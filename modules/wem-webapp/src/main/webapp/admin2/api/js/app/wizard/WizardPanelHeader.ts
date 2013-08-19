@@ -1,6 +1,14 @@
 module api_app_wizard {
 
-    export class WizardPanelHeader extends api_dom.DivEl {
+    export interface WizardPanelHeaderListener extends api_ui.Listener {
+
+        onDisplayNameChanged?(oldValue:string, newValue:string);
+
+        onNameChanged?(oldValue:string, newValue:string);
+
+    }
+
+    export class WizardPanelHeader extends api_dom.DivEl implements api_ui.Observable {
 
         private displayNameEl:api_ui.TextInput;
 
@@ -10,13 +18,25 @@ module api_app_wizard {
 
         private autogenerateName:bool = false;
 
+        private listeners:WizardPanelHeaderListener[] = [];
+
         constructor() {
             super(null, "wizard-header");
 
             this.displayNameEl = api_ui.AutosizeTextInput.large().setName('displayName');
+            this.displayNameEl.addListener({
+                onValueChanged: (oldValue, newValue) => {
+                    this.notifyDisplayNameChanged(oldValue, newValue);
+                }
+            });
             this.appendChild(this.displayNameEl);
 
             this.nameEl = api_ui.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(/[^a-z0-9\-]+/ig);
+            this.nameEl.addListener({
+                onValueChanged: (oldValue, newValue) => {
+                    this.notifyNameChanged(oldValue, newValue);
+                }
+            });
             this.appendChild(this.nameEl);
 
             this.displayNameEl.getEl().addEventListener('input', () => {
@@ -76,12 +96,30 @@ module api_app_wizard {
             return value ? value.replace(/[\s+\.\/]/ig, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '').toLowerCase() : '';
         }
 
-        addDisplayNameChangedEventListener(listener:(oldValue:string, newValue:string) => void) {
-            this.displayNameEl.addValueChangedEventListener(listener);
+        addListener(listener:WizardPanelHeaderListener) {
+            this.listeners.push(listener);
         }
 
-        addNameChangedEventListener(listener: (oldValue:string, newValue:string) => void) {
-            this.nameEl.addValueChangedEventListener(listener);
+        removeListener(listener:WizardPanelHeaderListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyDisplayNameChanged(oldValue, newValue) {
+            this.listeners.forEach((listener:WizardPanelHeaderListener) => {
+                if (listener.onDisplayNameChanged) {
+                    listener.onDisplayNameChanged(oldValue, newValue);
+                }
+            });
+        }
+
+        private notifyNameChanged(oldValue, newValue) {
+            this.listeners.forEach((listener:WizardPanelHeaderListener) => {
+                if (listener.onNameChanged) {
+                    listener.onNameChanged(oldValue, newValue);
+                }
+            });
         }
     }
 }

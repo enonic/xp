@@ -1,6 +1,12 @@
 module api_ui {
 
-    export class TextInput extends api_dom.InputEl {
+    export interface TextInputListener extends api_ui.Listener {
+
+        onValueChanged?(oldValue:string, newValue:string);
+
+    }
+
+    export class TextInput extends api_dom.InputEl implements api_ui.Observable {
 
         static MIDDLE:string = 'middle';
         static LARGE:string = 'large';
@@ -8,14 +14,14 @@ module api_ui {
         /**
          * Specifies RegExp for characters that will be removed during input.
          */
-        private stripCharsRe: RegExp;
+        private stripCharsRe:RegExp;
 
         /**
          * Input value before it was changed by last input event.
          */
         private oldValue:string = "";
 
-        private valueChangedEventListeners: Function[] = [];
+        private listeners:TextInputListener[] = [];
 
         constructor(idPrefix?:string, className?:string, size?:string = TextInput.MIDDLE) {
             super(idPrefix, className);
@@ -38,7 +44,7 @@ module api_ui {
             });
 
             this.getEl().addEventListener('input', () => {
-                this.fireValueChangedEvent(this.oldValue, this.getValue());
+                this.notifyValueChanged(this.oldValue, this.getValue());
                 this.oldValue = this.getValue();
             });
         }
@@ -57,7 +63,7 @@ module api_ui {
 
             if (oldValue != newValue) {
                 super.setValue(newValue);
-                this.fireValueChangedEvent(oldValue, newValue);
+                this.notifyValueChanged(oldValue, newValue);
                 // save new value to know which value was before input event.
                 this.oldValue = newValue;
             }
@@ -79,26 +85,32 @@ module api_ui {
             return this.getEl().getAttribute('placeholder');
         }
 
-        setForbiddenCharsRe(re: RegExp): TextInput {
+        setForbiddenCharsRe(re:RegExp):TextInput {
             this.stripCharsRe = re;
             return this;
         }
 
-        addValueChangedEventListener(listener:(oldValue:string, newValue:string) => void) {
-            this.valueChangedEventListeners.push(listener);
+        addListener(listener:TextInputListener) {
+            this.listeners.push(listener);
         }
 
-        private fireValueChangedEvent(oldValue:string, newValue:string) {
-            this.valueChangedEventListeners.forEach((listener: (oldValue:string, newValue:string) => void) => {
-                listener(oldValue, newValue);
+        removeListener(listener:TextInputListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
             });
         }
 
-        private removeForbiddenChars(rawValue: string): string {
+        private notifyValueChanged(oldValue:string, newValue:string) {
+            this.listeners.forEach((listener:TextInputListener) => {
+                listener.onValueChanged(oldValue, newValue);
+            });
+        }
+
+        private removeForbiddenChars(rawValue:string):string {
             return this.stripCharsRe ? (rawValue || '').replace(this.stripCharsRe, '') : rawValue;
         }
 
-        private containsForbiddenChars(value: string): bool {
+        private containsForbiddenChars(value:string):bool {
             // create new RegExp object in order not to mess RegExp.lastIndex
             var forbidden = new RegExp(<any> this.stripCharsRe);
             return forbidden.test(value);

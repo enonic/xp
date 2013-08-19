@@ -1,6 +1,6 @@
 module app_new {
 
-    export class RecommendedContentTypesList extends api_dom.DivEl {
+    export class RecommendedContentTypesList extends api_dom.DivEl implements api_ui.Observable {
 
         private contentTypesList:ContentTypesList;
 
@@ -15,8 +15,12 @@ module app_new {
             this.appendChild(this.contentTypesList);
         }
 
-        addSelectedListener(listener:(selectedContentType:api_remote_contenttype.ContentType) => void) {
-            this.contentTypesList.addSelectedListener(listener);
+        addListener(listener:ContentTypesListListener) {
+            this.contentTypesList.addListener(listener);
+        }
+
+        removeListener(listener:ContentTypesListListener) {
+            this.contentTypesList.removeListener(listener);
         }
 
         refresh() {

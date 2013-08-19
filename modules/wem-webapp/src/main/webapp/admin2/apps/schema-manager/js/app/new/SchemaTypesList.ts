@@ -6,11 +6,17 @@ module app_new {
         iconUrl: string;
     }
 
-    export class SchemaTypesList extends api_dom.DivEl {
+    export interface SchemaTypesListListener extends api_ui.Listener {
+
+        onSelected(schemaType:SchemaTypeListItem);
+
+    }
+
+    export class SchemaTypesList extends api_dom.DivEl implements api_ui.Observable {
 
         private ul:api_dom.UlEl;
 
-        private selectedListeners:Function[] = [];
+        private listeners:SchemaTypesListListener[] = [];
 
         constructor(items:SchemaTypeListItem[]) {
             super("SchemaTypeList", "schema-type-list");
@@ -21,13 +27,19 @@ module app_new {
             this.layoutItems(items);
         }
 
-        addSelectedListener(listener:(itemSelected:SchemaTypeListItem) => void) {
-            this.selectedListeners.push(listener);
+        addListener(listener:SchemaTypesListListener) {
+            this.listeners.push(listener);
         }
 
-        private fireSelectedEvent(selectedItem:SchemaTypeListItem) {
-            this.selectedListeners.forEach((listener:(itemSelected:SchemaTypeListItem) => void) => {
-                listener(selectedItem);
+        removeListener(listener:SchemaTypesListListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifySelected(schemaType:SchemaTypeListItem) {
+            this.listeners.forEach((listener:SchemaTypesListListener) => {
+                listener.onSelected(schemaType);
             });
         }
 
@@ -49,7 +61,7 @@ module app_new {
             li.appendChild(h6);
 
             li.getEl().addEventListener("click", function (event:Event) => {
-                this.fireSelectedEvent(item);
+                this.notifySelected(item);
             });
             return li;
         }

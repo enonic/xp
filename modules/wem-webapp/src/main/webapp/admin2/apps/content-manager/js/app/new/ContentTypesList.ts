@@ -1,12 +1,18 @@
 module app_new {
 
-    export class ContentTypesList extends api_dom.DivEl {
+    export interface ContentTypesListListener extends api_ui.Listener {
+
+        onSelected?(contentType:api_remote_contenttype.ContentType);
+
+    }
+
+    export class ContentTypesList extends api_dom.DivEl implements api_ui.Observable {
 
         private ul:api_dom.UlEl;
 
         private contentTypes:api_remote_contenttype.ContentType[];
 
-        private contentTypeSelectedListeners:Function[] = [];
+        private listeners:ContentTypesListListener[] = [];
 
         constructor() {
             super("ContentTypeList", "content-type-list");
@@ -15,13 +21,19 @@ module app_new {
             this.appendChild(this.ul);
         }
 
-        addSelectedListener(listener:(selectedContentType:api_remote_contenttype.ContentType) => void) {
-            this.contentTypeSelectedListeners.push(listener);
+        addListener(listener:ContentTypesListListener) {
+            this.listeners.push(listener);
         }
 
-        private fireSelectedEvent(selectedContentType:api_remote_contenttype.ContentType) {
-            this.contentTypeSelectedListeners.forEach((listener:(selectedContentType:api_remote_contenttype.ContentType) => void) => {
-                listener(selectedContentType);
+        removeListener(listener:ContentTypesListListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifySelected(contentType:api_remote_contenttype.ContentType) {
+            this.listeners.forEach((listener:ContentTypesListListener) => {
+                listener.onSelected(contentType);
             });
         }
 
@@ -67,7 +79,7 @@ module app_new {
             var listItemEl = new ContentTypeListItemEl(listItem);
 
             listItemEl.getEl().addEventListener("click", () => {
-                this.fireSelectedEvent(contentType);
+                this.notifySelected(contentType);
             });
             return listItemEl;
         }

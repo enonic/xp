@@ -1,8 +1,14 @@
 module api_app_browse {
 
-    export class ItemsSelectionPanel extends api_ui.Panel {
+    export interface ItemSelectionPanelListener extends api_ui.Listener {
 
-        private deselectionListeners:{ (item:BrowseItem): void; } [] = [];
+        onDeselected(item:BrowseItem);
+
+    }
+
+    export class ItemsSelectionPanel extends api_ui.Panel implements api_ui.Observable {
+
+        private listeners:ItemSelectionPanelListener[] = [];
         private items:BrowseItem[] = [];
 
         constructor() {
@@ -46,14 +52,22 @@ module api_app_browse {
             this.items.push(item);
         }
 
-        addDeselectionListener(listener:(item:BrowseItem) => void) {
-            this.deselectionListeners.push(listener);
+        addListener(listener:ItemSelectionPanelListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:ItemSelectionPanelListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
         }
 
         private notifyDeselected(item:BrowseItem) {
-            for (var i = 0; i < this.deselectionListeners.length; i++) {
-                this.deselectionListeners[i](item);
-            }
+            this.listeners.forEach((listener:ItemSelectionPanelListener) => {
+                if (listener.onDeselected) {
+                    listener.onDeselected(item);
+                }
+            });
         }
 
     }

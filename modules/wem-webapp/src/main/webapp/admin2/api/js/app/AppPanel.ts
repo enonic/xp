@@ -17,11 +17,12 @@ module api_app{
             this.addNavigationItem(homePanelMenuItem, this.homePanel);
             this.showPanel(0);
 
-            this.addShownPanelChangedListener((panel:api_ui.Panel, index:number) => {
-
-                if (!this.isHomePanel(index)) {
-                    // do panel afterRender to calculate offsets for each but home panel cuz they were created hidden
-                    panel.afterRender();
+            this.addListener({
+                onPanelShown: (panel:api_ui.Panel, index:number) => {
+                    if (!this.isHomePanel(index)) {
+                        // do panel afterRender to calculate offsets for each but home panel cuz they were created hidden
+                        panel.afterRender();
+                    }
                 }
             });
         }

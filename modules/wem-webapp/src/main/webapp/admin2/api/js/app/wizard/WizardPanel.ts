@@ -9,7 +9,14 @@ module api_app_wizard {
         livePanel?:api_ui.Panel;
     }
 
-    export class WizardPanel extends api_ui.Panel implements api_ui.Closeable {
+    export interface WizardPanelListener extends WizardPanelHeaderListener {
+
+        onClosed?(wizard:WizardPanel);
+
+    }
+
+
+    export class WizardPanel extends api_ui.Panel implements api_ui.Closeable, api_ui.Observable {
 
         private persistedItem:api_remote.Item;
 
@@ -28,7 +35,7 @@ module api_app_wizard {
 
         private next:WizardStepNavigationArrow;
 
-        private closingEventListeners:Function[] = [];
+        private listeners:WizardPanelListener[] = [];
 
         private backPanel:api_ui.DeckPanel;
         private formPanel:api_ui.Panel;
@@ -80,8 +87,24 @@ module api_app_wizard {
             this.backPanel.afterRender();
         }
 
-        addClosingEventListener(listener:(wizardPanel:WizardPanel) => void) {
-            this.closingEventListeners.push(listener);
+        addListener(listener:WizardPanelListener) {
+            this.listeners.push(listener);
+            this.header.addListener(listener);
+        }
+
+        removeListener(listener:WizardPanelListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+            this.header.removeListener(listener);
+        }
+
+        private notifyClosed() {
+            this.listeners.forEach((listener:WizardPanelListener) => {
+                if (listener.onClosed) {
+                    listener.onClosed(this);
+                }
+            });
         }
 
         setPersistedItem(item:api_remote.Item) {
@@ -132,14 +155,6 @@ module api_app_wizard {
             return this.header.generateName(value);
         }
 
-        addDisplayNameChangedEventListener(listener: (oldValue:string, newValue:string) => void) {
-            this.header.addDisplayNameChangedEventListener(listener);
-        }
-
-        addNameChangedEventListener(listener: (oldValue:string, newValue:string) => void) {
-            this.header.addNameChangedEventListener(listener);
-        }
-
         addStep(step:WizardStep) {
             this.steps.push(step);
             this.stepNavigator.addStep(step);
@@ -169,13 +184,7 @@ module api_app_wizard {
         }
 
         closing() {
-            this.fireClosingEvent();
-        }
-
-        private fireClosingEvent() {
-            this.closingEventListeners.forEach((listener:(wizardPanelClosing:WizardPanel) => void) => {
-                listener(this);
-            });
+            this.notifyClosed();
         }
 
         /*

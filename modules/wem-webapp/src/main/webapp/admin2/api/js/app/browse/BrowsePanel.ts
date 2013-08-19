@@ -37,8 +37,10 @@ module api_app_browse{
             this.browseItemPanel = params.browseItemPanel;
             this.filterPanel = params.filterPanel;
 
-            this.browseItemPanel.addDeselectionListener((item:BrowseItem) => {
-                this.treeGridPanel.deselect(item);
+            this.browseItemPanel.addListener({
+                onDeselected: (item:BrowseItem) => {
+                    this.treeGridPanel.deselect(item);
+                }
             });
 
             this.gridContainer = new api_app_browse.GridContainer(this.treeGridPanel);

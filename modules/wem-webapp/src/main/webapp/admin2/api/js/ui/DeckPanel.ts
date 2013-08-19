@@ -1,15 +1,21 @@
 module api_ui {
 
+    export interface DeckPanelListener extends api_ui.Listener {
+
+        onPanelShown?(panel:api_ui.Panel, index:number);
+
+    }
+
     /**
      * A panel having multiple child panels, but showing only one at a time - like a deck of cards.
      */
-    export class DeckPanel extends Panel {
+    export class DeckPanel extends Panel implements api_ui.Observable {
 
         private panels:Panel[] = [];
 
         private panelShown:Panel = null;
 
-        private shownPanelChangedListeners:{(panel:api_ui.Panel, index:number): void;}[] = [];
+        private listeners:DeckPanelListener[] = [];
 
         constructor(idPrefix?:string) {
             super(idPrefix || "DeckPanel");
@@ -120,24 +126,24 @@ module api_ui {
 
             panelToShow.show();
             this.panelShown = panelToShow;
-            this.notifyShownPanelChangedListeners(panelToShow, this.getPanelIndex(panelToShow));
+            this.notifyPanelShown(panelToShow, this.getPanelIndex(panelToShow));
         }
 
-        addShownPanelChangedListener(listener:(panel:api_ui.Panel, index:number) => void) {
-            this.shownPanelChangedListeners.push(listener);
+        addListener(listener:DeckPanelListener) {
+            this.listeners.push(listener);
         }
 
-        removeShownPanelChangedListener(listener:(panel:api_ui.Panel, index:number) => void) {
-            this.shownPanelChangedListeners.forEach((curr, index:number) => {
-                if (curr == listener) {
-                    this.shownPanelChangedListeners.splice(index--, 1)
-                }
+        removeListener(listener:DeckPanelListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
             });
         }
 
-        private notifyShownPanelChangedListeners(panel:Panel, panelIndex:number) {
-            this.shownPanelChangedListeners.forEach((listener) => {
-                listener(panel, panelIndex);
+        private notifyPanelShown(panel:Panel, panelIndex:number) {
+            this.listeners.forEach((listener:DeckPanelListener) => {
+                if (listener.onPanelShown) {
+                    listener.onPanelShown(panel, panelIndex);
+                }
             });
         }
     }

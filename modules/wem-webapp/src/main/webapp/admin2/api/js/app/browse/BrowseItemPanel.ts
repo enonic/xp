@@ -5,6 +5,10 @@ module api_app_browse {
         actionMenuActions:api_ui.Action[];
     }
 
+    export interface BrowseItemPanelListener extends api_ui.DeckPanelListener, ItemSelectionPanelListener {
+
+    }
+
     export class BrowseItemPanel extends api_ui.DeckPanel {
 
         private actionMenu:api_ui_menu.ActionMenu;
@@ -46,8 +50,14 @@ module api_app_browse {
             }
         }
 
-        addDeselectionListener(listener:(item:BrowseItem) => void) {
-            this.itemsSelectionPanel.addDeselectionListener(listener);
+        addListener(listener:BrowseItemPanelListener) {
+            super.addListener(listener);
+            this.itemsSelectionPanel.addListener(listener);
+        }
+
+        removeListener(listener:BrowseItemPanelListener) {
+            super.removeListener(listener);
+            this.itemsSelectionPanel.removeListener(listener);
         }
     }
 }

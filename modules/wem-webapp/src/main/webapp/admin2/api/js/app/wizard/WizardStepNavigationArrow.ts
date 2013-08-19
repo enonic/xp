@@ -4,7 +4,7 @@ module api_app_wizard {
         static NEXT = "next";
         static PREVIOUS = "prev";
 
-        private navigator;
+        private navigator:WizardStepNavigator;
         private direction:string;
 
         constructor(direction:string, navigator:WizardStepNavigator) {
@@ -23,8 +23,10 @@ module api_app_wizard {
             });
             this.update();
 
-            this.navigator.addStepShownEventListener((step:WizardStep) => {
-                this.update();
+            this.navigator.addListener({
+                onStepShown: (step:WizardStep) => {
+                    this.update();
+                }
             });
         }
 

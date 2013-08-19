@@ -23,13 +23,17 @@ module app_new {
 
 
             this.recommendedList = new RecommendedContentTypesList("block recommended");
-            this.recommendedList.addSelectedListener((selectedContentType:api_remote_contenttype.ContentType) => {
-                this.closeAndIssueNewContentEvent(selectedContentType);
+            this.recommendedList.addListener({
+                onSelected: (selectedContentType:api_remote_contenttype.ContentType) => {
+                    this.closeAndIssueNewContentEvent(selectedContentType);
+                }
             });
 
             this.recentList = new RecentContentTypesList("block recent");
-            this.recentList.addSelectedListener((selectedContentType:api_remote_contenttype.ContentType) => {
-                this.closeAndIssueNewContentEvent(selectedContentType);
+            this.recentList.addListener({
+                onSelected: (selectedContentType:api_remote_contenttype.ContentType) => {
+                    this.closeAndIssueNewContentEvent(selectedContentType);
+                }
             });
 
             var leftColumn = new api_dom.DivEl().setClass("column column-left");
@@ -38,8 +42,10 @@ module app_new {
             this.appendChildToContentPanel(leftColumn);
 
             this.allList = new AllContentTypesList("column column-right block all");
-            this.allList.addSelectedListener((selectedContentType:api_remote_contenttype.ContentType) => {
-                this.closeAndIssueNewContentEvent(selectedContentType);
+            this.allList.addListener({
+                onSelected: (selectedContentType:api_remote_contenttype.ContentType) => {
+                    this.closeAndIssueNewContentEvent(selectedContentType);
+                }
             });
 
             this.appendChildToContentPanel(this.allList);

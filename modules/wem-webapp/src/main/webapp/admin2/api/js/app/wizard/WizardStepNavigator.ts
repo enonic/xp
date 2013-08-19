@@ -1,6 +1,12 @@
 module api_app_wizard {
 
-    export class WizardStepNavigator extends api_dom.UlEl {
+    export interface WizardStepNavigatorListener extends api_ui.Listener {
+
+        onStepShown?(step:WizardStep);
+
+    }
+
+    export class WizardStepNavigator extends api_dom.UlEl implements api_ui.Observable {
 
         private deckPanel:api_app_wizard.WizardStepDeckPanel;
 
@@ -8,7 +14,7 @@ module api_app_wizard {
 
         private activeStepIndex:number;
 
-        private stepShownEventListeners: Function[] = [];
+        private listeners:WizardStepNavigatorListener[] = [];
 
         constructor(deckPanel:api_app_wizard.WizardStepDeckPanel) {
             super("WizardStepNavigator", "step-navigator");
@@ -36,7 +42,7 @@ module api_app_wizard {
                 this.showStep(step);
             }
             this.appendChild(stepEl);
-            this.fireStepShownEvent(step);
+            this.notifyStepShown(step);
         }
 
         showStep(step:WizardStep) {
@@ -44,7 +50,7 @@ module api_app_wizard {
             step.setActive(true);
             this.deckPanel.showPanel(step.getIndex());
             this.activeStepIndex = step.getIndex();
-            this.fireStepShownEvent(step);
+            this.notifyStepShown(step);
         }
 
         nextStep() {
@@ -87,13 +93,21 @@ module api_app_wizard {
             })
         }
 
-        addStepShownEventListener(listener:(step:WizardStep) => void) {
-            this.stepShownEventListeners.push(listener);
+        addListener(listener:WizardStepNavigatorListener) {
+            this.listeners.push(listener);
         }
 
-        private fireStepShownEvent(step:WizardStep) {
-            this.stepShownEventListeners.forEach((listener:(step:WizardStep) => void) => {
-                listener(step);
+        removeListener(listener:WizardStepNavigatorListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyStepShown(step:WizardStep) {
+            this.listeners.forEach((listener:WizardStepNavigatorListener) => {
+                if (listener.onStepShown) {
+                    listener.onStepShown(step);
+                }
             });
         }
     }

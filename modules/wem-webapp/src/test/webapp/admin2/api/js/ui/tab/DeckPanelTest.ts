@@ -2,6 +2,7 @@
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/jquery.d.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ExtJs.d.ts' />
 
+///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/Observable.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/event/Event.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/event/EventBus.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ElementHelper.ts' />
@@ -49,22 +50,28 @@ TestCase("DecPanel", {
         deckPanel.addPanel(panel1);
         deckPanel.addPanel(panel2);
 
-        var listener1 = (panel:api_ui.Panel, index:number) => {
+        var listener1 = {
+            onPanelShown: (panel:api_ui.Panel, index:number) => {
+            }
         };
-        var listener2 = (panel:api_ui.Panel, index:number) => {
-            fail("Second listener not expected to be notified");
+        var listener2 = {
+            onPanelShown: (panel:api_ui.Panel, index:number) => {
+                fail("Second listener not expected to be notified");
+            }
         };
-        var listener3 = (panel:api_ui.Panel, index:number) => {
+        var listener3 = {
+            onPanelShown: (panel:api_ui.Panel, index:number) => {
+            }
         };
-        deckPanel.addShownPanelChangedListener(listener1);
-        deckPanel.addShownPanelChangedListener(listener2);
-        deckPanel.addShownPanelChangedListener(listener3);
+        deckPanel.addListener(listener1);
+        deckPanel.addListener(listener2);
+        deckPanel.addListener(listener3);
 
         // verify setup
         deckPanel.showPanel(1);
 
         // exercise
-        deckPanel.removeShownPanelChangedListener(listener2);
+        deckPanel.removeListener(listener2);
 
         // verify
         deckPanel.showPanel(0);

@@ -102,6 +102,7 @@
 ///<reference path='ui/Action.ts' />
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/Closeable.ts' />
+///<reference path='ui/Observable.ts' />
 ///<reference path='ui/DeckPanel.ts' />
 ///<reference path='ui/SplitPanel.ts' />
 ///<reference path='ui/BodyMask.ts' />

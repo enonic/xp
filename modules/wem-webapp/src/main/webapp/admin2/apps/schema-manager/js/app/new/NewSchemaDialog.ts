@@ -41,9 +41,11 @@ module app_new {
                 this.close();
             });
 
-            this.schemaTypesList.addSelectedListener((selectedItem:SchemaTypeListItem) => {
-                this.close();
-                new NewSchemaEvent(selectedItem.type).fire();
+            this.schemaTypesList.addListener({
+                onSelected: (selectedItem:SchemaTypeListItem) => {
+                    this.close();
+                    new NewSchemaEvent(selectedItem.type).fire();
+                }
             });
 
             api_dom.Body.get().appendChild(this);

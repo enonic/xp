@@ -19,9 +19,11 @@ module api_app {
             this.browsePanel = config.browsePanel;
             this.appBarTabMenu = config.appBar.getTabMenu();
 
-            this.addShownPanelChangedListener((panel:api_ui.Panel, index:number) => {
-                if (panel === this.browsePanel) {
-                    this.browsePanel.refreshGrid();
+            this.addListener({
+                onPanelShown: (panel:api_ui.Panel, index:number) => {
+                    if (panel === this.browsePanel) {
+                        this.browsePanel.refreshGrid();
+                    }
                 }
             });
 
@@ -34,18 +36,17 @@ module api_app {
         addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
             super.addNavigationItem(tabMenuItem, wizardPanel);
 
-            wizardPanel.addDisplayNameChangedEventListener(() => {
-                tabMenuItem.setLabel(wizardPanel.getDisplayName());
+            wizardPanel.addListener({
+                onDisplayNameChanged: (oldValue, newValue) => {
+                    tabMenuItem.setLabel(newValue);
+                },
+                onNameChanged: (oldValue, newValue) => {
+                    // update something when name changed
+                },
+                onClosed: (wizard) => {
+                    this.removePanel(wizard, false);
+                }
             });
-
-            wizardPanel.addNameChangedEventListener(() => {
-                // update something when name changed
-            });
-
-            wizardPanel.addClosingEventListener((wizardPanel:api_app_wizard.WizardPanel) => {
-                this.removePanel(wizardPanel, false);
-            });
-
         }
 
         canRemovePanel(panel:api_ui.Panel):bool {
