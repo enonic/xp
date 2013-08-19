@@ -13,10 +13,10 @@ module app_wizard {
         }
     }
 
-    export class ShowContentFormEvent extends BaseContentModelEvent {
+    export class ShowContentFormEvent extends api_event.Event {
 
-        constructor(model:api_model.ContentExtModel[]) {
-            super('showContentForm', model);
+        constructor() {
+            super('showContentForm');
         }
 
         static on(handler:(event:ShowContentFormEvent) => void) {
@@ -25,10 +25,10 @@ module app_wizard {
 
     }
 
-    export class ShowContentLiveEvent extends BaseContentModelEvent {
+    export class ShowContentLiveEvent extends api_event.Event {
 
-        constructor(model:api_model.ContentExtModel[]) {
-            super('showContentLive', model);
+        constructor() {
+            super('showContentLive');
         }
 
         static on(handler:(event:ShowContentLiveEvent) => void) {

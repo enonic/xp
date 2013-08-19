@@ -5,7 +5,7 @@ module api_ui_menu {
         private button:api_ui.Button;
         private list:ActionList;
 
-        constructor(...actions:api_ui.Action[]) {
+        constructor(actions:api_ui.Action[]) {
             super("ActionMenu", "action-menu");
 
             this.button = new api_ui.Button("Actions");

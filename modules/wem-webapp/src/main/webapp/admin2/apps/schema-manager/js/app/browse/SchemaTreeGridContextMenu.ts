@@ -4,10 +4,13 @@ module app_browse {
 
         constructor() {
             super();
-            super.addAction(SchemaBrowseActions.EDIT_SCHEMA);
-            super.addAction(SchemaBrowseActions.OPEN_SCHEMA);
-            super.addAction(SchemaBrowseActions.DELETE_SCHEMA);
         }
 
+        setActions(actions:SchemaBrowseActions) {
+            this.addAction(actions.NEW_SCHEMA);
+            this.addAction(actions.EDIT_SCHEMA);
+            this.addAction(actions.OPEN_SCHEMA);
+            this.addAction(actions.DELETE_SCHEMA);
+        }
     }
 }

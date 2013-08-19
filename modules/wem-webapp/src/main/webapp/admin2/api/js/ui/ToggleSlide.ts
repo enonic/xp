@@ -31,7 +31,14 @@ module api_ui{
             this.calculateStyles();
             this.setupAnimation();
 
-            initOn ? this.turnOn() : this.turnOff();
+            if( initOn ) {
+                this.slideOn();
+            }
+            else {
+                this.slideOff();
+            }
+            this.isOn = initOn;
+
 
             this.getEl().addEventListener('click', () => {
                 this.toggle();
@@ -43,25 +50,29 @@ module api_ui{
         }
 
         turnOn() {
+            this.slideOn();
+            this.isOn = true;
+            this.actions.turnOnAction.execute();
+        }
+
+        private slideOn() {
             if (this.slideLeft.isRunning()) {
                 this.slideLeft.stop();
             }
             this.slideRight.start();
-
-            this.isOn = true;
-
-            this.actions.turnOnAction.execute();
         }
 
         turnOff() {
+            this.slideOff();
+            this.isOn = false;
+            this.actions.turnOffAction.execute();
+        }
+
+        private slideOff() {
             if (this.slideRight.isRunning()) {
                 this.slideRight.stop();
             }
             this.slideLeft.start();
-
-            this.isOn = false;
-
-            this.actions.turnOffAction.execute();
         }
 
         isTurnedOn():bool {

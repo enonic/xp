@@ -28,7 +28,7 @@ module app_wizard {
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new ShowContentLiveEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new ShowContentLiveEvent().fire();
             });
         }
     }
@@ -40,7 +40,7 @@ module app_wizard {
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new ShowContentFormEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new ShowContentFormEvent().fire();
             })
         }
     }

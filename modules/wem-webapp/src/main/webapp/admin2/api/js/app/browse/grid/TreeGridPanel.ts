@@ -1,4 +1,19 @@
-module api_app_browse {
+module api_app_browse_grid {
+
+    export interface TreeGridPanelParams {
+
+        columns:any[];
+
+        gridStore:Ext_data_Store;
+
+        treeStore:Ext_data_TreeStore;
+
+        gridConfig?:Object;
+
+        treeConfig?:Object;
+
+        contextMenu:api_ui_menu.ContextMenu;
+    }
 
     export class TreeGridPanel {
 
@@ -6,6 +21,7 @@ module api_app_browse {
         static TREE = "tree";
 
         ext:Ext_panel_Panel;
+
 
         private gridStore:Ext_data_Store;
         private gridConfig:Object;
@@ -16,6 +32,20 @@ module api_app_browse {
         private activeList:string = "grid";
         private itemId:string;
         private refreshNeeded:bool = false;
+
+        private contextMenu:api_ui_menu.ContextMenu;
+
+        private listeners:TreeGridPanelListener[] = [];
+
+        constructor(params:TreeGridPanelParams) {
+
+            this.gridStore = params.gridStore;
+            this.treeStore = params.treeStore;
+            this.columns = params.columns;
+            this.gridConfig = params.gridConfig;
+            this.treeConfig = params.treeConfig;
+            this.contextMenu = params.contextMenu;
+        }
 
         //TODO: move to constructor after ext has been dropped
         create(region?:string, renderTo?:string) {
@@ -30,106 +60,89 @@ module api_app_browse {
                 itemId: this.itemId
             });
 
-            this.ext.add(this.createGridPanel(this.gridStore, this.gridConfig));
+            var gridPanel = new GridPanel(this.gridStore, this.columns, this.keyField, this.gridConfig);
+            this.ext.add(gridPanel.getExt());
 
-            this.ext.add(this.createTreePanel(this.treeStore, this.treeConfig));
-
-            return this;
-        }
-
-        constructor(columns:any[], gridStore:Ext_data_Store, treeStore:Ext_data_TreeStore, gridConfig?:Object, treeConfig?:Object) {
-
-            this.gridStore = gridStore;
-            this.treeStore = treeStore;
-            this.columns = columns;
-            this.gridConfig = gridConfig;
-            this.treeConfig = treeConfig;
-
-        }
-
-        private createGridPanel(gridStore:Ext_data_Store, gridConfig?:Object) {
-
-            var grid:Ext_grid_Panel = <any> new Ext.grid.Panel(Ext.apply({
-                itemId: 'grid',
-                cls: 'admin-grid',
-                border: false,
-                hideHeaders: true,
-                columns: this.columns,
-                viewConfig: {
-                    trackOver: true,
-                    stripeRows: true,
-                    loadMask: {
-                        store: gridStore
-                    }
-                },
-                store: gridStore,
-                plugins: [
-                    new Admin.plugin.PersistentGridSelectionPlugin({
-                        keyField: this.keyField
-                    })
-                ]
-            }, gridConfig));
-
-            grid.addDocked(new Ext.toolbar.Toolbar({
-                itemId: 'selectionToolbar',
-                cls: 'admin-white-toolbar',
-                dock: 'top',
-                store: gridStore,
-                gridPanel: grid,
-                resultCountHidden: true,
-                plugins: ['gridToolbarPlugin']
-            }));
-
-            gridStore.on('datachanged', this.fireUpdateEvent, this);
-
-            return grid;
-        }
-
-        private createTreePanel(treeStore:Ext_data_TreeStore, treeConfig?:Object) {
+            this.gridStore.on('datachanged', this.fireUpdateEvent, this);
 
             var treeColumns = Ext.clone(this.columns);
             treeColumns[0].xtype = 'treecolumn';
 
-            var tree:Ext_tree_Panel = <any> new Ext.tree.Panel(Ext.apply({
-                xtype: 'treepanel',
-                cls: 'admin-tree',
-                hideHeaders: true,
-                itemId: 'tree',
-                useArrows: true,
-                border: false,
-                rootVisible: false,
-                viewConfig: {
-                    trackOver: true,
-                    stripeRows: true,
-                    loadMask: {
-                        store: treeStore
-                    }
-                },
-                store: treeStore,
-                columns: treeColumns,
-                plugins: [
-                    new Admin.plugin.PersistentGridSelectionPlugin({
-                        keyField: this.keyField
-                    })
-                ]
-            }, treeConfig));
+            var treePanel = new TreePanel(this.treeStore, treeColumns, this.keyField, this.treeConfig);
+            this.ext.add(treePanel.getExt());
 
-            tree.addDocked({
-                xtype: 'toolbar',
-                itemId: 'selectionToolbar',
-                cls: 'admin-white-toolbar',
-                dock: 'top',
-                store: treeStore,
-                gridPanel: tree,
-                resultCountHidden: true,
-                countTopLevelOnly: true,
-                plugins: ['gridToolbarPlugin']
+            this.treeStore.on('datachanged', this.fireUpdateEvent, this);
+
+            treePanel.addListener(<TreePanelListener>{
+                onSelectionChanged: (event:TreeSelectionChangedEvent) => {
+
+                    console.log("TreeGridPanel onSelectionChanged from tree");
+
+                    this.notifyTreeGridSelectionChanged({
+                        selectionCount: event.selectionCount,
+                        selectedModels: event.selectedModels
+                    });
+                },
+                onItemDoubleClicked: (event:TreeItemDoubleClickedEvent) => {
+
+                    console.log("TreeGridPanel onSelectionChanged from tree");
+
+                    this.notifyItemDoubleClicked({
+                        clickedModel: event.clickedModel
+                    });
+                },
+                onShowContextMenu: (event:TreeShowContextMenuEvent) => {
+
+                    console.log("TreeGridPanel onShowContextMenu from tree");
+
+                    this.contextMenu.showAt(event.x, event.y);
+                }
             });
 
-            treeStore.on('datachanged', this.fireUpdateEvent, this);
+            gridPanel.addListener(<GridPanelListener>{
+                onSelectionChanged: (event:GridSelectionChangedEvent) => {
 
-            return tree;
+                    console.log("TreeGridPanel onSelectionChanged from grid");
+
+                    this.notifyTreeGridSelectionChanged({
+                        selectionCount: event.selectionCount,
+                        selectedModels: event.selectedModels
+                    });
+                },
+                onShowContextMenu: (event:GridShowContextMenuEvent) => {
+
+                    console.log("TreeGridPanel onShowContextMenu from grid");
+
+                    this.contextMenu.showAt(event.x, event.y);
+                }
+            });
+
+            return this;
         }
+
+        addListener(listener:TreeGridPanelListener) {
+            this.listeners.push(listener);
+        }
+
+        private notifyTreeGridSelectionChanged(event:TreeGridSelectionChangedEvent) {
+
+            this.listeners.forEach((listener:TreeGridPanelListener)=> {
+                if (listener.onSelectionChanged) {
+                    listener.onSelectionChanged(event);
+                }
+            });
+        }
+
+        private notifyItemDoubleClicked(event:TreeGridItemDoubleClickedEvent) {
+
+            this.listeners.forEach((listener:TreeGridPanelListener)=> {
+                if (listener.onItemDoubleClicked) {
+                    listener.onItemDoubleClicked(event);
+                }
+            });
+        }
+
+
 
         private fireUpdateEvent(values) {
             this.ext.fireEvent('datachanged', values);
@@ -140,11 +153,11 @@ module api_app_browse {
             return <Ext_panel_Table> (<Ext_layout_container_Card> this.ext.getLayout()).getActiveItem();
         }
 
-        /**
+        /*
          * Switches the view
          * @param listId the view to show can be either of TreeGridPanel.GRID or TreeGridPanel.TREE
          */
-            setActiveList(listId) {
+         setActiveList(listId) {
             this.activeList = listId;
             if (this.ext) {
                 (<Ext_layout_container_Card> this.ext.getLayout()).setActiveItem(listId);
@@ -249,16 +262,16 @@ module api_app_browse {
     interface GridToolbarPlugin extends Ext_AbstractPlugin {
 
         setResultCountVisible(visible:bool): void;
-        updateResultCount(count:number): void;
 
+        updateResultCount(count:number): void;
     }
 
 
     interface PersistentGridSelectionPlugin extends Ext_AbstractPlugin {
 
         getSelection():api_model.SpaceExtModel[];
-        clearSelection():void;
 
+        clearSelection():void;
     }
 
 }

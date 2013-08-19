@@ -13,10 +13,11 @@
 ///<reference path='app/browse/SpaceBrowseEvents.ts' />
 ///<reference path='app/browse/SpaceBrowseActions.ts' />
 ///<reference path='app/browse/SpaceBrowseToolbar.ts' />
-///<reference path='app/browse/SpaceActionMenu.ts' />
 ///<reference path='app/browse/SpaceBrowseItemPanel.ts' />
 ///<reference path='app/browse/SpaceBrowsePanel.ts' />
 ///<reference path='app/browse/SpaceTreeGridContextMenu.ts' />
+///<reference path='app/browse/grid/SpaceGridStore.ts' />
+///<reference path='app/browse/grid/SpaceTreeStore.ts' />
 ///<reference path='app/browse/SpaceTreeGridPanel.ts' />
 
 ///<reference path='app/browse/filter/SpaceBrowseFilterEvents.ts' />
@@ -34,7 +35,6 @@
 ///<reference path='app/SpaceAppBarTabMenuItem.ts' />
 ///<reference path='app/SpaceAppBarTabMenu.ts' />
 ///<reference path='app/SpaceAppBar.ts' />
-///<reference path='app/SpaceContext.ts' />
 ///<reference path='app/SpaceAppPanel.ts' />
 
 
@@ -80,7 +80,3 @@ Ext.application({
         });
     }
 });
-
-app.SpaceContext.init();
-app_browse.SpaceBrowseActions.init();
-

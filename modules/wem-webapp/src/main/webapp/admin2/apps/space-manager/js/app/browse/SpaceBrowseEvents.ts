@@ -13,17 +13,6 @@ module app_browse {
         }
     }
 
-    export class GridSelectionChangeEvent extends BaseSpaceModelEvent {
-
-        constructor(model:api_model.SpaceExtModel[]) {
-            super('gridChange', model);
-        }
-
-        static on(handler:(event:GridSelectionChangeEvent) => void) {
-            api_event.onEvent('gridChange', handler);
-        }
-    }
-
     export class NewSpaceEvent extends api_event.Event {
 
         constructor() {

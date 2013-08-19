@@ -8,7 +8,6 @@ module app_view {
                 new app_browse.EditContentEvent([panel.getItem().getModel()]).fire();
             });
         }
-
     }
 
     export class DeleteContentAction extends api_ui.Action {
@@ -32,5 +31,4 @@ module app_view {
             });
         }
     }
-
 }

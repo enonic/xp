@@ -1,23 +1,34 @@
 module app_view {
 
+    export interface ContentItemViewPanelParams {
+        showPreviewAction:api_ui.Action;
+        showDetailsAction:api_ui.Action;
+    }
+
     export class ContentItemViewPanel extends api_app_view.ItemViewPanel {
 
-        private id:string;
-        private editAction:api_ui.Action;
-        private deleteAction:api_ui.Action;
-        private closeAction:api_ui.Action;
-
         private statisticsPanel:api_app_view.ItemStatisticsPanel;
+
         private statisticsPanelIndex:number;
+
         private previewPanel;
+
         private previewMode:bool;
+
         private previewPanelIndex:number;
+
         private deckPanel:api_ui.DeckPanel;
 
+        private editAction:api_ui.Action;
 
-        constructor(id:string) {
+        private deleteAction:api_ui.Action;
 
-            this.id = id;
+        private closeAction:api_ui.Action;
+
+        constructor(params:ContentItemViewPanelParams) {
+
+            this.deckPanel = new api_ui.DeckPanel();
+
             this.editAction = new EditContentAction(this);
             this.deleteAction = new DeleteContentAction(this);
             this.closeAction = new CloseContentAction(this, true);
@@ -25,8 +36,12 @@ module app_view {
             var toolbar = new ContentItemViewToolbar({
                 editAction: this.editAction,
                 deleteAction: this.deleteAction,
-                closeAction: this.closeAction
+                closeAction: this.closeAction,
+                showPreviewAction: params.showPreviewAction,
+                showDetailsAction: params.showDetailsAction
             });
+
+            super(toolbar, this.deckPanel);
 
             this.statisticsPanel = new ContentItemStatisticsPanel({
                 editAction: this.editAction,
@@ -34,14 +49,10 @@ module app_view {
             });
             this.previewPanel = new app_browse.ContentItemPreviewPanel();
 
-            this.deckPanel = new api_ui.DeckPanel();
-
             this.statisticsPanelIndex = this.deckPanel.addPanel(this.statisticsPanel);
             this.previewPanelIndex = this.deckPanel.addPanel(this.previewPanel);
 
             this.showPreview(false);
-
-            super(toolbar, this.deckPanel);
 
             app_browse.ShowPreviewEvent.on((event) => {
                 this.showPreview(true);

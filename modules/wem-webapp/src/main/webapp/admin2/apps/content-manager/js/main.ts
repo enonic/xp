@@ -38,14 +38,15 @@
 
 ///<reference path='app/browse/ContentBrowseEvents.ts' />
 ///<reference path='app/browse/ContentBrowseActions.ts' />
-///<reference path='app/browse/ContentActionMenu.ts' />
 ///<reference path='app/browse/ContentBrowseToolbar.ts' />
 ///<reference path='app/browse/ContentTreeGridContextMenu.ts' />
-///<reference path='app/browse/ContentTreeGridPanel.ts' />
 ///<reference path='app/browse/ContentBrowseItemPanel.ts' />
 ///<reference path='app/browse/ContentBrowsePanel.ts' />
+///<reference path='app/browse/grid/ContentTreeStore.ts' />
+///<reference path='app/browse/grid/ContentGridStore.ts' />
+///<reference path='app/browse/ContentTreeGridPanel.ts' />
 
-///<reference path='app/view/ContentViewActions.ts' />
+///<reference path='app/view/ContentItemViewActions.ts' />
 ///<reference path='app/view/ContentItemViewToolbar.ts' />
 ///<reference path='app/view/ContentItemStatisticsPanel.ts' />
 ///<reference path='app/view/ContentItemViewPanel.ts' />
@@ -63,7 +64,6 @@
 ///<reference path='app/ContentAppBarTabMenu.ts' />
 ///<reference path='app/ContentAppBarTabMenuItem.ts' />
 ///<reference path='app/ContentAppBar.ts' />
-///<reference path='app/ContentContext.ts' />
 
 ///<reference path='handler/DeleteContentHandler.ts' />
 
@@ -125,7 +125,3 @@ Ext.application({
         });
     }
 });
-
-
-app.ContentContext.init();
-app_browse.ContentBrowseActions.init();

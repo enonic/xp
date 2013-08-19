@@ -121,6 +121,7 @@
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/NavigatedDeckPanel.ts' />
 
+
 ///<reference path='ui/Dropdown.ts' />
 ///<reference path='ui/TextInput.ts' />
 ///<reference path='ui/AutosizeTextInput.ts' />
@@ -152,18 +153,25 @@
 ///<reference path='app/AppPanel.ts' />
 ///<reference path='app/BrowseAndWizardBasedAppPanel.ts' />
 
-///<reference path='app/browse/BrowsePanel.ts' />
-///<reference path='app/browse/BrowseItem.ts' />
-///<reference path='app/browse/ItemsSelectionPanel.ts' />
-///<reference path='app/browse/BrowseItemPanel.ts' />
-///<reference path='app/browse/GridContainer.ts'/>
-///<reference path='app/browse/TreeGridPanel.ts'/>
-
 ///<reference path='app/browse/filter/BrowseFilterPanelActions.ts' />
 ///<reference path='app/browse/filter/Facet.ts' />
 ///<reference path='app/browse/filter/FacetGroup.ts' />
 ///<reference path='app/browse/filter/FacetContainer.ts' />
 ///<reference path='app/browse/filter/BrowseFilterPanel.ts' />
+
+///<reference path='app/browse/grid/GridPanelListener.ts' />
+///<reference path='app/browse/grid/GridPanel.ts' />
+///<reference path='app/browse/grid/TreePanelListener.ts' />
+///<reference path='app/browse/grid/TreePanel.ts' />
+///<reference path='app/browse/grid/TreeGridPanelListener.ts' />
+///<reference path='app/browse/grid/TreeGridPanel.ts' />
+
+///<reference path='app/browse/BrowsePanel.ts' />
+///<reference path='app/browse/BrowseItem.ts' />
+///<reference path='app/browse/ItemsSelectionPanel.ts' />
+///<reference path='app/browse/BrowseItemPanel.ts' />
+///<reference path='app/browse/GridContainer.ts'/>
+
 
 ///<reference path='app/view/ViewItem.ts' />
 ///<reference path='app/view/ItemStatisticsPanel.ts' />

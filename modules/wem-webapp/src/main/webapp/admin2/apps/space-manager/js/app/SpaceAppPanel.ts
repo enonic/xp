@@ -14,7 +14,7 @@ module app {
             super({
                 appBar: appBar,
                 browsePanel: this.browsePanel,
-                browsePanelActions: app_browse.SpaceBrowseActions.ACTIONS
+                browsePanelActions: app_browse.SpaceBrowseActions.get().getAllActions()
             });
 
             this.handleGlobalEvents();
@@ -50,7 +50,7 @@ module app {
 
                     var tabMenuItem = new SpaceAppBarTabMenuItem(spaceModel.data.displayName);
                     var id = this.generateTabId(spaceModel.data.name, false);
-                    var spaceItemViewPanel = new app_view.SpaceItemViewPanel(id);
+                    var spaceItemViewPanel = new app_view.SpaceItemViewPanel();
 
                     var spaceItem = new api_app_view.ViewItem(spaceModel)
                         .setDisplayName(spaceModel.data.displayName)

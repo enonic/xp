@@ -1,13 +1,25 @@
 module app_browse {
 
-    export class ContentTreeGridPanel extends api_app_browse.TreeGridPanel {
+    export interface ContentTreeGridPanelParams {
 
-        constructor(itemId?:string) {
-            super(this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
+        contextMenu:api_ui_menu.ContextMenu;
+    }
 
-            this.setActiveList(api_app_browse.TreeGridPanel.TREE);
+    export class ContentTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
+
+        constructor(params:ContentTreeGridPanelParams) {
+
+            super({
+                columns: this.createColumns(),
+                gridStore: new app_browse_grid.ContentGridStore().getExtDataStore(),
+                treeStore: new app_browse_grid.ContentTreeStore().getExtDataStore(),
+                gridConfig: this.createGridConfig(),
+                treeConfig: this.createTreeConfig(),
+                contextMenu: params.contextMenu});
+
+            this.setActiveList(api_app_browse_grid.TreeGridPanel.TREE);
             this.setKeyField("path");
-            this.setItemId(itemId);
+            this.setItemId("ContentTreeGridPanel");
 
             app_browse_filter.ContentBrowseSearchEvent.on((event) => {
                 if (event.getResultContentIds().length > 0) {
@@ -24,52 +36,13 @@ module app_browse {
             app_browse_filter.ContentBrowseResetEvent.on((event) => {
                 this.setRemoteSearchParams({});
                 this.refresh();
-            })
-
-            var contentContextMenu = new app_browse.ContentTreeGridContextMenu();
-            app_browse.ShowContextMenuEvent.on((event) => {
-                contentContextMenu.showAt(event.getX(), event.getY());
             });
-        }
 
-        private createGridStore() {
-            return new Ext.data.Store({
 
-                model: 'Admin.model.contentManager.ContentModel',
-
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote_content.RemoteContentService.content_find,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'contents',
-                        totalProperty: 'total'
-                    }
-                }
-            });
-        }
-
-        private createTreeStore() {
-            return new Ext.data.TreeStore({
-
-                model: 'Admin.model.contentManager.ContentModel',
-
-                folderSort: true,
-                autoLoad: false,
-
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote_content.RemoteContentService.content_tree,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'contents',
-                        totalProperty: 'total'
-                    }
-                }
-
-            });
+            this.addListener({
+                onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
+                new app_browse.EditContentEvent([<any>event.clickedModel]).fire();
+            }});
         }
 
         private createColumns() {
@@ -99,37 +72,13 @@ module app_browse {
 
         private createGridConfig() {
             return {
-                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
-                listeners: {
-                    selectionchange: (selModel, selected, opts) => {
-                        new GridSelectionChangeEvent(selected).fire();
-                    },
-                    itemcontextmenu: (view, rec, node, index, event) => {
-                        event.stopEvent();
-                        new ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
-                    },
-                    itemdblclick: (grid, record) => {
-                        new EditContentEvent(grid.getSelection()).fire();
-                    }
-                }
+                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
             }
         }
 
         private createTreeConfig() {
             return {
-                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
-                listeners: {
-                    selectionchange: (selModel, selected, opts) => {
-                        new GridSelectionChangeEvent(selected).fire();
-                    },
-                    itemcontextmenu: (view, rec, node, index, event) => {
-                        event.stopEvent();
-                        new ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
-                    },
-                    itemdblclick: (grid, record) => {
-                        new EditContentEvent(grid.getSelection()).fire();
-                    }
-                }
+                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
             }
         }
 

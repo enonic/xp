@@ -2,90 +2,90 @@ module app_browse {
 
     export class ShowNewContentDialogAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("New");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new ShowNewContentDialogEvent(app.ContentContext.get().getSelectedContents()[0]).fire();
+                new ShowNewContentDialogEvent(treeGridPanel.getSelection()[0]).fire();
             });
         }
     }
 
     export class OpenContentAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new OpenContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new OpenContentEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class EditContentAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new EditContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new EditContentEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class DeleteContentAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new ContentDeletePromptEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new ContentDeletePromptEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class DuplicateContentAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Duplicate");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new DuplicateContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new DuplicateContentEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class MoveContentAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Move");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new MoveContentEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new MoveContentEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class ShowPreviewAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("PREVIEW");
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new ShowPreviewEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new ShowPreviewEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class ShowDetailsAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("DETAILS");
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new ShowDetailsEvent(app.ContentContext.get().getSelectedContents()).fire();
+                new ShowDetailsEvent(treeGridPanel.getSelection()).fire();
             })
         }
     }
@@ -104,54 +104,81 @@ module app_browse {
 
     export class ContentBrowseActions {
 
-        static SHOW_NEW_CONTENT_DIALOG_ACTION:api_ui.Action = new app_browse.ShowNewContentDialogAction();
-        static OPEN_CONTENT:api_ui.Action = new OpenContentAction;
-        static EDIT_CONTENT:api_ui.Action = new EditContentAction();
-        static DELETE_CONTENT:api_ui.Action = new DeleteContentAction();
-        static DUPLICATE_CONTENT:api_ui.Action = new DuplicateContentAction();
-        static MOVE_CONTENT:api_ui.Action = new MoveContentAction();
-        static SHOW_PREVIEW:api_ui.Action = new ShowPreviewAction();
-        static SHOW_DETAILS:api_ui.Action = new ShowDetailsAction();
-        static BROWSE_CONTENT_SETTINGS:api_ui.Action = new BrowseContentSettingsAction();
+        public SHOW_NEW_CONTENT_DIALOG_ACTION:api_ui.Action;
+        public OPEN_CONTENT:api_ui.Action;
+        public EDIT_CONTENT:api_ui.Action;
+        public DELETE_CONTENT:api_ui.Action;
+        public DUPLICATE_CONTENT:api_ui.Action;
+        public MOVE_CONTENT:api_ui.Action;
+        public SHOW_PREVIEW:api_ui.Action;
+        public SHOW_DETAILS:api_ui.Action;
+        public BROWSE_CONTENT_SETTINGS:api_ui.Action;
 
-        static ACTIONS:api_ui.Action[] = [];
+        private allActions:api_ui.Action[] = [];
 
-        static init() {
+        private static INSTANCE:ContentBrowseActions;
 
-            ACTIONS.push(SHOW_NEW_CONTENT_DIALOG_ACTION, OPEN_CONTENT, EDIT_CONTENT, DELETE_CONTENT, DUPLICATE_CONTENT, MOVE_CONTENT);
-
-            GridSelectionChangeEvent.on((event) => {
-
-                var contents:api_model.ContentExtModel[] = event.getModels();
-
-                if (contents.length <= 0) {
-                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                    OPEN_CONTENT.setEnabled(false);
-                    EDIT_CONTENT.setEnabled(false);
-                    DELETE_CONTENT.setEnabled(false);
-                    DUPLICATE_CONTENT.setEnabled(false);
-                    MOVE_CONTENT.setEnabled(false);
-                }
-                else if (contents.length == 1) {
-                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-                    OPEN_CONTENT.setEnabled(true);
-                    EDIT_CONTENT.setEnabled(contents[0].data.editable);
-                    DELETE_CONTENT.setEnabled(contents[0].data.deletable);
-                    DUPLICATE_CONTENT.setEnabled(true);
-                    MOVE_CONTENT.setEnabled(true);
-                }
-                else {
-                    SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                    OPEN_CONTENT.setEnabled(true);
-                    EDIT_CONTENT.setEnabled(anyEditable(contents));
-                    DELETE_CONTENT.setEnabled(anyDeleteable(contents));
-                    DUPLICATE_CONTENT.setEnabled(true);
-                    MOVE_CONTENT.setEnabled(true);
-                }
-            });
+        static init(treeGridPanel:api_app_browse_grid.TreeGridPanel):ContentBrowseActions {
+            new ContentBrowseActions(treeGridPanel);
+            return INSTANCE;
         }
 
-        static anyEditable(contents:api_model.ContentExtModel[]):bool {
+        static get():ContentBrowseActions {
+            return INSTANCE;
+        }
+
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+
+            this.SHOW_NEW_CONTENT_DIALOG_ACTION = new app_browse.ShowNewContentDialogAction(treeGridPanel);
+            this.OPEN_CONTENT = new OpenContentAction(treeGridPanel);
+            this.EDIT_CONTENT = new EditContentAction(treeGridPanel);
+            this.DELETE_CONTENT = new DeleteContentAction(treeGridPanel);
+            this.DUPLICATE_CONTENT = new DuplicateContentAction(treeGridPanel);
+            this.MOVE_CONTENT = new MoveContentAction(treeGridPanel);
+            this.SHOW_PREVIEW = new ShowPreviewAction(treeGridPanel);
+            this.SHOW_DETAILS = new ShowDetailsAction(treeGridPanel);
+            this.BROWSE_CONTENT_SETTINGS = new BrowseContentSettingsAction();
+
+            this.allActions.push(this.SHOW_NEW_CONTENT_DIALOG_ACTION, this.OPEN_CONTENT, this.EDIT_CONTENT, this.DELETE_CONTENT,
+                this.DUPLICATE_CONTENT, this.MOVE_CONTENT, this.SHOW_PREVIEW, this.SHOW_DETAILS, this.BROWSE_CONTENT_SETTINGS);
+
+            ContentBrowseActions.INSTANCE = this;
+        }
+
+        getAllActions():api_ui.Action[] {
+            return this.allActions;
+        }
+
+        updateActionsEnabledState(models:api_model.ContentExtModel[]) {
+
+            if (models.length <= 0) {
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.OPEN_CONTENT.setEnabled(false);
+                this.EDIT_CONTENT.setEnabled(false);
+                this.DELETE_CONTENT.setEnabled(false);
+                this.DUPLICATE_CONTENT.setEnabled(false);
+                this.MOVE_CONTENT.setEnabled(false);
+            }
+            else if (models.length == 1) {
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
+                this.OPEN_CONTENT.setEnabled(true);
+                this.EDIT_CONTENT.setEnabled(models[0].data.editable);
+                this.DELETE_CONTENT.setEnabled(models[0].data.deletable);
+                this.DUPLICATE_CONTENT.setEnabled(true);
+                this.MOVE_CONTENT.setEnabled(true);
+            }
+            else {
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.OPEN_CONTENT.setEnabled(true);
+                this.EDIT_CONTENT.setEnabled(this.anyEditable(models));
+                this.DELETE_CONTENT.setEnabled(this.anyDeleteable(models));
+                this.DUPLICATE_CONTENT.setEnabled(true);
+                this.MOVE_CONTENT.setEnabled(true);
+            }
+
+        }
+
+        private anyEditable(contents:api_model.ContentExtModel[]):bool {
             for (var i in contents) {
                 var content:api_model.ContentExtModel = contents[i];
                 if (content.data.editable) {
@@ -161,7 +188,7 @@ module app_browse {
             return false;
         }
 
-        static anyDeleteable(contents:api_model.ContentExtModel[]):bool {
+        private anyDeleteable(contents:api_model.ContentExtModel[]):bool {
             for (var i in contents) {
                 var content:api_model.ContentExtModel = contents[i];
                 if (content.data.deletable) {

@@ -12,90 +12,115 @@ module app_browse {
 
     export class EditSchemaAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new EditSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
+                new EditSchemaEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class OpenSchemaAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new OpenSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
+                new OpenSchemaEvent((treeGridPanel.getSelection())).fire();
             });
         }
     }
 
     export class DeleteSchemaAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new DeleteSchemaPromptEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
+                new DeleteSchemaPromptEvent((treeGridPanel.getSelection())).fire();
             });
         }
     }
 
     export class ReindexSchemaAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Re-index");
             this.addExecutionListener(() => {
-                new ReindexSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
+                new ReindexSchemaEvent((treeGridPanel.getSelection())).fire();
             });
         }
     }
 
     export class ExportSchemaAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Export");
             this.addExecutionListener(() => {
-                new ExportSchemaEvent(app.SchemaContext.get().getSelectedSchemes()).fire();
+                new ExportSchemaEvent((treeGridPanel.getSelection())).fire();
             });
         }
     }
 
     export class SchemaBrowseActions {
 
-        static NEW_SCHEMA:api_ui.Action = new NewSchemaAction();
-        static EDIT_SCHEMA:api_ui.Action = new EditSchemaAction();
-        static OPEN_SCHEMA:api_ui.Action = new OpenSchemaAction();
-        static DELETE_SCHEMA:api_ui.Action = new DeleteSchemaAction();
-        static REINDEX_SCHEMA:api_ui.Action = new ReindexSchemaAction();
-        static EXPORT_SCHEMA:api_ui.Action = new ExportSchemaAction();
+        public NEW_SCHEMA:api_ui.Action;
+        public EDIT_SCHEMA:api_ui.Action;
+        public OPEN_SCHEMA:api_ui.Action;
+        public DELETE_SCHEMA:api_ui.Action;
+        public REINDEX_SCHEMA:api_ui.Action;
+        public EXPORT_SCHEMA:api_ui.Action;
 
-        static ACTIONS:api_ui.Action[] = [];
+        private allActions:api_ui.Action[] = [];
 
-        static init() {
-            ACTIONS.push(NEW_SCHEMA, EDIT_SCHEMA, OPEN_SCHEMA, DELETE_SCHEMA, REINDEX_SCHEMA, EXPORT_SCHEMA);
+        private static INSTANCE:SchemaBrowseActions;
 
-            GridSelectionChangeEvent.on((event) => {
-                var spaces:api_model.SchemaExtModel[] = event.getModels();
+        static init(treeGridPanel:api_app_browse_grid.TreeGridPanel):SchemaBrowseActions {
+            new SchemaBrowseActions(treeGridPanel);
+            return INSTANCE;
+        }
 
-                if (spaces.length <= 0) {
-                    NEW_SCHEMA.setEnabled(true);
-                    EDIT_SCHEMA.setEnabled(false);
-                    OPEN_SCHEMA.setEnabled(false);
-                    DELETE_SCHEMA.setEnabled(false);
-                    REINDEX_SCHEMA.setEnabled(true);
-                    EXPORT_SCHEMA.setEnabled(true);
-                } else {
-                    NEW_SCHEMA.setEnabled(true);
-                    EDIT_SCHEMA.setEnabled(true);
-                    OPEN_SCHEMA.setEnabled(true);
-                    DELETE_SCHEMA.setEnabled(true);
-                    REINDEX_SCHEMA.setEnabled(true);
-                    EXPORT_SCHEMA.setEnabled(true);
-                }
-            });
+        static get():SchemaBrowseActions {
+            return INSTANCE;
+        }
+
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+
+            this.NEW_SCHEMA = new NewSchemaAction();
+            this.EDIT_SCHEMA = new EditSchemaAction(treeGridPanel);
+            this.OPEN_SCHEMA = new OpenSchemaAction(treeGridPanel);
+            this.DELETE_SCHEMA = new DeleteSchemaAction(treeGridPanel);
+            this.REINDEX_SCHEMA = new ReindexSchemaAction(treeGridPanel);
+            this.EXPORT_SCHEMA = new ExportSchemaAction(treeGridPanel);
+
+            this.allActions.push(this.NEW_SCHEMA, this.EDIT_SCHEMA, this.OPEN_SCHEMA, this.DELETE_SCHEMA, this.REINDEX_SCHEMA,
+                this.EXPORT_SCHEMA);
+
+            SchemaBrowseActions.INSTANCE = this;
+        }
+
+        getAllActions():api_ui.Action[] {
+            return this.allActions;
+        }
+
+        updateActionsEnabledState(models:api_model.SchemaExtModel[]) {
+
+            if (models.length <= 0) {
+                this.NEW_SCHEMA.setEnabled(true);
+                this.EDIT_SCHEMA.setEnabled(false);
+                this.OPEN_SCHEMA.setEnabled(false);
+                this.DELETE_SCHEMA.setEnabled(false);
+                this.REINDEX_SCHEMA.setEnabled(false);
+                this.EXPORT_SCHEMA.setEnabled(false);
+            } else {
+                this.NEW_SCHEMA.setEnabled(true);
+                this.EDIT_SCHEMA.setEnabled(true);
+                this.OPEN_SCHEMA.setEnabled(true);
+                this.DELETE_SCHEMA.setEnabled(true);
+                this.REINDEX_SCHEMA.setEnabled(true);
+                this.EXPORT_SCHEMA.setEnabled(true);
+            }
         }
 
     }

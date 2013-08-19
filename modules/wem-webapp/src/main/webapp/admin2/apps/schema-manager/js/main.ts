@@ -12,10 +12,11 @@
 ///<reference path='app/browse/SchemaBrowseToolbar.ts' />
 ///<reference path='app/browse/SchemaBrowseItemPanel.ts' />
 ///<reference path='app/browse/SchemaBrowsePanel.ts' />
-///<reference path='app/browse/SchemaActionMenu.ts' />
-///<reference path='app/browse/SchemaTreeGridPanel.ts' />
-///<reference path='app/browse/SchemaTreeGridContextMenu.ts' />
 ///<reference path='app/delete/SchemaDeleteDialog.ts' />
+///<reference path='app/browse/SchemaTreeGridContextMenu.ts' />
+///<reference path='app/browse/grid/SchemaGridStore.ts' />
+///<reference path='app/browse/grid/SchemaTreeStore.ts' />
+///<reference path='app/browse/SchemaTreeGridPanel.ts' />
 
 ///<reference path='app/new/NewSchemaEvent.ts' />
 ///<reference path='app/new/SchemaTypesList.ts' />
@@ -43,7 +44,6 @@
 ///<reference path='app/SchemaAppBarTabMenu.ts' />
 ///<reference path='app/SchemaAppBarTabMenuItem.ts' />
 ///<reference path='app/SchemaAppPanel.ts' />
-///<reference path='app/SchemaContext.ts' />
 
 declare var Ext;
 declare var Admin;
@@ -78,6 +78,3 @@ Ext.application({
         appPanel.init();
     }
 });
-
-app.SchemaContext.init();
-app_browse.SchemaBrowseActions.init();

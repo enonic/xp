@@ -13,17 +13,6 @@ module app_browse {
         }
     }
 
-    export class GridSelectionChangeEvent extends BaseSchemaModelEvent {
-
-        constructor(model:api_model.SchemaExtModel[]) {
-            super('gridChange', model);
-        }
-
-        static on(handler:(event:GridSelectionChangeEvent) => void) {
-            api_event.onEvent('gridChange', handler);
-        }
-    }
-
     export class ShowNewSchemaDialogEvent extends api_event.Event {
 
         constructor() {
@@ -114,29 +103,4 @@ module app_browse {
             api_event.onEvent('closeSchema', handler);
         }
     }
-
-    export class ShowContextMenuEvent extends api_event.Event {
-
-        private x:number;
-        private y:number;
-
-        constructor(x:number, y:number) {
-            this.x = x;
-            this.y = y;
-            super('showContextMenu');
-        }
-
-        getX() {
-            return this.x;
-        }
-
-        getY() {
-            return this.y;
-        }
-
-        static on(handler:(event:ShowContextMenuEvent) => void) {
-            api_event.onEvent('showContextMenu', handler);
-        }
-    }
-
 }

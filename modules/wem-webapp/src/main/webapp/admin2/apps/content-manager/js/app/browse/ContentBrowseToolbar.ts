@@ -2,18 +2,23 @@ module app_browse {
 
     export class ContentBrowseToolbar extends api_ui_toolbar.Toolbar {
 
-        constructor() {
+        constructor(actions:ContentBrowseActions) {
             super();
 
-            super.addActions(ContentBrowseActions.ACTIONS);
-            super.addGreedySpacer();
-            super.addAction(app_browse.ContentBrowseActions.BROWSE_CONTENT_SETTINGS);
+            this.addAction(actions.SHOW_NEW_CONTENT_DIALOG_ACTION);
+            this.addAction(actions.EDIT_CONTENT);
+            this.addAction(actions.OPEN_CONTENT);
+            this.addAction(actions.DELETE_CONTENT);
+            this.addAction(actions.DUPLICATE_CONTENT);
+            this.addAction(actions.MOVE_CONTENT);
+            this.addGreedySpacer();
+            this.addAction(actions.BROWSE_CONTENT_SETTINGS);
 
-            var displayModeToggle = new api_ui.ToggleSlide({
-                turnOnAction: ContentBrowseActions.SHOW_PREVIEW,
-                turnOffAction: ContentBrowseActions.SHOW_DETAILS
+            var previewDetailsToggler = new api_ui.ToggleSlide({
+                turnOnAction: actions.SHOW_PREVIEW,
+                turnOffAction: actions.SHOW_DETAILS
             }, false);
-            super.addElement(displayModeToggle);
+            super.addElement(previewDetailsToggler);
         }
     }
 }
