@@ -1,11 +1,24 @@
 module  app_browse {
 
-    export class SpaceTreeGridPanel extends api_app_browse.TreeGridPanel {
+    export interface SpaceTreeGridPanelParams {
 
-        constructor(itemId?:string) {
-            super(this.createColumns(), this.createGridStore(), this.createTreeStore(), this.createGridConfig(), this.createTreeConfig());
+        contextMenu:api_ui_menu.ContextMenu;
+    }
 
-            this.setItemId(itemId);
+    export class SpaceTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
+
+
+        constructor(params?:SpaceTreeGridPanelParams) {
+
+            super({
+                columns: this.createColumns(),
+                gridStore: new app_browse_grid.SpaceGridStore().getExtDataStore(),
+                treeStore: new app_browse_grid.SpaceTreeStore().getExtDataStore(),
+                gridConfig: this.createGridConfig(),
+                treeConfig: this.createTreeConfig(),
+                contextMenu: params.contextMenu});
+
+            this.setItemId("SpaceTreeGridPanel");
 
             app_wizard.SpaceCreatedEvent.on((event) => {
                 this.setRefreshNeeded(true);
@@ -15,32 +28,10 @@ module  app_browse {
                 this.setRefreshNeeded(true);
             });
 
-            var spaceGridContextMenu = new app_browse.SpaceTreeGridContextMenu();
-            app_browse.ShowContextMenuEvent.on((event) => {
-                spaceGridContextMenu.showAt(event.getX(), event.getY());
-            });
-        }
-
-        private createGridStore() {
-            return new Ext.data.Store({
-                pageSize: 100,
-                autoLoad: true,
-                model: 'Admin.model.SpaceModel',
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote_space.RemoteSpaceService.space_list,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'spaces',
-                        totalProperty: 'total'
-                    }
-                }
-            });
-        }
-
-        private createTreeStore() {
-            return new Ext.data.TreeStore();
+            this.addListener({
+                onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
+                new app_browse.EditSpaceEvent([<any>event.clickedModel]).fire();
+            }});
         }
 
         private createColumns() {
@@ -75,28 +66,13 @@ module  app_browse {
 
         private createGridConfig() {
             return {
-                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
-                listeners: {
-                    selectionchange: (selModel, selected, opts) => {
-                        new GridSelectionChangeEvent(selected).fire();
-                    },
-                    itemcontextmenu: (view, rec, node, index, event) => {
-                        event.stopEvent();
-                        new ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
-                    },
-                    itemdblclick: (grid, record) => {
-                        new EditSpaceEvent(grid.getSelection()).fire();
-                    }, buffer: 10
-                }
+                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
             }
         }
 
         private createTreeConfig() {
             return {
-                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36}),
-                selectionchange: (selModel, selected, opts) => {
-                    new GridSelectionChangeEvent(selected).fire();
-                }
+                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
             }
         }
 

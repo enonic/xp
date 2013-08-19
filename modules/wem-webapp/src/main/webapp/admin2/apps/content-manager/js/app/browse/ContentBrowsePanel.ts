@@ -2,19 +2,34 @@ module app_browse {
 
     export class ContentBrowsePanel extends api_app_browse.BrowsePanel {
 
+        private browseActions:app_browse.ContentBrowseActions;
+
         private toolbar:ContentBrowseToolbar;
 
-        private filterPanel:app_browse_filter.ContentBrowseFilterPanel;
+        private treeGridPanel:app_browse.ContentTreeGridPanel;
 
-        private grid:ContentTreeGridPanel;
+        private filterPanel:app_browse_filter.ContentBrowseFilterPanel;
 
         private browseItemPanel:ContentBrowseItemPanel;
 
         constructor() {
+            var treeGridContextMenu = new ContentTreeGridContextMenu();
+            this.treeGridPanel = components.gridPanel = new app_browse.ContentTreeGridPanel({
+                contextMenu: treeGridContextMenu
+            });
 
-            this.toolbar = new ContentBrowseToolbar();
-            this.grid = components.gridPanel = new ContentTreeGridPanel('contentTreeGrid');
-            this.browseItemPanel = components.detailPanel = new ContentBrowseItemPanel();
+            this.browseActions = ContentBrowseActions.init(this.treeGridPanel);
+            treeGridContextMenu.setActions(this.browseActions);
+
+            this.toolbar = new ContentBrowseToolbar(this.browseActions);
+            this.browseItemPanel =
+            components.detailPanel = new ContentBrowseItemPanel({actionMenuActions:[
+                this.browseActions.SHOW_NEW_CONTENT_DIALOG_ACTION,
+                this.browseActions.EDIT_CONTENT,
+                this.browseActions.OPEN_CONTENT,
+                this.browseActions.DELETE_CONTENT,
+                this.browseActions.DUPLICATE_CONTENT,
+                this.browseActions.MOVE_CONTENT]});
 
             this.filterPanel = new app_browse_filter.ContentBrowseFilterPanel();
             var params = createLoadContentParams({});
@@ -24,9 +39,11 @@ module app_browse {
                 this.filterPanel.updateFacets(response.facets);
             });
 
-
-            super(this.toolbar, this.grid, this.browseItemPanel, this.filterPanel);
-
+            super({
+                browseToolbar: this.toolbar,
+                treeGridPanel: this.treeGridPanel,
+                browseItemPanel: this.browseItemPanel,
+                filterPanel: this.filterPanel});
 
             ShowPreviewEvent.on((event) => {
                 this.browseItemPanel.setPreviewMode(true);
@@ -36,37 +53,24 @@ module app_browse {
                 this.browseItemPanel.setPreviewMode(false);
             });
 
-            GridSelectionChangeEvent.on((event) => {
-
-                var models:api_model.ContentExtModel[] = event.getModels();
-
-                if (models.length == 0) {
-                    this.browseItemPanel.setItems([]);
-                } else {
-
-                    var items:api_app_browse.BrowseItem[] = [];
-                    var contentIds:string[] = [];
-                    models.forEach((model:api_model.ContentExtModel) => {
-                        contentIds.push(model.data.id);
-                    });
-
-                    var getParams:api_remote_content.GetParams = {
-                        contentIds: contentIds
-                    };
-                    api_remote_content.RemoteContentService.content_get(getParams, (result:api_remote_content.GetResult)=> {
-
-                        result.content.forEach((contentGet:api_remote_content.Content, index:number) => {
-                            var item = new api_app_browse.BrowseItem(models[index]).
-                                setDisplayName(contentGet.displayName).
-                                setPath(contentGet.path).
-                                setIconUrl(contentGet.iconUrl);
-                            items.push(item);
-                        });
-
-                        this.browseItemPanel.setItems(items);
-                    });
+            this.treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
+                onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
+                    this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }
             });
+        }
+
+        extModelsToBrowseItems(models:api_model.ContentExtModel[]) {
+
+            var browseItems:api_app_browse.BrowseItem[] = [];
+            models.forEach((model:api_model.ContentExtModel, index:number) => {
+                var item = new api_app_browse.BrowseItem(models[index]).
+                    setDisplayName(model.data.displayName).
+                    setPath(model.data.path).
+                    setIconUrl(model.data.iconUrl);
+                browseItems.push(item);
+            });
+            return browseItems;
         }
     }
 

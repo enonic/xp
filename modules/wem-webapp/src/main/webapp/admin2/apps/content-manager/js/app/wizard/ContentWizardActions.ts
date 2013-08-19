@@ -20,4 +20,29 @@ module app_wizard {
             });
         }
     }
+
+    export class ShowLiveFormAction extends api_ui.Action {
+
+        constructor() {
+            super("LIVE");
+
+            this.setEnabled(true);
+            this.addExecutionListener(() => {
+                new ShowContentLiveEvent().fire();
+            });
+        }
+    }
+
+    export class ShowFormAction extends api_ui.Action {
+
+        constructor() {
+            super("FORM");
+
+            this.setEnabled(true);
+            this.addExecutionListener(() => {
+                new ShowContentFormEvent().fire();
+            })
+        }
+    }
+
 }

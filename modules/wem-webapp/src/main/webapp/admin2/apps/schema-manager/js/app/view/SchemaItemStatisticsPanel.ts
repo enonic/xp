@@ -9,9 +9,9 @@ module app_view {
 
         constructor(params:SchemaItemStatisticsPanelParams) {
             super({
-                actionMenu: new api_ui_menu.ActionMenu(
+                actionMenu: new api_ui_menu.ActionMenu([
                     params.editAction,
-                    params.deleteAction
+                    params.deleteAction]
                 )
             });
         }

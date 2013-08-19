@@ -5,6 +5,8 @@ module api_app_wizard {
         formIcon:FormIcon;
 
         toolbar:api_ui_toolbar.Toolbar;
+
+        livePanel?:api_ui.Panel;
     }
 
     export class WizardPanel extends api_ui.Panel implements api_ui.Closeable {
@@ -28,31 +30,54 @@ module api_app_wizard {
 
         private closingEventListeners:Function[] = [];
 
+        private backPanel:api_ui.DeckPanel;
+        private formPanel:api_ui.Panel;
+
+
         constructor(params:WizardPanelParams) {
             super("WizardPanel");
-
             this.getEl().addClass("wizard-panel");
+            this.backPanel = new api_ui.DeckPanel("BackPanel");
+            this.formPanel = new api_ui.Panel("FormPanel");
+
+            this.backPanel.addPanel(this.formPanel);
+            this.backPanel.showPanel(0);
 
             this.appendChild(params.toolbar);
-            this.appendChild(params.formIcon);
+            this.appendChild(this.backPanel);
+
+            this.formPanel.appendChild(params.formIcon);
 
             this.header = new WizardPanelHeader();
-            this.appendChild(this.header);
+            this.formPanel.appendChild(this.header);
 
             this.stepPanels = new api_app_wizard.WizardStepDeckPanel();
             this.stepNavigator = new WizardStepNavigator(this.stepPanels);
-            this.appendChild(this.stepNavigator);
-            this.appendChild(this.stepPanels);
+            this.formPanel.appendChild(this.stepNavigator);
+            this.formPanel.appendChild(this.stepPanels);
 
             this.previous = new WizardStepNavigationArrow(WizardStepNavigationArrow.PREVIOUS, this.stepNavigator);
             this.next = new WizardStepNavigationArrow(WizardStepNavigationArrow.NEXT, this.stepNavigator);
-            this.appendChild(this.previous);
-            this.appendChild(this.next);
+            this.formPanel.appendChild(this.previous);
+            this.formPanel.appendChild(this.next);
+
+            if (params.livePanel) {
+                this.backPanel.addPanel(params.livePanel);
+            }
+        }
+
+        toggleFormPanel(toggle:bool) {
+            if (toggle) {
+                this.backPanel.showPanel(0)
+            } else {
+                this.backPanel.showPanel(1)
+            }
         }
 
         afterRender() {
             super.afterRender();
             this.stepPanels.afterRender();
+            this.backPanel.afterRender();
         }
 
         addClosingEventListener(listener:(wizardPanel:WizardPanel) => void) {

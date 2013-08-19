@@ -1,19 +1,26 @@
 module app_browse {
 
-    export class SchemaTreeGridPanel extends api_app_browse.TreeGridPanel {
+    export interface SpaceTreeGridPanelParams {
 
-        constructor(itemId?:string) {
-            super(
-                this.createColumns(),
-                this.createGridStore(),
-                this.createTreeStore(),
-                this.createGridConfig(),
-                this.createTreeConfig()
-            );
+        contextMenu:api_ui_menu.ContextMenu;
+    }
 
-            this.setActiveList(api_app_browse.TreeGridPanel.TREE);
+    export class SchemaTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
+
+        constructor(params:SpaceTreeGridPanelParams) {
+
+            super({
+                columns: this.createColumns(),
+                gridStore: new app_browse_grid.SchemaGridStore().getExtDataStore(),
+                treeStore: new app_browse_grid.SchemaTreeStore().getExtDataStore(),
+                gridConfig: this.createGridConfig(),
+                treeConfig: this.createTreeConfig(),
+                contextMenu: params.contextMenu});
+
+            this.setItemId("SchemaTreeGridPanel");
+
+            this.setActiveList(api_app_browse_grid.TreeGridPanel.TREE);
             this.setKeyField("key");
-            this.setItemId(itemId);
 
             app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
                 this.setActiveList('grid');
@@ -34,10 +41,10 @@ module app_browse {
                 this.refresh();
             });
 
-            var schemaGridContextMenu = new app_browse.SchemaTreeGridContextMenu();
-            app_browse.ShowContextMenuEvent.on((event) => {
-                schemaGridContextMenu.showAt(event.getX(), event.getY());
-            });
+            this.addListener({
+                onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
+                new app_browse.EditSchemaEvent([<any>event.clickedModel]).fire();
+            }});
         }
 
         private createColumns() {
@@ -65,68 +72,8 @@ module app_browse {
             ];
         }
 
-        private createGridStore() {
-            return new Ext.data.Store({
-                model: 'Admin.model.schemaManager.SchemaModel',
-
-                pageSize: 50,
-                remoteSort: true,
-                sorters: [
-                    {
-                        property: 'modifiedTime',
-                        direction: 'DESC'
-                    }
-                ],
-                autoLoad: false,
-
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote_schema.RemoteSchemaService.schema_list,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'schemas',
-                        totalProperty: 'total'
-                    }
-                }
-            });
-        }
-
-        private createTreeStore() {
-            return new Ext.data.TreeStore({
-
-                model: 'Admin.model.schemaManager.SchemaModel',
-
-                folderSort: true,
-
-                proxy: {
-                    type: 'direct',
-                    directFn: api_remote_schema.RemoteSchemaService.schema_tree,
-                    simpleSortMode: true,
-                    reader: {
-                        type: 'json',
-                        root: 'schemas',
-                        totalProperty: 'total'
-                    }
-                }
-
-            });
-        }
-
         private createGridConfig() {
             return {
-                listeners: {
-                    selectionchange: (selModel, selected, opts) => {
-                        new GridSelectionChangeEvent(selected).fire();
-                    },
-                    itemcontextmenu: (view, rec, node, index, event) => {
-                        event.stopEvent();
-                        new ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
-                    },
-                    itemdblclick: (grid, record) => {
-                        new EditSchemaEvent(grid.getSelection()).fire();
-                    }
-                },
                 selModel: {
                     allowDeselect: false,
                     ignoreRightMouseSelection: true
@@ -136,18 +83,6 @@ module app_browse {
 
         private createTreeConfig() {
             return {
-                listeners: {
-                    selectionchange: (selModel, selected, opts) => {
-                        new GridSelectionChangeEvent(selected).fire();
-                    },
-                    itemcontextmenu: (view, rec, node, index, event) => {
-                        event.stopEvent();
-                        new ShowContextMenuEvent(event.xy[0], event.xy[1]).fire();
-                    },
-                    itemdblclick: (grid, record) => {
-                        new EditSchemaEvent(grid.getSelection()).fire();
-                    }
-                },
                 selModel: {
                     allowDeselect: false,
                     ignoreRightMouseSelection: true

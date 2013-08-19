@@ -1,16 +1,21 @@
 module app_browse {
 
+    export interface ContentBrowseItemPanelParams {
+
+        actionMenuActions:api_ui.Action[];
+    }
+
     export class ContentBrowseItemPanel extends api_app_browse.BrowseItemPanel {
 
-        private actionMenu:ContentActionMenu;
         private previewPanel;
+
         private previewMode:bool;
+
         private items:api_app_browse.BrowseItem[];
 
-        constructor() {
-            this.actionMenu = new ContentActionMenu();
-            super({
-                actionMenu: this.actionMenu
+        constructor(params:ContentBrowseItemPanelParams) {
+            super(<api_app_browse.BrowseItemPanelParams>{
+                actionMenuActions: params.actionMenuActions
             });
 
             this.previewPanel = new ContentItemPreviewPanel();

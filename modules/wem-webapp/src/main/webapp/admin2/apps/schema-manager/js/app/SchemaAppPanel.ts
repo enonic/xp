@@ -17,7 +17,7 @@ module app {
             super({
                 appBar: appBar,
                 browsePanel: this.browsePanel,
-                browsePanelActions: app_browse.SchemaBrowseActions.ACTIONS
+                browsePanelActions: app_browse.SchemaBrowseActions.get().getAllActions()
             });
 
             this.handleGlobalEvents();
@@ -142,7 +142,7 @@ module app {
                     var tabMenuItem = new SchemaAppBarTabMenuItem(schemaModel.data.displayName);
 
                     var id = this.generateTabId(schemaModel.data.name, false);
-                    var schemaItemViewPanel = new app_view.SchemaItemViewPanel(id);
+                    var schemaItemViewPanel = new app_view.SchemaItemViewPanel();
 
                     var spaceItem = new api_app_view.ViewItem(schemaModel)
                         .setDisplayName(schemaModel.data.displayName)

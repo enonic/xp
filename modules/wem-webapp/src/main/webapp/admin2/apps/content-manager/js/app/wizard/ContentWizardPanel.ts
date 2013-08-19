@@ -45,9 +45,12 @@ module app_wizard {
                 closeAction: closeAction
             });
 
+            var livePanel = new LiveFormPanel();
+
             super({
                 formIcon: this.formIcon,
-                toolbar: this.toolbar
+                toolbar: this.toolbar,
+                livePanel: livePanel
             });
 
             this.setDisplayName("New Content");
@@ -77,6 +80,14 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Schemas", this.schemaPanel));
             this.addStep(new api_app_wizard.WizardStep("Modules", this.modulesPanel));
             this.addStep(new api_app_wizard.WizardStep("Templates", this.templatesPanel));
+
+            ShowContentLiveEvent.on((event) => {
+                this.toggleFormPanel(false);
+            });
+
+            ShowContentFormEvent.on((event) => {
+                this.toggleFormPanel(true);
+            });
         }
 
         renderNew() {
@@ -153,4 +164,18 @@ module app_wizard {
             });
         }
     }
+
+    class LiveFormPanel extends api_ui.Panel {
+
+            private frame:api_dom.IFrameEl;
+
+            constructor(url?:string) {
+                super("LiveFormPanel");
+                this.addClass("live-form-panel");
+                this.frame = new api_dom.IFrameEl();
+                this.appendChild(this.frame);
+                this.frame.setSrc("../../../dev/live-edit-page/bootstrap.jsp?edit=true");
+            }
+
+        }
 }

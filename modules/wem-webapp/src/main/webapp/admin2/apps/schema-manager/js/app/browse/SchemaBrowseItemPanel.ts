@@ -1,14 +1,15 @@
 module app_browse {
 
+    export interface SchemaBrowseItemPanelParams {
+
+        actionMenuActions:api_ui.Action[];
+    }
+
     export class SchemaBrowseItemPanel extends api_app_browse.BrowseItemPanel {
 
-        private actionMenu:SchemaActionMenu;
-
-        constructor() {
-            this.actionMenu = new SchemaActionMenu();
-
-            super({
-                actionMenu: this.actionMenu,
+        constructor(params:SchemaBrowseItemPanelParams) {
+            super(<api_app_browse.BrowseItemPanelParams>{
+                actionMenuActions: params.actionMenuActions
             });
         }
 

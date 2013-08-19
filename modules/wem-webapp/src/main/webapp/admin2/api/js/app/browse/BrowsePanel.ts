@@ -1,10 +1,21 @@
 module api_app_browse{
 
+    export interface BrowsePanelParams {
+
+        browseToolbar:api_ui_toolbar.Toolbar;
+
+        treeGridPanel:api_app_browse_grid.TreeGridPanel;
+
+        browseItemPanel:BrowseItemPanel;
+
+        filterPanel:api_app_browse_filter.BrowseFilterPanel;
+    }
+
     export class BrowsePanel extends api_ui.Panel {
 
         private browseToolbar:api_ui_toolbar.Toolbar;
 
-        private grid:TreeGridPanel;
+        private treeGridPanel:api_app_browse_grid.TreeGridPanel;
 
         private browseItemPanel:BrowseItemPanel;
 
@@ -18,23 +29,21 @@ module api_app_browse{
 
         private gridAndToolbarContainer:api_ui.Panel;
 
-
-        constructor(browseToolbar:api_ui_toolbar.Toolbar, grid:TreeGridPanel, browseItemPanel:BrowseItemPanel,
-                    filterPanel:api_app_browse_filter.BrowseFilterPanel) {
+        constructor(params:BrowsePanelParams) {
             super("BrowsePanel");
 
-            this.browseToolbar = browseToolbar;
-            this.grid = grid;
-            this.browseItemPanel = browseItemPanel;
-            this.filterPanel = filterPanel;
+            this.browseToolbar = params.browseToolbar;
+            this.treeGridPanel = params.treeGridPanel;
+            this.browseItemPanel = params.browseItemPanel;
+            this.filterPanel = params.filterPanel;
 
             this.browseItemPanel.addDeselectionListener((item:BrowseItem) => {
-                this.grid.deselect(item);
+                this.treeGridPanel.deselect(item);
             });
 
-            this.gridAndToolbarContainer = new api_ui.Panel();
-            this.gridContainer = new api_app_browse.GridContainer(this.grid);
+            this.gridContainer = new api_app_browse.GridContainer(this.treeGridPanel);
 
+            this.gridAndToolbarContainer = new api_ui.Panel("GridAndToolbar");
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
 
@@ -43,11 +52,23 @@ module api_app_browse{
             this.gridAndFilterAndDetailSplitPanel.setDistribution(15, 85);
             this.gridAndFilterAndDetailSplitPanel.setAlignment(api_ui.SplitPanelAlignment.VERTICAL);
 
+            this.treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
+                onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
+
+                    var models:api_model.ContentExtModel[] = <any[]>event.selectedModels;
+                    var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems(models);
+                    this.browseItemPanel.setItems(browseItems);
+                }
+            });
+        }
+
+        extModelsToBrowseItems(models:api_model.ExtModel[]):BrowseItem[] {
+            throw Error("To be implemented by inheritor");
         }
 
         refreshGrid() {
-            if (this.grid.isRefreshNeeded()) {
-                this.grid.refresh();
+            if (this.treeGridPanel.isRefreshNeeded()) {
+                this.treeGridPanel.refresh();
             }
         }
 

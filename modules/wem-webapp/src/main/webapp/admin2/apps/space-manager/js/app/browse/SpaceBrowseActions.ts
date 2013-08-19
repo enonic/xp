@@ -12,76 +12,97 @@ module app_browse {
 
     export class OpenSpaceAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new OpenSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+                new OpenSpaceEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class EditSpaceAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new EditSpaceEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+                new EditSpaceEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class DeleteSpaceAction extends api_ui.Action {
 
-        constructor() {
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new app_browse.SpaceDeletePromptEvent(app.SpaceContext.get().getSelectedSpaces()).fire();
+                new app_browse.SpaceDeletePromptEvent(treeGridPanel.getSelection()).fire();
             });
         }
     }
 
     export class SpaceBrowseActions {
 
-        static NEW_SPACE:api_ui.Action = new NewSpaceAction();
-        static OPEN_SPACE:api_ui.Action = new OpenSpaceAction();
-        static EDIT_SPACE:api_ui.Action = new EditSpaceAction();
-        static DELETE_SPACE:api_ui.Action = new DeleteSpaceAction();
+        public NEW_SPACE:api_ui.Action;
+        public OPEN_SPACE:api_ui.Action;
+        public EDIT_SPACE:api_ui.Action;
+        public DELETE_SPACE:api_ui.Action;
 
-        static ACTIONS:api_ui.Action[] = [];
+        private allActions:api_ui.Action[] = [];
 
-        static init() {
+        private static INSTANCE:SpaceBrowseActions;
 
-            ACTIONS.push(NEW_SPACE, OPEN_SPACE, EDIT_SPACE, DELETE_SPACE);
-
-            GridSelectionChangeEvent.on((event) => {
-
-                var spaces:api_model.SpaceExtModel[] = event.getModels();
-
-                if (spaces.length <= 0) {
-                    NEW_SPACE.setEnabled(true);
-                    OPEN_SPACE.setEnabled(false);
-                    EDIT_SPACE.setEnabled(false);
-                    DELETE_SPACE.setEnabled(false);
-                }
-                else if (spaces.length == 1) {
-                    NEW_SPACE.setEnabled(false);
-                    OPEN_SPACE.setEnabled(true);
-                    EDIT_SPACE.setEnabled(spaces[0].data.editable);
-                    DELETE_SPACE.setEnabled(spaces[0].data.deletable);
-                }
-                else {
-                    NEW_SPACE.setEnabled(false);
-                    OPEN_SPACE.setEnabled(true);
-                    EDIT_SPACE.setEnabled(anyEditable(spaces));
-                    DELETE_SPACE.setEnabled(anyDeleteable(spaces));
-                }
-            });
+        static init(treeGridPanel:api_app_browse_grid.TreeGridPanel):SpaceBrowseActions {
+            new SpaceBrowseActions(treeGridPanel);
+            return INSTANCE;
         }
 
-        private static anyEditable(spaces:api_model.SpaceExtModel[]):bool {
+        static get():SpaceBrowseActions {
+            return INSTANCE;
+        }
+
+        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+
+            this.NEW_SPACE = new NewSpaceAction();
+            this.OPEN_SPACE = new OpenSpaceAction(treeGridPanel);
+            this.EDIT_SPACE = new EditSpaceAction(treeGridPanel);
+            this.DELETE_SPACE = new DeleteSpaceAction(treeGridPanel);
+
+
+            this.allActions.push(this.NEW_SPACE, this.OPEN_SPACE, this.EDIT_SPACE, this.DELETE_SPACE);
+
+            SpaceBrowseActions.INSTANCE = this;
+        }
+
+        updateActionsEnabledState(models:api_model.SpaceExtModel[]) {
+
+            if (models.length <= 0) {
+                this.NEW_SPACE.setEnabled(true);
+                this.OPEN_SPACE.setEnabled(false);
+                this.EDIT_SPACE.setEnabled(false);
+                this.DELETE_SPACE.setEnabled(false);
+            }
+            else if (models.length == 1) {
+                this.NEW_SPACE.setEnabled(false);
+                this.OPEN_SPACE.setEnabled(true);
+                this.EDIT_SPACE.setEnabled(models[0].data.editable);
+                this.DELETE_SPACE.setEnabled(models[0].data.deletable);
+            }
+            else {
+                this.NEW_SPACE.setEnabled(false);
+                this.OPEN_SPACE.setEnabled(true);
+                this.EDIT_SPACE.setEnabled(this.anyEditable(models));
+                this.DELETE_SPACE.setEnabled(this.anyDeleteable(models));
+            }
+        }
+
+        getAllActions():api_ui.Action[] {
+            return this.allActions;
+        }
+
+        private anyEditable(spaces:api_model.SpaceExtModel[]):bool {
             for (var i in spaces) {
                 var space:api_model.SpaceExtModel = spaces[i];
                 if (space.data.editable) {
@@ -91,7 +112,7 @@ module app_browse {
             return false;
         }
 
-        private static anyDeleteable(spaces:api_model.SpaceExtModel[]):bool {
+        private anyDeleteable(spaces:api_model.SpaceExtModel[]):bool {
             for (var i in spaces) {
                 var space:api_model.SpaceExtModel = spaces[i];
                 if (space.data.deletable) {
