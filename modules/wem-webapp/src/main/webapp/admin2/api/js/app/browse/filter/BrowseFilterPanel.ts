@@ -1,10 +1,15 @@
 module api_app_browse_filter {
 
-    export class BrowseFilterPanel extends api_ui.Panel {
+    export interface BrowseFilterPanelListener extends api_ui.Listener {
 
-        private filterSearchAction:FilterSearchAction = new FilterSearchAction();
+        onSearch?(values:any[]);
 
-        private filterResetAction:FilterResetAction = new FilterResetAction();
+        onReset?();
+    }
+
+    export class BrowseFilterPanel extends api_ui.Panel implements api_ui.Observable {
+
+        private listeners:BrowseFilterPanelListener[] = [];
 
         private facetContainer:FacetContainer;
 
@@ -66,14 +71,6 @@ module api_app_browse_filter {
             this.facetContainer.update(facetGroupsData)
         }
 
-        setFilterSearchAction(action:FilterSearchAction) {
-            this.filterSearchAction = action;
-        }
-
-        setFilterResetAction(action:FilterResetAction) {
-            this.filterResetAction = action;
-        }
-
         afterRender() {
             this.appendChild(this.searchField);
             this.appendChild(this.clearFilter);
@@ -95,12 +92,37 @@ module api_app_browse_filter {
             window.clearTimeout(this.searchFilterTypingTimer);
             this.facetContainer.reset();
             this.clearFilter.hide();
-            this.filterResetAction.execute();
+            this.notifyReset();
         }
 
         private search() {
-            this.filterSearchAction.setFilterValues(this.getValues());
-            this.filterSearchAction.execute();
+            this.notifySearch(this.getValues());
+        }
+
+        addListener(listener:BrowseFilterPanelListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:BrowseFilterPanelListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifySearch(values:any[]) {
+            this.listeners.forEach((listener) => {
+                if (listener.onSearch) {
+                    listener.onSearch(values);
+                }
+            });
+        }
+
+        private notifyReset() {
+            this.listeners.forEach((listener) => {
+                if (listener.onReset) {
+                    listener.onReset();
+                }
+            });
         }
     }
 
