@@ -172,6 +172,13 @@
 ///<reference path='app/browse/BrowseItemPanel.ts' />
 ///<reference path='app/browse/GridContainer.ts'/>
 
+///<reference path='app/browse/filter/BrowseFilterPanelActions.ts' />
+///<reference path='app/browse/filter/Facet.ts' />
+///<reference path='app/browse/filter/FacetGroup.ts' />
+///<reference path='app/browse/filter/FacetContainer.ts' />
+///<reference path='app/browse/filter/BrowseFilterPanel.ts' />
+///<reference path='app/browse/filter/TextSearchField.ts'/>
+///<reference path='app/browse/filter/ClearFilterButton.ts'/>
 
 ///<reference path='app/view/ViewItem.ts' />
 ///<reference path='app/view/ItemStatisticsPanel.ts' />

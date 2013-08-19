@@ -8,9 +8,9 @@ module api_app_browse_filter {
 
         private facetContainer:FacetContainer;
 
-        private searchField:api_dom.InputEl;
+        private searchField:api_app_browse_filter.TextSearchField;
 
-        private clearFilter:api_dom.AEl;
+        private clearFilter:api_app_browse_filter.ClearFilterButton;
 
         private searchFilterTypingTimer:number;
 
@@ -33,9 +33,9 @@ module api_app_browse_filter {
 
         }
 
-        private createSearchFieldEl():api_dom.InputEl {
-            var searchField = new api_dom.InputEl('SearchField', 'search-field');
-            searchField.getEl().addEventListener('keydown', (event:any) => {
+        private createSearchFieldEl():api_app_browse_filter.TextSearchField {
+            var searchField:api_app_browse_filter.TextSearchField = new api_app_browse_filter.TextSearchField('Search');
+            searchField.addSearchListener((event:any) => {
                 if (event.which === 97) {
                     new api_event.FilterSearchEvent().fire();
                 } else {
@@ -51,10 +51,9 @@ module api_app_browse_filter {
             return searchField;
         }
 
-        private createClearFilterEl():api_dom.AEl {
-            var clearFilter:api_dom.AEl = new api_dom.AEl('ClearFilter', 'reset-link');
-            clearFilter.getEl().setInnerHtml('Clear filter');
-            clearFilter.getHTMLElement().setAttribute('href', 'javascript:;');
+        private createClearFilterEl():api_app_browse_filter.ClearFilterButton {
+            var clearFilter:api_app_browse_filter.ClearFilterButton = new api_app_browse_filter.ClearFilterButton();
+
             clearFilter.hide();
 
             clearFilter.getEl().addEventListener('click', () => {
