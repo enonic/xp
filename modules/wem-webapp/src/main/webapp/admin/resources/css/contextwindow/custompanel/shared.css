@@ -1,0 +1,51 @@
+.admin-cw-items {
+    overflow: hidden;
+}
+
+.admin-cw-items:hover {
+    overflow: auto;
+}
+
+.admin-cw-item {
+    position: relative;
+    border-bottom: 1px dashed #3f3f46;
+    border-left: 5px solid transparent;
+    padding: 10px 20px;
+}
+
+.admin-cw-item:hover {
+    background-color: #3f3f46;
+    border-left: 5px solid;
+}
+
+.admin-cw-item:hover * {
+    color: #fff;
+}
+
+.admin-cw-item-row {
+    display: table-row;
+}
+
+.admin-cw-item-icon {
+    width: 50px;
+    font-size: 32px;
+    font-weight: lighter;
+    display: table-cell;
+    vertical-align: top;
+}
+
+.admin-cw-item-info {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.admin-cw-item-row h3 {
+    margin: 0;
+    padding: 0;
+    font-size: 13px !important;
+    line-height: 1.50;
+}
+
+.admin-cw-item-row sub {
+    font-size: 11px;
+}

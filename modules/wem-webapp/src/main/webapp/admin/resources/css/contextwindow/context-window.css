@@ -1,14 +1,11 @@
 /** Context Window */
 
-.admin-context-window,
-.admin-context-window th,
-.admin-context-window td {
-    color: #c4c4c4;
-
-}
 .admin-context-window {
-    /*background: linear-gradient(to bottom, rgba(65,65,65,.8) 0%,rgba(0,0,0,.9) 100%);*/
-    /*background-color: rgba(47,47,47,.8);*/
+    color: #a3a3a3;
+}
+
+
+.admin-context-window {
 
     background-color: #252526;
 

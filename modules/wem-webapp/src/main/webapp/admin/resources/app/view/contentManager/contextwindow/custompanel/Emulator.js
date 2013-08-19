@@ -32,7 +32,6 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Emulator', {
      */
     createTopTextCmp: function () {
         return new Ext.Component({
-            padding: '20',
             cls: 'admin-emulator-top-bar',
             html: '<div>Emulate different client\'s physical sizes</div>'
         });
@@ -87,10 +86,10 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Emulator', {
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-device-item">',
-            '      <div class="admin-device-item-row">',
-            '           <div class="admin-device-item-icon {[this.getIconCls(values.device_type)]}"></div>',
-            '           <div class="admin-device-item-info">',
+            '   <div class="admin-cw-item">',
+            '      <div class="admin-cw-item-row">',
+            '           <div class="admin-cw-item-icon {[this.getIconCls(values.device_type)]}"></div>',
+            '           <div class="admin-cw-item-info">',
             '               <h3>{name}</h3>',
             '               <sub>{width} x {height}</sub>',
             '           </div>',
@@ -111,8 +110,8 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Emulator', {
             flex: 1,
             store: Ext.getStore('contextWindowDeviceStore'),
             tpl: template,
-            cls: 'admin-device-list',
-            itemSelector: 'div.admin-device-item',
+            cls: 'admin-cw-items admin-device-items',
+            itemSelector: 'div.admin-cw-item',
             emptyText: 'No devices available',
             selectedItemCls: 'admin-device-item-selected',
             listeners: {

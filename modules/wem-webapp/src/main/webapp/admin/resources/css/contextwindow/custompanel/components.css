@@ -1,0 +1,23 @@
+.admin-components-search-bar {
+    padding: 10px 20px;
+}
+
+.admin-components-search-input {
+    background-color: #3f3f46;
+    border: none;
+    color: #fff;
+    padding: 5px 3px;
+    width: 100%;
+}
+
+.admin-component-items .admin-cw-item {
+    cursor: move;
+}
+
+.admin-component-items .admin-cw-item:hover {
+    border-left-color: #e3c800;
+}
+
+.live-edit-droppable-active {
+    border: 1px solid #3399fe;
+}

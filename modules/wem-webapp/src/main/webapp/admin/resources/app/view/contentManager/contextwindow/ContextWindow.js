@@ -11,15 +11,16 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         'Admin.view.contentManager.contextwindow.custompanel.Emulator'
     ],
 
-    modal: false,
     cls: 'admin-context-window',
     x: 10,
     y: 10,
-    width: 300,
+    width: 318,
     height: 480,
-    shadow: false,
-    border: false,
+
+    modal: false,
     floating: true,
+    border: false,
+    shadow: false,
     layout: {
         type: 'vbox',
         align : 'stretch'

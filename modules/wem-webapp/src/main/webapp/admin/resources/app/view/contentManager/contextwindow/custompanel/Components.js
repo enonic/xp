@@ -36,7 +36,6 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
     createSearchBarCt: function () {
         this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
-            padding: '20',
             cls: 'admin-components-search-bar',
             items: [
                 new Ext.Component({
@@ -102,10 +101,10 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
 
         var templates = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-components-item" data-context-window-draggable="true" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
-            '      <div class="admin-components-item-row">',
-            '           <div class="admin-components-item-icon {[this.resolveIconCls(values.type)]}"></div>',
-            '           <div class="admin-components-item-info">',
+            '   <div class="admin-cw-item" data-context-window-draggable="true" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
+            '      <div class="admin-cw-item-row">',
+            '           <div class="admin-cw-item-icon {[this.resolveIconCls(values.type)]}"></div>',
+            '           <div class="admin-cw-item-info">',
             '               <h3>{name}</h3>',
             '               <sub title="{subtitle}">{[this.substringSubtitle(values.subtitle)]}</sub>',
             '           </div>',
@@ -131,8 +130,8 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
             flex: 1,
             store: Ext.data.StoreManager.lookup('contextWindowComponentStore'),
             tpl: templates,
-            cls: 'admin-components-list',
-            itemSelector: 'div.live-edit-components-item',
+            cls: 'admin-cw-items admin-component-items',
+            itemSelector: 'div.admin-cw-item',
             emptyText: 'No components available',
             listeners: {
                 render: function () {
