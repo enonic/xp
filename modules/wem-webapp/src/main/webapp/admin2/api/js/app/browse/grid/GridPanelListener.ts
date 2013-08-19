@@ -4,6 +4,8 @@ module api_app_browse_grid {
 
         onSelectionChanged?(event:GridSelectionChangedEvent);
 
+        onItemDoubleClicked?(event:TreeItemDoubleClickedEvent);
+
         onShowContextMenu?(event:GridShowContextMenuEvent);
     }
 
@@ -12,6 +14,11 @@ module api_app_browse_grid {
         selectionCount:number;
 
         selectedModels:Ext_data_Model[];
+    }
+
+    export interface GridItemDoubleClickedEvent {
+
+        clickedModel:Ext_data_Model;
     }
 
     export interface GridShowContextMenuEvent {

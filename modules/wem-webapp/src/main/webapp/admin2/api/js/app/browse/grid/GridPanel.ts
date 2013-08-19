@@ -42,6 +42,7 @@ module api_app_browse_grid {
             }));
 
             this.extGridPanel.on("selectionchange", this.notifySelectionChanged, this, {buffer: 10});
+            this.extGridPanel.on("itemdblclick", this.notifyItemDoubleClicked, this);
             this.extGridPanel.on("itemcontextmenu", this.handleItemContextMenuEvent, this);
         }
 
@@ -56,6 +57,17 @@ module api_app_browse_grid {
                     listener.onSelectionChanged({
                         selectionCount: selectionModel.getCount(),
                         selectedModels: models
+                    });
+                }
+            });
+        }
+
+        private notifyItemDoubleClicked(view:Ext_view_View, record:Ext_data_Model) {
+
+            this.listeners.forEach((listener:GridPanelListener)=> {
+                if (listener.onItemDoubleClicked != null) {
+                    listener.onItemDoubleClicked({
+                        clickedModel: record
                     });
                 }
             });

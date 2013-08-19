@@ -76,7 +76,7 @@ module api_app_browse_grid {
             treePanel.addListener(<TreePanelListener>{
                 onSelectionChanged: (event:TreeSelectionChangedEvent) => {
 
-                    console.log("TreeGridPanel onSelectionChanged from tree");
+                    console.log("TreeGridPanel onSelectionChanged from tree", event);
 
                     this.notifyTreeGridSelectionChanged({
                         selectionCount: event.selectionCount,
@@ -85,7 +85,7 @@ module api_app_browse_grid {
                 },
                 onItemDoubleClicked: (event:TreeItemDoubleClickedEvent) => {
 
-                    console.log("TreeGridPanel onSelectionChanged from tree");
+                    console.log("TreeGridPanel onItemDoubleClicked from tree", event);
 
                     this.notifyItemDoubleClicked({
                         clickedModel: event.clickedModel
@@ -93,7 +93,7 @@ module api_app_browse_grid {
                 },
                 onShowContextMenu: (event:TreeShowContextMenuEvent) => {
 
-                    console.log("TreeGridPanel onShowContextMenu from tree");
+                    console.log("TreeGridPanel onShowContextMenu from tree", event);
 
                     this.contextMenu.showAt(event.x, event.y);
                 }
@@ -102,16 +102,24 @@ module api_app_browse_grid {
             gridPanel.addListener(<GridPanelListener>{
                 onSelectionChanged: (event:GridSelectionChangedEvent) => {
 
-                    console.log("TreeGridPanel onSelectionChanged from grid");
+                    console.log("TreeGridPanel onSelectionChanged from grid", event);
 
                     this.notifyTreeGridSelectionChanged({
                         selectionCount: event.selectionCount,
                         selectedModels: event.selectedModels
                     });
                 },
+                onItemDoubleClicked: (event:GridItemDoubleClickedEvent) => {
+
+                    console.log("TreeGridPanel onItemDoubleClicked from grid", event);
+
+                    this.notifyItemDoubleClicked({
+                        clickedModel: event.clickedModel
+                    });
+                },
                 onShowContextMenu: (event:GridShowContextMenuEvent) => {
 
-                    console.log("TreeGridPanel onShowContextMenu from grid");
+                    console.log("TreeGridPanel onShowContextMenu from grid", event);
 
                     this.contextMenu.showAt(event.x, event.y);
                 }
@@ -143,7 +151,6 @@ module api_app_browse_grid {
         }
 
 
-
         private fireUpdateEvent(values) {
             this.ext.fireEvent('datachanged', values);
         }
@@ -157,7 +164,7 @@ module api_app_browse_grid {
          * Switches the view
          * @param listId the view to show can be either of TreeGridPanel.GRID or TreeGridPanel.TREE
          */
-         setActiveList(listId) {
+        setActiveList(listId) {
             this.activeList = listId;
             if (this.ext) {
                 (<Ext_layout_container_Card> this.ext.getLayout()).setActiveItem(listId);
