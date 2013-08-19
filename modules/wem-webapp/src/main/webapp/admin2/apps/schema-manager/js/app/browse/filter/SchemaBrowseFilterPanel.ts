@@ -25,9 +25,8 @@ module app_browse_filter {
                     ]
                 }
             ]);
-            var searchAction = new api_app_browse_filter.FilterSearchAction();
-            searchAction.addExecutionListener((action:api_app_browse_filter.FilterSearchAction)=> {
-                var params = app_browse.createLoadContentParams(action.getFilterValues());
+            this.addListener({onSearch: (values:any[])=> {
+                var params = app_browse.createLoadContentParams(values);
                 api_remote_schema.RemoteSchemaService.schema_list(params, (response:api_remote_schema.ListResult) => {
                     if (this.isDirty()) {
                         new SchemaBrowseSearchEvent(params).fire();
@@ -37,14 +36,11 @@ module app_browse_filter {
                     //TODO: update filter facets when they are implemented
                 });
 
-            });
-            var resetAction = new api_app_browse_filter.FilterResetAction();
-            resetAction.addExecutionListener((action:api_app_browse_filter.FilterResetAction)=> {
+            }});
+            this.addListener({onReset: ()=> {
                 //TODO: reset filter facets when they are implemented
                 new SchemaBrowseResetEvent().fire();
-            });
-            this.setFilterSearchAction(searchAction);
-            this.setFilterResetAction(resetAction);
+            }});
         }
     }
 }
