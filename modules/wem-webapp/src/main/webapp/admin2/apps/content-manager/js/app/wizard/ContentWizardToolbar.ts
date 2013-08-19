@@ -15,7 +15,13 @@ module app_wizard {
             super.addAction(params.duplicateAction);
             super.addAction(params.deleteAction);
             super.addGreedySpacer();
+            var displayModeToggle = new api_ui.ToggleSlide({
+                turnOnAction: new app_wizard.ShowLiveFormAction(),
+                turnOffAction: new app_wizard.ShowFormAction()
+            }, false);
+            super.addElement(displayModeToggle);
             super.addAction(params.closeAction);
+
         }
     }
 }

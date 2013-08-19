@@ -10,6 +10,7 @@
 
 ///<reference path='app/delete/ContentDeleteDialog.ts' />
 
+///<reference path='app/wizard/ContentWizardEvents.ts' />
 ///<reference path='app/wizard/ContentTypeFormFactory.ts' />
 ///<reference path='app/wizard/ContentDataFactory.ts' />
 ///<reference path='app/wizard/ContentWizardActions.ts' />
