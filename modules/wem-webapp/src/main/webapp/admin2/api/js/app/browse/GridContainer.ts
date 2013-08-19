@@ -13,6 +13,7 @@ module api_app_browse {
 
         afterRender() {
             this.grid.create('center', this.getId());
+            super.afterRender();
         }
     }
 }
