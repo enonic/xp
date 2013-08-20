@@ -31,7 +31,7 @@ module api_app_browse_filter {
                 } else {
                     this.checkbox.getHTMLElement().setAttribute('checked', '');
                 }
-                new api_event.FilterSearchEvent(this).fire();
+                new api_app_browse_filter.FilterSearchEvent(this).fire();
             });
             this.appendChild(this.checkbox);
             this.appendChild(this.label);
