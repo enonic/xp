@@ -97,12 +97,14 @@
 ///<reference path='dom/LegendEl.ts' />
 ///<reference path='dom/FormEl.ts' />
 
+///<reference path='ui/Observable.ts' />
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Mnemonic.ts' />
 ///<reference path='ui/Action.ts' />
-///<reference path='ui/Panel.ts' />
+///<reference path='ui/ActionContainer.ts' />
 ///<reference path='ui/Closeable.ts' />
-///<reference path='ui/Observable.ts' />
+///<reference path='ui/Panel.ts' />
+///<reference path='ui/DeckPanelListener.ts' />
 ///<reference path='ui/DeckPanel.ts' />
 ///<reference path='ui/SplitPanel.ts' />
 ///<reference path='ui/BodyMask.ts' />

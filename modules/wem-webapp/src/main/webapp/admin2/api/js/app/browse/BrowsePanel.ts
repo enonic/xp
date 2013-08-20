@@ -11,7 +11,7 @@ module api_app_browse{
         filterPanel:api_app_browse_filter.BrowseFilterPanel;
     }
 
-    export class BrowsePanel extends api_ui.Panel {
+    export class BrowsePanel extends api_ui.Panel implements api_ui.ActionContainer{
 
         private browseToolbar:api_ui_toolbar.Toolbar;
 
@@ -62,6 +62,10 @@ module api_app_browse{
                     this.browseItemPanel.setItems(browseItems);
                 }
             });
+        }
+
+        getActions():api_ui.Action[] {
+            return this.browseToolbar.getActions();
         }
 
         extModelsToBrowseItems(models:api_model.ExtModel[]):BrowseItem[] {

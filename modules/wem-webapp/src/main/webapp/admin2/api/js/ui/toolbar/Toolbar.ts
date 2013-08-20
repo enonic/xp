@@ -1,10 +1,12 @@
 module api_ui_toolbar {
 
-    export class Toolbar extends api_dom.DivEl {
+    export class Toolbar extends api_dom.DivEl implements api_ui.ActionContainer {
 
         ext;
 
         private components:any[] = [];
+
+        private actions:api_ui.Action[] = [];
 
         constructor() {
             super("Toolbar", "toolbar");
@@ -26,6 +28,7 @@ module api_ui_toolbar {
 
         addAction(action:api_ui.Action) {
             var button:ToolbarButton = this.addActionButton(action);
+            this.actions.push(action);
             this.appendChild(button);
         }
 
@@ -33,6 +36,10 @@ module api_ui_toolbar {
             actions.forEach((action:api_ui.Action) => {
                 this.addAction(action);
             });
+        }
+
+        getActions():api_ui.Action[] {
+            return this.actions;
         }
 
         addElement(element:api_dom.Element) {

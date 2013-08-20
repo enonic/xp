@@ -16,9 +16,11 @@ module api_app_wizard {
     }
 
 
-    export class WizardPanel extends api_ui.Panel implements api_ui.Closeable, api_ui.Observable {
+    export class WizardPanel extends api_ui.Panel implements api_ui.Closeable, api_ui.Observable, api_ui.ActionContainer {
 
         private persistedItem:api_remote.Item;
+
+        private toolbar:api_ui_toolbar.Toolbar;
 
         private header:WizardPanelHeader;
 
@@ -49,8 +51,9 @@ module api_app_wizard {
 
             this.backPanel.addPanel(this.formPanel);
             this.backPanel.showPanel(0);
+            this.toolbar = params.toolbar;
 
-            this.appendChild(params.toolbar);
+            this.appendChild(this.toolbar);
             this.appendChild(this.backPanel);
 
             this.formPanel.appendChild(params.formIcon);
@@ -97,6 +100,10 @@ module api_app_wizard {
                 return curr != listener;
             });
             this.header.removeListener(listener);
+        }
+
+        getActions():api_ui.Action[] {
+            return this.toolbar.getActions();
         }
 
         private notifyClosed() {

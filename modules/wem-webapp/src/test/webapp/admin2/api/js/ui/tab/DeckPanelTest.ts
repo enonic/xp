@@ -13,6 +13,7 @@
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/UlEl.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/LiEl.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/Panel.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/DeckPanelListener.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/DeckPanel.ts' />
 
 TestCase("DecPanel", {
@@ -51,16 +52,16 @@ TestCase("DecPanel", {
         deckPanel.addPanel(panel2);
 
         var listener1 = {
-            onPanelShown: (panel:api_ui.Panel, index:number) => {
+            onPanelShown: (event) => {
             }
         };
         var listener2 = {
-            onPanelShown: (panel:api_ui.Panel, index:number) => {
+            onPanelShown: (event) => {
                 fail("Second listener not expected to be notified");
             }
         };
         var listener3 = {
-            onPanelShown: (panel:api_ui.Panel, index:number) => {
+            onPanelShown: (event) => {
             }
         };
         deckPanel.addListener(listener1);

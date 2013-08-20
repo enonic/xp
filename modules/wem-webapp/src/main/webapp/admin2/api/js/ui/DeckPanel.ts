@@ -1,11 +1,5 @@
 module api_ui {
 
-    export interface DeckPanelListener extends api_ui.Listener {
-
-        onPanelShown?(panel:api_ui.Panel, index:number);
-
-    }
-
     /**
      * A panel having multiple child panels, but showing only one at a time - like a deck of cards.
      */
@@ -114,6 +108,7 @@ module api_ui {
         }
 
         showPanel(index:number) {
+            var previousPanel = this.getPanelShown();
             var panelToShow = this.getPanel(index);
 
             if (panelToShow == null) {
@@ -126,7 +121,7 @@ module api_ui {
 
             panelToShow.show();
             this.panelShown = panelToShow;
-            this.notifyPanelShown(panelToShow, this.getPanelIndex(panelToShow));
+            this.notifyPanelShown(panelToShow, this.getPanelIndex(panelToShow), previousPanel);
         }
 
         addListener(listener:DeckPanelListener) {
@@ -139,10 +134,14 @@ module api_ui {
             });
         }
 
-        private notifyPanelShown(panel:Panel, panelIndex:number) {
+        private notifyPanelShown(panel:Panel, panelIndex:number, previousPanel:Panel) {
             this.listeners.forEach((listener:DeckPanelListener) => {
                 if (listener.onPanelShown) {
-                    listener.onPanelShown(panel, panelIndex);
+                    listener.onPanelShown(<PanelShownEvent>{
+                            panel: panel,
+                            index: panelIndex,
+                            previousPanel: previousPanel
+                        });
                 }
             });
         }

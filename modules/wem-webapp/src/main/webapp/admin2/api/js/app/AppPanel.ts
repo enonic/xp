@@ -18,10 +18,10 @@ module api_app{
             this.showPanel(0);
 
             this.addListener({
-                onPanelShown: (panel:api_ui.Panel, index:number) => {
-                    if (!this.isHomePanel(index)) {
+                onPanelShown: (event:api_ui.PanelShownEvent) => {
+                    if (!this.isHomePanel(event.index)) {
                         // do panel afterRender to calculate offsets for each but home panel cuz they were created hidden
-                        panel.afterRender();
+                        event.panel.afterRender();
                     }
                 }
             });
@@ -29,17 +29,6 @@ module api_app{
 
         showHomePanel() {
             this.showPanel(0);
-        }
-
-        showPanel(index:number) {
-            super.showPanel(index);
-
-            if (this.isHomePanel(index)) {
-                api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(this.homePanelActions));
-            }
-            else {
-                api_ui.KeyBindings.unbindKeys(api_ui.Action.getKeyBindings(this.homePanelActions));
-            }
         }
 
         removePanelByIndex(index:number):api_ui.Panel {
