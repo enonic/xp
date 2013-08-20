@@ -14,7 +14,7 @@ module api_app_browse_filter {
                 }
             }
 
-            api_event.FilterSearchEvent.on((event) => {
+            api_app_browse_filter.FilterSearchEvent.on((event) => {
                 if (event.getTarget()) {
                     this.lastFacetGroup = (<Facet>event.getTarget()).getFacetGroup();
                 } else {

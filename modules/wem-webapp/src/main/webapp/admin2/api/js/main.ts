@@ -58,7 +58,6 @@
 ///<reference path='remote/util/RemoteSystemService.ts' />
 
 ///<reference path='event/Event.ts' />
-///<reference path='event/FilterSearchEvent.ts' />
 ///<reference path='event/EventBus.ts' />
 
 ///<reference path='notify/Message.ts' />
