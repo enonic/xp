@@ -42,14 +42,14 @@ module api_app_browse_filter {
             var searchField:api_app_browse_filter.TextSearchField = new api_app_browse_filter.TextSearchField('Search');
             searchField.addSearchListener((event:any) => {
                 if (event.which === 97) {
-                    new api_event.FilterSearchEvent().fire();
+                    new api_app_browse_filter.FilterSearchEvent().fire();
                 } else {
                     if (this.searchFilterTypingTimer !== null) {
                         window.clearTimeout(this.searchFilterTypingTimer);
                         this.searchFilterTypingTimer = null;
                     }
                     this.searchFilterTypingTimer = window.setTimeout(() => {
-                        new api_event.FilterSearchEvent().fire();
+                        new api_app_browse_filter.FilterSearchEvent().fire();
                     }, 500);
                 }
             });
