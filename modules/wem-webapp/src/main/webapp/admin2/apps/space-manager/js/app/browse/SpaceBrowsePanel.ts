@@ -31,11 +31,6 @@ module app_browse {
                                        this.browseActions.DELETE_SPACE]});
 
             this.filterPanel = new app_browse_filter.SpaceBrowseFilterPanel();
-            var action = new api_app_browse_filter.FilterSearchAction();
-            action.addExecutionListener((action:api_app_browse_filter.FilterSearchAction)=> {
-                //console.log(action.getFilterValues());
-            });
-            this.filterPanel.setFilterSearchAction(action);
 
             super({
                 browseToolbar: this.toolbar,
