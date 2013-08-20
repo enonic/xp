@@ -3,6 +3,7 @@ module api_app_browse_filter {
     export interface FacetData {
         count:number;
         name:string;
+        displayName:string;
     }
 
     export class Facet extends api_dom.DivEl {
@@ -22,7 +23,7 @@ module api_app_browse_filter {
             this.facetGroup = facetGroup;
             this.checkbox = new api_dom.InputEl('FacetCheckbox', 'facet-cb', 'checkbox');
             this.label = new api_dom.LabelEl('', null, 'FacetLabel', 'facet-lbl');
-            this.label.getEl().setInnerHtml(facetData.name + ' (' + facetData.count + ')');
+            this.label.getEl().setInnerHtml(facetData.displayName + ' (' + facetData.count + ')');
             this.label.getEl().addEventListener('click', () => {
                 var node = this.checkbox.getHTMLElement().getAttributeNode('checked');
                 if (node) {
@@ -49,7 +50,7 @@ module api_app_browse_filter {
         }
 
         update(facetData:FacetData) {
-            this.label.getEl().setInnerHtml(facetData.name + ' (' + facetData.count + ')');
+            this.label.getEl().setInnerHtml(facetData.displayName + ' (' + facetData.count + ')');
             if (facetData.count > 0 || this.isSelected()) {
                 this.show();
             } else {

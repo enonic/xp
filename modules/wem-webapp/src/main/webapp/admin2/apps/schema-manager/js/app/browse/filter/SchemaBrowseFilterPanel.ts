@@ -9,19 +9,19 @@ module app_browse_filter {
                     "name": "Type",
                     "displayName": "Type",
                     "terms": [
-                        { "name": "Content Type", "key": 'contentType', "count": 6 },
-                        { "name": "Relationship Type", "key": 'relationshipType', "count": 2 },
-                        { "name": "Mixin", "key": 'mixin', "count": 5 }
+                        { "name": "Content Type", displayName: 'Content Type', "key": 'contentType', "count": 6 },
+                        { "name": "Relationship Type", displayName: 'Relationship Type', "key": 'relationshipType', "count": 2 },
+                        { "name": "Mixin", displayName: 'Mixin', "key": 'mixin', "count": 5 }
                     ]
                 },
                 {
                     "name": "Module",
                     "displayName": "Module",
                     "terms": [
-                        { "name": "system", "key": 'system', "count": 4 },
-                        { "name": "demo", "key": 'demo', "count": 7 },
-                        { "name": "B", "key": 'b', "count": 1 },
-                        { "name": "C", "key": 'c', "count": 3 }
+                        { "name": "system", displayName: 'System', "key": 'system', "count": 4 },
+                        { "name": "demo", displayName: 'Demo', "key": 'demo', "count": 7 },
+                        { "name": "B", displayName: 'B', "key": 'b', "count": 1 },
+                        { "name": "C", displayName: 'C', "key": 'c', "count": 3 }
                     ]
                 }
             ]);
