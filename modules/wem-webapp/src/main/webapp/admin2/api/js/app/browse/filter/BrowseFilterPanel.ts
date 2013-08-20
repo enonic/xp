@@ -27,7 +27,7 @@ module api_app_browse_filter {
             this.clearFilter = this.createClearFilterEl();
             this.facetContainer = new FacetContainer(facetData);
 
-            api_event.FilterSearchEvent.on((event:api_event.FilterSearchEvent) => {
+            api_app_browse_filter.FilterSearchEvent.on((event:api_app_browse_filter.FilterSearchEvent) => {
                 if (this.isDirty()) {
                     this.clearFilter.show();
                 } else {

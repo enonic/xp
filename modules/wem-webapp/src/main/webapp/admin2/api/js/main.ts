@@ -156,12 +156,6 @@
 ///<reference path='app/AppPanel.ts' />
 ///<reference path='app/BrowseAndWizardBasedAppPanel.ts' />
 
-///<reference path='app/browse/filter/BrowseFilterPanelActions.ts' />
-///<reference path='app/browse/filter/Facet.ts' />
-///<reference path='app/browse/filter/FacetGroup.ts' />
-///<reference path='app/browse/filter/FacetContainer.ts' />
-///<reference path='app/browse/filter/BrowseFilterPanel.ts' />
-
 ///<reference path='app/browse/grid/GridPanelListener.ts' />
 ///<reference path='app/browse/grid/GridPanel.ts' />
 ///<reference path='app/browse/grid/TreePanelListener.ts' />
@@ -175,7 +169,7 @@
 ///<reference path='app/browse/BrowseItemPanel.ts' />
 ///<reference path='app/browse/GridContainer.ts'/>
 
-///<reference path='app/browse/filter/BrowseFilterPanelActions.ts' />
+///<reference path='app/browse/filter/FilterSearchEvent.ts' />
 ///<reference path='app/browse/filter/Facet.ts' />
 ///<reference path='app/browse/filter/FacetGroup.ts' />
 ///<reference path='app/browse/filter/FacetContainer.ts' />
