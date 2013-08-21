@@ -23,7 +23,6 @@ module app_browse {
             this.setKeyField("key");
 
             app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
-                this.setActiveList('grid');
                 if (event.getFilterParams()) {
                     // show  ids
                     this.setRemoteSearchParams(event.getFilterParams());
@@ -36,15 +35,14 @@ module app_browse {
             });
 
             app_browse_filter.SchemaBrowseResetEvent.on((event) => {
-                this.setActiveList('tree');
                 this.setRemoteSearchParams({});
                 this.refresh();
             });
 
             this.addListener({
                 onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
-                new app_browse.EditSchemaEvent([<any>event.clickedModel]).fire();
-            }});
+                    new app_browse.EditSchemaEvent([<any>event.clickedModel]).fire();
+                }});
         }
 
         private createColumns() {
