@@ -80,7 +80,7 @@ module api_app_browse_filter {
             return this.facetContainer.isDirty() || this.searchField.getHTMLElement()['value'].trim() != '';
         }
 
-        private reset() {
+        reset() {
             this.searchField.getHTMLElement()['value'] = '';
             window.clearTimeout(this.searchFilterTypingTimer);
             this.facetContainer.reset();
@@ -88,7 +88,7 @@ module api_app_browse_filter {
             this.notifyReset();
         }
 
-        private search() {
+        search() {
             this.notifySearch(this.getValues());
         }
 
