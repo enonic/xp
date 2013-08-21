@@ -16,7 +16,7 @@
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/DeckPanelListener.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/DeckPanel.ts' />
 
-TestCase("DecPanel", {
+TestCase("DeckPanel", {
 
     "test given DeckPanel with three panels and last panel is shown when last is removed then the second becomes the shown": function () {
 
