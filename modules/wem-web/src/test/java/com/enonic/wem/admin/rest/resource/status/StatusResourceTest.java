@@ -2,15 +2,22 @@ package com.enonic.wem.admin.rest.resource.status;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
 
 public class StatusResourceTest
+    extends AbstractResourceTest2
 {
+    @Override
+    protected Object getResourceInstance()
+    {
+        return new StatusResource();
+    }
+
     @Test
     public void testGetStatus()
+        throws Exception
     {
-        final StatusResource resource = new StatusResource();
-        final StatusResult result = resource.getStatus();
-        assertNotNull( result );
+        final String json = resource().path( "/status" ).get( String.class );
+        assertJson( "status_ok.json", json );
     }
 }
