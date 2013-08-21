@@ -10,6 +10,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -23,7 +24,6 @@ import com.enonic.wem.admin.rest.service.upload.UploadService;
 
 @Path("upload")
 @Produces(MediaType.APPLICATION_JSON)
-
 public final class UploadResource
 {
     private UploadService uploadService;
@@ -54,8 +54,9 @@ public final class UploadResource
         final UploadItem item = this.uploadService.getItem( id );
         if ( item == null )
         {
-            return null;
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
+
         MediaType mediaType;
         try
         {
