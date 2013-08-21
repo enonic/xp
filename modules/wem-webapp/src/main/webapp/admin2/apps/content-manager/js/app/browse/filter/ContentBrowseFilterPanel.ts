@@ -6,6 +6,10 @@ module app_browse_filter {
             super(facetData);
 
             this.addListener({onSearch: (values:any[])=> {
+                if (!this.isDirty()) {
+                    this.reset();
+                    return;
+                }
                 var params = app_browse.createLoadContentParams(values);
                 api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
                     var ids = response.contents.map(function (item) {
