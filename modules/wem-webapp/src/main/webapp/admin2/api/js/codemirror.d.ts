@@ -217,6 +217,8 @@ declare var CodeMirror: {
     defineMIME(mime: string, mode: string);
     connect(target: EventTarget, event: String, func: Function);
     commands: any;
+    modeURL:string;
+    autoLoadMode(codeMirror:CodeMirrorEditor, mode:string);
 
     tagRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: bool) => number;
     braceRangeFinder: (codeMirror: CodeMirrorEditor, line: number, hideEnd: bool) => number;
