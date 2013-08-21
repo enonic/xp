@@ -45,10 +45,10 @@ module app_wizard_form {
         }
 
         getData():api_content_data.Data[] {
-            return this.getPropeties();
+            return this.getProperties();
         }
 
-        getPropeties():api_content_data.Property[] {
+        getProperties():api_content_data.Property[] {
 
             var properties:api_content_data.Property[] = [];
             this.inputCmp.getValues().forEach((value:string, index:number) => {
