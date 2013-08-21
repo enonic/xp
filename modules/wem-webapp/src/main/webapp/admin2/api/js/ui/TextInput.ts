@@ -1,12 +1,6 @@
 module api_ui {
 
-    export interface TextInputListener extends api_ui.Listener {
-
-        onValueChanged?(oldValue:string, newValue:string);
-
-    }
-
-    export class TextInput extends api_dom.InputEl implements api_ui.Observable {
+    export class TextInput extends api_dom.InputEl implements api_event.Observable {
 
         static MIDDLE:string = 'middle';
         static LARGE:string = 'large';

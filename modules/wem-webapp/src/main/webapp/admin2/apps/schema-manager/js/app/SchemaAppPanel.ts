@@ -53,7 +53,7 @@ module app {
                     this.selectPanel(tabMenuItem);
 
                 } else {
-                    var tabMenuItem, schemaWizardPanel;
+                    var schemaWizardPanel;
 
                     switch (schemaType) {
                     case SchemaAppPanel.CONTENT_TYPE:

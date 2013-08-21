@@ -9,14 +9,7 @@ module api_app_wizard {
         livePanel?:api_ui.Panel;
     }
 
-    export interface WizardPanelListener extends WizardPanelHeaderListener {
-
-        onClosed?(wizard:WizardPanel);
-
-    }
-
-
-    export class WizardPanel extends api_ui.Panel implements api_ui.Closeable, api_ui.Observable, api_ui.ActionContainer {
+    export class WizardPanel extends api_ui.Panel implements api_ui.Closeable, api_event.Observable, api_ui.ActionContainer {
 
         private persistedItem:api_remote.Item;
 

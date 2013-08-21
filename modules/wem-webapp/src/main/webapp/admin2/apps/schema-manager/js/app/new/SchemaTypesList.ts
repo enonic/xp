@@ -6,13 +6,7 @@ module app_new {
         iconUrl: string;
     }
 
-    export interface SchemaTypesListListener extends api_ui.Listener {
-
-        onSelected(schemaType:SchemaTypeListItem);
-
-    }
-
-    export class SchemaTypesList extends api_dom.DivEl implements api_ui.Observable {
+    export class SchemaTypesList extends api_dom.DivEl implements api_event.Observable {
 
         private ul:api_dom.UlEl;
 

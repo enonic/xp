@@ -2,7 +2,8 @@
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/jquery.d.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ExtJs.d.ts' />
 
-///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/Observable.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/event/Listener.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/event/Observable.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/event/Event.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/event/EventBus.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ElementHelper.ts' />

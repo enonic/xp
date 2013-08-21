@@ -1,11 +1,4 @@
-module api_ui {
-
-    /**
-     *  Base listener
-     */
-    export interface Listener {
-
-    }
+module api_event {
 
     /**
      *  Observable interface

@@ -19,6 +19,7 @@
 ///<reference path='app/browse/SchemaTreeGridPanel.ts' />
 
 ///<reference path='app/new/NewSchemaEvent.ts' />
+///<reference path='app/new/SchemaTypesListListener.ts' />
 ///<reference path='app/new/SchemaTypesList.ts' />
 ///<reference path='app/new/NewSchemaDialog.ts' />
 

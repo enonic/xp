@@ -1,6 +1,6 @@
 module app_new {
 
-    export class RecentContentTypesList extends api_dom.DivEl implements api_ui.Observable {
+    export class RecentContentTypesList extends api_dom.DivEl implements api_event.Observable {
 
         private contentTypesList:ContentTypesList;
 

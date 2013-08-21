@@ -3,7 +3,7 @@ module api_ui {
     /**
      * A panel having multiple child panels, but showing only one at a time - like a deck of cards.
      */
-    export class DeckPanel extends Panel implements api_ui.Observable {
+    export class DeckPanel extends Panel implements api_event.Observable {
 
         private panels:Panel[] = [];
 

@@ -1,12 +1,6 @@
 module api_app_wizard {
 
-    export interface WizardStepNavigatorListener extends api_ui.Listener {
-
-        onStepShown?(step:WizardStep);
-
-    }
-
-    export class WizardStepNavigator extends api_dom.UlEl implements api_ui.Observable {
+    export class WizardStepNavigator extends api_dom.UlEl implements api_event.Observable {
 
         private deckPanel:api_app_wizard.WizardStepDeckPanel;
 

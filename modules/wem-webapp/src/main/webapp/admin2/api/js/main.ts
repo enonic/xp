@@ -57,6 +57,8 @@
 ///<reference path='remote/util/RemoteUtilsModel.ts' />
 ///<reference path='remote/util/RemoteSystemService.ts' />
 
+///<reference path='event/Listener.ts' />
+///<reference path='event/Observable.ts' />
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
 
@@ -96,7 +98,6 @@
 ///<reference path='dom/LegendEl.ts' />
 ///<reference path='dom/FormEl.ts' />
 
-///<reference path='ui/Observable.ts' />
 ///<reference path='ui/KeyBindings.ts'/>
 ///<reference path='ui/Mnemonic.ts' />
 ///<reference path='ui/Action.ts' />
@@ -125,6 +126,7 @@
 
 
 ///<reference path='ui/Dropdown.ts' />
+///<reference path='ui/TextInputListener.ts' />
 ///<reference path='ui/TextInput.ts' />
 ///<reference path='ui/AutosizeTextInput.ts' />
 ///<reference path='ui/TextArea.ts' />
@@ -138,11 +140,14 @@
 ///<reference path='app/wizard/CloseAction.ts' />
 ///<reference path='app/wizard/FormIcon.ts' />
 ///<reference path='app/wizard/WizardEvents.ts' />
+///<reference path='app/wizard/WizardPanelHeaderListener.ts' />
 ///<reference path='app/wizard/WizardPanelHeader.ts' />
 ///<reference path='app/wizard/WizardStepDeckPanel.ts' />
 ///<reference path='app/wizard/WizardStepNavigator.ts' />
+///<reference path='app/wizard/WizardStepNavigatorListener.ts' />
 ///<reference path='app/wizard/WizardStepNavigationArrow.ts' />
 ///<reference path='app/wizard/WizardStep.ts' />
+///<reference path='app/wizard/WizardPanelListener.ts' />
 ///<reference path='app/wizard/WizardPanel.ts' />
 
 ///<reference path='app/AppBar.ts' />
@@ -164,7 +169,9 @@
 
 ///<reference path='app/browse/BrowsePanel.ts' />
 ///<reference path='app/browse/BrowseItem.ts' />
+///<reference path='app/browse/ItemsSelectionPanelListener.ts' />
 ///<reference path='app/browse/ItemsSelectionPanel.ts' />
+///<reference path='app/browse/BrowseItemPanelListener.ts' />
 ///<reference path='app/browse/BrowseItemPanel.ts' />
 ///<reference path='app/browse/GridContainer.ts'/>
 
@@ -172,6 +179,7 @@
 ///<reference path='app/browse/filter/Facet.ts' />
 ///<reference path='app/browse/filter/FacetGroup.ts' />
 ///<reference path='app/browse/filter/FacetContainer.ts' />
+///<reference path='app/browse/filter/BrowseFilterPanelListener.ts' />
 ///<reference path='app/browse/filter/BrowseFilterPanel.ts' />
 ///<reference path='app/browse/filter/TextSearchField.ts'/>
 ///<reference path='app/browse/filter/ClearFilterButton.ts'/>

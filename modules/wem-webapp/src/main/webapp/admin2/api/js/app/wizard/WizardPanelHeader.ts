@@ -1,14 +1,6 @@
 module api_app_wizard {
 
-    export interface WizardPanelHeaderListener extends api_ui.Listener {
-
-        onDisplayNameChanged?(oldValue:string, newValue:string);
-
-        onNameChanged?(oldValue:string, newValue:string);
-
-    }
-
-    export class WizardPanelHeader extends api_dom.DivEl implements api_ui.Observable {
+    export class WizardPanelHeader extends api_dom.DivEl implements api_event.Observable {
 
         private displayNameEl:api_ui.TextInput;
 

@@ -1,13 +1,6 @@
 module api_app_browse_filter {
 
-    export interface BrowseFilterPanelListener extends api_ui.Listener {
-
-        onSearch?(values:any[]);
-
-        onReset?();
-    }
-
-    export class BrowseFilterPanel extends api_ui.Panel implements api_ui.Observable {
+    export class BrowseFilterPanel extends api_ui.Panel implements api_event.Observable {
 
         private listeners:BrowseFilterPanelListener[] = [];
 

@@ -5,10 +5,6 @@ module api_app_browse {
         actionMenuActions:api_ui.Action[];
     }
 
-    export interface BrowseItemPanelListener extends api_ui.DeckPanelListener, ItemSelectionPanelListener {
-
-    }
-
     export class BrowseItemPanel extends api_ui.DeckPanel {
 
         private actionMenu:api_ui_menu.ActionMenu;

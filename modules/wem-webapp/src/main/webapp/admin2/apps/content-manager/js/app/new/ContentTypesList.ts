@@ -1,12 +1,6 @@
 module app_new {
 
-    export interface ContentTypesListListener extends api_ui.Listener {
-
-        onSelected?(contentType:api_remote_contenttype.ContentType);
-
-    }
-
-    export class ContentTypesList extends api_dom.DivEl implements api_ui.Observable {
+    export class ContentTypesList extends api_dom.DivEl implements api_event.Observable {
 
         private ul:api_dom.UlEl;
 
