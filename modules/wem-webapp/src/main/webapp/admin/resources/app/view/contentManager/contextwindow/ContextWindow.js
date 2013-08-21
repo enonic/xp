@@ -77,7 +77,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
         this.enableWindowResize();
 
-        this.registerListenersFromLiveEditPage();
+        this.bindLiveEditEventListeners();
 
         this.currentHeight = this.height;
 
@@ -338,7 +338,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         }
     },
 
-    registerListenersFromLiveEditPage: function () {
+    bindLiveEditEventListeners: function () {
         var me = this,
         // Right now We need to use the jQuery object from the live edit page in order to listen for the events
             liveEditWindow = me.getLiveEditContentWindowObject(),

@@ -135,7 +135,7 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
             emptyText: 'No components available',
             listeners: {
                 render: function () {
-                    me.registerListenersFromLiveEditPage();
+                    me.bindLiveEditEventListeners();
                     me.initComponentDraggables();
                 }
             }
@@ -268,7 +268,7 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
         return $(html);
     },
 
-    registerListenersFromLiveEditPage: function () {
+    bindLiveEditEventListeners: function () {
         var me = this,
             // Right now We need to use the jQuery object from the live edit page in order to listen for the events
             contextWindow = me.getContextWindow(),
