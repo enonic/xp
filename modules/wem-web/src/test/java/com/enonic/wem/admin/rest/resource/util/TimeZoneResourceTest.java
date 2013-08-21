@@ -4,29 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTimeZone;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.TestUtil;
-import com.enonic.wem.admin.rest.resource.util.model.TimeZoneJson;
-import com.enonic.wem.admin.rest.resource.util.model.TimeZoneListJson;
-import com.enonic.wem.api.Client;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
 import com.enonic.wem.core.time.TimeZoneService;
 
-import static org.junit.Assert.*;
-
 public class TimeZoneResourceTest
+    extends AbstractResourceTest2
 {
-
-    private Client client;
-    private TimeZoneService timezoneService;
-
-    @Before
-    public void setup()
+    @Override
+    protected Object getResourceInstance()
     {
-        client = Mockito.mock( Client.class );
-        timezoneService = Mockito.mock( TimeZoneService.class );
+        final TimeZoneService timezoneService = Mockito.mock( TimeZoneService.class );
 
         final List<DateTimeZone> zones = new ArrayList<>( 3 );
         zones.add( DateTimeZone.UTC );
@@ -35,29 +25,17 @@ public class TimeZoneResourceTest
         zones.add( DateTimeZone.forID( "America/Caracas" ) );
 
         Mockito.when( timezoneService.getTimeZones() ).thenReturn( zones );
+
+        final TimeZoneResource resource = new TimeZoneResource();
+        resource.setTimezoneService( timezoneService );
+        return resource;
     }
 
     @Test
     public void testList()
         throws Exception
     {
-        final TimeZoneResource resource = new TimeZoneResource();
-        resource.setClient( client );
-        resource.setTimezoneService( timezoneService );
-
-        TimeZoneListJson result = resource.list();
-
-        Mockito.verify( timezoneService, Mockito.times( 1 ) ).getTimeZones();
-
-        assertNotNull( result );
-        assertEquals( 4, result.getTotal() );
-
-        List<String> names = new ArrayList<>( 4 );
-        for ( final TimeZoneJson model : result.getTimezones() )
-        {
-            names.add( model.getId() );
-        }
-
-        TestUtil.assertUnorderedArraysEquals( new String[]{"UTC", "EST", "Asia/Tokyo", "America/Caracas"}, names.toArray() );
+        final String json = resource().path( "util/timezone" ).get( String.class );
+        assertJson( "timezone_list.json", json );
     }
 }

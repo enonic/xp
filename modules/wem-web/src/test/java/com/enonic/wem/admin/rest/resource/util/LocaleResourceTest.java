@@ -1,58 +1,35 @@
 package com.enonic.wem.admin.rest.resource.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.TestUtil;
-import com.enonic.wem.admin.rest.resource.util.model.LocaleJson;
-import com.enonic.wem.admin.rest.resource.util.model.LocaleListJson;
-import com.enonic.wem.api.Client;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
 import com.enonic.wem.core.locale.LocaleService;
 
-import static org.junit.Assert.*;
-
 public class LocaleResourceTest
+    extends AbstractResourceTest2
 {
-
-    private Client client;
-    private LocaleService localeService;
-
-    @Before
-    public void setup()
+    @Override
+    protected Object getResourceInstance()
     {
-        client = Mockito.mock( Client.class );
-        localeService = Mockito.mock( LocaleService.class );
+        final LocaleService localeService = Mockito.mock( LocaleService.class );
 
-        final Locale[] locales = new Locale[] { Locale.UK, Locale.ITALY, Locale.JAPAN };
+        final Locale[] locales = new Locale[]{Locale.UK, Locale.ITALY, Locale.JAPAN};
         Mockito.when( localeService.getLocales() ).thenReturn( locales );
+
+        final LocaleResource resource = new LocaleResource();
+        resource.setLocaleService( localeService );
+
+        return resource;
     }
 
     @Test
     public void testList()
         throws Exception
     {
-        final LocaleResource resource = new LocaleResource();
-        resource.setClient( client );
-        resource.setLocaleService( localeService );
-
-        LocaleListJson result = resource.list();
-
-        Mockito.verify( localeService, Mockito.times( 1 ) ).getLocales();
-
-        assertNotNull( result );
-        assertEquals( 3, result.getTotal() );
-
-        List<String> names = new ArrayList<>( 3 );
-        for ( final LocaleJson model : result.getLocales() )
-        {
-            names.add( model.getDisplayName() );
-        }
-
-        TestUtil.assertUnorderedArraysEquals( new String[]{"English (United Kingdom)", "Italian (Italy)", "Japanese (Japan)"}, names.toArray() );
+        final String json = resource().path( "util/locale" ).get( String.class );
+        assertJson( "locale_list.json", json );
     }
 }

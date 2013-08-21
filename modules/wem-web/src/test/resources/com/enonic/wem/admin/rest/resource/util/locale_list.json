@@ -1,0 +1,23 @@
+{
+    "locales": [
+        {
+            "deletable": false,
+            "displayName": "English (United Kingdom)",
+            "editable": false,
+            "id": "en_GB"
+        },
+        {
+            "deletable": false,
+            "displayName": "Italian (Italy)",
+            "editable": false,
+            "id": "it_IT"
+        },
+        {
+            "deletable": false,
+            "displayName": "Japanese (Japan)",
+            "editable": false,
+            "id": "ja_JP"
+        }
+    ],
+    "total": 3
+}

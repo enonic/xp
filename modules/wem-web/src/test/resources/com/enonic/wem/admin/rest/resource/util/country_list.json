@@ -1,0 +1,33 @@
+{
+    "countries": [
+        {
+            "callingCodes": [
+                {
+                    "callingCode": "+47",
+                    "callingCodeId": "47_NO",
+                    "deletable": false,
+                    "editable": false,
+                    "englishName": "NORWAY",
+                    "localName": "NORGE"
+                }
+            ],
+            "code": "NO",
+            "deletable": false,
+            "editable": false,
+            "englishName": "NORWAY",
+            "localName": "NORGE",
+            "regions": [
+                {
+                    "deletable": false,
+                    "editable": false,
+                    "englishName": "Akershus",
+                    "localName": "Akershus",
+                    "regionCode": "02"
+                }
+            ],
+            "regionsEnglishName": "County",
+            "regionsLocalName": "Fylke"
+        }
+    ],
+    "total": 1
+}

@@ -1,0 +1,41 @@
+{
+    "timezones": [
+        {
+            "deletable": false,
+            "editable": false,
+            "humanizedId": "UTC",
+            "id": "UTC",
+            "name": "Coordinated Universal Time",
+            "offset": "+00:00",
+            "shortName": "UTC"
+        },
+        {
+            "deletable": false,
+            "editable": false,
+            "humanizedId": "EST",
+            "id": "EST",
+            "name": "Eastern Standard Time",
+            "offset": "-05:00",
+            "shortName": "EST"
+        },
+        {
+            "deletable": false,
+            "editable": false,
+            "humanizedId": "Asia/Tokyo",
+            "id": "Asia/Tokyo",
+            "name": "Japan Standard Time",
+            "offset": "+09:00",
+            "shortName": "JST"
+        },
+        {
+            "deletable": false,
+            "editable": false,
+            "humanizedId": "America/Caracas",
+            "id": "America/Caracas",
+            "name": "Venezuela Time",
+            "offset": "-04:30",
+            "shortName": "VET"
+        }
+    ],
+    "total": 4
+}
