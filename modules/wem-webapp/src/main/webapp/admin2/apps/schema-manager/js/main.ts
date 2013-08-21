@@ -40,9 +40,6 @@
 ///<reference path='app/wizard/MixinWizardToolbar.ts' />
 ///<reference path='app/wizard/MixinWizardEvents.ts' />
 
-///<reference path='app/SchemaAppBar.ts' />
-///<reference path='app/SchemaAppBarTabMenu.ts' />
-///<reference path='app/SchemaAppBarTabMenuItem.ts' />
 ///<reference path='app/SchemaAppPanel.ts' />
 
 declare var Ext;
@@ -69,7 +66,7 @@ Ext.application({
     stores: [],
 
     launch: function () {
-        var appBar = new app.SchemaAppBar();
+        var appBar = new api_app.AppBar("Schema Manager", new api_app.AppBarTabMenu("SchemaAppBarTabMenu"));
         var appPanel = new app.SchemaAppPanel(appBar);
 
         api_dom.Body.get().appendChild(appBar);

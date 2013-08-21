@@ -44,116 +44,128 @@ module app {
             });
 
             app_new.NewSchemaEvent.on((event) => {
-                var schemaType = event.getSchemaType();
 
-                if (schemaType) {
+                var schemaType = event.getSchemaType();
+                var tabId = this.generateTabId(schemaType);
+                var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+
+                if (tabMenuItem != null) {
+                    this.selectPanel(tabMenuItem);
+
+                } else {
                     var tabMenuItem, schemaWizardPanel;
 
                     switch (schemaType) {
                     case SchemaAppPanel.CONTENT_TYPE:
-                        tabMenuItem = new SchemaAppBarTabMenuItem("New Content Type", true);
-                        schemaWizardPanel = new app_wizard.ContentTypeWizardPanel('new-content-type');
+                        tabMenuItem = new api_app.AppBarTabMenuItem("New Content Type", tabId, true);
+                        schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(tabId);
                         break;
                     case SchemaAppPanel.RELATIONSHIP_TYPE:
-                        tabMenuItem = new SchemaAppBarTabMenuItem("New Relationship Type", true);
-                        schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel('new-relationship-type');
+                        tabMenuItem = new api_app.AppBarTabMenuItem("New Relationship Type", tabId, true);
+                        schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(tabId);
                         break;
                     case SchemaAppPanel.MIXIN:
-                        tabMenuItem = new SchemaAppBarTabMenuItem("New Mixin", true);
-                        schemaWizardPanel = new app_wizard.MixinWizardPanel('new-mixin');
+                        tabMenuItem = new api_app.AppBarTabMenuItem("New Mixin", tabId, true);
+                        schemaWizardPanel = new app_wizard.MixinWizardPanel(tabId);
                         break;
                     }
 
                     this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                    this.selectPanel(tabMenuItem);
                     schemaWizardPanel.reRender();
                 }
             });
 
             app_browse.EditSchemaEvent.on((event) => {
+
                 event.getModels().forEach((schemaModel:api_model.SchemaExtModel) => {
-                    switch (schemaModel.data.type) {
-                    case SchemaAppPanel.CONTENT_TYPE:
-                        var contentTypeGetParams:api_remote_contenttype.GetParams = {
-                            qualifiedNames: [schemaModel.data.qualifiedName],
-                            format: 'JSON'
-                        };
-                        api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams,
-                            (result:api_remote_contenttype.GetResult) => {
 
-                                var contentType:api_remote_contenttype.ContentType = result.contentTypes[0];
-                                var tabMenuItem = new SchemaAppBarTabMenuItem(contentType.displayName, true);
+                    var tabId = this.generateTabId(schemaModel.data.type, schemaModel.data.name, true);
+                    var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
 
-                                var id = this.generateTabId(contentType.name, true);
-                                var schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(id);
-                                schemaWizardPanel.setPersistedItem(contentType);
+                    if (tabMenuItem != null) {
+                        this.selectPanel(tabMenuItem);
+
+                    } else {
+                        var schemaWizardPanel;
+
+                        switch (schemaModel.data.type) {
+                        case SchemaAppPanel.CONTENT_TYPE:
+                            var contentTypeGetParams:api_remote_contenttype.GetParams = {
+                                qualifiedNames: [schemaModel.data.qualifiedName],
+                                format: 'JSON'
+                            };
+                            api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams,
+                                (result:api_remote_contenttype.GetResult) => {
+
+                                    var contentType:api_remote_contenttype.ContentType = result.contentTypes[0];
+
+                                    tabMenuItem = new api_app.AppBarTabMenuItem(contentType.displayName, tabId, true);
+
+                                    schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(tabId);
+                                    schemaWizardPanel.setPersistedItem(contentType);
+
+                                    this.addWizardPanel(tabMenuItem, schemaWizardPanel);
+                                });
+                            break;
+                        case SchemaAppPanel.RELATIONSHIP_TYPE:
+                            var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
+                                qualifiedName: schemaModel.data.qualifiedName,
+                                format: 'JSON'
+                            };
+                            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
+                                (result:api_remote_relationshiptype.GetResult) => {
+
+                                    tabMenuItem = new api_app.AppBarTabMenuItem(result.relationshipType.displayName, tabId, true);
+
+                                    schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(tabId);
+                                    schemaWizardPanel.setPersistedItem(result.relationshipType);
+
+                                    this.addWizardPanel(tabMenuItem, schemaWizardPanel);
+                                });
+                            break;
+                        case SchemaAppPanel.MIXIN:
+                            var mixinGetParams:api_remote_mixin.GetParams = {
+                                qualifiedName: schemaModel.data.qualifiedName,
+                                format: 'JSON'
+                            };
+                            api_remote_mixin.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
+
+                                tabMenuItem = new api_app.AppBarTabMenuItem(result.mixin.displayName, tabId, true);
+
+                                schemaWizardPanel = new app_wizard.MixinWizardPanel(tabId);
+                                schemaWizardPanel.setPersistedItem(result.mixin);
 
                                 this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                                this.selectPanel(tabMenuItem);
-
                             });
-                        break;
-                    case SchemaAppPanel.RELATIONSHIP_TYPE:
-                        var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
-                            qualifiedName: schemaModel.data.qualifiedName,
-                            format: 'JSON'
-                        };
-                        api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
-                            (result:api_remote_relationshiptype.GetResult) => {
-
-                                var tabMenuItem = new SchemaAppBarTabMenuItem(result.relationshipType.displayName, true);
-
-                                var id = this.generateTabId(result.relationshipType.name, true);
-                                var schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(id);
-                                schemaWizardPanel.setPersistedItem(result.relationshipType);
-
-                                this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                                this.selectPanel(tabMenuItem);
-
-                            });
-                        break;
-                    case SchemaAppPanel.MIXIN:
-                        var mixinGetParams:api_remote_mixin.GetParams = {
-                            qualifiedName: schemaModel.data.qualifiedName,
-                            format: 'JSON'
-                        };
-                        api_remote_mixin.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
-
-                            var tabMenuItem = new SchemaAppBarTabMenuItem(result.mixin.displayName, true);
-
-                            var id = this.generateTabId(result.mixin.name, true);
-                            var schemaWizardPanel = new app_wizard.MixinWizardPanel(id);
-                            schemaWizardPanel.setPersistedItem(result.mixin);
-
-                            this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                            this.selectPanel(tabMenuItem);
-
-                        });
-                        break;
+                            break;
+                        }
                     }
                 });
             });
 
             app_browse.OpenSchemaEvent.on((event) => {
-                var schemes:api_model.SchemaExtModel[] = event.getModels();
-                for (var i = 0; i < schemes.length; i++) {
-                    var schemaModel:api_model.SchemaExtModel = schemes[i];
+                event.getModels().forEach((schemaModel:api_model.SchemaExtModel) => {
 
-                    var tabMenuItem = new SchemaAppBarTabMenuItem(schemaModel.data.displayName);
+                        var tabId = this.generateTabId(schemaModel.data.type, schemaModel.data.name, false);
+                        var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
 
-                    var id = this.generateTabId(schemaModel.data.name, false);
-                    var schemaItemViewPanel = new app_view.SchemaItemViewPanel();
+                        if (tabMenuItem != null) {
+                            this.selectPanel(tabMenuItem);
 
-                    var spaceItem = new api_app_view.ViewItem(schemaModel)
-                        .setDisplayName(schemaModel.data.displayName)
-                        .setPath(schemaModel.data.name)
-                        .setIconUrl(schemaModel.data.iconUrl);
+                        } else {
+                            tabMenuItem = new api_app.AppBarTabMenuItem(schemaModel.data.displayName, tabId);
+                            var schemaItemViewPanel = new app_view.SchemaItemViewPanel();
+                            var spaceItem = new api_app_view.ViewItem(schemaModel)
+                                .setDisplayName(schemaModel.data.displayName)
+                                .setPath(schemaModel.data.name)
+                                .setIconUrl(schemaModel.data.iconUrl);
 
-                    schemaItemViewPanel.setItem(spaceItem);
+                            schemaItemViewPanel.setItem(spaceItem);
 
-                    this.addNavigationItem(tabMenuItem, schemaItemViewPanel);
-                    this.selectPanel(tabMenuItem);
-                }
+                            this.addNavigationItem(tabMenuItem, schemaItemViewPanel);
+                        }
+                    }
+                );
             });
 
             app_browse.DeleteSchemaPromptEvent.on((event) => {
@@ -176,8 +188,8 @@ module app {
             });
         }
 
-        private generateTabId(shemaName, isEdit) {
-            return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + shemaName;
+        private generateTabId(schemaType:string, schemaName ?:string, isEdit ?:bool = false) {
+            return schemaName ? ( isEdit ? 'edit-' : 'view-') + schemaName : 'new-' + schemaType;
         }
 
     }

@@ -16,10 +16,14 @@ module api_ui {
             return this.navigator.getSelectedNavigationItem();
         }
 
-        addNavigationItem(item:PanelNavigationItem, panel:Panel) {
+        addNavigationItem(item:PanelNavigationItem, panel:Panel, inBackground?:bool = false) {
 
             this.navigator.addNavigationItem(item);
             this.addPanel(panel);
+
+            if (!inBackground) {
+                this.selectPanel(item);
+            }
         }
 
         selectPanel(item:PanelNavigationItem) {

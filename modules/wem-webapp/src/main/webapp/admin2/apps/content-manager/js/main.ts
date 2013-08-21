@@ -60,11 +60,6 @@
 ///<reference path='app/new/RecentContentTypesList.ts' />
 ///<reference path='app/new/RecommendedContentTypesList.ts' />
 
-///<reference path='app/ContentAppPanel.ts' />
-///<reference path='app/ContentAppBarTabMenu.ts' />
-///<reference path='app/ContentAppBarTabMenuItem.ts' />
-///<reference path='app/ContentAppBar.ts' />
-
 ///<reference path='handler/DeleteContentHandler.ts' />
 
 ///<reference path='store/ContentStore.ts' />
@@ -75,6 +70,8 @@
 ///<reference path='lib/UriHelper.ts' />
 ///<reference path='lib/DateHelper.ts' />
 ///<reference path='lib/Sortable.ts' />
+
+///<reference path='app/ContentAppPanel.ts' />
 
 declare var Ext;
 declare var Admin;
@@ -96,7 +93,7 @@ Ext.application({
 
     launch: function () {
 
-        var appBar = new app.ContentAppBar();
+        var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
         var appPanel = new app.ContentAppPanel(appBar);
 
         api_dom.Body.get().appendChild(appBar);

@@ -31,10 +31,6 @@
 ///<reference path='app/delete/DeletedEvent.ts' />
 ///<reference path='app/delete/SpaceDeleteDialog.ts' />
 
-///<reference path='app/SpaceAppBar.ts' />
-///<reference path='app/SpaceAppBarTabMenuItem.ts' />
-///<reference path='app/SpaceAppBarTabMenu.ts' />
-///<reference path='app/SpaceAppBar.ts' />
 ///<reference path='app/SpaceAppPanel.ts' />
 
 
@@ -65,7 +61,7 @@ Ext.application({
 
     launch: function () {
 
-        var appBar = new app.SpaceAppBar();
+        var appBar = new api_app.AppBar("Space Admin", new api_app.AppBarTabMenu("SpaceAppBarTabMenu"));
         var appPanel = new app.SpaceAppPanel(appBar);
 
         api_dom.Body.get().appendChild(appBar);

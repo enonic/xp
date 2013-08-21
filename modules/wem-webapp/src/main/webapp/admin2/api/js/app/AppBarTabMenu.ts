@@ -14,23 +14,23 @@ module api_app{
             this.updateMenuPosition();
         }
 
-        createTabMenuButton():api_ui_tab.TabMenuButton {
+        createTabMenuButton():AppBarTabMenuButton {
             this.tabMenuButton = new AppBarTabMenuButton();
             return this.tabMenuButton;
         }
 
-        addNavigationItem(tab:api_ui.PanelNavigationItem) {
+        addNavigationItem(tab:AppBarTabMenuItem) {
             super.addNavigationItem(tab);
 
             this.tabMenuButton.setTabCount(this.countVisible());
-            this.tabMenuButton.setEditing((<AppBarTabMenuItem>tab).isEditing());
+            this.tabMenuButton.setEditing(tab.isEditing());
 
             if (this.isShowingMenuItems()) {
                 this.updateMenuPosition();
             }
         }
 
-        removeNavigationItem(tab:api_ui.PanelNavigationItem) {
+        removeNavigationItem(tab:AppBarTabMenuItem) {
             super.removeNavigationItem(tab);
 
             this.tabMenuButton.setTabCount(this.countVisible());
@@ -42,6 +42,18 @@ module api_app{
             if (this.isShowingMenuItems()) {
                 this.updateMenuPosition();
             }
+        }
+
+        getNavigationItemById(itemId:string):AppBarTabMenuItem {
+            var items:api_ui_tab.TabMenuItem[] = this.getNavigationItems();
+            var item;
+            for (var i = 0; i < items.length; i++) {
+                item = <AppBarTabMenuItem>items[i];
+                if (item.getItemId() == itemId) {
+                    return item;
+                }
+            }
+            return null;
         }
 
         selectNavigationItem(tabIndex:number) {
@@ -64,7 +76,7 @@ module api_app{
             var menuWidth = this.getMenuEl().getEl().getWidth();
             var containerPaddingLeft = this.getEl().getPaddingLeft();
 
-            this.getMenuEl().getEl().setMarginLeft((containerWidth - menuWidth)/2 - containerPaddingLeft + 'px');
+            this.getMenuEl().getEl().setMarginLeft((containerWidth - menuWidth) / 2 - containerPaddingLeft + 'px');
         }
     }
 }

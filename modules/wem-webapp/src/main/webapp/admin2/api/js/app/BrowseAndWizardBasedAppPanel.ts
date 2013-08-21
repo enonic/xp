@@ -14,7 +14,7 @@ module api_app {
         private appBarTabMenu:api_app.AppBarTabMenu;
 
         constructor(config:BrowseBasedAppPanelConfig) {
-            super(config.appBar.getTabMenu(), config.browsePanel, config.browsePanelActions)
+            super(config.appBar.getTabMenu(), config.browsePanel, config.browsePanelActions);
 
             this.browsePanel = config.browsePanel;
             this.appBarTabMenu = config.appBar.getTabMenu();
@@ -39,8 +39,8 @@ module api_app {
             });
         }
 
-        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
-            super.addNavigationItem(tabMenuItem, wizardPanel);
+        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground?:bool = false) {
+            super.addNavigationItem(tabMenuItem, wizardPanel, inBackground);
 
             wizardPanel.addListener({
                 onDisplayNameChanged: (oldValue, newValue) => {

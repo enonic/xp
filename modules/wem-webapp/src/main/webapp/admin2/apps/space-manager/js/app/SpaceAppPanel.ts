@@ -6,7 +6,7 @@ module app {
 
         private appBarTabMenu:api_app.AppBarTabMenu;
 
-        constructor(appBar:SpaceAppBar) {
+        constructor(appBar:api_app.AppBar) {
 
             this.browsePanel = new app_browse.SpaceBrowsePanel();
             this.appBarTabMenu = appBar.getTabMenu();
@@ -35,56 +35,70 @@ module app {
 
             app_browse.NewSpaceEvent.on((event) => {
 
-                var tabMenuItem = new SpaceAppBarTabMenuItem("New Space");
-                var spaceWizardPanel = new app_wizard.SpaceWizardPanel('new-space');
-                this.addWizardPanel(tabMenuItem, spaceWizardPanel);
-                this.selectPanel(tabMenuItem);
-                spaceWizardPanel.reRender();
+                var tabId = this.generateTabId();
+                var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+
+                if (tabMenuItem != null) {
+                    this.selectPanel(tabMenuItem);
+
+                } else {
+                    tabMenuItem = new api_app.AppBarTabMenuItem("New Space", tabId);
+                    var spaceWizardPanel = new app_wizard.SpaceWizardPanel(tabId);
+                    this.addWizardPanel(tabMenuItem, spaceWizardPanel);
+                    spaceWizardPanel.reRender();
+                }
             });
 
             app_browse.OpenSpaceEvent.on((event) => {
 
-                var spaces:api_model.SpaceExtModel[] = event.getModels();
-                for (var i = 0; i < spaces.length; i++) {
-                    var spaceModel:api_model.SpaceExtModel = spaces[i];
+                event.getModels().forEach((spaceModel:api_model.SpaceExtModel) => {
 
-                    var tabMenuItem = new SpaceAppBarTabMenuItem(spaceModel.data.displayName);
-                    var id = this.generateTabId(spaceModel.data.name, false);
-                    var spaceItemViewPanel = new app_view.SpaceItemViewPanel();
+                    var tabId = this.generateTabId(spaceModel.data.name, false);
+                    var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
 
-                    var spaceItem = new api_app_view.ViewItem(spaceModel)
-                        .setDisplayName(spaceModel.data.displayName)
-                        .setPath(spaceModel.data.name)
-                        .setIconUrl(spaceModel.data.iconUrl);
+                    if (tabMenuItem != null) {
+                        this.selectPanel(tabMenuItem);
 
-                    spaceItemViewPanel.setItem(spaceItem);
+                    } else {
+                        tabMenuItem = new api_app.AppBarTabMenuItem(spaceModel.data.displayName, tabId);
+                        var spaceItemViewPanel = new app_view.SpaceItemViewPanel();
+                        var spaceItem = new api_app_view.ViewItem(spaceModel)
+                            .setDisplayName(spaceModel.data.displayName)
+                            .setPath(spaceModel.data.name)
+                            .setIconUrl(spaceModel.data.iconUrl);
 
-                    this.addNavigationItem(tabMenuItem, spaceItemViewPanel);
-                    this.selectPanel(tabMenuItem);
-                }
+                        spaceItemViewPanel.setItem(spaceItem);
 
+                        this.addNavigationItem(tabMenuItem, spaceItemViewPanel);
+                    }
+                });
             });
 
             app_browse.EditSpaceEvent.on((event) => {
 
-                var spaces:api_model.SpaceExtModel[] = event.getModels();
-                for (var i = 0; i < spaces.length; i++) {
-                    var spaceModel:api_model.SpaceExtModel = spaces[i];
+                event.getModels().forEach((spaceModel:api_model.SpaceExtModel) => {
 
-                    var spaceGetParams:api_remote_space.GetParams = {
-                        "spaceNames": [spaceModel.data.name]
-                    };
-                    api_remote_space.RemoteSpaceService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
-                        var space = result.spaces[0];
-                        var tabMenuItem = new SpaceAppBarTabMenuItem(space.displayName, true);
-                        var id = this.generateTabId(space.name, true);
-                        var spaceWizardPanel = new app_wizard.SpaceWizardPanel(id);
-                        spaceWizardPanel.setPersistedItem(space);
+                    var tabId = this.generateTabId(spaceModel.data.name, true);
+                    var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
 
-                        this.addWizardPanel(tabMenuItem, spaceWizardPanel);
+                    if (tabMenuItem != null) {
                         this.selectPanel(tabMenuItem);
-                    });
-                }
+
+                    } else {
+                        var spaceGetParams:api_remote_space.GetParams = {
+                            "spaceNames": [spaceModel.data.name]
+                        };
+                        api_remote_space.RemoteSpaceService.space_get(spaceGetParams, (result:api_remote_space.GetResult) => {
+                            var space = result.spaces[0];
+
+                            tabMenuItem = new api_app.AppBarTabMenuItem(space.displayName, tabId, true);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel(tabId);
+                            spaceWizardPanel.setPersistedItem(space);
+
+                            this.addWizardPanel(tabMenuItem, spaceWizardPanel);
+                        });
+                    }
+                });
             });
 
             app_browse.CloseSpaceEvent.on((event) => {
@@ -92,8 +106,8 @@ module app {
             });
         }
 
-        private generateTabId(spaceName, isEdit) {
-            return 'tab-' + ( isEdit ? 'edit-' : 'preview-') + spaceName;
+        private generateTabId(spaceName?:string, isEdit?:bool = false) {
+            return spaceName ? ( isEdit ? 'edit-' : 'view-') + spaceName : 'new-';
         }
     }
 

@@ -11,11 +11,10 @@ module api_app{
 
             this.homePanel = homePanel;
             this.homePanelActions = homePanelActions;
-            var homePanelMenuItem = new AppBarTabMenuItem("home");
+            var homePanelMenuItem = new AppBarTabMenuItem("home", "home");
             homePanelMenuItem.setVisible(false);
             homePanelMenuItem.setRemovable(false);
             this.addNavigationItem(homePanelMenuItem, this.homePanel);
-            this.showPanel(0);
 
             this.addListener({
                 onPanelShown: (event:api_ui.PanelShownEvent) => {

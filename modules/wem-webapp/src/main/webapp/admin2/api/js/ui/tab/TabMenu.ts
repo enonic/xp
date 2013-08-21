@@ -78,18 +78,16 @@ module api_ui_tab {
             return this.showingMenuItems;
         }
 
-        addNavigationItem(tab:api_ui.PanelNavigationItem) {
+        addNavigationItem(tab:api_ui_tab.TabMenuItem) {
 
-            var tabMenuItem = <TabMenuItem>tab;
+            tab.setTabMenu(this);
 
-            tabMenuItem.setTabMenu(this);
-
-            var newLength = this.tabs.push(tabMenuItem);
-            tabMenuItem.setIndex(newLength - 1);
+            var newLength = this.tabs.push(tab);
+            tab.setIndex(newLength - 1);
 
             if (tab.isVisible()) {
                 this.tabMenuButton.setLabel(tab.getLabel());
-                this.menuEl.appendChild(tabMenuItem);
+                this.menuEl.appendChild(tab);
                 this.tabMenuButton.show();
             }
         }
@@ -116,15 +114,19 @@ module api_ui_tab {
             return this.selectedTab;
         }
 
-        getSelectedNavigationItem():api_ui.PanelNavigationItem {
+        getSelectedNavigationItem():api_ui_tab.TabMenuItem {
             return this.tabs[this.selectedTab];
         }
 
-        getNavigationItem(tabIndex:number) {
+        getNavigationItem(tabIndex:number):api_ui_tab.TabMenuItem {
             return this.tabs[tabIndex];
         }
 
-        removeNavigationItem(tab:api_ui.PanelNavigationItem) {
+        getNavigationItems():api_ui_tab.TabMenuItem[] {
+            return this.tabs;
+        }
+
+        removeNavigationItem(tab:api_ui_tab.TabMenuItem) {
             var tabMenuItem = <TabMenuItem>tab;
 
             tabMenuItem.getEl().remove();

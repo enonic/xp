@@ -6,7 +6,7 @@ module api_ui {
 
         removeNavigationItem(item:PanelNavigationItem);
 
-        getNavigationItem(index:number);
+        getNavigationItem(index:number):PanelNavigationItem;
 
         selectNavigationItem(index:number);
 
@@ -18,6 +18,8 @@ module api_ui {
         deselectNavigationItem();
 
         getSize():number;
+
+        getNavigationItems():PanelNavigationItem[];
 
     }
 }
