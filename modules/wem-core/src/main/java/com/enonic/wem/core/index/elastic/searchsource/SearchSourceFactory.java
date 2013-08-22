@@ -30,7 +30,7 @@ public class SearchSourceFactory
 
         final String fullTextSearchString = contentIndexQuery.getFullTextSearchString();
 
-        searchSourceBuilder.size( contentIndexQuery.getCount() );
+        searchSourceBuilder.size( contentIndexQuery.getSize() );
 
         QueryBuilder query = null;
 

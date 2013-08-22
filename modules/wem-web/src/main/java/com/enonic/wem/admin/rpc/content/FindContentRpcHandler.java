@@ -32,7 +32,7 @@ public class FindContentRpcHandler
         final boolean includeFacets = context.param( "includeFacets" ).asBoolean( true );
         final String[] contentTypes = context.param( "contentTypes" ).asStringArray();
         final String[] spaces = context.param( "spaces" ).asStringArray();
-        final Integer count = context.param( "count" ).asInteger();
+        final Integer size = context.param( "size" ).asInteger();
 
         final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( fulltext );
@@ -40,9 +40,9 @@ public class FindContentRpcHandler
         contentIndexQuery.setContentTypeNames( QualifiedContentTypeNames.from( contentTypes ) );
         contentIndexQuery.setSpaceNames( SpaceNames.from( spaces ) );
 
-        if ( count != null )
+        if ( size != null )
         {
-            contentIndexQuery.setCount( count );
+            contentIndexQuery.setSize( size );
         }
 
         final ObjectNode[] rangesJson = context.param( "ranges" ).asObjectArray();

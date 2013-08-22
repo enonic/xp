@@ -33,7 +33,7 @@ public class SearchSourceFactoryTest
         throws Exception
     {
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
-        contentIndexQuery.setCount( 10 );
+        contentIndexQuery.setSize( 10 );
 
         final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
 

@@ -26,7 +26,7 @@ public class ContentIndexQuery
 
     private Set<Range> ranges = Sets.newHashSet();
 
-    private int count = DEFAULT_COUNT;
+    private int size = DEFAULT_COUNT;
 
     public void addRange( final DateTime lower, final DateTime upper )
     {
@@ -88,14 +88,14 @@ public class ContentIndexQuery
         this.spaceNames = spaceNames;
     }
 
-    public int getCount()
+    public int getSize()
     {
-        return count;
+        return size;
     }
 
-    public void setCount( final int count )
+    public void setSize( final int size )
     {
-        this.count = count;
+        this.size = size;
     }
 
     public class Range
