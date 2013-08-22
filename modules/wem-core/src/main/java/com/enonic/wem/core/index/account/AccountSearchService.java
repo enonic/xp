@@ -47,7 +47,7 @@ public class AccountSearchService
 
         if ( query.isIncludeFacets() )
         {
-            final Facets facets = res.facets();
+            final Facets facets = res.getFacets();
             addSearchFacets( searchResult, facets );
         }
 
@@ -73,11 +73,11 @@ public class AccountSearchService
             if ( facet instanceof TermsFacet )
             {
                 TermsFacet tf = (TermsFacet) facet;
-                com.enonic.wem.core.index.facet.Facet resultFacet = new com.enonic.wem.core.index.facet.Facet( tf.name() );
+                com.enonic.wem.core.index.facet.Facet resultFacet = new com.enonic.wem.core.index.facet.Facet( tf.getName() );
                 searchResult.getFacets().addFacet( resultFacet );
                 for ( TermsFacet.Entry entry : tf )
                 {
-                    FacetEntry facetEntry = new FacetEntry( entry.term(), entry.count() );
+                    FacetEntry facetEntry = new FacetEntry( entry.getTerm().toString(), entry.getCount() );
                     resultFacet.addEntry( facetEntry );
                 }
             }

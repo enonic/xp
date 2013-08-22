@@ -65,7 +65,7 @@ public class ElasticsearchIndexServiceImpl
     {
         final ClusterHealthResponse clusterHealth = getClusterHealth( indexName, waitForStatusYellow );
 
-        LOG.info( "Cluster in state: " + clusterHealth.status().toString() );
+        LOG.info( "Cluster in state: " + clusterHealth.getStatus().toString() );
 
         return IndexStatus.valueOf( clusterHealth.getStatus().name() );
     }
@@ -74,7 +74,7 @@ public class ElasticsearchIndexServiceImpl
     public boolean indexExists( String indexName )
     {
         final IndicesExistsResponse exists = this.client.admin().indices().exists( new IndicesExistsRequest( indexName ) ).actionGet();
-        return exists.exists();
+        return exists.isExists();
     }
 
     @Override
@@ -211,13 +211,13 @@ public class ElasticsearchIndexServiceImpl
 
         final ClusterHealthResponse clusterHealthResponse = this.client.admin().cluster().health( request ).actionGet();
 
-        if ( clusterHealthResponse.timedOut() )
+        if ( clusterHealthResponse.isTimedOut() )
         {
             LOG.warn( "ElasticSearch cluster health timed out" );
         }
         else
         {
-            LOG.trace( "ElasticSearch cluster health: Status " + clusterHealthResponse.status().name() + "; " +
+            LOG.trace( "ElasticSearch cluster health: Status " + clusterHealthResponse.getStatus().name() + "; " +
                            clusterHealthResponse.getNumberOfNodes() + " nodes; " + clusterHealthResponse.getActiveShards() +
                            " active shards." );
         }
