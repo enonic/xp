@@ -28,6 +28,9 @@ module LiveEdit.ui {
             case 'part':
                 cursor = 'move';
                 break;
+            case 'image':
+                cursor = 'pointer';
+                break;
             case 'layout':
                 cursor = 'move';
                 break;

@@ -96,6 +96,12 @@ module LiveEdit {
                 fillColor = 'rgba(255,255,255,0)';
                 break;
 
+            case 'image':
+                strokeColor = 'rgba(68,68,68,1)';
+                strokeDashArray = '5 5';
+                fillColor = 'rgba(255,255,255,0)';
+                break;
+
             case 'paragraph':
                 strokeColor = 'rgba(85,85,255,1)';
                 strokeDashArray = '5 5';

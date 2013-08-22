@@ -14,6 +14,7 @@ module LiveEdit.ui.contextmenu {
             'region': ['parent', 'reset', 'clear'],
             'layout': ['parent', 'remove'],
             'part': ['parent', 'details', 'remove'],
+            'image': ['parent', 'details', 'remove'],
             'content': ['parent', 'opencontent', 'view'],
             'paragraph': ['parent', 'edit', 'remove']
         };

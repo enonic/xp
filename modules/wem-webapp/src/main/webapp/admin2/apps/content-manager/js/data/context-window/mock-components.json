@@ -1,6 +1,13 @@
 {
     "components": [
         {
+            "key": "10517",
+            "type": "image",
+            "name": "Image",
+            "subtitle": "Adds an image to the page"
+        },
+
+        {
             "key": "10017",
             "type": "layout",
             "name": "2+1 Column Layout",

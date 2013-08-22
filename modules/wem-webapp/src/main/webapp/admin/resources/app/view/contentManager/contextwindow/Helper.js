@@ -25,6 +25,9 @@ Ext.define('Admin.view.contentManager.contextwindow.Helper', {
                 case 'part':
                     iconCls = 'icon-puzzle-piece';
                     break;
+                case 'image':
+                    iconCls = 'icon-picture';
+                    break;
                 case 'paragraph':
                     iconCls = 'icon-edit';
                     break;

@@ -17,6 +17,7 @@ declare var LiveEditMutationSummary;
 ///<reference path='component/observer/Page.ts' />
 ///<reference path='component/observer/Region.ts' />
 ///<reference path='component/observer/Layout.ts' />
+///<reference path='component/observer/Image.ts' />
 ///<reference path='component/observer/Part.ts' />
 ///<reference path='component/observer/Content.ts' />
 ///<reference path='component/observer/Paragraph.ts' />
@@ -55,6 +56,7 @@ declare var LiveEditMutationSummary;
             new LiveEdit.component.observer.Region();
             new LiveEdit.component.observer.Layout();
             new LiveEdit.component.observer.Part();
+            new LiveEdit.component.observer.Image();
             new LiveEdit.component.observer.Paragraph();
             new LiveEdit.component.observer.Content();
 

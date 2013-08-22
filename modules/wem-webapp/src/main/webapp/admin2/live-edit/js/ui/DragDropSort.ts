@@ -195,26 +195,44 @@ module LiveEdit.DragDropSort {
 
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
-            var contextWindowComponent:JQuery = $(event.target).children(contextWindowDragSourceSelector),
-                componentKey:string = contextWindowComponent.data('live-edit-key'),
-                componentType:string = contextWindowComponent.data('live-edit-type'),
+            var component:JQuery = $(event.target).children(contextWindowDragSourceSelector),
+                // fixme: use helper to get the info!
+                componentKey:string = component.data('live-edit-key'),
+                componentType:string = component.data('live-edit-type'),
                 url:string = '../../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
 
-            contextWindowComponent.hide(null);
+            component.hide(null);
 
-            $.ajax({
-                url: url,
-                cache: false
-            }).done((html) => {
-                    contextWindowComponent.replaceWith(html);
-                    // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
-                    // So we have to create it again.
-                    // Ideally we should destroy the existing sortable first before creating.
-                    if (componentType === 'layout') {
-                        this.createSortable();
-                    }
-                    $(window).trigger('sortableUpdate.liveEdit');
-                });
+            // Prototyping. New upcomming structure
+            if (componentType === 'image') {
+
+                var placeHolderHtml:string = '';
+                placeHolderHtml += '<div class="live-edit-component-placeholder" data-live-edit-type="' + componentType + '">';
+                placeHolderHtml += '    Placeholder';
+                placeHolderHtml += '    <br/><span style="font-size:11px">Click to add a component of type ' + componentType + '</span>';
+                placeHolderHtml += '</div>';
+
+                component.replaceWith(placeHolderHtml);
+
+                $(window).trigger('sortableUpdate.liveEdit');
+
+            } else {
+
+                $.ajax({
+                    url: url,
+                    cache: false
+                }).done((responseHtml:string) => {
+                        component.replaceWith(responseHtml);
+                        // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
+                        // So we have to create it again.
+                        // Ideally we should destroy the existing sortable first before creating.
+                        if (componentType === 'layout') {
+                            this.createSortable();
+                        }
+                        $(window).trigger('sortableUpdate.liveEdit');
+                    });
+            }
+
         }
     }
 

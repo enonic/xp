@@ -264,6 +264,16 @@ svg.live-edit-highlight-border rect {
   background-color: #eee;
   margin: 1px 0 10px 0; }
 
+.live-edit-component-placeholder {
+  clear: both;
+  border: 1px solid #000;
+  padding: 28px;
+  color: #000;
+  font-size: 20px;
+  text-align: center;
+  background-color: #d6d7e0;
+  margin: 1px 0 10px 0; }
+
 .live-edit-component-padding {
   padding-top: 10px !important;
   padding-bottom: 10px !important; }
