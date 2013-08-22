@@ -1,4 +1,5 @@
 {
+    "size": 100,
     "query": {
         "query_string": {
             "query": "test",

@@ -29,6 +29,19 @@ public class SearchSourceFactoryTest
     }
 
     @Test
+    public void testSetCount()
+        throws Exception
+    {
+        ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
+        contentIndexQuery.setCount( 10 );
+
+        final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
+
+        assertJson( "setCount_result.json", searchSourceBuilder );
+    }
+
+
+    @Test
     public void testContentTypeFilter()
         throws Exception
     {

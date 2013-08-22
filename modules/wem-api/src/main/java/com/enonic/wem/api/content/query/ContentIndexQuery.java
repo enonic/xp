@@ -11,6 +11,9 @@ import com.enonic.wem.api.space.SpaceNames;
 
 public class ContentIndexQuery
 {
+
+    private final static int DEFAULT_COUNT = 100;
+
     private String fullTextSearchString;
 
     private boolean includeFacets = false;
@@ -22,6 +25,8 @@ public class ContentIndexQuery
     private SpaceNames spaceNames;
 
     private Set<Range> ranges = Sets.newHashSet();
+
+    private int count = DEFAULT_COUNT;
 
     public void addRange( final DateTime lower, final DateTime upper )
     {
@@ -83,6 +88,15 @@ public class ContentIndexQuery
         this.spaceNames = spaceNames;
     }
 
+    public int getCount()
+    {
+        return count;
+    }
+
+    public void setCount( final int count )
+    {
+        this.count = count;
+    }
 
     public class Range
     {
