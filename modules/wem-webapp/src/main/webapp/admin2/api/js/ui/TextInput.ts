@@ -17,11 +17,13 @@ module api_ui {
 
         private listeners:TextInputListener[] = [];
 
-        constructor(idPrefix?:string, className?:string, size?:string = TextInput.MIDDLE) {
+        constructor(idPrefix?:string, className?:string, size?:string) {
             super(idPrefix, className);
 
             this.getEl().setAttribute('type', 'text');
-            this.addClass('text-input').addClass(size);
+            if (size) {
+                this.addClass('text-input').addClass(size);
+            }
 
             this.getEl().addEventListener('keypress', (event) => {
                 if (!this.stripCharsRe) {

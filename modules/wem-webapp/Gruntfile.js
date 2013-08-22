@@ -57,6 +57,14 @@ module.exports = function (grunt) {
                     // target: 'es5',
                     sourcemap: true
                 }
+            },
+            app_launcher: {
+                src: ['src/main/webapp/admin2/apps/app-launcher/js/main.ts'],
+                dest: 'src/main/webapp/admin2/apps/app-launcher/js/all.js',
+                options: {
+                    // target: 'es5',
+                    sourcemap: true
+                }
             }
         },
 

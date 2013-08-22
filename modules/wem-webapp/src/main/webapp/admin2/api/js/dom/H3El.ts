@@ -5,5 +5,10 @@ module api_dom {
         constructor(idPrefix?:string, className?:string) {
             super("h3", idPrefix, className);
         }
+
+        public setText(value: string) {
+            this.getEl().setInnerHtml(value);
+        }
+
     }
 }

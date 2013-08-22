@@ -1,0 +1,287 @@
+.admin-home-main-container h3,
+.admin-home-installation-info {
+  font-size: 24px;
+  color: #fff;
+}
+
+.admin-home-main-container a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.admin-home-main-container {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #141414;
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.admin-home-main-container.show-home {
+  animation: animation-show-home 100ms ease both;
+  animation-play-state: running;
+
+  -webkit-animation: animation-show-home 100ms ease both;
+  -webkit-animation-play-state: running;
+}
+
+.admin-home-main-container.hide-home {
+  animation: animation-hide-home 100ms ease both;
+  animation-play-state: running;
+
+  -webkit-animation: animation-hide-home 100ms ease both;
+  -webkit-animation-play-state: running;
+}
+
+@-webkit-keyframes animation-show-home {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes animation-hide-home {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes animation-show-home {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes animation-hide-home {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/** Branding */
+
+.admin-home-branding {
+  position: absolute;
+  top: 30px;
+  left: 35px;
+  background: transparent url(../../../admin/resources/images/wem-enonic-logo.png) 0 0 no-repeat;
+  height: 24px;
+}
+
+.admin-home-installation-info {
+  margin-top: -6px;
+  padding: 0 0 0 181px;
+}
+
+.admin-home-version-info {
+  color: #d2d6d6;
+}
+
+/** Center */
+
+.admin-home-center {
+  width: 775px;
+  position: absolute;
+  left: 50%;
+  margin-left: -387.5px; /* width / 2 */
+  background-color: transparent;
+  top: 0;
+  bottom: 0;
+}
+
+/** Left column */
+
+.admin-home-center .admin-home-left-column {
+  position: absolute;
+  width: 480px;
+  background: transparent;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  color: #fff !important;
+}
+
+/** Right column */
+
+.admin-home-center .admin-home-right-column {
+  position: absolute;
+  width: 295px;
+  background: rgba(0, 0, 0, 0.2);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  color: #fff !important;
+}
+
+.admin-home-login-licensed-to {
+  text-align: center;
+  padding-top: 35px;
+}
+
+.admin-home-links-container {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  bottom: 30px;
+}
+
+/** Common */
+
+.admin-home-login-form,
+.admin-home-app-selector,
+.admin-home-app-info-container {
+  position: absolute;
+  top: 24%;
+}
+
+.admin-home-login-form,
+.admin-home-app-info-container {
+  padding: 0 45px;
+}
+
+/** App selector */
+
+.admin-home-app-selector {
+  color: #fff;
+
+  opacity: 0;
+  transition: all 300ms ease-out;
+  -webkit-transition: all 300ms ease-out;
+
+  transform: scale(.25);
+  -webkit-transform: scale(.25);
+}
+
+.admin-home-app-selector.fade-in-and-scale-up {
+  opacity: 1 !important;
+
+  transform: scale(1) !important;
+  -webkit-transform: scale(1) !important;
+}
+
+.admin-home-app-selector-search-input-container {
+  margin-bottom: 10px;
+  width: 470px;
+}
+
+.admin-home-app-selector-search-inputEl {
+  vertical-align: top;
+  height: 26px;
+  padding: 4px 9px;
+  border: 1px solid;
+  border-color: #aaaaaa;
+  width: 100%;
+}
+
+.admin-home-app-info-name {
+  color: #ebebeb;
+}
+
+.admin-home-app-info-description {
+  color: #ebebeb;
+}
+
+.admin-home-app-tiles-placeholder {
+  width: 480px;
+}
+
+.admin-home-app-tile {
+  cursor: pointer;
+  position: relative;
+  background-color: #1c59af;
+  float: left;
+  width: 110px;
+  height: 100px;
+  margin: 0 10px 10px 0;
+}
+
+.admin-home-app-tile > .img-container {
+  position: absolute;
+  width: 100%;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.admin-home-app-tile > .img-container > img {
+  width: 40px;
+  height: 40px;
+}
+
+.admin-home-app-tile > .name-container {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.admin-home-app-tile > .tab-count-container {
+  background-color: #DC143C;
+  color: #FFFFFF;
+  font-size: 13px;
+  padding: 2px 8px;
+  position: absolute;
+  right: -5px;
+  text-align: center;
+  top: -5px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.admin-home-app-tile-over {
+  background-color: #012056;
+}
+
+.admin-home-form-item {
+  font-family: @admin-font-family;
+  font-size: 12px;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+  border: 1px solid @admin-light-gray-bg;
+  vertical-align: top;
+
+  padding: 4px 9px;
+  background: none #fff !important;
+  width: 200px;
+}
+
+.admin-home-login-button {
+  font-family: @admin-font-family;
+  padding: 6px 19px 6px 19px;
+  background-color: @admin-blue-button;
+
+  font-size: 12px;
+  border-width: 0;
+  color: white;
+
+  display: inline-block;
+  float: right;
+  margin-right: 11px;
+
+  &:hover {
+    cursor: pointer;
+    color: @admin-light-gray-font;
+  }
+}

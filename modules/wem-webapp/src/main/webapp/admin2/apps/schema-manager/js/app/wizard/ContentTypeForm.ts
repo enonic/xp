@@ -12,7 +12,7 @@ module app_wizard {
             textArea.setSize(api_ui.TextAreaSize.LARGE);
             textArea.setLineNumbers(true);
 
-            var text = new api_ui.TextInput();
+            var text = api_ui.TextInput.middle();
             text.setName("test");
 
             fieldset.add(new api_ui_form.FormItem("Test", text));

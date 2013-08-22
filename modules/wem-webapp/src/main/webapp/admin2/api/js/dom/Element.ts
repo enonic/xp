@@ -175,5 +175,36 @@ module api_dom {
         isRendered():bool {
             return this.rendered;
         }
+
+        onMouseEnter(handler:(e:MouseEvent)=>any) {
+            this.mouseEnterLeave(this.getHTMLElement(), 'mouseenter', handler);
+        }
+
+        onMouseLeave(handler:(e:MouseEvent)=>any) {
+            this.mouseEnterLeave(this.getHTMLElement(), 'mouseleave', handler);
+        }
+
+        private mouseEnterLeave(elem:HTMLElement, type:string, handler:(e:MouseEvent)=>any) {
+            var mouseEnter = type === 'mouseenter',
+                ie = mouseEnter ? 'fromElement' : 'toElement',
+                mouseEventHandler = (e:MouseEvent) => {
+                    e = e || window.event;
+                    var target:HTMLElement = <HTMLElement> (e.target || e.srcElement),
+                        related:HTMLElement = <HTMLElement> (e.relatedTarget || e[ie]);
+                    if ((elem === target || this.contains(elem, target)) && !this.contains(elem, related)) {
+                        handler(e);
+                    }
+                };
+            type = mouseEnter ? 'mouseover' : 'mouseout';
+
+            elem.addEventListener(type, mouseEventHandler);
+            return mouseEventHandler;
+        }
+
+        private contains(container:HTMLElement, maybe:HTMLElement) {
+            return container.contains ? container.contains(maybe) :
+                !!(container.compareDocumentPosition(maybe) & 16);
+        }
+
     }
 }

@@ -128,6 +128,7 @@
 ///<reference path='ui/Dropdown.ts' />
 ///<reference path='ui/TextInputListener.ts' />
 ///<reference path='ui/TextInput.ts' />
+///<reference path='ui/PasswordInput.ts' />
 ///<reference path='ui/AutosizeTextInput.ts' />
 ///<reference path='ui/TextArea.ts' />
 ///<reference path='ui/CodeArea.ts' />
