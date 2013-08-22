@@ -27,7 +27,6 @@ module api_ui_tab {
             this.menuEl = this.createMenu();
             this.appendChild(this.menuEl);
 
-            this.initExt();
         }
 
         createTabMenuButton():TabMenuButton {
@@ -47,13 +46,6 @@ module api_ui_tab {
             ulEl.getEl().setZindex(19001);
             ulEl.hide();
             return ulEl;
-        }
-
-        private initExt() {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl
-            });
         }
 
         private toggleMenu() {
