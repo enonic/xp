@@ -21,6 +21,28 @@
 
 
 /*** HTML element placeholders */
+.live-edit-drop-target-placeholder {
+  list-style-type: none; /* The placeholder in jQuery UI has the same tag name as the dragged component */
+  clear: both;
+  border: 2px dashed #000;
+  padding: 28px;
+  color: #000;
+  font-size: 20px;
+  text-align: center;
+  background-color: #eee;
+  margin: 1px 0 10px 0;
+}
+
+.live-edit-component-placeholder {
+  clear: both;
+  background-color: #e6f1fe;
+  padding: 28px;
+  border: 2px dashed #2d2d2d;
+  font-size: 20px;
+  color: #737373;
+  text-align: center;
+  margin: 1px 0 10px 0;
+}
 
 .live-edit-html-element-placeholder {
   position: relative;

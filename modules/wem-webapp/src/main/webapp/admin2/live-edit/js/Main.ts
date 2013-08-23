@@ -8,13 +8,7 @@ declare var LiveEditMutationSummary;
 ///<reference path='shared/DomHelper.ts' />
 
 ///<reference path='component/ComponentHelper.ts' />
-
-///<reference path='shared/MutationObserver.ts' />
-
-///<reference path='ui/DragDropSort.ts' />
-
 ///<reference path='component/Component.ts' />
-
 ///<reference path='component/eventdispatcher/Base.ts' />
 ///<reference path='component/eventdispatcher/Page.ts' />
 ///<reference path='component/eventdispatcher/Region.ts' />
@@ -44,6 +38,10 @@ declare var LiveEditMutationSummary;
 ///<reference path='ui/contextmenu/menuitem/Empty.ts' />
 ///<reference path='ui/contextmenu/menuitem/View.ts' />
 ///<reference path='ui/contextmenu/menuitem/Remove.ts' />
+
+///<reference path='shared/MutationObserver.ts' />
+
+///<reference path='ui/DragDropSort.ts' />
 
 (function ($) {
     'use strict';
