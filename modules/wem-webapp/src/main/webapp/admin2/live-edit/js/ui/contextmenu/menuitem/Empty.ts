@@ -18,11 +18,23 @@ module LiveEdit.ui.contextmenu.menuitem {
                 id: 'live-edit-button-clear',
                 handler: (event) => {
                     event.stopPropagation();
+
+                    this.emptyRegion();
                 }
             });
 
             this.appendTo(this.menu.getRootEl());
             this.menu.buttons.push(this);
+        }
+
+        private emptyRegion() {
+            var region = this.menu.selectedComponent;
+
+            $('[data-live-edit-type]', region).remove();
+
+            $(window).trigger('deselectComponent.liveEdit');
+            $(window).trigger('componentRemoved.liveEdit');
+
         }
     }
 }

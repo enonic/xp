@@ -14,6 +14,7 @@ module LiveEdit.component.eventdispatcher {
                 if (this.cancelMouseOverEvent(event)) {
                     return;
                 }
+
                 $('.live-edit-selected-component').removeClass('live-edit-selected-component');
 
                 event.stopPropagation();

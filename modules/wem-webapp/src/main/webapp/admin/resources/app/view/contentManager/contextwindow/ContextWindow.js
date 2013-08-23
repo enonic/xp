@@ -352,6 +352,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                 me.showHideInspector(false);
             }
         });
+        liveEditJQuery(liveEditWindow).on('componentRemoved.liveEdit', function (event) {
+            if (me.selectedPanelIndex != undefined) {
+                me.showHideInspector(false);
+            }
+        });
     },
 
     setSelectedPanelIndex: function (index) {

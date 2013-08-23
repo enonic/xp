@@ -19,13 +19,19 @@ module LiveEdit.ui.contextmenu.menuitem {
                 handler: (event) => {
                     event.stopPropagation();
                     // For demo purposes
-                    this.menu.selectedComponent.remove();
-                    $(window).trigger('removeComponent.liveEdit');
+
+                    this.removeComponent();
+
+                    $(window).trigger('componentRemoved.liveEdit');
                 }
             });
 
             this.appendTo(this.menu.getRootEl());
             this.menu.buttons.push(this);
+        }
+
+        private removeComponent() {
+            this.menu.selectedComponent.remove();
         }
     }
 }

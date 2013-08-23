@@ -22,7 +22,7 @@ module LiveEdit.ui {
             $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:JQuery) => this.show(component));
             $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component:JQuery) => this.show(component));
             $(window).on('deselectComponent.liveEdit', () => this.hide());
-            $(window).on('removeComponent.liveEdit', () => this.hide());
+            $(window).on('componentRemoved.liveEdit', () => this.hide());
             $(window).on('sortableStart.liveEdit', () => this.hide());
             $(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
         }

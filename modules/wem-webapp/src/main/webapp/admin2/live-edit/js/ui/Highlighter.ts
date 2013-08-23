@@ -19,7 +19,7 @@ module LiveEdit.ui {
             $(window).on('deselectComponent.liveEdit', ()                  => this.deselect());
             $(window).on('mouseOutComponent.liveEdit', ()                  => this.hide());
             $(window).on('sortableStart.liveEdit', ()                 => this.hide());
-            $(window).on('removeComponent.liveEdit', ()                    => this.hide());
+            $(window).on('componentRemoved.liveEdit', ()                    => this.hide());
             $(window).on('editParagraphComponent.liveEdit', ()             => this.hide());
             $(window).on('resizeBrowserWindow.liveEdit', ()                       => this.handleWindowResize());
 
