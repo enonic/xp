@@ -47,8 +47,8 @@ public class DataSetJson
         return DataSet.class.getSimpleName();
     }
 
-    public DataSetJson getValue()
+    public List<DataJson> getValue()
     {
-        return new DataSetJson( dataSet );
+        return this.list;
     }
 }

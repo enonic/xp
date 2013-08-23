@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -14,6 +16,7 @@ import com.sun.jersey.api.NotFoundException;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.model.ContentListJson;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.content.Content;
@@ -24,12 +27,12 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 
 @Path("content")
+@Produces(MediaType.APPLICATION_JSON)
 public class ContentResource
     extends AbstractResource
 {
     @GET
-    public ContentListJson get( @QueryParam("path") final String path,
-                                @QueryParam("version") final Integer version,
+    public ContentListJson get( @QueryParam("path") final String path, @QueryParam("version") final Integer version,
                                 @QueryParam("contentIds") final List<String> contentIds )
     {
         if ( StringUtils.isNotEmpty( path ) )
@@ -42,6 +45,19 @@ public class ContentResource
             final String[] stringOfPathIds = contentIds.toArray( new String[contentIds.size()] );
             return handleGetContentByIds( ContentIds.from( stringOfPathIds ) );
         }
+    }
+
+    @GET
+    @Path("list")
+    public ContentListJson list( @QueryParam("path") String path )
+    {
+        final ContentPath parentPath = ContentPath.from( path );
+
+        final GetChildContent getChildContent = Commands.content().getChildren();
+        getChildContent.parentPath( parentPath );
+
+        final Contents contents = client.execute( getChildContent );
+        return new ContentListJson( contents );
     }
 
     private ContentListJson handleGetContentByPath( final ContentPath contentPath, final Integer version )
