@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.Contents;
 
 public class ContentListJson
 {
-    private ImmutableList<ContentJson> list;
+    private List<ContentJson> contents;
 
     public ContentListJson( Content content )
     {
@@ -24,11 +24,11 @@ public class ContentListJson
             builder.add( new ContentJson( content ) );
         }
 
-        this.list = builder.build();
+        this.contents = builder.build();
     }
 
-    public List<ContentJson> getContent()
+    public List<ContentJson> getContents()
     {
-        return list;
+        return contents;
     }
 }

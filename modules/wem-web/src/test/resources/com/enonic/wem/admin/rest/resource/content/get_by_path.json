@@ -1,0 +1,42 @@
+{
+    "contents": [
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "data": {
+                "data": [
+                    {
+                        "data": {
+                            "name": "myData",
+                            "path": "myData",
+                            "type": "Text",
+                            "value": "value1"
+                        }
+                    }
+                ],
+                "name": "",
+                "path": "",
+                "type": "DataSet",
+                "value": [
+                    {
+                        "data": {
+                            "name": "myData",
+                            "path": "myData",
+                            "type": "Text",
+                            "value": "value1"
+                        }
+                    }
+                ]
+            },
+            "displayName": "My Content",
+            "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+            "id": "aaa",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_a_content",
+            "owner": "user:myStore:me",
+            "path": "/my_a_content",
+            "root": false,
+            "type": "mymodule:my_type"
+        }
+    ]
+}

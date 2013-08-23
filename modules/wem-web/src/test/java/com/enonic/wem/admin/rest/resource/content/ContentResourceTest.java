@@ -1,24 +1,19 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.rest.resource.content.model.ContentJson;
-import com.enonic.wem.admin.rest.resource.content.model.ContentListJson;
-import com.enonic.wem.admin.rest.resource.content.model.PropertyJson;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -29,19 +24,16 @@ import com.enonic.wem.api.content.data.Value;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.web.servlet.ServletRequestHolder;
 
-import static org.junit.Assert.*;
-
 public class ContentResourceTest
+    extends AbstractResourceTest2
 {
     private Client client;
+
+    private final String currentTime = "2013-08-23T12:55:09.162Z";
 
     @Before
     public void setup()
     {
-        DateTimeUtils.setCurrentMillisFixed( new DateTime( 2000, 1, 1, 12, 0, 0, DateTimeZone.UTC ).getMillis() );
-
-        client = Mockito.mock( Client.class );
-
         mockCurrentContextHttpRequest();
     }
 
@@ -64,96 +56,32 @@ public class ContentResourceTest
     public void get_by_path()
         throws Exception
     {
-        final Content myContent = createContent( "abc", "my_content" );
 
-        Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn( Contents.from( myContent ) );
+        String jsonString = resource().path( "content" ).queryParam( "path", "/my_content" ).get( String.class );
 
-        final ContentResource resource = new ContentResource();
-        resource.setClient( client );
+        assertJson( "get_by_path.json", jsonString );
 
-        ContentListJson result = resource.get( "/my_content", null, null );
-
-        List<ContentJson> contents = result.getContent();
-        assertEquals( 1, contents.size() );
-
-        ContentJson content = contents.get( 0 );
-        assertEquals( "abc", content.getId() );
-        assertEquals( "/my_content", content.getPath() );
-        assertEquals( "my_content", content.getName() );
-        assertEquals( "mymodule:my_type", content.getType() );
-        assertEquals( "My Content", content.getDisplayName() );
-        assertEquals( "user:myStore:me", content.getOwner() );
-        assertEquals( "user:system:admin", content.getModifier() );
-        assertEquals( false, content.isRoot() );
-        assertEquals( "2000-01-01T12:00:00.000Z", content.getModifiedTime() );
-        assertEquals( "2000-01-01T12:00:00.000Z", content.getCreatedTime() );
-        assertEquals( "http://localhost/admin/rest/content/image/abc", content.getIconUrl() );
-
-        PropertyJson property = ( PropertyJson ) content.getData().getData().get( 0 ).getData();
-
-        assertEquals( "myData", property.getName() );
-        assertEquals( "myData", property.getPath() );
-        assertEquals( "Text", property.getType() );
-        assertEquals( "value1", property.getValue() );
     }
 
     @Test
     public void get_by_id()
         throws Exception
     {
-        final Content aaaContent = createContent( "aaa", "my_a_content" );
-        final Content bbbContent = createContent( "bbb", "my_b_content" );
 
-        Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn(
-            Contents.from( aaaContent, bbbContent ) );
+        String jsonString =
+            resource().path( "content" ).queryParam( "contentIds", "aaa" ).queryParam( "contentIds", "bbb" ).get( String.class );
 
-        final ContentResource resource = new ContentResource();
-        resource.setClient( client );
+        assertJson( "get_by_id.json", jsonString );
+    }
 
-        ContentListJson result = resource.get( null, null, Arrays.asList( "aaa", "bbb" ) );
+    @Test
+    public void get_content_list()
+        throws Exception
+    {
+        String jsonString = resource().path( "content/list" ).queryParam( "path", "mymodule:/" ).get( String.class );
 
-        List<ContentJson> contents = result.getContent();
-        assertEquals( 2, contents.size() );
+        assertJson( "get_content_list.json", jsonString );
 
-        ContentJson content = contents.get( 0 );
-        assertEquals( "aaa", content.getId() );
-        assertEquals( "/my_a_content", content.getPath() );
-        assertEquals( "my_a_content", content.getName() );
-        assertEquals( "mymodule:my_type", content.getType() );
-        assertEquals( "My Content", content.getDisplayName() );
-        assertEquals( "user:myStore:me", content.getOwner() );
-        assertEquals( "user:system:admin", content.getModifier() );
-        assertEquals( false, content.isRoot() );
-        assertEquals( "2000-01-01T12:00:00.000Z", content.getModifiedTime() );
-        assertEquals( "2000-01-01T12:00:00.000Z", content.getCreatedTime() );
-        assertEquals( "http://localhost/admin/rest/content/image/aaa", content.getIconUrl() );
-
-        PropertyJson property = ( PropertyJson ) content.getData().getData().get( 0 ).getData();
-
-        assertEquals( "myData", property.getName() );
-        assertEquals( "myData", property.getPath() );
-        assertEquals( "Text", property.getType() );
-        assertEquals( "value1", property.getValue() );
-
-        content = contents.get( 1 );
-        assertEquals( "bbb", content.getId() );
-        assertEquals( "/my_b_content", content.getPath() );
-        assertEquals( "my_b_content", content.getName() );
-        assertEquals( "mymodule:my_type", content.getType() );
-        assertEquals( "My Content", content.getDisplayName() );
-        assertEquals( "user:myStore:me", content.getOwner() );
-        assertEquals( "user:system:admin", content.getModifier() );
-        assertEquals( false, content.isRoot() );
-        assertEquals( "2000-01-01T12:00:00.000Z", content.getModifiedTime() );
-        assertEquals( "2000-01-01T12:00:00.000Z", content.getCreatedTime() );
-        assertEquals( "http://localhost/admin/rest/content/image/bbb", content.getIconUrl() );
-
-        property = ( PropertyJson ) content.getData().getData().get( 0 ).getData();
-
-        assertEquals( "myData", property.getName() );
-        assertEquals( "myData", property.getPath() );
-        assertEquals( "Text", property.getType() );
-        assertEquals( "value1", property.getValue() );
     }
 
     private Content createContent( final String id, final String name )
@@ -164,13 +92,31 @@ public class ContentResourceTest
         return Content.newContent().
             id( ContentId.from( id ) ).
             path( ContentPath.from( name ) ).
-            createdTime( DateTime.now() ).
+            createdTime( DateTime.parse( this.currentTime ) ).
             owner( UserKey.from( "myStore:me" ) ).
             displayName( "My Content" ).
-            modifiedTime( DateTime.now() ).
+            modifiedTime( DateTime.parse( this.currentTime ) ).
             modifier( UserKey.superUser() ).
             type( new QualifiedContentTypeName( "mymodule:my_type" ) ).
             contentData( contentData ).
             build();
+    }
+
+    @Override
+    protected Object getResourceInstance()
+    {
+        client = Mockito.mock( Client.class );
+        final ContentResource resource = new ContentResource();
+        resource.setClient( client );
+
+        final Content aaaContent = createContent( "aaa", "my_a_content" );
+        final Content bbbContent = createContent( "bbb", "my_b_content" );
+
+        Mockito.when( client.execute( Mockito.any( Commands.content().get().getClass() ) ) ).thenReturn(
+            Contents.from( aaaContent, bbbContent ) );
+
+        Mockito.when( client.execute( Mockito.any( GetChildContent.class ) ) ).thenReturn( Contents.from( aaaContent, bbbContent ) );
+
+        return resource;
     }
 }
