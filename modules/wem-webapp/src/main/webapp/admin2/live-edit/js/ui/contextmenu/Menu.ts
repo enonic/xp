@@ -1,6 +1,6 @@
 module LiveEdit.ui.contextmenu {
     var $ = $liveEdit;
-    var componentHelper = LiveEdit.ComponentHelper;
+    var componentHelper = LiveEdit.component.ComponentHelper;
     var domHelper = LiveEdit.DomHelper;
 
     export class Menu extends LiveEdit.ui.Base {
@@ -24,8 +24,6 @@ module LiveEdit.ui.contextmenu {
             this.addView();
             this.registerEvents();
             this.registerGlobalListeners();
-
-            console.log('Menu instantiated. Using jQuery ' + $().jquery);
         }
 
         private registerGlobalListeners():void {

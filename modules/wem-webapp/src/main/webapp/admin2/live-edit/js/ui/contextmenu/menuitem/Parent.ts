@@ -1,6 +1,6 @@
 module LiveEdit.ui.contextmenu.menuitem {
     var $ = $liveEdit;
-    var componentHelper = LiveEdit.ComponentHelper;
+    var componentHelper = LiveEdit.component.ComponentHelper;
 
     export class Parent extends LiveEdit.ui.contextmenu.menuitem.Base {
 

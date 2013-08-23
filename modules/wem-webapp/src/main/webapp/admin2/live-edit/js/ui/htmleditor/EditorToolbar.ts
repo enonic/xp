@@ -1,7 +1,7 @@
 module LiveEdit.ui {
     var $ = $liveEdit;
 
-    var componentHelper = LiveEdit.ComponentHelper;
+    var componentHelper = LiveEdit.component.ComponentHelper;
 
     export class EditorToolbar extends LiveEdit.ui.Base {
 
@@ -15,8 +15,6 @@ module LiveEdit.ui {
             this.addView();
             this.addEvents();
             this.registerGlobalListeners();
-
-            console.log('EditorToolbar instantiated. Using jQuery ' + $().jquery);
         }
 
         registerGlobalListeners():void {
@@ -28,21 +26,21 @@ module LiveEdit.ui {
 
         addView():void {
             var html:string = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
-                '    <button data-tag="paste" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="insertOrderedList" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="link" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="cut" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="strikeThrough" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="bold" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="underline" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="italic" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="superscript" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="subscript" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="justifyLeft" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="justifyCenter" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="justifyRight" class="live-edit-editor-button"></button>' +
-                '    <button data-tag="justifyFull" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="paste" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="insertOrderedList" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="link" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="cut" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="strikeThrough" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="bold" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="underline" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="italic" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="superscript" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="subscript" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="justifyLeft" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="justifyCenter" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="justifyRight" class="live-edit-editor-button"></button>' +
+                '    <button live-edit-data-tag="justifyFull" class="live-edit-editor-button"></button>' +
                 '</div>';
 
             this.createElementsFromString(html);
@@ -56,7 +54,7 @@ module LiveEdit.ui {
                 event.stopPropagation();
 
                 // Simple editor command implementation ;)
-                var tag = event.target.getAttribute('data-tag');
+                var tag = event.target.getAttribute('live-edit-data-tag');
                 if (tag) {
                     $(window).trigger('editorToolbarButtonClick.liveEdit', [tag]);
                 }

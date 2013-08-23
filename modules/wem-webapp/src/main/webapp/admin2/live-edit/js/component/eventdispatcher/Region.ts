@@ -1,20 +1,18 @@
-module LiveEdit.component.observer {
+module LiveEdit.component.eventdispatcher {
     var $ = $liveEdit;
-    var componentHelper = LiveEdit.ComponentHelper;
+    var componentHelper = LiveEdit.component.ComponentHelper;
 
-    export class Region extends LiveEdit.component.observer.Base {
+    export class Region extends LiveEdit.component.eventdispatcher.Base {
         constructor() {
             super();
 
-            this.cssSelector = '[data-live-edit-type=region]';
+            this.componentCssSelector = '[data-live-edit-type=region]';
 
             this.renderEmptyPlaceholders();
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();
             this.attachClickEvent();
             this.registerGlobalListeners();
-
-            console.log('Region observer instantiated. Using jQuery ' + $().jquery);
         }
 
         private registerGlobalListeners():void {

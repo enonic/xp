@@ -31,7 +31,7 @@ interface ComponentPagePosition {
     left: number;
 }
 
-module LiveEdit {
+module LiveEdit.component {
     export class ComponentHelper {
 
         static $:JQuery = $liveEdit;

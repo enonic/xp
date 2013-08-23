@@ -6,7 +6,7 @@
 module LiveEdit.DragDropSort {
     var $ = $liveEdit;
 
-    var componentHelper = LiveEdit.ComponentHelper;
+    var componentHelper = LiveEdit.component.ComponentHelper;
 
     var _isDragging:bool = false;
 
@@ -128,7 +128,7 @@ module LiveEdit.DragDropSort {
         var componentIsSelected = ui.item.hasClass('live-edit-selected-component');
         ui.item.data('live-edit-selected-on-sort-start', componentIsSelected);
 
-        var targetComponentName = LiveEdit.ComponentHelper.getComponentName($(event.target));
+        var targetComponentName = LiveEdit.component.ComponentHelper.getComponentName($(event.target));
         ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + targetComponentName + '</div>');
 
         this.refreshSortable();
@@ -182,7 +182,7 @@ module LiveEdit.DragDropSort {
             ui.item.remove()
         }
 
-        if (LiveEdit.ComponentHelper.supportsTouch()) {
+        if (LiveEdit.component.ComponentHelper.supportsTouch()) {
             $(window).trigger('mouseOutComponent.liveEdit');
         }
 
@@ -208,8 +208,7 @@ module LiveEdit.DragDropSort {
 
                 var placeHolderHtml:string = '';
                 placeHolderHtml += '<div class="live-edit-component-placeholder" data-live-edit-type="' + componentType + '">';
-                placeHolderHtml += '    Placeholder';
-                placeHolderHtml += '    <br/><span style="font-size:11px">Click to add a component of type ' + componentType + '</span>';
+                placeHolderHtml += '    Drop here to upload image';
                 placeHolderHtml += '</div>';
 
                 component.replaceWith(placeHolderHtml);
@@ -252,7 +251,7 @@ module LiveEdit.DragDropSort {
 
     export function registerGlobalListeners():void {
         $(window).on('deselectComponent.liveEdit', () => {
-            if (LiveEdit.ComponentHelper.supportsTouch() && !_isDragging) {
+            if (LiveEdit.component.ComponentHelper.supportsTouch() && !_isDragging) {
                 this.disableDragDrop();
             }
         });

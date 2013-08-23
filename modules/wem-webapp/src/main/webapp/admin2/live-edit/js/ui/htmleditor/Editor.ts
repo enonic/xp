@@ -10,8 +10,6 @@ module LiveEdit.ui {
 
             this.toolbar = new LiveEdit.ui.EditorToolbar();
             this.registerGlobalListeners();
-
-            console.log('Editor instantiated. Using jQuery ' + $().jquery);
         }
 
         registerGlobalListeners():void {

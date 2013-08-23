@@ -6,7 +6,7 @@ interface ToolTipPosition {
 module LiveEdit.ui {
     var $ = $liveEdit;
 
-    var componentHelper = LiveEdit.ComponentHelper;
+    var componentHelper = LiveEdit.component.ComponentHelper;
     var domHelper = LiveEdit.DomHelper;
 
     export class ToolTip extends LiveEdit.ui.Base {
@@ -18,8 +18,6 @@ module LiveEdit.ui {
             this.addView();
             this.attachEventListeners();
             this.registerGlobalListeners();
-
-            console.log('ToolTip instantiated. Using jQuery ' + $().jquery);
         }
 
         private registerGlobalListeners():void {

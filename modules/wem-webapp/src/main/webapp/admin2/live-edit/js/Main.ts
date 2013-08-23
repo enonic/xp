@@ -6,21 +6,23 @@ declare var LiveEditMutationSummary;
 ///<reference path='../lib/jqueryui.d.ts' />
 
 ///<reference path='shared/DomHelper.ts' />
-///<reference path='shared/ComponentHelper.ts' />
+
+///<reference path='component/ComponentHelper.ts' />
+
 ///<reference path='shared/MutationObserver.ts' />
 
 ///<reference path='ui/DragDropSort.ts' />
 
 ///<reference path='component/Component.ts' />
 
-///<reference path='component/observer/Base.ts' />
-///<reference path='component/observer/Page.ts' />
-///<reference path='component/observer/Region.ts' />
-///<reference path='component/observer/Layout.ts' />
-///<reference path='component/observer/Image.ts' />
-///<reference path='component/observer/Part.ts' />
-///<reference path='component/observer/Content.ts' />
-///<reference path='component/observer/Paragraph.ts' />
+///<reference path='component/eventdispatcher/Base.ts' />
+///<reference path='component/eventdispatcher/Page.ts' />
+///<reference path='component/eventdispatcher/Region.ts' />
+///<reference path='component/eventdispatcher/Layout.ts' />
+///<reference path='component/eventdispatcher/Image.ts' />
+///<reference path='component/eventdispatcher/Part.ts' />
+///<reference path='component/eventdispatcher/Content.ts' />
+///<reference path='component/eventdispatcher/Paragraph.ts' />
 
 ///<reference path='ui/Base.ts' />
 ///<reference path='ui/HtmlElementReplacer.ts' />
@@ -52,13 +54,13 @@ declare var LiveEditMutationSummary;
         loaderSplash.fadeOut('fast', () => {
             loaderSplash.remove();
 
-            new LiveEdit.component.observer.Page();
-            new LiveEdit.component.observer.Region();
-            new LiveEdit.component.observer.Layout();
-            new LiveEdit.component.observer.Part();
-            new LiveEdit.component.observer.Image();
-            new LiveEdit.component.observer.Paragraph();
-            new LiveEdit.component.observer.Content();
+            new LiveEdit.component.eventdispatcher.Page();
+            new LiveEdit.component.eventdispatcher.Region();
+            new LiveEdit.component.eventdispatcher.Layout();
+            new LiveEdit.component.eventdispatcher.Part();
+            new LiveEdit.component.eventdispatcher.Image();
+            new LiveEdit.component.eventdispatcher.Paragraph();
+            new LiveEdit.component.eventdispatcher.Content();
 
             new LiveEdit.ui.HtmlElementReplacer();
             new LiveEdit.ui.Highlighter();

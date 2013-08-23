@@ -17,7 +17,7 @@ module LiveEdit.ui {
         }
 
         private update(component:JQuery):void {
-            var componentType = LiveEdit.ComponentHelper.getComponentType(component);
+            var componentType = LiveEdit.component.ComponentHelper.getComponentType(component);
             var body:JQuery = $('body');
             var cursor:string = this.DEFAULT_CURSOR;
 

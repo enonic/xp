@@ -7,8 +7,6 @@ module LiveEdit.ui {
         constructor() {
             super();
             this.replaceElementsWithPlaceholders();
-
-            console.log('HtmlElementReplacer instantiated. Using jQuery ' + $().jquery);
         }
 
         replaceElementsWithPlaceholders():void {

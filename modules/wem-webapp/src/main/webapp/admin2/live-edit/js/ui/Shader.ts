@@ -1,7 +1,7 @@
 module LiveEdit.ui {
     var $ = $liveEdit;
 
-    var componentHelper = LiveEdit.ComponentHelper;
+    var componentHelper = LiveEdit.component.ComponentHelper;
 
     export class Shader extends LiveEdit.ui.Base {
         private selectedComponent:JQuery = null;
@@ -16,8 +16,6 @@ module LiveEdit.ui {
             this.addView();
             this.addEvents();
             this.registerGlobalListeners();
-
-            console.log('Shader instantiated. Using jQuery ' + $().jquery);
         }
 
         registerGlobalListeners():void {

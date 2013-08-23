@@ -314,49 +314,49 @@ svg.live-edit-highlight-border rect {
 .live-edit-editor-button:hover {
   border: 1px solid #ccc; }
 
-.live-edit-editor-button[data-tag=paste] {
+.live-edit-editor-button[live-edit-data-tag=paste] {
   background: url("..//images/htmleditor/paste.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=insertUnorderedList] {
+.live-edit-editor-button[live-edit-data-tag=insertUnorderedList] {
   background: url("..//images/htmleditor/list.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=insertOrderedList] {
+.live-edit-editor-button[live-edit-data-tag=insertOrderedList] {
   background: url("..//images/htmleditor/numbered-list.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=link] {
+.live-edit-editor-button[live-edit-data-tag=link] {
   background: url("..//images/htmleditor/link.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=cut] {
+.live-edit-editor-button[live-edit-data-tag=cut] {
   background: url("..//images/htmleditor/scissors.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=strikeThrough] {
+.live-edit-editor-button[live-edit-data-tag=strikeThrough] {
   background: url("..//images/htmleditor/strikethrough.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=bold] {
+.live-edit-editor-button[live-edit-data-tag=bold] {
   background: url("..//images/htmleditor/bold.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=underline] {
+.live-edit-editor-button[live-edit-data-tag=underline] {
   background: url("..//images/htmleditor/underline.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=italic] {
+.live-edit-editor-button[live-edit-data-tag=italic] {
   background: url("..//images/htmleditor/italic.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=superscript] {
+.live-edit-editor-button[live-edit-data-tag=superscript] {
   background: url("..//images/htmleditor/superscript.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=subscript] {
+.live-edit-editor-button[live-edit-data-tag=subscript] {
   background: url("..//images/htmleditor/subscript.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=justifyLeft] {
+.live-edit-editor-button[live-edit-data-tag=justifyLeft] {
   background: url("..//images/htmleditor/paragraph-left.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=justifyCenter] {
+.live-edit-editor-button[live-edit-data-tag=justifyCenter] {
   background: url("..//images/htmleditor/paragraph-center.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=justifyRight] {
+.live-edit-editor-button[live-edit-data-tag=justifyRight] {
   background: url("..//images/htmleditor/paragraph-right.png") center center no-repeat; }
 
-.live-edit-editor-button[data-tag=justifyFull] {
+.live-edit-editor-button[live-edit-data-tag=justifyFull] {
   background: url("..//images/htmleditor/paragraph-justify.png") center center no-repeat; }
 
 .live-edit-context-menu {

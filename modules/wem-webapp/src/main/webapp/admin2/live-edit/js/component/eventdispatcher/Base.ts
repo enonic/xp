@@ -1,16 +1,16 @@
 // fixme: pass Live Edit Component reference instead of a JQuery object in triggers
-module LiveEdit.component.observer {
+module LiveEdit.component.eventdispatcher {
     var $ = $liveEdit;
 
     export class Base {
-        public cssSelector:string = '';
+        public componentCssSelector:string = '';
 
         constructor() {
         }
 
         attachMouseOverEvent():void {
 
-            $(document).on('mouseover', this.cssSelector, (event:JQueryEventObject) => {
+            $(document).on('mouseover', this.componentCssSelector, (event:JQueryEventObject) => {
                 if (this.cancelMouseOverEvent(event)) {
                     return;
                 }
@@ -34,7 +34,7 @@ module LiveEdit.component.observer {
 
         attachClickEvent():void {
 
-            $(document).on('click contextmenu touchstart', this.cssSelector, (event:JQueryEventObject) => {
+            $(document).on('click contextmenu touchstart', this.componentCssSelector, (event:JQueryEventObject) => {
                 // Is this needed? We are using $.on with a delegate so the target would always be a LE component
                 if (this.isLiveEditUiComponent($(event.target))) {
                     return;
@@ -62,7 +62,7 @@ module LiveEdit.component.observer {
         }
 
         getAll():JQuery {
-            return $(this.cssSelector);
+            return $(this.componentCssSelector);
         }
 
         cancelMouseOverEvent(event:JQueryEventObject):Boolean {

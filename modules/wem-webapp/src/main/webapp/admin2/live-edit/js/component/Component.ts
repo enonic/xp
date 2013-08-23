@@ -1,5 +1,5 @@
-module LiveEdit {
-    var componentHelper = LiveEdit.ComponentHelper;
+module LiveEdit.component {
+    var componentHelper = LiveEdit.component.ComponentHelper;
 
     export class Component {
 

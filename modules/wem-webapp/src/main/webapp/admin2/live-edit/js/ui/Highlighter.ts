@@ -1,7 +1,7 @@
 module LiveEdit.ui {
     var $ = $liveEdit;
 
-    var componentHelper = LiveEdit.ComponentHelper;
+    var componentHelper = LiveEdit.component.ComponentHelper;
 
     export class Highlighter extends LiveEdit.ui.Base {
 
@@ -11,8 +11,6 @@ module LiveEdit.ui {
             super();
             this.addView();
             this.registerGlobalListeners();
-
-            console.log('Highlighter instantiated. Using jQuery ' + $().jquery);
         }
 
         private registerGlobalListeners():void {

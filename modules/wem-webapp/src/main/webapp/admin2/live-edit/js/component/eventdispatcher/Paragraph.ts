@@ -1,7 +1,7 @@
-module LiveEdit.component.observer {
+module LiveEdit.component.eventdispatcher {
     var $ = $liveEdit;
 
-    export class Paragraph extends LiveEdit.component.observer.Base {
+    export class Paragraph extends LiveEdit.component.eventdispatcher.Base {
 
         private selectedParagraph:JQuery = null;
         private modes:any = {};
@@ -10,7 +10,7 @@ module LiveEdit.component.observer {
         constructor() {
             super();
 
-            this.cssSelector = '[data-live-edit-type=paragraph]';
+            this.componentCssSelector = '[data-live-edit-type=paragraph]';
             this.modes = {
                 UNSELECTED: 0,
                 SELECTED: 1,
@@ -21,8 +21,6 @@ module LiveEdit.component.observer {
             this.attachMouseOutEvent();
             this.attachClickEvent();
             this.registerGlobalListeners();
-
-            console.log('Paragraph observer instantiated. Using jQuery ' + $().jquery);
         }
 
         registerGlobalListeners():void {
@@ -33,7 +31,7 @@ module LiveEdit.component.observer {
 
         // Override base attachClickEvent
         attachClickEvent():void {
-            $(document).on('click contextmenu touchstart', this.cssSelector, (event:JQueryEventObject) => {
+            $(document).on('click contextmenu touchstart', this.componentCssSelector, (event:JQueryEventObject) => {
                 this.handleClick(event);
             });
         }

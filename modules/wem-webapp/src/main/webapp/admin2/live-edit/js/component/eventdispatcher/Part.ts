@@ -1,18 +1,16 @@
-module LiveEdit.component.observer {
+module LiveEdit.component.eventdispatcher {
     var $ = $liveEdit;
 
-    export class Part extends LiveEdit.component.observer.Base {
+    export class Part extends LiveEdit.component.eventdispatcher.Base {
         constructor() {
             super();
 
-            this.cssSelector = '[data-live-edit-type=part]';
+            this.componentCssSelector = '[data-live-edit-type=part]';
 
             this.renderEmptyPlaceholders();
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();
             this.attachClickEvent();
-
-            console.log('Part observer instantiated. Using jQuery ' + $().jquery);
         }
 
         private renderEmptyPlaceholders():void {
