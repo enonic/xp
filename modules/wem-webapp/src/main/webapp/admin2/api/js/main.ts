@@ -142,8 +142,10 @@
 ///<reference path='app/wizard/CloseAction.ts' />
 ///<reference path='app/wizard/FormIcon.ts' />
 ///<reference path='app/wizard/WizardEvents.ts' />
-///<reference path='app/wizard/WizardPanelHeaderListener.ts' />
-///<reference path='app/wizard/WizardPanelHeader.ts' />
+///<reference path='app/wizard/WizardHeaderListener.ts' />
+///<reference path='app/wizard/WizardHeader.ts' />
+///<reference path='app/wizard/WizardHeaderWithDisplayNameAndName.ts' />
+///<reference path='app/wizard/WizardHeaderWithName.ts' />
 ///<reference path='app/wizard/WizardStepDeckPanel.ts' />
 ///<reference path='app/wizard/WizardStepNavigator.ts' />
 ///<reference path='app/wizard/WizardStepNavigatorListener.ts' />

@@ -20,6 +20,19 @@ module app {
             this.handleGlobalEvents();
         }
 
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground?:bool = false) {
+            super.addWizardPanel(tabMenuItem, wizardPanel, inBackground);
+
+            wizardPanel.getHeader().addListener(
+                {
+                    onPropertyChanged: (event:api_app_wizard.WizardHeaderPropertyChangedEvent) => {
+                        if (event.property == "displayName") {
+                            tabMenuItem.setLabel(event.newValue);
+                        }
+                    }
+                });
+        }
+
         private handleGlobalEvents() {
 
             api_app.ShowAppBrowsePanelEvent.on((event) => {

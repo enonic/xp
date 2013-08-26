@@ -23,6 +23,19 @@ module app {
             this.handleGlobalEvents();
         }
 
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground?:bool = false) {
+            super.addWizardPanel(tabMenuItem, wizardPanel, inBackground);
+
+            wizardPanel.getHeader().addListener(
+                {
+                    onPropertyChanged: (event:api_app_wizard.WizardHeaderPropertyChangedEvent) => {
+                        if (event.property == "name") {
+                            tabMenuItem.setLabel(event.newValue);
+                        }
+                    }
+                });
+        }
+
         private handleGlobalEvents() {
 
             api_app.ShowAppBrowsePanelEvent.on((event) => {
@@ -57,15 +70,15 @@ module app {
 
                     switch (schemaType) {
                     case SchemaAppPanel.CONTENT_TYPE:
-                        tabMenuItem = new api_app.AppBarTabMenuItem("New Content Type", tabId, true);
+                        tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
                         schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(tabId);
                         break;
                     case SchemaAppPanel.RELATIONSHIP_TYPE:
-                        tabMenuItem = new api_app.AppBarTabMenuItem("New Relationship Type", tabId, true);
+                        tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
                         schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(tabId);
                         break;
                     case SchemaAppPanel.MIXIN:
-                        tabMenuItem = new api_app.AppBarTabMenuItem("New Mixin", tabId, true);
+                        tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.MixinWizardPanel.NEW_WIZARD_HEADER, tabId, true);
                         schemaWizardPanel = new app_wizard.MixinWizardPanel(tabId);
                         break;
                     }
@@ -99,7 +112,7 @@ module app {
 
                                     var contentType:api_remote_contenttype.ContentType = result.contentTypes[0];
 
-                                    tabMenuItem = new api_app.AppBarTabMenuItem(contentType.displayName, tabId, true);
+                                    tabMenuItem = new api_app.AppBarTabMenuItem(contentType.name, tabId, true);
 
                                     schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(tabId);
                                     schemaWizardPanel.setPersistedItem(contentType);

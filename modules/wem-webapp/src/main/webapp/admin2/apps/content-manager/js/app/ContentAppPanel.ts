@@ -45,6 +45,19 @@ module app {
             });
         }
 
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground?:bool = false) {
+            super.addWizardPanel(tabMenuItem, wizardPanel, inBackground);
+
+            wizardPanel.getHeader().addListener(
+                {
+                    onPropertyChanged: (event:api_app_wizard.WizardHeaderPropertyChangedEvent) => {
+                        if (event.property == "displayName") {
+                            tabMenuItem.setLabel(event.newValue);
+                        }
+                    }
+                });
+        }
+
         private handleNew(contentType:api_remote_contenttype.ContentType, parentContent:api_remote_content.Content) {
 
             var tabId = this.generateTabId();
@@ -54,7 +67,7 @@ module app {
                 this.selectPanel(tabMenuItem);
 
             } else {
-                tabMenuItem = new api_app.AppBarTabMenuItem("New Content", tabId);
+                tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentWizardPanel.NEW_WIZARD_HEADER, tabId);
                 var wizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent);
                 wizardPanel.renderNew();
 

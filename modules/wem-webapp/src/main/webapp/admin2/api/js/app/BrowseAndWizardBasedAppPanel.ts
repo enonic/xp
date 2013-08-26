@@ -43,12 +43,6 @@ module api_app {
             super.addNavigationItem(tabMenuItem, wizardPanel, inBackground);
 
             wizardPanel.addListener({
-                onDisplayNameChanged: (oldValue, newValue) => {
-                    tabMenuItem.setLabel(newValue);
-                },
-                onNameChanged: (oldValue, newValue) => {
-                    // update something when name changed
-                },
                 onClosed: (wizard) => {
                     this.removePanel(wizard, false);
                 }
