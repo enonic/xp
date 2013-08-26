@@ -208,6 +208,7 @@
 ///<reference path='schema/content/form/FieldSet.ts' />
 ///<reference path='schema/content/form/Input.ts' />
 ///<reference path='schema/content/form/Occurrences.ts' />
+///<reference path='schema/content/ContentType.ts' />
 
 
 ///<reference path='schema/content/form/FormItemSet.ts' />
