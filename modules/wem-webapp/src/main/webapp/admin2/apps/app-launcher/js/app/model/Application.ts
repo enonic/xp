@@ -4,12 +4,13 @@ module app_model {
         private name:string;
         private description:string;
         private iconUrl:string;
-        private appUrl:string; // TODO
+        private appUrl:string;
         private openTabs:number;
 
-        constructor(name:string, iconUrl:string, description:string) {
+        constructor(name:string, appUrl:string, iconUrl:string, description?:string) {
             this.name = name;
             this.iconUrl = iconUrl;
+            this.appUrl = appUrl;
             this.description = description;
             this.openTabs = 0;
         }
@@ -24,6 +25,10 @@ module app_model {
 
         getIconUrl():string {
             return this.iconUrl;
+        }
+
+        getAppUrl():string {
+            return this.appUrl;
         }
 
         getOpenTabs():number {

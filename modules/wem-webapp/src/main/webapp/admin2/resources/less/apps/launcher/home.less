@@ -1,11 +1,11 @@
 .admin-home-main-container h3,
 .admin-home-installation-info {
   font-size: 24px;
-  color: #fff;
+  color: @admin-white;
 }
 
 .admin-home-main-container a {
-  color: #fff;
+  color: @admin-white;
   text-decoration: none;
 }
 
@@ -100,37 +100,37 @@
 /** Center */
 
 .admin-home-center {
-  width: 775px;
+  @home-center-width: 775px;
+  width: @home-center-width;
   position: absolute;
   left: 50%;
-  margin-left: -387.5px; /* width / 2 */
+  margin-left: -(@home-center-width / 2);
   background-color: transparent;
   top: 0;
   bottom: 0;
-}
+  /** Left column */
 
-/** Left column */
+  .admin-home-left-column {
+    position: absolute;
+    width: 480px;
+    background: transparent;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    color: @admin-white !important;
+  }
 
-.admin-home-center .admin-home-left-column {
-  position: absolute;
-  width: 480px;
-  background: transparent;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  color: #fff !important;
-}
+  /** Right column */
 
-/** Right column */
-
-.admin-home-center .admin-home-right-column {
-  position: absolute;
-  width: 295px;
-  background: rgba(0, 0, 0, 0.2);
-  top: 0;
-  right: 0;
-  bottom: 0;
-  color: #fff !important;
+  .admin-home-right-column {
+    position: absolute;
+    width: 295px;
+    background: rgba(0, 0, 0, 0.2);
+    top: 0;
+    right: 0;
+    bottom: 0;
+    color: @admin-white !important;
+  }
 }
 
 .admin-home-login-licensed-to {
@@ -162,7 +162,7 @@
 /** App selector */
 
 .admin-home-app-selector {
-  color: #fff;
+  color: @admin-white;
 
   opacity: 0;
   transition: all 300ms ease-out;
@@ -236,7 +236,7 @@
 
 .admin-home-app-tile > .tab-count-container {
   background-color: #DC143C;
-  color: #FFFFFF;
+  color: @admin-white;
   font-size: 13px;
   padding: 2px 8px;
   position: absolute;
@@ -263,7 +263,7 @@
   vertical-align: top;
 
   padding: 4px 9px;
-  background: none #fff !important;
+  background: none @admin-white !important;
   width: 200px;
 }
 
