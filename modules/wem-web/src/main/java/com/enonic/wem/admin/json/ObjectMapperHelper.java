@@ -15,7 +15,8 @@ public final class ObjectMapperHelper
         mapper.disable( SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS );
         mapper.disable( SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS );
         mapper.enable( SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY );
-        mapper.setSerializationInclusion( JsonSerialize.Inclusion.NON_NULL );
+        mapper.enable( SerializationConfig.Feature.WRITE_NULL_MAP_VALUES );
+        mapper.setSerializationInclusion( JsonSerialize.Inclusion.ALWAYS );
         return mapper;
     }
 }

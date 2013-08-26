@@ -5,7 +5,7 @@
             "allowChildren": true,
             "contentDisplayNameScript": null,
             "deletable": true,
-            "displayName": null,
+            "displayName": "My ContentType",
             "editable": true,
             "final": false,
             "form": [

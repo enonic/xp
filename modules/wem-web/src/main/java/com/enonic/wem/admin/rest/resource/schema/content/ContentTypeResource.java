@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,7 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -55,6 +53,7 @@ import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newSetContentTypeEditor;
 
 @Path("schema/content")
+@Produces("application/json")
 public class ContentTypeResource
     extends AbstractResource
 {
@@ -64,8 +63,9 @@ public class ContentTypeResource
 
     private UploadService uploadService;
 
+    private ContentTypeXmlSerializer contentTypeXmlSerializer = new ContentTypeXmlSerializer();
+
     @GET
-    @Produces("application/json")
     public ContentTypeList get( @QueryParam("qualifiedNames") final List<String> qualifiedNamesAsStrings,
                                 @QueryParam("format") final String format,
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
@@ -127,15 +127,14 @@ public class ContentTypeResource
 
     @POST
     @Path("delete")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void delete( @FormParam("qualifiedContentTypeNames") final List<String> names )
+    public void delete( @FormParam("qualifiedNames") final List<String> qualifiedNames )
     {
-        final QualifiedContentTypeNames contentTypeNames = QualifiedContentTypeNames.from( names );
+        final QualifiedContentTypeNames qualifiedContentTypeNames = QualifiedContentTypeNames.from( qualifiedNames );
 
         final List<String> notFound = Lists.newArrayList();
         final List<String> unableDelete = Lists.newArrayList();
 
-        for ( QualifiedContentTypeName contentTypeName : contentTypeNames )
+        for ( QualifiedContentTypeName contentTypeName : qualifiedContentTypeNames )
         {
             final DeleteContentType deleteContentType = Commands.contentType().delete().name( contentTypeName );
             final DeleteContentTypeResult deleteResult = client.execute( deleteContentType );
@@ -169,8 +168,67 @@ public class ContentTypeResource
     }
 
     @POST
+    @Path("create")
+    public void create( @FormParam("contentType") final String contentTypeXml, @FormParam("iconReference") final String iconReference )
+    {
+        ContentType contentType;
+        try
+        {
+            contentType = contentTypeXmlSerializer.toContentType( contentTypeXml );
+        }
+        catch ( XmlParsingException e )
+        {
+            throw new WebApplicationException( e );
+        }
+
+        if ( contentTypeExists( contentType.getQualifiedName() ) )
+        {
+            throw new IllegalArgumentException(
+                "ContentType already exists [" + contentType.getQualifiedName().toString() + "] TODO: make form reload" );
+        }
+
+        final Icon icon;
+        try
+        {
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+        }
+        catch ( JsonRpcException | IOException e )
+        {
+            throw new WebApplicationException( e );
+        }
+
+        if ( icon != null )
+        {
+            contentType = newContentType( contentType ).icon( icon ).build();
+        }
+
+        createContentType( contentType );
+    }
+
+    private void createContentType( final ContentType contentType )
+    {
+        final CreateContentType createCommand = contentType().create().
+            name( contentType.getName() ).
+            displayName( contentType.getDisplayName() ).
+            superType( contentType.getSuperType() ).
+            setAbstract( contentType.isAbstract() ).
+            setFinal( contentType.isFinal() ).
+            moduleName( contentType.getModuleName() ).
+            form( contentType.form() ).
+            icon( contentType.getIcon() ).
+            contentDisplayNameScript( contentType.getContentDisplayNameScript() );
+        try
+        {
+            client.execute( createCommand );
+        }
+        catch ( BaseException e )
+        {
+            throw new WebApplicationException( e );
+        }
+    }
+
+    @POST
     @Path("update")
-    @Consumes(MediaType.APPLICATION_JSON)
     public void update( @FormParam("contentType") final String contentTypeXml, @FormParam("iconReference") final String iconReference )
     {
         ContentType contentType;
@@ -224,74 +282,6 @@ public class ContentTypeResource
         }
     }
 
-    @POST
-    @Path("create")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void create( @FormParam("contentType") final String contentTypeXml, @FormParam("iconReference") final String iconReference )
-    {
-        ContentType contentType;
-        try
-        {
-            contentType = new ContentTypeXmlSerializer().toContentType( contentTypeXml );
-        }
-        catch ( XmlParsingException e )
-        {
-            throw new WebApplicationException( e );
-        }
-
-        final Icon icon;
-        try
-        {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
-        }
-        catch ( JsonRpcException | IOException e )
-        {
-            throw new WebApplicationException( e );
-        }
-
-        if ( icon != null )
-        {
-            contentType = newContentType( contentType ).icon( icon ).build();
-        }
-
-        if ( !contentTypeExists( contentType.getQualifiedName() ) )
-        {
-            createContentType( contentType );
-        }
-        else
-        {
-            updateContentType( contentType );
-        }
-    }
-
-    private boolean contentTypeExists( final QualifiedContentTypeName qualifiedName )
-    {
-        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) );
-        return !client.execute( getContentTypes ).isEmpty();
-    }
-
-    private void createContentType( final ContentType contentType )
-    {
-        final CreateContentType createCommand = contentType().create().
-            name( contentType.getName() ).
-            displayName( contentType.getDisplayName() ).
-            superType( contentType.getSuperType() ).
-            setAbstract( contentType.isAbstract() ).
-            setFinal( contentType.isFinal() ).
-            moduleName( contentType.getModuleName() ).
-            form( contentType.form() ).
-            icon( contentType.getIcon() ).
-            contentDisplayNameScript( contentType.getContentDisplayNameScript() );
-        try
-        {
-            client.execute( createCommand );
-        }
-        catch ( BaseException e )
-        {
-            throw new WebApplicationException( e );
-        }
-    }
-
     @GET
     @Path("tree")
     public ContentTypeTreeJson getTree()
@@ -318,6 +308,13 @@ public class ContentTypeResource
 
         return new ValidateContentTypeJson( validationResult, contentType );
     }
+
+    private boolean contentTypeExists( final QualifiedContentTypeName qualifiedName )
+    {
+        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) );
+        return !client.execute( getContentTypes ).isEmpty();
+    }
+
 
     @Inject
     public void setUploadService( final UploadService uploadService )

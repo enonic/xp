@@ -1,21 +1,17 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MultivaluedMap;
 
-import org.codehaus.jackson.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeConfigListJson;
-import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeList;
-import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeListJson;
-import com.enonic.wem.admin.rest.resource.schema.content.model.ContentTypeSummaryListJson;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -33,10 +29,9 @@ import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
-import static junit.framework.Assert.assertTrue;
 
 public class ContentTypeResourceTest
-    extends JsonTestHelper
+    extends AbstractResourceTest2
 {
     private UploadService uploadService;
 
@@ -51,25 +46,34 @@ public class ContentTypeResourceTest
         super();
     }
 
-    @Before
-    public void setup()
+    @Override
+    protected Object getResourceInstance()
     {
         client = Mockito.mock( Client.class );
+        resource = new ContentTypeResource();
         resource.setClient( client );
 
         uploadService = Mockito.mock( UploadService.class );
         resource.setUploadService( uploadService );
 
+        return resource;
+    }
+
+    @Before
+    public void setup()
+    {
         mockCurrentContextHttpRequest();
     }
 
     @Test
     public void get_contentType_with_only_one_input()
+        throws Exception
     {
         // setup
         final ContentType contentType = newContentType().
             module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
             name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
+            displayName( "My ContentType" ).
             addFormItem( newInput().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
@@ -83,16 +87,18 @@ public class ContentTypeResourceTest
             ContentTypes.from( contentType ) );
 
         // execute
-        ContentTypeList resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "JSON", false );
+        MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
+        qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
+        String jsonString = resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "format", "JSON" ).queryParam(
+            "mixinReferencesToFormItems", "false" ).get( String.class );
 
         // verify
-        assertTrue( resultObject instanceof ContentTypeListJson );
-        JsonNode actualJson = objectToJson( resultObject );
-        assertJsonEquals2( loadTestJson( "get_contentType_with_only_one_input-result.json" ), actualJson );
+        assertJson( "ContentTypeResourceTest-get_contentType_with_only_one_input-result.json", jsonString );
     }
 
     @Test
     public void get_contentType_with_all_formItem_types()
+        throws Exception
     {
         // setup
 
@@ -144,16 +150,18 @@ public class ContentTypeResourceTest
             ContentTypes.from( contentType ) );
 
         // execute
-        ContentTypeList resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "JSON", false );
+        MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
+        qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
+        String jsonString = resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "format", "JSON" ).queryParam(
+            "mixinReferencesToFormItems", "false" ).get( String.class );
 
         // verify
-        assertTrue( resultObject instanceof ContentTypeListJson );
-        JsonNode actualJson = objectToJson( resultObject );
-        assertJsonEquals2( loadTestJson( "get_contentType_with_all_formItem_types-result.json" ), actualJson );
+        assertJson( "ContentTypeResourceTest-get_contentType_with_all_formItem_types-result.json", jsonString );
     }
 
     @Test
     public void get_contentType_with_format_as_xml()
+        throws Exception
     {
         // setup
         final ContentType contentType = newContentType().
@@ -172,16 +180,18 @@ public class ContentTypeResourceTest
             ContentTypes.from( contentType ) );
 
         // execute
-        ContentTypeList resultObject = resource.get( Lists.newArrayList( MY_CTY_QUALIFIED_NAME.toString() ), "XML", false );
+        MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
+        qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
+        String jsonString = resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "format", "XML" ).queryParam(
+            "mixinReferencesToFormItems", "false" ).get( String.class );
 
         // verify
-        assertTrue( resultObject instanceof ContentTypeConfigListJson );
-        JsonNode actualJson = objectToJson( resultObject );
-        assertJsonEquals2( loadTestJson( "get_contentType_with_format_as_xml-result.json" ), actualJson );
+        assertJson( "ContentTypeResourceTest-get_contentType_with_format_as_xml-result.json", jsonString );
     }
 
     @Test
     public void list_one_contentType_with_only_one_input()
+        throws Exception
     {
         // setup
         final ContentType contentType = newContentType().
@@ -198,11 +208,14 @@ public class ContentTypeResourceTest
         Mockito.when( client.execute( Commands.contentType().get().all() ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
-        ContentTypeSummaryListJson resultObject = resource.list();
+        MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
+        qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
+        String jsonString =
+            resource().path( "schema/content/list" ).queryParams( qualifiedNames ).queryParam( "format", "JSON" ).queryParam(
+                "mixinReferencesToFormItems", "false" ).get( String.class );
 
         // verify
-        JsonNode actualJson = objectToJson( resultObject );
-        assertJsonEquals2( loadTestJson( "list_one_contentType_with_only_one_input-result.json" ), actualJson );
+        assertJson( "ContentTypeResourceTest-list_one_contentType_with_only_one_input-result.json", jsonString );
     }
 
     private void mockCurrentContextHttpRequest()

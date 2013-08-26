@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
+@SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryListJson
     implements ContentTypeList
 {
