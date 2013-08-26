@@ -70,6 +70,7 @@ module app_wizard {
         persistNewItem(successCallback?:() => void) {
             var formData = this.contentTypeForm.getFormData();
             var createParams:api_remote_contenttype.CreateOrUpdateParams = {
+                name: this.header.getName(),
                 contentType: formData.xml,
                 iconReference: this.getIconUrl()
             };
@@ -88,6 +89,7 @@ module app_wizard {
         updatePersistedItem(successCallback?:() => void) {
             var formData = this.contentTypeForm.getFormData();
             var updateParams:api_remote_contenttype.CreateOrUpdateParams = {
+                name: this.header.getName(),
                 contentType: formData.xml,
                 iconReference: this.getIconUrl()
             };

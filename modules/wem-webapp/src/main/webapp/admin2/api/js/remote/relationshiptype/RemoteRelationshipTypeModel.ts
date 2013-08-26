@@ -41,6 +41,7 @@ module api_remote_relationshiptype {
     }
 
     export interface CreateOrUpdateParams {
+        name:string;
         relationshipType:string;
         iconReference:string;
     }

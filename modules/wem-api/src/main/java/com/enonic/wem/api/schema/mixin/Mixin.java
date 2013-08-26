@@ -32,7 +32,14 @@ public class Mixin
     {
         this.moduleName = builder.moduleName;
         this.formItem = builder.formItem;
-        this.qualifiedName = new QualifiedMixinName( moduleName, getName() );
+        if ( this.moduleName != null )
+        {
+            this.qualifiedName = new QualifiedMixinName( this.moduleName, getName() );
+        }
+        else
+        {
+            this.qualifiedName = null;
+        }
         this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;

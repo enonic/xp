@@ -52,7 +52,12 @@ public final class RelationshipType
         this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
-        this.qualifiedName = new QualifiedRelationshipTypeName( module, name );
+        if( this.name != null && this.module != null ) {
+            this.qualifiedName = new QualifiedRelationshipTypeName( module, name );
+        }
+        else {
+            this.qualifiedName = null;
+        }
         this.fromSemantic = builder.fromSemantic;
         this.toSemantic = builder.toSemantic;
         this.allowedFromTypes = QualifiedContentTypeNames.from( builder.allowedFromTypes );
@@ -63,7 +68,7 @@ public final class RelationshipType
     @Override
     public String getName()
     {
-        return name.toString();
+        return name != null ? name.toString() : null;
     }
 
     @Override
@@ -225,7 +230,7 @@ public final class RelationshipType
 
         public Builder name( String value )
         {
-            this.name = Name.from( value );
+            this.name = value != null ? Name.from( value ) : null;
             return this;
         }
 

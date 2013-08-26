@@ -44,6 +44,7 @@ module api_remote_mixin {
     }
 
     export interface CreateOrUpdateParams {
+        name:string;
         mixin:string;
         iconReference:string;
     }

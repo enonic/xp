@@ -4,7 +4,6 @@ package com.enonic.wem.api.schema.content;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.Name;
@@ -21,6 +20,8 @@ public final class ContentType
     implements Schema
 {
     private final Name name;
+
+    private final QualifiedContentTypeName qualifiedName;
 
     private final String displayName;
 
@@ -46,15 +47,22 @@ public final class ContentType
 
     private ContentType( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.name, "Name cannot be null in ContentType" );
-        Preconditions.checkNotNull( builder.moduleName, "Module name cannot be null in ContentType" );
         this.name = builder.name;
+        this.moduleName = builder.moduleName;
+        if ( this.moduleName != null & this.name != null )
+        {
+            this.qualifiedName = new QualifiedContentTypeName( this.moduleName, this.name );
+        }
+        else
+        {
+            this.qualifiedName = null;
+        }
         this.displayName = builder.displayName;
         this.superType = builder.superType;
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
         this.allowChildren = builder.allowChildren;
-        this.moduleName = builder.moduleName;
+
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.form = builder.formBuilder.build();
@@ -65,7 +73,7 @@ public final class ContentType
     @Override
     public String getName()
     {
-        return name.toString();
+        return name != null ? name.toString() : null;
     }
 
     @Override
@@ -77,7 +85,7 @@ public final class ContentType
     @Override
     public QualifiedContentTypeName getQualifiedName()
     {
-        return new QualifiedContentTypeName( moduleName, name );
+        return qualifiedName;
     }
 
     public QualifiedContentTypeName getSuperType()
@@ -145,7 +153,7 @@ public final class ContentType
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "name", name );
         s.add( "displayName", displayName );
-        s.add( "module", moduleName.toString() );
+        s.add( "module", moduleName != null ? moduleName.toString() : null );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
@@ -199,7 +207,7 @@ public final class ContentType
 
         private Builder( final ContentType source )
         {
-            this.name = Name.from( source.getName() );
+            this.name = source.name;
             this.moduleName = source.getModuleName();
             this.displayName = source.getDisplayName();
             this.isAbstract = source.isAbstract();
@@ -225,7 +233,7 @@ public final class ContentType
 
         public Builder name( final String name )
         {
-            this.name = Name.from( name );
+            this.name = name != null ? Name.from( name ) : null;
             return this;
         }
 

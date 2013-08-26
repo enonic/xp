@@ -6,9 +6,9 @@ import javax.inject.Inject;
 import com.enonic.wem.admin.json.JsonErrorResult;
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.jsonrpc.JsonRpcException;
+import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
@@ -24,6 +24,7 @@ import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 import static com.enonic.wem.api.command.Commands.relationshipType;
+import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
 
 
 public final class CreateOrUpdateRelationshipTypeRpcHandler
@@ -43,9 +44,10 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
+        final String name = context.param( "name" ).required().asString();
         final String xml = context.param( "relationshipType" ).required().asString();
         final String iconReference = context.param( "iconReference" ).asString();
-        final RelationshipType relationshipType;
+        RelationshipType relationshipType;
         try
         {
             relationshipType = relationshipTypeXmlSerializer.toRelationshipType( xml );
@@ -55,6 +57,8 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
             context.setResult( new JsonErrorResult( "Invalid RelationshipType format" ) );
             return;
         }
+
+        relationshipType = newRelationshipType( relationshipType ).name( name ).build();
 
         final Icon icon;
         try

@@ -95,6 +95,7 @@ module api_remote_contenttype {
     }
 
     export interface CreateOrUpdateParams {
+        name: string;
         contentType: string;
         iconReference: string;
     }

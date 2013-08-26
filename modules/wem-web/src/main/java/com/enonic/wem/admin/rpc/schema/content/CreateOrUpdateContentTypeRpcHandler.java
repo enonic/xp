@@ -5,9 +5,9 @@ import javax.inject.Inject;
 import com.enonic.wem.admin.json.JsonErrorResult;
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.jsonrpc.JsonRpcException;
+import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
@@ -45,6 +45,7 @@ public class CreateOrUpdateContentTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
+        final String name = context.param( "name" ).required().asString();
         final String contentTypeXml = context.param( "contentType" ).required().asString();
         final String iconReference = context.param( "iconReference" ).asString();
         ContentType contentType;
@@ -57,6 +58,8 @@ public class CreateOrUpdateContentTypeRpcHandler
             context.setResult( new JsonErrorResult( "Invalid content type format: " + e.getMessage() ) );
             return;
         }
+
+        contentType = newContentType( contentType ).name( name ).build();
 
         final Icon icon;
         try

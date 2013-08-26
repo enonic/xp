@@ -1,5 +1,6 @@
 {
-    "contentType": "<type><xml-format-not-validated-in-this-test/><name>all_types</name><module>mymodule</module><form><input type=\"TextLine\" built-in=\"true\" name=\"myTextLine\"> <label /> <immutable>false</immutable> <indexed>false</indexed> <customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></form></type>",
+    "name" : "all_types",
+    "contentType": "<type><xml-format-not-validated-in-this-test/><module>mymodule</module><form><input type=\"TextLine\" built-in=\"true\" name=\"myTextLine\"> <label /> <immutable>false</immutable> <indexed>false</indexed> <customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></form></type>",
     "iconReference": "edc1af66-ecb4-4f8a-8df4-0738418f84fc"
 }
 
