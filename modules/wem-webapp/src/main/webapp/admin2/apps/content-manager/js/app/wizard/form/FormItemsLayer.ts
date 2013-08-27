@@ -8,7 +8,7 @@ module app_wizard_form {
             this.parentEl = parentEl;
         }
 
-        public layout(formItems:api_schema_content_form.FormItem[], parentDataSet:api_content_data.DataSet):FormItemContainer[] {
+        public layout(formItems:api_schema_content_form.FormItem[], parentDataSet:api_data.DataSet):FormItemContainer[] {
 
             console.log("FormItemsLayer.layout");
             console.log(".. formItems: ", formItems);

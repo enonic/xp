@@ -157,14 +157,14 @@ module app_wizard {
             });
         }
 
-        private flattenData(contentData:api_content_data.DataSet, result:any) {
-            contentData.getDataArray().forEach((data:api_content_data.Data) => {
-                if (data instanceof api_content_data.Property) {
-                    var property:api_content_data.Property = <api_content_data.Property>data;
+        private flattenData(contentData:api_data.DataSet, result:any) {
+            contentData.getDataArray().forEach((data:api_data.Data) => {
+                if (data instanceof api_data.Property) {
+                    var property:api_data.Property = <api_data.Property>data;
                     result[data.getId().toString()] = property.getValue();
                 }
-                else if (data instanceof api_content_data.DataSet) {
-                    var dataSet = <api_content_data.DataSet>data;
+                else if (data instanceof api_data.DataSet) {
+                    var dataSet = <api_data.DataSet>data;
                     this.flattenData(dataSet, result);
                 }
             });

@@ -4,13 +4,13 @@ module app_wizard_form {
 
         private input:api_schema_content_form.Input;
 
-        private parentDataSet:api_content_data.DataSet;
+        private parentDataSet:api_data.DataSet;
 
-        private properties:api_content_data.Property[];
+        private properties:api_data.Property[];
 
         private inputCmp;
 
-        constructor(input:api_schema_content_form.Input, parentDataSet:api_content_data.DataSet) {
+        constructor(input:api_schema_content_form.Input, parentDataSet:api_data.DataSet) {
             super(input);
 
             this.input = input;
@@ -44,15 +44,15 @@ module app_wizard_form {
             this.getEl().appendChild(this.inputCmp.getHTMLElement());
         }
 
-        getData():api_content_data.Data[] {
+        getData():api_data.Data[] {
             return this.getProperties();
         }
 
-        getProperties():api_content_data.Property[] {
+        getProperties():api_data.Property[] {
 
-            var properties:api_content_data.Property[] = [];
+            var properties:api_data.Property[] = [];
             this.inputCmp.getValues().forEach((value:string, index:number) => {
-                properties[index] = new api_content_data.Property(this.input.getName(), value, "TEXT");
+                properties[index] = new api_data.Property(this.input.getName(), value, "TEXT");
             });
             return properties;
         }

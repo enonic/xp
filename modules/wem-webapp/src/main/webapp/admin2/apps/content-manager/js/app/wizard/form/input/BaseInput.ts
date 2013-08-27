@@ -14,13 +14,13 @@ module app_wizard_form_input {
             return super.getHTMLElement();
         }
 
-        layout(input:api_schema_content_form.Input, properties?:api_content_data.Property[]) {
+        layout(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
 
             this.input = input;
             this.inputs = [];
 
             if (properties.length > 0) {
-                properties.forEach((property:api_content_data.Property, index:number) => {
+                properties.forEach((property:api_data.Property, index:number) => {
 
                     var inputEl = this.createInputEl(index, property);
                     this.inputs[index] = inputEl;
@@ -44,7 +44,7 @@ module app_wizard_form_input {
             }
         }
 
-        createInputEl(index:number, property?:api_content_data.Property):api_dom.FormInputEl {
+        createInputEl(index:number, property?:api_data.Property):api_dom.FormInputEl {
             throw new Error("Must be implemented by inheritor");
         }
 

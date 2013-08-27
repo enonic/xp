@@ -198,12 +198,13 @@
 ///<reference path='app/delete/DeleteDialog.ts' />
 ///<reference path='app/wizard/SaveBeforeCloseDialog.ts' />
 
+///<reference path='data/DataId.ts' />
+///<reference path='data/Data.ts' />
+///<reference path='data/DataSet.ts' />
+///<reference path='data/Property.ts' />
+
 ///<reference path='content/ContentPath.ts' />
-///<reference path='content/data/DataId.ts' />
-///<reference path='content/data/Data.ts' />
-///<reference path='content/data/DataSet.ts' />
 ///<reference path='content/data/ContentData.ts' />
-///<reference path='content/data/Property.ts' />
 
 ///<reference path='schema/content/form/InputType.ts' />
 ///<reference path='schema/content/form/FormItem.ts' />

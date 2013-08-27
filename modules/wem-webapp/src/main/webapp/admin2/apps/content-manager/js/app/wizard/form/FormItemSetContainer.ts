@@ -4,11 +4,11 @@ module app_wizard_form {
 
         private formItemSet:api_schema_content_form.FormItemSet;
 
-        private parentDataSet:api_content_data.DataSet;
+        private parentDataSet:api_data.DataSet;
 
-        private dataSets:api_content_data.DataSet[];
+        private dataSets:api_data.DataSet[];
 
-        constructor(formItemSet:api_schema_content_form.FormItemSet, parentDataSet:api_content_data.DataSet) {
+        constructor(formItemSet:api_schema_content_form.FormItemSet, parentDataSet:api_data.DataSet) {
             super(formItemSet);
 
             this.formItemSet = formItemSet;
@@ -19,13 +19,13 @@ module app_wizard_form {
             this.layout();
         }
 
-        getData():api_content_data.Data[] {
+        getData():api_data.Data[] {
             return this.getDataSets();
         }
 
-        getDataSets():api_content_data.DataSet[] {
+        getDataSets():api_data.DataSet[] {
 
-            var dataSets:api_content_data.DataSet[] = [];
+            var dataSets:api_data.DataSet[] = [];
             return dataSets;
         }
 
@@ -34,7 +34,7 @@ module app_wizard_form {
             var label = new FormItemSetLabel(this.formItemSet);
             this.appendChild(label);
 
-            this.dataSets.forEach( (dataSet:api_content_data.DataSet) => {
+            this.dataSets.forEach( (dataSet:api_data.DataSet) => {
                 var layer = new FormItemsLayer(this);
                 layer.layout(this.formItemSet.getFormItems(), dataSet);
             } );

@@ -33,7 +33,7 @@ module app_wizard_form {
             var contentData:api_content_data.ContentData = new api_content_data.ContentData();
             this.formItemContainers.forEach((formItemContainer:FormItemContainer) => {
 
-                formItemContainer.getData().forEach( (data:api_content_data.Data) => {
+                formItemContainer.getData().forEach( (data:api_data.Data) => {
                     contentData.addData(data)
                 });
 

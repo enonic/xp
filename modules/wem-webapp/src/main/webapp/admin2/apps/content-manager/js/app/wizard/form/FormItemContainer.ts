@@ -14,7 +14,7 @@ module app_wizard_form {
             return this.formItem;
         }
 
-        getData():api_content_data.Data[] {
+        getData():api_data.Data[] {
             throw new Error("Method needs to be implemented in inheritors");
         }
     }

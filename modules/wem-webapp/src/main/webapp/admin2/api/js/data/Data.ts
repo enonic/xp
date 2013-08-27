@@ -1,4 +1,4 @@
-module api_content_data{
+module api_data{
 
     export class Data {
 

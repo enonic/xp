@@ -8,7 +8,7 @@ module app_wizard_form_input {
             super("TextLine");
         }
 
-        createInputEl(index:number, property?:api_content_data.Property):api_dom.FormInputEl {
+        createInputEl(index:number, property?:api_data.Property):api_dom.FormInputEl {
             var inputEl = api_ui.TextInput.middle(this.input.getName() + "-" + index);
             inputEl.setName(this.input.getName());
             if (property != null) {

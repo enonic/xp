@@ -17,9 +17,9 @@ module app_wizard {
             return contentData;
         }
 
-        public static createDataSet(remote:api_remote_content.DataSet):api_content_data.DataSet {
+        public static createDataSet(remote:api_remote_content.DataSet):api_data.DataSet {
 
-            var dataSet = new api_content_data.DataSet(remote.name);
+            var dataSet = new api_data.DataSet(remote.name);
             remote.value.forEach((data:api_remote_content.Data) => {
 
                 if (data.type == "DataSet") {
@@ -32,9 +32,9 @@ module app_wizard {
             return dataSet;
         }
 
-        public static createProperty(remote:api_remote_content.Property):api_content_data.Property {
+        public static createProperty(remote:api_remote_content.Property):api_data.Property {
 
-            return new api_content_data.Property(remote.name, remote.value, remote.type);
+            return new api_data.Property(remote.name, remote.value, remote.type);
         }
     }
 }
