@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
 
 public final class OccurrenceValidator

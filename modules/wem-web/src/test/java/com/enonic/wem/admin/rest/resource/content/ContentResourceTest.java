@@ -18,9 +18,9 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.data.data.ContentData;
-import com.enonic.wem.api.data.data.DataPath;
-import com.enonic.wem.api.data.data.Value;
+import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.web.servlet.ServletRequestHolder;
 

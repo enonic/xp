@@ -6,14 +6,14 @@ import org.jdom.Element;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.data.ContentData;
-import com.enonic.wem.api.data.data.Data;
-import com.enonic.wem.api.data.data.DataSet;
-import com.enonic.wem.api.data.data.Property;
-import com.enonic.wem.api.data.data.type.ValueType;
-import com.enonic.wem.api.data.data.type.ValueTypes;
+import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.data.Data;
+import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.type.ValueType;
+import com.enonic.wem.api.data.type.ValueTypes;
 
-import static com.enonic.wem.api.data.data.DataSet.newDataSet;
+import static com.enonic.wem.api.data.DataSet.newDataSet;
 
 
 public final class DataXmlSerializer

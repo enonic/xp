@@ -4,7 +4,7 @@ package com.enonic.wem.api.schema.content.form;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.enonic.wem.api.data.data.Property;
+import com.enonic.wem.api.data.Property;
 
 public class ValidationRegex
 {

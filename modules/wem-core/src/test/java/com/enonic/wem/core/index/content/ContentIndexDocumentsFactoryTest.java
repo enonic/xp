@@ -11,7 +11,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.data.data.Value;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 import com.enonic.wem.core.index.indexdocument.IndexDocumentEntry;
 

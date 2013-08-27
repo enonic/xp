@@ -14,7 +14,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.data.data.DataPath;
+import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.Relationships;

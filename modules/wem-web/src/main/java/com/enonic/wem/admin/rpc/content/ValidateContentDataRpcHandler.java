@@ -5,7 +5,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;

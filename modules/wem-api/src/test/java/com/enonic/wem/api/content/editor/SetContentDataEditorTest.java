@@ -4,9 +4,9 @@ package com.enonic.wem.api.content.editor;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data.data.ContentData;
-import com.enonic.wem.api.data.data.Property;
-import com.enonic.wem.api.data.data.type.ValueTypes;
+import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;

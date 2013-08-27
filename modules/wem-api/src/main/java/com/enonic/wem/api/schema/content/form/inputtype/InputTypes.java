@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.data.type.ValueType;
-import com.enonic.wem.api.data.data.type.ValueTypes;
+import com.enonic.wem.api.data.type.ValueType;
+import com.enonic.wem.api.data.type.ValueTypes;
 
 public final class InputTypes
 {

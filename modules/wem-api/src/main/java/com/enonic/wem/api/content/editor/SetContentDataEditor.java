@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.editor;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.ContentData;
 
 import static com.enonic.wem.api.content.Content.newContent;
 

@@ -1,8 +1,8 @@
 package com.enonic.wem.api.schema.content.form.inputtype;
 
 
-import com.enonic.wem.api.data.data.Property;
-import com.enonic.wem.api.data.data.Value;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.plugin.ext.Extension;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 

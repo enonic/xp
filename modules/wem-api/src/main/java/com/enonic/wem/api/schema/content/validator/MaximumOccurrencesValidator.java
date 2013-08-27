@@ -6,8 +6,8 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.data.data.ContentData;
-import com.enonic.wem.api.data.data.DataSet;
+import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.content.form.FormItemPath;

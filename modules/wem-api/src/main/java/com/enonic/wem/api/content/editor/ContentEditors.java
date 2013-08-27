@@ -1,6 +1,6 @@
 package com.enonic.wem.api.content.editor;
 
-import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.ContentData;
 
 public abstract class ContentEditors
 {

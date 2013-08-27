@@ -1,8 +1,8 @@
 package com.enonic.wem.admin.rest.resource.content.model;
 
-import com.enonic.wem.api.data.data.Data;
-import com.enonic.wem.api.data.data.DataSet;
-import com.enonic.wem.api.data.data.Property;
+import com.enonic.wem.api.data.Data;
+import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data.Property;
 
 public class DataJson
 {

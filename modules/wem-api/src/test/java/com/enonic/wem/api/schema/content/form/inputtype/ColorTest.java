@@ -4,10 +4,10 @@ package com.enonic.wem.api.schema.content.form.inputtype;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data.data.ContentData;
-import com.enonic.wem.api.data.data.Property;
-import com.enonic.wem.api.data.data.Value;
-import com.enonic.wem.api.data.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
 import static com.enonic.wem.api.content.Content.newContent;

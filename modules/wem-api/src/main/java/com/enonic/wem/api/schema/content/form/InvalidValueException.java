@@ -1,8 +1,8 @@
 package com.enonic.wem.api.schema.content.form;
 
 
-import com.enonic.wem.api.data.data.Property;
-import com.enonic.wem.api.data.data.Value;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.Value;
 
 public class InvalidValueException
     extends RuntimeException

@@ -12,7 +12,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.ContentData;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.content.dao.ContentDao;

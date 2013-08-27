@@ -7,7 +7,7 @@ import javax.jcr.Session;
 import javax.jcr.util.TraversingItemVisitor;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.data.DataPath;
+import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.RelationshipKey;

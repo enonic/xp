@@ -7,10 +7,10 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data.data.Data;
-import com.enonic.wem.api.data.data.DataSet;
-import com.enonic.wem.api.data.data.Property;
-import com.enonic.wem.api.data.data.Value;
+import com.enonic.wem.api.data.Data;
+import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;

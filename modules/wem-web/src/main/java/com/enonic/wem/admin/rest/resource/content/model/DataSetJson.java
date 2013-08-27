@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.data.data.Data;
-import com.enonic.wem.api.data.data.DataSet;
+import com.enonic.wem.api.data.Data;
+import com.enonic.wem.api.data.DataSet;
 
 public class DataSetJson
     extends AbstractDataJson

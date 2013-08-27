@@ -2,7 +2,7 @@ package com.enonic.wem.api.schema.content.form.inputtype;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.data.Property;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 

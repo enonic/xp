@@ -2,8 +2,8 @@ package com.enonic.wem.api.schema.content.form.inputtype;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.data.data.Property;
-import com.enonic.wem.api.data.data.type.ValueTypes;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 
 public class SingleSelectorTest

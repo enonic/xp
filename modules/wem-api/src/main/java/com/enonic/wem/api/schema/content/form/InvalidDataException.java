@@ -1,9 +1,9 @@
 package com.enonic.wem.api.schema.content.form;
 
 
-import com.enonic.wem.api.data.data.Property;
-import com.enonic.wem.api.data.data.type.InvalidPropertyTypeException;
-import com.enonic.wem.api.data.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.type.InvalidPropertyTypeException;
+import com.enonic.wem.api.data.type.InvalidValueTypeException;
 
 public class InvalidDataException
     extends RuntimeException

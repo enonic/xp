@@ -5,7 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
-import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.ContentData;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
 public class ContentDataJsonSerializer
