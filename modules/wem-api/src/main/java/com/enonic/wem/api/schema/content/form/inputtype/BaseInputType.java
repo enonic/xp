@@ -12,17 +12,18 @@ public abstract class BaseInputType
 {
     private final String name;
 
-    private Class configClass;
+    private final Class configClass;
 
-    private boolean builtIn;
+    private final boolean builtIn;
 
-    BaseInputType()
+    protected BaseInputType()
     {
         this.name = resolveName();
         this.builtIn = resolveBuiltIn();
+        this.configClass = null;
     }
 
-    BaseInputType( final Class configClass )
+    protected BaseInputType( final Class configClass )
     {
         this.name = resolveName();
         this.builtIn = resolveBuiltIn();
