@@ -9,6 +9,7 @@ module app_view {
         private userStoresDropdown:api_ui.Dropdown;
         private userIdInput:api_ui.TextInput;
         private passwordInput:api_ui.PasswordInput;
+        private loginButton:api_ui.Button;
 
         private authenticator:app_model.Authenticator;
         private userStores:{[userStoreId: string]: app_model.UserStore;};
@@ -29,10 +30,16 @@ module app_view {
             this.userIdInput.setPlaceholder('userid or e-mail');
             this.passwordInput = new api_ui.PasswordInput(null, 'admin-home-form-item');
             this.passwordInput.setPlaceholder('password');
+            this.userIdInput.getEl().addEventListener('keyup', (event) => {
+                this.onInputTyped();
+            });
+            this.passwordInput.getEl().addEventListener('keyup', (event) => {
+                this.onInputTyped();
+            });
 
-            var loginButton = new api_ui.Button('Log in');
-            loginButton.addClass('admin-home-login-button');
-            loginButton.setClickListener((event) => {
+            this.loginButton = new api_ui.Button('Log in');
+            this.loginButton.addClass('admin-home-login-button').addClass('disabled');
+            this.loginButton.setClickListener((event) => {
                 this.loginButtonClick();
             });
 
@@ -40,7 +47,7 @@ module app_view {
             formContainer.appendChild(this.userStoresDropdown);
             formContainer.appendChild(this.userIdInput);
             formContainer.appendChild(this.passwordInput);
-            formContainer.appendChild(loginButton);
+            formContainer.appendChild(this.loginButton);
             this.appendChild(formContainer);
 
             this.licensedTo = new api_dom.DivEl(null, 'admin-home-login-licensed-to');
@@ -78,6 +85,16 @@ module app_view {
                     this.onUserAuthenticatedHandler(userName, userStore);
                 }
             }
+        }
+
+        private onInputTyped() {
+            var fieldsNotEmpty:bool = (this.userIdInput.getValue() !== '') && (this.passwordInput.getValue() !== '');
+            if (fieldsNotEmpty) {
+                this.loginButton.removeClass('disabled');
+            } else {
+                this.loginButton.addClass('disabled');
+            }
+            this.loginButton.setEnabled(fieldsNotEmpty);
         }
     }
 

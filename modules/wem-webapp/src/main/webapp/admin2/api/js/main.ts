@@ -18,7 +18,6 @@
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
 ///<reference path='util/Animation.ts'/>
-///<reference path='util/AppBridge.ts'/>
 
 ///<reference path='model/Model.ts' />
 ///<reference path='model/SpaceModel.ts' />
@@ -163,6 +162,7 @@
 ///<reference path='app/AppBarTabMenuItem.ts' />
 ///<reference path='app/AppPanel.ts' />
 ///<reference path='app/BrowseAndWizardBasedAppPanel.ts' />
+///<reference path='app/AppBridge.ts'/>
 
 ///<reference path='app/browse/grid/GridPanelListener.ts' />
 ///<reference path='app/browse/grid/GridPanel.ts' />

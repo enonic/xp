@@ -1,12 +1,11 @@
-module api_util {
-
-    var _instance:api_util.AppBridge = null;
+module api_app {
 
     export class AppBridge {
+        private static _instance:AppBridge = null;
         private showLauncherHandler:()=>void;
 
         constructor() {
-            _instance = this;
+            AppBridge._instance = this;
         }
 
         showLauncher():void {
@@ -19,14 +18,15 @@ module api_util {
             this.showLauncherHandler = handler;
         }
 
-        static instance():api_util.AppBridge {
+        static instance():AppBridge {
             if (_instance) {
                 return _instance;
             } else if (window !== window.parent) {
                 // look for instance in parent frame
-                var appUtilModule = (<any> window.parent).api_util;
-                if (appUtilModule && appUtilModule.AppBridge) {
-                    var parentAppBridge = <api_util.AppBridge> appUtilModule.AppBridge.instance();
+
+                var apiAppModule = (<any> window.parent).api_app;
+                if (apiAppModule && apiAppModule.AppBridge) {
+                    var parentAppBridge = <AppBridge> apiAppModule.AppBridge.instance();
                     if (parentAppBridge) {
                         _instance = parentAppBridge;
                     }

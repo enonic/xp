@@ -1,5 +1,3 @@
-///<reference path='../model/Application.ts' />
-
 module app_view {
 
     export class AppLauncher {
@@ -7,7 +5,6 @@ module app_view {
         private mainContainer:app_view.HomeMainContainerPanel;
         private adminApplicationFrames:api_dom.DivEl;
         private appIframes:{[name: string]: api_dom.IFrameEl;};
-        private appBridge:api_util.AppBridge;
 
         constructor(mainContainer:app_view.HomeMainContainerPanel) {
             this.mainContainer = mainContainer;
@@ -16,8 +13,8 @@ module app_view {
             this.adminApplicationFrames = new api_dom.DivEl();
             this.adminApplicationFrames.getEl().setHeight('100%').setWidth('100%');
 
-            this.appBridge = new api_util.AppBridge();
-            this.appBridge.onShowLauncher(()=> {
+            var appBridge = new api_app.AppBridge();
+            appBridge.onShowLauncher(()=> {
                 this.showLauncherScreen();
             });
 

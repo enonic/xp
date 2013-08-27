@@ -48,7 +48,7 @@ module api_app {
                 this.userInfoPopup.toggle();
             });
 
-            var appBridge:api_util.AppBridge = api_util.AppBridge.instance();
+            var appBridge:AppBridge = AppBridge.instance();
             this.launcherButton.setClickListener((event) => {
                 appBridge.showLauncher();
             });

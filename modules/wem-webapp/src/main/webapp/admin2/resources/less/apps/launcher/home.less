@@ -273,19 +273,29 @@ html, body {
 
 .admin-home-login-button {
   font-family: @admin-font-family;
-  padding: 6px 19px 6px 19px;
+  padding: 5px 20px 5px 20px;
   background-color: @admin-blue-button;
 
   font-size: 12px;
-  border-width: 0;
+  border-width: 1px 1px 1px 1px;
+  border-style: solid;
+  border-color: @admin-blue-button;
   color: white;
 
   display: inline-block;
   float: right;
-  margin-right: 11px;
+  margin-right: 9px;
+  margin-top: 1px;
 
   &:hover {
     cursor: pointer;
-    color: @admin-light-gray-font;
+    border-color: #5a94ee;
+    background-color: #5a94ee;
+  }
+
+  &.disabled {
+    cursor: default;
+    border-color: #88b2f3;
+    background-color: #5a94ee;
   }
 }
