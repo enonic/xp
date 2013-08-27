@@ -19,13 +19,13 @@ public final class ContentData
     }
 
     @Override
-    DataId getDataId()
+    protected DataId getDataId()
     {
         return null;
     }
 
     @Override
-    void setParent( final DataSet entries )
+    protected void setParent( final DataSet entries )
     {
         throw new UnsupportedOperationException( "A ContentData cannot have a parent" );
     }

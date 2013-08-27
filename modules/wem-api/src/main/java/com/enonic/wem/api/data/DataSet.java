@@ -25,7 +25,7 @@ public class DataSet
 
     private Map<String, DataArray> arrayByDataName = new HashMap<>();
 
-    DataSet()
+    protected DataSet()
     {
         // Creates a root DataSet
     }
