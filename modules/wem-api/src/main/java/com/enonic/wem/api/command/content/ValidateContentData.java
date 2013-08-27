@@ -3,7 +3,7 @@ package com.enonic.wem.api.command.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 

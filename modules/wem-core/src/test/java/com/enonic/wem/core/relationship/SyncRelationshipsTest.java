@@ -4,7 +4,7 @@ package com.enonic.wem.core.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;

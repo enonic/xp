@@ -8,7 +8,7 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;

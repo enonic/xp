@@ -13,7 +13,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;

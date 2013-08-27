@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.type.ValueTypes;
 
 import static org.junit.Assert.*;

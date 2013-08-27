@@ -1,5 +1,8 @@
-package com.enonic.wem.api.data;
+package com.enonic.wem.api.content.data;
 
+
+import com.enonic.wem.api.data.DataId;
+import com.enonic.wem.api.data.DataSet;
 
 public final class ContentData
     extends DataSet

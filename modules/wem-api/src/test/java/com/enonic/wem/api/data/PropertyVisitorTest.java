@@ -7,6 +7,7 @@ import java.util.List;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;

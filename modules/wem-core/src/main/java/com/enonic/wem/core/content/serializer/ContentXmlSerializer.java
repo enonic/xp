@@ -8,7 +8,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.support.util.JdomHelper;
 

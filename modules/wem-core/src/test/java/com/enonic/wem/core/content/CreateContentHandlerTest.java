@@ -18,7 +18,7 @@ import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;

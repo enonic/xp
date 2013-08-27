@@ -35,7 +35,7 @@ import com.enonic.wem.api.content.RenameContentException;
 import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;

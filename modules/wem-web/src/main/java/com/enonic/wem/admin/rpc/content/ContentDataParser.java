@@ -6,7 +6,7 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.ContentType;

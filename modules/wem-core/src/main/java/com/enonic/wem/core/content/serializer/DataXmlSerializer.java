@@ -6,7 +6,7 @@ import org.jdom.Element;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;

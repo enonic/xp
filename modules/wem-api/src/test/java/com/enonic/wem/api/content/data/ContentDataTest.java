@@ -1,7 +1,9 @@
-package com.enonic.wem.api.data;
+package com.enonic.wem.api.content.data;
 
 
 import org.junit.Test;
+
+import com.enonic.wem.api.data.DataSet;
 
 import static org.junit.Assert.*;
 

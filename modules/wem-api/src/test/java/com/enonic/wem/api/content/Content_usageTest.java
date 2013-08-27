@@ -8,7 +8,7 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;

@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.module.Module;

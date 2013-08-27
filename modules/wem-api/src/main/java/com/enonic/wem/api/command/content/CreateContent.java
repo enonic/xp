@@ -12,7 +12,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.data.ContentData;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 public final class CreateContent
