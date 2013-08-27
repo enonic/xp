@@ -30,7 +30,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.query.FacetsResultSet;
+import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexException;
@@ -41,7 +41,7 @@ import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
-import com.enonic.wem.core.index.elastic.result.FacetResultSetFactory;
+import com.enonic.wem.core.index.elastic.result.FacetFactory;
 import com.enonic.wem.core.index.elastic.searchsource.SearchSourceFactory;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
 
@@ -183,9 +183,9 @@ public class ElasticsearchIndexServiceImpl
             contentSearchResults.add( new ContentSearchHit( ContentId.from( hit.getId() ), hit.score() ) );
         }
 
-        final FacetsResultSet facetResultSets = FacetResultSetFactory.create( searchResponse );
+        final Facets facets = FacetFactory.create( searchResponse );
 
-        contentSearchResults.setFacetResultSets( facetResultSets );
+        contentSearchResults.setFacets( facets );
 
         return contentSearchResults;
     }

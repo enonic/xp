@@ -1,6 +1,6 @@
-package com.enonic.wem.api.query;
+package com.enonic.wem.api.facet;
 
-public class DateHistogramFacetResultEntry
+public class DateHistogramFacetEntry
 {
     private Long count;
 

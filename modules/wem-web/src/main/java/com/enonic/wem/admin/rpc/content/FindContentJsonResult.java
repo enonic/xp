@@ -15,14 +15,15 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.content.query.ContentQueryHit;
-import com.enonic.wem.api.query.DateHistogramFacetResultEntry;
-import com.enonic.wem.api.query.DateHistogramFacetResultSet;
-import com.enonic.wem.api.query.FacetResultSet;
-import com.enonic.wem.api.query.FacetsResultSet;
-import com.enonic.wem.api.query.QueryFacetResultSet;
-import com.enonic.wem.api.query.RangeFacetResultEntry;
-import com.enonic.wem.api.query.RangeFacetResultSet;
-import com.enonic.wem.api.query.TermsFacetResultSet;
+import com.enonic.wem.api.facet.DateHistogramFacet;
+import com.enonic.wem.api.facet.DateHistogramFacetEntry;
+import com.enonic.wem.api.facet.Facet;
+import com.enonic.wem.api.facet.Facets;
+import com.enonic.wem.api.facet.QueryFacet;
+import com.enonic.wem.api.facet.RangeFacet;
+import com.enonic.wem.api.facet.RangeFacetEntry;
+import com.enonic.wem.api.facet.TermsFacet;
+import com.enonic.wem.api.facet.TermsFacetEntry;
 
 public class FindContentJsonResult
     extends JsonResult
@@ -48,49 +49,49 @@ public class FindContentJsonResult
         json.put( "total", contentIndexQueryResult.getContentIds().size() );
         json.put( "contents", serialize( contentIndexQueryResult.getContentQueryHits() ) );
 
-        final FacetsResultSet facetsResultSet = contentIndexQueryResult.getFacetsResultSet();
+        final Facets facets = contentIndexQueryResult.getFacets();
 
-        if ( facetsResultSet != null )
+        if ( facets != null )
         {
-            final ArrayNode facets = json.putArray( "facets" );
+            final ArrayNode facetsNode = json.putArray( "facets" );
 
-            final List<QueryFacetResultSet> queries = Lists.newArrayList();
+            final List<QueryFacet> queries = Lists.newArrayList();
 
-            for ( FacetResultSet facetResultSet : facetsResultSet )
+            for ( Facet facet : facets )
             {
-                if ( facetResultSet instanceof TermsFacetResultSet )
+                if ( facet instanceof TermsFacet )
                 {
-                    serializeFacet( facets.addObject(), (TermsFacetResultSet) facetResultSet );
+                    serializeFacet( facetsNode.addObject(), (TermsFacet) facet );
                 }
-                else if ( facetResultSet instanceof DateHistogramFacetResultSet )
+                else if ( facet instanceof DateHistogramFacet )
                 {
-                    serializeFacet( facets.addObject(), (DateHistogramFacetResultSet) facetResultSet );
+                    serializeFacet( facetsNode.addObject(), (DateHistogramFacet) facet );
                 }
-                else if ( facetResultSet instanceof RangeFacetResultSet )
+                else if ( facet instanceof RangeFacet )
                 {
-                    serializeFacet( facets.addObject(), (RangeFacetResultSet) facetResultSet );
+                    serializeFacet( facetsNode.addObject(), (RangeFacet) facet );
                 }
-                else if ( facetResultSet instanceof QueryFacetResultSet )
+                else if ( facet instanceof QueryFacet )
                 {
-                    queries.add( (QueryFacetResultSet) facetResultSet );
+                    queries.add( (QueryFacet) facet );
                 }
             }
 
-            serializeFacet( facets.addObject(), queries );
+            serializeFacet( facetsNode.addObject(), queries );
         }
     }
 
-    private void serializeFacet( final ObjectNode json, final DateHistogramFacetResultSet dateHistogramFacetResultSet )
+    private void serializeFacet( final ObjectNode json, final DateHistogramFacet dateHistogramFacet )
     {
-        json.put( "name", dateHistogramFacetResultSet.getName() );
-        json.put( "displayName", dateHistogramFacetResultSet.getDisplayName() );
+        json.put( "name", dateHistogramFacet.getName() );
+        json.put( "displayName", dateHistogramFacet.getDisplayName() );
         json.put( "_type", "dateHistogram" );
 
         final ArrayNode terms = json.putArray( "terms" );
 
-        final Set<DateHistogramFacetResultEntry> resultEntries = dateHistogramFacetResultSet.getResultEntries();
+        final Set<DateHistogramFacetEntry> resultEntries = dateHistogramFacet.getResultEntries();
 
-        for ( DateHistogramFacetResultEntry entry : resultEntries )
+        for ( DateHistogramFacetEntry entry : resultEntries )
         {
             ObjectNode facetObject = terms.addObject();
             facetObject.put( "time", entry.getTime() );
@@ -99,17 +100,17 @@ public class FindContentJsonResult
         }
     }
 
-    private void serializeFacet( final ObjectNode json, final RangeFacetResultSet rangeFacetResultSet )
+    private void serializeFacet( final ObjectNode json, final RangeFacet rangeFacet )
     {
-        json.put( "name", rangeFacetResultSet.getName() );
-        json.put( "displayName", rangeFacetResultSet.getDisplayName() );
+        json.put( "name", rangeFacet.getName() );
+        json.put( "displayName", rangeFacet.getDisplayName() );
         json.put( "_type", "range" );
 
         final ArrayNode terms = json.putArray( "ranges" );
 
-        final Set<RangeFacetResultEntry> resultEntries = rangeFacetResultSet.getResultEntries();
+        final Set<RangeFacetEntry> resultEntries = rangeFacet.getResultEntries();
 
-        for ( RangeFacetResultEntry entry : resultEntries )
+        for ( RangeFacetEntry entry : resultEntries )
         {
             ObjectNode facetObject = terms.addObject();
             facetObject.put( "from", entry.getFrom() );
@@ -119,18 +120,18 @@ public class FindContentJsonResult
     }
 
 
-    private void serializeFacet( final ObjectNode json, final TermsFacetResultSet termsFacetResultSet )
+    private void serializeFacet( final ObjectNode json, final TermsFacet termsFacet )
     {
-        final String facetName = termsFacetResultSet.getName();
+        final String facetName = termsFacet.getName();
         json.put( "name", facetName );
-        json.put( "displayName", termsFacetResultSet.getDisplayName() );
+        json.put( "displayName", termsFacet.getDisplayName() );
         json.put( "_type", "terms" );
 
         final ArrayNode terms = json.putArray( "terms" );
 
-        final Set<TermsFacetResultSet.TermFacetResult> results = termsFacetResultSet.getResults();
+        final Set<TermsFacetEntry> results = termsFacet.getResults();
 
-        for ( TermsFacetResultSet.TermFacetResult result : results )
+        for ( TermsFacetEntry result : results )
         {
             ObjectNode facetObject = terms.addObject();
             facetObject.put( "name", result.getTerm() );
@@ -139,7 +140,7 @@ public class FindContentJsonResult
         }
     }
 
-    private void serializeFacet( final ObjectNode json, final List<QueryFacetResultSet> queries )
+    private void serializeFacet( final ObjectNode json, final List<QueryFacet> queries )
     {
         json.put( "name", "ranges" );
         json.put( "displayName", "Last Modified" );
@@ -147,12 +148,12 @@ public class FindContentJsonResult
 
         final ArrayNode terms = json.putArray( "terms" );
 
-        for ( final QueryFacetResultSet queryFacetResultSet : queries )
+        for ( final QueryFacet queryFacet : queries )
         {
             final ObjectNode facetObject = terms.addObject();
-            facetObject.put( "name", queryFacetResultSet.getName() );
+            facetObject.put( "name", queryFacet.getName() );
             facetObject.put( "_type", "query" );
-            facetObject.put( "count", queryFacetResultSet.getCount() );
+            facetObject.put( "count", queryFacet.getCount() );
         }
     }
 

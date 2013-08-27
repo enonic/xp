@@ -1,7 +1,7 @@
-package com.enonic.wem.api.query;
+package com.enonic.wem.api.facet;
 
-public abstract class AbstractFacetResultSet
-    implements FacetResultSet
+public abstract class AbstractFacet
+    implements Facet
 {
 
     private String name;

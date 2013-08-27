@@ -7,9 +7,9 @@ import org.junit.Test;
 import com.enonic.wem.admin.rpc.AbstractJsonTest;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
-import com.enonic.wem.api.query.FacetsResultSet;
-import com.enonic.wem.api.query.QueryFacetResultSet;
-import com.enonic.wem.api.query.TermsFacetResultSet;
+import com.enonic.wem.api.facet.Facets;
+import com.enonic.wem.api.facet.QueryFacet;
+import com.enonic.wem.api.facet.TermsFacet;
 
 import static org.junit.Assert.*;
 
@@ -38,15 +38,15 @@ public class FindContentJsonResultTest
 
         ContentIndexQueryResult contentIndexQueryResult = new ContentIndexQueryResult( 10 );
 
-        FacetsResultSet facetsResultSet = new FacetsResultSet();
-        TermsFacetResultSet termsFacetResultSet = new TermsFacetResultSet();
-        termsFacetResultSet.setName( "myTermsFacet" );
-        termsFacetResultSet.addResult( "term1", 1 );
-        termsFacetResultSet.addResult( "term2", 2 );
-        termsFacetResultSet.addResult( "term3", 3 );
-        facetsResultSet.addFacetResultSet( termsFacetResultSet );
+        Facets facets = new Facets();
+        TermsFacet termsFacet = new TermsFacet();
+        termsFacet.setName( "myTermsFacet" );
+        termsFacet.addResult( "term1", 1 );
+        termsFacet.addResult( "term2", 2 );
+        termsFacet.addResult( "term3", 3 );
+        facets.addFacet( termsFacet );
 
-        contentIndexQueryResult.setFacetsResultSet( facetsResultSet );
+        contentIndexQueryResult.setFacets( facets );
 
         FindContentJsonResult result = new FindContentJsonResult( contents, contentIndexQueryResult );
 
@@ -64,12 +64,12 @@ public class FindContentJsonResultTest
 
         ContentIndexQueryResult contentIndexQueryResult = new ContentIndexQueryResult( 10 );
 
-        FacetsResultSet facetsResultSet = new FacetsResultSet();
-        QueryFacetResultSet queryFacetResultSet = new QueryFacetResultSet( 10L );
-        queryFacetResultSet.setName( "myQueryFacet" );
-        facetsResultSet.addFacetResultSet( queryFacetResultSet );
+        Facets facets = new Facets();
+        QueryFacet queryFacet = new QueryFacet( 10L );
+        queryFacet.setName( "myQueryFacet" );
+        facets.addFacet( queryFacet );
 
-        contentIndexQueryResult.setFacetsResultSet( facetsResultSet );
+        contentIndexQueryResult.setFacets( facets );
 
         FindContentJsonResult result = new FindContentJsonResult( contents, contentIndexQueryResult );
 

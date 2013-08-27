@@ -1,6 +1,6 @@
-package com.enonic.wem.api.query;
+package com.enonic.wem.api.facet;
 
-public class RangeFacetResultEntry
+public class RangeFacetEntry
 {
 
     private String from;

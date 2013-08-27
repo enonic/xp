@@ -1,6 +1,6 @@
-package com.enonic.wem.api.query;
+package com.enonic.wem.api.facet;
 
-public interface FacetResultSet
+public interface Facet
 {
     public String getName();
 

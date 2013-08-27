@@ -8,50 +8,51 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.space.GetSpaces;
-import com.enonic.wem.api.query.FacetResultSet;
-import com.enonic.wem.api.query.FacetsResultSet;
-import com.enonic.wem.api.query.TermsFacetResultSet;
+import com.enonic.wem.api.facet.Facet;
+import com.enonic.wem.api.facet.Facets;
+import com.enonic.wem.api.facet.TermsFacet;
+import com.enonic.wem.api.facet.TermsFacetEntry;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 
-public class FacetResultSetEnricher
+public class FacetEnricher
 {
 
-    public static void enrichFacetResult( final FacetsResultSet facetsResultSet, final Client client )
+    public static void enrichFacets( final Facets facets, final Client client )
     {
 
-        if ( facetsResultSet == null )
+        if ( facets == null )
         {
             return;
         }
 
-        final Iterator<FacetResultSet> facetsIterator = facetsResultSet.iterator();
+        final Iterator<Facet> facetsIterator = facets.iterator();
 
         while ( facetsIterator.hasNext() )
         {
-            final FacetResultSet next = facetsIterator.next();
+            final Facet next = facetsIterator.next();
 
             final String name = next.getName();
 
-            if ( "contentType".equals( name ) && next instanceof TermsFacetResultSet )
+            if ( "contentType".equals( name ) && next instanceof TermsFacet )
             {
-                enrichContentTypeFacetWithDisplayName( client, (TermsFacetResultSet) next );
+                enrichContentTypeFacetWithDisplayName( client, (TermsFacet) next );
             }
-            else if ( "space".equals( name ) && next instanceof TermsFacetResultSet )
+            else if ( "space".equals( name ) && next instanceof TermsFacet )
             {
-                enrichSpaceFacetWithDisplayName( client, (TermsFacetResultSet) next );
+                enrichSpaceFacetWithDisplayName( client, (TermsFacet) next );
 
             }
         }
     }
 
-    private static void enrichSpaceFacetWithDisplayName( final Client client, final TermsFacetResultSet termsFacetResultSet )
+    private static void enrichSpaceFacetWithDisplayName( final Client client, final TermsFacet termsFacet )
     {
-        termsFacetResultSet.setDisplayName( "Space" );
+        termsFacet.setDisplayName( "Space" );
 
-        for ( TermsFacetResultSet.TermFacetResult resultSet : termsFacetResultSet.getResults() )
+        for ( TermsFacetEntry resultSet : termsFacet.getResults() )
         {
             final String qualifiedSpaceName = resultSet.getTerm();
 
@@ -68,11 +69,11 @@ public class FacetResultSetEnricher
         }
     }
 
-    private static void enrichContentTypeFacetWithDisplayName( final Client client, final TermsFacetResultSet termsFacetResultSet )
+    private static void enrichContentTypeFacetWithDisplayName( final Client client, final TermsFacet termsFacet )
     {
-        termsFacetResultSet.setDisplayName( "Content Type" );
+        termsFacet.setDisplayName( "Content Type" );
 
-        for ( TermsFacetResultSet.TermFacetResult resultSet : termsFacetResultSet.getResults() )
+        for ( TermsFacetEntry resultSet : termsFacet.getResults() )
         {
             final String qualifiedContentTypeName = resultSet.getTerm();
 

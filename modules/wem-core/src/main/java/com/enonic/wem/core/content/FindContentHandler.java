@@ -34,7 +34,7 @@ public class FindContentHandler
 
         ContentIndexQueryResult contentIndexQueryResult = new ContentIndexQueryResult( searchResults.getTotal() );
 
-        contentIndexQueryResult.setFacetsResultSet( searchResults.getFacetsResultSet() );
+        contentIndexQueryResult.setFacets( searchResults.getFacets() );
 
         for ( ContentSearchHit hit : searchResults.getHits() )
         {

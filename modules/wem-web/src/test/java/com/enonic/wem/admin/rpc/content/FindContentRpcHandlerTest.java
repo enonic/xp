@@ -20,8 +20,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
-import com.enonic.wem.api.query.FacetsResultSet;
-import com.enonic.wem.api.query.TermsFacetResultSet;
+import com.enonic.wem.api.facet.Facets;
+import com.enonic.wem.api.facet.TermsFacet;
 
 import static org.mockito.Matchers.isA;
 
@@ -111,7 +111,7 @@ public class FindContentRpcHandlerTest
 
         final ContentIndexQueryResult contentIndexQueryResult = new ContentIndexQueryResult( 10 );
 
-        createFacetResults( contentIndexQueryResult );
+        createFacets( contentIndexQueryResult );
 
         Mockito.when( client.execute( isA( FindContent.class ) ) ).thenReturn( contentIndexQueryResult );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( contents );
@@ -119,16 +119,16 @@ public class FindContentRpcHandlerTest
         testSuccess( "findContent_param.json", "findContent_result.json" );
     }
 
-    private void createFacetResults( final ContentIndexQueryResult contentIndexQueryResult )
+    private void createFacets( final ContentIndexQueryResult contentIndexQueryResult )
     {
-        FacetsResultSet facetsResultSet = new FacetsResultSet();
-        TermsFacetResultSet termsFacetResultSet = new TermsFacetResultSet();
-        termsFacetResultSet.setName( "myTermsFacet" );
-        termsFacetResultSet.addResult( "term1", 1 );
-        termsFacetResultSet.addResult( "term2", 2 );
-        termsFacetResultSet.addResult( "term3", 3 );
-        facetsResultSet.addFacetResultSet( termsFacetResultSet );
-        contentIndexQueryResult.setFacetsResultSet( facetsResultSet );
+        Facets facets = new Facets();
+        TermsFacet termsFacet = new TermsFacet();
+        termsFacet.setName( "myTermsFacet" );
+        termsFacet.addResult( "term1", 1 );
+        termsFacet.addResult( "term2", 2 );
+        termsFacet.addResult( "term3", 3 );
+        facets.addFacet( termsFacet );
+        contentIndexQueryResult.setFacets( facets );
     }
 
     private Content createContent( String path )
