@@ -6,9 +6,9 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.ValueType;
-import com.enonic.wem.api.content.data.type.ValueTypes;
+import com.enonic.wem.api.data.data.Property;
+import com.enonic.wem.api.data.data.type.ValueType;
+import com.enonic.wem.api.data.data.type.ValueTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 

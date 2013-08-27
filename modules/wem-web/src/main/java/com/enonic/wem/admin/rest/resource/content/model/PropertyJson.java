@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.rest.resource.content.model;
 
-import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.data.data.Property;
 
 public class PropertyJson
     extends AbstractDataJson

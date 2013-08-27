@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.data.DataSet;
+import com.enonic.wem.api.data.data.Property;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.FieldSet;
 import com.enonic.wem.api.schema.content.form.Form;

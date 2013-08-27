@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.DataPath;
+import com.enonic.wem.api.data.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;

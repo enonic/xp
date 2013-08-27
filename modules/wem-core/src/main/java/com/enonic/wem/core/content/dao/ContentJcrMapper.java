@@ -7,8 +7,8 @@ import javax.jcr.RepositoryException;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.data.data.ContentData;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.content.serializer.ContentDataJsonSerializer;
 

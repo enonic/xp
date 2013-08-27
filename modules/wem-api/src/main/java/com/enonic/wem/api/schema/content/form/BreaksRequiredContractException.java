@@ -1,7 +1,7 @@
 package com.enonic.wem.api.schema.content.form;
 
 
-import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.data.data.Property;
 import com.enonic.wem.api.schema.content.form.inputtype.InputType;
 
 public class BreaksRequiredContractException

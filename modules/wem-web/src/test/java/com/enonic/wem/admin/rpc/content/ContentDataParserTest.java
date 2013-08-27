@@ -11,11 +11,11 @@ import org.junit.Test;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.data.DataPath;
-import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.ValueTypes;
+import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.data.DataPath;
+import com.enonic.wem.api.data.data.DataSet;
+import com.enonic.wem.api.data.data.Property;
+import com.enonic.wem.api.data.data.type.ValueTypes;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.FormItemSet;

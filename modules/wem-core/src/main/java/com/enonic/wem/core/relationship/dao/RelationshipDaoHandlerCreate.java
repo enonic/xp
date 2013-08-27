@@ -4,7 +4,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.content.data.DataPath;
+import com.enonic.wem.api.data.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.core.jcr.JcrConstants;

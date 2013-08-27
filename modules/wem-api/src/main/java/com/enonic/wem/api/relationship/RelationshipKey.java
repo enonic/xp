@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.DataPath;
+import com.enonic.wem.api.data.data.DataPath;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
 /**

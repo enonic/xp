@@ -8,9 +8,9 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.ValueTypes;
+import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.data.Property;
+import com.enonic.wem.api.data.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.support.BaseInitializer;
 
@@ -77,7 +77,7 @@ public class DemoImagesInitializer
         client.execute( createContent ).getContentId();
     }
 
-    private ContentData createContentData( final String attachmentName)
+    private ContentData createContentData( final String attachmentName )
     {
         final ContentData dataSet = new ContentData();
         dataSet.add( Property.newProperty( "mimeType" ).type( ValueTypes.TEXT ).value( "image/png" ).build() );

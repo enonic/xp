@@ -6,8 +6,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.data.data.ContentData;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;

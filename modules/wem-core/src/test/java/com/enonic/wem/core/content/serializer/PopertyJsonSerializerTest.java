@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.content.binary.BinaryId;
-import com.enonic.wem.api.content.data.Property;
-import com.enonic.wem.api.content.data.type.ValueTypes;
+import com.enonic.wem.api.data.data.Property;
+import com.enonic.wem.api.data.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 

@@ -4,10 +4,10 @@ package com.enonic.wem.core.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.data.DataPath;
-import com.enonic.wem.api.content.data.DataSet;
-import com.enonic.wem.api.content.data.Property;
+import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.data.DataPath;
+import com.enonic.wem.api.data.data.DataSet;
+import com.enonic.wem.api.data.data.Property;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.schema.content.form.Form;

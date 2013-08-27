@@ -10,9 +10,9 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.data.Data;
-import com.enonic.wem.api.content.data.DataSet;
+import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.data.Data;
+import com.enonic.wem.api.data.data.DataSet;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 

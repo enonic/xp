@@ -6,9 +6,9 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.data.DataPath;
-import com.enonic.wem.api.content.data.Value;
+import com.enonic.wem.api.data.data.ContentData;
+import com.enonic.wem.api.data.data.DataPath;
+import com.enonic.wem.api.data.data.Value;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.FormItemPath;
 import com.enonic.wem.api.schema.content.form.Input;

@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.data.Value;
+import com.enonic.wem.api.data.data.Value;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
