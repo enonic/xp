@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
@@ -481,7 +482,11 @@ public class ContentTest
         contentData.setProperty( "mySet.myOtherNumber", new Value.WholeNumber( 2 ) );
 
         Content content = Content.newContent().
+            id( ContentId.from( "ABC-123" ) ).
             name( "myContent" ).
+            displayName( "My Content" ).
+            owner( UserKey.from( "mystore:someuser" ) ).
+            modifier( UserKey.from( "mystore:someotheruser" ) ).
             createdTime( DateTime.parse( "2012-12-12T12:00:00" ) ).
             modifiedTime( DateTime.parse( "2012-12-12T13:00:00" ) ).
             type( QualifiedContentTypeName.from( "mymodule:mycty" ) ).
@@ -489,7 +494,11 @@ public class ContentTest
 
         Item item = content.toItem();
 
+        assertEquals( "ABC-123", item.getProperty( "id" ).getString() );
         assertEquals( "myContent", item.getProperty( "name" ).getString() );
+        assertEquals( "My Content", item.getProperty( "displayName" ).getString() );
+        assertEquals( "user:mystore:someuser", item.getProperty( "owner" ).getString() );
+        assertEquals( "user:mystore:someotheruser", item.getProperty( "modifier" ).getString() );
         assertEquals( "2012-12-12T12:00:00", item.getProperty( "createdTime" ).getString() );
         assertEquals( "2012-12-12T13:00:00", item.getProperty( "modifiedTime" ).getString() );
         assertEquals( "mymodule:mycty", item.getProperty( "type" ).getString() );
