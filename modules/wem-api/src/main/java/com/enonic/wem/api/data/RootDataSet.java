@@ -32,4 +32,10 @@ public class RootDataSet
     {
         return -1;
     }
+
+    public DataSet toDataSet( final String name )
+    {
+        final DataSet newDataSet = newDataSet( this ).name( name ).build();
+        return newDataSet;
+    }
 }

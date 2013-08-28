@@ -4,12 +4,12 @@ package com.enonic.wem.api.data.type;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 
-public class DateMidnight
-    extends ValueType<org.joda.time.DateMidnight>
+public class DateTime
+    extends ValueType<org.joda.time.DateTime>
 {
-    DateMidnight( int key )
+    DateTime( int key )
     {
-        super( key, JavaTypeConverter.DateMidnight.GET );
+        super( key, JavaTypeConverter.DateTime.GET );
     }
 
     @Override

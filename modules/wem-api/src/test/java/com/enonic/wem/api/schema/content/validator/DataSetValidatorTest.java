@@ -1,6 +1,5 @@
 package com.enonic.wem.api.schema.content.validator;
 
-import org.joda.time.DateMidnight;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -100,7 +99,7 @@ public class DataSetValidatorTest
         contentType.form().addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getContentData().setProperty( "myDate", new Value.Date( new DateMidnight( 2012, 9, 11 ) ) );
+        content.getContentData().setProperty( "myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2012, 9, 11 ) ) );
         content.getContentData().setProperty( "myDecimalNumber", new Value.DecimalNumber( 12.34 ) );
         content.getContentData().setProperty( "mySingleSelector", new Value.Text( "o1" ) );
         content.getContentData().setProperty( "myHtmlArea", new Value.HtmlPart( "<h1>Hello world</h1>" ) );

@@ -32,7 +32,7 @@ public class Date
     @Override
     public Value newValue( final String value )
     {
-        return new Value.Date( ValueTypes.DATE_MIDNIGHT.convert( value ) );
+        return new Value.DateMidnight( ValueTypes.DATE_MIDNIGHT.convert( value ) );
     }
 }
 

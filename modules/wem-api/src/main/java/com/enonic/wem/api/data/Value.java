@@ -251,22 +251,41 @@ public abstract class Value<T>
         return getType().newProperty( name, this );
     }
 
-    public static final class Date
+    public static final class DateMidnight
         extends Value<org.joda.time.DateMidnight>
     {
-        public Date( final org.joda.time.DateMidnight value )
+        public DateMidnight( final org.joda.time.DateMidnight value )
         {
             super( ValueTypes.DATE_MIDNIGHT, value );
         }
 
-        public Date( final org.joda.time.DateTime value )
+        public DateMidnight( final org.joda.time.DateTime value )
         {
             super( ValueTypes.DATE_MIDNIGHT, value.toDateMidnight() );
         }
 
-        public Date( final String value )
+        public DateMidnight( final String value )
         {
             super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
+        }
+    }
+
+    public static final class DateTime
+        extends Value<org.joda.time.DateTime>
+    {
+        public DateTime( final org.joda.time.DateTime value )
+        {
+            super( ValueTypes.DATE_TIME, value );
+        }
+
+        public DateTime( final org.joda.time.DateMidnight value )
+        {
+            super( ValueTypes.DATE_TIME, value.toDateTime() );
+        }
+
+        public DateTime( final String value )
+        {
+            super( ValueTypes.DATE_TIME, JavaTypeConverter.DateTime.GET.convertFromString( value ) );
         }
     }
 

@@ -1,7 +1,6 @@
 package com.enonic.wem.api.data;
 
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class ValueTest
     public void isJavaType()
     {
         assertTrue( new Value.Text( "Some text" ).isJavaType( String.class ) );
-        assertTrue( new Value.Date( DateMidnight.now() ).isJavaType( DateMidnight.class ) );
+        assertTrue( new Value.DateMidnight( org.joda.time.DateMidnight.now() ).isJavaType( org.joda.time.DateMidnight.class ) );
     }
 
     @Test
@@ -75,10 +74,10 @@ public class ValueTest
     @Test
     public void construct_Date()
     {
-        DateMidnight value = new DateMidnight( 2013, 1, 1 );
+        org.joda.time.DateMidnight value = new org.joda.time.DateMidnight( 2013, 1, 1 );
 
-        assertSame( value, new Value.Date( value ).getDate() );
-        assertEquals( value, new Value.Date( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).getDate() );
-        assertEquals( value, new Value.Date( "2013-1-1" ).getDate() );
+        assertSame( value, new Value.DateMidnight( value ).getDate() );
+        assertEquals( value, new Value.DateMidnight( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).getDate() );
+        assertEquals( value, new Value.DateMidnight( "2013-1-1" ).getDate() );
     }
 }

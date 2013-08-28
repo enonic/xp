@@ -1,7 +1,5 @@
 package com.enonic.wem.api.data;
 
-import org.joda.time.DateMidnight;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -147,7 +145,7 @@ public class Property
         return getArray().getValue( arrayIndex ).asDouble();
     }
 
-    public DateMidnight getDate()
+    public org.joda.time.DateMidnight getDate()
         throws InconvertibleValueException
     {
         return value.asDate();
@@ -158,7 +156,7 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateMidnight.
      */
-    public DateMidnight getDate( final int arrayIndex )
+    public org.joda.time.DateMidnight getDate( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDate();
@@ -205,6 +203,12 @@ public class Property
     }
 
     @Override
+    public Data copy()
+    {
+        return newProperty( this ).build();
+    }
+
+    @Override
     public boolean equals( final Object o )
     {
         if ( this == o )
@@ -240,6 +244,11 @@ public class Property
     public static Builder newProperty()
     {
         return new Builder();
+    }
+
+    public static Builder newProperty( Property property )
+    {
+        return new Builder( property );
     }
 
     public static TypeBuilder newProperty( final String name )
@@ -303,6 +312,17 @@ public class Property
     public static class Builder
         extends AbstractNameBuilder<Builder>
     {
+
+        public Builder()
+        {
+
+        }
+
+        public Builder( final Property property )
+        {
+            this.name( property.getName() ).type( property.getValueType() ).value( property.getValue() );
+        }
+
         public Builder type( ValueType value )
         {
             super.setType( value );
@@ -602,14 +622,14 @@ public class Property
     public final static class Date
         extends Property
     {
-        public Date( final String name, final DateMidnight value )
+        public Date( final String name, final org.joda.time.DateMidnight value )
         {
-            super( name, new Value.Date( value ) );
+            super( name, new Value.DateMidnight( value ) );
         }
 
         public Date( final String name, final String value )
         {
-            super( name, new Value.Date( value ) );
+            super( name, new Value.DateMidnight( value ) );
         }
 
         private Date( final AbstractBaseBuilder builder )
@@ -635,7 +655,7 @@ public class Property
                 setType( ValueTypes.DATE_MIDNIGHT );
             }
 
-            public DateBuilder value( final DateMidnight value )
+            public DateBuilder value( final org.joda.time.DateMidnight value )
             {
                 setValue( value );
                 return this;
@@ -668,7 +688,7 @@ public class Property
                 setName( name );
             }
 
-            public Date value( final DateMidnight value )
+            public Date value( final org.joda.time.DateMidnight value )
             {
                 setValue( value );
                 return new Date( this );
@@ -890,6 +910,11 @@ public class Property
         extends Property
     {
         public WholeNumber( final String name, final Long value )
+        {
+            super( name, new Value.WholeNumber( value ) );
+        }
+
+        public WholeNumber( final String name, final Integer value )
         {
             super( name, new Value.WholeNumber( value ) );
         }

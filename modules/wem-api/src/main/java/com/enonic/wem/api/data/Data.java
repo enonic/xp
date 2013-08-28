@@ -152,5 +152,7 @@ public abstract class Data
 
         return parent.getArray( this );
     }
+
+    public abstract Data copy();
 }
 

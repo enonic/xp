@@ -73,6 +73,14 @@ public abstract class JavaTypeConverter<T>
             {
                 return value.toString();
             }
+            else if ( value instanceof org.joda.time.DateTime )
+            {
+                return DateTime.FORMATTER.print( (org.joda.time.DateTime) value );
+            }
+            else if ( value instanceof org.joda.time.DateMidnight )
+            {
+                return DateMidnight.FORMATTER.print( (org.joda.time.DateMidnight) value );
+            }
             else
             {
                 return null;
@@ -201,6 +209,47 @@ public abstract class JavaTypeConverter<T>
         public org.joda.time.DateMidnight convertFromString( final java.lang.String value )
         {
             return FORMATTER.parseDateTime( value ).toDateMidnight();
+        }
+    }
+
+    public static final class DateTime
+        extends JavaTypeConverter<org.joda.time.DateTime>
+    {
+        private final static DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().
+            appendYear( 4, 4 ).appendLiteral( "-" ).appendMonthOfYear( 2 ).appendLiteral( "-" ).appendDayOfMonth( 2 ).
+            appendLiteral( "T" ).appendHourOfDay( 2 ).appendLiteral( ":" ).appendMinuteOfHour( 2 ).appendLiteral(
+            ":" ).appendSecondOfMinute( 2 ).toFormatter();
+
+        public static final DateTime GET = new DateTime();
+
+        private DateTime()
+        {
+            super( org.joda.time.DateTime.class );
+        }
+
+        public org.joda.time.DateTime convertFrom( final Object value )
+        {
+            if ( value instanceof org.joda.time.DateTime )
+            {
+                return (org.joda.time.DateTime) value;
+            }
+            else if ( value instanceof java.lang.String )
+            {
+                return FORMATTER.parseDateTime( (java.lang.String) value ).toDateTime();
+            }
+            else if ( value instanceof java.lang.Long )
+            {
+                return new org.joda.time.DateTime( value );
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public org.joda.time.DateTime convertFromString( final java.lang.String value )
+        {
+            return FORMATTER.parseDateTime( value ).toDateTime();
         }
     }
 

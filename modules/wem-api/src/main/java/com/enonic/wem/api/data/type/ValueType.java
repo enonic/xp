@@ -20,7 +20,7 @@ public abstract class ValueType<T>
 
     private final Class classType;
 
-    private JavaTypeConverter<T> javaTypeConverter;
+    private final JavaTypeConverter<T> javaTypeConverter;
 
     public ValueType( final int key, final JavaTypeConverter<T> javaTypeConverter )
     {

@@ -8,13 +8,16 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.ItemTranslatable;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Content
-    implements IllegalEditAware<Content>
+    implements IllegalEditAware<Content>, ItemTranslatable
 {
     private final String displayName;
 
@@ -122,6 +125,52 @@ public final class Content
         return versionId;
     }
 
+    public Item toItem()
+    {
+        final Item item = new Item();
+        if ( this.id != null )
+        {
+            item.setProperty( "id", new Value.ContentId( this.id ) );
+        }
+        if ( this.getName() != null )
+        {
+            item.setProperty( "name", new Value.Text( this.getName() ) );
+        }
+        if ( this.path != null )
+        {
+            item.setProperty( "path", new Value.Text( this.path.toString() ) );
+        }
+        if ( this.displayName != null )
+        {
+            item.setProperty( "displayName", new Value.Text( this.displayName ) );
+        }
+        if ( this.createdTime != null )
+        {
+            item.setProperty( "createdTime", new Value.DateTime( this.createdTime ) );
+        }
+        if ( this.modifiedTime != null )
+        {
+            item.setProperty( "modifiedTime", new Value.DateTime( this.modifiedTime ) );
+        }
+        if ( this.owner != null )
+        {
+            item.setProperty( "owner", new Value.Text( this.owner.toString() ) );
+        }
+        if ( this.modifier != null )
+        {
+            item.setProperty( "modifier", new Value.Text( this.modifier.toString() ) );
+        }
+        if ( this.type != null )
+        {
+            item.setProperty( "type", new Value.Text( this.type.toString() ) );
+        }
+        if ( this.contentData != null )
+        {
+            item.add( this.contentData.toDataSet( "data" ) );
+        }
+        return item;
+    }
+
     @Override
     public String toString()
     {
@@ -131,8 +180,8 @@ public final class Content
         s.add( "version", versionId );
         s.add( "displayName", displayName );
         s.add( "contentType", type );
-        s.add( "created", createdTime );
-        s.add( "modified", modifiedTime );
+        s.add( "createdTime", createdTime );
+        s.add( "modifiedTime", modifiedTime );
         s.add( "owner", owner );
         s.add( "modifier", modifier );
         return s.toString();

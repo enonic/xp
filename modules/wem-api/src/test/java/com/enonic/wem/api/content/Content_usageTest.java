@@ -4,7 +4,6 @@ package com.enonic.wem.api.content;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -43,7 +42,7 @@ public class Content_usageTest
         // exercise
         dataSet.setProperty( "myText", new Value.Text( "abc" ) );
         dataSet.setProperty( "myNum", new Value.WholeNumber( 123 ) );
-        dataSet.setProperty( "myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.setProperty( "myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.setProperty( "myDec", new Value.DecimalNumber( 123.123 ) );
         dataSet.setProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
@@ -77,7 +76,7 @@ public class Content_usageTest
         // exercise
         dataSet.setProperty( "mySet.myText", new Value.Text( "abc" ) );
         dataSet.setProperty( "mySet.myNum", new Value.WholeNumber( 123 ) );
-        dataSet.setProperty( "mySet.myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.setProperty( "mySet.myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.setProperty( "mySet.myDec", new Value.DecimalNumber( 123.123 ) );
         dataSet.setProperty( "mySet.myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
@@ -98,7 +97,7 @@ public class Content_usageTest
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "abc" ).build() );
         dataSet.add( newProperty( "myNum" ).type( WHOLE_NUMBER ).value( 123L ).build() );
         dataSet.add( newProperty( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
-        dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ).build() );
+        dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ).build() );
         dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
         // verify
@@ -124,7 +123,7 @@ public class Content_usageTest
         dataSet.add( newText( "myText" ).value( "abc" ) );
         dataSet.add( newWholeNumber( "myNum" ).value( 123L ) );
         dataSet.add( newDecimalNumber( "myDec" ).value( 123.123 ) );
-        dataSet.add( newDate( "myDate" ).value( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( newDate( "myDate" ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( newHtmlPart( "myHtml" ).value( "<p>abc</p>" ) );
 
         // verify
@@ -150,7 +149,7 @@ public class Content_usageTest
         dataSet.add( new Property.Text( "myText", "abc" ) );
         dataSet.add( new Property.WholeNumber( "myNum", 123L ) );
         dataSet.add( new Property.DecimalNumber( "myDec", 123.123 ) );
-        dataSet.add( new Property.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( new Property.Date( "myDate", new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
@@ -176,7 +175,7 @@ public class Content_usageTest
         dataSet.addProperty( "myText", new Value.Text( "abc" ) );
         dataSet.addProperty( "myNum", new Value.WholeNumber( 123 ) );
         dataSet.addProperty( "myDec", new Value.DecimalNumber( 123.123 ) );
-        dataSet.addProperty( "myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.addProperty( "myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.addProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
@@ -202,7 +201,7 @@ public class Content_usageTest
         contentData.addProperty( "mySet.myText", new Value.Text( "abc" ) );
         contentData.addProperty( "mySet.myNum", new Value.WholeNumber( 123 ) );
         contentData.addProperty( "mySet.myDec", new Value.DecimalNumber( 123.123 ) );
-        contentData.addProperty( "mySet.myDate", new Value.Date( new DateMidnight( 2013, 1, 13 ) ) );
+        contentData.addProperty( "mySet.myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         contentData.addProperty( "mySet.myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
@@ -232,14 +231,14 @@ public class Content_usageTest
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "abc" ).build() );
         dataSet.add( newProperty( "myNum" ).type( WHOLE_NUMBER ).value( 123L ).build() );
         dataSet.add( newProperty( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
-        dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new DateMidnight( 2013, 1, 13 ) ).build() );
+        dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ).build() );
         dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
         // exercise & verify
         assertEquals( "abc", dataSet.getProperty( "myText" ).getString() );
         assertEquals( new Long( 123L ), dataSet.getProperty( "myNum" ).getLong() );
         assertEquals( 123.123, dataSet.getProperty( "myDec" ).getDouble() );
-        assertEquals( new DateMidnight( 2013, 1, 13 ), dataSet.getProperty( "myDate" ).getDate() );
+        assertEquals( new org.joda.time.DateMidnight( 2013, 1, 13 ), dataSet.getProperty( "myDate" ).getDate() );
         assertEquals( "<p>abc</p>", dataSet.getProperty( "myHtml" ).getString() );
     }
 
@@ -369,7 +368,7 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         ContentData contentData = new ContentData();
-        contentData.setProperty( "invoiceDate", new Value.Date( invoice.invoiceDate.toDateMidnight() ) );
+        contentData.setProperty( "invoiceDate", new Value.DateMidnight( invoice.invoiceDate.toDateMidnight() ) );
         contentData.setProperty( "recipient", new Value.Text( invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )

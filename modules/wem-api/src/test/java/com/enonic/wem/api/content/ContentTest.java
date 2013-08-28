@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content;
 
 
-import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,8 +10,10 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.form.FieldSet;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.Input;
@@ -460,7 +462,7 @@ public class ContentTest
         // exercise
         try
         {
-            content.getContentData().setProperty( "myData[1]", new Value.Date( new DateMidnight( 2000, 1, 1 ) ) );
+            content.getContentData().setProperty( "myData[1]", new Value.DateMidnight( new org.joda.time.DateMidnight( 2000, 1, 1 ) ) );
             fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -468,6 +470,32 @@ public class ContentTest
             assertTrue( e instanceof IllegalArgumentException );
             assertEquals( "Array [myData] expects Property of type [Text]. Property [myData] was of type: DateMidnight", e.getMessage() );
         }
+    }
+
+    @Test
+    public void toItem()
+    {
+        ContentData contentData = new ContentData();
+        contentData.add( new Property.WholeNumber( "myNumber", 1 ) );
+        contentData.add( new Property.Text( "myText", "text" ) );
+        contentData.setProperty( "mySet.myOtherNumber", new Value.WholeNumber( 2 ) );
+
+        Content content = Content.newContent().
+            name( "myContent" ).
+            createdTime( DateTime.parse( "2012-12-12T12:00:00" ) ).
+            modifiedTime( DateTime.parse( "2012-12-12T13:00:00" ) ).
+            type( QualifiedContentTypeName.from( "mymodule:mycty" ) ).
+            contentData( contentData ).build();
+
+        Item item = content.toItem();
+
+        assertEquals( "myContent", item.getProperty( "name" ).getString() );
+        assertEquals( "2012-12-12T12:00:00", item.getProperty( "createdTime" ).getString() );
+        assertEquals( "2012-12-12T13:00:00", item.getProperty( "modifiedTime" ).getString() );
+        assertEquals( "mymodule:mycty", item.getProperty( "type" ).getString() );
+        assertEquals( "1", item.getProperty( "data.myNumber" ).getString() );
+        assertEquals( "text", item.getProperty( "data.myText" ).getString() );
+        assertEquals( "2", item.getProperty( "data.mySet.myOtherNumber" ).getString() );
     }
 
     @Test

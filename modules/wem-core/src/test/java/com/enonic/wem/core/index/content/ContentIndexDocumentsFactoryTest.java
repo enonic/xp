@@ -3,7 +3,6 @@ package com.enonic.wem.core.index.content;
 import java.util.Collection;
 import java.util.Set;
 
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -46,8 +45,8 @@ public class ContentIndexDocumentsFactoryTest
         Content content = createContentWithMetadata();
 
         content.getContentData().setProperty( "mydata.value1", new Value.DecimalNumber( 1.0 ) );
-        content.getContentData().setProperty( "mydata.value2", new Value.Date( DateMidnight.now() ) );
-        content.getContentData().setProperty( "mydata.value2[1]", new Value.Date( DateMidnight.now() ) );
+        content.getContentData().setProperty( "mydata.value2", new Value.DateMidnight( org.joda.time.DateMidnight.now() ) );
+        content.getContentData().setProperty( "mydata.value2[1]", new Value.DateMidnight( org.joda.time.DateMidnight.now() ) );
         content.getContentData().setProperty( "mydata.value3.subvalue1", new Value.Text( "value3.1" ) );
         content.getContentData().setProperty( "mydata.value3.subvalue2", new Value.Text( "value3.2" ) );
         content.getContentData().setProperty( "mydata.value3.subvalue3", new Value.Text( "value3.3" ) );

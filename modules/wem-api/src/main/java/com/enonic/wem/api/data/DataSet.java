@@ -39,9 +39,9 @@ public class DataSet
     {
         super( builder.name );
 
-        for ( Property property : builder.propertyList )
+        for ( Data data : builder.dataList )
         {
-            add( property );
+            add( data );
         }
     }
 
@@ -426,6 +426,12 @@ public class DataSet
     }
 
     @Override
+    public Data copy()
+    {
+        return newDataSet( this ).build();
+    }
+
+    @Override
     public boolean equals( final Object o )
     {
         if ( this == o )
@@ -485,6 +491,11 @@ public class DataSet
         return new Builder();
     }
 
+    public static Builder newDataSet( final DataSet dataSet )
+    {
+        return new Builder( dataSet );
+    }
+
     public static Builder newDataSet( final String name )
     {
         final Builder builder = new Builder();
@@ -496,7 +507,20 @@ public class DataSet
     {
         private String name;
 
-        private List<Property> propertyList = new ArrayList<>();
+        private List<Data> dataList = new ArrayList<>();
+
+        public Builder()
+        {
+        }
+
+        public Builder( final DataSet dataSet )
+        {
+            this.name = dataSet.getName();
+            for ( final Data data : dataSet )
+            {
+                this.dataList.add( data.copy() );
+            }
+        }
 
         public Builder name( final String value )
         {
@@ -506,7 +530,7 @@ public class DataSet
 
         public Builder set( final String name, final Object value, final ValueType propertyType )
         {
-            propertyList.add( propertyType.newProperty( name, value ) );
+            dataList.add( propertyType.newProperty( name, value ) );
             return this;
         }
 

@@ -19,15 +19,17 @@ public final class ValueTypes
 
     public static final DateMidnight DATE_MIDNIGHT = new DateMidnight( 5 );
 
-    public static final ContentId CONTENT_ID = new ContentId( 6 );
+    public static final DateTime DATE_TIME = new DateTime( 6 );
 
-    public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 7 );
+    public static final ContentId CONTENT_ID = new ContentId( 7 );
 
-    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 8 );
+    public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 8 );
 
-    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 9 );
+    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 9 );
 
-    public static final AttachmentName ATTACHMENT_NAME = new AttachmentName( 10 );
+    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 10 );
+
+    public static final AttachmentName ATTACHMENT_NAME = new AttachmentName( 11 );
 
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
 
@@ -40,6 +42,7 @@ public final class ValueTypes
         register( HTML_PART );
         register( XML );
         register( DATE_MIDNIGHT );
+        register( DATE_TIME );
         register( CONTENT_ID );
         register( WHOLE_NUMBER );
         register( DECIMAL_NUMBER );
