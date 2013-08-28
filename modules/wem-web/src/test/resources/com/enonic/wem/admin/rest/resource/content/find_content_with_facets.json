@@ -1,0 +1,98 @@
+{
+    "contents": [
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "displayName": "My Content",
+            "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+            "id": "aaa",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_a_content",
+            "owner": "user:myStore:me",
+            "path": "/my_a_content",
+            "root": false,
+            "type": "mymodule:my_type"
+        },
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "displayName": "My Content",
+            "iconUrl": "http://localhost/admin/rest/content/image/bbb",
+            "id": "bbb",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_b_content",
+            "owner": "user:myStore:me",
+            "path": "/my_b_content",
+            "root": false,
+            "type": "mymodule:my_type"
+        }
+    ],
+    "facets": [
+        {
+            "_type": "terms",
+            "displayName": "Content Type",
+            "name": "contentType",
+            "terms": [
+                {
+                    "count": 5,
+                    "displayName": "My type",
+                    "name": "system:folder"
+                },
+                {
+                    "count": 24,
+                    "displayName": "My type",
+                    "name": "system:image"
+                },
+                {
+                    "count": 4,
+                    "displayName": "My type",
+                    "name": "system:space"
+                }
+            ]
+        },
+        {
+            "_type": "terms",
+            "displayName": "Space",
+            "name": "space",
+            "terms": [
+                {
+                    "count": 30,
+                    "displayName": "My space",
+                    "name": "bildearkiv"
+                },
+                {
+                    "count": 1,
+                    "displayName": "My space",
+                    "name": "bluman trampoliner"
+                },
+                {
+                    "count": 1,
+                    "displayName": "My space",
+                    "name": "bluman intranett"
+                }
+            ]
+        },
+        {
+            "_type": "terms",
+            "displayName": "Last Modified",
+            "name": "ranges",
+            "terms": [
+                {
+                    "count": 0,
+                    "name": "< 1 hour",
+                    "type": "query"
+                },
+                {
+                    "count": 0,
+                    "name": "< 1 week",
+                    "type": "query"
+                },
+                {
+                    "count": 0,
+                    "name": "< 1 day",
+                    "type": "query"
+                }
+            ]
+        }
+    ]
+}
