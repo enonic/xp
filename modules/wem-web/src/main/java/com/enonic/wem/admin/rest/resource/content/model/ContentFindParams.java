@@ -8,6 +8,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
 
+import com.enonic.wem.admin.rest.resource.DateTimeFormatter;
+
 @XmlRootElement
 public class ContentFindParams
 {
@@ -97,7 +99,7 @@ public class ContentFindParams
 
         public void setLower( final String lower )
         {
-            this.lower = parseDateTime( lower );
+            this.lower = DateTimeFormatter.parse( lower );
         }
 
         public DateTime getUpper()
@@ -107,24 +109,7 @@ public class ContentFindParams
 
         public void setUpper( final String upper )
         {
-            this.upper = parseDateTime( upper );
-        }
-
-        private DateTime parseDateTime( final String dateTime )
-        {
-            if ( dateTime == null || dateTime.isEmpty() )
-            {
-                return null;
-            }
-
-            try
-            {
-                return DateTime.parse( dateTime );
-            }
-            catch ( Exception e )
-            {
-                return null;
-            }
+            this.upper = DateTimeFormatter.parse( upper );
         }
     }
 

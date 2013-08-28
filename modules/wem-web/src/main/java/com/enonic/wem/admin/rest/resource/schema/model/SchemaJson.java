@@ -2,6 +2,7 @@ package com.enonic.wem.admin.rest.resource.schema.model;
 
 import org.joda.time.DateTime;
 
+import com.enonic.wem.admin.rest.resource.DateTimeFormatter;
 import com.enonic.wem.admin.rest.resource.model.Item;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.schema.Schema;
@@ -101,9 +102,9 @@ public class SchemaJson
         this.type = type;
     }
 
-    public DateTime getCreatedTime()
+    public String getCreatedTime()
     {
-        return createdTime;
+        return DateTimeFormatter.format( createdTime );
     }
 
     public void setCreatedTime( final DateTime createdTime )
@@ -111,9 +112,9 @@ public class SchemaJson
         this.createdTime = createdTime;
     }
 
-    public DateTime getModifiedTime()
+    public String getModifiedTime()
     {
-        return modifiedTime;
+        return DateTimeFormatter.format( modifiedTime );
     }
 
     public void setModifiedTime( final DateTime modifiedTime )

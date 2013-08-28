@@ -1,14 +1,11 @@
 package com.enonic.wem.admin.rest.resource.content.model;
 
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
+import com.enonic.wem.admin.rest.resource.DateTimeFormatter;
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.api.content.Content;
 
 public class ContentSummaryJson
 {
-    private static final DateTimeFormatter isoDateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();
 
     private final Content content;
 
@@ -66,12 +63,12 @@ public class ContentSummaryJson
 
     public String getModifiedTime()
     {
-        return isoDateTimeFormatter.print( content.getModifiedTime() );
+        return DateTimeFormatter.format( content.getModifiedTime() );
     }
 
     public String getCreatedTime()
     {
-        return isoDateTimeFormatter.print( content.getCreatedTime() );
+        return DateTimeFormatter.format( content.getCreatedTime() );
     }
 
 }
