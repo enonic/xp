@@ -1,36 +1,36 @@
-module api_app_browse_filter {
+module api_facet {
 
-    export class FacetContainer extends api_dom.DivEl {
+    export class FacetGroupView extends api_dom.DivEl {
 
-        private facetGroups:FacetGroup[] = [];
-        private lastFacetGroup:FacetGroup;
+        private facetGroups:TermsFacetView[] = [];
+        private lastFacetGroup:TermsFacetView;
 
-        constructor(data?:FacetGroupData[]) {
-            super('FacetContainer');
+        constructor(data?:TermsFacet[]) {
+            super('FacetGroupView');
 
             if (data) {
                 for (var i = 0; i < data.length; i++) {
-                    this.addFacetGroup(new FacetGroup(data[i]));
+                    this.addFacetGroup(new TermsFacetView(data[i]));
                 }
             }
 
-            api_app_browse_filter.FilterSearchEvent.on((event) => {
+            api_app_browse_filter.FilterSearchEvent.on((event:api_app_browse_filter.FilterSearchEvent) => {
                 if (event.getTarget()) {
-                    this.lastFacetGroup = (<Facet>event.getTarget()).getFacetGroup();
+                    this.lastFacetGroup = (<TermsFacetEntryView>event.getTarget()).getFacetGroup();
                 } else {
                     this.lastFacetGroup = undefined;
                 }
-            })
+            });
         }
 
-        private addFacetGroup(facetGroup:FacetGroup) {
+        private addFacetGroup(facetGroup:TermsFacetView) {
             this.facetGroups.push(facetGroup);
             this.appendChild(facetGroup);
         }
 
         private getFacetGroup(name:string) {
             for (var i = 0; i < this.facetGroups.length; i++) {
-                var facetGroup:FacetGroup = this.facetGroups[i];
+                var facetGroup:TermsFacetView = this.facetGroups[i];
                 if (facetGroup.getName() == name) {
                     return facetGroup;
                 }
@@ -38,15 +38,16 @@ module api_app_browse_filter {
             return null;
         }
 
-        update(facetGroupsData:FacetGroupData[]) {
+        update(facetGroupsData:api_facet.TermsFacet[]) {
             for (var i = 0; i < facetGroupsData.length; i++) {
-                var facetGroupData = facetGroupsData[i];
-                var facetGroup:FacetGroup = this.getFacetGroup(facetGroupData.name);
+                var termsFacet = facetGroupsData[i];
+                var facetGroup:TermsFacetView = this.getFacetGroup(termsFacet.name);
 
                 if (facetGroup != null && facetGroup != this.lastFacetGroup) {
-                    facetGroup.update(facetGroupData);
+                    facetGroup.update(termsFacet);
                 } else if (facetGroup == null) {
-                    this.addFacetGroup(new FacetGroup(facetGroupData));
+                    facetGroup = new TermsFacetView(termsFacet);
+                    this.addFacetGroup(facetGroup);
                 }
             }
         }
@@ -60,7 +61,7 @@ module api_app_browse_filter {
 
         getValues():any[] {
             var values = [];
-            var facetGroup:FacetGroup;
+            var facetGroup:TermsFacetView;
             for (var i = 0; i < this.facetGroups.length; i++) {
                 facetGroup = this.facetGroups[i];
                 values[facetGroup.getName()] = facetGroup.getValues();
