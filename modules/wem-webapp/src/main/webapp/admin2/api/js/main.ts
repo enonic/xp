@@ -180,13 +180,17 @@
 ///<reference path='app/browse/GridContainer.ts'/>
 
 ///<reference path='app/browse/filter/FilterSearchEvent.ts' />
-///<reference path='app/browse/filter/Facet.ts' />
-///<reference path='app/browse/filter/FacetGroup.ts' />
-///<reference path='app/browse/filter/FacetContainer.ts' />
 ///<reference path='app/browse/filter/BrowseFilterPanelListener.ts' />
 ///<reference path='app/browse/filter/BrowseFilterPanel.ts' />
 ///<reference path='app/browse/filter/TextSearchField.ts'/>
 ///<reference path='app/browse/filter/ClearFilterButton.ts'/>
+
+///<reference path='facet/TermsFacetEntryView.ts' />
+///<reference path='facet/TermsFacetView.ts' />
+///<reference path='facet/FacetGroupView.ts' />
+///<reference path='facet/Facet.ts' />
+///<reference path='facet/TermsFacet.ts' />
+///<reference path='facet/TermsFacetEntry.ts' />
 
 ///<reference path='app/view/ViewItem.ts' />
 ///<reference path='app/view/ItemStatisticsPanel.ts' />

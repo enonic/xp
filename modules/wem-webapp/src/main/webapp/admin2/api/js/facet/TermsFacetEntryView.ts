@@ -1,12 +1,6 @@
-module api_app_browse_filter {
+module api_facet {
 
-    export interface FacetData {
-        count:number;
-        name:string;
-        displayName:string;
-    }
-
-    export class Facet extends api_dom.DivEl {
+    export class TermsFacetEntryView extends api_dom.DivEl {
 
         private checkbox:api_dom.InputEl;
 
@@ -14,9 +8,9 @@ module api_app_browse_filter {
 
         private name:string;
 
-        private facetGroup:FacetGroup;
+        private facetGroup:TermsFacetView;
 
-        constructor(facetData:FacetData, facetGroup:FacetGroup) {
+        constructor(facetData:TermsFacetEntry, facetGroup:TermsFacetView) {
             super('Facet', 'facet');
             this.name = facetData.name;
 
@@ -41,7 +35,7 @@ module api_app_browse_filter {
             }
         }
 
-        getFacetGroup():FacetGroup {
+        getFacetGroup():TermsFacetView {
             return this.facetGroup;
         }
 
@@ -49,7 +43,7 @@ module api_app_browse_filter {
             return this.name;
         }
 
-        update(facetData:FacetData) {
+        update(facetData:TermsFacetEntry) {
             this.label.getEl().setInnerHtml(facetData.displayName + ' (' + facetData.count + ')');
             if (facetData.count > 0 || this.isSelected()) {
                 this.show();

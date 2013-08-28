@@ -4,7 +4,7 @@ module api_app_browse_filter {
 
         private listeners:BrowseFilterPanelListener[] = [];
 
-        private facetContainer:FacetContainer;
+        private facetContainer:api_facet.FacetGroupView;
 
         private searchField:api_app_browse_filter.TextSearchField;
 
@@ -12,13 +12,13 @@ module api_app_browse_filter {
 
         private searchFilterTypingTimer:number;
 
-        constructor(facetData?:FacetGroupData[]) {
+        constructor(facetData?:api_facet.TermsFacet[]) {
             super('BrowseFilterPanel');
             this.addClass('filter-panel');
 
             this.searchField = this.createSearchFieldEl();
             this.clearFilter = this.createClearFilterEl();
-            this.facetContainer = new FacetContainer(facetData);
+            this.facetContainer = new api_facet.FacetGroupView(facetData);
 
             api_app_browse_filter.FilterSearchEvent.on((event:api_app_browse_filter.FilterSearchEvent) => {
                 if (this.isDirty()) {
@@ -60,7 +60,7 @@ module api_app_browse_filter {
             return clearFilter;
         }
 
-        updateFacets(facetGroupsData:FacetGroupData[]) {
+        updateFacets(facetGroupsData:api_facet.TermsFacet[]) {
             this.facetContainer.update(facetGroupsData)
         }
 
