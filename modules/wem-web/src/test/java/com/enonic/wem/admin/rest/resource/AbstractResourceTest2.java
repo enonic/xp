@@ -57,14 +57,14 @@ public abstract class AbstractResourceTest2
         assertEquals( expectedStr, actualStr );
     }
 
-    private JsonNode parseJson( final String json )
+    protected JsonNode parseJson( final String json )
         throws Exception
     {
         final ObjectMapper mapper = ObjectMapperHelper.create();
         return mapper.readTree( json );
     }
 
-    private String readFromFile( final String fileName )
+    protected String readFromFile( final String fileName )
         throws Exception
     {
         final URL url = getClass().getResource( fileName );

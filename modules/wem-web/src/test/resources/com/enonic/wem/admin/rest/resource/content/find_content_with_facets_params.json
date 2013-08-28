@@ -1,0 +1,55 @@
+{
+    "fulltext":"",
+    "contentTypes":[],
+    "spaces":[],
+    "ranges":[],
+    "facets":{
+        "space":{
+            "terms":{
+                "field":"space",
+                "size":10,
+                "all_terms":true,
+                "order":"term"
+            }
+        },
+        "contentType":{
+            "terms":{
+                "field":"contentType",
+                "size":10,
+                "all_terms":true,
+                "order":"term"
+            }
+        },
+        "< 1 day":{
+            "query":{
+                "range":{
+                    "lastModified.date":{
+                        "from":"2013-08-21T09:56:09.380Z",
+                        "include_lower":true
+                    }
+                }
+            }
+        },
+        "< 1 hour":{
+            "query":{
+                "range":{
+                    "lastModified.date":{
+                        "from":"2013-08-22T08:56:09.380Z",
+                        "include_lower":true
+                    }
+                }
+            }
+        },
+        "< 1 week":{
+            "query":{
+                "range":{
+                    "lastModified.date":{
+                        "from":"2013-08-15T09:56:09.380Z",
+                        "include_lower":true
+                    }
+                }
+            }
+        }
+    },
+    "include":true
+}
