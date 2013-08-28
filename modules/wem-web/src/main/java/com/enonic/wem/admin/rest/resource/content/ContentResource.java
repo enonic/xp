@@ -1,8 +1,11 @@
 package com.enonic.wem.admin.rest.resource.content;
 
 import java.util.List;
+import java.util.Set;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -14,7 +17,11 @@ import com.google.common.base.Joiner;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.content.model.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.model.ContentListJson;
+import com.enonic.wem.admin.rest.resource.content.model.ContentSummaryListJson;
+import com.enonic.wem.admin.rest.resource.content.model.FacetedContentSummaryListJson;
+import com.enonic.wem.admin.rpc.content.FacetEnricher;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContentVersion;
@@ -24,7 +31,11 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.query.ContentIndexQuery;
+import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.space.SpaceNames;
 
 @Path("content")
 @Produces(MediaType.APPLICATION_JSON)
@@ -49,7 +60,7 @@ public class ContentResource
 
     @GET
     @Path("list")
-    public ContentListJson list( @QueryParam("path") String path )
+    public ContentSummaryListJson list( @QueryParam("path") String path )
     {
         final ContentPath parentPath = ContentPath.from( path );
 
@@ -57,8 +68,46 @@ public class ContentResource
         getChildContent.parentPath( parentPath );
 
         final Contents contents = client.execute( getChildContent );
-        return new ContentListJson( contents );
+        return new ContentSummaryListJson( contents );
     }
+
+
+    @POST
+    @Path("find")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public FacetedContentSummaryListJson find( final ContentFindParams params )
+    {
+
+        final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
+        contentIndexQuery.setFullTextSearchString( params.getFulltext() );
+        contentIndexQuery.setIncludeFacets( params.isIncludeFacets() );
+        contentIndexQuery.setContentTypeNames( QualifiedContentTypeNames.from( params.getContentTypes() ) );
+        contentIndexQuery.setSpaceNames( SpaceNames.from( params.getSpaces() ) );
+
+        Set<ContentFindParams.Range> ranges = params.getRanges();
+        if ( ranges != null && !ranges.isEmpty() )
+        {
+            for ( ContentFindParams.Range range : ranges )
+            {
+                contentIndexQuery.addRange( range.getLower(), range.getUpper() );
+            }
+        }
+
+        if ( params.isIncludeFacets() )
+        {
+            contentIndexQuery.setFacets( params.getFacets() );
+        }
+
+        final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
+
+        FacetEnricher.enrichFacets( contentIndexQueryResult.getFacets(), this.client );
+
+        final Contents contents =
+            this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
+
+        return new FacetedContentSummaryListJson( contents, contentIndexQueryResult.getFacets() );
+    }
+
 
     private ContentListJson handleGetContentByPath( final ContentPath contentPath, final Integer version )
     {

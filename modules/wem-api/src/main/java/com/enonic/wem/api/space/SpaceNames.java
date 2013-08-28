@@ -58,6 +58,11 @@ public final class SpaceNames
         return new SpaceNames( parseNames( names ) );
     }
 
+    public static SpaceNames from( final Collection<String> names )
+    {
+        return from( names.toArray( new String[names.size()] ) );
+    }
+
     private static ImmutableSet<SpaceName> parseNames( final String... names )
     {
         final Collection<String> list = Lists.newArrayList( names );
