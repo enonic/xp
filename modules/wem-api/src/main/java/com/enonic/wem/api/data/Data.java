@@ -35,7 +35,7 @@ public abstract class Data
         this.name = "";
     }
 
-    protected void setParent( final DataSet parent )
+    void setParent( final DataSet parent )
     {
         this.parent = parent;
     }
@@ -55,7 +55,7 @@ public abstract class Data
         return name;
     }
 
-    protected DataId getDataId()
+    DataId getDataId()
     {
         return DataId.from( name, arrayIndex );
     }
