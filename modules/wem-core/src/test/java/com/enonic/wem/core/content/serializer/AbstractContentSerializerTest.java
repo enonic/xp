@@ -55,7 +55,7 @@ public abstract class AbstractContentSerializerTest
     abstract void assertSerializedResult( String fileNameForExpected, String actualSerialization );
 
     @Test
-    public void data()
+    public void property()
     {
         Content content = newContent().build();
         content.getContentData().setProperty( "myInput", new Value.Text( "A value" ) );
