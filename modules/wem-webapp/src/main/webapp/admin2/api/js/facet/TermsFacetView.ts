@@ -1,18 +1,12 @@
-module api_app_browse_filter {
+module api_facet {
 
-    export interface FacetGroupData {
-        name:string;
-        displayName:string;
-        terms:FacetData[];
-    }
+    export class TermsFacetView extends api_dom.DivEl {
 
-    export class FacetGroup extends api_dom.DivEl {
-
-        private facets:Facet[] = [];
+        private facets:TermsFacetEntryView[] = [];
 
         private name:string;
 
-        constructor(facetGroupData:FacetGroupData) {
+        constructor(facetGroupData:TermsFacet) {
             super('FacetGroup', 'facet-group');
             this.name = facetGroupData.name;
 
@@ -26,7 +20,7 @@ module api_app_browse_filter {
                 if (facetData.count > 0) {
                     needHide = false;
                 }
-                this.addFacet(new Facet(facetData, this));
+                this.addFacet(new TermsFacetEntryView(facetData, this));
             }
 
             if (needHide) {
@@ -34,14 +28,14 @@ module api_app_browse_filter {
             }
         }
 
-        private addFacet(facet:Facet) {
+        private addFacet(facet:TermsFacetEntryView) {
             this.appendChild(facet);
             this.facets.push(facet);
         }
 
-        private getFacet(name:string):Facet {
+        private getFacet(name:string):TermsFacetEntryView {
             for (var i = 0; i < this.facets.length; i++) {
-                var facet:Facet = this.facets[i];
+                var facet:TermsFacetEntryView = this.facets[i];
                 if (facet.getName() == name) {
                     return facet;
                 }
@@ -49,18 +43,18 @@ module api_app_browse_filter {
             return null;
         }
 
-        update(facetGroupData:FacetGroupData) {
+        update(facetGroupData:TermsFacet) {
             var needHide = true;
             for (var i = 0; i < facetGroupData.terms.length; i++) {
                 var facetData = facetGroupData.terms[i];
                 if (facetData.count > 0) {
                     needHide = false;
                 }
-                var facet:Facet = this.getFacet(facetData.name);
+                var facet:TermsFacetEntryView = this.getFacet(facetData.name);
                 if (facet != null) {
                     facet.update(facetData);
                 } else {
-                    this.addFacet(new Facet(facetData, this));
+                    this.addFacet(new TermsFacetEntryView(facetData, this));
                 }
             }
 

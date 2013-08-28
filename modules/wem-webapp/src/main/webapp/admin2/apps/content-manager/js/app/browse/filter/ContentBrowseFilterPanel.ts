@@ -2,7 +2,7 @@ module app_browse_filter {
 
     export class ContentBrowseFilterPanel extends api_app_browse_filter.BrowseFilterPanel {
 
-        constructor(facetData?:api_app_browse_filter.FacetGroupData[]) {
+        constructor(facetData?:api_facet.TermsFacet[]) {
             super(facetData);
 
             this.addListener({onSearch: (values:any[])=> {
