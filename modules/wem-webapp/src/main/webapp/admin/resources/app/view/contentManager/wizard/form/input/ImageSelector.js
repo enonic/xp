@@ -25,7 +25,7 @@ Ext.define('Admin.view.contentManager.wizard.form.input.ImageSelector', {
 
         if (this.inputConfig && this.inputConfig.type && this.inputConfig.type.config) {
             var getRelationshipTypeCommand = {
-                qualifiedRelationshipTypeName: this.inputConfig.type.config.relationshipType,
+                qualifiedName: this.inputConfig.type.config.relationshipType,
                 format: 'JSON'
             };
             Admin.lib.RemoteService.relationshipType_get(getRelationshipTypeCommand, function (response) {

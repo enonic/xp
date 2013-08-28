@@ -225,7 +225,7 @@ Ext.define('Admin.controller.schemaManager.Controller', {
         tabPanel.el.mask();
         Admin.lib.RemoteService.relationshipType_get({
             "format": "XML",
-            "qualifiedRelationshipTypeName": [relationshipType.get('qualifiedName')]
+            "qualifiedName": [relationshipType.get('qualifiedName')]
         }, function (r) {
             tabPanel.el.unmask();
             if (r) {
