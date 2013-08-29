@@ -1,10 +1,29 @@
 package com.enonic.wem.api.query;
 
-public interface And
-    extends Constraint
+class And
+    implements Constraint
 {
-    Constraint getLeftConstraint();
+    private final Constraint leftConstraint, rightConstraint;
 
-    Constraint getRightConstraint();
+    public And( final Constraint leftConstraint, final Constraint rightConstraint )
+    {
+        this.leftConstraint = leftConstraint;
+        this.rightConstraint = rightConstraint;
+    }
 
+    public Constraint getLeftConstraint()
+    {
+        return leftConstraint;
+    }
+
+    public Constraint getRightConstraint()
+    {
+        return rightConstraint;
+    }
+
+    @Override
+    public String toString()
+    {
+        return leftConstraint.toString() + " AND " + rightConstraint.toString();
+    }
 }
