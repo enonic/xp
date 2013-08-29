@@ -40,8 +40,7 @@
                                 "validationRegexp": null,
                                 "helpText": "Help text line 1",
                                 "type": {
-                                    "name": "TextLine",
-                                    "builtIn": true
+                                    "name": "TextLine"
                                 }
                             }
                         },
@@ -59,8 +58,7 @@
                                 "validationRegexp": null,
                                 "helpText": "Help text line 2",
                                 "type": {
-                                    "name": "TextLine",
-                                    "builtIn": true
+                                    "name": "TextLine"
                                 }
                             }
                         },
@@ -78,8 +76,7 @@
                                 "validationRegexp": null,
                                 "helpText": "Help text area",
                                 "type": {
-                                    "name": "TextArea",
-                                    "builtIn": true
+                                    "name": "TextArea"
                                 }
                             }
                         }

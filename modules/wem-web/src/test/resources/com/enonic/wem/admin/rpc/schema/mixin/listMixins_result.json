@@ -18,8 +18,7 @@
                 "validationRegexp": null,
                 "helpText": "Help text line 1",
                 "type": {
-                    "name": "TextLine",
-                    "builtIn": true
+                    "name": "TextLine"
                 }
             },
             "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1"
@@ -41,8 +40,7 @@
                 "validationRegexp": null,
                 "helpText": "Help text area",
                 "type": {
-                    "name": "TextArea",
-                    "builtIn": true
+                    "name": "TextArea"
                 }
             },
             "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:othermodule:text_area_1"

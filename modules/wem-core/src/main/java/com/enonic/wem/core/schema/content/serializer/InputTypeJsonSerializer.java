@@ -6,7 +6,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
-import com.enonic.wem.core.schema.content.form.inputtype.InputTypeFactory;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypeName;
+import com.enonic.wem.core.schema.content.form.inputtype.InputTypeResolver;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -22,15 +23,13 @@ public class InputTypeJsonSerializer
     public JsonNode serialize( final BaseInputType baseInputType )
     {
         final ObjectNode inputNode = objectMapper().createObjectNode();
-        inputNode.put( "name", baseInputType.getName() );
-        inputNode.put( "builtIn", baseInputType.isBuiltIn() );
+        inputNode.put( "name", InputTypeName.from( baseInputType ).toString() );
         return inputNode;
     }
 
     public BaseInputType parse( final JsonNode node )
     {
-        final String className = JsonSerializerUtil.getStringValue( "name", node );
-        final boolean builtIn = JsonSerializerUtil.getBooleanValue( "builtIn", node );
-        return InputTypeFactory.instantiate( className, builtIn );
+        final String inputTypeName = JsonSerializerUtil.getStringValue( "name", node );
+        return InputTypeResolver.get().resolve( inputTypeName );
     }
 }

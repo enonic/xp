@@ -4,6 +4,7 @@ package com.enonic.wem.api.schema.content.form.inputtype;
 import java.util.LinkedHashMap;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
@@ -42,28 +43,35 @@ public final class InputTypes
 
     public static final Xml XML = new Xml();
 
-    private static LinkedHashMap<String, BaseInputType> inputTypeByName = new LinkedHashMap<String, BaseInputType>();
+    private static final ImmutableList<InputType> inputTypes = new ImmutableList.Builder<InputType>().
+        add( COLOR ).
+        add( DATE ).
+        add( DECIMAL_NUMBER ).
+        add( GEO_LOCATION ).
+        add( HTML_AREA ).
+        add( IMAGE ).
+        add( IMAGE_SELECTOR ).
+        add( MONEY ).
+        add( PHONE ).
+        add( RELATIONSHIP ).
+        add( SINGLE_SELECTOR ).
+        add( TAGS ).
+        add( TEXT_AREA ).
+        add( TEXT_LINE ).
+        add( WHOLE_NUMBER ).
+        add( XML ).
+        build();
 
-    private static LinkedHashMap<Integer, BaseInputType> inputTypeByDataTypeKey = new LinkedHashMap<Integer, BaseInputType>();
+    private static LinkedHashMap<String, InputType> inputTypeByName = new LinkedHashMap<>();
+
+    private static LinkedHashMap<Integer, BaseInputType> inputTypeByDataTypeKey = new LinkedHashMap<>();
 
     static
     {
-        register( COLOR );
-        register( DATE );
-        register( DECIMAL_NUMBER );
-        register( GEO_LOCATION );
-        register( HTML_AREA );
-        register( IMAGE );
-        register( IMAGE_SELECTOR );
-        register( MONEY );
-        register( PHONE );
-        register( RELATIONSHIP );
-        register( SINGLE_SELECTOR );
-        register( TAGS );
-        register( TEXT_LINE );
-        register( TEXT_AREA );
-        register( WHOLE_NUMBER );
-        register( XML );
+        for ( InputType inputType : inputTypes )
+        {
+            register( (BaseInputType) inputType );
+        }
 
         registerDefaultInputType( ValueTypes.DATE_MIDNIGHT, DATE );
         registerDefaultInputType( ValueTypes.TEXT, TEXT_AREA );
@@ -89,15 +97,20 @@ public final class InputTypes
         return inputTypeByName.size();
     }
 
-    public static BaseInputType parse( final String inputTypeName )
+    public static BaseInputType parse( final String simpleClassName )
     {
-        for ( BaseInputType inputType : inputTypeByName.values() )
+        for ( InputType inputType : inputTypeByName.values() )
         {
-            if ( inputType.getName().equals( inputTypeName ) )
+            if ( inputType.getClass().getSimpleName().equals( simpleClassName ) )
             {
-                return inputType;
+                return (BaseInputType) inputType;
             }
         }
         return null;
+    }
+
+    public static ImmutableList<InputType> list()
+    {
+        return inputTypes;
     }
 }

@@ -23,8 +23,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Color",
-                    "builtIn": true
+                    "name": "Color"
                 }
             }
         },
@@ -42,8 +41,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Date",
-                    "builtIn": true
+                    "name": "Date"
                 }
             }
         },
@@ -61,8 +59,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "DecimalNumber",
-                    "builtIn": true
+                    "name": "DecimalNumber"
                 }
             }
         },
@@ -80,8 +77,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "GeoLocation",
-                    "builtIn": true
+                    "name": "GeoLocation"
                 }
             }
         },
@@ -99,8 +95,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "HtmlArea",
-                    "builtIn": true
+                    "name": "HtmlArea"
                 }
             }
         },
@@ -118,8 +113,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Money",
-                    "builtIn": true
+                    "name": "Money"
                 }
             }
         },
@@ -137,8 +131,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Phone",
-                    "builtIn": true
+                    "name": "Phone"
                 }
             }
         },
@@ -157,7 +150,6 @@
                 "helpText": null,
                 "type": {
                     "name": "SingleSelector",
-                    "builtIn": true,
                     "config": {
                         "selectorType": "DROPDOWN",
                         "options": [
@@ -188,8 +180,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Tags",
-                    "builtIn": true
+                    "name": "Tags"
                 }
             }
         },
@@ -207,8 +198,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "TextLine",
-                    "builtIn": true
+                    "name": "TextLine"
                 }
             }
         },
@@ -226,8 +216,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "TextArea",
-                    "builtIn": true
+                    "name": "TextArea"
                 }
             }
         },
@@ -245,8 +234,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "WholeNumber",
-                    "builtIn": true
+                    "name": "WholeNumber"
                 }
             }
         },
@@ -264,8 +252,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "Xml",
-                    "builtIn": true
+                    "name": "Xml"
                 }
             }
         },
@@ -284,7 +271,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "system:like"
                     }
@@ -306,7 +292,6 @@
                 "helpText": null,
                 "type": {
                     "name": "ImageSelector",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "system:default"
                     }

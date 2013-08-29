@@ -2,6 +2,9 @@ package com.enonic.wem.core.schema.content.serializer;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.acme.DummyCustomInputType;
 
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleName;
@@ -20,6 +23,8 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MockMixinFetcher;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
+import com.enonic.wem.core.schema.content.form.inputtype.InputTypeExtensions;
+import com.enonic.wem.core.schema.content.form.inputtype.InputTypeResolver;
 
 import static com.enonic.wem.api.module.Module.newModule;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
@@ -44,9 +49,15 @@ public abstract class AbstractContentTypeSerializerTest
 
     private ContentType contentTypeWithAllFormItemTypes;
 
+    private static final DummyCustomInputType MY_TYPE = new DummyCustomInputType();
+
     @Before
     public void before()
     {
+        InputTypeExtensions inputTypeExtensions = Mockito.mock( InputTypeExtensions.class );
+        Mockito.when( inputTypeExtensions.getInputType( MY_TYPE.getName() ) ).thenReturn( MY_TYPE );
+        InputTypeResolver.get().setInputTypeExtensions( inputTypeExtensions );
+
         this.serializer = getSerializer();
         contentTypeWithAllFormItemTypes = createContentTypeWithAllInputFormItemTypes();
     }
@@ -264,6 +275,24 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "a*c", parsedContentType.form().getInput( "myText" ).getValidationRegexp().toString() );
     }
 
+    @Test
+    public void xxxx()
+    {
+        // setup
+        Input input = newInput().name( "myCustomType" ).inputType( MY_TYPE ).build();
+        ContentType contentType = newContentType().
+            name( "test" ).
+            module( ModuleName.from( "mymodule" ) ).
+            addFormItem( input ).build();
+        String serialized = toString( contentType );
+
+        // exercise
+        ContentType parsedContentType = toContentType( serialized );
+
+        // verify
+        assertSame( MY_TYPE, parsedContentType.form().getInput( "myCustomType" ).getInputType() );
+    }
+
     private ContentType toContentType( final String serialized )
     {
         return serializer.toContentType( serialized );
@@ -319,5 +348,6 @@ public abstract class AbstractContentTypeSerializerTest
 
         return contentTypeBuilder.build();
     }
+
 
 }

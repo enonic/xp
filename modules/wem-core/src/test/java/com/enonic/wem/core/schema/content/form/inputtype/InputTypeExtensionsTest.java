@@ -7,7 +7,7 @@ import com.enonic.wem.core.plugin.ext.ExtensionPointTest;
 
 
 public class InputTypeExtensionsTest
-    extends ExtensionPointTest<InputType, InputTypeExtensions>
+    extends ExtensionPointTest<InputType, InputTypeExtensionsImpl>
 {
     public InputTypeExtensionsTest()
     {
@@ -15,9 +15,9 @@ public class InputTypeExtensionsTest
     }
 
     @Override
-    protected InputTypeExtensions createExtensionPoint()
+    protected InputTypeExtensionsImpl createExtensionPoint()
     {
-        return new InputTypeExtensions();
+        return new InputTypeExtensionsImpl();
     }
 
     @Override

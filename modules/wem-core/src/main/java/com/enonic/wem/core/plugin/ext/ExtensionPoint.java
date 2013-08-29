@@ -39,7 +39,7 @@ public abstract class ExtensionPoint<T extends Extension>
         return this.list.iterator();
     }
 
-    protected synchronized final void addExtension( final T ext )
+    protected synchronized void addExtension( final T ext )
     {
         final List<T> other = Lists.newArrayList( this.list );
         other.add( ext );
@@ -47,7 +47,7 @@ public abstract class ExtensionPoint<T extends Extension>
         this.list = ImmutableList.copyOf( other );
     }
 
-    protected synchronized final void removeExtension( final T ext )
+    protected synchronized void removeExtension( final T ext )
     {
         final List<T> other = Lists.newArrayList( this.list );
         other.remove( ext );

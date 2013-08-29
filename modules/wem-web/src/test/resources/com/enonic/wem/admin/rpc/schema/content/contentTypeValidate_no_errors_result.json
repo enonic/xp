@@ -27,8 +27,7 @@
                     "validationRegexp": null,
                     "helpText": "",
                     "type": {
-                        "name": "TextLine",
-                        "builtIn": true
+                        "name": "TextLine"
                     }
                 }
             }
