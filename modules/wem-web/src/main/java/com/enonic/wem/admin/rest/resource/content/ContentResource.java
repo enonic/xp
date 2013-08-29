@@ -19,10 +19,12 @@ import com.sun.jersey.api.NotFoundException;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.model.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.model.ContentListJson;
+import com.enonic.wem.admin.rest.resource.content.model.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.model.ContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.content.model.FacetedContentSummaryListJson;
 import com.enonic.wem.admin.rpc.content.FacetEnricher;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.GetContents;
@@ -71,7 +73,6 @@ public class ContentResource
         return new ContentSummaryListJson( contents );
     }
 
-
     @POST
     @Path("find")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -106,6 +107,17 @@ public class ContentResource
             this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
 
         return new FacetedContentSummaryListJson( contents, contentIndexQueryResult.getFacets() );
+    }
+
+    @GET
+    @Path("generateName")
+    public ContentNameJson generateName( @QueryParam( "displayName" ) final String displayName ) {
+
+        final GenerateContentName generateContentName = Commands.content().generateContentName().displayName( displayName );
+
+        final String generatedContentName = client.execute( generateContentName );
+
+        return new ContentNameJson( generatedContentName );
     }
 
 
@@ -161,7 +173,6 @@ public class ContentResource
         throw new NotFoundException( String.format( "Contents [%s] not found", missing ) );
     }
 
-    // list() @GET
     // delete() @POST
     // create() @POST
     // update() @POST

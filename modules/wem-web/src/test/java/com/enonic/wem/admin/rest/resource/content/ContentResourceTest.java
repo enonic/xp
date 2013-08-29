@@ -14,6 +14,7 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.FindContent;
+import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
@@ -150,6 +151,18 @@ public class ContentResourceTest
         String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_with_facets_params.json" ),
                                                                       MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "find_content_with_facets.json", jsonString );
+    }
+
+    @Test
+    public void generate_name()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GenerateContentName.class ) ) ).thenReturn( "some-rea11y-werd-name" );
+
+        String jsonString =
+            resource().path( "content/generateName" ).queryParam( "displayName", "Some rea11y we!rd name..." ).get( String.class );
+
+        assertJson( "generate_content_name.json", jsonString );
     }
 
     @Override
