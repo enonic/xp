@@ -3,26 +3,49 @@
         {
             "createdTime": "2013-08-23T12:55:09.162Z",
             "data": {
-                "data": [
-                    {
-                        "data": {
-                            "name": "myData",
-                            "path": "myData",
-                            "type": "Text",
-                            "value": "value1"
-                        }
-                    }
-                ],
                 "name": "",
                 "path": "",
                 "type": "DataSet",
                 "value": [
                     {
                         "data": {
-                            "name": "myData",
-                            "path": "myData",
+                            "name": "myArray",
+                            "path": "myArray[0]",
                             "type": "Text",
-                            "value": "value1"
+                            "value": "arrayValue1"
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "myArray",
+                            "path": "myArray[1]",
+                            "type": "Text",
+                            "value": "arrayValue2"
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "mySetWithArray",
+                            "path": "mySetWithArray",
+                            "type": "DataSet",
+                            "value": [
+                                {
+                                    "data": {
+                                        "name": "myArray",
+                                        "path": "mySetWithArray.myArray[0]",
+                                        "type": "DecimalNumber",
+                                        "value": "3.14159"
+                                    }
+                                },
+                                {
+                                    "data": {
+                                        "name": "myArray",
+                                        "path": "mySetWithArray.myArray[1]",
+                                        "type": "DecimalNumber",
+                                        "value": "1.333"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]
@@ -41,26 +64,108 @@
         {
             "createdTime": "2013-08-23T12:55:09.162Z",
             "data": {
-                "data": [
-                    {
-                        "data": {
-                            "name": "myData",
-                            "path": "myData",
-                            "type": "Text",
-                            "value": "value1"
-                        }
-                    }
-                ],
                 "name": "",
                 "path": "",
                 "type": "DataSet",
                 "value": [
                     {
                         "data": {
-                            "name": "myData",
-                            "path": "myData",
-                            "type": "Text",
-                            "value": "value1"
+                            "name": "myArrayOfSets",
+                            "path": "myArrayOfSets[0]",
+                            "type": "DataSet",
+                            "value": [
+                                {
+                                    "data": {
+                                        "name": "myFirstSetProperty1",
+                                        "path": "myArrayOfSets[0].myFirstSetProperty1",
+                                        "type": "Text",
+                                        "value": "1"
+                                    }
+                                },
+                                {
+                                    "data": {
+                                        "name": "myFirstSetProperty2",
+                                        "path": "myArrayOfSets[0].myFirstSetProperty2",
+                                        "type": "Text",
+                                        "value": "a"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "myArrayOfSets",
+                            "path": "myArrayOfSets[1]",
+                            "type": "DataSet",
+                            "value": [
+                                {
+                                    "data": {
+                                        "name": "mySecondSetProperty1",
+                                        "path": "myArrayOfSets[1].mySecondSetProperty1",
+                                        "type": "Text",
+                                        "value": "2"
+                                    }
+                                },
+                                {
+                                    "data": {
+                                        "name": "mySecondSetProperty2",
+                                        "path": "myArrayOfSets[1].mySecondSetProperty2",
+                                        "type": "Text",
+                                        "value": "b"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "myArrayOfArrays",
+                            "path": "myArrayOfArrays[0]",
+                            "type": "DataSet",
+                            "value": [
+                                {
+                                    "data": {
+                                        "name": "myFirstArray",
+                                        "path": "myArrayOfArrays[0].myFirstArray[0]",
+                                        "type": "Text",
+                                        "value": "1"
+                                    }
+                                },
+                                {
+                                    "data": {
+                                        "name": "myFirstArray",
+                                        "path": "myArrayOfArrays[0].myFirstArray[1]",
+                                        "type": "Text",
+                                        "value": "2"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "myArrayOfArrays",
+                            "path": "myArrayOfArrays[1]",
+                            "type": "DataSet",
+                            "value": [
+                                {
+                                    "data": {
+                                        "name": "mySecondArray",
+                                        "path": "myArrayOfArrays[1].mySecondArray[0]",
+                                        "type": "Text",
+                                        "value": "3"
+                                    }
+                                },
+                                {
+                                    "data": {
+                                        "name": "mySecondArray",
+                                        "path": "myArrayOfArrays[1].mySecondArray[1]",
+                                        "type": "Text",
+                                        "value": "4"
+                                    }
+                                }
+                            ]
                         }
                     }
                 ]

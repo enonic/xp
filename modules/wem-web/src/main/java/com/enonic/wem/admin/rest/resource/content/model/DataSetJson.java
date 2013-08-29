@@ -27,11 +27,6 @@ public class DataSetJson
         this.list = builder.build();
     }
 
-    public List<DataJson> getData()
-    {
-        return list;
-    }
-
     public String getName()
     {
         return dataSet.getName();
