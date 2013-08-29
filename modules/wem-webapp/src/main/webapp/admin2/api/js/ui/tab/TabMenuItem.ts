@@ -1,5 +1,10 @@
 module api_ui_tab {
 
+    export interface TabMenuItemOptions {
+        removable?:bool;
+        removeText?:string;
+    }
+
     export class TabMenuItem extends api_dom.LiEl implements api_ui.PanelNavigationItem {
 
         private tabIndex:number;
@@ -16,26 +21,30 @@ module api_ui_tab {
 
         private active:bool;
 
-        constructor(label:string) {
+        constructor(label:string, options?:TabMenuItemOptions) {
             super("TabMenuItem", "tab-menu-item");
+            if (!options) {
+                options = {};
+            }
+
 
             this.labelEl = new api_dom.SpanEl(null, 'label');
             this.appendChild(this.labelEl);
             this.setLabel(label);
-
-            var removeButton = new api_dom.ButtonEl();
-            removeButton.getEl().setInnerHtml("&times;");
-            this.prependChild(removeButton);
-
             this.labelEl.getEl().addEventListener("click", () => {
                 new TabMenuItemSelectEvent(this).fire();
             });
 
-            removeButton.getEl().addEventListener("click", () => {
-                if (this.removable) {
-                    new TabMenuItemCloseEvent(this).fire();
-                }
-            });
+            if (options.removable) {
+                var removeButton = new api_dom.ButtonEl();
+                removeButton.getEl().setInnerHtml(options.removeText ? options.removeText : "&times;");
+                this.prependChild(removeButton);
+                removeButton.getEl().addEventListener("click", () => {
+                    if (this.removable) {
+                        new TabMenuItemCloseEvent(this).fire();
+                    }
+                });
+            }
         }
 
         setTabMenu(tabMenu:TabMenu) {
@@ -54,12 +63,12 @@ module api_ui_tab {
             return this.label;
         }
 
-        setLabel(value: string) {
+        setLabel(value:string) {
             this.label = value;
             this.labelEl.getEl().setInnerHtml(value);
             this.labelEl.getEl().setAttribute('title', value);
 
-            if( this.tabMenu ) {
+            if (this.tabMenu) {
                 this.tabMenu.setButtonLabel(value);
             }
         }

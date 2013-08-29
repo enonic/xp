@@ -16,6 +16,7 @@ module api_ui_tab {
 
         constructor(idPrefix?:string) {
             super(idPrefix || "TabMenu");
+            this.addClass("tab-menu");
 
             this.tabMenuButton = this.createTabMenuButton();
             this.tabMenuButton.hide();
@@ -30,7 +31,9 @@ module api_ui_tab {
         }
 
         createTabMenuButton():TabMenuButton {
-            return new TabMenuButton();
+            var btn = new TabMenuButton();
+            btn.addClass("tab-menu-button");
+            return btn;
         }
 
         setButtonLabel(value:string) {
@@ -44,6 +47,7 @@ module api_ui_tab {
         createMenu():api_dom.UlEl {
             var ulEl = new api_dom.UlEl();
             ulEl.getEl().setZindex(19001);
+            ulEl.getEl().setPosition("absolute");
             ulEl.hide();
             return ulEl;
         }
@@ -78,7 +82,8 @@ module api_ui_tab {
             tab.setIndex(newLength - 1);
 
             if (tab.isVisible()) {
-                this.tabMenuButton.setLabel(tab.getLabel());
+                // TODO: Why is this done?
+                //this.tabMenuButton.setLabel(tab.getLabel());
                 this.menuEl.appendChild(tab);
                 this.tabMenuButton.show();
             }

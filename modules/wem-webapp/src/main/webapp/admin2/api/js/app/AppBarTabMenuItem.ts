@@ -6,7 +6,7 @@ module api_app{
         private editing:bool;
 
         constructor(label:string, itemId:string, editing?:bool) {
-            super(label);
+            super(label, {removable:true});
             this.editing = editing;
             this.itemId = itemId;
 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet/less" type="text/css" href="../../resources/less/styles.less">
+
+    <!-- LIB -->
+    <script type="text/javascript" src="../../resources/js/less.js"></script>
+    <script type="text/javascript" src="../../../admin/resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="../../resources/lib/jquery-2.0.2.js"></script>
+    <script type="text/javascript" src="../../resources/lib/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript">
+        $.noConflict();
+    </script>
+
+
+</head>
+<body>
+<!-- API -->
+<script type="text/javascript" src="../js/api.js"></script>
+<script type="text/javascript">
+    //var floatWindow = new api_ui.FloatingWindow({draggable: true});
+    var floatWindow = new api_ui.NavigableFloatingWindow();
+    floatWindow.addItem("Inspector");
+    floatWindow.addItem("Components");
+    floatWindow.addItem("Emulator");
+
+
+    document.body.appendChild(floatWindow.getHTMLElement());
+    floatWindow.init();
+
+    /*var nav = new api_ui_tab.TabMenu();
+
+
+    nav.addNavigationItem(new api_ui_tab.TabMenuItem("Inspector"));
+    nav.addNavigationItem(new api_ui_tab.TabMenuItem("Components"));
+    nav.addNavigationItem(new api_ui_tab.TabMenuItem("Emulator"));
+
+    document.body.appendChild(nav.getHTMLElement());*/
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+.floating-window {
+  position: fixed;
+  top:100px;
+  left:100px;
+  height:480px;
+  width: 320px;
+
+  background-color: #252526;
+  box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
+
+  color:white;
+
+  .tab-menu {
+    background-color: @admin-dark-gray;
+    .tab-menu-button {
+      width:25px;
+      height:25px;
+      background-color: white;
+      text-indent: 30px;
+      color:@admin-medium-gray-font;
+      cursor:pointer;
+    }
+
+    ul {
+      list-style: none;
+      padding:0;
+      margin:0;
+      background-color: @admin-dark-gray;
+      width:100%;
+      li {
+        margin-left:25px;
+      }
+    }
+
+    .tab-menu-item {
+      color:@admin-medium-gray-font;
+      padding: 5px;
+      cursor: pointer;
+        &.active {
+          display:none;
+        }
+      }
+  }
+}
