@@ -1,11 +1,24 @@
 module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-ts');
+    grunt.loadNpmTasks('grunt-typescript');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.initConfig({
+
+        // Use typescript for LiveEdit
+        typescript: {
+            live_edit: {
+                src: ['src/main/webapp/admin2/live-edit/js/Main.ts'],
+                dest: 'src/main/webapp/admin2/live-edit/js/all.js',
+                options: {
+                    // target: 'es5',
+                    sourcemap: true
+                }
+            }
+        },
 
         ts: {
             api: {
@@ -50,14 +63,6 @@ module.exports = function (grunt) {
                     sourcemap: true
                 }
             },
-            live_edit: {
-                src: ['src/main/webapp/admin2/live-edit/js/Main.ts'],
-                out: 'src/main/webapp/admin2/live-edit/js/all.js',
-                options: {
-                    // target: 'es5',
-                    sourcemap: true
-                }
-            },
             app_launcher: {
                 src: ['src/main/webapp/admin2/apps/app-launcher/js/main.ts'],
                 out: 'src/main/webapp/admin2/apps/app-launcher/js/all.js',
@@ -94,10 +99,10 @@ module.exports = function (grunt) {
      * Alias tasks
      */
     grunt.registerTask('default', 'watch');
-    grunt.registerTask('all', ['ts']);
+    grunt.registerTask('all', ['ts', 'typescript']);
     grunt.registerTask('live_edit_build_all',
         [
-            'ts:live_edit',
+            'typescript:live_edit',
             'sass:live_edit',
             'cssmin:live_edit'
         ]
