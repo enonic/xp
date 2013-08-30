@@ -10,7 +10,7 @@ import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
 public class DecimalNumber
-    extends BaseInputType
+    extends InputType
 {
     public DecimalNumber()
     {

@@ -64,13 +64,13 @@ public final class InputTypes
 
     private static LinkedHashMap<String, InputType> inputTypeByName = new LinkedHashMap<>();
 
-    private static LinkedHashMap<Integer, BaseInputType> inputTypeByDataTypeKey = new LinkedHashMap<>();
+    private static LinkedHashMap<Integer, InputType> inputTypeByDataTypeKey = new LinkedHashMap<>();
 
     static
     {
         for ( InputType inputType : inputTypes )
         {
-            register( (BaseInputType) inputType );
+            register( inputType );
         }
 
         registerDefaultInputType( ValueTypes.DATE_MIDNIGHT, DATE );
@@ -80,13 +80,13 @@ public final class InputTypes
         registerDefaultInputType( ValueTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );
     }
 
-    private static void register( BaseInputType inputType )
+    private static void register( InputType inputType )
     {
         Object previous = inputTypeByName.put( inputType.getName(), inputType );
         Preconditions.checkState( previous == null, "InputType already registered: " + inputType.getName() );
     }
 
-    private static void registerDefaultInputType( ValueType valueType, BaseInputType inputType )
+    private static void registerDefaultInputType( ValueType valueType, InputType inputType )
     {
         Object previousDataType = inputTypeByDataTypeKey.put( valueType.getKey(), inputType );
         Preconditions.checkState( previousDataType == null, "Default InputType already registered for ValueType: " + valueType );
@@ -97,13 +97,13 @@ public final class InputTypes
         return inputTypeByName.size();
     }
 
-    public static BaseInputType parse( final String simpleClassName )
+    public static InputType parse( final String simpleClassName )
     {
         for ( InputType inputType : inputTypeByName.values() )
         {
             if ( inputType.getClass().getSimpleName().equals( simpleClassName ) )
             {
-                return (BaseInputType) inputType;
+                return inputType;
             }
         }
         return null;

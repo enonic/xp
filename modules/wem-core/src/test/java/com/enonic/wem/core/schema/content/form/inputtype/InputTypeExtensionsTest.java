@@ -1,17 +1,19 @@
 package com.enonic.wem.core.schema.content.form.inputtype;
 
 
-import com.enonic.wem.api.schema.content.form.inputtype.InputType;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.acme.DummyCustomInputType;
+import com.acme.DummyCustomInputType2;
+
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypeExtension;
 import com.enonic.wem.core.plugin.ext.ExtensionPointTest;
 
 
 public class InputTypeExtensionsTest
-    extends ExtensionPointTest<InputType, InputTypeExtensionsImpl>
+    extends ExtensionPointTest<InputTypeExtension, InputTypeExtensionsImpl>
 {
     public InputTypeExtensionsTest()
     {
-        super( InputType.class );
+        super( InputTypeExtension.class );
     }
 
     @Override
@@ -21,14 +23,14 @@ public class InputTypeExtensionsTest
     }
 
     @Override
-    protected InputType createOne()
+    protected InputTypeExtension createOne()
     {
-        return InputTypes.TEXT_AREA;
+        return new DummyCustomInputType();
     }
 
     @Override
-    protected InputType createTwo()
+    protected InputTypeExtension createTwo()
     {
-        return InputTypes.TEXT_LINE;
+        return new DummyCustomInputType2();
     }
 }

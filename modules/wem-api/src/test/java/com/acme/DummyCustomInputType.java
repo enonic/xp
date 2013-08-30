@@ -6,10 +6,10 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
-import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypeExtension;
 
 public class DummyCustomInputType
-    extends BaseInputType
+    extends InputTypeExtension
 {
     @Override
     public void checkValidity( final Property property )

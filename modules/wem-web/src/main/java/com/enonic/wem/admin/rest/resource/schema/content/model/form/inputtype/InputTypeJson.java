@@ -1,26 +1,26 @@
 package com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype;
 
-import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
+import com.enonic.wem.api.schema.content.form.inputtype.InputType;
 
 public class InputTypeJson
 {
-    private final BaseInputType baseInputType;
+    private final InputType inputType;
 
     private Object configJson;
 
-    public InputTypeJson( final BaseInputType baseInputType )
+    public InputTypeJson( final InputType inputType )
     {
-        this.baseInputType = baseInputType;
+        this.inputType = inputType;
     }
 
     public String getName()
     {
-        return baseInputType.getName();
+        return inputType.getName();
     }
 
     public boolean isBuiltIn()
     {
-        return baseInputType.isBuiltIn();
+        return inputType.isBuiltIn();
     }
 
     public void setConfig( final Object configJson )

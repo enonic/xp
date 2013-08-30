@@ -6,7 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
+import com.enonic.wem.api.schema.content.form.inputtype.InputType;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -61,7 +61,7 @@ public class InputJsonSerializer
         jsonObject.put( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
         jsonObject.put( HELP_TEXT, input.getHelpText() );
 
-        final ObjectNode typeObject = (ObjectNode) inputTypeSerializer.serialize( (BaseInputType) input.getInputType() );
+        final ObjectNode typeObject = (ObjectNode) inputTypeSerializer.serialize( (InputType) input.getInputType() );
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
             final JsonNode inputTypeNode =
@@ -114,7 +114,7 @@ public class InputJsonSerializer
     {
         if ( inputTypeNode != null )
         {
-            final BaseInputType inputType = inputTypeSerializer.parse( inputTypeNode );
+            final InputType inputType = inputTypeSerializer.parse( inputTypeNode );
             builder.inputType( inputType );
             if ( inputTypeNode.has( CONFIG ) )
             {

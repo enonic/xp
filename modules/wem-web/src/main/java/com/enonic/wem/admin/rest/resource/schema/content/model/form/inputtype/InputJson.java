@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype;
 import com.enonic.wem.admin.rest.resource.schema.content.model.form.FormItemJson;
 import com.enonic.wem.admin.rest.resource.schema.content.model.form.OccurrencesJson;
 import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
 
 public class InputJson
     extends FormItemJson
@@ -20,7 +19,7 @@ public class InputJson
 
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
 
-        this.inputType = new InputTypeJson( (BaseInputType) input.getInputType() );
+        this.inputType = new InputTypeJson( input.getInputType() );
 
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {

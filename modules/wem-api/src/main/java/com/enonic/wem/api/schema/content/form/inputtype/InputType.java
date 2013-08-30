@@ -1,31 +1,105 @@
 package com.enonic.wem.api.schema.content.form.inputtype;
 
 
+import com.google.common.base.Objects;
+
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.plugin.ext.Extension;
-import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 
-/**
- * Common interface for all kinds of input types.
- */
-public interface InputType
-    extends Extension
+public abstract class InputType
 {
-    String getName();
+    private final String name;
 
-    boolean isBuiltIn();
+    private final Class configClass;
 
-    boolean requiresConfig();
+    private final boolean builtIn;
 
-    Class requiredConfigClass();
+    protected InputType()
+    {
+        this.name = resolveName();
+        this.builtIn = resolveBuiltIn();
+        this.configClass = null;
+    }
 
-    AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer();
+    protected InputType( final Class configClass )
+    {
+        this.name = resolveName();
+        this.builtIn = resolveBuiltIn();
+        this.configClass = configClass;
+    }
 
-    AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer();
+    public final String getName()
+    {
+        return name;
+    }
 
-    void checkBreaksRequiredContract( Property property )
-        throws BreaksRequiredContractException;
+    public final boolean isBuiltIn()
+    {
+        return builtIn;
+    }
 
-    Value newValue( String value );
+    public final boolean requiresConfig()
+    {
+        return configClass != null;
+    }
+
+    public final Class requiredConfigClass()
+    {
+        return configClass;
+    }
+
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    {
+        return null;
+    }
+
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    {
+        return null;
+    }
+
+    public abstract void checkValidity( final Property property );
+
+    public abstract void checkBreaksRequiredContract( final Property property );
+
+    public abstract Value newValue( final String value );
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof InputType ) )
+        {
+            return false;
+        }
+
+        final InputType that = (InputType) o;
+
+        return Objects.equal( this.getClass(), that.getClass() );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode( this.getClass() );
+    }
+
+    private String resolveName()
+    {
+        return this.getClass().getSimpleName();
+    }
+
+    private boolean resolveBuiltIn()
+    {
+        return !( this instanceof InputTypeExtension );
+    }
 }

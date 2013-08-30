@@ -9,7 +9,7 @@ import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.Layout;
 import com.enonic.wem.api.schema.content.form.MixinReference;
-import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
+import com.enonic.wem.api.schema.content.form.inputtype.InputType;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypeName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.core.schema.content.form.inputtype.InputTypeResolver;
@@ -74,7 +74,7 @@ public class FormItemXmlSerializer
     private Element serializeInput( final Input input )
     {
         Element inputEl = new Element( classNameToXmlElementName( Input.class.getSimpleName() ) );
-        inputEl.setAttribute( TYPE, InputTypeName.from( (BaseInputType) input.getInputType() ).toString() );
+        inputEl.setAttribute( TYPE, InputTypeName.from( (InputType) input.getInputType() ).toString() );
         inputEl.setAttribute( NAME, String.valueOf( input.getName() ) );
 
         inputEl.addContent( new Element( LABEL ).setText( input.getLabel() ) );
@@ -267,7 +267,7 @@ public class FormItemXmlSerializer
     private void parseInputType( final Input.Builder builder, final Element formItemEl )
     {
         final String inputTypeName = formItemEl.getAttributeValue( TYPE );
-        final BaseInputType inputType = InputTypeResolver.get().resolve( inputTypeName );
+        final InputType inputType = InputTypeResolver.get().resolve( inputTypeName );
         builder.inputType( inputType );
         builder.inputTypeConfig( inputTypeConfigSerializer.parse( formItemEl, inputType.getClass() ) );
     }
