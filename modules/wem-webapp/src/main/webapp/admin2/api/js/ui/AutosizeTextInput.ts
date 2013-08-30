@@ -5,7 +5,7 @@ module api_ui {
         private attendant: api_dom.Element;
         private clone: api_dom.Element;
 
-        constructor(idPrefix?:string, className?:string, size?:string = TextInput.MIDDLE) {
+        constructor(idPrefix?:string, className?:string, size:string = TextInput.MIDDLE) {
             super(idPrefix, className, size);
 
             this.addClass('autosize');

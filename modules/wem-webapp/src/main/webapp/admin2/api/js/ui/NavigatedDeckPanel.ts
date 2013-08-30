@@ -16,7 +16,7 @@ module api_ui {
             return this.navigator.getSelectedNavigationItem();
         }
 
-        addNavigationItem(item:PanelNavigationItem, panel:Panel, inBackground?:bool = false) {
+        addNavigationItem(item:PanelNavigationItem, panel:Panel, inBackground:boolean = false) {
 
             this.navigator.addNavigationItem(item);
             this.addPanel(panel);
@@ -31,12 +31,12 @@ module api_ui {
             this.navigator.selectNavigationItem(item.getIndex());
         }
 
-        removePanel(panel:Panel, checkCanRemovePanel?:bool = true):number {
+        removePanel(panel:Panel, checkCanRemovePanel:boolean = true):number {
 
             var panelIndex:number = this.getPanelIndex(panel);
             var navigationItem:api_ui.PanelNavigationItem = this.navigator.getNavigationItem(panelIndex);
             var removedPanelAtIndex = super.removePanel(panel, checkCanRemovePanel);
-            var removed:bool = removedPanelAtIndex !== -1;
+            var removed:boolean = removedPanelAtIndex !== -1;
 
             if (removed) {
                 this.navigator.removeNavigationItem(navigationItem);

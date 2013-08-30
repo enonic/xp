@@ -88,7 +88,7 @@ module app_view {
         }
 
         private onInputTyped() {
-            var fieldsNotEmpty:bool = (this.userIdInput.getValue() !== '') && (this.passwordInput.getValue() !== '');
+            var fieldsNotEmpty:boolean = (this.userIdInput.getValue() !== '') && (this.passwordInput.getValue() !== '');
             if (fieldsNotEmpty) {
                 this.loginButton.removeClass('disabled');
             } else {

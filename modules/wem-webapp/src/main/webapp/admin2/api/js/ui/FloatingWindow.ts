@@ -1,13 +1,13 @@
 module api_ui {
 
     export interface FloatingWindowOptions {
-        draggable?:bool;
-        resizeable?:bool;
+        draggable?:boolean;
+        resizeable?:boolean;
     }
 
     export class FloatingWindow extends api_dom.DivEl {
-        private draggable:bool;
-        private resizable:bool;
+        private draggable:boolean;
+        private resizable:boolean;
 
         constructor(options:FloatingWindowOptions) {
             super("FloatingWindow");

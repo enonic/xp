@@ -67,14 +67,14 @@ module api_app_wizard {
             this.showStep(step);
         }
 
-        hasNext():bool {
+        hasNext():boolean {
             if (this.steps) {
                 return this.activeStepIndex < this.steps.length - 1;
             }
             return false;
         }
 
-        hasPrevious():bool {
+        hasPrevious():boolean {
             if (this.steps) {
                 return this.activeStepIndex && this.activeStepIndex != 0;
             }

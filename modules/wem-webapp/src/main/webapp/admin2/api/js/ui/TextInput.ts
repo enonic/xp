@@ -106,7 +106,7 @@ module api_ui {
             return this.stripCharsRe ? (rawValue || '').replace(this.stripCharsRe, '') : rawValue;
         }
 
-        private containsForbiddenChars(value:string):bool {
+        private containsForbiddenChars(value:string):boolean {
             // create new RegExp object in order not to mess RegExp.lastIndex
             var forbidden = new RegExp(<any> this.stripCharsRe);
             return forbidden.test(value);

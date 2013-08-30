@@ -2,8 +2,6 @@ module app_delete {
 
     export class SchemaDeleteDialog extends api_app_delete.DeleteDialog {
 
-        private deleteAction:api_ui.Action = new SchemaDeleteDialogAction();
-
         private schemaToDelete:api_model.SchemaExtModel[];
 
         private deleteHandler:api_handler.DeleteSchemaHandler = new api_handler.DeleteSchemaHandler();
@@ -11,7 +9,7 @@ module app_delete {
         constructor() {
             super("Schema");
 
-            this.setDeleteAction(this.deleteAction);
+            this.setDeleteAction(new SchemaDeleteDialogAction());
 
             var deleteCallback = (result) => {
                 this.close();
@@ -19,7 +17,7 @@ module app_delete {
                 api_notify.showFeedback('Schema was deleted!');
             };
 
-            this.deleteAction.addExecutionListener(() => {
+            this.getDeleteAction().addExecutionListener(() => {
                 this.deleteHandler.doDelete(api_handler.DeleteSchemaParamFactory.create(this.schemaToDelete), deleteCallback);
             });
         }

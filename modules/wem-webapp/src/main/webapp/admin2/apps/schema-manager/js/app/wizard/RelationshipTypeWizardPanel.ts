@@ -12,9 +12,8 @@ module app_wizard {
 
         private formIcon:api_app_wizard.FormIcon;
 
-        private toolbar:api_ui_toolbar.Toolbar;
 
-        private header:api_app_wizard.WizardHeaderWithName;
+        private relationShipTypeWizardHeader:api_app_wizard.WizardHeaderWithName;
 
         private persistedRelationshipType:api_remote_relationshiptype.RelationshipType;
 
@@ -22,25 +21,25 @@ module app_wizard {
 
         constructor(id:string) {
 
-            this.header = new api_app_wizard.WizardHeaderWithName();
+            this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
             new api_app_wizard.FormIcon(RelationshipTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
             this.closeAction = new api_app_wizard.CloseAction(this);
             this.saveAction = new api_app_wizard.SaveAction(this);
 
-            this.toolbar = new RelationshipTypeWizardToolbar({
+            var toolbar = new RelationshipTypeWizardToolbar({
                 saveAction: this.saveAction,
                 closeAction: this.closeAction
             });
 
             super({
                 formIcon: this.formIcon,
-                toolbar: this.toolbar,
-                header: this.header
+                toolbar: toolbar,
+                header: this.relationShipTypeWizardHeader
             });
 
-            this.header.setName(RelationshipTypeWizardPanel.NEW_WIZARD_HEADER);
+            this.relationShipTypeWizardHeader.setName(RelationshipTypeWizardPanel.NEW_WIZARD_HEADER);
             this.relationshipTypeForm = new RelationshipTypeForm();
             this.addStep(new api_app_wizard.WizardStep("Relationship Type", this.relationshipTypeForm));
         }
@@ -48,7 +47,7 @@ module app_wizard {
         setPersistedItem(relationshipType:api_remote_relationshiptype.RelationshipType) {
             super.setPersistedItem(relationshipType);
 
-            this.header.setName(relationshipType.name);
+            this.relationShipTypeWizardHeader.setName(relationshipType.name);
             this.formIcon.setSrc(relationshipType.iconUrl);
 
             this.persistedRelationshipType = relationshipType;
@@ -66,7 +65,7 @@ module app_wizard {
         persistNewItem(successCallback?:() => void) {
             var formData = this.relationshipTypeForm.getFormData();
             var createParams:api_remote_relationshiptype.CreateOrUpdateParams = {
-                name: this.header.getName(),
+                name: this.relationShipTypeWizardHeader.getName(),
                 relationshipType: formData.xml,
                 iconReference: this.getIconUrl()
             };
@@ -80,7 +79,7 @@ module app_wizard {
         updatePersistedItem(successCallback?:() => void) {
             var formData = this.relationshipTypeForm.getFormData();
             var updateParams:api_remote_relationshiptype.CreateOrUpdateParams = {
-                name: this.header.getName(),
+                name: this.relationShipTypeWizardHeader.getName(),
                 relationshipType: formData.xml,
                 iconReference: this.getIconUrl()
             };

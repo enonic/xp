@@ -9,7 +9,7 @@ module api_ui {
         static bindKeys(bindings:KeyBinding[]) {
 
             bindings.forEach((binding:KeyBinding) => {
-                bindKey(binding);
+                KeyBindings.bindKey(binding);
             })
         }
 
@@ -17,7 +17,7 @@ module api_ui {
 
             console.log("KeyBindings.bindKey", binding);
             Mousetrap.bind(binding.getCombination(), binding.getCallback(), binding.getAction());
-            mousetraps[binding.getCombination()] = binding;
+            KeyBindings.mousetraps[binding.getCombination()] = binding;
         }
 
         static unbindKeys(bindings:KeyBinding[]) {
@@ -25,7 +25,7 @@ module api_ui {
             console.log("KeyBindings.unbindKeys");
 
             bindings.forEach((binding:KeyBinding) => {
-                unbindKey(binding);
+                KeyBindings.unbindKey(binding);
             })
         }
 
@@ -34,7 +34,7 @@ module api_ui {
             console.log("KeyBindings.unbindKey");
 
             Mousetrap.unbind(binding.getCombination());
-            delete mousetraps[binding.getCombination()];
+            delete KeyBindings.mousetraps[binding.getCombination()];
         }
 
         static trigger(combination:string, action?:string) {
@@ -46,7 +46,7 @@ module api_ui {
 
             console.log("KeyBindings.reset");
             Mousetrap.reset();
-            mousetraps = {};
+            KeyBindings.mousetraps = {};
         }
 
         /*
@@ -56,14 +56,14 @@ module api_ui {
 
             console.log("shelveBindings() {");
             console.log("  resetting current");
-            for (var key in mousetraps) {
-                console.log("  shelving: " + <KeyBinding> mousetraps[key].getCombination());
+            for (var key in KeyBindings.mousetraps) {
+                console.log("  shelving: " + <KeyBinding> KeyBindings.mousetraps[key].getCombination());
             }
 
 
             Mousetrap.reset();
-            shelves.push(mousetraps);
-            mousetraps = {};
+            KeyBindings.shelves.push(KeyBindings.mousetraps);
+            KeyBindings.mousetraps = {};
 
             console.log("}");
         }
@@ -79,13 +79,13 @@ module api_ui {
 
             Mousetrap.reset();
 
-            var previousMousetraps = shelves.pop();
+            var previousMousetraps = KeyBindings.shelves.pop();
             for (var key in previousMousetraps) {
                 var mousetrap:KeyBinding = <KeyBinding> previousMousetraps[key];
                 console.log("  binding: " + mousetrap.getCombination());
                 Mousetrap.bind(mousetrap.getCombination(), mousetrap.getCallback(), mousetrap.getAction());
             }
-            mousetraps = previousMousetraps;
+            KeyBindings.mousetraps = previousMousetraps;
 
             console.log("}");
         }

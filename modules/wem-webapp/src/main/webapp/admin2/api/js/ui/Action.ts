@@ -10,7 +10,7 @@ module api_ui {
 
         private mnemonic:Mnemonic;
 
-        private enabled:bool = true;
+        private enabled:boolean = true;
 
         private executionListeners:Function[] = [];
 
@@ -41,11 +41,11 @@ module api_ui {
             }
         }
 
-        isEnabled():bool {
+        isEnabled():boolean {
             return this.enabled;
         }
 
-        setEnabled(value:bool) {
+        setEnabled(value:boolean) {
 
             if (value !== this.enabled) {
                 this.enabled = value;
@@ -71,7 +71,7 @@ module api_ui {
             }
         }
 
-        hasShortcut():bool {
+        hasShortcut():boolean {
             return this.shortcut != null;
         }
 
@@ -83,7 +83,7 @@ module api_ui {
             this.mnemonic = new Mnemonic(value);
         }
 
-        hasMnemonic():bool {
+        hasMnemonic():boolean {
             return this.mnemonic != null;
         }
 

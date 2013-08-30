@@ -11,7 +11,7 @@ module api_ui{
 
         private actions:ToggleSlideActions;
 
-        private isOn:bool;
+        private isOn:boolean;
 
         private slider:api_dom.Element;
         private holder:api_dom.Element;
@@ -22,7 +22,7 @@ module api_ui{
         private slideLeft:api_util.Animation;
         private slideRight:api_util.Animation;
 
-        constructor(actions:ToggleSlideActions, initOn:bool) {
+        constructor(actions:ToggleSlideActions, initOn:boolean) {
             super('ToogleSlide', 'toggle-slide');
 
             this.actions = actions;
@@ -75,7 +75,7 @@ module api_ui{
             this.slideLeft.start();
         }
 
-        isTurnedOn():bool {
+        isTurnedOn():boolean {
             return this.isOn;
         }
 

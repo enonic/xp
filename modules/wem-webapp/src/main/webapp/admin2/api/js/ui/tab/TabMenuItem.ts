@@ -1,7 +1,7 @@
 module api_ui_tab {
 
     export interface TabMenuItemOptions {
-        removable?:bool;
+        removable?:boolean;
         removeText?:string;
     }
 
@@ -15,11 +15,11 @@ module api_ui_tab {
 
         private tabMenu:TabMenu;
 
-        private visible:bool = true;
+        private visible:boolean = true;
 
-        private removable:bool = true;
+        private removable:boolean = true;
 
-        private active:bool;
+        private active:boolean;
 
         constructor(label:string, options?:TabMenuItemOptions) {
             super("TabMenuItem", "tab-menu-item");
@@ -73,18 +73,18 @@ module api_ui_tab {
             }
         }
 
-        isVisible():bool {
+        isVisible():boolean {
             return this.visible
         }
 
-        setVisible(value:bool) {
+        setVisible(value:boolean) {
             this.visible = value;
             if (!this.visible) {
                 this.remove();
             }
         }
 
-        setActive(value:bool) {
+        setActive(value:boolean) {
             this.active = value;
             if (this.active) {
                 this.getEl().addClass("active");
@@ -93,19 +93,20 @@ module api_ui_tab {
             }
         }
 
-        isRemovable():bool {
+        isRemovable():boolean {
             return this.removable;
         }
 
-        setRemovable(value:bool) {
+        setRemovable(value:boolean) {
             this.removable = value;
         }
 
-        private remove() {
+        //TODO: Does this really need to override Element.remove()?
+        /*private remove() {
             if (this.tabMenu) {
                 this.tabMenu.removeChild(this);
             }
-        }
+        }*/
     }
 
     export class TabMenuItemSelectEvent extends api_event.Event {

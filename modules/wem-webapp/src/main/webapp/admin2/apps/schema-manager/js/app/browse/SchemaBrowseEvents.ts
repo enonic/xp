@@ -83,9 +83,9 @@ module app_browse {
 
         private panel:api_ui.Panel;
 
-        private checkCanRemovePanel:bool;
+        private checkCanRemovePanel:boolean;
 
-        constructor(panel:api_ui.Panel, checkCanRemovePanel?:bool = true) {
+        constructor(panel:api_ui.Panel, checkCanRemovePanel:boolean = true) {
             super('closeSchema');
             this.panel = panel;
             this.checkCanRemovePanel = checkCanRemovePanel;

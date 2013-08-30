@@ -22,7 +22,7 @@ module api_app{
             this.tabCountEl.setCount(value);
         }
 
-        setEditing(value:bool) {
+        setEditing(value:boolean) {
             this.iconEl[value ? "show" : "hide"]();
         }
     }

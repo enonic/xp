@@ -24,7 +24,7 @@ module app_view {
 
     export class CloseSpaceAction extends api_ui.Action {
 
-        constructor(panel:api_ui.Panel, checkCanRemovePanel?:bool = true) {
+        constructor(panel:api_ui.Panel, checkCanRemovePanel:boolean = true) {
             super("Close");
 
             this.addExecutionListener(() => {

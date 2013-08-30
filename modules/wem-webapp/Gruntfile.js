@@ -1,16 +1,16 @@
 module.exports = function (grunt) {
 
-    grunt.loadNpmTasks('grunt-typescript');
+    grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.initConfig({
 
-        typescript: {
+        ts: {
             api: {
                 src: ['src/main/webapp/admin2/api/js/main.ts'],
-                dest: 'src/main/webapp/admin2/api/js/api.js',
+                out: 'src/main/webapp/admin2/api/js/api.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true,
@@ -19,7 +19,7 @@ module.exports = function (grunt) {
             },
             api_test: {
                 src: ['src/test/webapp/admin2/api/js/**/*.ts'],
-                dest: 'src/test/webapp/admin2/api/js/api-test.js',
+                out: 'src/test/webapp/admin2/api/js/api-test.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true,
@@ -28,7 +28,7 @@ module.exports = function (grunt) {
             },
             space_manager: {
                 src: ['src/main/webapp/admin2/apps/space-manager/js/main.ts'],
-                dest: 'src/main/webapp/admin2/apps/space-manager/js/all.js',
+                out: 'src/main/webapp/admin2/apps/space-manager/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
@@ -36,7 +36,7 @@ module.exports = function (grunt) {
             },
             content_manager: {
                 src: ['src/main/webapp/admin2/apps/content-manager/js/main.ts'],
-                dest: 'src/main/webapp/admin2/apps/content-manager/js/all.js',
+                out: 'src/main/webapp/admin2/apps/content-manager/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
             },
             schema_manager: {
                 src: ['src/main/webapp/admin2/apps/schema-manager/js/main.ts'],
-                dest: 'src/main/webapp/admin2/apps/schema-manager/js/all.js',
+                out: 'src/main/webapp/admin2/apps/schema-manager/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
@@ -52,7 +52,7 @@ module.exports = function (grunt) {
             },
             live_edit: {
                 src: ['src/main/webapp/admin2/live-edit/js/Main.ts'],
-                dest: 'src/main/webapp/admin2/live-edit/js/all.js',
+                out: 'src/main/webapp/admin2/live-edit/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
             },
             app_launcher: {
                 src: ['src/main/webapp/admin2/apps/app-launcher/js/main.ts'],
-                dest: 'src/main/webapp/admin2/apps/app-launcher/js/all.js',
+                out: 'src/main/webapp/admin2/apps/app-launcher/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
@@ -94,10 +94,10 @@ module.exports = function (grunt) {
      * Alias tasks
      */
     grunt.registerTask('default', 'watch');
-    grunt.registerTask('all', ['typescript']);
+    grunt.registerTask('all', ['ts']);
     grunt.registerTask('live_edit_build_all',
         [
-            'typescript:live_edit',
+            'ts:live_edit',
             'sass:live_edit',
             'cssmin:live_edit'
         ]

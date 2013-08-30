@@ -4,7 +4,6 @@ module app_new {
 
         private parentContent:api_remote_content.Content;
 
-        private cancelAction:api_ui.Action = new CancelNewContentDialog();
 
         private recentList:RecentContentTypesList;
 
@@ -50,8 +49,8 @@ module app_new {
 
             this.appendChildToContentPanel(this.allList);
 
-            this.setCancelAction(this.cancelAction);
-            this.cancelAction.addExecutionListener(()=> {
+            this.setCancelAction(new CancelNewContentDialog());
+            this.getCancelAction().addExecutionListener(()=> {
                 this.close();
             });
 

@@ -8,7 +8,7 @@ module api_ui_tab {
 
         private menuEl:api_dom.UlEl;
 
-        private showingMenuItems:bool = false;
+        private showingMenuItems:boolean = false;
 
         private tabs:TabMenuItem[] = [];
 
@@ -70,7 +70,7 @@ module api_ui_tab {
             this.showingMenuItems = true;
         }
 
-        isShowingMenuItems(): bool {
+        isShowingMenuItems(): boolean {
             return this.showingMenuItems;
         }
 
@@ -89,7 +89,7 @@ module api_ui_tab {
             }
         }
 
-        isEmpty():bool {
+        isEmpty():boolean {
             return this.tabs.length == 0;
         }
 
@@ -158,7 +158,7 @@ module api_ui_tab {
             return tab.getIndex() == this.selectedTab;
         }
 
-        private isLastTab(tab:api_ui.PanelNavigationItem):bool {
+        private isLastTab(tab:api_ui.PanelNavigationItem):boolean {
             return tab.getIndex() === this.tabs.length;
         }
 

@@ -2,7 +2,7 @@ module api_ui {
 
     export class Panel extends api_dom.DivEl {
 
-        private doOffset:bool;
+        private doOffset:boolean;
 
         constructor(idPrefix?:string) {
             super(idPrefix, "panel");
@@ -15,7 +15,7 @@ module api_ui {
             }
         }
 
-        setDoOffset(value:bool) {
+        setDoOffset(value:boolean) {
             this.doOffset = value;
         }
 

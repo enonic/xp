@@ -52,7 +52,7 @@ module api_facet {
             }
         }
 
-        isSelected():bool {
+        isSelected():boolean {
             return this.checkbox.getHTMLElement().getAttributeNode('checked') != null;
         }
 
@@ -60,7 +60,7 @@ module api_facet {
             this.checkbox.getHTMLElement().removeAttribute('checked');
         }
 
-        isDirty():bool {
+        isDirty():boolean {
             if (this.checkbox.getHTMLElement().getAttributeNode('checked')) {
                 return true;
             } else {

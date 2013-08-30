@@ -6,8 +6,6 @@ module api_app_delete{
 
         private deleteAction:api_ui.Action;
 
-        private cancelAction:api_ui.Action = new CancelDeleteDialogAction();
-
         private deleteItems:DeleteItem[];
 
         private itemList:DeleteDialogItemList = new DeleteDialogItemList();
@@ -19,14 +17,14 @@ module api_app_delete{
                 width: 500,
                 height: 300
             });
+            this.setCancelAction(new CancelDeleteDialogAction());
 
             this.modelName = modelName;
 
             this.getEl().addClass("delete-dialog");
             this.appendChildToContentPanel(this.itemList);
-            this.addAction(this.cancelAction);
 
-            this.cancelAction.addExecutionListener(()=> {
+            this.getCancelAction().addExecutionListener(()=> {
                 this.close();
             })
         }
@@ -44,6 +42,10 @@ module api_app_delete{
         setDeleteAction(action:api_ui.Action) {
             this.deleteAction = action;
             this.addAction(action);
+        }
+
+        getDeleteAction():api_ui.Action {
+            return this.deleteAction;
         }
 
         setDeleteItems(deleteItems:DeleteItem[]) {

@@ -9,7 +9,7 @@ module app_browse {
 
         private previewPanel;
 
-        private previewMode:bool;
+        private previewMode:boolean;
 
         private items:api_app_browse.BrowseItem[];
 
@@ -33,13 +33,13 @@ module app_browse {
             }
         }
 
-        public setPreviewMode(enabled:bool) {
+        public setPreviewMode(enabled:boolean) {
             this.previewMode = enabled;
             // refresh the view
             this.setItems(this.items);
         }
 
-        public isPreviewMode():bool {
+        public isPreviewMode():boolean {
             return this.previewMode;
         }
     }

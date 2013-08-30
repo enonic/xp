@@ -52,6 +52,10 @@ module api_ui_dialog{
             this.addAction(action);
         }
 
+        getCancelAction():api_ui.Action {
+            return this.cancelAction;
+        }
+
         setTitle(value:string) {
             this.title.setTitle(value);
         }

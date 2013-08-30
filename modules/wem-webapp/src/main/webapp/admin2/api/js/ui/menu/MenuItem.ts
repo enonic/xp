@@ -20,7 +20,7 @@ module api_ui_menu {
             });
         }
 
-        setEnable(value:bool) {
+        setEnable(value:boolean) {
             var el = this.getEl();
             el.setDisabled(!value);
             if (value) {

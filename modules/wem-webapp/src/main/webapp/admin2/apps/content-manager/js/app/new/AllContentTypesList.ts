@@ -10,7 +10,7 @@ module app_new {
             super("AllContentTypesList", className);
 
             this.input = new api_dom.Element("input");
-            this.input.getEl().addEventListener("keyup", function (event:Event) => {
+            this.input.getEl().addEventListener("keyup", (event:Event) => {
                 this.contentTypesList.filter("displayName", (<HTMLInputElement> event.target).value);
             });
             this.appendChild(this.input);
@@ -29,7 +29,7 @@ module app_new {
 
         refresh() {
 
-            api_remote_contenttype.RemoteContentTypeService.contentType_list({}, function (result) => {
+            api_remote_contenttype.RemoteContentTypeService.contentType_list({}, (result) => {
                 this.contentTypesList.setContentTypes(result.contentTypes);
             });
         }

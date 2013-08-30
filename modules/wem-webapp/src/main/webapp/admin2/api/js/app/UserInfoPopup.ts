@@ -2,7 +2,7 @@ module api_app {
 
     export class UserInfoPopup extends api_dom.DivEl {
 
-        private isShown:bool = false;
+        private isShown:boolean = false;
 
         constructor() {
             super('UserInfoPopup', 'user-info-popup');

@@ -150,11 +150,11 @@ svg.live-edit-highlight-border {
   width: 88px;
   height: 88px;
   border: none;
-  -moz-animation: live-edit-spinner .5s infinite linear;
-  -webkit-animation: live-edit-spinner .5s infinite linear;
-  -ms-animation: live-edit-spinner .5s infinite linear;
-  -o-animation: live-edit-spinner .5s infinite linear;
-  animation: live-edit-spinner .5s infinite linear; }
+  -moz-animation: live-edit-spinner 0.5s infinite linear;
+  -webkit-animation: live-edit-spinner 0.5s infinite linear;
+  -ms-animation: live-edit-spinner 0.5s infinite linear;
+  -o-animation: live-edit-spinner 0.5s infinite linear;
+  animation: live-edit-spinner 0.5s infinite linear; }
 
 .live-edit-loader-splash-content div {
   color: #000;
@@ -184,7 +184,7 @@ svg.live-edit-highlight-border rect {
 
 .live-edit-empty-region-placeholder {
   background-color: #fff;
-  border: 2px dashed #add8e6;
+  border: 2px dashed lightblue;
   clear: both;
   color: #add8e6;
   font-size: 20px;
@@ -204,7 +204,7 @@ svg.live-edit-highlight-border rect {
   list-style-type: none;
   /* The placeholder in jQuery UI has the same tag name as the dragged component */
   clear: both;
-  border: 2px dashed #000;
+  border: 2px dashed black;
   padding: 28px;
   color: #000;
   font-size: 20px;
@@ -226,7 +226,7 @@ svg.live-edit-highlight-border rect {
   position: relative;
   color: #444;
   background-color: Lightgoldenrodyellow;
-  border: 1px solid #ccc; }
+  border: 1px solid #cccccc; }
 
 .live-edit-html-element-placeholder div {
   position: absolute;
@@ -280,7 +280,7 @@ svg.live-edit-highlight-border rect {
 
 .live-edit-tool-tip {
   position: absolute;
-  border: 1px solid #000;
+  border: 1px solid black;
   padding: 10px 10px;
   background-color: #ffffc7; }
 
@@ -312,7 +312,7 @@ svg.live-edit-highlight-border rect {
   cursor: pointer; }
 
 .live-edit-editor-button:hover {
-  border: 1px solid #ccc; }
+  border: 1px solid #cccccc; }
 
 .live-edit-editor-button[live-edit-data-tag=paste] {
   background: url("..//images/htmleditor/paste.png") center center no-repeat; }

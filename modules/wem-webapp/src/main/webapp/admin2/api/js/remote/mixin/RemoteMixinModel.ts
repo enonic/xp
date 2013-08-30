@@ -50,8 +50,8 @@ module api_remote_mixin {
     }
 
     export interface CreateOrUpdateResult {
-        created:bool;
-        updated:bool;
+        created:boolean;
+        updated:boolean;
     }
 
 }

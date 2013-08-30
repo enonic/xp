@@ -2,25 +2,21 @@ module app {
 
     export class SpaceAppPanel extends api_app.BrowseAndWizardBasedAppPanel {
 
-        private browsePanel:app_browse.SpaceBrowsePanel;
-
-        private appBarTabMenu:api_app.AppBarTabMenu;
 
         constructor(appBar:api_app.AppBar) {
 
-            this.browsePanel = new app_browse.SpaceBrowsePanel();
-            this.appBarTabMenu = appBar.getTabMenu();
+            var browsePanel = new app_browse.SpaceBrowsePanel();
 
             super({
                 appBar: appBar,
-                browsePanel: this.browsePanel,
+                browsePanel: browsePanel,
                 browsePanelActions: app_browse.SpaceBrowseActions.get().getAllActions()
             });
 
             this.handleGlobalEvents();
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground?:bool = false) {
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground:boolean = false) {
             super.addWizardPanel(tabMenuItem, wizardPanel, inBackground);
 
             wizardPanel.getHeader().addListener(
@@ -37,7 +33,7 @@ module app {
 
             api_app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
-                this.appBarTabMenu.deselectNavigationItem();
+                this.getAppBarTabMenu().deselectNavigationItem();
             });
 
             api_ui_tab.TabMenuItemCloseEvent.on((event) => {
@@ -49,7 +45,7 @@ module app {
             app_browse.NewSpaceEvent.on((event) => {
 
                 var tabId = this.generateTabId();
-                var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+                var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
@@ -67,7 +63,7 @@ module app {
                 event.getModels().forEach((spaceModel:api_model.SpaceExtModel) => {
 
                     var tabId = this.generateTabId(spaceModel.data.name, false);
-                    var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+                    var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
                         this.selectPanel(tabMenuItem);
@@ -92,7 +88,7 @@ module app {
                 event.getModels().forEach((spaceModel:api_model.SpaceExtModel) => {
 
                     var tabId = this.generateTabId(spaceModel.data.name, true);
-                    var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+                    var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
                         this.selectPanel(tabMenuItem);
@@ -119,7 +115,7 @@ module app {
             });
         }
 
-        private generateTabId(spaceName?:string, isEdit?:bool = false) {
+        private generateTabId(spaceName?:string, isEdit:boolean = false) {
             return spaceName ? ( isEdit ? 'edit-' : 'view-') + spaceName : 'new-';
         }
     }

@@ -31,8 +31,8 @@ module api_ui {
          * @param trigger Event type to hook on (mouse,focus)
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          */
-        constructor(target:api_dom.Element, text:string, showDelay?:number = 0, hideTimeout?:number = 1000,
-                    trigger?:string = Tooltip.TRIGGER_MOUSE, side?:string = Tooltip.SIDE_BOTTOM) {
+        constructor(target:api_dom.Element, text:string, showDelay:number = 0, hideTimeout:number = 1000,
+                    trigger:string = Tooltip.TRIGGER_MOUSE, side:string = Tooltip.SIDE_BOTTOM) {
 
             this.target = target;
             this.text = text;
@@ -198,7 +198,7 @@ module api_ui {
             }
         }
 
-        private getEventName(enter:bool) {
+        private getEventName(enter:boolean) {
             switch (this.trigger) {
             case Tooltip.TRIGGER_FOCUS:
                 return enter ? "focus" : "blur";

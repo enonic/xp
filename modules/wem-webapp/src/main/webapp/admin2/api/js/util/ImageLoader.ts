@@ -4,14 +4,14 @@ module api_util {
         private static cachedImages:HTMLImageElement[] = [];
 
         static get(url:string, width?:number, height?:number):HTMLImageElement {
-            var imageFound:bool = false;
+            var imageFound:boolean = false;
             var returnImage:HTMLImageElement;
             url = encodeURI(url);
 
-            for (var i in cachedImages) {
-                if (cachedImages[i].src == url) {
+            for (var i in ImageLoader.cachedImages) {
+                if (ImageLoader.cachedImages[i].src == url) {
                     imageFound = true;
-                    returnImage = cachedImages[i];
+                    returnImage = ImageLoader.cachedImages[i];
                 }
             }
 
@@ -20,7 +20,7 @@ module api_util {
                 image.src = url;
                 //image.height = height;
                 //image.width = width;
-                cachedImages[cachedImages.length + 1] = image;
+                ImageLoader.cachedImages[ImageLoader.cachedImages.length + 1] = image;
                 returnImage = image;
             }
 

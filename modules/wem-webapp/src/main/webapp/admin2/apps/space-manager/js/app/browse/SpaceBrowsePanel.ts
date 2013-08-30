@@ -6,39 +6,34 @@ module app_browse {
 
         private toolbar:SpaceBrowseToolbar;
 
-        private treeGridPanel:SpaceTreeGridPanel;
-
-        private filterPanel:app_browse_filter.SpaceBrowseFilterPanel;
-
-        private browseItemPanel:SpaceBrowseItemPanel;
 
         constructor() {
 
             var treeGridContextMenu = new SpaceTreeGridContextMenu();
-            this.treeGridPanel = components.gridPanel = new SpaceTreeGridPanel({
+            var treeGridPanel = components.gridPanel = new SpaceTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
 
-            this.browseActions = SpaceBrowseActions.init(this.treeGridPanel);
+            this.browseActions = SpaceBrowseActions.init(treeGridPanel);
             treeGridContextMenu.setActions(this.browseActions);
 
             this.toolbar = new app_browse.SpaceBrowseToolbar(this.browseActions);
 
-            this.browseItemPanel = components.detailPanel =
+            var browseItemPanel = components.detailPanel =
                                    new SpaceBrowseItemPanel({ actionMenuActions: [
                                        this.browseActions.EDIT_SPACE,
                                        this.browseActions.OPEN_SPACE,
                                        this.browseActions.DELETE_SPACE]});
 
-            this.filterPanel = new app_browse_filter.SpaceBrowseFilterPanel();
+            var filterPanel = new app_browse_filter.SpaceBrowseFilterPanel();
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel: this.treeGridPanel,
-                browseItemPanel: this.browseItemPanel,
-                filterPanel: this.filterPanel});
+                treeGridPanel: treeGridPanel,
+                browseItemPanel: browseItemPanel,
+                filterPanel: filterPanel});
 
-            this.treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
+            treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }

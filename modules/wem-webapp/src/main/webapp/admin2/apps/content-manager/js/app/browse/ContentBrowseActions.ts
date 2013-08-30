@@ -120,11 +120,11 @@ module app_browse {
 
         static init(treeGridPanel:api_app_browse_grid.TreeGridPanel):ContentBrowseActions {
             new ContentBrowseActions(treeGridPanel);
-            return INSTANCE;
+            return ContentBrowseActions.INSTANCE;
         }
 
         static get():ContentBrowseActions {
-            return INSTANCE;
+            return ContentBrowseActions.INSTANCE;
         }
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
@@ -178,7 +178,7 @@ module app_browse {
 
         }
 
-        private anyEditable(contents:api_model.ContentExtModel[]):bool {
+        private anyEditable(contents:api_model.ContentExtModel[]):boolean {
             for (var i in contents) {
                 var content:api_model.ContentExtModel = contents[i];
                 if (content.data.editable) {
@@ -188,7 +188,7 @@ module app_browse {
             return false;
         }
 
-        private anyDeleteable(contents:api_model.ContentExtModel[]):bool {
+        private anyDeleteable(contents:api_model.ContentExtModel[]):boolean {
             for (var i in contents) {
                 var content:api_model.ContentExtModel = contents[i];
                 if (content.data.deletable) {

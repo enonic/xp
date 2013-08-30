@@ -29,14 +29,14 @@ module api_remote_content {
     }
 
     export interface Content extends ContentSummary{
-        isRoot: bool;
+        isRoot: boolean;
         data: Data[];
     }
 
     export interface ContentList extends ContentSummary{
-        editable: bool;
-        deletable: bool;
-        allowsChildren: bool;
+        editable: boolean;
+        deletable: boolean;
+        allowsChildren: boolean;
     }
 
     export interface ContentFind extends ContentList{
@@ -62,13 +62,13 @@ module api_remote_content {
     }
 
     export interface ContentTreeNode {
-        allowsChildren:bool;
+        allowsChildren:boolean;
         contents:ContentTreeNode[];
         createdTime?:Date;
-        deletable:bool;
+        deletable:boolean;
         displayName:string;
-        editable:bool;
-        hasChildren:bool;
+        editable:boolean;
+        hasChildren:boolean;
         iconUrl:string;
         id:string;
         modifiedTime?:Date;
@@ -99,7 +99,7 @@ module api_remote_content {
 
     export interface FindParams {
         fulltext?: string;
-        includeFacets?: bool;
+        includeFacets?: boolean;
         contentTypes: string[];
         spaces?: string[];
         ranges?: {
@@ -123,7 +123,7 @@ module api_remote_content {
     }
 
     export interface ValidateResult {
-        hasError: bool;
+        hasError: boolean;
         errors: {
             path: string;
             message: string;
@@ -146,7 +146,7 @@ module api_remote_content {
 
     export interface CreateOrUpdateParams {
         contentId?: string;
-        temporary?: bool;
+        temporary?: boolean;
         contentName?: string;
         parentContentPath?: string;
         qualifiedContentTypeName: string;
@@ -161,8 +161,8 @@ module api_remote_content {
     }
 
     export interface CreateOrUpdateResult{
-        created: bool;
-        updated: bool;
+        created: boolean;
+        updated: boolean;
         contentId?: string;
         contentPath?: string;
         failure?: string;

@@ -47,8 +47,8 @@ module api_remote_relationshiptype {
     }
 
     export interface CreateOrUpdateResult {
-        created:bool;
-        updated:bool;
+        created:boolean;
+        updated:boolean;
     }
 
 }

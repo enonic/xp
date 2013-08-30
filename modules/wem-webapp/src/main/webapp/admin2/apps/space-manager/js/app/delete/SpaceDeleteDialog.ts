@@ -2,7 +2,6 @@ module app {
 
     export class SpaceDeleteDialog extends api_app_delete.DeleteDialog {
 
-        private deleteAction:api_ui.Action = new app.SpaceDeleteDialogAction();
 
         private spacesToDelete:api_model.SpaceExtModel[];
 
@@ -10,10 +9,10 @@ module app {
 
         constructor() {
             super("Space");
+            var deleteAction = new app.SpaceDeleteDialogAction();
+            this.setDeleteAction(deleteAction);
 
-            this.setDeleteAction(this.deleteAction);
-
-            this.deleteAction.addExecutionListener(() => {
+            deleteAction.addExecutionListener(() => {
                 this.deleteHandler.doDelete(api_handler.DeleteSpaceParamFactory.create(this.spacesToDelete),
                     (result:api_remote_space.DeleteResult) => {
                         this.close();

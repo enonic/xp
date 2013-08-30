@@ -56,5 +56,9 @@ module app_wizard_form_input {
             });
             return values;
         }
+
+        getInput():api_schema_content_form.Input {
+            return this.input;
+        }
     }
 }

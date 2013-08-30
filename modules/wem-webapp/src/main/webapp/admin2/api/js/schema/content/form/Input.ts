@@ -6,11 +6,11 @@ module api_schema_content_form{
 
         private label:string;
 
-        private immutable:bool;
+        private immutable:boolean;
 
         private occurrences:Occurrences;
 
-        private indexed:bool;
+        private indexed:boolean;
 
         private customText:string;
 
@@ -39,7 +39,7 @@ module api_schema_content_form{
             return this.label;
         }
 
-        isImmutable():bool {
+        isImmutable():boolean {
             return this.immutable;
         }
 
@@ -47,7 +47,7 @@ module api_schema_content_form{
             return this.occurrences;
         }
 
-        isIndexed():bool {
+        isIndexed():boolean {
             return this.indexed;
         }
 

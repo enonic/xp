@@ -2,7 +2,7 @@ module api_app{
 
     export class AppBarTabMenu extends api_ui_tab.TabMenu {
 
-        private tabMenuButton:AppBarTabMenuButton;
+        private appBarTabMenuButton:AppBarTabMenuButton;
 
         constructor(idPrefix?:string) {
             super(idPrefix || "AppBarTabMenu");
@@ -15,15 +15,15 @@ module api_app{
         }
 
         createTabMenuButton():AppBarTabMenuButton {
-            this.tabMenuButton = new AppBarTabMenuButton();
-            return this.tabMenuButton;
+            this.appBarTabMenuButton = new AppBarTabMenuButton();
+            return this.appBarTabMenuButton;
         }
 
         addNavigationItem(tab:AppBarTabMenuItem) {
             super.addNavigationItem(tab);
 
-            this.tabMenuButton.setTabCount(this.countVisible());
-            this.tabMenuButton.setEditing(tab.isEditing());
+            this.appBarTabMenuButton.setTabCount(this.countVisible());
+            this.appBarTabMenuButton.setEditing(tab.isEditing());
 
             if (this.isShowingMenuItems()) {
                 this.updateMenuPosition();
@@ -33,10 +33,10 @@ module api_app{
         removeNavigationItem(tab:AppBarTabMenuItem) {
             super.removeNavigationItem(tab);
 
-            this.tabMenuButton.setTabCount(this.countVisible());
+            this.appBarTabMenuButton.setTabCount(this.countVisible());
             var newSelectedTab = <AppBarTabMenuItem>this.getSelectedNavigationItem();
             if (newSelectedTab) {
-                this.tabMenuButton.setEditing(newSelectedTab.isEditing());
+                this.appBarTabMenuButton.setEditing(newSelectedTab.isEditing());
             }
 
             if (this.isShowingMenuItems()) {
@@ -59,12 +59,12 @@ module api_app{
         selectNavigationItem(tabIndex:number) {
             super.selectNavigationItem(tabIndex);
             var tab:api_ui_tab.TabMenuItem = this.getNavigationItem(tabIndex);
-            this.tabMenuButton.setEditing((<AppBarTabMenuItem>tab).isEditing());
+            this.appBarTabMenuButton.setEditing((<AppBarTabMenuItem>tab).isEditing());
         }
 
         deselectNavigationItem() {
             super.deselectNavigationItem();
-            this.tabMenuButton.setEditing(false);
+            this.appBarTabMenuButton.setEditing(false);
             this.updateMenuPosition();
         }
 

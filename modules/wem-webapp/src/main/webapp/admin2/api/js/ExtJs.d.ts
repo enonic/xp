@@ -18,7 +18,7 @@ interface Html_dom_Element {
     children: Html_dom_Element[];
     src: string;
 
-    hasAttribute(name:string):bool;
+    hasAttribute(name:string):boolean;
     getAttribute(name:string):string;
     setAttribute(name:string, value:string);
     removeAttribute(name:string);
@@ -34,7 +34,7 @@ interface IExt {
 
     SSL_SECURE_URL: string;
 
-    USE_NATIVE_JSON: bool;
+    USE_NATIVE_JSON: boolean;
 
     chromeVersion: number;
 
@@ -42,13 +42,13 @@ interface IExt {
 
     emptyString: Object;
 
-    enableFx: bool;
+    enableFx: boolean;
 
-    enableGarbageCollector: bool;
+    enableGarbageCollector: boolean;
 
-    enableListenerCollection: bool;
+    enableListenerCollection: boolean;
 
-    enableNestedListenerRemoval: bool;
+    enableNestedListenerRemoval: boolean;
 
     enumerables: string[];
 
@@ -58,79 +58,79 @@ interface IExt {
 
     ieVersion: number;
 
-    isChrome: bool;
+    isChrome: boolean;
 
-    isFF10: bool;
+    isFF10: boolean;
 
-    isFF3_0: bool;
+    isFF3_0: boolean;
 
-    isFF3_5: bool;
+    isFF3_5: boolean;
 
-    isFF3_6: bool;
+    isFF3_6: boolean;
 
-    isFF4: bool;
+    isFF4: boolean;
 
-    isFF5: bool;
+    isFF5: boolean;
 
-    isGecko: bool;
+    isGecko: boolean;
 
-    isGecko10: bool;
+    isGecko10: boolean;
 
-    isGecko3: bool;
+    isGecko3: boolean;
 
-    isGecko4: bool;
+    isGecko4: boolean;
 
-    isGecko5: bool;
+    isGecko5: boolean;
 
-    isIE: bool;
+    isIE: boolean;
 
-    isIE6: bool;
+    isIE6: boolean;
 
-    isIE7: bool;
+    isIE7: boolean;
 
-    isIE7m: bool;
+    isIE7m: boolean;
 
-    isIE7p: bool;
+    isIE7p: boolean;
 
-    isIE8: bool;
+    isIE8: boolean;
 
-    isIE8m: bool;
+    isIE8m: boolean;
 
-    isIE8p: bool;
+    isIE8p: boolean;
 
-    isIE9: bool;
+    isIE9: boolean;
 
-    isIE9m: bool;
+    isIE9m: boolean;
 
-    isIE9p: bool;
+    isIE9p: boolean;
 
-    isLinux: bool;
+    isLinux: boolean;
 
-    isMac: bool;
+    isMac: boolean;
 
-    isOpera: bool;
+    isOpera: boolean;
 
-    isOpera10_5: bool;
+    isOpera10_5: boolean;
 
-    isReady: bool;
+    isReady: boolean;
 
-    isSafari: bool;
+    isSafari: boolean;
 
-    isSafari2: bool;
+    isSafari2: boolean;
 
-    isSafari3: bool;
+    isSafari3: boolean;
 
-    isSafari4: bool;
+    isSafari4: boolean;
 
-    isSafari5: bool;
+    isSafari5: boolean;
 
-    isSafari5_0: bool;
+    isSafari5_0: boolean;
 
-    isSecure: bool;
+    isSecure: boolean;
 
-    isWebKit: bool;
+    isWebKit: boolean;
 
-    isWindows: bool;
+    isWindows: boolean;
 
     name: string;
 
@@ -140,9 +140,9 @@ interface IExt {
 
     safariVersion: number;
 
-    scopeResetCSS : bool;
+    scopeResetCSS : boolean;
 
-    useShims : bool;
+    useShims : boolean;
 
     webKitVersion : number;
 
@@ -156,23 +156,23 @@ interface IExt {
 
     batchLayouts(fn:Function, scope?:Object): void;
 
-    bind(fn:Function, scope?:Object, args?:any[], appendArgs?:bool): Function;
+    bind(fn:Function, scope?:Object, args?:any[], appendArgs?:boolean): Function;
 
     callback(callback:Function, scope?:Object, args?:any[], delay?:number): void;
 
     clone(item:any): any;
 
-    copyTo(dest:Object, source:Object, names:string, usePrototypeKeys?:bool): Object;
-    copyTo(dest:Object, source:Object, names:string[], usePrototypeKeys?:bool): Object;
+    copyTo(dest:Object, source:Object, names:string, usePrototypeKeys?:boolean): Object;
+    copyTo(dest:Object, source:Object, names:string[], usePrototypeKeys?:boolean): Object;
 
     create(name:string, object?:Object): Object;
     create(object:Object): Object;
 
     createByAlias(alias:string, ...args:Object[]): Object;
 
-    decode(value:string, safe?:bool): Object;
+    decode(value:string, safe?:boolean): Object;
 
-    defer(fn:Function, millis:number, scope?:Object, args?:any[], appendArgs?:bool): number;
+    defer(fn:Function, millis:number, scope?:Object, args?:any[], appendArgs?:boolean): number;
 
     define(name:string, object:Object, callback?:Function): Ext_Base;
 
@@ -185,7 +185,7 @@ interface IExt {
 
     destroyMembers(o:Object, ...args:string[]): void;
 
-    each(value:any, fn:(item:any, index:number, all:any) => any /*bool*/, scope?:Object, reverse?:bool);
+    each(value:any, fn:(item:any, index:number, all:any) => any /*boolean*/, scope?:Object, reverse?:boolean);
 
     encode(value:any): string;
 
@@ -218,7 +218,7 @@ interface IExt {
 
     getOrientation(): string;
 
-    getScrollbarSize(force?:bool): {
+    getScrollbarSize(force?:boolean): {
         width: number;
         height: number;
     };
@@ -234,44 +234,44 @@ interface IExt {
 
     identityFn(o:Object): any;      // ?
 
-    isArray(value:any): bool;
+    isArray(value:any): boolean;
 
-    isbool(value:any): bool;
+    isboolean(value:any): boolean;
 
-    isDate(value:any): bool;
+    isDate(value:any): boolean;
 
-    isDefined(value:any): bool;
+    isDefined(value:any): boolean;
 
-    isElement(value:any): bool;
+    isElement(value:any): boolean;
 
-    isEmpty(value:any, allowEmptyString?:bool): bool;
+    isEmpty(value:any, allowEmptyString?:boolean): boolean;
 
-    isFunction(value:any): bool;
+    isFunction(value:any): boolean;
 
-    isIterable(value:any): bool;
+    isIterable(value:any): boolean;
 
-    isNumber(value:any): bool;
+    isNumber(value:any): boolean;
 
-    isNumeric(value:any): bool;
+    isNumeric(value:any): boolean;
 
-    isObject(value:any): bool;
+    isObject(value:any): boolean;
 
-    isPrimitive(value:any): bool;
+    isPrimitive(value:any): boolean;
 
-    isString(value:any): bool;
+    isString(value:any): boolean;
 
-    isTextNode(value:any): bool;
+    isTextNode(value:any): boolean;
 
-    iterate(o:Object, fn:(item:Object, index:number, all:any[]) => bool, scope?:Object): void;
+    iterate(o:Object, fn:(item:Object, index:number, all:any[]) => boolean, scope?:Object): void;
 
     log(options:string): void;
     log(options:{
         msg: string;
         level?: string;
         dump?: Object;
-        stack?: bool;
-        indent?: bool;
-        outdent?: bool;
+        stack?: boolean;
+        indent?: boolean;
+        outdent?: boolean;
     }): void;
 
     merge(dest:Object, object:Object): Object;
@@ -301,10 +301,10 @@ interface IExt {
 
     resumeLayouts(flush:Object): void;
 
-    select(selector:string, unique?:bool, root?:string): Ext_dom_CompositeElement;
-    select(selector:string, unique?:bool, root?:Html_dom_Element): Ext_dom_CompositeElement;
-    select(selector:Html_dom_Element[], unique?:bool, root?:string): Ext_dom_CompositeElement;
-    select(selector:Html_dom_Element[], unique?:bool, root?:Html_dom_Element): Ext_dom_CompositeElement;
+    select(selector:string, unique?:boolean, root?:string): Ext_dom_CompositeElement;
+    select(selector:string, unique?:boolean, root?:Html_dom_Element): Ext_dom_CompositeElement;
+    select(selector:Html_dom_Element[], unique?:boolean, root?:string): Ext_dom_CompositeElement;
+    select(selector:Html_dom_Element[], unique?:boolean, root?:Html_dom_Element): Ext_dom_CompositeElement;
 
     setVersion(packageName:string, version:string) : IExt;
     setVersion(packageName:string, version:Ext_Version) : IExt;
@@ -318,7 +318,7 @@ interface IExt {
 
     typeOf(value:any): string;
 
-    valueFrom(value:Object, defaultValue:Object, allowBlank?:bool): Object;
+    valueFrom(value:Object, defaultValue:Object, allowBlank?:boolean): Object;
 
     widget(name?:string, config?:Object): Object;
 }
@@ -551,28 +551,28 @@ interface Ext_dom_AbstractElement extends Ext_Base {
     applyStyles(styles:Object): Ext_dom_Element;
     applyStyles(styles:Function): Ext_dom_Element;
 
-    child(selector:string, returnDom?:bool): any;     // HTMLElement/Ext.dom.Element
+    child(selector:string, returnDom?:boolean): any;     // HTMLElement/Ext.dom.Element
 
-    contains(el:string):bool;
-    contains(el:Html_dom_Element):bool;
+    contains(el:string):boolean;
+    contains(el:Html_dom_Element):boolean;
 
-    createChild(config:Object, insertBefore?:Html_dom_Element, returnDom?:bool): any;  // HTMLElement/Ext.dom.Element;
+    createChild(config:Object, insertBefore?:Html_dom_Element, returnDom?:boolean): any;  // HTMLElement/Ext.dom.Element;
 
     destroy(): void;
 
-    down(selector:string, returnDom?:bool): any;     // HTMLElement/Ext.dom.Element
+    down(selector:string, returnDom?:boolean): any;     // HTMLElement/Ext.dom.Element
 
-    findParent(selector:string, limit?:number, returnEl?:bool): any;  // HTMLElement/Ext.dom.Element;
-    findParent(selector:string, limit?:string, returnEl?:bool): any;  // HTMLElement/Ext.dom.Element;
-    findParent(selector:string, limit?:Html_dom_Element, returnEl?:bool): any;  // HTMLElement/Ext.dom.Element;
-    findParent(selector:string, limit?:Ext_dom_Element, returnEl?:bool): any;  // HTMLElement/Ext.dom.Element;
+    findParent(selector:string, limit?:number, returnEl?:boolean): any;  // HTMLElement/Ext.dom.Element;
+    findParent(selector:string, limit?:string, returnEl?:boolean): any;  // HTMLElement/Ext.dom.Element;
+    findParent(selector:string, limit?:Html_dom_Element, returnEl?:boolean): any;  // HTMLElement/Ext.dom.Element;
+    findParent(selector:string, limit?:Ext_dom_Element, returnEl?:boolean): any;  // HTMLElement/Ext.dom.Element;
 
-    findParentNode(selector:string, limit?:number, returnEl?:bool): any;    // HTMLElement/Ext.dom.Element
-    findParentNode(selector:string, limit?:string, returnEl?:bool): any;    // HTMLElement/Ext.dom.Element
-    findParentNode(selector:string, limit?:Html_dom_Element, returnEl?:bool): any;    // HTMLElement/Ext.dom.Element
-    findParentNode(selector:string, limit?:Ext_dom_Element, returnEl?:bool): any;    // HTMLElement/Ext.dom.Element
+    findParentNode(selector:string, limit?:number, returnEl?:boolean): any;    // HTMLElement/Ext.dom.Element
+    findParentNode(selector:string, limit?:string, returnEl?:boolean): any;    // HTMLElement/Ext.dom.Element
+    findParentNode(selector:string, limit?:Html_dom_Element, returnEl?:boolean): any;    // HTMLElement/Ext.dom.Element
+    findParentNode(selector:string, limit?:Ext_dom_Element, returnEl?:boolean): any;    // HTMLElement/Ext.dom.Element
 
-    first(selector?:string, returnDom?:bool): any;   //Ext.dom.Element/HTMLElement
+    first(selector?:string, returnDom?:boolean): any;   //Ext.dom.Element/HTMLElement
 
     getActiveElement(): Html_dom_Element;
 
@@ -580,15 +580,15 @@ interface Ext_dom_AbstractElement extends Ext_Base {
     getAlignToXY(element:Html_dom_Element, position?:string, offsets?:number[]): number[];
     getAlignToXY(element:Ext_dom_Element, position?:string, offsets?:number[]): number[];
 
-    getAnchorXY(anchor?:string, local?:bool, size?:Object): number[];
+    getAnchorXY(anchor?:string, local?:boolean, size?:Object): number[];
 
     getAttribute(name:string, namespace?:string): string;
 
     getBorderWidth(side:string): number;
 
-    getBottom(local:bool): number;
+    getBottom(local:boolean): number;
 
-    getBox(contentBox?:bool, local?:bool): {
+    getBox(contentBox?:boolean, local?:boolean): {
         x: number;
         y: number;
         width: number;
@@ -597,13 +597,13 @@ interface Ext_dom_AbstractElement extends Ext_Base {
         right: number;
     };
 
-    getById(id:string, asDom?:bool): any;   // HTMLElement/Ext.dom.Element
+    getById(id:string, asDom?:boolean): any;   // HTMLElement/Ext.dom.Element
 
     getHTML(): string;
 
-    getHeight(contentHeight?:bool): number;
+    getHeight(contentHeight?:boolean): number;
 
-    getLeft(local:bool): number;
+    getLeft(local:boolean): number;
 
     getMargin(sides?:string): any;    // Object/Number
 
@@ -613,7 +613,7 @@ interface Ext_dom_AbstractElement extends Ext_Base {
 
     getPadding(side:string): number;
 
-    getPageBox(asRegion?:bool): {
+    getPageBox(asRegion?:boolean): {
         left: number;
         top: number;
         width: number;
@@ -622,26 +622,26 @@ interface Ext_dom_AbstractElement extends Ext_Base {
         right: number;
     };
 
-    getRight(local:bool): number;
+    getRight(local:boolean): number;
 
-    getSize(contentSize?:bool) : {
+    getSize(contentSize?:boolean) : {
         width: number;
         height: number;
     };
 
-    getStyle(property:string, inline:bool): string;
-    getStyle(property:string[], inline:bool): Object;
+    getStyle(property:string, inline:boolean): string;
+    getStyle(property:string[], inline:boolean): Object;
 
-    getTop(local:bool): number;
+    getTop(local:boolean): number;
 
-    getValue(asNumber:bool) : any;   // String/Number;
+    getValue(asNumber:boolean) : any;   // String/Number;
 
     getViewSize() : {
         width: number;
         height: number;
     };
 
-    getWidth(contentWidth?:bool) : number;
+    getWidth(contentWidth?:boolean) : number;
 
     getX(el:Object): number;
 
@@ -649,9 +649,9 @@ interface Ext_dom_AbstractElement extends Ext_Base {
 
     getY(el:Object): number[];
 
-    hasCls(name:string): bool;
+    hasCls(name:string): boolean;
 
-    hide(animate?:bool): Ext_dom_Element;
+    hide(animate?:boolean): Ext_dom_Element;
 
     insertAfter(el:string): Ext_dom_AbstractElement;
     insertAfter(el:Html_dom_Element): Ext_dom_AbstractElement;
@@ -665,31 +665,31 @@ interface Ext_dom_AbstractElement extends Ext_Base {
     insertFirst(el:Html_dom_Element): Ext_dom_AbstractElement;
     insertFirst(el:Ext_dom_AbstractElement): Ext_dom_AbstractElement;
 
-    insertHtml(where:string, html:string, returnEl?:bool): any;     // HTMLElement/Ext_dom_AbstractElement
+    insertHtml(where:string, html:string, returnEl?:boolean): any;     // HTMLElement/Ext_dom_AbstractElement
 
-    insertSibling(el:string, where?:string, returnDom?:bool): Ext_dom_AbstractElement;
-    insertSibling(el:Html_dom_Element, where?:string, returnDom?:bool): Ext_dom_AbstractElement;
-    insertSibling(el:Ext_dom_AbstractElement, where?:string, returnDom?:bool): Ext_dom_AbstractElement;
-    insertSibling(el:Object, where?:string, returnDom?:bool): Ext_dom_AbstractElement;
-    insertSibling(el:Object[], where?:string, returnDom?:bool): Ext_dom_AbstractElement;
+    insertSibling(el:string, where?:string, returnDom?:boolean): Ext_dom_AbstractElement;
+    insertSibling(el:Html_dom_Element, where?:string, returnDom?:boolean): Ext_dom_AbstractElement;
+    insertSibling(el:Ext_dom_AbstractElement, where?:string, returnDom?:boolean): Ext_dom_AbstractElement;
+    insertSibling(el:Object, where?:string, returnDom?:boolean): Ext_dom_AbstractElement;
+    insertSibling(el:Object[], where?:string, returnDom?:boolean): Ext_dom_AbstractElement;
 
-    is(selector:string): bool;
+    is(selector:string): boolean;
 
-    isStyle(style:string, value:string): bool;
+    isStyle(style:string, value:string): boolean;
 
-    isTransparent(property:string): bool;
+    isTransparent(property:string): boolean;
 
-    last(selector?:string, returnDom?:bool): any;       // Ext.dom.Element/HTMLElement
+    last(selector?:string, returnDom?:boolean): any;       // Ext.dom.Element/HTMLElement
 
     mask(msg?:string, msgCls?:string): void;
 
-    next(selector?:string, returnDom?:bool) : any;      // Ext.dom.Element/HTMLElement
+    next(selector?:string, returnDom?:boolean) : any;      // Ext.dom.Element/HTMLElement
 
-    parent(selector?:string, returnDom?:bool): any;     // Ext.dom.Element/HTMLElement
+    parent(selector?:string, returnDom?:boolean): any;     // Ext.dom.Element/HTMLElement
 
     populateStyleMap(map:Object, order:Object): void;
 
-    prev(selector?:string, returnDom?:bool): any;       // Ext.dom.Element/HTMLElement
+    prev(selector?:string, returnDom?:boolean): any;       // Ext.dom.Element/HTMLElement
 
     query(selector:string): Html_dom_Element[];
 
@@ -714,11 +714,11 @@ interface Ext_dom_AbstractElement extends Ext_Base {
     replaceWith(el:Ext_dom_Element): Ext_dom_AbstractElement;
     replaceWith(el:Object): Ext_dom_AbstractElement;
 
-    select(selector:string, unique?:bool): Ext_dom_CompositeElement;
+    select(selector:string, unique?:boolean): Ext_dom_CompositeElement;
 
     serializeForm(form:Object): String;
 
-    set(obj:Object, useSet?:bool): Ext_dom_Element;
+    set(obj:Object, useSet?:boolean): Ext_dom_Element;
 
     setBottom(bottom:string): Ext_dom_AbstractElement;
 
@@ -727,23 +727,23 @@ interface Ext_dom_AbstractElement extends Ext_Base {
         y: number;
         width: number;
         height: number;
-    }, adjust?:bool, animate?:any /* bool/Object */): Ext_dom_AbstractElement;
+    }, adjust?:boolean, animate?:any /* boolean/Object */): Ext_dom_AbstractElement;
 
     setHTML(html:string): Ext_dom_Element;
 
-    setHeight(height:number, animate:any /* bool/Object */): Ext_dom_Element;
-    setHeight(height:string, animate:any /* bool/Object */): Ext_dom_Element;
+    setHeight(height:number, animate:any /* boolean/Object */): Ext_dom_Element;
+    setHeight(height:string, animate:any /* boolean/Object */): Ext_dom_Element;
 
     setLeft(left:string): Ext_dom_AbstractElement;
 
     setRight(right:string): Ext_dom_AbstractElement;
 
-    setSize(width:number, height:number, animate?:any /* bool/Object */): Ext_dom_Element;
-    setSize(width:string, height:string, animate?:any /* bool/Object */): Ext_dom_Element;
+    setSize(width:number, height:number, animate?:any /* boolean/Object */): Ext_dom_Element;
+    setSize(width:string, height:string, animate?:any /* boolean/Object */): Ext_dom_Element;
     setSize(width:{
         width: number;
         height: number;
-    }, animate?:any /* bool/Object */): Ext_dom_Element;
+    }, animate?:any /* boolean/Object */): Ext_dom_Element;
 
     setStyle(property:string, value:string): Ext_dom_Element;
     setStyle(property:string, value:number): Ext_dom_Element;
@@ -753,18 +753,18 @@ interface Ext_dom_AbstractElement extends Ext_Base {
 
     setVisibilityMode(mode:number): Ext_dom_AbstractElement;
 
-    setVisible(visible:bool, animate?:any /* bool/Object */): Ext_dom_Element;
+    setVisible(visible:boolean, animate?:any /* boolean/Object */): Ext_dom_Element;
 
-    setWidth(width:number, animate?:any /* bool/Object */): Ext_dom_Element;
-    setWidth(width:string, animate?:any /* bool/Object */): Ext_dom_Element;
+    setWidth(width:number, animate?:any /* boolean/Object */): Ext_dom_Element;
+    setWidth(width:string, animate?:any /* boolean/Object */): Ext_dom_Element;
 
-    setX(x:number, animate?:any /* bool/Object */): Ext_dom_AbstractElement;
+    setX(x:number, animate?:any /* boolean/Object */): Ext_dom_AbstractElement;
 
-    setXY(pos:number[], animate?:bool): Ext_dom_AbstractElement;
+    setXY(pos:number[], animate?:boolean): Ext_dom_AbstractElement;
 
-    setY(y:number, animate?:any /* bool/Object */): Ext_dom_AbstractElement;
+    setY(y:number, animate?:any /* boolean/Object */): Ext_dom_AbstractElement;
 
-    show(animate?:any /* bool/Object */): Ext_dom_Element;
+    show(animate?:any /* boolean/Object */): Ext_dom_Element;
 
     toggleCls(className:string): Ext_dom_Element;
 
@@ -783,7 +783,7 @@ interface Ext_dom_AbstractElement extends Ext_Base {
 
     update(html:string): Ext_dom_Element;
 
-    wrap(config?:Object, returnDom?:bool, selector?:string): any;      // HTMLElement/Ext_dom_AbstractElement
+    wrap(config?:Object, returnDom?:boolean, selector?:string): any;      // HTMLElement/Ext_dom_AbstractElement
 
 }
 
@@ -791,13 +791,13 @@ interface Ext_dom_AbstractElement extends Ext_Base {
 interface Ext_dom_Element_ListenerOptions {
     scope?: Object;
     delegate?: string;
-    stopEvent?: bool;
-    preventDefault?: bool;
-    stopPropagation?: bool;
-    normalized?: bool;
+    stopEvent?: boolean;
+    preventDefault?: boolean;
+    stopPropagation?: boolean;
+    normalized?: boolean;
     target?: Ext_dom_Element;
     delay?: number;
-    single?: bool;
+    single?: boolean;
     buffer?: number;
 }
 
@@ -807,11 +807,11 @@ interface Ext_dom_Element_ListenerOptions {
  */
 interface Ext_dom_Element extends Ext_dom_AbstractElement {
 
-    autoBoxAdjust: bool;
+    autoBoxAdjust: boolean;
     originalDisplay: string;
 
-    new(el:Html_dom_Element, forceNew?:bool): Ext_dom_Element;
-    new(el:string, forceNew?:bool): Ext_dom_Element;
+    new(el:Html_dom_Element, forceNew?:boolean): Ext_dom_Element;
+    new(el:string, forceNew?:boolean): Ext_dom_Element;
 
     addClsOnClick(className:string, testFn?:Function, scope?:Object): Ext_dom_Element;
 
@@ -824,9 +824,9 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
     addKeyListener(key:number[], fn:Function, scope?:Function): Ext_util_KeyMap;
     addKeyListener(key:{
         key: any;       // Number/Array
-        shift: bool;
-        ctrl: bool;
-        alt: bool;
+        shift: boolean;
+        ctrl: boolean;
+        alt: boolean;
     }, fn:Function, scope?:Function): Ext_util_KeyMap;
 
     addKeyMap(config:Object): Ext_util_KeyMap;
@@ -834,16 +834,16 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
     addListener(eventName:string, fn:(evt:Object, el:Html_dom_Element, opts:Object) => any, scope?:Object,
                 options?:Ext_dom_Element_ListenerOptions): Ext_dom_Element;
 
-    alignTo(element:string, position?:string, offsets?:number[], animate?:any /* bool/Object */): Ext_dom_Element;
-    alignTo(element:Html_dom_Element, position?:string, offsets?:number[], animate?:any /* bool/Object */): Ext_dom_Element;
-    alignTo(element:Ext_dom_Element, position?:string, offsets?:number[], animate?:any /* bool/Object */): Ext_dom_Element;
+    alignTo(element:string, position?:string, offsets?:number[], animate?:any /* boolean/Object */): Ext_dom_Element;
+    alignTo(element:Html_dom_Element, position?:string, offsets?:number[], animate?:any /* boolean/Object */): Ext_dom_Element;
+    alignTo(element:Ext_dom_Element, position?:string, offsets?:number[], animate?:any /* boolean/Object */): Ext_dom_Element;
 
-    anchorTo(element:string, position:string, offsets?:number[], animate?:any /* bool/Object */, monitorScroll?:any /* bool/Number */,
+    anchorTo(element:string, position:string, offsets?:number[], animate?:any /* boolean/Object */, monitorScroll?:any /* boolean/Number */,
              callback?:Function): Ext_dom_Element;
-    anchorTo(element:Html_dom_Element, position:string, offsets?:number[], animate?:any /* bool/Object */, monitorScroll?:any
-             /* bool/Number */, callback?:Function): Ext_dom_Element;
-    anchorTo(element:Ext_dom_Element, position:string, offsets?:number[], animate?:any /* bool/Object */, monitorScroll?:any
-             /* bool/Number */, callback?:Function): Ext_dom_Element;
+    anchorTo(element:Html_dom_Element, position:string, offsets?:number[], animate?:any /* boolean/Object */, monitorScroll?:any
+             /* boolean/Number */, callback?:Function): Ext_dom_Element;
+    anchorTo(element:Ext_dom_Element, position:string, offsets?:number[], animate?:any /* boolean/Object */, monitorScroll?:any
+             /* boolean/Number */, callback?:Function): Ext_dom_Element;
 
     animate(config:Object): Ext_dom_Element;
 
@@ -857,7 +857,7 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
     center(centerIn?:Html_dom_Element): void;
     center(centerIn?:Ext_dom_Element): void;
 
-    clean(forceReclean?:bool): void;
+    clean(forceReclean?:boolean): void;
 
     clearListeners(): Ext_dom_Element;
 
@@ -867,10 +867,10 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
 
     clip(): Ext_dom_Element;
 
-    createProxy(config:string, renderTo?:string, matchBox?:bool): Ext_dom_Element;
-    createProxy(config:string, renderTo?:Html_dom_Element, matchBox?:bool): Ext_dom_Element;
-    createProxy(config:Object, renderTo?:string, matchBox?:bool): Ext_dom_Element;
-    createProxy(config:Object, renderTo?:Html_dom_Element, matchBox?:bool): Ext_dom_Element;
+    createProxy(config:string, renderTo?:string, matchBox?:boolean): Ext_dom_Element;
+    createProxy(config:string, renderTo?:Html_dom_Element, matchBox?:boolean): Ext_dom_Element;
+    createProxy(config:Object, renderTo?:string, matchBox?:boolean): Ext_dom_Element;
+    createProxy(config:Object, renderTo?:Html_dom_Element, matchBox?:boolean): Ext_dom_Element;
 
     createShim(): Ext_dom_Element;
 
@@ -882,7 +882,7 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
 
     focus(defer?:number): Ext_dom_Element;
 
-    focusable(asFocusEl:Object): bool;
+    focusable(asFocusEl:Object): boolean;
 
     frame(color?:string, count?:number, options?:Object): Ext_dom_Element;
 
@@ -896,8 +896,8 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
 
     getComputedWidth(): number;
 
-    getConstrainVector(constrainTo:Ext_dom_Element, proposedPosition:number[]) : any;        // number[]/bool
-    getConstrainVector(constrainTo:Ext_util_Region, proposedPosition:number[]) : any;        // number[]/bool
+    getConstrainVector(constrainTo:Ext_dom_Element, proposedPosition:number[]) : any;        // number[]/boolean
+    getConstrainVector(constrainTo:Ext_util_Region, proposedPosition:number[]) : any;        // number[]/boolean
 
     getFrameWidth(sides:string): number;
 
@@ -931,25 +931,25 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
 
     initDDTarget(group:string, config:Object, overrides:Object): Ext_dd_DDTarget;
 
-    isBorderBox(): bool;
+    isBorderBox(): boolean;
 
-    isDisplayed(): bool;
+    isDisplayed(): boolean;
 
-    isFocusable(asFocusEl:Object): bool;
+    isFocusable(asFocusEl:Object): boolean;
 
-    isMasked(): bool;
+    isMasked(): boolean;
 
-    isScrollable(): bool;
+    isScrollable(): boolean;
 
-    isVisible(deep?:bool): bool;
+    isVisible(deep?:boolean): boolean;
 
     load(options:Object): Ext_dom_Element;
 
     monitorMouseLeave(delay:number, handler:Function, scope?:Object): Object;
 
-    move(direction:string, distance:number, animate:any /* bool/Object */): void;
+    move(direction:string, distance:number, animate:any /* boolean/Object */): void;
 
-    moveTo(x:number, y:number, animate:any /* bool/Object */) : Ext_dom_AbstractElement;
+    moveTo(x:number, y:number, animate:any /* boolean/Object */) : Ext_dom_AbstractElement;
 
     needsTabIndex(): void;
 
@@ -970,46 +970,46 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
 
     removeListener(eventName:string, fn:Function, scope:Object): Ext_dom_Element;
 
-    scroll(direction:string, distance:number, animate?:any /* bool/Object */): bool;
+    scroll(direction:string, distance:number, animate?:any /* boolean/Object */): boolean;
 
-    scrollBy(deltaX:number, deltaY:number, animate?:any /* bool/Object */): Ext_dom_Element;
-    scrollBy(deltaX:number[], animate?:any /* bool/Object */): Ext_dom_Element;
-    scrollBy(deltaX:Object, animate?:any /* bool/Object */): Ext_dom_Element;
+    scrollBy(deltaX:number, deltaY:number, animate?:any /* boolean/Object */): Ext_dom_Element;
+    scrollBy(deltaX:number[], animate?:any /* boolean/Object */): Ext_dom_Element;
+    scrollBy(deltaX:Object, animate?:any /* boolean/Object */): Ext_dom_Element;
 
-    scrollIntoView(container:string, hscroll?:bool, animate?:any /* bool/Object */): Ext_dom_Element;
-    scrollIntoView(container:Html_dom_Element, hscroll?:bool, animate?:any /* bool/Object */): Ext_dom_Element;
-    scrollIntoView(container:Ext_dom_Element, hscroll?:bool, animate?:any /* bool/Object */): Ext_dom_Element;
+    scrollIntoView(container:string, hscroll?:boolean, animate?:any /* boolean/Object */): Ext_dom_Element;
+    scrollIntoView(container:Html_dom_Element, hscroll?:boolean, animate?:any /* boolean/Object */): Ext_dom_Element;
+    scrollIntoView(container:Ext_dom_Element, hscroll?:boolean, animate?:any /* boolean/Object */): Ext_dom_Element;
 
     scrollTo(side:string, value:number, animate?:any): Ext_dom_Element;
 
     selectable(): Ext_dom_Element;
 
-    setBounds(x:number, y:number, width:number, height:number, animate?:any /* bool/Object */): Ext_dom_AbstractElement;
-    setBounds(x:number, y:number, width:string, height:string, animate?:any /* bool/Object */): Ext_dom_AbstractElement;
+    setBounds(x:number, y:number, width:number, height:number, animate?:any /* boolean/Object */): Ext_dom_AbstractElement;
+    setBounds(x:number, y:number, width:string, height:string, animate?:any /* boolean/Object */): Ext_dom_AbstractElement;
 
-    setDisplayed(value:bool) : Ext_dom_Element;
+    setDisplayed(value:boolean) : Ext_dom_Element;
     setDisplayed(value:String) : Ext_dom_Element;
 
     setLeftTop(left:string, top:string): Ext_dom_Element;
 
-    setLocation(x:number, y:number, animate?:any /* bool/Object */): Ext_dom_AbstractElement;
+    setLocation(x:number, y:number, animate?:any /* boolean/Object */): Ext_dom_AbstractElement;
 
-    setOpacity(opacity:number, animate?:any /* bool/Object */): Ext_dom_Element;
+    setOpacity(opacity:number, animate?:any /* boolean/Object */): Ext_dom_Element;
 
     setPositioning(posCfg:Object): Ext_dom_AbstractElement;
 
-    setRegion(region:Ext_util_Region, animate?:any /* bool/Object */): Ext_dom_AbstractElement;
+    setRegion(region:Ext_util_Region, animate?:any /* boolean/Object */): Ext_dom_AbstractElement;
 
     slideIn(anchor?:string, options?:Object): Ext_dom_Element;
 
     slideOut(anchor?:string, options?:Object): Ext_dom_Element;
 
-    swallowEvent(eventName:string, preventDefault?:bool): Ext_dom_Element;
-    swallowEvent(eventName:string[], preventDefault?:bool): Ext_dom_Element;
+    swallowEvent(eventName:string, preventDefault?:boolean): Ext_dom_Element;
+    swallowEvent(eventName:string[], preventDefault?:boolean): Ext_dom_Element;
 
     switchOff(options?:Object): Ext_dom_Element;
 
-    toggle(animate?:any /* bool/Object */): Ext_dom_Element;
+    toggle(animate?:any /* boolean/Object */): Ext_dom_Element;
 
     un(eventName:string, fn:Function, scope:Object): Ext_dom_Element;
 
@@ -1026,7 +1026,7 @@ interface Ext_dom_Element extends Ext_dom_AbstractElement {
  */
 interface Ext_dom_Element_Fly extends Ext_dom_Element {
 
-    isFly: bool;
+    isFly: boolean;
 
 }
 
@@ -1037,7 +1037,7 @@ interface Ext_dom_Element_Fly extends Ext_dom_Element {
  */
 interface Ext_dom_CompositeElementLite extends Ext_Base {
 
-    isComposite: bool;
+    isComposite: boolean;
     elements: Html_dom_Element[];
 
     add(els:Html_dom_Element[]): Ext_dom_CompositeElement;
@@ -1045,12 +1045,12 @@ interface Ext_dom_CompositeElementLite extends Ext_Base {
 
     clear(): void;
 
-    contains(el:string): bool;
-    contains(el:number): bool;
-    contains(el:Html_dom_Element): bool;
-    contains(el:Ext_dom_Element): bool;
+    contains(el:string): boolean;
+    contains(el:number): boolean;
+    contains(el:Html_dom_Element): boolean;
+    contains(el:Ext_dom_Element): boolean;
 
-    each(fn:(el:Ext_dom_Element, all:Ext_dom_CompositeElement, index:number) => bool, scope:Object): Ext_dom_CompositeElement;
+    each(fn:(el:Ext_dom_Element, all:Ext_dom_CompositeElement, index:number) => boolean, scope:Object): Ext_dom_CompositeElement;
 
     fill(els:Html_dom_Element[]): Ext_dom_CompositeElement;
     fill(els:Ext_dom_CompositeElement): Ext_dom_CompositeElement;
@@ -1071,15 +1071,15 @@ interface Ext_dom_CompositeElementLite extends Ext_Base {
 
     last(): Ext_dom_Element;
 
-    removeElement(el:string, removeDom?:bool): Ext_dom_CompositeElement;
-    removeElement(el:number, removeDom?:bool): Ext_dom_CompositeElement;
-    removeElement(el:Html_dom_Element, removeDom?:bool): Ext_dom_CompositeElement;
-    removeElement(el:Ext_dom_Element, removeDom?:bool): Ext_dom_CompositeElement;
+    removeElement(el:string, removeDom?:boolean): Ext_dom_CompositeElement;
+    removeElement(el:number, removeDom?:boolean): Ext_dom_CompositeElement;
+    removeElement(el:Html_dom_Element, removeDom?:boolean): Ext_dom_CompositeElement;
+    removeElement(el:Ext_dom_Element, removeDom?:boolean): Ext_dom_CompositeElement;
 
-    replaceElement(el:string, replacement:any /* String/Ext.Element */, domReplace?:bool): Ext_dom_CompositeElement;
-    replaceElement(el:number, replacement:any /* String/Ext.Element */, domReplace?:bool): Ext_dom_CompositeElement;
-    replaceElement(el:Html_dom_Element, replacement:any /* String/Ext.Element */, domReplace?:bool): Ext_dom_CompositeElement;
-    replaceElement(el:Ext_dom_Element, replacement:any /* String/Ext.Element */, domReplace?:bool): Ext_dom_CompositeElement;
+    replaceElement(el:string, replacement:any /* String/Ext.Element */, domReplace?:boolean): Ext_dom_CompositeElement;
+    replaceElement(el:number, replacement:any /* String/Ext.Element */, domReplace?:boolean): Ext_dom_CompositeElement;
+    replaceElement(el:Html_dom_Element, replacement:any /* String/Ext.Element */, domReplace?:boolean): Ext_dom_CompositeElement;
+    replaceElement(el:Ext_dom_Element, replacement:any /* String/Ext.Element */, domReplace?:boolean): Ext_dom_CompositeElement;
 
 }
 
@@ -1101,11 +1101,11 @@ interface Ext_dom_CompositeElement extends Ext_dom_CompositeElementLite {
  */
 interface Ext_dom_Helper extends Ext_Base {
 
-    useDom: bool;
+    useDom: boolean;
 
-    append(el:string, obj:any /* Object/String */, returnElement?:bool): any;      // HTMLElement/Ext.Element
-    append(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;   // HTMLElement/Ext.Element
-    append(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;    // HTMLElement/Ext.Element
+    append(el:string, obj:any /* Object/String */, returnElement?:boolean): any;      // HTMLElement/Ext.Element
+    append(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;   // HTMLElement/Ext.Element
+    append(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;    // HTMLElement/Ext.Element
 
     applyStyles(el:string, styles:any /* String/Object/Function */);
     applyStyles(el:Html_dom_Element, styles:any /* String/Object/Function */);
@@ -1119,25 +1119,25 @@ interface Ext_dom_Helper extends Ext_Base {
 
     generateStyles(styles:Object, buffer?:string[]): any;       // String/String[]
 
-    insertAfter(el:string, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
-    insertAfter(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
-    insertAfter(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
+    insertAfter(el:string, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
+    insertAfter(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
+    insertAfter(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
 
-    insertBefore(el:string, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
-    insertBefore(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
-    insertBefore(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
+    insertBefore(el:string, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
+    insertBefore(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
+    insertBefore(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
 
-    insertFirst(el:string, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
-    insertFirst(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
-    insertFirst(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;        // HTMLElement/Ext.Element
+    insertFirst(el:string, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
+    insertFirst(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
+    insertFirst(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;        // HTMLElement/Ext.Element
 
     insertHtml(where:string, el:Html_dom_Element, html:string): Html_dom_Element;
 
     markup(spec:Object): string;
 
-    overwrite(el:string, obj:any /* Object/String */, returnElement?:bool): any;       // HTMLElement/Ext.Element
-    overwrite(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;       // HTMLElement/Ext.Element
-    overwrite(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:bool): any;       // HTMLElement/Ext.Element
+    overwrite(el:string, obj:any /* Object/String */, returnElement?:boolean): any;       // HTMLElement/Ext.Element
+    overwrite(el:Html_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;       // HTMLElement/Ext.Element
+    overwrite(el:Ext_dom_Element, obj:any /* Object/String */, returnElement?:boolean): any;       // HTMLElement/Ext.Element
 
 }
 
@@ -1155,11 +1155,11 @@ interface Ext_dom_Query extends Ext_Base {
 
     compile(selector:string, type?:string): Function;
 
-    filter(el:Html_dom_Element[], selector:string, nonMatches:bool) : Html_dom_Element[];
+    filter(el:Html_dom_Element[], selector:string, nonMatches:boolean) : Html_dom_Element[];
 
-    is(el:string, selector:string): bool;
-    is(el:Html_dom_Element, selector:string): bool;
-    is(el:Html_dom_Element[], selector:string): bool;
+    is(el:string, selector:string): boolean;
+    is(el:Html_dom_Element, selector:string): boolean;
+    is(el:Html_dom_Element[], selector:string): boolean;
 
     jsSelect(selector:string, root?:string): Html_dom_Element[];
     jsSelect(selector:string, root?:Html_dom_Element): Html_dom_Element[];
@@ -1187,24 +1187,24 @@ interface Ext_Array {
 
     clone(array:any[]): any[];
 
-    contains(array:any[], item): bool;
+    contains(array:any[], item): boolean;
 
     difference(arrayA:any[], arrayB:any[]): any[];
 
-    each(iterable:any /* Array/NodeList/Object */, fn:(item:any /*Object*/, index:number, all:any) => any /*bool*/, scope?:Object,
-         reverse?:bool): bool;
+    each(iterable:any /* Array/NodeList/Object */, fn:(item:any /*Object*/, index:number, all:any) => any /*boolean*/, scope?:Object,
+         reverse?:boolean): boolean;
 
     erase(array:any[], index:number, removeCount:number): any[];
 
-    every(array:any[], fn:Function, scope:Object): bool;
+    every(array:any[], fn:Function, scope:Object): boolean;
 
     filter(array:any[], fn:Function, scope?): any[];
 
     flatten(array:any[]): any[];
 
-    forEach(array:any[], fn:(item:Object, index:number, all:any[]) => bool, scope?:Object): void;
+    forEach(array:any[], fn:(item:Object, index:number, all:any[]) => boolean, scope?:Object): void;
 
-    from(value:Object, newReference?:bool): any[];
+    from(value:Object, newReference?:boolean): any[];
 
     include(array:any[], item:Object): void;
 
@@ -1234,7 +1234,7 @@ interface Ext_Array {
 
     slice(array:any[], begin:number, end:number): any[];
 
-    some(array:any[], fn:Function, scope:Object): bool;
+    some(array:any[], fn:Function, scope:Object): boolean;
 
     sort(array:any[], sortFn?:Function): any[];
 
@@ -1265,7 +1265,7 @@ interface Ext_String {
 
     createVarName(s:string): string;
 
-    ellipsis(value:string, length:number, word?:bool): string;
+    ellipsis(value:string, length:number, word?:boolean): string;
 
     escape(string:string): string;
 
@@ -1306,13 +1306,13 @@ interface Ext_Function {
     alias(object:Object, methodName:string): Function;
     alias(object:Function, methodName:string): Function;
 
-    bind(fn:Function, scope?:Object, args?:any[], appendArgs?:any /* Boolean/Number */): Function;
+    bind(fn:Function, scope?:Object, args?:any[], appendArgs?:any /* boolean/Number */): Function;
 
     clone(method:Function): Function;
 
     createBuffered(fn:Function, buffer:number, scope?:Object, args?:any[]): Function;
 
-    createDelayed(fn:Function, delay:number, scope?:Object, args?:any[], appendArgs?:any /* Boolean/Number */): Function;
+    createDelayed(fn:Function, delay:number, scope?:Object, args?:any[], appendArgs?:any /* boolean/Number */): Function;
 
     createInterceptor(origFn:Function, newFn:Function, scope?:Object, returnValue?:Object): Function;
 
@@ -1320,7 +1320,7 @@ interface Ext_Function {
 
     createThrottled(fn:Function, interval:number, scope?:Object): Function;
 
-    defer(fn:Function, millis:number, scope?:Object, args?:any[], appendArgs?:any /* Boolean/Number */): number;
+    defer(fn:Function, millis:number, scope?:Object, args?:any[], appendArgs?:any /* boolean/Number */): number;
 
     flexSetter(setter:Function): Function;
 
@@ -1342,7 +1342,7 @@ interface Ext_Object {
 
     each(object:Object, fn:Function, scope?:Object): void;
 
-    fromQueryString(queryString:string, recursive?:bool): Object;
+    fromQueryString(queryString:string, recursive?:boolean): Object;
 
     getKey(object:Object, value:any): string;
 
@@ -1354,10 +1354,10 @@ interface Ext_Object {
 
     merge(destination:Object, object:Object): Object;
 
-    toQueryObjects(name:string, value:string, recursive?:bool): Object[];
-    toQueryObjects(name:string, value:string[], recursive?:bool): Object[];
+    toQueryObjects(name:string, value:string, recursive?:boolean): Object[];
+    toQueryObjects(name:string, value:string[], recursive?:boolean): Object[];
 
-    toQueryString(object:Object, recursive?:bool): string;
+    toQueryString(object:Object, recursive?:boolean): string;
 
 }
 
@@ -1367,7 +1367,7 @@ interface Ext_Object {
  */
 interface Ext_JSON {
 
-    decode(json:string, safe?:bool): any;
+    decode(json:string, safe?:boolean): any;
 
     encode(object:any): string;
 
@@ -1403,7 +1403,7 @@ interface Ext_Loader {
         scope?:Object;
     }): void;
 
-    onReady(fn:Function, scope:Object, withDomReady:bool): void;
+    onReady(fn:Function, scope:Object, withDomReady:boolean): void;
 
     require(expressions:string, fn?:Function, scope?:Object, excludes?:string): void;
     require(expressions:string, fn?:Function, scope?:Object, excludes?:string[]): void;
@@ -1428,13 +1428,13 @@ interface Ext_Loader {
  */
 interface Ext_Template extends Ext_Base {
 
-    isTemplate: bool;
+    isTemplate: boolean;
 
     new(...html:string[]):Ext_Template;
 
-    append(el:string, values:any /* Object/Array */, returnElement?:bool): any;      // HTMLElement/Ext.Element
-    append(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;      // HTMLElement/Ext.Element
-    append(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;      // HTMLElement/Ext.Element
+    append(el:string, values:any /* Object/Array */, returnElement?:boolean): any;      // HTMLElement/Ext.Element
+    append(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;      // HTMLElement/Ext.Element
+    append(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;      // HTMLElement/Ext.Element
 
     apply(values:Object): string;
     apply(values:any[]): string;
@@ -1447,23 +1447,23 @@ interface Ext_Template extends Ext_Base {
 
     compile(): Ext_Template;
 
-    insertAfter(el:string, values:any /* Object/Array */, returnElement?:bool): any;    // HTMLElement/Ext.Element
-    insertAfter(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;    // HTMLElement/Ext.Element
-    insertAfter(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;    // HTMLElement/Ext.Element
+    insertAfter(el:string, values:any /* Object/Array */, returnElement?:boolean): any;    // HTMLElement/Ext.Element
+    insertAfter(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;    // HTMLElement/Ext.Element
+    insertAfter(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;    // HTMLElement/Ext.Element
 
-    insertBefore(el:string, values:any /* Object/Array */, returnElement?:bool): any;     // HTMLElement/Ext.Element
-    insertBefore(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;     // HTMLElement/Ext.Element
-    insertBefore(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;     // HTMLElement/Ext.Element
+    insertBefore(el:string, values:any /* Object/Array */, returnElement?:boolean): any;     // HTMLElement/Ext.Element
+    insertBefore(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;     // HTMLElement/Ext.Element
+    insertBefore(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;     // HTMLElement/Ext.Element
 
-    insertFirst(el:string, values:any /* Object/Array */, returnElement?:bool): any;     // HTMLElement/Ext.Element
-    insertFirst(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;     // HTMLElement/Ext.Element
-    insertFirst(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;     // HTMLElement/Ext.Element
+    insertFirst(el:string, values:any /* Object/Array */, returnElement?:boolean): any;     // HTMLElement/Ext.Element
+    insertFirst(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;     // HTMLElement/Ext.Element
+    insertFirst(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;     // HTMLElement/Ext.Element
 
-    overwrite(el:string, values:any /* Object/Array */, returnElement?:bool): any;       // HTMLElement/Ext.Element
-    overwrite(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;       // HTMLElement/Ext.Element
-    overwrite(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:bool): any;       // HTMLElement/Ext.Element
+    overwrite(el:string, values:any /* Object/Array */, returnElement?:boolean): any;       // HTMLElement/Ext.Element
+    overwrite(el:Html_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;       // HTMLElement/Ext.Element
+    overwrite(el:Ext_dom_Element, values:any /* Object/Array */, returnElement?:boolean): any;       // HTMLElement/Ext.Element
 
-    set(html:string, compile?:bool): Ext_Template;
+    set(html:string, compile?:boolean): Ext_Template;
 }
 
 
@@ -1485,14 +1485,14 @@ interface Ext_XTemplate extends Ext_Template {
 interface Ext_AbstractComponent extends Ext_Base, Ext_state_Stateful, Ext_util_Animate,
     Ext_util_ElementContainer, Ext_util_Observable, Ext_util_Renderable {
 
-    draggable: bool;
+    draggable: boolean;
     frameSize: Object;
     hasListeners: Object;
-    isComponent: bool;
-    isObservable: bool;
-    maskOnDisable: bool;
+    isComponent: boolean;
+    isObservable: boolean;
+    maskOnDisable: boolean;
     ownerCt: Ext_container_Container;
-    rendered: bool;
+    rendered: boolean;
 
     addCls(cls:string): Ext_Component;
     addCls(cls:string[]): Ext_Component;
@@ -1502,11 +1502,11 @@ interface Ext_AbstractComponent extends Ext_Base, Ext_state_Stateful, Ext_util_A
 
     addUIClsToElement(ui:string): void;
 
-    disable(silent?:bool) : void;
+    disable(silent?:boolean) : void;
 
     doComponentLayout(): Ext_container_Container;
 
-    enable(silent?:bool): void;
+    enable(silent?:boolean): void;
 
     getBubbleTarget(): Ext_container_Container;
 
@@ -1530,29 +1530,29 @@ interface Ext_AbstractComponent extends Ext_Base, Ext_state_Stateful, Ext_util_A
 
     getXTypes(): String;
 
-    hasCls(className:string): bool;
+    hasCls(className:string): boolean;
 
-    hasUICls(cls:string): bool;
+    hasUICls(cls:string): boolean;
 
-    is(selector:string): bool;
+    is(selector:string): boolean;
 
-    isDescendantOf(container:Ext_container_Container): bool;
+    isDescendantOf(container:Ext_container_Container): boolean;
 
-    isDisabled(): bool;
+    isDisabled(): boolean;
 
-    isDraggable(): bool;
+    isDraggable(): boolean;
 
-    isDroppable(): bool;
+    isDroppable(): boolean;
 
-    isFloating(): bool;
+    isFloating(): boolean;
 
-    isHidden(): bool;
+    isHidden(): boolean;
 
-    isLayoutSuspended(): bool;
+    isLayoutSuspended(): boolean;
 
-    isVisible(deep?:bool): bool;
+    isVisible(deep?:boolean): boolean;
 
-    isXType(xtype:string, shallow?:bool): bool;
+    isXType(xtype:string, shallow?:boolean): boolean;
 
     nextNode(selector?:string): Ext_Component;
 
@@ -1577,16 +1577,16 @@ interface Ext_AbstractComponent extends Ext_Base, Ext_state_Stateful, Ext_util_A
     setBorder(border:string): void;
     setBorder(border:number): void;
 
-    setDisabled(disabled:bool);
+    setDisabled(disabled:boolean);
 
-    setDocked(dock:Object, layoutParent?:bool): Ext_Component;
+    setDocked(dock:Object, layoutParent?:boolean): Ext_Component;
 
     setHeight(height:number) : Ext_Component;
     setHeight(height:string) : Ext_Component;
 
-    setPosition(x:number, y?:number, animate?:any /* bool/Object */) : Ext_Component;
-    setPosition(x:number[], animate?:any /* bool/Object */) : Ext_Component;
-    setPosition(x:Object, animate?:any /* bool/Object */) : Ext_Component;
+    setPosition(x:number, y?:number, animate?:any /* boolean/Object */) : Ext_Component;
+    setPosition(x:number[], animate?:any /* boolean/Object */) : Ext_Component;
+    setPosition(x:Object, animate?:any /* boolean/Object */) : Ext_Component;
 
     setSize(width:number, height:number) : Ext_Component;
     setSize(width:string, height:string) : Ext_Component;
@@ -1594,19 +1594,19 @@ interface Ext_AbstractComponent extends Ext_Base, Ext_state_Stateful, Ext_util_A
 
     setUI(ui:string): void;
 
-    setVisible(visible:bool) : Ext_Component;
+    setVisible(visible:boolean) : Ext_Component;
 
     setWidth(width:number) : Ext_Component;
     setWidth(width:string) : Ext_Component;
 
     up(selector?:string): Ext_container_Container;
 
-    update(htmlOrData:string, loadScripts?:bool, callback?:Function): void;
-    update(htmlOrData:Object, loadScripts?:bool, callback?:Function): void;
+    update(htmlOrData:string, loadScripts?:boolean, callback?:Function): void;
+    update(htmlOrData:Object, loadScripts?:boolean, callback?:Function): void;
 
     updateLayout(options?:{
-        defer: bool;
-        isRoot: bool;
+        defer: boolean;
+        isRoot: boolean;
     }): void;
 
 }
@@ -1634,12 +1634,12 @@ interface Ext_Component extends Ext_AbstractComponent, Ext_util_Floating {
 
     findParentByType(xtype): Ext_container_Container;
 
-    focus(selectText?:bool, delay?:bool): Ext_Component;
-    focus(selectText?:bool, delay?:number): Ext_Component;
+    focus(selectText?:boolean, delay?:boolean): Ext_Component;
+    focus(selectText?:boolean, delay?:number): Ext_Component;
 
-    getBox(local?:bool): Object;
+    getBox(local?:boolean): Object;
 
-    getPosition(local?:bool): number[];
+    getPosition(local?:boolean): number[];
 
     getXType(): String;
 
@@ -1647,27 +1647,27 @@ interface Ext_Component extends Ext_AbstractComponent, Ext_util_Floating {
     hide(animateTarget?:Ext_dom_Element, callback?:Function, scope?:Object): Ext_Component;
     hide(animateTarget?:Ext_Component, callback?:Function, scope?:Object): Ext_Component;
 
-    scrollBy(deltaX:number, deltaY:number, animate:any /* bool/Object */): void;
-    scrollBy(deltaX:number[], animate:any /* bool/Object */): void;
-    scrollBy(deltaX:Object, animate:any /* bool/Object */): void;
+    scrollBy(deltaX:number, deltaY:number, animate:any /* boolean/Object */): void;
+    scrollBy(deltaX:number[], animate:any /* boolean/Object */): void;
+    scrollBy(deltaX:Object, animate:any /* boolean/Object */): void;
 
-    setAutoScroll(scroll:bool): Ext_Component;
+    setAutoScroll(scroll:boolean): Ext_Component;
 
-    setLoading(load:bool, targetEl?:bool): Ext_LoadMask;
-    setLoading(load:Object, targetEl?:bool): Ext_LoadMask;
-    setLoading(load:String, targetEl?:bool): Ext_LoadMask;
+    setLoading(load:boolean, targetEl?:boolean): Ext_LoadMask;
+    setLoading(load:Object, targetEl?:boolean): Ext_LoadMask;
+    setLoading(load:String, targetEl?:boolean): Ext_LoadMask;
 
     setOverflowXY(overflowX:string, overflowY:string): Ext_Component;
 
-    setPagePosition(x:number, y?:number, animate?:any /* bool/Object */): Ext_Component;
-    setPagePosition(x:number[], y?:number, animate?:any /* bool/Object */): Ext_Component;
+    setPagePosition(x:number, y?:number, animate?:any /* boolean/Object */): Ext_Component;
+    setPagePosition(x:number[], y?:number, animate?:any /* boolean/Object */): Ext_Component;
 
     show(animateTarget?:string, callback?:Function, scope?:Object): Ext_Component;
     show(animateTarget?:Ext_dom_Element, callback?:Function, scope?:Object): Ext_Component;
 
-    showAt(x:number, y?:number, animate?:any /* bool/Object */): Ext_Component;
-    showAt(x:number[], animate?:any /* bool/Object */): Ext_Component;
-    showAt(x:Object, animate?:any /* bool/Object */): Ext_Component;
+    showAt(x:number, y?:number, animate?:any /* boolean/Object */): Ext_Component;
+    showAt(x:number[], animate?:any /* boolean/Object */): Ext_Component;
+    showAt(x:Object, animate?:any /* boolean/Object */): Ext_Component;
 
     showBy(component:Ext_Component, position?:string, offsets?:number[]): Ext_Component;
     showBy(component:Ext_dom_Element, position?:string, offsets?:number[]): Ext_Component;
@@ -1693,7 +1693,7 @@ interface Ext_Img extends Ext_Component {
  */
 interface Ext_ComponentQuery extends Ext_Base {
 
-    is(component:Ext_Component, selector:string): bool;
+    is(component:Ext_Component, selector:string): boolean;
 
     query(selector:string, root?:Ext_container_Container) : Ext_Component[];
 
@@ -1794,9 +1794,9 @@ interface Ext_EventObject extends Ext_Base {
     Y: number;
     Z: number;
     ZERO: number;
-    altKey: bool;
-    ctrlKey: bool;
-    shiftKey: bool;
+    altKey: boolean;
+    ctrlKey: boolean;
+    shiftKey: boolean;
 
     correctWheelDelta(delta:number): void;
 
@@ -1806,11 +1806,11 @@ interface Ext_EventObject extends Ext_Base {
 
     getPoint(): Ext_util_Point;
 
-    getRelatedTarget(selector?:string, maxDepth?:number, returnEl?:bool): any;   // HTMLElement/Ext.dom.Element
-    getRelatedTarget(selector?:string, maxDepth?:Html_dom_Element, returnEl?:bool): any;   // HTMLElement/Ext.dom.Element
+    getRelatedTarget(selector?:string, maxDepth?:number, returnEl?:boolean): any;   // HTMLElement/Ext.dom.Element
+    getRelatedTarget(selector?:string, maxDepth?:Html_dom_Element, returnEl?:boolean): any;   // HTMLElement/Ext.dom.Element
 
-    getTarget(selector?:string, maxDepth?:number, returnEl?:bool): any;   // HTMLElement/Ext.dom.Element
-    getTarget(selector?:string, maxDepth?:Html_dom_Element, returnEl?:bool): any;   // HTMLElement/Ext.dom.Element
+    getTarget(selector?:string, maxDepth?:number, returnEl?:boolean): any;   // HTMLElement/Ext.dom.Element
+    getTarget(selector?:string, maxDepth?:Html_dom_Element, returnEl?:boolean): any;   // HTMLElement/Ext.dom.Element
 
     getWheelDelta(): number;
 
@@ -1822,14 +1822,14 @@ interface Ext_EventObject extends Ext_Base {
 
     getY(): number;
 
-    hasModifier(): bool;
+    hasModifier(): boolean;
 
     injectEvent(target?:Html_dom_Element): void;
     injectEvent(target?:Ext_dom_Element): void;
 
-    isNavKeyPress(): bool;
+    isNavKeyPress(): boolean;
 
-    isSpecialKey(): bool;
+    isSpecialKey(): boolean;
 
     preventDefault(): void;
 
@@ -1837,9 +1837,9 @@ interface Ext_EventObject extends Ext_Base {
 
     stopPropagation(): void;
 
-    within(el:string, related?:bool, allowEl?:bool): bool;
-    within(el:Html_dom_Element, related?:bool, allowEl?:bool): bool;
-    within(el:Ext_dom_Element, related?:bool, allowEl?:bool): bool;
+    within(el:string, related?:boolean, allowEl?:boolean): boolean;
+    within(el:Html_dom_Element, related?:boolean, allowEl?:boolean): boolean;
+    within(el:Ext_dom_Element, related?:boolean, allowEl?:boolean): boolean;
 
 }
 
@@ -1888,7 +1888,7 @@ interface Ext_LoadMask extends Ext_Component {
  */
 interface Ext_menu_Menu extends Ext_panel_Panel {
 
-    isMenu: Boolean;
+    isMenu: boolean;
 
     parentMenu: Ext_menu_Menu;
 
@@ -1896,7 +1896,7 @@ interface Ext_menu_Menu extends Ext_panel_Panel {
     new(config?:Object): Ext_menu_Menu;
 
 
-    canActivateItem(item:Object): bool;
+    canActivateItem(item:Object): boolean;
 
     deactivateActiveItem(andBlurFocusedItem:Object): void;
 
@@ -1921,9 +1921,9 @@ interface Ext_menu_Menu extends Ext_panel_Panel {
  */
 interface Ext_menu_Item extends Ext_Component {
 
-    activated: bool;
+    activated: boolean;
 
-    maskOnDisable: bool;
+    maskOnDisable: boolean;
 
     menu: Ext_menu_Menu;
 
@@ -1936,8 +1936,8 @@ interface Ext_menu_Item extends Ext_Component {
 
     setIconCls(iconCls:string): void;
 
-    setMenu(menu:Ext_menu_Menu, destroyMenu?:bool): void;
-    setMenu(menu:Object, destroyMenu?:bool): void;
+    setMenu(menu:Ext_menu_Menu, destroyMenu?:boolean): void;
+    setMenu(menu:Object, destroyMenu?:boolean): void;
 
     setText(text:string): void;
 
@@ -1953,7 +1953,7 @@ interface Ext_menu_CheckItem extends Ext_menu_Item {
 
     enableCheckChange(): void;
 
-    setChecked(checked:bool, suppressEvents?:bool): void;
+    setChecked(checked:boolean, suppressEvents?:boolean): void;
 
 }
 
@@ -1963,27 +1963,27 @@ interface Ext_menu_CheckItem extends Ext_menu_Item {
 
 interface Ext_button_Button extends Ext_Component {
 
-    disabled: bool;
+    disabled: boolean;
 
-    hidden: bool;
+    hidden: boolean;
 
     menu: Ext_menu_Menu;
 
-    pressed: bool;
+    pressed: boolean;
 
     template: Ext_Template;
 
     new(config?:Object): Ext_button_Button;
 
-    disable(silent?:bool): void;
+    disable(silent?:boolean): void;
 
-    enable(silent?:bool): void;
+    enable(silent?:boolean): void;
 
     getTemplateArgs(): Object;
 
     getText() : string;
 
-    hasVisibleMenu(): bool;
+    hasVisibleMenu(): boolean;
 
     hideMenu(): Ext_button_Button;
 
@@ -2008,7 +2008,7 @@ interface Ext_button_Button extends Ext_Component {
 
     showMenu(fromEvent:Object): void;
 
-    toggle(state?:bool, suppressEvent?:bool): Ext_button_Button;
+    toggle(state?:boolean, suppressEvent?:boolean): Ext_button_Button;
 
 }
 
@@ -2026,7 +2026,7 @@ interface Ext_button_Cycle extends Ext_button_Split {
 
     getActiveItem(): Ext_menu_CheckItem;
 
-    setActiveItem(item:Ext_menu_CheckItem, suppressEvent?:bool): void;
+    setActiveItem(item:Ext_menu_CheckItem, suppressEvent?:boolean): void;
 
     toggleSelected(): void;
 
@@ -2052,7 +2052,7 @@ interface Ext_container_AbstractContainer extends Ext_Component {
 
     child(selector?:string): Ext_Component;
 
-    disable(silent?:bool): Ext_container_AbstractContainer;
+    disable(silent?:boolean): Ext_container_AbstractContainer;
 
     doLayout(): Ext_container_Container;
 
@@ -2066,7 +2066,7 @@ interface Ext_container_AbstractContainer extends Ext_Component {
     insert(index:number, component:Ext_Component): Ext_Component;
     insert(index:number, component:Object): Ext_Component;
 
-    isAncestor(possibleDescendant:Ext_Component): bool;
+    isAncestor(possibleDescendant:Ext_Component): boolean;
 
     move(fromIdx:number, toIdx:number): Ext_Component;
 
@@ -2076,10 +2076,10 @@ interface Ext_container_AbstractContainer extends Ext_Component {
 
     queryById(id:string): Ext_Component;
 
-    remove(component:Ext_Component, autoDestroy?:bool): Ext_Component;
-    remove(component:string, autoDestroy?:bool): Ext_Component;
+    remove(component:Ext_Component, autoDestroy?:boolean): Ext_Component;
+    remove(component:string, autoDestroy?:boolean): Ext_Component;
 
-    removeAll(autoDestroy?:bool): Ext_Component[];
+    removeAll(autoDestroy?:boolean): Ext_Component[];
 
 }
 
@@ -2091,9 +2091,9 @@ interface Ext_container_Container extends Ext_container_AbstractContainer {
 
     new(config?:Object): Ext_container_Container;
 
-    getChildByElement(el:Ext_dom_Element, deep:bool): Ext_Component;
-    getChildByElement(el:Html_dom_Element, deep:bool): Ext_Component;
-    getChildByElement(el:string, deep:bool): Ext_Component;
+    getChildByElement(el:Ext_dom_Element, deep:boolean): Ext_Component;
+    getChildByElement(el:Html_dom_Element, deep:boolean): Ext_Component;
+    getChildByElement(el:string, deep:boolean): Ext_Component;
 
 }
 
@@ -2108,12 +2108,12 @@ interface Ext_container_DockingContainer extends Ext_Base {
     getDockedComponent(comp:string): Ext_Component;
     getDockedComponent(comp:number): Ext_Component;
 
-    getDockedItems(selector:string, beforeBody:bool): Ext_Component[];
+    getDockedItems(selector:string, beforeBody:boolean): Ext_Component[];
 
     insertDocked(pos:number, component:Object): void;
     insertDocked(pos:number, component:Object[]): void;
 
-    removeDocked(item:Ext_Component, autoDestroy?:bool): void;
+    removeDocked(item:Ext_Component, autoDestroy?:boolean): void;
 }
 
 
@@ -2122,7 +2122,7 @@ interface Ext_container_DockingContainer extends Ext_Base {
  */
 interface Ext_container_Viewport extends Ext_container_Container {
 
-    isViewport: bool;
+    isViewport: boolean;
 
 
     new(config?:Object): Ext_container_Viewport;
@@ -2149,8 +2149,8 @@ interface Ext_view_AbstractView extends Ext_Component {
 
     collectData(records:Ext_data_Model[], startIndex:number): Object[];
 
-    deselect(records:Ext_data_Model[], suppressEvent:bool): void;
-    deselect(records:number, suppressEvent:bool): void;
+    deselect(records:Ext_data_Model[], suppressEvent:boolean): void;
+    deselect(records:number, suppressEvent:boolean): void;
 
     findItemByChild(node:Html_dom_Element): Html_dom_Element;
 
@@ -2178,9 +2178,9 @@ interface Ext_view_AbstractView extends Ext_Component {
     indexOf(nodeInfo:number): number;
     indexOf(nodeInfo:Ext_data_Model): number;
 
-    isSelected(node:Html_dom_Element): bool;
-    isSelected(node:number): bool;
-    isSelected(node:Ext_data_Model): bool;
+    isSelected(node:Html_dom_Element): boolean;
+    isSelected(node:number): boolean;
+    isSelected(node:Ext_data_Model): boolean;
 
     prepareData(data:Object, recordIndex:number, record:Ext_data_Model): any;    // Array/Object
     prepareData(data:Object[], recordIndex:number, record:Ext_data_Model): any;    // Array/Object
@@ -2230,7 +2230,7 @@ interface Ext_view_Table extends Ext_view_View {
 
     getFeature(id:string): Ext_grid_feature_Feature;
 
-    getPosition(local?:bool): number[];
+    getPosition(local?:boolean): number[];
 
     getRowClass(record:Ext_data_Model, index:number, rowParams:Object, store:Ext_data_Store): string;
 
@@ -2261,15 +2261,15 @@ interface Ext_grid_View extends Ext_view_Table {
  */
 interface Ext_tree_View extends Ext_view_Table {
 
-    collapse(record:Ext_data_Model, deep?:bool, callback?:Function, scope?:Object): void;
+    collapse(record:Ext_data_Model, deep?:boolean, callback?:Function, scope?:Object): void;
 
     collectData(records:Ext_data_Model[], startIndex:number): Object[];
 
-    expand(record:Ext_data_Model, deep?:bool, callback?:Function, scope?:Object): void;
+    expand(record:Ext_data_Model, deep?:boolean, callback?:Function, scope?:Object): void;
 
     getTreeStore(): Ext_data_TreeStore;
 
-    toggle(record:Ext_data_Model, deep?:bool, callback?:Function, scope?:Object): void;
+    toggle(record:Ext_data_Model, deep?:boolean, callback?:Function, scope?:Object): void;
 
 }
 
@@ -2281,13 +2281,13 @@ interface Ext_panel_AbstractPanel extends Ext_container_Container, Ext_container
 
     body : Ext_dom_Element;
 
-    isPanel: bool;
+    isPanel: boolean;
 
     addBodyCls(cls:string): Ext_panel_Panel;
 
     addUIClsToElement(ui:string): void;
 
-    getComponent(comp:string): Ext_Component;
+    //getComponent(comp:string): Ext_Component;
 
     removeBodyCls(cls:string): Ext_panel_Panel;
 
@@ -2308,39 +2308,39 @@ interface Ext_panel_Panel extends Ext_panel_AbstractPanel {
     dd : Ext_dd_DragSource;
 
     new(config?:{
-        animCollapse?: bool;
+        animCollapse?: boolean;
         bbar?: any;      // Object/Object[]
         buttonAlign?: string;
         buttons?: any;   // Object/Object[]
-        closable?: bool;
+        closable?: boolean;
         closeAction?: string;
         collapseDirection?: string;
-        collapseFirst?: bool;
+        collapseFirst?: boolean;
         collapseMode?: string;
-        collapsed?: bool;
+        collapsed?: boolean;
         collapsedCls?: string;
-        collapsible?: bool;
+        collapsible?: boolean;
         dockedItems?: any;      // Object/Object[]
         fbar?: any;         // Object/Object[]
-        floatable?: bool;
-        frame?: bool;
-        frameHeader?: bool;
-        header?: any;       // bool/Object
+        floatable?: boolean;
+        frame?: boolean;
+        frameHeader?: boolean;
+        header?: any;       // boolean/Object
         headerPosition?: string;
-        hideCollapseTool?: bool;
+        hideCollapseTool?: boolean;
         icon?: string;
         iconCls?: string;
         lbar?: any;         // Object/Object[]
-        manageHeight?: bool;
+        manageHeight?: boolean;
         minButtonWidth?: number;
-        overlapHeader?: bool;
+        overlapHeader?: boolean;
         placeholder?: any;      // Ext.Component/Object
         placeholderCollapseHideMode?: number;
         rbar?: any;     // Object/Object[]
         tbar?: any;     // Object/Object[]
         title?: string;
         titleAlign?: string;
-        titleCollapse?: bool;
+        titleCollapse?: boolean;
         tools?: any[];      //Object[]/Ext.panel.Tool[]
     }): Ext_panel_Panel;
 
@@ -2349,18 +2349,18 @@ interface Ext_panel_Panel extends Ext_panel_AbstractPanel {
 
     close(): void;
 
-    collapse(direction?:string, animate?:bool): Ext_panel_Panel;
+    collapse(direction?:string, animate?:boolean): Ext_panel_Panel;
     collapse(direction?:string, animate?:number): Ext_panel_Panel;
 
-    expand(animate?:bool): Ext_panel_Panel;
+    expand(animate?:boolean): Ext_panel_Panel;
 
-    getCollapsed(): any;      // bool/String;
+    getCollapsed(): any;      // boolean/String;
 
     getHeader(): Ext_panel_Header;
 
     getState(): Object;
 
-    isVisible(deep?:bool): bool;
+    isVisible(deep?:boolean): boolean;
 
     setBorder(border:string): void;
     setBorder(border:number): void;
@@ -2383,7 +2383,7 @@ interface Ext_panel_Panel extends Ext_panel_AbstractPanel {
  */
 interface Ext_panel_Header extends Ext_container_Container {
 
-    isHeader: bool;
+    isHeader: boolean;
 
     addTool(tool:Object): void;
     addTool(tool:Ext_panel_Tool): void;
@@ -2422,7 +2422,7 @@ interface Ext_window_Window extends Ext_panel_Panel {
 
     dd: Ext_dd_DragSource;      //TODO: Ext_util_ComponentDragger throws exception
 
-    isWindow: bool;
+    isWindow: boolean;
 
     new(config?:Object): Ext_window_Window;
 
@@ -2481,19 +2481,19 @@ interface Ext_window_MessageBox extends Ext_window_Window {
 
     confirm(title:string, msg:string, fn?:(buttonId:string, text:string, opts:Object) => void, scope?:Object): Ext_window_MessageBox;
 
-    hide(animateTarget:string, callback?:Function, scope?:Object): Ext_Component;
+    //hide(animateTarget:string, callback?:Function, scope?:Object): Ext_Component;
 
     progress(title:string, msg:string, progressText?:string): Ext_window_MessageBox;
 
-    prompt(title:string, msg:string, fn?:(buttonId:string, text:string, opts:Object) => void, scope?:Object, multiline?:bool,
+    prompt(title:string, msg:string, fn?:(buttonId:string, text:string, opts:Object) => void, scope?:Object, multiline?:boolean,
            value?:string): Ext_window_MessageBox;
 
     setIcon(icon:string): Ext_window_MessageBox;
 
-    show(config:{
+/*    show(config:{
         animateTarget?: string;
         buttons?: number;
-        closable?: bool;
+        closable?: boolean;
         cls?: string;
         defaultTextHeight?: number;
         fn?: (buttonId:string, text:string, opts:Object) => void;
@@ -2503,19 +2503,19 @@ interface Ext_window_MessageBox extends Ext_window_Window {
         iconCls?: string;
         maxWidth?; number;
         minWidth?: number;
-        modal?: bool;
+        modal?: boolean;
         msg?: string;
-        multiline?: bool;
-        progress?: bool;
+        multiline?: boolean;
+        progress?: boolean;
         progressText?: string;
-        prompt?: bool;
-        proxyDrag?: bool;
+        prompt?: boolean;
+        proxyDrag?: boolean;
         title?: string;
         value?: string;
-        wait?: bool;
+        wait?: boolean;
         waitConfig?: Object;
         width?: number;
-    }): Ext_window_MessageBox;
+    }): Ext_window_MessageBox;*/
 
     updateProgress(value?:number, progressText?:string, msg?:string): Ext_window_MessageBox;
 
@@ -2529,9 +2529,9 @@ interface Ext_window_MessageBox extends Ext_window_Window {
  */
 interface Ext_panel_Table extends Ext_panel_Panel {
 
-    hasView: bool;
+    hasView: boolean;
 
-    optimizedColumnMove: bool;
+    optimizedColumnMove: boolean;
 
     applyState(state:Object): void;
 
@@ -2563,9 +2563,9 @@ interface Ext_grid_Panel extends Ext_panel_Table {
  */
 interface Ext_grid_feature_Feature extends Ext_util_Observable {
 
-    collectData : bool;
+    collectData : boolean;
 
-    disabled: bool;
+    disabled: boolean;
 
     eventPrefix: string;
 
@@ -2573,7 +2573,7 @@ interface Ext_grid_feature_Feature extends Ext_util_Observable {
 
     grid: Ext_grid_Panel;
 
-    hasFeatureEvent: bool;
+    hasFeatureEvent: boolean;
 
     view: Ext_view_Table;
 
@@ -2605,11 +2605,11 @@ interface Ext_tree_Panel extends Ext_panel_Table {
 
     collapseAll(callback?:Function, scope?:Object): void;
 
-    collapseNode(record:Ext_data_Model, deep?:bool, callback?:Function, scope?:Object): void;
+    collapseNode(record:Ext_data_Model, deep?:boolean, callback?:Function, scope?:Object): void;
 
     expandAll(callback?:Function, scope?:Object): void;
 
-    expandNode(record:Ext_data_Model, deep?:bool, callback?:Function, scope?:Object): void;
+    expandNode(record:Ext_data_Model, deep?:boolean, callback?:Function, scope?:Object): void;
 
     expandPath(path:string, field?:string, separator?:string, callback?:Function, scope?:Object): void;
 
@@ -2650,7 +2650,7 @@ interface Ext_tab_Panel extends Ext_panel_Panel {
  */
 interface Ext_tab_Bar extends Ext_panel_Header {
 
-    isTabBar: bool;
+    isTabBar: boolean;
 
     getLayout() : Ext_layout_container_Container;
 
@@ -2666,13 +2666,13 @@ interface Ext_selection_Model extends Ext_util_Observable {
 
     new(config?:Object): Ext_selection_Model;
 
-    bindStore(store?:string, initial?:bool): void;
-    bindStore(store?:Ext_data_AbstractStore, initial?:bool): void;
+    bindStore(store?:string, initial?:boolean): void;
+    bindStore(store?:Ext_data_AbstractStore, initial?:boolean): void;
 
-    deselect(records:Ext_data_Model[], suppressEvent?:bool): void;
-    deselect(records:number, suppressEvent?:bool): void;
+    deselect(records:Ext_data_Model[], suppressEvent?:boolean): void;
+    deselect(records:number, suppressEvent?:boolean): void;
 
-    deselectAll(suppressEvent?:bool): void;
+    deselectAll(suppressEvent?:boolean): void;
 
     getCount(): number;
 
@@ -2682,25 +2682,25 @@ interface Ext_selection_Model extends Ext_util_Observable {
 
     getSelectionMode(): string;
 
-    hasSelection(): bool;
+    hasSelection(): boolean;
 
     isFocused(record:Ext_data_Model): void;
 
-    isLocked(): bool;
+    isLocked(): boolean;
 
-    isSelected(record:Ext_data_Model): bool;
+    isSelected(record:Ext_data_Model): boolean;
 
-    select(records:Ext_data_Model[], keepExisting?:bool, suppressEvent?:bool): void;
-    select(records:number, keepExisting?:bool, suppressEvent?:bool): void;
+    select(records:Ext_data_Model[], keepExisting?:boolean, suppressEvent?:boolean): void;
+    select(records:number, keepExisting?:boolean, suppressEvent?:boolean): void;
 
-    selectAll(suppressEvent?:bool): void;
+    selectAll(suppressEvent?:boolean): void;
 
-    selectRange(startRow:Ext_data_Model, endRow:Ext_data_Model, keepExisting?:bool): void;
-    selectRange(startRow:number, endRow:number, keepExisting?:bool): void;
+    selectRange(startRow:Ext_data_Model, endRow:Ext_data_Model, keepExisting?:boolean): void;
+    selectRange(startRow:number, endRow:number, keepExisting?:boolean): void;
 
     setLastFocused(record:Ext_data_Model): void;
 
-    setLocked(locked:bool): void;
+    setLocked(locked:boolean): void;
 
     setSelectionMode(selMode:string): void;
 
@@ -2716,11 +2716,11 @@ interface Ext_selection_Model extends Ext_util_Observable {
  */
 interface Ext_toolbar_Item extends Ext_Component {
 
-    disable(silent?:bool): void;
+    disable(silent?:boolean): void;
 
-    enable(silent?:bool): void;
+    enable(silent?:boolean): void;
 
-    focus(selectText?:bool, delay?:number): Ext_Component;
+    focus(selectText?:boolean, delay?:number): Ext_Component;
 
 }
 
@@ -2731,15 +2731,15 @@ interface Ext_toolbar_Item extends Ext_Component {
  */
 interface Ext_toolbar_Toolbar extends Ext_container_Container {
 
-    isToolbar: bool;
+    isToolbar: boolean;
 
     new(config?:Object): Ext_toolbar_Toolbar;
 
-    add(...args:Ext_Component[]) : any;      // Ext.Component[]/Ext.Component
-    add(...args:Object[]) : any;      // Ext.Component[]/Ext.Component
-    add(...args:string[]) : any;      // Ext.Component[]/Ext.Component
-    add(...args:Html_dom_Element[]) : any;      // Ext.Component[]/Ext.Component
-    add(...args:Ext_toolbar_Item[]) : any;      // Ext.Component[]/Ext.Component
+    //add(...args:Ext_Component[]) : any;      // Ext.Component[]/Ext.Component
+    //add(...args:Object[]) : any;      // Ext.Component[]/Ext.Component
+    //add(...args:string[]) : any;      // Ext.Component[]/Ext.Component
+    //add(...args:Html_dom_Element[]) : any;      // Ext.Component[]/Ext.Component
+    //add(...args:Ext_toolbar_Item[]) : any;      // Ext.Component[]/Ext.Component
 
     insert(index:number, component:Ext_Component): Ext_Component;
     insert(index:number, component:Object): Ext_Component;
@@ -2754,7 +2754,7 @@ interface Ext_toolbar_Toolbar extends Ext_container_Container {
  */
 interface Ext_toolbar_Fill extends Ext_Component {
 
-    isFill: bool;
+    isFill: boolean;
 
 }
 
@@ -2767,7 +2767,7 @@ interface Ext_toolbar_Fill extends Ext_Component {
  */
 interface Ext_form_field_Field extends Ext_Base {
 
-    isFormField: bool;
+    isFormField: boolean;
 
     originalValue: Object;
 
@@ -2795,13 +2795,13 @@ interface Ext_form_field_Field extends Ext_Base {
 
     initValue(): void;
 
-    isDirty(): bool;
+    isDirty(): boolean;
 
-    isEqual(value1:Object, value2:Object): bool;
+    isEqual(value1:Object, value2:Object): boolean;
 
-    isFileUpload(): bool;
+    isFileUpload(): boolean;
 
-    isValid(): bool;
+    isValid(): boolean;
 
     markInvalid(errors:string): void;
     markInvalid(errors:string[]): void;
@@ -2812,7 +2812,7 @@ interface Ext_form_field_Field extends Ext_Base {
 
     setValue(value) : Ext_form_field_Field;
 
-    validate(): bool;
+    validate(): boolean;
 
 }
 
@@ -2858,13 +2858,13 @@ interface Ext_form_field_Display extends Ext_form_field_Base {
 
     getSubTplData(): Object;
 
-    isDirty(): bool;
+    isDirty(): boolean;
 
-    isValid(): bool;
+    isValid(): boolean;
 
     setRawValue(value:Object): Object;
 
-    validate(): bool;
+    validate(): boolean;
 
 }
 
@@ -2883,23 +2883,23 @@ interface Ext_form_field_Checkbox extends Ext_form_field_Base {
     new(config?:Object): Ext_form_field_Checkbox;
 
 
-    getRawValue() : bool;
+    //getRawValue() : boolean;
 
     getSubTplData() : Object;
 
     getSubmitValue() : string;
 
-    getValue() : bool;
+    getValue() : boolean;
 
     initValue(): void;
 
     resetOriginalValue(): void;
 
-    setRawValue(value): bool;
+    setRawValue(value): boolean;
 
-    setReadOnly(readOnly:bool): void;
+    setReadOnly(readOnly:boolean): void;
 
-    setValue(checked:bool): Ext_form_field_Checkbox;
+    setValue(checked:boolean): Ext_form_field_Checkbox;
 
     valueToRaw(value:Object): Object;
 
@@ -2927,9 +2927,9 @@ interface Ext_form_field_Trigger extends Ext_form_field_Text {
 
     getTriggerWidth(): number;
 
-    setEditable(editable:bool): void;
+    setEditable(editable:boolean): void;
 
-    setReadOnly(readOnly:bool): void;
+    setReadOnly(readOnly:boolean): void;
 
 }
 
@@ -2940,7 +2940,7 @@ interface Ext_form_field_Trigger extends Ext_form_field_Text {
  */
 interface Ext_form_field_Picker extends Ext_form_field_Trigger {
 
-    isExpanded: bool;
+    isExpanded: boolean;
 
 
     new(config?:Object): Ext_form_field_Picker;
@@ -2972,7 +2972,7 @@ interface Ext_form_field_ComboBox extends Ext_form_field_Picker {
 
     createPicker(): void;
 
-    doQuery(queryString:string, forceAll?:bool, rawQuery?:bool): bool;
+    doQuery(queryString:string, forceAll?:boolean, rawQuery?:boolean): boolean;
 
     findRecord(field:string, value:Object): Ext_data_Model;
 
@@ -2991,8 +2991,8 @@ interface Ext_form_field_ComboBox extends Ext_form_field_Picker {
     select(r:Object): void;
     select(r:Ext_data_Model): void;
 
-    setValue(value:string) : Ext_form_field_Field;
-    setValue(value:string[]) : Ext_form_field_Field;
+    //setValue(value:string) : Ext_form_field_Field;
+    //setValue(value:string[]) : Ext_form_field_Field;
 
 }
 
@@ -3017,13 +3017,13 @@ interface Ext_form_field_VTypes extends Ext_Base {
 
     urlText: string;
 
-    alpha(value:Object): bool;
+    alpha(value:Object): boolean;
 
-    alphanum(value:Object): bool;
+    alphanum(value:Object): boolean;
 
-    email(value:Object): bool;
+    email(value:Object): boolean;
 
-    url(value:Object): bool;
+    url(value:Object): boolean;
 
 }
 
@@ -3037,7 +3037,7 @@ interface Ext_form_Labelable extends Ext_Base {
 
     errorEl: Ext_dom_Element;
 
-    isFieldLabelable: bool;
+    isFieldLabelable: boolean;
 
     labelCell: Ext_dom_Element;
 
@@ -3053,9 +3053,9 @@ interface Ext_form_Labelable extends Ext_Base {
 
     getLabelWidth(): Number;
 
-    hasActiveError(): bool;
+    hasActiveError(): boolean;
 
-    hasVisibleLabel(): bool;
+    hasVisibleLabel(): boolean;
 
     initLabelable(): void;
 
@@ -3082,7 +3082,7 @@ interface Ext_form_field_Base extends Ext_Component, Ext_form_field_Field, Ext_f
 
     inputEl : Ext_dom_Element;
 
-    maskOnDisable: bool;
+    maskOnDisable: boolean;
 
     clearInvalid(): void;
 
@@ -3104,9 +3104,9 @@ interface Ext_form_field_Base extends Ext_Component, Ext_form_field_Field, Ext_f
 
     getValue(): Object;
 
-    isFileUpload(): bool;
+    isFileUpload(): boolean;
 
-    isValid(): bool;
+    isValid(): boolean;
 
     markInvalid(errors:string): void;
     markInvalid(errors:string[]): void;
@@ -3121,11 +3121,11 @@ interface Ext_form_field_Base extends Ext_Component, Ext_form_field_Field, Ext_f
 
     setRawValue(value): Object;
 
-    setReadOnly(readOnly:bool): void;
+    setReadOnly(readOnly:boolean): void;
 
     setValue(value) : Ext_form_field_Field;
 
-    validateValue(value:Object) : bool;
+    validateValue(value:Object) : boolean;
 
     valueToRaw(value:Object) : Object;
 
@@ -3154,13 +3154,13 @@ interface Ext_form_Panel extends Ext_panel_AbstractPanel, Ext_form_FieldAncestor
 
     getRecord(): Ext_data_Model;
 
-    getValues(asString?:bool, dirtyOnly?:bool, includeEmptyText?:bool, useDataValues?:bool): any;     // String/Object2
+    getValues(asString?:boolean, dirtyOnly?:boolean, includeEmptyText?:boolean, useDataValues?:boolean): any;     // String/Object2
 
     hasInvalidField(): void;
 
-    isDirty(): bool;
+    isDirty(): boolean;
 
-    isValid(): bool;
+    isValid(): boolean;
 
     load(options:Object): void;
 
@@ -3211,7 +3211,7 @@ interface Ext_form_Basic_ActionOptions {
     success?: (form:Ext_form_Basic, action:Ext_form_action_Action) => void;
     failure?: (form:Ext_form_Basic, action:Ext_form_action_Action) => void;
     scope?: Object;
-    clientValidation?: bool;
+    clientValidation?: boolean;
 }
 
 
@@ -3242,21 +3242,21 @@ interface Ext_form_Basic extends Ext_util_Observable {
 
     findField(id:string): Ext_form_field_Field;
 
-    getFieldValues(dirtyOnly?:bool): Object;
+    getFieldValues(dirtyOnly?:boolean): Object;
 
     getFields(): Ext_util_MixedCollection;
 
     getRecord(): Ext_data_Model;
 
-    getValues(asString?:bool, dirtyOnly?:bool, includeEmptyText?:bool, useDataValues?:bool): any;     // String/Object1
+    getValues(asString?:boolean, dirtyOnly?:boolean, includeEmptyText?:boolean, useDataValues?:boolean): any;     // String/Object1
 
-    hasInvalidField(): bool;
+    hasInvalidField(): boolean;
 
-    hasUpload(): bool;
+    hasUpload(): boolean;
 
-    isDirty(): bool;
+    isDirty(): boolean;
 
-    isValid(): bool;
+    isValid(): boolean;
 
     load(options:Object): Ext_form_Basic;
 
@@ -3266,7 +3266,7 @@ interface Ext_form_Basic extends Ext_util_Observable {
     markInvalid(errors:Object[]): Ext_form_Basic;
     markInvalid(errors:Ext_data_Errors): Ext_form_Basic;
 
-    reset(resetRecord?:bool) : Ext_form_Basic;
+    reset(resetRecord?:boolean) : Ext_form_Basic;
 
     setValues(values:Object): Ext_form_Basic;
     setValues(values:Object[]): Ext_form_Basic;
@@ -3287,7 +3287,7 @@ interface Ext_form_FieldSet extends Ext_container_Container {
 
     legend : Ext_Component;
 
-    maskOnDisable : bool;
+    maskOnDisable : boolean;
 
     toggleCmp : Ext_panel_Tool;
 
@@ -3317,7 +3317,7 @@ interface Ext_form_FieldSet extends Ext_container_Container {
 interface Ext_layout_ContextItem extends Ext_Base {
 
     state : Object;
-    wrapsComponent: bool;
+    wrapsComponent: boolean;
 
     addCls(newCls:string): void;
     addCls(newCls:string[]): void;
@@ -3355,9 +3355,9 @@ interface Ext_layout_ContextItem extends Ext_Base {
 
     getStyles(styleNames:string[], altNames?:string[]): Object;
 
-    hasDomProp(propName:string): bool;
+    hasDomProp(propName:string): boolean;
 
-    hasProp(propName:string): bool;
+    hasProp(propName:string): boolean;
 
     invalidate(options:{
         state?: Object;
@@ -3379,11 +3379,11 @@ interface Ext_layout_ContextItem extends Ext_Base {
 
     setContentWidth(width:number, measured:Object): void;
 
-    setHeight(height:number, dirty?:bool): number;
+    setHeight(height:number, dirty?:boolean): number;
 
-    setProp(propName:string, value:Object, dirty:bool): number;
+    setProp(propName:string, value:Object, dirty:boolean): number;
 
-    setWidth(width:number, dirty?:bool): number;
+    setWidth(width:number, dirty?:boolean): number;
 
 }
 
@@ -3393,8 +3393,8 @@ interface Ext_layout_ContextItem extends Ext_Base {
  */
 interface Ext_layout_Layout extends Ext_Base {
 
-    done: bool;
-    isLayout : bool;
+    done: boolean;
+    isLayout : boolean;
 
 
     new(config?:Object): Ext_layout_Layout;
@@ -3414,7 +3414,7 @@ interface Ext_layout_Layout extends Ext_Base {
 
     notifyOwner(ownerContext:Ext_layout_ContextItem): void;
 
-    onContentChange(child:Ext_Component): bool;
+    onContentChange(child:Ext_Component): boolean;
 
 }
 
@@ -3597,7 +3597,7 @@ interface Ext_app_Controller extends Ext_Base, Ext_util_Observable {
 
     getView(name:string) : Ext_Base;
 
-    hasRef(ref:Object): bool;
+    hasRef(ref:Object): boolean;
 
     init(application:Ext_app_Application): void;
 
@@ -3624,7 +3624,7 @@ interface Ext_app_Application extends Ext_app_Controller {
 
     getView(name:string): Ext_Base;
 
-    launch(profile:string): bool;
+    launch(profile:string): boolean;
 
 }
 
@@ -3635,11 +3635,11 @@ interface Ext_app_Application extends Ext_app_Controller {
 interface Ext_util_Observable_ListenerOptions {
     scope?: Object;
     delay?: number;
-    single?: bool;
+    single?: boolean;
     buffer?: number;
     target?: Ext_util_Observable;
     element?: string;
-    destroyable?: bool;
+    destroyable?: boolean;
 }
 
 
@@ -3649,7 +3649,7 @@ interface Ext_util_Observable_ListenerOptions {
 interface Ext_util_Observable extends Ext_Base {
 
     hasListeners: Object;
-    isObservable: bool;
+    isObservable: boolean;
 
     new(config?:Object):Ext_util_Observable;
 
@@ -3671,9 +3671,9 @@ interface Ext_util_Observable extends Ext_Base {
     enableBubble(eventNames:string): void;
     enableBubble(eventNames:string[]): void;
 
-    fireEvent(eventName:string, ...args:Object[]): bool;
+    fireEvent(eventName:string, ...args:Object[]): boolean;
 
-    hasListener(eventName:string): bool;
+    hasListener(eventName:string): boolean;
 
     mon(item:Ext_util_Observable, ename:any /* Object/String */, fn?:Function, scope?:Object,
         options?:Ext_util_Observable_ListenerOptions): Object;
@@ -3695,7 +3695,7 @@ interface Ext_util_Observable extends Ext_Base {
 
     resumeEvents(): void;
 
-    suspendEvents(queueSuspended:bool): void;
+    suspendEvents(queueSuspended:boolean): void;
 
     un(eventName:string, fn:Function, scope?:Object): void;
 
@@ -3722,7 +3722,7 @@ interface Ext_state_Stateful extends Ext_Base, Ext_util_Observable {
 
     getState(): Object;
 
-    savePropToState(propName:string, state:Object, stateName?:string): bool;
+    savePropToState(propName:string, state:Object, stateName?:string): boolean;
 
     savePropsToState(propNames:string, state:Object): Object;
     savePropsToState(propNames:string[], state:Object): Object;
@@ -3739,7 +3739,7 @@ interface Ext_util_Animate extends Ext_Base {
 
     animate(config): Object;
 
-    getActiveAnimation(): any /* Ext.fx.Anim/bool */;
+    getActiveAnimation(): any /* Ext.fx.Anim/boolean */;
 
     sequenceFx(): Object;
 
@@ -3759,7 +3759,7 @@ interface Ext_util_Cookies extends Ext_Base {
 
     get(name:string): Object;
 
-    set(name:string, value:Object, expires?:Object, path?:string, domain?:string, secure?:bool): void;
+    set(name:string, value:Object, expires?:Object, path?:string, domain?:string, secure?:boolean): void;
 
 }
 
@@ -3768,7 +3768,7 @@ interface Ext_util_Renderable extends Ext_Base {
 
     doAutoRender(): void;
 
-    ensureAttachedToBody(runLayout?:bool): void;
+    ensureAttachedToBody(runLayout?:boolean): void;
 
     getInsertPosition(position): Html_dom_Element;
 
@@ -3795,11 +3795,11 @@ interface Ext_util_Floating extends Ext_Base {
     doConstrain(constrainTo?:Ext_dom_Element): void;
     doConstrain(constrainTo?:Ext_util_Region): void;
 
-    setActive(active?:bool, newActive?:Ext_Component): void;
+    setActive(active?:boolean, newActive?:Ext_Component): void;
 
     toBack(): Ext_Component;
 
-    toFront(preventFocus?:bool): Ext_Component;
+    toFront(preventFocus?:boolean): Ext_Component;
 }
 
 
@@ -3818,7 +3818,7 @@ interface Ext_util_ElementContainer extends Ext_Base {
 
 interface Ext_util_AbstractMixedCollection extends Ext_Base, Ext_util_Observable {
 
-    isMixedCollection : bool;
+    isMixedCollection : boolean;
 
     add(key:string, obj?:Object): Object;
 
@@ -3829,24 +3829,24 @@ interface Ext_util_AbstractMixedCollection extends Ext_Base, Ext_util_Observable
 
     clone(): Ext_util_MixedCollection;
 
-    collect(property:string, root?:string, allowBlank?:bool): Object[];
+    collect(property:string, root?:string, allowBlank?:boolean): Object[];
 
-    contains(obj:Object): bool;
+    contains(obj:Object): boolean;
 
-    containsKey(key:string): bool;
+    containsKey(key:string): boolean;
 
     each(fn:(item:Object, index:number, length:number) => any, scope?:Object): void;
 
     eachKey(fn:(key:string, item:Object, index:number, length:number) => any, scope?:Object): void;
 
-    filter(property:string, value:string, anyMatch?:bool, caseSensitive?:bool): Ext_util_MixedCollection;
+    filter(property:string, value:string, anyMatch?:boolean, caseSensitive?:boolean): Ext_util_MixedCollection;
     filter(property:Ext_util_Filter[]): Ext_util_MixedCollection;
 
     filterBy(fn:(item:Object, key:string) => any, scope?:Object): Ext_util_MixedCollection;
 
     findBy(fn:(item:Object, key:string) => any, scope?:Object): Object;
 
-    findIndex(property:string, value:string, start?:number, anyMatch?:bool, caseSensitive?:bool): number;
+    findIndex(property:string, value:string, start?:number, anyMatch?:boolean, caseSensitive?:boolean): number;
 
     findIndexBy(fn:(item:Object, key:string) => any, scope?:Object, start?:number): number;
 
@@ -3923,13 +3923,13 @@ interface Ext_util_Region extends Ext_Base {
 
     constrainTo(targetRegion:Ext_util_Region): Ext_util_Region;
 
-    contains(region:Ext_util_Region): bool;
+    contains(region:Ext_util_Region): boolean;
 
     copy(): Ext_util_Region;
 
     copyFrom(source:Ext_util_Region): Ext_util_Region;
 
-    equals(region:Ext_util_Region): bool;
+    equals(region:Ext_util_Region): boolean;
 
     getOutOfBoundOffset(axis?:string, p?:Ext_util_Point): Ext_util_Offset;
 
@@ -3937,14 +3937,14 @@ interface Ext_util_Region extends Ext_Base {
 
     getOutOfBoundOffsetY(p:number): number;
 
-    intersect(region:Ext_util_Region): any;       // Ext.util.Region/bool
+    intersect(region:Ext_util_Region): any;       // Ext.util.Region/boolean
 
-    isOutOfBound(axis?:string, p?:Ext_util_Point): bool;
-    isOutOfBound(axis?:string, p?:number): bool;
+    isOutOfBound(axis?:string, p?:Ext_util_Point): boolean;
+    isOutOfBound(axis?:string, p?:number): boolean;
 
-    isOutOfBoundX(p:number): bool;
+    isOutOfBoundX(p:number): boolean;
 
-    isOutOfBoundY(p:number): bool;
+    isOutOfBoundY(p:number): boolean;
 
     round(): Ext_util_Region;
 
@@ -3961,23 +3961,23 @@ interface Ext_util_Region extends Ext_Base {
  */
 interface Ext_util_Point extends Ext_util_Region {
 
-    equals(point:Ext_util_Point): bool;
+    equals(point:Ext_util_Point): boolean;
     equals(point:{
         left: number;
         top: number;
-    }): bool;
+    }): boolean;
 
-    isWithin(point:Ext_util_Point, threshold:number): bool;
+    isWithin(point:Ext_util_Point, threshold:number): boolean;
     isWithin(point:{
         left: number;
         top: number;
-    }, threshold:number): bool;
+    }, threshold:number): boolean;
 
-    roundedEquals(point:Ext_util_Point): bool;
+    roundedEquals(point:Ext_util_Point): boolean;
     roundedEquals(point:{
         left: number;
         top: number;
-    }): bool;
+    }): boolean;
 
     toString(): string;
 
@@ -4002,7 +4002,7 @@ interface Ext_util_Offset extends Ext_Base {
  */
 interface Ext_util_Sortable extends Ext_Base {
 
-    isSortable: Boolean;
+    isSortable: boolean;
 
     sorters : Ext_util_MixedCollection;
 
@@ -4045,7 +4045,7 @@ interface Ext_util_TaskRunner extends Ext_Base {
     newTask(config:Object): void;
 
     start(task:{
-        run?: () => bool;
+        run?: () => boolean;
         onError?: Function;
         interval?: number;
         args?: Object[];
@@ -4071,8 +4071,8 @@ interface Ext_data_AbstractStore extends Ext_Base, Ext_util_Observable, Ext_util
 
     defaultProxyType : string;
     filters : Ext_util_MixedCollection;
-    isDestroyed : bool;
-    isStore : bool;
+    isDestroyed : boolean;
+    isStore : boolean;
 
     getModifiedRecords(): Ext_data_Model[];
 
@@ -4084,7 +4084,7 @@ interface Ext_data_AbstractStore extends Ext_Base, Ext_util_Observable, Ext_util
 
     getUpdatedRecords(): Ext_data_Model[];
 
-    isLoading(): bool;
+    isLoading(): boolean;
 
     load(options?:Object): Ext_data_Store;
 
@@ -4130,19 +4130,19 @@ interface Ext_data_Store extends Ext_data_AbstractStore {
 
     addSorted(model:Ext_data_Model): void;
 
-    aggregate(fn:Function, scope?:Object, grouped?:bool, args?:any[]): Object;
+    aggregate(fn:Function, scope?:Object, grouped?:boolean, args?:any[]): Object;
 
-    average(field:string, grouped?:bool): Object;
+    average(field:string, grouped?:boolean): Object;
 
-    clearFilter(suppressEvent?:bool): void;
+    clearFilter(suppressEvent?:boolean): void;
 
     clearGrouping(): void;
 
-    collect(dataIndex:string, allowNull?:bool, bypassFilter?:bool): Object[];
+    collect(dataIndex:string, allowNull?:boolean, bypassFilter?:boolean): Object[];
 
     commitChanges(): void;
 
-    count(grouped?:bool): number;
+    count(grouped?:boolean): number;
 
     each(fn:Function, scope?:Object): void;
 
@@ -4152,15 +4152,15 @@ interface Ext_data_Store extends Ext_data_AbstractStore {
 
     filterBy(fn:(model:Ext_data_Model, id:string) => any, scope?:Object): void;
 
-    find(fieldName:string, value:Object, startIndex?:number, anyMatch?:bool, caseSensitive?:bool, exactMatch?:bool): number;
+    find(fieldName:string, value:Object, startIndex?:number, anyMatch?:boolean, caseSensitive?:boolean, exactMatch?:boolean): number;
 
     findBy(fn:(model:Ext_data_Model, id:string) => any, scope?:Object, startIndex?:number): number;
 
     findExact(fieldName:string, value:Object, startIndex?:number): number;
 
-    findRecord(fieldName:string, value:Object, startIndex?:number, anyMatch?:bool, caseSensitive?:bool, exactMatch?:bool): Ext_data_Model;
+    findRecord(fieldName:string, value:Object, startIndex?:number, anyMatch?:boolean, caseSensitive?:boolean, exactMatch?:boolean): Ext_data_Model;
 
-    first(grouped?:bool): Ext_data_Model;        //Ext.data.Model/undefined
+    first(grouped?:boolean): Ext_data_Model;        //Ext.data.Model/undefined
 
     getAt(index:number): Ext_data_Model;
 
@@ -4191,27 +4191,27 @@ interface Ext_data_Store extends Ext_data_AbstractStore {
 
     insert(index, model:Ext_data_Model): Ext_data_Model[];
 
-    isFiltered(): bool;
+    isFiltered(): boolean;
 
-    isGrouped(): bool;
+    isGrouped(): boolean;
 
-    last(grouped?:bool): Ext_data_Model;      // Ext.data.Model/undefined
+    last(grouped?:boolean): Ext_data_Model;      // Ext.data.Model/undefined
 
-    loadData(data:Object[], append?:bool): void;
-    loadData(data:Ext_data_Model[], append?:bool): void;
+    loadData(data:Object[], append?:boolean): void;
+    loadData(data:Ext_data_Model[], append?:boolean): void;
 
     loadPage(page:number, options?:Object): void;
 
-    loadRawData(data:Object[], append?:bool): void;
+    loadRawData(data:Object[], append?:boolean): void;
 
     loadRecords(records:Ext_data_Model[], options:{
-        addRecords?: bool;
+        addRecords?: boolean;
         start?: number;
     }): void;
 
-    max(field:string, grouped?:bool): Object;
+    max(field:string, grouped?:boolean): Object;
 
-    min(field:string, grouped?:bool): Object;
+    min(field:string, grouped?:boolean): Object;
 
     nextPage(options:Object): void;
 
@@ -4223,7 +4223,7 @@ interface Ext_data_Store extends Ext_data_AbstractStore {
 
     previousPage(options:Object): void;
 
-    query(property:string, value:string, anyMatch?:bool, caseSensitive?:bool, exactMatch?:bool): Ext_util_MixedCollection;
+    query(property:string, value:string, anyMatch?:boolean, caseSensitive?:boolean, exactMatch?:boolean): Ext_util_MixedCollection;
 
     queryBy(fn:(model:Ext_data_Model) => any, scope?:Object): Ext_util_MixedCollection;
 
@@ -4232,14 +4232,14 @@ interface Ext_data_Store extends Ext_data_AbstractStore {
     remove(model:Ext_data_Model): void;
     remove(model:Ext_data_Model[]): void;
 
-    removeAll(silent:bool): void;
+    //removeAll(silent:boolean): void;
 
     removeAt(index:number, count?:number): void;
 
     sort(sorters?:string, direction?:string): Ext_util_Sorter[];
     sort(sorters?:Ext_util_Sorter[], direction?:string): Ext_util_Sorter[];
 
-    sum(field:string, grouped?:bool): number;
+    sum(field:string, grouped?:boolean): number;
 
 }
 
@@ -4261,7 +4261,7 @@ interface Ext_data_TreeStore extends Ext_data_AbstractStore {
 
     getUpdatedRecords(): Ext_data_Model[];
 
-    load(options?:Object): void;
+    //load(options?:Object): void;
 
     removeAll(): void;
 
@@ -4291,7 +4291,7 @@ interface Ext_data_proxy_Proxy extends Ext_Base {
         scope: Object;
     }) : Ext_data_Batch;
 
-    create(operation:Ext_data_Operation, callback:Function, scope:Object): void;
+    //create(operation:Ext_data_Operation, callback:Function, scope:Object): void;
 
     destroy(operation:Ext_data_Operation, callback:Function, scope:Object): void;
 
@@ -4303,8 +4303,8 @@ interface Ext_data_proxy_Proxy extends Ext_Base {
 
     read(operation:Ext_data_Operation, callback:Function, scope:Object): void;
 
-    setModel(model:string, setOnStore:bool): void;
-    setModel(model:Ext_data_Model, setOnStore:bool): void;
+    setModel(model:string, setOnStore:boolean): void;
+    setModel(model:Ext_data_Model, setOnStore:boolean): void;
 
     setReader(reader:string) : Ext_data_reader_Reader;
     setReader(reader:Object) : Ext_data_reader_Reader;
@@ -4328,12 +4328,12 @@ interface Ext_data_Model extends Ext_util_Observable {
     EDIT: string;
     REJECT: string;
 
-    dirty: bool;
-    editing: bool;
+    dirty: boolean;
+    editing: boolean;
     fields: Ext_util_MixedCollection;
-    isModel: bool;
+    isModel: boolean;
     modified: Object;
-    phantom: bool;
+    phantom: boolean;
     raw: Object;
     store: Ext_data_Store;
     stores: Ext_data_Store[];
@@ -4342,13 +4342,13 @@ interface Ext_data_Model extends Ext_util_Observable {
 
     cancelEdit(): void;
 
-    commit(silent?:bool): void;
+    commit(silent?:boolean): void;
 
     copy(id?:string): Ext_data_Model;
 
     destroy(options:Object): Ext_data_Model;
 
-    endEdit(silent:bool, modifiedFieldNames:string[]): void;
+    endEdit(silent:boolean, modifiedFieldNames:string[]): void;
 
     get(fieldName:string): Object;
 
@@ -4356,19 +4356,19 @@ interface Ext_data_Model extends Ext_util_Observable {
 
     getChanges(): Object;
 
-    getData(includeAssociated?:bool): Object;
+    getData(includeAssociated?:boolean): Object;
 
     getId(): string;        // Number/String
 
     getProxy(): Ext_data_proxy_Proxy;
 
-    isModified(fieldName:string): bool;
+    isModified(fieldName:string): boolean;
 
-    isValid(): bool;
+    isValid(): boolean;
 
     join(store:Ext_data_Store): void;
 
-    reject(silent?:bool): void;
+    reject(silent?:boolean): void;
 
     save(options:Object): Ext_data_Model;
 
@@ -4394,7 +4394,7 @@ interface Ext_data_Errors extends Ext_Base {
 
     getByField(fieldName:string): Object[];
 
-    isValid(): bool;
+    isValid(): boolean;
 
 }
 
@@ -4408,7 +4408,7 @@ interface Ext_data_NodeInterface extends Ext_Base {
 
     firstChild: Object;
 
-    isNode: Boolean;
+    isNode: boolean;
 
     lastChild: Object;
 
@@ -4426,27 +4426,27 @@ interface Ext_data_NodeInterface extends Ext_Base {
 
     cascadeBy(fn, scope?:Object, args?:any[]): void;
 
-    collapse(recursive?:bool, callback?:Function, scope?:Object): void;
+    collapse(recursive?:boolean, callback?:Function, scope?:Object): void;
 
-    collapseChildren(recursive?:bool, callback?:Function, scope?:Object): void;
+    collapseChildren(recursive?:boolean, callback?:Function, scope?:Object): void;
 
-    contains(node): bool;
+    contains(node): boolean;
 
-    copy(id?:string, deep?:bool): Ext_data_NodeInterface;
+    copy(id?:string, deep?:boolean): Ext_data_NodeInterface;
 
     createNode(node:Object): Ext_data_NodeInterface;
 
-    destroy(silent?:bool): void;
+    destroy(silent?:boolean): void;
 
     eachChild(fn:Function, scope?:Object, args?:any[]): void;
 
-    expand(recursive?:bool, callback?:Function, scope?:Object): void;
+    expand(recursive?:boolean, callback?:Function, scope?:Object): void;
 
-    expandChildren(recursive?:bool, callback?:Function, scope?:Object): void;
+    expandChildren(recursive?:boolean, callback?:Function, scope?:Object): void;
 
-    findChild(attribute:string, value:Object, deep?:bool): Ext_data_NodeInterface;
+    findChild(attribute:string, value:Object, deep?:boolean): Ext_data_NodeInterface;
 
-    findChildBy(fn, scope?:Object, deep?:bool): Ext_data_NodeInterface;
+    findChildBy(fn, scope?:Object, deep?:boolean): Ext_data_NodeInterface;
 
     getChildAt(index): Ext_data_NodeInterface;
 
@@ -4458,7 +4458,7 @@ interface Ext_data_NodeInterface extends Ext_Base {
 
     getPath(field?:string, separator?:string): string;
 
-    hasChildNodes(): bool;
+    hasChildNodes(): boolean;
 
     indexOf(node): number;
 
@@ -4468,37 +4468,37 @@ interface Ext_data_NodeInterface extends Ext_Base {
 
     insertChild(index:number, node:Ext_data_NodeInterface): Ext_data_NodeInterface;
 
-    isAncestor(node:Ext_data_NodeInterface): bool;
+    isAncestor(node:Ext_data_NodeInterface): boolean;
 
-    isExpandable(): bool;
+    isExpandable(): boolean;
 
-    isExpanded(): bool;
+    isExpanded(): boolean;
 
-    isFirst(): bool;
+    isFirst(): boolean;
 
-    isLast(): bool;
+    isLast(): boolean;
 
-    isLeaf(): bool;
+    isLeaf(): boolean;
 
-    isLoaded(): bool;
+    isLoaded(): boolean;
 
-    isLoading(): bool;
+    isLoading(): boolean;
 
-    isRoot(): bool;
+    isRoot(): boolean;
 
-    isVisible(): bool;
+    isVisible(): boolean;
 
-    remove(destroy?:bool): Ext_data_NodeInterface;
+    remove(destroy?:boolean): Ext_data_NodeInterface;
 
-    removeAll(destroy?:bool): Ext_data_NodeInterface;
+    removeAll(destroy?:boolean): Ext_data_NodeInterface;
 
-    removeChild(node:Ext_data_NodeInterface, destroy?:bool): Ext_data_NodeInterface;
+    removeChild(node:Ext_data_NodeInterface, destroy?:boolean): Ext_data_NodeInterface;
 
     replaceChild(newChild, oldChild): Ext_data_NodeInterface;
 
-    sort(fn, recursive?:bool, suppressEvent?:bool): void;
+    sort(fn, recursive?:boolean, suppressEvent?:boolean): void;
 
-    updateInfo(commit): bool;
+    updateInfo(commit): boolean;
 
 }
 
@@ -4513,15 +4513,15 @@ interface Ext_AbstractManager extends Ext_Base {
 
     all: Ext_util_HashMap;
 
-    create(config:Object, defaultType:string): Object;
+    //create(config:Object, defaultType:string): Object;
 
-    each(fn:(key:string, value:number, length:number) => bool, scope:Object): void;
+    each(fn:(key:string, value:number, length:number) => boolean, scope:Object): void;
 
     get(id:string): Object;
 
     getCount(): number;
 
-    isRegistered(type:string): bool;
+    isRegistered(type:string): boolean;
 
     onAvailable(id:string, fn:Function, scope:Object): void;
 
@@ -4564,7 +4564,7 @@ interface Ext_ClassManager {
 
     instantiateByAlias(alias:string, ...args:any[]): any;
 
-    isCreated(className:string): bool;
+    isCreated(className:string): boolean;
 
     set(name:string, value:any): Ext_ClassManager;
 
@@ -4580,7 +4580,7 @@ interface Ext_ClassManager {
  */
 interface Ext_ComponentManager extends Ext_AbstractManager {
 
-    create(config:Object, defaultType?:string): Ext_Component;
+    //create(config:Object, defaultType?:string): Ext_Component;
 
     registerType(type:string, cls:Function): void;
 
@@ -4590,12 +4590,12 @@ interface Ext_ComponentManager extends Ext_AbstractManager {
 interface Ext_EventManager_ListenerOptions {
     scope?: Object;
     delegate?: string;
-    stopEvent?: bool;
-    preventDefault?: bool;
-    stopPropagation?: bool;
-    normalized?: bool;
+    stopEvent?: boolean;
+    preventDefault?: boolean;
+    stopPropagation?: boolean;
+    normalized?: boolean;
     delay?: number;
-    single?: bool;
+    single?: boolean;
     buffer?: number;
     target?: Ext_dom_Element;
 }
@@ -4672,8 +4672,8 @@ interface Ext_EventManager {
  */
 interface Ext_ZIndexManager extends Ext_Base {
 
-    bringToFront(comp:string): bool;
-    bringToFront(comp:Ext_Component): bool;
+    bringToFront(comp:string): boolean;
+    bringToFront(comp:Ext_Component): boolean;
 
     each(fn:Function, scope?:Object): void;
 
@@ -4712,7 +4712,7 @@ interface Ext_WindowManager extends Ext_ZIndexManager {
  */
 interface Ext_data_StoreManager extends Ext_util_MixedCollection {
 
-    getKey(item:Object): Object;
+    //getKey(item:Object): Object;
 
     lookup(store:Ext_data_Store): Ext_data_Store;
 
@@ -4776,7 +4776,7 @@ interface Ext_direct_RemotingProvider extends Ext_direct_JsonProvider {
 
     disconnect(): void;
 
-    isConnected(): bool;
+    isConnected(): boolean;
 
     createEvent(response:any): Ext_direct_Event;
 
@@ -4809,11 +4809,11 @@ interface Ext_direct_Transaction extends Ext_Base {
 interface Ext_direct_Manager_listenerOptions {
     scope: Object;
     delay: number;
-    single: bool;
+    single: boolean;
     buffer: number;
     target: Ext_util_Observable;
     element: string;
-    destroyable? : bool;
+    destroyable? : boolean;
 }
 
 /**
@@ -4842,12 +4842,12 @@ interface Ext_direct_Manager extends Ext_Base {
 
     enableBubble(eventNames): void;
 
-    fireEvent(eventName, args): bool;
+    fireEvent(eventName, args): boolean;
 
     getProvider(id:string): Ext_direct_Provider;
     getProvider(id:Ext_direct_Provider): Ext_direct_Provider;
 
-    hasListener(eventName:string): bool;
+    hasListener(eventName:string): boolean;
 
     mon(item:Ext_util_Observable, ename:string, fn?:Function, scope?:Object, options?:Ext_direct_Manager_listenerOptions): Object;
 
@@ -4880,7 +4880,7 @@ interface Ext_direct_Manager extends Ext_Base {
  */
 interface Ext_dd_DragDrop extends Ext_Base {
 
-    available: bool;
+    available: boolean;
 
     config: Object;
 
@@ -4888,11 +4888,11 @@ interface Ext_dd_DragDrop extends Ext_Base {
 
     groups: Object;
 
-    hasOuterHandles: bool;
+    hasOuterHandles: boolean;
 
     id: string;
 
-    ignoreSelf: bool;
+    ignoreSelf: boolean;
 
     invalidHandleClasses: string[];
 
@@ -4900,15 +4900,15 @@ interface Ext_dd_DragDrop extends Ext_Base {
 
     invalidHandleTypes: Object;
 
-    isTarget: bool;
+    isTarget: boolean;
 
-    maintainOffset: bool;
+    maintainOffset: boolean;
 
-    moveOnly: bool;
+    moveOnly: boolean;
 
     padding: number[];
 
-    primaryButtonOnly: bool;
+    primaryButtonOnly: boolean;
 
     xTicks: number[];
 
@@ -4932,9 +4932,9 @@ interface Ext_dd_DragDrop extends Ext_Base {
 
     clearTicks(): void;
 
-    constrainTo(constrainTo:string, pad?:any /* Object/number */, inContent?:bool): void;
-    constrainTo(constrainTo:Html_dom_Element, pad?:any /* Object/number */, inContent?:bool): void;
-    constrainTo(constrainTo:Ext_dom_Element, pad?:any /* Object/number */, inContent?:bool): void;
+    constrainTo(constrainTo:string, pad?:any /* Object/number */, inContent?:boolean): void;
+    constrainTo(constrainTo:Html_dom_Element, pad?:any /* Object/number */, inContent?:boolean): void;
+    constrainTo(constrainTo:Ext_dom_Element, pad?:any /* Object/number */, inContent?:boolean): void;
 
     endDrag(e:Object): void;
 
@@ -4946,9 +4946,9 @@ interface Ext_dd_DragDrop extends Ext_Base {
 
     initTarget(id:string, sGroup:string, config:Object): void;
 
-    isLocked(): bool;
+    isLocked(): boolean;
 
-    isValidHandleChild(node:Html_dom_Element): bool;
+    isValidHandleChild(node:Html_dom_Element): boolean;
 
     lock(): void;
 
@@ -4982,7 +4982,7 @@ interface Ext_dd_DragDrop extends Ext_Base {
 
     removeInvalidHandleType(tagName:string): void;
 
-    resetConstraints(maintainOffset?:bool): void;
+    resetConstraints(maintainOffset?:boolean): void;
 
     setDragElId(id:string): void;
 
@@ -5014,7 +5014,7 @@ interface Ext_dd_DragDrop extends Ext_Base {
  */
 interface Ext_dd_DD extends Ext_dd_DragDrop {
 
-    scroll: bool;
+    scroll: boolean;
 
     new(id:string, sGroup?:string, config?:Object): Ext_dd_DD;
 
@@ -5044,9 +5044,9 @@ interface Ext_dd_DD extends Ext_dd_DragDrop {
  */
 interface Ext_dd_DDProxy extends Ext_dd_DD {
 
-    centerFrame: bool;
+    centerFrame: boolean;
 
-    resizeFrame: bool;
+    resizeFrame: boolean;
 
     dragElId: string;
 
@@ -5094,15 +5094,15 @@ interface Ext_dd_DragSource extends Ext_dd_DDProxy {
 
     alignElWithMouse(el:Html_dom_Element, iPageX:number, iPageY:number): void;
 
-    beforeDragDrop(target:Ext_dd_DragDrop, e:Object, id:string) : bool;
+    beforeDragDrop(target:Ext_dd_DragDrop, e:Object, id:string) : boolean;
 
-    beforeDragEnter(target:Ext_dd_DragDrop, e:Object, id:string) : bool;
+    beforeDragEnter(target:Ext_dd_DragDrop, e:Object, id:string) : boolean;
 
-    beforeDragOut(target:Ext_dd_DragDrop, e:Object, id:string) : bool;
+    beforeDragOut(target:Ext_dd_DragDrop, e:Object, id:string) : boolean;
 
-    beforeDragOver(target:Ext_dd_DragDrop, e:Object, id:string) : bool;
+    beforeDragOver(target:Ext_dd_DragDrop, e:Object, id:string) : boolean;
 
-    beforeInvalidDrop(target:Ext_dd_DragDrop, e:Object, id:string) : bool;
+    beforeInvalidDrop(target:Ext_dd_DragDrop, e:Object, id:string) : boolean;
 
     getDragData(e:Object): Object;
 
@@ -5110,7 +5110,7 @@ interface Ext_dd_DragSource extends Ext_dd_DDProxy {
 
     hideProxy(): void;
 
-    onBeforeDrag(data:Object, e:Object): bool;
+    onBeforeDrag(data:Object, e:Object): boolean;
 
     onStartDrag(x:number, y:number): void;
 
@@ -5134,7 +5134,7 @@ interface Ext_dd_DragZone extends Ext_dd_DragSource {
 
     getRepairXY(event:Event): number[];
 
-    onInitDrag(x:number, y:number): bool;
+    onInitDrag(x:number, y:number): boolean;
 
 }
 
@@ -5150,11 +5150,11 @@ interface Ext_dd_StatusProxy extends Ext_Component {
 
     getGhost(): Ext_dom_Element;
 
-    hide(clear:bool): void;
+    //hide(clear:boolean): void;
 
     repair(xy:number[], callback:Function, scope:Object): void;
 
-    reset(clearGhost:bool): void;
+    reset(clearGhost:boolean): void;
 
     setStatus(cssClass:string): void;
 
@@ -5189,9 +5189,9 @@ interface Ext_dd_DDTarget extends Ext_dd_DragDrop {
 
     endDrag(): void;
 
-    getDragEl(): void;
+    //getDragEl(): void;
 
-    isValidHandleChild(): void;
+    //isValidHandleChild(): void;
 
     onDrag(): void;
 
@@ -5241,13 +5241,13 @@ interface Ext_dd_DDTarget extends Ext_dd_DragDrop {
  */
 interface Ext_dd_DropTarget extends Ext_dd_DDTarget {
 
-    isTarget: bool;
+    isTarget: boolean;
 
     new(el:string, config:Object): Ext_dd_DropTarget;
     new(el:HTMLElement, config:Object): Ext_dd_DropTarget;
     new(el:Ext_dom_Element, config:Object): Ext_dd_DropTarget;
 
-    notifyDrop(source:Ext_dd_DragSource, e:Event, data:Object): bool;
+    notifyDrop(source:Ext_dd_DragSource, e:Event, data:Object): boolean;
 
     notifyEnter(source:Ext_dd_DragSource, e:Event, data:Object): String;
 
@@ -5265,7 +5265,7 @@ interface Ext_dd_DropZone extends Ext_dd_DropTarget {
 
     getTargetFromEvent(event:Event): Object;
 
-    notifyDrop(source:Ext_dd_DragSource, e:Event, data:Object): bool;
+    notifyDrop(source:Ext_dd_DragSource, e:Event, data:Object): boolean;
 
     notifyEnter(source:Ext_dd_DragSource, e:Event, data:Object): String;
 
@@ -5273,11 +5273,11 @@ interface Ext_dd_DropZone extends Ext_dd_DropTarget {
 
     notifyOver(source:Ext_dd_DragSource, e:Event, data:Object): String;
 
-    onContainerDrop(source:Ext_dd_DragSource, e:Event, data:Object): bool;
+    onContainerDrop(source:Ext_dd_DragSource, e:Event, data:Object): boolean;
 
     onContainerOver(source:Ext_dd_DragSource, e:Event, data:Object): String;
 
-    onNodeDrop(nodeData:Object, source:Ext_dd_DragSource, e:Event, data:Object): bool;
+    onNodeDrop(nodeData:Object, source:Ext_dd_DragSource, e:Event, data:Object): boolean;
 
     onNodeEnter(nodeData:Object, source:Ext_dd_DragSource, e:Event, data:Object): void;
 
@@ -5295,7 +5295,7 @@ interface Ext_dd_ScrollManager {
 
     animDuration: number;
 
-    animate: bool;
+    animate: boolean;
 
     ddGroup: string;
 

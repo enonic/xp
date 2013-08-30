@@ -69,7 +69,7 @@ module api_facet {
             return values;
         }
 
-        isDirty():bool {
+        isDirty():boolean {
             for (var i = 0; i < this.facetGroups.length; i++) {
                 if (this.facetGroups[i].isDirty()) {
                     return true;

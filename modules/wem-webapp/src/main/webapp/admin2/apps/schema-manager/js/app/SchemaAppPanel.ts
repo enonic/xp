@@ -6,24 +6,19 @@ module app {
         public static RELATIONSHIP_TYPE = 'RelationshipType';
         public static MIXIN = 'Mixin';
 
-        private browsePanel:app_browse.SchemaBrowsePanel;
-
-        private appBarTabMenu:api_app.AppBarTabMenu;
-
         constructor(appBar:api_app.AppBar) {
-            this.browsePanel = new app_browse.SchemaBrowsePanel();
-            this.appBarTabMenu = appBar.getTabMenu();
+            var browsePanel = new app_browse.SchemaBrowsePanel();
 
             super({
                 appBar: appBar,
-                browsePanel: this.browsePanel,
+                browsePanel: browsePanel,
                 browsePanelActions: app_browse.SchemaBrowseActions.get().getAllActions()
             });
 
             this.handleGlobalEvents();
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground?:bool = false) {
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground:boolean = false) {
             super.addWizardPanel(tabMenuItem, wizardPanel, inBackground);
 
             wizardPanel.getHeader().addListener(
@@ -40,7 +35,7 @@ module app {
 
             api_app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
-                this.appBarTabMenu.deselectNavigationItem();
+                this.getAppBarTabMenu().deselectNavigationItem();
             });
 
             api_ui_tab.TabMenuItemCloseEvent.on((event) => {
@@ -60,7 +55,7 @@ module app {
 
                 var schemaType = event.getSchemaType();
                 var tabId = this.generateTabId(schemaType);
-                var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+                var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
@@ -93,7 +88,7 @@ module app {
                 event.getModels().forEach((schemaModel:api_model.SchemaExtModel) => {
 
                     var tabId = this.generateTabId(schemaModel.data.type, schemaModel.data.name, true);
-                    var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+                    var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
                         this.selectPanel(tabMenuItem);
@@ -160,7 +155,7 @@ module app {
                 event.getModels().forEach((schemaModel:api_model.SchemaExtModel) => {
 
                         var tabId = this.generateTabId(schemaModel.data.type, schemaModel.data.name, false);
-                        var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+                        var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                         if (tabMenuItem != null) {
                             this.selectPanel(tabMenuItem);
@@ -201,7 +196,7 @@ module app {
             });
         }
 
-        private generateTabId(schemaType:string, schemaName ?:string, isEdit ?:bool = false) {
+        private generateTabId(schemaType:string, schemaName?:string, isEdit:boolean = false) {
             return schemaName ? ( isEdit ? 'edit-' : 'view-') + schemaName : 'new-' + schemaType;
         }
 

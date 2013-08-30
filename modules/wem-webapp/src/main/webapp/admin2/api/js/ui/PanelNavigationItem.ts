@@ -8,9 +8,9 @@ module api_ui {
 
         getLabel():string;
 
-        isVisible():bool;
+        isVisible():boolean;
 
-        isRemovable():bool;
+        isRemovable():boolean;
 
     }
 }

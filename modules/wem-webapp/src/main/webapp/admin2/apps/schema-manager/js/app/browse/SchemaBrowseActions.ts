@@ -78,11 +78,11 @@ module app_browse {
 
         static init(treeGridPanel:api_app_browse_grid.TreeGridPanel):SchemaBrowseActions {
             new SchemaBrowseActions(treeGridPanel);
-            return INSTANCE;
+            return SchemaBrowseActions.INSTANCE;
         }
 
         static get():SchemaBrowseActions {
-            return INSTANCE;
+            return SchemaBrowseActions.INSTANCE;
         }
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {

@@ -32,8 +32,8 @@ module api_data{
         }
 
         static from(str:string):DataId {
-            var endsWithEndBracket:bool = str.indexOf(']', str.length - ']'.length) !== -1;
-            var containsStartBracket:bool = str.indexOf('[') !== -1;
+            var endsWithEndBracket:boolean = str.indexOf(']', str.length - ']'.length) !== -1;
+            var containsStartBracket:boolean = str.indexOf('[') !== -1;
 
             if (endsWithEndBracket && containsStartBracket) {
                 var firstBracketPos:number = str.indexOf('[');

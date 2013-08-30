@@ -28,7 +28,7 @@ module api_data{
         }
 
         getDataArray():Data[] {
-            var datas = new Data[];
+            var datas = [];
             for(var i in this.dataById){
                 var data = this.dataById[i];
                 datas.push(data);

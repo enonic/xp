@@ -21,7 +21,7 @@ module api_remote_schema {
         type:string;
         createdTime?:Date;
         modifiedTime?:Date;
-        hasChildren:bool;
+        hasChildren:boolean;
         schemas:SchemaTreeNode[];
     }
 

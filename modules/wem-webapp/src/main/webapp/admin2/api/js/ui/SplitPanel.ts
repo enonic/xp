@@ -95,9 +95,9 @@ module api_ui {
 
     export class SplitPanelSplitter extends api_dom.DivEl {
 
-        private draggable:bool;
+        private draggable:boolean;
 
-        private visible:bool;
+        private visible:boolean;
 
         private splitPanel:SplitPanel;
 
@@ -214,11 +214,11 @@ module api_ui {
             this.setThickness(this.thickness);
         }
 
-        setDraggable(value:bool) {
+        setDraggable(value:boolean) {
             this.draggable = value;
         }
 
-        setVisible(value:bool) {
+        setVisible(value:boolean) {
             this.visible = value;
             this.setThickness(0);
         }

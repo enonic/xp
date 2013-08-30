@@ -6,12 +6,12 @@ module api_remote_account {
         name: string;
         userStore: string;
         qualifiedName: string;
-        builtIn: bool;
+        builtIn: boolean;
         displayName: string;
         modifiedTime: Date;
         createdTime: Date;
-        editable: bool;
-        deleted: bool;
+        editable: boolean;
+        deleted: boolean;
         image_url: string;
         email?: string;
     }
@@ -47,7 +47,7 @@ module api_remote_account {
         title?: string;
         birthday?: Date;
         gender?: string;
-        htmlEmail?: bool;
+        htmlEmail?: boolean;
         locale?: string;
         timezone?: string;
         addresses?: Address[];
@@ -115,7 +115,7 @@ module api_remote_account {
     }
 
     export interface VerifyUniqueEmailResult {
-        emailInUse: bool;
+        emailInUse: boolean;
         key: string;
     }
 
@@ -140,8 +140,8 @@ module api_remote_account {
     }
 
     export interface CreateOrUpdateResult {
-        created: bool;
-        updated: bool;
+        created: boolean;
+        updated: boolean;
     }
 
     export interface DeleteParams {

@@ -6,23 +6,17 @@ module app_browse {
 
         private toolbar:ContentBrowseToolbar;
 
-        private treeGridPanel:app_browse.ContentTreeGridPanel;
-
-        private filterPanel:app_browse_filter.ContentBrowseFilterPanel;
-
-        private browseItemPanel:ContentBrowseItemPanel;
-
         constructor() {
             var treeGridContextMenu = new ContentTreeGridContextMenu();
-            this.treeGridPanel = components.gridPanel = new app_browse.ContentTreeGridPanel({
+            var treeGridPanel = components.gridPanel = new app_browse.ContentTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
 
-            this.browseActions = ContentBrowseActions.init(this.treeGridPanel);
+            this.browseActions = ContentBrowseActions.init(treeGridPanel);
             treeGridContextMenu.setActions(this.browseActions);
 
             this.toolbar = new ContentBrowseToolbar(this.browseActions);
-            this.browseItemPanel =
+            var browseItemPanel =
             components.detailPanel = new ContentBrowseItemPanel({actionMenuActions:[
                 this.browseActions.SHOW_NEW_CONTENT_DIALOG_ACTION,
                 this.browseActions.EDIT_CONTENT,
@@ -31,29 +25,29 @@ module app_browse {
                 this.browseActions.DUPLICATE_CONTENT,
                 this.browseActions.MOVE_CONTENT]});
 
-            this.filterPanel = new app_browse_filter.ContentBrowseFilterPanel();
+            var filterPanel = new app_browse_filter.ContentBrowseFilterPanel();
             var params = createLoadContentParams({});
 
             api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
                 // set facet data
-                this.filterPanel.updateFacets(response.facets);
+                filterPanel.updateFacets(response.facets);
             });
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel: this.treeGridPanel,
-                browseItemPanel: this.browseItemPanel,
-                filterPanel: this.filterPanel});
+                treeGridPanel: treeGridPanel,
+                browseItemPanel: browseItemPanel,
+                filterPanel: filterPanel});
 
             ShowPreviewEvent.on((event) => {
-                this.browseItemPanel.setPreviewMode(true);
+                browseItemPanel.setPreviewMode(true);
             });
 
             ShowDetailsEvent.on((event) => {
-                this.browseItemPanel.setPreviewMode(false);
+                    browseItemPanel.setPreviewMode(false);
             });
 
-            this.treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
+            treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }

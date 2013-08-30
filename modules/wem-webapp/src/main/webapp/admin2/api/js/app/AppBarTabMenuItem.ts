@@ -3,9 +3,9 @@ module api_app{
     export class AppBarTabMenuItem extends api_ui_tab.TabMenuItem {
 
         private itemId: string;
-        private editing:bool;
+        private editing:boolean;
 
-        constructor(label:string, itemId:string, editing?:bool) {
+        constructor(label:string, itemId:string, editing?:boolean) {
             super(label, {removable:true});
             this.editing = editing;
             this.itemId = itemId;
@@ -16,7 +16,7 @@ module api_app{
             }
         }
 
-        isEditing():bool {
+        isEditing():boolean {
             return this.editing;
         }
 

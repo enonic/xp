@@ -25,7 +25,7 @@ var USERSTORES:app_model.UserStore[] = [
     new app_model.UserStore('Some very long value', '4')
 ];
 
-function isUserLoggedIn():bool {
+function isUserLoggedIn():boolean {
     // TODO create utility class for cookie handling, remove dependency to ExtJs
     var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn');
     return dummyCookie && dummyCookie === 'true';

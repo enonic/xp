@@ -42,9 +42,10 @@ module api_ui_menu{
                 setDisplay('block');
         }
 
-        private hide() {
+        //TODO: Does this really need to override Element.hide()?
+        /*private hide() {
             this.getEl().setDisplay('none');
-        }
+        }*/
 
         private hideMenuOnOutsideClick(evt:Event):void {
             var id = this.getId();

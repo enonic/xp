@@ -18,7 +18,7 @@ module app_new {
         private valueSeparator = '|';
 
         public static get():RecentContentTypes {
-            return INSTANCE;
+            return RecentContentTypes.INSTANCE;
         }
 
         public addRecentContentType(contentType:api_remote_contenttype.ContentType) {

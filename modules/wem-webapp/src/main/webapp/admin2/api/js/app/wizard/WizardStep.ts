@@ -3,7 +3,7 @@ module api_app_wizard {
     export class WizardStep {
         private label:string;
         private panel:api_ui.Panel;
-        private active:bool;
+        private active:boolean;
         private el:api_dom.Element;
         private index:number;
 
@@ -24,7 +24,7 @@ module api_app_wizard {
             this.el = el;
         }
 
-        setActive(active:bool) {
+        setActive(active:boolean) {
             this.active = active;
             if (active) {
                 this.el.getEl().addClass("active");
@@ -33,7 +33,7 @@ module api_app_wizard {
             }
         }
 
-        isActive():bool {
+        isActive():boolean {
             return this.active;
         }
 

@@ -13,7 +13,7 @@ module api_ui{
             this.appendChild(this.labelEl);
         }
 
-        setEnabled(value:bool) {
+        setEnabled(value:boolean) {
             this.getEl().setDisabled(!value);
         }
 

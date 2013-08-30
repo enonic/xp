@@ -1,7 +1,7 @@
 module app_model {
 
     export interface Authenticator {
-        authenticate(userName:string, userStore:UserStore, password:string):bool;
+        authenticate(userName:string, userStore:UserStore, password:string):boolean;
     }
 
     export class AuthenticatorImpl implements Authenticator {
@@ -9,7 +9,7 @@ module app_model {
         constructor() {
         }
 
-        authenticate(userName:string, userStore:UserStore, password:string):bool {
+        authenticate(userName:string, userStore:UserStore, password:string):boolean {
             return true; // TODO
         }
 

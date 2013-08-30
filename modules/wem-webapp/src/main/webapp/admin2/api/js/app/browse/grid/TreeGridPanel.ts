@@ -31,7 +31,7 @@ module api_app_browse_grid {
         private keyField:string = 'name';
         private activeList:string = "grid";
         private itemId:string;
-        private refreshNeeded:bool = false;
+        private refreshNeeded:boolean = false;
 
         private contextMenu:api_ui_menu.ContextMenu;
 
@@ -197,11 +197,11 @@ module api_app_browse_grid {
             this.refreshNeeded = false;
         }
 
-        isRefreshNeeded():bool {
+        isRefreshNeeded():boolean {
             return this.refreshNeeded;
         }
 
-        setRefreshNeeded(refreshNeeded:bool) {
+        setRefreshNeeded(refreshNeeded:boolean) {
             this.refreshNeeded = refreshNeeded;
         }
 
@@ -268,7 +268,7 @@ module api_app_browse_grid {
 
     interface GridToolbarPlugin extends Ext_AbstractPlugin {
 
-        setResultCountVisible(visible:bool): void;
+        setResultCountVisible(visible:boolean): void;
 
         updateResultCount(count:number): void;
     }

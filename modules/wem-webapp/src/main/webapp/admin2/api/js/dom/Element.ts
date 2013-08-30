@@ -12,7 +12,7 @@ module api_dom {
 
         private children:Element[];
 
-        private rendered:bool;
+        private rendered:boolean;
 
         constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {
             this.rendered = false;
@@ -89,7 +89,7 @@ module api_dom {
             return this;
         }
 
-        hasClass(className:string):bool {
+        hasClass(className:string):boolean {
             return this.el.hasClass(className);
         }
 
@@ -169,10 +169,13 @@ module api_dom {
 
         remove() {
             var htmlEl = this.el.getHTMLElement();
-            htmlEl.parentElement.removeChild(htmlEl);
+            var parent = htmlEl.parentElement;
+            if (parent) {
+                parent.removeChild(htmlEl);
+            }
         }
 
-        isRendered():bool {
+        isRendered():boolean {
             return this.rendered;
         }
 

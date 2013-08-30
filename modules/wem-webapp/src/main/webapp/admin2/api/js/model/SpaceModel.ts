@@ -9,8 +9,8 @@ module api_model {
             createdTime:Date;
             modifiedTime:Date;
 
-            editable:bool;
-            deletable:bool;
+            editable:boolean;
+            deletable:boolean;
         };
     }
 }

@@ -15,7 +15,7 @@ module api_ui {
             super(idPrefix || "DeckPanel");
         }
 
-        isEmpty():bool {
+        isEmpty():boolean {
             return this.panels.length == 0;
         }
 
@@ -65,7 +65,7 @@ module api_ui {
          * Removes panel specified by given index. Method canRemovePanel will be called to know if specified panel is allowed to be removed.
          * @returns {Panel} the removed panel. Null if not was not removable.
          */
-        removePanelByIndex(index:number, checkCanRemovePanel?:bool = true):Panel {
+        removePanelByIndex(index:number, checkCanRemovePanel:boolean = true):Panel {
             var panelToRemove = this.getPanel(index);
             return this.removePanel(panelToRemove, checkCanRemovePanel) ? panelToRemove : null;
         }
@@ -74,7 +74,7 @@ module api_ui {
          * Removes given panel. Method canRemovePanel will be called to know if specified panel is allowed to be removed.
          * @returns {number} the index of the removed panel. -1 if it was not removable.
          */
-        removePanel(panelToRemove:Panel, checkCanRemovePanel?:bool = true):number {
+        removePanel(panelToRemove:Panel, checkCanRemovePanel:boolean = true):number {
 
             var index:number = this.getPanelIndex(panelToRemove);
 
@@ -103,7 +103,7 @@ module api_ui {
         /*
          * Override this method to decide whether given panel at given index can be removed or not. Default is true.
          */
-        canRemovePanel(panel:Panel):bool {
+        canRemovePanel(panel:Panel):boolean {
             return true;
         }
 

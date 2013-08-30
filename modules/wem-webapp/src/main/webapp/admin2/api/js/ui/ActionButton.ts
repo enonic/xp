@@ -5,7 +5,7 @@ module api_ui{
         private action:Action;
         private tooltip:Tooltip;
 
-        constructor(idPrefix:string, action:Action, showTooltip:bool = true) {
+        constructor(idPrefix:string, action:Action, showTooltip:boolean = true) {
             super(idPrefix);
 
             this.action = action;
@@ -39,7 +39,7 @@ module api_ui{
             });
         }
 
-        setEnabled(value:bool) {
+        setEnabled(value:boolean) {
             this.getEl().setDisabled(!value);
         }
 

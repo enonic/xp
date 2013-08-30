@@ -18,7 +18,7 @@ module api_ui {
             CodeMirror.autoLoadMode(this.codeMirror, this.mode);
         }
 
-        setLineNumbers(value:bool) {
+        setLineNumbers(value:boolean) {
             this.options.lineNumbers = value;
         }
 

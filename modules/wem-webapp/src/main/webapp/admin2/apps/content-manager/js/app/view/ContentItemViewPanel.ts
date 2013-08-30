@@ -13,7 +13,7 @@ module app_view {
 
         private previewPanel;
 
-        private previewMode:bool;
+        private previewMode:boolean;
 
         private previewPanelIndex:number;
 
@@ -70,7 +70,7 @@ module app_view {
         }
 
 
-        public showPreview(enabled:bool) {
+        public showPreview(enabled:boolean) {
             this.previewMode = enabled;
             // refresh the view
             if (enabled) {

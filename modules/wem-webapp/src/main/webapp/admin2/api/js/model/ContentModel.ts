@@ -12,11 +12,11 @@ module api_model {
             iconUrl:string;
             modifiedTime:Date;
             createdTime:Date;
-            editable:bool;
-            deletable:bool;
-            allowsChildren:bool;
-            hasChildren:bool;
-            leaf:bool;
+            editable:boolean;
+            deletable:boolean;
+            allowsChildren:boolean;
+            hasChildren:boolean;
+            leaf:boolean;
         };
     }
 }

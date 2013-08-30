@@ -5,7 +5,7 @@ module api_dom {
         private static instance:Body = new Body();
 
         static get():Body {
-            return instance;
+            return Body.instance;
         }
 
         constructor() {

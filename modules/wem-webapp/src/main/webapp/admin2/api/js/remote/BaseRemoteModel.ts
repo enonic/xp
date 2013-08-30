@@ -1,8 +1,8 @@
 module api_remote {
 
     export interface Item {
-        editable:bool;
-        deletable:bool;
+        editable:boolean;
+        deletable:boolean;
     }
 
     export interface FailureResult {

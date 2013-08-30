@@ -7,9 +7,9 @@ module api_remote_contenttype {
         displayName: string;
         contentDisplayNameScript: string;
         superType: string;
-        isAbstract: bool;
-        isFinal: bool;
-        allowChildren: bool;
+        isAbstract: boolean;
+        isFinal: boolean;
+        allowChildren: boolean;
         createdTime?: Date;
         modifiedTime?: Date;
         iconUrl: string;
@@ -18,7 +18,7 @@ module api_remote_contenttype {
 
     export interface ContentTypeTreeNode extends ContentType {
         iconUrl:string;
-        hasChildren:bool;
+        hasChildren:boolean;
         contentTypes:ContentTypeTreeNode[];
     }
 
@@ -36,7 +36,7 @@ module api_remote_contenttype {
     export interface FormItemSet {
         name: string;
         label: string;
-        immutable: bool;
+        immutable: boolean;
         occurrences: Occurrences;
         customText: string;
         helpText: string;
@@ -53,9 +53,9 @@ module api_remote_contenttype {
     export interface Input {
         name: string;
         label: string;
-        immutable: bool;
+        immutable: boolean;
         occurrences: Occurrences;
-        indexed: bool;
+        indexed: boolean;
         customText: string;
         validationRegexp?: string;
         helpText: string;
@@ -70,7 +70,7 @@ module api_remote_contenttype {
 
     export interface InputType {
         name: string;
-        builtIn: bool;
+        builtIn: boolean;
     }
 
     export interface InputTypeConfig {
@@ -85,7 +85,7 @@ module api_remote_contenttype {
     export interface GetParams {
         qualifiedNames: string[];
         format: string;
-        mixinReferencesToFormItems?: bool;
+        mixinReferencesToFormItems?: boolean;
     }
 
     export interface GetResult {
@@ -101,8 +101,8 @@ module api_remote_contenttype {
     }
 
     export interface CreateOrUpdateResult {
-        created: bool;
-        updated: bool;
+        created: boolean;
+        updated: boolean;
         failure?: string;
     }
 

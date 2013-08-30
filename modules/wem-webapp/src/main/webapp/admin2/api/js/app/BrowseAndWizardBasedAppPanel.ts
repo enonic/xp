@@ -39,7 +39,11 @@ module api_app {
             });
         }
 
-        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground?:bool = false) {
+        getAppBarTabMenu():api_app.AppBarTabMenu {
+            return this.appBarTabMenu;
+        }
+
+        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground:boolean = false) {
             super.addNavigationItem(tabMenuItem, wizardPanel, inBackground);
 
             wizardPanel.addListener({
@@ -49,7 +53,7 @@ module api_app {
             });
         }
 
-        canRemovePanel(panel:api_ui.Panel):bool {
+        canRemovePanel(panel:api_ui.Panel):boolean {
             if (panel instanceof api_app_wizard.WizardPanel) {
                 var wizardPanel:api_app_wizard.WizardPanel = <api_app_wizard.WizardPanel>panel;
                 return wizardPanel.canClose();

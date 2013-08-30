@@ -2,7 +2,7 @@ module api_dom {
 
     export class ImgHelper extends ElementHelper {
 
-        private el:HTMLImageElement;
+        private imgEl:HTMLImageElement;
 
         static create():ElementHelper {
             return new ImgHelper(<HTMLImageElement>document.createElement("img"));
@@ -10,15 +10,15 @@ module api_dom {
 
         constructor(element:HTMLImageElement) {
             super(<HTMLElement>element);
-            this.el = element;
+            this.imgEl = element;
         }
 
         getHTMLElement():HTMLImageElement {
-            return this.el;
+            return this.imgEl;
         }
 
         setSrc(value:string):ImgHelper {
-            this.el.src = value;
+            this.imgEl.src = value;
             return this;
         }
     }

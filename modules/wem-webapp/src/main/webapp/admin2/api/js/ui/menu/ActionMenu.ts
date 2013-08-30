@@ -36,7 +36,7 @@ module api_ui_menu {
             this.list.hide();
         }
 
-        setEnabled(enabled:bool) {
+        setEnabled(enabled:boolean) {
             this.button.setEnabled(enabled);
         }
 

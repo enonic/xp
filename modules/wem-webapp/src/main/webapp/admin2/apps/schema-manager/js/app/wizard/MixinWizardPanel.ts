@@ -12,9 +12,7 @@ module app_wizard {
 
         private formIcon:api_app_wizard.FormIcon;
 
-        private toolbar:api_ui_toolbar.Toolbar;
-
-        private header:api_app_wizard.WizardHeaderWithName;
+        private mixinWizardHeader:api_app_wizard.WizardHeaderWithName;
 
         private persistedMixin:api_remote_mixin.Mixin;
 
@@ -22,24 +20,24 @@ module app_wizard {
 
         constructor(id:string) {
 
-            this.header = new api_app_wizard.WizardHeaderWithName();
+            this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
             this.closeAction = new api_app_wizard.CloseAction(this);
             this.saveAction = new api_app_wizard.SaveAction(this);
 
-            this.toolbar = new MixinWizardToolbar({
+            var toolbar = new MixinWizardToolbar({
                 saveAction: this.saveAction,
                 closeAction: this.closeAction
             });
 
             super({
                 formIcon: this.formIcon,
-                toolbar: this.toolbar,
-                header: this.header
+                toolbar: toolbar,
+                header: this.mixinWizardHeader
             });
 
-            this.header.setName(MixinWizardPanel.NEW_WIZARD_HEADER);
+            this.mixinWizardHeader.setName(MixinWizardPanel.NEW_WIZARD_HEADER);
 
             this.mixinForm = new MixinForm();
             this.addStep(new api_app_wizard.WizardStep("Mixin", this.mixinForm));
@@ -48,7 +46,7 @@ module app_wizard {
         setPersistedItem(mixin:api_remote_mixin.Mixin) {
             super.setPersistedItem(mixin);
 
-            this.header.setName(mixin.name);
+            this.mixinWizardHeader.setName(mixin.name);
             this.formIcon.setSrc(mixin.iconUrl);
 
             this.persistedMixin = mixin;
@@ -66,7 +64,7 @@ module app_wizard {
         persistNewItem(successCallback?:() => void) {
             var formData = this.mixinForm.getFormData();
             var createParams:api_remote_mixin.CreateOrUpdateParams = {
-                name: this.header.getName(),
+                name: this.mixinWizardHeader.getName(),
                 mixin: formData.xml,
                 iconReference: this.getIconUrl()
             };
@@ -84,7 +82,7 @@ module app_wizard {
         updatePersistedItem(successCallback?:() => void) {
             var formData = this.mixinForm.getFormData();
             var updateParams:api_remote_mixin.CreateOrUpdateParams = {
-                name: this.header.getName(),
+                name: this.mixinWizardHeader.getName(),
                 mixin: formData.xml,
                 iconReference: this.getIconUrl()
             };

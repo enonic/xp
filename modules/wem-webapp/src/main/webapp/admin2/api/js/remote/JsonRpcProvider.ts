@@ -49,7 +49,7 @@ module api_remote {
         }
 
         private createEvent(response:any):Ext_direct_Event {
-            var error:bool = response.error ? true : false;
+            var error:boolean = response.error ? true : false;
 
             response.tid = response.id;
             response.type = error ? 'exception' : 'rpc';
@@ -62,7 +62,7 @@ module api_remote {
         }
 
         private runCallback(transaction, event) {
-            var success:bool,
+            var success:boolean,
                 successCallback:(successResult:any, event:any) => void,
                 failureCallback:(failureResult:FailureResult, event:any) => void,
                 result:any,

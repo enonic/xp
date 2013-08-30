@@ -9,8 +9,6 @@ module api_app_wizard {
 
         private noAction = new api_ui.Action('No');
 
-        private cancelAction = new api_ui.Action('Cancel', 'esc');
-
         constructor(wizardPanel:api_app_wizard.WizardPanel) {
             super({
                 idPrefix: "SaveBeforeCloseDialog",
@@ -19,10 +17,12 @@ module api_app_wizard {
                 height: 180
             });
 
+            this.setCancelAction(new api_ui.Action('Cancel', 'esc'));
+
             this.wizardPanel = wizardPanel;
 
-            this.cancelAction.setMnemonic("c");
-            this.cancelAction.addExecutionListener(() => {
+            this.getCancelAction().setMnemonic("c");
+            this.getCancelAction().addExecutionListener(() => {
                 this.close();
             });
 
@@ -41,7 +41,6 @@ module api_app_wizard {
             message.getEl().setInnerHtml("There are unsaved changes, do you want to save them before closing?");
             this.appendChildToContentPanel(message);
 
-            this.setCancelAction(this.cancelAction);
             this.addAction(this.noAction);
             this.addAction(this.yesAction);
         }

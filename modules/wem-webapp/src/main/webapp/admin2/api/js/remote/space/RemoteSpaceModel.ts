@@ -1,8 +1,8 @@
 module api_remote_space {
 
     export interface Space extends SpaceSummary {
-        deletable:bool;
-        editable:bool;
+        deletable:boolean;
+        editable:boolean;
     }
 
     export interface SpaceSummary extends api_remote.Item {
@@ -48,8 +48,8 @@ module api_remote_space {
     }
 
     export interface CreateOrUpdateResult {
-        created:bool;
-        updated:bool;
+        created:boolean;
+        updated:boolean;
     }
 
     export interface DeleteParams {
@@ -57,7 +57,7 @@ module api_remote_space {
     }
 
     export interface DeleteResult {
-        deleted:bool;
+        deleted:boolean;
         failureReason?:string;
     }
 }

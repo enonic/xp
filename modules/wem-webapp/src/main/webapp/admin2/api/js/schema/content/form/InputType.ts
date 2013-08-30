@@ -4,7 +4,7 @@ module api_schema_content_form{
 
         private name:string;
 
-        private builtIn:bool;
+        private builtIn:boolean;
 
         constructor(json:any) {
             this.name = json.name;
@@ -15,7 +15,7 @@ module api_schema_content_form{
             return this.name;
         }
 
-        isBuiltIn():bool {
+        isBuiltIn():boolean {
             return this.builtIn;
         }
     }

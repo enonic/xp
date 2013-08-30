@@ -17,7 +17,7 @@ module api_content{
             var spaceName:string;
             var path:string;
             var spacePrefixDividerPos:number = s.indexOf(ContentPath.SPACE_PREFIX_DIVIDER);
-            var absolute:bool = spacePrefixDividerPos > -1;
+            var absolute:boolean = spacePrefixDividerPos > -1;
             if (absolute) {
                 path = s.substr(spacePrefixDividerPos + 1, s.length);
                 spaceName = s.substr(0, spacePrefixDividerPos);

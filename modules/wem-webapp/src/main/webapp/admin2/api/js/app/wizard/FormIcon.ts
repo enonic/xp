@@ -25,7 +25,7 @@ module api_app_wizard {
             this.tooltip = new api_ui.Tooltip(this, iconTitle, 0, 0);
 
             var img = this.img = new api_dom.ImgEl(this.iconUrl, "FormIcon");
-            img.getEl().addEventListener("load", function () => {
+            img.getEl().addEventListener("load", () => {
                 if (img.isVisible()) {
                     this.tooltip.showFor(10000);
                 }
@@ -36,7 +36,7 @@ module api_app_wizard {
                 this.progress = new api_ui.ProgressBar();
                 el.appendChild(this.progress.getHTMLElement());
 
-                var firstClickHandler = function (event:Event) => {
+                var firstClickHandler = (event:Event) => {
                     if (!me.uploader) {
                         if (!plupload) {
                             console.log('FormIcon: plupload not found, check if it is included in page.');
@@ -90,19 +90,19 @@ module api_app_wizard {
                 up.start();
             });
 
-            uploader.bind('UploadFile', function (up, file) => {
+            uploader.bind('UploadFile', (up, file) => {
                 console.log('uploader upload file', up, file);
 
                 this.progress.show();
             });
 
-            uploader.bind('UploadProgress', function (up, file) => {
+            uploader.bind('UploadProgress', (up, file) => {
                 console.log('uploader upload progress', up, file);
 
                 this.progress.setValue(file.percent);
             });
 
-            uploader.bind('FileUploaded', function (up, file, response) => {
+            uploader.bind('FileUploaded', (up, file, response) => {
                 console.log('uploader file uploaded', up, file, response);
 
                 var responseObj, uploadedResUrl;

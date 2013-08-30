@@ -5,12 +5,12 @@ module api_ui {
         /*
          * Issue closing. Implementations are expected to call canClose if checkCanClose is true.
          */
-        close(checkCanClose?:bool);
+        close(checkCanClose?:boolean);
 
         /*
          * Whether object can be closed or not.
          */
-        canClose():bool;
+        canClose():boolean;
 
         /*
          * Override this method if other closing logic is needed.

@@ -2,18 +2,13 @@ module app {
 
     export class ContentAppPanel extends api_app.BrowseAndWizardBasedAppPanel {
 
-        private browsePanel:app_browse.ContentBrowsePanel;
-
-        private appBarTabMenu:api_app.AppBarTabMenu;
-
         constructor(appBar:api_app.AppBar) {
 
-            this.browsePanel = new app_browse.ContentBrowsePanel();
-            this.appBarTabMenu = appBar.getTabMenu();
+            var browsePanel = new app_browse.ContentBrowsePanel();
 
             super({
                 appBar: appBar,
-                browsePanel: this.browsePanel,
+                browsePanel: browsePanel,
                 browsePanelActions: app_browse.ContentBrowseActions.get().getAllActions()
             });
 
@@ -31,7 +26,7 @@ module app {
 
             api_app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
-                this.appBarTabMenu.deselectNavigationItem();
+                this.getAppBarTabMenu().deselectNavigationItem();
             });
 
             api_ui_tab.TabMenuItemCloseEvent.on((event) => {
@@ -45,7 +40,7 @@ module app {
             });
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground?:bool = false) {
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground:boolean = false) {
             super.addWizardPanel(tabMenuItem, wizardPanel, inBackground);
 
             wizardPanel.getHeader().addListener(
@@ -61,7 +56,7 @@ module app {
         private handleNew(contentType:api_remote_contenttype.ContentType, parentContent:api_remote_content.Content) {
 
             var tabId = this.generateTabId();
-            var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+            var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
             if (tabMenuItem != null) {
                 this.selectPanel(tabMenuItem);
@@ -82,7 +77,7 @@ module app {
             contents.forEach((contentModel:api_model.ContentExtModel) => {
 
                 var tabId = this.generateTabId(contentModel.data.path, false);
-                var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+                var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
@@ -111,7 +106,7 @@ module app {
             contents.forEach((contentModel:api_model.ContentExtModel) => {
 
                 var tabId = this.generateTabId(contentModel.data.path, true);
-                var tabMenuItem = this.appBarTabMenu.getNavigationItemById(tabId);
+                var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
@@ -163,7 +158,7 @@ module app {
             });
         }
 
-        private generateTabId(contentName?:string, isEdit?:bool = false) {
+        private generateTabId(contentName?:string, isEdit:boolean = false) {
             return contentName ? ( isEdit ? 'edit-' : 'view-') + contentName : 'new-';
         }
     }

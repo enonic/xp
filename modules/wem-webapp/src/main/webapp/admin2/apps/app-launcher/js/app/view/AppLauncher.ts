@@ -28,7 +28,7 @@ module app_view {
             }
             var appName = app.getName();
             var appIframe:api_dom.IFrameEl = this.appIframes[ appName];
-            var iFrameExist:bool = !!appIframe;
+            var iFrameExist:boolean = !!appIframe;
 
             this.mainContainer.hide();
             for (var name in this.appIframes) {

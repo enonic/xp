@@ -2,8 +2,6 @@ module app_new {
 
     export class NewSchemaDialog extends api_ui_dialog.ModalDialog {
 
-        private cancelAction:api_ui.Action = new CancelNewDialogAction();
-
         private schemaTypesList:SchemaTypesList;
 
         private schemaTypeListItems:SchemaTypeListItem[] = [
@@ -36,8 +34,8 @@ module app_new {
             this.schemaTypesList = new SchemaTypesList(this.schemaTypeListItems);
             this.appendChildToContentPanel(this.schemaTypesList);
 
-            this.setCancelAction(this.cancelAction);
-            this.cancelAction.addExecutionListener(()=> {
+            this.setCancelAction(new CancelNewDialogAction());
+            this.getCancelAction().addExecutionListener(()=> {
                 this.close();
             });
 

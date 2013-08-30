@@ -26,7 +26,7 @@ module api_app_wizard {
         private stepPanels:api_app_wizard.WizardStepDeckPanel;
 
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
-        private isChanged:bool = true;
+        private isChanged:boolean = true;
 
         private previous:WizardStepNavigationArrow;
 
@@ -71,7 +71,7 @@ module api_app_wizard {
             }
         }
 
-        toggleFormPanel(toggle:bool) {
+        toggleFormPanel(toggle:boolean) {
             if (toggle) {
                 this.backPanel.showPanel(0)
             } else {
@@ -115,7 +115,8 @@ module api_app_wizard {
             this.persistedItem = item;
         }
 
-        isItemPersisted():bool {
+
+        isItemPersisted():boolean {
             return this.persistedItem != null;
         }
 
@@ -128,7 +129,7 @@ module api_app_wizard {
             this.stepNavigator.addStep(step);
         }
 
-        close(checkCanClose?:bool = false) {
+        close(checkCanClose:boolean = false) {
 
             if (checkCanClose) {
                 if (this.canClose()) {
@@ -140,7 +141,7 @@ module api_app_wizard {
             }
         }
 
-        canClose():bool {
+        canClose():boolean {
 
             if (this.hasUnsavedChanges()) {
                 this.askUserForSaveChangesBeforeClosing();
@@ -158,7 +159,7 @@ module api_app_wizard {
         /*
          * Override this method in specific wizard to do proper check.
          */
-        hasUnsavedChanges():bool {
+        hasUnsavedChanges():boolean {
             return this.isChanged;
         }
 

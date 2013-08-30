@@ -39,12 +39,12 @@ module api_dom {
             return previous ? new ElementHelper(<HTMLElement> previous) : null;
         }
 
-        setDisabled(value:bool):ElementHelper {
+        setDisabled(value:boolean):ElementHelper {
             this.el.disabled = value;
             return this;
         }
 
-        isDisabled():bool {
+        isDisabled():boolean {
             return this.el.disabled;
         }
 
@@ -71,7 +71,7 @@ module api_dom {
             return this.el.getAttribute(name);
         }
 
-        hasAttribute(name:string):bool {
+        hasAttribute(name:string):boolean {
             return this.el.hasAttribute(name);
         }
 
@@ -106,7 +106,7 @@ module api_dom {
             return this;
         }
 
-        hasClass(clsName:string):bool {
+        hasClass(clsName:string):boolean {
             return this.el.className.match(new RegExp('(\\s|^)' + clsName + '(\\s|$)')) !== null;
         }
 

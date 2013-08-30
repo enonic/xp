@@ -2,7 +2,7 @@ module api_remote_userstore {
 
     export interface UserStore {
         name: string;
-        defaultStore: bool;
+        defaultStore: boolean;
         connectorName: string;
         configXML?: string;
         userFields?: UserStoreFieldConfig[];
@@ -17,40 +17,40 @@ module api_remote_userstore {
 
     export interface UserStoreFieldConfig {
         type: string;
-        readOnly: bool;
-        remote: bool;
-        required: bool;
-        iso: bool;
+        readOnly: boolean;
+        remote: boolean;
+        required: boolean;
+        iso: boolean;
     }
 
     export interface UserPolicy {
-        create: bool;
-        updatePassword: bool;
-        update: bool;
-        delete: bool;
+        create: boolean;
+        updatePassword: boolean;
+        update: boolean;
+        delete: boolean;
     }
 
     export interface GroupPolicy {
-        create: bool;
-        read: bool;
-        update: bool;
-        delete: bool;
+        create: boolean;
+        read: boolean;
+        update: boolean;
+        delete: boolean;
     }
 
     export interface UserStoreConnector {
         name: string;
         pluginType: string;
-        canCreateUser: bool;
-        canUpdateUser: bool;
-        canUpdateUserPassword: bool;
-        canDeleteUser: bool;
-        canCreateGroup: bool;
-        canUpdateGroup: bool;
-        canDeleteGroup: bool;
-        canReadGroup: bool;
-        canResurrectDeletedGroups: bool;
-        canResurrectDeletedUsers: bool;
-        groupsLocal: bool;
+        canCreateUser: boolean;
+        canUpdateUser: boolean;
+        canUpdateUserPassword: boolean;
+        canDeleteUser: boolean;
+        canCreateGroup: boolean;
+        canUpdateGroup: boolean;
+        canDeleteGroup: boolean;
+        canReadGroup: boolean;
+        canResurrectDeletedGroups: boolean;
+        canResurrectDeletedUsers: boolean;
+        groupsLocal: boolean;
     }
 
     export interface GetAllParams {
@@ -66,7 +66,7 @@ module api_remote_userstore {
     }
 
     export interface GetResult extends UserStore {
-        success: bool;
+        success: boolean;
         error?: string;
     }
 
@@ -80,15 +80,15 @@ module api_remote_userstore {
 
     export interface CreateOrUpdateParams {
         name: string[];
-        defaultUserstore: bool;
+        defaultUserstore: boolean;
         configXML: string;
         connectorName: string;
         administrators: string[];
     }
 
     export interface CreateOrUpdateResult {
-        created: bool;
-        updated: bool;
+        created: boolean;
+        updated: boolean;
     }
 
     export interface DeleteParams {

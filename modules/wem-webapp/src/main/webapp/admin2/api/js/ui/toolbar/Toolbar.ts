@@ -63,7 +63,7 @@ module api_ui_toolbar {
             return button;
         }
 
-        private hasGreedySpacer():bool {
+        private hasGreedySpacer():boolean {
             for (var i in this.components) {
                 var comp = this.components[i];
                 if (comp instanceof ToolbarGreedySpacer) {
@@ -74,20 +74,20 @@ module api_ui_toolbar {
         }
     }
 
-    class ToolbarButton extends api_ui.ActionButton {
+    export class ToolbarButton extends api_ui.ActionButton {
 
         constructor(action:api_ui.Action) {
             super("ToolbarButton", action, true);
         }
 
-        setFloatRight(value:bool) {
+        setFloatRight(value:boolean) {
             if (value) {
                 this.getEl().addClass('pull-right');
             }
         }
     }
 
-    class ToolbarGreedySpacer {
+    export class ToolbarGreedySpacer {
         constructor() {
         }
     }

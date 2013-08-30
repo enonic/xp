@@ -12,9 +12,7 @@ module app_wizard {
 
         private formIcon:api_app_wizard.FormIcon;
 
-        private toolbar:api_ui_toolbar.Toolbar;
-
-        private header:api_app_wizard.WizardHeaderWithName;
+        private contentTypeWizardHeader:api_app_wizard.WizardHeaderWithName;
 
         private persistedContentType:api_remote_contenttype.ContentType;
 
@@ -22,25 +20,25 @@ module app_wizard {
 
         constructor(id:string) {
 
-            this.header = new api_app_wizard.WizardHeaderWithName();
+            this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
             new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
 
             this.closeAction = new api_app_wizard.CloseAction(this);
             this.saveAction = new api_app_wizard.SaveAction(this);
 
-            this.toolbar = new ContentTypeWizardToolbar({
+            var toolbar = new ContentTypeWizardToolbar({
                 saveAction: this.saveAction,
                 closeAction: this.closeAction
             });
 
             super({
                 formIcon: this.formIcon,
-                toolbar: this.toolbar,
-                header: this.header
+                toolbar: toolbar,
+                header: this.contentTypeWizardHeader
             });
 
-            this.header.setName(ContentTypeWizardPanel.NEW_WIZARD_HEADER);
+            this.contentTypeWizardHeader.setName(ContentTypeWizardPanel.NEW_WIZARD_HEADER);
 
             this.contentTypeForm = new ContentTypeForm();
 
@@ -52,7 +50,7 @@ module app_wizard {
         setPersistedItem(contentType:api_remote_contenttype.ContentType) {
             super.setPersistedItem(contentType);
 
-            this.header.setName(contentType.name);
+            this.contentTypeWizardHeader.setName(contentType.name);
             this.formIcon.setSrc(contentType.iconUrl);
 
             this.persistedContentType = contentType;
@@ -70,7 +68,7 @@ module app_wizard {
         persistNewItem(successCallback?:() => void) {
             var formData = this.contentTypeForm.getFormData();
             var createParams:api_remote_contenttype.CreateOrUpdateParams = {
-                name: this.header.getName(),
+                name: this.contentTypeWizardHeader.getName(),
                 contentType: formData.xml,
                 iconReference: this.getIconUrl()
             };
@@ -89,7 +87,7 @@ module app_wizard {
         updatePersistedItem(successCallback?:() => void) {
             var formData = this.contentTypeForm.getFormData();
             var updateParams:api_remote_contenttype.CreateOrUpdateParams = {
-                name: this.header.getName(),
+                name: this.contentTypeWizardHeader.getName(),
                 contentType: formData.xml,
                 iconReference: this.getIconUrl()
             };

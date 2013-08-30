@@ -54,7 +54,7 @@ module app_new {
             li.appendChild(img);
             li.appendChild(h6);
 
-            li.getEl().addEventListener("click", function (event:Event) => {
+            li.getEl().addEventListener("click", (event:Event) => {
                 this.notifySelected(item);
             });
             return li;

@@ -19,8 +19,8 @@ module api_app {
         }
 
         static instance():AppBridge {
-            if (_instance) {
-                return _instance;
+            if (AppBridge._instance) {
+                return AppBridge._instance;
             } else if (window !== window.parent) {
                 // look for instance in parent frame
 
@@ -28,11 +28,11 @@ module api_app {
                 if (apiAppModule && apiAppModule.AppBridge) {
                     var parentAppBridge = <AppBridge> apiAppModule.AppBridge.instance();
                     if (parentAppBridge) {
-                        _instance = parentAppBridge;
+                        AppBridge._instance = parentAppBridge;
                     }
                 }
             }
-            return _instance;
+            return AppBridge._instance;
         }
     }
 }

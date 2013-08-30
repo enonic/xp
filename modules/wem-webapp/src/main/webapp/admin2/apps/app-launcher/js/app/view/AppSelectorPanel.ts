@@ -170,7 +170,7 @@ module app_view {
             appTile.hide();
         }
 
-        private isAppTileVisible(appIndex:number):bool {
+        private isAppTileVisible(appIndex:number):boolean {
             return this.appTiles[this.apps[appIndex].getName()].isVisible();
         }
 

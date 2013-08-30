@@ -1,6 +1,7 @@
 // Globals
 declare var $liveEdit;
 declare var LiveEditMutationSummary;
+declare var LiveEdit;
 
 ///<reference path='../lib/jquery-1.8.3.d.ts' />
 ///<reference path='../lib/jqueryui.d.ts' />
@@ -48,7 +49,7 @@ declare var LiveEditMutationSummary;
 
     $(window).load(() => {
         // Fade out the loader splash and start the app.
-        var loaderSplash:JQuery = $('.live-edit-loader-splash-container');
+        var loaderSplash = $('.live-edit-loader-splash-container');
         loaderSplash.fadeOut('fast', () => {
             loaderSplash.remove();
 

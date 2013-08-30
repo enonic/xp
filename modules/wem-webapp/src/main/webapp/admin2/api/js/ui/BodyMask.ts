@@ -8,7 +8,7 @@ module api_ui{
         private static instance:BodyMask = new BodyMask();
 
         static get():BodyMask {
-            return instance;
+            return BodyMask.instance;
         }
 
         constructor() {

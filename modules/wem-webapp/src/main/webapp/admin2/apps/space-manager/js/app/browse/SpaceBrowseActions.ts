@@ -56,11 +56,11 @@ module app_browse {
 
         static init(treeGridPanel:api_app_browse_grid.TreeGridPanel):SpaceBrowseActions {
             new SpaceBrowseActions(treeGridPanel);
-            return INSTANCE;
+            return SpaceBrowseActions.INSTANCE;
         }
 
         static get():SpaceBrowseActions {
-            return INSTANCE;
+            return SpaceBrowseActions.INSTANCE;
         }
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
@@ -102,7 +102,7 @@ module app_browse {
             return this.allActions;
         }
 
-        private anyEditable(spaces:api_model.SpaceExtModel[]):bool {
+        private anyEditable(spaces:api_model.SpaceExtModel[]):boolean {
             for (var i in spaces) {
                 var space:api_model.SpaceExtModel = spaces[i];
                 if (space.data.editable) {
@@ -112,7 +112,7 @@ module app_browse {
             return false;
         }
 
-        private anyDeleteable(spaces:api_model.SpaceExtModel[]):bool {
+        private anyDeleteable(spaces:api_model.SpaceExtModel[]):boolean {
             for (var i in spaces) {
                 var space:api_model.SpaceExtModel = spaces[i];
                 if (space.data.deletable) {

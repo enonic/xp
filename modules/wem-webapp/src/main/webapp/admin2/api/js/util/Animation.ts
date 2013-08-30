@@ -7,17 +7,17 @@ module api_util {
         private duration:number;
         private interval:number;
 
-        private doStep:(progress:number)=>{};
+        private doStep:(progress:number)=>void;
 
         private id:number;
-        private running:bool = false;
+        private running:boolean = false;
 
         constructor(duration:number, interval:number = Animation.DEFAULT_INTERVAL) {
             this.duration = duration;
             this.interval = interval;
         }
 
-        onStep(doStep:(progress)=>{}):void {
+        onStep(doStep:(progress)=>void):void {
             this.doStep = doStep;
         }
 
@@ -45,7 +45,7 @@ module api_util {
             this.running = false;
         }
 
-        isRunning():bool {
+        isRunning():boolean {
             return this.running;
         }
 

@@ -2,8 +2,6 @@ module app_delete {
 
     export class ContentDeleteDialog extends api_app_delete.DeleteDialog {
 
-        private deleteAction:api_ui.Action = new ContentDeleteDialogAction();
-
         private contentToDelete:api_model.ContentExtModel[];
 
         private deleteHandler:api_handler.DeleteContentHandler = new api_handler.DeleteContentHandler();
@@ -11,9 +9,9 @@ module app_delete {
         constructor() {
             super("Content");
 
-            this.setDeleteAction(this.deleteAction);
+            this.setDeleteAction(new ContentDeleteDialogAction());
 
-            this.deleteAction.addExecutionListener(() => {
+            this.getDeleteAction().addExecutionListener(() => {
                 this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(this.contentToDelete),
                     (result) => {
                         this.close();

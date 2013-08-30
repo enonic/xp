@@ -71,8 +71,8 @@ module api_facet {
             }
         }
 
-        isDirty():bool {
-            var isDirty:bool = false;
+        isDirty():boolean {
+            var isDirty:boolean = false;
             for (var i = 0; i < this.facets.length; i++) {
                 if (this.facets[i].isDirty()) {
                     isDirty = true;
