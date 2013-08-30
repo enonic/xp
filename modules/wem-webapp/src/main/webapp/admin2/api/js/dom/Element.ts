@@ -156,13 +156,22 @@ module api_dom {
             return this.children;
         }
 
+        getLastChild():Element {
+            return this.children[this.children.length - 1];
+        }
+
+        getFirstChild():Element {
+            return this.children[0];
+        }
+
         getCumulativeOffsetTop() {
             var top = 0;
             var element = this.el.getHTMLElement();
             do {
                 top += parseInt(element.style.top, 10) || 0;
                 element = element.parentElement;
-            } while (element);
+            }
+            while (element);
 
             return top;
         }
