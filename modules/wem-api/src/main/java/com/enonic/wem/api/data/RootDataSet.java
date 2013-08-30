@@ -6,7 +6,12 @@ public class RootDataSet
 {
     public RootDataSet()
     {
-        // default
+        super( ROOT_NAME );
+    }
+
+    protected RootDataSet( final DataSet.Builder builder )
+    {
+        super( builder.name( ROOT_NAME ) );
     }
 
     @Override
@@ -35,7 +40,6 @@ public class RootDataSet
 
     public DataSet toDataSet( final String name )
     {
-        final DataSet newDataSet = newDataSet( this ).name( name ).build();
-        return newDataSet;
+        return newDataSet( this ).name( name ).build();
     }
 }

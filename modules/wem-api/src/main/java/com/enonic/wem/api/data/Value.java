@@ -190,13 +190,29 @@ public abstract class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to org.joda.time.DateMidnight.
      */
-    public org.joda.time.DateMidnight asDate()
+    public org.joda.time.DateMidnight asDateMidnight()
         throws InconvertibleValueException
     {
         final org.joda.time.DateMidnight converted = JavaTypeConverter.DateMidnight.GET.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.DateMidnight.GET );
+        }
+        return converted;
+    }
+
+    /**
+     * Attempts to return value as org.joda.time.DateTime, using best effort converting if value is not of type org.joda.time.DateTime.
+     *
+     * @throws InconvertibleValueException if value is not convertible to org.joda.time.DateTime.
+     */
+    public org.joda.time.DateTime asDateTime()
+        throws InconvertibleValueException
+    {
+        final org.joda.time.DateTime converted = JavaTypeConverter.DateTime.GET.convertFrom( object );
+        if ( object != null && converted == null )
+        {
+            throw new InconvertibleValueException( object, JavaTypeConverter.DateTime.GET );
         }
         return converted;
     }

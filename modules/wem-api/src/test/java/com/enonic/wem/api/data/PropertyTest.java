@@ -52,8 +52,8 @@ public class PropertyTest
     public void getDate_given_value_as_string()
     {
         Property property = newProperty().name( "myDate" ).type( ValueTypes.TEXT ).value( "2012-08-31" ).build();
-        assertEquals( DateMidnight.class, property.getDate().getClass() );
-        assertEquals( new DateMidnight( 2012, 8, 31 ), property.getDate() );
+        assertEquals( DateMidnight.class, property.getDateMidnight().getClass() );
+        assertEquals( new DateMidnight( 2012, 8, 31 ), property.getDateMidnight() );
     }
 
     @Test

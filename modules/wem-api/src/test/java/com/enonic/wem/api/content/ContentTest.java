@@ -476,6 +476,44 @@ public class ContentTest
     @Test
     public void toItem()
     {
+        // setup
+        ContentData contentData = new ContentData();
+        contentData.add( new Property.WholeNumber( "myNumber", 1 ) );
+        contentData.add( new Property.Text( "myText", "text" ) );
+        contentData.setProperty( "mySet.myOtherNumber", new Value.WholeNumber( 2 ) );
+
+        Content content = Content.newContent().
+            id( ContentId.from( "ABC-123" ) ).
+            name( "myContent" ).
+            displayName( "My Content" ).
+            owner( UserKey.from( "mystore:someuser" ) ).
+            modifier( UserKey.from( "mystore:someotheruser" ) ).
+            createdTime( DateTime.parse( "2012-12-12T12:00:00" ) ).
+            modifiedTime( DateTime.parse( "2012-12-12T13:00:00" ) ).
+            type( QualifiedContentTypeName.from( "mymodule:mycty" ) ).
+            contentData( contentData ).build();
+
+        // exercise
+        Item item = content.toItem();
+
+        // verify
+        assertEquals( "ABC-123", item.getProperty( "id" ).getString() );
+        assertEquals( "myContent", item.getProperty( "name" ).getString() );
+        assertEquals( "My Content", item.getProperty( "displayName" ).getString() );
+        assertEquals( "user:mystore:someuser", item.getProperty( "owner" ).getString() );
+        assertEquals( "user:mystore:someotheruser", item.getProperty( "modifier" ).getString() );
+        assertEquals( "2012-12-12T12:00:00", item.getProperty( "createdTime" ).getString() );
+        assertEquals( "2012-12-12T13:00:00", item.getProperty( "modifiedTime" ).getString() );
+        assertEquals( "mymodule:mycty", item.getProperty( "type" ).getString() );
+        assertEquals( "1", item.getProperty( "data.myNumber" ).getString() );
+        assertEquals( "text", item.getProperty( "data.myText" ).getString() );
+        assertEquals( "2", item.getProperty( "data.mySet.myOtherNumber" ).getString() );
+    }
+
+    @Test
+    public void toObject()
+    {
+        // setup
         ContentData contentData = new ContentData();
         contentData.add( new Property.WholeNumber( "myNumber", 1 ) );
         contentData.add( new Property.Text( "myText", "text" ) );
@@ -494,17 +532,27 @@ public class ContentTest
 
         Item item = content.toItem();
 
-        assertEquals( "ABC-123", item.getProperty( "id" ).getString() );
-        assertEquals( "myContent", item.getProperty( "name" ).getString() );
-        assertEquals( "My Content", item.getProperty( "displayName" ).getString() );
-        assertEquals( "user:mystore:someuser", item.getProperty( "owner" ).getString() );
-        assertEquals( "user:mystore:someotheruser", item.getProperty( "modifier" ).getString() );
-        assertEquals( "2012-12-12T12:00:00", item.getProperty( "createdTime" ).getString() );
-        assertEquals( "2012-12-12T13:00:00", item.getProperty( "modifiedTime" ).getString() );
-        assertEquals( "mymodule:mycty", item.getProperty( "type" ).getString() );
-        assertEquals( "1", item.getProperty( "data.myNumber" ).getString() );
-        assertEquals( "text", item.getProperty( "data.myText" ).getString() );
-        assertEquals( "2", item.getProperty( "data.mySet.myOtherNumber" ).getString() );
+        // exercise
+        Content translated = content.toObject( item );
+
+        // verify
+        assertEquals( content.getId(), translated.getId() );
+        assertEquals( content.getName(), translated.getName() );
+        assertEquals( content.getDisplayName(), translated.getDisplayName() );
+        assertEquals( content.getOwner(), translated.getOwner() );
+        assertEquals( content.getModifier(), translated.getModifier() );
+        assertEquals( content.getType(), translated.getType() );
+
+        ContentData expectedContentData = content.getContentData();
+        ContentData translatedContentData = translated.getContentData();
+        assertEquals( expectedContentData.getName(), translatedContentData.getName() );
+        assertEquals( expectedContentData.getParent(), translatedContentData.getParent() );
+        assertEquals( expectedContentData.getPath(), translatedContentData.getPath() );
+        assertEquals( expectedContentData.size(), translatedContentData.size() );
+        assertEquals( expectedContentData.getProperty( "myNumber" ), translatedContentData.getProperty( "myNumber" ) );
+        assertEquals( expectedContentData.getProperty( "myText" ), translatedContentData.getProperty( "myText" ) );
+        assertEquals( expectedContentData.getProperty( "mySet.myOtherNumber" ),
+                      translatedContentData.getProperty( "mySet.myOtherNumber" ) );
     }
 
     @Test
