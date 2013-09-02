@@ -6,9 +6,9 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     alias: 'widget.contextWindow',
 
     requires: [
-        'Admin.view.contentManager.contextwindow.Inspector',
-        'Admin.view.contentManager.contextwindow.screen.ComponentTypeList',
-        'Admin.view.contentManager.contextwindow.screen.Emulator'
+        'Admin.view.contentManager.contextwindow.TitleBar',
+        'Admin.view.contentManager.contextwindow.emulator.Emulator',
+        'Admin.view.contentManager.contextwindow.inspector.Inspector'
     ],
 
     cls: 'admin-context-window',
@@ -16,7 +16,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     y: 10,
     width: 318,
     height: 480,
-
     modal: false,
     floating: true,
     border: false,
@@ -26,60 +25,62 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         align : 'stretch'
     },
 
-    listeners: {
-        resize: function () {
-            this.resizeScreenHeights();
-        }
-    },
-
-    DEFAULT_SCREEN_INDEX: 0,
     TITLE_BAR_HEIGHT: 32,
 
-    selectedScreenIndex: undefined,
-    collapsed: false,
-    currentHeight: undefined,
+    titleBar: undefined,
 
-    titleBarCt: undefined,
-    menuButton: undefined,
-    titleTextCmp: undefined,
-    toggleButton: undefined,
-    screenContainer: undefined,
-    inspectorCmp: undefined,
+    listContainer: undefined,
+
+    emulatorContainer: undefined,
+
+    inspectorContainer: undefined,
+
     iFrameMask: undefined,
 
     liveEditIFrameDom: undefined, // Passed as constructor config
 
-    screens: [
-        {
-            item: function () {
-                return new Admin.view.contentManager.contextwindow.screen.ComponentTypeList({hidden:true});
-            }
-        },
-        {
-            item: function () {
-                return new Admin.view.contentManager.contextwindow.screen.Emulator({hidden:true});
-            }
-        },
-    ],
-
     initComponent: function () {
-        this.titleBarCt = this.createTitleBarCt();
-        this.screenContainer = this.createScreenContainer();
-        this.inspectorCmp = new Admin.view.contentManager.contextwindow.Inspector({hidden:true});
+        var me = this;
+        this.titleBar = new Admin.view.contentManager.contextwindow.TitleBar({
+            height: this.TITLE_BAR_HEIGHT,
+            contextWindow: this,
+            currentWindowHeight: this.height
+        });
+
+        // fixme: move
+        this.titleBar.addMenuItem('Insert', function () {
+            me.displayContainer(0);
+        });
+        this.titleBar.addMenuItem('Emulator', function () {
+            me.displayContainer(1)
+        });
+        this.titleBar.addMenuItem('Inspector', function () {
+            me.displayContainer(2)
+        });
+
+        this.listContainer = this.createListContainer();
+        this.emulatorContainer = new Admin.view.contentManager.contextwindow.emulator.Emulator({hidden:true});
+        this.inspectorContainer = new Admin.view.contentManager.contextwindow.inspector.Inspector({hidden:true});
+
         this.items = [
-            this.titleBarCt,
-            this.screenContainer,
-            this.inspectorCmp
+            this.titleBar,
+            this.listContainer,
+            this.emulatorContainer,
+            this.inspectorContainer
         ];
+
         this.iFrameMask = this.createIFrameMask();
 
         this.enableWindowDrag();
-
         this.enableWindowResize();
-
         this.bindLiveEditEventListeners();
 
-        this.currentHeight = this.height;
+        this.addListener('resize', function () {
+            me.resizeContainerHeights();
+        });
+        this.addListener('afterrender', function () {
+            me.loadList('Admin.view.contentManager.contextwindow.list.ComponentTypesList');
+        });
 
         this.callParent(arguments);
     },
@@ -87,182 +88,58 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     /**
      * @returns {Ext.container.Container}
      */
-    createTitleBarCt: function () {
-        this.menuButton = this.createMenuButton();
-        this.titleTextCmp = this.createTitleTextCmp();
-        this.toggleButton = this.createToggleButton();
-
-        return new Ext.container.Container({
-            cls: 'admin-context-window-title-bar',
-            height: this.TITLE_BAR_HEIGHT,
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-            },
-            items: [
-                this.menuButton,
-                this.titleTextCmp,
-                this.toggleButton
-            ]
-        });
-    },
-
-    /**
-     * @returns {Ext.button.Button}
-     */
-    createMenuButton: function () {
-        var me = this;
-        return new Ext.button.Button({
-            text: '',
-            arrowCls: '-none',
-            cls: 'admin-context-window-menu-button icon-reorder',
-            menu: new Ext.menu.Menu({
-                border: false,
-                plain: true,
-                shadow: false,
-                cls: 'context-window-menu',
-                listeners: {
-                    beforeshow: function (menu) {
-                        menu.setWidth(me.getWidth());
-                    }
-                }
-            })
-        });
-    },
-
-    addMenuItem: function (text, index) {
-        var me = this;
-        var menuItemSpec = {
-            plain: true,
-            cls: 'context-window-menu-item',
-            itemId: index,
-            width:'100%',
-            text: text,
-            handler: function (item) {
-                me.showScreen(item.itemId);
-            }
-        };
-
-        this.menuButton.menu.add(menuItemSpec);
-    },
-
-    /**
-     * @returns {Ext.Component}
-     */
-    createTitleTextCmp: function () {
-        return new Ext.Component({
-            cls: 'admin-context-window-title-text',
-            html: 'Title',
-            flex: 3
-        });
-    },
-
-    /**
-     * @returns {Ext.Component}
-     */
-    createToggleButton: function () {
-        var me = this;
-        return new Ext.Component({
-            cls: 'admin-context-window-expand-collapse-button icon-chevron-down',
-            width: 30,
-            listeners: {
-                render: function (component) {
-                    component.getEl().on('click', function () {
-                        if (me.collapsed) {
-                            // fixme: is there a simpler way to toggle classes?
-                            component.getEl().addCls('icon-chevron-down').removeCls('icon-chevron-up');
-                        } else {
-                            component.getEl().addCls('icon-chevron-up').removeCls('icon-chevron-down');
-                        }
-                        me.toggleExpandCollapseWindow();
-                    });
-                }
-            }
-        });
-    },
-
-    /**
-     * @returns {Ext.container.Container}
-     */
-    createScreenContainer: function () {
-        var me = this;
+    createListContainer: function () {
         return new Ext.container.Container({
             flex: 1,
             height: this.height - this.TITLE_BAR_HEIGHT,
-            cls: 'admin-context-window-screens',
-            listeners: {
-                render: function () {
-                    me.addScreens();
-                    me.showScreen(me.DEFAULT_SCREEN_INDEX);
-                }
-            }
+            cls: 'admin-context-window-list-container'
         });
     },
 
-    setTitleText: function (text) {
-        this.titleTextCmp.getEl().setHTML(text);
+    loadList: function (classPath) {
+        var list = Ext.create(classPath);
+
+        this.listContainer.removeAll();
+        this.listContainer.add(list);
+        this.listContainer.doLayout();
+        this.titleBar.setTitleText(list.title)
     },
 
-    toggleExpandCollapseWindow: function () {
-        if (this.collapsed) {
-            this.animate({
-                duration: 200,
-                to: {
-                    height: this.currentHeight
-                }
-            });
-            this.collapsed = false;
-        } else {
-            this.animate({
-                duration: 200,
-                to: {
-                    height: this.TITLE_BAR_HEIGHT
-                }
-            });
-            this.currentHeight = this.height;
-            this.collapsed = true;
-        }
+    loadInspector: function (classPath) {
+        /**/
     },
 
-    showScreen: function (index) {
-        var addedScreens = this.screenContainer.items.items,
-            screen;
+    displayContainer: function (containerIndex) {
+        var me = this,
+            containers = this.items.items,
+            container;
+        for(var i = 0; i < containers.length; i++) {
+            // Skip title bar
+            if (i == 0) {
+                continue;
+            }
+            container = containers[i];
 
-        for (var i = 0; i < addedScreens.length; i++) {
-            screen = addedScreens[i];
-            if (i == index) {
-                screen.show();
+            if (i == containerIndex + 1) {
+                container.show();
+                container.doLayout();
+                me.titleBar.setTitleText(container.title);
 
-                this.setTitleText(screen.screenTitle); // ai, move this
-                this.setSelectedScreenIndex(i);
             } else {
-                screen.hide();
+                container.hide();
             }
         }
     },
 
     showHideInspector: function (show) {
         if (show) {
-            this.setTitleText('Inspector');
-            this.screenContainer.hide();
-            this.inspectorCmp.show();
+            this.titleBar.setTitleText('Inspector');
+            this.listContainer.hide();
+            this.inspectorContainer.show();
         } else {
-            this.setTitleText(this.screenContainer.items.items[this.selectedScreenIndex].screenTitle);
-            this.screenContainer.show();
-            this.inspectorCmp.hide();
-        }
-    },
-
-    addScreens: function () {
-        // Should this function add menu items too?
-        var key,
-            screen;
-        for (key in this.screens) {
-            if (this.screens.hasOwnProperty(key)) {
-                screen = this.screens[key].item();
-                this.screenContainer.add(screen);
-                this.addMenuItem(screen.screenTitle, key);
-            }
+            this.titleBar.setTitleText('Insert');
+            this.listContainer.show();
+            this.inspectorContainer.hide();
         }
     },
 
@@ -329,38 +206,57 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         };
     },
 
-    resizeScreenHeights: function () {
-        var addedScreens = this.screenContainer.items.items,
+    resizeContainerHeights: function () {
+        /*
+        var containers = this.items.items,
             newHeight = this.height - this.TITLE_BAR_HEIGHT;
 
-        for (var i = 0; i < addedScreens.length; i++) {
-            addedScreens[i].setHeight(newHeight);
+        for(var i = 0; i < containers.length; i++) {
+            // Skip title bar
+            if (i == 0) {
+                continue;
+            }
+            containers[i].setHeight(newHeight);
+
+            // fixme: dirty fix for list container
+            if (containers[i].items && containers[i].items.items) {
+                containers[i].items.items[0].setHeight(newHeight);
+            }
         }
+        */
+    },
+
+
+    onSelectComponent: function (component) {
+        var me = this,
+            componentType = component.getComponentType().getType();
+
+        if (component.isEmpty()) {
+            // Load part list
+            alert('Load list for type: ' + componentType);
+
+        } else {
+            me.showHideInspector(true);
+        }
+
     },
 
     bindLiveEditEventListeners: function () {
         var me = this,
-        // Right now We need to use the jQuery object from the live edit page in order to listen for the events
             liveEditWindow = me.getLiveEditContentWindowObject(),
             liveEditJQuery = me.getLiveEditJQuery();
 
-        liveEditJQuery(liveEditWindow).on('selectComponent.liveEdit', function (event) {
-            me.showHideInspector(true);
+        liveEditJQuery(liveEditWindow).on('selectComponent.liveEdit', function (jQueryEvent, component) {
+            me.onSelectComponent(component);
         });
-        liveEditJQuery(liveEditWindow).on('deselectComponent.liveEdit', function (event) {
-            if (me.selectedScreenIndex != undefined) {
-                me.showHideInspector(false);
-            }
-        });
-        liveEditJQuery(liveEditWindow).on('componentRemoved.liveEdit', function (event) {
-            if (me.selectedScreenIndex != undefined) {
-                me.showHideInspector(false);
-            }
-        });
-    },
 
-    setSelectedScreenIndex: function (index) {
-        this.selectedScreenIndex = index;
+        liveEditJQuery(liveEditWindow).on('deselectComponent.liveEdit', function (jQueryEvent) {
+            me.showHideInspector(false);
+        });
+
+        liveEditJQuery(liveEditWindow).on('componentRemoved.liveEdit', function (jQueryEvent) {
+            me.showHideInspector(false);
+        });
     },
 
     /**

@@ -1,30 +1,29 @@
 /**
  * fixme: Extract model and store
  */
-Ext.define('Admin.view.contentManager.contextwindow.screen.ComponentTypeList', {
+Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowComponentTypeList',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
-    screenTitle: 'Insert',
+    title: 'Insert',
 
     layout: {
-        type: 'vbox',
-        align: 'stretch'
+        type: 'fit'
     },
 
     URL_TO_COMPONENTS: '../admin2/apps/content-manager/js/data/context-window/mock-component-type-list.json',
 
-    searchBarCt: undefined,
-    searchInputCmp: undefined,
+    searchBar: undefined,
+    searchInput: undefined,
     listView: undefined,
 
     initComponent: function () {
-        this.searchBarCt = this.createSearchBarCt();
+        this.searchBar = this.createSearchBar();
         this.listView = this.createListView();
 
         this.items = [
-            this.searchBarCt,
+            this.searchBar,
             this.listView
         ];
         this.callParent(arguments);
@@ -33,15 +32,15 @@ Ext.define('Admin.view.contentManager.contextwindow.screen.ComponentTypeList', {
     /**
      * @returns {Ext.container.Container}
      */
-    createSearchBarCt: function () {
-        this.searchInputCmp = this.createSearchInputCmp();
+    createSearchBar: function () {
+        this.searchInput = this.createSearchInput();
         return new Ext.container.Container({
             cls: 'admin-component-types-search-bar',
             items: [
                 new Ext.Component({
                     html: '<p>Drag\'n drop Parts, Layouts and more..</p>'
                 }),
-                this.searchInputCmp
+                this.searchInput
             ]
         });
     },
@@ -49,7 +48,7 @@ Ext.define('Admin.view.contentManager.contextwindow.screen.ComponentTypeList', {
     /**
      * @returns {Ext.Component}
      */
-    createSearchInputCmp: function () {
+    createSearchInput: function () {
         var me = this;
         return new Ext.Component({
             autoEl: {

@@ -1,13 +1,12 @@
-Ext.define('Admin.view.contentManager.contextwindow.screen.Emulator', {
+Ext.define('Admin.view.contentManager.contextwindow.emulator.Emulator', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowEmulator',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
-    screenTitle: 'Emulator',
+    title: 'Emulator',
 
     layout: {
-        type: 'vbox',
-        align: 'stretch'
+        type: 'fit'
     },
 
     DEVICES_URL: '../admin2/apps/content-manager/js/data/context-window/devices.json',
@@ -24,6 +23,7 @@ Ext.define('Admin.view.contentManager.contextwindow.screen.Emulator', {
             this.topTextCmp,
             this.listView
         ];
+
         this.callParent(arguments);
     },
 

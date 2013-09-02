@@ -1,7 +1,9 @@
-Ext.define('Admin.view.contentManager.contextwindow.Inspector', {
-    extend: 'Ext.Component',
+Ext.define('Admin.view.contentManager.contextwindow.inspector.Inspector', {
+    extend: 'Ext.container.Container',
     alias: 'widget.contextWindowInspector',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
+
+    title: 'Inspector',
 
     tpl: new Ext.XTemplate(
         '<div class="admin-inspector-info-container">',
