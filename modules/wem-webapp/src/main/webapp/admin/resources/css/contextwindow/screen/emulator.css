@@ -1,7 +1,7 @@
 /** fixme: make generic / merge with components.css? */
 
 .admin-emulator-top-bar {
-    padding: 10px 20px;
+    padding: 15px 20px;
 }
 
 .admin-device-items .admin-cw-item {
@@ -11,6 +11,7 @@
 .admin-device-items .admin-cw-item:hover,
 .admin-device-item-selected {
     border-left: 5px solid #3399fe;
+    background-color: #3f3f46;
 }
 
 .admin-device-items .admin-cw-item:not(.admin-device-item-selected):hover h3,

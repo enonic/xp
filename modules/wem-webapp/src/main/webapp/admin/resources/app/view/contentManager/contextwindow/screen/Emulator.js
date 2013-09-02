@@ -1,9 +1,9 @@
-Ext.define('Admin.view.contentManager.contextwindow.custompanel.Emulator', {
+Ext.define('Admin.view.contentManager.contextwindow.screen.Emulator', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowEmulator',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
-    panelName: 'Emulator',
+    screenTitle: 'Emulator',
 
     layout: {
         type: 'vbox',

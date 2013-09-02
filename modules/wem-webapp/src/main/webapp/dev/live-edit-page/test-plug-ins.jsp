@@ -106,7 +106,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
 
 
 </head>
-<body data-live-edit-type="page" data-live-edit-key="1867" data-live-edit-name="Home"><!--stopindex-->
+<body data-live-edit-type="0" data-live-edit-key="1867" data-live-edit-name="Home"><!--stopindex-->
 
 
 <%@ include file="live-edit/loader-splash.jsp" %>
@@ -171,7 +171,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
   <div id="middle-container" class="clear clearfix">
 
     <!-- Region -->
-    <div id="north" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="70" data-live-edit-name="North">
+    <div id="north" class="clear clearfix" data-live-edit-type="1" data-live-edit-key="70" data-live-edit-name="North">
 
       <%@ include file="includes/window-carousel-customers.html" %>
 
@@ -182,14 +182,14 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
 
 
       <!-- Region -->
-      <div class="column clear clearfix screen" id="west" data-live-edit-type="region" data-live-edit-key="49" data-live-edit-name="West">
+      <div class="column clear clearfix screen" id="west" data-live-edit-type="1" data-live-edit-key="49" data-live-edit-name="West">
 
 
       </div>
 
 
       <!-- Region -->
-      <div id="center" class="column clearfix" data-live-edit-type="region" data-live-edit-key="55" data-live-edit-name="Center">
+      <div id="center" class="column clearfix" data-live-edit-type="1" data-live-edit-key="55" data-live-edit-name="Center">
 
         <%@ include file="includes/window-flash.html" %>
 
@@ -203,7 +203,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
 
 
       <!-- Region -->
-      <div class="column clearfix screen" id="east" data-live-edit-type="region" data-live-edit-key="31" data-live-edit-name="East">
+      <div class="column clearfix screen" id="east" data-live-edit-type="1" data-live-edit-key="31" data-live-edit-name="East">
 
 
       </div>
@@ -212,7 +212,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml
     </div>
 
     <!-- Region -->
-    <div id="south" class="clear clearfix" data-live-edit-type="region" data-live-edit-key="99" data-live-edit-name="South">
+    <div id="south" class="clear clearfix" data-live-edit-type="1" data-live-edit-key="99" data-live-edit-name="South">
 
 
     </div>

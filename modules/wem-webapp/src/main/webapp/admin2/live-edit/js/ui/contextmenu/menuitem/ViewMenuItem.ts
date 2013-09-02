@@ -1,7 +1,9 @@
 module LiveEdit.ui.contextmenu.menuitem {
+
+    // Uses
     var $ = $liveEdit;
 
-    export class Insert extends LiveEdit.ui.contextmenu.menuitem.Base {
+    export class ViewMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         private menu = null;
 
@@ -14,14 +16,12 @@ module LiveEdit.ui.contextmenu.menuitem {
 
         init():void {
             var $button = this.createButton({
-                text: 'Insert',
-                id: 'live-edit-button-insert',
-                handler: (event) => {
-                    event.stopPropagation();
-                }
+                text: 'View',
+                id: 'live-edit-button-view',
+                handler: (event) => event.stopPropagation()
             });
 
-            this.appendTo(this.menu.getRootEl());
+            this.appendTo(this.menu.getEl());
             this.menu.buttons.push(this);
         }
     }

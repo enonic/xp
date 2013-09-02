@@ -1,12 +1,12 @@
 /**
  * fixme: Extract model and store
  */
-Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
+Ext.define('Admin.view.contentManager.contextwindow.screen.ComponentTypeList', {
     extend: 'Ext.container.Container',
-    alias: 'widget.contextWindowComponentsPanel',
+    alias: 'widget.contextWindowComponentTypeList',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
-    panelName: 'Components',
+    screenTitle: 'Insert',
 
     layout: {
         type: 'vbox',
@@ -36,7 +36,7 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
     createSearchBarCt: function () {
         this.searchInputCmp = this.createSearchInputCmp();
         return new Ext.container.Container({
-            cls: 'admin-components-search-bar',
+            cls: 'admin-component-types-search-bar',
             items: [
                 new Ext.Component({
                     html: '<p>Drag\'n drop Parts, Layouts and more..</p>'
@@ -56,7 +56,7 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
                 tag: 'input',
                 placeholder: 'Search'
             },
-            cls: 'admin-components-search-input',
+            cls: 'admin-component-types-search-input',
             listeners: {
                 render: function () {
                     this.getEl().on('keyup', function (event, el) {
@@ -130,7 +130,7 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
             flex: 1,
             store: Ext.data.StoreManager.lookup('contextWindowComponentStore'),
             tpl: templates,
-            cls: 'admin-cw-items admin-component-items',
+            cls: 'admin-cw-items admin-component-types-items',
             itemSelector: 'div.admin-cw-item',
             emptyText: 'No components available',
             listeners: {
@@ -248,7 +248,7 @@ Ext.define('Admin.view.contentManager.contextwindow.custompanel.Components', {
 
         ui.helper.hide(null);
 
-        contextWindow.getLiveEditContentWindowObject().LiveEdit.DragDropSort.createDraggable(clone);
+        contextWindow.getLiveEditContentWindowObject().LiveEdit.DragDropSort.createJQueryUiDraggable(clone);
 
         clone.simulate('mousedown');
 

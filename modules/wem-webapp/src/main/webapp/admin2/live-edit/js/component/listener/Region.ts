@@ -1,12 +1,13 @@
-module LiveEdit.component.eventdispatcher {
-    var $ = $liveEdit;
-    var componentHelper = LiveEdit.component.ComponentHelper;
+module LiveEdit.component.listener {
 
-    export class Region extends LiveEdit.component.eventdispatcher.Base {
+    // Uses
+    var $ = $liveEdit;
+
+    export class Region extends LiveEdit.component.listener.Base {
         constructor() {
             super();
 
-            this.componentCssSelector = '[data-live-edit-type=region]';
+            this.componentCssSelectorFilter = LiveEdit.component.Configuration[LiveEdit.component.Type.REGION].cssSelector;
 
             this.renderEmptyPlaceholders();
             this.attachMouseOverEvent();
@@ -21,13 +22,15 @@ module LiveEdit.component.eventdispatcher {
             });
         }
 
+        // fixme: extract placeholder stuff to another class
+
         private renderEmptyPlaceholders():void {
             this.removeAllRegionPlaceholders();
-            var regions = this.getAll(),
+            var allRegionElements:JQuery = this.getAll(),
                 region:JQuery;
 
-            regions.each((i) => {
-                region = $(regions[i]);
+            allRegionElements.each((i) => {
+                region = $(allRegionElements[i]);
                 var regionIsEmpty = this.isRegionEmpty(region);
                 if (regionIsEmpty) {
                     this.appendEmptyPlaceholder(region);
@@ -35,19 +38,20 @@ module LiveEdit.component.eventdispatcher {
             });
         }
 
-        private appendEmptyPlaceholder(region:JQuery):void {
+        private appendEmptyPlaceholder(regionElement:JQuery):void {
             var html = '<div>Drag components here</div>';
-            html += '<div style="font-size: 10px;">' + componentHelper.getComponentName(region) + '</div>';
-            var $placeholder = $('<div/>', {
+            var regionComponent = new LiveEdit.component.Component(regionElement);
+            html += '<div style="font-size: 10px;">' + regionComponent.getName() + '</div>';
+            var placeholderElement:JQuery = $('<div/>', {
                 'class': 'live-edit-empty-region-placeholder',
                 'html': html
             });
-            region.append($placeholder);
+            regionElement.append(placeholderElement);
         }
 
-        private isRegionEmpty(region:JQuery):Boolean {
-            var hasNotParts:Boolean = region.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
-            var hasNotDropTargetPlaceholder:Boolean = region.children('.live-edit-drop-target-placeholder').length === 0;
+        private isRegionEmpty(regionElement:JQuery):Boolean {
+            var hasNotParts:Boolean = regionElement.children('[data-live-edit-type]' + ':not(:hidden)').length === 0;
+            var hasNotDropTargetPlaceholder:Boolean = regionElement.children('.live-edit-drop-target-placeholder').length === 0;
             return hasNotParts && hasNotDropTargetPlaceholder;
         }
 

@@ -4,6 +4,7 @@
 }
 .admin-inspector-info-container h3 {
     line-height: 1.8;
+    text-transform: capitalize;
 }
 
 .admin-inspector-icon {

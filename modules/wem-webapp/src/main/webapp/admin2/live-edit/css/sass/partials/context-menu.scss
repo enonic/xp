@@ -1,3 +1,4 @@
+@import "../modules/variables";
 @import "../modules/colors";
 
 .live-edit-context-menu {
@@ -19,44 +20,21 @@
   cursor: -webkit-grab;
 }
 
-.live-edit-context-menu-title-icon,
+.live-edit-context-menu-title-icon-container,
 .live-edit-context-menu-title-text,
 .live-edit-context-menu-title-close-button {
   padding: 5px;
 }
 
-.live-edit-context-menu-title-icon {
+.live-edit-context-menu-title-icon-container {
   padding: 7px;
   float: left;
 }
 
-.live-edit-context-menu-title-icon > div {
-  width: 22px;
-  height: 22px;
-}
-
-.live-edit-context-menu-page-icon {
-  background: transparent url($resourcePath + "/images/component-types/22/file.png") center center no-repeat;
-}
-
-.live-edit-context-menu-region-icon {
-  background: transparent url($resourcePath + "/images/component-types/22/compass.png") center center no-repeat;
-}
-
-.live-edit-context-menu-part-icon {
-  background: transparent url($resourcePath + "/images/component-types/22/puzzle.png") center center no-repeat;
-}
-
-.live-edit-context-menu-paragraph-icon {
-  background: transparent url($resourcePath + "/images/component-types/22/text-color.png") center center no-repeat;
-}
-
-.live-edit-context-menu-layout-icon {
-  background: transparent url($resourcePath + "/images/component-types/22/insert-template.png") center center no-repeat;
-}
-
-.live-edit-context-menu-content-icon {
-  background: transparent url($resourcePath + "/images/component-types/22/file.png") center center no-repeat;
+.live-edit-context-menu-title-icon-container > div {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
 }
 
 .live-edit-context-menu-title-text {

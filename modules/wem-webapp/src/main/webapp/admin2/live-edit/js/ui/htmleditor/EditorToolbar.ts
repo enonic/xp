@@ -1,11 +1,11 @@
 module LiveEdit.ui {
-    var $ = $liveEdit;
 
-    var componentHelper = LiveEdit.component.ComponentHelper;
+    // Uses
+    var $ = $liveEdit;
 
     export class EditorToolbar extends LiveEdit.ui.Base {
 
-        private selectedComponent:JQuery = null;
+        private selectedComponent:LiveEdit.component.Component = null;
 
         constructor() {
             super();
@@ -18,7 +18,7 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component:JQuery) => this.show(component));
+            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
             $(window).on('leaveParagraphComponent.liveEdit', () => this.hide());
             $(window).on('componentRemoved.liveEdit', () => this.hide());
             $(window).on('sortableStart.liveEdit', () => this.hide());
@@ -43,12 +43,12 @@ module LiveEdit.ui {
                 '    <button live-edit-data-tag="justifyFull" class="live-edit-editor-button"></button>' +
                 '</div>';
 
-            this.createElementsFromString(html);
+            this.createHtmlFromString(html);
             this.appendTo($('body'));
         }
 
         addEvents():void {
-            this.getRootEl().on('click', (event) => {
+            this.getEl().on('click', (event) => {
 
                 // Make sure component is not deselected when the toolbar is clicked.
                 event.stopPropagation();
@@ -67,17 +67,17 @@ module LiveEdit.ui {
             });
         }
 
-        show(component:JQuery):void {
+        show(component:LiveEdit.component.Component):void {
             this.selectedComponent = component;
 
-            this.getRootEl().show(null);
+            this.getEl().show(null);
             this.toggleArrowPosition(false);
             this.updatePosition();
         }
 
         hide():void {
             this.selectedComponent = null;
-            this.getRootEl().hide(null);
+            this.getEl().hide(null);
         }
 
         updatePosition():void {
@@ -87,9 +87,9 @@ module LiveEdit.ui {
 
             var defaultPosition = this.getPositionRelativeToComponentTop();
 
-            var stick = $(window).scrollTop() >= this.selectedComponent.offset().top - 60;
+            var stick = $(window).scrollTop() >= this.selectedComponent.getElement().offset().top - 60;
 
-            var el = this.getRootEl();
+            var el = this.getEl();
 
             if (stick) {
                 el.css({
@@ -112,21 +112,21 @@ module LiveEdit.ui {
 
         toggleArrowPosition(showArrowAtTop:Boolean):void {
             if (showArrowAtTop) {
-                this.getRootEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
+                this.getEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
             } else {
-                this.getRootEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
+                this.getEl().removeClass('live-edit-arrow-top').addClass('live-edit-arrow-bottom');
             }
         }
 
         getPositionRelativeToComponentTop():any {
-            var componentBox = componentHelper.getBoxModel(this.selectedComponent),
-                leftPos = componentBox.left + (componentBox.width / 2 - this.getRootEl().outerWidth() / 2),
-                topPos = componentBox.top - this.getRootEl().height() - 25;
+            var dimensions:ElementDimensions = this.selectedComponent.getElementDimensions(),
+                leftPos = dimensions.left + (dimensions.width / 2 - this.getEl().outerWidth() / 2),
+                topPos = dimensions.top - this.getEl().height() - 25;
 
             return {
                 left: leftPos,
                 top: topPos,
-                bottom: componentBox.top + componentBox.height
+                bottom: dimensions.top + dimensions.height
             };
         }
     }

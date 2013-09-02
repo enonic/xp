@@ -1,4 +1,6 @@
 module LiveEdit.ui {
+
+    // Uses
     var $ = $liveEdit;
 
     export class Editor extends LiveEdit.ui.Base {
@@ -13,19 +15,19 @@ module LiveEdit.ui {
         }
 
         registerGlobalListeners():void {
-            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, paragraph:JQuery) => this.activate(paragraph));
-            $(window).on('leaveParagraphComponent.liveEdit', (event:JQueryEventObject, paragraph:JQuery) => this.deActivate(paragraph));
+            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, paragraphComponent) => this.activate(paragraphComponent));
+            $(window).on('leaveParagraphComponent.liveEdit', (event:JQueryEventObject, paragraphComponent) => this.deActivate(paragraphComponent));
             $(window).on('editorToolbarButtonClick.liveEdit', (event:JQueryEventObject, tag:string) => document.execCommand(tag, false, null));
         }
 
-        activate(paragraph:JQuery):void {
-            paragraph.attr('contenteditable', true);
-            paragraph.get(0).focus();
+        activate(paragraphComponent:LiveEdit.component.Component):void {
+            paragraphComponent.getElement().attr('contenteditable', true);
+            paragraphComponent.getElement().get(0).focus();
         }
 
-        deActivate(paragraph:JQuery):void {
-            paragraph.attr('contenteditable', false);
-            paragraph.get(0).blur();
+        deActivate(paragraphComponent:LiveEdit.component.Component):void {
+            paragraphComponent.getElement().attr('contenteditable', false);
+            paragraphComponent.getElement().get(0).blur();
         }
 
     }

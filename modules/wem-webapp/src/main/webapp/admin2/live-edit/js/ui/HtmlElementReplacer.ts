@@ -1,4 +1,6 @@
 module LiveEdit.ui {
+
+    // Uses
     var $ = $liveEdit;
 
     export class HtmlElementReplacer extends LiveEdit.ui.Base {
@@ -42,7 +44,8 @@ module LiveEdit.ui {
         }
 
         getElements():JQuery {
-            return $('[data-live-edit-type=part] > ' + this.elementsToReplaceSpec.toString());
+            var partsSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PART].cssSelector;
+            return $(partsSelector + ' > ' + this.elementsToReplaceSpec.toString());
         }
 
         getElementWidth(element:JQuery):number {

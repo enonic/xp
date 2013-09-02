@@ -7,9 +7,11 @@ interface ButtonConfig {
 }
 
 module LiveEdit.ui.contextmenu.menuitem {
+
+    // Uses
     var $ = $liveEdit;
 
-    export class Base extends LiveEdit.ui.Base {
+    export class BaseMenuItem extends LiveEdit.ui.Base {
         constructor() {
             super();
         }
@@ -25,7 +27,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             }
             html += '<span class="live-edit-menu-item-text">' + text + '</span></div>';
 
-            var $button = this.createElementsFromString(html);
+            var $button = this.createHtmlFromString(html);
             if (config.handler) {
                 $button.on('click', (event) => config.handler.call(this, event));
             }

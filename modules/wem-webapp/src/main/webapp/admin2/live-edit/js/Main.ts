@@ -1,26 +1,27 @@
 // Globals
 declare var $liveEdit;
 declare var LiveEditMutationSummary;
-declare var LiveEdit;
 
 ///<reference path='../lib/jquery-1.8.3.d.ts' />
 ///<reference path='../lib/jqueryui.d.ts' />
 
 ///<reference path='shared/DomHelper.ts' />
+///<reference path='shared/Selection.ts' />
 
 ///<reference path='component/ComponentHelper.ts' />
 ///<reference path='component/Component.ts' />
-///<reference path='component/eventdispatcher/Base.ts' />
-///<reference path='component/eventdispatcher/Page.ts' />
-///<reference path='component/eventdispatcher/Region.ts' />
-///<reference path='component/eventdispatcher/Layout.ts' />
-///<reference path='component/eventdispatcher/Image.ts' />
-///<reference path='component/eventdispatcher/Part.ts' />
-///<reference path='component/eventdispatcher/Content.ts' />
-///<reference path='component/eventdispatcher/Paragraph.ts' />
+///<reference path='component/ComponentType.ts' />
+
+///<reference path='component/listener/Base.ts' />
+///<reference path='component/listener/Page.ts' />
+///<reference path='component/listener/Region.ts' />
+///<reference path='component/listener/Layout.ts' />
+///<reference path='component/listener/Image.ts' />
+///<reference path='component/listener/Part.ts' />
+///<reference path='component/listener/Content.ts' />
+///<reference path='component/listener/Paragraph.ts' />
 
 ///<reference path='ui/Base.ts' />
-///<reference path='ui/HtmlElementReplacer.ts' />
 ///<reference path='ui/htmleditor/Editor.ts' />
 ///<reference path='ui/htmleditor/EditorToolbar.ts' />
 ///<reference path='ui/Shader.ts' />
@@ -29,16 +30,16 @@ declare var LiveEdit;
 ///<reference path='ui/ToolTip.ts' />
 
 ///<reference path='ui/contextmenu/Menu.ts' />
-///<reference path='ui/contextmenu/menuitem/Base.ts' />
-///<reference path='ui/contextmenu/menuitem/Parent.ts' />
-///<reference path='ui/contextmenu/menuitem/OpenContent.ts' />
-///<reference path='ui/contextmenu/menuitem/Insert.ts' />
-///<reference path='ui/contextmenu/menuitem/Details.ts' />
-///<reference path='ui/contextmenu/menuitem/Edit.ts' />
-///<reference path='ui/contextmenu/menuitem/Reset.ts' />
-///<reference path='ui/contextmenu/menuitem/Empty.ts' />
-///<reference path='ui/contextmenu/menuitem/View.ts' />
-///<reference path='ui/contextmenu/menuitem/Remove.ts' />
+///<reference path='ui/contextmenu/menuitem/BaseMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/ParentMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/OpenContentMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/InsertMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/DetailsMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/EditMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/ResetMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/EmptyMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/ViewMenuItem.ts' />
+///<reference path='ui/contextmenu/menuitem/RemoveMenuItem.ts' />
 
 ///<reference path='shared/MutationObserver.ts' />
 
@@ -49,19 +50,19 @@ declare var LiveEdit;
 
     $(window).load(() => {
         // Fade out the loader splash and start the app.
-        var loaderSplash = $('.live-edit-loader-splash-container');
+        var loaderSplash:JQuery = $('.live-edit-loader-splash-container');
         loaderSplash.fadeOut('fast', () => {
             loaderSplash.remove();
 
-            new LiveEdit.component.eventdispatcher.Page();
-            new LiveEdit.component.eventdispatcher.Region();
-            new LiveEdit.component.eventdispatcher.Layout();
-            new LiveEdit.component.eventdispatcher.Part();
-            new LiveEdit.component.eventdispatcher.Image();
-            new LiveEdit.component.eventdispatcher.Paragraph();
-            new LiveEdit.component.eventdispatcher.Content();
+            new LiveEdit.component.listener.Page();
+            new LiveEdit.component.listener.Region();
+            new LiveEdit.component.listener.Layout();
+            new LiveEdit.component.listener.Part();
+            new LiveEdit.component.listener.Image();
+            new LiveEdit.component.listener.Paragraph();
+            new LiveEdit.component.listener.Content();
 
-            new LiveEdit.ui.HtmlElementReplacer();
+            // new LiveEdit.ui.HtmlElementReplacer();
             new LiveEdit.ui.Highlighter();
             new LiveEdit.ui.ToolTip();
             new LiveEdit.ui.Cursor();

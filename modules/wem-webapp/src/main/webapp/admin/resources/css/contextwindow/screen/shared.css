@@ -10,7 +10,7 @@
     position: relative;
     border-bottom: 1px dashed #3f3f46;
     border-left: 5px solid transparent;
-    padding: 10px 20px;
+    padding: 15px 20px;
 }
 
 .admin-cw-item:hover {
@@ -32,6 +32,7 @@
     font-weight: lighter;
     display: table-cell;
     vertical-align: top;
+    padding-top: 2px;
 }
 
 .admin-cw-item-info {

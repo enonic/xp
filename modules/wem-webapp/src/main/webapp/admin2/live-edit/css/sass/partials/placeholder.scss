@@ -1,3 +1,4 @@
+@import "../modules/variables";
 @import "../modules/colors";
 
 .live-edit-empty-region-placeholder {
@@ -30,17 +31,6 @@
   font-size: 20px;
   text-align: center;
   background-color: #eee;
-  margin: 1px 0 10px 0;
-}
-
-.live-edit-component-placeholder {
-  clear: both;
-  background-color: #e6f1fe;
-  padding: 28px;
-  border: 2px dashed #2d2d2d;
-  font-size: 20px;
-  color: #737373;
-  text-align: center;
   margin: 1px 0 10px 0;
 }
 

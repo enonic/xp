@@ -1,6 +1,6 @@
 module LiveEdit.ui.contextmenu.menuitem {
 
-    export class Details extends LiveEdit.ui.contextmenu.menuitem.Base {
+    export class DetailsMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         private menu = null;
 
@@ -20,7 +20,7 @@ module LiveEdit.ui.contextmenu.menuitem {
                 }
             });
 
-            this.appendTo(this.menu.getRootEl());
+            this.appendTo(this.menu.getEl());
             this.menu.buttons.push(this);
         }
     }

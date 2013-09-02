@@ -1,6 +1,11 @@
 module LiveEdit.ui {
+
+    // Uses
     var $ = $liveEdit;
 
+    /**
+     * Base for all Live Edit UI elements
+     */
     export class Base {
 
         ID_PREFIX:string = 'live-edit-ui-cmp-';
@@ -8,13 +13,15 @@ module LiveEdit.ui {
         static constructedCount:number = 0;
 
         private rootEl:JQuery;
+
         private id:string;
 
         constructor() {
+            // Create dom id attribute value
             this.id = this.ID_PREFIX + Base.constructedCount++;
         }
 
-        public createElementsFromString(html:string):JQuery {
+        public createHtmlFromString(html:string):JQuery {
             this.rootEl = $(html);
             this.rootEl.attr('id', this.id);
 
@@ -22,12 +29,12 @@ module LiveEdit.ui {
         }
 
         public appendTo(parent:JQuery):void {
-            if (parent.length > 0 && this.rootEl.length > 0) {
+            if (parent.length > 0) {
                 parent.append(this.rootEl);
             }
         }
 
-        public getRootEl():JQuery {
+        public getEl():JQuery {
             return this.rootEl;
         }
 

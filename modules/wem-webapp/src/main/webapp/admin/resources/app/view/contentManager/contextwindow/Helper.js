@@ -7,32 +7,35 @@ Ext.define('Admin.view.contentManager.contextwindow.Helper', {
          * This method should at a later stage in the project be moved in order to
          * share the functionality between Live Edit and Context Window.
          *
-         * @param componentType {string}
+         * @param componentType {number}
          * @returns {string}
-         */
+        */
         resolveComponentTypeIconCls: function (componentType) {
             var iconCls;
-            switch (componentType) {
-                case 'page':
-                    iconCls = 'icon-file';
+
+            var type = parseInt(componentType, 10);
+
+            switch (type) {
+                case 0:
+                    iconCls = 'live-edit-component-type-page-icon';
                     break;
-                case 'region':
-                    iconCls = 'icon-compass';
+                case 1:
+                    iconCls = 'live-edit-component-type-region-icon';
                     break;
-                case 'layout':
-                    iconCls = 'icon-columns';
+                case 2:
+                    iconCls = 'live-edit-component-type-layout-icon';
                     break;
-                case 'part':
-                    iconCls = 'icon-puzzle-piece';
+                case 3:
+                    iconCls = 'live-edit-component-type-part-icon';
                     break;
-                case 'image':
-                    iconCls = 'icon-picture';
+                case 4:
+                    iconCls = 'live-edit-component-type-image-icon';
                     break;
-                case 'paragraph':
-                    iconCls = 'icon-edit';
+                case 5:
+                    iconCls = 'live-edit-component-type-paragraph-icon';
                     break;
-                case 'content':
-                    iconCls = 'icon-file-text-alt';
+                case 6:
+                    iconCls = 'live-edit-component-type-content-icon';
                     break;
                 default:
                     iconCls = '';

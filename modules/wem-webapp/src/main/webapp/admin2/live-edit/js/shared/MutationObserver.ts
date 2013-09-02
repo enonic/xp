@@ -1,22 +1,24 @@
 module LiveEdit {
+
+    // Uses
     var $ = $liveEdit;
 
     export class MutationObserver {
 
         private mutationSummary:any = null;
-        private observedComponent:JQuery = null;
+        private observedComponent:LiveEdit.component.Component = null;
 
         constructor() {
             this.registerGlobalListeners();
         }
 
         private registerGlobalListeners():void {
-            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component:JQuery) => this.observe(event, component));
+            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component) => this.observe(event, component));
             $(window).on('clickShader.liveEdit', (event:JQueryEventObject) => this.disconnect(event));
         }
 
-        private observe(event:JQueryEventObject, component:JQuery):void {
-            var isBeingObserved:Boolean = this.observedComponent && this.observedComponent[0] === component[0];
+        private observe(event:JQueryEventObject, component:LiveEdit.component.Component):void {
+            var isBeingObserved:Boolean = this.observedComponent && this.observedComponent.getElement()[0] === component.getElement()[0];
             if (isBeingObserved) {
                 return;
             }
@@ -27,7 +29,7 @@ module LiveEdit {
                 callback: (summaries:any) => {
                     this.onMutate(summaries, event);
                 },
-                rootNode: component[0],
+                rootNode: component.getElement()[0],
                 queries: [
                     { all: true}
                 ]
@@ -37,8 +39,8 @@ module LiveEdit {
         }
 
         private disconnect(event:JQueryEventObject):void {
-            var targetComponentIsSelected = (this.observedComponent && this.observedComponent.hasClass('live-edit-selected-component'));
-            var componentIsSelectedAndUserMouseOut = event.type === 'mouseOutComponent.liveEdit' && targetComponentIsSelected;
+            var targetComponentIsSelected = (this.observedComponent && this.observedComponent.isSelected());
+            var componentIsSelectedAndUserMouseOut = event.type == 'mouseOutComponent.liveEdit' && targetComponentIsSelected;
             if (componentIsSelectedAndUserMouseOut) {
                 return;
             }
@@ -54,16 +56,17 @@ module LiveEdit {
 
         private onMutate(summaries:any, event:JQueryEventObject):void {
             if (summaries && summaries[0]) {
-                var component:JQuery = $(summaries[0].target),
-                    targetComponentIsSelected = component.hasClass('live-edit-selected-component'),
+                var component:LiveEdit.component.Component = new LiveEdit.component.Component($(summaries[0].target)),
+                    targetComponentIsSelected = component.isSelected(),
                     componentIsNotSelectedAndMouseIsOver = !targetComponentIsSelected && event.type === 'mouseOverComponent.liveEdit',
-                    componentIsParagraphAndBeingEdited = component.attr('contenteditable');
+                    componentIsParagraphAndBeingEdited = component.getComponentType().getType() === LiveEdit.component.Type.PARAGRAPH && component.getElement().attr('contenteditable');
+
                 if (componentIsParagraphAndBeingEdited) {
-                    $(window).trigger('editParagraphComponent.liveEdit', [component]);
+                    $(window).trigger('editParagraphComponent.liveEdit', [ component ]);
                 } else if (componentIsNotSelectedAndMouseIsOver) {
-                    $(window).trigger('mouseOverComponent.liveEdit', [component]);
+                    $(window).trigger('mouseOverComponent.liveEdit', [ component ]);
                 } else {
-                    $(window).trigger('selectComponent.liveEdit', [component]);
+                    $(window).trigger('selectComponent.liveEdit', [ component ]);
                 }
             }
         }

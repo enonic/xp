@@ -1,7 +1,9 @@
 module LiveEdit.ui.contextmenu.menuitem {
+
+    // Uses
     var $ = $liveEdit;
 
-    export class Empty extends LiveEdit.ui.contextmenu.menuitem.Base {
+    export class RemoveMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         private menu = null;
 
@@ -14,27 +16,24 @@ module LiveEdit.ui.contextmenu.menuitem {
 
         init():void {
             var $button = this.createButton({
-                text: 'Empty',
-                id: 'live-edit-button-clear',
+                text: 'Remove',
+                id: 'live-edit-button-remove',
                 handler: (event) => {
                     event.stopPropagation();
+                    // For demo purposes
 
-                    this.emptyRegion();
+                    this.removeComponent();
                 }
             });
 
-            this.appendTo(this.menu.getRootEl());
+            this.appendTo(this.menu.getEl());
             this.menu.buttons.push(this);
         }
 
-        private emptyRegion() {
-            var region = this.menu.selectedComponent;
+        private removeComponent() {
+            this.menu.selectedComponent.getElement().remove();
 
-            $('[data-live-edit-type]', region).remove();
-
-            $(window).trigger('deselectComponent.liveEdit');
             $(window).trigger('componentRemoved.liveEdit');
-
         }
     }
 }

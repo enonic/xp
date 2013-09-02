@@ -12,6 +12,7 @@ interface ViewPortSize {
 module LiveEdit {
     export class DomHelper {
 
+        // Uses
         static $ = $liveEdit;
 
         public static getDocumentSize():DocumentSize {
@@ -32,6 +33,10 @@ module LiveEdit {
 
         public static getDocumentScrollTop():number {
             return $(document).scrollTop();
+        }
+
+        public static supportsTouch():Boolean {
+            return document.hasOwnProperty('ontouchend');
         }
 
     }

@@ -1,7 +1,9 @@
 module LiveEdit.ui.contextmenu.menuitem {
+
+    // Uses
     var $ = $liveEdit;
 
-    export class OpenContent extends LiveEdit.ui.contextmenu.menuitem.Base {
+    export class OpenContentMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         private menu = null;
 
@@ -28,7 +30,7 @@ module LiveEdit.ui.contextmenu.menuitem {
                 }
             });
 
-            this.appendTo(this.menu.getRootEl());
+            this.appendTo(this.menu.getEl());
             this.menu.buttons.push(this);
         }
     }

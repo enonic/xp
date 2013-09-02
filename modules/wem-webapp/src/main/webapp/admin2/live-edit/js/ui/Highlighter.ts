@@ -1,11 +1,11 @@
 module LiveEdit.ui {
-    var $ = $liveEdit;
 
-    var componentHelper = LiveEdit.component.ComponentHelper;
+    // Uses
+    var $ = $liveEdit;
 
     export class Highlighter extends LiveEdit.ui.Base {
 
-        private selectedComponent:JQuery = null;
+        private selectedComponent:LiveEdit.component.Component = null;
 
         constructor() {
             super();
@@ -14,18 +14,20 @@ module LiveEdit.ui {
         }
 
         private registerGlobalListeners():void {
-            $(window).on('mouseOverComponent.liveEdit', (event, component) => this.componentMouseOver(component));
-            $(window).on('selectComponent.liveEdit', (event, component)    => this.selectComponent(component));
-            $(window).on('deselectComponent.liveEdit', ()                  => this.deselect());
-            $(window).on('mouseOutComponent.liveEdit', ()                  => this.hide());
-            $(window).on('sortableStart.liveEdit', ()                 => this.hide());
+            $(window).on('mouseOverComponent.liveEdit', (event, component)  => this.onMouseOverComponent(component));
+            $(window).on('selectComponent.liveEdit', (event, component)     => this.onSelectComponent(component));
+            $(window).on('deselectComponent.liveEdit', ()                   => this.onDeselectComponent());
+            $(window).on('mouseOutComponent.liveEdit', ()                   => this.hide());
+            $(window).on('sortableStart.liveEdit', ()                       => this.hide());
             $(window).on('componentRemoved.liveEdit', ()                    => this.hide());
-            $(window).on('editParagraphComponent.liveEdit', ()             => this.hide());
-            $(window).on('resizeBrowserWindow.liveEdit', ()                       => this.handleWindowResize());
+            $(window).on('editParagraphComponent.liveEdit', ()              => this.hide());
+            $(window).on('resizeBrowserWindow.liveEdit', ()                 => this.handleWindowResize());
 
+            // The component should be re-selected after drag'n drop
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
-                    $(window).trigger('selectComponent.liveEdit', [ui.item]);
+                    var component = new LiveEdit.component.Component(ui.item);
+                    $(window).trigger('selectComponent.liveEdit', [ component ]);
                 }
             });
         }
@@ -35,78 +37,74 @@ module LiveEdit.ui {
                               '    <rect width="150" height="150"/>' +
                               '</svg>';
 
-            this.createElementsFromString(html);
+            this.createHtmlFromString(html);
             this.appendTo($('body'));
         }
 
-        private componentMouseOver(component:JQuery):void {
+        private onMouseOverComponent(component:LiveEdit.component.Component):void {
             this.show();
+            this.resizeToComponent(component);
             this.paintBorder(component);
             this.selectedComponent = component;
         }
 
-        private selectComponent(component:JQuery):void {
+        private onSelectComponent(component:LiveEdit.component.Component):void {
             this.selectedComponent = component;
-            var componentType = componentHelper.getComponentType(component);
-
-            component.addClass('live-edit-selected-component');
 
             // Highlighter should not be shown when type page is selected
-            if (componentType === 'page') {
+            if (component.getComponentType().getType() == LiveEdit.component.Type.PAGE) {
                 this.hide();
                 return;
             }
 
+            this.resizeToComponent(component);
             this.paintBorder(component);
             this.show();
         }
 
-        private deselect():void {
-            $('.live-edit-selected-component').removeClass('live-edit-selected-component');
+        private onDeselectComponent():void {
+            LiveEdit.Selection.clearSelection();
             this.selectedComponent = null;
         }
 
-        private paintBorder(component):void {
-            var border = this.getRootEl();
+        private paintBorder(component:LiveEdit.component.Component):void {
+            var el:JQuery = this.getEl();
+            var style = component.getComponentType().getHighlighterStyle();
 
-            this.resizeBorderToComponent(component);
-
-            var style = componentHelper.getHighlighterStyleForComponent(component);
-            border.css('stroke', style.strokeColor);
-            border.css('fill', style.fillColor);
-            border.css('stroke-dasharray', style.strokeDashArray);
+            el.css(style);
         }
 
-        private resizeBorderToComponent(component):void {
-            var componentBoxModel = componentHelper.getBoxModel(component);
+        private resizeToComponent(component:LiveEdit.component.Component):void {
+            var componentBoxModel = component.getElementDimensions();
             var w = Math.round(componentBoxModel.width),
                 h = Math.round(componentBoxModel.height),
                 top = Math.round(componentBoxModel.top),
                 left = Math.round(componentBoxModel.left);
 
-            var $highlighter = this.getRootEl(),
-                $HighlighterRect = $highlighter.find('rect');
+            var highlighter = this.getEl(),
+                HighlighterRect = highlighter.find('rect');
 
-            $highlighter.width(w);
-            $highlighter.height(h);
-            $HighlighterRect.attr('width', w);
-            $HighlighterRect.attr('height', h);
-            $highlighter.css({
+            highlighter.width(w);
+            highlighter.height(h);
+            HighlighterRect.attr('width', w);
+            HighlighterRect.attr('height', h);
+            highlighter.css({
                 top: top,
                 left: left
             });
         }
 
         private show():void {
-            this.getRootEl().show(null);
+            this.getEl().show(null);
         }
 
         private hide():void {
-            this.getRootEl().hide(null);
+            this.getEl().hide(null);
         }
 
         private handleWindowResize():void {
             if (this.selectedComponent) {
+                this.resizeToComponent(this.selectedComponent);
                 this.paintBorder(this.selectedComponent);
             }
         }

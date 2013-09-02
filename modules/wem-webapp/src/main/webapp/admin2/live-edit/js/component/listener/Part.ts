@@ -1,11 +1,13 @@
-module LiveEdit.component.eventdispatcher {
+module LiveEdit.component.listener {
+
+    // Uses
     var $ = $liveEdit;
 
-    export class Part extends LiveEdit.component.eventdispatcher.Base {
+    export class Part extends LiveEdit.component.listener.Base {
         constructor() {
             super();
 
-            this.componentCssSelector = '[data-live-edit-type=part]';
+            this.componentCssSelectorFilter = LiveEdit.component.Configuration[LiveEdit.component.Type.PART].cssSelector;
 
             this.renderEmptyPlaceholders();
             this.attachMouseOverEvent();

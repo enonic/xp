@@ -7,7 +7,7 @@ Ext.define('Admin.view.contentManager.contextwindow.Inspector', {
         '<div class="admin-inspector-info-container">',
         '   <div class="admin-inspector-icon {componentTypeIconCls}"><!-- --></div>',
         '   <div class="admin-inspector-info">',
-        '       <h3>{componentType}</h3>',
+        '       <h3>{componentTypeName}</h3>',
         '       <div>{componentName}</div>',
         '       <div>Width: {width}px</div>',
         '       <div>Height: {height}px</div>',
@@ -43,18 +43,14 @@ Ext.define('Admin.view.contentManager.contextwindow.Inspector', {
 
     displayComponentInfo: function (component) {
         var me = this,
-            componentDom = component[0], // Component is a jQuert object
-            type = componentDom.getAttribute('data-live-edit-type'),
-            name = componentDom.getAttribute('data-live-edit-name'),
-            width = Ext.fly(componentDom).getWidth(),
-            height = Ext.fly(componentDom).getHeight(),
-            iconCls = Admin.view.contentManager.contextwindow.Helper.resolveComponentTypeIconCls(type),
+            componentType = component.getComponentType(),
+            dimensions = component.getElementDimensions(),
             data = {
-                componentType: type,
-                componentName: name,
-                componentTypeIconCls: iconCls,
-                width: width,
-                height: height
+                componentTypeName: componentType.getName(),
+                componentName: component.getName(),
+                componentTypeIconCls: componentType.getIconCls(),
+                width: dimensions.width,
+                height: dimensions.height
             };
         me.tpl.overwrite(me.getEl(), data);
     },

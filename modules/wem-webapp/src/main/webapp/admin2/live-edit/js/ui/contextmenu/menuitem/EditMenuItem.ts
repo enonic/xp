@@ -1,7 +1,9 @@
 module LiveEdit.ui.contextmenu.menuitem {
+
+    // Uses
     var $ = $liveEdit;
 
-    export class Edit extends LiveEdit.ui.contextmenu.menuitem.Base {
+    export class EditMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
         private menu = null;
 
@@ -19,14 +21,14 @@ module LiveEdit.ui.contextmenu.menuitem {
                 handler: (event) => {
                     event.stopPropagation();
 
-                    var $paragraph = this.menu.selectedComponent;
-                    if ($paragraph && $paragraph.length > 0) {
-                        $(window).trigger('editParagraphComponent.liveEdit', [$paragraph]);
+                    var paragraphComponent = this.menu.selectedComponent;
+                    if (paragraphComponent && paragraphComponent.getElement().length > 0) {
+                        $(window).trigger('editParagraphComponent.liveEdit', [paragraphComponent]);
                     }
                 }
             });
 
-            this.appendTo(this.menu.getRootEl());
+            this.appendTo(this.menu.getEl());
             this.menu.buttons.push(this);
         }
     }

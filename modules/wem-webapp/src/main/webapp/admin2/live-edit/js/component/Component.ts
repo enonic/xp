@@ -1,43 +1,40 @@
 module LiveEdit.component {
+
+    // Uses
     var componentHelper = LiveEdit.component.ComponentHelper;
+
 
     export class Component {
 
-        private jQueryElement:JQuery;
-        private type:string;
-        private name:string;
-        private key:string;
-        private dimensions:ComponentBoxModel;
-        private highlightStyle:HighlighterStyle;
-        private iconCls:string;
+        private componentType:ComponentType;
 
-        // fixme: move context menu stuff here
-        private contextMenuConfig:any;
+        private element:JQuery;
+
+        private name:string;
+
+        private key:string;
+
+        private elementDimensions:ElementDimensions;
 
         constructor(element:JQuery) {
-            this.setJQueryElement(element);
-            this.setType(componentHelper.getComponentType(element));
+
+            if (element.length == 0) {
+                throw "Could not create component. No element";
+            }
+
+            this.setElement(element);
             this.setName(componentHelper.getComponentName(element));
-            this.setKey(componentHelper.getComponentKey(element));
-            this.setDimensions(componentHelper.getBoxModel(element));
-            this.setHighlightStyle(componentHelper.getHighlighterStyleForComponent(element));
-            this.setIconCls(componentHelper.resolveCssClassForComponent(element));
+            this.setKey(componentHelper.getComponentKeyFromElement(element));
+            this.setElementDimensions(componentHelper.getDimensionsFromElement(element));
+            this.setComponentType(new LiveEdit.component.ComponentType( componentHelper.getComponentTypeFromElement(element) ));
         }
 
-        getJQueryElement():JQuery {
-            return this.jQueryElement;
+        getElement():JQuery {
+            return this.element;
         }
 
-        setJQueryElement(element:JQuery):void {
-            this.jQueryElement = element;
-        }
-
-        getType():string {
-            return this.type;
-        }
-
-        setType(type:string):void {
-            this.type = type;
+        setElement(jQueryObject:JQuery):void {
+            this.element = jQueryObject;
         }
 
         getName():string {
@@ -53,39 +50,28 @@ module LiveEdit.component {
         }
 
         setKey(key:string):void {
-            this.key = key;
+            this.key = key || '';
         }
 
-        getDimensions():ComponentBoxModel {
-            return this.dimensions;
+        getElementDimensions():ElementDimensions {
+            return this.elementDimensions;
         }
 
-        setDimensions(rectangle:ComponentBoxModel):void {
-            this.dimensions = rectangle;
+        setElementDimensions(dimensions:ElementDimensions):void {
+            this.elementDimensions = dimensions;
         }
 
-        getHighlightStyle():HighlighterStyle {
-            return this.highlightStyle;
+        setComponentType(componentType:ComponentType):void {
+            this.componentType = componentType;
         }
 
-        setHighlightStyle(style:HighlighterStyle):void {
-            this.highlightStyle = style;
+        getComponentType():ComponentType {
+            return this.componentType;
         }
 
-        getIconCls():any {
-            return this.iconCls;
-        }
 
-        setIconCls(cls:string):void {
-            this.iconCls = cls;
-        }
-
-        getContextMenuConfig():any {
-            return this.contextMenuConfig;
-        }
-
-        setContextMenuConfig(config:any):void {
-            this.contextMenuConfig = config;
+        isSelected():bool {
+            return this.getElement().attr('data-live-edit-selected') == 'true';
         }
 
     }
