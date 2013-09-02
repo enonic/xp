@@ -54,6 +54,8 @@ declare var LiveEditMutationSummary;
         loaderSplash.fadeOut('fast', () => {
             loaderSplash.remove();
 
+            console.log('Init Live Edit. Using jQuery version: ' + $liveEdit.fn.jquery);
+
             new LiveEdit.component.listener.Page();
             new LiveEdit.component.listener.Region();
             new LiveEdit.component.listener.Layout();
