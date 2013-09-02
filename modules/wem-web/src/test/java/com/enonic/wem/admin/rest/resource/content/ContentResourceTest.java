@@ -1,5 +1,8 @@
 package com.enonic.wem.admin.rest.resource.content;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
@@ -17,6 +20,7 @@ import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContents;
+import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.space.GetSpaces;
 import com.enonic.wem.api.content.Content;
@@ -25,7 +29,9 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.api.facet.QueryFacet;
 import com.enonic.wem.api.facet.TermsFacet;
@@ -33,6 +39,12 @@ import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.validator.DataValidationError;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
+import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
+import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.web.servlet.ServletRequestHolder;
@@ -165,6 +177,40 @@ public class ContentResourceTest
         assertJson( "generate_content_name.json", jsonString );
     }
 
+    @Test
+    public void validate_content_success()
+        throws Exception
+    {
+
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+
+        Mockito.when( client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
+
+        String jsonString = resource().path( "content/validate" ).
+            entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "validate_content_success.json", jsonString );
+    }
+
+    @Test
+    public void validate_content_error()
+        throws Exception
+    {
+
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+
+        Mockito.when( client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( createDataValidationErrors() );
+
+        String jsonString = resource().path( "content/validate" ).
+            entity( readFromFile( "validate_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "validate_content_error.json", jsonString );
+    }
+
     @Override
     protected Object getResourceInstance()
     {
@@ -173,6 +219,19 @@ public class ContentResourceTest
         resource.setClient( client );
 
         return resource;
+    }
+
+    private DataValidationErrors createDataValidationErrors()
+    {
+        List<DataValidationError> errors = new ArrayList<>( 2 );
+
+        Input input = Input.newInput().name( "myInput" ).inputType( InputTypes.PHONE ).required( true ).maximumOccurrences( 3 ).build();
+        Property property = Property.newProperty( "myProperty" ).type( ValueTypes.TEXT ).value( "myValue" ).build();
+
+        errors.add( new MaximumOccurrencesValidationError( input, 5 ) );
+        errors.add( new MissingRequiredValueValidationError( input, property ) );
+
+        return DataValidationErrors.from(errors);
     }
 
     private Content createContent( final String id, final String name, final String contentTypeName )

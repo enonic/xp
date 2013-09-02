@@ -22,21 +22,29 @@ import com.enonic.wem.admin.rest.resource.content.model.ContentListJson;
 import com.enonic.wem.admin.rest.resource.content.model.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.model.ContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.content.model.FacetedContentSummaryListJson;
+import com.enonic.wem.admin.rest.resource.content.model.ValidateContentJson;
+import com.enonic.wem.admin.rest.resource.content.model.ValidateContentParams;
+import com.enonic.wem.admin.rpc.content.ContentDataParser;
 import com.enonic.wem.admin.rpc.content.FacetEnricher;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.GetContents;
+import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.space.SpaceNames;
 
 @Path("content")
@@ -111,13 +119,32 @@ public class ContentResource
 
     @GET
     @Path("generateName")
-    public ContentNameJson generateName( @QueryParam( "displayName" ) final String displayName ) {
+    public ContentNameJson generateName( @QueryParam("displayName") final String displayName )
+    {
 
         final GenerateContentName generateContentName = Commands.content().generateContentName().displayName( displayName );
 
         final String generatedContentName = client.execute( generateContentName );
 
         return new ContentNameJson( generatedContentName );
+    }
+
+    @POST
+    @Path("validate")
+    public ValidateContentJson validate( final ValidateContentParams params )
+    {
+        final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( params.getQualifiedContentTypeName() );
+
+        GetContentTypes getContentType =
+            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
+        final ContentType contentType = client.execute( getContentType ).first();
+
+        final ContentData contentData = new ContentDataParser( contentType ).parse( params.getContentData() );
+
+        final DataValidationErrors validationErrors =
+            client.execute( Commands.content().validate().contentData( contentData ).contentType( qualifiedContentTypeName ) );
+
+        return new ValidateContentJson( validationErrors );
     }
 
 

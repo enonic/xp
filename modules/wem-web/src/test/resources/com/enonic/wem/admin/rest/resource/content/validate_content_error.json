@@ -1,0 +1,10 @@
+{
+    "errors" : [ {
+        "message" : "Input [myInput] allows maximum 3 occurrences: 5",
+        "path" : "myInput"
+    }, {
+        "message" : "Missing required value for input [myInput] of type [Phone]: myValue",
+        "path" : "myInput"
+    } ],
+    "hasErrors": true
+}
