@@ -1,0 +1,28 @@
+{
+    "components": [
+        {
+            "key": "10517",
+            "type": 2,
+            "name": "Layout",
+            "subtitle": "Adds a layout component to the page"
+        },
+        {
+            "key": "10617",
+            "type": 3,
+            "name": "Part",
+            "subtitle": "Adds a part component to the page"
+        },
+        {
+            "key": "10717",
+            "type": 4,
+            "name": "Image",
+            "subtitle": "Adds an image component to the page"
+        },
+        {
+            "key": "10817",
+            "type": 5,
+            "name": "Paragraph",
+            "subtitle": "Adds a paragraph component to the page"
+        }
+    ]
+}

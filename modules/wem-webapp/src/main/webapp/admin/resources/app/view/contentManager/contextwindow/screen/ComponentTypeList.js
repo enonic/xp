@@ -13,7 +13,7 @@ Ext.define('Admin.view.contentManager.contextwindow.screen.ComponentTypeList', {
         align: 'stretch'
     },
 
-    URL_TO_COMPONENTS: '../admin2/apps/content-manager/js/data/context-window/mock-components.json',
+    URL_TO_COMPONENTS: '../admin2/apps/content-manager/js/data/context-window/mock-component-type-list.json',
 
     searchBarCt: undefined,
     searchInputCmp: undefined,
