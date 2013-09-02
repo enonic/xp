@@ -3,7 +3,7 @@ module LiveEdit.ui.contextmenu {
     // Uses
     var $ = $liveEdit;
 
-    export class Menu extends LiveEdit.ui.Base {
+    export class ContextMenu extends LiveEdit.ui.Base {
         private selectedComponent:LiveEdit.component.Component;
 
         private hidden = true;
@@ -54,6 +54,9 @@ module LiveEdit.ui.contextmenu {
         }
 
         private show(component:LiveEdit.component.Component, pagePosition):void {
+            if (component.isEmpty()) {
+                return;
+            }
             this.selectedComponent = component;
 
             this.updateTitleBar(component);

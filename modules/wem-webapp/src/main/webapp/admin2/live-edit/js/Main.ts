@@ -29,7 +29,7 @@ declare var LiveEditMutationSummary;
 ///<reference path='ui/Highlighter.ts' />
 ///<reference path='ui/ToolTip.ts' />
 
-///<reference path='ui/contextmenu/Menu.ts' />
+///<reference path='ui/contextmenu/ContextMenu.ts' />
 ///<reference path='ui/contextmenu/menuitem/BaseMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/ParentMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/OpenContentMenuItem.ts' />
@@ -66,7 +66,7 @@ declare var LiveEditMutationSummary;
             new LiveEdit.ui.Highlighter();
             new LiveEdit.ui.ToolTip();
             new LiveEdit.ui.Cursor();
-            new LiveEdit.ui.contextmenu.Menu();
+            new LiveEdit.ui.contextmenu.ContextMenu();
             new LiveEdit.ui.Shader();
             new LiveEdit.ui.Editor();
             new LiveEdit.MutationObserver();

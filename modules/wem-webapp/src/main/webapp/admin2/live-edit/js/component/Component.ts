@@ -3,7 +3,6 @@ module LiveEdit.component {
     // Uses
     var componentHelper = LiveEdit.component.ComponentHelper;
 
-
     export class Component {
 
         private componentType:ComponentType;
@@ -69,6 +68,9 @@ module LiveEdit.component {
             return this.componentType;
         }
 
+        isEmpty():bool {
+            return this.getElement().attr('data-live-edit-empty-component') == 'true';
+        }
 
         isSelected():bool {
             return this.getElement().attr('data-live-edit-selected') == 'true';
