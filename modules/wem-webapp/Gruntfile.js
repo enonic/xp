@@ -90,7 +90,7 @@ module.exports = function (grunt) {
 
         watch: {
             files: ['src/main/webapp/admin2/**/*.ts', 'src/test/webapp/admin2/**/*.ts'],
-            tasks: ['typescript']
+            tasks: ['ts']
         }
 
     });
