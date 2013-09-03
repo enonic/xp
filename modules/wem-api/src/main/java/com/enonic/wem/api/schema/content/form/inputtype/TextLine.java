@@ -10,7 +10,7 @@ import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
 public class TextLine
-    extends BaseInputType
+    extends InputType
 {
     public TextLine()
     {

@@ -1,0 +1,8 @@
+{
+    "failures" : [ ],
+    "successes" : [ {
+        "path" : "myspace:/1"
+    }, {
+        "path" : "myspace:/2"
+    } ]
+}

@@ -11,7 +11,7 @@ import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
 public class Money
-    extends BaseInputType
+    extends InputType
 {
     public Money()
     {

@@ -128,6 +128,8 @@
 ///<reference path='ui/Dropdown.ts' />
 ///<reference path='ui/TextInputListener.ts' />
 ///<reference path='ui/TextInput.ts' />
+///<reference path='ui/CheckboxInputListener.ts' />
+///<reference path='ui/CheckboxInput.ts' />
 ///<reference path='ui/PasswordInput.ts' />
 ///<reference path='ui/AutosizeTextInput.ts' />
 ///<reference path='ui/TextArea.ts' />
@@ -136,6 +138,46 @@
 ///<reference path='ui/form/Form.ts' />
 ///<reference path='ui/form/FormItem.ts' />
 
+///<reference path='ui/dialog/DialogButton.ts' />
+///<reference path='ui/dialog/ModalDialog.ts' />
+
+
+///<reference path='facet/Facet.ts' />
+///<reference path='facet/FacetEntry.ts' />
+///<reference path='facet/TermsFacetEntry.ts' />
+///<reference path='facet/TermsFacet.ts' />
+///<reference path='facet/QueryFacet.ts' />
+///<reference path='facet/FacetFactory.ts' />
+///<reference path='facet/FacetEntryViewSelectionChangedEvent.ts' />
+///<reference path='facet/FacetEntryView.ts' />
+///<reference path='facet/FacetView.ts' />
+///<reference path='facet/TermsFacetEntryView.ts' />
+///<reference path='facet/TermsFacetView.ts' />
+///<reference path='facet/QueryFacetEntryView.ts' />
+///<reference path='facet/QueryFacetView.ts' />
+///<reference path='facet/FacetGroupView.ts' />
+///<reference path='facet/FacetContainer.ts' />
+
+
+///<reference path='data/DataId.ts' />
+///<reference path='data/Data.ts' />
+///<reference path='data/DataSet.ts' />
+///<reference path='data/Property.ts' />
+
+///<reference path='content/ContentPath.ts' />
+///<reference path='content/data/ContentData.ts' />
+
+///<reference path='schema/content/form/InputTypeName.ts' />
+///<reference path='schema/content/form/FormItem.ts' />
+///<reference path='schema/content/form/Layout.ts' />
+///<reference path='schema/content/form/FieldSet.ts' />
+///<reference path='schema/content/form/Input.ts' />
+///<reference path='schema/content/form/Occurrences.ts' />
+///<reference path='schema/content/ContentType.ts' />
+
+
+///<reference path='schema/content/form/FormItemSet.ts' />
+///<reference path='schema/content/form/Form.ts' />
 
 ///<reference path='app/wizard/SaveAction.ts' />
 ///<reference path='app/wizard/CloseAction.ts' />
@@ -179,48 +221,20 @@
 ///<reference path='app/browse/BrowseItemPanel.ts' />
 ///<reference path='app/browse/GridContainer.ts'/>
 
-///<reference path='app/browse/filter/FilterSearchEvent.ts' />
 ///<reference path='app/browse/filter/BrowseFilterPanelListener.ts' />
 ///<reference path='app/browse/filter/BrowseFilterPanel.ts' />
 ///<reference path='app/browse/filter/TextSearchField.ts'/>
 ///<reference path='app/browse/filter/ClearFilterButton.ts'/>
 
-///<reference path='facet/TermsFacetEntryView.ts' />
-///<reference path='facet/TermsFacetView.ts' />
-///<reference path='facet/FacetGroupView.ts' />
-///<reference path='facet/Facet.ts' />
-///<reference path='facet/TermsFacet.ts' />
-///<reference path='facet/TermsFacetEntry.ts' />
 
 ///<reference path='app/view/ViewItem.ts' />
 ///<reference path='app/view/ItemStatisticsPanel.ts' />
 ///<reference path='app/view/ItemViewPanel.ts' />
 
-///<reference path='ui/dialog/DialogButton.ts' />
-///<reference path='ui/dialog/ModalDialog.ts' />
 ///<reference path='app/delete/DeleteItem.ts' />
 ///<reference path='app/delete/DeleteDialog.ts' />
 ///<reference path='app/wizard/SaveBeforeCloseDialog.ts' />
 
-///<reference path='data/DataId.ts' />
-///<reference path='data/Data.ts' />
-///<reference path='data/DataSet.ts' />
-///<reference path='data/Property.ts' />
-
-///<reference path='content/ContentPath.ts' />
-///<reference path='content/data/ContentData.ts' />
-
-///<reference path='schema/content/form/InputType.ts' />
-///<reference path='schema/content/form/FormItem.ts' />
-///<reference path='schema/content/form/Layout.ts' />
-///<reference path='schema/content/form/FieldSet.ts' />
-///<reference path='schema/content/form/Input.ts' />
-///<reference path='schema/content/form/Occurrences.ts' />
-///<reference path='schema/content/ContentType.ts' />
-
-
-///<reference path='schema/content/form/FormItemSet.ts' />
-///<reference path='schema/content/form/Form.ts' />
 
 declare var Mousetrap;
 declare var Ext;

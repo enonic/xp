@@ -4,64 +4,41 @@ module api_app_browse_filter {
 
         private listeners:BrowseFilterPanelListener[] = [];
 
-        private facetContainer:api_facet.FacetGroupView;
+        private facetContainer:api_facet.FacetContainer;
 
         private searchField:api_app_browse_filter.TextSearchField;
 
         private clearFilter:api_app_browse_filter.ClearFilterButton;
 
-        private searchFilterTypingTimer:number;
-
-        constructor(facetData?:api_facet.TermsFacet[]) {
+        constructor(facets?:api_facet.Facet[], groupViews?:api_facet.FacetGroupView[]) {
             super('BrowseFilterPanel');
             this.addClass('filter-panel');
 
-            this.searchField = this.createSearchFieldEl();
-            this.clearFilter = this.createClearFilterEl();
-            this.facetContainer = new api_facet.FacetGroupView(facetData);
-
-            api_app_browse_filter.FilterSearchEvent.on((event:api_app_browse_filter.FilterSearchEvent) => {
-                if (this.isDirty()) {
-                    this.clearFilter.show();
-                } else {
-                    this.clearFilter.hide();
-                }
-                this.search();
+            this.searchField = new TextSearchField('Search');
+            this.searchField.addValueChangedListener(() => {
+                this.doHandleSearch();
             });
 
-        }
-
-        private createSearchFieldEl():api_app_browse_filter.TextSearchField {
-            var searchField:api_app_browse_filter.TextSearchField = new api_app_browse_filter.TextSearchField('Search');
-            searchField.addSearchListener((event:any) => {
-                if (event.which === 97) {
-                    new api_app_browse_filter.FilterSearchEvent().fire();
-                } else {
-                    if (this.searchFilterTypingTimer !== null) {
-                        window.clearTimeout(this.searchFilterTypingTimer);
-                        this.searchFilterTypingTimer = null;
-                    }
-                    this.searchFilterTypingTimer = window.setTimeout(() => {
-                        new api_app_browse_filter.FilterSearchEvent().fire();
-                    }, 500);
-                }
-            });
-            return searchField;
-        }
-
-        private createClearFilterEl():api_app_browse_filter.ClearFilterButton {
-            var clearFilter:api_app_browse_filter.ClearFilterButton = new api_app_browse_filter.ClearFilterButton();
-
-            clearFilter.hide();
-
-            clearFilter.getEl().addEventListener('click', () => {
+            this.clearFilter = new ClearFilterButton();
+            this.clearFilter.getEl().addEventListener('click', () => {
                 this.reset();
             });
-            return clearFilter;
-        }
 
-        updateFacets(facetGroupsData:api_facet.TermsFacet[]) {
-            this.facetContainer.update(facetGroupsData)
+            this.facetContainer = new api_facet.FacetContainer();
+            this.appendChild(this.facetContainer);
+
+            if (groupViews != null) {
+                groupViews.forEach((facetGroupView:api_facet.FacetGroupView) => {
+
+                        facetGroupView.addFacetEntrySelectionChangeListener((event:api_facet.FacetEntryViewSelectionChangedEvent) => {
+
+                            this.doHandleSearch();
+                        });
+
+                        this.facetContainer.addFacetGroupView(facetGroupView);
+                    }
+                );
+            }
         }
 
         afterRender() {
@@ -70,20 +47,37 @@ module api_app_browse_filter {
             this.appendChild(this.facetContainer);
         }
 
-        getValues():any[] {
-            var values = this.facetContainer.getValues();
-            values['query'] = this.searchField.getEl().getValue();
+        private doHandleSearch() {
+            if (this.hasFilterSet()) {
+                this.clearFilter.show();
+            }
+            else {
+                this.clearFilter.hide();
+            }
+            this.handleSearch(this.getValues());
+        }
+
+        handleSearch(values:{ [s : string ] : string[]; }) {
+            throw new Error("Must be implemented by inheritors");
+        }
+
+        updateFacets(facets:api_facet.Facet[]) {
+            this.facetContainer.updateFacets(facets)
+        }
+
+        getValues():{ [s : string ] : string[]; } {
+            var values:{[s:string] : string[]; } = this.facetContainer.getSelectedValuesByFacetName();
+            values['query'] = [this.searchField.getEl().getValue()];
             return values;
         }
 
-        isDirty() {
-            return this.facetContainer.isDirty() || this.searchField.getHTMLElement()['value'].trim() != '';
+        hasFilterSet() {
+            return this.facetContainer.hasSelectedFacetEntries() || this.searchField.getHTMLElement()['value'].trim() != '';
         }
 
         reset() {
-            this.searchField.getHTMLElement()['value'] = '';
-            window.clearTimeout(this.searchFilterTypingTimer);
-            this.facetContainer.reset();
+            this.searchField.clear();
+            this.facetContainer.deselectAll();
             this.clearFilter.hide();
             this.notifyReset();
         }
@@ -102,7 +96,7 @@ module api_app_browse_filter {
             });
         }
 
-        private notifySearch(values:any[]) {
+        private notifySearch(values:{ [s : string ] : string[]; }) {
             this.listeners.forEach((listener) => {
                 if (listener.onSearch) {
                     listener.onSearch(values);

@@ -2,15 +2,14 @@ module api_ui_toolbar {
 
     export class Toolbar extends api_dom.DivEl implements api_ui.ActionContainer {
 
-        ext;
-
         private components:any[] = [];
+
+        private greedySpacerInsertPoint;
 
         private actions:api_ui.Action[] = [];
 
         constructor() {
             super("Toolbar", "toolbar");
-            this.initExt();
         }
 
         afterRender() {
@@ -18,18 +17,10 @@ module api_ui_toolbar {
             super.afterRender();
         }
 
-        private initExt() {
-            var htmlEl = this.getHTMLElement();
-            this.ext = new Ext.Component({
-                contentEl: htmlEl,
-                region: 'north'
-            });
-        }
-
         addAction(action:api_ui.Action) {
             var button:ToolbarButton = this.addActionButton(action);
             this.actions.push(action);
-            this.appendChild(button);
+            this.addElement(button);
         }
 
         addActions(actions:api_ui.Action[]) {
@@ -45,33 +36,33 @@ module api_ui_toolbar {
         addElement(element:api_dom.Element) {
             if (this.hasGreedySpacer()) {
                 element.getEl().addClass('pull-right');
+                element.insertAfterEl(this.greedySpacerInsertPoint);
+            } else {
+                this.appendChild(element);
             }
-            this.appendChild(element);
         }
 
         addGreedySpacer() {
             var spacer = new ToolbarGreedySpacer();
             this.components.push(spacer);
+            this.greedySpacerInsertPoint = this.getLastChild();
         }
 
         private addActionButton(action:api_ui.Action):api_ui_toolbar.ToolbarButton {
             var button:ToolbarButton = new ToolbarButton(action);
-            if (this.hasGreedySpacer()) {
-                button.setFloatRight(true);
-            }
             this.components.push(button);
             return button;
         }
 
         private hasGreedySpacer():boolean {
-            for (var i in this.components) {
-                var comp = this.components[i];
+            return this.components.some((comp:any) => {
                 if (comp instanceof ToolbarGreedySpacer) {
                     return true;
                 }
-            }
-            return false;
+                return false;
+            });
         }
+
     }
 
     export class ToolbarButton extends api_ui.ActionButton {

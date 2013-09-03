@@ -10,12 +10,11 @@ public final class Version
 
     private final static Version INSTANCE = new Version();
 
-    private final String version;
+    private String version;
 
     private Version()
     {
-        final String value = getClass().getPackage().getImplementationVersion();
-        this.version = value != null ? value : "x.x.x";
+        setVersion( getClass().getPackage().getImplementationVersion() );
     }
 
     public String getName()
@@ -31,6 +30,11 @@ public final class Version
     public String getVersion()
     {
         return this.version;
+    }
+
+    public void setVersion( final String value )
+    {
+        this.version = value != null ? value : "x.x.x";
     }
 
     public String getBanner()

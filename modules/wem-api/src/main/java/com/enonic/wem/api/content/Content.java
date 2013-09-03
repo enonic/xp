@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
@@ -17,7 +18,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Content
-    implements IllegalEditAware<Content>, ItemTranslatable
+    implements IllegalEditAware<Content>, ItemTranslatable<Content>
 {
     private final String displayName;
 
@@ -169,6 +170,22 @@ public final class Content
             item.add( this.contentData.toDataSet( "data" ) );
         }
         return item;
+    }
+
+    @Override
+    public Content toObject( final Item item )
+    {
+        return newContent().
+            id( item.getProperty( "id" ).getContentId() ).
+            name( item.getProperty( "name" ).getString() ).
+            displayName( item.getProperty( "displayName" ).getString() ).
+            createdTime( item.getProperty( "createdTime" ).getDateTime() ).
+            modifiedTime( item.getProperty( "modifiedTime" ).getDateTime() ).
+            owner( AccountKey.from( item.getProperty( "owner" ).getString() ).asUser() ).
+            modifier( AccountKey.from( item.getProperty( "modifier" ).getString() ).asUser() ).
+            type( QualifiedContentTypeName.from( item.getProperty( "type" ).getString() ) ).
+            contentData( new ContentData( item.getDataSet( "data" ).toRootDataSet() ) ).
+            build();
     }
 
     @Override

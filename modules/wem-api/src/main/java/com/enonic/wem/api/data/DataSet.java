@@ -35,7 +35,7 @@ public class DataSet
         super( name );
     }
 
-    private DataSet( final Builder builder )
+    protected DataSet( final Builder builder )
     {
         super( builder.name );
 
@@ -423,6 +423,11 @@ public class DataSet
     public final DataSetArray getArray()
     {
         return (DataSetArray) super.getArray();
+    }
+
+    public RootDataSet toRootDataSet()
+    {
+        return new RootDataSet( newDataSet( this ) );
     }
 
     @Override

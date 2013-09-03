@@ -8,7 +8,7 @@ import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
 public class Image
-    extends BaseInputType
+    extends InputType
 {
     public Image()
     {

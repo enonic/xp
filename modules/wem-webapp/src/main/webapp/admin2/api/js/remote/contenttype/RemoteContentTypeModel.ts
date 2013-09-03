@@ -70,7 +70,6 @@ module api_remote_contenttype {
 
     export interface InputType {
         name: string;
-        builtIn: boolean;
     }
 
     export interface InputTypeConfig {

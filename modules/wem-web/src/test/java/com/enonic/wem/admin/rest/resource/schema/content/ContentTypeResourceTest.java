@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
@@ -31,7 +31,7 @@ import static com.enonic.wem.api.schema.content.form.MixinReference.newMixinRefe
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
 
 public class ContentTypeResourceTest
-    extends AbstractResourceTest2
+    extends AbstractResourceTest
 {
     private UploadService uploadService;
 

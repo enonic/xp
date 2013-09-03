@@ -1,6 +1,15 @@
 module api_facet {
 
-    export interface Facet {
+    export class Facet {
 
+        private name:string;
+
+        constructor(name:string) {
+            this.name = name;
+        }
+
+        getName():string {
+            return this.name;
+        }
     }
 }

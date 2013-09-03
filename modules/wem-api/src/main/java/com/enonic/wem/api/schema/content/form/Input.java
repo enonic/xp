@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.InvalidPropertyTypeException;
 import com.enonic.wem.api.data.type.InvalidValueTypeException;
-import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
 import com.enonic.wem.api.schema.content.form.inputtype.InputType;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypeConfig;
 
@@ -15,7 +14,7 @@ import static com.enonic.wem.api.schema.content.form.Occurrences.newOccurrences;
 public final class Input
     extends FormItem
 {
-    private final BaseInputType type;
+    private final InputType type;
 
     private final String label;
 
@@ -188,7 +187,7 @@ public final class Input
     {
         private String name;
 
-        private BaseInputType inputType;
+        private InputType inputType;
 
         private String label;
 
@@ -230,7 +229,7 @@ public final class Input
             return this;
         }
 
-        public Builder inputType( BaseInputType value )
+        public Builder inputType( InputType value )
         {
             inputType = value;
             return this;

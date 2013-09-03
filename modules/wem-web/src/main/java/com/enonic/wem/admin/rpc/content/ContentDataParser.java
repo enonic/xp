@@ -4,7 +4,6 @@ package com.enonic.wem.admin.rpc.content;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
@@ -13,20 +12,20 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.FormItemPath;
 import com.enonic.wem.api.schema.content.form.Input;
 
-final class ContentDataParser
+public final class ContentDataParser
 {
     private ContentType contentType;
 
-    ContentDataParser( final ContentType contentType )
+    public ContentDataParser( final ContentType contentType )
     {
         this.contentType = contentType;
     }
 
-    ContentDataParser()
+    public ContentDataParser()
     {
     }
 
-    ContentData parse( final ObjectNode data )
+    public ContentData parse( final JsonNode data )
     {
         final ContentData contentData = new ContentData();
 

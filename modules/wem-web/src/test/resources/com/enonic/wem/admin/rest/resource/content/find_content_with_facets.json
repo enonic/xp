@@ -30,69 +30,60 @@
     "facets": [
         {
             "_type": "terms",
-            "displayName": "Content Type",
-            "name": "contentType",
-            "terms": [
+            "entries": [
                 {
                     "count": 5,
-                    "displayName": "My type",
+                    "displayName": "Folder",
                     "name": "system:folder"
                 },
                 {
                     "count": 24,
-                    "displayName": "My type",
+                    "displayName": "Image",
                     "name": "system:image"
                 },
                 {
                     "count": 4,
-                    "displayName": "My type",
+                    "displayName": "Space",
                     "name": "system:space"
                 }
-            ]
+            ],
+            "name": "contentType"
         },
         {
             "_type": "terms",
-            "displayName": "Space",
-            "name": "space",
-            "terms": [
+            "entries": [
                 {
                     "count": 30,
-                    "displayName": "My space",
+                    "displayName": "Bildearkiv",
                     "name": "bildearkiv"
                 },
                 {
                     "count": 1,
-                    "displayName": "My space",
+                    "displayName": "Bluman Trampoliner",
                     "name": "bluman trampoliner"
                 },
                 {
                     "count": 1,
-                    "displayName": "My space",
+                    "displayName": "Bluman Intranett",
                     "name": "bluman intranett"
                 }
-            ]
+            ],
+            "name": "space"
         },
         {
-            "_type": "terms",
-            "displayName": "Last Modified",
-            "name": "ranges",
-            "terms": [
-                {
-                    "count": 0,
-                    "name": "< 1 hour",
-                    "type": "query"
-                },
-                {
-                    "count": 0,
-                    "name": "< 1 week",
-                    "type": "query"
-                },
-                {
-                    "count": 0,
-                    "name": "< 1 day",
-                    "type": "query"
-                }
-            ]
+            "_type": "query",
+            "count": 0,
+            "name": "< 1 hour"
+        },
+        {
+            "_type": "query",
+            "count": 0,
+            "name": "< 1 week"
+        },
+        {
+            "_type": "query",
+            "count": 0,
+            "name": "< 1 day"
         }
     ]
 }

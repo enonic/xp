@@ -12,7 +12,7 @@ import com.enonic.wem.api.schema.content.form.InvalidValueException;
  * TODO: An array of strings
  */
 public class Tags
-    extends BaseInputType
+    extends InputType
 {
     public Tags()
     {

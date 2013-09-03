@@ -441,5 +441,16 @@ public class DataSetTest
         assertEquals( "mySet[1] { myData, myData[1] }", mySet.toString() );
     }
 
+    @Test
+    public void toRootDataSet()
+    {
+        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "A value" ).build() );
+        RootDataSet rootDataSet = dataSet.toRootDataSet();
+
+        assertEquals( true, rootDataSet.isRoot() );
+        assertEquals( "", rootDataSet.getName() );
+    }
+
 }
 

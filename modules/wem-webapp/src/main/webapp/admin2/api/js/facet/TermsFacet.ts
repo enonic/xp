@@ -1,8 +1,19 @@
 module api_facet {
 
-    export interface TermsFacet extends Facet {
-        name:string;
-        displayName:string;
-        terms:TermsFacetEntry[];
+    export class TermsFacet extends Facet {
+
+        private displayName:string;
+
+        private entries:TermsFacetEntry[];
+
+        constructor(name:string, displayName:string, entries:TermsFacetEntry[]) {
+            super(name);
+            this.displayName = displayName;
+            this.entries = entries;
+        }
+
+        getTermsFacetEntries():TermsFacetEntry[] {
+            return this.entries;
+        }
     }
 }

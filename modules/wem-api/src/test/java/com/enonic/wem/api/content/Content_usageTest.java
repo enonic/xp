@@ -238,7 +238,7 @@ public class Content_usageTest
         assertEquals( "abc", dataSet.getProperty( "myText" ).getString() );
         assertEquals( new Long( 123L ), dataSet.getProperty( "myNum" ).getLong() );
         assertEquals( 123.123, dataSet.getProperty( "myDec" ).getDouble() );
-        assertEquals( new org.joda.time.DateMidnight( 2013, 1, 13 ), dataSet.getProperty( "myDate" ).getDate() );
+        assertEquals( new org.joda.time.DateMidnight( 2013, 1, 13 ), dataSet.getProperty( "myDate" ).getDateMidnight() );
         assertEquals( "<p>abc</p>", dataSet.getProperty( "myHtml" ).getString() );
     }
 
@@ -282,7 +282,7 @@ public class Content_usageTest
         }
 
         // print out
-        System.out.println( contentData.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( contentData.getProperty( "invoiceDate" ).getDateMidnight() );
         System.out.println( contentData.getProperty( "recipient" ).getString() );
         for ( Data invoiceLine : contentData.getDataSet( "invoiceLine" ).getArray() )
         {
@@ -316,7 +316,7 @@ public class Content_usageTest
         }
 
         // print out
-        System.out.println( contentData.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( contentData.getProperty( "invoiceDate" ).getDateMidnight() );
         System.out.println( contentData.getProperty( "recipient" ).getString() );
         for ( Data invoiceLine : contentData.getDataSet( "invoiceLine" ).getArray() )
         {
@@ -348,7 +348,7 @@ public class Content_usageTest
         }
 
         // print out
-        System.out.println( contentData.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( contentData.getProperty( "invoiceDate" ).getDateMidnight() );
         System.out.println( contentData.getProperty( "recipient" ).getString() );
         for ( Data invoiceLine : contentData.getDataSet( "invoiceLine" ).getArray() )
         {
@@ -380,7 +380,7 @@ public class Content_usageTest
         }
 
         // print out
-        System.out.println( contentData.getProperty( "invoiceDate" ).getDate() );
+        System.out.println( contentData.getProperty( "invoiceDate" ).getDateMidnight() );
         System.out.println( contentData.getProperty( "recipient" ).getString() );
         for ( Data invoiceLine : contentData.getDataSet( "invoiceLine" ).getArray() )
         {

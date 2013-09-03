@@ -9,7 +9,7 @@ import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
 public class Attachment
-    extends BaseInputType
+    extends InputType
 {
     Attachment()
     {

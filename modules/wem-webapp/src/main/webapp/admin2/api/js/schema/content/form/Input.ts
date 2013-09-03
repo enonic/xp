@@ -2,7 +2,7 @@ module api_schema_content_form{
 
     export class Input extends FormItem {
 
-        private inputType:InputType;
+        private inputType:InputTypeName;
 
         private label:string;
 
@@ -21,7 +21,7 @@ module api_schema_content_form{
         constructor(json) {
 
             super(json.name);
-            this.inputType = new InputType(json.type);
+            this.inputType = InputTypeName.parseInputTypeName(json.type.name);
             this.label = json.label;
             this.immutable = json.immutable;
             this.occurrences = new Occurrences(json.occurrences);
@@ -31,7 +31,7 @@ module api_schema_content_form{
             this.helpText = json.helpText;
         }
 
-        getInputType():InputType {
+        getInputType():InputTypeName {
             return this.inputType;
         }
 

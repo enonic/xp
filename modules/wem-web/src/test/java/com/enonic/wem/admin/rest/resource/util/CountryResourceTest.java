@@ -6,14 +6,14 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.core.country.Country;
 import com.enonic.wem.core.country.CountryCode;
 import com.enonic.wem.core.country.CountryService;
 import com.enonic.wem.core.country.Region;
 
 public class CountryResourceTest
-    extends AbstractResourceTest2
+    extends AbstractResourceTest
 {
     @Override
     protected Object getResourceInstance()

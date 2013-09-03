@@ -3,10 +3,11 @@ package com.enonic.wem.core.schema.content.form.inputtype;
 import java.util.LinkedHashMap;
 
 import com.enonic.wem.api.schema.content.form.inputtype.InputType;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypeExtension;
 import com.enonic.wem.core.plugin.ext.ExtensionPoint;
 
 public class InputTypeExtensionsImpl
-    extends ExtensionPoint<InputType>
+    extends ExtensionPoint<InputTypeExtension>
     implements InputTypeExtensions
 {
     private static final InputTypeExtensionsImpl instance = new InputTypeExtensionsImpl();
@@ -20,7 +21,7 @@ public class InputTypeExtensionsImpl
 
     public InputTypeExtensionsImpl()
     {
-        super( InputType.class );
+        super( InputTypeExtension.class );
     }
 
     public InputType getInputType( final String name )
@@ -29,21 +30,21 @@ public class InputTypeExtensionsImpl
     }
 
     @Override
-    protected synchronized void addExtension( final InputType ext )
+    protected synchronized void addExtension( final InputTypeExtension ext )
     {
         super.addExtension( ext );
         inputTypeByName.put( ext.getName(), ext );
     }
 
     @Override
-    protected synchronized void removeExtension( final InputType ext )
+    protected synchronized void removeExtension( final InputTypeExtension ext )
     {
         super.removeExtension( ext );
         inputTypeByName.remove( ext.getName() );
     }
 
     @Override
-    public int compare( final InputType inputTypeA, final InputType inputTypeB )
+    public int compare( final InputTypeExtension inputTypeA, final InputTypeExtension inputTypeB )
     {
         return inputTypeA.getName().compareTo( inputTypeB.getName() );
     }

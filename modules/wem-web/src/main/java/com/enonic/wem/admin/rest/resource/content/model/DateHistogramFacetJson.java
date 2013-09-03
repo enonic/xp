@@ -14,21 +14,20 @@ import com.enonic.wem.api.facet.DateHistogramFacetEntry;
 public class DateHistogramFacetJson
     extends AbstractFacetJson
 {
-    private String type;
+    private final String type = "dateHistogram";
 
-    private List<DateHistogramFacetEntryJson> terms;
+    private final List<DateHistogramFacetEntryJson> entries;
 
     public DateHistogramFacetJson( final DateHistogramFacet facet )
     {
         super( facet );
-        this.type = "dateHistogram";
 
         ImmutableList.Builder<DateHistogramFacetEntryJson> builder = ImmutableList.builder();
         for ( DateHistogramFacetEntry result : facet.getResultEntries() )
         {
             builder.add( new DateHistogramFacetEntryJson( result ) );
         }
-        this.terms = builder.build();
+        this.entries = builder.build();
     }
 
     @JsonProperty(value = "_type")
@@ -37,9 +36,9 @@ public class DateHistogramFacetJson
         return type;
     }
 
-    public List<DateHistogramFacetEntryJson> getTerms()
+    public List<DateHistogramFacetEntryJson> getEntries()
     {
-        return terms;
+        return entries;
     }
 
     public class DateHistogramFacetEntryJson

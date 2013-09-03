@@ -7,6 +7,8 @@ import com.google.common.base.Preconditions;
 
 public abstract class Data
 {
+    protected static final String ROOT_NAME = "";
+
     private final String name;
 
     private int arrayIndex;
@@ -21,9 +23,18 @@ public abstract class Data
      */
     private volatile DataPath path;
 
+    Data( final Data source )
+    {
+        this.name = source.name;
+        this.arrayIndex = source.arrayIndex;
+    }
+
     Data( final String name )
     {
-        DataPath.Element.checkName( name );
+        if ( name != null && !name.equals( ROOT_NAME ) )
+        {
+            DataPath.Element.checkName( name );
+        }
         this.name = name;
     }
 
@@ -32,7 +43,7 @@ public abstract class Data
      */
     Data()
     {
-        this.name = "";
+        this.name = ROOT_NAME;
     }
 
     void setParent( final DataSet parent )

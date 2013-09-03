@@ -30,38 +30,38 @@
     border-color: black;
   }
 
-  .facet-group {
+  h2 {
+    color: #000000 !important;
+    font-size: 15px !important;
+    padding: 0 !important;
+    text-transform: capitalize;
+  }
+
+  .facet-view {
     border: none !important;
     padding: 0 !important;
     margin-bottom: 15px !important;
 
-    h2 {
-      color: #000000 !important;
-      font-size: 15px !important;
-      padding: 0 !important;
-      text-transform: capitalize;
-    }
-
-    .facet:hover label {
+    .facet-entry-view:hover label {
       color: #000 !important;
     }
 
-    .facet input[type="checkbox"] {
+    .facet-entry-view input[type="checkbox"] {
       display: none;
     }
 
-    .facet label {
+    .facet-entry-view label {
       color: #777 !important;
       background-image: url("../images/admin-unchecked.gif");
       background-repeat: no-repeat;
       padding-left: 20px;
     }
 
-    .facet input[type="checkbox"]:checked + label {
+    .facet-entry-view input[type="checkbox"]:checked + label {
       background-image: url("../images/admin-checked.gif");
     }
 
-    .facet.checked label {
+    .facet-entry-view.checked label {
       color: #333 !important;
     }
   }

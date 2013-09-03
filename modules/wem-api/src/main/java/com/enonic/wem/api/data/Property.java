@@ -16,6 +16,12 @@ public class Property
 {
     private Value value;
 
+    Property( final Property source )
+    {
+        super( source );
+        this.value = source.value;
+    }
+
     Property( final String name, final Value value )
     {
         super( name );
@@ -145,10 +151,10 @@ public class Property
         return getArray().getValue( arrayIndex ).asDouble();
     }
 
-    public org.joda.time.DateMidnight getDate()
+    public org.joda.time.DateMidnight getDateMidnight()
         throws InconvertibleValueException
     {
-        return value.asDate();
+        return value.asDateMidnight();
     }
 
     /**
@@ -156,10 +162,27 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateMidnight.
      */
-    public org.joda.time.DateMidnight getDate( final int arrayIndex )
+    public org.joda.time.DateMidnight getDateMidnight( final int arrayIndex )
         throws InconvertibleValueException
     {
-        return getArray().getValue( arrayIndex ).asDate();
+        return getArray().getValue( arrayIndex ).asDateMidnight();
+    }
+
+    public org.joda.time.DateTime getDateTime()
+        throws InconvertibleValueException
+    {
+        return value.asDateTime();
+    }
+
+    /**
+     * Returns the value at of the Property at the given array index as a DateTime.
+     *
+     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a org.joda.time.DateTime.
+     */
+    public org.joda.time.DateTime getDateTime( final int arrayIndex )
+        throws InconvertibleValueException
+    {
+        return getArray().getValue( arrayIndex ).asDateTime();
     }
 
     public String getAttachmentName()
@@ -424,11 +447,20 @@ public class Property
             super( name, value );
         }
 
+        ContentId( final ContentId source )
+        {
+            super( source );
+        }
+
+        public ContentId copy()
+        {
+            return new ContentId( this );
+        }
+
         public static Builder newContentId()
         {
             return new Builder();
         }
-
 
         public static class Builder
             extends AbstractNameBuilder<Builder>
@@ -474,6 +506,16 @@ public class Property
         private BinaryId( final AbstractBaseBuilder builder )
         {
             super( builder );
+        }
+
+        BinaryId( final BinaryId source )
+        {
+            super( source );
+        }
+
+        public BinaryId copy()
+        {
+            return new BinaryId( this );
         }
 
         public static Builder newBinaryId()
@@ -523,6 +565,15 @@ public class Property
             super( builder );
         }
 
+        public AttachmentName( final AttachmentName source )
+        {
+            super( source );
+        }
+
+        public AttachmentName copy()
+        {
+            return new AttachmentName( this );
+        }
 
         public static Builder newAttachmentName()
         {
@@ -568,6 +619,16 @@ public class Property
         public GeographicCoordinate( final AbstractBaseBuilder builder )
         {
             super( builder );
+        }
+
+        GeographicCoordinate( final GeographicCoordinate source )
+        {
+            super( source );
+        }
+
+        public GeographicCoordinate copy()
+        {
+            return new GeographicCoordinate( this );
         }
 
         public static GeographicCoordinateBuilder newGeographicCoordinate()
@@ -640,6 +701,16 @@ public class Property
         public Date( final String name, final Value value )
         {
             super( name, value );
+        }
+
+        Date( final Date source )
+        {
+            super( source );
+        }
+
+        public Date copy()
+        {
+            return new Date( this );
         }
 
         public static DateBuilder newDate()
@@ -720,6 +791,16 @@ public class Property
             super( name, value );
         }
 
+        DecimalNumber( final DecimalNumber source )
+        {
+            super( source );
+        }
+
+        public DecimalNumber copy()
+        {
+            return new DecimalNumber( this );
+        }
+
         public static DecimalNumberBuilder newDecimalNumber()
         {
             return new DecimalNumberBuilder();
@@ -792,6 +873,16 @@ public class Property
             super( name, value );
         }
 
+        HtmlPart( final HtmlPart source )
+        {
+            super( source );
+        }
+
+        public HtmlPart copy()
+        {
+            return new HtmlPart( this );
+        }
+
         public static HtmlPartBuilder newHtmlPart()
         {
             return new HtmlPartBuilder();
@@ -856,6 +947,16 @@ public class Property
         public Text( final String name, final Value value )
         {
             super( name, value );
+        }
+
+        Text( final Text source )
+        {
+            super( source );
+        }
+
+        public Text copy()
+        {
+            return new Text( this );
         }
 
         public static TextBuilder newText()
@@ -929,6 +1030,16 @@ public class Property
             super( name, value );
         }
 
+        WholeNumber( final WholeNumber source )
+        {
+            super( source );
+        }
+
+        public WholeNumber copy()
+        {
+            return new WholeNumber( this );
+        }
+
         public static WholeNumberBuilder newWholeNumber()
         {
             return new WholeNumberBuilder();
@@ -993,6 +1104,16 @@ public class Property
         public Xml( final String name, final Value value )
         {
             super( name, value );
+        }
+
+        Xml( final Xml source )
+        {
+            super( source );
+        }
+
+        public Xml copy()
+        {
+            return new Xml( this );
         }
 
         public static XmlBuilder newXml()

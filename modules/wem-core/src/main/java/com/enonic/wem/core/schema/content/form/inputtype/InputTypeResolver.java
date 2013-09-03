@@ -1,7 +1,7 @@
 package com.enonic.wem.core.schema.content.form.inputtype;
 
 
-import com.enonic.wem.api.schema.content.form.inputtype.BaseInputType;
+import com.enonic.wem.api.schema.content.form.inputtype.InputType;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypeName;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 
@@ -16,17 +16,17 @@ public class InputTypeResolver
         return instance;
     }
 
-    public BaseInputType resolve( final String inputTypeName )
+    public InputType resolve( final String inputTypeName )
     {
         return resolve( InputTypeName.from( inputTypeName ) );
     }
 
-    public BaseInputType resolve( final InputTypeName inputTypeName )
+    public InputType resolve( final InputTypeName inputTypeName )
     {
-        final BaseInputType foundType;
+        final InputType foundType;
         if ( inputTypeName.isCustom() )
         {
-            foundType = (BaseInputType) inputTypeExtensions.getInputType( inputTypeName.getName() );
+            foundType = (InputType) inputTypeExtensions.getInputType( inputTypeName.getName() );
         }
         else
         {

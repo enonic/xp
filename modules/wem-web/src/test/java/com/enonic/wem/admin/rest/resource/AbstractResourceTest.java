@@ -1,42 +1,79 @@
 package com.enonic.wem.admin.rest.resource;
 
-import org.codehaus.jackson.JsonFactory;
+import java.net.URL;
+
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.enonic.wem.admin.json.JsonResult;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.sun.jersey.api.core.DefaultResourceConfig;
+import com.sun.jersey.test.framework.AppDescriptor;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.LowLevelAppDescriptor;
+import com.sun.jersey.test.framework.spi.container.inmemory.InMemoryTestContainerFactory;
+
 import com.enonic.wem.admin.json.ObjectMapperHelper;
+import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
+import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
 
 import static org.junit.Assert.*;
 
 public abstract class AbstractResourceTest
+    extends JerseyTest
 {
-    private final ObjectMapper mapper;
-
     public AbstractResourceTest()
     {
-        this.mapper = ObjectMapperHelper.create();
+        super( new InMemoryTestContainerFactory() );
     }
 
-    protected final void assertJsonResult( final String name, final JsonResult result )
-        throws Exception
+    @Override
+    protected AppDescriptor configure()
     {
-        final JsonNode node = result.toJson();
+        final DefaultResourceConfig config = new DefaultResourceConfig();
+        configure( config );
 
-        assertNotNull( node );
-        assertJson( name, node );
+        return new LowLevelAppDescriptor.Builder( config ).build();
     }
 
-    protected final void assertJson( final String name, final JsonNode node )
+    private void configure( final DefaultResourceConfig config )
+    {
+        config.getClasses().add( JsonObjectProvider.class );
+        config.getClasses().add( JsonSerializableProvider.class );
+        config.getSingletons().add( getResourceInstance() );
+    }
+
+    protected abstract Object getResourceInstance();
+
+    protected final void assertJson( final String fileName, final String actualJson )
         throws Exception
     {
-        final JsonNode expectedNode = parseJson( name );
+        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
+        final JsonNode actualNode = parseJson( actualJson );
 
         final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( node );
+        final String actualStr = toJson( actualNode );
 
         assertEquals( expectedStr, actualStr );
+    }
+
+    protected JsonNode parseJson( final String json )
+        throws Exception
+    {
+        final ObjectMapper mapper = ObjectMapperHelper.create();
+        return mapper.readTree( json );
+    }
+
+    protected String readFromFile( final String fileName )
+        throws Exception
+    {
+        final URL url = getClass().getResource( fileName );
+        if ( url == null )
+        {
+            throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
+        }
+
+        return Resources.toString( url, Charsets.UTF_8 );
     }
 
     private String toJson( final Object value )
@@ -44,14 +81,5 @@ public abstract class AbstractResourceTest
     {
         final ObjectMapper mapper = ObjectMapperHelper.create();
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
-    }
-
-    private JsonNode parseJson( final String name )
-        throws Exception
-    {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
-        final JsonFactory factory = mapper.getJsonFactory();
-        final JsonParser parser = factory.createJsonParser( getClass().getResource( name ) );
-        return parser.readValueAsTree();
     }
 }

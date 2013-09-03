@@ -21,7 +21,7 @@ public class InputTypeName
         }
     }
 
-    public static InputTypeName from( final BaseInputType inputType )
+    public static InputTypeName from( final InputType inputType )
     {
         if ( inputType.isBuiltIn() )
         {
