@@ -1,9 +1,29 @@
 package com.enonic.wem.api.query;
 
-public interface Or
-    extends Constraint
+public class Or
+    implements Constraint
 {
-    Constraint getLeftConstraint();
+    private final Constraint leftConstraint, rightConstraint;
 
-    Constraint getRightConstraint();
+    public Or( final Constraint leftConstraint, final Constraint rightConstraint )
+    {
+        this.leftConstraint = leftConstraint;
+        this.rightConstraint = rightConstraint;
+    }
+
+    Constraint getLeftConstraint()
+    {
+        return leftConstraint;
+    }
+
+    Constraint getRightConstraint()
+    {
+        return rightConstraint;
+    }
+
+    @Override
+    public String toString()
+    {
+        return leftConstraint.toString() + " OR " + rightConstraint.toString();
+    }
 }

@@ -1,6 +1,12 @@
 package com.enonic.wem.api.query;
 
-public interface FullTextSearch
-    extends Constraint
+public class FullTextSearch
+    implements Constraint
 {
+    private final String text;
+
+    public FullTextSearch( final String text )
+    {
+        this.text = text;
+    }
 }

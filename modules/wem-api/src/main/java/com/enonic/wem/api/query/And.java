@@ -1,24 +1,21 @@
 package com.enonic.wem.api.query;
 
+import com.google.common.base.Preconditions;
+
 class And
     implements Constraint
 {
     private final Constraint leftConstraint, rightConstraint;
 
-    public And( final Constraint leftConstraint, final Constraint rightConstraint )
+    private And( final Builder builder )
     {
-        this.leftConstraint = leftConstraint;
-        this.rightConstraint = rightConstraint;
+        this.leftConstraint = builder.leftConstraint;
+        this.rightConstraint = builder.rightConstraint;
     }
 
-    public Constraint getLeftConstraint()
+    public static Builder and()
     {
-        return leftConstraint;
-    }
-
-    public Constraint getRightConstraint()
-    {
-        return rightConstraint;
+        return new Builder();
     }
 
     @Override
@@ -26,4 +23,31 @@ class And
     {
         return leftConstraint.toString() + " AND " + rightConstraint.toString();
     }
+
+    public static class Builder
+    {
+        private Constraint leftConstraint, rightConstraint;
+
+        public Builder leftConstraint( final Constraint leftConstraint )
+        {
+            this.leftConstraint = leftConstraint;
+            return this;
+        }
+
+        public Builder rightConstraint( final Constraint rightConstraint )
+        {
+            this.rightConstraint = rightConstraint;
+            return this;
+        }
+
+        public And build()
+        {
+            Preconditions.checkNotNull( leftConstraint );
+            Preconditions.checkNotNull( rightConstraint );
+
+            return new And( this );
+        }
+
+    }
+
 }

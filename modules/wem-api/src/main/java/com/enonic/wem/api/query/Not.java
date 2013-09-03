@@ -1,9 +1,23 @@
 package com.enonic.wem.api.query;
 
-public interface Not
-    extends Constraint
+public class Not
+    implements Constraint
 {
+    private final Constraint constraint;
 
-    public Constraint getConstraint();
+    public Not( final Constraint constraint )
+    {
+        this.constraint = constraint;
+    }
 
+    public Constraint getConstraint()
+    {
+        return constraint;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "NOT ( " + constraint + " )";
+    }
 }

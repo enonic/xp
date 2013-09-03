@@ -96,7 +96,7 @@ public final class QueryParser
         Constraint c = parseAnd();
         while ( readIf( "OR" ) )
         {
-            c = null; // TODO: this.factory.or( c, parseAnd() );
+            c = factory.or( c, parseCondition() ); // TODO: this.factory.or( c, parseAnd() );
         }
 
         return c;

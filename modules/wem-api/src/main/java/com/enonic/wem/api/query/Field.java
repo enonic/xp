@@ -1,7 +1,23 @@
 package com.enonic.wem.api.query;
 
-public interface Field
-    extends StaticOperand
+public class Field
+    implements StaticOperand
 {
-    public String getFieldName();
+    private final String fieldName;
+
+    public Field( final String fieldName )
+    {
+        this.fieldName = fieldName;
+    }
+
+    public String getFieldName()
+    {
+        return this.fieldName;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.fieldName;
+    }
 }
