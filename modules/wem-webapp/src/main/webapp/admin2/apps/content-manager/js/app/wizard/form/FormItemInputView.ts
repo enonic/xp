@@ -1,6 +1,6 @@
 module app_wizard_form {
 
-    export class InputContainer extends FormItemContainer {
+    export class FormItemInputView extends FormItemView {
 
         private input:api_schema_content_form.Input;
 

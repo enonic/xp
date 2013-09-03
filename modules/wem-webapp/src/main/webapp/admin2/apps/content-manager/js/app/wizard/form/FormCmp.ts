@@ -6,7 +6,7 @@ module app_wizard_form {
 
         private contentData:api_content_data.ContentData;
 
-        private formItemContainers:FormItemContainer[];
+        private formItemContainers:FormItemView[];
 
         constructor(form:api_schema_content_form.Form, contentData?:api_content_data.ContentData) {
             super("FormCmp");
@@ -31,7 +31,7 @@ module app_wizard_form {
 
         rebuildContentData():api_content_data.ContentData {
             var contentData:api_content_data.ContentData = new api_content_data.ContentData();
-            this.formItemContainers.forEach((formItemContainer:FormItemContainer) => {
+            this.formItemContainers.forEach((formItemContainer:FormItemView) => {
 
                 formItemContainer.getData().forEach( (data:api_data.Data) => {
                     contentData.addData(data)

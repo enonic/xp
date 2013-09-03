@@ -23,12 +23,11 @@
 ///<reference path='app/wizard/form/input/TextLine.ts' />
 ///<reference path='app/wizard/form/input/TextArea.ts' />
 ///<reference path='app/wizard/form/input/HtmlArea.ts' />
-///<reference path='app/wizard/form/FormItemContainer.ts' />
+///<reference path='app/wizard/form/FormItemView.ts' />
 ///<reference path='app/wizard/form/InputLabel.ts' />
-///<reference path='app/wizard/form/InputContainer.ts' />
+///<reference path='app/wizard/form/FormItemInputView.ts' />
 ///<reference path='app/wizard/form/FormItemSetLabel.ts' />
-///<reference path='app/wizard/form/FormItemSetContainer.ts' />
-///<reference path='app/wizard/form/FormItemSetCmp.ts' />
+///<reference path='app/wizard/form/FormItemSetView.ts' />
 ///<reference path='app/wizard/form/FormItemsLayer.ts' />
 ///<reference path='app/wizard/form/FormCmp.ts' />
 
