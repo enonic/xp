@@ -95,6 +95,11 @@ public final class ContentPaths
         return new ContentPaths( parsePaths( paths ) );
     }
 
+    public static ContentPaths from( final Collection<String> contentPaths )
+    {
+        return from( contentPaths.toArray( new String[contentPaths.size()] ) );
+    }
+
     public static ContentPaths from( final ContentPath... paths )
     {
         return new ContentPaths( ImmutableSet.copyOf( paths ) );

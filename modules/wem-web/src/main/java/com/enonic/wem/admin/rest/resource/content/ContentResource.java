@@ -21,11 +21,15 @@ import com.enonic.wem.admin.rest.resource.content.model.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.model.ContentListJson;
 import com.enonic.wem.admin.rest.resource.content.model.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.model.ContentSummaryListJson;
+import com.enonic.wem.admin.rest.resource.content.model.DeleteContentJson;
+import com.enonic.wem.admin.rest.resource.content.model.DeleteContentParams;
 import com.enonic.wem.admin.rest.resource.content.model.FacetedContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.content.model.ValidateContentJson;
 import com.enonic.wem.admin.rest.resource.content.model.ValidateContentParams;
 import com.enonic.wem.admin.rpc.content.ContentDataParser;
+import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContentVersion;
@@ -142,6 +146,25 @@ public class ContentResource
             client.execute( Commands.content().validate().contentData( contentData ).contentType( qualifiedContentTypeName ) );
 
         return new ValidateContentJson( validationErrors );
+    }
+
+    @POST
+    @Path("delete")
+    public DeleteContentJson delete( final DeleteContentParams params )
+    {
+        final ContentPaths contentsToDelete = ContentPaths.from( params.getContentPaths() );
+
+        final DeleteContentJson jsonResult = new DeleteContentJson();
+
+        for ( final ContentPath contentToDelete : contentsToDelete )
+        {
+            final DeleteContent deleteContent = Commands.content().delete();
+            deleteContent.deleter( AccountKey.anonymous() );
+            deleteContent.selector( contentToDelete );
+            jsonResult.addResult( contentToDelete, client.execute( deleteContent ) );
+        }
+
+        return jsonResult;
     }
 
 

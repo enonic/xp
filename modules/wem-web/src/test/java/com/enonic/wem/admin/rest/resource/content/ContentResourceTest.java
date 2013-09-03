@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
@@ -27,6 +28,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.data.Property;
@@ -209,6 +211,48 @@ public class ContentResourceTest
             post( String.class );
 
         assertJson( "validate_content_error.json", jsonString );
+    }
+
+    @Test
+    public void delete_content_success()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( DeleteContent.class ) ) ).thenReturn( DeleteContentResult.SUCCESS );
+
+        String jsonString = resource().path( "content/delete" ).
+            entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "delete_content_success.json", jsonString );
+    }
+
+    @Test
+    public void delete_content_failure()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( DeleteContent.class ) ) ).thenReturn( DeleteContentResult.NOT_FOUND,
+                                                                                         DeleteContentResult.UNABLE_TO_DELETE );
+
+        String jsonString = resource().path( "content/delete" ).
+            entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "delete_content_failure.json", jsonString );
+    }
+
+    @Test
+    public void delete_content_both()
+        throws Exception
+    {
+
+        Mockito.when( client.execute( Mockito.isA( DeleteContent.class ) ) ).thenReturn( DeleteContentResult.SUCCESS,
+                                                                                         DeleteContentResult.UNABLE_TO_DELETE );
+
+        String jsonString = resource().path( "content/delete" ).
+            entity( readFromFile( "delete_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "delete_content_both.json", jsonString );
     }
 
     @Override
