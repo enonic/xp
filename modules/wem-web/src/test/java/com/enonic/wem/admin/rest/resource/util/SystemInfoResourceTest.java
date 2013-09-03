@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.util;
 import org.junit.Test;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.api.Version;
 
 public class SystemInfoResourceTest
     extends AbstractResourceTest2
@@ -10,6 +11,7 @@ public class SystemInfoResourceTest
     @Override
     protected Object getResourceInstance()
     {
+        Version.get().setVersion( "5.0.0" );
         return new SystemInfoResource();
     }
 
