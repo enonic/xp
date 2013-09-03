@@ -12,6 +12,8 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
         type: 'fit'
     },
 
+    contextWindow: undefined,
+
     searchBar: undefined,
 
     searchInput: undefined,
@@ -179,14 +181,14 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
             addClasses: false,
             helper: me.createDragHelper,
             start: function (event, ui) {
-                me.onStartDragComponent(event, ui);
+                me.onStartDrag(event, ui);
             },
             stop: function () {
-                me.getContextWindow().showHideIFrameMask(false);
+                me.contextWindow.showHideIFrameMask(false);
             }
         });
 
-        $(me.getContextWindow().getLiveEditIFrameDom()).droppable({
+        $(me.contextWindow.getLiveEditIFrameDom()).droppable({
             tolerance: 'pointer',
             addClasses: false,
             over: function (event, ui) {
@@ -195,14 +197,14 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
         });
     },
 
-    onStartDragComponent: function (event, ui) {
-        this.getContextWindow().showHideIFrameMask(true);
-        this.getContextWindow().iFrameMask.className += ' live-edit-droppable-active';
+    onStartDrag: function (event, ui) {
+        this.contextWindow.showHideIFrameMask(true);
+        this.contextWindow.iFrameMask.className += ' live-edit-droppable-active';
     },
 
     onDragOverIFrame: function (event, ui) {
         var me = this,
-            contextWindow = me.getContextWindow(),
+            contextWindow = me.contextWindow,
             jQuery = contextWindow.getLiveEditJQuery();
 
         contextWindow.showHideIFrameMask(false);
@@ -244,7 +246,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
     bindLiveEditEventListeners: function () {
         var me = this,
             // Right now We need to use the jQuery object from the live edit page in order to listen for the events
-            contextWindow = me.getContextWindow(),
+            contextWindow = me.contextWindow,
             liveEditWindow = contextWindow.getLiveEditContentWindowObject(),
             liveEditJQuery = contextWindow.getLiveEditJQuery();
 
@@ -253,10 +255,6 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
             contextWindow.doShow();
             contextWindow.iFrameMask.className = contextWindow.iFrameMask.className.replace(/live-edit-droppable-active/g, '');
         });
-    },
-
-    getContextWindow: function () {
-        return this.up('contextWindow');
     }
 
 });

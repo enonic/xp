@@ -3,6 +3,8 @@ Ext.define('Admin.view.contentManager.contextwindow.inspector.Inspector', {
     alias: 'widget.contextWindowInspector',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
+    contextWindow: undefined,
+
     title: 'Inspector',
 
     tpl: new Ext.XTemplate(
@@ -29,10 +31,9 @@ Ext.define('Admin.view.contentManager.contextwindow.inspector.Inspector', {
 
     registerListenersFromLiveEditPage: function () {
         var me = this,
-        // Right now We need to use the jQuery object from the live edit page in order to listen for the events
-            contextWindow = me.getContextWindow(),
-            liveEditWindow = contextWindow.getLiveEditContentWindowObject(),
-            liveEditJQuery = contextWindow.getLiveEditJQuery();
+            // Right now We need to use the jQuery object from the live edit page in order to listen for the events
+            liveEditWindow = me.contextWindow.getLiveEditContentWindowObject(),
+            liveEditJQuery = me.contextWindow.getLiveEditJQuery();
 
         liveEditJQuery(liveEditWindow).on('selectComponent.liveEdit', function (jQueryEvent, component) {
             me.displayComponentInfo(component);
@@ -60,10 +61,6 @@ Ext.define('Admin.view.contentManager.contextwindow.inspector.Inspector', {
     clearComponentInfo: function () {
         var me = this;
         me.tpl.overwrite(me.getEl(), null);
-    },
-
-    getContextWindow: function () {
-        return this.up('contextWindow');
     }
 
 });

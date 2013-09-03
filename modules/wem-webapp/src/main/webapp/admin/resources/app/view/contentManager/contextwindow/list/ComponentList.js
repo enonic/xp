@@ -12,6 +12,8 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
         type: 'fit'
     },
 
+    contextWindow: undefined,
+
     searchBar: undefined,
 
     searchInput: undefined,
@@ -135,7 +137,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
             listeners: {
                 itemclick: function (view, record, item) {
 
-                    var contextWindow = me.getContextWindow(),
+                    var contextWindow = me.contextWindow,
                         liveEditWindow = contextWindow.getLiveEditContentWindowObject();
 
                     liveEditWindow.LiveEdit.component.Inserter.replaceEmptyComponent(record.get('key'));
@@ -153,11 +155,6 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
         store.filterBy(function (item) {
             return item.get('name').toLowerCase().indexOf(valueLowerCased) > -1;
         });
-    },
-
-
-    getContextWindow: function () {
-        return this.up('contextWindow');
     }
 
 });

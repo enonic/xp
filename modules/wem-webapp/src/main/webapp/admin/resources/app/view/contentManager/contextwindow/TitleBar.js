@@ -10,13 +10,13 @@ Ext.define('Admin.view.contentManager.contextwindow.TitleBar', {
         align: 'stretch'
     },
 
+    contextWindow: undefined,
+
     menuButton: undefined,
 
     titleText: undefined,
 
     toggleButton: undefined,
-
-    contextWindow: undefined,
 
     currentWindowHeight: undefined,
 

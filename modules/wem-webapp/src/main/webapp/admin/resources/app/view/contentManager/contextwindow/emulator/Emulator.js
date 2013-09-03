@@ -3,6 +3,7 @@ Ext.define('Admin.view.contentManager.contextwindow.emulator.Emulator', {
     alias: 'widget.contextWindowEmulator',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
+    contextWindow: undefined,
     title: 'Emulator',
 
     layout: {
@@ -125,7 +126,7 @@ Ext.define('Admin.view.contentManager.contextwindow.emulator.Emulator', {
 
     resizeLiveEditFrame: function (deviceModel) {
         var me = this,
-            iFrameEl = Ext.get(me.getContextWindow().getLiveEditIFrameDom().id),
+            iFrameEl = Ext.get(me.contextWindow.getLiveEditIFrameDom().id),
             iFrameContainer = iFrameEl.parent(),
             deviceType = deviceModel.data.device_type,
             deviceIsRotatable = deviceModel.data.rotatable,
@@ -182,10 +183,6 @@ Ext.define('Admin.view.contentManager.contextwindow.emulator.Emulator', {
         } else {
             buttonEl.removeCls('admin-device-item-rotate-button-horizontal');
         }
-    },
-
-    getContextWindow: function () {
-        return this.up('contextWindow');
     }
 
 });

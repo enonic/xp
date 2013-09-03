@@ -36,6 +36,12 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     inspectorContainer: undefined,
 
+    containers: {
+        'LIST': 0,
+        'EMULATOR': 1,
+        'INSPECTOR': 2
+    },
+
     iFrameMask: undefined,
 
     liveEditIFrameDom: undefined, // Passed as constructor config
@@ -48,20 +54,20 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             currentWindowHeight: this.height
         });
 
-        // fixme: move
+        // fixme: move to TitleBar
         this.titleBar.addMenuItem('Insert', function () {
-            me.displayContainer(0);
+            me.displayContainer(me.containers.LIST);
         });
         this.titleBar.addMenuItem('Emulator', function () {
-            me.displayContainer(1)
+            me.displayContainer(me.containers.EMULATOR)
         });
         this.titleBar.addMenuItem('Inspector', function () {
-            me.displayContainer(2)
+            me.displayContainer(me.containers.INSPECTOR)
         });
 
         this.listContainer = this.createListContainer();
-        this.emulatorContainer = new Admin.view.contentManager.contextwindow.emulator.Emulator({hidden:true});
-        this.inspectorContainer = new Admin.view.contentManager.contextwindow.inspector.Inspector({hidden:true});
+        this.emulatorContainer = new Admin.view.contentManager.contextwindow.emulator.Emulator({hidden: true, contextWindow: this});
+        this.inspectorContainer = new Admin.view.contentManager.contextwindow.inspector.Inspector({hidden: true, contextWindow: this});
 
         this.items = [
             this.titleBar,
@@ -99,7 +105,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     },
 
     loadList: function (classPath) {
-        var list = Ext.create(classPath);
+        var list = Ext.create(classPath, {contextWindow: this});
 
         this.listContainer.removeAll();
         this.listContainer.add(list);
@@ -216,23 +222,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         */
     },
 
-    onSelectComponent: function (component) {
-        var me = this,
-            componentType = component.getComponentType().getType();
-
-        if (component.isEmpty()) {
-            me.loadList('Admin.view.contentManager.contextwindow.list.ComponentList');
-
-        } else {
-            me.displayContainer(2);
-        }
-    },
-
-    onDeSelectComponent: function () {
-        this.displayContainer(0);
-        this.loadList('Admin.view.contentManager.contextwindow.list.ComponentTypeList');
-    },
-
     bindLiveEditEventListeners: function () {
         var me = this,
             liveEditWindow = me.getLiveEditContentWindowObject(),
@@ -247,8 +236,26 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         });
 
         liveEditJQuery(liveEditWindow).on('componentRemoved.liveEdit', function (jQueryEvent) {
-            me.displayContainer(0);
+            me.displayContainer(me.containers.LIST);
         });
+    },
+
+    onSelectComponent: function (component) {
+        var me = this,
+            componentType = component.getComponentType().getType();
+
+        if (component.isEmpty()) {
+            me.loadList('Admin.view.contentManager.contextwindow.list.ComponentList');
+
+        } else {
+            me.displayContainer(me.containers.INSPECTOR);
+        }
+    },
+
+    onDeSelectComponent: function () {
+        var me = this;
+        this.displayContainer(me.containers.LIST);
+        this.loadList('Admin.view.contentManager.contextwindow.list.ComponentTypeList');
     },
 
     /**
