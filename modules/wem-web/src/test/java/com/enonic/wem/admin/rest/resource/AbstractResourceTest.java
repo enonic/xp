@@ -19,10 +19,10 @@ import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
 
 import static org.junit.Assert.*;
 
-public abstract class AbstractResourceTest2
+public abstract class AbstractResourceTest
     extends JerseyTest
 {
-    public AbstractResourceTest2()
+    public AbstractResourceTest()
     {
         super( new InMemoryTestContainerFactory() );
     }

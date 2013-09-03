@@ -12,7 +12,7 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
-import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 public class UploadResourceTest
-    extends AbstractResourceTest2
+    extends AbstractResourceTest
 {
     private FormDataMultiPart multiPart;
 

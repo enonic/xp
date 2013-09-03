@@ -2,10 +2,10 @@ package com.enonic.wem.admin.rest.resource.status;
 
 import org.junit.Test;
 
-import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 
 public class StatusResourceTest
-    extends AbstractResourceTest2
+    extends AbstractResourceTest
 {
     @Override
     protected Object getResourceInstance()

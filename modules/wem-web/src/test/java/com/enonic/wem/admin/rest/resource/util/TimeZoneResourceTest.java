@@ -7,11 +7,11 @@ import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.core.time.TimeZoneService;
 
 public class TimeZoneResourceTest
-    extends AbstractResourceTest2
+    extends AbstractResourceTest
 {
     @Override
     protected Object getResourceInstance()

@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.FindContent;
@@ -50,7 +50,7 @@ import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 public class ContentResourceTest
-    extends AbstractResourceTest2
+    extends AbstractResourceTest
 {
     private Client client;
 

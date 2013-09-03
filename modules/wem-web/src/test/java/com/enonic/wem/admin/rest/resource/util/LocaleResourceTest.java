@@ -5,11 +5,11 @@ import java.util.Locale;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.core.locale.LocaleService;
 
 public class LocaleResourceTest
-    extends AbstractResourceTest2
+    extends AbstractResourceTest
 {
     @Override
     protected Object getResourceInstance()

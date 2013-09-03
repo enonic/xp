@@ -2,11 +2,11 @@ package com.enonic.wem.admin.rest.resource.util;
 
 import org.junit.Test;
 
-import com.enonic.wem.admin.rest.resource.AbstractResourceTest2;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Version;
 
 public class SystemInfoResourceTest
-    extends AbstractResourceTest2
+    extends AbstractResourceTest
 {
     @Override
     protected Object getResourceInstance()
