@@ -4,11 +4,6 @@ import java.util.ArrayList;
 
 import com.google.common.base.Joiner;
 
-import com.enonic.wem.api.query.Constraint;
-import com.enonic.wem.api.query.Ordering;
-import com.enonic.wem.api.query.QueryException;
-import com.enonic.wem.api.query.QueryObjectModelFactory;
-
 // Modelled after https://github.com/apache/jackrabbit-oak/blob/trunk/oak-core/src/main/java/org/apache/jackrabbit/oak/query/SQL2Parser.java
 public final class QueryParser
 {

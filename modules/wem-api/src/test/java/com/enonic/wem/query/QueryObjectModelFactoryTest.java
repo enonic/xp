@@ -1,4 +1,4 @@
-package com.enonic.wem.api.query;
+package com.enonic.wem.query;
 
 import org.junit.Before;
 import org.junit.Test;

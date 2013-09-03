@@ -1,4 +1,4 @@
-package com.enonic.wem.api.query;
+package com.enonic.wem.query;
 
 import com.google.common.base.Preconditions;
 
