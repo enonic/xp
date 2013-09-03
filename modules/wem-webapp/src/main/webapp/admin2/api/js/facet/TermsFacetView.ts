@@ -6,20 +6,22 @@ module api_facet {
 
         private entryViews:TermsFacetEntryView[] = [];
 
+        private hasAnyCountLargerThanZero:boolean;
+
         constructor(termsFacet:TermsFacet, parentGroupView:FacetGroupView) {
             super(termsFacet, parentGroupView);
 
             this.termsFacet = termsFacet;
 
-            var needHide = true;
+            this.hasAnyCountLargerThanZero = false;
             this.termsFacet.getTermsFacetEntries().forEach((entry:TermsFacetEntry) => {
                 this.addFacet(new TermsFacetEntryView(entry, this));
                 if (entry.getCount() > 0) {
-                    needHide = false;
+                    this.hasAnyCountLargerThanZero = true;
                 }
             });
 
-            if (needHide) {
+            if (!this.hasAnyCountLargerThanZero) {
                 this.hide();
             }
         }
@@ -37,18 +39,19 @@ module api_facet {
 
             this.termsFacet = <TermsFacet>facet;
 
-            var hasAnyCountLargerThanZero = false;
+            var anyCountLargerThanZero = false;
             this.termsFacet.getTermsFacetEntries().forEach((entry:TermsFacetEntry) => {
                 var existingEntry:TermsFacetEntryView = this.getFacetEntryView(entry.getName());
                 if (existingEntry != null) {
                     existingEntry.update(entry);
                 }
                 if (entry.getCount() > 0) {
-                    hasAnyCountLargerThanZero = true;
+                    anyCountLargerThanZero = true;
                 }
             });
+            this.hasAnyCountLargerThanZero = anyCountLargerThanZero;
 
-            if (!hasAnyCountLargerThanZero) {
+            if (!this.hasAnyCountLargerThanZero ) {
                 this.hide();
             }
             else if (!this.isVisible()) {
@@ -64,8 +67,8 @@ module api_facet {
 
         hasSelectedEntry():boolean {
             var isSelected:boolean = false;
-            this.entryViews.forEach((entry:TermsFacetEntryView) => {
-                if (entry.isSelected()) {
+            this.entryViews.forEach((entryView:TermsFacetEntryView) => {
+                if (entryView.isSelected()) {
                     isSelected = true;
                 }
             });
