@@ -1,106 +1,88 @@
 {
     "components": [
         {
-            "key": "10017",
-            "type": "layout",
-            "name": "2+1 Column Layout",
-            "subtitle": "The quick, brown fox jumps over a lazy dog"
-        },
-        {
-            "key": "10016",
-            "type": "layout",
-            "name": "2 Column Layout",
-            "subtitle": "Even the all-powerful Pointing has no control"
-        },
-        {
-            "key": "10018",
-            "type": "layout",
-            "name": "3 Column Layout",
-            "subtitle": "Far far away, behind the word mountains"
-        },
-        {
             "key": "10001",
             "type": "part",
             "name": "HTML 5 Video",
-            "subtitle": "Separated they live in Bookmarksgrove right at the coast of the Semantics"
-        },
-        {
-            "key": "10007",
-            "type": "paragraph",
-            "name": "Lorem Ipsum Paragraph",
-            "subtitle": "The quick, brown fox jumps over a lazy dog"
-        },
-        {
-            "key": "10050",
-            "type": "paragraph",
-            "name": "æøå",
-            "subtitle": "På Værøy, rett ved Røst, bodde en gang en fattig fisker, som hette Isak"
+            "subtitle": "Separated they live in Bookmarksgrove right at the coast of the Semantics",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10011",
             "type": "part",
             "name": "Banner",
-            "subtitle": "A un Angleso it va semblar un simplificat"
+            "subtitle": "A un Angleso it va semblar un simplificat",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10004",
             "type": "part",
             "name": "Contact Form",
-            "subtitle": "Far far away, behind the word mountains"
+            "subtitle": "Far far away, behind the word mountains",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10012",
             "type": "part",
             "name": "Image Gallery",
-            "subtitle": "Even the all-powerful Pointing has no control"
+            "subtitle": "Even the all-powerful Pointing has no control",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10020",
             "type": "part",
             "name": "Product - Show",
-            "subtitle": "Lorem Ipsum decided to leave for the far World of Grammar"
+            "subtitle": "Lorem Ipsum decided to leave for the far World of Grammar",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10021",
             "type": "part",
             "name": "Products - Related",
-            "subtitle": "Separated they live in Bookmarksgrove right at the coast of the Semantics"
+            "subtitle": "Separated they live in Bookmarksgrove right at the coast of the Semantics",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10022",
             "type": "part",
             "name": "Trampoline - Show Variants",
-            "subtitle": "Quick wafting zephyrs vex bold Jim"
+            "subtitle": "Quick wafting zephyrs vex bold Jim",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10023",
             "type": "part",
             "name": "Trampoline - Image Gallery",
-            "subtitle": "The quick, brown fox jumps over a lazy dog"
+            "subtitle": "The quick, brown fox jumps over a lazy dog",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10024",
             "type": "part",
             "name": "Trampoline - Show Description",
-            "subtitle": "DJs flock by when MTV ax quiz prog"
+            "subtitle": "DJs flock by when MTV ax quiz prog",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10025",
             "type": "part",
             "name": "Trampoline - Show Accessories",
-            "subtitle": "The jay, pig, fox, zebra, and my wolves quack"
+            "subtitle": "The jay, pig, fox, zebra, and my wolves quack",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10026",
             "type": "part",
             "name": "Trampoline - Comments",
-            "subtitle": "Blowzy red vixens fight for a quick jump"
+            "subtitle": "Blowzy red vixens fight for a quick jump",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         },
         {
             "key": "10027",
             "type": "part",
             "name": "Upsale Teaser - Big Bounce",
-            "subtitle": "Joaquin Phoenix was gazed by MTV for luck"
+            "subtitle": "Joaquin Phoenix was gazed by MTV for luck",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
         }
 
     ]

@@ -7,6 +7,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     requires: [
         'Admin.view.contentManager.contextwindow.TitleBar',
+        'Admin.view.contentManager.contextwindow.list.ComponentTypeList',
         'Admin.view.contentManager.contextwindow.emulator.Emulator',
         'Admin.view.contentManager.contextwindow.inspector.Inspector'
     ],
@@ -78,8 +79,9 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.addListener('resize', function () {
             me.resizeContainerHeights();
         });
+
         this.addListener('afterrender', function () {
-            me.loadList('Admin.view.contentManager.contextwindow.list.ComponentTypesList');
+            me.loadList('Admin.view.contentManager.contextwindow.list.ComponentTypeList');
         });
 
         this.callParent(arguments);
@@ -128,18 +130,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             } else {
                 container.hide();
             }
-        }
-    },
-
-    showHideInspector: function (show) {
-        if (show) {
-            this.titleBar.setTitleText('Inspector');
-            this.listContainer.hide();
-            this.inspectorContainer.show();
-        } else {
-            this.titleBar.setTitleText('Insert');
-            this.listContainer.show();
-            this.inspectorContainer.hide();
         }
     },
 
@@ -226,19 +216,21 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         */
     },
 
-
     onSelectComponent: function (component) {
         var me = this,
             componentType = component.getComponentType().getType();
 
         if (component.isEmpty()) {
-            // Load part list
-            alert('Load list for type: ' + componentType);
+            me.loadList('Admin.view.contentManager.contextwindow.list.ComponentList');
 
         } else {
-            me.showHideInspector(true);
+            me.displayContainer(2);
         }
+    },
 
+    onDeSelectComponent: function () {
+        this.displayContainer(0);
+        this.loadList('Admin.view.contentManager.contextwindow.list.ComponentTypeList');
     },
 
     bindLiveEditEventListeners: function () {
@@ -251,11 +243,11 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         });
 
         liveEditJQuery(liveEditWindow).on('deselectComponent.liveEdit', function (jQueryEvent) {
-            me.showHideInspector(false);
+            me.onDeSelectComponent();
         });
 
         liveEditJQuery(liveEditWindow).on('componentRemoved.liveEdit', function (jQueryEvent) {
-            me.showHideInspector(false);
+            me.displayContainer(0);
         });
     },
 

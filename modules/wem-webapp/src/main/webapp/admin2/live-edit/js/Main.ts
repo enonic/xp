@@ -12,6 +12,8 @@ declare var LiveEditMutationSummary;
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
 
+///<reference path='component/Inserter.ts' />
+
 ///<reference path='component/listener/Base.ts' />
 ///<reference path='component/listener/Page.ts' />
 ///<reference path='component/listener/Region.ts' />

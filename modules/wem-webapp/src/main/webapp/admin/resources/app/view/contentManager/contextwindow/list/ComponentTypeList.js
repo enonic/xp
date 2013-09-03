@@ -1,7 +1,7 @@
 /**
  * fixme: Extract model and store
  */
-Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
+Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
     extend: 'Ext.container.Container',
     alias: 'widget.contextWindowComponentTypeList',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
@@ -12,11 +12,13 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
         type: 'fit'
     },
 
-    URL_TO_COMPONENTS: '../admin2/apps/content-manager/js/data/context-window/mock-component-type-list.json',
-
     searchBar: undefined,
+
     searchInput: undefined,
+
     listView: undefined,
+
+    store: undefined,
 
     initComponent: function () {
         this.searchBar = this.createSearchBar();
@@ -84,12 +86,12 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
             ]
         });
 
-        Ext.create('Ext.data.Store', {
+        this.store = Ext.create('Ext.data.Store', {
             id: 'contextWindowComponentStore',
             model: 'Admin.ContextWindow.ComponentModel',
             proxy: {
                 type: 'ajax',
-                url: me.URL_TO_COMPONENTS,
+                url: '../admin2/apps/content-manager/js/data/context-window/mock-component-types.json',
                 reader: {
                     type: 'json',
                     root: 'components'
@@ -131,7 +133,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
             tpl: templates,
             cls: 'admin-cw-items admin-component-types-items',
             itemSelector: 'div.admin-cw-item',
-            emptyText: 'No components available',
+            emptyText: 'No component types available',
             listeners: {
                 render: function () {
                     me.bindLiveEditEventListeners();
@@ -182,12 +184,6 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
             stop: function () {
                 me.getContextWindow().showHideIFrameMask(false);
             }
-            /*
-            ,
-            drag: function (event, ui) {
-                me.onDragComponent(event, ui);
-            }
-            */
         });
 
         $(me.getContextWindow().getLiveEditIFrameDom()).droppable({
@@ -202,31 +198,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
     onStartDragComponent: function (event, ui) {
         this.getContextWindow().showHideIFrameMask(true);
         this.getContextWindow().iFrameMask.className += ' live-edit-droppable-active';
-        /*
-        var me = this,
-            panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
-            contextWindow = me.getContextWindow();
-        */
-
-        // cache the regions on drag start for performance
-        // this.windowRegion = panelHelper.getContextWindowViewRegion(contextWindow);
     },
-
-    /*
-    onDragComponent: function (event, ui) {
-        var me = this;
-        var panelHelper = Admin.view.contentManager.contextwindow.panel.Helper,
-            mouseX = event.pageX,
-            mouseY = event.pageY,
-            mousePointerIsOutsideOfWindowRegion = mouseY <= me.windowRegion.top || mouseY >= (me.windowRegion.bottom - 10) ||
-                                            mouseX >= (me.windowRegion.right - 10) ||
-                                            mouseX <= me.windowRegion.left;
-
-        if (mousePointerIsOutsideOfWindowRegion) {
-            //
-        }
-    },
-    */
 
     onDragOverIFrame: function (event, ui) {
         var me = this,
@@ -259,10 +231,12 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
             text = draggable.data('live-edit-name');
 
         // fixme: can this be shared with live edit Live Edit/DragDropSort.ts ?
-        var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute;"><div id="live-edit-drag-helper-inner">' +
-            '               <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' +
-            '               <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
-            '           </div></div>';
+        var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute;">' +
+                   '    <div id="live-edit-drag-helper-inner">' +
+                   '        <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' +
+                   '        <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
+                   '    </div>' +
+                   '</div>';
 
         return $(html);
     },
@@ -274,7 +248,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypesList', {
             liveEditWindow = contextWindow.getLiveEditContentWindowObject(),
             liveEditJQuery = contextWindow.getLiveEditJQuery();
 
-        liveEditJQuery(liveEditWindow).on('sortableStop.liveEdit draggableStop.liveEdit', function (event) {
+        liveEditJQuery(liveEditWindow).on('sortableStop.liveEdit draggableStop.liveEdit', function (jQueryEvent) {
             $('[data-context-window-draggable="true"]').simulate('mouseup');
             contextWindow.doShow();
             contextWindow.iFrameMask.className = contextWindow.iFrameMask.className.replace(/live-edit-droppable-active/g, '');
