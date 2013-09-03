@@ -55,7 +55,7 @@ module api_ui_toolbar {
         }
 
         private hasGreedySpacer():boolean {
-            return this.components.some(function (comp) {
+            return this.components.some((comp:any) => {
                 if (comp instanceof ToolbarGreedySpacer) {
                     return true;
                 }

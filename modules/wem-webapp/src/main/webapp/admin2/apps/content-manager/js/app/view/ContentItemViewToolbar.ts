@@ -15,13 +15,14 @@ module app_view {
             super.addAction(params.editAction);
             super.addAction(params.deleteAction);
             super.addGreedySpacer();
-            super.addAction(params.closeAction);
+
 
             var displayModeToggle = new api_ui.ToggleSlide({
                 turnOnAction: params.showPreviewAction,
                 turnOffAction: params.showDetailsAction
             }, false);
             super.addElement(displayModeToggle);
+            super.addAction(params.closeAction);
         }
     }
 }
