@@ -59,8 +59,6 @@ public class FindContentRpcHandler
 
         final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
 
-        FacetEnricher.enrichFacets( contentIndexQueryResult.getFacets(), this.client );
-
         final Contents contents =
             this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
 

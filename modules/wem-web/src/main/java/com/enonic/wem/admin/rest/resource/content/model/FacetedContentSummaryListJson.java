@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.content.model;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
@@ -41,12 +40,11 @@ public class FacetedContentSummaryListJson
         final ImmutableList.Builder<AbstractFacetJson> builder = ImmutableList.builder();
         if ( facets != null )
         {
-            final List<QueryFacet> queries = Lists.newArrayList();
             for ( final Facet facet : facets )
             {
                 if ( facet instanceof TermsFacet )
                 {
-                    builder.add( new TermFacetJson( (TermsFacet) facet ) );
+                    builder.add( new TermsFacetJson( (TermsFacet) facet ) );
                 }
                 else if ( facet instanceof DateHistogramFacet )
                 {
@@ -58,10 +56,9 @@ public class FacetedContentSummaryListJson
                 }
                 else if ( facet instanceof QueryFacet )
                 {
-                    queries.add( (QueryFacet) facet );
+                    builder.add( new QueryFacetJson( (QueryFacet) facet ) );
                 }
             }
-            builder.add( new QueryFacetJson( queries ) );
         }
         return builder.build();
     }

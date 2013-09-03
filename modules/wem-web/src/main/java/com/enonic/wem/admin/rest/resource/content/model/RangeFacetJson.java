@@ -13,21 +13,20 @@ import com.enonic.wem.api.facet.RangeFacetEntry;
 public class RangeFacetJson
     extends AbstractFacetJson
 {
-    private String type;
+    private final String type = "range";
 
-    private List<RangeFacetEntryJson> terms;
+    private final List<RangeFacetEntryJson> entries;
 
     public RangeFacetJson( final RangeFacet facet )
     {
         super( facet );
-        this.type = "range";
 
         ImmutableList.Builder<RangeFacetEntryJson> builder = ImmutableList.builder();
         for ( RangeFacetEntry result : facet.getResultEntries() )
         {
             builder.add( new RangeFacetEntryJson( result ) );
         }
-        this.terms = builder.build();
+        this.entries = builder.build();
     }
 
     @JsonProperty(value = "_type")
@@ -36,9 +35,9 @@ public class RangeFacetJson
         return type;
     }
 
-    public List<RangeFacetEntryJson> getTerms()
+    public List<RangeFacetEntryJson> getEntries()
     {
-        return terms;
+        return entries;
     }
 
     public class RangeFacetEntryJson

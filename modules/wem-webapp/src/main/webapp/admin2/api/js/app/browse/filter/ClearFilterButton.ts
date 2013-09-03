@@ -6,6 +6,7 @@ module api_app_browse_filter {
             super('ClearFilterButton', 'clear-filter-button');
             this.getEl().setInnerHtml('Clear filter');
             this.getHTMLElement().setAttribute('href', 'javascript:;');
+            this.hide();
         }
     }
 }

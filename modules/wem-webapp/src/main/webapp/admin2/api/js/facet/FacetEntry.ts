@@ -1,6 +1,6 @@
 module api_facet {
 
-    export class Facet {
+    export class FacetEntry {
 
         private name:string;
 

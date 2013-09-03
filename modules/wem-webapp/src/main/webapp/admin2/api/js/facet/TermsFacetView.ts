@@ -1,100 +1,95 @@
 module api_facet {
 
-    export class TermsFacetView extends api_dom.DivEl {
+    export class TermsFacetView extends FacetView {
 
-        private facets:TermsFacetEntryView[] = [];
+        private termsFacet:TermsFacet;
 
-        private name:string;
+        private entryViews:TermsFacetEntryView[] = [];
 
-        constructor(facetGroupData:TermsFacet) {
-            super('FacetGroup', 'facet-group');
-            this.name = facetGroupData.name;
+        constructor(termsFacet:TermsFacet, parentGroupView:FacetGroupView) {
+            super(termsFacet, parentGroupView);
 
-            var facetTitle:api_dom.H2El = new api_dom.H2El('FacetTitle');
-            facetTitle.getEl().setInnerHtml(facetGroupData.displayName || facetGroupData.name);
-            this.appendChild(facetTitle);
+            this.termsFacet = termsFacet;
 
             var needHide = true;
-            for (var i = 0; i < facetGroupData.terms.length; i++) {
-                var facetData = facetGroupData.terms[i];
-                if (facetData.count > 0) {
+            this.termsFacet.getTermsFacetEntries().forEach((entry:TermsFacetEntry) => {
+                this.addFacet(new TermsFacetEntryView(entry, this));
+                if (entry.getCount() > 0) {
                     needHide = false;
                 }
-                this.addFacet(new TermsFacetEntryView(facetData, this));
-            }
+            });
 
             if (needHide) {
                 this.hide();
             }
         }
 
-        private addFacet(facet:TermsFacetEntryView) {
-            this.appendChild(facet);
-            this.facets.push(facet);
+        private addFacet(entryView:TermsFacetEntryView) {
+            this.appendChild(entryView);
+            entryView.addSelectionChangeListener((event:FacetEntryViewSelectionChangedEvent) => {
+                    this.notifyFacetEntrySelectionChanged(event);
+                }
+            );
+            this.entryViews.push(entryView);
         }
 
-        private getFacet(name:string):TermsFacetEntryView {
-            for (var i = 0; i < this.facets.length; i++) {
-                var facet:TermsFacetEntryView = this.facets[i];
+        update(facet:Facet) {
+
+            this.termsFacet = <TermsFacet>facet;
+
+            var hasAnyCountLargerThanZero = false;
+            this.termsFacet.getTermsFacetEntries().forEach((entry:TermsFacetEntry) => {
+                var existingEntry:TermsFacetEntryView = this.getFacetEntryView(entry.getName());
+                if (existingEntry != null) {
+                    existingEntry.update(entry);
+                }
+                if (entry.getCount() > 0) {
+                    hasAnyCountLargerThanZero = true;
+                }
+            });
+
+            if (!hasAnyCountLargerThanZero) {
+                this.hide();
+            }
+            else if (!this.isVisible()) {
+                this.show();
+            }
+        }
+
+        deselectFacet() {
+            this.entryViews.forEach((entryView:TermsFacetEntryView) => {
+                entryView.deselect();
+            });
+        }
+
+        hasSelectedEntry():boolean {
+            var isSelected:boolean = false;
+            this.entryViews.forEach((entry:TermsFacetEntryView) => {
+                if (entry.isSelected()) {
+                    isSelected = true;
+                }
+            });
+            return isSelected;
+        }
+
+        getSelectedValues():string[] {
+            var terms:string[] = [];
+            this.entryViews.forEach((entryView:TermsFacetEntryView) => {
+                if (entryView.isSelected()) {
+                    terms.push(entryView.getName());
+                }
+            });
+            return terms;
+        }
+
+        private getFacetEntryView(name:string):TermsFacetEntryView {
+            for (var i = 0; i < this.entryViews.length; i++) {
+                var facet:TermsFacetEntryView = this.entryViews[i];
                 if (facet.getName() == name) {
                     return facet;
                 }
             }
             return null;
-        }
-
-        update(facetGroupData:TermsFacet) {
-            var needHide = true;
-            for (var i = 0; i < facetGroupData.terms.length; i++) {
-                var facetData = facetGroupData.terms[i];
-                if (facetData.count > 0) {
-                    needHide = false;
-                }
-                var facet:TermsFacetEntryView = this.getFacet(facetData.name);
-                if (facet != null) {
-                    facet.update(facetData);
-                } else {
-                    this.addFacet(new TermsFacetEntryView(facetData, this));
-                }
-            }
-
-            if (needHide) {
-                this.hide();
-            } else if (!this.isVisible()) {
-                this.show();
-            }
-        }
-
-        reset() {
-            for (var i = 0; i < this.facets.length; i++) {
-                this.facets[i].reset();
-            }
-        }
-
-        isDirty():boolean {
-            var isDirty:boolean = false;
-            for (var i = 0; i < this.facets.length; i++) {
-                if (this.facets[i].isDirty()) {
-                    isDirty = true;
-                    break;
-                }
-            }
-            return isDirty;
-        }
-
-        getName():string {
-            return this.name;
-        }
-
-        getValues() {
-            var values = [];
-            for (var i = 0; i < this.facets.length; i++) {
-                var facet = this.facets[i];
-                if (facet.isSelected()) {
-                    values.push(facet.getName());
-                }
-            }
-            return values;
         }
 
     }

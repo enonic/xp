@@ -1,13 +1,10 @@
 package com.enonic.wem.admin.rpc.content;
 
-import java.util.List;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.api.content.Content;
@@ -55,8 +52,6 @@ public class FindContentJsonResult
         {
             final ArrayNode facetsNode = json.putArray( "facets" );
 
-            final List<QueryFacet> queries = Lists.newArrayList();
-
             for ( Facet facet : facets )
             {
                 if ( facet instanceof TermsFacet )
@@ -73,18 +68,16 @@ public class FindContentJsonResult
                 }
                 else if ( facet instanceof QueryFacet )
                 {
-                    queries.add( (QueryFacet) facet );
+                    serializeFacet( facetsNode.addObject(), (QueryFacet) facet );
                 }
             }
 
-            serializeFacet( facetsNode.addObject(), queries );
         }
     }
 
     private void serializeFacet( final ObjectNode json, final DateHistogramFacet dateHistogramFacet )
     {
         json.put( "name", dateHistogramFacet.getName() );
-        json.put( "displayName", dateHistogramFacet.getDisplayName() );
         json.put( "_type", "dateHistogram" );
 
         final ArrayNode terms = json.putArray( "terms" );
@@ -103,7 +96,6 @@ public class FindContentJsonResult
     private void serializeFacet( final ObjectNode json, final RangeFacet rangeFacet )
     {
         json.put( "name", rangeFacet.getName() );
-        json.put( "displayName", rangeFacet.getDisplayName() );
         json.put( "_type", "range" );
 
         final ArrayNode terms = json.putArray( "ranges" );
@@ -124,7 +116,6 @@ public class FindContentJsonResult
     {
         final String facetName = termsFacet.getName();
         json.put( "name", facetName );
-        json.put( "displayName", termsFacet.getDisplayName() );
         json.put( "_type", "terms" );
 
         final ArrayNode terms = json.putArray( "terms" );
@@ -140,21 +131,11 @@ public class FindContentJsonResult
         }
     }
 
-    private void serializeFacet( final ObjectNode json, final List<QueryFacet> queries )
+    private void serializeFacet( final ObjectNode json, final QueryFacet queryFacet )
     {
-        json.put( "name", "ranges" );
-        json.put( "displayName", "Last Modified" );
-        json.put( "_type", "terms" );
-
-        final ArrayNode terms = json.putArray( "terms" );
-
-        for ( final QueryFacet queryFacet : queries )
-        {
-            final ObjectNode facetObject = terms.addObject();
-            facetObject.put( "name", queryFacet.getName() );
-            facetObject.put( "_type", "query" );
-            facetObject.put( "count", queryFacet.getCount() );
-        }
+        json.put( "name", queryFacet.getName() );
+        json.put( "_type", "query" );
+        json.put( "count", queryFacet.getCount() );
     }
 
     private JsonNode serialize( final Set<ContentQueryHit> contentQueryHits )

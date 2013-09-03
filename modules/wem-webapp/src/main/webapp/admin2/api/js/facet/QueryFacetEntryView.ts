@@ -1,16 +1,16 @@
 module api_facet {
 
-    export class TermsFacetEntryView extends FacetEntryView {
+    export class QueryFacetEntryView extends FacetEntryView {
 
-        private entry:TermsFacetEntry;
+        private queryFacet:QueryFacet;
 
         private checkbox:api_ui.CheckboxInput;
 
         private label:api_dom.LabelEl;
 
-        constructor(entry:TermsFacetEntry, parentFacetView:FacetView) {
+        constructor(queryFacet:QueryFacet, parentFacetView:QueryFacetView) {
             super(parentFacetView);
-            this.entry = entry;
+            this.queryFacet = queryFacet;
 
             this.checkbox = new api_ui.CheckboxInput();
             this.checkbox.addListener({
@@ -30,16 +30,15 @@ module api_facet {
         }
 
         private resolveLabelValue():string {
-            return this.entry.getDisplayName() + ' (' + this.entry.getCount() + ')';
+            return this.queryFacet.getName() + ' (' + this.queryFacet.getCount() + ')';
         }
 
         getName():string {
-            return this.entry.getName();
+            return this.queryFacet.getName();
         }
 
-        update(entry:TermsFacetEntry) {
-
-            this.entry = entry;
+        update(facet:QueryFacet) {
+            this.queryFacet = facet;
             this.updateUI();
         }
 
@@ -55,7 +54,7 @@ module api_facet {
 
             this.label.setValue(this.resolveLabelValue());
 
-            if (this.entry.getCount() > 0 || this.isSelected()) {
+            if (this.queryFacet.getCount() > 0 || this.isSelected()) {
                 this.show();
             } else {
                 this.hide();

@@ -10,26 +10,23 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.facet.TermsFacet;
 import com.enonic.wem.api.facet.TermsFacetEntry;
 
-public class TermFacetJson
+public class TermsFacetJson
     extends AbstractFacetJson
 {
+    private final String type = "terms";
 
-    private String type;
+    private final List<TermFacetEntryJson> entries;
 
-    private List<TermFacetEntryJson> terms;
-
-    public TermFacetJson( final TermsFacet facet )
+    public TermsFacetJson( final TermsFacet facet )
     {
         super( facet );
-
-        this.type = "terms";
 
         ImmutableList.Builder<TermFacetEntryJson> builder = ImmutableList.builder();
         for ( TermsFacetEntry result : facet.getResults() )
         {
             builder.add( new TermFacetEntryJson( result ) );
         }
-        this.terms = builder.build();
+        this.entries = builder.build();
     }
 
     @JsonProperty(value = "_type")
@@ -38,9 +35,9 @@ public class TermFacetJson
         return type;
     }
 
-    public List<TermFacetEntryJson> getTerms()
+    public List<TermFacetEntryJson> getEntries()
     {
-        return terms;
+        return entries;
     }
 
     public class TermFacetEntryJson

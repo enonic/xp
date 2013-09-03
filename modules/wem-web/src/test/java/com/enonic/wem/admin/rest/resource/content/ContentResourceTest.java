@@ -231,7 +231,7 @@ public class ContentResourceTest
         errors.add( new MaximumOccurrencesValidationError( input, 5 ) );
         errors.add( new MissingRequiredValueValidationError( input, property ) );
 
-        return DataValidationErrors.from(errors);
+        return DataValidationErrors.from( errors );
     }
 
     private Content createContent( final String id, final String name, final String contentTypeName )
@@ -261,7 +261,6 @@ public class ContentResourceTest
             Facets facets = new Facets();
 
             TermsFacet contentTypesFacet = new TermsFacet();
-            contentTypesFacet.setDisplayName( "Content Type" );
             contentTypesFacet.setName( "contentType" );
             contentTypesFacet.addResult( "system:folder", "Folder", 5 );
             contentTypesFacet.addResult( "system:image", "Image", 24 );
@@ -269,7 +268,6 @@ public class ContentResourceTest
             facets.addFacet( contentTypesFacet );
 
             TermsFacet spacesFacet = new TermsFacet();
-            spacesFacet.setDisplayName( "Space" );
             spacesFacet.setName( "space" );
             spacesFacet.addResult( "bildearkiv", "Bildearkiv", 30 );
             spacesFacet.addResult( "bluman trampoliner", "Bluman Trampoliner", 1 );

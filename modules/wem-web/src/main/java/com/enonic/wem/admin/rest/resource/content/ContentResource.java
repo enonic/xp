@@ -25,7 +25,6 @@ import com.enonic.wem.admin.rest.resource.content.model.FacetedContentSummaryLis
 import com.enonic.wem.admin.rest.resource.content.model.ValidateContentJson;
 import com.enonic.wem.admin.rest.resource.content.model.ValidateContentParams;
 import com.enonic.wem.admin.rpc.content.ContentDataParser;
-import com.enonic.wem.admin.rpc.content.FacetEnricher;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
@@ -108,8 +107,6 @@ public class ContentResource
         }
 
         final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
-
-        FacetEnricher.enrichFacets( contentIndexQueryResult.getFacets(), this.client );
 
         final Contents contents =
             this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
