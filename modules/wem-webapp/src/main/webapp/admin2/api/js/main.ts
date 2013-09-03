@@ -167,7 +167,7 @@
 ///<reference path='content/ContentPath.ts' />
 ///<reference path='content/data/ContentData.ts' />
 
-///<reference path='schema/content/form/InputType.ts' />
+///<reference path='schema/content/form/InputTypeName.ts' />
 ///<reference path='schema/content/form/FormItem.ts' />
 ///<reference path='schema/content/form/Layout.ts' />
 ///<reference path='schema/content/form/FieldSet.ts' />

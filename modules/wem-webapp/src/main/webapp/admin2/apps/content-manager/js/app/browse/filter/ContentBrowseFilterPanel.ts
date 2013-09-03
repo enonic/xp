@@ -12,7 +12,6 @@ module app_browse_filter {
 
             this.addListener({ onReset: ()=> {
 
-                console.log("ContentBrowseFilterPanel onReset");
                 var params = app_browse.createLoadContentParams({});
 
                 api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
@@ -26,7 +25,6 @@ module app_browse_filter {
 
         handleSearch(values:{[s:string] : string[]; }) {
 
-            console.log("ContentBrowseFilterPanel handleSearch");
             var isClean = !this.hasFilterSet();
             if (isClean) {
                 this.reset();

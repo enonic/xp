@@ -36,7 +36,6 @@ module app_browse {
 
             api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
                 // set facet data
-                console.log("ContentBrowsePanel updating facets", response.facets);
                 var termsFacets:api_facet.Facet[] = api_facet.FacetFactory.createFacets(response.facets)
                 this.contentFilterPanel.updateFacets(termsFacets);
             });

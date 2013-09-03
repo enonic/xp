@@ -26,16 +26,19 @@ module app_wizard_form {
             var label = new InputLabel(this.input);
             this.appendChild(label);
 
-            var inputType = this.input.getInputType();
+            var inputType:api_schema_content_form.InputTypeName = this.input.getInputType();
             if (inputType.isBuiltIn()) {
                 var newInput = window["app_wizard_form_input"][inputType.getName()];
-                if( newInput == null ){
+                if (newInput == null) {
                     throw new Error("No built-in component for input type found: " + inputType.getName());
                 }
                 var newInputPrototype = Object.create(newInput.prototype);
                 newInputPrototype.constructor.apply(newInputPrototype);
             }
             else {
+
+                // custom types must register it self by name in a global known input type registry
+
                 throw Error("Custom input types are not supported yet: " + inputType.getName());
             }
 

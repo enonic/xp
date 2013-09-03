@@ -41,15 +41,11 @@ module api_facet {
 
         updateFacets(facets:Facet[]) {
 
-            console.log("Updaing facets ", facets );
-
             this.facetGroupViews.forEach((facetGroupView:FacetGroupView) => {
 
                 var matchingFacets:Facet[] = facets.filter((current:Facet) => {
                     return facetGroupView.handlesFacet(current);
                 });
-                console.log("Painting group view ", facetGroupView.getName() );
-                console.log("..found matching facets: ", matchingFacets);
 
                 if (this.isGroupUpdatable(facetGroupView)) {
                     facetGroupView.update(matchingFacets);
