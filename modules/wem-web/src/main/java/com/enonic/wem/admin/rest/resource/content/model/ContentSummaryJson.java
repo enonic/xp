@@ -71,4 +71,9 @@ public class ContentSummaryJson
         return DateTimeFormatter.format( content.getCreatedTime() );
     }
 
+    public boolean getHasChildren()
+    {
+        return content.hasChildren();
+    }
+
 }
