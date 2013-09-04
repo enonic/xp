@@ -288,7 +288,7 @@ public class ContentDaoImplTest
     }
 
     @Test
-    public void findContentByPath()
+    public void selectContentByPath()
         throws Exception
     {
         // setup
@@ -312,7 +312,7 @@ public class ContentDaoImplTest
     }
 
     @Test
-    public void findMultipleContentsByPath()
+    public void selectMultipleContentsByPath()
         throws Exception
     {
         // setup
@@ -347,7 +347,7 @@ public class ContentDaoImplTest
     }
 
     @Test
-    public void findMultipleContentsById()
+    public void selectMultipleContentsById()
         throws Exception
     {
         // setup
@@ -382,7 +382,7 @@ public class ContentDaoImplTest
     }
 
     @Test
-    public void findContentById()
+    public void selectContentById()
         throws Exception
     {
         // setup
@@ -403,6 +403,28 @@ public class ContentDaoImplTest
         DataSet contentData = actualContent.getContentData();
         assertEquals( "myValue", contentData.getProperty( DataPath.from( "myData" ) ).getString() );
         assertEquals( "myOtherValue", contentData.getProperty( DataPath.from( "mySet.myData" ) ).getString() );
+    }
+
+    @Test
+    public void select_content_and_check_that_hasChildren_method_returns_correct_results()
+        throws Exception
+    {
+        // setup
+        contentDao.create( createContent( "myspace:/" ), session );
+        contentDao.create( createContent( "myspace:parentWithoutChildren" ), session );
+        contentDao.create( createContent( "myspace:parentWithChild"), session );
+        contentDao.create( createContent( "myspace:parentWithChild/child" ), session );
+        commit();
+
+        // execute
+        Content contentWithoutChildren = contentDao.select( ContentPath.from( "myspace:parentWithoutChildren" ), session );
+        Content contentWithChild = contentDao.select( ContentPath.from( "myspace:parentWithChild" ), session );
+
+        // verify
+        assertNotNull( contentWithoutChildren );
+        assertFalse( contentWithoutChildren.hasChildren() );
+        assertNotNull( contentWithChild );
+        assertTrue( contentWithChild.hasChildren() );
     }
 
     @Test

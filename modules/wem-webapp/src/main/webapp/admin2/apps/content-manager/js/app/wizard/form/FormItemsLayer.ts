@@ -8,13 +8,13 @@ module app_wizard_form {
             this.parentEl = parentEl;
         }
 
-        public layout(formItems:api_schema_content_form.FormItem[], parentDataSet:api_data.DataSet):FormItemContainer[] {
+        public layout(formItems:api_schema_content_form.FormItem[], parentDataSet:api_data.DataSet):FormItemView[] {
 
             console.log("FormItemsLayer.layout");
             console.log(".. formItems: ", formItems);
             console.log(".. parentDataSet: ", parentDataSet);
 
-            var formItemContainers:FormItemContainer[] = [];
+            var formItemContainers:FormItemView[] = [];
 
             formItems.forEach((formItem:api_schema_content_form.FormItem) => {
 
@@ -26,7 +26,7 @@ module app_wizard_form {
 
                     if (parentDataSet != null) {
 
-                        var formItemSetContainer = new FormItemSetContainer(formItemSet, parentDataSet);
+                        var formItemSetContainer = new FormItemSetView(formItemSet, parentDataSet);
                         formItemContainers.push(formItemSetContainer);
                         this.parentEl.appendChild(formItemSetContainer);
                     }
@@ -43,7 +43,7 @@ module app_wizard_form {
                     console.log("laying out Input: ", input);
 
                     if (parentDataSet != null) {
-                        var inputContainer = new InputContainer(input, parentDataSet);
+                        var inputContainer = new FormItemInputView(input, parentDataSet);
                         formItemContainers.push(inputContainer);
                         this.parentEl.appendChild(inputContainer);
                     }

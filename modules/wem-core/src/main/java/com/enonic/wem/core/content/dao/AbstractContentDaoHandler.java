@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -14,7 +12,6 @@ import javax.jcr.Session;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.space.SpaceName;
@@ -26,9 +23,7 @@ import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
 import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE;
 import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
-import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
 
 public abstract class AbstractContentDaoHandler
 {
@@ -95,87 +90,42 @@ public abstract class AbstractContentDaoHandler
     protected final Node doGetContentNode( final ContentPath contentPath )
         throws RepositoryException
     {
-        final String path = resolveNodePath( contentPath );
-        final Node rootNode = session.getRootNode();
-        return getNodeOrNull( rootNode, path );
+        return ContentJcrHelper.doGetContentNode( contentPath, session );
     }
 
     protected final Node doGetContentNode( final ContentId contentId )
         throws RepositoryException
     {
-        try
-        {
-            return session.getNodeByIdentifier( contentId.toString() );
-        }
-        catch ( ItemNotFoundException | IllegalArgumentException e )
-        {
-            return null;
-        }
+        return ContentJcrHelper.doGetContentNode( contentId, session );
     }
 
     protected final Content doFindContent( final ContentPath contentPath )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( contentPath );
-        if ( contentNode == null )
-        {
-            return null;
-        }
-
-        return nodeToContent( contentNode );
-    }
-
-    protected Content nodeToContent( final Node contentNode )
-        throws RepositoryException
-    {
-        final Content.Builder contentBuilder = newContent();
-        contentJcrMapper.toContent( contentNode, contentBuilder );
-        return contentBuilder.build();
+        return ContentJcrHelper.doFindContent( contentPath, session, contentJcrMapper );
     }
 
     protected final Content doFindContent( final ContentId contentId )
         throws RepositoryException
     {
-        final Node contentNode = doGetContentNode( contentId );
-        if ( contentNode == null )
-        {
-            return null;
-        }
-
-        return nodeToContent( contentNode );
-    }
-
-    protected String resolveNodePath( final ContentPath contentPath )
-    {
-        if ( contentPath.isRoot() )
-        {
-            return getSpaceRootPath( contentPath.getSpace() );
-        }
-        else
-        {
-            final String relativePathToContent = contentPath.getRelativePath();
-            return getSpaceRootPath( contentPath.getSpace() ) + "/" + removeStart( relativePathToContent, "/" );
-        }
-    }
-
-    protected ContentPath getContentPathFromNode( final Node node )
-        throws RepositoryException
-    {
-        final String jcrNodePath = substringAfter( node.getPath(), SPACES_PATH );
-        final String spaceName = substringBefore( jcrNodePath, "/" + SPACE_CONTENT_ROOT_NODE );
-        final String contentPath = substringAfter( jcrNodePath, "/" + SPACE_CONTENT_ROOT_NODE );
-        return ContentPath.from( spaceName + ":" + contentPath );
-    }
-
-    protected String getSpaceRootPath( final SpaceName spaceName )
-    {
-        return SPACES_PATH + spaceName.name() + "/" + SPACE_CONTENT_ROOT_NODE;
+        return ContentJcrHelper.doFindContent( contentId, session, contentJcrMapper );
     }
 
     protected Node getContentVersionHistoryNode( final Node contentNode )
         throws RepositoryException
     {
         return contentNode.getNode( CONTENT_VERSION_HISTORY_NODE );
+    }
+
+    protected String resolveNodePath( final ContentPath contentPath )
+    {
+        return ContentJcrHelper.resolveNodePath( contentPath );
+    }
+
+    public boolean moveContentNode( final String srcPath, final String dstPath )
+        throws RepositoryException
+    {
+        return ContentJcrHelper.moveContentNode( srcPath, dstPath, session );
     }
 
     protected Node addContentVersion( final Content content, final Node contentVersionHistoryNode )
@@ -187,30 +137,21 @@ public abstract class AbstractContentDaoHandler
         return contentVersionNode;
     }
 
-    protected boolean moveContentNode( final String srcPath, final String dstPath )
-        throws RepositoryException
-    {
-        if ( srcPath.equals( dstPath ) )
-        {
-            return false;
-        }
-
-        try
-        {
-            session.move( srcPath, dstPath );
-            return true;
-        }
-        catch ( ItemExistsException e )
-        {
-            final ContentPath path = getContentPathFromNode( session.getNode( dstPath ) );
-            throw new ContentAlreadyExistException( path );
-        }
-    }
-
     protected boolean isNonContentNode( Node node )
         throws RepositoryException
     {
-        return node.getName().startsWith( ContentDao.NON_CONTENT_NODE_PREFIX );
+        return ContentJcrHelper.isNonContentNode( node );
+    }
+
+    protected String getSpaceRootPath( final SpaceName spaceName )
+    {
+        return ContentJcrHelper.getSpaceRootPath( spaceName );
+    }
+
+    protected Content nodeToContent( final Node contentNode )
+        throws RepositoryException
+    {
+        return ContentJcrHelper.nodeToContent( contentNode, contentJcrMapper );
     }
 
     class ContentAndNode

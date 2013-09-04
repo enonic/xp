@@ -1,11 +1,11 @@
 module app_wizard_form {
 
-    export class FormItemContainer extends api_dom.DivEl {
+    export class FormItemView extends api_dom.DivEl {
 
         private formItem:api_schema_content_form.FormItem;
 
         constructor(formItem:api_schema_content_form.FormItem) {
-            super("FormItemContainer");
+            super("FormItemView");
 
             this.formItem = formItem;
         }
