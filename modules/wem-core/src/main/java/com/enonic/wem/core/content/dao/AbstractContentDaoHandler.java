@@ -143,6 +143,17 @@ public abstract class AbstractContentDaoHandler
         return ContentJcrHelper.isNonContentNode( node );
     }
 
+    protected String getSpaceRootPath( final SpaceName spaceName )
+    {
+        return ContentJcrHelper.getSpaceRootPath( spaceName );
+    }
+
+    protected Content nodeToContent( final Node contentNode )
+        throws RepositoryException
+    {
+        return ContentJcrHelper.nodeToContent( contentNode, contentJcrMapper );
+    }
+
     class ContentAndNode
     {
         Content content;
