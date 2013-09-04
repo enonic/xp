@@ -53,17 +53,19 @@ module LiveEdit.ui.contextmenu {
             });
         }
 
-        private show(component:LiveEdit.component.Component, pagePosition):void {
+        private show(component:LiveEdit.component.Component, positionOnPage:any = null):void {
             this.selectedComponent = component;
 
             this.updateTitleBar(component);
             this.updateMenuItemsForComponent(component);
 
-            // Calculate positions after menu is populated in order to get the right position.
-            var pageXPosition = pagePosition.x - this.getEl().width() / 2,
-                pageYPosition = pagePosition.y + 15;
+            if (positionOnPage) {
+                var pageXPosition = positionOnPage.x - this.getEl().width() / 2,
+                    pageYPosition = positionOnPage.y + 15;
 
-            this.moveToXY(pageXPosition, pageYPosition);
+                this.moveToXY(pageXPosition, pageYPosition);
+            }
+
             this.getEl().show(null);
 
             this.hidden = false;

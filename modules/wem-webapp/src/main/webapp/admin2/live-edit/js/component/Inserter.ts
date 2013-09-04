@@ -5,7 +5,6 @@ module LiveEdit.component {
         static $ = $liveEdit;
 
         public static replaceEmptyComponent(componentKey:string):void {
-
             var selectedComponent = LiveEdit.Selection.getSelectedComponent();
 
             if (!selectedComponent.isEmpty()) {
@@ -19,9 +18,29 @@ module LiveEdit.component {
                 cache: false
             }).done((responseHtml:string) => {
 
-                $(window).trigger('deselectComponent.liveEdit');
+                var responseHtmlAsElement:JQuery = $(responseHtml);
 
-                selectedComponent.getElement().replaceWith(responseHtml);
+                selectedComponent.getElement().replaceWith(responseHtmlAsElement);
+
+                LiveEdit.Selection.setSelectionOnElement(responseHtmlAsElement);
+
+                $(window).trigger('selectComponent.liveEdit', [new LiveEdit.component.Component(responseHtmlAsElement)]);
+
+                $(window).trigger('sortableUpdate.liveEdit');
+
+                /*
+                var mutationSummary = new LiveEditMutationSummary({
+                    callback: (summaries:any) => {
+                        LiveEdit.Selection.setSelectionOnElement(responseHtmlAsElement);
+                        $(window).trigger('selectComponent.liveEdit', [new LiveEdit.component.Component(responseHtmlAsElement)]);
+                    },
+                    rootNode: responseHtmlAsElement[0].parentNode,
+                    queries: [
+                        { all: true}
+                    ]
+                });
+                */
+
 
                 // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
                 // So we have to create it again.
@@ -30,7 +49,6 @@ module LiveEdit.component {
                     LiveEdit.DragDropSort.createJQueryUiSortable();
                 }
 
-                $(window).trigger('sortableUpdate.liveEdit');
             });
 
         }

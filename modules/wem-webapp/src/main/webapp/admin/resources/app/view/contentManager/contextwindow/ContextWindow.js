@@ -54,17 +54,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
             currentWindowHeight: this.height
         });
 
-        // fixme: move to TitleBar
-        this.titleBar.addMenuItem('Insert', function () {
-            me.displayContainer(me.containers.LIST);
-        });
-        this.titleBar.addMenuItem('Emulator', function () {
-            me.displayContainer(me.containers.EMULATOR)
-        });
-        this.titleBar.addMenuItem('Inspector', function () {
-            me.displayContainer(me.containers.INSPECTOR)
-        });
-
         this.listContainer = this.createListContainer();
         this.emulatorContainer = new Admin.view.contentManager.contextwindow.emulator.Emulator({hidden: true, contextWindow: this});
         this.inspectorContainer = new Admin.view.contentManager.contextwindow.inspector.Inspector({hidden: true, contextWindow: this});
@@ -104,13 +93,18 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         });
     },
 
-    loadList: function (classPath) {
+    loadList: function (classPath, componentType) {
         var list = Ext.create(classPath, {contextWindow: this});
+
+        var title = list.title;
+        if (componentType) {
+            title += ' ' + componentType.getName();
+        }
 
         this.listContainer.removeAll();
         this.listContainer.add(list);
         this.listContainer.doLayout();
-        this.titleBar.setTitleText(list.title)
+        this.titleBar.setTitleText(title)
     },
 
     loadInspector: function (classPath) {
@@ -242,17 +236,21 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     onSelectComponent: function (component) {
         var me = this,
-            componentType = component.getComponentType().getType();
+            componentType = component.getComponentType();
 
         if (component.isEmpty()) {
-            me.loadList('Admin.view.contentManager.contextwindow.list.ComponentList');
+            me.displayContainer(me.containers.LIST);
+            me.loadList('Admin.view.contentManager.contextwindow.list.ComponentList', componentType);
 
         } else {
             me.displayContainer(me.containers.INSPECTOR);
+            me.titleBar.setTitleText('Inspect ' + componentType.getName());
         }
     },
 
     onDeSelectComponent: function () {
+        // we should show last used container here.
+
         var me = this;
         this.displayContainer(me.containers.LIST);
         this.loadList('Admin.view.contentManager.contextwindow.list.ComponentTypeList');

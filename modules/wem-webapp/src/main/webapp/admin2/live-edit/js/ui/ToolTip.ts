@@ -44,7 +44,7 @@ module LiveEdit.ui {
             $(document).on('mousemove', '[data-live-edit-type]', (event) => {
 
                 // fixme: Use PubSub instead of calling DragDrop object.
-                if (LiveEdit.Selection.hasSelection() || LiveEdit.DragDropSort.isDragging()) {
+                if (LiveEdit.Selection.pageHasSelectedElements() || LiveEdit.DragDropSort.isDragging()) {
                     this.hide();
                     return;
                 }

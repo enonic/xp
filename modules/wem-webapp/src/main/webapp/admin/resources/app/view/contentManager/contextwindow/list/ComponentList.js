@@ -6,7 +6,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
     alias: 'widget.contextWindowComponentList',
     uses: 'Admin.view.contentManager.contextwindow.Helper',
 
-    title: 'Insert Part',
+    title: 'Inspect',
 
     layout: {
         type: 'fit'

@@ -64,7 +64,6 @@ module LiveEdit.ui {
 
         private onDeselectComponent():void {
             LiveEdit.Selection.clearSelection();
-            this.hide();
             this.selectedComponent = null;
         }
 

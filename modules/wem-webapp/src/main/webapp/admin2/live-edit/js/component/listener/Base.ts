@@ -28,7 +28,7 @@ module LiveEdit.component.listener {
 
         attachMouseOutEvent():void {
             $(document).on('mouseout', () => {
-                if (LiveEdit.Selection.hasSelection()) {
+                if (LiveEdit.Selection.pageHasSelectedElements()) {
                     return;
                 }
                 $(window).trigger('mouseOutComponent.liveEdit');
@@ -49,14 +49,14 @@ module LiveEdit.component.listener {
                 event.preventDefault();
 
                 var component = new LiveEdit.component.Component($(event.currentTarget)),
-                    deselectComponent:bool = component.isSelected() || LiveEdit.Selection.hasSelection();
+                    deselectComponent:bool = component.isSelected() || LiveEdit.Selection.pageHasSelectedElements();
 
                 // Toggle select/deselect
                 if (deselectComponent) {
                     LiveEdit.Selection.clearSelection();
                     $(window).trigger('deselectComponent.liveEdit');
                 } else {
-                    LiveEdit.Selection.setSelection(component.getElement());
+                    LiveEdit.Selection.setSelectionOnElement(component.getElement());
 
                     // Used by for menu positioning
                     // fixme: send event and let menu do this by itself
@@ -76,7 +76,7 @@ module LiveEdit.component.listener {
         }
 
         cancelMouseOverEvent(event:JQueryEventObject):Boolean {
-            return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.Selection.hasSelection() ||
+            return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.Selection.pageHasSelectedElements() ||
                    LiveEdit.DragDropSort.isDragging();
         }
 

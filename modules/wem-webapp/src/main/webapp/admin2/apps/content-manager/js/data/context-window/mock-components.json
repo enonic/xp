@@ -1,6 +1,13 @@
 {
     "components": [
         {
+            "key": "10060",
+            "type": "part",
+            "name": "Jumpy Box",
+            "subtitle": "A box where the computed height is recalculated each second",
+            "icon": "/admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
+        },
+        {
             "key": "10001",
             "type": "part",
             "name": "HTML 5 Video",

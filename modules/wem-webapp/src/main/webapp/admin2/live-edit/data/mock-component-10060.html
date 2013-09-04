@@ -1,0 +1,18 @@
+<div data-live-edit-type="1" data-live-edit-key="10060" data-live-edit-name="Jumpy Box">
+
+    <div id="the-jumpy-box" style="background-color:yellow; padding: 20px;">
+        A box where the computed height is recalculated each second
+    </div>
+
+    <script>
+        var liveEditTest_jumpyBox = document.getElementById('the-jumpy-box');
+        var liveEditTest_jumpyBoxNewHeight;
+
+        setInterval(function () {
+            liveEditTest_jumpyBoxNewHeight = Math.floor(Math.random() * 500) + 100;
+            liveEditTest_jumpyBox.style.height = liveEditTest_jumpyBoxNewHeight + 'px';
+        }, 1000);
+    </script>
+
+</div>
+

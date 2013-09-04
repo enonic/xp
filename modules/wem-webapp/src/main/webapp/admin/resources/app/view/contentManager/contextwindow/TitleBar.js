@@ -23,6 +23,8 @@ Ext.define('Admin.view.contentManager.contextwindow.TitleBar', {
     isCollapsed: false,
 
     initComponent: function () {
+        var me = this,
+            contextWindow = me.contextWindow;
 
         this.menuButton = this.createMenuButton();
         this.titleText = this.createTitleTextCmp();
@@ -33,6 +35,15 @@ Ext.define('Admin.view.contentManager.contextwindow.TitleBar', {
             this.titleText,
             this.toggleButton
         ];
+        this.addMenuItem('Insert', function () {
+            contextWindow.displayContainer(contextWindow.containers.LIST);
+        });
+        this.addMenuItem('Emulator', function () {
+            contextWindow.displayContainer(contextWindow.containers.EMULATOR)
+        });
+        this.addMenuItem('Inspector', function () {
+            contextWindow.displayContainer(contextWindow.containers.INSPECTOR)
+        });
 
         this.callParent(arguments);
     },

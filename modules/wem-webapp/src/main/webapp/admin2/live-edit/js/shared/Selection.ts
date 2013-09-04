@@ -1,33 +1,26 @@
 module LiveEdit {
     export class Selection {
 
-        // fixme: everything here should work with app component object. Not DOM. See getSelectedComponent.
-
         // Uses
         static $ = $liveEdit;
 
         private static ATTRIBUTE_NAME = 'data-live-edit-selected';
 
-        public static setSelection(element):void {
+        public static setSelectionOnElement(element:JQuery):void {
+            clearSelection();
             element.attr(ATTRIBUTE_NAME, 'true');
         }
 
-        public static getSelected():JQuery {
-            return $('[' + ATTRIBUTE_NAME + ']');
-        }
-
-
         public static getSelectedComponent():LiveEdit.component.Component {
             try {
-                return new LiveEdit.component.Component(getSelected());
+                return new LiveEdit.component.Component($('[' + ATTRIBUTE_NAME + ']'));
 
             } catch(ex) {
                 return null;
             }
         }
 
-
-        public static hasSelection():bool {
+        public static pageHasSelectedElements():bool {
             return $('[' + ATTRIBUTE_NAME + ']').length > 0;
         }
 
