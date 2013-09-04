@@ -1,9 +1,12 @@
 package com.enonic.wem.api.content;
 
+import java.util.List;
+
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
@@ -40,6 +43,8 @@ public final class Content
 
     private final ContentVersionId versionId;
 
+    private final ImmutableList<ContentId> childrenIds;
+
     private Content( final Builder builder )
     {
         this.displayName = builder.displayName;
@@ -52,6 +57,7 @@ public final class Content
         this.owner = builder.owner;
         this.modifier = builder.modifier;
         this.versionId = builder.versionId;
+        this.childrenIds = builder.childrenIdsBuilder.build();
     }
 
     public boolean isTemporary()
@@ -124,6 +130,10 @@ public final class Content
     public ContentVersionId getVersionId()
     {
         return versionId;
+    }
+
+    public boolean hasChildren() {
+        return childrenIds.isEmpty();
     }
 
     public Item toItem()
@@ -249,6 +259,8 @@ public final class Content
 
         private ContentVersionId versionId;
 
+        private ImmutableList.Builder<ContentId> childrenIdsBuilder;
+
         public Builder()
         {
             this.contentId = null;
@@ -261,6 +273,7 @@ public final class Content
             this.modifiedTime = null;
             this.modifier = null;
             this.versionId = null;
+            this.childrenIdsBuilder = ImmutableList.builder();
         }
 
         public Builder( final Content content )
@@ -275,6 +288,8 @@ public final class Content
             this.modifiedTime = content.modifiedTime;
             this.modifier = content.modifier;
             this.versionId = content.versionId;
+            this.childrenIdsBuilder = ImmutableList.builder();
+            this.childrenIdsBuilder.addAll( content.childrenIds );
         }
 
         public Builder path( final ContentPath path )
@@ -344,6 +359,11 @@ public final class Content
         public Builder version( final ContentVersionId versionId )
         {
             this.versionId = versionId;
+            return this;
+        }
+
+        public Builder addChildId( final ContentId childId ) {
+            this.childrenIdsBuilder.add( childId );
             return this;
         }
 

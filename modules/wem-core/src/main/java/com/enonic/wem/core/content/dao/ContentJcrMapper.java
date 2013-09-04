@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.dao;
 
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.account.AccountKey;
@@ -94,6 +95,13 @@ final class ContentJcrMapper
         if ( contentNode.hasProperty( VERSION_ID ) )
         {
             contentBuilder.version( ContentVersionId.of( getPropertyLong( contentNode, VERSION_ID ) ) );
+        }
+        NodeIterator children = contentNode.getNodes();
+        while ( children.hasNext() ) {
+            Node child = children.nextNode();
+            if ( !ContentJcrHelper.isNonContentNode( child ) ) {
+                contentBuilder.addChildId( ContentIdFactory.from( child ) );
+            }
         }
     }
 
