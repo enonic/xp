@@ -1,4 +1,4 @@
-module api_component{
+module api_page{
 
     export class Page {
 
