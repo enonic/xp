@@ -139,16 +139,16 @@ module app {
                                             (parentContentResult:api_remote_content.GetResult) => {
 
                                                 var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId,
-                                                    contentType, parentContentResult.content[0]);
+                                                    contentType, <any>parentContentResult.content);
 
-                                                contentWizardPanel.renderExisting(contentResult);
+                                                contentWizardPanel.setPersistedItem(contentResult.content[0]);
                                                 this.addWizardPanel(tabMenuItem, contentWizardPanel);
                                             });
                                     }
                                     else {
                                         var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId,
                                             contentType, null);
-                                        contentWizardPanel.renderExisting(contentResult);
+                                        contentWizardPanel.setPersistedItem(contentResult.content[0]);
                                         this.addWizardPanel(tabMenuItem, contentWizardPanel);
                                     }
                                 });

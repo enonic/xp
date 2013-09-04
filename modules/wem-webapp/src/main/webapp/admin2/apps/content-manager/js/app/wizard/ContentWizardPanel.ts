@@ -6,6 +6,8 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = "resources/images/icons/128x128/default_content.png";
 
+        private persistedContent:api_remote_content.Content;
+
         private parentContent:api_remote_content.Content;
 
         private renderingNew:boolean;
@@ -99,11 +101,10 @@ module app_wizard {
             this.renderingNew = true;
         }
 
-        renderExisting(result:api_remote_content.GetResult) {
-
+        setPersistedItem(content:api_remote_content.Content) {
+            super.setPersistedItem(content);
+            this.persistedContent = content;
             this.renderingNew = false;
-
-            var content:api_remote_content.Content = result.content[0];
 
             this.contentWizardHeader.setDisplayName(content.displayName);
             this.contentWizardHeader.setName(content.name);
@@ -142,12 +143,17 @@ module app_wizard {
 
         updatePersistedItem(successCallback?:() => void) {
 
+            var flattenedContentData:any = {};
+            this.flattenData(this.contentForm.getContentData(), flattenedContentData);
+            console.log("updatePersistedItem flattenedContentData: ", flattenedContentData);
+
             var updateParams:api_remote_content.CreateOrUpdateParams = {
+                contentId: this.persistedContent.id,
                 contentName: this.contentWizardHeader.getName(),
                 parentContentPath: this.parentContent.path,
                 qualifiedContentTypeName: this.contentType.qualifiedName,
                 displayName: this.contentWizardHeader.getDisplayName(),
-                contentData: null
+                contentData: flattenedContentData
             };
 
             api_remote_content.RemoteContentService.content_createOrUpdate(updateParams, () => {
