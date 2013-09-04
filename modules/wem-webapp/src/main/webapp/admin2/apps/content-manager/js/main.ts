@@ -73,6 +73,8 @@
 
 ///<reference path='app/ContentAppPanel.ts' />
 
+///<reference path='../../app-launcher/js/app/launcher/LostConnectionDetectorEvents.ts'/>
+
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
@@ -120,5 +122,6 @@ Ext.application({
                 newContentDialog.open();
             });
         });
+
     }
 });
