@@ -1,10 +1,12 @@
+@import "../modules/colors";
+
 [id^=live-edit-ui-cmp-],
 [id^=live-edit-ui-cmp-] *,
 .live-edit-component-placeholder,
 #live-edit-drag-helper * {
   border: 0;
   outline: 0;
-  color: #000;
+  color: $textColor;
   font-size: 11px;
   font-family: Tahoma, Geneva, sans-serif;
   font-weight: normal;

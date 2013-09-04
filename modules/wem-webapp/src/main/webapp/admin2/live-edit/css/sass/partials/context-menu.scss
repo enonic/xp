@@ -40,7 +40,7 @@
 .live-edit-context-menu-title-text {
   float: left;
   font-size: 14px;
-  color: #000;
+  color: $textColor;
   padding-top: 7px;
   padding-left: 2px;
 }
@@ -66,7 +66,7 @@
 }
 
 .live-edit-menu-item:hover {
-  background-color: $hoverColor;
+  background-color: $hoverBackgroundColor;
   color: $hoverTextColor !important;
 }
 
@@ -76,7 +76,7 @@
 
 .live-edit-menu-item-text {
   font-size: 14px;
-  color: #606060;
+  color: $textColor;
   line-height: 20px;
   text-transform: capitalize;
 }
