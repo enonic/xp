@@ -52,7 +52,7 @@ module api_content{
 
         getParentPath():ContentPath {
 
-            if (this.elements.length < 2) {
+            if (this.elements.length < 1) {
                 return null;
             }
             var parentElemements:string[] = [];
