@@ -26,6 +26,7 @@ module api_remote_content {
         modifiedTime: Date;
         createdTime: Date;
         iconUrl: string;
+        hasChildren: boolean;
     }
 
     export interface Content extends ContentSummary{

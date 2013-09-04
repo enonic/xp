@@ -43,6 +43,7 @@
                 ]
             },
             "displayName": "My Content",
+            "hasChildren" : false,
             "iconUrl": "http://localhost/admin/rest/content/image/aaa",
             "id": "aaa",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
