@@ -174,10 +174,17 @@
 ///<reference path='schema/content/form/Input.ts' />
 ///<reference path='schema/content/form/Occurrences.ts' />
 ///<reference path='schema/content/ContentType.ts' />
-
-
 ///<reference path='schema/content/form/FormItemSet.ts' />
 ///<reference path='schema/content/form/Form.ts' />
+
+///<reference path='page/Component.ts' />
+///<reference path='page/Image.ts' />
+///<reference path='page/Layout.ts' />
+///<reference path='page/Paragraph.ts' />
+///<reference path='page/Part.ts' />
+///<reference path='page/Video.ts' />
+///<reference path='page/Region.ts' />
+///<reference path='page/Page.ts' />
 
 ///<reference path='app/wizard/SaveAction.ts' />
 ///<reference path='app/wizard/CloseAction.ts' />
