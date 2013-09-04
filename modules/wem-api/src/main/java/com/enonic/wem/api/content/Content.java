@@ -133,7 +133,7 @@ public final class Content
     }
 
     public boolean hasChildren() {
-        return childrenIds.isEmpty();
+        return !childrenIds.isEmpty();
     }
 
     public Item toItem()
