@@ -5,7 +5,7 @@ module app_wizard_form {
         private formItemSet:api_schema_content_form.FormItemSet;
 
         constructor(formItemSet:api_schema_content_form.FormItemSet) {
-            super("FormItemSetLabel");
+            super("FormItemSetLabel", "form-item-set-label");
 
             this.formItemSet = formItemSet;
 

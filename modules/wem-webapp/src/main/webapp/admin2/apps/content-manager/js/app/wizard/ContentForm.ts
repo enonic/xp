@@ -4,7 +4,7 @@ module app_wizard {
 
         private form:api_schema_content_form.Form;
 
-        private formCmp:app_wizard_form.FormCmp;
+        private formView:app_wizard_form.FormView;
 
         constructor(form:api_schema_content_form.Form) {
             super("ContentForm");
@@ -24,12 +24,12 @@ module app_wizard {
 
         private layout(contentData?:api_content_data.ContentData) {
 
-            this.formCmp = new app_wizard_form.FormCmp(this.form, contentData);
-            this.appendChild(this.formCmp)
+            this.formView = new app_wizard_form.FormView(this.form, contentData);
+            this.appendChild(this.formView)
         }
 
         getContentData() {
-            return this.formCmp.rebuildContentData();
+            return this.formView.rebuildContentData();
         }
     }
 }

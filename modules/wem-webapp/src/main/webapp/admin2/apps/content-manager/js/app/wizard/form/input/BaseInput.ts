@@ -19,7 +19,7 @@ module app_wizard_form_input {
             this.input = input;
             this.inputs = [];
 
-            if (properties.length > 0) {
+            if (properties != null && properties.length > 0) {
                 properties.forEach((property:api_data.Property, index:number) => {
 
                     var inputEl = this.createInputEl(index, property);

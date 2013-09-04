@@ -4,8 +4,8 @@ module app_wizard_form {
 
         private formItem:api_schema_content_form.FormItem;
 
-        constructor(formItem:api_schema_content_form.FormItem) {
-            super("FormItemView");
+        constructor(idPrefix:string, className:string, formItem:api_schema_content_form.FormItem) {
+            super(idPrefix, className);
 
             this.formItem = formItem;
         }
