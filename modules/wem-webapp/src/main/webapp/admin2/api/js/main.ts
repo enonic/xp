@@ -212,6 +212,7 @@
 ///<reference path='app/AppPanel.ts' />
 ///<reference path='app/BrowseAndWizardBasedAppPanel.ts' />
 ///<reference path='app/AppBridge.ts'/>
+///<reference path='app/AppBridgeListener.ts'/>
 
 ///<reference path='app/browse/grid/GridPanelListener.ts' />
 ///<reference path='app/browse/grid/GridPanel.ts' />

@@ -14,6 +14,9 @@
 ///<reference path='app/view/AppSelectorPanel.ts' />
 ///<reference path='app/view/AppLauncher.ts' />
 
+///<reference path='app/launcher/LostConnectionDetector.ts' />
+///<reference path='app/launcher/LostConnectionDetectorListener.ts' />
+
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
