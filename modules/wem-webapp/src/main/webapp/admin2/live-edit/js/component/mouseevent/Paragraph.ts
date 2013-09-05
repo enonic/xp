@@ -67,8 +67,8 @@ module LiveEdit.component.mouseevent {
             } else if (this.currentMode === this.modes.SELECTED) {
                 this.setEditMode();
             } else {
+                /**/
             }
-
         }
 
         setSelectMode(event:JQueryEventObject):void {

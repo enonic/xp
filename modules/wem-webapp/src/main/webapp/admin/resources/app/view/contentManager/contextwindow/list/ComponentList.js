@@ -14,6 +14,8 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
 
     contextWindow: undefined,
 
+    componentType: undefined, // Live edit component type
+
     searchBar: undefined,
 
     searchInput: undefined,
@@ -140,7 +142,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
                     var contextWindow = me.contextWindow,
                         liveEditWindow = contextWindow.getLiveEditContentWindowObject();
 
-                    liveEditWindow.LiveEdit.component.Inserter.replaceEmptyComponent(record.get('key'));
+                    liveEditWindow.LiveEdit.component.ComponentInserter.replaceEmptyComponent(record.get('key'));
 
                 }
             }

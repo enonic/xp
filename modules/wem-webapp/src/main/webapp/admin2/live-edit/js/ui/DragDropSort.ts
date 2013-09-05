@@ -8,26 +8,40 @@ module LiveEdit.DragDropSort {
     // Uses
     var $ = $liveEdit;
 
+    // jQuery sortable cursor position form to the drag helper.
+    var CURSOR_AT:any = {left: -10, top: -15};
+
+    // Set up selectors for jQuery.sortable configuration.
+    var REGION_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.REGION].cssSelector;
+
+    var LAYOUT_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.LAYOUT].cssSelector;
+
+    var PART_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PART].cssSelector;
+
+    var IMAGE_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.IMAGE].cssSelector;
+
+    var PARAGRAPH_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PARAGRAPH].cssSelector;
+
+    var CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR:string = '[data-context-window-draggable="true"]';
+
+    var SORTABLE_ITEMS_SELECTOR = LAYOUT_SELECTOR + ',' + PART_SELECTOR + ',' + PARAGRAPH_SELECTOR + ',' + IMAGE_SELECTOR;
 
     var _isDragging:bool = false;
 
-    // Drag helper mouse cursor offsets.
-    var cursorAt:any = {left: -10, top: -15};
 
-    // Set up selectors for jQuery.sortable configuration.
-    var regionSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.REGION].cssSelector;
+    // fixme: can this be shared with live edit Context Window/Components.js ?
+    export function createDragHelperHtml(text:string):string {
+        var html:string;
+        // Note: The width and height must be inlined so jQueryUI does not overwrite these properties.
+        html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute; z-index: 400000;">' +
+               '    <div id="live-edit-drag-helper-inner">' +
+               '        <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"><!-- --></div>' +
+               '        <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
+               '    </div>' +
+               '</div>';
 
-    var layoutSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.LAYOUT].cssSelector;
-
-    var partSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PART].cssSelector;
-
-    var imageSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.IMAGE].cssSelector;
-
-    var paragraphSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PARAGRAPH].cssSelector;
-
-    var contextWindowDragSourceSelector:string = '[data-context-window-draggable="true"]';
-
-    var sortableItemsSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector + ',' + imageSelector;
+        return html;
+    }
 
     export function init():void {
         this.createJQueryUiSortable();
@@ -38,24 +52,20 @@ module LiveEdit.DragDropSort {
         return _isDragging;
     }
 
-    export function enableDragDrop():void {
-        $(regionSelector).sortable('enable');
-    }
-
     export function disableDragDrop():void {
-        $(regionSelector).sortable('disable');
+        $(REGION_SELECTOR).sortable('disable');
     }
 
     export function createJQueryUiSortable():void {
-        $(regionSelector).sortable({
+        $(REGION_SELECTOR).sortable({
             revert: false,
-            connectWith: regionSelector,
-            items: sortableItemsSelector,
+            connectWith: REGION_SELECTOR,
+            items: SORTABLE_ITEMS_SELECTOR,
             distance: 1,
             delay: 150,
             tolerance: 'pointer',
             cursor: 'move',
-            cursorAt: cursorAt,
+            cursorAt: CURSOR_AT,
             scrollSensitivity: Math.round(LiveEdit.DomHelper.getViewPortSize().height / 8),
             placeholder: 'live-edit-drop-target-placeholder',
             zIndex: 1001000,
@@ -73,12 +83,12 @@ module LiveEdit.DragDropSort {
     // Used by the Context Window when dragging above the IFrame
     export function createJQueryUiDraggable(contextWindowItem:JQuery):void {
         contextWindowItem.draggable({
-            connectToSortable: regionSelector,
+            connectToSortable: REGION_SELECTOR,
             addClasses: false,
             cursor: 'move',
             appendTo: 'body',
             zIndex: 5100000,
-            cursorAt: cursorAt,
+            cursorAt: CURSOR_AT,
             helper: () => {
                 return createDragHelperHtml('');
             },
@@ -92,17 +102,6 @@ module LiveEdit.DragDropSort {
                 _isDragging = false;
             }
         });
-    }
-
-    // fixme: can this be shared with live edit Context Window/Components.js ?
-    export function createDragHelperHtml(text:string):string {
-        // We need to inline the width and height, if not jQuery ui will overwrite it
-        var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute; z-index: 400000;"><div id="live-edit-drag-helper-inner">' +
-            '               <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' +
-            '               <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
-            '           </div></div>';
-
-        return html;
     }
 
     export function createDragHelper(event:JQueryEventObject, helperElement:JQuery):string {
@@ -119,7 +118,7 @@ module LiveEdit.DragDropSort {
     }
 
     export function refreshSortable():void {
-        $(regionSelector).sortable('refresh');
+        $(REGION_SELECTOR).sortable('refresh');
     }
 
     export function targetIsPlaceholder(target:JQuery):Boolean {
@@ -136,7 +135,7 @@ module LiveEdit.DragDropSort {
 
         ui.item.data('live-edit-selected-on-sort-start', component.isSelected());
 
-        ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + component.getComponentType().getName() + ': ' +  component.getName() + '</div>');
+        ui.placeholder.html(LiveEdit.PlaceholderCreator.createPlaceholderForJQuerySortable(component));
 
         this.refreshSortable();
 
@@ -148,7 +147,7 @@ module LiveEdit.DragDropSort {
 
         var component = new LiveEdit.component.Component(ui.item);
 
-        var isDraggingOverLayoutComponent = ui.placeholder.closest(layoutSelector).length > 0;
+        var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
         if (component.getComponentType().getType() === LiveEdit.component.Type.LAYOUT && isDraggingOverLayoutComponent) {
             this.setHelperStatusIcon('no');
@@ -189,7 +188,7 @@ module LiveEdit.DragDropSort {
         this.removePaddingFromLayoutComponent();
 
         var draggedItemIsLayoutComponent = component.getComponentType().getType() === LiveEdit.component.Type.LAYOUT,
-            targetComponentIsInLayoutComponent = $(event.target).closest(layoutSelector).length > 0;
+            targetComponentIsInLayoutComponent = $(event.target).closest(LAYOUT_SELECTOR).length > 0;
 
         if (draggedItemIsLayoutComponent && targetComponentIsInLayoutComponent) {
             ui.item.remove()
@@ -209,52 +208,14 @@ module LiveEdit.DragDropSort {
     // When sortable receives a new item
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
-            var component = new LiveEdit.component.Component($(event.target).children(contextWindowDragSourceSelector));
+            var component = new LiveEdit.component.Component($(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR));
 
-            // fixme: is this needed anymore.
+            // fixme: is this needed anymore?
             component.getElement().hide(null);
 
-            var placeHolderHtml:string = '';
-            placeHolderHtml += '<div class="live-edit-empty-component ' + component.getComponentType().getIconCls() + '" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getType() + '"><!-- --></div>';
-
-            component.getElement().replaceWith(placeHolderHtml);
+            component.getElement().replaceWith(LiveEdit.PlaceholderCreator.createEmptyComponentElement(component));
 
             $(window).trigger('sortableUpdate.liveEdit');
-
-
-            /*
-            if (componentType === LiveEdit.component.Type.IMAGE) {
-
-                var placeHolderHtml:string = '';
-                placeHolderHtml += '<div class="live-edit-component-placeholder" data-live-edit-type="' + componentType + '">';
-                placeHolderHtml += '    Drop here to upload image';
-                placeHolderHtml += '</div>';
-
-                component.getElement().replaceWith(placeHolderHtml);
-
-                $(window).trigger('sortableUpdate.liveEdit');
-
-            } else {
-                var url:string = '../../../admin2/live-edit/data/mock-component-' + component.getKey() + '.html';
-
-                $.ajax({
-                    url: url,
-                    cache: false
-                }).done((responseHtml:string) => {
-                        component.getElement().replaceWith(responseHtml);
-
-                        // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
-                        // So we have to create it again.
-                        // Ideally we should destroy the existing sortable first before creating.
-                        if (componentType === LiveEdit.component.Type.LAYOUT) {
-                            this.createJQueryUiSortable();
-                        }
-
-                        $(window).trigger('sortableUpdate.liveEdit');
-                    });
-            }
-            */
-
         }
     }
 
@@ -264,7 +225,7 @@ module LiveEdit.DragDropSort {
     }
 
     export function addPaddingToLayoutComponent(component:LiveEdit.component.Component):void {
-        component.getElement().closest(layoutSelector).addClass('live-edit-component-padding');
+        component.getElement().closest(LAYOUT_SELECTOR).addClass('live-edit-component-padding');
     }
 
 
@@ -280,11 +241,11 @@ module LiveEdit.DragDropSort {
         });
 
         $(window).on('selectParagraphComponent.liveEdit', () => {
-            $(regionSelector).sortable('option', 'cancel', LiveEdit.component.Configuration[LiveEdit.component.Type.PARAGRAPH].cssSelector);
+            $(REGION_SELECTOR).sortable('option', 'cancel', LiveEdit.component.Configuration[LiveEdit.component.Type.PARAGRAPH].cssSelector);
         });
 
         $(window).on('leaveParagraphComponent.liveEdit', () => {
-            $(regionSelector).sortable('option', 'cancel', '');
+            $(REGION_SELECTOR).sortable('option', 'cancel', '');
         });
     }
 

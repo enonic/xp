@@ -1,5 +1,5 @@
 module LiveEdit.component {
-    export class Inserter {
+    export class ComponentInserter {
 
         // Uses
         static $ = $liveEdit;

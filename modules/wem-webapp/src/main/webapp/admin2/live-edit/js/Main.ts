@@ -7,12 +7,12 @@ declare var LiveEditMutationSummary;
 
 ///<reference path='shared/DomHelper.ts' />
 ///<reference path='shared/Selection.ts' />
+///<reference path='shared/PlaceholderCreator.ts' />
 
 ///<reference path='component/ComponentHelper.ts' />
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
-
-///<reference path='component/Inserter.ts' />
+///<reference path='component/ComponentInserter.ts' />
 
 ///<reference path='component/mouseevent/Base.ts' />
 ///<reference path='component/mouseevent/Page.ts' />

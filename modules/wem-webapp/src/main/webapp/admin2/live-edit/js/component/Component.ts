@@ -53,7 +53,8 @@ module LiveEdit.component {
         }
 
         getElementDimensions():ElementDimensions {
-            return this.elementDimensions;
+            // We need to dynamically get the dimension as it can change on eg. browser window resize.
+            return componentHelper.getDimensionsFromElement(this.getElement());
         }
 
         setElementDimensions(dimensions:ElementDimensions):void {
