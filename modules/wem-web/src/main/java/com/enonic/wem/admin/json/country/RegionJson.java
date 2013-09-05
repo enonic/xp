@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.util.model;
+package com.enonic.wem.admin.json.country;
 
 import com.enonic.wem.admin.rest.resource.model.Item;
 import com.enonic.wem.core.country.Region;
@@ -27,6 +27,7 @@ public class RegionJson
     {
         return this.model.getLocalName();
     }
+
     @Override
     public boolean getEditable()
     {

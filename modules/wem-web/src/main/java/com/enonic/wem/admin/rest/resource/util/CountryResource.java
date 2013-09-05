@@ -8,8 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.json.country.CountryListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.util.model.CountryListJson;
 import com.enonic.wem.core.country.Country;
 import com.enonic.wem.core.country.CountryService;
 
@@ -24,7 +24,7 @@ public class CountryResource
     public CountryListJson list()
     {
         final Collection<Country> countries = this.countryService.getCountries();
-        final CountryListJson result = new CountryListJson( countries  );
+        final CountryListJson result = new CountryListJson( countries );
 
         return result;
     }

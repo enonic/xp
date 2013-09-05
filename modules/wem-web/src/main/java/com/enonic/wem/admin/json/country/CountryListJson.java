@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.util.model;
+package com.enonic.wem.admin.json.country;
 
 import java.util.Collection;
 import java.util.List;

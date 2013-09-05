@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.util.model;
+package com.enonic.wem.admin.json.country;
 
 import java.util.List;
 
@@ -12,7 +12,9 @@ public class CountryJson
     extends Item
 {
     private final Country model;
+
     private final ImmutableList<CallingCodeJson> callingCodes;
+
     private final ImmutableList<RegionJson> regions;
 
     public CountryJson( final Country model )
