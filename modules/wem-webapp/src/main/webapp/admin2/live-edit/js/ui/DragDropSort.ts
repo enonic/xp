@@ -11,19 +11,23 @@ module LiveEdit.DragDropSort {
 
     var _isDragging:bool = false;
 
+    // Drag helper mouse cursor offsets.
     var cursorAt:any = {left: -10, top: -15};
 
+    // Set up selectors for jQuery.sortable configuration.
     var regionSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.REGION].cssSelector;
 
     var layoutSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.LAYOUT].cssSelector;
 
     var partSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PART].cssSelector;
 
+    var imageSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.IMAGE].cssSelector;
+
     var paragraphSelector:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PARAGRAPH].cssSelector;
 
     var contextWindowDragSourceSelector:string = '[data-context-window-draggable="true"]';
 
-    var sortableItemsSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector;
+    var sortableItemsSelector = layoutSelector + ',' + partSelector + ',' + paragraphSelector + ',' + imageSelector;
 
     export function init():void {
         this.createJQueryUiSortable();
@@ -132,7 +136,7 @@ module LiveEdit.DragDropSort {
 
         ui.item.data('live-edit-selected-on-sort-start', component.isSelected());
 
-        ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + component.getName() + '</div>');
+        ui.placeholder.html('Drop component here' + '<div style="font-size: 10px;">' + component.getComponentType().getName() + ': ' +  component.getName() + '</div>');
 
         this.refreshSortable();
 
