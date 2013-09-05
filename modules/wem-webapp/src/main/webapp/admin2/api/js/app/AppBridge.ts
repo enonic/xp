@@ -1,21 +1,59 @@
 module api_app {
 
-    export class AppBridge {
+    export class AppBridge implements api_event.Observable {
         private static _instance:AppBridge = null;
         private showLauncherHandler:()=>void;
+
+        private listeners:AppBridgeListener[] = [];
 
         constructor() {
             AppBridge._instance = this;
         }
 
         showLauncher():void {
-            if (this.showLauncherHandler) {
-                this.showLauncherHandler();
-            }
+            this.notifyShowLauncher();
         }
 
-        onShowLauncher(handler:()=>void) {
-            this.showLauncherHandler = handler;
+        addListener(listener:AppBridgeListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:AppBridgeListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        onConnectionLost() {
+            this.notifyConnectionLost();
+        }
+
+        onConnectionRestored() {
+            this.notifyConnectionRestored();
+        }
+
+        private notifyConnectionLost() {
+            this.listeners.forEach((listener:AppBridgeListener) => {
+                if (listener.onConnectionLost) {
+                    listener.onConnectionLost();
+                }
+            });
+        }
+
+        private notifyConnectionRestored() {
+            this.listeners.forEach((listener:AppBridgeListener) => {
+                if (listener.onConnectionRestored) {
+                    listener.onConnectionRestored();
+                }
+            });
+        }
+
+        private notifyShowLauncher() {
+            this.listeners.forEach((listener:AppBridgeListener) => {
+                if (listener.onShowLauncher) {
+                    listener.onShowLauncher();
+                }
+            });
         }
 
         static instance():AppBridge {

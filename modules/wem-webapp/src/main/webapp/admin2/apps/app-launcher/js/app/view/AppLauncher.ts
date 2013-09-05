@@ -5,19 +5,27 @@ module app_view {
         private mainContainer:app_view.HomeMainContainerPanel;
         private adminApplicationFrames:api_dom.DivEl;
         private appIframes:{[name: string]: api_dom.IFrameEl;};
+        private lostConnectionDetector:app_launcher.LostConnectionDetector;
 
         constructor(mainContainer:app_view.HomeMainContainerPanel) {
             this.mainContainer = mainContainer;
             this.appIframes = {};
 
+
             this.adminApplicationFrames = new api_dom.DivEl();
             this.adminApplicationFrames.getEl().setHeight('100%').setWidth('100%');
 
             var appBridge = new api_app.AppBridge();
-            appBridge.onShowLauncher(()=> {
-                this.showLauncherScreen();
+            appBridge.addListener({
+                onShowLauncher: ()=> {
+                    this.showLauncherScreen();
+                },
+                onConnectionLost: ()=> {
+                    new api_notify.showError("Lost connection to server - Please wait until connection is restored");
+                }
             });
-
+            this.lostConnectionDetector = new app_launcher.LostConnectionDetector();
+            this.lostConnectionDetector.startPolling();
             api_dom.Body.get().appendChild(this.adminApplicationFrames);
         }
 
