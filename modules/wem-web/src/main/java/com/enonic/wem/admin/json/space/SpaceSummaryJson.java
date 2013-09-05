@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.space.model;
+package com.enonic.wem.admin.json.space;
 
 import com.enonic.wem.admin.rest.resource.model.Item;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageUriResolver;

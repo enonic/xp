@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.space.model;
+package com.enonic.wem.admin.json.space;
 
 import java.util.List;
 
