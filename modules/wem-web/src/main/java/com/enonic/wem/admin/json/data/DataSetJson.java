@@ -17,6 +17,7 @@ public class DataSetJson
 
     public DataSetJson( final DataSet dataSet )
     {
+        super( dataSet );
         this.dataSet = dataSet;
 
         final ImmutableList.Builder<DataJson> builder = ImmutableList.builder();
@@ -33,16 +34,6 @@ public class DataSetJson
         }
 
         this.list = builder.build();
-    }
-
-    public String getName()
-    {
-        return dataSet.getName();
-    }
-
-    public String getPath()
-    {
-        return dataSet.getPath().toString();
     }
 
     public String getType()

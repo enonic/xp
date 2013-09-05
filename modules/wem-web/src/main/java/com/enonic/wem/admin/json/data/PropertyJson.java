@@ -9,17 +9,8 @@ public class PropertyJson
 
     public PropertyJson( final Property property )
     {
+        super( property );
         this.property = property;
-    }
-
-    public String getName()
-    {
-        return property.getName();
-    }
-
-    public String getPath()
-    {
-        return property.getPath().toString();
     }
 
     public String getType()
