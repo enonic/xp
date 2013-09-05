@@ -1,7 +1,7 @@
-package com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype;
+package com.enonic.wem.admin.json.schema.content.form.inputtype;
 
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.FormItemJson;
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.OccurrencesJson;
+import com.enonic.wem.admin.json.schema.content.form.FormItemJson;
+import com.enonic.wem.admin.json.schema.content.form.OccurrencesJson;
 import com.enonic.wem.api.schema.content.form.Input;
 
 public class InputJson

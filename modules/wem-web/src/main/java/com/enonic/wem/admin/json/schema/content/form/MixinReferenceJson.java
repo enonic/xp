@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.content.model.form;
+package com.enonic.wem.admin.json.schema.content.form;
 
 import com.enonic.wem.api.schema.content.form.MixinReference;
 

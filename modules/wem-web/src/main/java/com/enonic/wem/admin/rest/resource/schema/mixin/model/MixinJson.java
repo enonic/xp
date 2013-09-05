@@ -1,11 +1,11 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin.model;
 
+import com.enonic.wem.admin.json.schema.content.form.FieldSetJson;
+import com.enonic.wem.admin.json.schema.content.form.FormItemSetJson;
+import com.enonic.wem.admin.json.schema.content.form.MixinReferenceJson;
+import com.enonic.wem.admin.json.schema.content.form.inputtype.InputJson;
 import com.enonic.wem.admin.rest.resource.model.Item;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.FieldSetJson;
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.FormItemSetJson;
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.MixinReferenceJson;
-import com.enonic.wem.admin.rest.resource.schema.content.model.form.inputtype.InputJson;
 import com.enonic.wem.api.schema.content.form.FieldSet;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.Input;

@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.content.model;
+package com.enonic.wem.admin.json.schema.content;
 
 import com.enonic.wem.admin.rest.resource.model.Item;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;

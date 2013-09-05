@@ -1,9 +1,10 @@
-package com.enonic.wem.admin.rest.resource.schema.content.model;
+package com.enonic.wem.admin.json.schema;
 
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.support.tree.TreeNode;
 

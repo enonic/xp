@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.content.model;
+package com.enonic.wem.admin.json.schema.content;
 
 import java.util.List;
 
@@ -7,17 +7,18 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
-public class ContentTypeConfigListJson
+@SuppressWarnings("UnusedDeclaration")
+public class ContentTypeListJson
     implements ContentTypeList
 {
-    private final ImmutableList<ContentTypeConfigJson> list;
+    private final ImmutableList<ContentTypeJson> list;
 
-    public ContentTypeConfigListJson( final ContentTypes contentTypes )
+    public ContentTypeListJson( final ContentTypes contentTypes )
     {
-        final ImmutableList.Builder<ContentTypeConfigJson> builder = ImmutableList.builder();
+        final ImmutableList.Builder<ContentTypeJson> builder = ImmutableList.builder();
         for ( final ContentType contentType : contentTypes )
         {
-            builder.add( new ContentTypeConfigJson( contentType ) );
+            builder.add( new ContentTypeJson( contentType ) );
         }
 
         this.list = builder.build();
@@ -28,7 +29,7 @@ public class ContentTypeConfigListJson
         return this.list.size();
     }
 
-    public List<ContentTypeConfigJson> getContentTypeXmls()
+    public List<ContentTypeJson> getContentTypes()
     {
         return this.list;
     }

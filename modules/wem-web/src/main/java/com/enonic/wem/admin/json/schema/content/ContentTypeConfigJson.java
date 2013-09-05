@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.content.model;
+package com.enonic.wem.admin.json.schema.content;
 
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
