@@ -1,9 +1,9 @@
-module LiveEdit.component.listener {
+module LiveEdit.component.mouseevent {
 
     // Uses
     var $ = $liveEdit;
 
-    export class Page extends LiveEdit.component.listener.Base {
+    export class Page extends LiveEdit.component.mouseevent.Base {
         constructor() {
             super();
 

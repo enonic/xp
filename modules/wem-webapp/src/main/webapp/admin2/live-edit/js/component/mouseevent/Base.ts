@@ -1,5 +1,4 @@
-// fixme: pass Live Edit Component reference instead of a JQuery object in triggers
-module LiveEdit.component.listener {
+module LiveEdit.component.mouseevent {
 
     // Uses
     var $ = $liveEdit;

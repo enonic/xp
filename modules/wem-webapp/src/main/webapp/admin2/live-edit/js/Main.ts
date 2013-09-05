@@ -14,14 +14,14 @@ declare var LiveEditMutationSummary;
 
 ///<reference path='component/Inserter.ts' />
 
-///<reference path='component/listener/Base.ts' />
-///<reference path='component/listener/Page.ts' />
-///<reference path='component/listener/Region.ts' />
-///<reference path='component/listener/Layout.ts' />
-///<reference path='component/listener/Image.ts' />
-///<reference path='component/listener/Part.ts' />
-///<reference path='component/listener/Content.ts' />
-///<reference path='component/listener/Paragraph.ts' />
+///<reference path='component/mouseevent/Base.ts' />
+///<reference path='component/mouseevent/Page.ts' />
+///<reference path='component/mouseevent/Region.ts' />
+///<reference path='component/mouseevent/Layout.ts' />
+///<reference path='component/mouseevent/Image.ts' />
+///<reference path='component/mouseevent/Part.ts' />
+///<reference path='component/mouseevent/Content.ts' />
+///<reference path='component/mouseevent/Paragraph.ts' />
 
 ///<reference path='ui/Base.ts' />
 ///<reference path='ui/htmleditor/Editor.ts' />
@@ -58,13 +58,13 @@ declare var LiveEditMutationSummary;
 
             console.log('Init Live Edit. Using jQuery version: ' + $liveEdit.fn.jquery);
 
-            new LiveEdit.component.listener.Page();
-            new LiveEdit.component.listener.Region();
-            new LiveEdit.component.listener.Layout();
-            new LiveEdit.component.listener.Part();
-            new LiveEdit.component.listener.Image();
-            new LiveEdit.component.listener.Paragraph();
-            new LiveEdit.component.listener.Content();
+            new LiveEdit.component.mouseevent.Page();
+            new LiveEdit.component.mouseevent.Region();
+            new LiveEdit.component.mouseevent.Layout();
+            new LiveEdit.component.mouseevent.Part();
+            new LiveEdit.component.mouseevent.Image();
+            new LiveEdit.component.mouseevent.Paragraph();
+            new LiveEdit.component.mouseevent.Content();
 
             // new LiveEdit.ui.HtmlElementReplacer();
             new LiveEdit.ui.Highlighter();

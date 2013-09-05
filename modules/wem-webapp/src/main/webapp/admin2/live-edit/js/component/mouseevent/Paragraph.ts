@@ -1,9 +1,9 @@
-module LiveEdit.component.listener {
+module LiveEdit.component.mouseevent {
 
     // Uses
     var $ = $liveEdit;
 
-    export class Paragraph extends LiveEdit.component.listener.Base {
+    export class Paragraph extends LiveEdit.component.mouseevent.Base {
 
         private selectedParagraph:LiveEdit.component.Component = null;
         private modes:any = {};
