@@ -10,9 +10,9 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemTranslatable;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -138,20 +138,7 @@ public final class Content
 
     public Item toItem()
     {
-        final Item.Builder itemBuilder = Item.newItem();
-        itemBuilder.name( this.getClass().getSimpleName() );
-        if ( this.id != null )
-        {
-            itemBuilder.property( "id", new Value.ContentId( this.id ) );
-        }
-        if ( this.getName() != null )
-        {
-            itemBuilder.property( "name", new Value.Text( this.getName() ) );
-        }
-        if ( this.path != null )
-        {
-            itemBuilder.property( "path", new Value.Text( this.path.toString() ) );
-        }
+        final Item.Builder itemBuilder = Item.newItem( new ItemId( this.id.toString() ), this.getName() );
         if ( this.displayName != null )
         {
             itemBuilder.property( "displayName", new Value.Text( this.displayName ) );
@@ -186,17 +173,16 @@ public final class Content
     @Override
     public Content toObject( final Item item )
     {
-        final RootDataSet rootDataSet = item.getRootDataSet();
         return newContent().
-            id( rootDataSet.getProperty( "id" ).getContentId() ).
-            name( rootDataSet.getProperty( "name" ).getString() ).
-            displayName( rootDataSet.getProperty( "displayName" ).getString() ).
-            createdTime( rootDataSet.getProperty( "createdTime" ).getDateTime() ).
-            modifiedTime( rootDataSet.getProperty( "modifiedTime" ).getDateTime() ).
-            owner( AccountKey.from( rootDataSet.getProperty( "owner" ).getString() ).asUser() ).
-            modifier( AccountKey.from( rootDataSet.getProperty( "modifier" ).getString() ).asUser() ).
-            type( QualifiedContentTypeName.from( rootDataSet.getProperty( "type" ).getString() ) ).
-            contentData( new ContentData( rootDataSet.getDataSet( "data" ).toRootDataSet() ) ).
+            id( ContentId.from( item.getId().toString() ) ).
+            name( item.getName() ).
+            displayName( item.getProperty( "displayName" ).getString() ).
+            createdTime( item.getProperty( "createdTime" ).getDateTime() ).
+            modifiedTime( item.getProperty( "modifiedTime" ).getDateTime() ).
+            owner( AccountKey.from( item.getProperty( "owner" ).getString() ).asUser() ).
+            modifier( AccountKey.from( item.getProperty( "modifier" ).getString() ).asUser() ).
+            type( QualifiedContentTypeName.from( item.getProperty( "type" ).getString() ) ).
+            contentData( new ContentData( item.getDataSet( "data" ).toRootDataSet() ) ).
             build();
     }
 

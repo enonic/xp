@@ -1,35 +1,44 @@
 package com.enonic.wem.api.item;
 
 
+import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 
-public final class Item<T>
+public final class Item
+    extends DataSet
 {
-    private final String name;
+    private final ItemId id;
 
-    private final RootDataSet rootDataSet;
-
-    public String getName()
+    public Item( final ItemId id, final String name, final DataSet dataSet )
     {
-        return name;
+        super( name );
+        this.id = id;
+        for ( final Data data : dataSet )
+        {
+            add( data.copy() );
+        }
     }
 
-    public RootDataSet getRootDataSet()
+    private Item( final Builder builder )
     {
-        return rootDataSet;
+        super( builder.name );
+        this.id = builder.id;
+        for ( final Data data : builder.dataSet )
+        {
+            add( data.copy() );
+        }
     }
 
-    public Item( final Builder builder )
+    public ItemId getId()
     {
-        this.name = builder.name;
-        this.rootDataSet = builder.rootDataSet;
+        return id;
     }
 
-    public static Builder newItem()
+    public static Builder newItem( final ItemId id, final String name )
     {
-        return new Builder();
+        return new Builder( id, name );
     }
 
     public static Builder newItem( final Item item )
@@ -39,41 +48,33 @@ public final class Item<T>
 
     public static class Builder
     {
+        private ItemId id;
+
         private String name;
 
-        private RootDataSet rootDataSet = new RootDataSet();
+        private DataSet dataSet = new RootDataSet();
 
         public Builder( final Item item )
         {
-            this.rootDataSet = (RootDataSet) item.rootDataSet.copy();
+            this.name = item.getName();
+            this.dataSet = item;
         }
 
-        public Builder()
+        public Builder( final ItemId id, final String name )
         {
-
-        }
-
-        public Builder name( final String value )
-        {
-            this.name = value;
-            return this;
+            this.id = id;
+            this.name = name;
         }
 
         public Builder property( final String name, final Value value )
         {
-            this.rootDataSet.setProperty( name, value );
+            this.dataSet.setProperty( name, value );
             return this;
         }
 
         public Builder addDataSet( final DataSet value )
         {
-            this.rootDataSet.add( value );
-            return this;
-        }
-
-        public Builder rootDataSet( final RootDataSet value )
-        {
-            this.rootDataSet = value;
+            this.dataSet.add( value );
             return this;
         }
 

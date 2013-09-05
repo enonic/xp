@@ -9,7 +9,6 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.item.Item;
@@ -496,21 +495,19 @@ public class ContentTest
 
         // exercise
         Item item = content.toItem();
-        RootDataSet rootDataSet = item.getRootDataSet();
 
         // verify
-        assertEquals( "Content", item.getName() );
-        assertEquals( "ABC-123", rootDataSet.getProperty( "id" ).getString() );
-        assertEquals( "myContent", rootDataSet.getProperty( "name" ).getString() );
-        assertEquals( "My Content", rootDataSet.getProperty( "displayName" ).getString() );
-        assertEquals( "user:mystore:someuser", rootDataSet.getProperty( "owner" ).getString() );
-        assertEquals( "user:mystore:someotheruser", rootDataSet.getProperty( "modifier" ).getString() );
-        assertEquals( "2012-12-12T12:00:00", rootDataSet.getProperty( "createdTime" ).getString() );
-        assertEquals( "2012-12-12T13:00:00", rootDataSet.getProperty( "modifiedTime" ).getString() );
-        assertEquals( "mymodule:mycty", rootDataSet.getProperty( "type" ).getString() );
-        assertEquals( "1", rootDataSet.getProperty( "data.myNumber" ).getString() );
-        assertEquals( "text", rootDataSet.getProperty( "data.myText" ).getString() );
-        assertEquals( "2", rootDataSet.getProperty( "data.mySet.myOtherNumber" ).getString() );
+        assertEquals( "ABC-123", item.getId().toString() );
+        assertEquals( "myContent", item.getName() );
+        assertEquals( "My Content", item.getProperty( "displayName" ).getString() );
+        assertEquals( "user:mystore:someuser", item.getProperty( "owner" ).getString() );
+        assertEquals( "user:mystore:someotheruser", item.getProperty( "modifier" ).getString() );
+        assertEquals( "2012-12-12T12:00:00", item.getProperty( "createdTime" ).getString() );
+        assertEquals( "2012-12-12T13:00:00", item.getProperty( "modifiedTime" ).getString() );
+        assertEquals( "mymodule:mycty", item.getProperty( "type" ).getString() );
+        assertEquals( "1", item.getProperty( "data.myNumber" ).getString() );
+        assertEquals( "text", item.getProperty( "data.myText" ).getString() );
+        assertEquals( "2", item.getProperty( "data.mySet.myOtherNumber" ).getString() );
     }
 
     @Test
