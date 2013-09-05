@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.relationship.model;
+package com.enonic.wem.admin.rest.resource.relationship.json;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.RelationshipKey;

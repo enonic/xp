@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.mixin.model;
+package com.enonic.wem.admin.rest.resource.schema.mixin.json;
 
 public class MixinCreateOrUpdateJson
 {

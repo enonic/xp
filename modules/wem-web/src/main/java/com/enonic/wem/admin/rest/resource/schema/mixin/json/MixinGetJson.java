@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.mixin.model;
+package com.enonic.wem.admin.rest.resource.schema.mixin.json;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

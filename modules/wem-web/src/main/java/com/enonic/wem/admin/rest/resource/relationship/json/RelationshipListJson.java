@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.relationship.model;
+package com.enonic.wem.admin.rest.resource.relationship.json;
 
 import java.util.List;
 

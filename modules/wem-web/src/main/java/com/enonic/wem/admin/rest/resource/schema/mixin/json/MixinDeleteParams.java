@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.mixin.model;
+package com.enonic.wem.admin.rest.resource.schema.mixin.json;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ public class MixinDeleteParams
 {
     private List<String> qualifiedMixinNames;
 
-    public void setQualifiedMixinNames(List<String> names)
+    public void setQualifiedMixinNames( List<String> names )
     {
         this.qualifiedMixinNames = names;
     }

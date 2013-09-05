@@ -13,12 +13,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.TestUtil;
-import com.enonic.wem.admin.rest.resource.relationship.model.CreateRelationshipJson;
-import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipCreateParams;
-import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipJson;
-import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipKeyParam;
-import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipListJson;
-import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipUpdateParams;
+import com.enonic.wem.admin.rest.resource.relationship.json.CreateRelationshipJson;
+import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipCreateParams;
+import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipJson;
+import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipKeyParam;
+import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipListJson;
+import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipUpdateParams;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.relationship.CreateRelationship;
 import com.enonic.wem.api.command.relationship.GetRelationships;
