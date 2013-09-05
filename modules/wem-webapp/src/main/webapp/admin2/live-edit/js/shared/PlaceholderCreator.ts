@@ -8,7 +8,9 @@ module LiveEdit {
 
             var html:string;
 
-            html = '<div class="live-edit-empty-component ' + component.getComponentType().getIconCls() + '" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getType() + '"><!-- --></div>';
+            var iconCls:string = component.getComponentType().getIconCls();
+
+            html = '<div class="live-edit-empty-component ' + iconCls + '" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getType() + '"><!-- --></div>';
 
             return html;
         }
@@ -18,8 +20,11 @@ module LiveEdit {
         public static createPlaceholderForJQuerySortable(component:LiveEdit.component.Component):string {
 
             var html:string;
+
+            var componentInfoText:string = component.getComponentType().getName() + ': ' +  component.getName();
+
             html = 'Drop component here' +
-                   '<div style="font-size: 10px;">' + component.getComponentType().getName() + ': ' +  component.getName() + '</div>';
+                   '<div style="font-size: 10px;">' + componentInfoText + '</div>';
 
             return html;
         }
@@ -50,9 +55,11 @@ module LiveEdit {
 
             var html:string;
 
+            var componentTypeInfoText:string = regionComponent.getComponentType().getName() +': '+ regionComponent.getName();
+
             html = '<div class="live-edit-empty-region-placeholder">' +
                    '    <div>Drag components here</div>' +
-                   '    <div style="font-size: 10px;">' + regionComponent.getName() + '</div>' +
+                   '    <div style="font-size: 10px;">' + componentTypeInfoText + '</div>' +
                    '</div>';
 
             return html;
