@@ -67,5 +67,13 @@ module app_view {
             iframe.getEl().setAttribute('data-wem-app', name);
             return iframe;
         }
+
+        getApplicationsIFrames():api_dom.IFrameEl[] {
+            var apps = [];
+            for (var name in this.appIframes) {
+                apps.push(this.appIframes[name]);
+            }
+            return apps;
+        }
     }
 }

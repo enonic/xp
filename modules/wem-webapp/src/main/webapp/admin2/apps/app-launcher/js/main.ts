@@ -14,6 +14,10 @@
 ///<reference path='app/view/AppSelectorPanel.ts' />
 ///<reference path='app/view/AppLauncher.ts' />
 
+///<reference path='app/launcher/LostConnectionDetector.ts'/>
+///<reference path='app/launcher/LostConnectionDetectorListener.ts'/>
+///<reference path='app/launcher/LostConnectionDetectorEvents.ts'/>
+
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
@@ -89,6 +93,34 @@ Ext.application({
         }
 
         api_dom.Body.get().appendChild(mainContainer);
+
+        var lostConnectionDetector = new app_launcher.LostConnectionDetector();
+        lostConnectionDetector.startPolling();
+
+
+        app_launcher.ConnectionLostEvent.on(() => {
+            appLauncher.getApplicationsIFrames().forEach(function (curr) {
+                var javaScriptContext = curr.getJavaScriptContext();
+                if (javaScriptContext.app_launcher) {
+                    new javaScriptContext.app_launcher.ConnectionLostEvent().fire();
+                } else {
+                    console.log('No app launcher module for', curr);
+                }
+            });
+            api_notify.sendNotification(new api_notify.Message(api_notify.Type.ERROR,
+                'Lost connection to server - Please wait until connection is restored'))
+        });
+
+        app_launcher.ConnectionRestoredEvent.on(() => {
+            appLauncher.getApplicationsIFrames().forEach(function (curr) {
+                var javaScriptContext = curr.getJavaScriptContext();
+                if (javaScriptContext.app_launcher) {
+                    new javaScriptContext.app_launcher.ConnectionRestoredEvent().fire();
+                } else {
+                    console.log('No app launcher module for', curr);
+                }
+            });
+        });
     }
 });
 

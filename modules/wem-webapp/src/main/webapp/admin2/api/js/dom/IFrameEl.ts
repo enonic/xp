@@ -9,5 +9,9 @@ module api_dom {
         public setSrc(src:string) {
             this.getEl().setAttribute("src", src);
         }
+
+        public getJavaScriptContext() {
+            return this.getEl().getHTMLElement()['contentWindow'];
+        }
     }
 }
