@@ -94,7 +94,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
             model: 'Admin.ContextWindow.ComponentModel',
             proxy: {
                 type: 'ajax',
-                url: '../admin2/apps/content-manager/js/data/context-window/mock-components.json',
+                url: '../admin2/apps/content-manager/js/data/context-window/mock-components.jsp?componentType=' + me.componentType.getType(),
                 reader: {
                     type: 'json',
                     root: 'components'

@@ -78,7 +78,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
 
         // fixme: formalize model, store 'n stuff
 
-        Ext.define('Admin.ContextWindow.ComponentModel', {
+        Ext.define('Admin.ContextWindow.ComponentTypeModel', {
             extend: 'Ext.data.Model',
             fields: [
                 { name: 'key', type: 'string' },
@@ -89,10 +89,11 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
         });
 
         this.store = Ext.create('Ext.data.Store', {
-            id: 'contextWindowComponentStore',
-            model: 'Admin.ContextWindow.ComponentModel',
+            id: 'contextWindowComponentTypeStore',
+            model: 'Admin.ContextWindow.ComponentTypeModel',
             proxy: {
                 type: 'ajax',
+
                 url: '../admin2/apps/content-manager/js/data/context-window/mock-component-types.json',
                 reader: {
                     type: 'json',
@@ -131,7 +132,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
 
         return new Ext.view.View({
             flex: 1,
-            store: Ext.data.StoreManager.lookup('contextWindowComponentStore'),
+            store: Ext.data.StoreManager.lookup('contextWindowComponentTypeStore'),
             tpl: templates,
             cls: 'admin-cw-items admin-component-types-items',
             itemSelector: 'div.admin-cw-item',

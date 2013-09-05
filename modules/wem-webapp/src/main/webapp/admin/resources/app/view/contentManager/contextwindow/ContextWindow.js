@@ -94,7 +94,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     },
 
     loadList: function (classPath, componentType) {
-        var list = Ext.create(classPath, {contextWindow: this});
+        var list = Ext.create(classPath, {contextWindow: this, componentType: componentType});
 
         var title = list.title;
         if (componentType) {
