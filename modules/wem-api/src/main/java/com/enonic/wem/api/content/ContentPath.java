@@ -121,7 +121,7 @@ public final class ContentPath
 
     public ContentPath getParentPath()
     {
-        if ( this.elements.size() < 2 )
+        if ( this.elements.size() < 1 )
         {
             return null;
         }

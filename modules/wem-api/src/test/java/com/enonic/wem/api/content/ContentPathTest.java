@@ -43,7 +43,7 @@ public class ContentPathTest
     }
 
     @Test
-    public void testFrom()
+    public void testFrom_without_spaceName()
         throws Exception
     {
         ContentPath path = ContentPath.from( "one/two/three" );
@@ -56,18 +56,31 @@ public class ContentPathTest
     }
 
     @Test
+    public void testFrom_with_spaceName()
+        throws Exception
+    {
+        ContentPath path = ContentPath.from( "space:/one/two/three" );
+        assertEquals( SpaceName.from( "space" ), path.getSpace() );
+        assertEquals( 3, path.elementCount() );
+        assertEquals( "one", path.getElement( 0 ) );
+        assertEquals( "two", path.getElement( 1 ) );
+        assertEquals( "three", path.getElement( 2 ) );
+        assertEquals( "space:/one/two/three", path.toString() );
+    }
+
+    @Test
     public void test_toString()
         throws Exception
     {
-        System.out.println(ContentPath.newPath().spaceName("mySpace").elements( "parent", "child" ).build().toString());
-        System.out.println(ContentPath.newPath().spaceName("mySpace").build().toString());
+        System.out.println( ContentPath.newPath().spaceName( "mySpace" ).elements( "parent", "child" ).build().toString() );
+        System.out.println( ContentPath.newPath().spaceName( "mySpace" ).build().toString() );
     }
 
     @Test
     public void getParentPath()
         throws Exception
     {
-        assertEquals( null, ContentPath.from( "first" ).getParentPath() );
+        assertEquals( ContentPath.from( "space:/" ), ContentPath.from( "space:/first" ).getParentPath() );
         assertEquals( ContentPath.from( "first" ), ContentPath.newPath().elements( "first", "second" ).build().getParentPath() );
         assertEquals( newPath().elements( "first", "second" ).build(),
                       newPath().elements( "first", "second", "third" ).build().getParentPath() );
@@ -94,6 +107,7 @@ public class ContentPathTest
         throws Exception
     {
         assertEquals( "/", ContentPath.ROOT.toString() );
+        assertEquals( "space:/", ContentPath.from( "space:/" ).toString() );
     }
 
     @Test
