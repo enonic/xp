@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.facet;
 
 
 import java.util.List;
@@ -11,7 +11,7 @@ import com.enonic.wem.api.facet.TermsFacet;
 import com.enonic.wem.api.facet.TermsFacetEntry;
 
 public class TermsFacetJson
-    extends AbstractFacetJson
+    extends FacetJson
 {
     private final String type = "terms";
 
@@ -41,7 +41,7 @@ public class TermsFacetJson
     }
 
     public class TermFacetEntryJson
-        extends AbstractFacetJson.FacetEntryJson
+        extends FacetJson.FacetEntryJson
     {
 
         private String name;

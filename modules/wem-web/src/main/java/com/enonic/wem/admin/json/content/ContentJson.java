@@ -1,5 +1,6 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.content;
 
+import com.enonic.wem.admin.json.data.DataSetJson;
 import com.enonic.wem.api.content.Content;
 
 public class ContentJson

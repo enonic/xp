@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.facet;
 
 
 import java.util.List;
@@ -11,7 +11,7 @@ import com.enonic.wem.api.facet.RangeFacet;
 import com.enonic.wem.api.facet.RangeFacetEntry;
 
 public class RangeFacetJson
-    extends AbstractFacetJson
+    extends FacetJson
 {
     private final String type = "range";
 
@@ -41,7 +41,7 @@ public class RangeFacetJson
     }
 
     public class RangeFacetEntryJson
-        extends AbstractFacetJson.FacetEntryJson
+        extends FacetJson.FacetEntryJson
     {
 
         private String from;

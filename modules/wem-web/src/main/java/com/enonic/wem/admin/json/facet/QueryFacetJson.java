@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.facet;
 
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -7,7 +7,7 @@ import com.enonic.wem.api.facet.QueryFacet;
 
 
 public class QueryFacetJson
-    extends AbstractFacetJson
+    extends FacetJson
 {
     private final String type = "query";
 
