@@ -5,7 +5,7 @@ module app_wizard_form {
         private input:api_schema_content_form.Input;
 
         constructor(input:api_schema_content_form.Input) {
-            super("InputLabel");
+            super("InputLabel", "input-label");
 
             this.input = input;
 

@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.facet;
 
 
 import java.util.List;
@@ -12,7 +12,7 @@ import com.enonic.wem.api.facet.DateHistogramFacetEntry;
 
 
 public class DateHistogramFacetJson
-    extends AbstractFacetJson
+    extends FacetJson
 {
     private final String type = "dateHistogram";
 
@@ -42,7 +42,7 @@ public class DateHistogramFacetJson
     }
 
     public class DateHistogramFacetEntryJson
-        extends AbstractFacetJson.FacetEntryJson
+        extends FacetJson.FacetEntryJson
     {
 
         private Long time;

@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.content;
 
 import com.enonic.wem.admin.rest.resource.DateTimeFormatter;
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
@@ -16,6 +16,7 @@ public class ContentSummaryJson
         this.content = content;
         this.iconUrl = ContentImageUriResolver.resolve( content );
     }
+
     public String getIconUrl()
     {
         return iconUrl;

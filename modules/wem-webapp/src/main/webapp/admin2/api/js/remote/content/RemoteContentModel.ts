@@ -15,7 +15,7 @@ module api_remote_content {
         value: string;
     }
 
-    export interface ContentSummary {
+    export interface ContentSummary extends api_remote.Item {
         id: string;
         path: string;
         name: string;
@@ -35,8 +35,6 @@ module api_remote_content {
     }
 
     export interface ContentList extends ContentSummary{
-        editable: boolean;
-        deletable: boolean;
         allowsChildren: boolean;
     }
 

@@ -25,11 +25,10 @@
 ///<reference path='app/wizard/form/input/HtmlArea.ts' />
 ///<reference path='app/wizard/form/FormItemView.ts' />
 ///<reference path='app/wizard/form/InputLabel.ts' />
-///<reference path='app/wizard/form/FormItemInputView.ts' />
+///<reference path='app/wizard/form/InputContainerView.ts' />
 ///<reference path='app/wizard/form/FormItemSetLabel.ts' />
 ///<reference path='app/wizard/form/FormItemSetView.ts' />
-///<reference path='app/wizard/form/FormItemsLayer.ts' />
-///<reference path='app/wizard/form/FormCmp.ts' />
+///<reference path='app/wizard/form/FormView.ts' />
 
 
 ///<reference path='app/browse/filter/ContentBrowseFilterEvents.ts' />

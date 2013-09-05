@@ -1,25 +1,16 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.data;
 
 import com.enonic.wem.api.data.Property;
 
 public class PropertyJson
-    extends AbstractDataJson
+    extends DataJson
 {
     private final Property property;
 
     public PropertyJson( final Property property )
     {
+        super( property );
         this.property = property;
-    }
-
-    public String getName()
-    {
-        return property.getName();
-    }
-
-    public String getPath()
-    {
-        return property.getPath().toString();
     }
 
     public String getType()

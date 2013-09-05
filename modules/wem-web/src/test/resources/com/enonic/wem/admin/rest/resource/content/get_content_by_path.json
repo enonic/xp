@@ -8,42 +8,34 @@
                 "type": "DataSet",
                 "value": [
                     {
-                        "data": {
-                            "name": "myProperty",
-                            "path": "myProperty",
-                            "type": "DateTime",
-                            "value": "2013-08-23T12:55:09"
-                        }
+                        "name": "myProperty",
+                        "path": "myProperty",
+                        "type": "DateTime",
+                        "value": "2013-08-23T12:55:09"
                     },
                     {
-                        "data": {
-                            "name": "mySet",
-                            "path": "mySet",
-                            "type": "DataSet",
-                            "value": [
-                                {
-                                    "data": {
-                                        "name": "setProperty1",
-                                        "path": "mySet.setProperty1",
-                                        "type": "WholeNumber",
-                                        "value": "1"
-                                    }
-                                },
-                                {
-                                    "data": {
-                                        "name": "setProperty2",
-                                        "path": "mySet.setProperty2",
-                                        "type": "WholeNumber",
-                                        "value": "2"
-                                    }
-                                }
-                            ]
-                        }
+                        "name": "mySet",
+                        "path": "mySet",
+                        "type": "DataSet",
+                        "value": [
+                            {
+                                "name": "setProperty1",
+                                "path": "mySet.setProperty1",
+                                "type": "WholeNumber",
+                                "value": "1"
+                            },
+                            {
+                                "name": "setProperty2",
+                                "path": "mySet.setProperty2",
+                                "type": "WholeNumber",
+                                "value": "2"
+                            }
+                        ]
                     }
                 ]
             },
             "displayName": "My Content",
-            "hasChildren" : false,
+            "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/aaa",
             "id": "aaa",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
@@ -56,5 +48,3 @@
         }
     ]
 }
-
-

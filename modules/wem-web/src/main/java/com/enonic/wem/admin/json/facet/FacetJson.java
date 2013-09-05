@@ -1,13 +1,13 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.facet;
 
 
 import com.enonic.wem.api.facet.AbstractFacet;
 
-public abstract class AbstractFacetJson
+public abstract class FacetJson
 {
     private String name;
 
-    public AbstractFacetJson( final AbstractFacet facet )
+    public FacetJson( final AbstractFacet facet )
     {
         this.name = facet.getName();
     }

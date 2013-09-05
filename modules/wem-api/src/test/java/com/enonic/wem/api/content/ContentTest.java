@@ -497,8 +497,8 @@ public class ContentTest
         Item item = content.toItem();
 
         // verify
-        assertEquals( "ABC-123", item.getProperty( "id" ).getString() );
-        assertEquals( "myContent", item.getProperty( "name" ).getString() );
+        assertEquals( "ABC-123", item.getId().toString() );
+        assertEquals( "myContent", item.getName() );
         assertEquals( "My Content", item.getProperty( "displayName" ).getString() );
         assertEquals( "user:mystore:someuser", item.getProperty( "owner" ).getString() );
         assertEquals( "user:mystore:someotheruser", item.getProperty( "modifier" ).getString() );

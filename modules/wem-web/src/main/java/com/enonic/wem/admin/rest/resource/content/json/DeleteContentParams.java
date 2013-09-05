@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.rest.resource.content.json;
 
 
 import java.util.Set;

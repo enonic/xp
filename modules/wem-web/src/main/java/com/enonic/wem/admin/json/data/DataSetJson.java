@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.json.data;
 
 import java.util.List;
 
@@ -6,9 +6,10 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data.Property;
 
 public class DataSetJson
-    extends AbstractDataJson
+    extends DataJson
 {
     private final ImmutableList<DataJson> list;
 
@@ -16,25 +17,23 @@ public class DataSetJson
 
     public DataSetJson( final DataSet dataSet )
     {
+        super( dataSet );
         this.dataSet = dataSet;
 
         final ImmutableList.Builder<DataJson> builder = ImmutableList.builder();
         for ( final Data data : dataSet )
         {
-            builder.add( new DataJson( data ) );
+            if ( data instanceof Property )
+            {
+                builder.add( new PropertyJson( (Property) data ) );
+            }
+            else
+            {
+                builder.add( new DataSetJson( (DataSet) data ) );
+            }
         }
 
         this.list = builder.build();
-    }
-
-    public String getName()
-    {
-        return dataSet.getName();
-    }
-
-    public String getPath()
-    {
-        return dataSet.getPath().toString();
     }
 
     public String getType()

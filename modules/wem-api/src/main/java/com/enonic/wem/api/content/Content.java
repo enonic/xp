@@ -1,7 +1,5 @@
 package com.enonic.wem.api.content;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
@@ -14,6 +12,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemTranslatable;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -132,62 +131,51 @@ public final class Content
         return versionId;
     }
 
-    public boolean hasChildren() {
+    public boolean hasChildren()
+    {
         return !childrenIds.isEmpty();
     }
 
     public Item toItem()
     {
-        final Item item = new Item();
-        if ( this.id != null )
-        {
-            item.setProperty( "id", new Value.ContentId( this.id ) );
-        }
-        if ( this.getName() != null )
-        {
-            item.setProperty( "name", new Value.Text( this.getName() ) );
-        }
-        if ( this.path != null )
-        {
-            item.setProperty( "path", new Value.Text( this.path.toString() ) );
-        }
+        final Item.Builder itemBuilder = Item.newItem( new ItemId( this.id.toString() ), this.getName() );
         if ( this.displayName != null )
         {
-            item.setProperty( "displayName", new Value.Text( this.displayName ) );
+            itemBuilder.property( "displayName", new Value.Text( this.displayName ) );
         }
         if ( this.createdTime != null )
         {
-            item.setProperty( "createdTime", new Value.DateTime( this.createdTime ) );
+            itemBuilder.property( "createdTime", new Value.DateTime( this.createdTime ) );
         }
         if ( this.modifiedTime != null )
         {
-            item.setProperty( "modifiedTime", new Value.DateTime( this.modifiedTime ) );
+            itemBuilder.property( "modifiedTime", new Value.DateTime( this.modifiedTime ) );
         }
         if ( this.owner != null )
         {
-            item.setProperty( "owner", new Value.Text( this.owner.toString() ) );
+            itemBuilder.property( "owner", new Value.Text( this.owner.toString() ) );
         }
         if ( this.modifier != null )
         {
-            item.setProperty( "modifier", new Value.Text( this.modifier.toString() ) );
+            itemBuilder.property( "modifier", new Value.Text( this.modifier.toString() ) );
         }
         if ( this.type != null )
         {
-            item.setProperty( "type", new Value.Text( this.type.toString() ) );
+            itemBuilder.property( "type", new Value.Text( this.type.toString() ) );
         }
         if ( this.contentData != null )
         {
-            item.add( this.contentData.toDataSet( "data" ) );
+            itemBuilder.addDataSet( this.contentData.toDataSet( "data" ) );
         }
-        return item;
+        return itemBuilder.build();
     }
 
     @Override
     public Content toObject( final Item item )
     {
         return newContent().
-            id( item.getProperty( "id" ).getContentId() ).
-            name( item.getProperty( "name" ).getString() ).
+            id( ContentId.from( item.getId().toString() ) ).
+            name( item.getName() ).
             displayName( item.getProperty( "displayName" ).getString() ).
             createdTime( item.getProperty( "createdTime" ).getDateTime() ).
             modifiedTime( item.getProperty( "modifiedTime" ).getDateTime() ).
@@ -362,7 +350,8 @@ public final class Content
             return this;
         }
 
-        public Builder addChildId( final ContentId childId ) {
+        public Builder addChildId( final ContentId childId )
+        {
             this.childrenIdsBuilder.add( childId );
             return this;
         }

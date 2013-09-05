@@ -1,9 +1,15 @@
-package com.enonic.wem.admin.rest.resource.content.model;
+package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.admin.json.content.ContentSummaryListJson;
+import com.enonic.wem.admin.json.facet.DateHistogramFacetJson;
+import com.enonic.wem.admin.json.facet.FacetJson;
+import com.enonic.wem.admin.json.facet.QueryFacetJson;
+import com.enonic.wem.admin.json.facet.RangeFacetJson;
+import com.enonic.wem.admin.json.facet.TermsFacetJson;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.facet.DateHistogramFacet;
@@ -16,7 +22,7 @@ import com.enonic.wem.api.facet.TermsFacet;
 public class FacetedContentSummaryListJson
     extends ContentSummaryListJson
 {
-    private List<AbstractFacetJson> facets;
+    private List<FacetJson> facets;
 
     public FacetedContentSummaryListJson( Content content, Facets facets )
     {
@@ -30,14 +36,14 @@ public class FacetedContentSummaryListJson
         this.facets = buildFacets( facets );
     }
 
-    public List<AbstractFacetJson> getFacets()
+    public List<FacetJson> getFacets()
     {
         return facets;
     }
 
-    private List<AbstractFacetJson> buildFacets( Facets facets )
+    private List<FacetJson> buildFacets( Facets facets )
     {
-        final ImmutableList.Builder<AbstractFacetJson> builder = ImmutableList.builder();
+        final ImmutableList.Builder<FacetJson> builder = ImmutableList.builder();
         if ( facets != null )
         {
             for ( final Facet facet : facets )

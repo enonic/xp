@@ -1,22 +1,18 @@
 module app_wizard_form {
 
-    export class FormItemInputView extends FormItemView {
+    export class InputContainerView extends FormItemView {
 
         private input:api_schema_content_form.Input;
 
-        private parentDataSet:api_data.DataSet;
-
         private properties:api_data.Property[];
 
-        private inputCmp;
+        private inputView;
 
-        constructor(input:api_schema_content_form.Input, parentDataSet:api_data.DataSet) {
-            super(input);
+        constructor(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
+            super("InputContainerView", "input-container-view", input);
 
             this.input = input;
-            this.parentDataSet = parentDataSet;
-
-            this.properties = this.parentDataSet.getPropertiesByName(input.getName());
+            this.properties = properties != null ? properties : [];
 
             this.layout();
         }
@@ -42,9 +38,9 @@ module app_wizard_form {
                 throw Error("Custom input types are not supported yet: " + inputType.getName());
             }
 
-            this.inputCmp = newInputPrototype;
-            this.inputCmp.layout(this.input, this.properties);
-            this.getEl().appendChild(this.inputCmp.getHTMLElement());
+            this.inputView = newInputPrototype;
+            this.inputView.layout(this.input, this.properties);
+            this.getEl().appendChild(this.inputView.getHTMLElement());
         }
 
         getData():api_data.Data[] {
@@ -54,7 +50,7 @@ module app_wizard_form {
         getProperties():api_data.Property[] {
 
             var properties:api_data.Property[] = [];
-            this.inputCmp.getValues().forEach((value:string, index:number) => {
+            this.inputView.getValues().forEach((value:string, index:number) => {
                 properties[index] = new api_data.Property(this.input.getName(), value, "TEXT");
             });
             return properties;
