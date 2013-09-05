@@ -1,10 +1,10 @@
 package com.enonic.wem.admin.rest.resource.relationship.model;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.relationship.RelationshipKey;
 
 public class CreateRelationshipJson
-    extends Item
+    extends ItemJson
 {
     private final RelationshipKey relationshipId;
 

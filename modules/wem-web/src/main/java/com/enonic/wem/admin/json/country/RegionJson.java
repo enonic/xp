@@ -1,10 +1,10 @@
 package com.enonic.wem.admin.json.country;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.core.country.Region;
 
 public class RegionJson
-    extends Item
+    extends ItemJson
 {
     private final Region model;
 

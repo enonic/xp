@@ -1,9 +1,9 @@
 package com.enonic.wem.admin.json.schema.relationship;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 
 public abstract class AbstractRelationshipTypeJson
-    extends Item
+    extends ItemJson
 {
     protected AbstractRelationshipTypeJson()
     {

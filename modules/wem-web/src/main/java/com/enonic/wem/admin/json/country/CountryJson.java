@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.core.country.Country;
 import com.enonic.wem.core.country.Region;
 
 public class CountryJson
-    extends Item
+    extends ItemJson
 {
     private final Country model;
 

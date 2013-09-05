@@ -4,10 +4,10 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 
 public class TimeZoneJson
-    extends Item
+    extends ItemJson
 {
     private final DateTimeZone model;
 

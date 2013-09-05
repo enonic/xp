@@ -3,12 +3,12 @@ package com.enonic.wem.admin.json.schema;
 import org.joda.time.DateTime;
 
 import com.enonic.wem.admin.json.DateTimeFormatter;
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.schema.Schema;
 
 public class SchemaJson
-    extends Item
+    extends ItemJson
 {
 
     private String key;

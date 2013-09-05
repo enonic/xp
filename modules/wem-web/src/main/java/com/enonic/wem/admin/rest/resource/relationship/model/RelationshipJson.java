@@ -2,11 +2,11 @@ package com.enonic.wem.admin.rest.resource.relationship.model;
 
 import java.util.Map;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.relationship.Relationship;
 
 public class RelationshipJson
-    extends Item
+    extends ItemJson
 {
     private final Relationship model;
 

@@ -1,13 +1,13 @@
 package com.enonic.wem.admin.json.schema.content;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryJson
-    extends Item
+    extends ItemJson
 {
     private final ContentType contentType;
 

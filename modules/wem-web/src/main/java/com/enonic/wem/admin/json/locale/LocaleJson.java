@@ -2,10 +2,10 @@ package com.enonic.wem.admin.json.locale;
 
 import java.util.Locale;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 
 public class LocaleJson
-    extends Item
+    extends ItemJson
 {
     private final Locale locale;
 

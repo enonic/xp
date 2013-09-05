@@ -1,10 +1,10 @@
 package com.enonic.wem.admin.json.schema.mixin;
 
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.schema.content.form.FieldSetJson;
 import com.enonic.wem.admin.json.schema.content.form.FormItemSetJson;
 import com.enonic.wem.admin.json.schema.content.form.MixinReferenceJson;
 import com.enonic.wem.admin.json.schema.content.form.inputtype.InputJson;
-import com.enonic.wem.admin.rest.resource.model.Item;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.schema.content.form.FieldSet;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
@@ -13,7 +13,7 @@ import com.enonic.wem.api.schema.content.form.MixinReference;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public class MixinJson
-    extends Item
+    extends ItemJson
 {
     private final Mixin model;
 

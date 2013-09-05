@@ -1,12 +1,12 @@
 package com.enonic.wem.admin.json.space;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageUriResolver;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class SpaceSummaryJson
-    extends Item
+    extends ItemJson
 {
     private final Space space;
 

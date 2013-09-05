@@ -3,13 +3,13 @@ package com.enonic.wem.admin.json.schema.relationship;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.wem.admin.rest.resource.model.Item;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
 public class RelationshipTypeResultJson
-    extends Item
+    extends ItemJson
 {
     private final RelationshipType model;
 
