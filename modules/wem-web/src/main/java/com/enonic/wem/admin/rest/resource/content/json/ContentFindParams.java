@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
 
-import com.enonic.wem.admin.rest.resource.DateTimeFormatter;
+import com.enonic.wem.admin.json.DateTimeFormatter;
 
 @XmlRootElement
 public class ContentFindParams

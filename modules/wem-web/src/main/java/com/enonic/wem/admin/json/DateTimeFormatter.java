@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource;
+package com.enonic.wem.admin.json;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
