@@ -2,10 +2,7 @@ package com.enonic.wem.admin.json.locale;
 
 import java.util.Locale;
 
-import com.enonic.wem.admin.json.ItemJson;
-
 public class LocaleJson
-    extends ItemJson
 {
     private final Locale locale;
 
@@ -24,15 +21,4 @@ public class LocaleJson
         return this.locale.getDisplayName();
     }
 
-    @Override
-    public boolean getEditable()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean getDeletable()
-    {
-        return false;
-    }
 }

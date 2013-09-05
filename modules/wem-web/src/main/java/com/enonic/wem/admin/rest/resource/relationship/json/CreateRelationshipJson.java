@@ -1,10 +1,8 @@
 package com.enonic.wem.admin.rest.resource.relationship.json;
 
-import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.api.relationship.RelationshipKey;
 
 public class CreateRelationshipJson
-    extends ItemJson
 {
     private final RelationshipKey relationshipId;
 
@@ -31,17 +29,5 @@ public class CreateRelationshipJson
     public String getType()
     {
         return this.relationshipId.getType().toString();
-    }
-
-    @Override
-    public boolean getEditable()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean getDeletable()
-    {
-        return false;
     }
 }

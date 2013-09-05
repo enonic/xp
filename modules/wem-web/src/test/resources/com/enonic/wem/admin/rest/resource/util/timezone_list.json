@@ -1,8 +1,6 @@
 {
     "timezones": [
         {
-            "deletable": false,
-            "editable": false,
             "humanizedId": "UTC",
             "id": "UTC",
             "name": "Coordinated Universal Time",
@@ -10,8 +8,6 @@
             "shortName": "UTC"
         },
         {
-            "deletable": false,
-            "editable": false,
             "humanizedId": "EST",
             "id": "EST",
             "name": "Eastern Standard Time",
@@ -19,8 +15,6 @@
             "shortName": "EST"
         },
         {
-            "deletable": false,
-            "editable": false,
             "humanizedId": "Asia/Tokyo",
             "id": "Asia/Tokyo",
             "name": "Japan Standard Time",
@@ -28,8 +22,6 @@
             "shortName": "JST"
         },
         {
-            "deletable": false,
-            "editable": false,
             "humanizedId": "America/Caracas",
             "id": "America/Caracas",
             "name": "Venezuela Time",

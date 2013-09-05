@@ -4,10 +4,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 
-import com.enonic.wem.admin.json.ItemJson;
-
 public class TimeZoneJson
-    extends ItemJson
 {
     private final DateTimeZone model;
 
@@ -73,17 +70,5 @@ public class TimeZoneJson
         }
         s.append( minutes );
         return s.toString();
-    }
-
-    @Override
-    public boolean getEditable()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean getDeletable()
-    {
-        return false;
     }
 }
