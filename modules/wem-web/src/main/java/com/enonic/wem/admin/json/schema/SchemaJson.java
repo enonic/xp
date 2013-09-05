@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.model;
+package com.enonic.wem.admin.json.schema;
 
 import org.joda.time.DateTime;
 

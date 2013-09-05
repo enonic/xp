@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.mixin.model;
+package com.enonic.wem.admin.json.schema.mixin;
 
 import com.enonic.wem.admin.json.schema.content.form.FieldSetJson;
 import com.enonic.wem.admin.json.schema.content.form.FormItemSetJson;

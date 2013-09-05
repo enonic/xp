@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.relationship.model;
+package com.enonic.wem.admin.json.schema.relationship;
 
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.schema.relationship.RelationshipType;

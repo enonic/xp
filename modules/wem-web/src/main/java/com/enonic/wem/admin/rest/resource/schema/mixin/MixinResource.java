@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.AbstractMixinJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinConfigJson;
@@ -19,7 +20,6 @@ import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdate
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinDeleteParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinGetJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinListJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -42,7 +42,8 @@ import static com.enonic.wem.api.schema.mixin.editor.SetMixinEditor.newSetMixinE
 
 @Path("schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
-public class MixinResource extends AbstractResource
+public class MixinResource
+    extends AbstractResource
 {
     public static final String FORMAT_XML = "XML";
 
@@ -59,35 +60,34 @@ public class MixinResource extends AbstractResource
     }
 
     @GET
-    public AbstractMixinJson get(@QueryParam("mixin") final String name,
-                                 @QueryParam("format") final String format)
+    public AbstractMixinJson get( @QueryParam("mixin") final String name, @QueryParam("format") final String format )
     {
-        final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName(name);
-        final Mixin mixin = fetchMixin(qualifiedMixinName);
+        final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName( name );
+        final Mixin mixin = fetchMixin( qualifiedMixinName );
 
         if ( mixin == null )
         {
-            String message = String.format("Mixin [%s] was not found.", qualifiedMixinName);
+            String message = String.format( "Mixin [%s] was not found.", qualifiedMixinName );
             throw new WebApplicationException( Response.serverError().entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
-        if ( FORMAT_JSON.equalsIgnoreCase( format ))
+        if ( FORMAT_JSON.equalsIgnoreCase( format ) )
         {
             return new MixinGetJson( mixin );
         }
-        else if ( FORMAT_XML.equalsIgnoreCase( format ))
+        else if ( FORMAT_XML.equalsIgnoreCase( format ) )
         {
             return new MixinConfigJson( mixin );
         }
         else
         {
-            String message = String.format("Response format [%s] doesn't exist.", format);
+            String message = String.format( "Response format [%s] doesn't exist.", format );
             throw new WebApplicationException( Response.serverError().entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
     }
 
     @GET
-    @Path( "list" )
+    @Path("list")
     public MixinListJson list()
     {
         final Mixins mixins = client.execute( Commands.mixin().get().all() );
@@ -103,8 +103,8 @@ public class MixinResource extends AbstractResource
     }
 
     @POST
-    @Path( "create" )
-    @Consumes( MediaType.APPLICATION_JSON )
+    @Path("create")
+    @Consumes(MediaType.APPLICATION_JSON)
     public MixinCreateOrUpdateJson create( MixinCreateOrUpdateParams params )
     {
         final Mixin mixin = parseXml( params.getMixin() );
@@ -116,11 +116,9 @@ public class MixinResource extends AbstractResource
                 Response.serverError().entity( "Mixin already exists." ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
-        final CreateMixin createCommand = mixin().create()
-            .displayName( mixin.getDisplayName() )
-            .formItem( mixin.getFormItem() )
-            .moduleName( mixin.getModuleName() )
-            .icon( icon );
+        final CreateMixin createCommand =
+            mixin().create().displayName( mixin.getDisplayName() ).formItem( mixin.getFormItem() ).moduleName( mixin.getModuleName() ).icon(
+                icon );
 
         try
         {
@@ -134,8 +132,8 @@ public class MixinResource extends AbstractResource
     }
 
     @POST
-    @Path( "update" )
-    @Consumes( MediaType.APPLICATION_JSON )
+    @Path("update")
+    @Consumes(MediaType.APPLICATION_JSON)
     public MixinCreateOrUpdateJson update( MixinCreateOrUpdateParams params )
     {
         final Mixin mixin = parseXml( params.getMixin() );
@@ -167,11 +165,12 @@ public class MixinResource extends AbstractResource
     }
 
     @POST
-    @Path( "delete" )
+    @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
     public MixinDeleteJson delete( MixinDeleteParams params )
     {
-        final QualifiedMixinNames qualifiedMixinNames = QualifiedMixinNames.from( params.getQualifiedMixinNames().toArray( new String[0] ) );
+        final QualifiedMixinNames qualifiedMixinNames =
+            QualifiedMixinNames.from( params.getQualifiedMixinNames().toArray( new String[0] ) );
 
         final MixinDeleteJson deletionResult = new MixinDeleteJson();
         for ( QualifiedMixinName qualifiedMixinName : qualifiedMixinNames )
@@ -199,7 +198,7 @@ public class MixinResource extends AbstractResource
         return deletionResult;
     }
 
-    private Mixin parseXml(String mixinXml)
+    private Mixin parseXml( String mixinXml )
     {
         try
         {

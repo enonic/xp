@@ -13,9 +13,9 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.admin.json.schema.SchemaJson;
+import com.enonic.wem.admin.json.schema.SchemaTreeJson;
 import com.enonic.wem.admin.rest.resource.schema.exception.InvalidSchemaTypeException;
-import com.enonic.wem.admin.rest.resource.schema.model.SchemaJson;
-import com.enonic.wem.admin.rest.resource.schema.model.SchemaTreeJson;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.command.schema.SchemaTypes;

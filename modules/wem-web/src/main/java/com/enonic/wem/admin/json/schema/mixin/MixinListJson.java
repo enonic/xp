@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.mixin.model;
+package com.enonic.wem.admin.json.schema.mixin;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class MixinListJson
 {
     private final Mixins mixins;
 
-    public MixinListJson(final Mixins mixins)
+    public MixinListJson( final Mixins mixins )
     {
         this.mixins = mixins;
     }

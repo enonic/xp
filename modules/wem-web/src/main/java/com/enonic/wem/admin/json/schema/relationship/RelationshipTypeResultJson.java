@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.relationship.model;
+package com.enonic.wem.admin.json.schema.relationship;
 
 import java.util.ArrayList;
 import java.util.List;

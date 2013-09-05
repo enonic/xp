@@ -17,11 +17,11 @@ import com.google.common.io.Files;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.TestUtil;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.AbstractRelationshipTypeJson;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.RelationshipTypeConfigRpcJson;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.RelationshipTypeJson;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.RelationshipTypeListJson;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.RelationshipTypeResultJson;
+import com.enonic.wem.admin.json.schema.relationship.AbstractRelationshipTypeJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigRpcJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeResultJson;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
@@ -99,7 +99,7 @@ public class RelationshipTypeResourceTest
         AbstractRelationshipTypeJson result = resource.get( "mymodule:the_relationship_type", RelationshipTypeResource.FORMAT_JSON );
         assertNotNull( result );
 
-        RelationshipTypeResultJson resultJson = ( ( RelationshipTypeJson ) result ).getRelationshipType();
+        RelationshipTypeResultJson resultJson = ( (RelationshipTypeJson) result ).getRelationshipType();
 
         assertEquals( "the_relationship_type", resultJson.getName() );
         assertEquals( null, resultJson.getDisplayName() );
@@ -127,7 +127,7 @@ public class RelationshipTypeResourceTest
         AbstractRelationshipTypeJson result = resource.get( "mymodule:the_relationship_type", RelationshipTypeResource.FORMAT_XML );
         assertNotNull( result );
 
-        RelationshipTypeConfigRpcJson resultJson = ( RelationshipTypeConfigRpcJson ) result;
+        RelationshipTypeConfigRpcJson resultJson = (RelationshipTypeConfigRpcJson) result;
 
         assertEquals( "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:the_relationship_type", resultJson.getIconUrl() );
         assertEquals(
@@ -212,7 +212,8 @@ public class RelationshipTypeResourceTest
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
             new QualifiedRelationshipTypeName( Module.SYSTEM.getName(), "love" ) );
 
-        String relationshipType = "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
+        String relationshipType =
+            "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
 
         Mockito.when( this.uploadService.getItem( "reference" ) ).thenReturn( null );
         resource.create( relationshipType, "reference" );
@@ -232,7 +233,8 @@ public class RelationshipTypeResourceTest
             RelationshipTypesExistsResult.from( qualifiedNames ) );
         Mockito.when( client.execute( isA( UpdateRelationshipType.class ) ) ).thenReturn( Boolean.TRUE );
 
-        String relationshipType = "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
+        String relationshipType =
+            "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
 
         Mockito.when( this.uploadService.getItem( "reference" ) ).thenReturn( null );
         resource.update( relationshipType, "reference" );
@@ -250,7 +252,8 @@ public class RelationshipTypeResourceTest
             new QualifiedRelationshipTypeName( Module.SYSTEM.getName(), "love" ) );
         uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
 
-        String relationshipType = "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
+        String relationshipType =
+            "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
         String iconReference = "edc1af66-ecb4-4f8a-8df4-0738418f84fc";
 
         resource.create( relationshipType, iconReference );

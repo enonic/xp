@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 
 import com.google.common.io.Files;
 
+import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.AbstractMixinJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinConfigJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdateJson;
@@ -21,7 +22,6 @@ import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinCreateOrUpdate
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinDeleteParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinGetJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.model.MixinListJson;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
