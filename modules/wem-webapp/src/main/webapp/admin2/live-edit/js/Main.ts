@@ -56,8 +56,6 @@ declare var LiveEditMutationSummary;
         loaderSplash.fadeOut('fast', () => {
             loaderSplash.remove();
 
-            console.log('Init Live Edit. Using jQuery version: ' + $liveEdit.fn.jquery);
-
             new LiveEdit.component.mouseevent.Page();
             new LiveEdit.component.mouseevent.Region();
             new LiveEdit.component.mouseevent.Layout();
@@ -78,6 +76,10 @@ declare var LiveEditMutationSummary;
             LiveEdit.DragDropSort.init();
 
             $(window).resize(() => $(window).trigger('resizeBrowserWindow.liveEdit'));
+
+            $(window).unload(() => console.log('Clean up any css classes etc. that live edit / sortable has added') );
+
+            console.log('Live Edit Initialized. Using jQuery version: ' + $.fn.jquery);
         });
     });
 
