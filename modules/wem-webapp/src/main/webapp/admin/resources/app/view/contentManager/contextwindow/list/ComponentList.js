@@ -39,12 +39,13 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
      * @returns {Ext.container.Container}
      */
     createSearchBar: function () {
-        this.searchInput = this.createSearchInput();
+        var me = this;
+        me.searchInput = this.createSearchInput();
         return new Ext.container.Container({
             cls: 'admin-component-search-bar',
             items: [
                 new Ext.Component({
-                    html: '<p>Choose Part</p>'
+                    html: '<p>Choose ' + me.componentType.getName() + '</p>'
                 }),
                 this.searchInput
             ]
@@ -107,7 +108,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
 
         var templates = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-cw-item" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
+            '   <div class="admin-cw-item" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}" title="Click to insert">',
             '      <div class="admin-cw-item-row">',
             '           <div class="admin-cw-item-icon" style="background: url({icon}) no-repeat"></div>',
             '           <div class="admin-cw-item-info">',
