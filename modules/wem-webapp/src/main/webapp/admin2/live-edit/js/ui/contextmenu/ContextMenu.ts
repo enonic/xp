@@ -53,18 +53,15 @@ module LiveEdit.ui.contextmenu {
             });
         }
 
-        private show(component:LiveEdit.component.Component, positionOnPage:any = null):void {
+        private show(component:LiveEdit.component.Component, pageXYPosition:any = null):void {
             this.selectedComponent = component;
 
             this.updateTitleBar(component);
             this.updateMenuItemsForComponent(component);
 
-            if (positionOnPage) {
-                var pageXPosition = positionOnPage.x - this.getEl().width() / 2,
-                    pageYPosition = positionOnPage.y + 15;
-
-                this.moveToXY(pageXPosition, pageYPosition);
-            }
+            // Position the context menu after menu items are updated in order to get the right menu popup width
+            var position = this.resolvePagePosition(component, pageXYPosition);
+            this.moveToXY(position.x, position.y);
 
             this.getEl().show(null);
 
@@ -127,6 +124,24 @@ module LiveEdit.ui.contextmenu {
                 } else {
                     button.hide(null);
                 }
+            }
+        }
+
+        private resolvePagePosition(component:LiveEdit.component.Component, pageXYPosition:any):any {
+            var componentElementDimensions = component.getElementDimensions();
+            var pageXPosition, pageYPosition;
+            if (pageXYPosition) {
+                pageXPosition = pageXYPosition.x - this.getEl().width() / 2;
+                pageYPosition = pageXYPosition.y + 15;
+            } else {
+                // component element - center
+                pageXPosition = componentElementDimensions.left + (componentElementDimensions.width/2) - this.getEl().width() / 2;
+                pageYPosition = componentElementDimensions.top + 10;
+            }
+
+            return {
+                x: pageXPosition,
+                y: pageYPosition
             }
         }
 

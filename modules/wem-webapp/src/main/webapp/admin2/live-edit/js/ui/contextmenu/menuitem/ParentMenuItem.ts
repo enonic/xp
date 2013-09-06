@@ -28,31 +28,19 @@ module LiveEdit.ui.contextmenu.menuitem {
                     if (parentElement && parentElement.length > 0) {
                         var parentComponent = new LiveEdit.component.Component($(parentElement[0]));
 
-                        var menuPagePosition:any = {x: 0, y: 0};
+                        $(window).trigger('deselectComponent.liveEdit');
 
                         LiveEdit.Selection.setSelectionOnElement(parentComponent.getElement());
-
-                        $(window).trigger('selectComponent.liveEdit', [parentComponent, menuPagePosition]);
+                        $(window).trigger('selectComponent.liveEdit', [parentComponent]);
 
                         this.scrollComponentIntoView(parentComponent);
-
-                        // Force position of the menu after component is selected.
-                        // We could move this code to menu show.
-                        // The position needs to be updated after menu is updated with info in order to get the right dimensions (width) of the menu.
-                        var menuWidth = this.menu.getEl().outerWidth();
-                        var dimensions:ElementDimensions = parentComponent.getElementDimensions(),
-                            newMenuPosition = {x: dimensions.left + (dimensions.width / 2) - (menuWidth / 2), y: dimensions.top + 10};
-
-                        this.menu.moveToXY(newMenuPosition.x, newMenuPosition.y);
                     }
                 }
             });
 
             this.appendTo(this.menu.getEl());
             this.menu.buttons.push(this);
-
         }
-
 
         scrollComponentIntoView(component:LiveEdit.component.Component):void {
             var dimensions:ElementDimensions = component.getElementDimensions();
