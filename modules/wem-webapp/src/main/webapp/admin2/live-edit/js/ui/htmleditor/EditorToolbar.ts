@@ -5,26 +5,26 @@ module LiveEdit.ui {
 
     export class EditorToolbar extends LiveEdit.ui.Base {
 
-        private selectedComponent:LiveEdit.component.Component = null;
+        private selectedParagraph:LiveEdit.component.Component = null;
 
         constructor() {
             super();
 
-            this.selectedComponent = null;
+            this.selectedParagraph = null;
 
             this.addView();
             this.addEvents();
             this.registerGlobalListeners();
         }
 
-        registerGlobalListeners():void {
+        private registerGlobalListeners():void {
             $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component) => this.show(component));
             $(window).on('leaveParagraphComponent.liveEdit', () => this.hide());
             $(window).on('componentRemoved.liveEdit', () => this.hide());
             $(window).on('sortableStart.liveEdit', () => this.hide());
         }
 
-        addView():void {
+        private addView():void {
             var html:string = '<div class="live-edit-editor-toolbar live-edit-arrow-bottom" style="display: none">' +
                 '    <button live-edit-data-tag="paste" class="live-edit-editor-button"></button>' +
                 '    <button live-edit-data-tag="insertUnorderedList" class="live-edit-editor-button"></button>' +
@@ -47,7 +47,7 @@ module LiveEdit.ui {
             this.appendTo($('body'));
         }
 
-        addEvents():void {
+        private addEvents():void {
             this.getEl().on('click', (event) => {
 
                 // Make sure component is not deselected when the toolbar is clicked.
@@ -61,33 +61,35 @@ module LiveEdit.ui {
             });
 
             $(window).scroll(() => {
-                if (this.selectedComponent) {
+                if (this.selectedParagraph) {
                     this.updatePosition();
                 }
             });
         }
 
-        show(component:LiveEdit.component.Component):void {
-            this.selectedComponent = component;
+        private show(component:LiveEdit.component.Component):void {
+            this.selectedParagraph = component;
 
+            // For some reason. JQuery outerWidth returns a very incorrect number after show() is called.
+            // Update positions before show.
+            this.updatePosition();
             this.getEl().show(null);
             this.toggleArrowPosition(false);
-            this.updatePosition();
         }
 
-        hide():void {
-            this.selectedComponent = null;
+        private hide():void {
+            this.selectedParagraph = null;
             this.getEl().hide(null);
         }
 
-        updatePosition():void {
-            if (!this.selectedComponent) {
+        private updatePosition():void {
+            if (!this.selectedParagraph) {
                 return;
             }
 
             var defaultPosition = this.getPositionRelativeToComponentTop();
 
-            var stick = $(window).scrollTop() >= this.selectedComponent.getElement().offset().top - 60;
+            var stick = $(window).scrollTop() >= this.selectedParagraph.getElement().offset().top - 60;
 
             var el = this.getEl();
 
@@ -110,7 +112,7 @@ module LiveEdit.ui {
             this.toggleArrowPosition(placeArrowOnTop);
         }
 
-        toggleArrowPosition(showArrowAtTop:Boolean):void {
+        private toggleArrowPosition(showArrowAtTop:Boolean):void {
             if (showArrowAtTop) {
                 this.getEl().removeClass('live-edit-arrow-bottom').addClass('live-edit-arrow-top');
             } else {
@@ -118,8 +120,8 @@ module LiveEdit.ui {
             }
         }
 
-        getPositionRelativeToComponentTop():any {
-            var dimensions:ElementDimensions = this.selectedComponent.getElementDimensions(),
+        private getPositionRelativeToComponentTop():any {
+            var dimensions:ElementDimensions = this.selectedParagraph.getElementDimensions(),
                 leftPos = dimensions.left + (dimensions.width / 2 - this.getEl().outerWidth() / 2),
                 topPos = dimensions.top - this.getEl().height() - 25;
 
