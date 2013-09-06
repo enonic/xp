@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.schema.content.form.FormItem;
 
+@SuppressWarnings("UnusedDeclaration")
 public class FormItemJsonArray
     implements Iterable<FormItemJson>
 {

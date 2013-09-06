@@ -2,8 +2,9 @@ package com.enonic.wem.admin.json.schema.content.form;
 
 import com.enonic.wem.api.schema.content.form.FieldSet;
 
+@SuppressWarnings("UnusedDeclaration")
 public class FieldSetJson
-    extends FormItemJson
+    extends LayoutJson
 {
     private final FieldSet fieldSet;
 
@@ -11,13 +12,14 @@ public class FieldSetJson
 
     public FieldSetJson( final FieldSet fieldSet )
     {
+        super( fieldSet );
         this.fieldSet = fieldSet;
         this.items = new FormItemJsonArray( fieldSet.getFormItems() );
     }
 
-    public String getType()
+    public String getLabel()
     {
-        return FieldSet.class.getSimpleName();
+        return fieldSet.getLabel();
     }
 
     public FormItemJsonArray getItems()
@@ -25,13 +27,4 @@ public class FieldSetJson
         return items;
     }
 
-    public String getName()
-    {
-        return ( fieldSet instanceof FieldSet ) ? ( (FieldSet) fieldSet ).getName() : null;
-    }
-
-    public String getLabel()
-    {
-        return ( fieldSet instanceof FieldSet ) ? ( (FieldSet) fieldSet ).getLabel() : null;
-    }
 }

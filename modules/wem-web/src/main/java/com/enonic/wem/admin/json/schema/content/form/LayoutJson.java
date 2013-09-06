@@ -1,0 +1,26 @@
+package com.enonic.wem.admin.json.schema.content.form;
+
+import com.enonic.wem.api.schema.content.form.Layout;
+
+@SuppressWarnings("UnusedDeclaration")
+public abstract class LayoutJson
+    extends FormItemJson
+{
+    private Layout layout;
+
+    public LayoutJson( final Layout layout )
+    {
+        super( layout );
+        this.layout = layout;
+    }
+
+    public String getFormItemType()
+    {
+        return Layout.class.getSimpleName();
+    }
+
+    public String getLayoutType()
+    {
+        return layout.getClass().getSimpleName();
+    }
+}

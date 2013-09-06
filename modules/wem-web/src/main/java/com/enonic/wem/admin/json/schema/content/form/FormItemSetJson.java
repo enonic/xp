@@ -2,45 +2,47 @@ package com.enonic.wem.admin.json.schema.content.form;
 
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 
+@SuppressWarnings("UnusedDeclaration")
 public class FormItemSetJson
     extends FormItemJson
 {
-    private final FormItemSet model;
+    private final FormItemSet formItemSet;
 
     private final FormItemJsonArray items;
 
     private final OccurrencesJson occurrences;
 
-    public FormItemSetJson( final FormItemSet formItem )
+    public FormItemSetJson( final FormItemSet formItemSet )
     {
-        this.model = formItem;
-        this.items = new FormItemJsonArray( formItem.getFormItems() );
-        this.occurrences = new OccurrencesJson( formItem.getOccurrences() );
+        super( formItemSet );
+        this.formItemSet = formItemSet;
+        this.items = new FormItemJsonArray( formItemSet.getFormItems() );
+        this.occurrences = new OccurrencesJson( formItemSet.getOccurrences() );
     }
 
     public String getName()
     {
-        return model.getName();
+        return formItemSet.getName();
     }
 
     public String getLabel()
     {
-        return model.getLabel();
+        return formItemSet.getLabel();
     }
 
     public boolean isImmutable()
     {
-        return model.isImmutable();
+        return formItemSet.isImmutable();
     }
 
     public String getCustomText()
     {
-        return model.getCustomText();
+        return formItemSet.getCustomText();
     }
 
     public String getHelpText()
     {
-        return model.getHelpText();
+        return formItemSet.getHelpText();
     }
 
     public FormItemJsonArray getItems()

@@ -2,6 +2,7 @@ package com.enonic.wem.admin.json.schema.content.form;
 
 import com.enonic.wem.api.schema.content.form.Occurrences;
 
+@SuppressWarnings("UnusedDeclaration")
 public class OccurrencesJson
 {
     private final Occurrences occurrences;
