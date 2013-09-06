@@ -113,13 +113,7 @@ module app {
 
                 } else {
 
-                    // TODO: Only testing
-                    new api_content.GetContentByIdRequest(contentModel.data.id).
-                        setAsync((response:api_rest.JsonResponse) => {
-                            console.log("GetContentByIdRequest async response: ", response.getJson());
-                        },(requestError:api_rest.RequestError) => {
-                            console.log("GetContentByIdRequest async error: ", requestError.getStatusText());
-                        }).send();
+
 
                     api_remote_content.RemoteContentService.content_get({
                             contentIds: [contentModel.data.id]
@@ -142,6 +136,15 @@ module app {
                                     var parentContentPath:api_content.ContentPath = contentToEditPath.getParentPath();
                                     if (parentContentPath != null) {
                                         // Fetch parent of content to edit
+
+                                        // TODO: Testing handling two requests to new REST API using JQuery promise
+                                        var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.data.id).sendAndPromise();
+                                        var getContentByPathPromise = new api_content.GetContentByPathRequest(parentContentPath).sendAndPromise();
+                                        jQuery.when(getContentByIdPromise, getContentByPathPromise).then( (first:api_rest.JsonResponse, second:api_rest.JsonResponse) => {
+                                            console.log("GetContentByIdRequest async promised response: ", first);
+                                            console.log("GetContentByPathRequest async promised response: ", second);
+                                        });
+
                                         api_remote_content.RemoteContentService.content_get({
                                                 path: parentContentPath.toString()
                                             },

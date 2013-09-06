@@ -41,18 +41,38 @@ module api_rest {
             throw new Error("Must be implemented by inheritors");
         }
 
-        send() {
+        sendAndPromise():JQueryPromise<Response> {
+            this.async = true;
+            return this.send();
+        }
+
+        send():JQueryPromise<Response>{
+
+            var deferred = jQuery.Deferred<Response>();
+
             var jsonRequest = new JsonRequest().
                 setMethod(this.method).
                 setUrl(this.getUrl());
 
             if (this.async) {
-                jsonRequest.setAsync(this.successCallback, this.errorCallback);
+                jsonRequest.setAsync((jsonResponse:JsonResponse) => {
+                    deferred.resolve(jsonResponse);
+                    if( this.successCallback != null ) {
+                        this.successCallback(jsonResponse);
+                    }
+                }, (requestError:RequestError) => {
+                    deferred.fail(requestError);
+                    if( this.errorCallback != null ) {
+                        this.errorCallback(requestError);
+                    }
+                });
                 jsonRequest.send();
+                return deferred.promise();
             }
             else {
                 jsonRequest.send();
                 this.jsonResponse = jsonRequest.getJsonResponse();
+                return null;
             }
         }
 
