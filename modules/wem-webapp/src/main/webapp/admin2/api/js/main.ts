@@ -57,6 +57,11 @@
 ///<reference path='remote/util/RemoteUtilsModel.ts' />
 ///<reference path='remote/util/RemoteSystemService.ts' />
 
+///<reference path='rest/JsonRequest.ts' />
+///<reference path='rest/JsonResponse.ts' />
+///<reference path='rest/RequestError.ts' />
+///<reference path='rest/ResourceRequest.ts' />
+
 ///<reference path='event/Listener.ts' />
 ///<reference path='event/Observable.ts' />
 ///<reference path='event/Event.ts' />
@@ -177,6 +182,8 @@
 ///<reference path='content/ContentData.ts' />
 ///<reference path='content/ContentDataFactory.ts' />
 ///<reference path='content/Content.ts' />
+///<reference path='content/ContentResourceRequest.ts' />
+///<reference path='content/GetContentByIdRequest.ts' />
 
 ///<reference path='schema/content/form/InputTypeName.ts' />
 ///<reference path='schema/content/form/FormItem.ts' />
