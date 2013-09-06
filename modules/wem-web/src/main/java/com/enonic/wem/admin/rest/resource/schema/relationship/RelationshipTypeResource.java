@@ -17,11 +17,11 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.NotFoundException;
 
+import com.enonic.wem.admin.json.schema.relationship.AbstractRelationshipTypeJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigRpcJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.AbstractRelationshipTypeJson;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.RelationshipTypeConfigRpcJson;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.RelationshipTypeJson;
-import com.enonic.wem.admin.rest.resource.schema.relationship.model.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -52,7 +52,8 @@ public class RelationshipTypeResource
     private UploadService uploadService;
 
     @GET
-    public AbstractRelationshipTypeJson get( @QueryParam("qualifiedRelationshipTypeName") final String name, @QueryParam("format") final String format )
+    public AbstractRelationshipTypeJson get( @QueryParam("qualifiedRelationshipTypeName") final String name,
+                                             @QueryParam("format") final String format )
     {
         final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( name );
         final GetRelationshipTypes getRelationshipTypes = Commands.relationshipType().get();
@@ -90,8 +91,8 @@ public class RelationshipTypeResource
     @Consumes(MediaType.APPLICATION_JSON)
     public void delete( @FormParam("qualifiedRelationshipTypeName") final List<String> names )
     {
-        final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from(
-            names.toArray( new String[names.size()] ) );
+        final QualifiedRelationshipTypeNames qualifiedNames =
+            QualifiedRelationshipTypeNames.from( names.toArray( new String[names.size()] ) );
 
         final List<String> failureList = Lists.newArrayList();
 

@@ -2,9 +2,9 @@ module app_wizard {
 
     export class ContentDataFactory {
 
-        public static createContentData(remoteData:api_remote_content.Data[]):api_content_data.ContentData {
+        public static createContentData(remoteData:api_remote_content.Data[]):api_content.ContentData {
 
-            var contentData = new api_content_data.ContentData();
+            var contentData = new api_content.ContentData();
 
             remoteData.forEach((data:api_remote_content.Data) => {
                 if (data.type == "DataSet") {

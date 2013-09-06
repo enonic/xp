@@ -5,8 +5,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.json.system.SystemInfoJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.util.model.SystemInfoJson;
 import com.enonic.wem.api.Version;
 
 @Path("util/system_info")

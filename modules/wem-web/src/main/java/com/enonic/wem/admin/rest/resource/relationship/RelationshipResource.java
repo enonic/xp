@@ -10,10 +10,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.relationship.model.CreateRelationshipJson;
-import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipCreateParams;
-import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipListJson;
-import com.enonic.wem.admin.rest.resource.relationship.model.RelationshipUpdateParams;
+import com.enonic.wem.admin.rest.resource.relationship.json.CreateRelationshipJson;
+import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipCreateParams;
+import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipListJson;
+import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipUpdateParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.relationship.CreateRelationship;
 import com.enonic.wem.api.command.relationship.GetRelationships;

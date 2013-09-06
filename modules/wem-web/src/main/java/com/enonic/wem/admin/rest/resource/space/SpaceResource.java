@@ -17,10 +17,10 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.sun.jersey.api.NotFoundException;
 
+import com.enonic.wem.admin.json.space.SpaceJson;
+import com.enonic.wem.admin.json.space.SpaceSummaryListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.space.exception.DuplicatedSpaceException;
-import com.enonic.wem.admin.rest.resource.space.model.SpaceJson;
-import com.enonic.wem.admin.rest.resource.space.model.SpaceSummaryListJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;

@@ -159,13 +159,24 @@
 ///<reference path='facet/FacetContainer.ts' />
 
 
+///<reference path='data/json/DataJson.ts' />
+///<reference path='data/json/DataSetJson.ts' />
+///<reference path='data/json/PropertyJson.ts' />
 ///<reference path='data/DataId.ts' />
 ///<reference path='data/Data.ts' />
 ///<reference path='data/DataSet.ts' />
 ///<reference path='data/Property.ts' />
+///<reference path='data/DataFactory.ts' />
 
+///<reference path='item/ItemJson.ts' />
+
+///<reference path='content/json/ContentSummaryJson.ts' />
+///<reference path='content/json/ContentJson.ts' />
 ///<reference path='content/ContentPath.ts' />
-///<reference path='content/data/ContentData.ts' />
+///<reference path='content/ContentSummary.ts' />
+///<reference path='content/ContentData.ts' />
+///<reference path='content/ContentDataFactory.ts' />
+///<reference path='content/Content.ts' />
 
 ///<reference path='schema/content/form/InputTypeName.ts' />
 ///<reference path='schema/content/form/FormItem.ts' />

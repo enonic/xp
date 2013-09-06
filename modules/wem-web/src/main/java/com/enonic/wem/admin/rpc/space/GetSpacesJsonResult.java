@@ -5,7 +5,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.admin.rest.resource.space.model.SpaceJson;
+import com.enonic.wem.admin.json.space.SpaceJson;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.Spaces;
 

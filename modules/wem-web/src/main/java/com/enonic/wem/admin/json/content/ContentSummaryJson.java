@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.content;
 
-import com.enonic.wem.admin.rest.resource.DateTimeFormatter;
+import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.api.content.Content;
 
