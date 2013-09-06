@@ -117,7 +117,7 @@ module app_wizard {
 
             console.log("ContentWizardPanel.renderExisting contentData: ", content.data);
 
-            var contentData:api_content_data.ContentData = app_wizard.ContentDataFactory.createContentData(content.data);
+            var contentData:api_content.ContentData = app_wizard.ContentDataFactory.createContentData(content.data);
 
             this.contentForm.renderExisting(contentData);
         }

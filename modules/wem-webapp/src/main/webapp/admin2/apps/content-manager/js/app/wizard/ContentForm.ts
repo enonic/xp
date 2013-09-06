@@ -17,12 +17,12 @@ module app_wizard {
             this.layout(null);
         }
 
-        renderExisting(contentData:api_content_data.ContentData) {
+        renderExisting(contentData:api_content.ContentData) {
             this.removeChildren();
             this.layout(contentData);
         }
 
-        private layout(contentData?:api_content_data.ContentData) {
+        private layout(contentData?:api_content.ContentData) {
 
             this.formView = new app_wizard_form.FormView(this.form, contentData);
             this.appendChild(this.formView)

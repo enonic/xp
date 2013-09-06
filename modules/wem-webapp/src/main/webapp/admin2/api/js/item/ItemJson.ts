@@ -1,4 +1,4 @@
-module api_data{
+module api_item{
 
     export interface ItemJson {
 

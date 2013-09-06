@@ -4,11 +4,11 @@ module app_wizard_form {
 
         private form:api_schema_content_form.Form;
 
-        private contentData:api_content_data.ContentData;
+        private contentData:api_content.ContentData;
 
         private formItemViews:FormItemView[] = [];
 
-        constructor(form:api_schema_content_form.Form, contentData?:api_content_data.ContentData) {
+        constructor(form:api_schema_content_form.Form, contentData?:api_content.ContentData) {
             super("FormView");
             this.form = form;
             this.contentData = contentData;
@@ -18,7 +18,7 @@ module app_wizard_form {
         private layout() {
 
             if (this.contentData == null) {
-                this.contentData = new api_content_data.ContentData();
+                this.contentData = new api_content.ContentData();
 
                 this.form.getFormItems().forEach((formItem:api_schema_content_form.FormItem) => {
                     if (formItem instanceof api_schema_content_form.FormItemSet) {
@@ -60,12 +60,12 @@ module app_wizard_form {
 
         }
 
-        getContentData():api_content_data.ContentData {
+        getContentData():api_content.ContentData {
             return this.contentData;
         }
 
-        rebuildContentData():api_content_data.ContentData {
-            var contentData:api_content_data.ContentData = new api_content_data.ContentData();
+        rebuildContentData():api_content.ContentData {
+            var contentData:api_content.ContentData = new api_content.ContentData();
             this.formItemViews.forEach((formItemContainer:FormItemView) => {
 
                 formItemContainer.getData().forEach((data:api_data.Data) => {

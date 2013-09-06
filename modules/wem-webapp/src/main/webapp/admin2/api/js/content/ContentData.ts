@@ -1,4 +1,4 @@
-module api_content_data{
+module api_content{
 
     export class ContentData extends api_data.DataSet {
 
