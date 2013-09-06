@@ -39,7 +39,7 @@ module LiveEdit.component {
         private registerGlobalListeners():void {
             $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.observe(component));
             $(window).on('deselectComponent.liveEdit', () => this.disconnect());
-            //$(window).on('editParagraphComponent.liveEdit', () => this.hide());
+            $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component) => this.observe(component));
         }
 
     }
