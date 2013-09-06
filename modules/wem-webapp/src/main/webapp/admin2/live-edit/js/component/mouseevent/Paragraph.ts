@@ -72,8 +72,10 @@ module LiveEdit.component.mouseevent {
         }
 
         setSelectMode(event:JQueryEventObject):void {
-            this.selectedParagraph.getElement().css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
 
+            console.log('Paragraph select mode');
+
+            this.selectedParagraph.getElement().css('cursor', 'url(../../../admin2/live-edit/images/pencil.png) 0 40, text');
             this.currentMode = this.modes.SELECTED;
 
             // Make sure Chrome does not selects the text on context click
@@ -86,12 +88,17 @@ module LiveEdit.component.mouseevent {
                 y: event.pageY
             };
 
+            LiveEdit.Selection.clearSelection();
+            LiveEdit.Selection.setSelectionOnElement(this.selectedParagraph.getElement());
+
             $(window).trigger('selectComponent.liveEdit', [this.selectedParagraph, pagePosition]);
             $(window).trigger('selectParagraphComponent.liveEdit', [this.selectedParagraph]);
         }
 
         setEditMode():void {
-            console.log('edit mode');
+
+            console.log('Paragraph edit mode');
+
             var paragraphComponent = this.selectedParagraph;
 
             $(window).trigger('editParagraphComponent.liveEdit', [this.selectedParagraph]);
@@ -103,6 +110,9 @@ module LiveEdit.component.mouseevent {
         }
 
         leaveEditMode():void {
+
+            console.log('Paragraph leave edit mode');
+
             var paragraphComponent = this.selectedParagraph;
             if (paragraphComponent === null) {
                 return;
@@ -114,6 +124,9 @@ module LiveEdit.component.mouseevent {
             this.selectedParagraph = null;
 
             this.currentMode = this.modes.UNSELECTED;
+
+            LiveEdit.Selection.clearSelection();
+
         }
     }
 }
