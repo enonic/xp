@@ -18,10 +18,6 @@ Ext.define('Admin.view.contentManager.contextwindow.TitleBar', {
 
     toggleButton: undefined,
 
-    currentWindowHeight: undefined,
-
-    isCollapsed: false,
-
     initComponent: function () {
         var me = this,
             contextWindow = me.contextWindow;
@@ -93,43 +89,23 @@ Ext.define('Admin.view.contentManager.contextwindow.TitleBar', {
             listeners: {
                 render: function (cmp) {
                     cmp.getEl().on('click', function () {
-                        if (me.isCollapsed) {
-                            // fixme: is there a simpler way to toggle classes?
-                            cmp.getEl().addCls('icon-chevron-down').removeCls('icon-chevron-up');
-                        } else {
-                            cmp.getEl().addCls('icon-chevron-up').removeCls('icon-chevron-down');
-                        }
-                        me.toggleExpandCollapseWindow();
+                        me.contextWindow.toggleExpandCollapseWindow();
                     });
                 }
             }
         });
     },
 
-    setTitleText: function (text) {
-        this.titleText.getEl().setHTML(text);
+    setExpandIcon: function () {
+        this.toggleButton.getEl().addCls('icon-chevron-down').removeCls('icon-chevron-up');
     },
 
-    toggleExpandCollapseWindow: function () {
-        if (this.isCollapsed) {
-            this.contextWindow.animate({
-                duration: 200,
-                to: {
-                    height: this.currentWindowHeight
-                }
-            });
-            this.isCollapsed = false;
-        } else {
-            this.contextWindow.animate({
-                duration: 200,
-                to: {
-                    height: this.height
-                }
-            });
+    setCollapseIcon: function () {
+        this.toggleButton.getEl().addCls('icon-chevron-up').removeCls('icon-chevron-down');
+    },
 
-            // this.currentWindowHeight = this.height;
-            this.isCollapsed = true;
-        }
+    setTitleText: function (text) {
+        this.titleText.getEl().setHTML(text);
     },
 
     addMenuItem: function (text, callback) {

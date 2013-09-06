@@ -28,6 +28,8 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     TITLE_BAR_HEIGHT: 32,
 
+    isCollapsed: false,
+
     titleBar: undefined,
 
     listContainer: undefined,
@@ -46,12 +48,12 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
 
     liveEditIFrameDom: undefined, // Passed as constructor config
 
+
     initComponent: function () {
         var me = this;
         this.titleBar = new Admin.view.contentManager.contextwindow.TitleBar({
             height: this.TITLE_BAR_HEIGHT,
-            contextWindow: this,
-            currentWindowHeight: this.height
+            contextWindow: this
         });
 
         this.listContainer = this.createListContainer();
@@ -71,13 +73,17 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.enableWindowResize();
         this.bindLiveEditEventListeners();
 
+        /*
         this.addListener('resize', function () {
             me.resizeContainerHeights();
         });
+        */
 
         this.addListener('afterrender', function () {
             me.loadList('Admin.view.contentManager.contextwindow.list.ComponentTypeList');
         });
+
+        this.currentWindowHeight = this.height;
 
         this.callParent(arguments);
     },
@@ -191,11 +197,42 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                 },
                 resize: function () {
                     me.showHideIFrameMask(false)
+                    me.currentWindowHeight = me.getHeight()
+
                 }
             }
         };
     },
 
+    expandWindow: function () {
+        this.animate({
+            duration: 200,
+            to: {
+                height: this.currentWindowHeight
+            }
+        });
+        this.titleBar.setExpandIcon();
+        this.isCollapsed = false;
+    },
+
+    collapseWindow: function () {
+        this.animate({
+            duration: 200,
+            to: {
+                height: this.TITLE_BAR_HEIGHT
+            }
+        });
+        this.titleBar.setCollapseIcon();
+        this.isCollapsed = true;
+    },
+
+    toggleExpandCollapseWindow: function () {
+        if (this.isCollapsed) {
+            this.expandWindow();
+        } else {
+            this.collapseWindow();
+        }
+    },
     resizeContainerHeights: function () {
         /*
         var containers = this.items.items,
@@ -237,6 +274,8 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
     onSelectComponent: function (component) {
         var me = this,
             componentType = component.getComponentType();
+
+        this.expandWindow();
 
         if (component.isEmpty()) {
             me.displayContainer(me.containers.LIST);
