@@ -11,67 +11,72 @@
             "form": [
                 {
                     "customText": null,
+                    "formItemType": "Input",
                     "helpText": null,
                     "immutable": false,
                     "indexed": false,
+                    "inputType": {
+                        "builtIn": true,
+                        "config": null,
+                        "name": "TextLine"
+                    },
                     "label": "My text line",
                     "name": "myTextLine",
                     "occurrences": {
                         "maximum": 1,
                         "minimum": 1
                     },
-                    "type": {
-                        "builtIn": true,
-                        "config": null,
-                        "name": "TextLine"
-                    },
                     "validationRegexp": null
                 },
                 {
+                    "formItemType": "Layout",
                     "items": [
                         {
                             "customText": null,
+                            "formItemType": "Input",
                             "helpText": null,
                             "immutable": false,
                             "indexed": false,
+                            "inputType": {
+                                "builtIn": true,
+                                "config": null,
+                                "name": "TextLine"
+                            },
                             "label": "My text line",
                             "name": "myTextLine",
                             "occurrences": {
                                 "maximum": 1,
                                 "minimum": 0
-                            },
-                            "type": {
-                                "builtIn": true,
-                                "config": null,
-                                "name": "TextLine"
                             },
                             "validationRegexp": null
                         }
                     ],
                     "label": "My field set",
-                    "name": "myFieldSet",
-                    "type": "FieldSet"
+                    "layoutType": "FieldSet",
+                    "name": "myFieldSet"
                 },
                 {
                     "customText": null,
+                    "formItemType": "FormItemSet",
                     "helpText": null,
                     "immutable": false,
                     "items": [
                         {
                             "customText": null,
+                            "formItemType": "Input",
                             "helpText": null,
                             "immutable": false,
                             "indexed": false,
+                            "inputType": {
+                                "builtIn": true,
+                                "config": null,
+                                "name": "TextLine"
+                            },
                             "label": "My text line",
                             "name": "myTextLine",
                             "occurrences": {
                                 "maximum": 1,
                                 "minimum": 0
-                            },
-                            "type": {
-                                "builtIn": true,
-                                "config": null,
-                                "name": "TextLine"
                             },
                             "validationRegexp": null
                         }
@@ -84,6 +89,7 @@
                     }
                 },
                 {
+                    "formItemType": "MixinReference",
                     "name": "myMixinReference",
                     "reference": "mymodule:mymixin",
                     "type": "Input"

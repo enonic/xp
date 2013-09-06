@@ -11,19 +11,20 @@
             "form": [
                 {
                     "customText": null,
+                    "formItemType": "Input",
                     "helpText": null,
                     "immutable": false,
                     "indexed": false,
+                    "inputType": {
+                        "builtIn": true,
+                        "config": null,
+                        "name": "TextLine"
+                    },
                     "label": "My text line",
                     "name": "myTextLine",
                     "occurrences": {
                         "maximum": 1,
                         "minimum": 1
-                    },
-                    "type": {
-                        "builtIn": true,
-                        "config": null,
-                        "name": "TextLine"
                     },
                     "validationRegexp": null
                 }

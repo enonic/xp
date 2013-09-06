@@ -15,6 +15,7 @@ public class InputJson
 
     public InputJson( final Input input )
     {
+        super( input );
         this.input = input;
 
         this.occurrences = new OccurrencesJson( input.getOccurrences() );
@@ -25,11 +26,6 @@ public class InputJson
         {
             this.inputType.setConfig( input.getInputTypeConfig() );
         }
-    }
-
-    public String getName()
-    {
-        return input.getName();
     }
 
     public String getLabel()
@@ -67,7 +63,7 @@ public class InputJson
         return occurrences;
     }
 
-    public InputTypeJson getType()
+    public InputTypeJson getInputType()
     {
         return this.inputType;
     }

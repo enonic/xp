@@ -8,19 +8,20 @@
             "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1",
             "input": {
                 "customText": null,
+                "formItemType": "Input",
                 "helpText": "Help text line 1",
                 "immutable": false,
                 "indexed": false,
+                "inputType": {
+                    "builtIn": true,
+                    "config": null,
+                    "name": "TextLine"
+                },
                 "label": "Line Text 1",
                 "name": "input_text1",
                 "occurrences": {
                     "maximum": 1,
                     "minimum": 1
-                },
-                "type": {
-                    "builtIn": true,
-                    "config": null,
-                    "name": "TextLine"
                 },
                 "validationRegexp": null
             },
@@ -37,19 +38,20 @@
             "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:othermodule:text_area_1",
             "input": {
                 "customText": null,
+                "formItemType": "Input",
                 "helpText": "Help text area",
                 "immutable": false,
                 "indexed": false,
+                "inputType": {
+                    "builtIn": true,
+                    "config": null,
+                    "name": "TextArea"
+                },
                 "label": "Text Area",
                 "name": "text_area_1",
                 "occurrences": {
                     "maximum": 1,
                     "minimum": 1
-                },
-                "type": {
-                    "builtIn": true,
-                    "config": null,
-                    "name": "TextArea"
                 },
                 "validationRegexp": null
             },
