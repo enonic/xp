@@ -9,8 +9,6 @@ module LiveEdit.component.mouseevent {
 
             this.componentCssSelectorFilter = LiveEdit.component.Configuration[LiveEdit.component.Type.PAGE].cssSelector;
 
-            // Only attach click event.
-            // Page should not have hover/out event
             this.attachClickEvent();
         }
     }

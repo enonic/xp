@@ -1,6 +1,5 @@
 // Globals
 declare var $liveEdit;
-declare var LiveEditMutationSummary;
 
 ///<reference path='../lib/jquery-1.8.3.d.ts' />
 ///<reference path='../lib/jqueryui.d.ts' />
@@ -13,6 +12,7 @@ declare var LiveEditMutationSummary;
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
 ///<reference path='component/ComponentInserter.ts' />
+///<reference path='component/ComponentResizeObserver.ts' />
 
 ///<reference path='component/mouseevent/Base.ts' />
 ///<reference path='component/mouseevent/Page.ts' />
@@ -43,8 +43,6 @@ declare var LiveEditMutationSummary;
 ///<reference path='ui/contextmenu/menuitem/ViewMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/RemoveMenuItem.ts' />
 
-///<reference path='shared/MutationObserver.ts' />
-
 ///<reference path='ui/DragDropSort.ts' />
 
 (function ($) {
@@ -64,6 +62,8 @@ declare var LiveEditMutationSummary;
             new LiveEdit.component.mouseevent.Paragraph();
             new LiveEdit.component.mouseevent.Content();
 
+            new LiveEdit.component.ComponentResizeObserver();
+
             // new LiveEdit.ui.HtmlElementReplacer();
             new LiveEdit.ui.Highlighter();
             new LiveEdit.ui.ToolTip();
@@ -71,7 +71,6 @@ declare var LiveEditMutationSummary;
             new LiveEdit.ui.contextmenu.ContextMenu();
             new LiveEdit.ui.Shader();
             new LiveEdit.ui.Editor();
-            new LiveEdit.MutationObserver();
 
             LiveEdit.DragDropSort.init();
 

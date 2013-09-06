@@ -28,20 +28,6 @@ module LiveEdit.component {
 
                 $(window).trigger('sortableUpdate.liveEdit');
 
-                /*
-                var mutationSummary = new LiveEditMutationSummary({
-                    callback: (summaries:any) => {
-                        LiveEdit.Selection.setSelectionOnElement(responseHtmlAsElement);
-                        $(window).trigger('selectComponent.liveEdit', [new LiveEdit.component.Component(responseHtmlAsElement)]);
-                    },
-                    rootNode: responseHtmlAsElement[0].parentNode,
-                    queries: [
-                        { all: true}
-                    ]
-                });
-                */
-
-
                 // It seems like it is not possible to add new sortables (region in layout) to the existing sortable
                 // So we have to create it again.
                 // Ideally we should destroy the existing sortable first before creating.
