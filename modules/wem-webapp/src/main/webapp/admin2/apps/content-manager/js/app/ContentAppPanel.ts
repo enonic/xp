@@ -112,6 +112,15 @@ module app {
                     this.selectPanel(tabMenuItem);
 
                 } else {
+
+                    // TODO: Only testing
+                    new api_content.GetContentByIdRequest(contentModel.data.id).
+                        setAsync((response:api_rest.JsonResponse) => {
+                            console.log("GetContentByIdRequest async response: ", response.getJson());
+                        },(requestError:api_rest.RequestError) => {
+                            console.log("GetContentByIdRequest async error: ", requestError.getStatusText());
+                        }).send();
+
                     api_remote_content.RemoteContentService.content_get({
                             contentIds: [contentModel.data.id]
                         },
