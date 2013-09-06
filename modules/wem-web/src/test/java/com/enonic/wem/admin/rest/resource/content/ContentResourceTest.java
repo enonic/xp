@@ -16,11 +16,16 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContents;
+import com.enonic.wem.api.command.content.RenameContent;
+import com.enonic.wem.api.command.content.UpdateContent;
+import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.space.GetSpaces;
@@ -28,7 +33,9 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.data.Property;
@@ -253,6 +260,123 @@ public class ContentResourceTest
             post( String.class );
 
         assertJson( "delete_content_both.json", jsonString );
+    }
+
+    @Test
+    public void create_content_exception()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+
+        CreateContent command = new CreateContent().displayName( "Content One" ).parentContentPath( ContentPath.from( "parent-path" ) );
+        Exception e = new Exception( "Exception occured." );
+
+        Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenThrow( new CreateContentException( command, e ) );
+
+        String jsonString = resource().path( "content/create" ).
+            entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "create_content_exception.json", jsonString );
+    }
+
+    @Test
+    public void create_content_success()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+
+        ContentId contentId = ContentId.from( "content-id" );
+        ContentPath parentPath = ContentPath.from( "parent-path" );
+        ContentPath contentPath = ContentPath.from( parentPath, "content-path" );
+        CreateContentResult result = new CreateContentResult( contentId, contentPath );
+
+        Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenReturn( result );
+
+        String jsonString = resource().path( "content/create" ).
+            entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "create_content_success.json", jsonString );
+    }
+
+    @Test
+    public void update_content_exception()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+
+        UpdateContent command = new UpdateContent().selector( ContentId.from( "content-id" ) );
+        Exception e = new Exception( "Exception occured." );
+
+        Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenThrow( new UpdateContentException( command, e ) );
+
+        String jsonString = resource().path( "content/update" ).
+            entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        Mockito.verify( client, Mockito.never() ).execute( Mockito.isA( RenameContent.class ) );
+
+        assertJson( "update_content_exception.json", jsonString );
+    }
+
+    @Test
+    public void update_content_failure()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+
+        Exception e = new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ) );
+
+        Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( UpdateContentResult.from( e ) );
+
+        String jsonString = resource().path( "content/update" ).
+            entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        Mockito.verify( client, Mockito.never() ).execute( Mockito.isA( RenameContent.class ) );
+
+        assertJson( "update_content_failure.json", jsonString );
+    }
+
+    @Test
+    public void update_content_nothing_updated()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+
+        Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( null );
+
+        String jsonString = resource().path( "content/update" ).
+            entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( RenameContent.class ) );
+
+        assertJson( "update_content_nothing_updated.json", jsonString );
+    }
+
+    @Test
+    public void update_content_success()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+
+        Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( UpdateContentResult.SUCCESS );
+
+        String jsonString = resource().path( "content/update" ).
+            entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( RenameContent.class ) );
+
+        assertJson( "update_content_success.json", jsonString );
     }
 
     @Override

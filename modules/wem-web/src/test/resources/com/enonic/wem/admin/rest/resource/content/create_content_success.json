@@ -1,0 +1,6 @@
+{
+    "contentId" : "content-id",
+    "contentPath" : "/parent-path/content-path",
+    "created" : true,
+    "failure" : null
+}

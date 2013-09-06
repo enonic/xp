@@ -88,6 +88,7 @@ public class UpdateContentHandler
             final List<Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent );
 
             Content edited = command.getEditor().edit( persistedContent );
+            //TODO: the result is null if nothing was edited, but should be SUCCESS ?
             if ( edited != null )
             {
                 persistedContent.checkIllegalEdit( edited );
@@ -162,6 +163,7 @@ public class UpdateContentHandler
         }
         catch ( ContentNotFoundException | IllegalEditException e )
         {
+            // TODO: exceptions swallowed, but why not bubble UpdateContentException up instead ?
             command.setResult( UpdateContentResult.from( e ) );
         }
         catch ( Exception e )

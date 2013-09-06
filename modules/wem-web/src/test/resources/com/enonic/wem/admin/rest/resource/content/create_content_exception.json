@@ -1,0 +1,6 @@
+{
+    "contentId" : null,
+    "contentPath" : null,
+    "created" : false,
+    "failure" : "Failed to create content [Content One] at path [/parent-path]: Exception occured."
+}
