@@ -275,8 +275,6 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         var me = this,
             componentType = component.getComponentType();
 
-        this.expandWindow();
-
         if (component.isEmpty()) {
             me.displayContainer(me.containers.LIST);
             me.loadList('Admin.view.contentManager.contextwindow.list.ComponentList', componentType);
