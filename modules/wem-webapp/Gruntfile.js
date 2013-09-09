@@ -98,7 +98,7 @@ module.exports = function (grunt) {
     grunt.registerTask('all', ['ts']);
     grunt.registerTask('live_edit_build_all',
         [
-            'typescript:live_edit',
+            'ts:live_edit',
             'sass:live_edit',
             'cssmin:live_edit'
         ]
