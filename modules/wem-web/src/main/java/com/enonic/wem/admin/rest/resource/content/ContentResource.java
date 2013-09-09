@@ -100,12 +100,21 @@ public class ContentResource
     @Path("list")
     public ContentSummaryListJson list( @QueryParam("path") String path )
     {
-        final ContentPath parentPath = ContentPath.from( path );
+        final Contents contents;
+        if ( StringUtils.isEmpty( path ) )
+        {
+            contents = client.execute( Commands.content().getRoot() );
 
-        final GetChildContent getChildContent = Commands.content().getChildren();
-        getChildContent.parentPath( parentPath );
+        }
+        else
+        {
+            final ContentPath parentPath = ContentPath.from( path );
 
-        final Contents contents = client.execute( getChildContent );
+            final GetChildContent getChildContent = Commands.content().getChildren();
+            getChildContent.parentPath( parentPath );
+
+            contents = client.execute( getChildContent );
+        }
         return new ContentSummaryListJson( contents );
     }
 
