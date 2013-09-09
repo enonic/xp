@@ -34,10 +34,11 @@ module LiveEdit.ui {
             this.appendTo($('body'));
         }
 
-        private  setText(componentType:string, componentName:string):void {
-            var $tooltip = this.getEl();
-            $tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
-            $tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
+        private setText(componentType:string, componentName:string):void {
+            var tooltip:JQuery = this.getEl();
+
+            tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
+            tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
         }
 
         private attachEventListeners():void {
@@ -58,13 +59,12 @@ module LiveEdit.ui {
 
             });
 
-            $(document).on('hover', '[data-live-edit-type]', (event) => {
-                if (event.type === 'mouseenter') {
-                    var component:LiveEdit.component.Component = new LiveEdit.component.Component($(event.target).closest('[data-live-edit-type]'));
-                    this.setText(component.getComponentType().getName(), component.getName());
+            $(document).on('mouseenter', '[data-live-edit-type]', (event) => {
+                var component:LiveEdit.component.Component = new LiveEdit.component.Component($(event.target).closest('[data-live-edit-type]'));
 
-                    this.getEl().hide(null).fadeIn(300);
-                }
+                this.setText(component.getComponentType().getName(), component.getName());
+
+                this.getEl().hide(null).fadeIn(300);
             });
 
             $(document).on('mouseout', () => this.hide());
