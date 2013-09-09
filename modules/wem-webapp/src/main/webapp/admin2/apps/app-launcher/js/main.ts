@@ -42,7 +42,7 @@ Ext.application({
 
     launch: function () {
         var userLoggedIn = isUserLoggedIn();
-        var mainContainer = new app_view.HomeMainContainerPanel('/admin/rest/ui/background.jpg');
+        var mainContainer = new app_view.HomeMainContainerPanel(api_util.getAbsoluteUri('admin/rest/ui/background.jpg'));
         var appLauncher = new app_view.AppLauncher(mainContainer);
 
         var homeBrandingPanel = mainContainer.getBrandingPanel();
