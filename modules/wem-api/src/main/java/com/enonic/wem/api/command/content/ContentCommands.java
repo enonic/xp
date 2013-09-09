@@ -23,6 +23,11 @@ public final class ContentCommands
         return new GetContents();
     }
 
+    public GetRootContent getRoot()
+    {
+        return new GetRootContent();
+    }
+
     public GetChildContent getChildren()
     {
         return new GetChildContent();

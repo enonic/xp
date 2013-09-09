@@ -23,6 +23,7 @@ import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContents;
+import com.enonic.wem.api.command.content.GetRootContent;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
@@ -103,6 +104,19 @@ public class ContentResourceTest
         String jsonString = resource().path( "content" ).queryParam( "path", "/my_a_content" ).get( String.class );
 
         assertJson( "get_content_by_path.json", jsonString );
+    }
+
+    @Test
+    public void get_root_content()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetRootContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        String jsonString = resource().path( "content/list" ).get( String.class );
+
+        assertJson( "list_content.json", jsonString );
     }
 
     @Test
