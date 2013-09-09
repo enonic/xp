@@ -38,15 +38,15 @@ module LiveEdit {
             var regionComponent:LiveEdit.component.Component;
             var regionIsEmpty:Boolean;
 
-            removeAllRegionPlaceholders();
+            this.removeAllRegionPlaceholders();
 
             allRegionElements.each((i) => {
                 region = $(allRegionElements[i]);
-                regionIsEmpty = isRegionEmpty(region);
+                regionIsEmpty = this.isRegionEmpty(region);
                 if (regionIsEmpty) {
                     regionComponent = new LiveEdit.component.Component(region);
 
-                    region.append(createEmptyRegionPlaceholder(regionComponent));
+                    region.append(this.createEmptyRegionPlaceholder(regionComponent));
                 }
             });
         }

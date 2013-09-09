@@ -1,13 +1,14 @@
 module LiveEdit {
+
+    // Uses
+    var $ = $liveEdit;
+
+    var ATTRIBUTE_NAME:string = 'data-live-edit-selected';
+
     export class Selection {
 
-        // Uses
-        static $ = $liveEdit;
-
-        private static ATTRIBUTE_NAME = 'data-live-edit-selected';
-
         public static setSelectionOnElement(element:JQuery):void {
-            clearSelection();
+            this.clearSelection();
             element.attr(ATTRIBUTE_NAME, 'true');
         }
 
@@ -20,7 +21,7 @@ module LiveEdit {
             }
         }
 
-        public static pageHasSelectedElements():bool {
+        public static pageHasSelectedElements():boolean {
             return $('[' + ATTRIBUTE_NAME + ']').length > 0;
         }
 

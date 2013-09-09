@@ -69,11 +69,11 @@ module LiveEdit.component {
             return this.componentType;
         }
 
-        isEmpty():bool {
+        isEmpty():boolean {
             return this.getElement().attr('data-live-edit-empty-component') == 'true';
         }
 
-        isSelected():bool {
+        isSelected():boolean {
             return this.getElement().attr('data-live-edit-selected') == 'true';
         }
 

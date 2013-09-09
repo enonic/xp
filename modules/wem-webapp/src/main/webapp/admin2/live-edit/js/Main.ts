@@ -1,7 +1,6 @@
 // Globals
-declare var $liveEdit;
 
-///<reference path='../lib/jquery-1.8.3.d.ts' />
+///<reference path='../lib/jquery.d.ts' />
 ///<reference path='../lib/jqueryui.d.ts' />
 
 ///<reference path='shared/DomHelper.ts' />
@@ -44,6 +43,8 @@ declare var $liveEdit;
 ///<reference path='ui/contextmenu/menuitem/RemoveMenuItem.ts' />
 
 ///<reference path='ui/DragDropSort.ts' />
+
+declare var $liveEdit;
 
 (function ($) {
     'use strict';

@@ -26,7 +26,7 @@ module LiveEdit.DragDropSort {
 
     var SORTABLE_ITEMS_SELECTOR = LAYOUT_SELECTOR + ',' + PART_SELECTOR + ',' + PARAGRAPH_SELECTOR + ',' + IMAGE_SELECTOR;
 
-    var _isDragging:bool = false;
+    var _isDragging:boolean = false;
 
 
     // fixme: can this be shared with live edit Context Window/Components.js ?
@@ -48,7 +48,7 @@ module LiveEdit.DragDropSort {
         this.registerGlobalListeners();
     }
 
-    export function isDragging():bool {
+    export function isDragging():boolean {
         return _isDragging;
     }
 
@@ -219,8 +219,8 @@ module LiveEdit.DragDropSort {
         }
     }
 
-    export function isItemDraggedFromContextWindow(item:JQuery):Boolean {
-        var isDraggedFromContextWindow:bool = item.data('context-window-draggable');
+    export function isItemDraggedFromContextWindow(item:JQuery):boolean {
+        var isDraggedFromContextWindow:boolean = item.data('context-window-draggable');
         return isDraggedFromContextWindow != undefined && isDraggedFromContextWindow == true;
     }
 

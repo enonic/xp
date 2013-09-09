@@ -48,7 +48,7 @@ module LiveEdit.component.mouseevent {
                 event.preventDefault();
 
                 var component = new LiveEdit.component.Component($(event.currentTarget)),
-                    deselectComponent:bool = component.isSelected() || LiveEdit.Selection.pageHasSelectedElements();
+                    deselectComponent:boolean = component.isSelected() || LiveEdit.Selection.pageHasSelectedElements();
 
                 // Toggle select/deselect
                 if (deselectComponent) {
@@ -74,12 +74,12 @@ module LiveEdit.component.mouseevent {
             return $(this.componentCssSelectorFilter);
         }
 
-        cancelMouseOverEvent(event:JQueryEventObject):Boolean {
+        cancelMouseOverEvent(event:JQueryEventObject):boolean {
             return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.Selection.pageHasSelectedElements() ||
                    LiveEdit.DragDropSort.isDragging();
         }
 
-        private targetIsLiveEditUiComponent(target:JQuery):Boolean {
+        private targetIsLiveEditUiComponent(target:JQuery):boolean {
             return target.is('[id*=live-edit-ui-cmp]') || target.parents('[id*=live-edit-ui-cmp]').length > 0;
         }
 
