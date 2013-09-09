@@ -100,7 +100,12 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
                     root: 'components'
                 }
             },
-            autoLoad: true
+            autoLoad: true,
+            listeners: {
+                load: function () {
+                    me.initComponentDraggables();
+                }
+            }
         });
 
         var templates = new Ext.XTemplate(
@@ -140,7 +145,6 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
             listeners: {
                 render: function () {
                     me.bindLiveEditEventListeners();
-                    me.initComponentDraggables();
                 }
             }
         });
@@ -169,6 +173,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
     cursorAt: {left: -10, top: -15},
 
     initComponentDraggables: function () {
+
         var me = this,
             components = $('[data-context-window-draggable="true"]');
 
