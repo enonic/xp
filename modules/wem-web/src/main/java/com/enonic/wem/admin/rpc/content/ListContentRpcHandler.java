@@ -21,12 +21,21 @@ public final class ListContentRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final ContentPath parentPath = ContentPath.from( context.param( "path" ).required().asString() );
+        final Contents contents;
 
-        final GetChildContent getChildContent = Commands.content().getChildren();
-        getChildContent.parentPath( parentPath );
+        if ( context.param( "path" ).isNull() )
+        {
+            contents = client.execute( Commands.content().getRoot() );
+        }
+        else
+        {
+            final ContentPath parentPath = ContentPath.from( context.param( "path" ).required().asString() );
 
-        final Contents contents = client.execute( getChildContent );
+            final GetChildContent getChildContent = Commands.content().getChildren();
+            getChildContent.parentPath( parentPath );
+
+            contents = client.execute( getChildContent );
+        }
         context.setResult( new ListContentJsonResult( contents ) );
     }
 }
