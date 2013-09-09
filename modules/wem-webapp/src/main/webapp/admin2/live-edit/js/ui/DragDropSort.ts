@@ -159,7 +159,7 @@ module LiveEdit.DragDropSort {
     }
 
     export function handleDragOut(event:JQueryEventObject, ui):void {
-        if (this.targetIsPlaceholder($(event.srcElement))) {
+        if (this.targetIsPlaceholder($(event.target))) {
             this.removePaddingFromLayoutComponent();
         }
         this.setHelperStatusIcon('no');
