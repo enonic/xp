@@ -9,7 +9,7 @@ module app_wizard_form {
 
             this.formItemSet = formItemSet;
 
-            this.getEl().setInnerHtml(this.formItemSet.getName());
+            this.getEl().setInnerHtml(this.formItemSet.getLabel() + ":");
         }
     }
 }

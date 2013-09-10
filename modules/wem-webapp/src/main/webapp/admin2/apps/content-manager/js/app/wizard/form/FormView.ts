@@ -10,6 +10,7 @@ module app_wizard_form {
 
         constructor(form:api_schema_content_form.Form, contentData?:api_content.ContentData) {
             super("FormView");
+            this.setClass("form-view");
             this.form = form;
             this.contentData = contentData;
             this.layout();

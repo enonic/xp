@@ -18,6 +18,7 @@ module api_schema_content_form{
 
         constructor(formItemSetJson:api_schema_content_form_json.FormItemSetJson) {
             super(formItemSetJson.name);
+            this.label = formItemSetJson.label;
             this.immutable = formItemSetJson.immutable;
             this.occurrences = new Occurrences(formItemSetJson.occurrences);
             this.customText = formItemSetJson.customText;

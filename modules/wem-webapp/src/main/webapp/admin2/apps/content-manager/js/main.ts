@@ -18,6 +18,7 @@
 
 ///<reference path='app/wizard/form/input/Input.ts' />
 ///<reference path='app/wizard/form/input/BaseInput.ts' />
+///<reference path='app/wizard/form/input/NoInputTypeFound.ts' />
 ///<reference path='app/wizard/form/input/TextLine.ts' />
 ///<reference path='app/wizard/form/input/TextArea.ts' />
 ///<reference path='app/wizard/form/input/HtmlArea.ts' />

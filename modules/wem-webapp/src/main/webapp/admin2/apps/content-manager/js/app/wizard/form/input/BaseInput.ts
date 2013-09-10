@@ -7,7 +7,7 @@ module app_wizard_form_input {
         private inputs:api_dom.FormInputEl[];
 
         constructor(idPrefix:string) {
-            super(idPrefix);
+            super(idPrefix, "input");
         }
 
         getHTMLElement():HTMLElement {

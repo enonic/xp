@@ -31,6 +31,8 @@ module app_wizard_form {
             var label = new FormItemSetLabel(this.formItemSet);
             this.appendChild(label);
 
+            var wrappingDiv = new api_dom.DivEl(null, "form-item-set-container");
+            this.appendChild(wrappingDiv);
 
             if (this.dataSets.length == 0) {
                 this.formItemSet.getFormItems().forEach((formItem:api_schema_content_form.FormItem) => {
@@ -38,14 +40,14 @@ module app_wizard_form {
                         var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
                         console.log("FormItemSetView.layout() laying out FormItemSet: ", formItemSet);
                         var formItemSetView = new FormItemSetView(formItemSet);
-                        this.appendChild(formItemSetView);
+                        wrappingDiv.appendChild(formItemSetView);
                         this.formItemViews.push(formItemSetView);
                     }
                     else if (formItem instanceof api_schema_content_form.Input) {
                         var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
                         console.log("FormItemSetView.layout()  laying out Input: ", input);
                         var inputContainerView = new app_wizard_form.InputContainerView(input);
-                        this.appendChild(inputContainerView);
+                        wrappingDiv.appendChild(inputContainerView);
                         this.formItemViews.push(inputContainerView);
                     }
                 });
@@ -58,7 +60,7 @@ module app_wizard_form {
                             console.log("FormItemSetView.layout() laying out FormItemSet: ", formItemSet);
                             var dataSets:api_data.DataSet[] = dataSet.getDataSetsByName(formItemSet.getName());
                             var formItemSetView = new FormItemSetView(formItemSet, dataSets);
-                            this.appendChild(formItemSetView);
+                            wrappingDiv.appendChild(formItemSetView);
                             this.formItemViews.push(formItemSetView);
                         }
                         else if (formItem instanceof api_schema_content_form.Input) {
@@ -66,7 +68,7 @@ module app_wizard_form {
                             console.log("FormItemSetView.layout() laying out Input: ", input);
                             var properties:api_data.Property[] = dataSet.getPropertiesByName(input.getName());
                             var inputContainerView = new app_wizard_form.InputContainerView(input, properties);
-                            this.appendChild(inputContainerView);
+                            wrappingDiv.appendChild(inputContainerView);
                             this.formItemViews.push(inputContainerView);
                         }
                     } );

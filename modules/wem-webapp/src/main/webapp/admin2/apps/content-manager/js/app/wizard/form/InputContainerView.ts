@@ -26,7 +26,7 @@ module app_wizard_form {
             if (inputType.isBuiltIn()) {
                 var newInput = window["app_wizard_form_input"][inputType.getName()];
                 if (newInput == null) {
-                    throw new Error("No built-in component for input type found: " + inputType.getName());
+                    newInput = window["app_wizard_form_input"]["NoInputTypeFound"];
                 }
                 var newInputPrototype = Object.create(newInput.prototype);
                 newInputPrototype.constructor.apply(newInputPrototype);
