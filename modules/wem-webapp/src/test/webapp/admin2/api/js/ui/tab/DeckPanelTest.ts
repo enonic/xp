@@ -69,9 +69,6 @@ TestCase("DeckPanel", {
         deckPanel.addListener(listener2);
         deckPanel.addListener(listener3);
 
-        // verify setup
-        deckPanel.showPanel(1);
-
         // exercise
         deckPanel.removeListener(listener2);
 

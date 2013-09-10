@@ -17,6 +17,7 @@
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/PanelNavigationItem.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/DeckPanelNavigator.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/tab/TabMenuItem.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/tab/TabMenuItemListener.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/tab/TabMenuButton.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/tab/TabMenu.ts' />
 
@@ -72,6 +73,51 @@ TestCase("TabMenu", {
         assertEquals(0, tab1.getIndex());
         assertEquals(1, tab3.getIndex());
         assertEquals(2, tab4.getIndex());
+    },
+
+    "test given TabMenu with selected tab when a tab before selected tab is removed then selected index is reduced by one": function () {
+
+        // setup
+        var tabMenu = new api_ui_tab.TabMenu();
+        var tab1 = new api_ui_tab.TabMenuItem("Tab1");
+        var tab2 = new api_ui_tab.TabMenuItem("Tab2");
+        var tab3 = new api_ui_tab.TabMenuItem("Tab3");
+        var tab4 = new api_ui_tab.TabMenuItem("Tab4");
+        tabMenu.addNavigationItem(tab1);
+        tabMenu.addNavigationItem(tab2);
+        tabMenu.addNavigationItem(tab3);
+        tabMenu.addNavigationItem(tab4);
+        tabMenu.selectNavigationItem(2);
+
+        // verify setup
+        assertEquals(2, tabMenu.getSelectedTabIndex());
+
+        // exercise
+        tabMenu.removeNavigationItem(tab2);
+
+        // verify
+        assertEquals(1, tabMenu.getSelectedTabIndex());
+    },
+
+    "test given TabMenu with selected tab when all tabs are removed then no selected": function () {
+
+        // setup
+        var tabMenu = new api_ui_tab.TabMenu();
+        var tab1 = new api_ui_tab.TabMenuItem("Tab1");
+        var tab2 = new api_ui_tab.TabMenuItem("Tab2");
+        tabMenu.addNavigationItem(tab1);
+        tabMenu.addNavigationItem(tab2);
+        tabMenu.selectNavigationItem(1);
+
+        // verify setup
+        assertEquals(1, tabMenu.getSelectedTabIndex());
+
+        // exercise
+        tabMenu.removeNavigationItem(tab1);
+        tabMenu.removeNavigationItem(tab2);
+
+        // verify
+        assertEquals(-1, tabMenu.getSelectedTabIndex());
     },
 
     "test given TabMenu with three tabs and last tab is selected when last is removed then the second becomes the selected": function () {
