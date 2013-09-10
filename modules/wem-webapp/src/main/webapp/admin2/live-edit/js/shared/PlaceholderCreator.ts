@@ -1,5 +1,8 @@
 module LiveEdit {
 
+    // Uses
+    var $ = $liveEdit;
+
     export class PlaceholderCreator {
 
         /** jQuery Sortable placeholder */
