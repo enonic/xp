@@ -121,9 +121,13 @@
 ///<reference path='ui/menu/ActionMenu.ts' />
 ///<reference path='ui/PanelNavigationItem.ts' />
 ///<reference path='ui/DeckPanelNavigator.ts' />
+///<reference path='ui/tab/TabBar.ts' />
+///<reference path='ui/tab/TabBarListener.ts' />
+///<reference path='ui/tab/TabBarItem.ts' />
 ///<reference path='ui/tab/TabMenu.ts' />
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
+///<reference path='ui/tab/TabMenuItemListener.ts' />
 ///<reference path='ui/NavigatedDeckPanel.ts' />
 
 
@@ -207,7 +211,6 @@
 ///<reference path='app/wizard/WizardHeaderWithName.ts' />
 ///<reference path='app/wizard/WizardStepDeckPanel.ts' />
 ///<reference path='app/wizard/WizardStepNavigator.ts' />
-///<reference path='app/wizard/WizardStepNavigatorListener.ts' />
 ///<reference path='app/wizard/WizardStepNavigationArrow.ts' />
 ///<reference path='app/wizard/WizardStep.ts' />
 ///<reference path='app/wizard/WizardPanelListener.ts' />
