@@ -13,25 +13,32 @@ module app_wizard_form {
             this.setClass("form-view");
             this.form = form;
             this.contentData = contentData;
-            this.layout();
+            this.doLayout();
         }
 
-        private layout() {
+        private doLayout() {
 
             if (this.contentData == null) {
                 this.contentData = new api_content.ContentData();
 
                 this.form.getFormItems().forEach((formItem:api_schema_content_form.FormItem) => {
-                    if (formItem instanceof api_schema_content_form.FormItemSet) {
+                    if (formItem instanceof api_schema_content_form.FieldSet) {
+                        var fieldSet:api_schema_content_form.FieldSet = <api_schema_content_form.FieldSet>formItem;
+                        console.log("FormView.doLayout() laying out FieldSet: ", fieldSet);
+                        var fieldSetView = new FieldSetView(fieldSet);
+                        this.appendChild(fieldSetView);
+                        this.formItemViews.push(fieldSetView);
+                    }
+                    else if (formItem instanceof api_schema_content_form.FormItemSet) {
                         var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
-                        console.log("FormView.layout() laying out FormItemSet: ", formItemSet);
+                        console.log("FormView.doLayout() laying out FormItemSet: ", formItemSet);
                         var formItemSetView = new FormItemSetView(formItemSet);
                         this.appendChild(formItemSetView);
                         this.formItemViews.push(formItemSetView);
                     }
                     else if (formItem instanceof api_schema_content_form.Input) {
                         var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
-                        console.log("FormView.layout() laying out Input: ", input);
+                        console.log("FormView.doLayout() laying out Input: ", input);
                         var inputContainerView = new InputContainerView(input);
                         this.appendChild(inputContainerView);
                         this.formItemViews.push(inputContainerView);
@@ -42,7 +49,7 @@ module app_wizard_form {
                 this.form.getFormItems().forEach((formItem:api_schema_content_form.FormItem) => {
                     if (formItem instanceof api_schema_content_form.FormItemSet) {
                         var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
-                        console.log("FormView.layout() laying out FormItemSet: ", formItemSet);
+                        console.log("FormView.doLayout() laying out FormItemSet: ", formItemSet);
                         var dataSets:api_data.DataSet[] = this.contentData.getDataSetsByName(formItemSet.getName());
                         var formItemSetView = new FormItemSetView(formItemSet, dataSets);
                         this.appendChild(formItemSetView);
@@ -50,7 +57,7 @@ module app_wizard_form {
                     }
                     else if (formItem instanceof api_schema_content_form.Input) {
                         var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
-                        console.log("FormView.layout() laying out Input: ", input);
+                        console.log("FormView.doLayout() laying out Input: ", input);
                         var properties:api_data.Property[] = this.contentData.getPropertiesByName(input.getName());
                         var inputContainerView = new InputContainerView(input, properties);
                         this.appendChild(inputContainerView);

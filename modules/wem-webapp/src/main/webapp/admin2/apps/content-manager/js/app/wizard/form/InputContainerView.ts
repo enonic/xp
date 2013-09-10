@@ -14,10 +14,10 @@ module app_wizard_form {
             this.input = input;
             this.properties = properties != null ? properties : [];
 
-            this.layout();
+            this.doLayout();
         }
 
-        private layout() {
+        private doLayout() {
 
             var label = new InputLabel(this.input);
             this.appendChild(label);

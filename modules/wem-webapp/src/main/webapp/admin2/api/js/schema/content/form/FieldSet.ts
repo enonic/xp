@@ -24,5 +24,9 @@ module api_schema_content_form{
         getLabel():string {
             return this.label;
         }
+
+        getFormItems():FormItem[] {
+            return this.formItems;
+        }
     }
 }

@@ -16,18 +16,8 @@
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentWizardPanel.ts' />
 
-///<reference path='app/wizard/form/input/Input.ts' />
-///<reference path='app/wizard/form/input/BaseInput.ts' />
-///<reference path='app/wizard/form/input/NoInputTypeFound.ts' />
-///<reference path='app/wizard/form/input/TextLine.ts' />
-///<reference path='app/wizard/form/input/TextArea.ts' />
-///<reference path='app/wizard/form/input/HtmlArea.ts' />
-///<reference path='app/wizard/form/FormItemView.ts' />
-///<reference path='app/wizard/form/InputLabel.ts' />
-///<reference path='app/wizard/form/InputContainerView.ts' />
-///<reference path='app/wizard/form/FormItemSetLabel.ts' />
-///<reference path='app/wizard/form/FormItemSetView.ts' />
-///<reference path='app/wizard/form/FormView.ts' />
+///<reference path='app/wizard/form/input/module.ts' />
+///<reference path='app/wizard/form/module.ts' />
 
 
 ///<reference path='app/browse/filter/ContentBrowseFilterEvents.ts' />
