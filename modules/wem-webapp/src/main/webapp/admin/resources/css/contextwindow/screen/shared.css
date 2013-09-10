@@ -10,7 +10,7 @@
     position: relative;
     border-bottom: 1px dashed #3f3f46;
     border-left: 5px solid transparent;
-    padding: 15px 20px;
+    padding: 10px 20px;
 }
 
 .admin-cw-item:hover {
@@ -27,12 +27,12 @@
 }
 
 .admin-cw-item-icon {
-    width: 50px;
-    font-size: 26px;
+    width: 45px;
+    font-size: 22px;
     font-weight: lighter;
     display: table-cell;
     vertical-align: top;
-    padding-top: 6px;
+    padding-top: 8px;
 }
 
 .admin-cw-item-info {
@@ -43,8 +43,8 @@
 .admin-cw-item-row h3 {
     margin: 0;
     padding: 0;
-    font-size: 13px !important;
-    line-height: 1.50;
+    font-size: 15px !important;
+    line-height: 1.40;
 }
 
 .admin-cw-item-row sub {
