@@ -132,7 +132,6 @@ module LiveEdit.component.DragDropSort {
 
         // Temporary store the selection info during the drag drop lifecycle.
         // Data is nullified on drag stop.
-
         ui.item.data('live-edit-selected-on-sort-start', component.isSelected());
 
         ui.placeholder.html(LiveEdit.PlaceholderCreator.createPlaceholderForJQuerySortable(component));

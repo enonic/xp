@@ -143,7 +143,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
                     var contextWindow = me.contextWindow,
                         liveEditWindow = contextWindow.getLiveEditContentWindowObject();
 
-                    liveEditWindow.LiveEdit.component.ComponentInserter.replaceEmptyComponent(record.get('key'));
+                    liveEditWindow.LiveEdit.component.ComponentInserter.insert(record.get('key'));
 
                 }
             }

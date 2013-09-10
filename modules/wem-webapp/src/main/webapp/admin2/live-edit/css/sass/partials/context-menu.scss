@@ -16,7 +16,7 @@
   cursor: hand;
   cursor: grab !important;
   cursor: -moz-grab;
-  cursor: url($resourcePath + '/images/cursor-grab.png'), pointer !important;
+  cursor: url($resourcePath + 'images/cursor-grab.png'), pointer !important;
   cursor: -webkit-grab;
 }
 
@@ -48,7 +48,7 @@
 .live-edit-context-menu-title-close-button {
   float: right;
   cursor: pointer;
-  background: transparent url($resourcePath + "/images/close.png") center center no-repeat;
+  background: transparent url($resourcePath + "images/close.png") center center no-repeat;
   width: 22px;
   height: 22px;
   padding: 5px 7px;

@@ -11,6 +11,7 @@ module LiveEdit.component {
         }
 
         private observe(component:LiveEdit.component.Component):void {
+
             this.disconnect();
 
             if (component.isEmpty()) {

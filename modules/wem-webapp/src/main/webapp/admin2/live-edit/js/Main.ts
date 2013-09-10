@@ -65,7 +65,6 @@ declare var $liveEdit;
 
             new LiveEdit.component.ComponentResizeObserver();
 
-            // new LiveEdit.ui.HtmlElementReplacer();
             new LiveEdit.ui.Highlighter();
             new LiveEdit.ui.ToolTip();
             new LiveEdit.ui.Cursor();
