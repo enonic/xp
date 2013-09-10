@@ -95,11 +95,11 @@ public class ContentTypesInitializer
             MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE};
 
     private static final String[] DEMO_CONTENT_TYPES =
-        {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-set.json", "demo-contenttype-blog.json",
-            "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json",
-            "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin.json",
-            "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
-            "demo-contenttype-trampoline.json"};
+        {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-formItemset.json",
+            "demo-contenttype-blog.json", "demo-contenttype-article1.json", "demo-contenttype-article2.json",
+            "demo-contenttype-relation.json", "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json",
+            "demo-contenttype-mixin.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
+            "demo-contenttype-trampoline.json", "demo-contenttype-formItemset-min-occurrences.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
