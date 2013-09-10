@@ -2,15 +2,13 @@ module api_ui_tab {
 
     export class TabMenu extends api_dom.DivEl implements api_ui.DeckPanelNavigator {
 
-        ext;
-
         private tabMenuButton:TabMenuButton;
 
         private menuEl:api_dom.UlEl;
 
         private showingMenuItems:boolean = false;
 
-        private tabs:TabMenuItem[] = [];
+        private tabs:api_ui.PanelNavigationItem[] = [];
 
         private selectedTab:number;
 
@@ -74,19 +72,24 @@ module api_ui_tab {
             return this.showingMenuItems;
         }
 
-        addNavigationItem(tab:api_ui_tab.TabMenuItem) {
-
-            tab.setTabMenu(this);
+        addNavigationItem(tab:api_ui.PanelNavigationItem) {
+            if ( !(tab instanceof TabMenuItem) ) {
+                return;
+            }
 
             var newLength = this.tabs.push(tab);
             tab.setIndex(newLength - 1);
 
             if (tab.isVisible()) {
-                // TODO: Why is this done?
-                //this.tabMenuButton.setLabel(tab.getLabel());
-                this.menuEl.appendChild(tab);
+                this.menuEl.appendChild(tab.getElement());
                 this.tabMenuButton.show();
             }
+
+            (<TabMenuItem> tab).addListener({
+                onLabelChanged: (newValue:string, oldValue:string) => {
+                    this.setButtonLabel(newValue);
+                }
+            });
         }
 
         isEmpty():boolean {
@@ -99,7 +102,7 @@ module api_ui_tab {
 
         countVisible():number {
             var size = 0;
-            this.tabs.forEach((tab:TabMenuItem) => {
+            this.tabs.forEach((tab:api_ui.PanelNavigationItem) => {
                 if (tab.isVisible()) {
                     size++;
                 }
@@ -111,35 +114,41 @@ module api_ui_tab {
             return this.selectedTab;
         }
 
-        getSelectedNavigationItem():api_ui_tab.TabMenuItem {
+        getSelectedNavigationItem():api_ui.PanelNavigationItem {
             return this.tabs[this.selectedTab];
         }
 
-        getNavigationItem(tabIndex:number):api_ui_tab.TabMenuItem {
+        getSelectedIndex():number {
+            return this.selectedTab;
+        }
+
+        getNavigationItem(tabIndex:number):api_ui.PanelNavigationItem {
             return this.tabs[tabIndex];
         }
 
-        getNavigationItems():api_ui_tab.TabMenuItem[] {
+        getNavigationItems():api_ui.PanelNavigationItem[] {
             return this.tabs;
         }
 
-        removeNavigationItem(tab:api_ui_tab.TabMenuItem) {
-            var tabMenuItem = <TabMenuItem>tab;
+        removeNavigationItem(tab:api_ui.PanelNavigationItem) {
+            tab.getElement().remove();
 
-            tabMenuItem.getEl().remove();
-            var isLastTab = this.isLastTab(tab);
             this.tabs.splice(tab.getIndex(), 1);
-            if (this.isSelectedTab(tab)) {
-                if (this.isEmpty()) {
-                    this.selectedTab = -1;
-                } else if (tab.getIndex() > this.tabs.length - 1) {
-                    this.selectedTab = tab.getIndex() - 1;
-                }
+
+            if (this.isEmpty()) {
+                // if there are no tabs set selected index to negative value
+                this.selectedTab = -1;
+            } else if ( tab.getIndex() < this.selectedTab ) {
+                // if removed tab was before selected tab than decrement selected index
+                this.selectedTab--;
+            } else if (tab.getIndex() > this.getSize() - 1) {
+                // if selected index is more than tabs amount set last index as selected
+                this.selectedTab = this.getSize() - 1;
             }
-            if (!isLastTab) {
-                for (var i = tab.getIndex() - 1; i < this.tabs.length; i++) {
-                    this.tabs[i].setIndex(i);
-                }
+
+            // update indexes for tabs that have been after the removed tab
+            for (var i = tab.getIndex(); i < this.tabs.length; i++) {
+                this.tabs[i].setIndex(i);
             }
 
             if (this.countVisible() == 0) {
@@ -147,19 +156,11 @@ module api_ui_tab {
                 this.tabMenuButton.hide();
                 this.hideMenu();
             } else {
-                var newTab = this.getNavigationItem(this.selectedTab);
+                var newTab = this.getSelectedNavigationItem();
                 if (newTab) {
                     this.tabMenuButton.setLabel(newTab.getLabel());
                 }
             }
-        }
-
-        private isSelectedTab(tab:api_ui.PanelNavigationItem) {
-            return tab.getIndex() == this.selectedTab;
-        }
-
-        private isLastTab(tab:api_ui.PanelNavigationItem):boolean {
-            return tab.getIndex() === this.tabs.length;
         }
 
         private updateActiveTab(tabIndex:number) {
