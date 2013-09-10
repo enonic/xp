@@ -1,50 +1,5 @@
 @import "../modules/colors";
 
-@-moz-keyframes live-edit-spinner {
-  0% {
-    -moz-transform: rotate(0deg);
-  }
-  100% {
-    -moz-transform: rotate(360deg);
-  }
-}
-
-@-webkit-keyframes live-edit-spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-
-@-ms-keyframes live-edit-spinner {
-  0% {
-    -ms-transform: rotate(0deg);
-  }
-  100% {
-    -ms-transform: rotate(360deg);
-  }
-}
-
-@-o-keyframes live-edit-spinner {
-  0% {
-    -o-transform: rotate(0deg);
-  }
-  100% {
-    -o-transform: rotate(360deg);
-  }
-}
-
-@keyframes live-edit-spinner {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 .live-edit-loader-splash-content {
   cursor: progress !important;
 }
@@ -71,11 +26,8 @@
   width: 88px;
   height: 88px;
   border: none;
-  -moz-animation: live-edit-spinner .5s infinite linear;
-  -webkit-animation: live-edit-spinner .5s infinite linear;
-  -ms-animation: live-edit-spinner .5s infinite linear;
-  -o-animation: live-edit-spinner .5s infinite linear;
   animation: live-edit-spinner .5s infinite linear;
+  -webkit-animation: live-edit-spinner .5s infinite linear;
 }
 
 .live-edit-loader-splash-content div {

@@ -13,6 +13,41 @@
   vertical-align: baseline;
   line-height: 1.2; }
 
+@-moz-keyframes live-edit-spinner {
+  0% {
+    -moz-transform: rotate(0deg); }
+
+  100% {
+    -moz-transform: rotate(360deg); } }
+
+@-webkit-keyframes live-edit-spinner {
+  0% {
+    -webkit-transform: rotate(0deg); }
+
+  100% {
+    -webkit-transform: rotate(360deg); } }
+
+@-ms-keyframes live-edit-spinner {
+  0% {
+    -ms-transform: rotate(0deg); }
+
+  100% {
+    -ms-transform: rotate(360deg); } }
+
+@-o-keyframes live-edit-spinner {
+  0% {
+    -o-transform: rotate(0deg); }
+
+  100% {
+    -o-transform: rotate(360deg); } }
+
+@keyframes live-edit-spinner {
+  0% {
+    transform: rotate(0deg); }
+
+  100% {
+    transform: rotate(360deg); } }
+
 /*** To be merged with Context Window / component list css */
 @font-face {
   font-family: 'live-edit-component-types';
@@ -65,6 +100,13 @@
   color: #d4e1f1;
   text-align: center;
   margin: 1px 0 10px 0; }
+
+.live-edit-empty-component img {
+  width: 88px;
+  height: 88px;
+  border: none;
+  animation: live-edit-spinner .5s infinite linear;
+  -webkit-animation: live-edit-spinner .5s infinite linear; }
 
 /***cssarrowplease.com/ */
 .live-edit-arrow-bottom:after,
@@ -146,41 +188,6 @@ svg.live-edit-highlight-border {
 .live-edit-components-container {
   z-index: 1000250; }
 
-@-moz-keyframes live-edit-spinner {
-  0% {
-    -moz-transform: rotate(0deg); }
-
-  100% {
-    -moz-transform: rotate(360deg); } }
-
-@-webkit-keyframes live-edit-spinner {
-  0% {
-    -webkit-transform: rotate(0deg); }
-
-  100% {
-    -webkit-transform: rotate(360deg); } }
-
-@-ms-keyframes live-edit-spinner {
-  0% {
-    -ms-transform: rotate(0deg); }
-
-  100% {
-    -ms-transform: rotate(360deg); } }
-
-@-o-keyframes live-edit-spinner {
-  0% {
-    -o-transform: rotate(0deg); }
-
-  100% {
-    -o-transform: rotate(360deg); } }
-
-@keyframes live-edit-spinner {
-  0% {
-    transform: rotate(0deg); }
-
-  100% {
-    transform: rotate(360deg); } }
-
 .live-edit-loader-splash-content {
   cursor: progress !important; }
 
@@ -204,11 +211,8 @@ svg.live-edit-highlight-border {
   width: 88px;
   height: 88px;
   border: none;
-  -moz-animation: live-edit-spinner .5s infinite linear;
-  -webkit-animation: live-edit-spinner .5s infinite linear;
-  -ms-animation: live-edit-spinner .5s infinite linear;
-  -o-animation: live-edit-spinner .5s infinite linear;
-  animation: live-edit-spinner .5s infinite linear; }
+  animation: live-edit-spinner .5s infinite linear;
+  -webkit-animation: live-edit-spinner .5s infinite linear; }
 
 .live-edit-loader-splash-content div {
   color: #000;
