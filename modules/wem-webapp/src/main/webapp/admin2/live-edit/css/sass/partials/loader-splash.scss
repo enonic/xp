@@ -1,36 +1,35 @@
-@import "../modules/colors";
-
-.live-edit-loader-splash-content {
-  cursor: progress !important;
-}
+@import "../variables";
 
 .live-edit-loader-splash-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(255, 255, 255, .9);
+    z-index: 2000000;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, .9);
 }
 
 .live-edit-loader-splash-content {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  margin-top: -36px;
-  margin-left: -36px;
-  text-align: center;
+    z-index: 2000010;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -36px;
+    margin-left: -36px;
+    text-align: center;
+    cursor: progress !important;
 }
 
 .live-edit-loader-splash-content img {
-  width: 88px;
-  height: 88px;
-  border: none;
-  animation: live-edit-spinner .5s infinite linear;
-  -webkit-animation: live-edit-spinner .5s infinite linear;
+    width: 88px;
+    height: 88px;
+    border: none;
+    animation: live-edit-spinner .5s infinite linear;
+    -webkit-animation: live-edit-spinner .5s infinite linear;
 }
 
 .live-edit-loader-splash-content div {
-  color: #000;
-  margin-top: .7em;
+    color: #000;
+    margin-top: .7em;
 }

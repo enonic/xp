@@ -140,11 +140,9 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
             listeners: {
                 itemclick: function (view, record, item) {
 
-                    var contextWindow = me.contextWindow,
-                        liveEditWindow = contextWindow.getLiveEditContentWindowObject();
+                    var liveEditWindow = me.contextWindow.getLiveEditContentWindowObject();
 
-                    liveEditWindow.LiveEdit.component.ComponentInserter.insert(record.get('key'));
-
+                    liveEditWindow.LiveEdit.component.EmptyComponent.loadComponent(record.get('key'));
                 }
             }
         });

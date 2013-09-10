@@ -3,25 +3,34 @@ module LiveEdit.component {
     // Uses
     var $ = $liveEdit;
 
-    export class ComponentInserter {
+    export class EmptyComponent {
 
-        public static insert(componentKey:string):void {
+        public static loadComponent(componentKey:string):void {
             var selectedComponent = LiveEdit.Selection.getSelectedComponent();
 
-            if (selectedComponent.isEmpty()) {
-                var componentUrl:string = '/admin2/live-edit/data/mock-component-' + componentKey + '.html';
-
-                $.ajax({
-                    url: componentUrl,
-                    cache: false,
-                    beforeSend: () => {
-                        LiveEdit.component.ComponentInserter.appendLoadingSpinner(selectedComponent)
-                    },
-                    success: (responseHtml:string) => {
-                        LiveEdit.component.ComponentInserter.replaceEmptyComponent(selectedComponent, $(responseHtml))
-                    }
-                });
+            if (!selectedComponent.isEmpty()) {
+                return;
             }
+
+            var componentUrl:string = '/admin2/live-edit/data/mock-component-' + componentKey + '.html';
+
+            $.ajax({
+                url: componentUrl,
+                cache: false,
+                beforeSend: () => {
+                    LiveEdit.component.EmptyComponent.appendLoadingSpinner(selectedComponent)
+                },
+                success: (responseHtml:string) => {
+                    LiveEdit.component.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml))
+                }
+            });
+        }
+
+        public static createEmptyComponentElement(component:LiveEdit.component.Component):string {
+
+            return '<div class="live-edit-empty-component ' + component.getComponentType().getIconCls() +
+                   '" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getType() +
+                   '"><!-- --></div>';
         }
 
         private static replaceEmptyComponent(selectedComponent:LiveEdit.component.Component, responseHtml:JQuery):void {

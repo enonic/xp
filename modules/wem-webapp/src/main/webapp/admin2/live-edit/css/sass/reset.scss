@@ -1,8 +1,13 @@
-@import "../modules/colors";
+@import "variables";
 
 [id^=live-edit-ui-cmp-],
 [id^=live-edit-ui-cmp-] *,
 .live-edit-component-placeholder,
+.live-edit-empty-component,
+.live-edit-loader-splash-container,
+.live-edit-empty-region-placeholder,
+.live-edit-empty-part-placeholder,
+.live-edit-drop-target-placeholder,
 #live-edit-drag-helper * {
   border: 0;
   outline: 0;

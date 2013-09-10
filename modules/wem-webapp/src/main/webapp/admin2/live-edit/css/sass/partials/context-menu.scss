@@ -1,59 +1,58 @@
-@import "../modules/variables";
-@import "../modules/colors";
+@import "../variables";
 
 .live-edit-context-menu {
-  position: absolute;
-  min-width: 150px;
-  padding: 0;
-  background-color: $baseColor;
-  border: 1px solid $borderColor;
-  box-shadow: $shadow;
+    z-index: 1000200;
+    position: absolute;
+    min-width: 150px;
+    padding: 0;
+    background-color: $baseColor;
+    border: 1px solid $borderColor;
+    box-shadow: $shadow;
 }
 
 .live-edit-context-menu-title-bar {
-  overflow: hidden;
-  margin-bottom: 2px;
-  cursor: hand;
-  cursor: grab !important;
-  cursor: -moz-grab;
-  cursor: url($resourcePath + 'images/cursor-grab.png'), pointer !important;
-  cursor: -webkit-grab;
+    overflow: hidden;
+    margin-bottom: 2px;
+    cursor: hand;
+    cursor: grab !important;
+    cursor: -moz-grab;
+    cursor: url($resourcePath + 'admin2/live-edit/images/cursor-grab.png'), pointer !important;
+    cursor: -webkit-grab;
 }
 
 .live-edit-context-menu-title-icon-container,
 .live-edit-context-menu-title-text,
 .live-edit-context-menu-title-close-button {
-  padding: 5px;
+    padding: 5px;
 }
 
 .live-edit-context-menu-title-icon-container {
-  padding: 7px;
-  float: left;
+    padding: 7px;
+    float: left;
 }
 
 .live-edit-context-menu-title-icon-container > div {
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
 }
 
 .live-edit-context-menu-title-text {
-  float: left;
-  font-size: 14px;
-  color: $textColor;
-  padding-top: 7px;
-  padding-left: 2px;
+    float: left;
+    font-size: 14px;
+    color: $textColor;
+    padding-top: 7px;
+    padding-left: 2px;
 }
 
 .live-edit-context-menu-title-close-button {
-  float: right;
-  cursor: pointer;
-  background: transparent url($resourcePath + "images/close.png") center center no-repeat;
-  width: 22px;
-  height: 22px;
-  padding: 5px 7px;
+    float: right;
+    cursor: pointer;
+    background: transparent url($resourcePath + 'admin2/live-edit/images/close.png') center center no-repeat;
+    width: 22px;
+    height: 22px;
+    padding: 5px 7px;
 }
-
 
 /*** Menu item */
 .live-edit-menu-item {
@@ -66,8 +65,8 @@
 }
 
 .live-edit-menu-item:hover {
-  background-color: $hoverBackgroundColor;
-  color: $hoverTextColor !important;
+    background-color: $hoverBackgroundColor;
+    color: $hoverTextColor !important;
 }
 
 .live-edit-menu-item:hover .live-edit-menu-item-text {
@@ -75,18 +74,70 @@
 }
 
 .live-edit-menu-item-text {
-  font-size: 14px;
-  color: $textColor;
-  line-height: 20px;
-  text-transform: capitalize;
+    font-size: 14px;
+    color: $textColor;
+    line-height: 20px;
+    text-transform: capitalize;
 }
 
 .live-edit-menu-item-icon {
-  display: block;
-  width: auto;
-  height: 24px;
-  padding-bottom: 10px;
-  background-color: transparent;
-  background-repeat: no-repeat;
-  background-position: center 5px;
+    display: block;
+    width: auto;
+    height: 24px;
+    padding-bottom: 10px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center 5px;
+}
+
+/** cssarrowplease.com */
+
+.live-edit-arrow-bottom:after,
+.live-edit-arrow-bottom:before,
+.live-edit-arrow-top:after,
+.live-edit-arrow-top:before {
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.live-edit-arrow-top:after,
+.live-edit-arrow-top:before {
+    bottom: 100%;
+}
+
+.live-edit-arrow-top:after {
+    border-bottom-color: $baseColor;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
+}
+
+.live-edit-arrow-top:before {
+    border-bottom-color: $borderColor;
+    border-width: 9px;
+    left: 50%;
+    margin-left: -9px;
+}
+
+.live-edit-arrow-bottom:after,
+.live-edit-arrow-bottom:before {
+    top: 100%;
+}
+
+.live-edit-arrow-bottom:after {
+    border-top-color: $baseColor;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
+}
+
+.live-edit-arrow-bottom:before {
+    border-top-color: $borderColor;
+    border-width: 9px;
+    left: 50%;
+    margin-left: -9px;
 }

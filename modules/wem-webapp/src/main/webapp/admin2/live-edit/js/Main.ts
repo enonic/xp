@@ -10,7 +10,7 @@
 ///<reference path='component/ComponentHelper.ts' />
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
-///<reference path='component/ComponentInserter.ts' />
+///<reference path='component/EmptyComponent.ts' />
 ///<reference path='component/ComponentResizeObserver.ts' />
 
 ///<reference path='component/mouseevent/Base.ts' />

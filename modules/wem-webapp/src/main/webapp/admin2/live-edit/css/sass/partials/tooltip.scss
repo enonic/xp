@@ -1,16 +1,17 @@
 .live-edit-tool-tip {
-  position: absolute;
-  border: 1px solid #000;
-  padding: 10px 10px;
-  background-color: #ffffc7;
+    z-index: 1000150;
+    position: absolute;
+    border: 1px solid #000;
+    padding: 10px 10px;
+    background-color: #ffffc7;
 }
 
 .live-edit-tool-tip-name-text,
 .live-edit-tool-tip-type-text {
-  display: block;
-  color: #444;
+    display: block;
+    color: #444;
 }
 
 .live-edit-tool-tip-name-text {
-  font-weight: bold;
+    font-weight: bold;
 }

@@ -2,19 +2,6 @@ module LiveEdit {
 
     export class PlaceholderCreator {
 
-        /** Empty component. We should have a dedicated class for this  */
-
-        public static createEmptyComponentElement(component:LiveEdit.component.Component):string {
-
-            var html:string;
-
-            var iconCls:string = component.getComponentType().getIconCls();
-
-            html = '<div class="live-edit-empty-component ' + iconCls + '" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getType() + '"><!-- --></div>';
-
-            return html;
-        }
-
         /** jQuery Sortable placeholder */
 
         public static createPlaceholderForJQuerySortable(component:LiveEdit.component.Component):string {

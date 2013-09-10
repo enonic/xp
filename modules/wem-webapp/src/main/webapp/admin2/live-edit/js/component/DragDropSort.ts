@@ -207,12 +207,13 @@ module LiveEdit.component.DragDropSort {
     // When sortable receives a new item
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
+
             var component = new LiveEdit.component.Component($(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR));
 
             // fixme: is this needed anymore?
             component.getElement().hide(null);
 
-            component.getElement().replaceWith(LiveEdit.PlaceholderCreator.createEmptyComponentElement(component));
+            component.getElement().replaceWith(LiveEdit.component.EmptyComponent.createEmptyComponentElement(component));
 
             $(window).trigger('sortableUpdate.liveEdit');
         }

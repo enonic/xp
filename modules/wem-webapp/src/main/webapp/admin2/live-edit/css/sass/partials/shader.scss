@@ -1,13 +1,33 @@
-.live-edit-shader {
-  position: absolute;
-  display: none;
-  top: 0;
-  left: 0;
-  background-color: #000;
-  opacity: .3;
-  cursor: default !important;
+#live-edit-shader-north {
+    z-index: 1000050;
+}
+
+#live-edit-shader-east {
+    z-index: 1000060;
+}
+
+#live-edit-shader-south {
+    z-index: 1000070;
+}
+
+#live-edit-shader-west {
+    z-index: 1000080;
 }
 
 #live-edit-page-shader {
-  position: fixed !important;
+    z-index: 1000090;
+}
+
+.live-edit-shader {
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    background-color: #000;
+    opacity: .3;
+    cursor: default !important;
+}
+
+#live-edit-page-shader {
+    position: fixed !important;
 }

@@ -155,7 +155,7 @@
 
 
     {
-      "key": "10070xxx",
+      "key": "10070",
       "type": 3,
       "name": "Test Photo",
       "subtitle": "Sailing on the Nile River",
