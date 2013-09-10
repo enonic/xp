@@ -1,13 +1,13 @@
 module app_wizard_form_input {
 
-    export class BaseInput extends api_dom.DivEl implements Input {
+    export class BaseInputTypeView extends api_dom.DivEl implements InputTypeView {
 
         private input:api_schema_content_form.Input;
 
         private inputs:api_dom.FormInputEl[];
 
         constructor(idPrefix:string) {
-            super(idPrefix, "input");
+            super(idPrefix, "input-type-view");
         }
 
         getHTMLElement():HTMLElement {

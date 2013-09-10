@@ -1,6 +1,6 @@
 module app_wizard_form_input {
 
-    export class NoInputTypeFound extends BaseInput implements Input {
+    export class NoInputTypeFoundView extends BaseInputTypeView {
 
         constructor() {
             super("NoInputTypeFound");

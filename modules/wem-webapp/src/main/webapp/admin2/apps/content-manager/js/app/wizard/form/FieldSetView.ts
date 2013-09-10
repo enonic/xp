@@ -36,7 +36,7 @@ module app_wizard_form {
                 else if (formItem instanceof api_schema_content_form.Input) {
                     var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
                     console.log("FieldSetView.doLayout()  laying out Input: ", input);
-                    var inputContainerView = new app_wizard_form.InputContainerView(input);
+                    var inputContainerView = new app_wizard_form.InputView(input);
                     wrappingDiv.appendChild(inputContainerView);
                     this.formItemViews.push(inputContainerView);
                 }

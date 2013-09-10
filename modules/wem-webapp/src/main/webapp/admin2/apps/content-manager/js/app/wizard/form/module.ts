@@ -6,5 +6,5 @@
 ///<reference path='FormItemSetOccurrenceView.ts' />
 ///<reference path='FormItemSetView.ts' />
 ///<reference path='InputLabel.ts' />
-///<reference path='InputContainerView.ts' />
+///<reference path='InputView.ts' />
 ///<reference path='FormView.ts' />

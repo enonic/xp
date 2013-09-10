@@ -1,6 +1,6 @@
 module app_wizard_form_input {
 
-    export class TextArea extends BaseInput implements Input {
+    export class TextArea extends BaseInputTypeView {
 
         constructor() {
             super("TextArea");

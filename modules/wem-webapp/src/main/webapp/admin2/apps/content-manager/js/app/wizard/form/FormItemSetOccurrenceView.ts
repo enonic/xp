@@ -62,7 +62,7 @@ module app_wizard_form {
                     var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
 
                     console.log("FormItemSetOccurrenceView.doLayout()  laying out Input: ", input);
-                    var inputContainerView = new app_wizard_form.InputContainerView(input);
+                    var inputContainerView = new app_wizard_form.InputView(input);
                     parentEl.appendChild(inputContainerView);
                     this.formItemViews.push(inputContainerView);
                 }
@@ -89,7 +89,7 @@ module app_wizard_form {
                     console.log("FormItemSetOccurrenceView.doLayout() laying out Input: ", input);
                     var properties:api_data.Property[] = this.dataSet.getPropertiesByName(input.getName());
 
-                    var inputContainerView = new app_wizard_form.InputContainerView(input, properties);
+                    var inputContainerView = new app_wizard_form.InputView(input, properties);
                     parentEl.appendChild(inputContainerView);
                     this.formItemViews.push(inputContainerView);
                 }

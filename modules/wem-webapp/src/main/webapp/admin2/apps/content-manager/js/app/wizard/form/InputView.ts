@@ -1,6 +1,6 @@
 module app_wizard_form {
 
-    export class InputContainerView extends FormItemView {
+    export class InputView extends FormItemView {
 
         private input:api_schema_content_form.Input;
 
@@ -9,7 +9,7 @@ module app_wizard_form {
         private inputView;
 
         constructor(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
-            super("InputContainerView", "input-container-view", input);
+            super("InputView", "input-view", input);
 
             this.input = input;
             this.properties = properties != null ? properties : [];
@@ -26,7 +26,7 @@ module app_wizard_form {
             if (inputType.isBuiltIn()) {
                 var newInput = window["app_wizard_form_input"][inputType.getName()];
                 if (newInput == null) {
-                    newInput = window["app_wizard_form_input"]["NoInputTypeFound"];
+                    newInput = window["app_wizard_form_input"]["NoInputTypeFoundView"];
                 }
                 var newInputPrototype = Object.create(newInput.prototype);
                 newInputPrototype.constructor.apply(newInputPrototype);
