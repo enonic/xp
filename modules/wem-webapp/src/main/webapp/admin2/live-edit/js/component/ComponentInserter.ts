@@ -32,7 +32,7 @@ module LiveEdit.component {
                 // So we have to create it again.
                 // Ideally we should destroy the existing sortable first before creating.
                 if (selectedComponent.getComponentType().getType() == LiveEdit.component.Type.LAYOUT) {
-                    LiveEdit.DragDropSort.createJQueryUiSortable();
+                    LiveEdit.component.DragDropSort.createJQueryUiSortable();
                 }
 
             });

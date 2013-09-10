@@ -76,7 +76,7 @@ module LiveEdit.component.mouseevent {
 
         cancelMouseOverEvent(event:JQueryEventObject):boolean {
             return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.Selection.pageHasSelectedElements() ||
-                   LiveEdit.DragDropSort.isDragging();
+                   LiveEdit.component.DragDropSort.isDragging();
         }
 
         private targetIsLiveEditUiComponent(target:JQuery):boolean {

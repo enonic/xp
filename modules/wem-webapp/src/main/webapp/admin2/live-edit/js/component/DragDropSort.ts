@@ -3,7 +3,7 @@
  A clean up should be done when Live Edit is specked
  */
 
-module LiveEdit.DragDropSort {
+module LiveEdit.component.DragDropSort {
 
     // Uses
     var $ = $liveEdit;
