@@ -103,7 +103,7 @@ public class ContentResource
         final Contents contents;
         if ( StringUtils.isEmpty( path ) )
         {
-            contents = client.execute( Commands.content().getRoot() );
+            contents = client.execute( Commands.content().getRoots() );
 
         }
         else

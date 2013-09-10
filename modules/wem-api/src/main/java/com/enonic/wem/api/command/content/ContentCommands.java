@@ -23,7 +23,7 @@ public final class ContentCommands
         return new GetContents();
     }
 
-    public GetRootContent getRoot()
+    public GetRootContent getRoots()
     {
         return new GetRootContent();
     }

@@ -25,7 +25,7 @@ public final class ListContentRpcHandler
 
         if ( context.param( "path" ).isNull() )
         {
-            contents = client.execute( Commands.content().getRoot() );
+            contents = client.execute( Commands.content().getRoots() );
         }
         else
         {
