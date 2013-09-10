@@ -242,10 +242,10 @@ svg.live-edit-highlight-border rect {
   text-overflow: ellipsis; }
 
 .live-edit-drag-helper-yes {
-  background: url(/admin2/live-edit/images/drop-yes.gif); }
+  background: url(../../../admin2/live-edit/images/drop-yes.gif); }
 
 .live-edit-drag-helper-no {
-  background: url(/admin2/live-edit/images/drop-no.gif); }
+  background: url(../../../admin2/live-edit/images/drop-no.gif); }
 
 .live-edit-component-padding {
   padding-top: 10px !important;
@@ -292,49 +292,49 @@ svg.live-edit-highlight-border rect {
   border: 1px solid #ccc; }
 
 .live-edit-editor-button[live-edit-data-tag=paste] {
-  background: url("/admin2/live-edit/images/htmleditor/paste.png") center center no-repeat; }
+  background: url("../images/htmleditor/paste.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=insertUnorderedList] {
-  background: url("/admin2/live-edit/images/htmleditor/list.png") center center no-repeat; }
+  background: url("../images/htmleditor/list.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=insertOrderedList] {
-  background: url("/admin2/live-edit/images/htmleditor/numbered-list.png") center center no-repeat; }
+  background: url("../images/htmleditor/numbered-list.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=link] {
-  background: url("/admin2/live-edit/images/htmleditor/link.png") center center no-repeat; }
+  background: url("../images/htmleditor/link.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=cut] {
-  background: url("/admin2/live-edit/images/htmleditor/scissors.png") center center no-repeat; }
+  background: url("../images/htmleditor/scissors.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=strikeThrough] {
-  background: url("/admin2/live-edit/images/htmleditor/strikethrough.png") center center no-repeat; }
+  background: url("../images/htmleditor/strikethrough.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=bold] {
-  background: url("/admin2/live-edit/images/htmleditor/bold.png") center center no-repeat; }
+  background: url("../images/htmleditor/bold.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=underline] {
-  background: url("/admin2/live-edit/images/htmleditor/underline.png") center center no-repeat; }
+  background: url("../images/htmleditor/underline.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=italic] {
-  background: url("/admin2/live-edit/images/htmleditor/italic.png") center center no-repeat; }
+  background: url("../images/htmleditor/italic.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=superscript] {
-  background: url("/admin2/live-edit/images/htmleditor/superscript.png") center center no-repeat; }
+  background: url("../images/htmleditor/superscript.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=subscript] {
-  background: url("/admin2/live-edit/images/htmleditor/subscript.png") center center no-repeat; }
+  background: url("../images/htmleditor/subscript.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=justifyLeft] {
-  background: url("/admin2/live-edit/images/htmleditor/paragraph-left.png") center center no-repeat; }
+  background: url("../images/htmleditor/paragraph-left.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=justifyCenter] {
-  background: url("/admin2/live-edit/images/htmleditor/paragraph-center.png") center center no-repeat; }
+  background: url("../images/htmleditor/paragraph-center.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=justifyRight] {
-  background: url("/admin2/live-edit/images/htmleditor/paragraph-right.png") center center no-repeat; }
+  background: url("../images/htmleditor/paragraph-right.png") center center no-repeat; }
 
 .live-edit-editor-button[live-edit-data-tag=justifyFull] {
-  background: url("/admin2/live-edit/images/htmleditor/paragraph-justify.png") center center no-repeat; }
+  background: url("../images/htmleditor/paragraph-justify.png") center center no-repeat; }
 
 /** Resource path */
 /** Colors */
@@ -353,7 +353,7 @@ svg.live-edit-highlight-border rect {
   cursor: hand;
   cursor: grab !important;
   cursor: -moz-grab;
-  cursor: url("/admin2/live-edit/images/cursor-grab.png"), pointer !important;
+  cursor: url("../images/cursor-grab.png"), pointer !important;
   cursor: -webkit-grab; }
 
 .live-edit-context-menu-title-icon-container,
@@ -380,7 +380,7 @@ svg.live-edit-highlight-border rect {
 .live-edit-context-menu-title-close-button {
   float: right;
   cursor: pointer;
-  background: transparent url("/admin2/live-edit/images/close.png") center center no-repeat;
+  background: transparent url("../images/close.png") center center no-repeat;
   width: 22px;
   height: 22px;
   padding: 5px 7px; }

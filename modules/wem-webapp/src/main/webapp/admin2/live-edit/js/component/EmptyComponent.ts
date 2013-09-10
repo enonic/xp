@@ -12,7 +12,7 @@ module LiveEdit.component {
                 return;
             }
 
-            var componentUrl:string = '/admin2/live-edit/data/mock-component-' + componentKey + '.html';
+            var componentUrl:string = '../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
 
             $.ajax({
                 url: componentUrl,
@@ -55,7 +55,7 @@ module LiveEdit.component {
         }
 
         private static appendLoadingSpinner(emptyComponent:LiveEdit.component.Component):void {
-            emptyComponent.getElement().append('<img src="/admin2/live-edit/images/spinner.png"/>');
+            emptyComponent.getElement().append('<img src="../../admin2/live-edit/images/spinner.png"/>');
         }
 
     }
