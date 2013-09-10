@@ -1,7 +1,7 @@
 // Globals
 
-///<reference path='../lib/jquery.d.ts' />
-///<reference path='../lib/jqueryui.d.ts' />
+///<reference path='jquery.d.ts' />
+///<reference path='jqueryui.d.ts' />
 
 ///<reference path='shared/DomHelper.ts' />
 ///<reference path='shared/Selection.ts' />
