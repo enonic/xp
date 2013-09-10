@@ -297,6 +297,24 @@
                     }
                 }
             }
+        },
+        {
+            "Input": {
+                "name": "myCustomInput",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "custom:DummyCustomInputType"
+                }
+            }
         }
     ]
 }

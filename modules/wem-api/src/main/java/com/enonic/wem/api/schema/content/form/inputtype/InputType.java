@@ -8,7 +8,7 @@ import com.enonic.wem.api.data.Value;
 
 public abstract class InputType
 {
-    private final String name;
+    private final InputTypeName inputTypeName;
 
     private final Class configClass;
 
@@ -16,21 +16,23 @@ public abstract class InputType
 
     protected InputType()
     {
-        this.name = resolveName();
         this.builtIn = resolveBuiltIn();
         this.configClass = null;
+        final String name = resolveName();
+        this.inputTypeName = new InputTypeName( name, !this.builtIn );
     }
 
     protected InputType( final Class configClass )
     {
-        this.name = resolveName();
         this.builtIn = resolveBuiltIn();
         this.configClass = configClass;
+        final String name = resolveName();
+        this.inputTypeName = new InputTypeName( name, !this.builtIn );
     }
 
     public final String getName()
     {
-        return name;
+        return inputTypeName.toString();
     }
 
     public final boolean isBuiltIn()
@@ -67,7 +69,7 @@ public abstract class InputType
     @Override
     public String toString()
     {
-        return name;
+        return this.inputTypeName.toString();
     }
 
     @Override

@@ -12,18 +12,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.schema.ContentTypeTreeJson;
-import com.enonic.wem.admin.json.schema.content.ContentTypeConfigListJson;
-import com.enonic.wem.admin.json.schema.content.ContentTypeList;
-import com.enonic.wem.admin.json.schema.content.ContentTypeListJson;
+import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
+import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
@@ -57,64 +52,44 @@ import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newS
 public class ContentTypeResource
     extends AbstractResource
 {
-    public static final String FORMAT_XML = "XML";
-
-    public static final String FORMAT_JSON = "JSON";
-
     private UploadService uploadService;
 
     private ContentTypeXmlSerializer contentTypeXmlSerializer = new ContentTypeXmlSerializer();
 
     @GET
-    public ContentTypeList get( @QueryParam("qualifiedNames") final List<String> qualifiedNamesAsStrings,
-                                @QueryParam("format") final String format,
+    public ContentTypeJson get( @QueryParam("qualifiedName") final String qualifiedNameAsString,
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
-        final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( qualifiedNamesAsStrings );
+        final QualifiedContentTypeName qualifiedName = QualifiedContentTypeName.from( qualifiedNameAsString );
         final GetContentTypes getContentTypes = Commands.contentType().get().
-            qualifiedNames( qualifiedNames ).
+            qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) ).
             mixinReferencesToFormItems( mixinReferencesToFormItems );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
-
-        if ( qualifiedNames.getSize() == contentTypes.getSize() )
+        if ( contentTypes.isEmpty() )
         {
-            if ( format.equalsIgnoreCase( FORMAT_JSON ) )
-            {
-                return new ContentTypeListJson( contentTypes );
-            }
-            else if ( format.equalsIgnoreCase( FORMAT_XML ) )
-            {
-                return new ContentTypeConfigListJson( contentTypes );
-            }
-            else
-            {
-                throw new IllegalArgumentException( "Unknown format: " + format );
-            }
+            throw new NotFoundException( String.format( "ContentTypes [%s] not found", qualifiedName ) );
+        }
+        return new ContentTypeJson( contentTypes.first() );
+    }
+
+    @GET
+    @Path("config")
+    public ContentTypeConfigJson getConfig( @QueryParam("qualifiedName") final String qualifiedNameAsString )
+    {
+        final QualifiedContentTypeName qualifiedName = QualifiedContentTypeName.from( qualifiedNameAsString );
+        final GetContentTypes getContentTypes = Commands.contentType().get().
+            qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) ).
+            mixinReferencesToFormItems( false );
+
+        final ContentTypes contentTypes = client.execute( getContentTypes );
+
+        if ( contentTypes.isEmpty() )
+        {
+            throw new NotFoundException( String.format( "ContentTypes [%s] not found", qualifiedName ) );
         }
 
-        final ImmutableSet<QualifiedContentTypeName> found = contentTypes.getNames();
-        final String[] notFound = FluentIterable.
-            from( qualifiedNames ).
-            filter( new Predicate<QualifiedContentTypeName>()
-            {
-                public boolean apply( final QualifiedContentTypeName requested )
-                {
-                    return !found.contains( requested );
-                }
-            } ).
-            transform( new Function<QualifiedContentTypeName, String>()
-            {
-                public String apply( final QualifiedContentTypeName qualifiedContentTypeName )
-                {
-                    return qualifiedContentTypeName.toString();
-                }
-            } ).
-            toArray( String.class );
-
-        final String missing = Joiner.on( "," ).join( notFound );
-
-        throw new NotFoundException( String.format( "ContentTypes [%s] not found", missing ) );
+        return new ContentTypeConfigJson( contentTypes.first() );
     }
 
     @GET

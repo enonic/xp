@@ -26,7 +26,7 @@ public class InputTypeResolver
         final InputType foundType;
         if ( inputTypeName.isCustom() )
         {
-            foundType = (InputType) inputTypeExtensions.getInputType( inputTypeName.getName() );
+            foundType = inputTypeExtensions.getInputType( inputTypeName.toString() );
         }
         else
         {

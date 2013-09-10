@@ -13,7 +13,7 @@ module api_app_wizard {
 
     export class WizardPanel extends api_ui.Panel implements api_ui.Closeable, api_event.Observable, api_ui.ActionContainer {
 
-        private persistedItem:api_remote.Item;
+        private persistedItem:any;
 
         private toolbar:api_ui_toolbar.Toolbar;
 
@@ -111,7 +111,7 @@ module api_app_wizard {
             });
         }
 
-        setPersistedItem(item:api_remote.Item) {
+        setPersistedItem(item:any) {
             this.persistedItem = item;
         }
 

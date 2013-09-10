@@ -26,6 +26,12 @@ TestCase("ContentPath", {
         assertEquals(["path"], new api_content.ContentPath('mySpace', ["path"]).getElements());
         assertEquals(["parent", "child"], new api_content.ContentPath('mySpace', ["parent", "child"]).getElements());
     },
+    "test hasParent": function () {
+
+        assertEquals(true, new api_content.ContentPath('mySpace', ["parent", "child"]).hasParent());
+        assertEquals(true, new api_content.ContentPath('mySpace', ["child"]).hasParent());
+        assertEquals(false, new api_content.ContentPath('mySpace', []).hasParent());
+    },
     "test getParentPath": function () {
 
         assertEquals("mySpace:/parent", new api_content.ContentPath('mySpace', ["parent", "child"]).getParentPath().toString());

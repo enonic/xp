@@ -132,6 +132,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType.form().getFormItem( "myTextArea" ) );
         assertNotNull( actualContentType.form().getFormItem( "myWholeNumber" ) );
         assertNotNull( actualContentType.form().getFormItem( "myXml" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myCustomInput" ) );
     }
 
     @Test
@@ -158,6 +159,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "myTextArea", actualContentType.form().getFormItem( "myTextArea" ).getPath().toString() );
         assertEquals( "myWholeNumber", actualContentType.form().getFormItem( "myWholeNumber" ).getPath().toString() );
         assertEquals( "myXml", actualContentType.form().getFormItem( "myXml" ).getPath().toString() );
+        assertEquals( "myCustomInput", actualContentType.form().getFormItem( "myCustomInput" ).getPath().toString() );
     }
 
 
@@ -345,6 +347,8 @@ public abstract class AbstractContentTypeSerializerTest
             newInput().name( "myRelationship" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( relationshipConfig ).build() );
         contentTypeBuilder.addFormItem(
             newInput().name( "myImage" ).inputType( InputTypes.IMAGE_SELECTOR ).inputTypeConfig( imageSelectorConfig ).build() );
+
+        contentTypeBuilder.addFormItem( newInput().name( "myCustomInput" ).inputType( new DummyCustomInputType() ).build() );
 
         return contentTypeBuilder.build();
     }

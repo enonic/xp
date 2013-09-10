@@ -6,14 +6,16 @@ module api_content {
 
             var contentData = new api_content.ContentData();
 
-            dataArray.forEach((dataJson:api_data_json.DataJson) => {
-                if (dataJson.type == "DataSet") {
-                    contentData.addData(api_data.DataFactory.createDataSet(<api_data_json.DataSetJson>dataJson));
-                }
-                else {
-                    contentData.addData(api_data.DataFactory.createProperty(<api_data_json.PropertyJson>dataJson));
-                }
-            });
+            if (dataArray != null) {
+                dataArray.forEach((dataJson:api_data_json.DataJson) => {
+                    if (dataJson.type == "DataSet") {
+                        contentData.addData(api_data.DataFactory.createDataSet(<api_data_json.DataSetJson>dataJson));
+                    }
+                    else {
+                        contentData.addData(api_data.DataFactory.createProperty(<api_data_json.PropertyJson>dataJson));
+                    }
+                });
+            }
             return contentData;
         }
 

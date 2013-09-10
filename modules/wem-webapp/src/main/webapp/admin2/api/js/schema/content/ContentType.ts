@@ -1,31 +1,16 @@
 module api_schema_content{
 
-    export class ContentType {
+    export class ContentType extends ContentTypeSummary {
 
-        private name:string;
+        private form:api_schema_content_form.Form;
 
-        private module:string;
-
-        private displayName:string;
-
-        // TODO:.... more fields of course
-
-        constructor(json:any) {
-            this.name = json.name;
-            this.module = json.module;
-            this.displayName = json.displayName;
+        constructor(json:api_schema_content_json.ContentTypeJson) {
+            super(json);
+            this.form = api_schema_content_form.FormItemFactory.createForm(json.form);
         }
 
-        getName():string{
-            return this.name;
-        }
-
-        getModule():string{
-            return this.module;
-        }
-
-        getDisplayName():string{
-            return this.displayName;
+        getForm():api_schema_content_form.Form {
+            return this.form;
         }
 
     }

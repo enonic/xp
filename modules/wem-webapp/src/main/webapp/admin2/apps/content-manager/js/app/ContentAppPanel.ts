@@ -53,7 +53,7 @@ module app {
                 });
         }
 
-        private handleNew(contentType:api_remote_contenttype.ContentType, parentContent:api_remote_content.Content) {
+        private handleNew(contentType:api_remote_contenttype.ContentType, parentContent:api_content.Content) {
 
             var tabId = this.generateTabId();
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
@@ -62,13 +62,22 @@ module app {
                 this.selectPanel(tabMenuItem);
 
             } else {
-                tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentWizardPanel.NEW_WIZARD_HEADER, tabId);
-                var wizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent);
-                wizardPanel.renderNew();
 
-                this.addWizardPanel(tabMenuItem, wizardPanel);
+                var contentTypeRequest = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentType.qualifiedName).sendAndPromise();
+                jQuery.
+                    when(contentTypeRequest).
+                    then((contentTypeResponse:api_rest.JsonResponse) => {
 
-                wizardPanel.reRender();
+                        var newContentType = new api_schema_content.ContentType(contentTypeResponse.getJson());
+
+                        tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentWizardPanel.NEW_WIZARD_HEADER, tabId);
+                        var wizardPanel = new app_wizard.ContentWizardPanel(tabId, newContentType, parentContent);
+                        wizardPanel.renderNew();
+
+                        this.addWizardPanel(tabMenuItem, wizardPanel);
+
+                        wizardPanel.reRender();
+                    });
             }
         }
 
@@ -114,58 +123,35 @@ module app {
                 } else {
 
 
+                    var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.data.id).sendAndPromise();
+                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentModel.data.type).sendAndPromise();
+                    jQuery.
+                        when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
+                        then((contentResponse:api_rest.JsonResponse, contentTypeResponse:api_rest.JsonResponse) => {
 
-                    api_remote_content.RemoteContentService.content_get({
-                            contentIds: [contentModel.data.id]
-                        },
-                        (contentResult:api_remote_content.GetResult) => {
+                            var contentToEdit:api_content.Content = new api_content.Content(<api_content_json.ContentJson>contentResponse.getJson().contents[0]);
+                            var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(<api_schema_content_json.ContentTypeJson>contentTypeResponse.getJson());
+                            tabMenuItem = new api_app.AppBarTabMenuItem(contentToEdit.getDisplayName(), tabId, true);
 
-                            var contentToEdit:api_remote_content.Content = contentResult.content[0];
-                            // Fetch content type of content to edit
-                            api_remote_contenttype.RemoteContentTypeService.contentType_get({
-                                    qualifiedNames: [contentToEdit.type],
-                                    format: "JSON",
-                                    mixinReferencesToFormItems: true
-                                },
-                                (contentTypeResult:api_remote_contenttype.GetResult) => {
+                            if (contentToEdit.getPath().hasParent()) {
+                                new api_content.GetContentByPathRequest(contentToEdit.getPath().getParentPath()).sendAndPromise().
+                                    done((parentContentResponse:api_rest.JsonResponse) => {
+                                        var parentContent:api_content.Content = new api_content.Content(<api_content_json.ContentJson>parentContentResponse.getJson().contents[0]);
 
-                                    var contentType:api_remote_contenttype.ContentType = contentTypeResult.contentTypes[0];
-                                    tabMenuItem = new api_app.AppBarTabMenuItem(contentToEdit.displayName, tabId, true);
+                                        var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent);
 
-                                    var contentToEditPath:api_content.ContentPath = api_content.ContentPath.fromString(contentToEdit.path);
-                                    var parentContentPath:api_content.ContentPath = contentToEditPath.getParentPath();
-                                    if (parentContentPath != null) {
-                                        // Fetch parent of content to edit
-
-                                        // TODO: Testing handling two requests to new REST API using JQuery promise
-                                        var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.data.id).sendAndPromise();
-                                        var getContentByPathPromise = new api_content.GetContentByPathRequest(parentContentPath).sendAndPromise();
-                                        jQuery.when(getContentByIdPromise, getContentByPathPromise).then( (first:api_rest.JsonResponse, second:api_rest.JsonResponse) => {
-                                            console.log("GetContentByIdRequest async promised response: ", first);
-                                            console.log("GetContentByPathRequest async promised response: ", second);
-                                        });
-
-                                        api_remote_content.RemoteContentService.content_get({
-                                                path: parentContentPath.toString()
-                                            },
-                                            (parentContentResult:api_remote_content.GetResult) => {
-
-                                                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId,
-                                                    contentType, <any>parentContentResult.content);
-
-                                                contentWizardPanel.setPersistedItem(contentResult.content[0]);
-                                                this.addWizardPanel(tabMenuItem, contentWizardPanel);
-                                            });
-                                    }
-                                    else {
-                                        var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId,
-                                            contentType, null);
-                                        contentWizardPanel.setPersistedItem(contentResult.content[0]);
+                                        contentWizardPanel.setPersistedItem(contentToEdit);
                                         this.addWizardPanel(tabMenuItem, contentWizardPanel);
-                                    }
-                                });
 
+                                    });
+                            }
+                            else {
+                                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, null);
+                                contentWizardPanel.setPersistedItem(contentToEdit);
+                                this.addWizardPanel(tabMenuItem, contentWizardPanel);
+                            }
                         });
+
                 }
             });
         }

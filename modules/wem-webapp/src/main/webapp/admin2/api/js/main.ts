@@ -57,11 +57,7 @@
 ///<reference path='remote/util/RemoteUtilsModel.ts' />
 ///<reference path='remote/util/RemoteSystemService.ts' />
 
-///<reference path='rest/Response.ts' />
-///<reference path='rest/JsonRequest.ts' />
-///<reference path='rest/JsonResponse.ts' />
-///<reference path='rest/RequestError.ts' />
-///<reference path='rest/ResourceRequest.ts' />
+///<reference path='rest/module.ts' />
 
 ///<reference path='event/Listener.ts' />
 ///<reference path='event/Observable.ts' />
@@ -187,15 +183,10 @@
 ///<reference path='content/GetContentByIdRequest.ts' />
 ///<reference path='content/GetContentByPathRequest.ts' />
 
-///<reference path='schema/content/form/InputTypeName.ts' />
-///<reference path='schema/content/form/FormItem.ts' />
-///<reference path='schema/content/form/Layout.ts' />
-///<reference path='schema/content/form/FieldSet.ts' />
-///<reference path='schema/content/form/Input.ts' />
-///<reference path='schema/content/form/Occurrences.ts' />
-///<reference path='schema/content/ContentType.ts' />
-///<reference path='schema/content/form/FormItemSet.ts' />
-///<reference path='schema/content/form/Form.ts' />
+///<reference path='schema/content/form/json/module.ts' />
+///<reference path='schema/content/form/module.ts' />
+///<reference path='schema/content/json/module.ts' />
+///<reference path='schema/content/module.ts' />
 
 ///<reference path='page/Component.ts' />
 ///<reference path='page/Image.ts' />

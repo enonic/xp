@@ -12,7 +12,6 @@
             "immutable": false,
             "indexed": false,
             "inputType": {
-                "builtIn": true,
                 "config": null,
                 "name": "TextLine"
             },

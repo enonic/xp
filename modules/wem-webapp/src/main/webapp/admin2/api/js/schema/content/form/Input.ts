@@ -18,10 +18,12 @@ module api_schema_content_form{
 
         private helpText:string;
 
-        constructor(json) {
+        private inputTypeConfig:any;
+
+        constructor(json:api_schema_content_form_json.InputJson) {
 
             super(json.name);
-            this.inputType = InputTypeName.parseInputTypeName(json.type.name);
+            this.inputType = InputTypeName.parseInputTypeName(json.inputType.name);
             this.label = json.label;
             this.immutable = json.immutable;
             this.occurrences = new Occurrences(json.occurrences);
@@ -29,6 +31,7 @@ module api_schema_content_form{
             this.customText = json.customText;
             this.validationRegex = json.validationRegexp;
             this.helpText = json.helpText;
+            this.inputTypeConfig = json.inputType.config;
         }
 
         getInputType():InputTypeName {
@@ -61,6 +64,10 @@ module api_schema_content_form{
 
         getHelpText():string {
             return this.helpText;
+        }
+
+        getInputTypeConfig():any {
+            return this.inputTypeConfig;
         }
     }
 }

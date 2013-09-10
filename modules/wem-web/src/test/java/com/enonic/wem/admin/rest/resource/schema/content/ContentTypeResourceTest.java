@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.acme.DummyCustomInputType;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
@@ -88,9 +89,10 @@ public class ContentTypeResourceTest
 
         // execute
         MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
-        qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
-        String jsonString = resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "format", "JSON" ).queryParam(
-            "mixinReferencesToFormItems", "false" ).get( String.class );
+        qualifiedNames.add( "qualifiedName", MY_CTY_QUALIFIED_NAME.toString() );
+        String jsonString =
+            resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "mixinReferencesToFormItems", "false" ).get(
+                String.class );
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_only_one_input-result.json", jsonString );
@@ -107,6 +109,13 @@ public class ContentTypeResourceTest
             inputType( TEXT_LINE ).
             label( "My text line" ).
             required( true ).
+            build();
+
+        Input myCustomInput = newInput().
+            name( "myCustomInput" ).
+            inputType( new DummyCustomInputType() ).
+            label( "My custom input" ).
+            required( false ).
             build();
 
         FieldSet myFieldSet = newFieldSet().
@@ -140,6 +149,7 @@ public class ContentTypeResourceTest
             module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
             name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
             addFormItem( myTextLine ).
+            addFormItem( myCustomInput ).
             addFormItem( myFieldSet ).
             addFormItem( myFormItemSet ).
             addFormItem( myMixinReference ).
@@ -151,9 +161,10 @@ public class ContentTypeResourceTest
 
         // execute
         MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
-        qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
-        String jsonString = resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "format", "JSON" ).queryParam(
-            "mixinReferencesToFormItems", "false" ).get( String.class );
+        qualifiedNames.add( "qualifiedName", MY_CTY_QUALIFIED_NAME.toString() );
+        String jsonString =
+            resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "mixinReferencesToFormItems", "false" ).get(
+                String.class );
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_all_formItem_types-result.json", jsonString );
@@ -181,9 +192,8 @@ public class ContentTypeResourceTest
 
         // execute
         MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
-        qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
-        String jsonString = resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "format", "XML" ).queryParam(
-            "mixinReferencesToFormItems", "false" ).get( String.class );
+        qualifiedNames.add( "qualifiedName", MY_CTY_QUALIFIED_NAME.toString() );
+        String jsonString = resource().path( "schema/content/config" ).queryParams( qualifiedNames ).get( String.class );
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_format_as_xml-result.json", jsonString );

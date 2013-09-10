@@ -1,5 +1,8 @@
 package com.enonic.wem.admin.json.content;
 
+import java.util.List;
+
+import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.data.DataSetJson;
 import com.enonic.wem.api.content.Content;
 
@@ -14,8 +17,8 @@ public class ContentJson
         this.data = new DataSetJson( content.getContentData() );
     }
 
-    public DataSetJson getData()
+    public List<DataJson> getData()
     {
-        return data;
+        return data.getValue();
     }
 }

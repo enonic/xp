@@ -23,14 +23,7 @@ public class InputTypeName
 
     public static InputTypeName from( final InputType inputType )
     {
-        if ( inputType.isBuiltIn() )
-        {
-            return new InputTypeName( inputType.getName(), false );
-        }
-        else
-        {
-            return new InputTypeName( inputType.getName(), true );
-        }
+        return InputTypeName.from( inputType.getName() );
     }
 
     public InputTypeName( final String name, final boolean custom )

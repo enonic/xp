@@ -2,8 +2,7 @@ module app_new {
 
     export class NewContentDialog extends api_ui_dialog.ModalDialog {
 
-        private parentContent:api_remote_content.Content;
-
+        private parentContent:api_content.Content;
 
         private recentList:RecentContentTypesList;
 
@@ -62,7 +61,7 @@ module app_new {
             new NewContentEvent(contentType, this.parentContent).fire();
         }
 
-        setParentContent(value:api_remote_content.Content) {
+        setParentContent(value:api_content.Content) {
             this.parentContent = value;
         }
 

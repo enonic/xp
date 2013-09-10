@@ -19,11 +19,6 @@ public class InputTypeJson
         return inputType.getName();
     }
 
-    public boolean isBuiltIn()
-    {
-        return inputType.isBuiltIn();
-    }
-
     public void setConfig( final Object configJson )
     {
         this.configJson = configJson;

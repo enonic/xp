@@ -61,7 +61,7 @@ public class InputJsonSerializer
         jsonObject.put( VALIDATION_REGEXP, input.getValidationRegexp() != null ? input.getValidationRegexp().toString() : null );
         jsonObject.put( HELP_TEXT, input.getHelpText() );
 
-        final ObjectNode typeObject = (ObjectNode) inputTypeSerializer.serialize( (InputType) input.getInputType() );
+        final ObjectNode typeObject = (ObjectNode) inputTypeSerializer.serialize( input.getInputType() );
         if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
         {
             final JsonNode inputTypeNode =

@@ -20,11 +20,6 @@ public class FormItemSetJson
         this.occurrences = new OccurrencesJson( formItemSet.getOccurrences() );
     }
 
-    public String getName()
-    {
-        return formItemSet.getName();
-    }
-
     public String getLabel()
     {
         return formItemSet.getLabel();

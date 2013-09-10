@@ -4,16 +4,30 @@ module api_schema_content_form{
 
         private formItems:FormItem[] = [];
 
+        private formItemByName:{[name:string] : FormItem; } = {};
+
         constructor() {
 
         }
 
         addFormItem(formItem:FormItem) {
+            if (this.formItemByName[name]) {
+                throw new Error("FormItem already added: " + name);
+            }
+            this.formItemByName[formItem.getName()] = formItem;
             this.formItems.push(formItem);
         }
 
         getFormItems():FormItem[] {
             return this.formItems;
+        }
+
+        getFormItemByName(name:string):FormItem {
+            return this.formItemByName[name];
+        }
+
+        getInputByName(name:string):Input {
+            return <Input>this.formItemByName[name];
         }
     }
 }

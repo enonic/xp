@@ -4,9 +4,9 @@ module app_new {
 
         private contentType:api_remote_contenttype.ContentType;
 
-        private parentContent:api_remote_content.Content;
+        private parentContent:api_content.Content;
 
-        constructor(contentType:api_remote_contenttype.ContentType, parentContent:api_remote_content.Content) {
+        constructor(contentType:api_remote_contenttype.ContentType, parentContent:api_content.Content) {
             super('newContent');
             this.contentType = contentType;
             this.parentContent = parentContent;
@@ -16,7 +16,7 @@ module app_new {
             return this.contentType;
         }
 
-        getParentContent():api_remote_content.Content {
+        getParentContent():api_content.Content {
             return this.parentContent;
         }
 

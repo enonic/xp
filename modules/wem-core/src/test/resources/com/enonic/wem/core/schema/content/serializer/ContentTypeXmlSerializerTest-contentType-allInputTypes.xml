@@ -148,5 +148,13 @@
         <relationship-type>system:default</relationship-type>
       </config>
     </input>
+    <input type="custom:DummyCustomInputType" name="myCustomInput">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
   </form>
 </type>

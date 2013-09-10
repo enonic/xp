@@ -27,8 +27,8 @@ module api_content{
                 spaceName = null;
             }
 
-            if( path.indexOf("/") == 0 ) {
-                path = path.substr( 1 );
+            if (path.indexOf("/") == 0) {
+                path = path.substr(1);
             }
             var elements:string[] = path.split(ContentPath.ELEMENT_DIVIDER);
             return new ContentPath(spaceName, elements);
@@ -48,6 +48,10 @@ module api_content{
 
         getElements():string[] {
             return this.elements;
+        }
+
+        hasParent():boolean {
+            return this.elements.length > 0;
         }
 
         getParentPath():ContentPath {

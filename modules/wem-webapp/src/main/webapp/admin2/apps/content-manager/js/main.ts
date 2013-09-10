@@ -11,8 +11,6 @@
 ///<reference path='app/delete/ContentDeleteDialog.ts' />
 
 ///<reference path='app/wizard/ContentWizardEvents.ts' />
-///<reference path='app/wizard/ContentTypeFormFactory.ts' />
-///<reference path='app/wizard/ContentDataFactory.ts' />
 ///<reference path='app/wizard/ContentWizardActions.ts' />
 ///<reference path='app/wizard/ContentForm.ts' />
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
@@ -111,13 +109,12 @@ Ext.application({
 
             var parentContent:api_model.ContentExtModel = event.getParentContent();
 
-            var contentGetParams:api_remote_content.GetParams = {
-                contentIds: [parentContent.data.id]
-            };
-            api_remote_content.RemoteContentService.content_get(contentGetParams, (result:api_remote_content.GetResult) => {
-                newContentDialog.setParentContent(result.content[0]);
-                newContentDialog.open();
-            });
+            new api_content.GetContentByIdRequest(parentContent.data.id).sendAndPromise().
+                done((jsonResponse:api_rest.JsonResponse) => {
+                    var newParentContent = new api_content.Content(jsonResponse.getJson().contents[0]);
+                    newContentDialog.setParentContent(newParentContent);
+                    newContentDialog.open();
+                });
         });
     }
 });
