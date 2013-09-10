@@ -6,8 +6,6 @@ module app_wizard_form {
 
         private dataSets:api_data.DataSet[];
 
-        private formItemViews:FormItemView[] = [];
-
         constructor(formItemSet:api_schema_content_form.FormItemSet, dataSets?:api_data.DataSet[]) {
             super("FormItemSetView", "form-item-set-view", formItemSet);
 
@@ -28,51 +26,48 @@ module app_wizard_form {
 
         private doLayout() {
 
-            var label = new FormItemSetLabel(this.formItemSet);
-            this.appendChild(label);
-
-            var wrappingDiv = new api_dom.DivEl(null, "form-item-set-container");
-            this.appendChild(wrappingDiv);
-
             if (this.dataSets.length == 0) {
-                this.formItemSet.getFormItems().forEach((formItem:api_schema_content_form.FormItem) => {
-                    if (formItem instanceof api_schema_content_form.FormItemSet) {
-                        var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
-                        console.log("FormItemSetView.doLayout() laying out FormItemSet: ", formItemSet);
-                        var formItemSetView = new FormItemSetView(formItemSet);
-                        wrappingDiv.appendChild(formItemSetView);
-                        this.formItemViews.push(formItemSetView);
-                    }
-                    else if (formItem instanceof api_schema_content_form.Input) {
-                        var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
-                        console.log("FormItemSetView.doLayout()  laying out Input: ", input);
-                        var inputContainerView = new app_wizard_form.InputContainerView(input);
-                        wrappingDiv.appendChild(inputContainerView);
-                        this.formItemViews.push(inputContainerView);
-                    }
-                });
+
+                this.doLayoutWithoutData();
             }
             else {
-                this.dataSets.forEach( (dataSet:api_data.DataSet) => {
-                    this.formItemSet.getFormItems().forEach( (formItem:api_schema_content_form.FormItem) => {
-                        if (formItem instanceof api_schema_content_form.FormItemSet) {
-                            var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
-                            console.log("FormItemSetView.doLayout() laying out FormItemSet: ", formItemSet);
-                            var dataSets:api_data.DataSet[] = dataSet.getDataSetsByName(formItemSet.getName());
-                            var formItemSetView = new FormItemSetView(formItemSet, dataSets);
-                            wrappingDiv.appendChild(formItemSetView);
-                            this.formItemViews.push(formItemSetView);
-                        }
-                        else if (formItem instanceof api_schema_content_form.Input) {
-                            var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
-                            console.log("FormItemSetView.doLayout() laying out Input: ", input);
-                            var properties:api_data.Property[] = dataSet.getPropertiesByName(input.getName());
-                            var inputContainerView = new app_wizard_form.InputContainerView(input, properties);
-                            wrappingDiv.appendChild(inputContainerView);
-                            this.formItemViews.push(inputContainerView);
-                        }
-                    } );
-                });
+                this.doLayoutWithData();
+            }
+        }
+
+        private doLayoutWithoutData() {
+
+            var occurrences:api_schema_content_form.Occurrences = this.formItemSet.getOccurrences();
+            if (this.formItemSet.getOccurrences().getMinimum() > 1) {
+                for (var i = 0; i < occurrences.getMinimum(); i++) {
+                    var occurrenceView = new FormItemSetOccurrenceView(this.formItemSet, i);
+                    this.appendChild(occurrenceView);
+                }
+            }
+            else {
+                var occurrenceView = new FormItemSetOccurrenceView(this.formItemSet, 0);
+                this.appendChild(occurrenceView);
+            }
+        }
+
+        private doLayoutWithData() {
+
+            var occurrences:api_schema_content_form.Occurrences = this.formItemSet.getOccurrences();
+
+            var occurrenceCount = 0;
+            // Add one occurrence for each DataSet
+            this.dataSets.forEach((dataSet:api_data.DataSet) => {
+                var occurrenceView = new FormItemSetOccurrenceView(this.formItemSet, occurrenceCount, dataSet);
+                occurrenceCount++;
+                this.appendChild(occurrenceView);
+            });
+
+            // Adding any remaining occurrences to fulfill minimum required occurrences
+            if (occurrenceCount < occurrences.getMinimum()) {
+                for (var i = occurrenceCount - 1; i < occurrences.getMinimum(); i++) {
+                    var occurrenceView = new FormItemSetOccurrenceView(this.formItemSet, i);
+                    this.appendChild(occurrenceView);
+                }
             }
         }
     }

@@ -3,6 +3,7 @@
 ///<reference path='FieldSetLabel.ts' />
 ///<reference path='FieldSetView.ts' />
 ///<reference path='FormItemSetLabel.ts' />
+///<reference path='FormItemSetOccurrenceView.ts' />
 ///<reference path='FormItemSetView.ts' />
 ///<reference path='InputLabel.ts' />
 ///<reference path='InputContainerView.ts' />

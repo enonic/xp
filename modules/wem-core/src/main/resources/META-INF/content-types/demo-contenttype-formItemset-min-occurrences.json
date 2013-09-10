@@ -26,6 +26,57 @@
         },
         {
             "FormItemSet": {
+                "name": "minimum3",
+                "label": "Minimum 3",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 3,
+                    "maximum": 0
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "label",
+                            "label": "Label",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine"
+                            }
+                        }
+                    },
+                    {
+                        "Input": {
+                            "name": "value",
+                            "label": "Value",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": false,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "FormItemSet": {
                 "name": "minimum2",
                 "label": "Minimum 2",
                 "immutable": false,

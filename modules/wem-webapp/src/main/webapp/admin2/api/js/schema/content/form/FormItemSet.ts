@@ -66,5 +66,9 @@ module api_schema_content_form{
         getHelpText():string {
             return this.helpText;
         }
+
+        getOccurrences():Occurrences {
+            return this.occurrences;
+        }
     }
 }
