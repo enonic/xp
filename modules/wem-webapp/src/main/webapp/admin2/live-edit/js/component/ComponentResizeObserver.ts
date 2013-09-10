@@ -18,27 +18,28 @@ module LiveEdit.component {
                 return;
             }
 
-            console.log('ComponentResizeListener.observe()');
-
             this.component = component;
             this.component.getElement().on('resize', () => {
                 if (this.component.isSelected()) {
                     $(window).on('selectComponent.liveEdit', [component])
                 }
-            });
+            }, false);
+
+            console.log('ComponentResizeListener: observe()');
         }
 
         private disconnect():void {
             if (this.component != null) {
-                console.log('ComponentResizeListener.disconnect()');
-
-                this.component.getElement().off('resize');
+                this.component.getElement().off('resize', false);
             }
             this.component = null;
+
+            console.log('ComponentResizeListener: disconnect()');
         }
 
         private registerGlobalListeners():void {
             $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.observe(component));
+
             $(window).on('deselectComponent.liveEdit', () => this.disconnect());
             $(window).on('editParagraphComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component) => this.observe(component));
         }

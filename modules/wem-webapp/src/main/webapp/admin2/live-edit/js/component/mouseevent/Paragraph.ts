@@ -72,7 +72,6 @@ module LiveEdit.component.mouseevent {
         }
 
         setSelectMode(event:JQueryEventObject):void {
-
             console.log('Paragraph select mode');
 
             this.selectedParagraph.getElement().css('cursor', 'url(../../admin2/live-edit/images/pencil.png) 0 40, text');
@@ -96,7 +95,6 @@ module LiveEdit.component.mouseevent {
         }
 
         setEditMode():void {
-
             console.log('Paragraph edit mode');
 
             var paragraphComponent = this.selectedParagraph;
@@ -110,13 +108,13 @@ module LiveEdit.component.mouseevent {
         }
 
         leaveEditMode():void {
-
-            console.log('Paragraph leave edit mode');
-
             var paragraphComponent = this.selectedParagraph;
             if (paragraphComponent === null) {
                 return;
             }
+
+            console.log('Paragraph leave edit mode');
+
             $(window).trigger('leaveParagraphComponent.liveEdit', [this.selectedParagraph]);
 
             paragraphComponent.getElement().css('cursor', '');
