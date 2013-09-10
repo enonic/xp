@@ -20,8 +20,7 @@ module api_schema_content_form{
                 return FormItemFactory.createFormItemSet(<api_schema_content_form_json.FormItemSetJson>formItemJson);
             }
             else if (formItemJson.formItemType == "Layout") {
-                // TODO: parse and create using a LayoutFactory
-                return null;
+                return FormItemFactory.createLayout(<api_schema_content_form_json.LayoutJson>formItemJson);
             }
         }
 
@@ -32,6 +31,16 @@ module api_schema_content_form{
         static createFormItemSet(formItemSetJson:api_schema_content_form_json.FormItemSetJson):FormItemSet {
 
             return new FormItemSet(formItemSetJson);
+        }
+
+        static createLayout(layoutJson:api_schema_content_form_json.LayoutJson):Layout {
+            if( layoutJson.layoutType == "FieldSet" ) {
+                return FormItemFactory.createFieldSetLayout(<api_schema_content_form_json.FieldSetJson>layoutJson);
+            }
+        }
+
+        static createFieldSetLayout(fieldSetJson:api_schema_content_form_json.FieldSetJson):FieldSet {
+            return new FieldSet(fieldSetJson);
         }
     }
 }
