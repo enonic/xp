@@ -6,7 +6,10 @@ module api_rest {
 
         constructor(json:any) {
             super();
-            this.json = json;
+            try {
+                this.json = JSON.parse(json);
+            } catch (e) {
+            }
         }
 
         getJson():any {

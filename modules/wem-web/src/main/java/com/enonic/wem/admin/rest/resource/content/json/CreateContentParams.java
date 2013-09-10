@@ -10,7 +10,7 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 public class CreateContentParams
 {
-    private Boolean temporary;
+    private Boolean temporary = Boolean.FALSE;
 
     private String contentName;
 

@@ -182,6 +182,8 @@
 ///<reference path='content/ContentResourceRequest.ts' />
 ///<reference path='content/GetContentByIdRequest.ts' />
 ///<reference path='content/GetContentByPathRequest.ts' />
+///<reference path='content/CreateContentRequest.ts' />
+///<reference path='content/UpdateContentRequest.ts' />
 
 ///<reference path='schema/content/form/json/module.ts' />
 ///<reference path='schema/content/form/module.ts' />

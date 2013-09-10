@@ -136,8 +136,9 @@ module app_wizard {
                 contentData: flattenedContentData
             };
 
-            api_remote_content.RemoteContentService.content_createOrUpdate(createParams, () => {
+            new api_content.CreateContentRequest(createParams).sendAndPromise().done((createResponse:api_rest.JsonResponse) => {
                 api_notify.showFeedback('Content was created!');
+                console.log('content create response', createResponse);
             });
         }
 
@@ -156,8 +157,9 @@ module app_wizard {
                 contentData: flattenedContentData
             };
 
-            api_remote_content.RemoteContentService.content_createOrUpdate(updateParams, () => {
+            new api_content.UpdateContentRequest(updateParams).sendAndPromise().done((updateResponse:api_rest.JsonResponse) => {
                 api_notify.showFeedback('Content was updated!');
+                console.log('content update response', updateResponse);
             });
         }
 

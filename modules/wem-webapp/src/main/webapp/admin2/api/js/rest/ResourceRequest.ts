@@ -6,6 +6,8 @@ module api_rest {
 
         private method:string = "GET";
 
+        private params:Object;
+
         private async:boolean = false;
 
         private successCallback:(response:JsonResponse) => void = null;
@@ -24,6 +26,14 @@ module api_rest {
 
         getMethod():string {
             return this.method;
+        }
+
+        setParams(params:Object) {
+            this.params = params;
+        }
+
+        getParams():Object {
+            return this.params;
         }
 
         setAsync(successCallback:(response:JsonResponse) => void, errorCallback?:(requestError:RequestError) => void):ResourceRequest {
@@ -52,6 +62,7 @@ module api_rest {
 
             var jsonRequest = new JsonRequest().
                 setMethod(this.method).
+                setParams(this.params).
                 setUrl(this.getUrl());
 
             if (this.async) {
