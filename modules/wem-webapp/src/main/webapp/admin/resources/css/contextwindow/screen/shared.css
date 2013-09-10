@@ -28,11 +28,11 @@
 
 .admin-cw-item-icon {
     width: 50px;
-    font-size: 32px;
+    font-size: 26px;
     font-weight: lighter;
     display: table-cell;
     vertical-align: top;
-    padding-top: 2px;
+    padding-top: 6px;
 }
 
 .admin-cw-item-info {
