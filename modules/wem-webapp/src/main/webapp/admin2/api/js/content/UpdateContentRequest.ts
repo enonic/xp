@@ -16,18 +16,19 @@ module api_content {
 
         setId(id:string) {
             this.id = id;
+            this.updateParams();
+            return this;
         }
 
         getUrl() {
             return super.getResourceUrl() + "/update";
         }
 
-        updateParams():UpdateContentRequest {
-            super.updateParams();
-            var params = super.getParams();
+        updateParams() {
+            var params = super.updateParams();
             params['contentId'] = this.id;
             super.setParams(params);
-            return this;
+            return params;
         }
     }
 }

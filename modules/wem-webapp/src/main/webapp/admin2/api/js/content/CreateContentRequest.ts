@@ -26,7 +26,8 @@ module api_content {
 
         setTemporary(temporary:boolean) {
             this.temporary = temporary;
-            return this.updateParams();
+            this.updateParams();
+            return this;
         }
 
         getContentName():string {
@@ -35,7 +36,8 @@ module api_content {
 
         setContentName(contentName:string) {
             this.contentName = contentName;
-            return this.updateParams();
+            this.updateParams();
+            return this;
         }
 
         getParentContentPath():string {
@@ -44,7 +46,8 @@ module api_content {
 
         setParentContentPath(parentContentPath:string) {
             this.parentContentPath = parentContentPath;
-            return this.updateParams();
+            this.updateParams();
+            return this;
         }
 
         getQualifiedContentTypeName():string {
@@ -53,7 +56,8 @@ module api_content {
 
         setQualifiedContentTypeName(qualifiedContentTypeName:string) {
             this.qualifiedContentTypeName = qualifiedContentTypeName;
-            return this.updateParams();
+            this.updateParams();
+            return this;
         }
 
         getContentData():{ [key:string]:string } {
@@ -62,7 +66,8 @@ module api_content {
 
         setContentData(contentData:{ [key:string]:string }) {
             this.contentData = contentData;
-            return this.updateParams();
+            this.updateParams();
+            return this;
         }
 
         getDisplayName():string {
@@ -71,7 +76,8 @@ module api_content {
 
         setDisplayName(displayName:string) {
             this.displayName = displayName;
-            return this.updateParams();
+            this.updateParams();
+            return this;
         }
 
         getAttachments():{uploadId: string;attachmentName: string;}[] {
@@ -80,7 +86,8 @@ module api_content {
 
         setAttachments(attachments:{uploadId: string;attachmentName: string;}[]) {
             this.attachments = attachments;
-            return this.updateParams();
+            this.updateParams();
+            return this;
         }
 
         getUrl() {
@@ -98,7 +105,7 @@ module api_content {
                 attachments: this.attachments
             };
             super.setParams(params);
-            return this;
+            return params;
         }
     }
 }
