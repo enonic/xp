@@ -28,10 +28,10 @@ module api_dom {
             existingEl.getHTMLElement().parentNode.insertBefore(this.el, existingEl.getHTMLElement().nextSibling);
         }
 
-        /**
+        /*
          * @returns {api_dom.ElementHelper} ElementHelper for previous node of this element.
          */
-        getPrevious(): ElementHelper {
+        getPrevious():ElementHelper {
             var previous = this.el.previousSibling;
             while (previous && previous.nodeType != Node.ELEMENT_NODE) {
                 previous = previous.previousSibling;
@@ -54,7 +54,7 @@ module api_dom {
         }
 
         setInnerHtml(value:string):ElementHelper {
-            this.el.innerHTML = value;
+            jQuery(this.el).html(value);
             return this;
         }
 
@@ -134,14 +134,12 @@ module api_dom {
         }
 
         setData(name:string, value:string):ElementHelper {
-            var any = <any>this.el;
-            any._data[name] = value;
+            jQuery(this.el).data(name, value);
             return this;
         }
 
         getData(name:string):string {
-            var any = <any>this.el;
-            return any._data[name];
+            return jQuery(this.el).data(name);
         }
 
         getDisplay():string {
@@ -224,7 +222,7 @@ module api_dom {
             return this;
         }
 
-        getPaddingLeft(): number {
+        getPaddingLeft():number {
             var stringValue = window.getComputedStyle(this.getHTMLElement(), null).getPropertyValue('padding-left');
             return +stringValue.replace('px', '');
         }
