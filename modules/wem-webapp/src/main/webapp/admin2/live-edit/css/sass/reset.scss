@@ -8,15 +8,16 @@
 .live-edit-empty-region-placeholder,
 .live-edit-empty-part-placeholder,
 .live-edit-drop-target-placeholder,
+.live-edit-tool-tip,
 #live-edit-drag-helper * {
-  border: 0;
-  outline: 0;
-  color: $textColor;
-  font-size: 11px;
-  font-family: Tahoma, Geneva, sans-serif;
-  font-weight: normal;
-  margin: 0;
-  padding: 0;
-  vertical-align: baseline;
-  line-height: 1.2;
+    border: 0;
+    outline: 0;
+    color: $textColor;
+    font-size: 11px;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    line-height: 1.2;
 }

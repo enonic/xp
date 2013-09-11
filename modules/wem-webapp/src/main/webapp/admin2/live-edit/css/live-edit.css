@@ -8,6 +8,7 @@
 .live-edit-empty-region-placeholder,
 .live-edit-empty-part-placeholder,
 .live-edit-drop-target-placeholder,
+.live-edit-tool-tip,
 #live-edit-drag-helper * {
   border: 0;
   outline: 0;
@@ -251,14 +252,12 @@ svg.live-edit-highlight-border rect {
 .live-edit-tool-tip {
   z-index: 1000150;
   position: absolute;
-  border: 1px solid #000;
-  padding: 10px 10px;
+  padding: 15px;
   background-color: #ffffc7; }
 
 .live-edit-tool-tip-name-text,
 .live-edit-tool-tip-type-text {
-  display: block;
-  color: #444; }
+  display: block; }
 
 .live-edit-tool-tip-name-text {
   font-weight: bold; }
@@ -341,12 +340,11 @@ svg.live-edit-highlight-border rect {
   min-width: 150px;
   padding: 0;
   background-color: #f6f5f7;
-  border: 1px solid #aaaaaa;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); }
 
 .live-edit-context-menu-title-bar {
   overflow: hidden;
-  margin-bottom: 2px;
+  margin: 5px 5px 0px 5px;
   cursor: hand;
   cursor: grab !important;
   cursor: -moz-grab;
@@ -371,7 +369,7 @@ svg.live-edit-highlight-border rect {
   float: left;
   font-size: 14px;
   color: #555555;
-  padding-top: 7px;
+  padding-top: 6px;
   padding-left: 2px; }
 
 .live-edit-context-menu-title-close-button {
@@ -380,7 +378,7 @@ svg.live-edit-highlight-border rect {
   background: transparent url("../images/close.png") center center no-repeat;
   width: 22px;
   height: 22px;
-  padding: 5px 7px; }
+  padding: 0px 7px 0 0; }
 
 /*** Menu item */
 .live-edit-menu-item {
@@ -388,7 +386,7 @@ svg.live-edit-highlight-border rect {
   display: block;
   cursor: pointer;
   text-decoration: none;
-  padding: 5px 10px;
+  padding: 5px 15px;
   color: #fff; }
 
 .live-edit-menu-item:hover {
@@ -436,7 +434,7 @@ svg.live-edit-highlight-border rect {
   margin-left: -8px; }
 
 .live-edit-arrow-top:before {
-  border-bottom-color: #aaaaaa;
+  border-bottom-color: #f6f5f7;
   border-width: 9px;
   left: 50%;
   margin-left: -9px; }
@@ -452,7 +450,7 @@ svg.live-edit-highlight-border rect {
   margin-left: -8px; }
 
 .live-edit-arrow-bottom:before {
-  border-top-color: #aaaaaa;
+  border-top-color: #f6f5f7;
   border-width: 9px;
   left: 50%;
   margin-left: -9px; }
