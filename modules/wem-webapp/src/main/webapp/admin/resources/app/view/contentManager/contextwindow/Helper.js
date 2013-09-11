@@ -17,25 +17,25 @@ Ext.define('Admin.view.contentManager.contextwindow.Helper', {
 
             switch (type) {
                 case 0:
-                    iconCls = 'live-edit-component-type-page-icon';
+                    iconCls = 'live-edit-font-icon-page';
                     break;
                 case 1:
-                    iconCls = 'live-edit-component-type-region-icon';
+                    iconCls = 'live-edit-font-icon-region';
                     break;
                 case 2:
-                    iconCls = 'live-edit-component-type-layout-icon';
+                    iconCls = 'live-edit-font-icon-layout';
                     break;
                 case 3:
-                    iconCls = 'live-edit-component-type-part-icon';
+                    iconCls = 'live-edit-font-icon-part';
                     break;
                 case 4:
-                    iconCls = 'live-edit-component-type-image-icon';
+                    iconCls = 'live-edit-font-icon-image';
                     break;
                 case 5:
-                    iconCls = 'live-edit-component-type-paragraph-icon';
+                    iconCls = 'live-edit-font-icon-paragraph';
                     break;
                 case 6:
-                    iconCls = 'live-edit-component-type-content-icon';
+                    iconCls = 'live-edit-font-icon-content';
                     break;
                 default:
                     iconCls = '';

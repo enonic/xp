@@ -123,7 +123,7 @@ module LiveEdit.component {
             typeName: 'page',
             cssSelector: '[data-live-edit-type=0]',
             cursor: 'pointer',
-            iconCls: 'live-edit-component-type-page-icon',
+            iconCls: 'live-edit-font-icon-page',
             highlighterStyle: {
                 stroke: '',
                 strokeDasharray: '',
@@ -136,7 +136,7 @@ module LiveEdit.component {
             typeName: 'region',
             cssSelector: '[data-live-edit-type=1]',
             cursor: 'pointer',
-            iconCls: 'live-edit-component-type-region-icon',
+            iconCls: 'live-edit-font-icon-region',
             highlighterStyle: {
                 stroke: 'rgba(20, 20, 20, 1)',
                 strokeDasharray: '',
@@ -150,7 +150,7 @@ module LiveEdit.component {
             typeName: 'layout',
             cssSelector: '[data-live-edit-type=2]',
             cursor: 'move',
-            iconCls: 'live-edit-component-type-layout-icon',
+            iconCls: 'live-edit-font-icon-layout',
             highlighterStyle: {
                 stroke: 'rgba(255, 165, 0, 1)',
                 strokeDasharray: '5 5',
@@ -163,7 +163,7 @@ module LiveEdit.component {
             typeName: 'part',
             cssSelector: '[data-live-edit-type=3]',
             cursor: 'move',
-            iconCls: 'live-edit-component-type-part-icon',
+            iconCls: 'live-edit-font-icon-part',
             highlighterStyle: {
                 stroke: 'rgba(68, 68, 68, 1)',
                 strokeDasharray: '5 5',
@@ -176,7 +176,7 @@ module LiveEdit.component {
             typeName: 'image',
             cssSelector: '[data-live-edit-type=4]',
             cursor: 'move',
-            iconCls: 'live-edit-component-type-image-icon',
+            iconCls: 'live-edit-font-icon-image',
             highlighterStyle: {
                 stroke: 'rgba(68, 68, 68, 1)',
                 strokeDasharray: '5 5',
@@ -189,7 +189,7 @@ module LiveEdit.component {
             typeName: 'paragraph',
             cssSelector: '[data-live-edit-type=5]',
             cursor: 'move',
-            iconCls: 'live-edit-component-type-paragraph-icon',
+            iconCls: 'live-edit-font-icon-paragraph',
             highlighterStyle: {
                 stroke: 'rgba(85, 85, 255, 1)',
                 strokeDasharray: '5 5',
@@ -202,7 +202,7 @@ module LiveEdit.component {
             typeName: 'content',
             cssSelector: '[data-live-edit-type=6]',
             cursor: 'pointer',
-            iconCls: 'live-edit-component-type-content-icon',
+            iconCls: 'live-edit-font-icon-content',
             highlighterStyle: {
                 stroke: '',
                 strokeDasharray: '',

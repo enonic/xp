@@ -21,15 +21,9 @@
     cursor: progress !important;
 }
 
-.live-edit-loader-splash-content img {
-    width: 88px;
-    height: 88px;
-    border: none;
+.live-edit-loader-splash-content .live-edit-loader-splash-spinner {
+    font-size: 85px;
+    margin-bottom: 10px;
     animation: live-edit-spinner .5s infinite linear;
     -webkit-animation: live-edit-spinner .5s infinite linear;
-}
-
-.live-edit-loader-splash-content div {
-    color: #000;
-    margin-top: .7em;
 }

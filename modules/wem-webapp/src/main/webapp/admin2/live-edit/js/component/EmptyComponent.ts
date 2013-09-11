@@ -28,9 +28,9 @@ module LiveEdit.component {
 
         public static createEmptyComponentElement(component:LiveEdit.component.Component):string {
 
-            return '<div class="live-edit-empty-component ' + component.getComponentType().getIconCls() +
-                   '" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getType() +
-                   '"><!-- --></div>';
+            return '<div class="live-edit-empty-component" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getType() + '">' +
+                   '    <div class="' + component.getComponentType().getIconCls() + ' live-edit-empty-component-icon"></div>' +
+                   '</div>';
         }
 
         private static replaceEmptyComponent(selectedComponent:LiveEdit.component.Component, responseHtml:JQuery):void {
@@ -55,7 +55,10 @@ module LiveEdit.component {
         }
 
         private static appendLoadingSpinner(emptyComponent:LiveEdit.component.Component):void {
-            emptyComponent.getElement().append('<img src="../../admin2/live-edit/images/spinner.png"/>');
+            var element:JQuery = emptyComponent.getElement();
+            element.children('.live-edit-empty-component-icon').addClass('live-edit-font-icon-spinner');
+
+            // element.append('<img src="../../admin2/live-edit/images/spinner.png"/>');
         }
 
     }
