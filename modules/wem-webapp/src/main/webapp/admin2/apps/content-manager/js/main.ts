@@ -100,7 +100,7 @@ Ext.application({
 
             var parentContent:api_model.ContentExtModel = event.getParentContent();
 
-            new api_content.GetContentByIdRequest(parentContent.data.id).sendAndPromise().
+            new api_content.GetContentByIdRequest(parentContent.data.id).send().
                 done((jsonResponse:api_rest.JsonResponse) => {
                     var newParentContent = new api_content.Content(jsonResponse.getJson().contents[0]);
                     newContentDialog.setParentContent(newParentContent);

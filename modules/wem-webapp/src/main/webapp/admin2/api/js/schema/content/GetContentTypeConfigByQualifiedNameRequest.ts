@@ -10,9 +10,14 @@ module api_schema_content {
             this.qualifiedName = qualifiedName;
         }
 
-        getUrl():string {
-            var resourceUrl = super.getResourceUrl();
-            return resourceUrl + "config?qualifiedName=" + this.qualifiedName;
+        getParams():Object {
+            return {
+                qualifiedName: this.qualifiedName
+            };
+        }
+
+        getRequestPath():api_rest.Path {
+            return api_rest.Path.fromParent(super.getResourcePath(), "config");
         }
     }
 }

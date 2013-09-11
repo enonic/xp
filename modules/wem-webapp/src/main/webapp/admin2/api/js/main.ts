@@ -57,17 +57,14 @@
 ///<reference path='remote/util/RemoteUtilsModel.ts' />
 ///<reference path='remote/util/RemoteSystemService.ts' />
 
-///<reference path='rest/module.ts' />
+///<reference path='notify/module.ts' />
 
 ///<reference path='event/Listener.ts' />
 ///<reference path='event/Observable.ts' />
 ///<reference path='event/Event.ts' />
 ///<reference path='event/EventBus.ts' />
 
-///<reference path='notify/Message.ts' />
-///<reference path='notify/NotifyManager.ts' />
-///<reference path='notify/NotifyOpts.ts' />
-///<reference path='notify/MessageBus.ts' />
+///<reference path='rest/module.ts' />
 
 ///<reference path='dom/TextNodeHelper.ts' />
 ///<reference path='dom/TextNode.ts' />

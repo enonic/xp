@@ -4,13 +4,20 @@ module api_rest {
 
         private statusText:string;
 
-        constructor(statusText:string) {
+        private responseText:string;
+
+        constructor(statusText:string, responseText:string) {
             super();
             this.statusText = statusText;
+            this.responseText = responseText;
         }
 
         getStatusText() {
             return this.statusText;
+        }
+
+        getResponseText() {
+            return this.responseText;
         }
     }
 }

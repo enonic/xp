@@ -2,15 +2,15 @@ module api_content {
 
     export class ContentResourceRequest extends api_rest.ResourceRequest{
 
-        private resourceUrl:string;
+        private resourcePath:api_rest.Path;
 
         constructor() {
             super();
-            this.resourceUrl = super.getRestUrl() + "/content";
+            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "content");
         }
 
-        getResourceUrl():string {
-            return this.resourceUrl;
+        getResourcePath():api_rest.Path {
+            return this.resourcePath;
         }
     }
 }

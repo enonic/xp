@@ -3,13 +3,19 @@ module api_content {
     export class CreateContentRequest extends ContentResourceRequest {
 
         private temporary:boolean = false;
+
         private contentName:string;
+
         private parentContentPath:string;
+
         private qualifiedContentTypeName:string;
+
         private contentData:{
             [key:string]: string;
         };
+
         private displayName:string;
+
         private attachments:{
             uploadId: string;
             attachmentName: string;
@@ -20,82 +26,45 @@ module api_content {
             super.setMethod("POST");
         }
 
-        isTemporary():boolean {
-            return this.temporary;
-        }
-
-        setTemporary(temporary:boolean) {
+        setTemporary(temporary:boolean):CreateContentRequest {
             this.temporary = temporary;
-            this.updateParams();
             return this;
         }
 
-        getContentName():string {
-            return this.contentName;
-        }
-
-        setContentName(contentName:string) {
+        setContentName(contentName:string):CreateContentRequest  {
             this.contentName = contentName;
-            this.updateParams();
             return this;
         }
 
-        getParentContentPath():string {
-            return this.parentContentPath;
-        }
-
-        setParentContentPath(parentContentPath:string) {
+        setParentContentPath(parentContentPath:string):CreateContentRequest {
             this.parentContentPath = parentContentPath;
-            this.updateParams();
             return this;
         }
 
-        getQualifiedContentTypeName():string {
-            return this.qualifiedContentTypeName;
-        }
-
-        setQualifiedContentTypeName(qualifiedContentTypeName:string) {
+        setContentType(qualifiedContentTypeName:string):CreateContentRequest {
             this.qualifiedContentTypeName = qualifiedContentTypeName;
-            this.updateParams();
             return this;
         }
 
-        getContentData():{ [key:string]:string } {
-            return this.contentData;
-        }
-
-        setContentData(contentData:{ [key:string]:string }) {
+        setContentData(contentData:{ [key:string]:string }):CreateContentRequest {
             this.contentData = contentData;
-            this.updateParams();
             return this;
         }
 
-        getDisplayName():string {
-            return this.displayName;
-        }
-
-        setDisplayName(displayName:string) {
+        setDisplayName(displayName:string):CreateContentRequest {
             this.displayName = displayName;
-            this.updateParams();
             return this;
         }
 
-        getAttachments():{uploadId: string;attachmentName: string;}[] {
-            return this.attachments;
-        }
 
-        setAttachments(attachments:{uploadId: string;attachmentName: string;}[]) {
+        setAttachments(attachments:{uploadId: string;attachmentName: string;}[]):CreateContentRequest {
             this.attachments = attachments;
-            this.updateParams();
             return this;
         }
 
-        getUrl() {
-            return super.getResourceUrl() + "/create";
-        }
 
-        updateParams() {
-            var params = {
+        getParams():Object {
+            return {
                 temporary: this.temporary,
                 contentName: this.contentName,
                 parentContentPath: this.parentContentPath,
@@ -104,8 +73,11 @@ module api_content {
                 displayName: this.displayName,
                 attachments: this.attachments
             };
-            super.setParams(params);
-            return params;
         }
+
+        getRequestPath():api_rest.Path {
+            return api_rest.Path.fromParent(super.getResourcePath(), "create");
+        }
+
     }
 }

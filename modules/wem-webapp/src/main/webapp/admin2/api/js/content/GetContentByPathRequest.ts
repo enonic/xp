@@ -2,16 +2,22 @@ module api_content {
 
     export class GetContentByPathRequest extends ContentResourceRequest {
 
+        private contentPath:ContentPath;
+
         constructor(path:ContentPath) {
             super();
             super.setMethod("GET");
-            super.setParams({
-                path: path
-            });
+            this.contentPath = path;
         }
 
-        getUrl():string {
-            return super.getResourceUrl();
+        getParams():Object {
+            return {
+                path: this.contentPath.toString()
+            };
+        }
+
+        getRequestPath():api_rest.Path {
+            return super.getResourcePath();
         }
     }
 }

@@ -17,9 +17,15 @@ module api_schema_content {
             return this;
         }
 
-        getUrl():string {
-            var resourceUrl = super.getResourceUrl();
-            return resourceUrl + "?qualifiedName=" + this.qualifiedName + "&mixinReferencesToFormItems=" + this.mixinReferencesToFormItems;
+        getParams():Object {
+            return {
+                qualifiedName: this.qualifiedName,
+                mixinReferencesToFormItems: this.mixinReferencesToFormItems
+            };
+        }
+
+        getRequestPath():api_rest.Path {
+            return super.getResourcePath();
         }
     }
 }

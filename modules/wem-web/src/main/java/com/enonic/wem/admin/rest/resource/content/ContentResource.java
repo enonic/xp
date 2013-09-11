@@ -25,6 +25,7 @@ import com.sun.jersey.api.NotFoundException;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.content.json.AttachmentParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
@@ -276,13 +277,13 @@ public class ContentResource
         return new ContentDataParser( contentType ).parse( contentData );
     }
 
-    private List<Attachment> parseAttachments( final List<CreateContentParams.AttachmentParams> attachmentParamsList )
+    private List<Attachment> parseAttachments( final List<AttachmentParams> attachmentParamsList )
         throws FileNotFoundException
     {
         List<Attachment> attachments = new ArrayList<>();
         if ( attachmentParamsList != null )
         {
-            for ( CreateContentParams.AttachmentParams attachmentParams : attachmentParamsList )
+            for ( AttachmentParams attachmentParams : attachmentParamsList )
             {
                 attachments.add( createAttachment( attachmentParams ) );
             }
@@ -290,7 +291,7 @@ public class ContentResource
         return attachments;
     }
 
-    private Attachment createAttachment( final CreateContentParams.AttachmentParams attachmentParams )
+    private Attachment createAttachment( final AttachmentParams attachmentParams )
         throws FileNotFoundException
     {
         final UploadItem uploadItem = uploadService.getItem( attachmentParams.getUploadId() );

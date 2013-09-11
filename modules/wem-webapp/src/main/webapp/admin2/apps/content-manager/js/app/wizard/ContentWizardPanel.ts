@@ -131,10 +131,10 @@ module app_wizard {
             new api_content.CreateContentRequest().
                 setContentName(this.contentWizardHeader.getName()).
                 setParentContentPath(this.parentContent.getPath().toString()).
-                setQualifiedContentTypeName(this.contentType.getQualifiedName()).
+                setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setContentData(flattenedContentData).
-                sendAndPromise().done((createResponse:api_rest.JsonResponse) => {
+                send().done((createResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
                 });
@@ -148,11 +148,10 @@ module app_wizard {
 
             new api_content.UpdateContentRequest(this.persistedContent.getId()).
                 setContentName(this.contentWizardHeader.getName()).
-                setParentContentPath(this.parentContent.getPath().toString()).
-                setQualifiedContentTypeName(this.contentType.getQualifiedName()).
+                setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setContentData(flattenedContentData).
-                sendAndPromise().done((updateResponse:api_rest.JsonResponse) => {
+                send().done((updateResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was updated!');
                     console.log('content update response', updateResponse);
                 });

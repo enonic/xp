@@ -63,7 +63,7 @@ module app {
 
             } else {
 
-                var contentTypeRequest = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentType.qualifiedName).sendAndPromise();
+                var contentTypeRequest = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentType.qualifiedName).send();
                 jQuery.
                     when(contentTypeRequest).
                     then((contentTypeResponse:api_rest.JsonResponse) => {
@@ -123,8 +123,8 @@ module app {
                 } else {
 
 
-                    var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.data.id).sendAndPromise();
-                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentModel.data.type).sendAndPromise();
+                    var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.data.id).send();
+                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentModel.data.type).send();
                     jQuery.
                         when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
                         then((contentResponse:api_rest.JsonResponse, contentTypeResponse:api_rest.JsonResponse) => {
@@ -134,7 +134,7 @@ module app {
                             tabMenuItem = new api_app.AppBarTabMenuItem(contentToEdit.getDisplayName(), tabId, true);
 
                             if (contentToEdit.getPath().hasParent()) {
-                                new api_content.GetContentByPathRequest(contentToEdit.getPath().getParentPath()).sendAndPromise().
+                                new api_content.GetContentByPathRequest(contentToEdit.getPath().getParentPath()).send().
                                     done((parentContentResponse:api_rest.JsonResponse) => {
                                         var parentContent:api_content.Content = new api_content.Content(<api_content_json.ContentJson>parentContentResponse.getJson().contents[0]);
 

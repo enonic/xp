@@ -1,5 +1,6 @@
 ///<reference path='../../TestCase.d.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/util/UriHelper.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/notify/module.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/rest/module.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/schema/content/form/json/module.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/schema/content/form/module.ts' />

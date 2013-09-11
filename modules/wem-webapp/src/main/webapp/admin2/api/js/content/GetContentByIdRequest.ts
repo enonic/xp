@@ -2,16 +2,22 @@ module api_content {
 
     export class GetContentByIdRequest extends ContentResourceRequest {
 
+        private id:string;
+
         constructor(id:string) {
             super();
             super.setMethod("GET");
-            super.setParams({
-                contentIds: [id]
-            });
+            this.id = id;
         }
 
-        getUrl():string {
-            return super.getResourceUrl();
+        getParams():Object {
+            return {
+                contentIds: [this.id]
+            };
+        }
+
+        getRequestPath():api_rest.Path {
+            return super.getResourcePath();
         }
     }
 }

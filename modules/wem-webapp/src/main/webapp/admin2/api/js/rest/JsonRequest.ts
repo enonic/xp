@@ -2,7 +2,7 @@ module api_rest {
 
     export class JsonRequest {
 
-        private url:string;
+        private path:Path;
 
         private method:string = "GET";
 
@@ -16,8 +16,8 @@ module api_rest {
 
         private jsonResponse:JsonResponse;
 
-        setUrl(value:string):JsonRequest {
-            this.url = value;
+        setPath(value:Path):JsonRequest {
+            this.path = value;
             return this;
         }
 
@@ -38,33 +38,54 @@ module api_rest {
             return this;
         }
 
-        send() {
+        private prepareGETRequest():XMLHttpRequest {
             var request = new XMLHttpRequest();
-            var paramString;
+            var paramString = this.serializeParams(this.params);
+            request.open(this.method, this.path.toString() + "?" + paramString, this.async);
+            request.setRequestHeader("Accept", "application/json");
+            return request;
+        }
+
+        private preparePOSTRequest():XMLHttpRequest {
+            var request = new XMLHttpRequest();
+            var paramString = JSON.stringify(this.params);
+            request.open(this.method, this.path.toString(), this.async);
+            request.setRequestHeader("Accept", "application/json");
+            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            request.setRequestHeader("Content-Length", "" + paramString.length);
+            request.setRequestHeader("Connection", "close");
+            request.send(paramString);
+            return request;
+        }
+
+        send() {
+
+            var request:XMLHttpRequest;
             if ("POST" == this.method.toUpperCase()) {
-                paramString = JSON.stringify(this.params);
-                request.open(this.method, this.url, this.async);
-                request.setRequestHeader("Accept", "application/json");
-                request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-                request.setRequestHeader("Content-length", "" + paramString.length);
-                request.setRequestHeader("Connection", "close");
-                request.send(paramString);
-            } else {
-                paramString = this.serialize(this.params);
-                request.open(this.method, this.url + "?" + paramString, this.async);
-                request.setRequestHeader("Accept", "application/json");
+                request = this.preparePOSTRequest();
+            }
+            else {
+                var request = this.prepareGETRequest();
                 request.send();
             }
 
             if (this.async) {
-                request.onload = () => {
-                    if (this.successCallback) {
-                        this.successCallback(new JsonResponse(request.response));
-                    }
-                };
-                request.onerror = () => {
-                    if (this.errorCallback) {
-                        this.errorCallback(new RequestError(request.statusText));
+                request.onreadystatechange = () => {
+
+                    if (request.readyState == 4) {
+                        if (request.status >= 200 && request.status < 300) {
+                            if (this.successCallback) {
+                                this.successCallback(new JsonResponse(request.response));
+                            }
+                        }
+                        else {
+                            var message:string = "HTTP Status " + request.status + " - " + request.statusText;
+                            api_notify.showError(message);
+
+                            if (this.errorCallback) {
+                                this.errorCallback(new RequestError(request.statusText, request.responseText));
+                            }
+                        }
                     }
                 };
             }
@@ -77,15 +98,14 @@ module api_rest {
             return this.jsonResponse;
         }
 
-
-        private serialize(obj:Object):string {
+        private serializeParams(params:Object):string {
             var str = "";
-            for (var key in obj) {
-                if (obj.hasOwnProperty(key)) {
+            for (var key in params) {
+                if (params.hasOwnProperty(key)) {
                     if (str.length > 0) {
                         str += "&";
                     }
-                    str += key + "=" + obj[key];
+                    str += key + "=" + params[key];
                 }
             }
             return str;
