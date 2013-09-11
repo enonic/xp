@@ -128,18 +128,16 @@ module app_wizard {
             this.flattenData(this.contentForm.getContentData(), flattenedContentData);
             console.log("persistNewItem flattenedContentData: ", flattenedContentData);
 
-            var createParams:api_remote_content.CreateOrUpdateParams = {
-                contentName: this.contentWizardHeader.getName(),
-                parentContentPath: this.parentContent.getPath().toString(),
-                qualifiedContentTypeName: this.contentType.getQualifiedName(),
-                displayName: this.contentWizardHeader.getDisplayName(),
-                contentData: flattenedContentData
-            };
-
-            new api_content.CreateContentRequest(createParams).sendAndPromise().done((createResponse:api_rest.JsonResponse) => {
-                api_notify.showFeedback('Content was created!');
-                console.log('content create response', createResponse);
-            });
+            new api_content.CreateContentRequest().
+                setContentName(this.contentWizardHeader.getName()).
+                setParentContentPath(this.parentContent.getPath().toString()).
+                setQualifiedContentTypeName(this.contentType.getQualifiedName()).
+                setDisplayName(this.contentWizardHeader.getDisplayName()).
+                setContentData(flattenedContentData).
+                sendAndPromise().done((createResponse:api_rest.JsonResponse) => {
+                    api_notify.showFeedback('Content was created!');
+                    console.log('content create response', createResponse);
+                });
         }
 
         updatePersistedItem(successCallback?:() => void) {
@@ -148,19 +146,16 @@ module app_wizard {
             this.flattenData(this.contentForm.getContentData(), flattenedContentData);
             console.log("updatePersistedItem flattenedContentData: ", flattenedContentData);
 
-            var updateParams:api_remote_content.CreateOrUpdateParams = {
-                contentId: this.persistedContent.getId(),
-                contentName: this.contentWizardHeader.getName(),
-                parentContentPath: this.parentContent.getPath().toString(),
-                qualifiedContentTypeName: this.contentType.getQualifiedName(),
-                displayName: this.contentWizardHeader.getDisplayName(),
-                contentData: flattenedContentData
-            };
-
-            new api_content.UpdateContentRequest(updateParams).sendAndPromise().done((updateResponse:api_rest.JsonResponse) => {
-                api_notify.showFeedback('Content was updated!');
-                console.log('content update response', updateResponse);
-            });
+            new api_content.UpdateContentRequest(this.persistedContent.getId()).
+                setContentName(this.contentWizardHeader.getName()).
+                setParentContentPath(this.parentContent.getPath().toString()).
+                setQualifiedContentTypeName(this.contentType.getQualifiedName()).
+                setDisplayName(this.contentWizardHeader.getDisplayName()).
+                setContentData(flattenedContentData).
+                sendAndPromise().done((updateResponse:api_rest.JsonResponse) => {
+                    api_notify.showFeedback('Content was updated!');
+                    console.log('content update response', updateResponse);
+                });
         }
 
         private flattenData(contentData:api_data.DataSet, result:any) {

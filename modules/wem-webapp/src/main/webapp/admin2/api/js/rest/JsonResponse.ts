@@ -9,6 +9,7 @@ module api_rest {
             try {
                 this.json = JSON.parse(json);
             } catch (e) {
+                console.warn("Failed to parse the response", json, e);
             }
         }
 

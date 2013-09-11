@@ -1,15 +1,33 @@
 module api_content {
 
-    export class UpdateContentRequest extends ContentResourceRequest {
+    export class UpdateContentRequest extends CreateContentRequest {
 
-        constructor(params:api_remote_content.CreateOrUpdateParams) {
+        private id:string;
+
+        constructor(id:string) {
             super();
-            super.setMethod("POST");
-            super.setParams(params);
+            this.id = id;
+            this.updateParams();
+        }
+
+        getId():string {
+            return this.id;
+        }
+
+        setId(id:string) {
+            this.id = id;
         }
 
         getUrl() {
             return super.getResourceUrl() + "/update";
+        }
+
+        updateParams():UpdateContentRequest {
+            super.updateParams();
+            var params = super.getParams();
+            params['contentId'] = this.id;
+            super.setParams(params);
+            return this;
         }
     }
 }
