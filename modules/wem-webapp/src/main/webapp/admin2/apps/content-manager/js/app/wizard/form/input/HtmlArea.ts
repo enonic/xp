@@ -6,13 +6,18 @@ module app_wizard_form_input {
             super("HtmlArea");
         }
 
-        createInputEl(index:number, property?:api_data.Property):api_dom.FormInputEl {
-            var inputEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
-            //inputEl.setName(this.input.getName());
+        createInputOccurrence(index:number, property?:api_data.Property):api_dom.Element {
+
+            var textAreaEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
             if (property != null) {
-                inputEl.setValue(property.getValue());
+                textAreaEl.setValue(property.getValue());
             }
-            return inputEl;
+            return textAreaEl;
+        }
+
+        getValue(occurrence:api_dom.Element):string {
+            var textAreaEl = <api_ui.TextArea>occurrence;
+            return textAreaEl.getValue();
         }
     }
 }

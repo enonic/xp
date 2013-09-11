@@ -14,7 +14,7 @@ module app_wizard_form_input {
             super.layout(input, properties);
         }
 
-        createInputEl(index:number, property?:api_data.Property):api_dom.FormInputEl {
+        createInputOccurrence(index:number, property?:api_data.Property):api_dom.Element {
 
             var inputEl = api_ui.TextInput.middle(this.getInput().getName() + "-" + index);
             inputEl.setName(this.getInput().getName());
@@ -22,6 +22,11 @@ module app_wizard_form_input {
                 inputEl.setValue(property.getValue());
             }
             return inputEl;
+        }
+
+        getValue(occurrence:api_dom.Element):string {
+            var inputEl = <api_ui.TextInput>occurrence;
+            return inputEl.getValue();
         }
     }
 }
