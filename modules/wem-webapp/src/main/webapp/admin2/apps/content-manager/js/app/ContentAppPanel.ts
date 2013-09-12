@@ -157,7 +157,7 @@ module app {
         }
 
         private generateTabId(contentName?:string, isEdit:boolean = false) {
-            return contentName ? ( isEdit ? 'edit-' : 'view-') + contentName : 'new-';
+            return contentName ? ( isEdit ? 'edit-' : 'view-') + contentName : 'new-content';
         }
     }
 

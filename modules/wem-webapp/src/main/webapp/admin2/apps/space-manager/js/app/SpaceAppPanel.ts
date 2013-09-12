@@ -116,7 +116,7 @@ module app {
         }
 
         private generateTabId(spaceName?:string, isEdit:boolean = false) {
-            return spaceName ? ( isEdit ? 'edit-' : 'view-') + spaceName : 'new-';
+            return spaceName ? ( isEdit ? 'edit-' : 'view-') + spaceName : 'new-space';
         }
     }
 
