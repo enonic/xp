@@ -18,7 +18,7 @@ module app_wizard {
 
         private mixinForm:MixinForm;
 
-        constructor(id:string) {
+        constructor() {
 
             this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");

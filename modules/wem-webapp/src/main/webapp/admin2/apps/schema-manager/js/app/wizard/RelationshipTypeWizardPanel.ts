@@ -19,7 +19,7 @@ module app_wizard {
 
         private relationshipTypeForm:RelationshipTypeForm;
 
-        constructor(id:string) {
+        constructor() {
 
             this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
