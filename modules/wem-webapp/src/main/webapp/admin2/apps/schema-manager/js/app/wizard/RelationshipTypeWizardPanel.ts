@@ -74,7 +74,7 @@ module app_wizard {
                 new app_wizard.RelationshipTypeCreatedEvent().fire();
                 api_notify.showFeedback('Relationship type was created!');
 
-                if (jQuery.isFunction(successCallback)) {
+                if (successCallback) {
                     successCallback.call(this);
                 }
             });
@@ -92,7 +92,7 @@ module app_wizard {
                 new app_wizard.RelationshipTypeUpdatedEvent().fire();
                 api_notify.showFeedback('Relationship type was saved!');
 
-                if (jQuery.isFunction(successCallback)) {
+                if (successCallback) {
                     successCallback.call(this);
                 }
             });

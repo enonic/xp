@@ -79,7 +79,7 @@ module app_wizard {
                         new app_wizard.ContentTypeCreatedEvent().fire();
                         api_notify.showFeedback('Content type was created!');
 
-                        if (jQuery.isFunction(successCallback)) {
+                        if (successCallback) {
                             successCallback.call(this);
                         }
                     } else {
@@ -102,7 +102,7 @@ module app_wizard {
                         new app_wizard.ContentTypeUpdatedEvent().fire();
                         api_notify.showFeedback('Content type was saved!');
 
-                        if (jQuery.isFunction(successCallback)) {
+                        if (successCallback) {
                             successCallback.call(this);
                         }
                     } else {

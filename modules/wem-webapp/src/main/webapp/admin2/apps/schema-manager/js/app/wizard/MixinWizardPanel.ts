@@ -73,7 +73,7 @@ module app_wizard {
                 new app_wizard.MixinCreatedEvent().fire();
                 api_notify.showFeedback('Mixin was created!');
 
-                if (jQuery.isFunction(successCallback)) {
+                if (successCallback) {
                     successCallback.call(this);
                 }
             });
@@ -91,7 +91,7 @@ module app_wizard {
                 new app_wizard.MixinUpdatedEvent().fire();
                 api_notify.showFeedback('Mixin was saved!');
 
-                if (jQuery.isFunction(successCallback)) {
+                if (successCallback) {
                     successCallback.call(this);
                 }
             });

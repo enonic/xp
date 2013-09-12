@@ -138,7 +138,7 @@ module app_wizard {
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
 
-                    if (jQuery.isFunction(successCallback)) {
+                    if (successCallback) {
                         successCallback.call(this);
                     }
                 });
@@ -159,7 +159,7 @@ module app_wizard {
                     api_notify.showFeedback('Content was updated!');
                     console.log('content update response', updateResponse);
 
-                    if (jQuery.isFunction(successCallback)) {
+                    if (successCallback) {
                         successCallback.call(this);
                     }
                 });
