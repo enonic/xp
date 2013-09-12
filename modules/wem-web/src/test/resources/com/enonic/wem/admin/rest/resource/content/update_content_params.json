@@ -1,8 +1,6 @@
 {
     "contentId": "content-id",
-    "temporary": false,
     "contentName": "content-name",
-    "parentContentPath": "parent-name:/",
     "qualifiedContentTypeName": "mymodule:my-type",
     "contentData": {},
     "displayName": "Content One"
