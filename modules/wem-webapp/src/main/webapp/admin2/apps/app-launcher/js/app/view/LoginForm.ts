@@ -1,6 +1,6 @@
 module app_view {
 
-    export class LoginFormPanel extends api_dom.DivEl {
+    export class LoginForm extends api_dom.DivEl {
 
         private licensedTo:api_dom.DivEl;
         private userStoresDropdown:api_ui.Dropdown;

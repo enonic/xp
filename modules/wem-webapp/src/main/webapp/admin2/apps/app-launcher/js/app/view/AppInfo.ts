@@ -1,11 +1,11 @@
 module app_view {
 
-    export class AppInfoPanel extends api_dom.DivEl {
+    export class AppInfo extends api_dom.DivEl {
         private appInfoName: api_dom.H3El;
         private appInfoDescription: api_dom.DivEl;
 
         constructor() {
-            super(null, 'app-info-container');
+            super(null, 'app-info');
 
             this.appInfoName = new api_dom.H3El(null, 'app-info-name');
             this.appInfoDescription = new api_dom.DivEl(null, 'app-info-description');

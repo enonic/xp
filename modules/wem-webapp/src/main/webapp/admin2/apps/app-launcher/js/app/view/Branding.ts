@@ -1,9 +1,9 @@
 module app_view {
 
-    export class HomeBrandingPanel extends api_dom.DivEl {
+    export class Branding extends api_dom.DivEl {
 
-        private installation:InstallationInfoPanel;
-        private version:VersionInfoPanel;
+        private installation:InstallationInfo;
+        private version:VersionInfo;
 
         constructor(installation?:string, version?:string) {
             super(null, 'branding');
@@ -11,8 +11,8 @@ module app_view {
             installation = installation || '';
             version = version || '';
 
-            this.installation = new InstallationInfoPanel(installation);
-            this.version = new VersionInfoPanel(version);
+            this.installation = new InstallationInfo(installation);
+            this.version = new VersionInfo(version);
             this.appendChild(this.installation);
             this.appendChild(this.version);
         }

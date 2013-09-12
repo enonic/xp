@@ -1,30 +1,30 @@
 module app_view {
 
-    export class HomeMainContainerPanel extends api_dom.DivEl {
+    export class HomeMainContainer extends api_dom.DivEl {
 
-        private brandingPanel:HomeBrandingPanel;
-        private centerPanel:HomeCenterPanel;
+        private brandingPanel:Branding;
+        private centerPanel:CenterPanel;
         private backgroundImgUrl:string;
 
         constructor(backgroundImgUrl:string) {
-            super(null, 'main-container');
+            super(null, 'home-main-container');
 
             var style = this.getHTMLElement().style;
             style.left = '0px';
             style.top = '0px';
             this.setBackgroundImgUrl(backgroundImgUrl);
 
-            this.brandingPanel = new HomeBrandingPanel();
-            this.centerPanel = new HomeCenterPanel();
+            this.brandingPanel = new Branding();
+            this.centerPanel = new CenterPanel();
             this.appendChild(this.brandingPanel);
             this.appendChild(this.centerPanel);
         }
 
-        getBrandingPanel():HomeBrandingPanel {
+        getBrandingPanel():Branding {
             return this.brandingPanel;
         }
 
-        getCenterPanel():HomeCenterPanel {
+        getCenterPanel():CenterPanel {
             return this.centerPanel;
         }
 

@@ -1,6 +1,6 @@
 module app_view {
 
-    export class AppSelectorPanel extends api_dom.DivEl {
+    export class AppSelector extends api_dom.DivEl {
         private selectedAppIndex:number;
         private apps:app_model.Application[];
         private appTiles:{[name: string]: AppTile;};
@@ -15,8 +15,6 @@ module app_view {
             this.apps = applications;
             this.appTiles = {};
             this.selectedAppIndex = -1;
-
-            this.getEl().setAttribute('data-screen', 'app-selector');
 
             this.homeAppSelector = new api_dom.DivEl(null, 'app-selector');
 

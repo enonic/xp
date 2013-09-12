@@ -2,7 +2,7 @@ html, body {
   height: 100%
 }
 
-.main-container {
+.home-main-container {
   position: fixed;
   left: 0;
   top: 0;
@@ -66,7 +66,7 @@ html, body {
 
   /** Center */
 
-  .center {
+  .center-panel {
     @center-width: 775px;
     width: @center-width;
     position: absolute;
@@ -115,13 +115,13 @@ html, body {
 
   .login-form,
   .app-selector,
-  .app-info-container {
+  .app-info {
     position: absolute;
     top: 24%;
   }
 
   .login-form,
-  .app-info-container {
+  .app-info {
     padding: 0 45px;
   }
 
@@ -160,7 +160,7 @@ html, body {
 
   }
 
-  .app-info-container {
+  .app-info {
     .app-info-name {
       color: #ebebeb;
     }
@@ -264,38 +264,3 @@ html, body {
 
 }
 
-@-webkit-keyframes animation-show-home {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@-webkit-keyframes animation-hide-home {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes animation-show-home {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes animation-hide-home {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}

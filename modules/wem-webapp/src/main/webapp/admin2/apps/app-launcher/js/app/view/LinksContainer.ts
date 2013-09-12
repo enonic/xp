@@ -1,6 +1,6 @@
 module app_view {
 
-    export class HomeLinksPanel extends api_dom.DivEl {
+    export class LinksContainer extends api_dom.DivEl {
         private links:{text:string; url:string;}[];
 
         constructor() {
@@ -8,7 +8,7 @@ module app_view {
             this.links = [];
         }
 
-        addLink(linkText:string, linkUrl:string):HomeLinksPanel {
+        addLink(linkText:string, linkUrl:string):LinksContainer {
             if (this.links.length > 0) {
                 this.addSeparator();
             }

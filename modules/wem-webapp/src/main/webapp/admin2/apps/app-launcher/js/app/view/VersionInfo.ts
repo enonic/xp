@@ -1,6 +1,6 @@
 module app_view {
 
-    export class VersionInfoPanel extends api_dom.DivEl {
+    export class VersionInfo extends api_dom.DivEl {
 
         private version:string;
 

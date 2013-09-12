@@ -1,6 +1,6 @@
 module app_view {
 
-    export class InstallationInfoPanel extends api_dom.DivEl {
+    export class InstallationInfo extends api_dom.DivEl {
 
         private installation: string;
 

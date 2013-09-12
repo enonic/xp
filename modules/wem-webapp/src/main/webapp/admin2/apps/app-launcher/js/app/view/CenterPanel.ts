@@ -1,12 +1,12 @@
 module app_view {
 
-    export class HomeCenterPanel extends api_dom.DivEl {
+    export class CenterPanel extends api_dom.DivEl {
 
         private leftColumn:api_dom.DivEl;
         private rightColumn:api_dom.DivEl;
 
         constructor() {
-            super(null, 'center');
+            super(null, 'center-panel');
 
             this.leftColumn = new api_dom.DivEl(null, 'left-column');
             this.rightColumn = new api_dom.DivEl(null, 'right-column');
