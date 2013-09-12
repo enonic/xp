@@ -24,7 +24,10 @@ module api_app_wizard {
             this.update();
 
             this.navigator.addListener({
-                onStepShown: (step:WizardStep) => {
+                onStepAdded: (step:api_ui.PanelNavigationItem) => {
+                    this.update();
+                },
+                onStepShown: (step:api_ui.PanelNavigationItem) => {
                     this.update();
                 }
             });

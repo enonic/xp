@@ -19,8 +19,6 @@ module api_app_wizard {
 
         private header:WizardHeader;
 
-        private steps:WizardStep[] = [];
-
         private stepNavigator:WizardStepNavigator;
 
         private stepPanels:api_app_wizard.WizardStepDeckPanel;
@@ -56,8 +54,8 @@ module api_app_wizard {
             this.header = params.header;
             this.formPanel.appendChild(this.header);
 
-            this.stepPanels = new api_app_wizard.WizardStepDeckPanel();
-            this.stepNavigator = new WizardStepNavigator(this.stepPanels);
+            this.stepNavigator = new WizardStepNavigator();
+            this.stepPanels = new WizardStepDeckPanel(this.stepNavigator);
             this.formPanel.appendChild(this.stepNavigator);
             this.formPanel.appendChild(this.stepPanels);
 
@@ -124,9 +122,8 @@ module api_app_wizard {
             return null; // TODO:
         }
 
-        addStep(step:WizardStep) {
-            this.steps.push(step);
-            this.stepNavigator.addStep(step);
+        addStep(step:api_ui.PanelNavigationItem, panel: api_ui.Panel, inBackground:boolean = true) {
+            this.stepPanels.addNavigationItem(step, panel, inBackground);
         }
 
         close(checkCanClose:boolean = false) {

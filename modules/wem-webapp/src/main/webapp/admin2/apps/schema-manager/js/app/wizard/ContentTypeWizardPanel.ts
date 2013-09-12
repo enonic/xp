@@ -42,7 +42,7 @@ module app_wizard {
 
             this.contentTypeForm = new ContentTypeForm();
 
-            this.addStep(new api_app_wizard.WizardStep("Content Type", this.contentTypeForm));
+            this.addStep(new api_app_wizard.WizardStep("Content Type"), this.contentTypeForm, false);
 
 
         }
