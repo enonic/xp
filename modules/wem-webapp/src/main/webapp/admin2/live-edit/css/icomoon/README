@@ -1,0 +1,6 @@
+1. Import the svg file into the icomoon app
+2. Modify selection
+3. Click "Font ->"
+4. Set pref - Font Name: live-edit-font-icon, Class Prefix: live-edit-font-icon-, check base64 & embed in CSS
+5. Update the font-icon.scss file
+6. Update the icomoon svg file for the next person using it
