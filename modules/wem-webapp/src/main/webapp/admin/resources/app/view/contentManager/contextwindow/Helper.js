@@ -7,34 +7,32 @@ Ext.define('Admin.view.contentManager.contextwindow.Helper', {
          * This method should at a later stage in the project be moved in order to
          * share the functionality between Live Edit and Context Window.
          *
-         * @param componentType {number}
+         * @param componentTypeName {number}
          * @returns {string}
         */
-        resolveComponentTypeIconCls: function (componentType) {
+        resolveComponentTypeIconCls: function (componentTypeName) {
             var iconCls;
 
-            var type = parseInt(componentType, 10);
-
-            switch (type) {
-                case 0:
+            switch (componentTypeName) {
+                case 'page':
                     iconCls = 'live-edit-font-icon-page';
                     break;
-                case 1:
+                case 'region':
                     iconCls = 'live-edit-font-icon-region';
                     break;
-                case 2:
+                case 'layout':
                     iconCls = 'live-edit-font-icon-layout';
                     break;
-                case 3:
+                case 'part':
                     iconCls = 'live-edit-font-icon-part';
                     break;
-                case 4:
+                case 'image':
                     iconCls = 'live-edit-font-icon-image';
                     break;
-                case 5:
+                case 'paragraph':
                     iconCls = 'live-edit-font-icon-paragraph';
                     break;
-                case 6:
+                case 'content':
                     iconCls = 'live-edit-font-icon-content';
                     break;
                 default:

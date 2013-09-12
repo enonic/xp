@@ -86,6 +86,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
             fields: [
                 { name: 'key', type: 'string' },
                 { name: 'type', type: 'string' },
+                { name: 'typeName', type: 'string' },
                 { name: 'name', type: 'string' },
                 { name: 'subtitle', type: 'string' },
                 { name: 'icon', type: 'string' }
@@ -108,7 +109,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
 
         var templates = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-cw-item" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}" title="Click to insert">',
+            '   <div class="admin-cw-item" data-live-edit-key="{key}" data-live-edit-type="{typeName}" data-live-edit-name="{name}" title="Click to insert">',
             '      <div class="admin-cw-item-row">',
             '           <div class="admin-cw-item-icon" style="background: url({icon}) no-repeat"></div>',
             '           <div class="admin-cw-item-info">',

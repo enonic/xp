@@ -15,7 +15,7 @@
   <%@ include file="live-edit/css.jsp" %>
 </head>
 
-<body data-live-edit-type="0" data-live-edit-key="/path/to/this/page" data-live-edit-name="Jumping Jack - Frogger">
+<body data-live-edit-type="page" data-live-edit-key="/path/to/this/page" data-live-edit-name="Jumping Jack - Frogger">
 <%@ include file="live-edit/loader-splash.jsp" %>
 <script src="js/jquery.js"></script>
 
@@ -39,13 +39,13 @@
     </div>
   </div>
 
-  <div id="main" data-live-edit-type="1" data-live-edit-key="80" data-live-edit-name="Main">
+  <div id="main" data-live-edit-type="region" data-live-edit-key="80" data-live-edit-name="Main">
     <!-- Product show -->
     <%@ include file="../../admin2/live-edit/data/mock-component-10022.html" %>
 
-    <div class="row-fluid" data-live-edit-type="2" data-live-edit-key="010101" data-live-edit-name="Layout 70-30">
+    <div class="row-fluid" data-live-edit-type="layout" data-live-edit-key="010101" data-live-edit-name="Layout 70-30">
 
-      <div class="span8" data-live-edit-type="1">
+      <div class="span8" data-live-edit-type="region">
         <!-- Description -->
         <%@ include file="../../admin2/live-edit/data/mock-component-10024.html" %>
 
@@ -56,7 +56,7 @@
         <%@ include file="../../admin2/live-edit/data/mock-component-10026.html" %>
 
       </div>
-      <div class="span4" data-live-edit-type="1">
+      <div class="span4" data-live-edit-type="region">
         <!-- Accessories -->
         <%@ include file="../../admin2/live-edit/data/mock-component-10025.html" %>
 

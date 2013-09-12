@@ -52,8 +52,8 @@ module LiveEdit.component {
             };
         }
 
-        public static getComponentTypeFromElement(componentElement:JQuery):number {
-            return parseInt(componentElement.data('live-edit-type'), 10);
+        public static getComponentTypeFromElement(componentElement:JQuery):string {
+            return componentElement.data('live-edit-type');
         }
 
         public static getComponentKeyFromElement(componentElement:JQuery):string {

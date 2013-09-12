@@ -5,6 +5,13 @@ module LiveEdit.component {
 
     export class EmptyComponent {
 
+        public static createEmptyComponentElement(component:LiveEdit.component.Component):string {
+
+            return '<div class="live-edit-empty-component" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getName() + '">' +
+                   '    <div class="' + component.getComponentType().getIconCls() + ' live-edit-empty-component-icon"></div>' +
+                   '</div>';
+        }
+
         public static loadComponent(componentKey:string):void {
             var selectedComponent = LiveEdit.Selection.getSelectedComponent();
 
@@ -24,13 +31,6 @@ module LiveEdit.component {
                     LiveEdit.component.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml))
                 }
             });
-        }
-
-        public static createEmptyComponentElement(component:LiveEdit.component.Component):string {
-
-            return '<div class="live-edit-empty-component" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getType() + '">' +
-                   '    <div class="' + component.getComponentType().getIconCls() + ' live-edit-empty-component-icon"></div>' +
-                   '</div>';
         }
 
         private static replaceEmptyComponent(selectedComponent:LiveEdit.component.Component, responseHtml:JQuery):void {

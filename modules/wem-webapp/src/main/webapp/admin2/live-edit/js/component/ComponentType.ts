@@ -121,7 +121,7 @@ module LiveEdit.component {
         {
             type: LiveEdit.component.Type.PAGE,
             typeName: 'page',
-            cssSelector: '[data-live-edit-type=0]',
+            cssSelector: '[data-live-edit-type=page]',
             cursor: 'pointer',
             iconCls: 'live-edit-font-icon-page',
             highlighterStyle: {
@@ -134,7 +134,7 @@ module LiveEdit.component {
         {
             type: LiveEdit.component.Type.REGION,
             typeName: 'region',
-            cssSelector: '[data-live-edit-type=1]',
+            cssSelector: '[data-live-edit-type=region]',
             cursor: 'pointer',
             iconCls: 'live-edit-font-icon-region',
             highlighterStyle: {
@@ -148,7 +148,7 @@ module LiveEdit.component {
         {
             type: LiveEdit.component.Type.LAYOUT,
             typeName: 'layout',
-            cssSelector: '[data-live-edit-type=2]',
+            cssSelector: '[data-live-edit-type=layout]',
             cursor: 'move',
             iconCls: 'live-edit-font-icon-layout',
             highlighterStyle: {
@@ -161,7 +161,7 @@ module LiveEdit.component {
         {
             type: LiveEdit.component.Type.PART,
             typeName: 'part',
-            cssSelector: '[data-live-edit-type=3]',
+            cssSelector: '[data-live-edit-type=part]',
             cursor: 'move',
             iconCls: 'live-edit-font-icon-part',
             highlighterStyle: {
@@ -174,7 +174,7 @@ module LiveEdit.component {
         {
             type: LiveEdit.component.Type.IMAGE,
             typeName: 'image',
-            cssSelector: '[data-live-edit-type=4]',
+            cssSelector: '[data-live-edit-type=image]',
             cursor: 'move',
             iconCls: 'live-edit-font-icon-image',
             highlighterStyle: {
@@ -187,7 +187,7 @@ module LiveEdit.component {
         {
             type: LiveEdit.component.Type.PARAGRAPH,
             typeName: 'paragraph',
-            cssSelector: '[data-live-edit-type=5]',
+            cssSelector: '[data-live-edit-type=paragraph]',
             cursor: 'move',
             iconCls: 'live-edit-font-icon-paragraph',
             highlighterStyle: {
@@ -200,7 +200,7 @@ module LiveEdit.component {
         {
             type: LiveEdit.component.Type.CONTENT,
             typeName: 'content',
-            cssSelector: '[data-live-edit-type=6]',
+            cssSelector: '[data-live-edit-type=content]',
             cursor: 'pointer',
             iconCls: 'live-edit-font-icon-content',
             highlighterStyle: {

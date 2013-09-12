@@ -83,6 +83,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
             fields: [
                 { name: 'key', type: 'string' },
                 { name: 'type', type: 'string' },
+                { name: 'typeName', type: 'string' },
                 { name: 'name', type: 'string' },
                 { name: 'subtitle', type: 'string' }
             ]
@@ -110,9 +111,9 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
 
         var templates = new Ext.XTemplate(
             '<tpl for=".">',
-            '   <div class="admin-cw-item" data-context-window-draggable="true" data-live-edit-key="{key}" data-live-edit-type="{type}" data-live-edit-name="{name}">',
+            '   <div class="admin-cw-item" data-context-window-draggable="true" data-live-edit-key="{key}" data-live-edit-type="{typeName}" data-live-edit-name="{name}">',
             '      <div class="admin-cw-item-row">',
-            '           <div class="admin-cw-item-icon {[this.resolveIconCls(values.type)]}"></div>',
+            '           <div class="admin-cw-item-icon {[this.resolveIconCls(values.typeName)]}"></div>',
             '           <div class="admin-cw-item-info">',
             '               <h3 title="Drag to insert">{name}</h3>',
             '               <sub title="{subtitle} (Drag to insert))">{[this.substringSubtitle(values.subtitle)]}</sub>',
@@ -125,12 +126,12 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
                     var maxLength = 33,
                         result = subtitle;
                     if (subtitle.length > maxLength) {
-                        result = subtitle.substring(0, maxLength) + ' ...'
+                        result = subtitle.substring(0, maxLength) + ' ...';
                     }
                     return result;
                 },
-                resolveIconCls: function (componentType) {
-                    return Admin.view.contentManager.contextwindow.Helper.resolveComponentTypeIconCls(componentType);
+                resolveIconCls: function (componentTypeName) {
+                    return Admin.view.contentManager.contextwindow.Helper.resolveComponentTypeIconCls(componentTypeName);
                 }
             }
         );

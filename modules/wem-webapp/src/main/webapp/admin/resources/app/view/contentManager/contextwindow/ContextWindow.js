@@ -110,7 +110,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         this.listContainer.removeAll();
         this.listContainer.add(list);
         this.listContainer.doLayout();
-        this.titleBar.setTitleText(title)
+        this.titleBar.setTitleText(title);
     },
 
     loadInspector: function (classPath) {
@@ -196,7 +196,7 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
                     me.showHideIFrameMask(true)
                 },
                 resize: function () {
-                    me.showHideIFrameMask(false)
+                    me.showHideIFrameMask(false);
                     me.currentWindowHeight = me.getHeight()
 
                 }
@@ -257,6 +257,12 @@ Ext.define('Admin.view.contentManager.contextwindow.ContextWindow', {
         var me = this,
             liveEditWindow = me.getLiveEditContentWindowObject(),
             liveEditJQuery = me.getLiveEditJQuery();
+
+        /*
+        liveEditJQuery(liveEditWindow).on('mouseOutComponent.liveEdit', function (jQueryEvent, component) {
+            me.onSelectComponent(component);
+        });
+        */
 
         liveEditJQuery(liveEditWindow).on('selectComponent.liveEdit', function (jQueryEvent, component) {
             me.onSelectComponent(component);

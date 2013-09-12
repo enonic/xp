@@ -25,7 +25,11 @@ module LiveEdit.component {
             this.setName(componentHelper.getComponentName(element));
             this.setKey(componentHelper.getComponentKeyFromElement(element));
             this.setElementDimensions(componentHelper.getDimensionsFromElement(element));
-            this.setComponentType(new LiveEdit.component.ComponentType( componentHelper.getComponentTypeFromElement(element) ));
+
+            var componentTypeName = componentHelper.getComponentTypeFromElement(element).toUpperCase();
+            var componentTypeEnum = LiveEdit.component.Type[componentTypeName];
+
+            this.setComponentType(new LiveEdit.component.ComponentType( componentTypeEnum ));
         }
 
         getElement():JQuery {
