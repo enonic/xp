@@ -9,10 +9,10 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
-public class WholeNumber
+final class WholeNumber
     extends InputType
 {
-    public WholeNumber()
+    WholeNumber()
     {
     }
 

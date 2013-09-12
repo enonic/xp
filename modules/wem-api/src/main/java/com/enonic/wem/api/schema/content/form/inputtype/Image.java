@@ -7,10 +7,10 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
-public class Image
+final class Image
     extends InputType
 {
-    public Image()
+    Image()
     {
     }
 
