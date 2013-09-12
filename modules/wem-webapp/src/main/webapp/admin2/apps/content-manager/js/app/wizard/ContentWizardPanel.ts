@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Content";
 
-        private static DEFAULT_CONTENT_ICON_URL:string = "resources/images/icons/128x128/default_content.png";
+        private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAbsoluteUri("resources/images/default_content.png");
 
         private persistedContent:api_content.Content;
 
