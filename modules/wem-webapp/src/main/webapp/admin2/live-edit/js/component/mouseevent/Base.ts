@@ -55,7 +55,7 @@ module LiveEdit.component.mouseevent {
                     LiveEdit.Selection.clearSelection();
                     $(window).trigger('deselectComponent.liveEdit');
                 } else {
-                    LiveEdit.Selection.setSelectionOnElement(component.getElement());
+                    LiveEdit.Selection.setSelectionAttributeOnElement(component.getElement());
 
                     // Used by for menu positioning
                     // fixme: send event and let menu do this by itself

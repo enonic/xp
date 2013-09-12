@@ -7,7 +7,7 @@ module LiveEdit {
 
     export class Selection {
 
-        public static setSelectionOnElement(element:JQuery):void {
+        public static setSelectionAttributeOnElement(element:JQuery):void {
             this.clearSelection();
             element.attr(ATTRIBUTE_NAME, 'true');
         }

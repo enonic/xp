@@ -30,7 +30,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
                         $(window).trigger('deselectComponent.liveEdit');
 
-                        LiveEdit.Selection.setSelectionOnElement(parentComponent.getElement());
+                        LiveEdit.Selection.setSelectionAttributeOnElement(parentComponent.getElement());
                         $(window).trigger('selectComponent.liveEdit', [parentComponent]);
 
                         this.scrollComponentIntoView(parentComponent);

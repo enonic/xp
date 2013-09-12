@@ -88,7 +88,7 @@ module LiveEdit.component.mouseevent {
             };
 
             LiveEdit.Selection.clearSelection();
-            LiveEdit.Selection.setSelectionOnElement(this.selectedParagraph.getElement());
+            LiveEdit.Selection.setSelectionAttributeOnElement(this.selectedParagraph.getElement());
 
             $(window).trigger('selectComponent.liveEdit', [this.selectedParagraph, pagePosition]);
             $(window).trigger('selectParagraphComponent.liveEdit', [this.selectedParagraph]);

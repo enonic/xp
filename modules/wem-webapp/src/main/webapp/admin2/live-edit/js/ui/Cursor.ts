@@ -23,7 +23,6 @@ module LiveEdit.ui {
         }
 
         private reset():void {
-            console.log('reset');
             if(LiveEdit.component.DragDropSort.isDragging()) {
                 return;
             }

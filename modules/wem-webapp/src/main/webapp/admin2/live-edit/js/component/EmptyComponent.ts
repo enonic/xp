@@ -39,7 +39,7 @@ module LiveEdit.component {
 
             emptyComponentEl.replaceWith(responseHtml);
 
-            LiveEdit.Selection.setSelectionOnElement(responseHtml);
+            LiveEdit.Selection.setSelectionAttributeOnElement(responseHtml);
 
             $(window).trigger('selectComponent.liveEdit', [new LiveEdit.component.Component(responseHtml)]);
 
