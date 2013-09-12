@@ -12,6 +12,8 @@ module api_ui {
 
         getSelectedNavigationItem():PanelNavigationItem;
 
+        getSelectedIndex():number;
+
         /**
          * Deselects any selected tab.
          */

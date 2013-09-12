@@ -41,7 +41,7 @@ module app_wizard {
 
             this.relationShipTypeWizardHeader.setName(RelationshipTypeWizardPanel.NEW_WIZARD_HEADER);
             this.relationshipTypeForm = new RelationshipTypeForm();
-            this.addStep(new api_app_wizard.WizardStep("Relationship Type", this.relationshipTypeForm));
+            this.addStep(new api_app_wizard.WizardStep("Relationship Type"), this.relationshipTypeForm, false);
         }
 
         setPersistedItem(relationshipType:api_remote_relationshiptype.RelationshipType) {
