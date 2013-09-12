@@ -5,7 +5,7 @@ module app_view {
         private version:string;
 
         constructor(version:string) {
-            super(null, 'admin-home-version-info');
+            super(null, 'version-info');
         }
 
         setVersion(version: string): void {

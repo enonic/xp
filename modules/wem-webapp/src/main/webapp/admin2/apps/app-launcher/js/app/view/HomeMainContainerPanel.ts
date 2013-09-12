@@ -1,6 +1,3 @@
-///<reference path='HomeBrandingPanel.ts' />
-///<reference path='HomeCenterPanel.ts' />
-
 module app_view {
 
     export class HomeMainContainerPanel extends api_dom.DivEl {
@@ -10,7 +7,7 @@ module app_view {
         private backgroundImgUrl:string;
 
         constructor(backgroundImgUrl:string) {
-            super(null, 'admin-home-main-container');
+            super(null, 'main-container');
 
             var style = this.getHTMLElement().style;
             style.left = '0px';

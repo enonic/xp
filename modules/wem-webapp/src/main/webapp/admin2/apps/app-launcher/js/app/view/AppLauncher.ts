@@ -2,12 +2,12 @@ module app_view {
 
     export class AppLauncher {
 
-        private mainContainer:app_view.HomeMainContainerPanel;
+        private mainContainer:HomeMainContainerPanel;
         private adminApplicationFrames:api_dom.DivEl;
         private appIframes:{[name: string]: api_dom.IFrameEl;};
         private lostConnectionDetector:app_launcher.LostConnectionDetector;
 
-        constructor(mainContainer:app_view.HomeMainContainerPanel) {
+        constructor(mainContainer:HomeMainContainerPanel) {
             this.mainContainer = mainContainer;
             this.appIframes = {};
 

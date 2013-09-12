@@ -4,7 +4,7 @@ module app_view {
         private links:{text:string; url:string;}[];
 
         constructor() {
-            super(null, 'admin-home-links-container');
+            super(null, 'links-container');
             this.links = [];
         }
 

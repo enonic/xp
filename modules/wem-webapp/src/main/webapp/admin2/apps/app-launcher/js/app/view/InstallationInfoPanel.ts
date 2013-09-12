@@ -5,7 +5,7 @@ module app_view {
         private installation: string;
 
         constructor(installation: string) {
-            super(null, 'admin-home-installation-info');
+            super(null, 'installation-info');
             this.setInstallation(installation);
         }
 

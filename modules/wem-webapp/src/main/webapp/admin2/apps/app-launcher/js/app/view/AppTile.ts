@@ -1,12 +1,10 @@
-///<reference path='../model/Application.ts' />
-
 module app_view {
 
     export class AppTile extends api_dom.DivEl {
         private app:app_model.Application;
 
         constructor(application:app_model.Application) {
-            super(null, 'admin-home-app-tile');
+            super(null, 'app-tile');
             this.app = application;
 
             var imgContainer = new api_dom.DivEl(null, 'img-container');

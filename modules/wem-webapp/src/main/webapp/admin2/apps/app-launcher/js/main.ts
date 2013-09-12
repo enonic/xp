@@ -6,13 +6,17 @@
 ///<reference path='app/model/Applications.ts' />
 ///<reference path='app/model/UserStore.ts' />
 ///<reference path='app/model/Authenticator.ts' />
+///<reference path='app/view/AppTile.ts' />
 ///<reference path='app/view/HomeBrandingPanel.ts' />
+///<reference path='app/view/HomeCenterPanel.ts' />
 ///<reference path='app/view/HomeMainContainerPanel.ts' />
 ///<reference path='app/view/HomeLinksPanel.ts' />
+///<reference path='app/view/InstallationInfoPanel.ts' />
 ///<reference path='app/view/AppInfoPanel.ts' />
 ///<reference path='app/view/LoginFormPanel.ts' />
 ///<reference path='app/view/AppSelectorPanel.ts' />
 ///<reference path='app/view/AppLauncher.ts' />
+///<reference path='app/view/VersionInfoPanel.ts' />
 
 ///<reference path='app/launcher/LostConnectionDetector.ts' />
 ///<reference path='app/launcher/LostConnectionDetectorListener.ts' />
@@ -77,6 +81,7 @@ Ext.application({
             Ext.util.Cookies.set('dummy_userIsLoggedIn', 'true');
             loginPanel.hide();
             appSelector.show();
+            appSelector.afterRender();
         });
 
         var centerPanel = mainContainer.getCenterPanel();
@@ -87,6 +92,7 @@ Ext.application({
 
         if (userLoggedIn) {
             loginPanel.hide();
+            appSelector.afterRender();
         } else {
             appSelector.hide();
         }

@@ -1,6 +1,3 @@
-///<reference path='InstallationInfoPanel.ts' />
-///<reference path='VersionInfoPanel.ts' />
-
 module app_view {
 
     export class HomeBrandingPanel extends api_dom.DivEl {
@@ -9,7 +6,7 @@ module app_view {
         private version:VersionInfoPanel;
 
         constructor(installation?:string, version?:string) {
-            super(null, 'admin-home-branding');
+            super(null, 'branding');
 
             installation = installation || '';
             version = version || '';

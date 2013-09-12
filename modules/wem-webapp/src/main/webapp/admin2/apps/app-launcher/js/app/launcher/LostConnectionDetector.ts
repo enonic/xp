@@ -2,10 +2,10 @@ module app_launcher {
 
     export class LostConnectionDetector implements api_event.Observable {
 
-        private intervalId = -1;
-        private pollIntervalMs;
+        private intervalId:number = -1;
+        private pollIntervalMs:number;
 
-        private connected = true;
+        private connected:boolean = true;
 
         private listeners:LostConnectionDetectorListener[] = [];
 
@@ -29,7 +29,7 @@ module app_launcher {
         }
 
         doPoll() {
-            var xhr = new XMLHttpRequest()
+            var xhr = new XMLHttpRequest();
             xhr.open('GET', api_util.getAbsoluteUri('admin/rest/status'));
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
@@ -55,7 +55,7 @@ module app_launcher {
 
         removeListener(listener:LostConnectionDetectorListener) {
             this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

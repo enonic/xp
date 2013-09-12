@@ -6,10 +6,10 @@ module app_view {
         private rightColumn:api_dom.DivEl;
 
         constructor() {
-            super(null, 'admin-home-center');
+            super(null, 'center');
 
-            this.leftColumn = new api_dom.DivEl(null, 'admin-home-left-column');
-            this.rightColumn = new api_dom.DivEl(null, 'admin-home-right-column');
+            this.leftColumn = new api_dom.DivEl(null, 'left-column');
+            this.rightColumn = new api_dom.DivEl(null, 'right-column');
             this.appendChild(this.leftColumn);
             this.appendChild(this.rightColumn);
         }

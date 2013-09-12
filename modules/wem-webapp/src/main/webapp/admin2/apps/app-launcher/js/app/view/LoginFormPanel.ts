@@ -1,6 +1,3 @@
-///<reference path='../model/UserStore.ts' />
-///<reference path='../model/Authenticator.ts' />
-
 module app_view {
 
     export class LoginFormPanel extends api_dom.DivEl {
@@ -16,19 +13,19 @@ module app_view {
         private onUserAuthenticatedHandler:(userName:string, userStore:app_model.UserStore) => void;
 
         constructor(authenticator:app_model.Authenticator) {
-            super(null, 'admin-home-login-form');
+            super(null, 'login-form');
             this.authenticator = authenticator;
             this.userStores = {};
             this.onUserAuthenticatedHandler = null;
 
-            var formContainer = new api_dom.DivEl(null, 'admin-home-login-form-container');
+            var formContainer = new api_dom.DivEl();
             var title = new api_dom.H3El();
             title.setText('Login');
             this.userStoresDropdown = new api_ui.Dropdown('userstore');
-            this.userStoresDropdown.addClass('admin-home-form-item');
-            this.userIdInput = new api_ui.TextInput(null, 'admin-home-form-item');
+            this.userStoresDropdown.addClass('form-item');
+            this.userIdInput = new api_ui.TextInput(null, 'form-item');
             this.userIdInput.setPlaceholder('userid or e-mail');
-            this.passwordInput = new api_ui.PasswordInput(null, 'admin-home-form-item');
+            this.passwordInput = new api_ui.PasswordInput(null, 'form-item');
             this.passwordInput.setPlaceholder('password');
             this.userIdInput.getEl().addEventListener('keyup', (event) => {
                 this.onInputTyped();
@@ -38,7 +35,7 @@ module app_view {
             });
 
             this.loginButton = new api_ui.Button('Log in');
-            this.loginButton.addClass('admin-home-login-button').addClass('disabled');
+            this.loginButton.addClass('login-button').addClass('disabled');
             this.loginButton.setClickListener((event) => {
                 this.loginButtonClick();
             });
@@ -50,7 +47,7 @@ module app_view {
             formContainer.appendChild(this.loginButton);
             this.appendChild(formContainer);
 
-            this.licensedTo = new api_dom.DivEl(null, 'admin-home-login-licensed-to');
+            this.licensedTo = new api_dom.DivEl(null, 'login-licensed-to');
             this.appendChild(this.licensedTo);
         }
 

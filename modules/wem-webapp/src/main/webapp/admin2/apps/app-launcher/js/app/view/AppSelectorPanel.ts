@@ -1,6 +1,3 @@
-///<reference path='../model/Application.ts' />
-///<reference path='AppTile.ts' />
-
 module app_view {
 
     export class AppSelectorPanel extends api_dom.DivEl {
@@ -11,6 +8,7 @@ module app_view {
         private onAppMouseLeaveHandler:(app:app_model.Application) => void;
         private onAppSelectedHandler:(app:app_model.Application) => void;
         private emptyMessagePlaceholder:api_dom.DivEl;
+        private homeAppSelector: api_dom.DivEl;
 
         constructor(applications:app_model.Application[]) {
             super();
@@ -20,11 +18,10 @@ module app_view {
 
             this.getEl().setAttribute('data-screen', 'app-selector');
 
-            var homeAppSelector = new api_dom.DivEl(null, 'admin-home-app-selector');
-            homeAppSelector.addClass('fade-in-and-scale-up');
+            this.homeAppSelector = new api_dom.DivEl(null, 'app-selector');
 
-            var searchInputContainer = new api_dom.DivEl(null, 'admin-home-app-selector-search-input-container');
-            var searchInput = new api_ui.TextInput(null, 'admin-home-app-selector-search-inputEl');
+            var searchInputContainer = new api_dom.DivEl(null, 'search-input-container');
+            var searchInput = new api_ui.TextInput();
             searchInput.setPlaceholder('Application Filter');
             searchInput.addListener({
                 onValueChanged: (oldValue, newValue) => {
@@ -33,18 +30,18 @@ module app_view {
             });
             searchInputContainer.appendChild(searchInput);
 
-            homeAppSelector.appendChild(searchInputContainer);
+            this.homeAppSelector.appendChild(searchInputContainer);
 
-            var tilesPlaceholder = new api_dom.DivEl(null, 'admin-home-app-tiles-placeholder');
+            var tilesPlaceholder = new api_dom.DivEl(null, 'app-tiles-placeholder');
             this.emptyMessagePlaceholder = new api_dom.DivEl();
             this.emptyMessagePlaceholder.getEl().setInnerHtml('No applications found');
             this.emptyMessagePlaceholder.hide();
             tilesPlaceholder.appendChild(this.emptyMessagePlaceholder);
 
             this.addAppTiles(applications, tilesPlaceholder);
-            homeAppSelector.appendChild(tilesPlaceholder);
+            this.homeAppSelector.appendChild(tilesPlaceholder);
 
-            this.appendChild(homeAppSelector);
+            this.appendChild(this.homeAppSelector);
 
             api_ui.KeyBindings.bindKey(new api_ui.KeyBinding('tab', (e:ExtendedKeyboardEvent, combo:string)=> {
                 this.highlightNextAppTile();
@@ -62,6 +59,11 @@ module app_view {
                 }
                 return false;
             }));
+        }
+
+        afterRender() {
+            super.afterRender();
+            this.homeAppSelector.addClass('fade-in-and-scale-up');
         }
 
         private appSelected(app:app_model.Application) {
@@ -118,9 +120,9 @@ module app_view {
             var currentSelected = this.selectedAppIndex >= 0;
             if (currentSelected) {
                 var currentTileSelected = this.appTiles[this.apps[this.selectedAppIndex].getName()];
-                currentTileSelected.removeClass('admin-home-app-tile-over');
+                currentTileSelected.removeClass('app-tile-over');
             }
-            appTile.addClass('admin-home-app-tile-over');
+            appTile.addClass('app-tile-over');
             this.selectedAppIndex = index;
             if (this.onAppMouseEnterHandler) {
                 this.onAppMouseEnterHandler(application);
@@ -131,7 +133,7 @@ module app_view {
             if (!appTile) {
                 appTile = this.appTiles[application.getName()];
             }
-            appTile.removeClass('admin-home-app-tile-over');
+            appTile.removeClass('app-tile-over');
             if (this.selectedAppIndex === index) {
                 this.selectedAppIndex = -1;
             }

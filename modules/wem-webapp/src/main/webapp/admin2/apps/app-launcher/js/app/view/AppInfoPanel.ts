@@ -5,10 +5,10 @@ module app_view {
         private appInfoDescription: api_dom.DivEl;
 
         constructor() {
-            super(null, 'admin-home-app-info-container');
+            super(null, 'app-info-container');
 
-            this.appInfoName = new api_dom.H3El(null, 'admin-home-app-info-name');
-            this.appInfoDescription = new api_dom.DivEl(null, 'admin-home-app-info-description');
+            this.appInfoName = new api_dom.H3El(null, 'app-info-name');
+            this.appInfoDescription = new api_dom.DivEl(null, 'app-info-description');
 
             this.appendChild(this.appInfoName);
             this.appendChild(this.appInfoDescription);
