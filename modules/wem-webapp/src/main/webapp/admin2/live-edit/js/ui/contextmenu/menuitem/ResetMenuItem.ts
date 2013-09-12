@@ -15,14 +15,14 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var $button = this.createButton({
+            var button = this.createButton({
                 text: 'Reset to Default',
-                id: 'live-edit-button-reset',
+                name: 'reset',
                 handler: (event) => event.stopPropagation()
             });
 
             this.appendTo(this.menu.getEl());
-            this.menu.buttons.push(this);
+            this.menu.menuItems.push(this);
         }
     }
 }

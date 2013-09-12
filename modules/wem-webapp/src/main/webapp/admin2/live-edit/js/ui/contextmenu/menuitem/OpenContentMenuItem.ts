@@ -15,9 +15,9 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var $button = this.createButton({
+            var button = this.createButton({
                 text: 'Open in new tab',
-                id: 'live-edit-button-opencontent',
+                name: 'opencontent',
                 handler: (event) => {
                     event.stopPropagation();
 
@@ -31,7 +31,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             });
 
             this.appendTo(this.menu.getEl());
-            this.menu.buttons.push(this);
+            this.menu.menuItems.push(this);
         }
     }
 }

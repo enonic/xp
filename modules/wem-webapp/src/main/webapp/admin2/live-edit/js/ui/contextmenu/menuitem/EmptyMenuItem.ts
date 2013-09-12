@@ -15,9 +15,9 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var $button = this.createButton({
+            var button = this.createButton({
                 text: 'Empty',
-                id: 'live-edit-button-clear',
+                name: 'clear',
                 handler: (event) => {
                     event.stopPropagation();
 
@@ -26,7 +26,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             });
 
             this.appendTo(this.menu.getEl());
-            this.menu.buttons.push(this);
+            this.menu.menuItems.push(this);
         }
 
         private emptyRegion() {

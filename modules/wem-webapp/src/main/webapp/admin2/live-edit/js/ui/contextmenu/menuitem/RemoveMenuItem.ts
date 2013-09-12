@@ -15,9 +15,9 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var $button = this.createButton({
+            var button = this.createButton({
                 text: 'Remove',
-                id: 'live-edit-button-remove',
+                name: 'remove',
                 handler: (event) => {
                     event.stopPropagation();
                     // For demo purposes
@@ -27,7 +27,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             });
 
             this.appendTo(this.menu.getEl());
-            this.menu.buttons.push(this);
+            this.menu.menuItems.push(this);
         }
 
         private removeComponent() {

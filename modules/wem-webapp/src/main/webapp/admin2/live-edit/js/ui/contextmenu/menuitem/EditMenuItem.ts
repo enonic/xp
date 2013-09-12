@@ -15,8 +15,8 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var $button = this.createButton({
-                id: 'live-edit-button-edit',
+            var button:JQuery = this.createButton({
+                name: 'edit',
                 text: 'Edit',
                 handler: (event) => {
                     event.stopPropagation();
@@ -29,7 +29,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             });
 
             this.appendTo(this.menu.getEl());
-            this.menu.buttons.push(this);
+            this.menu.menuItems.push(this);
         }
     }
 }

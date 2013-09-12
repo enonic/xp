@@ -8,7 +8,7 @@ module LiveEdit.ui.contextmenu {
 
         private hidden = true;
 
-        private buttons = [];
+        private menuItems:any[] = [];
 
         constructor() {
             super();
@@ -39,7 +39,7 @@ module LiveEdit.ui.contextmenu {
 
             this.createHtmlFromString(html);
             this.appendTo($('body'));
-            this.addButtons();
+            this.addMenuItems();
         }
 
         private registerEvents():void {
@@ -89,7 +89,7 @@ module LiveEdit.ui.contextmenu {
             });
         }
 
-        private addButtons():void {
+        private addMenuItems():void {
             var menuItem = LiveEdit.ui.contextmenu.menuitem;
             var parentMenuItem = new menuitem.ParentMenuItem(this);
             var detailsMenuItem = new menuitem.DetailsMenuItem(this);
@@ -103,26 +103,25 @@ module LiveEdit.ui.contextmenu {
             var i,
                 menuItemsPlaceholder:JQuery = this.getMenuItemsPlaceholderElement();
 
-            for (i = 0; i < this.buttons.length; i++) {
-                this.buttons[i].appendTo(menuItemsPlaceholder);
+            for (i = 0; i < this.menuItems.length; i++) {
+                this.menuItems[i].appendTo(menuItemsPlaceholder);
             }
         }
 
         private updateMenuItemsForComponent(component:LiveEdit.component.Component):void {
 
-            var buttonArray = component.getComponentType().getContextMenuConfig();
+            var menuItemsForComponent = component.getComponentType().getContextMenuConfig();
 
-            var buttons = this.getButtons();
+            var menuItems:any[] = this.getMenuItems();
 
             var i;
-            for (i = 0; i < buttons.length; i++) {
-                var button:JQuery = buttons[i].getEl();
-                var id:string = button.attr('data-live-edit-ui-cmp-id');
-                var subStr:string = id.substring(id.lastIndexOf('-') + 1, id.length);
-                if (buttonArray.indexOf(subStr) > -1) {
-                    button.show(null);
+            for (i = 0; i < menuItems.length; i++) {
+                var menuItemEl:JQuery = menuItems[i].getEl();
+                var name:string = menuItemEl.attr('data-live-edit-ctx-menu-item-name');
+                if (menuItemsForComponent.indexOf(name) > -1) {
+                    menuItemEl.show(null);
                 } else {
-                    button.hide(null);
+                    menuItemEl.hide(null);
                 }
             }
         }
@@ -173,8 +172,8 @@ module LiveEdit.ui.contextmenu {
             }
         }
 
-        private getButtons():any[] {
-            return this.buttons;
+        private getMenuItems():any[] {
+            return this.menuItems;
         }
 
         private getIconContainerElement():JQuery {

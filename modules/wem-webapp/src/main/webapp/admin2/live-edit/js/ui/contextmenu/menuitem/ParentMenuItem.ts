@@ -16,9 +16,9 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var $button = this.createButton({
-                id: 'live-edit-button-parent',
+            var button = this.createButton({
                 text: 'Select Parent',
+                name: 'parent',
                 handler: (event) => {
                     event.stopPropagation();
 
@@ -39,7 +39,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             });
 
             this.appendTo(this.menu.getEl());
-            this.menu.buttons.push(this);
+            this.menu.menuItems.push(this);
         }
 
         scrollComponentIntoView(component:LiveEdit.component.Component):void {

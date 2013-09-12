@@ -15,16 +15,16 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var $button = this.createButton({
+            var button = this.createButton({
                 text: 'Insert',
-                id: 'live-edit-button-insert',
+                name: 'insert',
                 handler: (event) => {
                     event.stopPropagation();
                 }
             });
 
             this.appendTo(this.menu.getEl());
-            this.menu.buttons.push(this);
+            this.menu.menuItems.push(this);
         }
     }
 }
