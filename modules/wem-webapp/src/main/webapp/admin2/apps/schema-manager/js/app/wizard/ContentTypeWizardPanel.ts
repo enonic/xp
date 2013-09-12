@@ -78,6 +78,10 @@ module app_wizard {
                     if (result.created) {
                         new app_wizard.ContentTypeCreatedEvent().fire();
                         api_notify.showFeedback('Content type was created!');
+
+                        if (jQuery.isFunction(successCallback)) {
+                            successCallback.call(this);
+                        }
                     } else {
                         api_notify.newError(result.failure).send();
                     }
@@ -97,6 +101,10 @@ module app_wizard {
                     if (result.updated) {
                         new app_wizard.ContentTypeUpdatedEvent().fire();
                         api_notify.showFeedback('Content type was saved!');
+
+                        if (jQuery.isFunction(successCallback)) {
+                            successCallback.call(this);
+                        }
                     } else {
                         api_notify.newError(result.failure).send();
                     }

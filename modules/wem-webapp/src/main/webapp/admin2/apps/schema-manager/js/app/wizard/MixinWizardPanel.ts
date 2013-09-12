@@ -73,8 +73,8 @@ module app_wizard {
                 new app_wizard.MixinCreatedEvent().fire();
                 api_notify.showFeedback('Mixin was created!');
 
-                if (successCallback) {
-                    successCallback();
+                if (jQuery.isFunction(successCallback)) {
+                    successCallback.call(this);
                 }
             });
         }
@@ -91,8 +91,8 @@ module app_wizard {
                 new app_wizard.MixinUpdatedEvent().fire();
                 api_notify.showFeedback('Mixin was saved!');
 
-                if (successCallback) {
-                    successCallback();
+                if (jQuery.isFunction(successCallback)) {
+                    successCallback.call(this);
                 }
             });
         }

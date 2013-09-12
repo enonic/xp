@@ -73,6 +73,10 @@ module app_wizard {
             api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_createOrUpdate(createParams, () => {
                 new app_wizard.RelationshipTypeCreatedEvent().fire();
                 api_notify.showFeedback('Relationship type was created!');
+
+                if (jQuery.isFunction(successCallback)) {
+                    successCallback.call(this);
+                }
             });
         }
 
@@ -87,6 +91,10 @@ module app_wizard {
             api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_createOrUpdate(updateParams, () => {
                 new app_wizard.RelationshipTypeUpdatedEvent().fire();
                 api_notify.showFeedback('Relationship type was saved!');
+
+                if (jQuery.isFunction(successCallback)) {
+                    successCallback.call(this);
+                }
             });
         }
 

@@ -104,8 +104,9 @@ module app_wizard {
 
                 new app_wizard.SpaceCreatedEvent().fire();
                 api_notify.showFeedback('Space was created!');
-                if (successCallback) {
-                    successCallback();
+
+                if (jQuery.isFunction(successCallback)) {
+                    successCallback.call(this);
                 }
             });
         }
@@ -123,8 +124,9 @@ module app_wizard {
 
                 new app_wizard.SpaceUpdatedEvent().fire();
                 api_notify.showFeedback('Space was saved!');
-                if (successCallback) {
-                    successCallback();
+
+                if (jQuery.isFunction(successCallback)) {
+                    successCallback.call(this);
                 }
             });
         }

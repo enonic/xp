@@ -137,6 +137,10 @@ module app_wizard {
                 send().done((createResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
+
+                    if (jQuery.isFunction(successCallback)) {
+                        successCallback.call(this);
+                    }
                 });
         }
 
@@ -154,6 +158,10 @@ module app_wizard {
                 send().done((updateResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was updated!');
                     console.log('content update response', updateResponse);
+
+                    if (jQuery.isFunction(successCallback)) {
+                        successCallback.call(this);
+                    }
                 });
         }
 
