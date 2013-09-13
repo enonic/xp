@@ -11,10 +11,10 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
-public class Relationship
+final class Relationship
     extends InputType
 {
-    public Relationship()
+    Relationship()
     {
         super( RelationshipConfig.class );
     }
