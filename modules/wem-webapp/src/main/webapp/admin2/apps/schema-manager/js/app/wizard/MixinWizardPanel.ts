@@ -40,7 +40,7 @@ module app_wizard {
             this.mixinWizardHeader.setName(MixinWizardPanel.NEW_WIZARD_HEADER);
 
             this.mixinForm = new MixinForm();
-            this.addStep(new api_app_wizard.WizardStep("Mixin", this.mixinForm));
+            this.addStep(new api_app_wizard.WizardStep("Mixin"), this.mixinForm, false);
         }
 
         setPersistedItem(mixin:api_remote_mixin.Mixin) {
