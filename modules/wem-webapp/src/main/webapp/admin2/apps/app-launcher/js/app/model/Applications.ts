@@ -10,27 +10,29 @@ module app_model {
 
         private static applications:Application[] = [
             new Application('Content Manager', api_util.getAbsoluteUri('admin2/apps/content-manager/index.html'),
-                ICONS_PATH + 'database.png',
-                DESCR1),
-            new Application('Relationships', '', ICONS_PATH + 'share.png', DESCR2),
-            new Application('Space Admin', api_util.getAbsoluteUri('admin2/apps/space-manager/index.html'), ICONS_PATH + 'earth.png',
-                DESCR3),
-            new Application('Schema Manager', api_util.getAbsoluteUri('admin2/apps/schema-manager/index.html'), ICONS_PATH + 'signup.png',
-                DESCR4),
+                Applications.ICONS_PATH + 'database.png',
+                Applications.DESCR1),
+            new Application('Relationships', '', Applications.ICONS_PATH + 'share.png', Applications.DESCR2),
+            new Application('Space Admin', api_util.getAbsoluteUri('admin2/apps/space-manager/index.html'),
+                Applications.ICONS_PATH + 'earth.png',
+                Applications.DESCR3),
+            new Application('Schema Manager', api_util.getAbsoluteUri('admin2/apps/schema-manager/index.html'),
+                Applications.ICONS_PATH + 'signup.png',
+                Applications.DESCR4),
 
-            new Application('Store Manager', '', ICONS_PATH + 'cart.png', DESCR4),
-            new Application('Segment Builder', '', ICONS_PATH + 'pie.png', DESCR3),
-            new Application('Optimizer', '', ICONS_PATH + 'target.png', DESCR2),
-            new Application('Analytics', '', ICONS_PATH + 'stats.png', DESCR1),
+            new Application('Store Manager', '', Applications.ICONS_PATH + 'cart.png', Applications.DESCR4),
+            new Application('Segment Builder', '', Applications.ICONS_PATH + 'pie.png', Applications.DESCR3),
+            new Application('Optimizer', '', Applications.ICONS_PATH + 'target.png', Applications.DESCR2),
+            new Application('Analytics', '', Applications.ICONS_PATH + 'stats.png', Applications.DESCR1),
 
-            new Application('Accounts', '', ICONS_PATH + 'users.png', DESCR2),
-            new Application('Modules', '', ICONS_PATH + 'puzzle.png', DESCR1),
-            new Application('Templates', '', ICONS_PATH + 'insert-template.png', DESCR4),
-            new Application('Diagnostics', '', ICONS_PATH + 'aid.png', DESCR3)
+            new Application('Accounts', '', Applications.ICONS_PATH + 'users.png', Applications.DESCR2),
+            new Application('Modules', '', Applications.ICONS_PATH + 'puzzle.png', Applications.DESCR1),
+            new Application('Templates', '', Applications.ICONS_PATH + 'insert-template.png', Applications.DESCR4),
+            new Application('Diagnostics', '', Applications.ICONS_PATH + 'aid.png', Applications.DESCR3)
         ];
 
         static getAllApps():Application[] {
-            return applications;
+            return Applications.applications;
         }
     }
 }
