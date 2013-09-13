@@ -8,10 +8,10 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
-public class ImageSelector
+final class ImageSelector
     extends InputType
 {
-    public ImageSelector()
+    ImageSelector()
     {
         super( ImageSelectorConfig.class );
     }

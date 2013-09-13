@@ -9,10 +9,10 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
-public class DecimalNumber
+final class DecimalNumber
     extends InputType
 {
-    public DecimalNumber()
+    DecimalNumber()
     {
     }
 

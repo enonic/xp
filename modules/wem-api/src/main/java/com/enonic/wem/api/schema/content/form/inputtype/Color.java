@@ -13,10 +13,10 @@ import com.enonic.wem.api.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
-public class Color
+final class Color
     extends InputType
 {
-    public Color()
+    Color()
     {
     }
 

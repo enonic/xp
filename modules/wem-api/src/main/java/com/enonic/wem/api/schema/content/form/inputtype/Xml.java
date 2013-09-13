@@ -9,10 +9,10 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
-public class Xml
+final class Xml
     extends InputType
 {
-    public Xml()
+    Xml()
     {
     }
 

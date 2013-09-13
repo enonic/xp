@@ -11,37 +11,37 @@ import com.enonic.wem.api.data.type.ValueTypes;
 
 public final class InputTypes
 {
-    public static final Color COLOR = new Color();
+    public static final InputType COLOR = new Color();
 
-    public static final Date DATE = new Date();
+    public static final InputType DATE = new Date();
 
-    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber();
+    public static final InputType DECIMAL_NUMBER = new DecimalNumber();
 
-    public static final GeoLocation GEO_LOCATION = new GeoLocation();
+    public static final InputType GEO_LOCATION = new GeoLocation();
 
-    public static final HtmlArea HTML_AREA = new HtmlArea();
+    public static final InputType HTML_AREA = new HtmlArea();
 
-    public static final Image IMAGE = new Image();
+    public static final InputType IMAGE = new Image();
 
-    public static final ImageSelector IMAGE_SELECTOR = new ImageSelector();
+    public static final InputType IMAGE_SELECTOR = new ImageSelector();
 
-    public static final Money MONEY = new Money();
+    public static final InputType MONEY = new Money();
 
-    public static final Phone PHONE = new Phone();
+    public static final InputType PHONE = new Phone();
 
-    public static final Relationship RELATIONSHIP = new Relationship();
+    public static final InputType RELATIONSHIP = new Relationship();
 
-    public static final SingleSelector SINGLE_SELECTOR = new SingleSelector();
+    public static final InputType SINGLE_SELECTOR = new SingleSelector();
 
-    public static final Tags TAGS = new Tags();
+    public static final InputType TAGS = new Tags();
 
-    public static final TextLine TEXT_LINE = new TextLine();
+    public static final InputType TEXT_LINE = new TextLine();
 
-    public static final TextArea TEXT_AREA = new TextArea();
+    public static final InputType TEXT_AREA = new TextArea();
 
-    public static final WholeNumber WHOLE_NUMBER = new WholeNumber();
+    public static final InputType WHOLE_NUMBER = new WholeNumber();
 
-    public static final Xml XML = new Xml();
+    public static final InputType XML = new Xml();
 
     private static final ImmutableList<InputType> inputTypes = new ImmutableList.Builder<InputType>().
         add( COLOR ).
