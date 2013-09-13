@@ -23,7 +23,7 @@ module app_new {
 
         public addRecentContentType(contentType:api_remote_contenttype.ContentType) {
 
-            var cookie:string = this.getCookie(this.cookieKey);
+            var cookie:string = api_util.CookieHelper.getCookie(this.cookieKey);
             var qualifiedContentTypeNames = cookie ? cookie.split(this.valueSeparator) : [];
 
             var qualifiedContentTypeName = contentType.qualifiedName;
@@ -37,7 +37,7 @@ module app_new {
             }
 
             // add chosen item to recent list
-            this.setCookie(this.cookieKey, qualifiedContentTypeNames.join(this.valueSeparator));
+            api_util.CookieHelper.setCookie(this.cookieKey, qualifiedContentTypeNames.join(this.valueSeparator));
         }
 
         public getRecentContentTypes():string[] {
@@ -80,22 +80,6 @@ module app_new {
             }
 
             return recommendations;
-        }
-
-        private getCookie(name:string):string {
-            var value;
-            var parts = document.cookie.split(name + "=");
-            if (parts.length == 2) {
-                value = parts.pop().split(";").shift();
-            }
-            return value;
-        }
-
-        private setCookie(name:string, value:string) {
-            var expDate = new Date();
-            expDate.setDate(expDate.getDate() + this.cookieExpire);
-            var value = value + "; expires=" + expDate.toUTCString();
-            document.cookie = name + "=" + value;
         }
 
     }

@@ -18,6 +18,7 @@
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
 ///<reference path='util/Animation.ts'/>
+///<reference path='util/CookieHelper.ts'/>
 
 ///<reference path='model/Model.ts' />
 ///<reference path='model/SpaceModel.ts' />

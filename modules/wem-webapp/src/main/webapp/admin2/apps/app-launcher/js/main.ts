@@ -33,9 +33,8 @@ var USERSTORES:app_model.UserStore[] = [
 ];
 
 function isUserLoggedIn():boolean {
-    // TODO create utility class for cookie handling, remove dependency to ExtJs
-    var dummyCookie = Ext.util.Cookies.get('dummy_userIsLoggedIn');
-    return dummyCookie && dummyCookie === 'true';
+    var dummyCookie = api_util.CookieHelper.getCookie('dummy_userIsLoggedIn');
+    return dummyCookie === 'true';
 }
 
 Ext.application({
@@ -78,7 +77,7 @@ Ext.application({
         loginPanel.setUserStores(USERSTORES, USERSTORES[1]);
         loginPanel.onUserAuthenticated((userName:string, userStore:app_model.UserStore) => {
             console.log('User logged in', userName, userStore);
-            Ext.util.Cookies.set('dummy_userIsLoggedIn', 'true');
+            api_util.CookieHelper.setCookie('dummy_userIsLoggedIn', 'true');
             loginPanel.hide();
             appSelector.show();
             appSelector.afterRender();
