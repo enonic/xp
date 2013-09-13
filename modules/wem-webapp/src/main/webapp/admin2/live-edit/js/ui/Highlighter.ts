@@ -33,6 +33,8 @@ module LiveEdit.ui {
         }
 
         private addView():void {
+            // Needs to be a SVG element as the css has pointer-events:none
+            // CSS pointer-events only works for SVG in IE
             var html:string = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="live-edit-highlight-border" style="top:-5000px;left:-5000px">' +
                               '    <rect width="150" height="150"/>' +
                               '</svg>';
