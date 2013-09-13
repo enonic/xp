@@ -1,4 +1,4 @@
-module LiveEdit.component {
+module LiveEdit.component.helper {
 
     // Uses
     var $ = $liveEdit;
@@ -25,10 +25,10 @@ module LiveEdit.component {
                 url: componentUrl,
                 cache: false,
                 beforeSend: () => {
-                    LiveEdit.component.EmptyComponent.appendLoadingSpinner(selectedComponent)
+                    LiveEdit.component.helper.EmptyComponent.appendLoadingSpinner(selectedComponent)
                 },
                 success: (responseHtml:string) => {
-                    LiveEdit.component.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml))
+                    LiveEdit.component.helper.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml))
                 }
             });
         }

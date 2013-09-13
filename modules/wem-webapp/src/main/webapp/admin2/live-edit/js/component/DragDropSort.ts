@@ -213,7 +213,7 @@ module LiveEdit.component.DragDropSort {
             // fixme: is this needed anymore?
             component.getElement().hide(null);
 
-            component.getElement().replaceWith(LiveEdit.component.EmptyComponent.createEmptyComponentElement(component));
+            component.getElement().replaceWith(LiveEdit.component.helper.EmptyComponent.createEmptyComponentElement(component));
 
             $(window).trigger('sortableUpdate.liveEdit');
         }
