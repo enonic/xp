@@ -82,7 +82,7 @@ module app_wizard {
             h1El.getEl().setInnerHtml("TODO: templates");
             this.templatesPanel.appendChild(h1El);
 
-            this.addStep(new api_app_wizard.WizardStep("Content"), this.contentForm, false);
+            this.addStep(new api_app_wizard.WizardStep("Content"), this.contentForm);
             this.addStep(new api_app_wizard.WizardStep("Schemas"), this.schemaPanel);
             this.addStep(new api_app_wizard.WizardStep("Modules"), this.modulesPanel);
             this.addStep(new api_app_wizard.WizardStep("Templates"), this.templatesPanel);

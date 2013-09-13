@@ -16,8 +16,8 @@ module app {
             this.handleGlobalEvents();
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground:boolean = false) {
-            super.addWizardPanel(tabMenuItem, wizardPanel, inBackground);
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+            super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().addListener(
                 {
@@ -78,7 +78,7 @@ module app {
 
                         spaceItemViewPanel.setItem(spaceItem);
 
-                        this.addNavigationItem(tabMenuItem, spaceItemViewPanel);
+                        this.addNavigablePanelToFront(tabMenuItem, spaceItemViewPanel);
                     }
                 });
             });

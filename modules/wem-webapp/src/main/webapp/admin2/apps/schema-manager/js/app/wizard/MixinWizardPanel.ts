@@ -18,7 +18,7 @@ module app_wizard {
 
         private mixinForm:MixinForm;
 
-        constructor(id:string) {
+        constructor() {
 
             this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
@@ -40,7 +40,7 @@ module app_wizard {
             this.mixinWizardHeader.setName(MixinWizardPanel.NEW_WIZARD_HEADER);
 
             this.mixinForm = new MixinForm();
-            this.addStep(new api_app_wizard.WizardStep("Mixin"), this.mixinForm, false);
+            this.addStep(new api_app_wizard.WizardStep("Mixin"), this.mixinForm);
         }
 
         setPersistedItem(mixin:api_remote_mixin.Mixin) {

@@ -14,7 +14,7 @@ module api_app{
             var homePanelMenuItem = new AppBarTabMenuItem("home", "home");
             homePanelMenuItem.setVisible(false);
             homePanelMenuItem.setRemovable(false);
-            this.addNavigationItem(homePanelMenuItem, this.homePanel);
+            this.addNavigablePanelToFront(homePanelMenuItem, this.homePanel);
 
             this.addListener({
                 onPanelShown: (event:api_ui.PanelShownEvent) => {

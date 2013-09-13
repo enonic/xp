@@ -43,8 +43,8 @@ module api_app {
             return this.appBarTabMenu;
         }
 
-        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground:boolean = false) {
-            super.addNavigationItem(tabMenuItem, wizardPanel, inBackground);
+        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+            super.addNavigablePanelToFront(tabMenuItem, wizardPanel);
 
             wizardPanel.addListener({
                 onClosed: (wizard) => {

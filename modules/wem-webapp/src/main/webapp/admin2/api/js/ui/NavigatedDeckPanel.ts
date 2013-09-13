@@ -16,14 +16,16 @@ module api_ui {
             return this.navigator.getSelectedNavigationItem();
         }
 
-        addNavigationItem(item:PanelNavigationItem, panel:Panel, inBackground:boolean = false) {
-
+        addNavigablePanelToFront(item:PanelNavigationItem, panel:Panel) {
             this.navigator.addNavigationItem(item);
-            this.addPanel(panel);
+            super.addPanel(panel);
 
-            if (!inBackground) {
-                this.selectPanel(item);
-            }
+            this.selectPanel(item);
+        }
+
+        addNavigablePanelToBack(item:PanelNavigationItem, panel:Panel) {
+            this.navigator.addNavigationItem(item);
+            super.addPanel(panel);
         }
 
         selectPanel(item:PanelNavigationItem) {

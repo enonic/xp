@@ -18,7 +18,7 @@ module app_wizard {
 
         private contentTypeForm:app_wizard.ContentTypeForm;
 
-        constructor(id:string) {
+        constructor() {
 
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
@@ -42,9 +42,7 @@ module app_wizard {
 
             this.contentTypeForm = new ContentTypeForm();
 
-            this.addStep(new api_app_wizard.WizardStep("Content Type"), this.contentTypeForm, false);
-
-
+            this.addStep(new api_app_wizard.WizardStep("Content Type"), this.contentTypeForm);
         }
 
         setPersistedItem(contentType:api_remote_contenttype.ContentType) {

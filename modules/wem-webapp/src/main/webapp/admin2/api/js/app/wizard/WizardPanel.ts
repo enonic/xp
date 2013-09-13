@@ -122,8 +122,12 @@ module api_app_wizard {
             return null; // TODO:
         }
 
-        addStep(step:api_ui.PanelNavigationItem, panel: api_ui.Panel, inBackground:boolean = true) {
-            this.stepPanels.addNavigationItem(step, panel, inBackground);
+        addStep(step:api_ui.PanelNavigationItem, panel:api_ui.Panel) {
+            this.stepPanels.addNavigablePanelToBack(step, panel);
+        }
+
+        showFirstStep() {
+            this.stepPanels.showPanel(0);
         }
 
         close(checkCanClose:boolean = false) {

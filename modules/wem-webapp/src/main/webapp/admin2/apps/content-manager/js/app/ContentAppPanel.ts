@@ -40,8 +40,8 @@ module app {
             });
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel, inBackground:boolean = false) {
-            super.addWizardPanel(tabMenuItem, wizardPanel, inBackground);
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+            super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().addListener(
                 {
@@ -105,7 +105,7 @@ module app {
 
                     contentItemViewPanel.setItem(contentItem);
 
-                    this.addNavigationItem(tabMenuItem, contentItemViewPanel);
+                    this.addNavigablePanelToFront(tabMenuItem, contentItemViewPanel);
                 }
             });
         }
