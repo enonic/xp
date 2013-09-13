@@ -13,20 +13,19 @@ module api_ui_tab {
 
         private labelEl:api_dom.SpanEl;
 
-        private tabMenu:TabMenu;
-
         private visible:boolean = true;
 
         private removable:boolean = true;
 
         private active:boolean;
 
+        private listeners: TabMenuItemListener[] = [];
+
         constructor(label:string, options?:TabMenuItemOptions) {
             super("TabMenuItem", "tab-menu-item");
             if (!options) {
                 options = {};
             }
-
 
             this.labelEl = new api_dom.SpanEl(null, 'label');
             this.appendChild(this.labelEl);
@@ -35,6 +34,7 @@ module api_ui_tab {
                 new TabMenuItemSelectEvent(this).fire();
             });
 
+            this.removable = options.removable;
             if (options.removable) {
                 var removeButton = new api_dom.ButtonEl();
                 removeButton.getEl().setInnerHtml(options.removeText ? options.removeText : "&times;");
@@ -47,8 +47,8 @@ module api_ui_tab {
             }
         }
 
-        setTabMenu(tabMenu:TabMenu) {
-            this.tabMenu = tabMenu;
+        getElement(): api_dom.Element {
+            return this;
         }
 
         setIndex(value:number) {
@@ -63,14 +63,16 @@ module api_ui_tab {
             return this.label;
         }
 
-        setLabel(value:string) {
-            this.label = value;
-            this.labelEl.getEl().setInnerHtml(value);
-            this.labelEl.getEl().setAttribute('title', value);
-
-            if (this.tabMenu) {
-                this.tabMenu.setButtonLabel(value);
+        setLabel(newValue:string) {
+            if (this.label == newValue) {
+                return;
             }
+
+            var oldValue = this.label;
+            this.label = newValue;
+            this.labelEl.getEl().setInnerHtml(newValue);
+            this.labelEl.getEl().setAttribute('title', newValue);
+            this.executeLabelChangedListeners(newValue, oldValue);
         }
 
         isVisible():boolean {
@@ -93,20 +95,36 @@ module api_ui_tab {
             }
         }
 
-        isRemovable():boolean {
-            return this.removable;
+        isActive():boolean {
+            return this.active;
         }
 
         setRemovable(value:boolean) {
             this.removable = value;
         }
 
-        //TODO: Does this really need to override Element.remove()?
-        /*private remove() {
-            if (this.tabMenu) {
-                this.tabMenu.removeChild(this);
-            }
-        }*/
+        isRemovable():boolean {
+            return this.removable;
+        }
+
+        addListener(listener:TabMenuItemListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:TabMenuItemListener) {
+            this.listeners = this.listeners.filter((elem) => {
+                return elem != listener;
+            });
+        }
+
+        private executeLabelChangedListeners(newValue:string, oldValue:string) {
+            this.listeners.forEach((listener:TabMenuItemListener) => {
+                if (listener.onLabelChanged) {
+                    listener.onLabelChanged(newValue, oldValue);
+                }
+            });
+        }
+
     }
 
     export class TabMenuItemSelectEvent extends api_event.Event {
