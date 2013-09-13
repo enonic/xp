@@ -124,6 +124,11 @@ module api_app_wizard {
 
         addStep(step:api_ui.PanelNavigationItem, panel:api_ui.Panel) {
             this.stepPanels.addNavigablePanelToBack(step, panel);
+
+            // Ensure first step is shown
+            if( this.stepPanels.getSize() == 1 ) {
+                this.stepPanels.showPanel( 0 );
+            }
         }
 
         showFirstStep() {
