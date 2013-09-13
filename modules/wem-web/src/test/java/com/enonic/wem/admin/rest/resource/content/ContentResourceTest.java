@@ -13,6 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.sun.jersey.api.client.UniformInterfaceException;
+
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
@@ -22,6 +24,7 @@ import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
+import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.command.content.GetRootContent;
 import com.enonic.wem.api.command.content.RenameContent;
@@ -58,6 +61,8 @@ import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidatio
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.Spaces;
 import com.enonic.wem.web.servlet.ServletRequestHolder;
+
+import static org.junit.Assert.*;
 
 public class ContentResourceTest
     extends AbstractResourceTest
@@ -101,22 +106,64 @@ public class ContentResourceTest
 
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
-        String jsonString = resource().path( "content" ).queryParam( "path", "/my_a_content" ).get( String.class );
+        String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get( String.class );
 
         assertJson( "get_content_by_path.json", jsonString );
     }
 
     @Test
-    public void get_root_content()
+    public void get_by_path_not_found()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
+
+        try
+        {
+            resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( e.getResponse().getStatus(), 404 );
+            assertEquals( e.getResponse().getEntity( String.class ), "Content [/my_a_content] was not found" );
+        }
+    }
+
+    @Test
+    public void get_by_path_and_version()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
-        Mockito.when( client.execute( Mockito.isA( GetRootContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list" ).get( String.class );
+        final ContentData aContentData = aContent.getContentData();
+        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        assertJson( "list_content.json", jsonString );
+        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( aContent );
+
+        String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
+            queryParam( "version", "1" ).get( String.class );
+
+        assertJson( "get_content_by_path.json", jsonString );
+    }
+
+    @Test
+    public void get_by_path_and_version_not_found()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( null );
+
+        try
+        {
+            resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
+                queryParam( "version", "1" ).get( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( e.getResponse().getStatus(), 404 );
+            assertEquals( e.getResponse().getEntity( String.class ), "Content [/my_a_content] was not found" );
+        }
     }
 
     @Test
@@ -133,25 +180,80 @@ public class ContentResourceTest
         aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
 
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
-        final ContentData bContentData = bContent.getContentData();
-        bContentData.setProperty( "myArrayOfSets[0].myFirstSetProperty1", new Value.Text( "1" ) );
-        bContentData.setProperty( "myArrayOfSets[0].myFirstSetProperty2", new Value.Text( "a" ) );
-        bContentData.setProperty( "myArrayOfSets[1].mySecondSetProperty1", new Value.Text( "2" ) );
-        bContentData.setProperty( "myArrayOfSets[1].mySecondSetProperty2", new Value.Text( "b" ) );
-
-        bContentData.setProperty( "myArrayOfArrays[0].myFirstArray[0]", new Value.Text( "1" ) );
-        bContentData.setProperty( "myArrayOfArrays[0].myFirstArray[1]", new Value.Text( "2" ) );
-        bContentData.setProperty( "myArrayOfArrays[1].mySecondArray[0]", new Value.Text( "3" ) );
-        bContentData.setProperty( "myArrayOfArrays[1].mySecondArray[1]", new Value.Text( "4" ) );
-
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
-
-        String jsonString =
-            resource().path( "content" ).queryParam( "contentIds", "aaa" ).queryParam( "contentIds", "bbb" ).get( String.class );
+        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
         assertJson( "get_content_by_id.json", jsonString );
+    }
+
+    @Test
+    public void get_by_id_not_found()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
+
+        try
+        {
+            resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( e.getResponse().getStatus(), 404 );
+            assertEquals( e.getResponse().getEntity( String.class ), "Content [aaa] was not found" );
+        }
+    }
+
+    @Test
+    public void get_by_id_and_version()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+
+        final ContentData aContentData = aContent.getContentData();
+
+        aContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+
+        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( aContent );
+
+        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).
+            queryParam( "version", "2" ).get( String.class );
+
+        assertJson( "get_content_by_id.json", jsonString );
+    }
+
+    @Test
+    public void get_by_id_and_version_not_found()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( null );
+
+        try
+        {
+            resource().path( "content" ).queryParam( "id", "aaa" ).queryParam( "version", "2" ).get( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( e.getResponse().getStatus(), 404 );
+            assertEquals( e.getResponse().getEntity( String.class ), "Content [aaa] was not found" );
+        }
+    }
+
+    @Test
+    public void get_root_content()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetRootContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        String jsonString = resource().path( "content/list" ).get( String.class );
+
+        assertJson( "list_content.json", jsonString );
     }
 
     @Test

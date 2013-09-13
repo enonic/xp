@@ -12,7 +12,7 @@ module api_content {
 
         getParams():Object {
             return {
-                contentIds: [this.id]
+                id: this.id
             };
         }
 

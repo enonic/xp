@@ -129,14 +129,14 @@ module app {
                         when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
                         then((contentResponse:api_rest.JsonResponse, contentTypeResponse:api_rest.JsonResponse) => {
 
-                            var contentToEdit:api_content.Content = new api_content.Content(<api_content_json.ContentJson>contentResponse.getJson().contents[0]);
+                            var contentToEdit:api_content.Content = new api_content.Content(<api_content_json.ContentJson>contentResponse.getJson());
                             var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(<api_schema_content_json.ContentTypeJson>contentTypeResponse.getJson());
                             tabMenuItem = new api_app.AppBarTabMenuItem(contentToEdit.getDisplayName(), tabId, true);
 
                             if (contentToEdit.getPath().hasParent()) {
                                 new api_content.GetContentByPathRequest(contentToEdit.getPath().getParentPath()).send().
                                     done((parentContentResponse:api_rest.JsonResponse) => {
-                                        var parentContent:api_content.Content = new api_content.Content(<api_content_json.ContentJson>parentContentResponse.getJson().contents[0]);
+                                        var parentContent:api_content.Content = new api_content.Content(<api_content_json.ContentJson>parentContentResponse.getJson());
 
                                         var contentWizardPanel = new app_wizard.ContentWizardPanel(contentType, parentContent);
 

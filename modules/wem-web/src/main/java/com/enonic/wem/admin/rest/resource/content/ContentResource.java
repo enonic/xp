@@ -17,12 +17,11 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.sun.jersey.api.NotFoundException;
 
-import com.enonic.wem.admin.json.content.ContentListJson;
+import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.json.AttachmentParams;
@@ -53,6 +52,7 @@ import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
@@ -82,19 +82,64 @@ public class ContentResource
     private UploadService uploadService;
 
     @GET
-    public ContentListJson get( @QueryParam("path") final String path, @QueryParam("version") final Integer version,
-                                @QueryParam("contentIds") final List<String> contentIds )
+    public ContentJson getById( @QueryParam("id") final String id, @QueryParam("version") final Long version )
     {
-        if ( StringUtils.isNotEmpty( path ) )
+        Content content = null;
+        if ( version == null )
         {
-            final ContentPath contentPath = ContentPath.from( path );
-            return handleGetContentByPath( contentPath, version );
+            final GetContents getContents = Commands.content().get().selectors( ContentIds.from( id ) );
+            final Contents contents = client.execute( getContents );
+
+            if ( contents.isNotEmpty() )
+            {
+                content = contents.first();
+            }
         }
         else
         {
-            final String[] stringOfPathIds = contentIds.toArray( new String[contentIds.size()] );
-            return handleGetContentByIds( ContentIds.from( stringOfPathIds ) );
+            final GetContentVersion getContentVersion = Commands.content().getVersion().
+                selector( ContentId.from( id ) ).
+                version( ContentVersionId.of( version ) );
+
+            content = client.execute( getContentVersion );
         }
+
+        if ( content == null )
+        {
+            throw new NotFoundException( String.format( "Content [%s] was not found", id ) );
+        }
+        return new ContentJson( content );
+    }
+
+    @GET
+    @Path("bypath")
+    public ContentJson getByPath( @QueryParam("path") final String path, @QueryParam("version") final Long version )
+    {
+        Content content = null;
+        if ( version == null )
+        {
+            final GetContents getContents = Commands.content().get().selectors( ContentPaths.from( path ) );
+            final Contents contents = client.execute( getContents );
+
+            if ( contents.isNotEmpty() )
+            {
+                content = contents.first();
+            }
+        }
+        else
+        {
+            final GetContentVersion getContentVersion = Commands.content().getVersion().
+                selector( ContentPath.from( path ) ).
+                version( ContentVersionId.of( version ) );
+
+            content = client.execute( getContentVersion );
+        }
+
+        if ( content == null )
+        {
+            throw new NotFoundException( String.format( "Content [%s] was not found", path ) );
+        }
+        return new ContentJson( content );
     }
 
     @GET
@@ -305,57 +350,5 @@ public class ContentResource
             mimeType( uploadItem.getMimeType() ).
             binary( binary ).
             build();
-    }
-
-    private ContentListJson handleGetContentByPath( final ContentPath contentPath, final Integer version )
-    {
-        final Content content;
-
-        if ( version == null )
-        {
-            content = findContent( contentPath );
-        }
-        else
-        {
-            content = findContentVersion( contentPath, ContentVersionId.of( version ) );
-        }
-
-        if ( content != null )
-        {
-            return new ContentListJson( content );
-        }
-        throw new NotFoundException( String.format( "Content [%s] was not found", contentPath ) );
-    }
-
-    private Content findContent( final ContentPath contentPath )
-    {
-        final GetContents getContents = Commands.content().get();
-        getContents.selectors( ContentPaths.from( contentPath ) );
-
-        final Contents contents = client.execute( getContents );
-        return contents.isNotEmpty() ? contents.first() : null;
-    }
-
-    private Content findContentVersion( final ContentPath contentPath, final ContentVersionId versionId )
-    {
-        final GetContentVersion getContentVersion = Commands.content().getVersion();
-        getContentVersion.selector( contentPath ).version( versionId );
-        return client.execute( getContentVersion );
-    }
-
-    private ContentListJson handleGetContentByIds( final ContentIds ids )
-    {
-        final GetContents getContents = Commands.content().get();
-        getContents.selectors( ids );
-
-        final Contents contents = client.execute( getContents );
-
-        if ( contents.isNotEmpty() )
-        {
-            return new ContentListJson( contents );
-        }
-
-        final String missing = Joiner.on( "," ).join( ids );
-        throw new NotFoundException( String.format( "Contents [%s] not found", missing ) );
     }
 }
