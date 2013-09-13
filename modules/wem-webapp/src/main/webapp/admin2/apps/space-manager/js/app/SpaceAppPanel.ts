@@ -51,8 +51,8 @@ module app {
                     this.selectPanel(tabMenuItem);
 
                 } else {
-                    tabMenuItem = new api_app.AppBarTabMenuItem("New Space", tabId);
-                    var spaceWizardPanel = new app_wizard.SpaceWizardPanel(tabId);
+                    tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.SpaceWizardPanel.NEW_WIZARD_HEADER, tabId);
+                    var spaceWizardPanel = new app_wizard.SpaceWizardPanel();
                     this.addWizardPanel(tabMenuItem, spaceWizardPanel);
                     spaceWizardPanel.reRender();
                 }
@@ -101,7 +101,7 @@ module app {
                             var space = result.spaces[0];
 
                             tabMenuItem = new api_app.AppBarTabMenuItem(space.displayName, tabId, true);
-                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel(tabId);
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel();
                             spaceWizardPanel.setPersistedItem(space);
 
                             this.addWizardPanel(tabMenuItem, spaceWizardPanel);
@@ -116,7 +116,7 @@ module app {
         }
 
         private generateTabId(spaceName?:string, isEdit:boolean = false) {
-            return spaceName ? ( isEdit ? 'edit-' : 'view-') + spaceName : 'new-';
+            return spaceName ? ( isEdit ? 'edit-' : 'view-') + spaceName : 'new-space';
         }
     }
 

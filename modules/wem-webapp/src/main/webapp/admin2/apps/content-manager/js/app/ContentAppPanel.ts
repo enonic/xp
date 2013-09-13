@@ -71,7 +71,7 @@ module app {
                         var newContentType = new api_schema_content.ContentType(contentTypeResponse.getJson());
 
                         tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentWizardPanel.NEW_WIZARD_HEADER, tabId);
-                        var wizardPanel = new app_wizard.ContentWizardPanel(tabId, newContentType, parentContent);
+                        var wizardPanel = new app_wizard.ContentWizardPanel(newContentType, parentContent);
                         wizardPanel.renderNew();
 
                         this.addWizardPanel(tabMenuItem, wizardPanel);
@@ -138,7 +138,7 @@ module app {
                                     done((parentContentResponse:api_rest.JsonResponse) => {
                                         var parentContent:api_content.Content = new api_content.Content(<api_content_json.ContentJson>parentContentResponse.getJson().contents[0]);
 
-                                        var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent);
+                                        var contentWizardPanel = new app_wizard.ContentWizardPanel(contentType, parentContent);
 
                                         contentWizardPanel.setPersistedItem(contentToEdit);
                                         this.addWizardPanel(tabMenuItem, contentWizardPanel);
@@ -146,7 +146,7 @@ module app {
                                     });
                             }
                             else {
-                                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, null);
+                                var contentWizardPanel = new app_wizard.ContentWizardPanel(contentType, null);
                                 contentWizardPanel.setPersistedItem(contentToEdit);
                                 this.addWizardPanel(tabMenuItem, contentWizardPanel);
                             }
@@ -157,7 +157,7 @@ module app {
         }
 
         private generateTabId(contentName?:string, isEdit:boolean = false) {
-            return contentName ? ( isEdit ? 'edit-' : 'view-') + contentName : 'new-';
+            return contentName ? ( isEdit ? 'edit-' : 'view-') + contentName : 'new-content';
         }
     }
 
