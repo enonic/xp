@@ -6,7 +6,7 @@ module app_wizard_form_input {
             super("HtmlArea");
         }
 
-        createInputOccurrence(index:number, property?:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property?:api_data.Property):api_dom.Element {
 
             var textAreaEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
             if (property != null) {

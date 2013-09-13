@@ -6,7 +6,7 @@ module app_wizard_form_input {
             super("TextLine");
         }
 
-        createInputOccurrence(index:number, property?:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property?:api_data.Property):api_dom.Element {
 
             var inputEl = api_ui.TextInput.middle(this.getInput().getName() + "-" + index);
             inputEl.setName(this.getInput().getName());

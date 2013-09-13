@@ -2,11 +2,9 @@ module app_wizard_form_input {
 
     export class InputOccurrenceView extends api_dom.DivEl implements api_event.Observable {
 
-        private input:api_schema_content_form.Input;
+        private inputOccurrence:InputOccurrence;
 
         private inputElement:api_dom.Element;
-
-        private index:number;
 
         private addButtonEl:api_dom.ButtonEl;
 
@@ -16,18 +14,22 @@ module app_wizard_form_input {
 
         private listeners:InputOccurrenceViewListener[] = [];
 
-        constructor(input:api_schema_content_form.Input, inputElement:api_dom.Element, index:number) {
+        constructor(inputOccurrence:InputOccurrence, inputElement:api_dom.Element) {
             super("InputOccurrenceView", "input-occurrence-view");
-            this.input = input;
-            this.index = index;
-            this.getEl().setData("dataId", this.input.getName() + "[" + this.index + "]");
+            this.inputOccurrence = inputOccurrence;
 
             this.inputElement = inputElement;
             this.appendChild(this.inputElement);
 
             this.occurrenceCountEl = new api_dom.SpanEl(null, "occurrence-count");
-            this.occurrenceCountEl.setHtml("#" + (index + 1 ));
             this.appendChild(this.occurrenceCountEl);
+
+            this.addButtonEl = new api_ui.Button("+");
+            this.addButtonEl.setClass("add-button");
+            this.appendChild(this.addButtonEl);
+            this.addButtonEl.setClickListener(() => {
+                this.notifyAddButtonClicked();
+            });
 
             this.removeButtonEl = new api_ui.Button("X");
             this.removeButtonEl.setClass("remove-button");
@@ -37,41 +39,36 @@ module app_wizard_form_input {
                 this.notifyRemoveButtonClicked();
             });
 
-            var showRemoveButton = (this.index + 1) > Math.max(1, this.input.getOccurrences().getMinimum());
-            if (showRemoveButton) {
-                this.removeButtonEl.show();
-            }
-
-            this.addButtonEl = new api_ui.Button("+");
-            this.addButtonEl.setClass("add-button");
-            this.appendChild(this.addButtonEl);
-            this.addButtonEl.setClickListener(() => {
-                this.notifyAddButtonClicked();
-            });
+            this.refresh();
         }
 
+        refresh() {
 
-        setIndex(value:number) {
-            this.index = value;
-            this.occurrenceCountEl.setHtml("#" + (this.index + 1));
-            this.getEl().setData("dataId", this.input.getName() + "[" + this.index + "]");
-        }
+            this.occurrenceCountEl.setHtml("#" + (this.inputOccurrence.getIndex() + 1));
+            this.getEl().setData("dataId", this.inputOccurrence.getDataId().toString());
 
-        getIndex():number {
-            return this.index;
-        }
 
-        getInputElement():api_dom.Element {
-            return this.inputElement;
-        }
-
-        showRemoveButton(value:boolean) {
-            if (value) {
+            if (this.inputOccurrence.showRemoveButton()) {
                 this.removeButtonEl.show();
             }
             else {
                 this.removeButtonEl.hide();
             }
+
+            if (this.inputOccurrence.showAddButton()) {
+                this.addButtonEl.show();
+            }
+            else {
+                this.addButtonEl.hide();
+            }
+        }
+
+        getIndex():number {
+            return this.inputOccurrence.getIndex();
+        }
+
+        getInputElement():api_dom.Element {
+            return this.inputElement;
         }
 
         addListener(listener:InputOccurrenceViewListener) {
@@ -87,7 +84,7 @@ module app_wizard_form_input {
         private notifyRemoveButtonClicked() {
             this.listeners.forEach((listener:InputOccurrenceViewListener) => {
                 if (listener.onRemoveButtonClicked) {
-                    listener.onRemoveButtonClicked(this);
+                    listener.onRemoveButtonClicked(this, this.inputOccurrence.getIndex());
                 }
             });
         }
