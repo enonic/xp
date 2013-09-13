@@ -15,7 +15,7 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var button = this.createButton({
+            this.createMenuItem({
                 text: 'Open in new tab',
                 name: 'opencontent',
                 handler: (event) => {

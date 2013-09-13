@@ -12,7 +12,7 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var button = this.createButton({
+            this.createMenuItem({
                 text: 'Show Details',
                 name: 'details',
                 handler: (event) => {

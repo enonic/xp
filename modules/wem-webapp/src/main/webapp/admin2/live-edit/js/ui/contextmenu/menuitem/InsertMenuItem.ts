@@ -15,7 +15,7 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         init():void {
-            var button = this.createButton({
+            this.createMenuItem({
                 text: 'Insert',
                 name: 'insert',
                 handler: (event) => {

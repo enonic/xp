@@ -1,4 +1,4 @@
-interface ButtonConfig {
+interface ContextMenuItemConfig {
     name?:string;
     text:string;
     cls?:string;
@@ -16,7 +16,7 @@ module LiveEdit.ui.contextmenu.menuitem {
             super();
         }
 
-        createButton(config:ButtonConfig):JQuery {
+        createMenuItem(config:ContextMenuItemConfig):JQuery {
             var name:string = config.name || '',
                 text:string = config.text,
                 cls:string = config.cls || '',
@@ -27,11 +27,11 @@ module LiveEdit.ui.contextmenu.menuitem {
             }
             html += '<span class="live-edit-menu-item-text">' + text + '</span></div>';
 
-            var button:JQuery = this.createHtmlFromString(html);
+            var menuItem:JQuery = this.createHtmlFromString(html);
             if (config.handler) {
-                button.on('click', (event) => config.handler.call(this, event));
+                menuItem.on('click', (event) => config.handler.call(this, event));
             }
-            return button;
+            return menuItem;
         }
     }
 }
