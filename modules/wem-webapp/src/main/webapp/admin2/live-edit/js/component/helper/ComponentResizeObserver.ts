@@ -1,4 +1,4 @@
-module LiveEdit.component {
+module LiveEdit.component.helper {
     // Uses
     var $ = $liveEdit;
 

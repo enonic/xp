@@ -7,11 +7,10 @@
 ///<reference path='shared/Selection.ts' />
 ///<reference path='shared/PlaceholderCreator.ts' />
 
-///<reference path='component/ComponentHelper.ts' />
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
 ///<reference path='component/EmptyComponent.ts' />
-///<reference path='component/ComponentResizeObserver.ts' />
+///<reference path='component/helper/ComponentResizeObserver.ts' />
 
 ///<reference path='component/mouseevent/Base.ts' />
 ///<reference path='component/mouseevent/Page.ts' />
@@ -63,7 +62,7 @@ declare var $liveEdit;
             new LiveEdit.component.mouseevent.Paragraph();
             new LiveEdit.component.mouseevent.Content();
 
-            new LiveEdit.component.ComponentResizeObserver();
+            new LiveEdit.component.helper.ComponentResizeObserver();
 
             new LiveEdit.ui.Highlighter();
             new LiveEdit.ui.ToolTip();

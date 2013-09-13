@@ -10,8 +10,8 @@ module LiveEdit.ui {
     var domHelper = LiveEdit.DomHelper;
 
     export class ToolTip extends LiveEdit.ui.Base {
-        private OFFSET_X = 10;
-        private OFFSET_Y = 10;
+        OFFSET_X = 10;
+        OFFSET_Y = 10;
 
         constructor() {
             super();
@@ -34,11 +34,11 @@ module LiveEdit.ui {
             this.appendTo($('body'));
         }
 
-        private setText(componentType:string, componentName:string):void {
+        private setText(component:LiveEdit.component.Component):void {
             var tooltip:JQuery = this.getEl();
 
-            tooltip.children('.live-edit-tool-tip-type-text').text(componentType);
-            tooltip.children('.live-edit-tool-tip-name-text').text(componentName);
+            tooltip.children('.live-edit-tool-tip-type-text').text(component.getComponentType().getName());
+            tooltip.children('.live-edit-tool-tip-name-text').text(component.getName());
         }
 
         private attachEventListeners():void {
@@ -62,7 +62,7 @@ module LiveEdit.ui {
             $(document).on('mouseenter', '[data-live-edit-type]', (event) => {
                 var component:LiveEdit.component.Component = new LiveEdit.component.Component($(event.target).closest('[data-live-edit-type]'));
 
-                this.setText(component.getComponentType().getName(), component.getName());
+                this.setText(component);
 
                 this.getEl().hide(null).fadeIn(300);
             });

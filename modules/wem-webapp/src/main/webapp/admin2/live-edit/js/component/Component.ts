@@ -1,19 +1,23 @@
-module LiveEdit.component {
+interface ElementDimensions {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+}
 
-    // Uses
-    var componentHelper = LiveEdit.component.ComponentHelper;
+module LiveEdit.component {
 
     export class Component {
 
-        private componentType:ComponentType;
+        element:JQuery;
 
-        private element:JQuery;
+        componentType:ComponentType;
 
-        private name:string;
+        key:string;
 
-        private key:string;
+        name:string;
 
-        private elementDimensions:ElementDimensions;
+        elementDimensions:ElementDimensions;
 
         constructor(element:JQuery) {
 
@@ -22,22 +26,22 @@ module LiveEdit.component {
             }
 
             this.setElement(element);
-            this.setName(componentHelper.getComponentName(element));
-            this.setKey(componentHelper.getComponentKeyFromElement(element));
-            this.setElementDimensions(componentHelper.getDimensionsFromElement(element));
 
-            var componentTypeName = componentHelper.getComponentTypeFromElement(element).toUpperCase();
-            var componentTypeEnum = LiveEdit.component.Type[componentTypeName];
+            this.setName(this.getComponentNameFromElement());
 
-            this.setComponentType(new LiveEdit.component.ComponentType( componentTypeEnum ));
+            this.setKey(this.getComponentKeyFromElement());
+
+            this.setElementDimensions(this.getDimensionsFromElement());
+
+            this.setComponentType(new LiveEdit.component.ComponentType( this.resolveComponentTypeEnum() ));
         }
 
         getElement():JQuery {
             return this.element;
         }
 
-        setElement(jQueryObject:JQuery):void {
-            this.element = jQueryObject;
+        setElement(element:JQuery):void {
+            this.element = element;
         }
 
         getName():string {
@@ -58,7 +62,7 @@ module LiveEdit.component {
 
         getElementDimensions():ElementDimensions {
             // We need to dynamically get the dimension as it can change on eg. browser window resize.
-            return componentHelper.getDimensionsFromElement(this.getElement());
+            return this.getDimensionsFromElement();
         }
 
         setElementDimensions(dimensions:ElementDimensions):void {
@@ -79,6 +83,39 @@ module LiveEdit.component {
 
         isSelected():boolean {
             return this.getElement().attr('data-live-edit-selected') == 'true';
+        }
+
+        private resolveComponentTypeEnum():LiveEdit.component.Type {
+            var elementComponentTypeName = this.getComponentTypeNameFromElement().toUpperCase();
+            return LiveEdit.component.Type[elementComponentTypeName];
+        }
+
+        private getComponentTypeNameFromElement():string {
+            return this.element.data('live-edit-type');
+        }
+
+        private getComponentKeyFromElement():string {
+            return this.element.data('live-edit-key');
+        }
+
+        private getComponentNameFromElement():string {
+            return this.element.data('live-edit-name') || '[No Name]';
+        }
+
+        private getDimensionsFromElement():ElementDimensions {
+            var cmp:JQuery = this.element;
+            var offset = cmp.offset();
+            var top = offset.top;
+            var left = offset.left;
+            var width = cmp.outerWidth();
+            var height = cmp.outerHeight();
+
+            return {
+                top: top,
+                left: left,
+                width: width,
+                height: height
+            };
         }
 
     }
