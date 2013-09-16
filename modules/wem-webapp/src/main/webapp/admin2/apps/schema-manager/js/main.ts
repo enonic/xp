@@ -59,20 +59,12 @@ module components {
     export var schemaDeleteDialog:app_delete.SchemaDeleteDialog;
 }
 
-Ext.application({
-    name: 'schemaManager',
+window.onload = () => {
+    var appBar = new api_app.AppBar("Schema Manager", new api_app.AppBarTabMenu("SchemaAppBarTabMenu"));
+    var appPanel = new app.SchemaAppPanel(appBar);
 
-    controllers: [],
+    api_dom.Body.get().appendChild(appBar);
+    api_dom.Body.get().appendChild(appPanel);
 
-    stores: [],
-
-    launch: function () {
-        var appBar = new api_app.AppBar("Schema Manager", new api_app.AppBarTabMenu("SchemaAppBarTabMenu"));
-        var appPanel = new app.SchemaAppPanel(appBar);
-
-        api_dom.Body.get().appendChild(appBar);
-        api_dom.Body.get().appendChild(appPanel);
-
-        appPanel.init();
-    }
-});
+    appPanel.init();
+};

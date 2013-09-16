@@ -50,29 +50,19 @@ module components {
     export var gridPanel:app_browse.SpaceTreeGridPanel;
 }
 
+window.onload = () => {
+    var appBar = new api_app.AppBar("Space Admin", new api_app.AppBarTabMenu("SpaceAppBarTabMenu"));
+    var appPanel = new app.SpaceAppPanel(appBar);
 
-Ext.application({
-    name: 'spaceAdmin',
+    api_dom.Body.get().appendChild(appBar);
+    api_dom.Body.get().appendChild(appPanel);
 
-    controllers: [
-    ],
+    appPanel.init();
 
-    stores: [],
+    var deleteSpaceDialog = new app.SpaceDeleteDialog();
+    app_browse.SpaceDeletePromptEvent.on((event) => {
+        deleteSpaceDialog.setSpacesToDelete(event.getModels());
+        deleteSpaceDialog.open();
+    });
+};
 
-    launch: function () {
-
-        var appBar = new api_app.AppBar("Space Admin", new api_app.AppBarTabMenu("SpaceAppBarTabMenu"));
-        var appPanel = new app.SpaceAppPanel(appBar);
-
-        api_dom.Body.get().appendChild(appBar);
-        api_dom.Body.get().appendChild(appPanel);
-
-        appPanel.init();
-
-        var deleteSpaceDialog = new app.SpaceDeleteDialog();
-        app_browse.SpaceDeletePromptEvent.on((event) => {
-            deleteSpaceDialog.setSpacesToDelete(event.getModels());
-            deleteSpaceDialog.open();
-        });
-    }
-});
