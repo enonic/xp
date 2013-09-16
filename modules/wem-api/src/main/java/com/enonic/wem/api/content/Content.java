@@ -174,15 +174,15 @@ public final class Content
     public Content toObject( final Item item )
     {
         return newContent().
-            id( ContentId.from( item.getId().toString() ) ).
-            name( item.getName() ).
-            displayName( item.getProperty( "displayName" ).getString() ).
-            createdTime( item.getProperty( "createdTime" ).getDateTime() ).
-            modifiedTime( item.getProperty( "modifiedTime" ).getDateTime() ).
-            owner( AccountKey.from( item.getProperty( "owner" ).getString() ).asUser() ).
-            modifier( AccountKey.from( item.getProperty( "modifier" ).getString() ).asUser() ).
-            type( QualifiedContentTypeName.from( item.getProperty( "type" ).getString() ) ).
-            contentData( new ContentData( item.getDataSet( "data" ).toRootDataSet() ) ).
+            id( ContentId.from( item.id().toString() ) ).
+            name( item.name() ).
+            displayName( item.property( "displayName" ).getString() ).
+            createdTime( item.property( "createdTime" ).getDateTime() ).
+            modifiedTime( item.property( "modifiedTime" ).getDateTime() ).
+            owner( AccountKey.from( item.property( "owner" ).getString() ).asUser() ).
+            modifier( AccountKey.from( item.property( "modifier" ).getString() ).asUser() ).
+            type( QualifiedContentTypeName.from( item.property( "type" ).getString() ) ).
+            contentData( new ContentData( item.dataSet( "data" ).toRootDataSet() ) ).
             build();
     }
 

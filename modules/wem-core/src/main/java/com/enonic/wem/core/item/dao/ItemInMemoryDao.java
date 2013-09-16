@@ -17,8 +17,8 @@ public class ItemInMemoryDao
     @Override
     public void storeNew( final Item item )
     {
-        itemByItemId.put( item.getId(), item );
-        // TODO: itemIdByPath.put( item.getP )
+        itemByItemId.put( item.id(), item );
+        //itemIdByPath.put( item. )
     }
 
     public Item getItemById( final ItemId id )

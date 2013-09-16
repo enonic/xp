@@ -497,17 +497,17 @@ public class ContentTest
         Item item = content.toItem();
 
         // verify
-        assertEquals( "ABC-123", item.getId().toString() );
-        assertEquals( "myContent", item.getName() );
-        assertEquals( "My Content", item.getProperty( "displayName" ).getString() );
-        assertEquals( "user:mystore:someuser", item.getProperty( "owner" ).getString() );
-        assertEquals( "user:mystore:someotheruser", item.getProperty( "modifier" ).getString() );
-        assertEquals( "2012-12-12T12:00:00", item.getProperty( "createdTime" ).getString() );
-        assertEquals( "2012-12-12T13:00:00", item.getProperty( "modifiedTime" ).getString() );
-        assertEquals( "mymodule:mycty", item.getProperty( "type" ).getString() );
-        assertEquals( "1", item.getProperty( "data.myNumber" ).getString() );
-        assertEquals( "text", item.getProperty( "data.myText" ).getString() );
-        assertEquals( "2", item.getProperty( "data.mySet.myOtherNumber" ).getString() );
+        assertEquals( "ABC-123", item.id().toString() );
+        assertEquals( "myContent", item.name() );
+        assertEquals( "My Content", item.property( "displayName" ).getString() );
+        assertEquals( "user:mystore:someuser", item.property( "owner" ).getString() );
+        assertEquals( "user:mystore:someotheruser", item.property( "modifier" ).getString() );
+        assertEquals( "2012-12-12T12:00:00", item.property( "createdTime" ).getString() );
+        assertEquals( "2012-12-12T13:00:00", item.property( "modifiedTime" ).getString() );
+        assertEquals( "mymodule:mycty", item.property( "type" ).getString() );
+        assertEquals( "1", item.property( "data.myNumber" ).getString() );
+        assertEquals( "text", item.property( "data.myText" ).getString() );
+        assertEquals( "2", item.property( "data.mySet.myOtherNumber" ).getString() );
     }
 
     @Test
