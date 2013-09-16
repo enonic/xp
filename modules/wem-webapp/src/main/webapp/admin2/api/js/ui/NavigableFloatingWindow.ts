@@ -7,13 +7,10 @@ module api_ui {
 
 
         constructor() {
-            super({draggable:true});
+            super({draggable:true, draggableOptions: { handle: ".tab-menu"} });
 
             this.navigator = new api_ui_tab.TabMenu();
             this.deck = new api_ui.NavigatedDeckPanel(this.navigator);
-
-
-
 
             this.appendChild(this.navigator);
             this.appendChild(this.deck);
@@ -26,18 +23,18 @@ module api_ui {
             });
         }
 
-        addItem(label:string) {
+        addItem(label:string, panel:api_ui.Panel):number {
             this.addItemArray(label);
             var item = new api_ui_tab.TabMenuItem(label);
+            console.log(this.navigator);
             this.navigator.addNavigationItem(item);
-            var panel = new api_ui.Panel();
-            panel.getEl().setInnerHtml(label);
-            this.deck.addPanel(panel);
+            var panelIndex = this.deck.addPanel(panel);
 
             if (this.items.length == 1) {
                 this.navigator.selectNavigationItem(0);
                 this.deck.showPanel(0);
             }
+            return panelIndex;
         }
 
         private addItemArray(item:any) {

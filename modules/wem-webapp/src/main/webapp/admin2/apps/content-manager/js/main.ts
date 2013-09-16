@@ -33,6 +33,10 @@
 ///<reference path='app/browse/grid/ContentGridStore.ts' />
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 
+///<reference path='app/contextwindow/ComponentGrid.ts' />
+///<reference path='app/contextwindow/ComponentsPanel.ts' />
+///<reference path='app/contextwindow/ContextWindow.ts' />
+
 ///<reference path='app/view/ContentItemViewActions.ts' />
 ///<reference path='app/view/ContentItemViewToolbar.ts' />
 ///<reference path='app/view/ContentItemStatisticsPanel.ts' />
@@ -71,16 +75,8 @@ module components {
     export var gridPanel:app_browse.ContentTreeGridPanel;
     export var detailPanel:app_browse.ContentBrowseItemPanel;
 }
-
-Ext.application({
-    name: 'CM',
-
-    appFolder: 'resources/app',
-
-    controllers: [],
-
-    launch: function () {
-
+window.onload = () => {
+    if (getURLParameter("test") == "") {
         var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
         var appPanel = new app.ContentAppPanel(appBar);
 
@@ -108,4 +104,25 @@ Ext.application({
                 });
         });
     }
-});
+};
+
+function getURLParameter(name) {
+    return decodeURI(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    );
+}
+
+/*
+
+ Ext.application({
+ name: 'CM',
+
+ appFolder: 'resources/app',
+
+ controllers: [],
+
+ launch: function () {
+
+
+ }
+ });*/

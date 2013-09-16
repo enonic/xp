@@ -13,7 +13,9 @@
 
 ///<reference path='Mousetrap.d.ts' />
 ///<reference path='jquery.d.ts' />
+///<reference path='jqueryui.d.ts' />
 ///<reference path='codemirror.d.ts' />
+///<reference path='slickgrid.d.ts' />
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
@@ -127,6 +129,8 @@
 ///<reference path='ui/tab/TabMenuItem.ts' />
 ///<reference path='ui/tab/TabMenuItemListener.ts' />
 ///<reference path='ui/NavigatedDeckPanel.ts' />
+///<reference path='ui/FloatingWindow.ts' />
+///<reference path='ui/NavigableFloatingWindow.ts' />
 
 
 ///<reference path='ui/Dropdown.ts' />
@@ -141,6 +145,9 @@
 ///<reference path='ui/form/Fieldset.ts' />
 ///<reference path='ui/form/Form.ts' />
 ///<reference path='ui/form/FormItem.ts' />
+
+///<reference path='grid/Grid.ts' />
+///<reference path='grid/DataView.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />

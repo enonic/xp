@@ -868,6 +868,10 @@ interface JQuery {
     draggable(optionLiteral: string, options: JQueryUI.DraggableOptions): any;
     draggable(optionLiteral: string, optionName: string, optionValue: any): JQuery;
 
+    // Custom function
+    liveDraggable(): JQuery;
+    liveDraggable(options: JQueryUI.DraggableOptions): JQuery;
+
     droppable(): JQuery;
     droppable(methodName: string): JQuery;
     droppable(methodName: 'destroy'): void;

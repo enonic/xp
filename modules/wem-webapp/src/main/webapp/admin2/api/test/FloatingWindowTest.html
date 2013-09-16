@@ -10,6 +10,7 @@
     <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
     <script type="text/javascript" src="../../resources/lib/jquery-2.0.2.js"></script>
     <script type="text/javascript" src="../../resources/lib/jquery-ui-1.10.3.custom.min.js"></script>
+
     <script type="text/javascript">
         $.noConflict();
     </script>
@@ -20,24 +21,18 @@
 <!-- API -->
 <script type="text/javascript" src="../js/api.js"></script>
 <script type="text/javascript">
-    //var floatWindow = new api_ui.FloatingWindow({draggable: true});
-    var floatWindow = new api_ui.NavigableFloatingWindow();
-    floatWindow.addItem("Inspector");
-    floatWindow.addItem("Components");
-    floatWindow.addItem("Emulator");
+    window.onload = function() {
+        //var floatWindow = new api_ui.FloatingWindow({draggable: true});
+            var floatWindow = new api_ui.NavigableFloatingWindow();
+            floatWindow.addItem("Inspector", new api_ui.Panel());
+            floatWindow.addItem("Components", new api_ui.Panel());
+            floatWindow.addItem("Emulator", new api_ui.Panel());
 
 
-    document.body.appendChild(floatWindow.getHTMLElement());
-    floatWindow.init();
+            document.body.appendChild(floatWindow.getHTMLElement());
+            floatWindow.init();
 
-    /*var nav = new api_ui_tab.TabMenu();
-
-
-    nav.addNavigationItem(new api_ui_tab.TabMenuItem("Inspector"));
-    nav.addNavigationItem(new api_ui_tab.TabMenuItem("Components"));
-    nav.addNavigationItem(new api_ui_tab.TabMenuItem("Emulator"));
-
-    document.body.appendChild(nav.getHTMLElement());*/
+    }
 </script>
 </body>
 </html>

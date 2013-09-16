@@ -1,44 +1,86 @@
 .floating-window {
   position: fixed;
-  top:100px;
-  left:100px;
-  height:480px;
+  top: 100px;
+  left: 100px;
+  height: 480px;
   width: 320px;
 
   background-color: #252526;
   box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
 
-  color:white;
+  color: white;
 
   .tab-menu {
     background-color: @admin-dark-gray;
+    font-size: 15px;
+    padding-top: 5px;
+    padding-left: 2px;
     .tab-menu-button {
-      width:25px;
-      height:25px;
+      width: 25px;
+      height: 25px;
       background-color: white;
       text-indent: 30px;
-      color:@admin-medium-gray-font;
-      cursor:pointer;
+      color: @admin-medium-gray-font;
+      cursor: pointer;
     }
 
     ul {
       list-style: none;
-      padding:0;
-      margin:0;
+      padding: 0;
+      margin: 0;
       background-color: @admin-dark-gray;
-      width:100%;
+      width: 100%;
       li {
-        margin-left:25px;
+        margin-left: 25px;
       }
     }
 
     .tab-menu-item {
-      color:@admin-medium-gray-font;
+      color: @admin-medium-gray-font;
       padding: 5px;
       cursor: pointer;
-        &.active {
-          display:none;
-        }
+      &.active {
+        display: none;
       }
+    }
+  }
+
+  input {
+    margin: 15px;
+    padding: 5px 3px;
+    width: calc(100% - 20px);
+    border: none;
+    background-color: @admin-dark-gray-font;
+    color: @admin-medium-gray-font;
+  }
+
+  &.context-window {
+
+    .tab-menu {
+      cursor: move;
+    }
+
+    .component {
+      padding-left: 60px;
+      color: @admin-medium-gray-font;
+      border-right: 0;
+      border-bottom: 1px dashed @admin-dark-gray-font;
+      background-color: #252526;
+
+      h5 {
+        margin: 0;
+        padding: 0;
+        font-size: 13px;
+        line-height: 1.50;
+        font-weight: normal;
+      }
+
+      h6 {
+        margin: 0;
+        padding: 0;
+        font-size: 11px;
+        font-weight: normal;
+      }
+    }
   }
 }
