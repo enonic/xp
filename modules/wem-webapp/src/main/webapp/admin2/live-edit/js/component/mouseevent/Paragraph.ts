@@ -82,15 +82,10 @@ module LiveEdit.component.mouseevent {
                 window.getSelection().removeAllRanges();
             }
 
-            var pagePosition:any = {
-                x: event.pageX,
-                y: event.pageY
-            };
-
             LiveEdit.Selection.clearSelection();
-            LiveEdit.Selection.setSelectionAttributeOnElement(this.selectedParagraph.getElement());
 
-            $(window).trigger('selectComponent.liveEdit', [this.selectedParagraph, pagePosition]);
+            LiveEdit.Selection.select(this.selectedParagraph, event);
+
             $(window).trigger('selectParagraphComponent.liveEdit', [this.selectedParagraph]);
         }
 

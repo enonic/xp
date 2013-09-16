@@ -54,7 +54,8 @@ module LiveEdit.ui {
                 event.stopPropagation();
                 event.preventDefault();
 
-                $(window).trigger('deselectComponent.liveEdit');
+                LiveEdit.Selection.deSelect();
+
                 $(window).trigger('clickShader.liveEdit');
             });
         }

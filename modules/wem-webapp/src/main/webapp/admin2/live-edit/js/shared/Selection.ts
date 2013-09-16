@@ -7,6 +7,26 @@ module LiveEdit {
 
     export class Selection {
 
+        public static select(component:LiveEdit.component.Component, event?:JQueryEventObject):void {
+
+            this.setSelectionAttributeOnElement(component.getElement());
+
+            var mouseClickPagePosition:any = null;
+            if (event) {
+                mouseClickPagePosition = {
+                    x: event.pageX,
+                    y: event.pageY
+                };
+            }
+
+            $(window).trigger('selectComponent.liveEdit', [component, mouseClickPagePosition]);
+        }
+
+        public static deSelect():void {
+            $(window).trigger('deselectComponent.liveEdit');
+            this.clearSelection();
+        }
+
         public static setSelectionAttributeOnElement(element:JQuery):void {
             this.clearSelection();
             element.attr(ATTRIBUTE_NAME, 'true');
@@ -21,7 +41,7 @@ module LiveEdit {
             }
         }
 
-        public static pageHasSelectedElements():boolean {
+        public static pageHasSelectedElement():boolean {
             return $('[' + ATTRIBUTE_NAME + ']').length > 0;
         }
 

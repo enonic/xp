@@ -27,7 +27,7 @@ module LiveEdit.component.mouseevent {
 
         attachMouseOutEvent():void {
             $(document).on('mouseout', () => {
-                if (LiveEdit.Selection.pageHasSelectedElements()) {
+                if (LiveEdit.Selection.pageHasSelectedElement()) {
                     return;
                 }
                 $(window).trigger('mouseOutComponent.liveEdit');
@@ -48,23 +48,13 @@ module LiveEdit.component.mouseevent {
                 event.preventDefault();
 
                 var component = new LiveEdit.component.Component($(event.currentTarget)),
-                    deselectComponent:boolean = component.isSelected() || LiveEdit.Selection.pageHasSelectedElements();
+                    deselectComponent:boolean = component.isSelected() || LiveEdit.Selection.pageHasSelectedElement();
 
                 // Toggle select/deselect
                 if (deselectComponent) {
-                    LiveEdit.Selection.clearSelection();
-                    $(window).trigger('deselectComponent.liveEdit');
+                    LiveEdit.Selection.deSelect();
                 } else {
-                    LiveEdit.Selection.setSelectionAttributeOnElement(component.getElement());
-
-                    // Used by for menu positioning
-                    // fixme: send event and let menu do this by itself
-                    var pagePosition:any = {
-                        x: event.pageX,
-                        y: event.pageY
-                    };
-
-                    $(window).trigger('selectComponent.liveEdit', [component, pagePosition]);
+                    LiveEdit.Selection.select(component, event);
                 }
             });
         }
@@ -75,7 +65,7 @@ module LiveEdit.component.mouseevent {
         }
 
         cancelMouseOverEvent(event:JQueryEventObject):boolean {
-            return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.Selection.pageHasSelectedElements() ||
+            return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.Selection.pageHasSelectedElement() ||
                    LiveEdit.component.DragDropSort.isDragging();
         }
 

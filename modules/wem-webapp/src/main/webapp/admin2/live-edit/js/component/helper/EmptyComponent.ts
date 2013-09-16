@@ -39,9 +39,7 @@ module LiveEdit.component.helper {
 
             emptyComponentEl.replaceWith(responseHtml);
 
-            LiveEdit.Selection.setSelectionAttributeOnElement(responseHtml);
-
-            $(window).trigger('selectComponent.liveEdit', [new LiveEdit.component.Component(responseHtml)]);
+            LiveEdit.Selection.select(new LiveEdit.component.Component(responseHtml));
 
             $(window).trigger('sortableUpdate.liveEdit');
 

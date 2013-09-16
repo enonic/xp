@@ -27,7 +27,7 @@ module LiveEdit.ui {
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
                     var component = new LiveEdit.component.Component(ui.item);
-                    $(window).trigger('selectComponent.liveEdit', [ component ]);
+                    LiveEdit.Selection.select(component);
                 }
             });
         }
