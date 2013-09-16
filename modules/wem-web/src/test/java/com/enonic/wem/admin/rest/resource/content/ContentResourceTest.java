@@ -244,7 +244,73 @@ public class ContentResourceTest
     }
 
     @Test
-    public void get_root_content()
+    public void list_content_by_path()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "mymodule:/" ).get( String.class );
+
+        assertJson( "list_content.json", jsonString );
+    }
+
+    @Test
+    public void list_content_by_path_not_found()
+        throws Exception
+    {
+
+        Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.empty() );
+
+        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "mymodule:/" ).get( String.class );
+
+        assertJson( "list_content_empty.json", jsonString );
+    }
+
+    @Test
+    public void list_content_by_path_root()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetRootContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        String jsonString = resource().path( "content/list/bypath" ).get( String.class );
+
+        assertJson( "list_content.json", jsonString );
+    }
+
+    @Test
+    public void list_content_by_id()
+        throws Exception
+    {
+        final Content cContent = createContent( "ccc", "my_c_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( cContent ) );
+
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
+
+        assertJson( "list_content.json", jsonString );
+    }
+
+    @Test
+    public void list_content_by_id_not_found()
+        throws Exception
+    {
+
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
+
+        String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
+
+        assertJson( "list_content_empty.json", jsonString );
+    }
+
+    @Test
+    public void list_content_by_id_root()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
@@ -256,18 +322,6 @@ public class ContentResourceTest
         assertJson( "list_content.json", jsonString );
     }
 
-    @Test
-    public void get_content_list()
-        throws Exception
-    {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
-        Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
-
-        String jsonString = resource().path( "content/list" ).queryParam( "path", "mymodule:/" ).get( String.class );
-
-        assertJson( "list_content.json", jsonString );
-    }
 
     @Test
     public void find_content_with_facets()

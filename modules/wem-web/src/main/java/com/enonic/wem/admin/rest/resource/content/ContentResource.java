@@ -144,21 +144,43 @@ public class ContentResource
 
     @GET
     @Path("list")
-    public ContentSummaryListJson list( @QueryParam("path") String path )
+    public ContentSummaryListJson listById( @QueryParam("parentId") String parentId )
     {
-        final Contents contents;
-        if ( StringUtils.isEmpty( path ) )
+        Contents contents;
+        if ( StringUtils.isEmpty( parentId ) )
         {
             contents = client.execute( Commands.content().getRoots() );
-
         }
         else
         {
-            final ContentPath parentPath = ContentPath.from( path );
+            final GetContents getContent = Commands.content().get().selectors( ContentIds.from( parentId ) );
+            Contents parentContents = client.execute( getContent );
 
-            final GetChildContent getChildContent = Commands.content().getChildren();
-            getChildContent.parentPath( parentPath );
+            if ( parentContents.isNotEmpty() )
+            {
+                final GetChildContent getChildContent = Commands.content().getChildren().parentPath( parentContents.first().getPath() );
+                contents = client.execute( getChildContent );
+            }
+            else
+            {
+                contents = Contents.empty();
+            }
+        }
+        return new ContentSummaryListJson( contents );
+    }
 
+    @GET
+    @Path("list/bypath")
+    public ContentSummaryListJson listByPath( @QueryParam("parentPath") String parentPath )
+    {
+        final Contents contents;
+        if ( StringUtils.isEmpty( parentPath ) )
+        {
+            contents = client.execute( Commands.content().getRoots() );
+        }
+        else
+        {
+            final GetChildContent getChildContent = Commands.content().getChildren().parentPath( ContentPath.from( parentPath ) );
             contents = client.execute( getChildContent );
         }
         return new ContentSummaryListJson( contents );
