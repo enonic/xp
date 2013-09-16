@@ -25,6 +25,8 @@ public class ContentFindParams
 
     private String facets;
 
+    private String expand = "none";
+
     public String getFulltext()
     {
         return fulltext;
@@ -84,6 +86,16 @@ public class ContentFindParams
     public void setFacets( final ObjectNode facets )
     {
         this.facets = facets.toString();
+    }
+
+    public String getExpand()
+    {
+        return expand;
+    }
+
+    public void setExpand( final String expand )
+    {
+        this.expand = expand;
     }
 
     public class Range

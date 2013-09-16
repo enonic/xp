@@ -1,0 +1,34 @@
+{
+    "contents": [
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "data" : [ ],
+            "displayName": "My Content",
+            "hasChildren" : false,
+            "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+            "id": "aaa",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_a_content",
+            "owner": "user:myStore:me",
+            "path": "/my_a_content",
+            "root": false,
+            "type": "mymodule:my_type"
+        },
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "data" : [ ],
+            "displayName": "My Content",
+            "hasChildren" : false,
+            "iconUrl": "http://localhost/admin/rest/content/image/bbb",
+            "id": "bbb",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_b_content",
+            "owner": "user:myStore:me",
+            "path": "/my_b_content",
+            "root": false,
+            "type": "mymodule:my_type"
+        }
+    ]
+}

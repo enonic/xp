@@ -1,34 +1,24 @@
 package com.enonic.wem.admin.json.content;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 
 public class ContentSummaryListJson
+    extends AbstractContentListJson<ContentSummaryJson>
 {
-    private List<ContentSummaryJson> contents;
-
-    public ContentSummaryListJson( Content content )
+    public ContentSummaryListJson( final Content content )
     {
-        this( Contents.from( content ) );
+        super( content );
     }
 
-    public ContentSummaryListJson( Contents contents )
+    public ContentSummaryListJson( final Contents contents )
     {
-        final ImmutableList.Builder<ContentSummaryJson> builder = ImmutableList.builder();
-        for ( final Content content : contents )
-        {
-            builder.add( new ContentSummaryJson( content ) );
-        }
-
-        this.contents = builder.build();
+        super( contents );
     }
 
-    public List<ContentSummaryJson> getContents()
+    @Override
+    protected ContentSummaryJson createItem( final Content content )
     {
-        return contents;
+        return new ContentSummaryJson( content );
     }
 }

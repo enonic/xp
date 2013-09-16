@@ -4,7 +4,7 @@ import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.api.content.Content;
 
-public class ContentSummaryJson
+public class ContentSummaryJson extends ContentIdJson
 {
 
     private final Content content;
@@ -13,6 +13,7 @@ public class ContentSummaryJson
 
     public ContentSummaryJson( Content content )
     {
+        super(content.getId());
         this.content = content;
         this.iconUrl = ContentImageUriResolver.resolve( content );
     }
@@ -20,11 +21,6 @@ public class ContentSummaryJson
     public String getIconUrl()
     {
         return iconUrl;
-    }
-
-    public String getId()
-    {
-        return content.getId() == null ? null : content.getId().toString();
     }
 
     public String getPath()

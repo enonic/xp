@@ -3,6 +3,7 @@
     "contentTypes": [],
     "spaces": [],
     "ranges": [],
+    "expand": "summary",
     "include": true,
     "facets": {
         "space": {

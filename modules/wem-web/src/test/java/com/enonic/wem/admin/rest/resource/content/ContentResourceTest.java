@@ -93,7 +93,28 @@ public class ContentResourceTest
     }
 
     @Test
-    public void get_by_path()
+    public void get_content_by_path()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+
+        final ContentData aContentData = aContent.getContentData();
+
+        aContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+
+        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
+
+        String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get( String.class );
+
+        assertJson( "get_content_full.json", jsonString );
+    }
+
+    @Test
+    public void get_content_summary_by_path()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
@@ -106,13 +127,14 @@ public class ContentResourceTest
 
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
-        String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get( String.class );
+        String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
+            queryParam( "expand", "summary" ).get( String.class );
 
-        assertJson( "get_content_by_path.json", jsonString );
+        assertJson( "get_content_summary.json", jsonString );
     }
 
     @Test
-    public void get_by_path_not_found()
+    public void get_content_by_path_not_found()
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
@@ -129,7 +151,7 @@ public class ContentResourceTest
     }
 
     @Test
-    public void get_by_path_and_version()
+    public void get_content_id_by_path_and_version()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
@@ -143,13 +165,13 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( aContent );
 
         String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
-            queryParam( "version", "1" ).get( String.class );
+            queryParam( "version", "1" ).queryParam( "expand", "none" ).get( String.class );
 
-        assertJson( "get_content_by_path.json", jsonString );
+        assertJson( "get_content_id.json", jsonString );
     }
 
     @Test
-    public void get_by_path_and_version_not_found()
+    public void get_content_by_path_and_version_not_found()
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( null );
@@ -167,7 +189,7 @@ public class ContentResourceTest
     }
 
     @Test
-    public void get_by_id()
+    public void get_content_by_id()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
@@ -184,11 +206,31 @@ public class ContentResourceTest
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
-        assertJson( "get_content_by_id.json", jsonString );
+        assertJson( "get_content_full.json", jsonString );
     }
 
     @Test
-    public void get_by_id_not_found()
+    public void get_content_summary_by_id()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+
+        final ContentData aContentData = aContent.getContentData();
+        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
+
+        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
+
+        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).
+            queryParam( "expand", "summary" ).get( String.class );
+
+        assertJson( "get_content_summary.json", jsonString );
+    }
+
+    @Test
+    public void get_content_by_id_not_found()
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
@@ -205,7 +247,7 @@ public class ContentResourceTest
     }
 
     @Test
-    public void get_by_id_and_version()
+    public void get_content_id_by_id_and_version()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
@@ -221,13 +263,13 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( aContent );
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).
-            queryParam( "version", "2" ).get( String.class );
+            queryParam( "version", "2" ).queryParam( "expand", "none" ).get( String.class );
 
-        assertJson( "get_content_by_id.json", jsonString );
+        assertJson( "get_content_id.json", jsonString );
     }
 
     @Test
-    public void get_by_id_and_version_not_found()
+    public void get_content_by_id_and_version_not_found()
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( null );
@@ -253,7 +295,21 @@ public class ContentResourceTest
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "mymodule:/" ).get( String.class );
 
-        assertJson( "list_content.json", jsonString );
+        assertJson( "list_content_summary.json", jsonString );
+    }
+
+    @Test
+    public void list_content_full_by_path()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "mymodule:/" ).
+            queryParam( "expand", "full" ).get( String.class );
+
+        assertJson( "list_content_full.json", jsonString );
     }
 
     @Test
@@ -269,16 +325,16 @@ public class ContentResourceTest
     }
 
     @Test
-    public void list_content_by_path_root()
+    public void list_root_content_id_by_path()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
         Mockito.when( client.execute( Mockito.isA( GetRootContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list/bypath" ).get( String.class );
+        String jsonString = resource().path( "content/list/bypath" ).queryParam( "expand", "none" ).get( String.class );
 
-        assertJson( "list_content.json", jsonString );
+        assertJson( "list_content_id.json", jsonString );
     }
 
     @Test
@@ -294,7 +350,24 @@ public class ContentResourceTest
 
         String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
 
-        assertJson( "list_content.json", jsonString );
+        assertJson( "list_content_summary.json", jsonString );
+    }
+
+    @Test
+    public void list_content_full_by_id()
+        throws Exception
+    {
+        final Content cContent = createContent( "ccc", "my_c_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( cContent ) );
+
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).
+            queryParam( "expand", "full" ).get( String.class );
+
+        assertJson( "list_content_full.json", jsonString );
     }
 
     @Test
@@ -310,25 +383,40 @@ public class ContentResourceTest
     }
 
     @Test
-    public void list_content_by_id_root()
+    public void list_root_content_id_by_id()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
         Mockito.when( client.execute( Mockito.isA( GetRootContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list" ).get( String.class );
+        String jsonString = resource().path( "content/list" ).queryParam( "expand", "none" ).get( String.class );
 
-        assertJson( "list_content.json", jsonString );
+        assertJson( "list_content_id.json", jsonString );
     }
-
 
     @Test
     public void find_content_with_facets()
         throws Exception
     {
         final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+
+        final ContentData aContentData = aContent.getContentData();
+        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
+
+        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+
         final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+
+        final ContentData bContentData = bContent.getContentData();
+
+        bContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
+        bContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+
+        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+
         Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
             createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
 
@@ -341,7 +429,81 @@ public class ContentResourceTest
 
         String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_with_facets_params.json" ),
                                                                       MediaType.APPLICATION_JSON_TYPE ).post( String.class );
-        assertJson( "find_content_with_facets.json", jsonString );
+        assertJson( "find_content_id_with_facets.json", jsonString );
+    }
+
+    @Test
+    public void find_content_summary_with_facets()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+
+        final ContentData aContentData = aContent.getContentData();
+        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
+
+        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+
+        final ContentData bContentData = bContent.getContentData();
+
+        bContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
+        bContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+
+        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+
+        Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
+            createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( createSpace( "my_space" ) ) );
+
+        String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_summary_with_facets_params.json" ),
+                                                                      MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "find_content_summary_with_facets.json", jsonString );
+    }
+
+    @Test
+    public void find_content_full_without_facets()
+        throws Exception
+    {
+        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+
+        final ContentData aContentData = aContent.getContentData();
+        aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
+
+        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+
+        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+
+        final ContentData bContentData = bContent.getContentData();
+
+        bContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
+        bContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+
+        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+
+        Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
+            createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( createSpace( "my_space" ) ) );
+
+        String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_full_without_facets_params.json" ),
+                                                                      MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "find_content_full_without_facets.json", jsonString );
     }
 
     @Test

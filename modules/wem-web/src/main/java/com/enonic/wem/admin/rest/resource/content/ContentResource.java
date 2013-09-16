@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,9 +22,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.sun.jersey.api.NotFoundException;
 
+import com.enonic.wem.admin.json.content.AbstractContentListJson;
+import com.enonic.wem.admin.json.content.ContentIdJson;
+import com.enonic.wem.admin.json.content.ContentIdListJson;
 import com.enonic.wem.admin.json.content.ContentJson;
+import com.enonic.wem.admin.json.content.ContentListJson;
+import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.content.json.AbstractFacetedContentListJson;
 import com.enonic.wem.admin.rest.resource.content.json.AttachmentParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
@@ -31,6 +38,8 @@ import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
+import com.enonic.wem.admin.rest.resource.content.json.FacetedContentIdListJson;
+import com.enonic.wem.admin.rest.resource.content.json.FacetedContentListJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams;
@@ -44,6 +53,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.DeleteContent;
+import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContentVersion;
@@ -81,9 +91,17 @@ public class ContentResource
 {
     private UploadService uploadService;
 
+    private final String EXPAND_FULL = "full";
+
+    private final String EXPAND_SUMMARY = "summary";
+
+    private final String EXPAND_NONE = "none";
+
     @GET
-    public ContentJson getById( @QueryParam("id") final String id, @QueryParam("version") final Long version )
+    public ContentIdJson getById( @QueryParam("id") final String id, @QueryParam("version") final Long version,
+                                  @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expand )
     {
+
         Content content = null;
         if ( version == null )
         {
@@ -108,12 +126,25 @@ public class ContentResource
         {
             throw new NotFoundException( String.format( "Content [%s] was not found", id ) );
         }
-        return new ContentJson( content );
+        else if ( EXPAND_NONE.equalsIgnoreCase( expand ) )
+        {
+            return new ContentIdJson( id );
+        }
+        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expand ) )
+        {
+            return new ContentSummaryJson( content );
+        }
+        else
+        {
+            return new ContentJson( content );
+        }
+
     }
 
     @GET
     @Path("bypath")
-    public ContentJson getByPath( @QueryParam("path") final String path, @QueryParam("version") final Long version )
+    public ContentIdJson getByPath( @QueryParam("path") final String path, @QueryParam("version") final Long version,
+                                    @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expand )
     {
         Content content = null;
         if ( version == null )
@@ -139,12 +170,24 @@ public class ContentResource
         {
             throw new NotFoundException( String.format( "Content [%s] was not found", path ) );
         }
-        return new ContentJson( content );
+        else if ( EXPAND_NONE.equalsIgnoreCase( expand ) )
+        {
+            return new ContentIdJson( content.getId() );
+        }
+        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expand ) )
+        {
+            return new ContentSummaryJson( content );
+        }
+        else
+        {
+            return new ContentJson( content );
+        }
     }
 
     @GET
     @Path("list")
-    public ContentSummaryListJson listById( @QueryParam("parentId") String parentId )
+    public AbstractContentListJson listById( @QueryParam("parentId") final String parentId,
+                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expand )
     {
         Contents contents;
         if ( StringUtils.isEmpty( parentId ) )
@@ -166,12 +209,25 @@ public class ContentResource
                 contents = Contents.empty();
             }
         }
-        return new ContentSummaryListJson( contents );
+
+        if ( EXPAND_NONE.equalsIgnoreCase( expand ) )
+        {
+            return new ContentIdListJson( contents );
+        }
+        else if ( EXPAND_FULL.equalsIgnoreCase( expand ) )
+        {
+            return new ContentListJson( contents );
+        }
+        else
+        {
+            return new ContentSummaryListJson( contents );
+        }
     }
 
     @GET
     @Path("list/bypath")
-    public ContentSummaryListJson listByPath( @QueryParam("parentPath") String parentPath )
+    public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPath,
+                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expand )
     {
         final Contents contents;
         if ( StringUtils.isEmpty( parentPath ) )
@@ -183,13 +239,25 @@ public class ContentResource
             final GetChildContent getChildContent = Commands.content().getChildren().parentPath( ContentPath.from( parentPath ) );
             contents = client.execute( getChildContent );
         }
-        return new ContentSummaryListJson( contents );
+
+        if ( EXPAND_NONE.equalsIgnoreCase( expand ) )
+        {
+            return new ContentIdListJson( contents );
+        }
+        else if ( EXPAND_FULL.equalsIgnoreCase( expand ) )
+        {
+            return new ContentListJson( contents );
+        }
+        else
+        {
+            return new ContentSummaryListJson( contents );
+        }
     }
 
     @POST
     @Path("find")
     @Consumes(MediaType.APPLICATION_JSON)
-    public FacetedContentSummaryListJson find( final ContentFindParams params )
+    public AbstractFacetedContentListJson find( final ContentFindParams params )
     {
         final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( params.getFulltext() );
@@ -211,12 +279,24 @@ public class ContentResource
             contentIndexQuery.setFacets( params.getFacets() );
         }
 
-        final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( Commands.content().find().query( contentIndexQuery ) );
+        final FindContent findContent = Commands.content().find().query( contentIndexQuery );
+        final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( findContent );
 
-        final Contents contents =
-            this.client.execute( Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) ) );
+        final GetContents getContents = Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) );
+        final Contents contents = this.client.execute( getContents );
 
-        return new FacetedContentSummaryListJson( contents, contentIndexQueryResult.getFacets() );
+        if ( EXPAND_FULL.equalsIgnoreCase( params.getExpand() ) )
+        {
+            return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets(): null );
+        }
+        else if ( EXPAND_SUMMARY.equalsIgnoreCase( params.getExpand() ) )
+        {
+            return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets(): null );
+        }
+        else
+        {
+            return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets(): null );
+        }
     }
 
     @GET
