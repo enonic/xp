@@ -20,7 +20,7 @@ module.exports = function (grunt) {
 
             karma: {
                 options: {
-                    browsers: ['Chrome'], // PhantomJS
+                    browsers: ['PhantomJS'],
                     files: [
                         'target/generated/**/*.js',
                         'src/test/**/*.js'
@@ -43,6 +43,6 @@ module.exports = function (grunt) {
         }
     );
 
-    grunt.registerTask('all', ['ts', 'karma']);
+    grunt.registerTask('all', ['ts']);
 
 };
