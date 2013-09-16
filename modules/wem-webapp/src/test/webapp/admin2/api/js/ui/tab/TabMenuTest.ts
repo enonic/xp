@@ -2,20 +2,9 @@
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/jquery.d.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ExtJs.d.ts' />
 
-///<reference path='../../../../../../../main/webapp/admin2/api/js/event/Event.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/event/EventBus.ts' />
-
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ElementHelper.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/Element.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/DivEl.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ImgElHelper.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ImgEl.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/ButtonEl.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/SpanEl.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/UlEl.ts' />
-///<reference path='../../../../../../../main/webapp/admin2/api/js/dom/LiEl.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/PanelNavigationItem.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/DeckPanelNavigator.ts' />
+///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/DeckPanelNavigatorListener.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/tab/TabMenuItem.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/tab/TabMenuItemListener.ts' />
 ///<reference path='../../../../../../../main/webapp/admin2/api/js/ui/tab/TabMenuButton.ts' />
@@ -90,13 +79,13 @@ TestCase("TabMenu", {
         tabMenu.selectNavigationItem(2);
 
         // verify setup
-        assertEquals(2, tabMenu.getSelectedTabIndex());
+        assertEquals(2, tabMenu.getSelectedIndex());
 
         // exercise
         tabMenu.removeNavigationItem(tab2);
 
         // verify
-        assertEquals(1, tabMenu.getSelectedTabIndex());
+        assertEquals(1, tabMenu.getSelectedIndex());
     },
 
     "test given TabMenu with selected tab when all tabs are removed then no selected": function () {
@@ -110,14 +99,14 @@ TestCase("TabMenu", {
         tabMenu.selectNavigationItem(1);
 
         // verify setup
-        assertEquals(1, tabMenu.getSelectedTabIndex());
+        assertEquals(1, tabMenu.getSelectedIndex());
 
         // exercise
         tabMenu.removeNavigationItem(tab1);
         tabMenu.removeNavigationItem(tab2);
 
         // verify
-        assertEquals(-1, tabMenu.getSelectedTabIndex());
+        assertEquals(-1, tabMenu.getSelectedIndex());
     },
 
     "test given TabMenu with three tabs and last tab is selected when last is removed then the second becomes the selected": function () {
@@ -133,13 +122,13 @@ TestCase("TabMenu", {
         tabMenu.selectNavigationItem(2);
 
         // verify setup
-        assertEquals(2, tabMenu.getSelectedTabIndex());
+        assertEquals(2, tabMenu.getSelectedIndex());
 
         // exercise
         tabMenu.removeNavigationItem(tab3);
 
         // verify
-        assertEquals(1, tabMenu.getSelectedTabIndex());
+        assertEquals(1, tabMenu.getSelectedIndex());
     }
 
 });

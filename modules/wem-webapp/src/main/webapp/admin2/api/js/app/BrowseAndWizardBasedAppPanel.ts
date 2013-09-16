@@ -32,19 +32,36 @@ module api_app {
                     api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(nextActions));
                 }
             });
-
-            api_ui_tab.TabMenuItemSelectEvent.on((event) => {
-                this.appBarTabMenu.hideMenu();
-                this.selectPanel(event.getTab());
-            });
         }
 
         getAppBarTabMenu():api_app.AppBarTabMenu {
             return this.appBarTabMenu;
         }
 
+        addViewPanel(tabMenuItem:AppBarTabMenuItem, viewPanel:api_app_view.ItemViewPanel) {
+            super.addNavigablePanelToFront(tabMenuItem, viewPanel);
+
+            tabMenuItem.addListener({
+                onClose: (tab: AppBarTabMenuItem) => {
+                    viewPanel.close();
+                }
+            });
+
+            viewPanel.addListener({
+                onClosed: (view) => {
+                    this.removePanel(view, false);
+                }
+            });
+        }
+
         addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
             super.addNavigablePanelToFront(tabMenuItem, wizardPanel);
+
+            tabMenuItem.addListener({
+                onClose: (tab: AppBarTabMenuItem) => {
+                    wizardPanel.close();
+                }
+            });
 
             wizardPanel.addListener({
                 onClosed: (wizard) => {

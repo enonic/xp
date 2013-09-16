@@ -36,12 +36,6 @@ module app {
                 this.getAppBarTabMenu().deselectNavigationItem();
             });
 
-            api_ui_tab.TabMenuItemCloseEvent.on((event) => {
-                var tabIndex = event.getTab().getIndex();
-                var panel = this.getPanel(tabIndex);
-                new app_browse.CloseSpaceEvent(panel, true).fire();
-            });
-
             app_browse.NewSpaceEvent.on((event) => {
 
                 var tabId = this.generateTabId();
@@ -78,7 +72,7 @@ module app {
 
                         spaceItemViewPanel.setItem(spaceItem);
 
-                        this.addNavigablePanelToFront(tabMenuItem, spaceItemViewPanel);
+                        this.addViewPanel(tabMenuItem, spaceItemViewPanel);
                     }
                 });
             });

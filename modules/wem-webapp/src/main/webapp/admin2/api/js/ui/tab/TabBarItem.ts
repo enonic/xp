@@ -4,7 +4,7 @@ module api_ui_tab {
         removable?:boolean;
     }
 
-    export class TabBarItem extends api_dom.LiEl implements api_ui.PanelNavigationItem {
+    export class TabBarItem extends api_dom.LiEl implements api_ui.PanelNavigationItem, api_event.Observable {
 
         private label: string;
 
@@ -16,15 +16,17 @@ module api_ui_tab {
 
         private removable:boolean = true;
 
+        private listeners: TabBarItemListener[] = [];
+
         constructor(label:string, options:TabBarItemOptions = {}) {
             super("TabBarItem", "tab-bar-item");
 
             this.setLabel(label);
             this.removable = options.removable;
-        }
 
-        getElement():api_dom.Element {
-            return this;
+            this.getEl().addEventListener("click", (event) => {
+                this.notifySelectedListeners();
+            });
         }
 
         setIndex(value:number) {
@@ -71,6 +73,24 @@ module api_ui_tab {
 
         isRemovable():boolean {
             return this.removable;
+        }
+
+        addListener(listener:TabBarItemListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:TabBarItemListener) {
+            this.listeners = this.listeners.filter((elem) => {
+                return elem != listener;
+            });
+        }
+
+        private notifySelectedListeners() {
+            this.listeners.forEach((listener:TabBarItemListener) => {
+                if (listener.onSelected) {
+                    listener.onSelected(this);
+                }
+            });
         }
 
     }

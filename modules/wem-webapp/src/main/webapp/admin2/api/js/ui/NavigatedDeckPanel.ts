@@ -10,6 +10,12 @@ module api_ui {
         constructor(navigator:DeckPanelNavigator, idPrefix?:string) {
             super(idPrefix);
             this.navigator = navigator;
+
+            navigator.addListener({
+                onNavigationItemSelected: (item:api_ui.PanelNavigationItem) => {
+                    this.showPanel(item.getIndex());
+                }
+            });
         }
 
         getSelectedNavigationItem():PanelNavigationItem {

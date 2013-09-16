@@ -5,7 +5,7 @@ module api_ui_tab {
         removeText?:string;
     }
 
-    export class TabMenuItem extends api_dom.LiEl implements api_ui.PanelNavigationItem {
+    export class TabMenuItem extends api_dom.LiEl implements api_ui.PanelNavigationItem, api_event.Observable {
 
         private tabIndex:number;
 
@@ -31,7 +31,7 @@ module api_ui_tab {
             this.appendChild(this.labelEl);
             this.setLabel(label);
             this.labelEl.getEl().addEventListener("click", () => {
-                new TabMenuItemSelectEvent(this).fire();
+                this.notifySelectedListeners(this);
             });
 
             this.removable = options.removable;
@@ -41,14 +41,10 @@ module api_ui_tab {
                 this.prependChild(removeButton);
                 removeButton.getEl().addEventListener("click", () => {
                     if (this.removable) {
-                        new TabMenuItemCloseEvent(this).fire();
+                        this.notifyCloseListeners(this);
                     }
                 });
             }
-        }
-
-        getElement(): api_dom.Element {
-            return this;
         }
 
         setIndex(value:number) {
@@ -72,7 +68,7 @@ module api_ui_tab {
             this.label = newValue;
             this.labelEl.getEl().setInnerHtml(newValue);
             this.labelEl.getEl().setAttribute('title', newValue);
-            this.executeLabelChangedListeners(newValue, oldValue);
+            this.notifyLabelChangedListeners(newValue, oldValue);
         }
 
         isVisible():boolean {
@@ -117,7 +113,7 @@ module api_ui_tab {
             });
         }
 
-        private executeLabelChangedListeners(newValue:string, oldValue:string) {
+        private notifyLabelChangedListeners(newValue:string, oldValue:string) {
             this.listeners.forEach((listener:TabMenuItemListener) => {
                 if (listener.onLabelChanged) {
                     listener.onLabelChanged(newValue, oldValue);
@@ -125,43 +121,22 @@ module api_ui_tab {
             });
         }
 
+        private notifySelectedListeners(tab:TabMenuItem) {
+            this.listeners.forEach((listener:TabMenuItemListener) => {
+                if (listener.onSelected) {
+                    listener.onSelected(this);
+                }
+            });
+        }
+
+        private notifyCloseListeners(tab:TabMenuItem) {
+            this.listeners.forEach((listener:TabMenuItemListener) => {
+                if (listener.onClose) {
+                    listener.onClose(this);
+                }
+            });
+        }
+
     }
 
-    export class TabMenuItemSelectEvent extends api_event.Event {
-
-        private item:TabMenuItem;
-
-        constructor(item:TabMenuItem) {
-            super('tabMenuItemSelect');
-
-            this.item = item;
-        }
-
-        getTab():TabMenuItem {
-            return this.item;
-        }
-
-        static on(handler:(event:TabMenuItemSelectEvent) => void) {
-            api_event.onEvent('tabMenuItemSelect', handler);
-        }
-    }
-
-    export class TabMenuItemCloseEvent extends api_event.Event {
-
-        private item:TabMenuItem;
-
-        constructor(item:TabMenuItem) {
-            super('tabMenuItemClose');
-
-            this.item = item;
-        }
-
-        getTab():TabMenuItem {
-            return this.item;
-        }
-
-        static on(handler:(event:TabMenuItemCloseEvent) => void) {
-            api_event.onEvent('tabMenuItemClose', handler);
-        }
-    }
 }

@@ -45,7 +45,7 @@ module api_app{
         }
 
         getNavigationItemById(itemId:string):AppBarTabMenuItem {
-            var items:api_ui.PanelNavigationItem[] = this.getNavigationItems();
+            var items:api_ui_tab.TabMenuItem[] = this.getNavigationItems();
             var item;
             for (var i = 0; i < items.length; i++) {
                 item = <AppBarTabMenuItem>items[i];
@@ -58,12 +58,10 @@ module api_app{
 
         selectNavigationItem(tabIndex:number) {
             super.selectNavigationItem(tabIndex);
-            var tab:api_ui.PanelNavigationItem = this.getNavigationItem(tabIndex);
-            this.appBarTabMenuButton.setEditing((<AppBarTabMenuItem>tab).isEditing());
+            var tab = <AppBarTabMenuItem>this.getNavigationItem(tabIndex);
+            this.appBarTabMenuButton.setEditing(tab.isEditing());
 
-            if (this.isShowingMenuItems()) {
-                this.updateMenuPosition();
-            }
+            this.hideMenu();
         }
 
         deselectNavigationItem() {
