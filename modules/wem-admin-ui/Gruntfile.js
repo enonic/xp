@@ -20,7 +20,7 @@ module.exports = function (grunt) {
 
             karma: {
                 options: {
-                    browsers: ['PhantomJS'],
+                    browsers: ['Chrome'], // PhantomJS
                     files: [
                         'target/generated/**/*.js',
                         'src/test/**/*.js'
