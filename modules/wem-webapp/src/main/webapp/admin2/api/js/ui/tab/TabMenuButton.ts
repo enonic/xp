@@ -4,17 +4,11 @@ module api_ui_tab {
 
         private labelEl:api_dom.SpanEl;
 
-        private tabMenu:TabMenu;
-
         constructor(idPrefix?:string) {
-            super(idPrefix || "TabMenuButton");
+            super(idPrefix || "TabMenuButton", "tab-menu-button");
 
             this.labelEl = new api_dom.SpanEl(null, 'label');
             this.appendChild(this.labelEl);
-        }
-
-        setTabMenu(tabMenu:TabMenu) {
-            this.tabMenu = tabMenu;
         }
 
         setLabel(value:string) {

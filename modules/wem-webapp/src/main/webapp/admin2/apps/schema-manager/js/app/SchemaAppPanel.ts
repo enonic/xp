@@ -38,12 +38,6 @@ module app {
                 this.getAppBarTabMenu().deselectNavigationItem();
             });
 
-            api_ui_tab.TabMenuItemCloseEvent.on((event) => {
-                var tabIndex = event.getTab().getIndex();
-                var panel = this.getPanel(tabIndex);
-                new app_browse.CloseSchemaEvent(panel, true).fire();
-            });
-
             app_browse.ShowNewSchemaDialogEvent.on((event) => {
                 if (!components.newSchemaDialog) {
                     components.newSchemaDialog = new app_new.NewSchemaDialog();
@@ -170,7 +164,7 @@ module app {
 
                             schemaItemViewPanel.setItem(spaceItem);
 
-                            this.addNavigablePanelToFront(tabMenuItem, schemaItemViewPanel);
+                            this.addViewPanel(tabMenuItem, schemaItemViewPanel);
                         }
                     }
                 );

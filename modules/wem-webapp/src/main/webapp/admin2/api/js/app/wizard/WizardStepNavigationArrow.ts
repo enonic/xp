@@ -15,36 +15,23 @@ module api_app_wizard {
             this.getEl().addClass("navigation-arrow");
             this.getEl().addClass(this.direction);
             this.getEl().addEventListener("click", (e) => {
-                if (this.direction == WizardStepNavigationArrow.NEXT) {
-                    this.navigator.nextStep();
-                } else {
-                    this.navigator.previousStep();
-                }
+                (this.direction == WizardStepNavigationArrow.NEXT) ? this.navigator.nextStep() : this.navigator.previousStep();
             });
             this.update();
 
             this.navigator.addListener({
-                onStepAdded: (step:api_ui.PanelNavigationItem) => {
+                onNavigationItemAdded: (step:api_ui.PanelNavigationItem) => {
                     this.update();
                 },
-                onStepShown: (step:api_ui.PanelNavigationItem) => {
+                onNavigationItemSelected: (step:api_ui.PanelNavigationItem) => {
                     this.update();
                 }
             });
         }
 
         private update() {
-            var show;
-            if (this.direction == WizardStepNavigationArrow.NEXT) {
-                show = this.navigator.hasNext();
-            } else if (this.direction == WizardStepNavigationArrow.PREVIOUS) {
-                show = this.navigator.hasPrevious();
-            }
-            if (show) {
-                this.show();
-            } else {
-                this.hide();
-            }
+            var show = (this.direction == WizardStepNavigationArrow.NEXT) ? this.navigator.hasNext() : this.navigator.hasPrevious();
+            show ? this.show() : this.hide();
         }
     }
 }

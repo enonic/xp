@@ -5,7 +5,6 @@
     <title>TextInput.ts test page</title>
 
     <script type="text/javascript" src="../../../admin/resources/lib/ext/ext-all-debug.js"></script>
-    <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
     <script type="text/javascript" src="../../resources/lib/jquery-2.0.2.js"></script>
     <script type="text/javascript">
         $.noConflict();
@@ -51,13 +50,13 @@
 <script type="text/javascript" src="../js/api.js"></script>
 <script>
 
-    var navigator = new api_app_wizard.WizardStepNavigator();
-    var stepPanels = new api_app_wizard.WizardStepDeckPanel(navigator);
-    var previous = new api_app_wizard.WizardStepNavigationArrow(api_app_wizard.WizardStepNavigationArrow.PREVIOUS, navigator);
-    var next = new api_app_wizard.WizardStepNavigationArrow(api_app_wizard.WizardStepNavigationArrow.NEXT, navigator);
+    var panelNavigator = new api_app_wizard.WizardStepNavigator();
+    var stepPanels = new api_app_wizard.WizardStepDeckPanel(panelNavigator);
+    var previous = new api_app_wizard.WizardStepNavigationArrow(api_app_wizard.WizardStepNavigationArrow.PREVIOUS, panelNavigator);
+    var next = new api_app_wizard.WizardStepNavigationArrow(api_app_wizard.WizardStepNavigationArrow.NEXT, panelNavigator);
 
     api_dom.Body.get().appendChild(previous);
-    api_dom.Body.get().appendChild(navigator);
+    api_dom.Body.get().appendChild(panelNavigator);
     api_dom.Body.get().appendChild(next);
     api_dom.Body.get().appendChild(stepPanels);
 
@@ -71,7 +70,7 @@
         var panel = new api_ui.Panel();
         panel.getEl().setInnerHtml("Panel " + id);
 
-        stepPanels.addNavigationItem(tab, panel);
+        stepPanels.addNavigablePanelToFront(tab, panel);
     }
 
 </script>

@@ -2,26 +2,32 @@ module api_ui_tab {
 
     export class TabBar extends api_dom.UlEl implements api_ui.DeckPanelNavigator {
 
-        private tabs: api_ui.PanelNavigationItem[] = [];
+        private tabs: TabBarItem[] = [];
 
         private selectedIndex: number = -1;
 
-        private listeners: TabBarListener[] = [];
+        private listeners: api_ui.DeckPanelNavigatorListener[] = [];
 
         constructor(idPrefix?:string, className?:string) {
             super(idPrefix || "TabBar", className || "tab-bar");
         }
 
-        addNavigationItem(tab:api_ui.PanelNavigationItem) {
+        addNavigationItem(tab:TabBarItem) {
             var newLength = this.tabs.push(tab);
             tab.setIndex(newLength - 1);
 
-            this.appendChild(tab.getElement());
+            this.appendChild(tab);
 
-            this.executeTabAddedListeners(tab);
+            tab.addListener({
+                onSelected: (tab:TabBarItem) => {
+                    this.selectNavigationItem(tab.getIndex());
+                }
+            });
+
+            this.notifyTabAddedListeners(tab);
         }
 
-        removeNavigationItem(tab:api_ui.PanelNavigationItem) {
+        removeNavigationItem(tab:TabBarItem) {
             var tabIndex = tab.getIndex();
 
             this.tabs.splice(tabIndex, 1);
@@ -44,7 +50,7 @@ module api_ui_tab {
                 this.selectedIndex--;
             }
 
-            tab.getElement().remove();
+            tab.remove();
         }
 
         selectNavigationItem(index:number) {
@@ -54,10 +60,10 @@ module api_ui_tab {
 
             this.deselectNavigationItem();
             this.selectedIndex = index;
-
             var selectedTab = this.getSelectedNavigationItem();
             selectedTab.setActive(true);
-            this.executeTabShownListeners(selectedTab);
+
+            this.notifyTabShownListeners(selectedTab);
         }
 
         deselectNavigationItem() {
@@ -68,11 +74,11 @@ module api_ui_tab {
             this.selectedIndex = -1;
         }
 
-        getNavigationItem(index:number):api_ui.PanelNavigationItem {
+        getNavigationItem(index:number):TabBarItem {
             return this.tabs[index];
         }
 
-        getSelectedNavigationItem():api_ui.PanelNavigationItem {
+        getSelectedNavigationItem():TabBarItem {
             return this.tabs[this.selectedIndex];
         }
 
@@ -88,32 +94,32 @@ module api_ui_tab {
             return this.tabs.length === 0;
         }
 
-        getNavigationItems():api_ui.PanelNavigationItem[] {
+        getNavigationItems():TabBarItem[] {
             return this.tabs;
         }
 
-        addListener(listener:TabBarListener) {
+        addListener(listener:api_ui.DeckPanelNavigatorListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:TabBarListener) {
+        removeListener(listener:api_ui.DeckPanelNavigatorListener) {
             this.listeners = this.listeners.filter((elem) => {
                 return elem != listener;
             });
         }
 
-        private executeTabAddedListeners(tab:api_ui.PanelNavigationItem) {
-            this.listeners.forEach((listener:TabBarListener) => {
-                if (listener.onStepAdded) {
-                    listener.onStepAdded(tab);
+        private notifyTabAddedListeners(tab:TabBarItem) {
+            this.listeners.forEach((listener:api_ui.DeckPanelNavigatorListener) => {
+                if (listener.onNavigationItemAdded) {
+                    listener.onNavigationItemAdded(tab);
                 }
             });
         }
 
-        private executeTabShownListeners(tab:api_ui.PanelNavigationItem) {
-            this.listeners.forEach((listener:TabBarListener) => {
-                if (listener.onStepShown) {
-                    listener.onStepShown(tab);
+        private notifyTabShownListeners(tab:TabBarItem) {
+            this.listeners.forEach((listener:api_ui.DeckPanelNavigatorListener) => {
+                if (listener.onNavigationItemSelected) {
+                    listener.onNavigationItemSelected(tab);
                 }
             });
         }

@@ -2,8 +2,6 @@ module api_ui {
 
     export interface PanelNavigationItem {
 
-        getElement():api_dom.Element;
-
         setIndex(value:number);
 
         getIndex():number;

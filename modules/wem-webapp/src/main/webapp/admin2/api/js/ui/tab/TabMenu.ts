@@ -8,9 +8,11 @@ module api_ui_tab {
 
         private showingMenuItems:boolean = false;
 
-        private tabs:api_ui.PanelNavigationItem[] = [];
+        private tabs:TabMenuItem[] = [];
 
         private selectedTab:number;
+
+        private listeners:api_ui.DeckPanelNavigatorListener[] = [];
 
         constructor(idPrefix?:string) {
             super(idPrefix || "TabMenu");
@@ -30,7 +32,6 @@ module api_ui_tab {
 
         createTabMenuButton():TabMenuButton {
             var btn = new TabMenuButton();
-            btn.addClass("tab-menu-button");
             return btn;
         }
 
@@ -72,24 +73,25 @@ module api_ui_tab {
             return this.showingMenuItems;
         }
 
-        addNavigationItem(tab:api_ui.PanelNavigationItem) {
-            if ( !(tab instanceof TabMenuItem) ) {
-                return;
-            }
-
+        addNavigationItem(tab:TabMenuItem) {
             var newLength = this.tabs.push(tab);
             tab.setIndex(newLength - 1);
 
             if (tab.isVisible()) {
-                this.menuEl.appendChild(tab.getElement());
+                this.menuEl.appendChild(tab);
                 this.tabMenuButton.show();
             }
 
-            (<TabMenuItem> tab).addListener({
+            tab.addListener({
+                onSelected: (tab:TabMenuItem) => {
+                    this.selectNavigationItem(tab.getIndex());
+                },
                 onLabelChanged: (newValue:string, oldValue:string) => {
                     this.setButtonLabel(newValue);
                 }
             });
+
+            this.notifyTabAddedListeners(tab);
         }
 
         isEmpty():boolean {
@@ -102,7 +104,7 @@ module api_ui_tab {
 
         countVisible():number {
             var size = 0;
-            this.tabs.forEach((tab:api_ui.PanelNavigationItem) => {
+            this.tabs.forEach((tab:TabMenuItem) => {
                 if (tab.isVisible()) {
                     size++;
                 }
@@ -110,11 +112,7 @@ module api_ui_tab {
             return size;
         }
 
-        getSelectedTabIndex():number {
-            return this.selectedTab;
-        }
-
-        getSelectedNavigationItem():api_ui.PanelNavigationItem {
+        getSelectedNavigationItem():TabMenuItem {
             return this.tabs[this.selectedTab];
         }
 
@@ -122,16 +120,16 @@ module api_ui_tab {
             return this.selectedTab;
         }
 
-        getNavigationItem(tabIndex:number):api_ui.PanelNavigationItem {
+        getNavigationItem(tabIndex:number):TabMenuItem {
             return this.tabs[tabIndex];
         }
 
-        getNavigationItems():api_ui.PanelNavigationItem[] {
+        getNavigationItems():TabMenuItem[] {
             return this.tabs;
         }
 
-        removeNavigationItem(tab:api_ui.PanelNavigationItem) {
-            tab.getElement().remove();
+        removeNavigationItem(tab:TabMenuItem) {
+            tab.remove();
 
             this.tabs.splice(tab.getIndex(), 1);
 
@@ -164,22 +162,54 @@ module api_ui_tab {
         }
 
         private updateActiveTab(tabIndex:number) {
-            this.tabs.forEach((tab, index) => {
+            this.tabs.forEach((tab:TabMenuItem, index: number) => {
                 var activate = (tabIndex == index);
                 tab.setActive(activate);
             });
         }
 
         selectNavigationItem(tabIndex:number) {
-            var selectedTab = this.tabs[tabIndex];
-            this.tabMenuButton.setLabel(selectedTab.getLabel());
+            if ( tabIndex < 0 || tabIndex >= this.getSize() || this.selectedTab == tabIndex ) {
+                return;
+            }
+
             this.selectedTab = tabIndex;
+            var selectedTab = this.getNavigationItem(tabIndex);
+            this.setButtonLabel(selectedTab.getLabel());
             this.updateActiveTab(tabIndex);
+
+            this.notifyTabSelectedListeners(selectedTab);
         }
 
         deselectNavigationItem() {
             this.tabMenuButton.setLabel("");
             this.selectedTab = -1;
+        }
+
+        addListener(listener:api_ui.DeckPanelNavigatorListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:api_ui.DeckPanelNavigatorListener) {
+            this.listeners = this.listeners.filter((elem) => {
+                return elem != listener;
+            });
+        }
+
+        private notifyTabAddedListeners(tab:TabMenuItem) {
+            this.listeners.forEach((listener:api_ui.DeckPanelNavigatorListener) => {
+                if (listener.onNavigationItemAdded) {
+                    listener.onNavigationItemAdded(tab);
+                }
+            });
+        }
+
+        private notifyTabSelectedListeners(tab:TabMenuItem) {
+            this.listeners.forEach((listener:api_ui.DeckPanelNavigatorListener) => {
+                if (listener.onNavigationItemSelected) {
+                    listener.onNavigationItemSelected(tab);
+                }
+            });
         }
     }
 }

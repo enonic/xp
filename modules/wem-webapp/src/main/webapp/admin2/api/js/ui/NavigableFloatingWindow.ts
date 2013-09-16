@@ -3,7 +3,7 @@ module api_ui {
 
         private deck:api_ui.NavigatedDeckPanel;
         private navigator:api_ui_tab.TabMenu;
-        private items:any[];
+        private items:any[] = [];
 
 
         constructor() {
@@ -14,35 +14,22 @@ module api_ui {
 
             this.appendChild(this.navigator);
             this.appendChild(this.deck);
-
-            api_ui_tab.TabMenuItemSelectEvent.on((event) => {
-                var tabIndex = event.getTab().getIndex();
-                this.navigator.selectNavigationItem(tabIndex);
-                this.navigator.hideMenu();
-                this.deck.showPanel(tabIndex);
-            });
         }
 
         addItem(label:string, panel:api_ui.Panel):number {
             this.addItemArray(label);
-            var item = new api_ui_tab.TabMenuItem(label);
-            console.log(this.navigator);
-            this.navigator.addNavigationItem(item);
-            var panelIndex = this.deck.addPanel(panel);
 
-            if (this.items.length == 1) {
-                this.navigator.selectNavigationItem(0);
-                this.deck.showPanel(0);
-            }
-            return panelIndex;
+            var item = new api_ui_tab.TabMenuItem(label);
+            
+            (this.items.length == 1)
+                ? this.deck.addNavigablePanelToFront(item, panel)
+                : this.deck.addNavigablePanelToBack(item, panel);
+            
+            return this.deck.getPanelIndex(panel);
         }
 
         private addItemArray(item:any) {
-            if (!this.items) {
-                this.items = [];
-            }
             this.items.push(item);
-
         }
 
     }
