@@ -9,7 +9,7 @@ module.exports = function (grunt) {
             ts: {
                 api: {
                     src: ['src/main/js/main.ts'],
-                    out: 'target/main/all.js',
+                    out: 'target/generated/all.js',
                     options: {
                         // target: 'es5',
                         sourcemap: true,
@@ -22,7 +22,7 @@ module.exports = function (grunt) {
                 options: {
                     browsers: ['PhantomJS'],
                     files: [
-                        'target/main/**/*.js',
+                        'target/generated/**/*.js',
                         'src/test/**/*.js'
                     ],
                     frameworks: ['jasmine'],

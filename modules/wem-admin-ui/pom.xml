@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.enonic.wem</groupId>
+    <artifactId>wem-ce</artifactId>
+    <version>5.0.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>wem-admin-ui</artifactId>
+  <packaging>pom</packaging>
+  <name>Enonic WEM Admin UI</name>
+
+  <properties>
+    <npm.exec>npm</npm.exec>
+    <node.exec>node</node.exec>
+    <grunt.script>node_modules/grunt-cli/bin/grunt</grunt.script>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <npm.exec>npm.cmd</npm.exec>
+        <node.exec>node.exe</node.exec>
+        <grunt.script>node_modules\grunt-cli\bin\grunt</grunt.script>
+      </properties>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <id>npmInstall</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${npm.exec}</executable>
+              <arguments>
+                <argument>install</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>gruntAll</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${node.exec}</executable>
+              <arguments>
+                <argument>${grunt.script}</argument>
+                <argument>all</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
+        
