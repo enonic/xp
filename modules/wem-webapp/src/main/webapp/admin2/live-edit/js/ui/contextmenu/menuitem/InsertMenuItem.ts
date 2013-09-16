@@ -5,26 +5,24 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class InsertMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        private menu = null;
+        menu = null;
 
         constructor(menu) {
-            super();
-
-            this.menu = menu;
-            this.init();
-        }
-
-        init():void {
-            this.createMenuItem({
+            super({
                 text: 'Insert',
                 name: 'insert',
-                handler: (event) => {
+                handler: (event:Event) => {
+                    this.onInsert();
                     event.stopPropagation();
                 }
-            });
+            }, menu);
 
-            this.appendTo(this.menu.getEl());
-            this.menu.menuItems.push(this);
+            this.menu = menu;
         }
+
+        private onInsert():void {
+            /**/
+        }
+
     }
 }

@@ -5,24 +5,24 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class ResetMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        private menu = null;
+        menu = null;
 
         constructor(menu) {
-            super();
-
-            this.menu = menu;
-            this.init();
-        }
-
-        init():void {
-            this.createMenuItem({
+            super({
                 text: 'Reset to Default',
                 name: 'reset',
-                handler: (event) => event.stopPropagation()
-            });
+                handler: (event:Event) => {
+                    this.onReset();
+                    event.stopPropagation();
+                }
+            }, menu);
 
-            this.appendTo(this.menu.getEl());
-            this.menu.menuItems.push(this);
+            this.menu = menu;
         }
+
+        private onReset() {
+            /**/
+        }
+
     }
 }

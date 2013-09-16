@@ -5,34 +5,24 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class RemoveMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        private menu = null;
+        menu = null;
 
         constructor(menu) {
-            super();
-
-            this.menu = menu;
-            this.init();
-        }
-
-        init():void {
-            this.createMenuItem({
+            super({
                 text: 'Remove',
                 name: 'remove',
-                handler: (event) => {
-                    event.stopPropagation();
+                handler: (event:Event) => {
                     // For demo purposes
-
-                    this.removeComponent();
+                    this.onRemoveComponent();
+                    event.stopPropagation();
                 }
-            });
+            }, menu);
 
-            this.appendTo(this.menu.getEl());
-            this.menu.menuItems.push(this);
+            this.menu = menu;
         }
 
-        private removeComponent() {
+        private onRemoveComponent() {
             this.menu.selectedComponent.getElement().remove();
-
             $(window).trigger('componentRemoved.liveEdit');
         }
     }

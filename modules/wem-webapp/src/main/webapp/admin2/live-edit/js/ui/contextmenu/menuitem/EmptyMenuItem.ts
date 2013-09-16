@@ -5,31 +5,22 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class EmptyMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        private menu = null;
+        menu = null;
 
         constructor(menu) {
-            super();
-
-            this.menu = menu;
-            this.init();
-        }
-
-        init():void {
-            this.createMenuItem({
+            super({
                 text: 'Empty',
                 name: 'clear',
-                handler: (event) => {
+                handler: (event:Event) => {
+                    this.onEmptyRegion();
                     event.stopPropagation();
-
-                    this.emptyRegion();
                 }
-            });
+            }, menu);
 
-            this.appendTo(this.menu.getEl());
-            this.menu.menuItems.push(this);
+            this.menu = menu;
         }
 
-        private emptyRegion() {
+        private onEmptyRegion() {
             var region:JQuery = this.menu.selectedComponent.getElement();
 
             $(window).trigger('deselectComponent.liveEdit');
@@ -37,7 +28,6 @@ module LiveEdit.ui.contextmenu.menuitem {
             $('[data-live-edit-type]', region).remove();
 
             $(window).trigger('componentRemoved.liveEdit');
-
         }
     }
 }

@@ -5,33 +5,24 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class OpenContentMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        private menu = null;
+        menu = null;
 
         constructor(menu) {
-            super();
-
-            this.menu = menu;
-            this.init();
-        }
-
-        init():void {
-            this.createMenuItem({
+            super({
                 text: 'Open in new tab',
                 name: 'opencontent',
-                handler: (event) => {
+                handler: (event:Event) => {
+                    this.onOpenContent();
                     event.stopPropagation();
-
-                    // Temporary workaround until we get a firm messaging system
-                    var parentWindow = window['parent'];
-                    if (parentWindow && parentWindow['Admin'].MessageBus) {
-                        // @TODO: [RYA] Should content in format (ContentModel.js) present here. Way to receive it: get by ID
-                        parentWindow['Admin'].MessageBus.liveEditOpenContent();
-                    }
                 }
-            });
+            }, menu);
 
-            this.appendTo(this.menu.getEl());
-            this.menu.menuItems.push(this);
+            this.menu = menu;
         }
+
+        private onOpenContent():void {
+            /* Fire openContent event in Content Manager */
+        }
+
     }
 }

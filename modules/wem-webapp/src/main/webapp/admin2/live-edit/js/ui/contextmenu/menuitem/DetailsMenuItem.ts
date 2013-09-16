@@ -2,26 +2,24 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class DetailsMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        private menu = null;
+        menu = null;
 
         constructor(menu) {
-            super();
-
-            this.menu = menu;
-            this.init();
-        }
-
-        init():void {
-            this.createMenuItem({
+            super({
                 text: 'Show Details',
                 name: 'details',
-                handler: (event) => {
+                handler: (event:Event) => {
+                    this.onShowDetails();
                     event.stopPropagation();
                 }
-            });
+            }, menu);
 
-            this.appendTo(this.menu.getEl());
-            this.menu.menuItems.push(this);
+            this.menu = menu;
         }
+
+        private onShowDetails():void {
+            /**/
+        }
+
     }
 }

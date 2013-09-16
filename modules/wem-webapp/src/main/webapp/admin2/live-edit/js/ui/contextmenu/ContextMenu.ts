@@ -4,26 +4,18 @@ module LiveEdit.ui.contextmenu {
     var $ = $liveEdit;
 
     export class ContextMenu extends LiveEdit.ui.Base {
-        private selectedComponent:LiveEdit.component.Component;
 
-        private hidden = true;
+        selectedComponent:LiveEdit.component.Component;
 
-        private menuItems:any[] = [];
+        hidden = true;
+
+        menuItems:any[] = [];
 
         constructor() {
             super();
             this.addView();
-            this.registerEvents();
             this.registerGlobalListeners();
-        }
-
-        private registerGlobalListeners():void {
-            $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.show(component, pagePosition));
-            $(window).on('deselectComponent.liveEdit', () => this.hide());
-            $(window).on('componentRemoved.liveEdit', () => this.hide());
-            $(window).on('editParagraphComponent.liveEdit', () => this.hide());
-            $(window).on('sortableStart.liveEdit', () => this.fadeOutAndHide());
-            $(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
+            this.registerEventsListeners();
         }
 
         private addView():void {
@@ -42,7 +34,16 @@ module LiveEdit.ui.contextmenu {
             this.addMenuItems();
         }
 
-        private registerEvents():void {
+        private registerGlobalListeners():void {
+            $(window).on('selectComponent.liveEdit', (event:JQueryEventObject, component:LiveEdit.component.Component, pagePosition) => this.show(component, pagePosition));
+            $(window).on('deselectComponent.liveEdit', () => this.hide());
+            $(window).on('componentRemoved.liveEdit', () => this.hide());
+            $(window).on('editParagraphComponent.liveEdit', () => this.hide());
+            $(window).on('sortableStart.liveEdit', () => this.fadeOutAndHide());
+            $(window).on('resizeBrowserWindow.liveEdit', () => this.handleWindowResize());
+        }
+
+        private registerEventsListeners():void {
             this.getEl().draggable({
                 handle: '.live-edit-context-menu-title-bar',
                 addClasses: false
@@ -91,15 +92,17 @@ module LiveEdit.ui.contextmenu {
 
         private addMenuItems():void {
             var menuItem = LiveEdit.ui.contextmenu.menuitem;
-            var parentMenuItem = new menuitem.ParentMenuItem(this);
-            var detailsMenuItem = new menuitem.DetailsMenuItem(this);
-            var insertMenuItem = new menuitem.InsertMenuItem(this);
-            var resetMenuItem = new menuitem.ResetMenuItem(this);
-            var clearMenuItem = new menuitem.EmptyMenuItem(this);
-            var openContentMenuItem = new menuitem.OpenContentMenuItem(this);
-            var viewMenuItem = new menuitem.ViewMenuItem(this);
-            var editMenuItem = new menuitem.EditMenuItem(this);
-            var removeMenuItem = new menuitem.RemoveMenuItem(this);
+
+            this.menuItems.push(new menuItem.ParentMenuItem(this));
+            this.menuItems.push(new menuItem.DetailsMenuItem(this));
+            this.menuItems.push(new menuItem.InsertMenuItem(this));
+            this.menuItems.push(new menuItem.ResetMenuItem(this));
+            this.menuItems.push(new menuItem.EmptyMenuItem(this));
+            this.menuItems.push(new menuItem.OpenContentMenuItem(this));
+            this.menuItems.push(new menuItem.ViewMenuItem(this));
+            this.menuItems.push(new menuItem.EditMenuItem(this));
+            this.menuItems.push(new menuItem.RemoveMenuItem(this));
+
             var i,
                 menuItemsPlaceholder:JQuery = this.getMenuItemsPlaceholderElement();
 
