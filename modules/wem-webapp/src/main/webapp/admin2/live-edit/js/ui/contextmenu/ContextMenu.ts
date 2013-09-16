@@ -78,7 +78,7 @@ module LiveEdit.ui.contextmenu {
         private fadeOutAndHide():void {
             this.getEl().fadeOut(500, () => {
                 this.hide();
-                $(window).trigger('deselectComponent.liveEdit', {showComponentBar: false});
+                $(window).trigger('deselectComponent.liveEdit');
             });
             this.selectedComponent = null;
         }
