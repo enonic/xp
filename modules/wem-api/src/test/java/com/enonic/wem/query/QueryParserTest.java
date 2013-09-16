@@ -3,6 +3,8 @@ package com.enonic.wem.query;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.wem.query.parser.QueryParser;
+
 import static org.junit.Assert.*;
 
 public class QueryParserTest
