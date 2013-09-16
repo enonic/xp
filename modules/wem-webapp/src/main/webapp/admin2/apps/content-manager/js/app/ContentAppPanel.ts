@@ -29,12 +29,6 @@ module app {
                 this.getAppBarTabMenu().deselectNavigationItem();
             });
 
-            api_ui_tab.TabMenuItemCloseEvent.on((event) => {
-                var tabIndex = event.getTab().getIndex();
-                var panel = this.getPanel(tabIndex);
-                new app_browse.CloseContentEvent(panel, true).fire();
-            });
-
             app_browse.CloseContentEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
@@ -105,7 +99,7 @@ module app {
 
                     contentItemViewPanel.setItem(contentItem);
 
-                    this.addNavigablePanelToFront(tabMenuItem, contentItemViewPanel);
+                    this.addViewPanel(tabMenuItem, contentItemViewPanel);
                 }
             });
         }

@@ -1,6 +1,6 @@
 module api_ui {
 
-    export interface DeckPanelNavigator {
+    export interface DeckPanelNavigator extends api_event.Observable {
 
         addNavigationItem(item:PanelNavigationItem);
 
@@ -22,6 +22,10 @@ module api_ui {
         getSize():number;
 
         getNavigationItems():PanelNavigationItem[];
+
+        addListener(listener:DeckPanelNavigatorListener);
+
+        removeListener(listener:DeckPanelNavigatorListener);
 
     }
 }

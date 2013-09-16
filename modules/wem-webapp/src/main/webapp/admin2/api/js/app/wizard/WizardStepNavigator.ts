@@ -6,15 +6,11 @@ module api_app_wizard {
             super("WizardStepNavigator", "step-navigator");
         }
 
-        addNavigationItem(step:api_ui.PanelNavigationItem) {
+        addNavigationItem(step:api_ui_tab.TabBarItem) {
             super.addNavigationItem(step);
 
-            step.getElement().getEl().addEventListener("click", (event) => {
-                this.selectNavigationItem(step.getIndex());
-            });
-
             if (this.getSize() == 1) {
-                step.getElement().addClass("first");
+                step.addClass("first");
                 this.selectNavigationItem(0);
             }
         }

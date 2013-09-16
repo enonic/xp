@@ -121,9 +121,10 @@
 ///<reference path='ui/menu/ActionMenu.ts' />
 ///<reference path='ui/PanelNavigationItem.ts' />
 ///<reference path='ui/DeckPanelNavigator.ts' />
+///<reference path='ui/DeckPanelNavigatorListener.ts' />
 ///<reference path='ui/tab/TabBar.ts' />
-///<reference path='ui/tab/TabBarListener.ts' />
 ///<reference path='ui/tab/TabBarItem.ts' />
+///<reference path='ui/tab/TabBarItemListener.ts' />
 ///<reference path='ui/tab/TabMenu.ts' />
 ///<reference path='ui/tab/TabMenuButton.ts' />
 ///<reference path='ui/tab/TabMenuItem.ts' />
@@ -259,6 +260,7 @@
 ///<reference path='app/view/ViewItem.ts' />
 ///<reference path='app/view/ItemStatisticsPanel.ts' />
 ///<reference path='app/view/ItemViewPanel.ts' />
+///<reference path='app/view/ItemViewPanelListener.ts' />
 
 ///<reference path='app/delete/DeleteItem.ts' />
 ///<reference path='app/delete/DeleteDialog.ts' />
