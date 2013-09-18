@@ -13,23 +13,15 @@ public final class Item
 
     private final String name;
 
-    private final RootDataSet rootDataSet;
+    private final ItemPath path;
 
-    public Item( final ItemId id, final String name, final DataSet dataSet )
-    {
-        this.id = id;
-        this.name = name;
-        this.rootDataSet = new RootDataSet();
-        for ( final Data data : dataSet )
-        {
-            this.rootDataSet.add( data.copy() );
-        }
-    }
+    private final RootDataSet rootDataSet;
 
     private Item( final Builder builder )
     {
         this.id = builder.id;
         this.name = builder.name;
+        this.path = builder.path;
         this.rootDataSet = new RootDataSet();
         for ( final Data data : builder.dataSet )
         {
@@ -44,7 +36,12 @@ public final class Item
 
     public String name()
     {
-        return name.toString();
+        return name;
+    }
+
+    public ItemPath path()
+    {
+        return path;
     }
 
     public Property property( final String path )
@@ -73,6 +70,8 @@ public final class Item
 
         private String name;
 
+        private ItemPath path;
+
         private RootDataSet dataSet = new RootDataSet();
 
         public Builder( final Item item )
@@ -91,6 +90,12 @@ public final class Item
         public Builder name( final String value )
         {
             this.name = value;
+            return this;
+        }
+
+        public Builder path( final String value )
+        {
+            this.path = new ItemPath( value );
             return this;
         }
 
