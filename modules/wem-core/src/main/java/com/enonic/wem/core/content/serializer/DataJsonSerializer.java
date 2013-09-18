@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.serializer;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;

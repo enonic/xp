@@ -3,12 +3,13 @@ package com.enonic.wem.admin.rpc.account;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.api.Client;

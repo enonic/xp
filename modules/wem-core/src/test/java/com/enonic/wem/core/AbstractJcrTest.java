@@ -4,10 +4,11 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.codehaus.jackson.JsonNode;
 import org.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.core.jcr.loader.JcrInitializer;
 import com.enonic.wem.core.jcr.provider.JcrSessionProviderImpl;

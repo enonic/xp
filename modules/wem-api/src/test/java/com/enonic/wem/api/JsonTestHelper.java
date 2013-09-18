@@ -3,12 +3,12 @@ package com.enonic.wem.api;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -27,7 +27,7 @@ public class JsonTestHelper
         this.resourceTestHelper = new ResourceTestHelper( this );
         this.prettyPrint = true;
         objectMapper = new ObjectMapper();
-        objectMapper.enable( SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY );
+        objectMapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
         objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     }
 
@@ -109,8 +109,8 @@ public class JsonTestHelper
         try
         {
             final ObjectMapper mapper = objectMapper;
-            final JsonFactory factory = mapper.getJsonFactory();
-            final JsonParser parser = factory.createJsonParser( jsonString );
+            final JsonFactory factory = mapper.getFactory();
+            final JsonParser parser = factory.createParser( jsonString );
             return parser.readValueAsTree();
         }
         catch ( IOException e )

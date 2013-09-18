@@ -1,8 +1,8 @@
 package com.enonic.wem.admin.rpc.content;
 
-import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Strings;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;

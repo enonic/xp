@@ -3,11 +3,12 @@ package com.enonic.wem.admin.rpc.content;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateMidnight;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.api.content.ContentId;

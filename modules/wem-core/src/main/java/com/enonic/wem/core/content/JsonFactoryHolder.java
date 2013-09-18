@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content;
 
 
-import org.codehaus.jackson.JsonFactory;
+import com.fasterxml.jackson.core.JsonFactory;
 
 public class JsonFactoryHolder
 {

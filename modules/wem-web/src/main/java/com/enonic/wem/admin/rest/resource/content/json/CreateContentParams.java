@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;

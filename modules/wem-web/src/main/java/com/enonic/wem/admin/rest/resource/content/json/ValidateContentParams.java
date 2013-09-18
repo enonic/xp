@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @XmlRootElement
 public class ValidateContentParams

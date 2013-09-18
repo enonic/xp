@@ -3,13 +3,14 @@ package com.enonic.wem.core.schema.content.serializer;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import junit.framework.Assert;
 
@@ -43,7 +44,7 @@ public class FormItemJsonSerializerTest
         throws IOException
     {
         sw = new StringWriter();
-        g = JsonFactoryHolder.DEFAULT_FACTORY.createJsonGenerator( sw );
+        g = JsonFactoryHolder.DEFAULT_FACTORY.createGenerator( sw );
         g.useDefaultPrettyPrinter();
     }
 
@@ -65,7 +66,7 @@ public class FormItemJsonSerializerTest
 
         String json = fieldToJson( input );
         System.out.println( json );
-        JsonParser jp = jsonFactory.createJsonParser( json );
+        JsonParser jp = jsonFactory.createParser( json );
 
         // exercise
         FormItem formItem = new FormItemJsonSerializer( formItemsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );
@@ -100,7 +101,7 @@ public class FormItemJsonSerializerTest
         Input input = builder.build();
 
         String json = fieldToJson( input );
-        JsonParser jp = jsonFactory.createJsonParser( json );
+        JsonParser jp = jsonFactory.createParser( json );
 
         // exercise
         FormItem formItem = new FormItemJsonSerializer( formItemsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );
@@ -141,7 +142,7 @@ public class FormItemJsonSerializerTest
         FormItemSet formItemSet = builder.build();
 
         String json = fieldSetToJson( formItemSet );
-        JsonParser jp = jsonFactory.createJsonParser( json );
+        JsonParser jp = jsonFactory.createParser( json );
 
         // exercise
         FormItem formItem = new FormItemJsonSerializer( formItemsJsonSerializer ).parse( objectMapper.readValue( jp, JsonNode.class ) );

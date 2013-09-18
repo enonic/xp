@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.codehaus.jackson.node.ObjectNode;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
@@ -64,12 +63,12 @@ public final class UpdateRelationshipPropertiesRpcHandler
 
     private Map<String, String> resolveProperties( final ObjectNode addNode )
     {
-        final Iterator<String> propertyNames = addNode.getFieldNames();
+        final Iterator<String> propertyNames = addNode.fieldNames();
         final Map<String, String> propertiesToAdd = Maps.newLinkedHashMap();
         while ( propertyNames.hasNext() )
         {
             final String propertyKey = propertyNames.next();
-            final String propertyValue = addNode.get( propertyKey ).getTextValue();
+            final String propertyValue = addNode.get( propertyKey ).textValue();
             propertiesToAdd.put( propertyKey, propertyValue );
         }
         return propertiesToAdd;

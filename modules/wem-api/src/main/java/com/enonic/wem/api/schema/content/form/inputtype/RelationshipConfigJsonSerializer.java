@@ -1,9 +1,9 @@
 package com.enonic.wem.api.schema.content.form.inputtype;
 
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
@@ -37,7 +37,7 @@ public class RelationshipConfigJsonSerializer
         final JsonNode relationshipTypeNode = inputTypeConfigNode.get( "relationshipType" );
         if ( relationshipTypeNode != null && !relationshipTypeNode.isNull() )
         {
-            builder.relationshipType( QualifiedRelationshipTypeName.from( relationshipTypeNode.getTextValue() ) );
+            builder.relationshipType( QualifiedRelationshipTypeName.from( relationshipTypeNode.textValue() ) );
         }
         return builder.build();
     }

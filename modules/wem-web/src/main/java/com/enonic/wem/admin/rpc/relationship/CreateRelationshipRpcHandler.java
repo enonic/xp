@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rpc.relationship;
 
 import java.util.Iterator;
 
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
@@ -42,11 +42,11 @@ public final class CreateRelationshipRpcHandler
 
     private void parseSetProperties( final CreateRelationship createCommand, final ObjectNode propertiesNode )
     {
-        final Iterator<String> propertyNames = propertiesNode.getFieldNames();
+        final Iterator<String> propertyNames = propertiesNode.fieldNames();
         while ( propertyNames.hasNext() )
         {
             final String propertyKey = propertyNames.next();
-            final String propertyValue = propertiesNode.get( propertyKey ).getTextValue();
+            final String propertyValue = propertiesNode.get( propertyKey ).textValue();
             createCommand.property( propertyKey, propertyValue );
         }
     }

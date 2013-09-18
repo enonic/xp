@@ -1,9 +1,10 @@
 package com.enonic.wem.core.content.serializer;
 
 
-import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.content.binary.BinaryId;

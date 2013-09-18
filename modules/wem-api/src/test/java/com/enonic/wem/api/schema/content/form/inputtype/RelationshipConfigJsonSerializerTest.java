@@ -3,9 +3,10 @@ package com.enonic.wem.api.schema.content.form.inputtype;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;

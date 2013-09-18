@@ -2,11 +2,11 @@ package com.enonic.wem.core.index.elastic;
 
 import java.net.URL;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.JsonNodeFactory;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import static org.junit.Assert.*;
 
@@ -22,7 +22,7 @@ public class AbstractJsonTest
         }
 
         final ObjectMapper mapper = ObjectMapperTestHelper.create();
-        final JsonFactory factory = mapper.getJsonFactory();
+        final JsonFactory factory = mapper.getFactory();
         final URL resource = getClass().getResource( fileName );
 
         if ( resource == null )
@@ -30,7 +30,7 @@ public class AbstractJsonTest
             throw new RuntimeException( "Could not find resource with name: " + fileName );
         }
 
-        final JsonParser parser = factory.createJsonParser( resource );
+        final JsonParser parser = factory.createParser( resource );
         return parser.readValueAsTree();
     }
 
@@ -38,8 +38,8 @@ public class AbstractJsonTest
         throws Exception
     {
         final ObjectMapper mapper = ObjectMapperTestHelper.create();
-        final JsonFactory factory = mapper.getJsonFactory();
-        final JsonParser parser = factory.createJsonParser( jsonString );
+        final JsonFactory factory = mapper.getFactory();
+        final JsonParser parser = factory.createParser( jsonString );
         return parser.readValueAsTree();
     }
 
