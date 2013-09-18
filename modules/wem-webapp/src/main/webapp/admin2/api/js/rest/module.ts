@@ -4,3 +4,4 @@
 ///<reference path='JsonResponse.ts' />
 ///<reference path='RequestError.ts' />
 ///<reference path='ResourceRequest.ts' />
+///<reference path='Expand.ts' />
