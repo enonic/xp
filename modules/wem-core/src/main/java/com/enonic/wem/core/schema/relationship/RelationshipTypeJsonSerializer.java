@@ -1,10 +1,10 @@
 package com.enonic.wem.core.schema.relationship;
 
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -68,13 +68,13 @@ public class RelationshipTypeJsonSerializer
         final JsonNode allowedFromTypes = relationshipTypeNode.get( "allowedFromTypes" );
         for ( JsonNode allowedFromType : allowedFromTypes )
         {
-            relationshipTypeBuilder.addAllowedFromType( new QualifiedContentTypeName( allowedFromType.getValueAsText() ) );
+            relationshipTypeBuilder.addAllowedFromType( new QualifiedContentTypeName( allowedFromType.textValue() ) );
         }
 
         final JsonNode allowedToTypes = relationshipTypeNode.get( "allowedToTypes" );
         for ( JsonNode allowedToType : allowedToTypes )
         {
-            relationshipTypeBuilder.addAllowedToType( new QualifiedContentTypeName( allowedToType.getValueAsText() ) );
+            relationshipTypeBuilder.addAllowedToType( new QualifiedContentTypeName( allowedToType.textValue() ) );
         }
 
         return relationshipTypeBuilder.build();

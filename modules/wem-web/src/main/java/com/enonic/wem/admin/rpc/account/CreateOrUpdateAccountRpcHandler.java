@@ -10,16 +10,16 @@ import java.util.TimeZone;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
-import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
+import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
@@ -198,7 +198,7 @@ public final class CreateOrUpdateAccountRpcHandler
 
         if ( profileJson.has( "addresses" ) )
         {
-            final Iterator<JsonNode> addressesJson = profileJson.get( "addresses" ).getElements();
+            final Iterator<JsonNode> addressesJson = profileJson.get( "addresses" ).elements();
             final List<Address> addressList = Lists.newArrayList();
             while ( addressesJson.hasNext() )
             {

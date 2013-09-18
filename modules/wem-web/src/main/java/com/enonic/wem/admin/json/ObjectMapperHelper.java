@@ -2,9 +2,10 @@ package com.enonic.wem.admin.json;
 
 import java.text.SimpleDateFormat;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public final class ObjectMapperHelper
 {
@@ -12,11 +13,11 @@ public final class ObjectMapperHelper
     {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        mapper.disable( SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS );
-        mapper.disable( SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS );
-        mapper.enable( SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY );
-        mapper.enable( SerializationConfig.Feature.WRITE_NULL_MAP_VALUES );
-        mapper.setSerializationInclusion( JsonSerialize.Inclusion.ALWAYS );
+        mapper.disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS );
+        mapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
+        mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
+        mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
+        mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
         return mapper;
     }
 }

@@ -3,10 +3,10 @@ package com.enonic.wem.core.support.serializer;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.wem.core.content.JsonFactoryHolder;
 
@@ -44,7 +44,7 @@ public abstract class AbstractJsonSerializer<T>
         {
             try
             {
-                return objectMapper().defaultPrettyPrintingWriter().writeValueAsString( jsonNode );
+                return objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString( jsonNode );
             }
             catch ( IOException e )
             {
@@ -62,7 +62,7 @@ public abstract class AbstractJsonSerializer<T>
         try
         {
             final JsonFactory f = JsonFactoryHolder.DEFAULT_FACTORY;
-            final JsonParser jp = f.createJsonParser( json );
+            final JsonParser jp = f.createParser( json );
 
             final ObjectMapper mapper = new ObjectMapper();
             final JsonNode node = mapper.readValue( jp, JsonNode.class );

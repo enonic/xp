@@ -1,11 +1,12 @@
 package com.enonic.wem.core.support.serializer;
 
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
@@ -27,7 +28,7 @@ public class JsonSerializerUtil
         {
             return defaultValue;
         }
-        return subNode.isNull() ? defaultValue : subNode.getIntValue();
+        return subNode.isNull() ? defaultValue : subNode.intValue();
     }
 
     public static void setDateTimeValue( String fieldName, DateTime dateTime, ObjectNode node )
@@ -53,7 +54,7 @@ public class JsonSerializerUtil
         {
             return null;
         }
-        return isoDateTimeFormatter.parseDateTime( subNode.getTextValue() );
+        return isoDateTimeFormatter.parseDateTime( subNode.textValue() );
     }
 
     public static String getStringValue( String fieldName, JsonNode node, String defaultValue )
@@ -63,7 +64,7 @@ public class JsonSerializerUtil
         {
             return defaultValue;
         }
-        return subNode.getTextValue();
+        return subNode.textValue();
     }
 
     public static String getStringValue( String fieldName, JsonNode node )
@@ -73,7 +74,7 @@ public class JsonSerializerUtil
         {
             throw new JsonParsingException( "Field [" + fieldName + "]  does not exist in: " + node.toString() );
         }
-        return subNode.getTextValue();
+        return subNode.textValue();
     }
 
 
@@ -84,7 +85,7 @@ public class JsonSerializerUtil
         {
             throw new JsonParsingException( "Field [" + fieldName + "]  does not exist in: " + node.toString() );
         }
-        return subNode.getBooleanValue();
+        return subNode.booleanValue();
     }
 
     public static Boolean getBooleanValue( String fieldName, JsonNode node, Boolean defaultValue )
@@ -94,6 +95,6 @@ public class JsonSerializerUtil
         {
             return defaultValue;
         }
-        return subNode.getBooleanValue();
+        return subNode.booleanValue();
     }
 }

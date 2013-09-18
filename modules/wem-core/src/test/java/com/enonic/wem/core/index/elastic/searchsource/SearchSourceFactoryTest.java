@@ -1,11 +1,12 @@
 package com.enonic.wem.core.index.elastic.searchsource;
 
-import org.codehaus.jackson.JsonNode;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;

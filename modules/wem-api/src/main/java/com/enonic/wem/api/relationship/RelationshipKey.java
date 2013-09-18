@@ -3,8 +3,7 @@ package com.enonic.wem.api.relationship;
 
 import java.util.Objects;
 
-import org.codehaus.jackson.node.ObjectNode;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;

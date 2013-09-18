@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.jsonrpc;
 
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public interface JsonRpcParam
 {

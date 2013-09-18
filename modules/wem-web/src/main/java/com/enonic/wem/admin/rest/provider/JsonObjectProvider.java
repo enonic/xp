@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.provider;
 
 import javax.ws.rs.ext.Provider;
 
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 

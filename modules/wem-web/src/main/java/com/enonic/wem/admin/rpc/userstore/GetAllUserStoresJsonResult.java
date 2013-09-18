@@ -2,8 +2,8 @@ package com.enonic.wem.admin.rpc.userstore;
 
 import java.util.List;
 
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStores;

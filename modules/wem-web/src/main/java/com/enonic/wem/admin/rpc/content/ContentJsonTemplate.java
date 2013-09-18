@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rpc.content;
 
 
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;

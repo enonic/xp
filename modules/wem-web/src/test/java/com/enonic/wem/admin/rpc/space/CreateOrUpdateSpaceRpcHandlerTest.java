@@ -4,17 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.Files;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
-import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
+import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.command.space.GetSpaces;

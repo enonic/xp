@@ -1,8 +1,8 @@
 package com.enonic.wem.admin.rpc.schema.content;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;

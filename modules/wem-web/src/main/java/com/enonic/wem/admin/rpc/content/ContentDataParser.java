@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rpc.content;
 
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
@@ -29,7 +29,7 @@ public final class ContentDataParser
     {
         final ContentData contentData = new ContentData();
 
-        final Iterator<String> fieldNames = data.getFieldNames();
+        final Iterator<String> fieldNames = data.fieldNames();
         while ( fieldNames.hasNext() )
         {
             final String fieldName = fieldNames.next();
@@ -39,7 +39,7 @@ public final class ContentDataParser
 
             if ( valueNode.isValueNode() )
             {
-                final String fieldValue = valueNode.getTextValue();
+                final String fieldValue = valueNode.textValue();
                 if ( fieldValue == null )
                 {
                     continue;

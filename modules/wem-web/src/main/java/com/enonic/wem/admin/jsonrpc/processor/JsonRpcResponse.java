@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.jsonrpc.processor;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public final class JsonRpcResponse
     extends JsonRpcMessage

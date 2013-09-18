@@ -1,8 +1,9 @@
 package com.enonic.wem.admin.rpc.content;
 
-import org.codehaus.jackson.JsonNode;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.admin.rpc.AbstractJsonTest;
 import com.enonic.wem.api.content.Contents;

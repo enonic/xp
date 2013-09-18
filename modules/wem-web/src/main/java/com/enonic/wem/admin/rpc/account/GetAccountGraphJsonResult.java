@@ -3,8 +3,8 @@ package com.enonic.wem.admin.rpc.account;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.resource.account.AccountImageUriResolver;

@@ -2,9 +2,8 @@ package com.enonic.wem.admin.rest.resource;
 
 import java.net.URL;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.sun.jersey.api.core.DefaultResourceConfig;
