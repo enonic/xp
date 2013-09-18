@@ -2,6 +2,10 @@ package com.enonic.wem.admin.rest.resource;
 
 import java.net.URL;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.mockito.Mockito;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
@@ -15,6 +19,7 @@ import com.sun.jersey.test.framework.spi.container.inmemory.InMemoryTestContaine
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
+import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -33,6 +38,15 @@ public abstract class AbstractResourceTest
         configure( config );
 
         return new LowLevelAppDescriptor.Builder( config ).build();
+    }
+
+    protected void mockCurrentContextHttpRequest()
+    {
+        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( req.getScheme() ).thenReturn( "http" );
+        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
+        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
+        ServletRequestHolder.setRequest( req );
     }
 
     private void configure( final DefaultResourceConfig config )
