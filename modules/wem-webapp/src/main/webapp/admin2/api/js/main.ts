@@ -182,18 +182,8 @@
 
 ///<reference path='item/ItemJson.ts' />
 
-///<reference path='content/json/ContentSummaryJson.ts' />
-///<reference path='content/json/ContentJson.ts' />
-///<reference path='content/ContentPath.ts' />
-///<reference path='content/ContentSummary.ts' />
-///<reference path='content/ContentData.ts' />
-///<reference path='content/ContentDataFactory.ts' />
-///<reference path='content/Content.ts' />
-///<reference path='content/ContentResourceRequest.ts' />
-///<reference path='content/GetContentByIdRequest.ts' />
-///<reference path='content/GetContentByPathRequest.ts' />
-///<reference path='content/CreateContentRequest.ts' />
-///<reference path='content/UpdateContentRequest.ts' />
+///<reference path='content/json/module.ts' />
+///<reference path='content/module.ts' />
 
 ///<reference path='schema/content/form/json/module.ts' />
 ///<reference path='schema/content/form/module.ts' />

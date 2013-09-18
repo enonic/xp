@@ -1,15 +1,15 @@
 module api_content {
 
-    export class ListContentByIdRequest extends ContentResourceRequest {
+    export class ListContentByPathRequest extends ContentResourceRequest {
 
-        private parentId:string;
+        private parentPath:ContentPath;
 
         private expand:api_rest.Expand = api_rest.Expand.SUMMARY;
 
-        constructor(parentId:string) {
+        constructor(parentPath:ContentPath) {
             super();
             super.setMethod("GET");
-            this.parentId = parentId;
+            this.parentPath = parentPath;
         }
 
         setExpand(value:api_rest.Expand) {
@@ -18,13 +18,13 @@ module api_content {
 
         getParams():Object {
             return {
-                parentId: this.parentId,
+                parentPath: this.parentPath.toString(),
                 expand: this.expand
             };
         }
 
         getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "list");
+            return api_rest.Path.fromParent(super.getResourcePath(), "list", "bypath");
         }
     }
 }
