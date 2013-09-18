@@ -4,11 +4,12 @@ package com.enonic.wem.core.content.serializer;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -65,7 +66,7 @@ public class ContentJsonSerializer
         try
         {
             final JsonFactory f = JsonFactoryHolder.DEFAULT_FACTORY;
-            final JsonParser jp = f.createJsonParser( json );
+            final JsonParser jp = f.createParser( json );
 
             final ObjectMapper mapper = new ObjectMapper();
             final JsonNode contentNode = mapper.readValue( jp, JsonNode.class );

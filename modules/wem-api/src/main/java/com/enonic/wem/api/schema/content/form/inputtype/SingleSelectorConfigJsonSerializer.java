@@ -3,10 +3,10 @@ package com.enonic.wem.api.schema.content.form.inputtype;
 
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
 public class SingleSelectorConfigJsonSerializer
@@ -38,7 +38,7 @@ public class SingleSelectorConfigJsonSerializer
             SingleSelectorConfig.SelectorType.valueOf( getStringValue( "selectorType", inputTypeConfigNode ) );
         builder.type( selectorType );
         final JsonNode optionsNode = inputTypeConfigNode.get( "options" );
-        final Iterator<JsonNode> optionIterator = optionsNode.getElements();
+        final Iterator<JsonNode> optionIterator = optionsNode.elements();
         while ( optionIterator.hasNext() )
         {
             JsonNode option = optionIterator.next();
@@ -54,6 +54,6 @@ public class SingleSelectorConfigJsonSerializer
         {
             throw new IllegalArgumentException( "Field [" + fieldName + "]  does not exist in: " + node.toString() );
         }
-        return subNode.getTextValue();
+        return subNode.textValue();
     }
 }

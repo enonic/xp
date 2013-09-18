@@ -4,9 +4,10 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.DateTimeFormatter;
 

@@ -2,9 +2,9 @@ package com.enonic.wem.core.index.elastic;
 
 import java.text.SimpleDateFormat;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class ObjectMapperTestHelper
 {
@@ -13,8 +13,8 @@ public class ObjectMapperTestHelper
     {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        mapper.disable( SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS );
-        mapper.setSerializationInclusion( JsonSerialize.Inclusion.NON_NULL );
+        mapper.disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS );
+        mapper.setSerializationInclusion( JsonInclude.Include.NON_NULL );
         return mapper;
     }
 }

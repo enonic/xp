@@ -3,9 +3,9 @@ package com.enonic.wem.core.schema.content.serializer;
 
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
@@ -73,7 +73,7 @@ public class FormItemJsonSerializer
 
     public FormItem parse( final JsonNode formItemNode )
     {
-        final Iterator<String> fieldNamesIt = formItemNode.getFieldNames();
+        final Iterator<String> fieldNamesIt = formItemNode.fieldNames();
 
         FormItem formItem = null;
         while ( fieldNamesIt.hasNext() )

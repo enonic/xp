@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
@@ -51,7 +51,7 @@ public final class FormItemsJsonSerializer
     public Iterable<FormItem> parse( final JsonNode formItemsNode )
     {
         final List<FormItem> formItems = new ArrayList<>();
-        final Iterator<JsonNode> formItemIt = formItemsNode.getElements();
+        final Iterator<JsonNode> formItemIt = formItemsNode.elements();
         while ( formItemIt.hasNext() )
         {
             try

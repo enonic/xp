@@ -3,8 +3,7 @@ package com.enonic.wem.admin.json.facet;
 
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.facet.DateHistogramFacet;

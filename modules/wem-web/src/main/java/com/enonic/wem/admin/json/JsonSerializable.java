@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public interface JsonSerializable
 {

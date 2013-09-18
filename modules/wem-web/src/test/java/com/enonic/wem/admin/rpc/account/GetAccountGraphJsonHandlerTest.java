@@ -6,11 +6,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.api.Client;
@@ -145,7 +146,7 @@ public class GetAccountGraphJsonHandlerTest
 
     private void assertGraphNode( JsonNode expected, JsonNode actual )
     {
-        Iterator<String> fieldIterator = expected.getFieldNames();
+        Iterator<String> fieldIterator = expected.fieldNames();
         while ( fieldIterator.hasNext() )
         {
             String fieldName = fieldIterator.next();

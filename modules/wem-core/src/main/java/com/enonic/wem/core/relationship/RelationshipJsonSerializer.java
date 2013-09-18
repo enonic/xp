@@ -4,9 +4,9 @@ package com.enonic.wem.core.relationship;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
@@ -148,11 +148,11 @@ public class RelationshipJsonSerializer
         if ( !relationshipNode.get( "properties" ).isNull() )
         {
             final ObjectNode propertiesNode = (ObjectNode) relationshipNode.get( "properties" );
-            final Iterator<String> it = propertiesNode.getFieldNames();
+            final Iterator<String> it = propertiesNode.fieldNames();
             while ( it.hasNext() )
             {
                 final String fieldName = it.next();
-                builder.property( fieldName, propertiesNode.get( fieldName ).getTextValue() );
+                builder.property( fieldName, propertiesNode.get( fieldName ).textValue() );
             }
         }
         return builder.build();

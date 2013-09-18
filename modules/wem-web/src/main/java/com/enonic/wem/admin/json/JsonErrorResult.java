@@ -2,7 +2,7 @@ package com.enonic.wem.admin.json;
 
 import java.text.MessageFormat;
 
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class JsonErrorResult
     extends JsonResult

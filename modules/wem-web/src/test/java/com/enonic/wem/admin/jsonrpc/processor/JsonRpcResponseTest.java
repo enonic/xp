@@ -1,8 +1,9 @@
 package com.enonic.wem.admin.jsonrpc.processor;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcError;
 

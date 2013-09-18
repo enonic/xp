@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.jsonrpc;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.admin.json.JsonSerializable;
 

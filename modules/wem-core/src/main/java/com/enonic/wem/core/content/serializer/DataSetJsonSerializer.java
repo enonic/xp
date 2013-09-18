@@ -3,11 +3,10 @@ package com.enonic.wem.core.content.serializer;
 
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.data.ContentData;
@@ -85,7 +84,7 @@ public class DataSetJsonSerializer
 
     void parseEntries( final ArrayNode arrayNode, final DataSet dataSet )
     {
-        final Iterator<JsonNode> dataIt = arrayNode.getElements();
+        final Iterator<JsonNode> dataIt = arrayNode.elements();
         while ( dataIt.hasNext() )
         {
             final JsonNode dataNode = dataIt.next();

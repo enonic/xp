@@ -1,10 +1,10 @@
 package com.enonic.wem.admin.rpc;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.JsonNodeFactory;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import com.enonic.wem.admin.json.ObjectMapperHelper;
 
@@ -21,8 +21,8 @@ public class AbstractJsonTest
         }
 
         final ObjectMapper mapper = ObjectMapperHelper.create();
-        final JsonFactory factory = mapper.getJsonFactory();
-        final JsonParser parser = factory.createJsonParser( getClass().getResource( fileName ) );
+        final JsonFactory factory = mapper.getFactory();
+        final JsonParser parser = factory.createParser( getClass().getResource( fileName ) );
         return parser.readValueAsTree();
     }
 

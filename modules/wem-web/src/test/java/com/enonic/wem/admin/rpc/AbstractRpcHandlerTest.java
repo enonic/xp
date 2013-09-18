@@ -2,13 +2,13 @@ package com.enonic.wem.admin.rpc;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
-import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcError;

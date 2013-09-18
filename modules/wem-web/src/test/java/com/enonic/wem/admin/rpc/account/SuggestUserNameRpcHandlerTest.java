@@ -1,9 +1,10 @@
 package com.enonic.wem.admin.rpc.account;
 
-import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;

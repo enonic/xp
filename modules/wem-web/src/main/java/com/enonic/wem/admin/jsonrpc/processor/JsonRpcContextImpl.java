@@ -3,10 +3,9 @@ package com.enonic.wem.admin.jsonrpc.processor;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
-import org.codehaus.jackson.node.ObjectNode;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.admin.json.JsonSerializable;
@@ -32,7 +31,7 @@ final class JsonRpcContextImpl
 
     private void setParams( final ObjectNode json )
     {
-        final Iterator<String> it = json.getFieldNames();
+        final Iterator<String> it = json.fieldNames();
         while ( it.hasNext() )
         {
             final String name = it.next();

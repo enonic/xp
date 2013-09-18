@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.json.facet;
 
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.api.facet.QueryFacet;
 

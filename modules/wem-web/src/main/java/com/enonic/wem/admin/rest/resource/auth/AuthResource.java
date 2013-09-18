@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.resource.auth;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
 

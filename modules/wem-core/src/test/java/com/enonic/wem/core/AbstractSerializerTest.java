@@ -1,9 +1,10 @@
 package com.enonic.wem.core;
 
 
-import org.codehaus.jackson.JsonNode;
 import org.elasticsearch.common.joda.time.DateTimeUtils;
 import org.junit.After;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public abstract class AbstractSerializerTest
 {

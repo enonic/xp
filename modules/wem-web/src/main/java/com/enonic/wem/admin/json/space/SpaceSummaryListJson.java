@@ -9,7 +9,7 @@ import com.enonic.wem.api.space.Spaces;
 
 public class SpaceSummaryListJson
 {
-    private final ImmutableList<SpaceSummaryJson> list;
+    private final List<SpaceSummaryJson> list;
 
     public SpaceSummaryListJson( final Spaces spaces )
     {
