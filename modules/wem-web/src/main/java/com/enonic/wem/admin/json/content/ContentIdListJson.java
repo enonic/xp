@@ -19,6 +19,6 @@ public class ContentIdListJson
     @Override
     protected ContentIdJson createItem( final Content content )
     {
-        return new ContentIdJson( content );
+        return new ContentIdJson( content.getId() );
     }
 }

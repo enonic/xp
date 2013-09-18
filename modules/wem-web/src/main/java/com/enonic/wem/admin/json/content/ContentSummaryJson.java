@@ -4,16 +4,17 @@ import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.api.content.Content;
 
-public class ContentSummaryJson extends ContentIdJson
+@SuppressWarnings("UnusedDeclaration")
+public class ContentSummaryJson
+    extends ContentIdJson
 {
-
     private final Content content;
 
     private final String iconUrl;
 
     public ContentSummaryJson( Content content )
     {
-        super(content.getId());
+        super( content.getId() );
         this.content = content;
         this.iconUrl = ContentImageUriResolver.resolve( content );
     }

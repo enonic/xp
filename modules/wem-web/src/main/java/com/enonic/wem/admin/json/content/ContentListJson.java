@@ -3,6 +3,7 @@ package com.enonic.wem.admin.json.content;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 
+@SuppressWarnings("UnusedDeclaration")
 public class ContentListJson
     extends AbstractContentListJson<ContentJson>
 {

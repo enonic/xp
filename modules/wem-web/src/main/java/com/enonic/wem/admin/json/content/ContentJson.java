@@ -6,6 +6,7 @@ import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.data.DataSetJson;
 import com.enonic.wem.api.content.Content;
 
+@SuppressWarnings("UnusedDeclaration")
 public class ContentJson
     extends ContentSummaryJson
 {

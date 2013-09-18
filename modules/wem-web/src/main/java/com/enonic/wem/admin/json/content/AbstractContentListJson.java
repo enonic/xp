@@ -8,16 +8,17 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 
 
+@SuppressWarnings("UnusedDeclaration")
 public abstract class AbstractContentListJson<T extends ContentIdJson>
 {
-    private List<T> contents;
+    private ImmutableList<T> contents;
 
-    public AbstractContentListJson( Content content )
+    public AbstractContentListJson( final Content content )
     {
         this( Contents.from( content ) );
     }
 
-    public AbstractContentListJson( Contents contents )
+    public AbstractContentListJson( final Contents contents )
     {
         final ImmutableList.Builder<T> builder = ImmutableList.builder();
         for ( final Content content : contents )

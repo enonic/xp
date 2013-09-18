@@ -67,6 +67,8 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
+import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.RenameContentException;
@@ -98,39 +100,29 @@ public class ContentResource
     private final String EXPAND_NONE = "none";
 
     @GET
-    public ContentIdJson getById( @QueryParam("id") final String id, @QueryParam("version") final Long version,
-                                  @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expand )
+    public ContentIdJson getById( @QueryParam("id") final String idParam, @QueryParam("version") final Long versionParam,
+                                  @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-
-        Content content = null;
-        if ( version == null )
+        final ContentId id = ContentId.from( idParam );
+        final Content content;
+        if ( versionParam == null )
         {
-            final GetContents getContents = Commands.content().get().selectors( ContentIds.from( id ) );
-            final Contents contents = client.execute( getContents );
-
-            if ( contents.isNotEmpty() )
-            {
-                content = contents.first();
-            }
+            content = doGetContent( id );
         }
         else
         {
-            final GetContentVersion getContentVersion = Commands.content().getVersion().
-                selector( ContentId.from( id ) ).
-                version( ContentVersionId.of( version ) );
-
-            content = client.execute( getContentVersion );
+            content = doGetVersionOfContent( id, ContentVersionId.of( versionParam ) );
         }
 
         if ( content == null )
         {
-            throw new NotFoundException( String.format( "Content [%s] was not found", id ) );
+            throw new NotFoundException( String.format( "Content [%s] was not found", idParam ) );
         }
-        else if ( EXPAND_NONE.equalsIgnoreCase( expand ) )
+        else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
             return new ContentIdJson( id );
         }
-        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expand ) )
+        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
         {
             return new ContentSummaryJson( content );
         }
@@ -138,43 +130,58 @@ public class ContentResource
         {
             return new ContentJson( content );
         }
+    }
 
+    private Content doGetContent( final ContentSelector contentSelector )
+    {
+        final ContentSelectors contentSelectors;
+        if ( contentSelector instanceof ContentId )
+        {
+            contentSelectors = ContentIds.from( (ContentId) contentSelector );
+        }
+        else
+        {
+            contentSelectors = ContentPaths.from( (ContentPath) contentSelector );
+        }
+        final GetContents getContents = Commands.content().get().selectors( contentSelectors );
+        final Contents contents = client.execute( getContents );
+        return contents.isNotEmpty() ? contents.first() : null;
+    }
+
+    private Content doGetVersionOfContent( final ContentSelector contentSelector, final ContentVersionId versionId )
+    {
+        final GetContentVersion getContentVersion = Commands.content().getVersion().
+            selector( contentSelector ).
+            version( versionId );
+
+        return client.execute( getContentVersion );
     }
 
     @GET
     @Path("bypath")
-    public ContentIdJson getByPath( @QueryParam("path") final String path, @QueryParam("version") final Long version,
-                                    @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expand )
+    public ContentIdJson getByPath( @QueryParam("path") final String pathParam, @QueryParam("version") final Long versionParam,
+                                    @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        Content content = null;
-        if ( version == null )
+        final Content content;
+        final ContentPath path = ContentPath.from( pathParam );
+        if ( versionParam == null )
         {
-            final GetContents getContents = Commands.content().get().selectors( ContentPaths.from( path ) );
-            final Contents contents = client.execute( getContents );
-
-            if ( contents.isNotEmpty() )
-            {
-                content = contents.first();
-            }
+            content = doGetContent( path );
         }
         else
         {
-            final GetContentVersion getContentVersion = Commands.content().getVersion().
-                selector( ContentPath.from( path ) ).
-                version( ContentVersionId.of( version ) );
-
-            content = client.execute( getContentVersion );
+            content = doGetVersionOfContent( ContentPath.from( pathParam ), ContentVersionId.of( versionParam ) );
         }
 
         if ( content == null )
         {
-            throw new NotFoundException( String.format( "Content [%s] was not found", path ) );
+            throw new NotFoundException( String.format( "Content [%s] was not found", pathParam ) );
         }
-        else if ( EXPAND_NONE.equalsIgnoreCase( expand ) )
+        else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
             return new ContentIdJson( content.getId() );
         }
-        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expand ) )
+        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
         {
             return new ContentSummaryJson( content );
         }
@@ -186,17 +193,17 @@ public class ContentResource
 
     @GET
     @Path("list")
-    public AbstractContentListJson listById( @QueryParam("parentId") final String parentId,
-                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expand )
+    public AbstractContentListJson listById( @QueryParam("parentId") final String parentIdParam,
+                                             @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
     {
         Contents contents;
-        if ( StringUtils.isEmpty( parentId ) )
+        if ( StringUtils.isEmpty( parentIdParam ) )
         {
             contents = client.execute( Commands.content().getRoots() );
         }
         else
         {
-            final GetContents getContent = Commands.content().get().selectors( ContentIds.from( parentId ) );
+            final GetContents getContent = Commands.content().get().selectors( ContentIds.from( parentIdParam ) );
             Contents parentContents = client.execute( getContent );
 
             if ( parentContents.isNotEmpty() )
@@ -210,11 +217,11 @@ public class ContentResource
             }
         }
 
-        if ( EXPAND_NONE.equalsIgnoreCase( expand ) )
+        if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
             return new ContentIdListJson( contents );
         }
-        else if ( EXPAND_FULL.equalsIgnoreCase( expand ) )
+        else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
             return new ContentListJson( contents );
         }
@@ -226,25 +233,25 @@ public class ContentResource
 
     @GET
     @Path("list/bypath")
-    public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPath,
-                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expand )
+    public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPathParam,
+                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
     {
         final Contents contents;
-        if ( StringUtils.isEmpty( parentPath ) )
+        if ( StringUtils.isEmpty( parentPathParam ) )
         {
             contents = client.execute( Commands.content().getRoots() );
         }
         else
         {
-            final GetChildContent getChildContent = Commands.content().getChildren().parentPath( ContentPath.from( parentPath ) );
+            final GetChildContent getChildContent = Commands.content().getChildren().parentPath( ContentPath.from( parentPathParam ) );
             contents = client.execute( getChildContent );
         }
 
-        if ( EXPAND_NONE.equalsIgnoreCase( expand ) )
+        if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
             return new ContentIdListJson( contents );
         }
-        else if ( EXPAND_FULL.equalsIgnoreCase( expand ) )
+        else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
             return new ContentListJson( contents );
         }
@@ -287,23 +294,23 @@ public class ContentResource
 
         if ( EXPAND_FULL.equalsIgnoreCase( params.getExpand() ) )
         {
-            return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets(): null );
+            return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
         }
         else if ( EXPAND_SUMMARY.equalsIgnoreCase( params.getExpand() ) )
         {
-            return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets(): null );
+            return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
         }
         else
         {
-            return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets(): null );
+            return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
         }
     }
 
     @GET
     @Path("generateName")
-    public ContentNameJson generateName( @QueryParam("displayName") final String displayName )
+    public ContentNameJson generateName( @QueryParam("displayName") final String displayNameParam )
     {
-        final GenerateContentName generateContentName = Commands.content().generateContentName().displayName( displayName );
+        final GenerateContentName generateContentName = Commands.content().generateContentName().displayName( displayNameParam );
 
         final String generatedContentName = client.execute( generateContentName );
 
