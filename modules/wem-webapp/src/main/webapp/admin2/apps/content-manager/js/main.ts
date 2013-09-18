@@ -98,7 +98,7 @@ window.onload = () => {
 
             new api_content.GetContentByIdRequest(parentContent.data.id).send().
                 done((jsonResponse:api_rest.JsonResponse) => {
-                    var newParentContent = new api_content.Content(jsonResponse.getJson().contents[0]);
+                    var newParentContent = new api_content.Content(jsonResponse.getJson());
                     newContentDialog.setParentContent(newParentContent);
                     newContentDialog.open();
                 });
