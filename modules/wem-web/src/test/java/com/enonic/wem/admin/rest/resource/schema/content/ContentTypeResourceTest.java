@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.junit.Before;
@@ -22,7 +21,6 @@ import com.enonic.wem.api.schema.content.form.FieldSet;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.MixinReference;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
@@ -228,12 +226,4 @@ public class ContentTypeResourceTest
         assertJson( "ContentTypeResourceTest-list_one_contentType_with_only_one_input-result.json", jsonString );
     }
 
-    private void mockCurrentContextHttpRequest()
-    {
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( req.getScheme() ).thenReturn( "http" );
-        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
-        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
-    }
 }

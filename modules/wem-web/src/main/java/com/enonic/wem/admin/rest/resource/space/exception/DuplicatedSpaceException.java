@@ -12,7 +12,7 @@ public class DuplicatedSpaceException
 
     public DuplicatedSpaceException( SpaceName spaceName )
     {
-        super( Response.status( Response.Status.NOT_ACCEPTABLE ).entity( "Space with name " + spaceName + "already exists" ).type(
+        super( Response.status( Response.Status.NOT_ACCEPTABLE ).entity( "Space with name " + spaceName + " already exists" ).type(
             MediaType.TEXT_PLAIN_TYPE ).build() );
     }
 }

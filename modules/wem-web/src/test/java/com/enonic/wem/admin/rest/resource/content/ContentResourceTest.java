@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.content;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
@@ -60,7 +59,6 @@ import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationE
 import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.Spaces;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
@@ -81,15 +79,6 @@ public class ContentResourceTest
     public void after()
     {
         DateTimeUtils.setCurrentMillisSystem();
-    }
-
-    private void mockCurrentContextHttpRequest()
-    {
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( req.getScheme() ).thenReturn( "http" );
-        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
-        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
     }
 
     @Test

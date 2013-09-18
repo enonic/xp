@@ -3,7 +3,6 @@ package com.enonic.wem.admin.rest.resource.space;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,13 +20,14 @@ import com.enonic.wem.admin.json.space.SpaceJson;
 import com.enonic.wem.admin.json.space.SpaceSummaryListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.space.exception.DuplicatedSpaceException;
+import com.enonic.wem.admin.rest.resource.space.json.SpaceCreateParams;
+import com.enonic.wem.admin.rest.resource.space.json.SpaceUpdateParams;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.space.DeleteSpace;
 import com.enonic.wem.api.command.space.UpdateSpace;
-import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.SpaceNames;
@@ -74,15 +74,14 @@ public final class SpaceResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void create( @FormParam("spaceName") String name, @FormParam("displayName") String displayName,
-                        @FormParam("iconReference") String iconReference )
+    public void create( SpaceCreateParams params )
     {
-        final SpaceName spaceName = SpaceName.from( name );
+        final SpaceName spaceName = SpaceName.from( params.getSpaceName() );
 
         final Icon icon;
         try
         {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
         }
         catch ( Exception e )
         {
@@ -91,7 +90,7 @@ public final class SpaceResource
 
         if ( !spaceExists( spaceName ) )
         {
-            client.execute( space().create().name( spaceName ).displayName( displayName ).icon( icon ) );
+            client.execute( space().create().name( spaceName ).displayName( params.getDisplayName() ).icon( icon ) );
         }
         else
         {
@@ -120,7 +119,7 @@ public final class SpaceResource
 
         if ( !success )
         {
-            final String spacesNotDeleted = Joiner.on( ", " ).join( spaceNames );
+            final String spacesNotDeleted = Joiner.on( ", " ).join( notDeleted );
             throw new NotFoundException( String.format( "Space [%s] not found", spacesNotDeleted ) );
         }
     }
@@ -128,15 +127,14 @@ public final class SpaceResource
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void update( @FormParam("spaceName") String name, @FormParam("displayName") String displayName,
-                        @FormParam("iconReference") String iconReference, @FormParam("newName") String newName )
+    public void update( SpaceUpdateParams params )
     {
-        final SpaceName spaceName = SpaceName.from( name );
+        final SpaceName spaceName = SpaceName.from( params.getSpaceName() );
 
         final Icon icon;
         try
         {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
         }
         catch ( Exception e )
         {
@@ -148,23 +146,23 @@ public final class SpaceResource
             final SpaceEditor editor;
             if ( icon == null )
             {
-                editor = setDisplayName( displayName );
+                editor = setDisplayName( params.getDisplayName() );
             }
             else
             {
-                editor = composite( setDisplayName( displayName ), setIcon( icon ) );
+                editor = composite( setDisplayName( params.getDisplayName() ), setIcon( icon ) );
             }
             final UpdateSpace updateCommand = space().update().name( spaceName ).editor( editor );
             client.execute( updateCommand );
 
-            if ( newName != null )
+            if ( params.getNewName() != null )
             {
-                client.execute( space().rename().space( spaceName ).newName( newName ) );
+                client.execute( space().rename().space( spaceName ).newName( params.getNewName() ) );
             }
         }
         else
         {
-            throw new SpaceNotFoundException( spaceName );
+            throw new NotFoundException( String.format( "Space %s not found", spaceName ) );
         }
     }
 
