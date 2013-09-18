@@ -1,0 +1,15 @@
+{
+    "relationshipKey": {
+        "fromContent": "123",
+        "toContent": "321",
+        "type": "system:like"
+    },
+    "add": {
+        "addA": "1",
+        "addB": "2"
+    },
+    "remove": [
+        "removeA",
+        "removeB"
+    ]
+}

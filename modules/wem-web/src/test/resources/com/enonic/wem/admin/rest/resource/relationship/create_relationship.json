@@ -1,0 +1,5 @@
+{
+    "fromContent" : "123",
+    "toContent" : "321",
+    "type" : "system:like"
+}

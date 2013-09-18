@@ -1,0 +1,12 @@
+{
+    "relationships" : [ {
+        "deletable" : false,
+        "editable" : false,
+        "fromContent" : "111",
+        "managingData" : null,
+        "properties" : { },
+        "toContent" : "222",
+        "type" : "system:default"
+    } ],
+    "total" : 1
+}

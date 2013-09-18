@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.resource.relationship.json;
 
 import com.enonic.wem.api.relationship.RelationshipKey;
 
-public class CreateRelationshipJson
+public class UpdateRelationshipJson
 {
     private String fromContent;
 
@@ -10,7 +10,7 @@ public class CreateRelationshipJson
 
     private String type;
 
-    public CreateRelationshipJson( final RelationshipKey relationshipKey )
+    public UpdateRelationshipJson( final RelationshipKey relationshipKey )
     {
         this.fromContent = relationshipKey.getFromContent().toString();
         this.toContent = relationshipKey.getToContent().toString();
