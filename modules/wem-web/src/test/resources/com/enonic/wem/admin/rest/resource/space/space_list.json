@@ -1,0 +1,36 @@
+{
+    "spaces": [
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "deletable": true,
+            "displayName": "space-1",
+            "editable": true,
+            "iconUrl": "http://localhost/admin/rest/space/image/space-1",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "name": "space-1",
+            "rootContentId": "root"
+        },
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "deletable": true,
+            "displayName": "space-2",
+            "editable": true,
+            "iconUrl": "http://localhost/admin/rest/space/image/space-2",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "name": "space-2",
+            "rootContentId": "root"
+        },
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "deletable": true,
+            "displayName": "space-3",
+            "editable": true,
+            "iconUrl": "http://localhost/admin/rest/space/image/space-3",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "name": "space-3",
+            "rootContentId": "root"
+        }
+    ],
+    "total": 3
+}
+
