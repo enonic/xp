@@ -11,15 +11,14 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
+import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.AbstractMixinJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinConfigJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinDeleteParams;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinGetJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -45,10 +44,6 @@ import static com.enonic.wem.api.schema.mixin.editor.SetMixinEditor.newSetMixinE
 public class MixinResource
     extends AbstractResource
 {
-    public static final String FORMAT_XML = "XML";
-
-    public static final String FORMAT_JSON = "JSON";
-
     private final MixinXmlSerializer mixinXmlSerializer = new MixinXmlSerializer();
 
     private UploadService uploadService;
@@ -60,7 +55,7 @@ public class MixinResource
     }
 
     @GET
-    public AbstractMixinJson get( @QueryParam("mixin") final String name, @QueryParam("format") final String format )
+    public MixinJson get( @QueryParam("qualifiedName") final String name )
     {
         final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName( name );
         final Mixin mixin = fetchMixin( qualifiedMixinName );
@@ -68,22 +63,28 @@ public class MixinResource
         if ( mixin == null )
         {
             String message = String.format( "Mixin [%s] was not found.", qualifiedMixinName );
-            throw new WebApplicationException( Response.serverError().entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
+            throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
+                entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
-        if ( FORMAT_JSON.equalsIgnoreCase( format ) )
+        return new MixinJson( mixin );
+    }
+
+    @GET
+    @Path("config")
+    public MixinConfigJson getConfig( @QueryParam("qualifiedName") final String name )
+    {
+        final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName( name );
+        final Mixin mixin = fetchMixin( qualifiedMixinName );
+
+        if ( mixin == null )
         {
-            return new MixinGetJson( mixin );
+            String message = String.format( "Mixin [%s] was not found.", qualifiedMixinName );
+            throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
+                entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
-        else if ( FORMAT_XML.equalsIgnoreCase( format ) )
-        {
-            return new MixinConfigJson( mixin );
-        }
-        else
-        {
-            String message = String.format( "Response format [%s] doesn't exist.", format );
-            throw new WebApplicationException( Response.serverError().entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
-        }
+
+        return new MixinConfigJson( mixin );
     }
 
     @GET

@@ -14,14 +14,13 @@ import org.mockito.Mockito;
 
 import com.google.common.io.Files;
 
+import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
+import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.AbstractMixinJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinConfigJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinDeleteParams;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinGetJson;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
@@ -44,7 +43,6 @@ import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
-import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -88,7 +86,7 @@ public class MixinResourceTest
     }
 
     @Test
-    public final void test_getMixin_existing_asJson()
+    public final void test_get_mixin()
         throws IOException
     {
         // setup
@@ -100,15 +98,14 @@ public class MixinResourceTest
             Mixins.from( mixin ) );
 
         // execute
-        AbstractMixinJson result = resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString(), MixinResource.FORMAT_JSON );
+        MixinJson result = resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString() );
 
         // verify
-        assertTrue( result instanceof MixinGetJson );
-        assertJsonEquals2( loadTestJson( "get_mixin_format_as_json-result.json" ), objectToJson( result ) );
+        assertJsonEquals2( loadTestJson( "get_mixin-result.json" ), objectToJson( result ) );
     }
 
     @Test
-    public final void test_getMixin_existing_asXml()
+    public final void test_get_mixin_config()
         throws IOException
     {
         // setup
@@ -120,37 +117,31 @@ public class MixinResourceTest
             Mixins.from( mixin ) );
 
         // execute
-        AbstractMixinJson result = resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString(), MixinResource.FORMAT_XML );
+        MixinConfigJson result = resource.getConfig( MY_MIXIN_QUALIFIED_NAME_1.toString() );
 
         // verify
-        assertTrue( result instanceof MixinConfigJson );
-        assertJsonEquals2( loadTestJson( "get_mixin_format_as_xml-result.json" ), objectToJson( result ) );
+        assertJsonEquals2( loadTestJson( "get_mixin_config-result.json" ), objectToJson( result ) );
     }
 
     @Test(expected = WebApplicationException.class)
-    public final void test_getMixin_notFound()
+    public final void test_get_mixin_not_found()
         throws Exception
     {
         // setup
         Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
 
         // execute
-        resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString(), MixinResource.FORMAT_JSON );
+        resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString() );
     }
 
     @Test(expected = WebApplicationException.class)
-    public final void test_getMixin_wrongFormat()
+    public final void test_get_mixin_config_not_found()
     {
         // setup
-        Mixin mixin = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                true ).helpText( "Help text line 1" ).required( true ).build() ).build();
-
-        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) ).thenReturn(
-            Mixins.from( mixin ) );
+        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
 
         // execute
-        resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString(), "not_existed_format" );
+        resource.getConfig( MY_MIXIN_QUALIFIED_NAME_1.toString() );
     }
 
     @Test
