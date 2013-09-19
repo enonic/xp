@@ -1,6 +1,8 @@
 package com.enonic.wem.api.item;
 
 
+import org.joda.time.DateTime;
+
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
@@ -15,6 +17,10 @@ public final class Item
 
     private final ItemPath path;
 
+    private final DateTime createdTime;
+
+    private final DateTime modifiedTime;
+
     private final RootDataSet rootDataSet;
 
     private Item( final Builder builder )
@@ -22,6 +28,8 @@ public final class Item
         this.id = builder.id;
         this.name = builder.name;
         this.path = builder.path;
+        this.createdTime = builder.createdTime;
+        this.modifiedTime = builder.modifiedTime;
         this.rootDataSet = new RootDataSet();
         for ( final Data data : builder.dataSet )
         {
@@ -42,6 +50,16 @@ public final class Item
     public ItemPath path()
     {
         return path;
+    }
+
+    public DateTime createdTime()
+    {
+        return createdTime;
+    }
+
+    public DateTime modifiedTime()
+    {
+        return modifiedTime;
     }
 
     public Property property( final String path )
@@ -72,12 +90,16 @@ public final class Item
 
         private ItemPath path;
 
+        private DateTime createdTime;
+
+        private DateTime modifiedTime;
+
         private RootDataSet dataSet = new RootDataSet();
 
         public Builder( final Item item )
         {
             this.id = item.id;
-            this.name = item.name.toString();
+            this.name = item.name;
             this.dataSet = item.rootDataSet;
         }
 
@@ -96,6 +118,18 @@ public final class Item
         public Builder path( final String value )
         {
             this.path = new ItemPath( value );
+            return this;
+        }
+
+        public Builder createdTime( final DateTime value )
+        {
+            this.createdTime = value;
+            return this;
+        }
+
+        public Builder modifiedTime( final DateTime value )
+        {
+            this.modifiedTime = value;
             return this;
         }
 

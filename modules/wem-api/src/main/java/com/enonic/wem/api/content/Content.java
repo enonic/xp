@@ -145,11 +145,11 @@ public final class Content
         }
         if ( this.createdTime != null )
         {
-            itemBuilder.property( "createdTime", new Value.DateTime( this.createdTime ) );
+            itemBuilder.createdTime( this.createdTime );
         }
         if ( this.modifiedTime != null )
         {
-            itemBuilder.property( "modifiedTime", new Value.DateTime( this.modifiedTime ) );
+            itemBuilder.modifiedTime( this.modifiedTime );
         }
         if ( this.owner != null )
         {
@@ -177,8 +177,8 @@ public final class Content
             id( ContentId.from( item.id().toString() ) ).
             name( item.name() ).
             displayName( item.property( "displayName" ).getString() ).
-            createdTime( item.property( "createdTime" ).getDateTime() ).
-            modifiedTime( item.property( "modifiedTime" ).getDateTime() ).
+            createdTime( item.createdTime() ).
+            modifiedTime( item.modifiedTime() ).
             owner( AccountKey.from( item.property( "owner" ).getString() ).asUser() ).
             modifier( AccountKey.from( item.property( "modifier" ).getString() ).asUser() ).
             type( QualifiedContentTypeName.from( item.property( "type" ).getString() ) ).

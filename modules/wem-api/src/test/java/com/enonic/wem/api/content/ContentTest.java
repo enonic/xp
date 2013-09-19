@@ -502,8 +502,8 @@ public class ContentTest
         assertEquals( "My Content", item.property( "displayName" ).getString() );
         assertEquals( "user:mystore:someuser", item.property( "owner" ).getString() );
         assertEquals( "user:mystore:someotheruser", item.property( "modifier" ).getString() );
-        assertEquals( "2012-12-12T12:00:00", item.property( "createdTime" ).getString() );
-        assertEquals( "2012-12-12T13:00:00", item.property( "modifiedTime" ).getString() );
+        assertEquals( content.getCreatedTime(), item.createdTime() );
+        assertEquals( content.getModifiedTime(), item.modifiedTime() );
         assertEquals( "mymodule:mycty", item.property( "type" ).getString() );
         assertEquals( "1", item.property( "data.myNumber" ).getString() );
         assertEquals( "text", item.property( "data.myText" ).getString() );
