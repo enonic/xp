@@ -76,7 +76,6 @@ module components {
     export var detailPanel:app_browse.ContentBrowseItemPanel;
 }
 window.onload = () => {
-    /*if (getURLParameter("test") == "") {*/
         var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
         var appPanel = new app.ContentAppPanel(appBar);
 
@@ -103,11 +102,4 @@ window.onload = () => {
                     newContentDialog.open();
                 });
         });
-    /*}*/
 };
-
-function getURLParameter(name) {
-    return decodeURI(
-        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-    );
-}
