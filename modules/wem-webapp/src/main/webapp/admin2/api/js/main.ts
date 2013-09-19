@@ -190,14 +190,8 @@
 ///<reference path='schema/content/json/module.ts' />
 ///<reference path='schema/content/module.ts' />
 
-///<reference path='page/Component.ts' />
-///<reference path='page/Image.ts' />
-///<reference path='page/Layout.ts' />
-///<reference path='page/Paragraph.ts' />
-///<reference path='page/Part.ts' />
-///<reference path='page/Video.ts' />
-///<reference path='page/Region.ts' />
-///<reference path='page/Page.ts' />
+///<reference path='page/json/module.ts' />
+///<reference path='page/module.ts' />
 
 ///<reference path='app/wizard/SaveAction.ts' />
 ///<reference path='app/wizard/CloseAction.ts' />

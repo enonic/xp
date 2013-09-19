@@ -1,6 +1,6 @@
 module api_page{
 
-    export class Component {
+    export class Component extends RegionItem {
 
 
     }
