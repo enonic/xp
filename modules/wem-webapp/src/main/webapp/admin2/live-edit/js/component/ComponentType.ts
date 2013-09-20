@@ -6,10 +6,11 @@ interface HighlighterStyle {
     fill:string;
 }
 
-interface Configuration {
+interface TypeConfiguration {
     type:LiveEdit.component.Type;
     typeName:string;
     cssSelector:string;
+    draggable:boolean;
     cursor:string;
     iconCls:string;
     highlighterStyle?: HighlighterStyle;
@@ -46,15 +47,15 @@ module LiveEdit.component {
 
         constructor(type:Type) {
 
-            var config = LiveEdit.component.Configuration[type];
+            var typeConfig:TypeConfiguration = LiveEdit.component.TypeConfiguration[type];
 
             this.setType(type);
-            this.setName(config.typeName);
-            this.setCssSelector(config.cssSelector);
-            this.setIconCls(config.iconCls);
-            this.setCursor(config.cursor);
-            this.setHighlighterStyle(config.highlighterStyle);
-            this.setContextMenuConfig(config.contextMenuConfig);
+            this.setName(typeConfig.typeName);
+            this.setCssSelector(typeConfig.cssSelector);
+            this.setIconCls(typeConfig.iconCls);
+            this.setCursor(typeConfig.cursor);
+            this.setHighlighterStyle(typeConfig.highlighterStyle);
+            this.setContextMenuConfig(typeConfig.contextMenuConfig);
         }
 
         setType(type:Type):void {
@@ -117,11 +118,12 @@ module LiveEdit.component {
 
 
     // fixme: refactor
-    export var Configuration:Configuration[] = [
+    export var TypeConfiguration:TypeConfiguration[] = [
         {
             type: LiveEdit.component.Type.PAGE,
             typeName: 'page',
             cssSelector: '[data-live-edit-type=page]',
+            draggable: false,
             cursor: 'pointer',
             iconCls: 'live-edit-font-icon-page',
             highlighterStyle: {
@@ -135,6 +137,7 @@ module LiveEdit.component {
             type: LiveEdit.component.Type.REGION,
             typeName: 'region',
             cssSelector: '[data-live-edit-type=region]',
+            draggable: false,
             cursor: 'pointer',
             iconCls: 'live-edit-font-icon-region',
             highlighterStyle: {
@@ -149,6 +152,7 @@ module LiveEdit.component {
             type: LiveEdit.component.Type.LAYOUT,
             typeName: 'layout',
             cssSelector: '[data-live-edit-type=layout]',
+            draggable: true,
             cursor: 'move',
             iconCls: 'live-edit-font-icon-layout',
             highlighterStyle: {
@@ -162,6 +166,7 @@ module LiveEdit.component {
             type: LiveEdit.component.Type.PART,
             typeName: 'part',
             cssSelector: '[data-live-edit-type=part]',
+            draggable: true,
             cursor: 'move',
             iconCls: 'live-edit-font-icon-part',
             highlighterStyle: {
@@ -175,6 +180,7 @@ module LiveEdit.component {
             type: LiveEdit.component.Type.IMAGE,
             typeName: 'image',
             cssSelector: '[data-live-edit-type=image]',
+            draggable: true,
             cursor: 'move',
             iconCls: 'live-edit-font-icon-image',
             highlighterStyle: {
@@ -188,6 +194,7 @@ module LiveEdit.component {
             type: LiveEdit.component.Type.PARAGRAPH,
             typeName: 'paragraph',
             cssSelector: '[data-live-edit-type=paragraph]',
+            draggable: true,
             cursor: 'move',
             iconCls: 'live-edit-font-icon-paragraph',
             highlighterStyle: {
@@ -201,6 +208,7 @@ module LiveEdit.component {
             type: LiveEdit.component.Type.CONTENT,
             typeName: 'content',
             cssSelector: '[data-live-edit-type=content]',
+            draggable: false,
             cursor: 'pointer',
             iconCls: 'live-edit-font-icon-content',
             highlighterStyle: {

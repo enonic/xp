@@ -12,22 +12,15 @@ module LiveEdit.component.DragDropSort {
     var CURSOR_AT:any = {left: -10, top: -15};
 
     // Set up selectors for jQuery.sortable configuration.
-    var REGION_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.REGION].cssSelector;
+    var REGION_SELECTOR:string = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.REGION].cssSelector;
 
-    var LAYOUT_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.LAYOUT].cssSelector;
-
-    var PART_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PART].cssSelector;
-
-    var IMAGE_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.IMAGE].cssSelector;
-
-    var PARAGRAPH_SELECTOR:string = LiveEdit.component.Configuration[LiveEdit.component.Type.PARAGRAPH].cssSelector;
+    var LAYOUT_SELECTOR:string = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.LAYOUT].cssSelector;
 
     var CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR:string = '[data-context-window-draggable="true"]';
 
-    var SORTABLE_ITEMS_SELECTOR = LAYOUT_SELECTOR + ',' + PART_SELECTOR + ',' + PARAGRAPH_SELECTOR + ',' + IMAGE_SELECTOR;
+    var SORTABLE_ITEMS_SELECTOR:string = createSortableItemsSelector();
 
     var _isDragging:boolean = false;
-
 
     // fixme: can this be shared with live edit Context Window/Components.js ?
     export function createDragHelperHtml(text:string):string {
@@ -241,12 +234,25 @@ module LiveEdit.component.DragDropSort {
         });
 
         $(window).on('selectParagraphComponent.liveEdit', () => {
-            $(REGION_SELECTOR).sortable('option', 'cancel', LiveEdit.component.Configuration[LiveEdit.component.Type.PARAGRAPH].cssSelector);
+            $(REGION_SELECTOR).sortable('option', 'cancel', LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.PARAGRAPH].cssSelector);
         });
 
         $(window).on('leaveParagraphComponent.liveEdit', () => {
             $(REGION_SELECTOR).sortable('option', 'cancel', '');
         });
+    }
+
+    export function createSortableItemsSelector():string {
+        var config:TypeConfiguration[] = LiveEdit.component.TypeConfiguration;
+        var items:string[] = [];
+
+        for (var i = 0; i < config.length; i++) {
+            if (config[i].draggable) {
+                items.push(config[i].cssSelector);
+            }
+        }
+
+        return items.toString();
     }
 
 }

@@ -7,7 +7,7 @@ module LiveEdit.component.mouseevent {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.Configuration[LiveEdit.component.Type.REGION].cssSelector;
+            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.REGION].cssSelector;
 
             // fixme: this does not belongs here.
             LiveEdit.PlaceholderCreator.renderEmptyRegionPlaceholders();

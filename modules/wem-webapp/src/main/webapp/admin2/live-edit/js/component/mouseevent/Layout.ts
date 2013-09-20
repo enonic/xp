@@ -7,7 +7,7 @@ module LiveEdit.component.mouseevent {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.Configuration[LiveEdit.component.Type.LAYOUT].cssSelector;
+            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.LAYOUT].cssSelector;
 
             this.attachMouseOverEvent();
             this.attachMouseOutEvent();

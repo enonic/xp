@@ -23,7 +23,7 @@ module LiveEdit {
 
         public static renderEmptyRegionPlaceholders():void {
 
-            var allRegionElements:JQuery = $(LiveEdit.component.Configuration[LiveEdit.component.Type.REGION].cssSelector);
+            var allRegionElements:JQuery = $(LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.REGION].cssSelector);
             var region:JQuery;
             var regionComponent:LiveEdit.component.Component;
             var regionIsEmpty:Boolean;

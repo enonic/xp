@@ -12,7 +12,7 @@ module LiveEdit.component.mouseevent {
         constructor() {
             super();
 
-            this.componentCssSelectorFilter = LiveEdit.component.Configuration[LiveEdit.component.Type.PARAGRAPH].cssSelector;
+            this.componentCssSelectorFilter = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.PARAGRAPH].cssSelector;
 
             this.modes = {
                 UNSELECTED: 0,
