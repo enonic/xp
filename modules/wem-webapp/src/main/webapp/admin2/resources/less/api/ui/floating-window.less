@@ -4,6 +4,7 @@
   left: 100px;
   height: 480px;
   width: 320px;
+  z-index: 100;
 
   background-color: #252526;
   box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
@@ -83,4 +84,12 @@
       }
     }
   }
+}
+
+.dragging-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  background-color: rgba(255, 255, 255, 0.5);
 }

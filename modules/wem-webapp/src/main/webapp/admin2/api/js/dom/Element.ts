@@ -31,6 +31,10 @@ module api_dom {
             this.children = [];
         }
 
+        static fromHtmlElement(element:any):Element  {
+            return new Element(null, null, null, new ElementHelper(<HTMLElement>element));
+        }
+
         init() {
             if (!this.isRendered()) {
                 this.afterRender();

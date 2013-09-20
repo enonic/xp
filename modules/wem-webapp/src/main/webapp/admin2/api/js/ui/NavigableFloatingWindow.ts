@@ -6,8 +6,8 @@ module api_ui {
         private items:any[] = [];
 
 
-        constructor() {
-            super({draggable:true, draggableOptions: { handle: ".tab-menu"} });
+        constructor(options:FloatingWindowOptions = {}) {
+            super(jQuery.extend({draggable:true, draggableOptions: { handle: ".tab-menu"} }, options));
 
             this.navigator = new api_ui_tab.TabMenu();
             this.deck = new api_ui.NavigatedDeckPanel(this.navigator);

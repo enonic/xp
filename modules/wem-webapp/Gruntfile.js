@@ -96,11 +96,13 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('default', 'watch');
     grunt.registerTask('all', ['ts']);
-    grunt.registerTask('live_edit_build_all',
-        [
-            'ts:live_edit',
-            'sass:live_edit',
-            'cssmin:live_edit'
-        ]
-    );
+    grunt.registerTask('cm', [
+        'ts:api',
+        'ts:content_manager'
+    ]);
+    grunt.registerTask('live_edit_build_all', [
+        'ts:live_edit',
+        'sass:live_edit',
+        'cssmin:live_edit'
+    ]);
 };

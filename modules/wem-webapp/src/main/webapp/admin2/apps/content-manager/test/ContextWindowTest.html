@@ -47,12 +47,12 @@
 <script type="text/javascript" src="../js/all.js"></script>
 <script type="text/javascript">
     window.onload = function() {
-        var contextwindow = new app_contextwindow.ContextWindow();
+        var contextwindow = new app_contextwindow.ContextWindow({liveEditId: "liveEdit"});
 
         document.body.appendChild(contextwindow.getHTMLElement());
         contextwindow.init();
     }
 </script>
-<iframe src="../../../../dev/live-edit-page/bootstrap.jsp" width="100%" height="100%" style="border:none"></iframe>
+<iframe id="liveEdit" src="../../../../dev/live-edit-page/bootstrap.jsp" width="100%" height="100%" style="border:none"></iframe>
 </body>
 </html>
