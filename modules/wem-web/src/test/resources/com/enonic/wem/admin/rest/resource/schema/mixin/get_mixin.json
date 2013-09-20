@@ -3,7 +3,7 @@
     "displayName" : null,
     "editable" : false,
     "formItemSet" : null,
-    "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1",
+    "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text_1",
     "input" : {
         "customText" : null,
         "formItemType" : "Input",
@@ -15,7 +15,7 @@
             "name" : "TextLine"
         },
         "label" : "Line Text 1",
-        "name" : "input_text1",
+        "name" : "input_text_1",
         "occurrences" : {
             "maximum" : 1,
             "minimum" : 1
@@ -25,5 +25,5 @@
     "layout" : null,
     "mixinReferenceJson" : null,
     "module" : "mymodule",
-    "name" : "input_text1"
+    "name" : "input_text_1"
 }

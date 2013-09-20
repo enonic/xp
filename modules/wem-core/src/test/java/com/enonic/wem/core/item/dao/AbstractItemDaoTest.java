@@ -2,6 +2,7 @@ package com.enonic.wem.core.item.dao;
 
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ public abstract class AbstractItemDaoTest
         try
         {
             dao.storeNew( item, parent );
-            fail( "Expecte exception" );
+            fail( "Expected exception" );
         }
         catch ( Exception e )
         {
@@ -82,21 +83,21 @@ public abstract class AbstractItemDaoTest
         ItemId id = new ItemId();
 
         dao.storeNew( Item.newItem( id, "myItem" ).
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
-            modifiedTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
+            modifiedTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
             build(), parent );
 
         dao.updateExisting( Item.newItem( id, "myItem" ).
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
-            modifiedTime( new DateTime( 2013, 1, 1, 13, 0, 0 ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
+            modifiedTime( new DateTime( 2013, 1, 1, 13, 0, 0, DateTimeZone.UTC ) ).
             build() );
 
         // exercise
         try
         {
             dao.updateExisting( Item.newItem( id, "myItem" ).
-                createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
-                modifiedTime( new DateTime( 2013, 1, 1, 12, 5, 0 ) ).
+                createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
+                modifiedTime( new DateTime( 2013, 1, 1, 12, 5, 0, DateTimeZone.UTC ) ).
                 build() );
 
         }
@@ -104,7 +105,7 @@ public abstract class AbstractItemDaoTest
         {
             assertTrue( e instanceof ItemModifiedSinceRead );
             assertEquals(
-                "Item has been modified since it was read by you. Persisted Item's modified time is [2013-01-01T13:00:00.000+01:00] while yours is [2013-01-01T12:05:00.000+01:00]",
+                "Item has been modified since it was read by you. Persisted Item's modified time is [2013-01-01T13:00:00.000Z] while yours is [2013-01-01T12:05:00.000Z]",
                 e.getMessage() );
         }
     }

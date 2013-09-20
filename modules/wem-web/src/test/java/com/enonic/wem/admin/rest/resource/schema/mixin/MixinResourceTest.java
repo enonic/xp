@@ -2,31 +2,26 @@ package com.enonic.wem.admin.rest.resource.schema.mixin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.Files;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
-import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
-import com.enonic.wem.admin.json.schema.mixin.MixinJson;
-import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateParams;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinDeleteJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinDeleteParams;
+import junit.framework.Assert;
+
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
+import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
@@ -35,22 +30,20 @@ import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
 
-import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class MixinResourceTest
-    extends JsonTestHelper
+    extends AbstractResourceTest
 {
-    private static QualifiedMixinName MY_MIXIN_QUALIFIED_NAME_1 = new QualifiedMixinName( "mymodule:input_text1" );
+    private static QualifiedMixinName MY_MIXIN_QUALIFIED_NAME_1 = new QualifiedMixinName( "mymodule:input_text_1" );
 
     private static QualifiedMixinName MY_MIXIN_QUALIFIED_NAME_2 = new QualifiedMixinName( "othermodule:text_area_1" );
 
@@ -67,88 +60,96 @@ public class MixinResourceTest
     @Before
     public void setup()
     {
-        this.client = Mockito.mock( Client.class );
-        resource.setClient( client );
-
-        this.uploadService = Mockito.mock( UploadService.class );
-        this.resource.setUploadService( uploadService );
-
         mockCurrentContextHttpRequest();
     }
 
-    private void mockCurrentContextHttpRequest()
+    @Override
+    protected Object getResourceInstance()
     {
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( req.getScheme() ).thenReturn( "http" );
-        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
-        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
+        client = Mockito.mock( Client.class );
+        resource = new MixinResource();
+        resource.setClient( client );
+
+        uploadService = Mockito.mock( UploadService.class );
+        resource.setUploadService( uploadService );
+
+        return resource;
     }
 
     @Test
     public final void test_get_mixin()
-        throws IOException
+        throws Exception
     {
-        // setup
         Mixin mixin = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
                 true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) ).thenReturn(
-            Mixins.from( mixin ) );
+        Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
-        // execute
-        MixinJson result = resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString() );
+        String response =
+            resource().path( "schema/mixin" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
 
-        // verify
-        assertJsonEquals2( loadTestJson( "get_mixin-result.json" ), objectToJson( result ) );
+        assertJson( "get_mixin.json", response );
     }
 
     @Test
     public final void test_get_mixin_config()
-        throws IOException
+        throws Exception
     {
-        // setup
         Mixin mixin = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
                 true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( mixin().get().names( QualifiedMixinNames.from( MY_MIXIN_QUALIFIED_NAME_1 ) ) ) ).thenReturn(
-            Mixins.from( mixin ) );
+        Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
-        // execute
-        MixinConfigJson result = resource.getConfig( MY_MIXIN_QUALIFIED_NAME_1.toString() );
+        String result = resource().path( "schema/mixin/config" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
+            String.class );
 
-        // verify
-        assertJsonEquals2( loadTestJson( "get_mixin_config-result.json" ), objectToJson( result ) );
-    }
-
-    @Test(expected = WebApplicationException.class)
-    public final void test_get_mixin_not_found()
-        throws Exception
-    {
-        // setup
-        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
-
-        // execute
-        resource.get( MY_MIXIN_QUALIFIED_NAME_1.toString() );
-    }
-
-    @Test(expected = WebApplicationException.class)
-    public final void test_get_mixin_config_not_found()
-    {
-        // setup
-        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
-
-        // execute
-        resource.getConfig( MY_MIXIN_QUALIFIED_NAME_1.toString() );
+        assertJson( "get_mixin_config.json", result );
     }
 
     @Test
-    public final void test_listMixins()
-        throws IOException
+    public final void test_get_mixin_not_found()
+        throws Exception
     {
-        // setup
+        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        try
+        {
+            String result =
+                resource().path( "schema/mixin" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
+
+            Assert.assertFalse( "Exception should've been thrown already", true );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            Assert.assertEquals( 404, e.getResponse().getStatus() );
+            Assert.assertEquals( "Mixin [mymodule:input_text_1] was not found.", e.getResponse().getEntity( String.class ) );
+        }
+    }
+
+    @Test
+    public final void test_get_mixin_config_not_found()
+    {
+        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        try
+        {
+            String result =
+                resource().path( "schema/mixin/config" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
+                    String.class );
+
+            Assert.assertFalse( "Exception should've been thrown already", true );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            Assert.assertEquals( 404, e.getResponse().getStatus() );
+            Assert.assertEquals( "Mixin [mymodule:input_text_1] was not found.", e.getResponse().getEntity( String.class ) );
+        }
+    }
+
+    @Test
+    public final void test_list_mixins()
+        throws Exception
+    {
         Mixin mixin1 = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
                 true ).helpText( "Help text line 1" ).required( true ).build() ).build();
@@ -157,35 +158,51 @@ public class MixinResourceTest
             newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getLocalName() ).inputType( TEXT_AREA ).label( "Text Area" ).required(
                 true ).helpText( "Help text area" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( mixin().get().all() ) ).thenReturn( Mixins.from( mixin1, mixin2 ) );
+        Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
-        // execute
-        MixinListJson result = this.resource.list();
+        String result = resource().path( "schema/mixin/list" ).get( String.class );
 
-        // verify
-        assertJsonEquals2( loadTestJson( "list_mixins-result.json" ), objectToJson( result ) );
+        assertJson( "list_mixins.json", result );
     }
 
     @Test
-    public void test_createMixin()
+    public void test_create_mixin()
         throws Exception
     {
         // setup
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
 
-        MixinCreateOrUpdateParams params = new MixinCreateOrUpdateParams();
-        params.setMixin( loadTestFile( "create_mixin_xml-param.txt" ) );
-
-        // execute
-        MixinCreateOrUpdateJson result = resource.create( params );
-
-        // verify
-        assertJsonEquals2( loadTestJson( "create_mixin-result.json" ), objectToJson( result ) );
+        String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
+                                                                         MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "create_mixin.json", result );
         verify( client, times( 1 ) ).execute( isA( CreateMixin.class ) );
     }
 
     @Test
-    public void test_createMixin_withIcon()
+    public void test_create_mixin_already_exists()
+        throws Exception
+    {
+        Mixin mixin = newMixin().module( Module.SYSTEM.getName() ).formItem(
+            newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
+
+        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
+
+        try
+        {
+            String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
+                                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+            Assert.assertFalse( "Exception should've been thrown already", true );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            Assert.assertEquals( 409, e.getResponse().getStatus() );
+            Assert.assertEquals( "Mixin [mymodule:my_set] already exists.", e.getResponse().getEntity( String.class ) );
+            verify( client, never() ).execute( isA( CreateMixin.class ) );
+        }
+    }
+
+    @Test
+    public void test_create_mixin_with_icon()
         throws Exception
     {
         // setup
@@ -193,74 +210,74 @@ public class MixinResourceTest
 
         uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
 
-        MixinCreateOrUpdateParams params = new MixinCreateOrUpdateParams();
-        params.setMixin( loadTestFile( "create_mixin_xml-param.txt" ) );
-        params.setIconReference( "edc1af66-ecb4-4f8a-8df4-0738418f84fc" );
+        String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_with_icon_params.json" ),
+                                                                         MediaType.APPLICATION_JSON_TYPE ).post( String.class );
 
-        // execute
-        MixinCreateOrUpdateJson result = resource.create( params );
-
-        // verify
-        assertJsonEquals2( loadTestJson( "create_mixin-result.json" ), objectToJson( result ) );
+        assertJson( "create_mixin.json", result );
+        verify( uploadService, times( 1 ) ).getItem( "edc1af66-ecb4-4f8a-8df4-0738418f84fc" );
         verify( client, times( 1 ) ).execute( isA( CreateMixin.class ) );
     }
 
     @Test
-    public void test_updateMixin()
+    public void test_update_mixin()
         throws Exception
     {
-        // setup
         Mixin mixin = newMixin().module( Module.SYSTEM.getName() ).formItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
-        MixinCreateOrUpdateParams params = new MixinCreateOrUpdateParams();
-        params.setMixin( loadTestFile( "create_mixin_xml-param.txt" ) );
+        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
 
-        // execute
-        MixinCreateOrUpdateJson result = resource.update( params );
-
-        // verify
-        assertJsonEquals2( loadTestJson( "update_mixin-result.json" ), objectToJson( result ) );
+        String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_with_icon_params.json" ),
+                                                                         MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "update_mixin.json", result );
+        verify( uploadService, times( 1 ) ).getItem( "edc1af66-ecb4-4f8a-8df4-0738418f84fc" );
         verify( client, times( 1 ) ).execute( isA( UpdateMixin.class ) );
     }
 
     @Test
-    public void test_deleteMixin_single()
+    public void test_update_mixin_not_found()
         throws Exception
     {
-        // setup
-        Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).thenReturn( DeleteMixinResult.SUCCESS );
-
-        MixinDeleteParams params = new MixinDeleteParams();
-        params.setQualifiedMixinNames( Arrays.asList( "my:existing_mixin" ) );
-
-        // execute
-        MixinDeleteJson result = resource.delete( params );
-
-        // verify
-        assertJsonEquals2( loadTestJson( "delete_mixin_single-result.json" ), objectToJson( result ) );
+        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        try
+        {
+            String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
+                                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+            Assert.assertFalse( "Exception should've been thrown already", true );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            Assert.assertEquals( 404, e.getResponse().getStatus() );
+            Assert.assertEquals( "Mixin [mymodule:my_set] not found.", e.getResponse().getEntity( String.class ) );
+            verify( client, never() ).execute( isA( UpdateMixin.class ) );
+        }
     }
 
     @Test
-    public void test_deleteMixin_Multiple()
+    public void test_delete_single_mixin()
         throws Exception
     {
-        // setup
+        Mockito.when( client.execute( Mockito.isA( DeleteMixin.class ) ) ).thenReturn( DeleteMixinResult.SUCCESS );
+
+        String result = resource().path( "schema/mixin/delete" ).entity( readFromFile( "delete_single_mixin_params.json" ),
+                                                                         MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "delete_single_mixin.json", result );
+    }
+
+    @Test
+    public void test_delete_multiple_mixins()
+        throws Exception
+    {
         Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).
             thenReturn( DeleteMixinResult.SUCCESS ).
             thenReturn( DeleteMixinResult.NOT_FOUND ).
             thenReturn( DeleteMixinResult.UNABLE_TO_DELETE );
 
-        MixinDeleteParams params = new MixinDeleteParams();
-        params.setQualifiedMixinNames( Arrays.asList( "my:existing_mixin", "my:not_found_mixin", "my:being_used_mixin" ) );
-
-        // execute
-        MixinDeleteJson result = resource.delete( params );
-
-        // verify
-        assertJsonEquals2( loadTestJson( "delete_mixin_multiple-result.json" ), objectToJson( result ) );
+        String result = resource().path( "schema/mixin/delete" ).entity( readFromFile( "delete_multiple_mixins_params.json" ),
+                                                                         MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "delete_multiple_mixins.json", result );
     }
 
     private void uploadFile( String id, String name, byte[] data, String type )

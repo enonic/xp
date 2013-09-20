@@ -113,8 +113,9 @@ public class MixinResource
 
         if ( fetchMixin( mixin.getQualifiedName() ) != null )
         {
+            String message = String.format( "Mixin [%s] already exists.", mixin.getQualifiedName() );
             throw new WebApplicationException(
-                Response.serverError().entity( "Mixin already exists." ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
+                Response.status( Response.Status.CONFLICT ).entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
         final CreateMixin createCommand =
@@ -142,8 +143,9 @@ public class MixinResource
 
         if ( fetchMixin( mixin.getQualifiedName() ) == null )
         {
+            String message = String.format( "Mixin [%s] not found.", mixin.getQualifiedName() );
             throw new WebApplicationException(
-                Response.serverError().entity( "Mixin doesn't exist." ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
+                Response.status( Response.Status.NOT_FOUND ).entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
 
         final SetMixinEditor editor = newSetMixinEditor().
