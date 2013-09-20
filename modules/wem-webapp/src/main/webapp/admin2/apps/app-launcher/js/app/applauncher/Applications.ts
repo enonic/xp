@@ -1,4 +1,4 @@
-module app_model {
+module app_launcher {
 
     export class Applications {
 

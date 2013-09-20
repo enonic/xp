@@ -1,8 +1,8 @@
-module app_view {
+module app_launcher {
 
     export class AppInfo extends api_dom.DivEl {
-        private appInfoName: api_dom.H3El;
-        private appInfoDescription: api_dom.DivEl;
+        private appInfoName:api_dom.H3El;
+        private appInfoDescription:api_dom.DivEl;
 
         constructor() {
             super(null, 'app-info');
@@ -14,7 +14,7 @@ module app_view {
             this.appendChild(this.appInfoDescription);
         }
 
-        showAppInfo(application: app_model.Application) {
+        showAppInfo(application:Application) {
             this.appInfoName.setText(application.getName());
             this.appInfoDescription.getEl().setInnerHtml(application.getDescription());
         }

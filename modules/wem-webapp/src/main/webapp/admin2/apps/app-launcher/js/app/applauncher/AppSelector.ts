@@ -1,14 +1,14 @@
-module app_view {
+module app_launcher {
 
     export class AppSelector extends api_dom.DivEl {
         private selectedAppIndex:number;
-        private apps:app_model.Application[];
+        private apps:Application[];
         private appTiles:{[name: string]: AppTile;};
         private listeners:AppSelectorListener[] = [];
         private emptyMessagePlaceholder:api_dom.DivEl;
         private homeAppSelector:api_dom.DivEl;
 
-        constructor(applications:app_model.Application[]) {
+        constructor(applications:Application[]) {
             super();
             this.apps = applications;
             this.appTiles = {};
@@ -48,7 +48,7 @@ module app_view {
                 return false;
             }));
             api_ui.KeyBindings.bindKey(new api_ui.KeyBinding('return', (e:ExtendedKeyboardEvent, combo:string)=> {
-                var app:app_model.Application;
+                var app:Application;
                 if (this.selectedAppIndex >= 0) {
                     app = this.apps[this.selectedAppIndex];
                     this.notifyAppSelected(app);
@@ -88,8 +88,8 @@ module app_view {
             this.highlightAppTile(this.apps[idx], idx);
         }
 
-        private addAppTiles(applications:app_model.Application[], tilesPlaceholder:api_dom.DivEl) {
-            applications.forEach((application:app_model.Application, idx:number) => {
+        private addAppTiles(applications:Application[], tilesPlaceholder:api_dom.DivEl) {
+            applications.forEach((application:Application, idx:number) => {
                 var appTile = new AppTile(application);
 
                 appTile.onMouseEnter((event:MouseEvent) => {
@@ -107,7 +107,7 @@ module app_view {
             });
         }
 
-        private highlightAppTile(application:app_model.Application, index:number, appTile?:AppTile) {
+        private highlightAppTile(application:Application, index:number, appTile?:AppTile) {
             if (!appTile) {
                 appTile = this.appTiles[application.getName()];
             }
@@ -121,7 +121,7 @@ module app_view {
             this.notifyAppHighlighted(application);
         }
 
-        private unhighlightAppTile(application:app_model.Application, index:number, appTile?:AppTile) {
+        private unhighlightAppTile(application:Application, index:number, appTile?:AppTile) {
             if (!appTile) {
                 appTile = this.appTiles[application.getName()];
             }
@@ -135,7 +135,7 @@ module app_view {
         private filterTiles(value:string) {
             var valueLowerCased = value.toLowerCase();
             var anyMatch = false;
-            this.apps.forEach((app:app_model.Application) => {
+            this.apps.forEach((app:Application) => {
                 var isMatch = app.getName().toLowerCase().indexOf(valueLowerCased) > -1;
                 if (isMatch) {
                     this.showAppTile(app.getName());
@@ -166,19 +166,19 @@ module app_view {
             return this.appTiles[this.apps[appIndex].getName()].isVisible();
         }
 
-        private notifyAppHighlighted(app:app_model.Application) {
+        private notifyAppHighlighted(app:Application) {
             this.listeners.forEach((listener:AppSelectorListener)=> {
                 listener.onAppHighlighted(app);
             });
         }
 
-        private notifyAppUnhighlighted(app:app_model.Application) {
+        private notifyAppUnhighlighted(app:Application) {
             this.listeners.forEach((listener:AppSelectorListener)=> {
                 listener.onAppUnhighlighted(app);
             });
         }
 
-        private notifyAppSelected(app:app_model.Application) {
+        private notifyAppSelected(app:Application) {
             this.listeners.forEach((listener:AppSelectorListener)=> {
                 listener.onAppSelected(app);
             });

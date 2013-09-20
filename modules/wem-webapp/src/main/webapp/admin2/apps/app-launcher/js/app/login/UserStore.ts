@@ -1,4 +1,4 @@
-module app_model {
+module app_login {
 
     export class UserStore {
         private name:string;

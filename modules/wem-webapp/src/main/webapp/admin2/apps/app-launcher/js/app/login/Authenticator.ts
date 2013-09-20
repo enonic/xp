@@ -1,4 +1,4 @@
-module app_model {
+module app_login {
 
     export interface Authenticator {
         authenticate(userName:string, userStore:UserStore, password:string):boolean;

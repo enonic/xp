@@ -1,4 +1,4 @@
-module app_view {
+module app_home {
 
     export class CenterPanel extends api_dom.DivEl {
 

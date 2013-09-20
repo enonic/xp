@@ -1,4 +1,4 @@
-module app_view {
+module app_home {
 
     export class LinksContainer extends api_dom.DivEl {
         private links:{text:string; url:string;}[];

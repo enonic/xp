@@ -1,13 +1,13 @@
-module app_view {
+module app_launcher {
 
     export class AppLauncher {
 
-        private mainContainer:HomeMainContainer;
+        private mainContainer:api_dom.DivEl;
         private adminApplicationFrames:api_dom.DivEl;
         private appIframes:{[name: string]: api_dom.IFrameEl;};
         private lostConnectionDetector:app_launcher.LostConnectionDetector;
 
-        constructor(mainContainer:HomeMainContainer) {
+        constructor(mainContainer:api_dom.DivEl) {
             this.mainContainer = mainContainer;
             this.appIframes = {};
 
@@ -31,7 +31,7 @@ module app_view {
             api_dom.Body.get().appendChild(this.adminApplicationFrames);
         }
 
-        loadApplication(app:app_model.Application) {
+        loadApplication(app:Application) {
             if (!app.getAppUrl()) {
                 console.warn('Missing URL for app "' + app.getName() + '". Cannot be opened.');
                 return;

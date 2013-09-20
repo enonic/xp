@@ -1,4 +1,4 @@
-module app_view {
+module app_login {
 
     export class LoginForm extends api_dom.DivEl {
 
@@ -8,11 +8,11 @@ module app_view {
         private passwordInput:api_ui.PasswordInput;
         private loginButton:api_ui.Button;
 
-        private authenticator:app_model.Authenticator;
-        private userStores:{[userStoreId: string]: app_model.UserStore;};
-        private onUserAuthenticatedHandler:(userName:string, userStore:app_model.UserStore) => void;
+        private authenticator:Authenticator;
+        private userStores:{[userStoreId: string]: UserStore;};
+        private onUserAuthenticatedHandler:(userName:string, userStore:UserStore) => void;
 
-        constructor(authenticator:app_model.Authenticator) {
+        constructor(authenticator:Authenticator) {
             super(null, 'login-form');
             this.authenticator = authenticator;
             this.userStores = {};
@@ -55,8 +55,8 @@ module app_view {
             this.licensedTo.getEl().setInnerHtml(value);
         }
 
-        setUserStores(userStores:app_model.UserStore[], defaultUserStore?:app_model.UserStore) {
-            userStores.forEach((userStore:app_model.UserStore) => {
+        setUserStores(userStores:UserStore[], defaultUserStore?:UserStore) {
+            userStores.forEach((userStore:UserStore) => {
                 this.userStoresDropdown.addOption(userStore.getId(), userStore.getName());
                 this.userStores[userStore.getId()] = userStore;
             });
@@ -65,7 +65,7 @@ module app_view {
             }
         }
 
-        onUserAuthenticated(handler:(userName:string, userStore:app_model.UserStore) => void) {
+        onUserAuthenticated(handler:(userName:string, userStore:UserStore) => void) {
             this.onUserAuthenticatedHandler = handler;
         }
 

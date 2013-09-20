@@ -2,35 +2,34 @@
 ///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='app/model/Application.ts' />
-///<reference path='app/model/Applications.ts' />
-///<reference path='app/model/UserStore.ts' />
-///<reference path='app/model/Authenticator.ts' />
-///<reference path='app/view/AppTile.ts' />
-///<reference path='app/view/Branding.ts' />
-///<reference path='app/view/CenterPanel.ts' />
-///<reference path='app/view/HomeMainContainer.ts' />
-///<reference path='app/view/LinksContainer.ts' />
-///<reference path='app/view/InstallationInfo.ts' />
-///<reference path='app/view/AppInfo.ts' />
-///<reference path='app/view/LoginForm.ts' />
-///<reference path='app/view/AppSelectorListener.ts' />
-///<reference path='app/view/AppSelector.ts' />
-///<reference path='app/view/AppLauncher.ts' />
-///<reference path='app/view/VersionInfo.ts' />
-
-///<reference path='app/launcher/LostConnectionDetector.ts' />
-///<reference path='app/launcher/LostConnectionDetectorListener.ts' />
+///<reference path='app/home/Branding.ts' />
+///<reference path='app/home/CenterPanel.ts' />
+///<reference path='app/home/HomeMainContainer.ts' />
+///<reference path='app/home/LinksContainer.ts' />
+///<reference path='app/home/InstallationInfo.ts' />
+///<reference path='app/home/VersionInfo.ts' />
+///<reference path='app/applauncher/Application.ts' />
+///<reference path='app/applauncher/Applications.ts' />
+///<reference path='app/applauncher/AppTile.ts' />
+///<reference path='app/applauncher/AppInfo.ts' />
+///<reference path='app/applauncher/AppSelectorListener.ts' />
+///<reference path='app/applauncher/AppSelector.ts' />
+///<reference path='app/applauncher/AppLauncher.ts' />
+///<reference path='app/applauncher/LostConnectionDetector.ts' />
+///<reference path='app/applauncher/LostConnectionDetectorListener.ts' />
+///<reference path='app/login/LoginForm.ts' />
+///<reference path='app/login/UserStore.ts' />
+///<reference path='app/login/Authenticator.ts' />
 
 declare var Ext;
 declare var Admin;
 declare var CONFIG;
 
-var USERSTORES:app_model.UserStore[] = [
-    new app_model.UserStore('ABC', '1'),
-    new app_model.UserStore('LDAP', '2'),
-    new app_model.UserStore('Local', '3'),
-    new app_model.UserStore('Some very long value', '4')
+var USERSTORES:app_login.UserStore[] = [
+    new app_login.UserStore('ABC', '1'),
+    new app_login.UserStore('LDAP', '2'),
+    new app_login.UserStore('Local', '3'),
+    new app_login.UserStore('Some very long value', '4')
 ];
 
 function isUserLoggedIn():boolean {
@@ -40,8 +39,8 @@ function isUserLoggedIn():boolean {
 
 window.onload = () => {
     var userLoggedIn = isUserLoggedIn();
-    var mainContainer = new app_view.HomeMainContainer(api_util.getAbsoluteUri('admin/rest/ui/background.jpg'));
-    var appLauncher = new app_view.AppLauncher(mainContainer);
+    var mainContainer = new app_home.HomeMainContainer(api_util.getAbsoluteUri('admin/rest/ui/background.jpg'));
+    var appLauncher = new app_launcher.AppLauncher(mainContainer);
 
     var homeBrandingPanel = mainContainer.getBrandingPanel();
     api_remote_util.RemoteSystemService.system_getSystemInfo({}, (result:api_remote_util.SystemGetSystemInfoResult) => {
@@ -49,30 +48,30 @@ window.onload = () => {
         homeBrandingPanel.setVersion(result.version);
     });
 
-    var linksPanel = new app_view.LinksContainer().
+    var linksPanel = new app_home.LinksContainer().
         addLink('Community', 'http://www.enonic.com/community').
         addLink('Documentation', 'http://www.enonic.com/docs').
         addLink('About', 'https://enonic.com/en/home/enonic-cms');
 
-    var appInfoPanel = new app_view.AppInfo();
+    var appInfoPanel = new app_launcher.AppInfo();
 
-    var appSelector = new app_view.AppSelector(app_model.Applications.getAllApps());
+    var appSelector = new app_launcher.AppSelector(app_launcher.Applications.getAllApps());
     appSelector.addListener({
-        onAppHighlighted: (app:app_model.Application) => {
+        onAppHighlighted: (app:app_launcher.Application) => {
             appInfoPanel.showAppInfo(app);
         },
-        onAppUnhighlighted: (app:app_model.Application) => {
+        onAppUnhighlighted: (app:app_launcher.Application) => {
             appInfoPanel.hideAppInfo();
         },
-        onAppSelected: (app:app_model.Application) => {
+        onAppSelected: (app:app_launcher.Application) => {
             appLauncher.loadApplication(app);
         }
     });
 
-    var loginPanel = new app_view.LoginForm(new app_model.AuthenticatorImpl());
+    var loginPanel = new app_login.LoginForm(new app_login.AuthenticatorImpl());
     loginPanel.setLicensedTo('Licensed to Enonic');
     loginPanel.setUserStores(USERSTORES, USERSTORES[1]);
-    loginPanel.onUserAuthenticated((userName:string, userStore:app_model.UserStore) => {
+    loginPanel.onUserAuthenticated((userName:string, userStore:app_login.UserStore) => {
         console.log('User logged in', userName, userStore);
         api_util.CookieHelper.setCookie('dummy_userIsLoggedIn', 'true');
         loginPanel.hide();

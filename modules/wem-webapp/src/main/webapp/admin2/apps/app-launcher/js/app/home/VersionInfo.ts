@@ -1,4 +1,4 @@
-module app_view {
+module app_home {
 
     export class VersionInfo extends api_dom.DivEl {
 
@@ -8,7 +8,7 @@ module app_view {
             super(null, 'version-info');
         }
 
-        setVersion(version: string): void {
+        setVersion(version:string):void {
             this.version = version;
             this.getEl().setInnerHtml(version);
         }

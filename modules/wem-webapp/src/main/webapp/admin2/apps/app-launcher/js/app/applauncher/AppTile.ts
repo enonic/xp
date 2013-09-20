@@ -1,9 +1,9 @@
-module app_view {
+module app_launcher {
 
     export class AppTile extends api_dom.DivEl {
-        private app:app_model.Application;
+        private app:Application;
 
-        constructor(application:app_model.Application) {
+        constructor(application:Application) {
             super(null, 'app-tile');
             this.app = application;
 
@@ -16,7 +16,7 @@ module app_view {
             nameContainer.getEl().setInnerHtml(application.getName());
 
             var countContainer = new api_dom.DivEl(null, 'tab-count-container');
-            countContainer.getEl().setInnerHtml(''+application.getOpenTabs());
+            countContainer.getEl().setInnerHtml('' + application.getOpenTabs());
             countContainer.hide();
 
             this.appendChild(imgContainer);
