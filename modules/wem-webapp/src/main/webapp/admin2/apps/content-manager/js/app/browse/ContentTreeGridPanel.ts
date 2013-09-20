@@ -41,8 +41,11 @@ module app_browse {
 
             this.addListener({
                 onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
-                new app_browse.EditContentEvent([<any>event.clickedModel]).fire();
-            }});
+                    new app_browse.EditContentEvent([<any>event.clickedModel]).fire();
+                },
+                onSelectionChanged: (event)=> {
+                }
+            });
         }
 
         private createColumns() {

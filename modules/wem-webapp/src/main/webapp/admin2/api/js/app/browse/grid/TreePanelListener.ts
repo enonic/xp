@@ -2,11 +2,11 @@ module api_app_browse_grid {
 
     export interface TreePanelListener {
 
-        onSelectionChanged?(event:TreeSelectionChangedEvent);
+        onSelectionChanged(event:TreeSelectionChangedEvent);
 
-        onItemDoubleClicked?(event:TreeItemDoubleClickedEvent);
+        onItemDoubleClicked(event:TreeItemDoubleClickedEvent);
 
-        onShowContextMenu?(event:TreeShowContextMenuEvent);
+        onShowContextMenu(event:TreeShowContextMenuEvent);
     }
 
     export interface TreeSelectionChangedEvent {

@@ -12,7 +12,7 @@ module app_launcher {
         constructor(pollIntervalMs:number = 5000) {
             this.pollIntervalMs = pollIntervalMs;
 
-            this.addListener(api_app.AppBridge.instance());
+            this.addListener(api_app.AppManager.instance());
         }
 
         startPolling() {

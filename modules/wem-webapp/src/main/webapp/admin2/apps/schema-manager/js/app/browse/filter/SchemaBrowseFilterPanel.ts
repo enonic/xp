@@ -13,22 +13,23 @@ module app_browse_filter {
 
             super([facet1]);
 
-            this.addListener({onSearch: (values:{[s:string] : string[]; })=> {
-                var params = app_browse.createLoadContentParams(values);
-                api_remote_schema.RemoteSchemaService.schema_list(params, (response:api_remote_schema.ListResult) => {
-                    if (this.hasFilterSet()) {
-                        new SchemaBrowseSearchEvent(params).fire();
-                    } else {
-                        new SchemaBrowseResetEvent().fire();
-                    }
-                    //TODO: update filter facets when they are implemented
-                });
+            this.addListener({
+                onSearch: (values:{[s:string] : string[]; })=> {
+                    var params = app_browse.createLoadContentParams(values);
+                    api_remote_schema.RemoteSchemaService.schema_list(params, (response:api_remote_schema.ListResult) => {
+                        if (this.hasFilterSet()) {
+                            new SchemaBrowseSearchEvent(params).fire();
+                        } else {
+                            new SchemaBrowseResetEvent().fire();
+                        }
+                        //TODO: update filter facets when they are implemented
+                    });
 
-            }});
-            this.addListener({onReset: ()=> {
-                //TODO: reset filter facets when they are implemented
-                new SchemaBrowseResetEvent().fire();
-            }});
+                },
+                onReset: ()=> {
+                    //TODO: reset filter facets when they are implemented
+                    new SchemaBrowseResetEvent().fire();
+                }});
         }
     }
 }

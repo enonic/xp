@@ -2,7 +2,7 @@ module api_ui {
 
     export interface DeckPanelListener extends api_event.Listener {
 
-        onPanelShown?(event:PanelShownEvent);
+        onPanelShown(event:PanelShownEvent);
 
     }
 

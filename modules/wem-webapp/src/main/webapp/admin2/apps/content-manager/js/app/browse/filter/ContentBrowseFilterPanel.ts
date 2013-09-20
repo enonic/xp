@@ -10,17 +10,22 @@ module app_browse_filter {
 
             super(null, [contentTypeFacets, spaceFacets, lastModifiedFacets]);
 
-            this.addListener({ onReset: ()=> {
+            this.addListener(
+                {
+                    onReset: ()=> {
 
-                var params = app_browse.createLoadContentParams({});
+                        var params = app_browse.createLoadContentParams({});
 
-                api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
-                    // set facet data
-                    this.updateFacets(api_facet.FacetFactory.createFacets(response.facets));
-                });
-                new ContentBrowseResetEvent().fire();
-            }});
-
+                        api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
+                            // set facet data
+                            this.updateFacets(api_facet.FacetFactory.createFacets(response.facets));
+                        });
+                        new ContentBrowseResetEvent().fire();
+                    },
+                    onSearch: (values)=> {
+                    }
+                }
+            );
         }
 
         handleSearch(values:{[s:string] : string[]; }) {

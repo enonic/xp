@@ -1,26 +1,25 @@
 module api_app {
 
-    export class AppBridge implements api_event.Observable {
-        private static _instance:AppBridge = null;
-        private showLauncherHandler:()=>void;
+    export class AppManager implements api_event.Observable {
+        private static _instance:api_app.AppManager = null;
 
-        private listeners:AppBridgeListener[] = [];
+        private listeners:api_app.AppManagerListener[] = [];
 
         constructor() {
-            AppBridge._instance = this;
+            api_app.AppManager._instance = this;
         }
 
         showLauncher():void {
             this.notifyShowLauncher();
         }
 
-        addListener(listener:AppBridgeListener) {
+        addListener(listener:api_app.AppManagerListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:AppBridgeListener) {
+        removeListener(listener:api_app.AppManagerListener) {
             this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -33,7 +32,7 @@ module api_app {
         }
 
         private notifyConnectionLost() {
-            this.listeners.forEach((listener:AppBridgeListener) => {
+            this.listeners.forEach((listener:api_app.AppManagerListener) => {
                 if (listener.onConnectionLost) {
                     listener.onConnectionLost();
                 }
@@ -41,7 +40,7 @@ module api_app {
         }
 
         private notifyConnectionRestored() {
-            this.listeners.forEach((listener:AppBridgeListener) => {
+            this.listeners.forEach((listener:api_app.AppManagerListener) => {
                 if (listener.onConnectionRestored) {
                     listener.onConnectionRestored();
                 }
@@ -49,28 +48,27 @@ module api_app {
         }
 
         private notifyShowLauncher() {
-            this.listeners.forEach((listener:AppBridgeListener) => {
+            this.listeners.forEach((listener:api_app.AppManagerListener) => {
                 if (listener.onShowLauncher) {
                     listener.onShowLauncher();
                 }
             });
         }
 
-        static instance():AppBridge {
-            if (AppBridge._instance) {
-                return AppBridge._instance;
+        static instance():api_app.AppManager {
+            if (api_app.AppManager._instance) {
+                return api_app.AppManager._instance;
             } else if (window !== window.parent) {
                 // look for instance in parent frame
-
                 var apiAppModule = (<any> window.parent).api_app;
-                if (apiAppModule && apiAppModule.AppBridge) {
-                    var parentAppBridge = <AppBridge> apiAppModule.AppBridge.instance();
-                    if (parentAppBridge) {
-                        AppBridge._instance = parentAppBridge;
+                if (apiAppModule && apiAppModule.AppManager) {
+                    var parentAppManager = <api_app.AppManager> apiAppModule.AppManager._instance;
+                    if (parentAppManager) {
+                        api_app.AppManager._instance = parentAppManager;
                     }
                 }
             }
-            return AppBridge._instance;
+           return api_app.AppManager._instance;
         }
     }
 }

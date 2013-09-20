@@ -4,11 +4,9 @@ module app_view {
         private selectedAppIndex:number;
         private apps:app_model.Application[];
         private appTiles:{[name: string]: AppTile;};
-        private onAppMouseEnterHandler:(app:app_model.Application) => void;
-        private onAppMouseLeaveHandler:(app:app_model.Application) => void;
-        private onAppSelectedHandler:(app:app_model.Application) => void;
+        private listeners:AppSelectorListener[] = [];
         private emptyMessagePlaceholder:api_dom.DivEl;
-        private homeAppSelector: api_dom.DivEl;
+        private homeAppSelector:api_dom.DivEl;
 
         constructor(applications:app_model.Application[]) {
             super();
@@ -53,21 +51,19 @@ module app_view {
                 var app:app_model.Application;
                 if (this.selectedAppIndex >= 0) {
                     app = this.apps[this.selectedAppIndex];
-                    this.appSelected(app);
+                    this.notifyAppSelected(app);
                 }
                 return false;
             }));
         }
 
+        addListener(listener:AppSelectorListener) {
+            this.listeners.push(listener);
+        }
+
         afterRender() {
             super.afterRender();
             this.homeAppSelector.addClass('fade-in-and-scale-up');
-        }
-
-        private appSelected(app:app_model.Application) {
-            if (this.onAppSelectedHandler) {
-                this.onAppSelectedHandler(app);
-            }
         }
 
         private highlightNextAppTile() {
@@ -103,7 +99,7 @@ module app_view {
                     this.unhighlightAppTile(application, idx, appTile);
                 });
                 appTile.getEl().addEventListener("click", (evt:Event) => {
-                    this.appSelected(application);
+                    this.notifyAppSelected(application);
                 });
 
                 tilesPlaceholder.appendChild(appTile);
@@ -122,9 +118,7 @@ module app_view {
             }
             appTile.addClass('app-tile-over');
             this.selectedAppIndex = index;
-            if (this.onAppMouseEnterHandler) {
-                this.onAppMouseEnterHandler(application);
-            }
+            this.notifyAppHighlighted(application);
         }
 
         private unhighlightAppTile(application:app_model.Application, index:number, appTile?:AppTile) {
@@ -135,9 +129,7 @@ module app_view {
             if (this.selectedAppIndex === index) {
                 this.selectedAppIndex = -1;
             }
-            if (this.onAppMouseLeaveHandler) {
-                this.onAppMouseLeaveHandler(application);
-            }
+            this.notifyAppUnhighlighted(application);
         }
 
         private filterTiles(value:string) {
@@ -174,17 +166,24 @@ module app_view {
             return this.appTiles[this.apps[appIndex].getName()].isVisible();
         }
 
-        onAppHighlighted(handler:(app:app_model.Application) => void) {
-            this.onAppMouseEnterHandler = handler;
+        private notifyAppHighlighted(app:app_model.Application) {
+            this.listeners.forEach((listener:AppSelectorListener)=> {
+                listener.onAppHighlighted(app);
+            });
         }
 
-        onAppUnhighlighted(handler:(app:app_model.Application) => void) {
-            this.onAppMouseLeaveHandler = handler;
+        private notifyAppUnhighlighted(app:app_model.Application) {
+            this.listeners.forEach((listener:AppSelectorListener)=> {
+                listener.onAppUnhighlighted(app);
+            });
         }
 
-        onAppSelected(handler:(app:app_model.Application) => void) {
-            this.onAppSelectedHandler = handler;
+        private notifyAppSelected(app:app_model.Application) {
+            this.listeners.forEach((listener:AppSelectorListener)=> {
+                listener.onAppSelected(app);
+            });
         }
+
     }
 
 }

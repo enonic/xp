@@ -14,6 +14,7 @@
 ///<reference path='app/view/InstallationInfo.ts' />
 ///<reference path='app/view/AppInfo.ts' />
 ///<reference path='app/view/LoginForm.ts' />
+///<reference path='app/view/AppSelectorListener.ts' />
 ///<reference path='app/view/AppSelector.ts' />
 ///<reference path='app/view/AppLauncher.ts' />
 ///<reference path='app/view/VersionInfo.ts' />
@@ -37,66 +38,60 @@ function isUserLoggedIn():boolean {
     return dummyCookie === 'true';
 }
 
-Ext.application({
-    name: 'app-launcher',
+window.onload = () => {
+    var userLoggedIn = isUserLoggedIn();
+    var mainContainer = new app_view.HomeMainContainer(api_util.getAbsoluteUri('admin/rest/ui/background.jpg'));
+    var appLauncher = new app_view.AppLauncher(mainContainer);
 
-    controllers: [
-    ],
+    var homeBrandingPanel = mainContainer.getBrandingPanel();
+    api_remote_util.RemoteSystemService.system_getSystemInfo({}, (result:api_remote_util.SystemGetSystemInfoResult) => {
+        homeBrandingPanel.setInstallation(result.installationName);
+        homeBrandingPanel.setVersion(result.version);
+    });
 
-    launch: function () {
-        var userLoggedIn = isUserLoggedIn();
-        var mainContainer = new app_view.HomeMainContainer(api_util.getAbsoluteUri('admin/rest/ui/background.jpg'));
-        var appLauncher = new app_view.AppLauncher(mainContainer);
+    var linksPanel = new app_view.LinksContainer().
+        addLink('Community', 'http://www.enonic.com/community').
+        addLink('Documentation', 'http://www.enonic.com/docs').
+        addLink('About', 'https://enonic.com/en/home/enonic-cms');
 
-        var homeBrandingPanel = mainContainer.getBrandingPanel();
-        api_remote_util.RemoteSystemService.system_getSystemInfo({}, (result:api_remote_util.SystemGetSystemInfoResult) => {
-            homeBrandingPanel.setInstallation(result.installationName);
-            homeBrandingPanel.setVersion(result.version);
-        });
+    var appInfoPanel = new app_view.AppInfo();
 
-        var linksPanel = new app_view.LinksContainer().
-            addLink('Community', 'http://www.enonic.com/community').
-            addLink('Documentation', 'http://www.enonic.com/docs').
-            addLink('About', 'https://enonic.com/en/home/enonic-cms');
-
-        var appInfoPanel = new app_view.AppInfo();
-
-        var appSelector = new app_view.AppSelector(app_model.Applications.getAllApps());
-        appSelector.onAppHighlighted((app:app_model.Application) => {
+    var appSelector = new app_view.AppSelector(app_model.Applications.getAllApps());
+    appSelector.addListener({
+        onAppHighlighted: (app:app_model.Application) => {
             appInfoPanel.showAppInfo(app);
-        });
-        appSelector.onAppUnhighlighted((app:app_model.Application) => {
+        },
+        onAppUnhighlighted: (app:app_model.Application) => {
             appInfoPanel.hideAppInfo();
-        });
-        appSelector.onAppSelected((app:app_model.Application) => {
+        },
+        onAppSelected: (app:app_model.Application) => {
             appLauncher.loadApplication(app);
-        });
-
-        var loginPanel = new app_view.LoginForm(new app_model.AuthenticatorImpl());
-        loginPanel.setLicensedTo('Licensed to Enonic');
-        loginPanel.setUserStores(USERSTORES, USERSTORES[1]);
-        loginPanel.onUserAuthenticated((userName:string, userStore:app_model.UserStore) => {
-            console.log('User logged in', userName, userStore);
-            api_util.CookieHelper.setCookie('dummy_userIsLoggedIn', 'true');
-            loginPanel.hide();
-            appSelector.show();
-            appSelector.afterRender();
-        });
-
-        var centerPanel = mainContainer.getCenterPanel();
-        centerPanel.appendRightColumn(loginPanel);
-        centerPanel.appendRightColumn(appInfoPanel);
-        centerPanel.appendRightColumn(linksPanel);
-        centerPanel.appendLeftColumn(appSelector);
-
-        if (userLoggedIn) {
-            loginPanel.hide();
-            appSelector.afterRender();
-        } else {
-            appSelector.hide();
         }
+    });
 
-        api_dom.Body.get().appendChild(mainContainer);
+    var loginPanel = new app_view.LoginForm(new app_model.AuthenticatorImpl());
+    loginPanel.setLicensedTo('Licensed to Enonic');
+    loginPanel.setUserStores(USERSTORES, USERSTORES[1]);
+    loginPanel.onUserAuthenticated((userName:string, userStore:app_model.UserStore) => {
+        console.log('User logged in', userName, userStore);
+        api_util.CookieHelper.setCookie('dummy_userIsLoggedIn', 'true');
+        loginPanel.hide();
+        appSelector.show();
+        appSelector.afterRender();
+    });
+
+    var centerPanel = mainContainer.getCenterPanel();
+    centerPanel.appendRightColumn(loginPanel);
+    centerPanel.appendRightColumn(appInfoPanel);
+    centerPanel.appendRightColumn(linksPanel);
+    centerPanel.appendLeftColumn(appSelector);
+
+    if (userLoggedIn) {
+        loginPanel.hide();
+        appSelector.afterRender();
+    } else {
+        appSelector.hide();
     }
-});
 
+    api_dom.Body.get().appendChild(mainContainer);
+}

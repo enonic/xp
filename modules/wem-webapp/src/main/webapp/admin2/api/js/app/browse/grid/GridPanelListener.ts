@@ -2,11 +2,11 @@ module api_app_browse_grid {
 
     export interface GridPanelListener {
 
-        onSelectionChanged?(event:GridSelectionChangedEvent);
+        onSelectionChanged(event:GridSelectionChangedEvent);
 
-        onItemDoubleClicked?(event:TreeItemDoubleClickedEvent);
+        onItemDoubleClicked(event:TreeItemDoubleClickedEvent);
 
-        onShowContextMenu?(event:GridShowContextMenuEvent);
+        onShowContextMenu(event:GridShowContextMenuEvent);
     }
 
     export interface GridSelectionChangedEvent {

@@ -2,9 +2,9 @@ module api_app_browse_grid {
 
     export interface TreeGridPanelListener {
 
-        onSelectionChanged?(event:TreeGridSelectionChangedEvent);
+        onSelectionChanged(event:TreeGridSelectionChangedEvent);
 
-        onItemDoubleClicked?(event:TreeGridItemDoubleClickedEvent);
+        onItemDoubleClicked(event:TreeGridItemDoubleClickedEvent);
     }
 
     export interface TreeGridSelectionChangedEvent {

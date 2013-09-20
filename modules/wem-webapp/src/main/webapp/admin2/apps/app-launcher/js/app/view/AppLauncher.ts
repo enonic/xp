@@ -15,13 +15,15 @@ module app_view {
             this.adminApplicationFrames = new api_dom.DivEl();
             this.adminApplicationFrames.getEl().setHeight('100%').setWidth('100%');
 
-            var appBridge = new api_app.AppBridge();
-            appBridge.addListener({
+            var appManager = new api_app.AppManager();
+            appManager.addListener({
                 onShowLauncher: ()=> {
                     this.showLauncherScreen();
                 },
                 onConnectionLost: ()=> {
                     new api_notify.showError("Lost connection to server - Please wait until connection is restored");
+                },
+                onConnectionRestored: ()=> {
                 }
             });
             this.lostConnectionDetector = new app_launcher.LostConnectionDetector();
