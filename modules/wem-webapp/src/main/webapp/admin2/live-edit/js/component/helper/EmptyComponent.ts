@@ -13,7 +13,7 @@ module LiveEdit.component.helper {
         }
 
         public static loadComponent(componentKey:string):void {
-            var selectedComponent = LiveEdit.Selection.getSelectedComponent();
+            var selectedComponent = LiveEdit.component.Selection.getSelectedComponent();
 
             if (!selectedComponent.isEmpty()) {
                 return;
@@ -39,7 +39,7 @@ module LiveEdit.component.helper {
 
             emptyComponentEl.replaceWith(responseHtml);
 
-            LiveEdit.Selection.select(new LiveEdit.component.Component(responseHtml));
+            LiveEdit.component.Selection.select(new LiveEdit.component.Component(responseHtml));
 
             $(window).trigger('sortableUpdate.liveEdit');
 

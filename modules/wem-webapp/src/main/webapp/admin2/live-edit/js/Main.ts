@@ -4,13 +4,14 @@
 ///<reference path='jqueryui.d.ts' />
 
 ///<reference path='shared/DomHelper.ts' />
-///<reference path='shared/Selection.ts' />
 ///<reference path='shared/PlaceholderCreator.ts' />
 
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
 ///<reference path='component/helper/EmptyComponent.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
+
+///<reference path='component/Selection.ts' />
 
 ///<reference path='component/mouseevent/Base.ts' />
 ///<reference path='component/mouseevent/Page.ts' />

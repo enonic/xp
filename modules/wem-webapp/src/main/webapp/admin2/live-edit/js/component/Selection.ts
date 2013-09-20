@@ -1,4 +1,4 @@
-module LiveEdit {
+module LiveEdit.component {
 
     // Uses
     var $ = $liveEdit;
@@ -24,11 +24,11 @@ module LiveEdit {
 
         public static deSelect():void {
             $(window).trigger('deselectComponent.liveEdit');
-            this.clearSelection();
+            this.removeSelectedAttribute();
         }
 
         public static setSelectionAttributeOnElement(element:JQuery):void {
-            this.clearSelection();
+            this.removeSelectedAttribute();
             element.attr(ATTRIBUTE_NAME, 'true');
         }
 
@@ -45,7 +45,7 @@ module LiveEdit {
             return $('[' + ATTRIBUTE_NAME + ']').length > 0;
         }
 
-        public static clearSelection():void {
+        public static removeSelectedAttribute():void {
             $('[' + ATTRIBUTE_NAME + ']').removeAttr(ATTRIBUTE_NAME);
         }
 

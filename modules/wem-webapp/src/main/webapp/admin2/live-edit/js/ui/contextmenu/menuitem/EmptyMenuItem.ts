@@ -23,7 +23,7 @@ module LiveEdit.ui.contextmenu.menuitem {
         private onEmptyRegion() {
             var region:JQuery = this.menu.selectedComponent.getElement();
 
-            LiveEdit.Selection.deSelect();
+            LiveEdit.component.Selection.deSelect();
 
             $('[data-live-edit-type]', region).remove();
 

@@ -27,7 +27,7 @@ module LiveEdit.ui {
             $(window).on('sortstop.liveedit.component', (event, uiEvent, ui, wasSelectedOnDragStart) => {
                 if (wasSelectedOnDragStart) {
                     var component = new LiveEdit.component.Component(ui.item);
-                    LiveEdit.Selection.select(component);
+                    LiveEdit.component.Selection.select(component);
                 }
             });
         }
@@ -65,7 +65,7 @@ module LiveEdit.ui {
         }
 
         private onDeselectComponent():void {
-            LiveEdit.Selection.clearSelection();
+            LiveEdit.component.Selection.removeSelectedAttribute();
             this.selectedComponent = null;
         }
 

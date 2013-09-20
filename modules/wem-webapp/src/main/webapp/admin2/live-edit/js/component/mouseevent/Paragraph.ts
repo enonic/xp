@@ -82,9 +82,9 @@ module LiveEdit.component.mouseevent {
                 window.getSelection().removeAllRanges();
             }
 
-            LiveEdit.Selection.clearSelection();
+            LiveEdit.component.Selection.removeSelectedAttribute();
 
-            LiveEdit.Selection.select(this.selectedParagraph, event);
+            LiveEdit.component.Selection.select(this.selectedParagraph, event);
 
             $(window).trigger('selectParagraphComponent.liveEdit', [this.selectedParagraph]);
         }
@@ -118,7 +118,7 @@ module LiveEdit.component.mouseevent {
 
             this.currentMode = this.modes.UNSELECTED;
 
-            LiveEdit.Selection.clearSelection();
+            LiveEdit.component.Selection.removeSelectedAttribute();
 
         }
     }

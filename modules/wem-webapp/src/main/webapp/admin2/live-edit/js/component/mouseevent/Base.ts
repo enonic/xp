@@ -17,7 +17,7 @@ module LiveEdit.component.mouseevent {
                 }
                 event.stopPropagation();
 
-                LiveEdit.Selection.clearSelection();
+                LiveEdit.component.Selection.removeSelectedAttribute();
 
                 var component:LiveEdit.component.Component = new LiveEdit.component.Component($(event.currentTarget));
 
@@ -27,7 +27,7 @@ module LiveEdit.component.mouseevent {
 
         attachMouseOutEvent():void {
             $(document).on('mouseout', () => {
-                if (LiveEdit.Selection.pageHasSelectedElement()) {
+                if (LiveEdit.component.Selection.pageHasSelectedElement()) {
                     return;
                 }
                 $(window).trigger('mouseOutComponent.liveEdit');
@@ -48,13 +48,13 @@ module LiveEdit.component.mouseevent {
                 event.preventDefault();
 
                 var component = new LiveEdit.component.Component($(event.currentTarget)),
-                    deselectComponent:boolean = component.isSelected() || LiveEdit.Selection.pageHasSelectedElement();
+                    deselectComponent:boolean = component.isSelected() || LiveEdit.component.Selection.pageHasSelectedElement();
 
                 // Toggle select/deselect
                 if (deselectComponent) {
-                    LiveEdit.Selection.deSelect();
+                    LiveEdit.component.Selection.deSelect();
                 } else {
-                    LiveEdit.Selection.select(component, event);
+                    LiveEdit.component.Selection.select(component, event);
                 }
             });
         }
@@ -65,7 +65,7 @@ module LiveEdit.component.mouseevent {
         }
 
         cancelMouseOverEvent(event:JQueryEventObject):boolean {
-            return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.Selection.pageHasSelectedElement() ||
+            return this.targetIsLiveEditUiComponent($(event.target)) || LiveEdit.component.Selection.pageHasSelectedElement() ||
                    LiveEdit.component.DragDropSort.isDragging();
         }
 
