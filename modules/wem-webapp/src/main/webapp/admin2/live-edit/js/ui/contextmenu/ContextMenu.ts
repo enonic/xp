@@ -24,7 +24,7 @@ module LiveEdit.ui.contextmenu {
             html += '   <div class="live-edit-context-menu-title-bar">';
             html += '       <div class="live-edit-context-menu-title-icon-container"><div><!-- --></div></div>';
             html += '       <div class="live-edit-context-menu-title-text"><!-- populated --></div>';
-            html += '       <div class="live-edit-context-menu-title-close-button"><!-- --></div>';
+            html += '       <div class="live-edit-context-menu-title-close-button live-edit-font-icon-close"><!-- --></div>';
             html += '   </div>';
             html += '   <div class="live-edit-context-menu-items"><!-- populated --></div>';
             html += '</div>';

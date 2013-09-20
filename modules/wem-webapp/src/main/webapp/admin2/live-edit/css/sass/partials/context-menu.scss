@@ -46,11 +46,14 @@
 
 .live-edit-context-menu-title-close-button {
     float: right;
+    border: 1px solid transparent;
     cursor: pointer;
-    background: transparent url($resourcePath + 'images/close.png') center center no-repeat;
-    width: 22px;
-    height: 22px;
-    padding: 0px 7px 0 0;
+    font-size: 13px;
+    padding: 7px;
+}
+
+.live-edit-context-menu-title-close-button:hover {
+    border: 1px solid $borderColor;
 }
 
 /*** Menu item */
