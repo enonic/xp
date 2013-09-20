@@ -1,27 +1,15 @@
-.admin-component-types-search-bar {
-    padding: 15px 20px;
-}
-
-.admin-component-types-search-input {
-    background-color: #3f3f46;
-    border: none;
-    color: #fff;
-    padding: 5px 3px;
-    width: 100%;
-}
-
 .admin-component-types-items .admin-cw-item {
     cursor: move;
 }
 
 .admin-component-types-items .admin-cw-item:hover {
-    border-left-color: #e3c800;
+    border-left-color: #3399fe;
+    border-right-color: #3399fe;
 }
 
 .live-edit-droppable-active {
     border: 1px solid #3399fe;
 }
-
 
 /*** To be merged with live edit */
 

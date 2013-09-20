@@ -10,7 +10,8 @@
 
 .admin-device-items .admin-cw-item:hover,
 .admin-device-item-selected {
-    border-left: 5px solid #3399fe;
+    border-left-color: #e3c800;
+    border-right-color: #e3c800;
     background-color: #3f3f46;
 }
 

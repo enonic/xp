@@ -34,6 +34,7 @@
       "key": "10018",
       "type": 2,
       "typeName": "layout",
+      "name": "3 Column Layout",
       "subtitle": "Far far away, behind the word mountains",
       "icon": "../admin2/apps/content-manager/js/data/context-window/mock-part-icon.png"
     }

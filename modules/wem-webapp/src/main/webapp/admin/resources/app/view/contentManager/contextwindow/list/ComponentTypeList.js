@@ -39,7 +39,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
     createSearchBar: function () {
         this.searchInput = this.createSearchInput();
         return new Ext.container.Container({
-            cls: 'admin-component-types-search-bar',
+            cls: 'admin-cw-search-bar',
             items: [
                 new Ext.Component({
                     html: '<p>Drag\'n drop Parts, Layouts and more..</p>'
@@ -59,7 +59,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
                 tag: 'input',
                 placeholder: 'Search'
             },
-            cls: 'admin-component-types-search-input',
+            cls: 'admin-cw-search-input',
             listeners: {
                 render: function () {
                     this.getEl().on('keyup', function (event, el) {

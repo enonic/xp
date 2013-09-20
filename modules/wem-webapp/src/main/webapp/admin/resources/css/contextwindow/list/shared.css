@@ -1,3 +1,15 @@
+.admin-cw-search-bar {
+    padding: 10px;
+}
+
+.admin-cw-search-input {
+    background-color: #3f3f46;
+    border: none;
+    color: #fff;
+    padding: 5px 3px;
+    width: 100%;
+}
+
 .admin-cw-items {
     overflow: hidden;
 }
@@ -10,12 +22,14 @@
     position: relative;
     border-bottom: 1px dashed #3f3f46;
     border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-radius: 3px;
     padding: 10px 20px;
 }
 
 .admin-cw-item:hover {
     background-color: #3f3f46;
-    border-left: 5px solid;
+
 }
 
 .admin-cw-item:hover * {
@@ -28,11 +42,11 @@
 
 .admin-cw-item-icon {
     width: 45px;
-    font-size: 22px;
-    font-weight: lighter;
+    padding-top: 8px;
     display: table-cell;
     vertical-align: top;
-    padding-top: 7px;
+    font-size: 22px;
+    font-weight: lighter;
 }
 
 .admin-cw-item-info {
@@ -44,7 +58,7 @@
     margin: 0;
     padding: 0;
     font-size: 14px !important;
-    line-height: 1.40;
+    line-height: 1.5;
 }
 
 .admin-cw-item-row sub {

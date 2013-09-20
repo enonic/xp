@@ -9,6 +9,8 @@
 
     background-color: #252526;
 
+    border-radius: 5px;
+
     box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 22px 70px 4px rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
 
     -webkit-touch-callout: none;
