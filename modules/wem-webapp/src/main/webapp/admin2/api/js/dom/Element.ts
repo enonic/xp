@@ -31,8 +31,8 @@ module api_dom {
             this.children = [];
         }
 
-        static fromHtmlElement(element:any):Element  {
-            return new Element(null, null, null, new ElementHelper(<HTMLElement>element));
+        static fromHtmlElement(element:HTMLElement):Element  {
+            return new Element(null, null, null, new ElementHelper(element));
         }
 
         init() {

@@ -10,7 +10,7 @@ module app_contextwindow {
         private data:ComponentData[];
         private grid:ComponentGrid;
 
-        constructor() {
+        constructor(contextWindow:ContextWindow) {
             super();
             this.data = this.mockData();
             this.grid = new ComponentGrid(this.data);
