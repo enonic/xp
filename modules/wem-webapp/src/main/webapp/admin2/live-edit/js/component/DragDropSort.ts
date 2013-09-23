@@ -201,14 +201,19 @@ module LiveEdit.component.DragDropSort {
     export function handleReceive(event:JQueryEventObject, ui):void {
         if (this.isItemDraggedFromContextWindow(ui.item)) {
 
-            var component = new LiveEdit.component.Component($(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR));
+            var bogusComponent = new LiveEdit.component.Component($(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR));
 
             // fixme: is this needed anymore?
-            component.getElement().hide(null);
+            bogusComponent.getElement().hide(null);
 
-            component.getElement().replaceWith(LiveEdit.component.helper.EmptyComponent.createEmptyComponentElement(component));
+            var emptyElement:JQuery = $(LiveEdit.component.helper.EmptyComponent.createEmptyComponentHtml(bogusComponent));
+            var emptyComponent = new LiveEdit.component.Component(emptyElement);
+
+            bogusComponent.getElement().replaceWith(emptyComponent.getElement());
 
             $(window).trigger('sortableUpdate.liveEdit');
+
+            LiveEdit.component.Selection.select(emptyComponent);
         }
     }
 

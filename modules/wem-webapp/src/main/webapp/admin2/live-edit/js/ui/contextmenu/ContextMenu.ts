@@ -51,7 +51,7 @@ module LiveEdit.ui.contextmenu {
             });
 
             this.getCloseButton().click(function () {
-                LiveEdit.component.Selection.deSelect();
+                LiveEdit.component.Selection.deselect();
             });
         }
 
@@ -79,7 +79,7 @@ module LiveEdit.ui.contextmenu {
         private fadeOutAndHide():void {
             this.getEl().fadeOut(500, () => {
                 this.hide();
-                LiveEdit.component.Selection.deSelect();
+                LiveEdit.component.Selection.deselect();
             });
             this.selectedComponent = null;
         }

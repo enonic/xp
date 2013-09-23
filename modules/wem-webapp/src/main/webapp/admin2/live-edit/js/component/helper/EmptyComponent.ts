@@ -5,7 +5,7 @@ module LiveEdit.component.helper {
 
     export class EmptyComponent {
 
-        public static createEmptyComponentElement(component:LiveEdit.component.Component):string {
+        public static createEmptyComponentHtml(component:LiveEdit.component.Component):string {
 
             return '<div class="live-edit-empty-component" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getName() + '">' +
                    '    <div class="' + component.getComponentType().getIconCls() + ' live-edit-empty-component-icon"></div>' +

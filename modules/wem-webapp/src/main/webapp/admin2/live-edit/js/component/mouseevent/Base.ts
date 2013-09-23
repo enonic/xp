@@ -52,7 +52,7 @@ module LiveEdit.component.mouseevent {
 
                 // Toggle select/deselect
                 if (deselectComponent) {
-                    LiveEdit.component.Selection.deSelect();
+                    LiveEdit.component.Selection.deselect();
                 } else {
                     LiveEdit.component.Selection.select(component, event);
                 }

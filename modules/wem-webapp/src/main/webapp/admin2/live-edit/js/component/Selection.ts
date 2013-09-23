@@ -22,7 +22,7 @@ module LiveEdit.component {
             $(window).trigger('selectComponent.liveEdit', [component, mouseClickPagePosition]);
         }
 
-        public static deSelect():void {
+        public static deselect():void {
             $(window).trigger('deselectComponent.liveEdit');
             this.removeSelectedAttribute();
         }
