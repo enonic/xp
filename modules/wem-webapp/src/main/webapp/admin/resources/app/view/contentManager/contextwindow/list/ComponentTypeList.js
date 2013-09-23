@@ -257,7 +257,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
             liveEditWindow = contextWindow.getLiveEditContentWindowObject(),
             liveEditJQuery = contextWindow.getLiveEditJQuery();
 
-        liveEditJQuery(liveEditWindow).on('sortableStop.liveEdit draggableStop.liveEdit', function (jQueryEvent) {
+        liveEditJQuery(liveEditWindow).on('sortableUpdate.liveEdit sortableStop.liveEdit draggableStop.liveEdit', function (jQueryEvent) {
             $('[data-context-window-draggable="true"]').simulate('mouseup');
             contextWindow.doShow();
             contextWindow.iFrameMask.className = contextWindow.iFrameMask.className.replace(/live-edit-droppable-active/g, '');
