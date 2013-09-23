@@ -2,11 +2,10 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-sass');
+    grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.initConfig({
-
 
         ts: {
             api: {
@@ -69,18 +68,14 @@ module.exports = function (grunt) {
             }
         },
 
-        sass: {
+        less: {
             live_edit: {
+                options: {
+                    compress: true
+                },
                 files: {
-                    'src/main/webapp/admin2/live-edit/css/live-edit.css': 'src/main/webapp/admin2/live-edit/css/sass/live-edit.scss'
+                    "src/main/webapp/admin2/live-edit/css/live-edit.css": "src/main/webapp/admin2/live-edit/css/less/live-edit.less"
                 }
-            }
-        },
-
-        cssmin: {
-            live_edit: {
-                src: 'src/main/webapp/admin2/live-edit/css/live-edit.css',
-                dest: 'src/main/webapp/admin2/live-edit/css/live-edit.min.css'
             }
         },
 
@@ -102,7 +97,6 @@ module.exports = function (grunt) {
     ]);
     grunt.registerTask('live_edit_build_all', [
         'ts:live_edit',
-        'sass:live_edit',
-        'cssmin:live_edit'
+        'less:live_edit'
     ]);
 };
