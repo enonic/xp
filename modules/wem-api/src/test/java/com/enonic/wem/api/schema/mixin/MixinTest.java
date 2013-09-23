@@ -21,14 +21,15 @@ public class MixinTest
     {
         ModuleName module = ModuleName.from( "mymodule" );
 
-        Mixin ageMixin = newMixin().module( module ).formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
+        Mixin ageMixin = newMixin().name( "age" ).module( module ).formItem(
+            newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final FormItemSet personFormItemSet = newFormItemSet().name( "person" ).addFormItem(
             newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newMixinReference( ageMixin ).name( "age" ).build() ).build();
-        Mixin personMixin = newMixin().module( module ).formItem( personFormItemSet ).build();
+        Mixin personMixin = newMixin().name( "person" ).module( module ).formItem( personFormItemSet ).build();
 
-        Mixin addressMixin = newMixin().module( module ).formItem( newFormItemSet().name( "address" ).addFormItem(
+        Mixin addressMixin = newMixin().name( "address" ).module( module ).formItem( newFormItemSet().name( "address" ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build() ).build();
@@ -49,7 +50,7 @@ public class MixinTest
     {
         ModuleName module = ModuleName.from( "mymodule" );
         Input input = newInput().name( "tags" ).label( "Tags" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build();
-        Mixin inputMixin = Mixin.newMixin().module( module ).formItem( input ).build();
+        Mixin inputMixin = Mixin.newMixin().name( "tags" ).module( module ).formItem( input ).build();
     }
 
 }

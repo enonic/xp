@@ -12,6 +12,8 @@ import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 public final class CreateMixin
     extends Command<QualifiedMixinName>
 {
+    private String name;
+
     private FormItem formItem;
 
     private ModuleName moduleName;
@@ -20,6 +22,12 @@ public final class CreateMixin
 
     private Icon icon;
 
+
+    public CreateMixin name( final String name )
+    {
+        this.name = name;
+        return this;
+    }
 
     public CreateMixin formItem( final FormItem formItem )
     {
@@ -43,6 +51,11 @@ public final class CreateMixin
     {
         this.icon = icon;
         return this;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     public FormItem getFormItem()
@@ -79,19 +92,23 @@ public final class CreateMixin
         }
 
         final CreateMixin that = (CreateMixin) o;
-        return Objects.equal( this.formItem, that.formItem ) && Objects.equal( this.moduleName, that.moduleName ) &&
-            Objects.equal( this.displayName, that.displayName ) && Objects.equal( this.icon, that.icon );
+        return Objects.equal( this.name, that.name ) &&
+            Objects.equal( this.formItem, that.formItem ) &&
+            Objects.equal( this.moduleName, that.moduleName ) &&
+            Objects.equal( this.displayName, that.displayName ) &&
+            Objects.equal( this.icon, that.icon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.formItem, this.moduleName, this.displayName, this.icon );
+        return Objects.hashCode( this.name, this.formItem, this.moduleName, this.displayName, this.icon );
     }
 
     @Override
     public void validate()
     {
+        Preconditions.checkNotNull( this.name, "name cannot be null" );
         Preconditions.checkNotNull( this.formItem, "formItem cannot be null" );
         Preconditions.checkNotNull( this.moduleName, "moduleName cannot be null" );
         Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );

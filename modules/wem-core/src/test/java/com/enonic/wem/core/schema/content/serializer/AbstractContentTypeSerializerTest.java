@@ -68,9 +68,9 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_all_schemas_when_parsed_then_paths_are_as_expected()
         throws Exception
     {
-        Mixin inputMixin =
-            newMixin().formItem( Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).module(
-                Module.SYSTEM.getName() ).build();
+        Mixin inputMixin = newMixin().name( "my_shared_input" ).formItem(
+            Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).module(
+            Module.SYSTEM.getName() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
             newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
@@ -187,11 +187,12 @@ public abstract class AbstractContentTypeSerializerTest
     public void parse_mixin()
     {
         // setup
-        Mixin mixin = newMixin().module( ModuleName.from( "mymodule" ) ).formItem( newFormItemSet().name( "address" ).addFormItem(
-            newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
+        Mixin mixin = newMixin().name( "address" ).module( ModuleName.from( "mymodule" ) ).formItem(
+            newFormItemSet().name( "address" ).addFormItem(
+                newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+                newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+                newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+                newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
         ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );

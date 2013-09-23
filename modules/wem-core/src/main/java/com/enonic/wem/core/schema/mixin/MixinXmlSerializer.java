@@ -96,6 +96,7 @@ public class MixinXmlSerializer
     private Mixin parseFormItemSetMixin( final Element mixinEl )
     {
         final Mixin.Builder builder = newMixin();
+        builder.name( mixinEl.getChildTextTrim( "name" ) );
         builder.module( ModuleName.from( mixinEl.getChildTextTrim( "module" ) ) );
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
         final String formItemSetElementName = formItemSerializer.classNameToXmlElementName( FormItemSet.class.getSimpleName() );
@@ -107,6 +108,7 @@ public class MixinXmlSerializer
     private Mixin parseInputMixin( final Element mixinEl )
     {
         final Mixin.Builder builder = newMixin();
+        builder.name( mixinEl.getChildTextTrim( "name" ) );
         builder.module( ModuleName.from( mixinEl.getChildTextTrim( "module" ) ) );
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
         final String inputElementName = formItemSerializer.classNameToXmlElementName( Input.class.getSimpleName() );

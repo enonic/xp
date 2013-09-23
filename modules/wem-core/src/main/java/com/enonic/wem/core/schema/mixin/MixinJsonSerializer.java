@@ -81,6 +81,7 @@ public class MixinJsonSerializer
     private Mixin parseFormItemSetMixin( final JsonNode mixinNode )
     {
         final Mixin.Builder builder = Mixin.newMixin();
+        builder.name( JsonSerializerUtil.getStringValue( "name", mixinNode ) );
         builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", mixinNode ) ) );
         builder.displayName( JsonSerializerUtil.getStringValue( "displayName", mixinNode ) );
         final JsonNode formItemNode = mixinNode.get( FormItemSet.class.getSimpleName() );
@@ -91,6 +92,7 @@ public class MixinJsonSerializer
     private Mixin parseInputMixin( final JsonNode mixinNode )
     {
         final Mixin.Builder builder = Mixin.newMixin();
+        builder.name( JsonSerializerUtil.getStringValue( "name", mixinNode ) );
         builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", mixinNode ) ) );
         builder.displayName( JsonSerializerUtil.getStringValue( "displayName", mixinNode ) );
         final JsonNode inputNode = mixinNode.get( Input.class.getSimpleName() );

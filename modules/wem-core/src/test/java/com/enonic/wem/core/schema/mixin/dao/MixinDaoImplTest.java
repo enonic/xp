@@ -35,7 +35,7 @@ public class MixinDaoImplTest
     {
         // setup
         Input myInput = newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_LINE ).build();
-        Mixin.Builder mixinBuilder = newMixin().
+        Mixin.Builder mixinBuilder = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My Mixin" ).formItem( myInput );
         Mixin mixin = mixinBuilder.build();
@@ -54,7 +54,7 @@ public class MixinDaoImplTest
         throws Exception
     {
         // setup
-        Mixin mixin = newMixin().
+        Mixin mixin = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My Mixin" ).formItem(
             newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
@@ -65,7 +65,7 @@ public class MixinDaoImplTest
         assertNotNull( mixinsAfterCreate );
         assertEquals( 1, mixinsAfterCreate.getSize() );
 
-        Mixin updatedMixin = newMixin().
+        Mixin updatedMixin = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My Updated Mixin" ).formItem(
             newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_AREA ).build() ).build();
@@ -88,7 +88,7 @@ public class MixinDaoImplTest
         throws Exception
     {
         // setup
-        Mixin mixin = newMixin().
+        Mixin mixin = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My Mixin" ).formItem(
             newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
@@ -110,7 +110,7 @@ public class MixinDaoImplTest
         throws Exception
     {
         // setup
-        Mixin mixin = newMixin().
+        Mixin mixin = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My Mixin" ).formItem(
             newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
@@ -138,13 +138,13 @@ public class MixinDaoImplTest
         throws Exception
     {
         // setup
-        Mixin mixin1 = newMixin().
+        Mixin mixin1 = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My Mixin 1" ).formItem(
             newInput().name( "my_input" ).label( "My input 1" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         mixinDao.create( mixin1, session );
 
-        Mixin mixin2 = newMixin().
+        Mixin mixin2 = newMixin().name( "my_input" ).
             module( ModuleName.from( "othermodule" ) ).
             displayName( "My Mixin 2" ).formItem(
             newInput().name( "my_input" ).label( "My input 2" ).inputType( InputTypes.DATE ).build() ).build();

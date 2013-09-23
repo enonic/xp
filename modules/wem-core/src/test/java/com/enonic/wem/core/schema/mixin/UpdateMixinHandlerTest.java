@@ -55,6 +55,7 @@ public class UpdateMixinHandlerTest
         // setup
         final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin existingMixin = newMixin().
+            name( "age" ).
             displayName( "Age" ).
             module( module ).
             formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).

@@ -77,7 +77,7 @@ public class GetSchemasHandlerTest
             newInput().inputType( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build();
-        final Mixin mixin = newMixin().
+        final Mixin mixin = newMixin().name( "address" ).
             module( ModuleName.from( "mymodule" ) ).
             formItem( formItemSet ).
             build();

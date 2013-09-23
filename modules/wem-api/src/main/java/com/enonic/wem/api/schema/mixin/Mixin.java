@@ -14,6 +14,8 @@ import com.enonic.wem.api.schema.content.form.FormItem;
 public class Mixin
     implements Schema
 {
+    private final String name;
+
     private final FormItem formItem;
 
     private final ModuleName moduleName;
@@ -30,6 +32,7 @@ public class Mixin
 
     private Mixin( final Builder builder )
     {
+        this.name = builder.name;
         this.moduleName = builder.moduleName;
         this.formItem = builder.formItem;
         if ( this.moduleName != null )
@@ -49,7 +52,7 @@ public class Mixin
     @Override
     public String getName()
     {
-        return formItem.getName();
+        return name;
     }
 
     @Override
@@ -110,6 +113,8 @@ public class Mixin
 
     public static class Builder
     {
+        private String name;
+
         private String displayName;
 
         private ModuleName moduleName;
@@ -130,12 +135,19 @@ public class Mixin
         public Builder( final Mixin mixin )
         {
             Preconditions.checkNotNull( mixin, "mixin cannot be null" );
+            this.name = mixin.name;
             this.displayName = mixin.displayName;
             this.moduleName = mixin.moduleName;
             this.createdTime = mixin.createdTime;
             this.modifiedTime = mixin.modifiedTime;
             this.formItem = mixin.formItem;
             this.icon = mixin.icon;
+        }
+
+        public Builder name( String name )
+        {
+            this.name = name;
+            return this;
         }
 
         public Builder displayName( String value )

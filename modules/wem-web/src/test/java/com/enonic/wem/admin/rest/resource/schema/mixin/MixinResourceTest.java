@@ -80,9 +80,10 @@ public class MixinResourceTest
     public final void test_get_mixin()
         throws Exception
     {
-        Mixin mixin = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin =
+            Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
+                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
+                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
@@ -96,9 +97,10 @@ public class MixinResourceTest
     public final void test_get_mixin_config()
         throws Exception
     {
-        Mixin mixin = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin =
+            Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
+                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
+                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
@@ -150,13 +152,15 @@ public class MixinResourceTest
     public final void test_list_mixins()
         throws Exception
     {
-        Mixin mixin1 = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin1 =
+            Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).formItem(
+                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
+                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 = Mixin.newMixin().module( MY_MIXIN_QUALIFIED_NAME_2.getModuleName() ).formItem(
-            newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getLocalName() ).inputType( TEXT_AREA ).label( "Text Area" ).required(
-                true ).helpText( "Help text area" ).required( true ).build() ).build();
+        Mixin mixin2 =
+            Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_2.getMixinName() ).module( MY_MIXIN_QUALIFIED_NAME_2.getModuleName() ).formItem(
+                newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getLocalName() ).inputType( TEXT_AREA ).label( "Text Area" ).required(
+                    true ).helpText( "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
@@ -182,7 +186,7 @@ public class MixinResourceTest
     public void test_create_mixin_already_exists()
         throws Exception
     {
-        Mixin mixin = newMixin().module( Module.SYSTEM.getName() ).formItem(
+        Mixin mixin = newMixin().name( "some_input" ).module( Module.SYSTEM.getName() ).formItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
@@ -222,7 +226,7 @@ public class MixinResourceTest
     public void test_update_mixin()
         throws Exception
     {
-        Mixin mixin = newMixin().module( Module.SYSTEM.getName() ).formItem(
+        Mixin mixin = newMixin().name( "some_input" ).module( Module.SYSTEM.getName() ).formItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );

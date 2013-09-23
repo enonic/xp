@@ -30,13 +30,9 @@ public final class CreateMixinHandler
     {
         final DateTime currentTime = DateTime.now();
 
-        final Mixin.Builder mixinBuilder = newMixin();
-        mixinBuilder.formItem( command.getFormItem() );
-        mixinBuilder.displayName( command.getDisplayName() );
-        mixinBuilder.module( command.getModuleName() );
-        mixinBuilder.createdTime( currentTime );
-        mixinBuilder.modifiedTime( currentTime );
-        mixinBuilder.icon( command.getIcon() );
+        final Mixin.Builder mixinBuilder =
+            newMixin().name( command.getName() ).formItem( command.getFormItem() ).displayName( command.getDisplayName() ).module(
+                command.getModuleName() ).createdTime( currentTime ).modifiedTime( currentTime ).icon( command.getIcon() );
 
         final Mixin mixin = mixinBuilder.build();
 

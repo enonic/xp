@@ -49,7 +49,7 @@ public abstract class AbstractMixinSerializerTest
         inputBuilder.customText( "Custom text" );
         inputBuilder.indexed( true );
         Input myInput = inputBuilder.build();
-        Mixin myInputMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myInput ).build();
+        Mixin myInputMixin = Mixin.newMixin().name( "my_input" ).displayName( "My Mixin" ).module( myModule ).formItem( myInput ).build();
 
         // exercise
         String serialized = toString( myInputMixin );
@@ -77,7 +77,8 @@ public abstract class AbstractMixinSerializerTest
         formItemSetBuilder.addFormItem( myInput );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
-        Mixin myFormItemSetMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
+        Mixin myFormItemSetMixin =
+            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
 
         // exercise
         String serialized = toString( myFormItemSetMixin );
@@ -133,7 +134,8 @@ public abstract class AbstractMixinSerializerTest
             Input.newInput().name( "myOtherInput" ).label( "My other input" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
-        Mixin myFormItemSetMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
+        Mixin myFormItemSetMixin =
+            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
 
         // exercise
         final String serialized = toString( myFormItemSetMixin );
@@ -160,7 +162,7 @@ public abstract class AbstractMixinSerializerTest
         inputBuilder.customText( "Custom text" );
         inputBuilder.indexed( true );
         Input myInput = inputBuilder.build();
-        Mixin myInputMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myInput ).build();
+        Mixin myInputMixin = Mixin.newMixin().name( "my_input" ).displayName( "My Mixin" ).module( myModule ).formItem( myInput ).build();
 
         // exercise
         final String serialized = toString( myInputMixin );

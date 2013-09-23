@@ -52,6 +52,7 @@ public class GetMixinsHandlerTest
         // setup
         final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin mixin = newMixin().
+            name( "age" ).
             displayName( "Age" ).
             module( module ).
             formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
@@ -76,11 +77,13 @@ public class GetMixinsHandlerTest
         // setup
         final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin mixin = newMixin().
+            name( "age" ).
             displayName( "Age" ).
             module( module ).
             formItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixin mixin2 = newMixin().
+            name( "gender" ).
             displayName( "Gender" ).
             module( module ).
             formItem( newInput().name( "gender" ).inputType( InputTypes.TEXT_LINE ).build() ).
