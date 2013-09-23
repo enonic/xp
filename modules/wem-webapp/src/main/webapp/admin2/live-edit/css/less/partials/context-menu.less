@@ -12,11 +12,13 @@
 .live-edit-context-menu-title-bar {
     overflow: hidden;
     margin: 5px 5px 0px 5px;
+    white-space: nowrap;
     cursor: hand;
     cursor: grab !important;
     cursor: -moz-grab;
     cursor: url("@{resourcePath}images/cursor-grab.png"), pointer !important;
     cursor: -webkit-grab;
+
 }
 
 .live-edit-context-menu-title-icon-container,
@@ -26,10 +28,9 @@
 }
 
 .live-edit-context-menu-title-icon-container {
+    display: inline-block;
     padding: 7px;
-    float: left;
 }
-
 .live-edit-context-menu-title-icon-container > div {
     width: 16px;
     height: 16px;
@@ -37,7 +38,7 @@
 }
 
 .live-edit-context-menu-title-text {
-    float: left;
+    display: inline-block;
     font-size: 14px;
     color: @textColor;
     padding-top: 6px;
@@ -45,7 +46,7 @@
 }
 
 .live-edit-context-menu-title-close-button {
-    float: right;
+    display: inline-block;
     border: 1px solid transparent;
     cursor: pointer;
     font-size: 13px;
@@ -143,3 +144,5 @@
     left: 50%;
     margin-left: -9px;
 }
+
+

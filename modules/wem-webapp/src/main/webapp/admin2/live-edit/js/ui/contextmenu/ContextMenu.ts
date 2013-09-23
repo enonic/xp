@@ -46,6 +46,7 @@ module LiveEdit.ui.contextmenu {
         private registerEventsListeners():void {
             this.getEl().draggable({
                 handle: '.live-edit-context-menu-title-bar',
+                containment: 'document',
                 addClasses: false
             });
 
