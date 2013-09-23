@@ -44,7 +44,7 @@ module app_contextwindow {
             if (this.contextWindowOptions.liveEditId) {
                 var el = <HTMLIFrameElement>document.querySelector("#" + this.contextWindowOptions.liveEditId);
                 if (el.tagName.toLowerCase() == "iframe") {
-                    this.liveEditEl = api_dom.IFrameEl.fromHtmlElement(el);
+                    this.liveEditEl = <api_dom.IFrameEl> api_dom.IFrameEl.fromHtmlElement(el);
                 }
             }
             this.draggingMask = new DraggingMask(this.liveEditEl);
