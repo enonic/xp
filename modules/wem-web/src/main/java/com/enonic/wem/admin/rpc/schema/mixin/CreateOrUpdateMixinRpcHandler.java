@@ -78,7 +78,7 @@ public class CreateOrUpdateMixinRpcHandler
     {
         final SetMixinEditor editor = newSetMixinEditor().
             displayName( mixin.getDisplayName() ).
-            formItem( mixin.getFormItem() ).
+            formItems( mixin.getFormItems() ).
             icon( icon ).
             build();
         final UpdateMixin updateCommand = mixin().update().
@@ -99,7 +99,7 @@ public class CreateOrUpdateMixinRpcHandler
     {
         final CreateMixin createCommand = mixin().create().
             displayName( mixin.getDisplayName() ).
-            formItem( mixin.getFormItem() ).
+            formItems( mixin.getFormItems() ).
             moduleName( mixin.getModuleName() ).
             icon( icon );
         try

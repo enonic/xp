@@ -2,12 +2,13 @@ package com.enonic.wem.api.schema.mixin.editor;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.content.form.FormItem;
+import com.enonic.wem.api.schema.content.form.FormItems;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public final class SetMixinEditor
     implements MixinEditor
 {
-    private final FormItem formItem;
+    private final FormItems formItems;
 
     private final String displayName;
 
@@ -15,7 +16,7 @@ public final class SetMixinEditor
 
     private SetMixinEditor( final Builder builder )
     {
-        this.formItem = builder.formItem;
+        this.formItems = builder.formItems;
         this.displayName = builder.displayName;
         this.icon = builder.icon;
     }
@@ -27,15 +28,21 @@ public final class SetMixinEditor
 
     public static class Builder
     {
-        private FormItem formItem;
+        private FormItems formItems = new FormItems( null );
 
         private String displayName;
 
         private Icon icon;
 
-        public Builder formItem( final FormItem value )
+        public Builder formItems( final FormItems value )
         {
-            this.formItem = value;
+            this.formItems = value;
+            return this;
+        }
+
+        public Builder addFormItem( final FormItem value )
+        {
+            this.formItems.add( value );
             return this;
         }
 
@@ -69,9 +76,9 @@ public final class SetMixinEditor
             builder.displayName( this.displayName );
         }
 
-        if ( this.formItem != null )
+        if ( this.formItems != null )
         {
-            builder.formItem( this.formItem );
+            builder.formItems( this.formItems );
         }
 
         if ( this.icon != null )

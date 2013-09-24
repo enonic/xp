@@ -1,15 +1,14 @@
 package com.enonic.wem.admin.json.schema.mixin;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.json.schema.content.form.FieldSetJson;
-import com.enonic.wem.admin.json.schema.content.form.FormItemSetJson;
-import com.enonic.wem.admin.json.schema.content.form.MixinReferenceJson;
-import com.enonic.wem.admin.json.schema.content.form.inputtype.InputJson;
+import com.enonic.wem.admin.json.schema.content.form.FormItemJson;
+import com.enonic.wem.admin.json.schema.content.form.FormItemJsonFactory;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
-import com.enonic.wem.api.schema.content.form.FieldSet;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.MixinReference;
+import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public class MixinJson
@@ -40,40 +39,14 @@ public class MixinJson
         return model.getModuleName().toString();
     }
 
-    public FormItemSetJson getFormItemSet()
+    public List<FormItemJson> getItems()
     {
-        if ( model.getFormItem() instanceof FormItemSet )
+        ImmutableList.Builder<FormItemJson> builder = ImmutableList.builder();
+        for ( FormItem formItem : model.getFormItems() )
         {
-            return new FormItemSetJson( (FormItemSet) model.getFormItem() );
+            builder.add( FormItemJsonFactory.create( formItem ) );
         }
-        return null;
-    }
-
-    public FieldSetJson getLayout()
-    {
-        if ( model.getFormItem() instanceof FieldSet )
-        {
-            return new FieldSetJson( (FieldSet) model.getFormItem() );
-        }
-        return null;
-    }
-
-    public InputJson getInput()
-    {
-        if ( model.getFormItem() instanceof Input )
-        {
-            return new InputJson( (Input) model.getFormItem() );
-        }
-        return null;
-    }
-
-    public MixinReferenceJson getMixinReferenceJson()
-    {
-        if ( model.getFormItem() instanceof MixinReference )
-        {
-            return new MixinReferenceJson( (MixinReference) model.getFormItem() );
-        }
-        return null;
+        return builder.build();
     }
 
     public String getIconUrl()

@@ -140,7 +140,6 @@ public class FormItemXmlSerializer
         referenceEl.setAttribute( NAME, String.valueOf( mixinReference.getName() ) );
         referenceEl.addContent( new Element( NAME ).setText( mixinReference.getName() ) );
         referenceEl.addContent( new Element( REFERENCE ).setText( mixinReference.getQualifiedMixinName().toString() ) );
-        referenceEl.addContent( new Element( TYPE ).setText( mixinReference.getMixinClass().getSimpleName() ) );
         return referenceEl;
     }
 
@@ -251,7 +250,6 @@ public class FormItemXmlSerializer
         final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( formItemEl.getAttributeValue( NAME ) );
         builder.mixin( new QualifiedMixinName( formItemEl.getChildText( REFERENCE ) ) );
-        builder.type( formItemEl.getChildText( TYPE ) );
         return builder.build();
     }
 

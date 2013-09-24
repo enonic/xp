@@ -30,7 +30,6 @@ class MixinReferenceJsonSerializer
         final ObjectNode jsonObject = objectMapper().createObjectNode();
         jsonObject.put( NAME, mixinReference.getName() );
         jsonObject.put( REFERENCE, mixinReference.getQualifiedMixinName().toString() );
-        jsonObject.put( TYPE, mixinReference.getMixinClass().getSimpleName() );
         return jsonObject;
     }
 
@@ -39,7 +38,6 @@ class MixinReferenceJsonSerializer
         final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( JsonSerializerUtil.getStringValue( NAME, mixinReferenceObj ) );
         builder.mixin( new QualifiedMixinName( JsonSerializerUtil.getStringValue( REFERENCE, mixinReferenceObj ) ) );
-        builder.type( JsonSerializerUtil.getStringValue( TYPE, mixinReferenceObj ) );
         return builder.build();
     }
 }
