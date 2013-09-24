@@ -35,8 +35,12 @@ module api_ui {
         }
 
         selectPanel(item:PanelNavigationItem) {
-            this.showPanel(item.getIndex());
-            this.navigator.selectNavigationItem(item.getIndex());
+            this.selectPanelFromIndex(item.getIndex());
+        }
+
+        selectPanelFromIndex(index:number) {
+            this.showPanel(index);
+            this.navigator.selectNavigationItem(index);
         }
 
         removePanel(panel:Panel, checkCanRemovePanel:boolean = true):number {

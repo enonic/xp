@@ -6,8 +6,12 @@ module app_contextwindow {
 
     export class ContextWindow extends api_ui.NavigableFloatingWindow {
         private componentsPanel:ComponentsPanel;
+        private componentsPanelIndex:number;
         private inspectorPanel:InspectorPanel;
+        private inspectorPanelIndex:number;
         private emulatorPanel:api_ui.Panel;
+        private emulatorPanelIndex:number;
+
         private draggingMask:DraggingMask;
         private liveEditEl:api_dom.IFrameEl;
         private liveEditJQuery:JQueryStatic;
@@ -31,12 +35,16 @@ module app_contextwindow {
             this.inspectorPanel = new InspectorPanel(this);
             this.emulatorPanel = new api_ui.Panel();
 
-            this.addItem("Components", this.componentsPanel);
-            this.addItem("Inspector", this.inspectorPanel);
-            this.addItem("Emulator", this.emulatorPanel);
+            this.componentsPanelIndex = this.addItem("Components", this.componentsPanel);
+            this.inspectorPanelIndex = this.addItem("Inspector", this.inspectorPanel);
+            this.emulatorPanelIndex = this.addItem("Emulator", this.emulatorPanel);
 
             ComponentSelectEvent.on((event) => {
-                this.
+                this.selectPanel(this.inspectorPanelIndex);
+            });
+
+            ComponentDeselectEvent.on((event) => {
+                this.selectPanel(this.componentsPanelIndex);
             });
 
             if (options.liveEditEl) {

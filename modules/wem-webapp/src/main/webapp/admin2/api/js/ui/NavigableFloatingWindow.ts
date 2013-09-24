@@ -17,9 +17,10 @@ module api_ui {
         }
 
         addItem(label:string, panel:api_ui.Panel):number {
-            this.addItemArray(label);
+
 
             var item = new api_ui_tab.TabMenuItem(label);
+            this.addItemArray(item);
 
             item.addListener({onSelected: (tab:api_ui_tab.TabMenuItem) => {
                 this.navigator.hideMenu()
@@ -30,6 +31,10 @@ module api_ui {
                 : this.deck.addNavigablePanelToBack(item, panel);
 
             return this.deck.getPanelIndex(panel);
+        }
+
+        selectPanel(index:number) {
+            this.deck.selectPanelFromIndex(index);
         }
 
         private addItemArray(item:any) {
