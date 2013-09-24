@@ -68,7 +68,7 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_all_schemas_when_parsed_then_paths_are_as_expected()
         throws Exception
     {
-        Mixin inputMixin = newMixin().name( "my_shared_input" ).formItem(
+        Mixin inputMixin = newMixin().name( "my_shared_input" ).addFormItem(
             Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).module(
             Module.SYSTEM.getName() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
@@ -187,7 +187,7 @@ public abstract class AbstractContentTypeSerializerTest
     public void parse_mixin()
     {
         // setup
-        Mixin mixin = newMixin().name( "address" ).module( ModuleName.from( "mymodule" ) ).formItem(
+        Mixin mixin = newMixin().name( "address" ).module( ModuleName.from( "mymodule" ) ).addFormItem(
             newFormItemSet().name( "address" ).addFormItem(
                 newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
                 newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(

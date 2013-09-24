@@ -48,7 +48,7 @@ public class SchemaResourceTest
 
     private Mixin createMixin( String displayName, ModuleName module )
     {
-        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).module( module ).formItem(
+        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).module( module ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).build() ).build();
     }
 

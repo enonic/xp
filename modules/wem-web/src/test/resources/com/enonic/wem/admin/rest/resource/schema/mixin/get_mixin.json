@@ -2,9 +2,8 @@
     "deletable" : false,
     "displayName" : null,
     "editable" : false,
-    "formItemSet" : null,
     "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text_1",
-    "input" : {
+    "items" : [ {
         "customText" : null,
         "formItemType" : "Input",
         "helpText" : "Help text line 1",
@@ -21,9 +20,7 @@
             "minimum" : 1
         },
         "validationRegexp" : null
-    },
-    "layout" : null,
-    "mixinReferenceJson" : null,
+    } ],
     "module" : "mymodule",
     "name" : "input_text_1"
 }

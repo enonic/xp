@@ -139,7 +139,7 @@ public class SchemaImageResourceTest
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             icon( icon ).
-            formItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 
@@ -159,7 +159,7 @@ public class SchemaImageResourceTest
             name( "postal_code" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
-            formItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 

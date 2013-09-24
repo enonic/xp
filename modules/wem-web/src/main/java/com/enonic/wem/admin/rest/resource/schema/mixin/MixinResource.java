@@ -119,7 +119,7 @@ public class MixinResource
         }
 
         final CreateMixin createCommand =
-            mixin().create().displayName( mixin.getDisplayName() ).formItem( mixin.getFormItem() ).moduleName( mixin.getModuleName() ).icon(
+            mixin().create().displayName( mixin.getDisplayName() ).formItems( mixin.getFormItems() ).moduleName( mixin.getModuleName() ).icon(
                 icon );
 
         try
@@ -150,7 +150,7 @@ public class MixinResource
 
         final SetMixinEditor editor = newSetMixinEditor().
             displayName( mixin.getDisplayName() ).
-            formItem( mixin.getFormItem() ).
+            formItems( mixin.getFormItems() ).
             icon( icon ).
             build();
         final UpdateMixin updateCommand = mixin().update().

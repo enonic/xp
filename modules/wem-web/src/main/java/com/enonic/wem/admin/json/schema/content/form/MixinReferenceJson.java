@@ -14,11 +14,6 @@ public class MixinReferenceJson
         this.mixinReference = mixinReference;
     }
 
-    public String getType()
-    {
-        return mixinReference.getMixinClass().getSimpleName();
-    }
-
     public String getReference()
     {
         return mixinReference.getQualifiedMixinName().toString();

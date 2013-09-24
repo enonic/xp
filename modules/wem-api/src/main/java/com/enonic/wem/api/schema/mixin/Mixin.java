@@ -10,13 +10,14 @@ import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.form.FormItem;
+import com.enonic.wem.api.schema.content.form.FormItems;
 
 public class Mixin
     implements Schema
 {
     private final String name;
 
-    private final FormItem formItem;
+    private final FormItems formItems;
 
     private final ModuleName moduleName;
 
@@ -34,7 +35,7 @@ public class Mixin
     {
         this.name = builder.name;
         this.moduleName = builder.moduleName;
-        this.formItem = builder.formItem;
+        this.formItems = builder.formItems;
         if ( this.moduleName != null )
         {
             this.qualifiedName = new QualifiedMixinName( this.moduleName, getName() );
@@ -73,9 +74,9 @@ public class Mixin
         return qualifiedName;
     }
 
-    public FormItem getFormItem()
+    public FormItems getFormItems()
     {
-        return formItem;
+        return formItems;
     }
 
     @Override
@@ -123,7 +124,7 @@ public class Mixin
 
         private DateTime modifiedTime;
 
-        private FormItem formItem;
+        private FormItems formItems = new FormItems( null );
 
         private Icon icon;
 
@@ -140,7 +141,7 @@ public class Mixin
             this.moduleName = mixin.moduleName;
             this.createdTime = mixin.createdTime;
             this.modifiedTime = mixin.modifiedTime;
-            this.formItem = mixin.formItem;
+            this.formItems = mixin.formItems;
             this.icon = mixin.icon;
         }
 
@@ -174,9 +175,15 @@ public class Mixin
             return this;
         }
 
-        public Builder formItem( FormItem value )
+        public Builder formItems( FormItems value )
         {
-            this.formItem = value;
+            this.formItems = value;
+            return this;
+        }
+
+        public Builder addFormItem( FormItem value )
+        {
+            this.formItems.add( value );
             return this;
         }
 

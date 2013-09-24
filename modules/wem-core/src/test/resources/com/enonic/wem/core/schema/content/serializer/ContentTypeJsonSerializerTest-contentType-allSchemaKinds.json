@@ -51,8 +51,7 @@
                     {
                         "MixinReference": {
                             "name": "myCommonInput",
-                            "reference": "system:my_shared_input",
-                            "type": "Input"
+                            "reference": "system:my_shared_input"
                         }
                     }
                 ]

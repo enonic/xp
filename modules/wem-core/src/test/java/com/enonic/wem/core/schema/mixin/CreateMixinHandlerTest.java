@@ -47,7 +47,7 @@ public class CreateMixinHandlerTest
         final Input age = newInput().name( "age" ).
             inputType( InputTypes.TEXT_LINE ).build();
         CreateMixin command =
-            Commands.mixin().create().name( "age" ).moduleName( ModuleName.from( "mymodule" ) ).formItem( age ).displayName( "Age" );
+            Commands.mixin().create().name( "age" ).moduleName( ModuleName.from( "mymodule" ) ).addFormItem( age ).displayName( "Age" );
 
         // exercise
         this.handler.handle( this.context, command );

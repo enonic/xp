@@ -47,7 +47,7 @@ public class GetMixinRpcHandlerTest
         Mixin mixin = Mixin.newMixin().
             name( "input_text1" ).
             module( ModuleName.from( "mymodule" ) ).
-            formItem( inputText1 ).
+            addFormItem( inputText1 ).
             build();
 
         Mixins mixins = Mixins.from( mixin );
@@ -66,7 +66,7 @@ public class GetMixinRpcHandlerTest
         Mixin mixin = Mixin.newMixin().
             name( "input_text1" ).
             module( ModuleName.from( "mymodule" ) ).
-            formItem( inputText1 ).
+            addFormItem( inputText1 ).
             build();
 
         Mixins mixins = Mixins.from( mixin );

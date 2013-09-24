@@ -1,25 +1,27 @@
 {
-    "success": true,
-    "mixin": {
-        "name": "input_text1",
-        "module": "mymodule",
-        "displayName": null,
-        "Input": {
-            "name": "input_text1",
-            "label": "Line Text 1",
-            "immutable": false,
-            "occurrences": {
-                "minimum": 1,
-                "maximum": 1
-            },
-            "indexed": false,
-            "customText": null,
-            "validationRegexp": null,
-            "helpText": "Help text line 1",
-            "type": {
-                "name": "TextLine"
+    "success" : true,
+    "mixin" : {
+        "name" : "input_text1",
+        "module" : "mymodule",
+        "displayName" : null,
+        "items" : [ {
+            "Input" : {
+                "name" : "input_text1",
+                "label" : "Line Text 1",
+                "immutable" : false,
+                "occurrences" : {
+                    "minimum" : 1,
+                    "maximum" : 1
+                },
+                "indexed" : false,
+                "customText" : null,
+                "validationRegexp" : null,
+                "helpText" : "Help text line 1",
+                "type" : {
+                    "name" : "TextLine"
+                }
             }
-        },
-        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1"
+        } ],
+        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1"
     }
 }
