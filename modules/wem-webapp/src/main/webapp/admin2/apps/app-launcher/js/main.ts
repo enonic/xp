@@ -1,6 +1,8 @@
 ///<reference path='../../../api/js/ExtJs.d.ts' />
 ///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
+///<reference path='../../../api/js/crossroads.d.ts' />
+///<reference path='../../../api/js/hasher.d.ts' />
 
 ///<reference path='app/home/Branding.ts' />
 ///<reference path='app/home/CenterPanel.ts' />
@@ -17,6 +19,7 @@
 ///<reference path='app/applauncher/AppLauncher.ts' />
 ///<reference path='app/applauncher/LostConnectionDetector.ts' />
 ///<reference path='app/applauncher/LostConnectionDetectorListener.ts' />
+///<reference path='app/applauncher/AppRouter.ts' />
 ///<reference path='app/login/LoginForm.ts' />
 ///<reference path='app/login/UserStore.ts' />
 ///<reference path='app/login/Authenticator.ts' />
@@ -55,7 +58,8 @@ window.onload = () => {
 
     var appInfoPanel = new app_launcher.AppInfo();
 
-    var appSelector = new app_launcher.AppSelector(app_launcher.Applications.getAllApps());
+    var applications = app_launcher.Applications.getAllApps();
+    var appSelector = new app_launcher.AppSelector(applications);
     appSelector.addListener({
         onAppHighlighted: (app:app_launcher.Application) => {
             appInfoPanel.showAppInfo(app);
@@ -93,4 +97,6 @@ window.onload = () => {
     }
 
     api_dom.Body.get().appendChild(mainContainer);
+
+    new app_launcher.AppRouter(applications, appLauncher);
 }
