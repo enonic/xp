@@ -7,7 +7,7 @@ module api_ui {
 
 
         constructor(options:FloatingWindowOptions = {}) {
-            super(jQuery.extend({draggable:true, draggableOptions: { handle: ".tab-menu"} }, options));
+            super(jQuery.extend({draggable: true, draggableOptions: { handle: ".tab-menu"} }, options));
 
             this.navigator = new api_ui_tab.TabMenu();
             this.deck = new api_ui.NavigatedDeckPanel(this.navigator);
@@ -20,11 +20,15 @@ module api_ui {
             this.addItemArray(label);
 
             var item = new api_ui_tab.TabMenuItem(label);
-            
+
+            item.addListener({onSelected: (tab:api_ui_tab.TabMenuItem) => {
+                this.navigator.hideMenu()
+            }});
+
             (this.items.length == 1)
                 ? this.deck.addNavigablePanelToFront(item, panel)
                 : this.deck.addNavigablePanelToBack(item, panel);
-            
+
             return this.deck.getPanelIndex(panel);
         }
 

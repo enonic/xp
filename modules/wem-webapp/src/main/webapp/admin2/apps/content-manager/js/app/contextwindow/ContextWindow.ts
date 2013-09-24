@@ -6,13 +6,13 @@ module app_contextwindow {
 
     export class ContextWindow extends api_ui.NavigableFloatingWindow {
         private componentsPanel:ComponentsPanel;
-        private inspectorPanel:api_ui.Panel;
+        private inspectorPanel:InspectorPanel;
         private emulatorPanel:api_ui.Panel;
         private draggingMask:DraggingMask;
         private liveEditEl:api_dom.IFrameEl;
         private liveEditJQuery:JQueryStatic;
         private contextWindowOptions:ContextWindowOptions;
-
+        private selectedComponent:any;
 
         constructor(options:ContextWindowOptions) {
             var dragStart = (event, ui) => {
@@ -28,12 +28,16 @@ module app_contextwindow {
             this.addClass("context-window");
 
             this.componentsPanel = new ComponentsPanel(this);
-            this.inspectorPanel = new api_ui.Panel();
+            this.inspectorPanel = new InspectorPanel(this);
             this.emulatorPanel = new api_ui.Panel();
 
             this.addItem("Components", this.componentsPanel);
             this.addItem("Inspector", this.inspectorPanel);
             this.addItem("Emulator", this.emulatorPanel);
+
+            ComponentSelectEvent.on((event) => {
+                this.
+            });
 
             if (options.liveEditEl) {
                 this.liveEditEl = options.liveEditEl;
@@ -49,15 +53,37 @@ module app_contextwindow {
             }
             this.draggingMask = new DraggingMask(this.liveEditEl);
             document.body.appendChild(this.draggingMask.getHTMLElement());
+            this.liveEditListen();
+        }
+
+        private liveEditListen() {
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectComponent.liveEdit', (event, component, mouseClickPagePosition) => {
+                new ComponentSelectEvent(<Component>component).fire();
+                this.selectedComponent = component;
+            });
+
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('deselectComponent.liveEdit', (event) => {
+                new ComponentDeselectEvent().fire();
+                this.selectedComponent = null;
+            });
+        }
+
+        getSelectedComponent():any {
+            return this.selectedComponent;
         }
 
         getLiveEditJQuery():JQueryStatic {
             if (!this.liveEditJQuery) {
-                //TODO: "contentwindow" is hacky because we need HTMLIFrameElement to fetch that property, but it is impossible to cast to ><
-                this.liveEditJQuery = <JQueryStatic>this.liveEditEl.getHTMLElement()["contentWindow"].$liveEdit;
+                console.log(this.getLiveEditWindow());
+                this.liveEditJQuery = <JQueryStatic>this.getLiveEditWindow().$liveEdit;
             }
             return this.liveEditJQuery;
 
+        }
+
+        getLiveEditWindow():any {
+            //TODO: "contentwindow" is hacky because we need HTMLIFrameElement to fetch that property, but it is impossible to cast to ><
+            return this.liveEditEl.getHTMLElement()["contentWindow"];
         }
 
     }

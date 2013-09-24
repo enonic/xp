@@ -102,6 +102,11 @@ module api_dom {
             return this;
         }
 
+        removeAllClasses(exceptions:string = ""):api_dom.Element {
+            this.el.getHTMLElement().className = exceptions;
+            return this;
+        }
+
         getId():string {
             return this.id;
         }

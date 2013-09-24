@@ -33,8 +33,11 @@
 ///<reference path='app/browse/grid/ContentGridStore.ts' />
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 
+///<reference path='app/contextwindow/Component.ts' />
+///<reference path='app/contextwindow/ContextWindowEvents.ts' />
 ///<reference path='app/contextwindow/ComponentGrid.ts' />
 ///<reference path='app/contextwindow/ComponentsPanel.ts' />
+///<reference path='app/contextwindow/InspectorPanel.ts' />
 ///<reference path='app/contextwindow/DraggingMask.ts' />
 ///<reference path='app/contextwindow/ContextWindow.ts' />
 
