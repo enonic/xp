@@ -1,0 +1,117 @@
+{
+    "name": "norwegian-county",
+    "module": "demo",
+    "displayName": "Demo: Norwegian countries",
+    "items": [
+        {
+            "Input": {
+                "name": "norwegianCounty",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "SingleSelector",
+                    "config": {
+                        "selectorType": "DROPDOWN",
+                        "options": [
+                            {
+                                "label": "Østfold",
+                                "value": "01"
+                            },
+                            {
+                                "label": "Akershus",
+                                "value": "02"
+                            },
+                            {
+                                "label": "Oslo",
+                                "value": "03"
+                            },
+                            {
+                                "label": "Hedmark",
+                                "value": "04"
+                            }
+                            ,
+                            {
+                                "label": "Oppland",
+                                "value": "05"
+                            }
+                            ,
+                            {
+                                "label": "Buskerud",
+                                "value": "06"
+                            },
+                            {
+                                "label": "Vestfold",
+                                "value": "07"
+                            }
+                            ,
+                            {
+                                "label": "Telemark",
+                                "value": "08"
+                            },
+                            {
+                                "label": "Øst-Agder",
+                                "value": "09"
+                            }
+                            ,
+                            {
+                                "label": "Vest-Agder",
+                                "value": "10"
+                            }
+                            ,
+                            {
+                                "label": "Rogaland",
+                                "value": "11"
+                            }
+                            ,
+                            {
+                                "label": "Hordaland",
+                                "value": "12"
+                            },
+                            {
+                                "label": "Sogn og Fjordane",
+                                "value": "14"
+                            }
+                            ,
+                            {
+                                "label": "Møre og Romsdal",
+                                "value": "15"
+                            }
+                            ,
+                            {
+                                "label": "Sør-Trøndelag",
+                                "value": "16"
+                            }
+                            ,
+                            {
+                                "label": "Nord-Trøndelag",
+                                "value": "17"
+                            }
+                            ,
+                            {
+                                "label": "Nordland",
+                                "value": "18"
+                            },
+                            {
+                                "label": "Troms",
+                                "value": "19"
+                            }
+                            ,
+                            {
+                                "label": "Finnmark",
+                                "value": "20"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -19,8 +19,7 @@ public class MixinsInitializer
 {
     private final MixinJsonSerializer serializer = new MixinJsonSerializer();
 
-    private static final String[] DEMO_MIXINS = {"demo-mixin-address.json"};
-
+    private static final String[] DEMO_MIXINS = {"demo-mixin-address.json", "demo-mixin-norwegian-counties.json"};
 
     protected MixinsInitializer()
     {

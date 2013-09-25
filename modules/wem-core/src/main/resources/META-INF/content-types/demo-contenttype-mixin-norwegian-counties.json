@@ -1,0 +1,16 @@
+{
+    "name": "mixin-using-norwegian-county",
+    "module": "demo",
+    "displayName": "Using mixin: norwegian-county",
+    "superType": "system:structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "MixinReference": {
+                "name": "norwegian-county",
+                "reference": "demo:norwegian-county"
+            }
+        }
+    ]
+}

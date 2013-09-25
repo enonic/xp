@@ -1,7 +1,7 @@
 {
-    "name": "mixin",
+    "name": "using-mixin-address",
     "module": "demo",
-    "displayName": "Mixin",
+    "displayName": "Using mixin: address",
     "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
@@ -9,8 +9,7 @@
         {
             "MixinReference": {
                 "name": "address",
-                "reference": "demo:address",
-                "type": "FormItemSet"
+                "reference": "demo:address"
             }
         }
     ]
