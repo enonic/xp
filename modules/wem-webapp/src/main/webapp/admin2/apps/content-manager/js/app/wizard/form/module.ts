@@ -1,4 +1,3 @@
-///<reference path='InputTypeManager.ts' />
 ///<reference path='FormItemView.ts' />
 ///<reference path='LayoutView.ts' />
 ///<reference path='FieldSetLabel.ts' />
