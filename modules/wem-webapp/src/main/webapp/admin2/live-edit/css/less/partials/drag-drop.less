@@ -2,38 +2,24 @@
 
 #live-edit-drag-helper {
     display: table;
-    border: 1px solid @borderColor;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    background-color: #fff;
-    font-size: 11px;
+    cursor: none;
+    font-size: 24px;
+    color: #fff;
 }
 
-#live-edit-drag-helper-inner {
-    display: table-row;
+// Align the font icon
+#live-edit-drag-helper:before {
+    position: absolute;
+    top: 12px;
+    left: 12px;
 }
 
-#live-edit-drag-helper-status-icon {
-    display: table-cell;
-    width: 64px;
-    background-repeat: no-repeat;
-    background-position: 8px 6px;
-    vertical-align: middle;
+[data-live-edit-drop-allowed="true"] {
+    background-color: #558e28;
 }
 
-#live-edit-drag-helper-text {
-    display: table-cell;
-    padding-top: 7px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.live-edit-drag-helper-yes {
-    background: url(../../../admin2/live-edit/images/drop-yes.gif);
-}
-
-.live-edit-drag-helper-no {
-    background: url(../../../admin2/live-edit/images/drop-no.gif);
+[data-live-edit-drop-allowed="false"] {
+    background-color: #d90b00;
 }
 
 .live-edit-component-padding {
