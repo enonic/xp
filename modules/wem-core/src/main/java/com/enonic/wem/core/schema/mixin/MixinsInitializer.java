@@ -49,6 +49,7 @@ public class MixinsInitializer
         if ( existingMixins.isEmpty() )
         {
             final CreateMixin createMixin = Commands.mixin().create();
+            createMixin.name( mixin.getName() );
             createMixin.displayName( mixin.getDisplayName() );
             createMixin.moduleName( mixin.getModuleName() );
             createMixin.formItems( mixin.getFormItems() );

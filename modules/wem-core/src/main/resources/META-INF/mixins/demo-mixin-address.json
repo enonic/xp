@@ -2,74 +2,78 @@
     "name": "address",
     "module": "demo",
     "displayName": "Demo: Address Mixin",
-    "FormItemSet": {
-        "name": "address",
-        "label": "Address",
-        "immutable": false,
-        "occurrences": {
-            "minimum": 0,
-            "maximum": 0
-        },
-        "customText": null,
-        "helpText": null,
-        "items": [
-            {
-                "Input": {
-                    "name": "street",
-                    "label": "Street",
-                    "immutable": false,
-                    "occurrences": {
-                        "minimum": 0,
-                        "maximum": 2
+    "items": [
+        {
+            "FormItemSet": {
+                "name": "address",
+                "label": "Address",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "customText": null,
+                "helpText": null,
+                "items": [
+                    {
+                        "Input": {
+                            "name": "street",
+                            "label": "Street",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 2
+                            },
+                            "indexed": true,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
                     },
-                    "indexed": true,
-                    "customText": null,
-                    "validationRegexp": null,
-                    "helpText": null,
-                    "type": {
-                        "name": "TextLine",
-                        "builtIn": true
-                    }
-                }
-            },
-            {
-                "Input": {
-                    "name": "postalCode",
-                    "label": "Postal code",
-                    "immutable": false,
-                    "occurrences": {
-                        "minimum": 1,
-                        "maximum": 1
+                    {
+                        "Input": {
+                            "name": "postalCode",
+                            "label": "Postal code",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 1,
+                                "maximum": 1
+                            },
+                            "indexed": true,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
                     },
-                    "indexed": true,
-                    "customText": null,
-                    "validationRegexp": null,
-                    "helpText": null,
-                    "type": {
-                        "name": "TextLine",
-                        "builtIn": true
+                    {
+                        "Input": {
+                            "name": "postalPlace",
+                            "label": "Postal place",
+                            "immutable": false,
+                            "occurrences": {
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "indexed": true,
+                            "customText": null,
+                            "validationRegexp": null,
+                            "helpText": null,
+                            "type": {
+                                "name": "TextLine",
+                                "builtIn": true
+                            }
+                        }
                     }
-                }
-            },
-            {
-                "Input": {
-                    "name": "postalPlace",
-                    "label": "Postal place",
-                    "immutable": false,
-                    "occurrences": {
-                        "minimum": 0,
-                        "maximum": 1
-                    },
-                    "indexed": true,
-                    "customText": null,
-                    "validationRegexp": null,
-                    "helpText": null,
-                    "type": {
-                        "name": "TextLine",
-                        "builtIn": true
-                    }
-                }
+                ]
             }
-        ]
-    }
+        }
+    ]
 }
