@@ -27,6 +27,9 @@ TestCase("ContentType", {
                 validationRegexp: "regex",
                 inputTypeConfig: {
                     someConfig: "someValue"
+                },
+                inputType: {
+                    name: "myRequiredInput"
                 }
             }
             ,
@@ -55,7 +58,10 @@ TestCase("ContentType", {
                         immutable: true,
                         indexed: true,
                         validationRegexp: null,
-                        inputTypeConfig: null
+                        inputTypeConfig: null,
+                        inputType: {
+                            name: "myInput"
+                        }
                     }
                 ]
             }
@@ -92,11 +98,11 @@ TestCase("ContentType", {
 
         var form:api_schema_content_form.Form = contentType.getForm();
         var myRequiredInput = form.getInputByName("myRequiredInput")
-        assertEquals( "My Required Input", myRequiredInput.getLabel() );
-        assertEquals( 1, myRequiredInput.getOccurrences().getMinimum() );
-        assertEquals( 1, myRequiredInput.getOccurrences().getMaximum() );
-        assertEquals( "Custom text", myRequiredInput.getCustomText() );
-        assertEquals( "Help text", myRequiredInput.getHelpText() );
+        assertEquals("My Required Input", myRequiredInput.getLabel());
+        assertEquals(1, myRequiredInput.getOccurrences().getMinimum());
+        assertEquals(1, myRequiredInput.getOccurrences().getMaximum());
+        assertEquals("Custom text", myRequiredInput.getCustomText());
+        assertEquals("Help text", myRequiredInput.getHelpText());
     }
 });
 
