@@ -7,7 +7,7 @@
   <super-type>system:content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
-  <allow-children>true</allow-children>
+  <allow-child-content>true</allow-child-content>
   <form>
     <input type="Color" name="myColor">
       <label/>

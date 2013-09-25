@@ -27,7 +27,7 @@ final class ContentJsonTemplate
         JsonSerializerUtil.setDateTimeValue( "modifiedTime", content.getModifiedTime(), contentNode );
         contentNode.put( "editable", true );
         contentNode.put( "deletable", !content.getPath().isRoot() );
-        contentNode.put( "allowsChildren", contentTypeAllowsChildren( content.getType() ) );
+        contentNode.put( "allowsChildren", contentTypeAllowsChildContent( content.getType() ) );
         if ( content.getId() == null )
         {
             contentNode.put( "iconUrl", SchemaImageUriResolver.resolve( content.getType() ) );
@@ -38,10 +38,10 @@ final class ContentJsonTemplate
         }
     }
 
-    private static boolean contentTypeAllowsChildren( QualifiedContentTypeName contentTypeName )
+    private static boolean contentTypeAllowsChildContent( QualifiedContentTypeName contentTypeName )
     {
         // quick hack to avoid refactoring ContentJsonTemplate and related classes before 18/04
-        // TODO retrieve content type and check value of allow-children flag
+        // TODO retrieve content type and check value of allow-child-content flag
         return !( contentTypeName.isImageMedia() || contentTypeName.isArchiveMedia() || contentTypeName.isAudioMedia() ||
             contentTypeName.isCodeMedia() || contentTypeName.isDataMedia() || contentTypeName.isDocumentMedia() ||
             contentTypeName.isExecutableMedia() || contentTypeName.isMedia() || contentTypeName.isSpreadsheetMedia() ||
