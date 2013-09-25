@@ -3,6 +3,8 @@ package com.enonic.wem.admin.json.schema.relationship;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -75,6 +77,16 @@ public class RelationshipTypeResultJson
     public List<String> getAllowedToTypes()
     {
         return allowedToTypes;
+    }
+
+    public DateTime getCreatedTime()
+    {
+        return model.getCreatedTime();
+    }
+
+    public DateTime getModifiedTime()
+    {
+        return model.getModifiedTime();
     }
 
     @Override

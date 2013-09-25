@@ -189,6 +189,7 @@
 ///<reference path='schema/content/form/module.ts' />
 ///<reference path='schema/content/json/module.ts' />
 ///<reference path='schema/content/module.ts' />
+///<reference path="schema/relationshiptype/json/RelationshipTypeJson.ts" />
 
 ///<reference path='page/json/module.ts' />
 ///<reference path='page/module.ts' />
