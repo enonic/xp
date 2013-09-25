@@ -9,7 +9,7 @@ module LiveEdit.component.DragDropSort {
     var $ = $liveEdit;
 
     // jQuery sortable cursor position form to the drag helper.
-    var CURSOR_AT:any = {left: -10, top: -15};
+    var CURSOR_AT:any = {left: 67, top: 8};
 
     // Set up selectors for jQuery.sortable configuration.
     var REGION_SELECTOR:string = LiveEdit.component.TypeConfiguration[LiveEdit.component.Type.REGION].cssSelector;
@@ -54,7 +54,7 @@ module LiveEdit.component.DragDropSort {
             revert: false,
             connectWith: REGION_SELECTOR,
             items: SORTABLE_ITEMS_SELECTOR,
-            distance: 10,
+            distance: 20,
             delay: 50,
             tolerance: 'intersect',
             cursor: 'move',
