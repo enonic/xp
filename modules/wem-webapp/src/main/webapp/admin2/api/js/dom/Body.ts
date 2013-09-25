@@ -10,6 +10,8 @@ module api_dom {
 
         constructor() {
             super(null, null, null, new ElementHelper(document.body));
+
+            this.init();
         }
 
     }

@@ -137,10 +137,12 @@
 ///<reference path='ui/Dropdown.ts' />
 ///<reference path='ui/TextInputListener.ts' />
 ///<reference path='ui/TextInput.ts' />
+///<reference path='ui/AutosizeTextInput.ts' />
+///<reference path='ui/ComboBox.ts' />
+///<reference path='ui/ComboBoxListener.ts' />
 ///<reference path='ui/CheckboxInputListener.ts' />
 ///<reference path='ui/CheckboxInput.ts' />
 ///<reference path='ui/PasswordInput.ts' />
-///<reference path='ui/AutosizeTextInput.ts' />
 ///<reference path='ui/TextArea.ts' />
 ///<reference path='ui/CodeArea.ts' />
 ///<reference path='ui/form/Fieldset.ts' />

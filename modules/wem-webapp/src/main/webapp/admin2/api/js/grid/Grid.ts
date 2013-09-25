@@ -30,6 +30,7 @@ module api_grid {
             this.getEl().setHeight((this.options.height ? this.options.height : this.defaultHeight) + "px");
             this.getEl().setWidth((this.options.width ? this.options.width : this.defaultWidth) + "px");
             this.dataView = new DataView(this);
+            this.slickGrid = new Slick.Grid(this.getHTMLElement(), this.dataView.slick(), this.columns, this.options);
 
         }
 
@@ -39,7 +40,6 @@ module api_grid {
 
 
         afterRender() {
-            this.slickGrid = new Slick.Grid(this.getHTMLElement(), this.dataView.slick(), this.columns, this.options);
             if (this.options) {
                 if (this.options.hideColumnHeaders) {
                     jQuery(".slick-header-columns").css("height", "0px");
@@ -60,6 +60,10 @@ module api_grid {
             this.slickGrid.render();
         }
 
+        resizeCanvas() {
+            this.slickGrid.resizeCanvas();
+        }
+
         updateRowCount() {
             this.slickGrid.updateRowCount();
         }
@@ -68,6 +72,40 @@ module api_grid {
             this.slickGrid.invalidateRows(rows);
         }
 
+        setSelectionModel(selectionModel: any) {
+            this.slickGrid.setSelectionModel(selectionModel);
+        }
 
+        resetActiveCell() {
+            this.slickGrid.resetActiveCell();
+        }
+
+        navigateUp() {
+            this.slickGrid.navigateUp();
+        }
+
+        navigateDown() {
+            this.slickGrid.navigateDown();
+        }
+
+        getActiveCell():Slick.Cell {
+            return this.slickGrid.getActiveCell();
+        }
+
+        setActiveCell(row:number, cell:number) {
+            this.slickGrid.setActiveCell(row, cell);
+        }
+
+        subscribeOnSelectedRowsChanged(callback:(e, args) => void) {
+            this.slickGrid.onSelectedRowsChanged.subscribe(callback);
+        }
+
+        subscribeOnRowsChanged(callback:(e, args) => void) {
+            this.dataView.subscribeOnRowsChanged(callback);
+        }
+
+        subscribeOnClick(callback:(e, args) => void) {
+            this.slickGrid.onClick.subscribe(callback);
+        }
     }
 }
