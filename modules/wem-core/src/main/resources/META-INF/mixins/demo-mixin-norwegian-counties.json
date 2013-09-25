@@ -6,7 +6,7 @@
         {
             "Input": {
                 "name": "norwegianCounty",
-                "label": null,
+                "label": "Norwegian county",
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
