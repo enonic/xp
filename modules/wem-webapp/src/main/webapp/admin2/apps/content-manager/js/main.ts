@@ -16,7 +16,6 @@
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentWizardPanel.ts' />
 
-///<reference path='app/wizard/form/InputTypeManager.ts' />
 ///<reference path='app/wizard/form/input/module.ts' />
 ///<reference path='app/wizard/form/module.ts' />
 
