@@ -174,7 +174,7 @@ public class CreateContentHandler
         if ( content != null )
         {
             final ContentType contentType = contentTypeDao.select( content.getType(), session );
-            if ( !contentType.allowChildren() )
+            if ( !contentType.allowChildContent() )
             {
                 throw new SystemException( "Content [{0}] of type [{1}] does not allow children", parentContentPath,
                                            contentType.getQualifiedName() );

@@ -70,7 +70,7 @@ TestCase("ContentType", {
         var json:api_schema_content_json.ContentTypeJson = <api_schema_content_json.ContentTypeJson>{
             name: "mytype",
             abstract: false,
-            allowChildren: true,
+            allowChildContent: true,
             contentDisplayNameScript: "myFunction();",
             displayName: "My Content type",
             final: false,
@@ -90,7 +90,7 @@ TestCase("ContentType", {
         assertEquals("http://localhost/myicon.png", contentType.getIconUrl());
         assertEquals(false, contentType.isAbstract());
         assertEquals(false, contentType.isFinal());
-        assertEquals(true, contentType.isAllowChildren());
+        assertEquals(true, contentType.isAllowChildContent());
         assertEquals("2013-08-23T12:55:09.162Z", contentType.getCreatedTime().toISOString());
         assertEquals("2013-08-23T13:55:09.162Z", contentType.getModifiedTime().toISOString());
         assertEquals("user:system:root", contentType.getOwner());

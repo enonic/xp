@@ -31,7 +31,7 @@ public final class ContentType
 
     private final boolean isFinal;
 
-    private final boolean allowChildren;
+    private final boolean allowChildContent;
 
     private final ModuleName moduleName;
 
@@ -61,7 +61,7 @@ public final class ContentType
         this.superType = builder.superType;
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
-        this.allowChildren = builder.allowChildren;
+        this.allowChildContent = builder.allowChildContent;
 
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -103,9 +103,9 @@ public final class ContentType
         return isFinal;
     }
 
-    public boolean allowChildren()
+    public boolean allowChildContent()
     {
-        return allowChildren;
+        return allowChildContent;
     }
 
     @Override
@@ -157,7 +157,7 @@ public final class ContentType
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
-        s.add( "allowChildren", allowChildren );
+        s.add( "allowChildContent", allowChildContent );
         s.add( "form", form );
         s.add( "icon", icon );
         return s.toString();
@@ -185,7 +185,7 @@ public final class ContentType
 
         private boolean isFinal;
 
-        private boolean allowChildren;
+        private boolean allowChildContent;
 
         private Form.Builder formBuilder = newForm();
 
@@ -202,7 +202,7 @@ public final class ContentType
         private Builder()
         {
             formBuilder = newForm();
-            allowChildren = true;
+            allowChildContent = true;
         }
 
         private Builder( final ContentType source )
@@ -212,7 +212,7 @@ public final class ContentType
             this.displayName = source.getDisplayName();
             this.isAbstract = source.isAbstract();
             this.isFinal = source.isFinal();
-            this.allowChildren = source.allowChildren();
+            this.allowChildContent = source.allowChildContent();
             this.superType = source.getSuperType();
             if ( source.form() != null )
             {
@@ -273,9 +273,9 @@ public final class ContentType
             return this;
         }
 
-        public Builder allowChildren( final boolean allowChildren )
+        public Builder allowChildContent( final boolean value )
         {
-            this.allowChildren = allowChildren;
+            this.allowChildContent = value;
             return this;
         }
 

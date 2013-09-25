@@ -1,6 +1,6 @@
 {
     "abstract" : false,
-    "allowChildren" : true,
+    "allowChildContent" : true,
     "contentDisplayNameScript" : null,
     "deletable" : true,
     "displayName" : null,

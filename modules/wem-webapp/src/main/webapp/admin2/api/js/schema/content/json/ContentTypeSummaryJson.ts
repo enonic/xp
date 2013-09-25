@@ -4,7 +4,7 @@ module api_schema_content_json{
 
         abstract:boolean;
 
-        allowChildren:boolean;
+        allowChildContent:boolean;
 
         contentDisplayNameScript: string;
 

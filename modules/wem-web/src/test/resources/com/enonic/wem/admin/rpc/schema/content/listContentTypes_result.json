@@ -10,7 +10,7 @@
             "superType": "system:unstructured",
             "isAbstract": false,
             "isFinal": false,
-            "allowChildren": true,
+            "allowChildContent": true,
             "form": [
                 {
                     "Input": {
@@ -78,7 +78,7 @@
             "superType": "system:unstructured",
             "isAbstract": false,
             "isFinal": false,
-            "allowChildren": true,
+            "allowChildContent": true,
             "form": [
                 {
                     "Input": {

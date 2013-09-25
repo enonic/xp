@@ -43,7 +43,7 @@ public final class CreateContentTypeHandler
             superType( command.getSuperType() ).
             setAbstract( command.isAbstract() ).
             setFinal( command.isFinal() ).
-            allowChildren( command.getAllowChildren() ).
+            allowChildContent( command.getAllowChildContent() ).
             icon( command.getIcon() ).
             createdTime( currentTime ).
             modifiedTime( currentTime ).

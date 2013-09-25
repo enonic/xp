@@ -9,7 +9,7 @@ module api_remote_contenttype {
         superType: string;
         isAbstract: boolean;
         isFinal: boolean;
-        allowChildren: boolean;
+        allowChildContent: boolean;
         createdTime?: Date;
         modifiedTime?: Date;
         iconUrl: string;

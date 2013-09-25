@@ -22,7 +22,7 @@ public final class CreateContentType
 
     private boolean isFinal;
 
-    private boolean allowChildren = true;
+    private boolean allowChildContent = true;
 
     private ModuleName moduleName;
 
@@ -87,14 +87,14 @@ public final class CreateContentType
         return this;
     }
 
-    public boolean getAllowChildren()
+    public boolean getAllowChildContent()
     {
-        return allowChildren;
+        return allowChildContent;
     }
 
-    public CreateContentType allowChildren( final boolean allowChildren )
+    public CreateContentType allowChildContent( final boolean value )
     {
-        this.allowChildren = allowChildren;
+        this.allowChildContent = value;
         return this;
     }
 
@@ -158,7 +158,7 @@ public final class CreateContentType
         final CreateContentType that = (CreateContentType) o;
         return Objects.equal( this.name, that.name ) && Objects.equal( this.displayName, that.displayName ) &&
             Objects.equal( this.superType, that.superType ) && Objects.equal( this.isAbstract, that.isAbstract ) &&
-            Objects.equal( this.isFinal, that.isFinal ) && Objects.equal( this.allowChildren, that.allowChildren ) &&
+            Objects.equal( this.isFinal, that.isFinal ) && Objects.equal( this.allowChildContent, that.allowChildContent ) &&
             Objects.equal( this.moduleName, that.moduleName ) && Objects.equal( this.form, that.form ) &&
             Objects.equal( this.icon, that.icon );
     }
@@ -166,7 +166,7 @@ public final class CreateContentType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildren, moduleName, form, icon );
+        return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildContent, moduleName, form, icon );
     }
 
     @Override

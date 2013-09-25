@@ -6,7 +6,7 @@
     "superType": "system:structured",
     "isAbstract": false,
     "isFinal": true,
-    "allowChildren": true,
+    "allowChildContent": true,
     "form": [
         {
             "Layout": {

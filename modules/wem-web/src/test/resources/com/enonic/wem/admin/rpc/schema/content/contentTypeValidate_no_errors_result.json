@@ -11,7 +11,7 @@
         "superType": "system:content",
         "isAbstract": false,
         "isFinal": true,
-        "allowChildren": true,
+        "allowChildContent": true,
         "form": [
             {
                 "Input": {

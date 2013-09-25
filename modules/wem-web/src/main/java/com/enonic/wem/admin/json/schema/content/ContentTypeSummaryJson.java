@@ -65,9 +65,9 @@ public class ContentTypeSummaryJson
         return this.contentType.isFinal();
     }
 
-    public boolean isAllowChildren()
+    public boolean isAllowChildContent()
     {
-        return this.contentType.allowChildren();
+        return this.contentType.allowChildContent();
     }
 
     public String getIconUrl()

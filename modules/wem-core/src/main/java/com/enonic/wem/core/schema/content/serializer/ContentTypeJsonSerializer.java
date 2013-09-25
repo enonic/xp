@@ -61,7 +61,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );
         objectNode.put( "isAbstract", contentType.isAbstract() );
         objectNode.put( "isFinal", contentType.isFinal() );
-        objectNode.put( "allowChildren", contentType.allowChildren() );
+        objectNode.put( "allowChildContent", contentType.allowChildContent() );
 
         if ( includeCreatedTime )
         {
@@ -106,7 +106,7 @@ public class ContentTypeJsonSerializer
         builder.superType( superType );
         builder.setAbstract( JsonSerializerUtil.getBooleanValue( "isAbstract", contentTypeNode ) );
         builder.setFinal( JsonSerializerUtil.getBooleanValue( "isFinal", contentTypeNode ) );
-        builder.allowChildren( JsonSerializerUtil.getBooleanValue( "allowChildren", contentTypeNode, true ) );
+        builder.allowChildContent( JsonSerializerUtil.getBooleanValue( "allowChildContent", contentTypeNode, true ) );
         if ( includeCreatedTime )
         {
             builder.createdTime( JsonSerializerUtil.getDateTimeValue( "createdTime", contentTypeNode ) );

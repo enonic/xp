@@ -8,7 +8,7 @@ module api_schema_content{
 
         private displayName:string;
 
-        private allowChildren:boolean;
+        private allowChildContent:boolean;
 
         private abstract:boolean;
 
@@ -32,7 +32,7 @@ module api_schema_content{
             this.name = json.name;
             this.qualifiedName = json.qualifiedName;
             this.displayName = json.displayName;
-            this.allowChildren = json.allowChildren;
+            this.allowChildContent = json.allowChildContent;
             this.final = json.final;
             this.abstract = json.abstract;
             this.superType = json.superType;
@@ -64,8 +64,8 @@ module api_schema_content{
             return this.abstract;
         }
 
-        isAllowChildren():boolean {
-            return this.allowChildren;
+        isAllowChildContent():boolean {
+            return this.allowChildContent;
         }
 
         getSuperType():string {
