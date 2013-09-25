@@ -7,12 +7,15 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.form.FormItem;
+import com.enonic.wem.api.schema.content.form.FormItems;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 
 public final class CreateMixin
     extends Command<QualifiedMixinName>
 {
-    private FormItem formItem;
+    private String name;
+
+    private FormItems formItems = new FormItems( null );
 
     private ModuleName moduleName;
 
@@ -21,9 +24,21 @@ public final class CreateMixin
     private Icon icon;
 
 
-    public CreateMixin formItem( final FormItem formItem )
+    public CreateMixin name( final String name )
     {
-        this.formItem = formItem;
+        this.name = name;
+        return this;
+    }
+
+    public CreateMixin formItems( final FormItems formItems )
+    {
+        this.formItems = formItems;
+        return this;
+    }
+
+    public CreateMixin addFormItem( final FormItem formItem )
+    {
+        this.formItems.add( formItem );
         return this;
     }
 
@@ -45,9 +60,14 @@ public final class CreateMixin
         return this;
     }
 
-    public FormItem getFormItem()
+    public String getName()
     {
-        return formItem;
+        return name;
+    }
+
+    public FormItems getFormItems()
+    {
+        return formItems;
     }
 
     public ModuleName getModuleName()
@@ -79,20 +99,24 @@ public final class CreateMixin
         }
 
         final CreateMixin that = (CreateMixin) o;
-        return Objects.equal( this.formItem, that.formItem ) && Objects.equal( this.moduleName, that.moduleName ) &&
-            Objects.equal( this.displayName, that.displayName ) && Objects.equal( this.icon, that.icon );
+        return Objects.equal( this.name, that.name ) &&
+            Objects.equal( this.formItems, that.formItems ) &&
+            Objects.equal( this.moduleName, that.moduleName ) &&
+            Objects.equal( this.displayName, that.displayName ) &&
+            Objects.equal( this.icon, that.icon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.formItem, this.moduleName, this.displayName, this.icon );
+        return Objects.hashCode( this.name, this.formItems, this.moduleName, this.displayName, this.icon );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.formItem, "formItem cannot be null" );
+        Preconditions.checkNotNull( this.name, "name cannot be null" );
+        Preconditions.checkNotNull( this.formItems, "formItems cannot be null" );
         Preconditions.checkNotNull( this.moduleName, "moduleName cannot be null" );
         Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
     }

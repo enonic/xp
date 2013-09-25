@@ -10,29 +10,28 @@
   <allow-children>true</allow-children>
   <form>
     <form-item-set name="mySet">
-      <label/>
+      <label />
       <immutable>false</immutable>
-      <custom-text/>
-      <help-text/>
-      <occurrences minimum="0" maximum="1"/>
+      <custom-text />
+      <help-text />
+      <occurrences minimum="0" maximum="1" />
       <items>
         <layout name="myFieldSet" type="FieldSet">
           <label>My field set</label>
           <items>
             <input type="TextLine" name="myTextLine">
-              <label/>
+              <label />
               <immutable>false</immutable>
               <indexed>false</indexed>
-              <custom-text/>
-              <help-text/>
-              <occurrences minimum="0" maximum="1"/>
+              <custom-text />
+              <help-text />
+              <occurrences minimum="0" maximum="1" />
             </input>
           </items>
         </layout>
         <mixin-reference name="myCommonInput">
           <name>myCommonInput</name>
           <reference>system:my_shared_input</reference>
-          <type>Input</type>
         </mixin-reference>
       </items>
     </form-item-set>

@@ -5,8 +5,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.schema.mixin.Mixin;
-
 import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
 
@@ -98,9 +96,8 @@ public abstract class FormItem
         return name;
     }
 
-    static FormItem from( final Mixin mixin, final MixinReference mixinReference )
+    static FormItem from( final FormItem formItem, final MixinReference mixinReference )
     {
-        final FormItem formItem = mixin.getFormItem();
         final FormItem newFormItem;
         if ( formItem instanceof FormItemSet )
         {
@@ -115,7 +112,7 @@ public abstract class FormItem
         else
         {
             throw new IllegalArgumentException(
-                "Cannot create FormItem from mixin [" + mixin.getQualifiedName() + "] of type: " + formItem.getClass().getSimpleName() );
+                "Cannot create FormItem [" + formItem.getPath().toString() + "] of type: " + formItem.getClass().getSimpleName() );
         }
         return newFormItem;
     }

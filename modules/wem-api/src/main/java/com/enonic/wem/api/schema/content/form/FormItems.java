@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 /**
  * Mutable.
  */
-class FormItems
+public class FormItems
     implements Iterable<FormItem>
 {
     private final FormItem containerFormItem;
@@ -18,7 +18,7 @@ class FormItems
 
     private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<>();
 
-    FormItems( final FormItem containerFormItem )
+    public FormItems( final FormItem containerFormItem )
     {
         this.containerFormItem = containerFormItem;
     }
@@ -32,7 +32,7 @@ class FormItems
         return containerFormItem.getPath();
     }
 
-    void add( final FormItem formItem )
+    public void add( final FormItem formItem )
     {
         if ( formItem.getParent() != null )
         {

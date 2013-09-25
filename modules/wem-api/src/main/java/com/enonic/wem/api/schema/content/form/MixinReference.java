@@ -11,26 +11,12 @@ public class MixinReference
 {
     private final QualifiedMixinName qualifiedMixinName;
 
-    private final Class mixinClass;
-
-    private final Occurrences occurrences;
-
-    private final boolean immutable;
-
     private MixinReference( Builder builder )
     {
         super( builder.name );
 
         Preconditions.checkNotNull( builder.qualifiedMixinName, "qualifiedMixinName is required" );
         this.qualifiedMixinName = builder.qualifiedMixinName;
-
-        Preconditions.checkNotNull( builder.mixinClass, "mixinClass is required" );
-        Preconditions.checkArgument( builder.mixinClass.equals( Input.class ) || builder.mixinClass.equals( FormItemSet.class ),
-                                     "mixinClass must be of type Input or FormItemSet" );
-        mixinClass = builder.mixinClass;
-
-        this.occurrences = builder.occurrences;
-        this.immutable = builder.immutable;
     }
 
     public QualifiedMixinName getQualifiedMixinName()
@@ -38,44 +24,15 @@ public class MixinReference
         return qualifiedMixinName;
     }
 
-    public Class getMixinClass()
-    {
-        return mixinClass;
-    }
-
     public static Builder newMixinReference()
     {
         return new Builder();
-    }
-
-    public Occurrences getOccurrences()
-    {
-        return occurrences;
-    }
-
-    public boolean isImmutable()
-    {
-        return immutable;
     }
 
     @Override
     public MixinReference copy()
     {
         return newMixinReference( this ).build();
-    }
-
-    public static Class resolveMixinClass( final String classSimpleName )
-    {
-        final String packageName = MixinReference.class.getPackage().getName();
-        final String className = packageName + "." + classSimpleName;
-        try
-        {
-            return Class.forName( className );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            throw new IllegalArgumentException( "Mixin class not found: " + className, e );
-        }
     }
 
     public static Builder newMixinReference( final Mixin mixin )
@@ -94,12 +51,6 @@ public class MixinReference
 
         private QualifiedMixinName qualifiedMixinName;
 
-        private Class mixinClass;
-
-        private Occurrences occurrences;
-
-        private boolean immutable;
-
         public Builder()
         {
             // default;
@@ -109,14 +60,10 @@ public class MixinReference
         {
             this.name = source.getName();
             this.qualifiedMixinName = source.qualifiedMixinName;
-            this.mixinClass = source.mixinClass;
-            this.occurrences = source.occurrences;
-            this.immutable = source.immutable;
         }
 
         public Builder( final Mixin mixin )
         {
-            this.mixinClass = mixin.getFormItem().getClass();
             this.qualifiedMixinName = mixin.getQualifiedName();
         }
 
@@ -129,7 +76,6 @@ public class MixinReference
         public Builder mixin( final Mixin mixin )
         {
             this.qualifiedMixinName = mixin.getQualifiedName();
-            this.mixinClass = mixin.getFormItem().getClass();
             return this;
         }
 
@@ -142,42 +88,6 @@ public class MixinReference
         public Builder mixin( QualifiedMixinName qualifiedName )
         {
             this.qualifiedMixinName = qualifiedName;
-            return this;
-        }
-
-        public Builder type( String value )
-        {
-            this.mixinClass = resolveMixinClass( value );
-            return this;
-        }
-
-        public Builder type( Class value )
-        {
-            this.mixinClass = value;
-            return this;
-        }
-
-        public Builder typeInput()
-        {
-            this.mixinClass = Input.class;
-            return this;
-        }
-
-        public Builder typeFormItemSet()
-        {
-            this.mixinClass = FormItemSet.class;
-            return this;
-        }
-
-        public Builder occurrences( final Occurrences occurrences )
-        {
-            this.occurrences = occurrences;
-            return this;
-        }
-
-        public Builder immutable( final boolean value )
-        {
-            this.immutable = value;
             return this;
         }
 

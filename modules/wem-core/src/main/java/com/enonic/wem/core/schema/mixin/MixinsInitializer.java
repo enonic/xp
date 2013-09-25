@@ -51,7 +51,7 @@ public class MixinsInitializer
             final CreateMixin createMixin = Commands.mixin().create();
             createMixin.displayName( mixin.getDisplayName() );
             createMixin.moduleName( mixin.getModuleName() );
-            createMixin.formItem( mixin.getFormItem() );
+            createMixin.formItems( mixin.getFormItems() );
             createMixin.icon( mixin.getIcon() );
             client.execute( createMixin );
         }
@@ -61,7 +61,7 @@ public class MixinsInitializer
             updateMixin.qualifiedName( mixin.getQualifiedName() );
             updateMixin.editor( SetMixinEditor.newSetMixinEditor().
                 displayName( mixin.getDisplayName() ).
-                formItem( mixin.getFormItem() ).
+                formItems( mixin.getFormItems() ).
                 icon( mixin.getIcon() ).
                 build() );
             client.execute( updateMixin );

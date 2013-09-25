@@ -2,20 +2,24 @@
     "name": "my_input",
     "module": "mymodule",
     "displayName": "My Mixin",
-    "Input": {
-        "name": "my_input",
-        "label": "My input",
-        "immutable": true,
-        "occurrences": {
-            "minimum": 1,
-            "maximum": 3
-        },
-        "indexed": true,
-        "customText": "Custom text",
-        "validationRegexp": null,
-        "helpText": "Help text",
-        "type": {
-            "name": "TextLine"
+    "items": [
+        {
+            "Input": {
+                "name": "my_input",
+                "label": "My input",
+                "immutable": true,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 3
+                },
+                "indexed": true,
+                "customText": "Custom text",
+                "validationRegexp": null,
+                "helpText": "Help text",
+                "type": {
+                    "name": "TextLine"
+                }
+            }
         }
-    }
+    ]
 }

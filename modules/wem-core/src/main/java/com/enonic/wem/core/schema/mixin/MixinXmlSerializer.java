@@ -7,10 +7,8 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.module.ModuleName;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.core.schema.content.serializer.FormItemXmlSerializer;
 import com.enonic.wem.core.schema.content.serializer.FormItemsXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;
 import com.enonic.wem.core.support.serializer.SerializingException;
@@ -23,8 +21,6 @@ public class MixinXmlSerializer
     implements MixinSerializer
 {
     private FormItemsXmlSerializer formItemsSerializer = new FormItemsXmlSerializer();
-
-    private FormItemXmlSerializer formItemSerializer = formItemsSerializer.getFormItemXmlSerializer();
 
     private boolean prettyPrint = false;
 
@@ -56,7 +52,7 @@ public class MixinXmlSerializer
         typeEl.addContent( new Element( "module" ).setText( mixin.getModuleName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( mixin.getDisplayName() ) );
 
-        typeEl.addContent( formItemSerializer.serialize( mixin.getFormItem() ) );
+        typeEl.addContent( formItemsSerializer.serialize( mixin.getFormItems() ) );
     }
 
     @Override
@@ -77,60 +73,17 @@ public class MixinXmlSerializer
     private Mixin parse( final Element mixinEl )
         throws IOException
     {
-        Class type = resolveType( mixinEl );
-
-        if ( type.equals( Input.class ) )
-        {
-            return parseInputMixin( mixinEl );
-        }
-        else if ( type.equals( FormItemSet.class ) )
-        {
-            return parseFormItemSetMixin( mixinEl );
-        }
-        else
-        {
-            throw new IllegalArgumentException( "Unsupported type of Mixin: " + type.getSimpleName() );
-        }
-    }
-
-    private Mixin parseFormItemSetMixin( final Element mixinEl )
-    {
         final Mixin.Builder builder = newMixin();
+        builder.name( mixinEl.getChildTextTrim( "name" ) );
         builder.module( ModuleName.from( mixinEl.getChildTextTrim( "module" ) ) );
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
-        final String formItemSetElementName = formItemSerializer.classNameToXmlElementName( FormItemSet.class.getSimpleName() );
-        final Element formItemSetEl = mixinEl.getChild( formItemSetElementName );
-        builder.formItem( formItemSerializer.parse( formItemSetEl ) );
-        return builder.build();
-    }
 
-    private Mixin parseInputMixin( final Element mixinEl )
-    {
-        final Mixin.Builder builder = newMixin();
-        builder.module( ModuleName.from( mixinEl.getChildTextTrim( "module" ) ) );
-        builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
-        final String inputElementName = formItemSerializer.classNameToXmlElementName( Input.class.getSimpleName() );
-        final Element inputEl = mixinEl.getChild( inputElementName );
-        builder.formItem( formItemSerializer.parse( inputEl ) );
-        return builder.build();
-    }
-
-    private Class resolveType( final Element mixinEl )
-    {
-        final String formItemSetElementName = formItemSerializer.classNameToXmlElementName( FormItemSet.class.getSimpleName() );
-        final Element formItemSetElement = mixinEl.getChild( formItemSetElementName );
-        if ( formItemSetElement != null )
+        Iterable<FormItem> formItems = formItemsSerializer.parse( mixinEl.getChild( "items" ) );
+        for ( FormItem formItem : formItems )
         {
-            return FormItemSet.class;
+            builder.addFormItem( formItem );
         }
 
-        final String inputElementName = formItemSerializer.classNameToXmlElementName( Input.class.getSimpleName() );
-        final Element inputElement = mixinEl.getChild( inputElementName );
-        if ( inputElement != null )
-        {
-            return Input.class;
-        }
-
-        throw new XmlParsingException( "Unrecognised Mixin: " + mixinEl.toString() );
+        return builder.build();
     }
 }

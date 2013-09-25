@@ -141,7 +141,7 @@ public class ContentTypeResourceTest
         MixinReference myMixinReference = newMixinReference().
             name( "myMixinReference" ).
             mixin( "mymodule:mymixin" ).
-            type( Input.class ).build();
+            build();
 
         ContentType contentType = newContentType().
             module( MY_CTY_QUALIFIED_NAME.getModuleName() ).

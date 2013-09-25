@@ -45,8 +45,9 @@ public class GetMixinRpcHandlerTest
         Input inputText1 = newInput().name( "input_text1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         Mixin mixin = Mixin.newMixin().
+            name( "input_text1" ).
             module( ModuleName.from( "mymodule" ) ).
-            formItem( inputText1 ).
+            addFormItem( inputText1 ).
             build();
 
         Mixins mixins = Mixins.from( mixin );
@@ -63,8 +64,9 @@ public class GetMixinRpcHandlerTest
         Input inputText1 = newInput().name( "input_text1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
             "Help text line 1" ).required( true ).build();
         Mixin mixin = Mixin.newMixin().
+            name( "input_text1" ).
             module( ModuleName.from( "mymodule" ) ).
-            formItem( inputText1 ).
+            addFormItem( inputText1 ).
             build();
 
         Mixins mixins = Mixins.from( mixin );

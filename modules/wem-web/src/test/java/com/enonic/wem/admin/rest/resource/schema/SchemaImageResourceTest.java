@@ -135,10 +135,11 @@ public class SchemaImageResourceTest
         final Icon icon = Icon.from( data, "image/png" );
 
         Mixin mixin = newMixin().
+            name( "postal_code" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             icon( icon ).
-            formItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 
@@ -155,9 +156,10 @@ public class SchemaImageResourceTest
         throws Exception
     {
         Mixin mixin = newMixin().
+            name( "postal_code" ).
             module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
-            formItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
 

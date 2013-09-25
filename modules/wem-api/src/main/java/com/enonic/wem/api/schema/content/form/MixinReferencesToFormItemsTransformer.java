@@ -52,24 +52,29 @@ public class MixinReferencesToFormItemsTransformer
             {
                 final MixinReference mixinReference = (MixinReference) formItem;
                 final Mixin mixin = mixinFetcher.getMixin( mixinReference.getQualifiedMixinName() );
-                // TODO: what to do when mixin not found?
                 if ( mixin != null )
                 {
-                    Preconditions.checkArgument( mixinReference.getMixinClass() == mixin.getFormItem().getClass(),
-                                                 "Mixin expected to be of type %s: " + mixin.getFormItem().getClass().getSimpleName(),
-                                                 mixinReference.getMixinClass().getSimpleName() );
-
-                    final FormItem formItemCreatedFromMixin = FormItem.from( mixin, mixinReference );
-                    if ( formItemCreatedFromMixin instanceof FormItemSet )
+                    FormItems mixinFormItems = mixin.getFormItems();
+                    for ( FormItem mixinFormItem : mixinFormItems )
                     {
-                        final FormItemSet formItemSet = (FormItemSet) formItemCreatedFromMixin;
-                        final FormItemSet transformedFormItemSet = transformFormItemSet( formItemSet );
-                        formItems.add( transformedFormItemSet );
+                        FormItem createdFormItem = FormItem.from( mixinFormItem, mixinReference );
+                        if ( createdFormItem instanceof FormItemSet )
+                        {
+                            final FormItemSet formItemSet = (FormItemSet) createdFormItem;
+                            final FormItemSet transformedFormItemSet = transformFormItemSet( formItemSet );
+                            formItems.add( transformedFormItemSet );
+                        }
+                        else
+                        {
+                            formItems.add( createdFormItem );
+                        }
                     }
-                    else
-                    {
-                        formItems.add( formItemCreatedFromMixin );
-                    }
+                }
+                else
+                {
+                    // TODO: what to do when mixin not found?
+                    formItem.setParent( null );
+                    formItems.add( formItem );
                 }
             }
             else

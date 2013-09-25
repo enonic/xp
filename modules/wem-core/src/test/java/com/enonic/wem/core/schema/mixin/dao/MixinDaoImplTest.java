@@ -6,6 +6,7 @@ import javax.jcr.Node;
 import org.junit.Test;
 
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -35,9 +36,9 @@ public class MixinDaoImplTest
     {
         // setup
         Input myInput = newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_LINE ).build();
-        Mixin.Builder mixinBuilder = newMixin().
+        Mixin.Builder mixinBuilder = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
-            displayName( "My Mixin" ).formItem( myInput );
+            displayName( "My Mixin" ).addFormItem( myInput );
         Mixin mixin = mixinBuilder.build();
 
         // exercise
@@ -54,9 +55,9 @@ public class MixinDaoImplTest
         throws Exception
     {
         // setup
-        Mixin mixin = newMixin().
+        Mixin mixin = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
-            displayName( "My Mixin" ).formItem(
+            displayName( "My Mixin" ).addFormItem(
             newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         mixinDao.create( mixin, session );
 
@@ -65,9 +66,9 @@ public class MixinDaoImplTest
         assertNotNull( mixinsAfterCreate );
         assertEquals( 1, mixinsAfterCreate.getSize() );
 
-        Mixin updatedMixin = newMixin().
+        Mixin updatedMixin = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
-            displayName( "My Updated Mixin" ).formItem(
+            displayName( "My Updated Mixin" ).addFormItem(
             newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_AREA ).build() ).build();
         mixinDao.update( updatedMixin, session );
         commit();
@@ -80,7 +81,7 @@ public class MixinDaoImplTest
         assertEquals( "my_input", mixin1.getName() );
         assertEquals( "mymodule", mixin1.getModuleName().toString() );
         assertEquals( "My Updated Mixin", mixin1.getDisplayName() );
-        assertEquals( InputTypes.TEXT_AREA, mixin1.getFormItem().toInput().getInputType() );
+        assertEquals( InputTypes.TEXT_AREA, mixin1.getFormItems().iterator().next().toInput().getInputType() );
     }
 
     @Test
@@ -88,9 +89,9 @@ public class MixinDaoImplTest
         throws Exception
     {
         // setup
-        Mixin mixin = newMixin().
+        Mixin mixin = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
-            displayName( "My Mixin" ).formItem(
+            displayName( "My Mixin" ).addFormItem(
             newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         mixinDao.create( mixin, session );
 
@@ -110,9 +111,9 @@ public class MixinDaoImplTest
         throws Exception
     {
         // setup
-        Mixin mixin = newMixin().
+        Mixin mixin = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
-            displayName( "My Mixin" ).formItem(
+            displayName( "My Mixin" ).addFormItem(
             newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         mixinDao.create( mixin, session );
@@ -125,12 +126,13 @@ public class MixinDaoImplTest
         assertNotNull( mixins );
         assertEquals( 1, mixins.getSize() );
         Mixin mixin1 = mixins.first();
+        FormItem formItem1 = mixin1.getFormItems().iterator().next();
         assertEquals( "my_input", mixin1.getName() );
         assertEquals( "mymodule", mixin1.getModuleName().toString() );
         assertEquals( "My Mixin", mixin1.getDisplayName() );
-        assertEquals( "my_input", mixin1.getFormItem().getName() );
-        assertEquals( "My input", mixin1.getFormItem().toInput().getLabel() );
-        assertEquals( InputTypes.TEXT_LINE, mixin1.getFormItem().toInput().getInputType() );
+        assertEquals( "my_input", formItem1.getName() );
+        assertEquals( "My input", formItem1.toInput().getLabel() );
+        assertEquals( InputTypes.TEXT_LINE, formItem1.toInput().getInputType() );
     }
 
     @Test
@@ -138,15 +140,15 @@ public class MixinDaoImplTest
         throws Exception
     {
         // setup
-        Mixin mixin1 = newMixin().
+        Mixin mixin1 = newMixin().name( "my_input" ).
             module( ModuleName.from( "mymodule" ) ).
-            displayName( "My Mixin 1" ).formItem(
+            displayName( "My Mixin 1" ).addFormItem(
             newInput().name( "my_input" ).label( "My input 1" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         mixinDao.create( mixin1, session );
 
-        Mixin mixin2 = newMixin().
+        Mixin mixin2 = newMixin().name( "my_input" ).
             module( ModuleName.from( "othermodule" ) ).
-            displayName( "My Mixin 2" ).formItem(
+            displayName( "My Mixin 2" ).addFormItem(
             newInput().name( "my_input" ).label( "My input 2" ).inputType( InputTypes.DATE ).build() ).build();
         mixinDao.create( mixin2, session );
 
@@ -163,12 +165,12 @@ public class MixinDaoImplTest
         assertEquals( "my_input", actualMixin1.getName() );
         assertEquals( "mymodule", actualMixin1.getModuleName().toString() );
         assertEquals( "My Mixin 1", actualMixin1.getDisplayName() );
-        assertEquals( InputTypes.TEXT_LINE, actualMixin1.getFormItem().toInput().getInputType() );
+        assertEquals( InputTypes.TEXT_LINE, actualMixin1.getFormItems().iterator().next().toInput().getInputType() );
 
         assertEquals( "my_input", actualMixin2.getName() );
         assertEquals( "othermodule", actualMixin2.getModuleName().toString() );
         assertEquals( "My Mixin 2", actualMixin2.getDisplayName() );
-        assertEquals( InputTypes.DATE, actualMixin2.getFormItem().toInput().getInputType() );
+        assertEquals( InputTypes.DATE, actualMixin2.getFormItems().iterator().next().toInput().getInputType() );
     }
 
 }

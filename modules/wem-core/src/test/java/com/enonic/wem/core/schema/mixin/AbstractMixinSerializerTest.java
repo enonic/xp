@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
+import com.enonic.wem.api.schema.content.form.FormItems;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -49,7 +50,7 @@ public abstract class AbstractMixinSerializerTest
         inputBuilder.customText( "Custom text" );
         inputBuilder.indexed( true );
         Input myInput = inputBuilder.build();
-        Mixin myInputMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myInput ).build();
+        Mixin myInputMixin = Mixin.newMixin().name( "my_input" ).displayName( "My Mixin" ).module( myModule ).addFormItem( myInput ).build();
 
         // exercise
         String serialized = toString( myInputMixin );
@@ -77,7 +78,8 @@ public abstract class AbstractMixinSerializerTest
         formItemSetBuilder.addFormItem( myInput );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
-        Mixin myFormItemSetMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
+        Mixin myFormItemSetMixin =
+            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).module( myModule ).addFormItem( myFormItemSet ).build();
 
         // exercise
         String serialized = toString( myFormItemSetMixin );
@@ -96,8 +98,8 @@ public abstract class AbstractMixinSerializerTest
         assertEquals( "address", mixin.getName() );
         assertEquals( "Address Mixin", mixin.getDisplayName() );
 
-        assertTrue( mixin.getFormItem() instanceof FormItemSet );
-        FormItemSet formItemSet = mixin.getFormItem().toFormItemSet();
+        assertTrue( mixin.getFormItems() instanceof FormItems );
+        FormItemSet formItemSet = (FormItemSet) mixin.getFormItems().iterator().next();
         assertEquals( "address.street", formItemSet.getInput( "street" ).getPath().toString() );
 
         assertEquals( "Street", formItemSet.getInput( "street" ).getLabel() );
@@ -133,7 +135,8 @@ public abstract class AbstractMixinSerializerTest
             Input.newInput().name( "myOtherInput" ).label( "My other input" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
-        Mixin myFormItemSetMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myFormItemSet ).build();
+        Mixin myFormItemSetMixin =
+            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).module( myModule ).addFormItem( myFormItemSet ).build();
 
         // exercise
         final String serialized = toString( myFormItemSetMixin );
@@ -160,7 +163,7 @@ public abstract class AbstractMixinSerializerTest
         inputBuilder.customText( "Custom text" );
         inputBuilder.indexed( true );
         Input myInput = inputBuilder.build();
-        Mixin myInputMixin = Mixin.newMixin().displayName( "My Mixin" ).module( myModule ).formItem( myInput ).build();
+        Mixin myInputMixin = Mixin.newMixin().name( "my_input" ).displayName( "My Mixin" ).module( myModule ).addFormItem( myInput ).build();
 
         // exercise
         final String serialized = toString( myInputMixin );
