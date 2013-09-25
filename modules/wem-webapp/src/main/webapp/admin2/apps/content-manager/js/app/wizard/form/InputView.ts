@@ -6,7 +6,7 @@ module app_wizard_form {
 
         private properties:api_data.Property[];
 
-        private inputView;
+        private inputView:app_wizard_form_input.BaseInputTypeView;
 
         constructor(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
             super("InputView", "input-view", input);
@@ -24,16 +24,16 @@ module app_wizard_form {
 
             var inputType:api_schema_content_form.InputTypeName = this.input.getInputType();
             if (inputType.isBuiltIn()) {
-                var newInput = window["app_wizard_form_input"][inputType.getName()];
-                if (newInput == null) {
-                    newInput = window["app_wizard_form_input"]["NoInputTypeFoundView"];
+                var newInputPrototype;
+                if (InputTypeManager.isRegistered(inputType.getName())) {
+                    newInputPrototype = InputTypeManager.createView(inputType.getName());
+                } else {
+                    newInputPrototype = InputTypeManager.createView("NoInputTypeFound");
                 }
-                var newInputPrototype = Object.create(newInput.prototype);
-                newInputPrototype.constructor.apply(newInputPrototype);
             }
             else {
 
-                // custom types must register it self by name in a global known input type registry
+                // custom types must register it self by name using InputTypeManager.register(name, class);
 
                 throw Error("Custom input types are not supported yet: " + inputType.getName());
             }

@@ -21,4 +21,6 @@ module app_wizard_form_input {
             return inputEl.getValue();
         }
     }
+
+    app_wizard_form.InputTypeManager.register("TextLine", TextLine);
 }

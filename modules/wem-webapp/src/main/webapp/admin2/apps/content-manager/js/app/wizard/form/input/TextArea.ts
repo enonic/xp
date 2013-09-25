@@ -20,4 +20,6 @@ module app_wizard_form_input {
             return textAreaEl.getValue();
         }
     }
+
+    app_wizard_form.InputTypeManager.register("TextArea", TextArea);
 }
