@@ -23,14 +23,6 @@ module LiveEdit.component.DragDropSort {
 
     var _isDragging:boolean = false;
 
-    // fixme: can this be shared with live edit Context Window/Components.js ?
-    export function createDragHelperHtml(text:string):string {
-        var html:string;
-        // Note: The width and height must be inlined so jQueryUI does not overwrite these properties.
-        html = '<div id="live-edit-drag-helper" class="live-edit-font-icon-drop-allowed" style="width: 48px; height: 48px; position: absolute; z-index: 400000;" data-live-edit-drop-allowed="false"></div>';
-        return html;
-    }
-
     export function init():void {
         this.createJQueryUiSortable();
         this.registerGlobalListeners();
@@ -57,7 +49,7 @@ module LiveEdit.component.DragDropSort {
             scrollSensitivity: Math.round(LiveEdit.DomHelper.getViewPortSize().height / 8),
             placeholder: 'live-edit-drop-target-placeholder',
             zIndex: 1001001,
-            helper:     (event, helper) => this.createDragHelper(event, helper),
+            helper:     (event, helper) => LiveEdit.component.helper.DragHelper.createDragHelperHtml(),
             start:      (event, ui)     => this.handleSortStart(event, ui),
             over:       (event, ui)     => this.handleDragOver(event, ui),
             out:        (event, ui)     => this.handleDragOut(event, ui),
@@ -78,7 +70,7 @@ module LiveEdit.component.DragDropSort {
             zIndex: 5100000,
             cursorAt: CURSOR_AT,
             helper: () => {
-                return createDragHelperHtml('');
+                return LiveEdit.component.helper.DragHelper.createDragHelperHtml();
             },
             start: (event, ui) => {
                 $(window).trigger('draggableStart.liveEdit', [event, ui]);
@@ -91,20 +83,14 @@ module LiveEdit.component.DragDropSort {
         });
     }
 
-    export function createDragHelper(event:JQueryEventObject, helperElement:JQuery):string {
-        var component = new LiveEdit.component.Component(helperElement);
-        return $(createDragHelperHtml(component.getName()));
-    }
-
-    export function setHelperStatusIcon(dropAllowed:boolean):void {
+    export function updateHelperStatusIcon(dropAllowed:boolean):void {
         var helper:JQuery = $('#live-edit-drag-helper');
-        helper.attr('data-live-edit-drop-allowed', dropAllowed);
         if (dropAllowed) {
-            helper.removeClass("live-edit-font-icon-drop-disallowed");
+            helper.removeClass("live-edit-font-icon-drop-not-allowed");
             helper.addClass("live-edit-font-icon-drop-allowed");
         } else {
             helper.removeClass("live-edit-font-icon-drop-allowed");
-            helper.addClass("live-edit-font-icon-drop-disallowed");
+            helper.addClass("live-edit-font-icon-drop-not-allowed");
         }
     }
 
@@ -140,10 +126,10 @@ module LiveEdit.component.DragDropSort {
         var isDraggingOverLayoutComponent = ui.placeholder.closest(LAYOUT_SELECTOR).length > 0;
 
         if (component.getComponentType().getType() === LiveEdit.component.Type.LAYOUT && isDraggingOverLayoutComponent) {
-            this.setHelperStatusIcon(false);
+            this.updateHelperStatusIcon(false);
             ui.placeholder.hide();
         } else {
-            this.setHelperStatusIcon(true);
+            this.updateHelperStatusIcon(true);
             $(window).trigger('sortableOver.liveEdit', [event, ui]);
         }
     }
@@ -152,7 +138,7 @@ module LiveEdit.component.DragDropSort {
         if (this.targetIsPlaceholder($(event.target))) {
             this.removePaddingFromLayoutComponent();
         }
-        this.setHelperStatusIcon(false);
+        this.updateHelperStatusIcon(false);
         $(window).trigger('sortableOut.liveEdit', [event, ui]);
     }
 
@@ -160,7 +146,7 @@ module LiveEdit.component.DragDropSort {
         var component = new LiveEdit.component.Component($(event.target))
 
         this.addPaddingToLayoutComponent(component);
-        this.setHelperStatusIcon(true);
+        this.updateHelperStatusIcon(true);
         ui.placeholder.show(null);
 
         $(window).trigger('sortableChange.liveEdit', [event, ui]);

@@ -186,7 +186,9 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
             revert: 'invalid',
             distance: 10,
             addClasses: false,
-            helper: me.createDragHelper,
+            helper: function () {
+                return me.contextWindow.getLiveEditContentWindowObject().LiveEdit.component.helper.DragHelper.createDragHelperHtml();
+            },
             start: function (event, ui) {
                 me.onStartDrag(event, ui);
             },
@@ -233,21 +235,6 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
         clone.simulate('mousedown');
 
         contextWindow.hide();
-    },
-
-    createDragHelper: function (jQueryEvent) {
-        var draggable = $(jQueryEvent.currentTarget),
-            text = draggable.data('live-edit-name');
-
-        // fixme: can this be shared with live edit Live Edit/DragDropSort.ts ?
-        var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute;">' +
-                   '    <div id="live-edit-drag-helper-inner">' +
-                   '        <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' +
-                   '        <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
-                   '    </div>' +
-                   '</div>';
-
-        return $(html);
     },
 
     bindLiveEditEventListeners: function () {

@@ -9,6 +9,7 @@
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
 ///<reference path='component/helper/EmptyComponent.ts' />
+///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
 
 ///<reference path='component/Selection.ts' />

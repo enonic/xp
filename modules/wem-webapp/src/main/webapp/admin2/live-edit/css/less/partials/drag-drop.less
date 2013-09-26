@@ -1,24 +1,23 @@
 @import "../variables";
 
 #live-edit-drag-helper {
-    display: table;
-    cursor: none;
     font-size: 24px;
     color: #fff;
 }
 
-// Align the font icon
+/* Align the font icon */
 #live-edit-drag-helper:before {
     position: absolute;
     top: 12px;
     left: 12px;
 }
 
-[data-live-edit-drop-allowed="true"] {
+.live-edit-font-icon-drop-allowed {
+    cursor: none;
     background-color: #558e28;
 }
-
-[data-live-edit-drop-allowed="false"] {
+.live-edit-font-icon-drop-not-allowed {
+    cursor: none;
     background-color: #d90b00;
 }
 
