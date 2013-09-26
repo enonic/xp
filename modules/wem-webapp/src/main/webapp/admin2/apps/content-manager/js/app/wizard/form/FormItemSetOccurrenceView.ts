@@ -34,16 +34,16 @@ module app_wizard_form {
             this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.index + 1));
             this.appendChild(this.occurrenceCountEl);
 
-            var wrappingDiv = new api_dom.DivEl(null, "form-item-set-container");
-            this.appendChild(wrappingDiv);
+            var formItemSetOccurrencesContainer = new api_dom.DivEl(null, "form-item-set-occurrences-container");
+            this.appendChild(formItemSetOccurrencesContainer);
 
             if (this.dataSet == null) {
 
-                this.doLayoutWithoutData(wrappingDiv);
+                this.doLayoutWithoutData(formItemSetOccurrencesContainer);
             }
             else {
 
-                this.doLayoutWithData(wrappingDiv);
+                this.doLayoutWithData(formItemSetOccurrencesContainer);
             }
         }
 
