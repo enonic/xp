@@ -1,6 +1,6 @@
 module app_wizard_form_input_type {
 
-    export class InputOccurrenceView extends api_dom.DivEl implements api_event.Observable {
+    export class InputOccurrenceView extends app_wizard_form.FormItemOccurrenceView implements api_event.Observable {
 
         private inputOccurrence:InputOccurrence;
 
@@ -15,7 +15,7 @@ module app_wizard_form_input_type {
         private listeners:InputOccurrenceViewListener[] = [];
 
         constructor(inputOccurrence:InputOccurrence, inputElement:api_dom.Element) {
-            super("InputOccurrenceView", "input-occurrence-view");
+            super("InputOccurrenceView", "input-occurrence-view", null);
             this.inputOccurrence = inputOccurrence;
 
             this.inputElement = inputElement;
