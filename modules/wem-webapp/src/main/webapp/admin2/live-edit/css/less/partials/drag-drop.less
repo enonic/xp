@@ -1,8 +1,20 @@
 @import "../variables";
 
+.live-edit-drag-helper-transition (@property, @duration) {
+    transition: @property @duration;
+    -webkit-transition: @property @duration;
+}
+
+.live-edit-drag-helper-scale (@scale) {
+    transform: @scale;
+    -webkit-transform: @scale;
+}
+
 #live-edit-drag-helper {
     font-size: 24px;
     color: #fff;
+
+    .live-edit-drag-helper-transition(transform, 100ms);
 }
 
 /* Align the font icon */
@@ -14,11 +26,16 @@
 
 .live-edit-font-icon-drop-allowed {
     cursor: none;
+    transform: scale(.8);
     background-color: #558e28;
+
+    .live-edit-drag-helper-scale(.8);
 }
 .live-edit-font-icon-drop-not-allowed {
     cursor: none;
     background-color: #d90b00;
+
+    .live-edit-drag-helper-scale(1);
 }
 
 .live-edit-component-padding {
