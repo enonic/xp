@@ -5,8 +5,8 @@ module app_contextwindow {
     }
 
     export class ContextWindow extends api_ui.NavigableFloatingWindow {
-        private componentsPanel:ComponentsPanel;
-        private componentsPanelIndex:number;
+        private componentTypesPanel:ComponentTypesPanel;
+        private componentTypesPanelIndex:number;
         private inspectorPanel:InspectorPanel;
         private inspectorPanelIndex:number;
         private emulatorPanel:api_ui.Panel;
@@ -27,15 +27,15 @@ module app_contextwindow {
                 this.draggingMask.hide();
             };
 
-            super({draggableOptions: { start: dragStart, stop: dragStop } } );
+            super({draggableOptions: { start: dragStart, stop: dragStop, handle: ".tab-menu" } } );
             this.contextWindowOptions = options;
             this.addClass("context-window");
 
-            this.componentsPanel = new ComponentsPanel(this);
+            this.componentTypesPanel = new ComponentTypesPanel(this);
             this.inspectorPanel = new InspectorPanel(this);
             this.emulatorPanel = new api_ui.Panel();
 
-            this.componentsPanelIndex = this.addItem("Components", this.componentsPanel);
+            this.componentTypesPanelIndex = this.addItem("Components", this.componentTypesPanel);
             this.inspectorPanelIndex = this.addItem("Inspector", this.inspectorPanel);
             this.emulatorPanelIndex = this.addItem("Emulator", this.emulatorPanel);
 
@@ -44,7 +44,7 @@ module app_contextwindow {
             });
 
             ComponentDeselectEvent.on((event) => {
-                this.selectPanel(this.componentsPanelIndex);
+                this.selectPanel(this.componentTypesPanelIndex);
             });
 
             if (options.liveEditEl) {
@@ -62,6 +62,10 @@ module app_contextwindow {
             this.draggingMask = new DraggingMask(this.liveEditEl);
             document.body.appendChild(this.draggingMask.getHTMLElement());
             this.liveEditListen();
+        }
+
+        getDraggingMask() {
+            return this.draggingMask;
         }
 
         private liveEditListen() {
@@ -87,6 +91,10 @@ module app_contextwindow {
             }
             return this.liveEditJQuery;
 
+        }
+
+        getLiveEditEl():api_dom.IFrameEl {
+            return this.liveEditEl;
         }
 
         getLiveEditWindow():any {

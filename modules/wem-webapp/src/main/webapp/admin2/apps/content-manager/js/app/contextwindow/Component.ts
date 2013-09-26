@@ -9,5 +9,7 @@ module app_contextwindow {
             typeName:string;
             iconCls:string;
         };
+        isEmpty:() => boolean;
+        isSelected:() => boolean;
     }
 }

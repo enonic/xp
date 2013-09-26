@@ -632,6 +632,8 @@ interface JQuery {
     select(eventData?: any, handler?: (eventObject: JQueryEventObject) => any): JQuery;
     select(handler: (eventObject: JQueryEventObject) => any): JQuery;
 
+    simulate(event:string); //TODO:custom addition, should make own definition file.
+
     submit(eventData?: any, handler?: (eventObject: JQueryEventObject) => any): JQuery;
     submit(handler: (eventObject: JQueryEventObject) => any): JQuery;
 
