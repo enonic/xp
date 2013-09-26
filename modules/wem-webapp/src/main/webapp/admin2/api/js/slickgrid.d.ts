@@ -1521,10 +1521,10 @@ declare module Slick {
 			*/
 			public expandGroup(...varArgs: string[]): void;
 			public getGroups(): Group[];
-			public getIdxById(): string;
-			public getRowById(): T;
-			public getItemById(): T;
-			public getItemByIdx(): T;
+			public getIdxById(i:string): string;
+			public getRowById(i:string): T;
+			public getItemById(i:string): T;
+			public getItemByIdx(i:string): T;
 			public mapRowsToIds(rowArray: T[]): string[];
 			public setRefreshHints(hints: RefreshHints): void;
 			public setFilterArgs(args: any): void;
@@ -1537,7 +1537,7 @@ declare module Slick {
 			public syncGridCellCssStyles(grid: Grid<T>, key: string): void;
 
 			public getLength(): number;
-			public getItem(index: number): SlickData;
+			public getItem(index: number): T;
 			public getItemMetadata(): void;
 
 			public onRowCountChanged: Slick.SlickEvent<OnRowCountChangedEventData>;

@@ -57,6 +57,10 @@ module api_dom {
 
         }
 
+        isRendered():boolean {
+            return this.rendered;
+        }
+
         className(value:string):Element {
             this.getHTMLElement().className = value;
             return this;
@@ -191,10 +195,6 @@ module api_dom {
             if (parent) {
                 parent.removeChild(htmlEl);
             }
-        }
-
-        isRendered():boolean {
-            return this.rendered;
         }
 
         onMouseEnter(handler:(e:MouseEvent)=>any) {
