@@ -41,11 +41,11 @@ module app_wizard_form_input {
 
         showAddButton():boolean {
 
-            if( this.input.getOccurrences().getMaximum() == 0 )
-            {
-                return true;
+            if( !this.isLastOccurrence() ) {
+                return false;
             }
-            return this.inputOccurrences.countOccurrences() < this.input.getOccurrences().getMaximum();
+
+            return this.lessOccurrencesThanMaximumAllowed();
         }
 
         private oneAndOnly() {
@@ -54,6 +54,19 @@ module app_wizard_form_input {
 
         private moreThanRequiredOccurrences() {
             return this.inputOccurrences.countOccurrences() > this.input.getOccurrences().getMinimum();
+        }
+
+        private lessOccurrencesThanMaximumAllowed():boolean {
+
+            if( this.input.getOccurrences().getMaximum() == 0 )
+            {
+                return true;
+            }
+            return this.inputOccurrences.countOccurrences() < this.input.getOccurrences().getMaximum();
+        }
+
+        private isLastOccurrence() {
+            return this.index == this.inputOccurrences.countOccurrences() -1;
         }
     }
 }
