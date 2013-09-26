@@ -6,24 +6,23 @@
   font-style: normal;
 }
 
-.icon() {
+.icon(@content, @size: 1em, @color: black) {
   font-family: FontAwesome;
+  &:before {
+    content: @content;
+    font-size: @size;
+    color: @color;
+  }
 }
 
 .icon-chevron-left(@size: 1em, @color: black) {
-  .icon();
-  &:before {
-    content: "\f053";
-    font-size: @size;
-    color: @color;
-  }
+  .icon("\f053", @size, @color);
 }
 
 .icon-chevron-right(@size: 1em, @color: black) {
-  .icon();
-  &:before {
-    content: "\f054";
-    font-size: @size;
-    color: @color;
-  }
+  .icon("\f054", @size, @color);
+}
+
+.icon-remove(@size: 1em, @color: black) {
+  .icon("\f00d", @size, @color);
 }

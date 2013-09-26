@@ -38,5 +38,17 @@ module api_grid {
         setItems(data:any) {
             this.slickDataView.setItems(data);
         }
+
+        getItem(index: number):any {
+            return this.slickDataView.getItem(index);
+        }
+
+        getLength(): number {
+            return this.slickDataView.getLength();
+        }
+
+        subscribeOnRowsChanged(callback:(e, args) => void) {
+            this.slickDataView.onRowsChanged.subscribe(callback);
+        }
     }
 }
