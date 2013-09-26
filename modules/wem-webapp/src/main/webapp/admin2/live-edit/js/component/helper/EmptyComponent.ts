@@ -55,8 +55,6 @@ module LiveEdit.component.helper {
         private static appendLoadingSpinner(emptyComponent:LiveEdit.component.Component):void {
             var element:JQuery = emptyComponent.getElement();
             element.children('.live-edit-empty-component-icon').addClass('live-edit-font-icon-spinner');
-
-            // element.append('<img src="../../admin2/live-edit/images/spinner.png"/>');
         }
 
     }
