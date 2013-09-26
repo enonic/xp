@@ -119,7 +119,7 @@ module api_dom {
             return this.el.getHTMLElement();
         }
 
-        appendChild(child:api_dom.Element) {
+        appendChild<T extends api_dom.Element>(child:T) {
             this.el.appendChild(child.getEl().getHTMLElement());
             child.setParent(this);
             this.children.push(child);
