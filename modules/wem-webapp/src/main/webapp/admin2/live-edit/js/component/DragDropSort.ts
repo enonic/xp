@@ -178,15 +178,16 @@ module LiveEdit.component.DragDropSort {
 
             var bogusComponent = new LiveEdit.component.Component($(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR));
 
-            // fixme: is this needed anymore?
-            bogusComponent.getElement().hide(null);
-
             var emptyElement:JQuery = $(LiveEdit.component.helper.EmptyComponent.createEmptyComponentHtml(bogusComponent));
             var emptyComponent = new LiveEdit.component.Component(emptyElement);
 
             bogusComponent.getElement().replaceWith(emptyComponent.getElement());
 
             $(window).trigger('sortableUpdate.liveEdit');
+
+            // The layout padding is removed on sortStop, but this is not fired yet at this point
+            // Remove it now so the auto selection is properly aligned.
+            this.removePaddingFromLayoutComponent();
 
             LiveEdit.component.Selection.select(emptyComponent);
         }
