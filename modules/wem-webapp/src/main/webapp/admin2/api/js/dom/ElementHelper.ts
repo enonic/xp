@@ -180,7 +180,7 @@ module api_dom {
         }
 
         getHeight():number {
-            return this.el.offsetHeight;
+            return parseFloat(this.getComputedProperty('height'));
         }
 
         setTop(value:string):ElementHelper {
@@ -223,8 +223,7 @@ module api_dom {
         }
 
         getPaddingLeft():number {
-            var stringValue = window.getComputedStyle(this.getHTMLElement(), null).getPropertyValue('padding-left');
-            return +stringValue.replace('px', '');
+            return parseFloat(this.getComputedProperty('padding-left'));
         }
 
         setZindex(value:number):ElementHelper {
@@ -256,6 +255,10 @@ module api_dom {
 
         getOffsetTop():number {
             return this.el.offsetTop;
+        }
+
+        getComputedProperty(name:string, pseudoElement: string = null):string {
+            return window.getComputedStyle(this.el, pseudoElement).getPropertyValue(name);
         }
 
     }
