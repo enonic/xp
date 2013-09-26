@@ -1,6 +1,6 @@
-module app_wizard_form {
+module app_wizard_form_formitemset {
 
-    export class FormItemSetView extends FormItemView {
+    export class FormItemSetView extends app_wizard_form.FormItemView {
 
         private formItemSet:api_schema_content_form.FormItemSet;
 

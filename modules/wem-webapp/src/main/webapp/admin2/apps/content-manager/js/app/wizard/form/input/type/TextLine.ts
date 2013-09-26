@@ -1,17 +1,9 @@
-module app_wizard_form_input {
+module app_wizard_form_input_type {
 
-    export class NoInputTypeFoundView extends BaseInputTypeView {
+    export class TextLine extends BaseInputTypeView {
 
         constructor() {
-            super("NoInputTypeFound");
-        }
-
-        layout(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
-
-            var divEl = new api_dom.DivEl();
-            divEl.getEl().setInnerHtml("Warning: no input type found: " + input.getInputType().toString());
-
-            super.layout(input, properties);
+            super("TextLine");
         }
 
         createInputOccurrenceElement(index:number, property?:api_data.Property):api_dom.Element {
@@ -30,5 +22,5 @@ module app_wizard_form_input {
         }
     }
 
-    app_wizard_form.InputTypeManager.register("NoInputTypeFound", NoInputTypeFoundView);
+    app_wizard_form_input.InputTypeManager.register("TextLine", TextLine);
 }

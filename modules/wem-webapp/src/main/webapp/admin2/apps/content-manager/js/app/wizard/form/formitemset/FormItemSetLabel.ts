@@ -1,4 +1,4 @@
-module app_wizard_form {
+module app_wizard_form_formitemset {
 
     export class FormItemSetLabel extends api_dom.DivEl {
 

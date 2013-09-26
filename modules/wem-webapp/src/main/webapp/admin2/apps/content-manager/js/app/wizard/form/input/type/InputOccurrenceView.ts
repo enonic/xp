@@ -1,4 +1,4 @@
-module app_wizard_form_input {
+module app_wizard_form_input_type {
 
     export class InputOccurrenceView extends api_dom.DivEl implements api_event.Observable {
 

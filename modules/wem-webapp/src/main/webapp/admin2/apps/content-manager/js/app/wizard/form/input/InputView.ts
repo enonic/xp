@@ -1,12 +1,12 @@
-module app_wizard_form {
+module app_wizard_form_input {
 
-    export class InputView extends FormItemView {
+    export class InputView extends app_wizard_form.FormItemView {
 
         private input:api_schema_content_form.Input;
 
         private properties:api_data.Property[];
 
-        private inputView:app_wizard_form_input.BaseInputTypeView;
+        private inputView:app_wizard_form_input_type.BaseInputTypeView;
 
         constructor(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
             super("InputView", "input-view", input);

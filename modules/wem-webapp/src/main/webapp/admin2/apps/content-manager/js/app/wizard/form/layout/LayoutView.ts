@@ -1,6 +1,6 @@
-module app_wizard_form {
+module app_wizard_form_layout {
 
-    export class LayoutView extends FormItemView {
+    export class LayoutView extends app_wizard_form.FormItemView {
 
         private layout:api_schema_content_form.Layout;
 

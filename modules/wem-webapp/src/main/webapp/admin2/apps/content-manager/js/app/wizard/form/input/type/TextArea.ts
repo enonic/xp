@@ -1,18 +1,18 @@
-module app_wizard_form_input {
+module app_wizard_form_input_type {
 
-    export class HtmlArea extends BaseInputTypeView {
+    export class TextArea extends BaseInputTypeView {
 
         constructor() {
-            super("HtmlArea");
+            super("TextArea");
         }
 
         createInputOccurrenceElement(index:number, property?:api_data.Property):api_dom.Element {
 
-            var textAreaEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
+            var inputEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
             if (property != null) {
-                textAreaEl.setValue(property.getValue());
+                inputEl.setValue(property.getValue());
             }
-            return textAreaEl;
+            return inputEl;
         }
 
         getValue(occurrence:api_dom.Element):string {
@@ -21,5 +21,5 @@ module app_wizard_form_input {
         }
     }
 
-    app_wizard_form.InputTypeManager.register("HtmlArea", HtmlArea);
+    app_wizard_form_input.InputTypeManager.register("TextArea", TextArea);
 }

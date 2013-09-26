@@ -1,4 +1,4 @@
-module app_wizard_form {
+module app_wizard_form_formitemset {
 
     export class FormItemSetOccurrenceView extends api_dom.DivEl {
 
@@ -10,7 +10,7 @@ module app_wizard_form {
 
         private dataSet:api_data.DataSet;
 
-        private formItemViews:FormItemView[] = [];
+        private formItemViews:app_wizard_form.FormItemView[] = [];
 
         constructor(formItemSet:api_schema_content_form.FormItemSet, index:number, dataSet?:api_data.DataSet) {
             super("FormItemSetOccurrenceView", "form-item-set-occurrence-view");
@@ -62,7 +62,7 @@ module app_wizard_form {
                     var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
 
                     console.log("FormItemSetOccurrenceView.doLayout()  laying out Input: ", input);
-                    var inputContainerView = new app_wizard_form.InputView(input);
+                    var inputContainerView = new app_wizard_form_input.InputView(input);
                     parentEl.appendChild(inputContainerView);
                     this.formItemViews.push(inputContainerView);
                 }
@@ -89,7 +89,7 @@ module app_wizard_form {
                     console.log("FormItemSetOccurrenceView.doLayout() laying out Input: ", input);
                     var properties:api_data.Property[] = this.dataSet.getPropertiesByName(input.getName());
 
-                    var inputContainerView = new app_wizard_form.InputView(input, properties);
+                    var inputContainerView = new app_wizard_form_input.InputView(input, properties);
                     parentEl.appendChild(inputContainerView);
                     this.formItemViews.push(inputContainerView);
                 }

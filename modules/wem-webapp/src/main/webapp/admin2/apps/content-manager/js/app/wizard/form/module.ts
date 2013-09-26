@@ -1,10 +1,2 @@
 ///<reference path='FormItemView.ts' />
-///<reference path='LayoutView.ts' />
-///<reference path='FieldSetLabel.ts' />
-///<reference path='FieldSetView.ts' />
-///<reference path='FormItemSetLabel.ts' />
-///<reference path='FormItemSetOccurrenceView.ts' />
-///<reference path='FormItemSetView.ts' />
-///<reference path='InputLabel.ts' />
-///<reference path='InputView.ts' />
 ///<reference path='FormView.ts' />

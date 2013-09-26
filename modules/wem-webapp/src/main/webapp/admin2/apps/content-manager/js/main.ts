@@ -16,9 +16,13 @@
 ///<reference path='app/wizard/ContentWizardToolbar.ts' />
 ///<reference path='app/wizard/ContentWizardPanel.ts' />
 
-///<reference path='app/wizard/form/InputTypeManager.ts' />
-///<reference path='app/wizard/form/input/module.ts' />
+///<reference path='app/wizard/form/input/InputTypeManager.ts' />
 ///<reference path='app/wizard/form/module.ts' />
+///<reference path='app/wizard/form/input/type/module.ts' />
+///<reference path='app/wizard/form/input/module.ts' />
+///<reference path='app/wizard/form/formitemset/module.ts' />
+///<reference path='app/wizard/form/layout/module.ts' />
+
 
 
 ///<reference path='app/browse/filter/ContentBrowseFilterEvents.ts' />

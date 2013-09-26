@@ -1,4 +1,4 @@
-module app_wizard_form_input {
+module app_wizard_form_input_type {
 
     export interface InputOccurrenceViewListener extends api_event.Listener{
 

@@ -1,4 +1,4 @@
-module app_wizard_form_input {
+module app_wizard_form_input_type {
 
     /*
     * A kind of a controller, which add/remove InputOccurrenceView-s to the BaseInputTypeView
