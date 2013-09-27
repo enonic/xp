@@ -19,6 +19,7 @@ module app_wizard_form_input {
             this.properties = properties != null ? properties : [];
 
             this.doLayout();
+            this.refresh();
         }
 
         private doLayout() {

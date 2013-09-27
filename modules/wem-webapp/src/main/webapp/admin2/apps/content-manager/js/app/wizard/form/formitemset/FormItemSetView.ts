@@ -49,6 +49,7 @@ module app_wizard_form_formitemset {
 
             this.bottomButtonRow.appendChild(this.addButton);
             this.bottomButtonRow.appendChild(this.collapseButton);
+            this.refresh();
         }
 
         refresh() {
