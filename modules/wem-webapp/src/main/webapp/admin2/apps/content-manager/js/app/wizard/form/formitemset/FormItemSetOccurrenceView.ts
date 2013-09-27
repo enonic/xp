@@ -35,7 +35,7 @@ module app_wizard_form_formitemset {
             this.removeButton = new api_ui.Button("X");
             this.removeButton.setClass("remove-button");
             this.appendChild(this.removeButton);
-            this.removeButton.setClickListener( () => {
+            this.removeButton.setClickListener(() => {
                 this.notifyRemoveButtonClicked();
             });
 
@@ -108,13 +108,7 @@ module app_wizard_form_formitemset {
             this.occurrenceCountEl.setHtml("#" + (this.formItemSetOccurrence.getIndex() + 1));
             this.getEl().setData("dataId", this.formItemSetOccurrence.getDataId().toString());
 
-
-            if (this.formItemSetOccurrence.showRemoveButton()) {
-                this.removeButton.show();
-            }
-            else {
-                this.removeButton.hide();
-            }
+            this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());
         }
     }
 

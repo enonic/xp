@@ -54,12 +54,7 @@ module app_wizard_form_formitemset {
 
         refresh() {
 
-            if (this.formItemSetOccurrences.showAddButton()) {
-                this.addButton.show();
-            }
-            else {
-                this.addButton.hide();
-            }
+            this.addButton.setVisible(this.formItemSetOccurrences.showAddButton());
         }
 
         getData():api_data.Data[] {

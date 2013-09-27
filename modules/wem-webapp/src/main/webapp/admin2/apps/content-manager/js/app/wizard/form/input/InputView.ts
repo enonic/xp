@@ -63,12 +63,7 @@ module app_wizard_form_input {
 
         refresh() {
 
-            if (this.baseInputTypeView.getInputOccurrences().showAddButton()) {
-                this.addButton.show();
-            }
-            else {
-                this.addButton.hide();
-            }
+            this.addButton.setVisible(this.baseInputTypeView.getInputOccurrences().showAddButton());
         }
 
         getData():api_data.Data[] {

@@ -36,13 +36,7 @@ module app_wizard_form_input_type {
             this.occurrenceCountEl.setHtml("#" + (this.inputOccurrence.getIndex() + 1));
             this.getEl().setData("dataId", this.inputOccurrence.getDataId().toString());
 
-
-            if (this.inputOccurrence.showRemoveButton()) {
-                this.removeButtonEl.show();
-            }
-            else {
-                this.removeButtonEl.hide();
-            }
+            this.removeButtonEl.setVisible(this.inputOccurrence.showRemoveButton());
         }
 
         getIndex():number {
