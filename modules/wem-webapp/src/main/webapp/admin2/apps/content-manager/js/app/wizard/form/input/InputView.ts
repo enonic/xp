@@ -28,20 +28,14 @@ module app_wizard_form_input {
             this.appendChild(label);
 
             var inputType:api_schema_content_form.InputTypeName = this.input.getInputType();
-            if (inputType.isBuiltIn()) {
-                var newInputPrototype;
-                if (InputTypeManager.isRegistered(inputType.getName())) {
-                    newInputPrototype = InputTypeManager.createView(inputType.getName());
-                }
-                else {
-                    newInputPrototype = InputTypeManager.createView("NoInputTypeFound");
-                }
+
+            var newInputPrototype;
+            if (InputTypeManager.isRegistered(inputType.getName())) {
+                newInputPrototype = InputTypeManager.createView(inputType.getName());
             }
             else {
-
-                // custom types must register it self by name using InputTypeManager.register(name, class);
-
-                throw Error("Custom input types are not supported yet: " + inputType.getName());
+                console.log("Input type [" + inputType.getName() + "] need to be registered first.");
+                newInputPrototype = InputTypeManager.createView("NoInputTypeFound");
             }
 
             this.baseInputTypeView = newInputPrototype;

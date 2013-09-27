@@ -9,35 +9,37 @@ module app_wizard_form_input {
         }
 
         static register(inputTypeName:string, inputTypeClass:Function) {
+
             if (!InputTypeManager.isRegistered(inputTypeName)) {
                 InputTypeManager.inputTypes[inputTypeName] = inputTypeClass;
-                console.log('Registered input type [' + inputTypeName + "]", inputTypeClass);
-            } else {
-                console.log('Input type [' + inputTypeName + '] already registered, unregister it first.');
+                console.log('Registered input type [' + inputTypeName + "]");
+            }
+            else {
+                throw new Error('Input type [' + inputTypeName + '] already registered, unregister it first.');
             }
         }
 
         static unregister(inputTypeName:string) {
+
             if (InputTypeManager.isRegistered(inputTypeName)) {
                 InputTypeManager.inputTypes[inputTypeName] = undefined;
                 console.log('Unregistered input type [' + inputTypeName + "]");
-            } else {
-                console.log('Input type [' + inputTypeName + '] is not registered.');
+            }
+            else {
+                throw new Error('Input type [' + inputTypeName + '] is not registered.');
             }
         }
 
         static createView(inputTypeName:string) {
+
             if (InputTypeManager.isRegistered(inputTypeName)) {
                 var inputType = Object.create(InputTypeManager.inputTypes[inputTypeName].prototype);
                 inputType.constructor.apply(inputType);
-                console.log("Created input of type [" + inputTypeName + "]", inputType);
                 return inputType;
-            } else {
-                console.log("Input type [" + inputTypeName + "] need to be registered first.");
-                return null;
+            }
+            else {
+                throw new Error("Input type [" + inputTypeName + "] need to be registered first.");
             }
         }
-
     }
-
 }
