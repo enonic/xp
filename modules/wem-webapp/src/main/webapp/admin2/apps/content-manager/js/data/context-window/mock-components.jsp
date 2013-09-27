@@ -173,8 +173,8 @@
       "key": "10070",
       "type": 4,
       "typeName": "image",
-      "name": "Test Photo",
-      "subtitle": "Sailing on the Nile River",
+      "name": "Jump",
+      "subtitle": "Jumping on a trampoline",
       "icon": "../admin2/apps/content-manager/js/data/context-window/mock-image-icon.png"
     }
 
