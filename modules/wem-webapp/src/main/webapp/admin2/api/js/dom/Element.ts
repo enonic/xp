@@ -31,7 +31,7 @@ module api_dom {
             this.children = [];
         }
 
-        static fromHtmlElement(element:HTMLElement):Element  {
+        static fromHtmlElement(element:HTMLElement):Element {
             return new Element(null, null, null, new ElementHelper(element));
         }
 
@@ -77,7 +77,7 @@ module api_dom {
         }
 
         setVisible(value:boolean) {
-            if( value ) {
+            if (value) {
                 this.show();
             }
             else {
@@ -165,7 +165,7 @@ module api_dom {
             this.insert(this, parent, index);
         }
 
-        private insert(child: Element, parent: Element, index) {
+        private insert(child:Element, parent:Element, index:number) {
             child.setParent(this);
             parent.getChildren().splice(index, 0, child);
             if (parent.isRendered()) {
