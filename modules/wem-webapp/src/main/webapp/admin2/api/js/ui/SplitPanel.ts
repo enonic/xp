@@ -97,8 +97,6 @@ module api_ui {
 
         private draggable:boolean;
 
-        private visible:boolean;
-
         private splitPanel:SplitPanel;
 
         private ghostDragger:api_dom.DivEl;
@@ -216,11 +214,6 @@ module api_ui {
 
         setDraggable(value:boolean) {
             this.draggable = value;
-        }
-
-        setVisible(value:boolean) {
-            this.visible = value;
-            this.setThickness(0);
         }
 
         setVertical() {

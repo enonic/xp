@@ -76,6 +76,15 @@ module api_dom {
             jQuery(this.el.getHTMLElement()).hide();
         }
 
+        setVisible(value:boolean) {
+            if( value ) {
+                this.show();
+            }
+            else {
+                this.hide();
+            }
+        }
+
         isVisible() {
             var displayed = this.el.getDisplay() != "none";
             var visible = this.el.getVisibility() != "hidden";

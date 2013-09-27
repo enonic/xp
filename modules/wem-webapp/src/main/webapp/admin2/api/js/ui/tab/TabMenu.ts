@@ -77,7 +77,7 @@ module api_ui_tab {
             var newLength = this.tabs.push(tab);
             tab.setIndex(newLength - 1);
 
-            if (tab.isVisible()) {
+            if (tab.isVisibleInMenu()) {
                 this.menuEl.appendChild(tab);
                 this.tabMenuButton.show();
             }
@@ -105,7 +105,7 @@ module api_ui_tab {
         countVisible():number {
             var size = 0;
             this.tabs.forEach((tab:TabMenuItem) => {
-                if (tab.isVisible()) {
+                if (tab.isVisibleInMenu()) {
                     size++;
                 }
             });

@@ -12,8 +12,6 @@ module api_ui_tab {
 
         private active:boolean = false;
 
-        private visible:boolean = true;
-
         private removable:boolean = true;
 
         private listeners: TabBarItemListener[] = [];
@@ -45,17 +43,6 @@ module api_ui_tab {
 
         getLabel():string {
             return this.label;
-        }
-
-        setVisible(value) {
-            this.visible = value;
-            if (!this.visible) {
-                this.hide();
-            }
-        }
-
-        isVisible():boolean {
-            return this.visible;
         }
 
         setActive(value:boolean) {

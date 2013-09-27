@@ -12,7 +12,7 @@ module api_app{
             this.homePanel = homePanel;
             this.homePanelActions = homePanelActions;
             var homePanelMenuItem = new AppBarTabMenuItem("home", "home");
-            homePanelMenuItem.setVisible(false);
+            homePanelMenuItem.setVisibleInMenu(false);
             homePanelMenuItem.setRemovable(false);
             this.addNavigablePanelToFront(homePanelMenuItem, this.homePanel);
 

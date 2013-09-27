@@ -13,7 +13,7 @@ module api_ui_tab {
 
         private labelEl:api_dom.SpanEl;
 
-        private visible:boolean = true;
+        private visibleInMenu:boolean = true;
 
         private removable:boolean = true;
 
@@ -71,15 +71,13 @@ module api_ui_tab {
             this.notifyLabelChangedListeners(newValue, oldValue);
         }
 
-        isVisible():boolean {
-            return this.visible
+        isVisibleInMenu():boolean {
+            return this.visibleInMenu
         }
 
-        setVisible(value:boolean) {
-            this.visible = value;
-            if (!this.visible) {
-                this.remove();
-            }
+        setVisibleInMenu(value:boolean) {
+            this.visibleInMenu = value;
+            super.setVisible(value);
         }
 
         setActive(value:boolean) {
