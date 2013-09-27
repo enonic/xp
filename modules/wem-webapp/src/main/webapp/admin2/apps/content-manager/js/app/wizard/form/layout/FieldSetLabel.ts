@@ -1,4 +1,4 @@
-module app_wizard_form {
+module app_wizard_form_layout {
 
     export class FieldSetLabel extends api_dom.DivEl {
 

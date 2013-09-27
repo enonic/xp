@@ -1,13 +1,12 @@
 module api_schema_content_form{
 
 
-    export class Occurrences   {
+    export class Occurrences {
 
         private minimum:number;
         private maximum:number;
 
-        constructor( json )
-        {
+        constructor(json) {
             this.minimum = json.minimum;
             this.maximum = json.maximum;
         }
@@ -18,6 +17,17 @@ module api_schema_content_form{
 
         getMinimum():number {
             return this.minimum;
+        }
+
+        minimumReached(occurrenceCount:number) {
+            return occurrenceCount > this.minimum;
+        }
+
+        maximumReached(occurrenceCount:number):boolean {
+            if (this.maximum == 0) {
+                return false;
+            }
+            return occurrenceCount >= this.maximum;
         }
     }
 }

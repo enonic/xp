@@ -33,30 +33,38 @@ module api_app_wizard {
         private listeners:WizardPanelListener[] = [];
 
         private backPanel:api_ui.DeckPanel;
+
         private formPanel:api_ui.Panel;
 
 
         constructor(params:WizardPanelParams) {
             super("WizardPanel");
+
+            this.header = params.header;
+            this.toolbar = params.toolbar;
+
             this.getEl().addClass("wizard-panel");
-            this.backPanel = new api_ui.DeckPanel("BackPanel");
+            this.backPanel = new api_ui.DeckPanel("WizardBackPanel");
+            this.backPanel.addClass("wizard-back-panel");
             this.formPanel = new api_ui.Panel("FormPanel");
 
             this.backPanel.addPanel(this.formPanel);
             this.backPanel.showPanel(0);
-            this.toolbar = params.toolbar;
 
             this.appendChild(this.toolbar);
             this.appendChild(this.backPanel);
 
-            this.formPanel.appendChild(params.formIcon);
+            var aboveStepPanels = new api_dom.DivEl();
+            this.formPanel.appendChild(aboveStepPanels);
 
-            this.header = params.header;
-            this.formPanel.appendChild(this.header);
+            aboveStepPanels.appendChild(params.formIcon);
+
+            aboveStepPanels.appendChild(this.header);
 
             this.stepNavigator = new WizardStepNavigator();
+            aboveStepPanels.appendChild(this.stepNavigator);
+
             this.stepPanels = new WizardStepDeckPanel(this.stepNavigator);
-            this.formPanel.appendChild(this.stepNavigator);
             this.formPanel.appendChild(this.stepPanels);
 
             this.previous = new WizardStepNavigationArrow(WizardStepNavigationArrow.PREVIOUS, this.stepNavigator);

@@ -1,28 +1,30 @@
-module app_wizard_form {
+module app_wizard_form_formitemset {
 
-    export class FormItemSetOccurrenceView extends api_dom.DivEl {
+    export class FormItemSetOccurrenceView extends app_wizard_form.FormItemOccurrenceView {
+
+        private formItemSetOccurrence:FormItemSetOccurrence;
 
         private formItemSet:api_schema_content_form.FormItemSet;
 
-        private index:number;
-
         private occurrenceCountEl:api_dom.SpanEl;
+
+        private removeButton:api_ui.Button;
+
+        private constructedWithData:boolean;
 
         private dataSet:api_data.DataSet;
 
-        private formItemViews:FormItemView[] = [];
+        private formItemViews:app_wizard_form.FormItemView[] = [];
 
-        constructor(formItemSet:api_schema_content_form.FormItemSet, index:number, dataSet?:api_data.DataSet) {
-            super("FormItemSetOccurrenceView", "form-item-set-occurrence-view");
-
+        constructor(formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api_schema_content_form.FormItemSet,
+                    dataSet?:api_data.DataSet) {
+            super("FormItemSetOccurrenceView", "form-item-set-occurrence-view", formItemSetOccurrence);
+            this.formItemSetOccurrence = formItemSetOccurrence;
             this.formItemSet = formItemSet;
-            this.index = index;
+            this.constructedWithData = dataSet != null;
             this.dataSet = dataSet;
             this.doLayout();
-        }
-
-        getData():api_data.Data {
-            return this.dataSet;
+            this.refresh();
         }
 
         private doLayout() {
@@ -30,20 +32,25 @@ module app_wizard_form {
             var label = new FormItemSetLabel(this.formItemSet);
             this.appendChild(label);
 
+            this.removeButton = new api_ui.Button("X");
+            this.removeButton.setClass("remove-button");
+            this.appendChild(this.removeButton);
+            this.removeButton.setClickListener( () => {
+                this.notifyRemoveButtonClicked();
+            });
+
             this.occurrenceCountEl = new api_dom.SpanEl(null, "occurrence-count");
-            this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.index + 1));
+            this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.getIndex() + 1));
             this.appendChild(this.occurrenceCountEl);
 
             var formItemSetOccurrencesContainer = new api_dom.DivEl(null, "form-item-set-occurrences-container");
             this.appendChild(formItemSetOccurrencesContainer);
 
-            if (this.dataSet == null) {
-
-                this.doLayoutWithoutData(formItemSetOccurrencesContainer);
+            if (this.constructedWithData) {
+                this.doLayoutWithData(formItemSetOccurrencesContainer);
             }
             else {
-
-                this.doLayoutWithData(formItemSetOccurrencesContainer);
+                this.doLayoutWithoutData(formItemSetOccurrencesContainer);
             }
         }
 
@@ -62,7 +69,7 @@ module app_wizard_form {
                     var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
 
                     console.log("FormItemSetOccurrenceView.doLayout()  laying out Input: ", input);
-                    var inputContainerView = new app_wizard_form.InputView(input);
+                    var inputContainerView = new app_wizard_form_input.InputView(input);
                     parentEl.appendChild(inputContainerView);
                     this.formItemViews.push(inputContainerView);
                 }
@@ -89,11 +96,26 @@ module app_wizard_form {
                     console.log("FormItemSetOccurrenceView.doLayout() laying out Input: ", input);
                     var properties:api_data.Property[] = this.dataSet.getPropertiesByName(input.getName());
 
-                    var inputContainerView = new app_wizard_form.InputView(input, properties);
+                    var inputContainerView = new app_wizard_form_input.InputView(input, properties);
                     parentEl.appendChild(inputContainerView);
                     this.formItemViews.push(inputContainerView);
                 }
             });
         }
+
+        refresh() {
+
+            this.occurrenceCountEl.setHtml("#" + (this.formItemSetOccurrence.getIndex() + 1));
+            this.getEl().setData("dataId", this.formItemSetOccurrence.getDataId().toString());
+
+
+            if (this.formItemSetOccurrence.showRemoveButton()) {
+                this.removeButton.show();
+            }
+            else {
+                this.removeButton.hide();
+            }
+        }
     }
+
 }

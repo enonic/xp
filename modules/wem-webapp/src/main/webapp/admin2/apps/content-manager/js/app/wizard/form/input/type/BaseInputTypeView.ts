@@ -1,4 +1,4 @@
-module app_wizard_form_input {
+module app_wizard_form_input_type {
 
     export class BaseInputTypeView extends api_dom.DivEl implements InputTypeView {
 
@@ -12,6 +12,10 @@ module app_wizard_form_input {
 
         getInput():api_schema_content_form.Input {
             return this.input;
+        }
+
+        getInputOccurrences():InputOccurrences {
+            return this.inputOccurrences;
         }
 
         getHTMLElement():HTMLElement {

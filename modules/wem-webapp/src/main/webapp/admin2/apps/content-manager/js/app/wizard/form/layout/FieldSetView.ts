@@ -1,10 +1,10 @@
-module app_wizard_form {
+module app_wizard_form_layout {
 
     export class FieldSetView extends LayoutView {
 
         private fieldSet:api_schema_content_form.FieldSet;
 
-        private formItemViews:FormItemView[] = [];
+        private formItemViews:app_wizard_form.FormItemView[] = [];
 
         constructor(fieldSet:api_schema_content_form.FieldSet) {
             super(fieldSet, "FieldSetView", "field-set-view");
@@ -29,14 +29,14 @@ module app_wizard_form {
                 if (formItem instanceof api_schema_content_form.FormItemSet) {
                     var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
                     console.log("FieldSetView.doLayout() laying out FormItemSet: ", formItemSet);
-                    var formItemSetView = new FormItemSetView(formItemSet);
+                    var formItemSetView = new app_wizard_form_formitemset.FormItemSetView(formItemSet);
                     wrappingDiv.appendChild(formItemSetView);
                     this.formItemViews.push(formItemSetView);
                 }
                 else if (formItem instanceof api_schema_content_form.Input) {
                     var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
                     console.log("FieldSetView.doLayout()  laying out Input: ", input);
-                    var inputContainerView = new app_wizard_form.InputView(input);
+                    var inputContainerView = new app_wizard_form_input.InputView(input);
                     wrappingDiv.appendChild(inputContainerView);
                     this.formItemViews.push(inputContainerView);
                 }
