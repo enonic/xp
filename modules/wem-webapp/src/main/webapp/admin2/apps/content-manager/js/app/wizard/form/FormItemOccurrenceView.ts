@@ -2,27 +2,33 @@ module app_wizard_form {
 
     export class FormItemOccurrenceView extends api_dom.DivEl {
 
-        private index:number;
+        private formItemOccurrence:app_wizard_form.FormItemOccurrence;
 
-        // TODO: Never used or to be used?
-        private data:api_data.Data;
+        private listeners:FormItemOccurrenceViewListener[] = [];
 
-        constructor(idPrefix:string, className, index:number, data?:api_data.Data) {
+        constructor(idPrefix:string, className, formItemOccurrence:FormItemOccurrence) {
             super(idPrefix, className);
-            this.index = index;
-            this.data = data;
+            this.formItemOccurrence = formItemOccurrence;
+        }
+
+        addListener(listener:FormItemOccurrenceViewListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:FormItemOccurrenceViewListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        notifyRemoveButtonClicked() {
+            this.listeners.forEach((listener:FormItemOccurrenceViewListener) => {
+                listener.onRemoveButtonClicked(this, this.formItemOccurrence.getIndex());
+            });
         }
 
         getIndex():number {
-            return this.index;
-        }
-
-        hasData(): boolean {
-            return this.data != null;
-        }
-
-        getData():api_data.Data {
-            return this.data;
+            return this.formItemOccurrence.getIndex();
         }
 
         refresh() {

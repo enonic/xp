@@ -14,6 +14,10 @@ module app_wizard_form_input_type {
             return this.input;
         }
 
+        getInputOccurrences():InputOccurrences {
+            return this.inputOccurrences;
+        }
+
         getHTMLElement():HTMLElement {
             return super.getHTMLElement();
         }

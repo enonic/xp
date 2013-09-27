@@ -8,6 +8,8 @@ module app_wizard_form_formitemset {
 
         private occurrenceViewsContainer:api_dom.DivEl;
 
+        private formItemSetOccurrences:FormItemSetOccurrences;
+
         private bottomButtonRow:api_dom.DivEl;
 
         private addButton:api_ui.Button;
@@ -19,7 +21,44 @@ module app_wizard_form_formitemset {
 
             this.formItemSet = formItemSet;
             this.dataSets = dataSets != null ? dataSets : [];
-            this.doLayout();
+
+            this.occurrenceViewsContainer = new api_dom.DivEl(null, "occurrence-views-container");
+            this.appendChild(this.occurrenceViewsContainer);
+
+            this.formItemSetOccurrences = new FormItemSetOccurrences(this.occurrenceViewsContainer, formItemSet, dataSets);
+            this.formItemSetOccurrences.layout();
+            this.formItemSetOccurrences.addListener(<app_wizard_form.FormItemOccurrencesListener>{
+                onOccurrenceAdded: (occurrenceAdded:app_wizard_form.FormItemOccurrence) => {
+                    this.refresh();
+                },
+                onOccurrenceRemoved: (occurrenceRemoved:app_wizard_form.FormItemOccurrence) => {
+                    this.refresh();
+                }
+            });
+
+            this.bottomButtonRow = new api_dom.DivEl(null, "bottom-button-row");
+            this.appendChild(this.bottomButtonRow);
+
+            this.addButton = new api_ui.Button("Add " + this.formItemSet.getLabel());
+            this.addButton.setClass("add-button");
+            this.addButton.setClickListener(() => {
+                this.formItemSetOccurrences.createAndAddOccurrence();
+            });
+            this.collapseButton = new api_ui.Button("Collapse");
+            this.collapseButton.setClass("collapse-button");
+
+            this.bottomButtonRow.appendChild(this.addButton);
+            this.bottomButtonRow.appendChild(this.collapseButton);
+        }
+
+        refresh() {
+
+            if (this.formItemSetOccurrences.showAddButton()) {
+                this.addButton.show();
+            }
+            else {
+                this.addButton.hide();
+            }
         }
 
         getData():api_data.Data[] {
@@ -30,64 +69,6 @@ module app_wizard_form_formitemset {
 
             var dataSets:api_data.DataSet[] = [];
             return dataSets;
-        }
-
-        private doLayout() {
-
-            this.occurrenceViewsContainer = new api_dom.DivEl(null, "occurrence-views-container");
-            this.appendChild(this.occurrenceViewsContainer);
-
-            if (this.dataSets.length == 0) {
-
-                this.doLayoutOccurrencesWithoutData();
-            }
-            else {
-                this.doLayoutOccurrencesWithData();
-            }
-
-            this.bottomButtonRow = new api_dom.DivEl(null, "bottom-button-row");
-            this.appendChild(this.bottomButtonRow);
-
-            this.addButton = new api_ui.Button("Add " + this.formItemSet.getLabel());
-            this.collapseButton = new api_ui.Button("Collapse");
-            this.bottomButtonRow.appendChild(this.addButton);
-            this.bottomButtonRow.appendChild(this.collapseButton);
-        }
-
-        private doLayoutOccurrencesWithoutData() {
-
-            var occurrences:api_schema_content_form.Occurrences = this.formItemSet.getOccurrences();
-            if (this.formItemSet.getOccurrences().getMinimum() > 1) {
-                for (var i = 0; i < occurrences.getMinimum(); i++) {
-                    var occurrenceView = new FormItemSetOccurrenceView(this.formItemSet, i);
-                    this.occurrenceViewsContainer.appendChild(occurrenceView);
-                }
-            }
-            else {
-                var occurrenceView = new FormItemSetOccurrenceView(this.formItemSet, 0);
-                this.occurrenceViewsContainer.appendChild(occurrenceView);
-            }
-        }
-
-        private doLayoutOccurrencesWithData() {
-
-            var occurrences:api_schema_content_form.Occurrences = this.formItemSet.getOccurrences();
-
-            var occurrenceCount = 0;
-            // Add one occurrence for each DataSet
-            this.dataSets.forEach((dataSet:api_data.DataSet) => {
-                var occurrenceView = new FormItemSetOccurrenceView(this.formItemSet, occurrenceCount, dataSet);
-                occurrenceCount++;
-                this.occurrenceViewsContainer.appendChild(occurrenceView);
-            });
-
-            // Adding any remaining occurrences to fulfill minimum required occurrences
-            if (occurrenceCount < occurrences.getMinimum()) {
-                for (var i = occurrenceCount - 1; i < occurrences.getMinimum(); i++) {
-                    var occurrenceView = new FormItemSetOccurrenceView(this.formItemSet, i);
-                    this.occurrenceViewsContainer.appendChild(occurrenceView);
-                }
-            }
         }
     }
 }

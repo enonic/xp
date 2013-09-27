@@ -11,8 +11,6 @@ module app_wizard_form_input_type {
 
         private properties:api_data.Property[];
 
-        private occurrenceViews:InputOccurrenceView[] = [];
-
         constructor(baseInputTypeView:BaseInputTypeView, input:api_schema_content_form.Input, properties:api_data.Property[]) {
             super(input, baseInputTypeView, input.getOccurrences());
 
@@ -32,16 +30,8 @@ module app_wizard_form_input_type {
             return this.input;
         }
 
-        private constructOccurrencesForNoData() {
-            if (this.input.getOccurrences().getMinimum() > 0) {
-
-                for (var i = 0; i < this.input.getOccurrences().getMinimum(); i++) {
-                    this.addOccurrence(new InputOccurrence(this, i));
-                }
-            }
-            else {
-                this.addOccurrence(new InputOccurrence(this, 0));
-            }
+        getAllowedOccurrences():api_schema_content_form.Occurrences {
+            return this.input.getOccurrences();
         }
 
         private constructOccurrencesForData() {
@@ -52,7 +42,7 @@ module app_wizard_form_input_type {
             if (this.countOccurrences() < this.input.getOccurrences().getMinimum()) {
                 for (var index:number = this.countOccurrences();
                      index < this.input.getOccurrences().getMinimum(); index++) {
-                    this.addOccurrence(new InputOccurrence(this, index));
+                    this.addOccurrence(this.createNewOccurrence(this, index));
                 }
             }
         }
@@ -68,13 +58,9 @@ module app_wizard_form_input_type {
                 this.baseInputTypeView.createInputOccurrenceElement(occurrence.getIndex()));
 
             var inputOccurrences:InputOccurrences = this;
-            inputOccurrenceView.addListener(<InputOccurrenceViewListener>{
+            inputOccurrenceView.addListener(<app_wizard_form.FormItemOccurrenceViewListener>{
                 onRemoveButtonClicked: (toBeRemoved:InputOccurrenceView, index:number) => {
                     inputOccurrences.doRemoveOccurrence(toBeRemoved, index);
-                },
-
-                onAddButtonClicked: (fromOccurrence:InputOccurrenceView) => {
-                    inputOccurrences.doAddOccurrenceAfter(fromOccurrence);
                 }
             });
             return inputOccurrenceView;
@@ -83,7 +69,8 @@ module app_wizard_form_input_type {
         getValues():string[] {
 
             var values:string[] = [];
-            this.occurrenceViews.forEach((inputOccurrenceView:InputOccurrenceView) => {
+            this.getOccurrenceViews().forEach((formItemOccurrenceView:app_wizard_form.FormItemOccurrenceView) => {
+                var inputOccurrenceView = <InputOccurrenceView>formItemOccurrenceView;
                 values.push(this.baseInputTypeView.getValue(inputOccurrenceView.getInputElement()));
             });
             return values;

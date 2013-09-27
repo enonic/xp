@@ -4,7 +4,7 @@ module app_wizard_form {
 
         private occurrences:FormItemOccurrence[] = [];
 
-        private occurrenceViewElements:FormItemOccurrenceView[] = [];
+        private occurrenceViews:FormItemOccurrenceView[] = [];
 
         private occurrenceViewContainer:api_dom.Element;
 
@@ -12,11 +12,51 @@ module app_wizard_form {
 
         private allowedOccurrences:api_schema_content_form.Occurrences;
 
+        private listeners:FormItemOccurrencesListener[] = [];
+
         constructor(formItem:api_schema_content_form.FormItem, occurrenceViewContainer:api_dom.Element,
                     allowedOccurrences?:api_schema_content_form.Occurrences) {
             this.formItem = formItem;
             this.occurrenceViewContainer = occurrenceViewContainer;
             this.allowedOccurrences = allowedOccurrences;
+        }
+
+        getAllowedOccurrences():api_schema_content_form.Occurrences {
+            throw new Error("Must be implemented by inheritor");
+        }
+
+        addListener(listener:FormItemOccurrencesListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:FormItemOccurrencesListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
+        private notifyOccurrenceAdded(occurrence:FormItemOccurrence) {
+            this.listeners.forEach((listener:FormItemOccurrencesListener) => {
+                listener.onOccurrenceAdded(occurrence);
+            });
+        }
+
+        private notifyOccurrenceRemoved(occurrence:FormItemOccurrence) {
+            this.listeners.forEach((listener:FormItemOccurrencesListener) => {
+                listener.onOccurrenceRemoved(occurrence);
+            });
+        }
+
+        constructOccurrencesForNoData() {
+            if (this.getAllowedOccurrences().getMinimum() > 0) {
+
+                for (var i = 0; i < this.getAllowedOccurrences().getMinimum(); i++) {
+                    this.addOccurrence(this.createNewOccurrence(this, i));
+                }
+            }
+            else {
+                this.addOccurrence(this.createNewOccurrence(this, 0));
+            }
         }
 
         addOccurrence(occurrence:FormItemOccurrence) {
@@ -27,10 +67,17 @@ module app_wizard_form {
             return this.formItem;
         }
 
+        /*
+         * Whether add button for new occurrence should be shown or not.
+         */
+        showAddButton():boolean {
+            return !this.allowedOccurrences.maximumReached(this.countOccurrences());
+        }
+
         layout() {
             this.occurrences.forEach((occurrence:FormItemOccurrence) => {
                 var occurrenceView:FormItemOccurrenceView = this.createNewOccurrenceView(occurrence);
-                this.occurrenceViewElements.push(occurrenceView);
+                this.occurrenceViews.push(occurrenceView);
                 this.occurrenceViewContainer.appendChild(occurrenceView);
             });
         }
@@ -50,37 +97,57 @@ module app_wizard_form {
             }
 
             occurrenceViewToRemove.remove();
-            this.occurrenceViewElements = this.occurrenceViewElements.filter((curr:FormItemOccurrenceView) => {
+            this.occurrenceViews = this.occurrenceViews.filter((curr:FormItemOccurrenceView) => {
                 return curr != occurrenceViewToRemove;
             });
+            var occurrenceToRemove = this.occurrences[indexToRemove];
             this.occurrences = this.occurrences.filter((curr:FormItemOccurrence) => {
                 return curr.getIndex() != indexToRemove;
             });
 
             this.resetOccurrenceIndexes();
             this.refreshOccurrenceViews();
+            this.notifyOccurrenceRemoved(occurrenceToRemove);
         }
 
-        doAddOccurrenceAfter(fromOccurrence:FormItemOccurrenceView) {
+        createAndAddOccurrence() {
+
+            var insertAtIndex:number = this.countOccurrences();
+            var occurrence:FormItemOccurrence = this.createNewOccurrence(this, insertAtIndex);
+
+            this.doAddOccurrence(occurrence);
+        }
+
+        addOccurrenceAfter(fromOccurrence:FormItemOccurrenceView) {
 
             var insertAtIndex:number = fromOccurrence.getIndex() + 1;
-            var newInputOccurrence:FormItemOccurrence = this.createNewOccurrence(this, insertAtIndex);
-            var newInputOccurrenceView:FormItemOccurrenceView = this.createNewOccurrenceView(newInputOccurrence);
+            var occurrence:FormItemOccurrence = this.createNewOccurrence(this, insertAtIndex);
 
-            this.occurrences.splice(insertAtIndex, 0, newInputOccurrence);
+            this.doAddOccurrence(occurrence);
+        }
+
+        private doAddOccurrence(occurrence:FormItemOccurrence) {
+
+            if (this.allowedOccurrences.maximumReached(this.countOccurrences())) {
+                return;
+            }
+            var occurrenceView:FormItemOccurrenceView = this.createNewOccurrenceView(occurrence);
+            var insertAtIndex = occurrence.getIndex();
+            this.occurrences.splice(insertAtIndex, 0, occurrence);
 
             var occurrenceViewBefore:api_dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
             if (occurrenceViewBefore != null) {
-                newInputOccurrenceView.insertAfterEl(occurrenceViewBefore);
+                occurrenceView.insertAfterEl(occurrenceViewBefore);
             }
             else {
-                this.occurrenceViewContainer.appendChild(newInputOccurrenceView);
+                this.occurrenceViewContainer.appendChild(occurrenceView);
             }
 
-            this.occurrenceViewElements.splice(insertAtIndex, 0, newInputOccurrenceView);
+            this.occurrenceViews.splice(insertAtIndex, 0, occurrenceView);
 
             this.resetOccurrenceIndexes();
             this.refreshOccurrenceViews();
+            this.notifyOccurrenceAdded(occurrence);
         }
 
         resetOccurrenceIndexes() {
@@ -90,7 +157,7 @@ module app_wizard_form {
         }
 
         refreshOccurrenceViews() {
-            this.occurrenceViewElements.forEach((currOccurrenceView:FormItemOccurrenceView) => {
+            this.occurrenceViews.forEach((currOccurrenceView:FormItemOccurrenceView) => {
                 currOccurrenceView.refresh();
             });
         }
@@ -99,7 +166,7 @@ module app_wizard_form {
             if (index < 1) {
                 return null;
             }
-            return this.occurrenceViewElements[index - 1];
+            return this.occurrenceViews[index - 1];
         }
 
         countOccurrences():number {
@@ -112,6 +179,10 @@ module app_wizard_form {
 
         canRemove() {
             return this.occurrences.length > Math.max(1, this.allowedOccurrences.getMinimum());
+        }
+
+        getOccurrenceViews():FormItemOccurrenceView[] {
+            return this.occurrenceViews;
         }
     }
 }

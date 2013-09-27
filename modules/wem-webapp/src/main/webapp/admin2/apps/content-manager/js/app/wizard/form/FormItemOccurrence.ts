@@ -53,15 +53,11 @@ module app_wizard_form {
         }
 
         private moreThanRequiredOccurrences() {
-            return this.occurrences.countOccurrences() > this.allowedOccurrences.getMinimum();
+            return this.allowedOccurrences.minimumReached(this.occurrences.countOccurrences());
         }
 
         private lessOccurrencesThanMaximumAllowed():boolean {
-
-            if (this.allowedOccurrences.getMaximum() == 0) {
-                return true;
-            }
-            return this.occurrences.countOccurrences() < this.allowedOccurrences.getMaximum();
+            return !this.allowedOccurrences.maximumReached(this.occurrences.countOccurrences());
         }
 
         private isLastOccurrence() {
