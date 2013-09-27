@@ -1,4 +1,4 @@
-module LiveEdit.component.helper {
+module LiveEdit.component.dragdropsort {
 
     // Uses
     var $ = $liveEdit;
@@ -25,10 +25,10 @@ module LiveEdit.component.helper {
                 url: componentUrl,
                 cache: false,
                 beforeSend: () => {
-                    LiveEdit.component.helper.EmptyComponent.appendLoadingSpinner(selectedComponent)
+                    LiveEdit.component.dragdropsort.EmptyComponent.appendLoadingSpinner(selectedComponent)
                 },
                 success: (responseHtml:string) => {
-                    LiveEdit.component.helper.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml))
+                    LiveEdit.component.dragdropsort.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml))
                 }
             });
         }
@@ -47,7 +47,7 @@ module LiveEdit.component.helper {
             // So we have to create it again.
             // Ideally we should destroy the existing sortable first before creating.
             if (selectedComponent.getComponentType().getType() == LiveEdit.component.Type.LAYOUT) {
-                LiveEdit.component.DragDropSort.createJQueryUiSortable();
+                LiveEdit.component.dragdropsort.DragDropSort.createJQueryUiSortable();
             }
 
         }

@@ -230,7 +230,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentTypeList', {
 
         ui.helper.hide(null);
 
-        contextWindow.getLiveEditContentWindowObject().LiveEdit.component.DragDropSort.createJQueryUiDraggable(clone);
+        contextWindow.getLiveEditContentWindowObject().LiveEdit.component.dragdropsort.DragDropSort.createJQueryUiDraggable(clone);
 
         clone.simulate('mousedown');
 

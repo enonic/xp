@@ -143,7 +143,7 @@ Ext.define('Admin.view.contentManager.contextwindow.list.ComponentList', {
 
                     var liveEditWindow = me.contextWindow.getLiveEditContentWindowObject();
 
-                    liveEditWindow.LiveEdit.component.helper.EmptyComponent.loadComponent(record.get('key'));
+                    liveEditWindow.LiveEdit.component.dragdropsort.EmptyComponent.loadComponent(record.get('key'));
                 }
             }
         });

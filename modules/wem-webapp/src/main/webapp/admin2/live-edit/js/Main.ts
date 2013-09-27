@@ -8,7 +8,7 @@
 
 ///<reference path='component/Component.ts' />
 ///<reference path='component/ComponentType.ts' />
-///<reference path='component/helper/EmptyComponent.ts' />
+///<reference path='component/dragdropsort/EmptyComponent.ts' />
 ///<reference path='component/helper/DragHelper.ts' />
 ///<reference path='component/helper/ComponentResizeObserver.ts' />
 
@@ -43,7 +43,7 @@
 ///<reference path='ui/contextmenu/menuitem/ViewMenuItem.ts' />
 ///<reference path='ui/contextmenu/menuitem/RemoveMenuItem.ts' />
 
-///<reference path='component/DragDropSort.ts' />
+///<reference path='component/dragdropsort/DragDropSort.ts' />
 
 declare var $liveEdit;
 
@@ -73,7 +73,7 @@ declare var $liveEdit;
             new LiveEdit.ui.Shader();
             new LiveEdit.ui.Editor();
 
-            LiveEdit.component.DragDropSort.init();
+            LiveEdit.component.dragdropsort.DragDropSort.init();
 
             $(window).resize(() => $(window).trigger('resizeBrowserWindow.liveEdit'));
 
