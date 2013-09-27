@@ -135,6 +135,7 @@
 
 
 ///<reference path='ui/Dropdown.ts' />
+///<reference path='ui/RadioGroup.ts' />
 ///<reference path='ui/TextInputListener.ts' />
 ///<reference path='ui/TextInput.ts' />
 ///<reference path='ui/AutosizeTextInput.ts' />

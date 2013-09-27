@@ -31,7 +31,8 @@ module app_wizard_form_input {
 
             var newInputPrototype;
             if (InputTypeManager.isRegistered(inputType.getName())) {
-                newInputPrototype = InputTypeManager.createView(inputType.getName());
+                var inputTypeConfig = this.input.getInputTypeConfig();
+                newInputPrototype = InputTypeManager.createView(inputType.getName(), inputTypeConfig);
             }
             else {
                 console.log("Input type [" + inputType.getName() + "] need to be registered first.");

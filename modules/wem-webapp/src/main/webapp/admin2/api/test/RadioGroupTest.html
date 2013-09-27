@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet/less" type="text/css" href="../../resources/less/styles.less">
+
+    <!-- LIB -->
+    <script type="text/javascript" src="../../resources/js/less.js"></script>
+    <script type="text/javascript" src="../../../admin/resources/lib/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="../../resources/lib/jquery-2.0.2.js"></script>
+    <script type="text/javascript">
+        $.noConflict();
+    </script>
+
+
+</head>
+<body>
+
+<button type="button" onclick="getValues();">Get values</button>
+<button type="button" onclick="setValues('2','chicken')">Set values: 2, chicken</button>
+
+<!-- API -->
+<script type="text/javascript" src="../js/api.js"></script>
+<script type="text/javascript">
+    radioGroup1 = new api_ui.RadioGroup("one");
+    document.body.appendChild(radioGroup1.getHTMLElement());
+    radioGroup1.addOption("1", "One");
+    radioGroup1.addOption("2", "Two");
+    radioGroup1.addOption("3", "Three");
+
+    radioGroup2 = new api_ui.RadioGroup("two", api_ui.RadioGroup.ORIENTATION_VERTICAL);
+    document.body.appendChild(radioGroup2.getHTMLElement());
+    radioGroup2.addOption("dog", "Dog");
+    radioGroup2.addOption("chicken", "Chicken");
+    radioGroup2.addOption("cow", "Cow");
+    radioGroup2.addOption("cat", "Cat");
+
+    function getValues() {
+        alert(radioGroup1.getValue() + ', ' + radioGroup2.getValue());
+    }
+
+    function setValues(val1, val2) {
+        radioGroup1.setValue(val1);
+        radioGroup2.setValue(val2);
+    }
+
+</script>
+</body>
+</html>

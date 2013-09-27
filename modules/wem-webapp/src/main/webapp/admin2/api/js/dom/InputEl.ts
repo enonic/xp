@@ -24,5 +24,14 @@ module api_dom {
         getName():string {
             return this.getEl().getAttribute('name');
         }
+
+        setType(type:string):InputEl {
+            this.getEl().setAttribute("type", type);
+            return this;
+        }
+
+        getType():string {
+            return this.getEl().getAttribute("type");
+        }
     }
 }
