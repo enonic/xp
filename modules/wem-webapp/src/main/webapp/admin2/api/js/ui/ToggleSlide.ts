@@ -19,6 +19,7 @@ module api_ui{
         private offLabel:api_dom.Element;
 
         private animationDuration:number = 300;
+        private sliderOffset:number;
         private slideLeft:api_util.Animation;
         private slideRight:api_util.Animation;
 
@@ -38,7 +39,6 @@ module api_ui{
                 this.slideOff();
             }
             this.isOn = initOn;
-
 
             this.getEl().addEventListener('click', () => {
                 this.toggle();
@@ -110,23 +110,23 @@ module api_ui{
             // Increase slider width a bit so it hides seam between labels.
             sliderEl.setWidth((labelWidth + 4) + 'px');
 
+            // calculate distance by which the slider moves
+            this.sliderOffset = labelWidth - 4;
+
             // Adjust labels width to the same value.
             onLabelEl.setWidth(labelWidth + 'px');
             offLabelEl.setWidth(labelWidth + 'px');
         }
 
         private setupAnimation() {
-            // calculate distance by which the slider moves
-            var offset = this.getEl().getWidth() - this.slider.getEl().getWidth();
-
             this.slideLeft = new api_util.Animation(this.animationDuration);
             this.slideLeft.onStep((progress) => {
-                this.slider.getEl().setLeft(offset * (1 - progress) + 'px');
+                this.slider.getEl().setLeft(this.sliderOffset * (1 - progress) + 'px');
             });
 
             this.slideRight = new api_util.Animation(this.animationDuration);
             this.slideRight.onStep((progress) => {
-                this.slider.getEl().setLeft(offset * progress + 'px');
+                this.slider.getEl().setLeft(this.sliderOffset * progress + 'px');
             });
         }
 
