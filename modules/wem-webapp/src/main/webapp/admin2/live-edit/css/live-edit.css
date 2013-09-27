@@ -30,8 +30,8 @@ svg.live-edit-highlight-border rect{stroke-width:4}
 .live-edit-drop-target-placeholder{list-style-type:none;clear:both;border:2px dashed #000;padding:28px;color:#000;font-size:20px;text-align:center;background-color:#eee;margin:1px 0 10px 0}
 #live-edit-drag-helper{font-size:24px;color:#fff;transition:transform 100ms;-webkit-transition:transform 100ms}
 #live-edit-drag-helper:before{position:absolute;top:12px;left:12px}
-.live-edit-font-icon-drop-allowed{cursor:none;transform:scale(.8);background-color:#558e28;transform:.8;-webkit-transform:.8}
-.live-edit-font-icon-drop-not-allowed{cursor:none;background-color:#d90b00;transform:1;-webkit-transform:1}
+.live-edit-font-icon-drop-allowed{transform:scale(.8);background-color:#558e28;transform:.8;-webkit-transform:.8}
+.live-edit-font-icon-drop-not-allowed{background-color:#d90b00;transform:1;-webkit-transform:1}
 .live-edit-component-padding{padding-top:10px !important;padding-bottom:10px !important}
 .live-edit-tool-tip{z-index:1000150;position:absolute;padding:15px;background-color:#ffffc7}
 .live-edit-tool-tip-name-text,.live-edit-tool-tip-type-text{display:block}
