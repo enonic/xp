@@ -125,29 +125,43 @@ module api_dom {
 
         appendChild<T extends api_dom.Element>(child:T) {
             this.el.appendChild(child.getEl().getHTMLElement());
-            child.setParent(this);
-            this.children.push(child);
-            if (this.isRendered()) {
-                child.init();
-            }
+            this.insert(child, this, this.children.length);
         }
 
         prependChild(child:api_dom.Element) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
+            this.insert(child, this, 0);
         }
 
         removeChild(child:api_dom.Element) {
             if (this.el.getHTMLElement().contains(child.getHTMLElement())) {
                 this.el.getHTMLElement().removeChild(child.getHTMLElement());
+                this.children = this.children.filter((element) => {
+                    return element != child;
+                });
             }
         }
 
         insertAfterEl(existingEl:Element) {
             this.el.insertAfterEl(existingEl);
+            var parent = existingEl.getParent();
+            var index = parent.getChildren().indexOf(existingEl) + 1;
+            this.insert(this, parent, index);
         }
 
         insertBeforeEl(existingEl:Element) {
             this.el.insertBeforeEl(existingEl);
+            var parent = existingEl.getParent();
+            var index = parent.getChildren().indexOf(existingEl);
+            this.insert(this, parent, index);
+        }
+
+        private insert(child: Element, parent: Element, index) {
+            child.setParent(this);
+            parent.getChildren().splice(index, 0, child);
+            if (parent.isRendered()) {
+                child.init();
+            }
         }
 
         removeChildren() {
@@ -155,6 +169,7 @@ module api_dom {
             while (htmlEl.firstChild) {
                 htmlEl.removeChild(htmlEl.firstChild);
             }
+            this.children = [];
         }
 
         private setParent(parent:Element) {
