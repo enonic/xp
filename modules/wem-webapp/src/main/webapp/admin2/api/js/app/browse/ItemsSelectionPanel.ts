@@ -71,7 +71,7 @@ module api_app_browse {
         private browseItem:api_app_browse.BrowseItem;
 
         constructor(browseItem:BrowseItem, removeCallback?:(selectionItem:SelectionItem) => void) {
-            super("ItemsSelectionPanel", "browse-selection-item");
+            super("SelectionItem", "browse-selection-item");
             this.browseItem = browseItem;
             this.setIcon(this.browseItem.getIconUrl(), 32);
             this.setData(this.browseItem.getDisplayName(), this.browseItem.getPath());
