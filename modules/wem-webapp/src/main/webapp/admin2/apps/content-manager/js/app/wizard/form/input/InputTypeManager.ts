@@ -1,5 +1,8 @@
 module app_wizard_form_input {
 
+    /**
+     *      Class to manage input types and their visual representation
+     */
     export class InputTypeManager {
 
         private static inputTypes:{ [index: string]: Function; } = {};
@@ -15,7 +18,7 @@ module app_wizard_form_input {
                 console.log('Registered input type [' + inputTypeName + "]");
             }
             else {
-                throw new Error('Input type [' + inputTypeName + '] already registered, unregister it first.');
+                throw new Error('Input type [' + inputTypeName + '] is already registered, unregister it first.');
             }
         }
 
@@ -42,4 +45,16 @@ module app_wizard_form_input {
             }
         }
     }
+}
+
+/**
+ *      Alias to expose InputTypeManager to third parties
+ *      To be used for custom javascript development only, use InputTypeManager in typescript instead.
+ *
+ *      Usage: wem.inputTypes.isRegistered('inputTypeName');
+ */
+module wem {
+
+    export var inputTypes = app_wizard_form_input.InputTypeManager;
+
 }
