@@ -58,12 +58,13 @@ module app_launcher {
             }
         }
 
-        private showLauncherScreen() {
+        showLauncherScreen() {
             for (var name in this.appIframes) {
                 var iframe:api_dom.IFrameEl = this.appIframes[name];
                 iframe.hide();
             }
             this.mainContainer.show();
+            hasher.setHash(AppRouter.HOME_HASH_ID);
         }
 
         private showLoadMask() {

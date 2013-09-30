@@ -172,6 +172,7 @@ html, body {
 
   .app-tiles-placeholder {
     width: 480px;
+    .noSelect();
 
     .app-tile {
       cursor: pointer;
@@ -182,37 +183,38 @@ html, body {
       height: 100px;
       margin: 0 10px 10px 0;
 
-      > .img-container {
-        position: absolute;
-        width: 100%;
-        margin-top: 16px;
-        text-align: center;
-      }
+      a {
+        > .img-container {
+          position: absolute;
+          width: 100%;
+          margin-top: 16px;
+          text-align: center;
+        }
 
-      > .img-container > img {
-        width: 40px;
-        height: 40px;
-      }
+        > .img-container > img {
+          width: 40px;
+          height: 40px;
+        }
 
-      > .name-container {
-        position: absolute;
-        bottom: 10px;
-        width: 100%;
-        text-align: center;
-      }
+        > .name-container {
+          position: absolute;
+          bottom: 10px;
+          width: 100%;
+          text-align: center;
+        }
 
-      > .tab-count-container {
-        background-color: #DC143C;
-        color: @admin-white;
-        font-size: 13px;
-        padding: 2px 8px;
-        position: absolute;
-        right: -5px;
-        text-align: center;
-        top: -5px;
-        .border-radius(50%);
+        > .tab-count-container {
+          background-color: #DC143C;
+          color: @admin-white;
+          font-size: 13px;
+          padding: 2px 8px;
+          position: absolute;
+          right: -5px;
+          text-align: center;
+          top: -5px;
+          .border-radius(50%);
+        }
       }
-
       &.app-tile-over {
         background-color: #012056;
       }
