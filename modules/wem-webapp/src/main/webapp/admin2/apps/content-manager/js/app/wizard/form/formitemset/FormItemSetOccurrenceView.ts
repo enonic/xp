@@ -110,6 +110,17 @@ module app_wizard_form_formitemset {
 
             this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());
         }
+
+        getDataSet():api_data.DataSet {
+
+            var dataSet = new api_data.DataSet(this.formItemSet.getName());
+            this.formItemViews.forEach((formItemView:app_wizard_form.FormItemView) => {
+                formItemView.getData().forEach((data:api_data.Data) => {
+                    dataSet.addData(data);
+                });
+            });
+            return dataSet;
+        }
     }
 
 }

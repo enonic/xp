@@ -4,7 +4,7 @@ module app_wizard_form_input_type {
 
         layout(input:api_schema_content_form.Input, properties?:api_data.Property[]);
 
-        getValues(): string[];
+        getValues(): api_data.Value[];
 
         getHTMLElement():HTMLElement;
     }

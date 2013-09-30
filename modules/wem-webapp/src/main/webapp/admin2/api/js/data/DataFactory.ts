@@ -19,7 +19,7 @@ module api_data {
 
         public static createProperty(propertyJson:api_data_json.PropertyJson):Property {
 
-            return new Property(propertyJson.name, propertyJson.value, propertyJson.type);
+            return Property.fromJson(propertyJson);
         }
     }
 }

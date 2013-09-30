@@ -173,15 +173,8 @@
 ///<reference path='facet/FacetGroupView.ts' />
 ///<reference path='facet/FacetContainer.ts' />
 
-
-///<reference path='data/json/DataJson.ts' />
-///<reference path='data/json/DataSetJson.ts' />
-///<reference path='data/json/PropertyJson.ts' />
-///<reference path='data/DataId.ts' />
-///<reference path='data/Data.ts' />
-///<reference path='data/DataSet.ts' />
-///<reference path='data/Property.ts' />
-///<reference path='data/DataFactory.ts' />
+///<reference path='data/json/_module.ts' />
+///<reference path='data/_module.ts' />
 
 ///<reference path='item/ItemJson.ts' />
 

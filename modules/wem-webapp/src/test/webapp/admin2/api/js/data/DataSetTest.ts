@@ -1,7 +1,6 @@
 ///<reference path='../TestCase.d.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/Data.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/Property.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/DataSet.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/data/json/_module.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/data/_module.ts' />
 
 TestCase("DataSet", {
 
@@ -15,8 +14,8 @@ TestCase("DataSet", {
     "test given an existing dataId when getData() then given Data is returned": function () {
 
         var dataSet = new api_data.DataSet('mySet');
-        dataSet.addData(new api_data.Property('myProp', 'A value', 'String'))
-        dataSet.addData(new api_data.Property('myOtherProp', 'A value', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myProp', 'A value', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myOtherProp', 'A value', 'String'))
 
         // exercise & verify
         assertEquals("myProp", dataSet.getData('myProp').getName());
@@ -25,7 +24,7 @@ TestCase("DataSet", {
     "test given a dataId not existing when getData() then no Data is returned": function () {
 
         var dataSet = new api_data.DataSet('mySet');
-        dataSet.addData(new api_data.Property('myProp', 'A value', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myProp', 'A value', 'String'))
 
         // exercise & verify
         assertEquals(null, dataSet.getData('myNonExistingProp'));
@@ -33,7 +32,7 @@ TestCase("DataSet", {
     "test given a Data added to a DataSet when getParent() then the DataSet added to is returned": function () {
 
         var dataSet = new api_data.DataSet('mySet');
-        dataSet.addData(new api_data.Property('myProp', 'A value', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myProp', 'A value', 'String'))
 
         var data = dataSet.getData('myProp');
 
@@ -43,8 +42,8 @@ TestCase("DataSet", {
     "test given two data with same name when nameCount then two is returned": function () {
 
         var dataSet = new api_data.DataSet('mySet');
-        dataSet.addData(new api_data.Property('myProp', 'A', 'String'))
-        dataSet.addData(new api_data.Property('myProp', 'B', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myProp', 'A', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myProp', 'B', 'String'))
 
         // exercise & verify
         assertEquals(2, dataSet.nameCount('myProp'));
@@ -52,17 +51,17 @@ TestCase("DataSet", {
     "test given Data with arrayIndex one when getData equal DataId then Data with arrayIndex one is returned": function () {
 
         var dataSet = new api_data.DataSet('mySet');
-        dataSet.addData(new api_data.Property('myProp', 'A', 'String'))
-        dataSet.addData(new api_data.Property('myProp', 'B', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myProp', 'A', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myProp', 'B', 'String'))
 
         assertEquals("myProp[1]", dataSet.getData('myProp[1]').getId().toString());
     },
     "test given two Data with same name and one different when getDataByName then two Data is returned": function () {
 
         var dataSet = new api_data.DataSet('mySet');
-        dataSet.addData(new api_data.Property('myInput', 'A', 'String'))
-        dataSet.addData(new api_data.Property('myOtherInput', 'B', 'String'))
-        dataSet.addData(new api_data.Property('myInput', 'C', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myInput', 'A', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myOtherInput', 'B', 'String'))
+        dataSet.addData(api_data.Property.fromStrings('myInput', 'C', 'String'))
 
         var dataArray:api_data.Data[] = dataSet.getDataByName('myInput');
 

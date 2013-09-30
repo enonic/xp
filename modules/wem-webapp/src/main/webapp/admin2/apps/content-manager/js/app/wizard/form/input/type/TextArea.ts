@@ -10,14 +10,14 @@ module app_wizard_form_input_type {
 
             var inputEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
             if (property != null) {
-                inputEl.setValue(property.getValue());
+                inputEl.setValue(property.getString());
             }
             return inputEl;
         }
 
-        getValue(occurrence:api_dom.Element):string {
-            var textAreaEl = <api_ui.TextArea>occurrence;
-            return textAreaEl.getValue();
+        getValue(occurrence:api_dom.Element):api_data.Value {
+            var inputEl = <api_ui.TextArea>occurrence;
+            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.TEXT);
         }
     }
 

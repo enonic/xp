@@ -47,11 +47,10 @@ module app_wizard_form_input_type {
             return inputEl;
         }
 
-        getValue(occurrence:api_dom.Element):string {
+        getValue(occurrence:api_dom.Element):api_data.Value {
             var inputEl = <api_dom.FormInputEl>occurrence;
-            return inputEl.getValue();
+            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.TEXT);
         }
-
     }
 
     app_wizard_form_input.InputTypeManager.register("SingleSelector", SingleSelector);

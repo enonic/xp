@@ -1,5 +1,5 @@
 ///<reference path='../TestCase.d.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/DataId.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/data/_module.ts' />
 
 TestCase("DataId", {
 

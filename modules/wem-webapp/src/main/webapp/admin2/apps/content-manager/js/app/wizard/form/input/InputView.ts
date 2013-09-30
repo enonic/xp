@@ -74,8 +74,8 @@ module app_wizard_form_input {
         getProperties():api_data.Property[] {
 
             var properties:api_data.Property[] = [];
-            this.baseInputTypeView.getValues().forEach((value:string, index:number) => {
-                properties[index] = new api_data.Property(this.input.getName(), value, "TEXT");
+            this.baseInputTypeView.getValues().forEach((value:api_data.Value, index:number) => {
+                properties[index] = new api_data.Property(this.input.getName(), value);
             });
             return properties;
         }

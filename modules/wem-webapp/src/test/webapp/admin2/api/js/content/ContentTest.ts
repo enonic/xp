@@ -70,8 +70,8 @@ TestCase("Content", {
         assertEquals("", contentData.getName());
         assertEquals(1, contentData.getPropertiesByName("prop1").length);
         assertEquals(1, contentData.getPropertiesByName("prop2").length);
-        assertEquals("1", contentData.getPropertiesByName("prop1")[0].getValue());
-        assertEquals("2", contentData.getPropertiesByName("prop2")[0].getValue());
+        assertEquals("1", contentData.getPropertiesByName("prop1")[0].getString());
+        assertEquals("2", contentData.getPropertiesByName("prop2")[0].getString());
     }
 
 });

@@ -2,30 +2,32 @@ module api_data{
 
     export class Property extends Data {
 
-        private value:string;
+        private value:Value;
 
-        private type:string;
-
-        static from( json ){
-            return new Property( json.name, json.value, json.type );
+        static fromJson(json) {
+            var value = new Value(json.value, ValueTypes.fromName(json.type));
+            return new Property(json.name, value);
         }
 
-        constructor(name:string, value:string, type:string) {
+        static fromStrings(name:string, valueAsString:string, type:string) {
+            return new Property(name, new Value(valueAsString, ValueTypes.fromName(type)));
+        }
+
+        constructor(name:string, value:Value) {
             super(name);
             this.value = value;
-            this.type = type;
         }
 
-        getValue():string {
+        getString():string {
+            return this.value.asString();
+        }
+
+        getValue():Value {
             return this.value;
         }
 
-        getType():string {
-            return this.type;
-        }
-
-        setValue(value:any) {
-            this.value = value;
+        getType():ValueType {
+            return this.value.getType();
         }
     }
 }

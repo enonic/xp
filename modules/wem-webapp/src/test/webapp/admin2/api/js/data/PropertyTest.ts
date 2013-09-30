@@ -1,28 +1,27 @@
 ///<reference path='../TestCase.d.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/Data.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/Property.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/data/_module.ts' />
 
 TestCase("Property", {
 
     "test given a name when getName() then given name is returned": function () {
 
-        var property = new api_data.Property('myProp', 'A value', 'String' );
+        var property = api_data.Property.fromStrings('myProp', 'A value', 'Text' );
 
         assertEquals("myProp", property.getName());
     }
     ,
     "test given a value when getValue() then given value is returned": function () {
 
-        var property = new api_data.Property('myProp', 'A value', 'String' );
+        var property = api_data.Property.fromStrings('myProp', 'A value', 'Text' );
 
-        assertEquals("A value", property.getValue());
+        assertEquals("A value", property.getString());
     }
     ,
     "test given a type when getType() then given type is returned": function () {
 
-        var property = new api_data.Property('myProp', 'A value', 'String' );
+        var property = api_data.Property.fromStrings('myProp', 'A value', 'Text' );
 
-        assertEquals("String", property.getType());
+        assertEquals("Text", property.getType().toString());
     }
 });
 

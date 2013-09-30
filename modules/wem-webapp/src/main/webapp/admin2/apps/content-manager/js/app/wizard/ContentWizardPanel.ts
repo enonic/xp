@@ -125,7 +125,9 @@ module app_wizard {
         persistNewItem(successCallback?:() => void) {
 
             var flattenedContentData:any = {};
-            this.flattenData(this.contentForm.getContentData(), flattenedContentData);
+            var contentData = this.contentForm.getContentData();
+            console.log("persistNewItem contentData: ", contentData);
+            this.flattenData(contentData, flattenedContentData);
             console.log("persistNewItem flattenedContentData: ", flattenedContentData);
 
             new api_content.CreateContentRequest().
@@ -147,7 +149,9 @@ module app_wizard {
         updatePersistedItem(successCallback?:() => void) {
 
             var flattenedContentData:any = {};
-            this.flattenData(this.contentForm.getContentData(), flattenedContentData);
+            var contentData = this.contentForm.getContentData();
+            console.log("updatePersistedItem contentData: ", flattenedContentData);
+            this.flattenData(contentData, flattenedContentData);
             console.log("updatePersistedItem flattenedContentData: ", flattenedContentData);
 
             new api_content.UpdateContentRequest(this.persistedContent.getId()).

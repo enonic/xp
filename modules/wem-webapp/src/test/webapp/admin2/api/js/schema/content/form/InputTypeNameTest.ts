@@ -1,5 +1,5 @@
-///<reference path='../TestCase.d.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/schema/content/form/InputTypeName.ts' />
+///<reference path='../../../TestCase.d.ts' />
+///<reference path='../../../../../../../../main/webapp/admin2/api/js/schema/content/form/InputTypeName.ts' />
 
 TestCase("InputTypeNameTest", {
 

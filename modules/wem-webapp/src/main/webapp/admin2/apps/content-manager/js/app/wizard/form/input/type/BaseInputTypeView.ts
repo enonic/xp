@@ -33,11 +33,11 @@ module app_wizard_form_input_type {
             throw new Error("Must be implemented by inheritor");
         }
 
-        getValue(occurrence:api_dom.Element):string {
+        getValue(occurrence:api_dom.Element):api_data.Value {
             throw new Error("Must be implemented by inheritor");
         }
 
-        getValues():string[] {
+        getValues():api_data.Value[] {
 
             return this.inputOccurrences.getValues();
         }

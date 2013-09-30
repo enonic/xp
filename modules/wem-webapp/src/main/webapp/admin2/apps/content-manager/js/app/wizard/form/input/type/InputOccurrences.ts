@@ -66,12 +66,11 @@ module app_wizard_form_input_type {
             return inputOccurrenceView;
         }
 
-        getValues():string[] {
+        getValues():api_data.Value[] {
 
-            var values:string[] = [];
-            this.getOccurrenceViews().forEach((formItemOccurrenceView:app_wizard_form.FormItemOccurrenceView) => {
-                var inputOccurrenceView = <InputOccurrenceView>formItemOccurrenceView;
-                values.push(this.baseInputTypeView.getValue(inputOccurrenceView.getInputElement()));
+            var values:api_data.Value[] = [];
+            this.getOccurrenceViews().forEach((occurrenceView:InputOccurrenceView) => {
+                values.push(this.baseInputTypeView.getValue(occurrenceView.getInputElement()));
             });
             return values;
         }

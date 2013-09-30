@@ -1,11 +1,6 @@
 ///<reference path='../TestCase.d.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/Data.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/Property.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/DataSet.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/json/DataJson.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/json/DataSetJson.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/json/PropertyJson.ts' />
-///<reference path='../../../../../../main/webapp/admin2/api/js/data/DataFactory.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/data/json/_module.ts' />
+///<reference path='../../../../../../main/webapp/admin2/api/js/data/_module.ts' />
 
 TestCase("DataFactory", {
 
@@ -36,8 +31,8 @@ TestCase("DataFactory", {
         assertEquals("mySet", dataSet.getName());
         assertEquals(1, dataSet.getPropertiesByName("prop1").length);
         assertEquals(1, dataSet.getPropertiesByName("prop2").length);
-        assertEquals("1", dataSet.getPropertiesByName("prop1")[0].getValue());
-        assertEquals("2", dataSet.getPropertiesByName("prop2")[0].getValue());
+        assertEquals("1", dataSet.getPropertiesByName("prop1")[0].getString());
+        assertEquals("2", dataSet.getPropertiesByName("prop2")[0].getString());
     }
 
 });

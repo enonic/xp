@@ -63,8 +63,7 @@ module app_wizard_form_formitemset {
 
         getDataSets():api_data.DataSet[] {
 
-            var dataSets:api_data.DataSet[] = [];
-            return dataSets;
+            return this.formItemSetOccurrences.getDataSets();
         }
     }
 }

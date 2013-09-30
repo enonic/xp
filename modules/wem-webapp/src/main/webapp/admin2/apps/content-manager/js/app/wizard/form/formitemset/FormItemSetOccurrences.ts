@@ -61,10 +61,13 @@ module app_wizard_form_formitemset {
             return newOccurrenceView;
         }
 
-
-        getValues():string[] {
-
-            return null;
+        getDataSets():api_data.DataSet[] {
+            var dataSets:api_data.DataSet[] = [];
+            this.getOccurrenceViews().forEach( (occurrenceView:FormItemSetOccurrenceView) => {
+                var dataSet = occurrenceView.getDataSet();
+                dataSets.push(dataSet);
+            });
+            return dataSets;
         }
     }
 }

@@ -19,14 +19,14 @@ module app_wizard_form_input_type {
             var inputEl = api_ui.TextInput.middle(this.getInput().getName() + "-" + index);
             inputEl.setName(this.getInput().getName());
             if (property != null) {
-                inputEl.setValue(property.getValue());
+                inputEl.setValue(property.getString());
             }
             return inputEl;
         }
 
-        getValue(occurrence:api_dom.Element):string {
+        getValue(occurrence:api_dom.Element):api_data.Value {
             var inputEl = <api_ui.TextInput>occurrence;
-            return inputEl.getValue();
+            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.TEXT);
         }
     }
 
