@@ -7,6 +7,9 @@ module app_launcher {
             super(null, 'app-tile');
             this.app = application;
 
+            var link = new api_dom.AEl();
+            link.setUrl('#/' + application.getName());
+
             var imgContainer = new api_dom.DivEl(null, 'img-container');
 
             var img = new api_dom.ImgEl(application.getIconUrl());
@@ -19,9 +22,10 @@ module app_launcher {
             countContainer.getEl().setInnerHtml('' + application.getOpenTabs());
             countContainer.hide();
 
-            this.appendChild(imgContainer);
-            this.appendChild(nameContainer);
-            this.appendChild(countContainer);
+            link.appendChild(imgContainer);
+            link.appendChild(nameContainer);
+            link.appendChild(countContainer);
+            this.appendChild(link);
         }
 
     }
