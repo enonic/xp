@@ -56,7 +56,8 @@ module api_ui {
             super("span", "RadioButton", "radio-button");
 
             this.radio = new api_dom.InputEl();
-            this.radio.setType("radio").setName(name).setValue(value);
+            this.radio.getEl().setAttribute('type', 'radio');
+            this.radio.setName(name).setValue(value);
             this.appendChild(this.radio);
 
             this.label = new api_dom.LabelEl(label, this.radio);
