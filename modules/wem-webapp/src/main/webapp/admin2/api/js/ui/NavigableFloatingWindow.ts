@@ -16,7 +16,7 @@ module api_ui {
             this.appendChild(this.deck);
         }
 
-        addItem(label:string, panel:api_ui.Panel):number {
+        addItem<T extends api_ui.Panel>(label:string, panel:T, hidden?:boolean):number {
 
 
             var item = new api_ui_tab.TabMenuItem(label);

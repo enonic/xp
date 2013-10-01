@@ -11,6 +11,8 @@ module app_contextwindow {
         private inspectorPanelIndex:number;
         private emulatorPanel:api_ui.Panel;
         private emulatorPanelIndex:number;
+        private componentsPanel:ComponentsPanel;
+        private componentsPanelIndex:number;
 
         private draggingMask:DraggingMask;
         private liveEditEl:api_dom.IFrameEl;
@@ -34,13 +36,20 @@ module app_contextwindow {
             this.componentTypesPanel = new ComponentTypesPanel(this);
             this.inspectorPanel = new InspectorPanel(this);
             this.emulatorPanel = new api_ui.Panel();
+            this.componentsPanel = new ComponentsPanel(this);
 
-            this.componentTypesPanelIndex = this.addItem("Components", this.componentTypesPanel);
+            this.componentTypesPanelIndex = this.addItem("ComponentTypes", this.componentTypesPanel);
             this.inspectorPanelIndex = this.addItem("Inspector", this.inspectorPanel);
             this.emulatorPanelIndex = this.addItem("Emulator", this.emulatorPanel);
+            this.componentsPanelIndex = this.addItem("Components", this.componentsPanel);
 
             ComponentSelectEvent.on((event) => {
-                this.selectPanel(this.inspectorPanelIndex);
+                if (event.getComponent().isEmpty) {
+                    this.selectPanel(this.componentsPanelIndex)
+                } else {
+                    this.selectPanel(this.inspectorPanelIndex);
+                }
+
             });
 
             ComponentDeselectEvent.on((event) => {

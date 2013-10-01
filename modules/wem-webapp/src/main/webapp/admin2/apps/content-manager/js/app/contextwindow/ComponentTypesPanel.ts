@@ -8,16 +8,18 @@ module app_contextwindow {
     export class ComponentTypesPanel extends api_ui.Panel {
         private searchBox;
         private data:ComponentData[];
-        private grid:ComponentTypeGrid;
+        private grid:ComponentGrid;
         private contextWindow:ContextWindow;
 
         constructor(contextWindow:ContextWindow) {
             super();
 
             this.contextWindow = contextWindow;
+            console.log(this.contextWindow);
+
 
             this.data = this.mockData();
-            this.grid = new ComponentTypeGrid(this.data);
+            this.grid = new ComponentGrid(this.data, {draggableRows: true, rowClass: "comp"});
 
             this.searchBox = new api_ui.TextInput();
             this.searchBox.setPlaceholder("Search");
@@ -27,10 +29,10 @@ module app_contextwindow {
 
             this.appendChild(this.searchBox);
             this.appendChild(this.grid);
+
         }
 
         afterRender() {
-            super.afterRender();
             this.initComponentDraggables();
         }
 
@@ -44,7 +46,7 @@ module app_contextwindow {
 
 
         initComponentDraggables() {
-
+            console.log("init component draggables -> ", this.contextWindow);
             var components = jQuery('[data-context-window-draggable="true"]');
 
             components.liveDraggable({
@@ -52,10 +54,10 @@ module app_contextwindow {
                 cursorAt: {left: -10, top: -15},
                 appendTo: 'body',
                 cursor: 'move',
-                revert: 'invalid',
+                revert: 'true',
                 distance: 10,
                 addClasses: false,
-                helper: this.createDragHelper,
+                helper: 'clone',
                 start: (event, ui) => {
                     this.onStartDrag(event, ui);
                 },
@@ -69,7 +71,6 @@ module app_contextwindow {
                 addClasses: false,
                 accept: '.comp',
                 over: (event, ui) => {
-                    console.log("asdf");
                     this.onDragOverIFrame(event, ui);
                 }
             });
@@ -82,14 +83,10 @@ module app_contextwindow {
         }
 
         onStartDrag(event, ui) {
-            console.log("showing dragMask")
             this.contextWindow.getDraggingMask().show();
         }
 
         onDragOverIFrame(event, ui) {
-            console.log("On drag over iframe");
-            console.log(event, ui);
-
             var liveEditJQ = this.contextWindow.getLiveEditJQuery();
 
             this.contextWindow.getDraggingMask().hide();
@@ -107,69 +104,56 @@ module app_contextwindow {
 
             ui.helper.hide(null);
 
-            this.contextWindow.getLiveEditWindow().LiveEdit.component.DragDropSort.createJQueryUiDraggable(clone);
+            this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.DragDropSort.createJQueryUiDraggable(clone);
 
             clone.simulate('mousedown');
 
             this.contextWindow.hide();
         }
 
-        //TODO: Share with LiveEdit dragHelper
-        createDragHelper(jQueryEvent) {
-            console.log(jQueryEvent);
-            var draggable = jQuery(jQueryEvent.currentTarget),
-                text = draggable.data('live-edit-name');
-
-            // fixme: can this be shared with live edit Live Edit/DragDropSort.ts ?
-            var html = '<div id="live-edit-drag-helper" style="width: 150px; height: 28px; position: absolute;">' +
-                       '    <div id="live-edit-drag-helper-inner">' +
-                       '        <div id="live-edit-drag-helper-status-icon" class="live-edit-drag-helper-no"></div>' +
-                       '        <span id="live-edit-drag-helper-text" style="width: 134px;">' + text + '</span>' +
-                       '    </div>' +
-                       '</div>';
-
-            return jQuery(html);
-        }
-
         private mockData():any[] {
-            return [
-                {
-                    "component": {
-                        "key": "10517",
-                        "type": "image",
-                        "name": "Image",
-                        "subtitle": "Adds an image to the page"
-                    },
-                    "id": "10517"
-                },
-                {
-                    "component": {
-                        "key": "10017",
-                        "type": "layout",
-                        "name": "2+1 Column Layout",
-                        "subtitle": "The quick, brown fox jumps over a lazy dog"
-                    },
-                    "id": "10017"
-                },
-                {
-                    "component": {
-                        "key": "10016",
-                        "type": "layout",
-                        "name": "2 Column Layout",
-                        "subtitle": "Even the all-powerful Pointing has no control"
-                    },
-                    "id": "10016"
-                },
-                {
-                    "component": {
-                        "key": "10018",
-                        "type": "layout",
-                        "name": "3 Column Layout",
-                        "subtitle": "Far far away, behind the word mountains"
-                    },
-                    "id": "10018"
+                    return [
+                        {
+                            "id": 10517,
+                            "component": {
+                                "key": "10517",
+                                "type": 2,
+                                "typeName": "layout",
+                                "name": "Layout",
+                                "subtitle": "Adds a layout component to the page"
+                            }
+                        },
+                        {
+                            "id": 10617,
+                            "component": {
+                                "key": "10617",
+                                "type": 3,
+                                "typeName": "part",
+                                "name": "Part",
+                                "subtitle": "Adds a part component to the page"
+                            }
+                        },
+                        {
+                            "id": 10717,
+                            "component": {
+                                "key": "10717",
+                                "type": 4,
+                                "typeName": "image",
+                                "name": "Image",
+                                "subtitle": "Adds an image component to the page"
+                            }
+                        },
+                        {
+                            "id": 10817,
+                            "component": {
+                                "key": "10817",
+                                "type": 5,
+                                "typeName": "paragraph",
+                                "name": "Paragraph",
+                                "subtitle": "Adds a paragraph component to the page"
+                            }
+                        }
+                    ];
                 }
-            ];
-        }
     }
 }
