@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
@@ -44,6 +45,8 @@ public final class Content
 
     private final ImmutableList<ContentId> childrenIds;
 
+    private final Page page;
+
     private Content( final Builder builder )
     {
         this.displayName = builder.displayName;
@@ -57,6 +60,7 @@ public final class Content
         this.modifier = builder.modifier;
         this.versionId = builder.versionId;
         this.childrenIds = builder.childrenIdsBuilder.build();
+        this.page = builder.page;
     }
 
     public boolean isTemporary()
@@ -249,6 +253,8 @@ public final class Content
 
         private ImmutableList.Builder<ContentId> childrenIdsBuilder;
 
+        private Page page;
+
         public Builder()
         {
             this.contentId = null;
@@ -262,6 +268,7 @@ public final class Content
             this.modifier = null;
             this.versionId = null;
             this.childrenIdsBuilder = ImmutableList.builder();
+            this.page = null;
         }
 
         public Builder( final Content content )
@@ -278,6 +285,7 @@ public final class Content
             this.versionId = content.versionId;
             this.childrenIdsBuilder = ImmutableList.builder();
             this.childrenIdsBuilder.addAll( content.childrenIds );
+            this.page = content.page;
         }
 
         public Builder path( final ContentPath path )
@@ -353,6 +361,12 @@ public final class Content
         public Builder addChildId( final ContentId childId )
         {
             this.childrenIdsBuilder.add( childId );
+            return this;
+        }
+
+        public Builder page( final Page page )
+        {
+            this.page = page;
             return this;
         }
 
