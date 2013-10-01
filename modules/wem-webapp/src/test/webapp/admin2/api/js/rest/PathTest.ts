@@ -7,8 +7,11 @@ TestCase("Path", {
 
         assertEquals("/a", new api_rest.Path(["a"]).toString());
         assertEquals("/a/b", new api_rest.Path(["a", "b"]).toString());
-    }
-    ,
+        assertEquals("a/b", api_rest.Path.fromString("a/b").toString());
+        assertEquals("/a/b", api_rest.Path.fromString("/a/b").toString());
+        assertEquals("a/b", api_rest.Path.fromParent(api_rest.Path.fromString("a"), "b").toString());
+        assertEquals("/a/b", api_rest.Path.fromParent(api_rest.Path.fromString("/a"), "b").toString());
+    },
     "test Path.fromString given path with one element then one element is returned from getElements": function () {
 
         var elements:string[] = api_rest.Path.fromString("/parent").getElements();
