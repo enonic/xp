@@ -10,6 +10,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageTemplateId;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
@@ -45,6 +46,8 @@ public final class Content
 
     private final ImmutableList<ContentId> childrenIds;
 
+    private final PageTemplateId pageTemplate;
+
     private final Page page;
 
     private Content( final Builder builder )
@@ -61,6 +64,7 @@ public final class Content
         this.versionId = builder.versionId;
         this.childrenIds = builder.childrenIdsBuilder.build();
         this.page = builder.page;
+        this.pageTemplate = builder.pageTemplate;
     }
 
     public boolean isTemporary()
@@ -255,20 +259,13 @@ public final class Content
 
         private Page page;
 
+        private PageTemplateId pageTemplate;
+
         public Builder()
         {
-            this.contentId = null;
             this.path = ContentPath.ROOT;
-            this.type = null;
             this.contentData = new ContentData();
-            this.displayName = null;
-            this.owner = null;
-            this.createdTime = null;
-            this.modifiedTime = null;
-            this.modifier = null;
-            this.versionId = null;
             this.childrenIdsBuilder = ImmutableList.builder();
-            this.page = null;
         }
 
         public Builder( final Content content )
@@ -286,6 +283,7 @@ public final class Content
             this.childrenIdsBuilder = ImmutableList.builder();
             this.childrenIdsBuilder.addAll( content.childrenIds );
             this.page = content.page;
+            this.pageTemplate = content.pageTemplate;
         }
 
         public Builder path( final ContentPath path )
@@ -367,6 +365,12 @@ public final class Content
         public Builder page( final Page page )
         {
             this.page = page;
+            return this;
+        }
+
+        public Builder pageTemplate( final PageTemplateId pageTemplate )
+        {
+            this.pageTemplate = pageTemplate;
             return this;
         }
 

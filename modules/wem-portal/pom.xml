@@ -15,5 +15,12 @@
   <packaging>jar</packaging>
   <name>Enonic WEM Portal</name>
 
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wem-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>
         
