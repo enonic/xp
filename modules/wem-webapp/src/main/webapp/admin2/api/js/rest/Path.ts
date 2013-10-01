@@ -28,7 +28,7 @@ module api_rest {
                 elements.push(element);
             });
 
-            return new Path(elements, parent.elementDivider);
+            return new Path(elements, parent.elementDivider, parent.isAbsolute());
         }
 
         private static removeEmptyElements(elements:string[]):string[] {
@@ -53,7 +53,7 @@ module api_rest {
                 }
             });
             this.elements = elements;
-            this.refString = this.elementDivider + this.elements.join(this.elementDivider);
+            this.refString = (this.absolute ? this.elementDivider : "") + this.elements.join(this.elementDivider);
         }
 
         getElements():string[] {
@@ -80,6 +80,10 @@ module api_rest {
 
         toString() {
             return this.refString;
+        }
+
+        isAbsolute():boolean {
+            return this.absolute;
         }
     }
 }
