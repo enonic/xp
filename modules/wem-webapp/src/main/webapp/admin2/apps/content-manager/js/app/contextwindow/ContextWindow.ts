@@ -14,7 +14,7 @@ module app_contextwindow {
         private componentsPanel:ComponentsPanel;
         private componentsPanelIndex:number;
 
-        private draggingMask:DraggingMask;
+        private draggingMask:api_ui.DraggingMask;
         private liveEditEl:api_dom.IFrameEl;
         private liveEditJQuery:JQueryStatic;
         private contextWindowOptions:ContextWindowOptions;
@@ -68,7 +68,7 @@ module app_contextwindow {
                     this.liveEditEl = <api_dom.IFrameEl> api_dom.IFrameEl.fromHtmlElement(el);
                 }
             }
-            this.draggingMask = new DraggingMask(this.liveEditEl);
+            this.draggingMask = new api_ui.DraggingMask(this.liveEditEl);
             document.body.appendChild(this.draggingMask.getHTMLElement());
             this.liveEditListen();
         }

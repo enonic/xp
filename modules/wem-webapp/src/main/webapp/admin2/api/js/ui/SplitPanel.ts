@@ -72,6 +72,10 @@ module api_ui {
             return this.panelA;
         }
 
+        getPanelB():api_ui.Panel {
+            return this.panelB;
+        }
+
         getPanelASpace():number {
             return this.panelASpace;
         }
@@ -112,6 +116,10 @@ module api_ui {
         private thickness:number;
 
         private alignment:SplitPanelAlignment;
+
+        private maskA:api_ui.DraggingMask;
+
+        private maskB:api_ui.DraggingMask;
 
 
         constructor(splitPanel:SplitPanel) {
@@ -156,6 +164,7 @@ module api_ui {
         }
 
         private stopDrag() {
+            this.removePanelMask();
             this.splitPanel.getEl().removeClass("dragging");
             var aSize;
             var bSize;
@@ -178,6 +187,7 @@ module api_ui {
         }
 
         private startDrag() {
+            this.addPanelMask();
             this.splitPanel.getEl().addClass("dragging");
             this.splitPanel.getHTMLElement().addEventListener("mousemove", this.dragListener);
         }
@@ -185,6 +195,28 @@ module api_ui {
         private createGhostDragger() {
             this.ghostDragger = new api_dom.DivEl();
             this.ghostDragger.getEl().addClass("ghost-dragger");
+        }
+
+        private addPanelMask() {
+            if (!this.maskA) {
+                this.maskA = new api_ui.DraggingMask(this.splitPanel.getPanelA());
+            }
+            if (!this.maskB) {
+                this.maskB = new api_ui.DraggingMask(this.splitPanel.getPanelB());
+            }
+
+            this.maskA.show();
+            this.maskB.show();
+
+            this.splitPanel.getPanelA().getParent().appendChild(this.maskA);
+            this.splitPanel.getPanelA().getParent().appendChild(this.maskB);
+        }
+
+        private removePanelMask() {
+            this.maskA.hide();
+            this.maskB.hide();
+            this.maskA.remove();
+            this.maskB.remove();
         }
 
         updatePosition(a:number, b:number) {

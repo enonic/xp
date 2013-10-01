@@ -44,7 +44,6 @@
 ///<reference path='app/contextwindow/ComponentGrid.ts' />
 ///<reference path='app/contextwindow/ComponentsPanel.ts' />
 ///<reference path='app/contextwindow/InspectorPanel.ts' />
-///<reference path='app/contextwindow/DraggingMask.ts' />
 ///<reference path='app/contextwindow/ContextWindow.ts' />
 
 ///<reference path='app/view/ContentItemViewActions.ts' />

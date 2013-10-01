@@ -1,4 +1,4 @@
-module app_contextwindow {
+module api_ui {
     export class DraggingMask extends api_dom.DivEl {
         private maskedItem:api_dom.Element;
 

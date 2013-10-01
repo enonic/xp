@@ -108,6 +108,7 @@
 ///<reference path='ui/Panel.ts' />
 ///<reference path='ui/DeckPanelListener.ts' />
 ///<reference path='ui/DeckPanel.ts' />
+///<reference path='ui/DraggingMask.ts' />
 ///<reference path='ui/SplitPanel.ts' />
 ///<reference path='ui/BodyMask.ts' />
 ///<reference path='ui/Tooltip.ts' />
