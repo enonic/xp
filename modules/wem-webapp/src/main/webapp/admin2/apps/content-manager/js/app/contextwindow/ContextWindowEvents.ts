@@ -25,4 +25,14 @@ module app_contextwindow {
             api_event.onEvent('componentDeselect', handler);
         }
     }
+
+    export class ComponentRemovedEvent extends api_event.Event {
+        constructor() {
+            super('componentRemoved');
+        }
+
+        static on(handler:(event:ComponentRemovedEvent) => void) {
+            api_event.onEvent('componentRemoved', handler);
+        }
+    }
 }

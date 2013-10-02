@@ -44,6 +44,10 @@ module app_contextwindow {
                 this.selectPanel(this.componentTypesPanel);
             });
 
+            ComponentRemovedEvent.on((event) => {
+                this.selectPanel(this.componentTypesPanel);
+            });
+
             if (options.liveEditEl) {
                 this.liveEditEl = options.liveEditEl;
             }
@@ -76,6 +80,13 @@ module app_contextwindow {
                 new ComponentDeselectEvent().fire();
                 this.selectedComponent = null;
             });
+
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('componentRemoved.liveEdit', (event) => {
+                new ComponentRemovedEvent().fire();
+                this.selectedComponent = null;
+            });
+
+
         }
 
         getSelectedComponent():any {
