@@ -7,6 +7,7 @@
         "type": "mymodule:my_type",
         "displayName": "My Content",
         "owner": "user:myStore:me",
+        "creator": "user:system:admin",
         "modifier": "user:system:admin",
         "isRoot": false,
         "modifiedTime": "2000-01-01T12:00:00.000Z",

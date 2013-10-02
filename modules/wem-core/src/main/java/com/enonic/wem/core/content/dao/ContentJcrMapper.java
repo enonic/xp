@@ -34,6 +34,8 @@ final class ContentJcrMapper
 
     static final String MODIFIED_TIME = "modifiedTime";
 
+    static final String CREATOR = "creator";
+
     static final String MODIFIER = "modifier";
 
     static final String OWNER = "owner";
@@ -60,6 +62,7 @@ final class ContentJcrMapper
         contentNode.setProperty( DATA, dataAsJson );
         setPropertyDateTime( contentNode, CREATED_TIME, content.getCreatedTime() );
         setPropertyDateTime( contentNode, MODIFIED_TIME, content.getModifiedTime() );
+        contentNode.setProperty( CREATOR, content.getModifier() == null ? null : content.getCreator().toString() );
         contentNode.setProperty( MODIFIER, content.getModifier() == null ? null : content.getModifier().toString() );
         contentNode.setProperty( OWNER, content.getOwner() == null ? null : content.getOwner().toString() );
         contentNode.setProperty( DISPLAY_NAME, content.getDisplayName() );
@@ -79,11 +82,14 @@ final class ContentJcrMapper
         {
             contentBuilder.modifier( AccountKey.from( getPropertyString( contentNode, MODIFIER ) ).asUser() );
         }
+        if ( contentNode.hasProperty( CREATOR ) )
+        {
+            contentBuilder.modifier( AccountKey.from( getPropertyString( contentNode, CREATOR ) ).asUser() );
+        }
         if ( contentNode.hasProperty( OWNER ) )
         {
             contentBuilder.owner( AccountKey.from( getPropertyString( contentNode, OWNER ) ).asUser() );
         }
-        contentBuilder.modifiedTime( getPropertyDateTime( contentNode, MODIFIED_TIME ) );
         contentBuilder.displayName( getPropertyString( contentNode, DISPLAY_NAME ) );
         final String contentType = getPropertyString( contentNode, TYPE );
         if ( contentType != null )
@@ -97,9 +103,11 @@ final class ContentJcrMapper
             contentBuilder.version( ContentVersionId.of( getPropertyLong( contentNode, VERSION_ID ) ) );
         }
         NodeIterator children = contentNode.getNodes();
-        while ( children.hasNext() ) {
+        while ( children.hasNext() )
+        {
             Node child = children.nextNode();
-            if ( !ContentJcrHelper.isNonContentNode( child ) ) {
+            if ( !ContentJcrHelper.isNonContentNode( child ) )
+            {
                 contentBuilder.addChildId( ContentIdFactory.from( child ) );
             }
         }

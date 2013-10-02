@@ -2,8 +2,9 @@
     "contents": [
         {
             "createdTime": "2013-08-23T12:55:09.162Z",
+            "creator": "user:system:admin",
             "displayName": "My Content",
-            "hasChildren" : false,
+            "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/aaa",
             "id": "aaa",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
@@ -16,8 +17,9 @@
         },
         {
             "createdTime": "2013-08-23T12:55:09.162Z",
+            "creator": "user:system:admin",
             "displayName": "My Content",
-            "hasChildren" : false,
+            "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/bbb",
             "id": "bbb",
             "modifiedTime": "2013-08-23T12:55:09.162Z",

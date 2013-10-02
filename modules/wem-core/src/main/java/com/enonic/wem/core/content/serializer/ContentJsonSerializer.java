@@ -52,6 +52,7 @@ public class ContentJsonSerializer
         jsonContent.put( "type", content.getType() != null ? content.getType().toString() : null );
         jsonContent.put( "displayName", content.getDisplayName() );
         jsonContent.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );
+        jsonContent.put( "creator", content.getCreator() != null ? content.getCreator().toString() : null );
         jsonContent.put( "modifier", content.getModifier() != null ? content.getModifier().toString() : null );
         jsonContent.put( "isRoot", content.getPath().isRoot() );
         setDateTimeValue( "modifiedTime", content.getModifiedTime(), jsonContent );
@@ -111,6 +112,7 @@ public class ContentJsonSerializer
         contentBuilder.path( ContentPath.from( getStringValue( "path", contentNode, null ) ) );
         contentBuilder.displayName( getStringValue( "displayName", contentNode, null ) );
         contentBuilder.owner( getUserKeyValue( "owner", contentNode ) );
+        contentBuilder.creator( getUserKeyValue( "creator", contentNode ) );
         contentBuilder.modifier( getUserKeyValue( "modifier", contentNode ) );
         contentBuilder.modifiedTime( getDateTimeValue( "modifiedTime", contentNode ) );
         contentBuilder.createdTime( getDateTimeValue( "createdTime", contentNode ) );

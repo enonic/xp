@@ -3,16 +3,12 @@ package com.enonic.wem.api.schema.relationship;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.Name;
-import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -21,20 +17,9 @@ import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
 public final class RelationshipType
+    extends BaseSchema
     implements Schema, IllegalEditAware<RelationshipType>
 {
-    private final ModuleName module;
-
-    private final Name name;
-
-    private final String displayName;
-
-    private final DateTime createdTime;
-
-    private final DateTime modifiedTime;
-
-    private final QualifiedRelationshipTypeName qualifiedName;
-
     private final String fromSemantic;
 
     private final String toSemantic;
@@ -43,62 +28,25 @@ public final class RelationshipType
 
     private final QualifiedContentTypeNames allowedToTypes;
 
-    private final Icon icon;
-
     private RelationshipType( final Builder builder )
     {
-        this.module = builder.module;
-        this.name = builder.name;
-        this.displayName = builder.displayName;
-        this.createdTime = builder.createdTime;
-        this.modifiedTime = builder.modifiedTime;
-        if( this.name != null && this.module != null ) {
-            this.qualifiedName = new QualifiedRelationshipTypeName( module, name );
-        }
-        else {
-            this.qualifiedName = null;
-        }
+        super( builder );
         this.fromSemantic = builder.fromSemantic;
         this.toSemantic = builder.toSemantic;
         this.allowedFromTypes = QualifiedContentTypeNames.from( builder.allowedFromTypes );
         this.allowedToTypes = QualifiedContentTypeNames.from( builder.allowedToTypes );
-        this.icon = builder.icon;
     }
 
     @Override
-    public String getName()
+    public SchemaKey getSchemaKey()
     {
-        return name != null ? name.toString() : null;
+        return SchemaKey.from( getQualifiedName() );
     }
 
     @Override
     public QualifiedRelationshipTypeName getQualifiedName()
     {
-        return qualifiedName;
-    }
-
-    @Override
-    public String getDisplayName()
-    {
-        return displayName;
-    }
-
-    @Override
-    public ModuleName getModuleName()
-    {
-        return module;
-    }
-
-    @Override
-    public DateTime getCreatedTime()
-    {
-        return createdTime;
-    }
-
-    @Override
-    public DateTime getModifiedTime()
-    {
-        return modifiedTime;
+        return new QualifiedRelationshipTypeName( getModuleName(), getName() );
     }
 
     public String getFromSemantic()
@@ -121,17 +69,6 @@ public final class RelationshipType
         return allowedToTypes;
     }
 
-    public Icon getIcon()
-    {
-        return icon;
-    }
-
-    @Override
-    public SchemaKey getSchemaKey()
-    {
-        return SchemaKey.from( qualifiedName );
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -145,10 +82,10 @@ public final class RelationshipType
             return false;
         }
         final RelationshipType that = (RelationshipType) o;
-        return Objects.equal( this.module, that.module ) &&
-            Objects.equal( this.name, that.name ) &&
-            Objects.equal( this.displayName, that.displayName ) &&
-            Objects.equal( this.qualifiedName, that.qualifiedName ) &&
+        return Objects.equal( this.getModuleName(), that.getModuleName() ) &&
+            Objects.equal( this.getName(), that.getName() ) &&
+            Objects.equal( this.getDisplayName(), that.getDisplayName() ) &&
+            Objects.equal( this.getQualifiedName(), that.getQualifiedName() ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
             Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
@@ -158,7 +95,8 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( module, name, displayName, qualifiedName, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
+        return Objects.hashCode( getModuleName(), getName(), getDisplayName(), getQualifiedName(), fromSemantic, toSemantic,
+                                 allowedFromTypes, allowedToTypes );
     }
 
     public void checkIllegalEdit( final RelationshipType to )
@@ -182,17 +120,8 @@ public final class RelationshipType
     }
 
     public static class Builder
+        extends BaseSchema.Builder<Builder>
     {
-        private ModuleName module;
-
-        private Name name;
-
-        private String displayName;
-
-        private DateTime createdTime;
-
-        private DateTime modifiedTime;
-
         private String fromSemantic;
 
         private String toSemantic;
@@ -201,55 +130,18 @@ public final class RelationshipType
 
         private List<QualifiedContentTypeName> allowedToTypes = Lists.newArrayList();
 
-        private Icon icon;
-
         private Builder()
         {
-
+            super();
         }
 
         private Builder( final RelationshipType relationshipType )
         {
-            this.module = relationshipType.module;
-            this.name = relationshipType.name;
-            this.displayName = relationshipType.displayName;
-            this.createdTime = relationshipType.createdTime;
-            this.modifiedTime = relationshipType.modifiedTime;
+            super( relationshipType );
             this.fromSemantic = relationshipType.fromSemantic;
             this.toSemantic = relationshipType.toSemantic;
             this.allowedFromTypes = Lists.newArrayList( relationshipType.allowedFromTypes );
             this.allowedToTypes = Lists.newArrayList( relationshipType.allowedToTypes );
-            this.icon = relationshipType.icon;
-        }
-
-        public Builder module( ModuleName value )
-        {
-            this.module = value;
-            return this;
-        }
-
-        public Builder name( String value )
-        {
-            this.name = value != null ? Name.from( value ) : null;
-            return this;
-        }
-
-        public Builder displayName( String value )
-        {
-            this.displayName = value;
-            return this;
-        }
-
-        public Builder createdTime( DateTime value )
-        {
-            this.createdTime = value;
-            return this;
-        }
-
-        public Builder modifiedTime( DateTime value )
-        {
-            this.modifiedTime = value;
-            return this;
         }
 
         public Builder fromSemantic( String value )
@@ -305,12 +197,6 @@ public final class RelationshipType
         {
             allowedToTypes.clear();
             Iterables.addAll( allowedToTypes, contentTypeNames );
-            return this;
-        }
-
-        public Builder icon( Icon icon )
-        {
-            this.icon = icon;
             return this;
         }
 

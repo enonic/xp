@@ -5,6 +5,7 @@
     "type": "system:unstructured",
     "displayName": null,
     "owner": null,
+    "creator": null,
     "modifier": null,
     "isRoot": true,
     "modifiedTime": null,

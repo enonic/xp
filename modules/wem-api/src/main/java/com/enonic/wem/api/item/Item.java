@@ -9,12 +9,13 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Item
-    implements IllegalEditAware<Item>
+    implements ChangeTraceable, IllegalEditAware<Item>
 {
     private final ItemId id;
 
@@ -63,7 +64,7 @@ public final class Item
         return path;
     }
 
-    public DateTime createdTime()
+    public DateTime getCreatedTime()
     {
         return createdTime;
     }
@@ -73,12 +74,22 @@ public final class Item
         return creator;
     }
 
-    public DateTime modifiedTime()
+    public UserKey getCreator()
+    {
+        return creator;
+    }
+
+    public DateTime getModifiedTime()
     {
         return modifiedTime;
     }
 
     public UserKey modifier()
+    {
+        return modifier;
+    }
+
+    public UserKey getModifier()
     {
         return modifier;
     }
@@ -100,9 +111,9 @@ public final class Item
         IllegalEdit.check( "id", this.id(), to.id(), Item.class );
         IllegalEdit.check( "name", this.name(), to.name(), Item.class );
         IllegalEdit.check( "path", this.path(), to.path(), Item.class );
-        IllegalEdit.check( "createdTime", this.createdTime(), to.createdTime(), Item.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Item.class );
         IllegalEdit.check( "creator", this.creator(), to.creator(), Item.class );
-        IllegalEdit.check( "modifiedTime", this.modifiedTime(), to.modifiedTime(), Item.class );
+        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Item.class );
         IllegalEdit.check( "modifier", this.modifier(), to.modifier(), Item.class );
     }
 

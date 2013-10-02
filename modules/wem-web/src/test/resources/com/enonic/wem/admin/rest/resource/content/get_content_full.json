@@ -1,40 +1,48 @@
 {
-    "createdTime" : "2013-08-23T12:55:09.162Z",
-    "data" : [ {
-        "name" : "myArray",
-        "path" : "myArray[0]",
-        "type" : "Text",
-        "value" : "arrayValue1"
-    }, {
-        "name" : "myArray",
-        "path" : "myArray[1]",
-        "type" : "Text",
-        "value" : "arrayValue2"
-    }, {
-        "name" : "mySetWithArray",
-        "path" : "mySetWithArray",
-        "type" : "DataSet",
-        "value" : [ {
-            "name" : "myArray",
-            "path" : "mySetWithArray.myArray[0]",
-            "type" : "DecimalNumber",
-            "value" : "3.14159"
-        }, {
-            "name" : "myArray",
-            "path" : "mySetWithArray.myArray[1]",
-            "type" : "DecimalNumber",
-            "value" : "1.333"
-        } ]
-    } ],
-    "displayName" : "My Content",
-    "hasChildren" : false,
-    "iconUrl" : "http://localhost/admin/rest/content/image/aaa",
-    "id" : "aaa",
-    "modifiedTime" : "2013-08-23T12:55:09.162Z",
-    "modifier" : "user:system:admin",
-    "name" : "my_a_content",
-    "owner" : "user:myStore:me",
-    "path" : "/my_a_content",
-    "root" : false,
-    "type" : "mymodule:my_type"
+    "createdTime": "2013-08-23T12:55:09.162Z",
+    "creator": "user:system:admin",
+    "data": [
+        {
+            "name": "myArray",
+            "path": "myArray[0]",
+            "type": "Text",
+            "value": "arrayValue1"
+        },
+        {
+            "name": "myArray",
+            "path": "myArray[1]",
+            "type": "Text",
+            "value": "arrayValue2"
+        },
+        {
+            "name": "mySetWithArray",
+            "path": "mySetWithArray",
+            "type": "DataSet",
+            "value": [
+                {
+                    "name": "myArray",
+                    "path": "mySetWithArray.myArray[0]",
+                    "type": "DecimalNumber",
+                    "value": "3.14159"
+                },
+                {
+                    "name": "myArray",
+                    "path": "mySetWithArray.myArray[1]",
+                    "type": "DecimalNumber",
+                    "value": "1.333"
+                }
+            ]
+        }
+    ],
+    "displayName": "My Content",
+    "hasChildren": false,
+    "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+    "id": "aaa",
+    "modifiedTime": "2013-08-23T12:55:09.162Z",
+    "modifier": "user:system:admin",
+    "name": "my_a_content",
+    "owner": "user:myStore:me",
+    "path": "/my_a_content",
+    "root": false,
+    "type": "mymodule:my_type"
 }

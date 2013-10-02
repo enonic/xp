@@ -17,12 +17,13 @@ import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemTranslatable;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Content
-    implements IllegalEditAware<Content>, ItemTranslatable<Content>
+    implements IllegalEditAware<Content>, ItemTranslatable<Content>, ChangeTraceable
 {
     private final String displayName;
 
@@ -37,6 +38,8 @@ public final class Content
     private final DateTime createdTime;
 
     private final DateTime modifiedTime;
+
+    private final UserKey creator;
 
     private final UserKey owner;
 
@@ -59,8 +62,9 @@ public final class Content
         this.contentData = builder.contentData;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
-        this.owner = builder.owner;
+        this.creator = builder.creator;
         this.modifier = builder.modifier;
+        this.owner = builder.owner;
         this.versionId = builder.versionId;
         this.childrenIds = builder.childrenIdsBuilder.build();
         this.page = builder.page;
@@ -114,6 +118,11 @@ public final class Content
         return modifiedTime;
     }
 
+    public UserKey getCreator()
+    {
+        return modifier;
+    }
+
     public UserKey getModifier()
     {
         return modifier;
@@ -163,9 +172,13 @@ public final class Content
         {
             itemBuilder.property( "owner", new Value.Text( this.owner.toString() ) );
         }
+        if ( this.creator != null )
+        {
+            itemBuilder.creator( this.creator );
+        }
         if ( this.modifier != null )
         {
-            itemBuilder.property( "modifier", new Value.Text( this.modifier.toString() ) );
+            itemBuilder.modifier( this.modifier );
         }
         if ( this.type != null )
         {
@@ -185,10 +198,11 @@ public final class Content
             id( ContentId.from( item.id().toString() ) ).
             name( item.name() ).
             displayName( item.property( "displayName" ).getString() ).
-            createdTime( item.createdTime() ).
-            modifiedTime( item.modifiedTime() ).
+            createdTime( item.getCreatedTime() ).
+            creator( item.getCreator() ).
+            modifiedTime( item.getModifiedTime() ).
+            modifier( item.getModifier() ).
             owner( AccountKey.from( item.property( "owner" ).getString() ).asUser() ).
-            modifier( AccountKey.from( item.property( "modifier" ).getString() ).asUser() ).
             type( QualifiedContentTypeName.from( item.property( "type" ).getString() ) ).
             contentData( new ContentData( item.dataSet( "data" ).toRootDataSet() ) ).
             build();
@@ -205,8 +219,9 @@ public final class Content
         s.add( "contentType", type );
         s.add( "createdTime", createdTime );
         s.add( "modifiedTime", modifiedTime );
-        s.add( "owner", owner );
+        s.add( "creator", creator );
         s.add( "modifier", modifier );
+        s.add( "owner", owner );
         return s.toString();
     }
 
@@ -218,9 +233,10 @@ public final class Content
         IllegalEdit.check( "versionId", this.getVersionId(), to.getVersionId(), Content.class );
         IllegalEdit.check( "path", this.getPath(), to.getPath(), Content.class );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Content.class );
-        IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
+        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), Content.class );
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
         IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
+        IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
     }
 
     public static Builder newContent()
@@ -251,6 +267,8 @@ public final class Content
 
         private DateTime modifiedTime;
 
+        private UserKey creator;
+
         private UserKey modifier;
 
         private ContentVersionId versionId;
@@ -278,6 +296,7 @@ public final class Content
             this.owner = content.owner;
             this.createdTime = content.createdTime;
             this.modifiedTime = content.modifiedTime;
+            this.creator = content.creator;
             this.modifier = content.modifier;
             this.versionId = content.versionId;
             this.childrenIdsBuilder = ImmutableList.builder();
@@ -323,6 +342,12 @@ public final class Content
         public Builder owner( final UserKey owner )
         {
             this.owner = owner;
+            return this;
+        }
+
+        public Builder creator( final UserKey modifier )
+        {
+            this.creator = modifier;
             return this;
         }
 

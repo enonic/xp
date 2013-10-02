@@ -2,27 +2,34 @@
     "contents": [
         {
             "createdTime": "2013-08-23T12:55:09.162Z",
-            "data" : [ {
-                "name" : "myProperty",
-                "path" : "myProperty",
-                "type" : "DateTime",
-                "value" : "2013-08-23T12:55:09"
-            }, {
-                "name" : "mySet",
-                "path" : "mySet",
-                "type" : "DataSet",
-                "value" : [ {
-                    "name" : "setProperty1",
-                    "path" : "mySet.setProperty1",
-                    "type" : "WholeNumber",
-                    "value" : "1"
-                }, {
-                    "name" : "setProperty2",
-                    "path" : "mySet.setProperty2",
-                    "type" : "WholeNumber",
-                    "value" : "2"
-                } ]
-            } ],
+            "creator": "user:system:admin",
+            "data": [
+                {
+                    "name": "myProperty",
+                    "path": "myProperty",
+                    "type": "DateTime",
+                    "value": "2013-08-23T12:55:09"
+                },
+                {
+                    "name": "mySet",
+                    "path": "mySet",
+                    "type": "DataSet",
+                    "value": [
+                        {
+                            "name": "setProperty1",
+                            "path": "mySet.setProperty1",
+                            "type": "WholeNumber",
+                            "value": "1"
+                        },
+                        {
+                            "name": "setProperty2",
+                            "path": "mySet.setProperty2",
+                            "type": "WholeNumber",
+                            "value": "2"
+                        }
+                    ]
+                }
+            ],
             "displayName": "My Content",
             "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/aaa",
@@ -37,32 +44,40 @@
         },
         {
             "createdTime": "2013-08-23T12:55:09.162Z",
-            "data" : [ {
-                "name" : "myArray",
-                "path" : "myArray[0]",
-                "type" : "Text",
-                "value" : "arrayValue1"
-            }, {
-                "name" : "myArray",
-                "path" : "myArray[1]",
-                "type" : "Text",
-                "value" : "arrayValue2"
-            }, {
-                "name" : "mySetWithArray",
-                "path" : "mySetWithArray",
-                "type" : "DataSet",
-                "value" : [ {
-                    "name" : "myArray",
-                    "path" : "mySetWithArray.myArray[0]",
-                    "type" : "DecimalNumber",
-                    "value" : "3.14159"
-                }, {
-                    "name" : "myArray",
-                    "path" : "mySetWithArray.myArray[1]",
-                    "type" : "DecimalNumber",
-                    "value" : "1.333"
-                } ]
-            } ],
+            "creator": "user:system:admin",
+            "data": [
+                {
+                    "name": "myArray",
+                    "path": "myArray[0]",
+                    "type": "Text",
+                    "value": "arrayValue1"
+                },
+                {
+                    "name": "myArray",
+                    "path": "myArray[1]",
+                    "type": "Text",
+                    "value": "arrayValue2"
+                },
+                {
+                    "name": "mySetWithArray",
+                    "path": "mySetWithArray",
+                    "type": "DataSet",
+                    "value": [
+                        {
+                            "name": "myArray",
+                            "path": "mySetWithArray.myArray[0]",
+                            "type": "DecimalNumber",
+                            "value": "3.14159"
+                        },
+                        {
+                            "name": "myArray",
+                            "path": "mySetWithArray.myArray[1]",
+                            "type": "DecimalNumber",
+                            "value": "1.333"
+                        }
+                    ]
+                }
+            ],
             "displayName": "My Content",
             "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/bbb",

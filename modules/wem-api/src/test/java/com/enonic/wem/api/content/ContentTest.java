@@ -486,10 +486,11 @@ public class ContentTest
             id( ContentId.from( "ABC-123" ) ).
             name( "myContent" ).
             displayName( "My Content" ).
-            owner( UserKey.from( "mystore:someuser" ) ).
-            modifier( UserKey.from( "mystore:someotheruser" ) ).
+            creator( UserKey.from( "mystore:someuser" ) ).
             createdTime( DateTime.parse( "2012-12-12T12:00:00" ) ).
             modifiedTime( DateTime.parse( "2012-12-12T13:00:00" ) ).
+            modifier( UserKey.from( "mystore:someotheruser" ) ).
+            owner( UserKey.from( "mystore:someuser" ) ).
             type( QualifiedContentTypeName.from( "mymodule:mycty" ) ).
             contentData( contentData ).build();
 
@@ -500,10 +501,11 @@ public class ContentTest
         assertEquals( "ABC-123", item.id().toString() );
         assertEquals( "myContent", item.name() );
         assertEquals( "My Content", item.property( "displayName" ).getString() );
+        assertEquals( "user:mystore:someuser", item.getCreator().toString() );
+        assertEquals( "user:mystore:someotheruser", item.getModifier().toString() );
         assertEquals( "user:mystore:someuser", item.property( "owner" ).getString() );
-        assertEquals( "user:mystore:someotheruser", item.property( "modifier" ).getString() );
-        assertEquals( content.getCreatedTime(), item.createdTime() );
-        assertEquals( content.getModifiedTime(), item.modifiedTime() );
+        assertEquals( content.getCreatedTime(), item.getCreatedTime() );
+        assertEquals( content.getModifiedTime(), item.getModifiedTime() );
         assertEquals( "mymodule:mycty", item.property( "type" ).getString() );
         assertEquals( "1", item.property( "data.myNumber" ).getString() );
         assertEquals( "text", item.property( "data.myText" ).getString() );

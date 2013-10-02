@@ -401,7 +401,8 @@ public abstract class AbstractContentSerializerTest
             createdTime( time ).
             modifiedTime( time ).
             owner( AccountKey.superUser() ).
-            modifier( AccountKey.superUser() ).
+            creator( AccountKey.superUser() ).
+            modifier( AccountKey.anonymous() ).
             displayName( "My content" ).
             path( ContentPath.from( "site1/mycontent" ) ).
             build();

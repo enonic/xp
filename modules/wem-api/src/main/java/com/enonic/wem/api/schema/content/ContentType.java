@@ -1,14 +1,10 @@
 package com.enonic.wem.api.schema.content;
 
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.Objects;
 
-import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.Name;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.form.Form;
@@ -17,14 +13,9 @@ import com.enonic.wem.api.schema.content.form.FormItem;
 import static com.enonic.wem.api.schema.content.form.Form.newForm;
 
 public final class ContentType
+    extends BaseSchema<QualifiedContentTypeName>
     implements Schema
 {
-    private final Name name;
-
-    private final QualifiedContentTypeName qualifiedName;
-
-    private final String displayName;
-
     private final QualifiedContentTypeName superType;
 
     private final boolean isAbstract;
@@ -33,59 +24,40 @@ public final class ContentType
 
     private final boolean allowChildContent;
 
-    private final ModuleName moduleName;
-
     private final Form form;
-
-    private final DateTime createdTime;
-
-    private final DateTime modifiedTime;
-
-    private final Icon icon;
 
     private final String contentDisplayNameScript;
 
     private ContentType( final Builder builder )
     {
-        this.name = builder.name;
-        this.moduleName = builder.moduleName;
-        if ( this.moduleName != null & this.name != null )
+        super( builder );
+
+        if ( builder.superType == null && ( getModuleName() != null && !getModuleName().equals( Module.SYSTEM.getName() ) ) )
         {
-            this.qualifiedName = new QualifiedContentTypeName( this.moduleName, this.name );
+            superType = QualifiedContentTypeName.unstructured();
         }
         else
         {
-            this.qualifiedName = null;
+            this.superType = builder.superType;
         }
-        this.displayName = builder.displayName;
-        this.superType = builder.superType;
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
         this.allowChildContent = builder.allowChildContent;
 
-        this.createdTime = builder.createdTime;
-        this.modifiedTime = builder.modifiedTime;
         this.form = builder.formBuilder.build();
-        this.icon = builder.icon;
         this.contentDisplayNameScript = builder.contentDisplayNameScript;
     }
 
     @Override
-    public String getName()
+    public SchemaKey getSchemaKey()
     {
-        return name != null ? name.toString() : null;
-    }
-
-    @Override
-    public String getDisplayName()
-    {
-        return displayName;
+        return SchemaKey.from( getQualifiedName() );
     }
 
     @Override
     public QualifiedContentTypeName getQualifiedName()
     {
-        return qualifiedName;
+        return new QualifiedContentTypeName( getModuleName(), getName() );
     }
 
     public QualifiedContentTypeName getSuperType()
@@ -108,38 +80,9 @@ public final class ContentType
         return allowChildContent;
     }
 
-    @Override
-    public ModuleName getModuleName()
-    {
-        return moduleName;
-    }
-
-    @Override
-    public DateTime getCreatedTime()
-    {
-        return createdTime;
-    }
-
-    @Override
-    public DateTime getModifiedTime()
-    {
-        return modifiedTime;
-    }
-
     public Form form()
     {
         return this.form;
-    }
-
-    public Icon getIcon()
-    {
-        return icon;
-    }
-
-    @Override
-    public SchemaKey getSchemaKey()
-    {
-        return SchemaKey.from( getQualifiedName() );
     }
 
     public String getContentDisplayNameScript()
@@ -151,15 +94,16 @@ public final class ContentType
     public String toString()
     {
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "name", name );
-        s.add( "displayName", displayName );
-        s.add( "module", moduleName != null ? moduleName.toString() : null );
+        s.add( "name", getName() );
+        s.add( "displayName", getDisplayName() );
+        s.add( "module", getModuleName() );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
         s.add( "allowChildContent", allowChildContent );
         s.add( "form", form );
-        s.add( "icon", icon );
+        s.add( "icon", getIcon() );
+        s.omitNullValues();
         return s.toString();
     }
 
@@ -174,13 +118,8 @@ public final class ContentType
     }
 
     public static class Builder
+        extends BaseSchema.Builder<Builder>
     {
-        private Name name;
-
-        private ModuleName moduleName;
-
-        private String displayName;
-
         private boolean isAbstract;
 
         private boolean isFinal;
@@ -191,25 +130,18 @@ public final class ContentType
 
         private QualifiedContentTypeName superType;
 
-        private DateTime createdTime;
-
-        private DateTime modifiedTime;
-
-        private Icon icon;
-
         private String contentDisplayNameScript;
 
         private Builder()
         {
+            super();
             formBuilder = newForm();
             allowChildContent = true;
         }
 
         private Builder( final ContentType source )
         {
-            this.name = source.name;
-            this.moduleName = source.getModuleName();
-            this.displayName = source.getDisplayName();
+            super( source );
             this.isAbstract = source.isAbstract();
             this.isFinal = source.isFinal();
             this.allowChildContent = source.allowChildContent();
@@ -218,35 +150,7 @@ public final class ContentType
             {
                 this.formBuilder = newForm( source.form() );
             }
-            this.createdTime = source.createdTime;
-            this.modifiedTime = source.modifiedTime;
             this.contentDisplayNameScript = source.contentDisplayNameScript;
-            this.icon = source.icon;
-        }
-
-        public Builder qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
-        {
-            this.name = Name.from( qualifiedContentTypeName.getContentTypeName() );
-            this.moduleName = qualifiedContentTypeName.getModuleName();
-            return this;
-        }
-
-        public Builder name( final String name )
-        {
-            this.name = name != null ? Name.from( name ) : null;
-            return this;
-        }
-
-        public Builder module( final ModuleName moduleName )
-        {
-            this.moduleName = moduleName;
-            return this;
-        }
-
-        public Builder displayName( final String displayName )
-        {
-            this.displayName = displayName;
-            return this;
         }
 
         public Builder setAbstract( final boolean value )
@@ -285,18 +189,6 @@ public final class ContentType
             return this;
         }
 
-        public Builder createdTime( final DateTime value )
-        {
-            this.createdTime = value;
-            return this;
-        }
-
-        public Builder modifiedTime( final DateTime value )
-        {
-            this.modifiedTime = value;
-            return this;
-        }
-
         public Builder addFormItem( final FormItem formItem )
         {
             this.formBuilder.addFormItem( formItem );
@@ -309,12 +201,6 @@ public final class ContentType
             return this;
         }
 
-        public Builder icon( final Icon icon )
-        {
-            this.icon = icon;
-            return this;
-        }
-
         public Builder contentDisplayNameScript( final String contentDisplayNameScript )
         {
             this.contentDisplayNameScript = contentDisplayNameScript;
@@ -323,11 +209,6 @@ public final class ContentType
 
         public ContentType build()
         {
-            if ( superType == null && ( moduleName != null && !moduleName.equals( Module.SYSTEM.getName() ) ) )
-            {
-                superType = QualifiedContentTypeName.unstructured();
-            }
-
             return new ContentType( this );
         }
     }

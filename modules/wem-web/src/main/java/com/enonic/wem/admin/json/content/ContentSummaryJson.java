@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.json.content;
 
+import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.api.content.Content;
@@ -7,6 +8,7 @@ import com.enonic.wem.api.content.Content;
 @SuppressWarnings("UnusedDeclaration")
 public class ContentSummaryJson
     extends ContentIdJson
+    implements ChangeTraceableJson
 {
     private final Content content;
 
@@ -47,6 +49,11 @@ public class ContentSummaryJson
     public String getOwner()
     {
         return content.getOwner() != null ? content.getOwner().toString() : null;
+    }
+
+    public String getCreator()
+    {
+        return content.getCreator() != null ? content.getCreator().toString() : null;
     }
 
     public String getModifier()
