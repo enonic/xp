@@ -1,0 +1,98 @@
+{
+    "schemas": [
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "deletable": true,
+            "displayName": null,
+            "editable": true,
+            "hasChildren": true,
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:tree:rootcontenttype",
+            "key": "ContentType:tree:rootcontenttype",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "module": "tree",
+            "name": "rootcontenttype",
+            "qualifyName": "tree:rootcontenttype",
+            "schemas": [
+                {
+                    "createdTime": "2013-08-23T12:55:09.162Z",
+                    "deletable": true,
+                    "displayName": null,
+                    "editable": true,
+                    "hasChildren": false,
+                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:tree:childcontenttype",
+                    "key": "ContentType:tree:childcontenttype",
+                    "modifiedTime": "2013-08-23T12:55:09.162Z",
+                    "module": "tree",
+                    "name": "childcontenttype",
+                    "qualifyName": "tree:childcontenttype",
+                    "schemas": [ ],
+                    "type": "ContentType"
+                }
+            ],
+            "type": "ContentType"
+        },
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "deletable": true,
+            "displayName": "rootmixin",
+            "editable": true,
+            "hasChildren": true,
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:tree:rootmixin",
+            "key": "Mixin:tree:rootmixin",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "module": "tree",
+            "name": "rootmixin",
+            "qualifyName": "tree:rootmixin",
+            "schemas": [
+                {
+                    "createdTime": "2013-08-23T12:55:09.162Z",
+                    "deletable": true,
+                    "displayName": "childmixin",
+                    "editable": true,
+                    "hasChildren": false,
+                    "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:tree:childmixin",
+                    "key": "Mixin:tree:childmixin",
+                    "modifiedTime": "2013-08-23T12:55:09.162Z",
+                    "module": "tree",
+                    "name": "childmixin",
+                    "qualifyName": "tree:childmixin",
+                    "schemas": [ ],
+                    "type": "Mixin"
+                }
+            ],
+            "type": "Mixin"
+        },
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "deletable": true,
+            "displayName": null,
+            "editable": true,
+            "hasChildren": true,
+            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:tree:rootrelationshiptype",
+            "key": "RelationshipType:tree:rootrelationshiptype",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "module": "tree",
+            "name": "rootrelationshiptype",
+            "qualifyName": "tree:rootrelationshiptype",
+            "schemas": [
+                {
+                    "createdTime": "2013-08-23T12:55:09.162Z",
+                    "deletable": true,
+                    "displayName": null,
+                    "editable": true,
+                    "hasChildren": false,
+                    "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:tree:childrelationshiptype",
+                    "key": "RelationshipType:tree:childrelationshiptype",
+                    "modifiedTime": "2013-08-23T12:55:09.162Z",
+                    "module": "tree",
+                    "name": "childrelationshiptype",
+                    "qualifyName": "tree:childrelationshiptype",
+                    "schemas": [ ],
+                    "type": "RelationshipType"
+                }
+            ],
+            "type": "RelationshipType"
+        }
+    ],
+    "total": 6
+}

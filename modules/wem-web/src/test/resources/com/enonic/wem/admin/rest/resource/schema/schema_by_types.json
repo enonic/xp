@@ -1,0 +1,28 @@
+[
+    {
+        "createdTime": "2013-08-23T12:55:09.162Z",
+        "deletable": true,
+        "displayName": null,
+        "editable": true,
+        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:module:contenttype",
+        "key": "ContentType:module:contenttype",
+        "modifiedTime": "2013-08-23T12:55:09.162Z",
+        "module": "module",
+        "name": "contenttype",
+        "qualifyName": "module:contenttype",
+        "type": "ContentType"
+    },
+    {
+        "createdTime": "2013-08-23T12:55:09.162Z",
+        "deletable": true,
+        "displayName": "mixin",
+        "editable": true,
+        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:module:mixin",
+        "key": "Mixin:module:mixin",
+        "modifiedTime": "2013-08-23T12:55:09.162Z",
+        "module": "module",
+        "name": "mixin",
+        "qualifyName": "module:mixin",
+        "type": "Mixin"
+    }
+]
