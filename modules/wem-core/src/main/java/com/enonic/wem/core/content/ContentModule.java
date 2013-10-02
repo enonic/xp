@@ -17,6 +17,10 @@ import com.enonic.wem.core.content.binary.dao.BinaryDaoImpl;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentDaoImpl;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
+import com.enonic.wem.core.item.CreateItemHandler;
+import com.enonic.wem.core.item.UpdateItemHandler;
+import com.enonic.wem.core.item.dao.ItemDao;
+import com.enonic.wem.core.item.dao.ItemInMemoryDao;
 
 public final class ContentModule
     extends AbstractModule
@@ -24,6 +28,7 @@ public final class ContentModule
     @Override
     protected void configure()
     {
+        bind( ItemDao.class ).to( ItemInMemoryDao.class ).in( Scopes.SINGLETON );
         bind( ContentDao.class ).to( ContentDaoImpl.class ).in( Scopes.SINGLETON );
         bind( BinaryDao.class ).to( BinaryDaoImpl.class ).in( Scopes.SINGLETON );
         bind( AttachmentDao.class ).to( AttachmentDaoImpl.class ).in( Scopes.SINGLETON );
@@ -32,6 +37,8 @@ public final class ContentModule
         tasks.bind( ContentInitializer.class );
 
         final CommandBinder commands = CommandBinder.from( binder() );
+        commands.add( CreateItemHandler.class );
+        commands.add( UpdateItemHandler.class );
         commands.add( CreateContentHandler.class );
         commands.add( DeleteContentHandler.class );
         commands.add( FindContentHandler.class );

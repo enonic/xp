@@ -3,13 +3,18 @@ package com.enonic.wem.api.item;
 
 import org.joda.time.DateTime;
 
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.support.illegaledit.IllegalEdit;
+import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
+import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Item
+    implements IllegalEditAware<Item>
 {
     private final ItemId id;
 
@@ -19,7 +24,11 @@ public final class Item
 
     private final DateTime createdTime;
 
+    private final UserKey creator;
+
     private final DateTime modifiedTime;
+
+    private final UserKey modifier;
 
     private final RootDataSet rootDataSet;
 
@@ -29,7 +38,9 @@ public final class Item
         this.name = builder.name;
         this.path = builder.path;
         this.createdTime = builder.createdTime;
+        this.creator = builder.creator;
         this.modifiedTime = builder.modifiedTime;
+        this.modifier = builder.modifier;
         this.rootDataSet = new RootDataSet();
         for ( final Data data : builder.dataSet )
         {
@@ -57,9 +68,19 @@ public final class Item
         return createdTime;
     }
 
+    public UserKey creator()
+    {
+        return creator;
+    }
+
     public DateTime modifiedTime()
     {
         return modifiedTime;
+    }
+
+    public UserKey modifier()
+    {
+        return modifier;
     }
 
     public Property property( final String path )
@@ -70,6 +91,24 @@ public final class Item
     public DataSet dataSet( final String path )
     {
         return rootDataSet.getDataSet( path );
+    }
+
+    @Override
+    public void checkIllegalEdit( final Item to )
+        throws IllegalEditException
+    {
+        IllegalEdit.check( "id", this.id(), to.id(), Item.class );
+        IllegalEdit.check( "name", this.name(), to.name(), Item.class );
+        IllegalEdit.check( "path", this.path(), to.path(), Item.class );
+        IllegalEdit.check( "createdTime", this.createdTime(), to.createdTime(), Item.class );
+        IllegalEdit.check( "creator", this.creator(), to.creator(), Item.class );
+        IllegalEdit.check( "modifiedTime", this.modifiedTime(), to.modifiedTime(), Item.class );
+        IllegalEdit.check( "modifier", this.modifier(), to.modifier(), Item.class );
+    }
+
+    public static Builder newItem()
+    {
+        return new Builder();
     }
 
     public static Builder newItem( final ItemId id, final String name )
@@ -92,9 +131,17 @@ public final class Item
 
         private DateTime createdTime;
 
+        private UserKey creator;
+
         private DateTime modifiedTime;
 
+        private UserKey modifier;
+
         private RootDataSet dataSet = new RootDataSet();
+
+        public Builder()
+        {
+        }
 
         public Builder( final Item item )
         {
@@ -127,9 +174,21 @@ public final class Item
             return this;
         }
 
+        public Builder creator( final UserKey value )
+        {
+            this.creator = value;
+            return this;
+        }
+
         public Builder modifiedTime( final DateTime value )
         {
             this.modifiedTime = value;
+            return this;
+        }
+
+        public Builder modifier( final UserKey value )
+        {
+            this.modifier = value;
             return this;
         }
 
