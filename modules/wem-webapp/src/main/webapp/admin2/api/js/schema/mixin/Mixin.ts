@@ -6,7 +6,7 @@ module api_schema_mixin {
         private moduleName:string;
         private displayName:string;
         private qualifiedName:string;
-        private formItem:api_schema_content_form.FormItem;
+        private formItems:api_schema_content_form.FormItem[];
         private createdTime:Date;
         private modifiedTime:Date;
         private icon:string;
@@ -18,13 +18,10 @@ module api_schema_mixin {
             this.moduleName = json.module;
             this.displayName = json.displayName;
             this.qualifiedName = this.moduleName + ":" + this.name;
-            if (json.formItemSet) {
-                this.formItem = new api_schema_content_form.FormItemSet(json.formItemSet);
-            } else if (json.layout) {
-                this.formItem = new api_schema_content_form.Layout(json.layout.name);
-            } else if (json.input) {
-                this.formItem = new api_schema_content_form.Input(json.input);
-            }
+            this.formItems = [];
+            json.items.forEach((item:api_schema_content_form_json.FormItemJson) => {
+                this.formItems.push(new api_schema_content_form[item.formItemType](item));
+            });
             this.icon = json.iconUrl;
             this.schemaKey = "mixin:" + this.qualifiedName;
         }
@@ -46,8 +43,8 @@ module api_schema_mixin {
             return this.qualifiedName;
         }
 
-        getFormItem():api_schema_content_form.FormItem {
-            return this.formItem;
+        getFormItems():api_schema_content_form.FormItem[] {
+            return this.formItems;
         }
 
         getCreatedTime():Date {
