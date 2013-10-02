@@ -1,61 +1,25 @@
 module app_contextwindow {
-    export class InspectorPanel extends api_ui.Panel {
-        private header:api_dom.H3El;
-        private subtitle:api_dom.Element;
-        private iconEl:api_dom.DivEl;
-        private infoEl:api_dom.Element;
+    export class InspectorPanel extends api_ui.DeckPanel {
+        private detailPanel:DetailPanel;
+        private selectPanel:SelectPanel;
 
         constructor(contextWindow:ContextWindow) {
-            super("InspectorPanel");
-            this.addClass("inspector-panel");
+            super();
 
-            this.initElements();
-            this.setEmpty();
+            this.detailPanel = new DetailPanel(contextWindow);
+            this.selectPanel = new SelectPanel(contextWindow);
+
+            this.addPanel(this.detailPanel);
+            this.addPanel(this.selectPanel);
 
             ComponentSelectEvent.on((event) => {
-                console.log(event);
-                console.log(event.getComponent().isEmpty());
-                this.setName(event.getComponent().name);
-                this.setType(event.getComponent().componentType.typeName);
-                this.setIcon(event.getComponent().componentType.iconCls);
+                if (event.getComponent().isEmpty()) {
+                    this.showPanel(this.getPanelIndex(this.selectPanel));
+                } else {
+                    this.showPanel(this.getPanelIndex(this.detailPanel));
+                }
             });
 
-            ComponentDeselectEvent.on((event) => {
-                this.setEmpty();
-            });
-
-        }
-
-        private initElements() {
-            this.header = new api_dom.H3El();
-            this.subtitle = new api_dom.DivEl();
-            this.iconEl = new api_dom.DivEl();
-            this.infoEl = new api_dom.DivEl();
-
-            this.iconEl.addClass("icon");
-
-            this.appendChild(this.iconEl);
-            this.appendChild(this.header);
-            this.appendChild(this.subtitle);
-            this.appendChild(this.infoEl);
-        }
-
-        private setEmpty() {
-            this.header.getEl().setInnerHtml("Empty");
-            this.subtitle.getEl().setInnerHtml("No component selected");
-            this.iconEl.removeAllClasses("icon");
-        }
-
-        setIcon(iconCls:string) {
-            this.iconEl.addClass(iconCls);
-        }
-
-        setName(name:string) {
-            this.subtitle.getEl().setInnerHtml(name);
-        }
-
-        setType(type:string) {
-            this.header.getEl().setInnerHtml(type);
         }
     }
 }

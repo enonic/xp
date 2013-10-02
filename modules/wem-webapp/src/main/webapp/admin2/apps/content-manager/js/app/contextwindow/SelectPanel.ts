@@ -1,5 +1,5 @@
 module app_contextwindow {
-    export class ComponentsPanel extends api_ui.Panel {
+    export class SelectPanel extends api_ui.Panel {
 
         private searchBox;
         private data:ComponentData[];

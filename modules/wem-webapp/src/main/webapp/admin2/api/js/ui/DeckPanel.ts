@@ -28,7 +28,7 @@ module api_ui {
          * @param panel
          * @returns {number} The index for the added Panel.
          */
-        addPanel(panel:Panel):number {
+        addPanel<T extends api_ui.Panel>(panel:T):number {
             panel.hide();
             panel.setDoOffset(false);
             this.appendChild(panel);
@@ -51,7 +51,7 @@ module api_ui {
             return this.getPanelIndex(this.panelShown);
         }
 
-        getPanelIndex(panel:Panel):number {
+        getPanelIndex<T extends api_ui.Panel>(panel:T):number {
             var size = this.getSize();
             for (var i = 0; i < size; i++) {
                 if (this.panels[i] === panel) {

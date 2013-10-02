@@ -33,8 +33,8 @@ module api_ui {
             return this.deck.getPanelIndex(panel);
         }
 
-        selectPanel(index:number) {
-            this.deck.selectPanelFromIndex(index);
+        selectPanel<T extends api_ui.Panel>(panel:T) {
+            this.deck.selectPanelFromIndex(this.deck.getPanelIndex(panel));
         }
 
         private addItemArray(item:any) {

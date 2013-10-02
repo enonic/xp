@@ -6,13 +6,8 @@ module app_contextwindow {
 
     export class ContextWindow extends api_ui.NavigableFloatingWindow {
         private componentTypesPanel:ComponentTypesPanel;
-        private componentTypesPanelIndex:number;
         private inspectorPanel:InspectorPanel;
-        private inspectorPanelIndex:number;
         private emulatorPanel:api_ui.Panel;
-        private emulatorPanelIndex:number;
-        private componentsPanel:ComponentsPanel;
-        private componentsPanelIndex:number;
 
         private draggingMask:api_ui.DraggingMask;
         private liveEditEl:api_dom.IFrameEl;
@@ -29,31 +24,24 @@ module app_contextwindow {
                 this.draggingMask.hide();
             };
 
-            super({draggableOptions: { start: dragStart, stop: dragStop, handle: ".tab-menu" } } );
+            super({draggableOptions: { start: dragStart, stop: dragStop, handle: ".tab-menu" } });
             this.contextWindowOptions = options;
             this.addClass("context-window");
 
             this.componentTypesPanel = new ComponentTypesPanel(this);
             this.inspectorPanel = new InspectorPanel(this);
             this.emulatorPanel = new api_ui.Panel();
-            this.componentsPanel = new ComponentsPanel(this);
 
-            this.componentTypesPanelIndex = this.addItem("ComponentTypes", this.componentTypesPanel);
-            this.inspectorPanelIndex = this.addItem("Inspector", this.inspectorPanel);
-            this.emulatorPanelIndex = this.addItem("Emulator", this.emulatorPanel);
-            this.componentsPanelIndex = this.addItem("Components", this.componentsPanel);
+            this.addItem("Insert", this.componentTypesPanel);
+            this.addItem("Inspect", this.inspectorPanel);
+            this.addItem("Emulator", this.emulatorPanel);
 
             ComponentSelectEvent.on((event) => {
-                if (event.getComponent().isEmpty) {
-                    this.selectPanel(this.componentsPanelIndex)
-                } else {
-                    this.selectPanel(this.inspectorPanelIndex);
-                }
-
+                this.selectPanel(this.inspectorPanel);
             });
 
             ComponentDeselectEvent.on((event) => {
-                this.selectPanel(this.componentTypesPanelIndex);
+                this.selectPanel(this.componentTypesPanel);
             });
 
             if (options.liveEditEl) {
@@ -78,10 +66,11 @@ module app_contextwindow {
         }
 
         private liveEditListen() {
-            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectComponent.liveEdit', (event, component, mouseClickPagePosition) => {
-                new ComponentSelectEvent(<Component>component).fire();
-                this.selectedComponent = component;
-            });
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectComponent.liveEdit',
+                (event, component, mouseClickPagePosition) => {
+                    new ComponentSelectEvent(<Component>component).fire();
+                    this.selectedComponent = component;
+                });
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('deselectComponent.liveEdit', (event) => {
                 new ComponentDeselectEvent().fire();
