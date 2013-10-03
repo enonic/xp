@@ -7,7 +7,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.system.SystemInfoJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.api.Version;
+import com.enonic.wem.Version;
 
 @Path("util/system_info")
 @Produces(MediaType.APPLICATION_JSON)
