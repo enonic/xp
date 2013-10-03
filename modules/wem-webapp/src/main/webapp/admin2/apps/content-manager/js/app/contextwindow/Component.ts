@@ -5,7 +5,7 @@ module app_contextwindow {
         componentType:{
             cssSelector:string;
             cursor:string;
-            type:string;
+            type:number;
             typeName:string;
             iconCls:string;
         };

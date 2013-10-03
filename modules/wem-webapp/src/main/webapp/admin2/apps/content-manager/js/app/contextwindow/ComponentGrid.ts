@@ -8,7 +8,7 @@ module app_contextwindow {
     export class ComponentGrid extends api_grid.Grid {
         private componentGridOptions:ComponentGridOptions;
 
-        constructor(data:any, options:ComponentGridOptions = {}) {
+        constructor(data:any = {}, options:ComponentGridOptions = {}) {
             super(data, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
             this.componentGridOptions = options;
             this.setFilter(this.filter);
@@ -74,6 +74,18 @@ module app_contextwindow {
             );
 
             return rowHtml.join("");
+        }
+
+        static toSlickData(data:any[]):any[] {
+            var result = [];
+            data["components"].forEach((item, index) => {
+                var tmp = {
+                    "id": item.key,
+                    "component": item
+                };
+                result.push(tmp);
+            });
+            return result;
         }
     }
 

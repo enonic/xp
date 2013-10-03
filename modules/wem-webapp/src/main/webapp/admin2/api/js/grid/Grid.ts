@@ -52,6 +52,12 @@ module api_grid {
             this.data = data;
         }
 
+        updateData(data:any) {
+            this.data = data;
+            this.dataView.setItems(data);
+            this.dataView.refresh();
+        }
+
         getDataView():DataView {
             return this.dataView;
         }

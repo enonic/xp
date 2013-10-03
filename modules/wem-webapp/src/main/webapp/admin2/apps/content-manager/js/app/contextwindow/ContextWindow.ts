@@ -13,7 +13,7 @@ module app_contextwindow {
         private liveEditEl:api_dom.IFrameEl;
         private liveEditJQuery:JQueryStatic;
         private contextWindowOptions:ContextWindowOptions;
-        private selectedComponent:any;
+        private selectedComponent:Component;
 
         constructor(options:ContextWindowOptions) {
             var dragStart = (event, ui) => {
@@ -38,6 +38,7 @@ module app_contextwindow {
 
             ComponentSelectEvent.on((event) => {
                 this.selectPanel(this.inspectorPanel);
+                this.selectedComponent = event.getComponent();
             });
 
             ComponentDeselectEvent.on((event) => {

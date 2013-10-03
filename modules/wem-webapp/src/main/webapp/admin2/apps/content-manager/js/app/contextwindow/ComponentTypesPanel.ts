@@ -18,7 +18,6 @@ module app_contextwindow {
             console.log(this.contextWindow);
 
 
-            this.data = this.mockData();
             this.grid = new ComponentGrid(this.data, {draggableRows: true, rowClass: "comp"});
 
             this.searchBox = new api_ui.TextInput();
@@ -29,7 +28,7 @@ module app_contextwindow {
 
             this.appendChild(this.searchBox);
             this.appendChild(this.grid);
-
+            this.getData();
         }
 
         afterRender() {
@@ -111,49 +110,13 @@ module app_contextwindow {
             this.contextWindow.hide();
         }
 
-        private mockData():any[] {
-            return [
-                {
-                    "id": 10517,
-                    "component": {
-                        "key": "10517",
-                        "type": 2,
-                        "typeName": "layout",
-                        "name": "Layout",
-                        "subtitle": "Adds a layout component to the page"
-                    }
-                },
-                {
-                    "id": 10617,
-                    "component": {
-                        "key": "10617",
-                        "type": 3,
-                        "typeName": "part",
-                        "name": "Part",
-                        "subtitle": "Adds a part component to the page"
-                    }
-                },
-                {
-                    "id": 10717,
-                    "component": {
-                        "key": "10717",
-                        "type": 4,
-                        "typeName": "image",
-                        "name": "Image",
-                        "subtitle": "Adds an image component to the page"
-                    }
-                },
-                {
-                    "id": 10817,
-                    "component": {
-                        "key": "10817",
-                        "type": 5,
-                        "typeName": "paragraph",
-                        "name": "Paragraph",
-                        "subtitle": "Adds a paragraph component to the page"
-                    }
+        private getData():void {
+            jQuery.ajax({
+                url: "/admin2/apps/content-manager/js/data/context-window/mock-component-types.json",
+                success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
+                    this.grid.updateData(ComponentGrid.toSlickData(data));
                 }
-            ];
+            });
         }
     }
 }
