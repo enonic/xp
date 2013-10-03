@@ -107,6 +107,8 @@ module api_ui {
                     this.dropdown.setOptions({autoHeight: false});
                     this.dropdown.resizeCanvas();
                 }
+
+                this.updateDropdownStyles()
             } else {
                 this.dropdown.hide();
                 this.emptyDropdown.show();
