@@ -15,8 +15,6 @@ module app_contextwindow {
             super();
 
             this.contextWindow = contextWindow;
-            console.log(this.contextWindow);
-
 
             this.grid = new ComponentGrid(this.data, {draggableRows: true, rowClass: "comp"});
 
@@ -45,7 +43,6 @@ module app_contextwindow {
 
 
         initComponentDraggables() {
-            console.log("init component draggables -> ", this.contextWindow);
             var components = jQuery('[data-context-window-draggable="true"]');
 
             components.liveDraggable({

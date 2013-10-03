@@ -78,11 +78,10 @@ module api_grid {
             this.slickGrid.invalidateRows(rows);
         }
 
-        setOnClick() {
+        setOnClick(callback:(cell) => void) {
             this.slickGrid.onClick.subscribe((event, data) => {
-                //TODO: Continue here, even tho its hacky...
-                //TODO: find out why this is called twice?
-                console.log(jQuery(this.slickGrid.getCellNode(data.row, data.cell)).children('div').data("live-edit-key"));
+                var el = this.slickGrid.getCellNode(data.row, data.cell);
+                callback(el);
             });
         }
 

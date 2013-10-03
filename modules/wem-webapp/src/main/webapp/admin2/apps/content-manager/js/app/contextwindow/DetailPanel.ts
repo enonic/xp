@@ -13,8 +13,6 @@ module app_contextwindow {
             this.setEmpty();
 
             ComponentSelectEvent.on((event) => {
-                console.log(event);
-                console.log(event.getComponent().isEmpty());
                 this.setName(event.getComponent().name);
                 this.setType(event.getComponent().componentType.typeName);
                 this.setIcon(event.getComponent().componentType.iconCls);

@@ -7,7 +7,8 @@ module app_contextwindow {
         private contextWindow:ContextWindow;
 
         constructor(contextWindow:ContextWindow) {
-            super();
+            super("SelectPanel");
+            this.addClass("select-panel");
             this.contextWindow = contextWindow;
             var onClick = () => {
             };
@@ -24,6 +25,12 @@ module app_contextwindow {
 
             ComponentSelectEvent.on((event) => {
                 this.getData(event.getComponent().componentType.type);
+            });
+
+            // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
+            jQuery(this.getHTMLElement()).on("click", ".component", (event:JQueryEventObject) => {
+                var key = jQuery(event.currentTarget).children('div').data("live-edit-key");
+                this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent(key);
             });
         }
 

@@ -2,7 +2,7 @@ module app_contextwindow {
     export interface ComponentGridOptions {
         draggableRows?:boolean;
         rowClass?:string;
-        onClick?:() => void;
+        onClick?:(el) => void;
     }
 
     export class ComponentGrid extends api_grid.Grid {
@@ -17,7 +17,7 @@ module app_contextwindow {
         afterRender() {
             super.afterRender();
             if (this.componentGridOptions.onClick) {
-                this.setOnClick();
+                this.setOnClick(this.componentGridOptions.onClick);
             }
         }
 
