@@ -10,7 +10,7 @@ import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -40,13 +40,12 @@ public class GetRelationshipTypeRpcHandlerTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "the_relationship_type" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:the_relationship_type" ) );
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeJson_param.json", "getRelationshipTypeJson_result.json" );
@@ -57,13 +56,12 @@ public class GetRelationshipTypeRpcHandlerTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "the_relationship_type" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:the_relationship_type" ) );
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeXml_param.json", "getRelationshipTypeXml_result.json" );
@@ -77,7 +75,7 @@ public class GetRelationshipTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "RelationshipType [[mymodule:the_relationship_type]] was not found" );
+        resultJson.put( "error", "RelationshipType [[the_relationship_type]] was not found" );
         testSuccess( "getRelationshipTypeJson_param.json", resultJson );
     }
 }

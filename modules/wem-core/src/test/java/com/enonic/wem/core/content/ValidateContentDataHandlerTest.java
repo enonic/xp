@@ -10,7 +10,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
@@ -51,7 +50,6 @@ public class ValidateContentDataHandlerTest
     {
         // setup
         final ContentType contentType = newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "my_type" ).
             addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newFormItemSet().name( "mySet" ).required( true ).addFormItem(
@@ -83,7 +81,6 @@ public class ValidateContentDataHandlerTest
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
                 newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "my_type" ).
             addFormItem( fieldSet ).
             build();

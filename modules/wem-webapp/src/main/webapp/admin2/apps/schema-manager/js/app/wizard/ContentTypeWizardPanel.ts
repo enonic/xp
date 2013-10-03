@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Content Type";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/ContentType:system:structured';
+        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/ContentType:structured';
 
         private saveAction:api_ui.Action;
 

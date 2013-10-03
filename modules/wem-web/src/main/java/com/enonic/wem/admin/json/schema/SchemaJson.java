@@ -33,7 +33,6 @@ public class SchemaJson
     {
         this.setKey( schema.getSchemaKey().toString() );
         this.setName( schema.getName() );
-        this.setModule( schema.getModuleName().toString() );
         this.setQualifyName( schema.getQualifiedName().toString() );
         this.setDisplayName( schema.getDisplayName() );
         this.setType( schema.getClass().getSimpleName() );

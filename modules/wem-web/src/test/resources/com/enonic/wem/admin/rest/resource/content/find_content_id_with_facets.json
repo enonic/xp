@@ -14,17 +14,17 @@
                 {
                     "count": 5,
                     "displayName": "Folder",
-                    "name": "system:folder"
+                    "name": "folder"
                 },
                 {
                     "count": 24,
                     "displayName": "Image",
-                    "name": "system:image"
+                    "name": "image"
                 },
                 {
                     "count": 4,
                     "displayName": "Space",
-                    "name": "system:space"
+                    "name": "space"
                 }
             ],
             "name": "contentType"

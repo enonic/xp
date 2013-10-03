@@ -2,7 +2,7 @@
     "name": "mixin-using-norwegian-county",
     "module": "demo",
     "displayName": "Using mixin: norwegian-county",
-    "superType": "system:structured",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

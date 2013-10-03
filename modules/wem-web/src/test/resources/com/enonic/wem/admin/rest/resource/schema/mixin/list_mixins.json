@@ -3,7 +3,7 @@
         "deletable" : false,
         "displayName" : null,
         "editable" : false,
-        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text_1",
+        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:input_text_1",
         "items" : [ {
             "customText" : null,
             "formItemType" : "Input",
@@ -22,13 +22,12 @@
             },
             "validationRegexp" : null
         } ],
-        "module" : "mymodule",
         "name" : "input_text_1"
     }, {
         "deletable" : false,
         "displayName" : null,
         "editable" : false,
-        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:othermodule:text_area_1",
+        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:text_area_1",
         "items" : [ {
             "customText" : null,
             "formItemType" : "Input",
@@ -47,7 +46,6 @@
             },
             "validationRegexp" : null
         } ],
-        "module" : "othermodule",
         "name" : "text_area_1"
     } ]
 }

@@ -41,8 +41,7 @@ final class RelationshipDaoHandlerCreate
     {
         final Node fromContentNode = session.getNodeByIdentifier( relationship.getFromContent().toString() );
         final Node relationshipsNode = JcrHelper.getOrAddNode( fromContentNode, RelationshipDao.RELATIONSHIPS_NODE );
-        final Node moduleNode = JcrHelper.getOrAddNode( relationshipsNode, relationship.getType().getModuleName().toString() );
-        final Node relationshipTypeNameNode = JcrHelper.getOrAddNode( moduleNode, relationship.getType().getLocalName() );
+        final Node relationshipTypeNameNode = JcrHelper.getOrAddNode( relationshipsNode, relationship.getType().getName() );
         if ( relationship.getManagingData() != null )
         {
             final Node managingDataNode = JcrHelper.getOrAddNode( relationshipTypeNameNode, RelationshipDao.MANAGING_DATA_NODE );

@@ -1,72 +1,57 @@
 package com.enonic.wem.api.schema.content;
 
 
-import com.enonic.wem.api.Name;
-import com.enonic.wem.api.content.ModuleBasedQualifiedName;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.content.QualifiedName;
 
 public final class QualifiedContentTypeName
-    extends ModuleBasedQualifiedName
+    extends QualifiedName
 {
-    private static final QualifiedContentTypeName UNSTRUCTURED = new QualifiedContentTypeName( Module.SYSTEM.getName(), "unstructured" );
+    private static final QualifiedContentTypeName UNSTRUCTURED = new QualifiedContentTypeName( "unstructured" );
 
-    private static final QualifiedContentTypeName SPACE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "space" );
+    private static final QualifiedContentTypeName SPACE = new QualifiedContentTypeName( "space" );
 
-    private static final QualifiedContentTypeName STRUCTURED = new QualifiedContentTypeName( Module.SYSTEM.getName(), "structured" );
+    private static final QualifiedContentTypeName STRUCTURED = new QualifiedContentTypeName( "structured" );
 
-    private static final QualifiedContentTypeName FOLDER = new QualifiedContentTypeName( Module.SYSTEM.getName(), "folder" );
+    private static final QualifiedContentTypeName FOLDER = new QualifiedContentTypeName( "folder" );
 
-    private static final QualifiedContentTypeName PAGE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "page" );
+    private static final QualifiedContentTypeName PAGE = new QualifiedContentTypeName( "page" );
 
-    private static final QualifiedContentTypeName SHORTCUT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "shortcut" );
+    private static final QualifiedContentTypeName SHORTCUT = new QualifiedContentTypeName( "shortcut" );
 
-    private static final QualifiedContentTypeName MEDIA = new QualifiedContentTypeName( Module.SYSTEM.getName(), "media" );
+    private static final QualifiedContentTypeName MEDIA = new QualifiedContentTypeName( "media" );
 
-    private static final QualifiedContentTypeName MEDIA_TEXT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "text" );
+    private static final QualifiedContentTypeName MEDIA_TEXT = new QualifiedContentTypeName( "text" );
 
-    private static final QualifiedContentTypeName MEDIA_DATA = new QualifiedContentTypeName( Module.SYSTEM.getName(), "data" );
+    private static final QualifiedContentTypeName MEDIA_DATA = new QualifiedContentTypeName( "data" );
 
-    private static final QualifiedContentTypeName MEDIA_AUDIO = new QualifiedContentTypeName( Module.SYSTEM.getName(), "audio" );
+    private static final QualifiedContentTypeName MEDIA_AUDIO = new QualifiedContentTypeName( "audio" );
 
-    private static final QualifiedContentTypeName MEDIA_VIDEO = new QualifiedContentTypeName( Module.SYSTEM.getName(), "video" );
+    private static final QualifiedContentTypeName MEDIA_VIDEO = new QualifiedContentTypeName( "video" );
 
-    private static final QualifiedContentTypeName MEDIA_IMAGE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "image" );
+    private static final QualifiedContentTypeName MEDIA_IMAGE = new QualifiedContentTypeName( "image" );
 
-    private static final QualifiedContentTypeName MEDIA_VECTOR = new QualifiedContentTypeName( Module.SYSTEM.getName(), "vector" );
+    private static final QualifiedContentTypeName MEDIA_VECTOR = new QualifiedContentTypeName( "vector" );
 
-    private static final QualifiedContentTypeName MEDIA_ARCHIVE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "archive" );
+    private static final QualifiedContentTypeName MEDIA_ARCHIVE = new QualifiedContentTypeName( "archive" );
 
-    private static final QualifiedContentTypeName MEDIA_DOCUMENT = new QualifiedContentTypeName( Module.SYSTEM.getName(), "document" );
+    private static final QualifiedContentTypeName MEDIA_DOCUMENT = new QualifiedContentTypeName( "document" );
 
-    private static final QualifiedContentTypeName MEDIA_SPREADSHEET =
-        new QualifiedContentTypeName( Module.SYSTEM.getName(), "spreadsheet" );
+    private static final QualifiedContentTypeName MEDIA_SPREADSHEET = new QualifiedContentTypeName( "spreadsheet" );
 
-    private static final QualifiedContentTypeName MEDIA_PRESENTATION =
-        new QualifiedContentTypeName( Module.SYSTEM.getName(), "presentation" );
+    private static final QualifiedContentTypeName MEDIA_PRESENTATION = new QualifiedContentTypeName( "presentation" );
 
-    private static final QualifiedContentTypeName MEDIA_CODE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "code" );
+    private static final QualifiedContentTypeName MEDIA_CODE = new QualifiedContentTypeName( "code" );
 
-    private static final QualifiedContentTypeName MEDIA_EXECUTABLE = new QualifiedContentTypeName( Module.SYSTEM.getName(), "executable" );
+    private static final QualifiedContentTypeName MEDIA_EXECUTABLE = new QualifiedContentTypeName( "executable" );
 
-    public QualifiedContentTypeName( final String qualifiedName )
+    private QualifiedContentTypeName( final String name )
     {
-        super( qualifiedName );
-    }
-
-    public QualifiedContentTypeName( final ModuleName moduleName, final String contentTypeName )
-    {
-        super( moduleName, contentTypeName );
-    }
-
-    public QualifiedContentTypeName( final ModuleName moduleName, final Name contentTypeName )
-    {
-        super( moduleName, contentTypeName );
+        super( name );
     }
 
     public String getContentTypeName()
     {
-        return getLocalName();
+        return getName();
     }
 
     public boolean isSpace()
@@ -259,14 +244,9 @@ public final class QualifiedContentTypeName
         return MEDIA_EXECUTABLE;
     }
 
-    public static QualifiedContentTypeName from( String qualifiedContentTypeName )
+    public static QualifiedContentTypeName from( String contentTypeName )
     {
-        return new QualifiedContentTypeName( qualifiedContentTypeName );
-    }
-
-    public static QualifiedContentTypeName from( ModuleName module, final String name )
-    {
-        return new QualifiedContentTypeName( module, name );
+        return new QualifiedContentTypeName( contentTypeName );
     }
 
 }

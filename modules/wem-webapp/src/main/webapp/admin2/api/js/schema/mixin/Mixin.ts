@@ -3,7 +3,6 @@ module api_schema_mixin {
     export class Mixin {
 
         private name:string;
-        private moduleName:string;
         private displayName:string;
         private qualifiedName:string;
         private formItems:api_schema_content_form.FormItem[];
@@ -15,9 +14,8 @@ module api_schema_mixin {
 
         constructor(json:api_schema_mixin_json.MixinJson) {
             this.name = json.name;
-            this.moduleName = json.module;
             this.displayName = json.displayName;
-            this.qualifiedName = this.moduleName + ":" + this.name;
+            this.qualifiedName = this.name;
             this.formItems = [];
             json.items.forEach((item:api_schema_content_form_json.FormItemJson) => {
                 this.formItems.push(new api_schema_content_form[item.formItemType](item));
@@ -29,10 +27,6 @@ module api_schema_mixin {
 
         getName():string {
             return this.name;
-        }
-
-        getModuleName():string {
-            return this.moduleName;
         }
 
         getDisplayName():string {

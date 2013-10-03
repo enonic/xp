@@ -3,7 +3,7 @@ package com.enonic.wem.core.schema.mixin;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.FormItems;
 import com.enonic.wem.api.schema.content.form.Input;
@@ -18,8 +18,6 @@ import static org.junit.Assert.*;
 public abstract class AbstractMixinSerializerTest
     extends AbstractSerializerTest
 {
-    private static final ModuleName myModule = ModuleName.from( "mymodule" );
-
     private MixinSerializer serializer;
 
     abstract MixinSerializer getSerializer();
@@ -50,7 +48,7 @@ public abstract class AbstractMixinSerializerTest
         inputBuilder.customText( "Custom text" );
         inputBuilder.indexed( true );
         Input myInput = inputBuilder.build();
-        Mixin myInputMixin = Mixin.newMixin().name( "my_input" ).displayName( "My Mixin" ).module( myModule ).addFormItem( myInput ).build();
+        Mixin myInputMixin = Mixin.newMixin().name( "my_input" ).displayName( "My Mixin" ).addFormItem( myInput ).build();
 
         // exercise
         String serialized = toString( myInputMixin );
@@ -79,7 +77,7 @@ public abstract class AbstractMixinSerializerTest
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
         Mixin myFormItemSetMixin =
-            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).module( myModule ).addFormItem( myFormItemSet ).build();
+            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).addFormItem( myFormItemSet ).build();
 
         // exercise
         String serialized = toString( myFormItemSetMixin );
@@ -136,7 +134,7 @@ public abstract class AbstractMixinSerializerTest
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
         Mixin myFormItemSetMixin =
-            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).module( myModule ).addFormItem( myFormItemSet ).build();
+            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).addFormItem( myFormItemSet ).build();
 
         // exercise
         final String serialized = toString( myFormItemSetMixin );
@@ -163,7 +161,7 @@ public abstract class AbstractMixinSerializerTest
         inputBuilder.customText( "Custom text" );
         inputBuilder.indexed( true );
         Input myInput = inputBuilder.build();
-        Mixin myInputMixin = Mixin.newMixin().name( "my_input" ).displayName( "My Mixin" ).module( myModule ).addFormItem( myInput ).build();
+        Mixin myInputMixin = Mixin.newMixin().name( "my_input" ).displayName( "My Mixin" ).addFormItem( myInput ).build();
 
         // exercise
         final String serialized = toString( myInputMixin );

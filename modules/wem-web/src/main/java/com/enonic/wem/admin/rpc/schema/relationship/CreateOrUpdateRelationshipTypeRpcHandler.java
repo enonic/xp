@@ -109,7 +109,6 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
     {
         final CreateRelationshipType createCommand = Commands.relationshipType().create();
         createCommand.
-            module( relationshipType.getModuleName() ).
             name( relationshipType.getName() ).
             displayName( relationshipType.getDisplayName() ).
             fromSemantic( relationshipType.getFromSemantic() ).

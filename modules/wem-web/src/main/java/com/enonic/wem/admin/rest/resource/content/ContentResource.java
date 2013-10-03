@@ -321,7 +321,7 @@ public class ContentResource
     @Path("validate")
     public ValidateContentJson validate( final ValidateContentParams params )
     {
-        final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( params.getQualifiedContentTypeName() );
+        final QualifiedContentTypeName qualifiedContentTypeName = QualifiedContentTypeName.from( params.getQualifiedContentTypeName() );
 
         GetContentTypes getContentType =
             Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );

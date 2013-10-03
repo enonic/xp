@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mixin>
   <name>my_input</name>
-  <module>mymodule</module>
   <display-name>My Mixin</display-name>
   <items>
     <input type="TextLine" name="my_input">

@@ -1,5 +1,5 @@
 {
-    "type": "system:like",
+    "type": "like",
     "fromContent": "123",
     "toContent": "321",
     "properties": {

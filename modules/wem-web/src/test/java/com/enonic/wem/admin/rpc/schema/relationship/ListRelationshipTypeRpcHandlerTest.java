@@ -7,7 +7,7 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
@@ -34,13 +34,11 @@ public class ListRelationshipTypeRpcHandlerTest
         throws Exception
     {
         final RelationshipType relationshipType1 = newRelationshipType().
-            module( ModuleName.from( "mymodule" ) ).
-            name( "the_relationship_type" ).
+            name( "the_relationship_type1" ).
             build();
 
         final RelationshipType relationshipType2 = newRelationshipType().
-            module( ModuleName.from( "othermodule" ) ).
-            name( "the_relationship_type" ).
+            name( "the_relationship_type2" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType1, relationshipType2 );

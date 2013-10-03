@@ -2,7 +2,6 @@ module api_schema_relationshiptype {
 
     export class RelationshipType {
 
-        private module:string;
         private name:string;
         private displayName:string;
         private createdTime:Date;
@@ -15,7 +14,6 @@ module api_schema_relationshiptype {
         private icon:string;
 
         constructor(relationshipTypeJson:api_schema_relationshiptype_json.RelationshipTypeJson) {
-            this.module = relationshipTypeJson.module;
             this.name = relationshipTypeJson.name;
             this.displayName = relationshipTypeJson.displayName;
             this.fromSemantic = relationshipTypeJson.fromSemantic;
@@ -25,10 +23,6 @@ module api_schema_relationshiptype {
             this.icon = relationshipTypeJson.iconUrl;
             this.modifiedTime = new Date(relationshipTypeJson.modifiedTime);
             this.createdTime = new Date(relationshipTypeJson.createdTime);
-        }
-
-        getModule():string {
-            return this.module;
         }
 
         getName():string {

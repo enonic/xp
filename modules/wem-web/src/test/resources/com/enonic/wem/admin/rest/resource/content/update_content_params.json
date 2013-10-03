@@ -1,7 +1,7 @@
 {
     "contentId": "content-id",
     "contentName": "content-name",
-    "qualifiedContentTypeName": "mymodule:my-type",
+    "qualifiedContentTypeName": "my-type",
     "contentData": {},
     "displayName": "Content One"
 }

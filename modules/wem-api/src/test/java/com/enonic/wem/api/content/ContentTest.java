@@ -12,7 +12,6 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.form.FieldSet;
@@ -40,7 +39,6 @@ public class ContentTest
     public void before()
     {
         contentType = newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "mytype" ).
             build();
     }

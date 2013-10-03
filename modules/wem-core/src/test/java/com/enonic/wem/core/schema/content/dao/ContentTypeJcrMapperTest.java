@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
@@ -48,12 +48,11 @@ public class ContentTypeJcrMapperTest
 
         mapper.toJcr( ContentType.newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My module" ).
             superType( QualifiedContentTypeName.structured() ).
             setAbstract( false ).
             setFinal( true ).
-            superType( null ).
+            superType( QualifiedContentTypeName.unstructured() ).
             createdTime( CREATED_TIME ).
             modifiedTime( MODIFIED_TIME ).
             icon( Icon.from( new byte[]{123}, "image/gif" ) ).
@@ -79,7 +78,6 @@ public class ContentTypeJcrMapperTest
 
         mapper.toJcr( ContentType.newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My module" ).
             superType( QualifiedContentTypeName.structured() ).
             setAbstract( false ).
@@ -97,7 +95,6 @@ public class ContentTypeJcrMapperTest
         assertEquals( CREATED_TIME, contentType.getCreatedTime() );
         assertEquals( MODIFIED_TIME, contentType.getModifiedTime() );
         assertEquals( "my_content_type", contentType.getName() );
-        assertEquals( ModuleName.from( "mymodule" ), contentType.getModuleName() );
         assertEquals( "My module", contentType.getDisplayName() );
         assertEquals( QualifiedContentTypeName.structured(), contentType.getSuperType() );
         assertEquals( false, contentType.isAbstract() );

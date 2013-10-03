@@ -2,7 +2,6 @@ module api_remote_contenttype {
 
     export interface ContentType extends api_remote.Item {
         name: string;
-        module: string;
         qualifiedName?: string;
         displayName: string;
         contentDisplayNameScript: string;

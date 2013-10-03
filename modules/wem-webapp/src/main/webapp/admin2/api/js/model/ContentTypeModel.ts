@@ -5,7 +5,6 @@ module api_model {
             qualifiedName:string;
             name:string;
             displayName:string;
-            module:string;
             iconUrl:string;
             configXML:string;
             createdTime:Date;

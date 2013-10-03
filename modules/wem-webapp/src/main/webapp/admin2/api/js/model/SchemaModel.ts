@@ -4,7 +4,6 @@ module api_model {
         data: {
             key:string;
             name:string;
-            module:string;
             qualifiedName:string;
             displayName:string;
             type:string;

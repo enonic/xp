@@ -5,7 +5,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.form.Form;
@@ -35,7 +35,6 @@ public class SetContentTypeEditorTest
 
         final ContentType contentType = newContentType().
             name( "test" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "test" ).
             contentDisplayNameScript( "myScript()" ).
             superType( QualifiedContentTypeName.unstructured() ).
@@ -73,7 +72,6 @@ public class SetContentTypeEditorTest
 
         final ContentType contentType = newContentType().
             name( "test" ).
-            module( ModuleName.from( "mymodule" ) ).
             contentDisplayNameScript( "myScript()" ).
             superType( QualifiedContentTypeName.unstructured() ).
             setAbstract( true ).

@@ -50,7 +50,7 @@ public class GetRelationshipRpcHandlerTest
         resultJson.put( "total", 1 );
         ArrayNode relationshipsArray = resultJson.putArray( "relationships" );
         ObjectNode rel1 = relationshipsArray.addObject();
-        rel1.put( "type", "system:default" );
+        rel1.put( "type", "default" );
         rel1.put( "fromContent", "111" );
         rel1.put( "toContent", "222" );
         rel1.putNull( "managingData" );
@@ -80,14 +80,14 @@ public class GetRelationshipRpcHandlerTest
         resultJson.put( "total", 2 );
         ArrayNode relationshipsArray = resultJson.putArray( "relationships" );
         ObjectNode rel1 = relationshipsArray.addObject();
-        rel1.put( "type", "system:default" );
+        rel1.put( "type", "default" );
         rel1.put( "fromContent", "111" );
         rel1.put( "toContent", "222" );
         rel1.putNull( "managingData" );
         rel1.putNull( "properties" );
 
         ObjectNode rel2 = relationshipsArray.addObject();
-        rel2.put( "type", "system:default" );
+        rel2.put( "type", "default" );
         rel2.put( "fromContent", "111" );
         rel2.put( "toContent", "333" );
         rel2.putNull( "managingData" );

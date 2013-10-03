@@ -38,9 +38,9 @@ public class DeleteMixinRpcHandlerTest
     public void deleteMultipleMixins()
         throws Exception
     {
-        final QualifiedMixinName existingName = new QualifiedMixinName( "my:existing_mixin" );
-        final QualifiedMixinName notFoundName = new QualifiedMixinName( "my:not_found_mixin" );
-        final QualifiedMixinName beingUsedName = new QualifiedMixinName( "my:being_used_mixin" );
+        final QualifiedMixinName existingName = QualifiedMixinName.from( "my:existing_mixin" );
+        final QualifiedMixinName notFoundName = QualifiedMixinName.from( "my:not_found_mixin" );
+        final QualifiedMixinName beingUsedName = QualifiedMixinName.from( "my:being_used_mixin" );
 
         MixinDeletionResult mixinDeletionResult = new MixinDeletionResult();
         mixinDeletionResult.success( existingName );

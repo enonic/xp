@@ -32,7 +32,7 @@ public final class ValidateContentDataRpcHandler
         final String contentTypeParam = context.param( "qualifiedContentTypeName" ).required().asString();
         final ObjectNode contentDataParam = context.param( "contentData" ).required().asObject();
 
-        final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( contentTypeParam );
+        final QualifiedContentTypeName qualifiedContentTypeName =  QualifiedContentTypeName.from( contentTypeParam );
 
         final ContentType contentType = getContentType( qualifiedContentTypeName );
         final ContentData contentData = new ContentDataParser( contentType ).parse( contentDataParam );

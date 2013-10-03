@@ -2,7 +2,6 @@
     "success" : true,
     "mixins" : [ {
         "name" : "input_text1",
-        "module" : "mymodule",
         "displayName" : null,
         "items" : [ {
             "Input" : {
@@ -22,10 +21,9 @@
                 }
             }
         } ],
-        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1"
+        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:input_text1"
     }, {
         "name" : "text_area_1",
-        "module" : "othermodule",
         "displayName" : null,
         "items" : [ {
             "Input" : {
@@ -45,6 +43,6 @@
                 }
             }
         } ],
-        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:othermodule:text_area_1"
+        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:text_area_1"
     } ]
 }

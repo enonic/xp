@@ -4,7 +4,6 @@ package com.enonic.wem.core.schema.relationship;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
@@ -30,8 +29,8 @@ public class RelationshipTypesInitializer
     private static final RelationshipType LIKE = createRelationshipType( QualifiedRelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
     private static final RelationshipType CITATION =
-        createRelationshipType( QualifiedRelationshipTypeName.from( "demo:citation" ), "Citation", "citation in", "cited by",
-                                QualifiedContentTypeNames.from( "news:article" ) );
+        createRelationshipType( QualifiedRelationshipTypeName.from( "citation" ), "Citation", "citation in", "cited by",
+                                QualifiedContentTypeNames.from( "article" ) );
 
     private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION};
 
@@ -62,7 +61,6 @@ public class RelationshipTypesInitializer
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
             createCommand.
                 name( relationshipType.getName() ).
-                module( relationshipType.getModuleName() ).
                 displayName( relationshipType.getDisplayName() ).
                 fromSemantic( relationshipType.getFromSemantic() ).
                 toSemantic( relationshipType.getToSemantic() ).
@@ -99,12 +97,10 @@ public class RelationshipTypesInitializer
                                                             final QualifiedContentTypeNames toContentTypes )
     {
         return newRelationshipType().
-            name( qualifiedName.getLocalName() ).
-            module( ModuleName.SYSTEM ).
+            name( qualifiedName.getName() ).
             displayName( displayName ).
             fromSemantic( fromSemantic ).
             toSemantic( toSemantic ).
-            module( qualifiedName.getModuleName() ).
             addAllowedToTypes( toContentTypes ).
             build();
     }

@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.inputtype.HtmlAreaConfig;
@@ -30,7 +29,6 @@ public class DataSetValidatorTest
     public void before()
     {
         contentType = newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "my_type" ).
             build();
     }

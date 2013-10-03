@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.form.FormItem;
@@ -51,7 +50,6 @@ public class ContentTypeJsonSerializer
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "name", contentType.getName() );
-        objectNode.put( "module", contentType.getModuleName().toString() );
         if ( includeQualifiedName )
         {
             objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
@@ -61,6 +59,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "superType", contentType.getSuperType() != null ? contentType.getSuperType().toString() : null );
         objectNode.put( "isAbstract", contentType.isAbstract() );
         objectNode.put( "isFinal", contentType.isFinal() );
+        objectNode.put( "isBuiltIn", contentType.isBuiltIn() );
         objectNode.put( "allowChildContent", contentType.allowChildContent() );
 
         if ( includeCreatedTime )
@@ -93,11 +92,10 @@ public class ContentTypeJsonSerializer
     protected ContentType parse( final JsonNode contentTypeNode )
     {
         final String superTypeValue = JsonSerializerUtil.getStringValue( "superType", contentTypeNode );
-        final QualifiedContentTypeName superType = superTypeValue != null ? new QualifiedContentTypeName( superTypeValue ) : null;
+        final QualifiedContentTypeName superType = superTypeValue != null ? QualifiedContentTypeName.from( superTypeValue ) : null;
 
         final ContentType.Builder builder = newContentType();
         builder.name( JsonSerializerUtil.getStringValue( "name", contentTypeNode ) );
-        builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", contentTypeNode ) ) );
         builder.displayName( JsonSerializerUtil.getStringValue( "displayName", contentTypeNode ) );
         if ( contentTypeNode.has( "contentDisplayNameScript" ) )
         {
@@ -106,6 +104,7 @@ public class ContentTypeJsonSerializer
         builder.superType( superType );
         builder.setAbstract( JsonSerializerUtil.getBooleanValue( "isAbstract", contentTypeNode ) );
         builder.setFinal( JsonSerializerUtil.getBooleanValue( "isFinal", contentTypeNode ) );
+        builder.builtIn( JsonSerializerUtil.getBooleanValue( "isBuiltIn", contentTypeNode, false ) );
         builder.allowChildContent( JsonSerializerUtil.getBooleanValue( "allowChildContent", contentTypeNode, true ) );
         if ( includeCreatedTime )
         {

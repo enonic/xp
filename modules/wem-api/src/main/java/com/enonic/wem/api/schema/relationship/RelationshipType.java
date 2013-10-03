@@ -46,7 +46,7 @@ public final class RelationshipType
     @Override
     public QualifiedRelationshipTypeName getQualifiedName()
     {
-        return new QualifiedRelationshipTypeName( getModuleName(), getName() );
+        return QualifiedRelationshipTypeName.from( getName() );
     }
 
     public String getFromSemantic()
@@ -82,8 +82,7 @@ public final class RelationshipType
             return false;
         }
         final RelationshipType that = (RelationshipType) o;
-        return Objects.equal( this.getModuleName(), that.getModuleName() ) &&
-            Objects.equal( this.getName(), that.getName() ) &&
+        return Objects.equal( this.getName(), that.getName() ) &&
             Objects.equal( this.getDisplayName(), that.getDisplayName() ) &&
             Objects.equal( this.getQualifiedName(), that.getQualifiedName() ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
@@ -95,8 +94,8 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( getModuleName(), getName(), getDisplayName(), getQualifiedName(), fromSemantic, toSemantic,
-                                 allowedFromTypes, allowedToTypes );
+        return Objects.hashCode( getName(), getDisplayName(), getQualifiedName(), fromSemantic, toSemantic, allowedFromTypes,
+                                 allowedToTypes );
     }
 
     public void checkIllegalEdit( final RelationshipType to )
@@ -106,7 +105,6 @@ public final class RelationshipType
 
         // Cannot be changed since they are a part of a Relationship's storage path in JCR.
         IllegalEdit.check( "name", this.getName(), to.getName(), RelationshipType.class );
-        IllegalEdit.check( "moduleName", this.getModuleName(), to.getModuleName(), RelationshipType.class );
     }
 
     public static Builder newRelationshipType()

@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -53,11 +53,9 @@ public class UpdateMixinHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin existingMixin = newMixin().
             name( "age" ).
             displayName( "Age" ).
-            module( module ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         Mockito.when(

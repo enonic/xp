@@ -34,11 +34,6 @@ public class MixinJson
         return model.getDisplayName();
     }
 
-    public String getModule()
-    {
-        return model.getModuleName().toString();
-    }
-
     public List<FormItemJson> getItems()
     {
         ImmutableList.Builder<FormItemJson> builder = ImmutableList.builder();

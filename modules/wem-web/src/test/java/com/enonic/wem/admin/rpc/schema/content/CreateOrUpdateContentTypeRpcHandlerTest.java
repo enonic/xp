@@ -19,7 +19,6 @@ import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
@@ -70,7 +69,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     public void update_ContentType()
         throws Exception
     {
-        ContentType existingContentType = ContentType.newContentType().name( "a_type" ).module( Module.SYSTEM.getName() ).build();
+        ContentType existingContentType = ContentType.newContentType().name( "a_type" ).build();
         ContentTypes contentTypes = ContentTypes.from( existingContentType );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( contentTypes );
         Mockito.when( client.execute( isA( UpdateContentType.class ) ) ).thenReturn( UpdateContentTypeResult.SUCCESS );
@@ -88,7 +87,7 @@ public class CreateOrUpdateContentTypeRpcHandlerTest
     public void update_ContentType_with_failure()
         throws Exception
     {
-        ContentType existingContentType = ContentType.newContentType().name( "a_type" ).module( Module.SYSTEM.getName() ).build();
+        ContentType existingContentType = ContentType.newContentType().name( "a_type" ).build();
         ContentTypes contentTypes = ContentTypes.from( existingContentType );
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( contentTypes );
         Mockito.when( client.execute( isA( UpdateContentType.class ) ) ).thenReturn( UpdateContentTypeResult.NOT_FOUND );

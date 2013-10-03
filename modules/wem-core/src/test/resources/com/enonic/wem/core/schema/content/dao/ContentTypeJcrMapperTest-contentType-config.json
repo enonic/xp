@@ -1,11 +1,11 @@
 {
     "name": "my_content_type",
-    "module": "mymodule",
     "displayName": "My module",
     "contentDisplayNameScript": "$('firstName') + ' ' +  $('lastName')",
-    "superType": "system:unstructured",
+    "superType": "unstructured",
     "isAbstract": false,
     "isFinal": true,
+    "isBuiltIn": false,
     "allowChildContent": true,
     "form": []
 }

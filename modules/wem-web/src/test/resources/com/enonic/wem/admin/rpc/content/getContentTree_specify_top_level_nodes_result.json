@@ -6,7 +6,7 @@
             "id": null,
             "path": "/c1",
             "name": "c1",
-            "type": "system:unstructured",
+            "type": "unstructured",
             "displayName": null,
             "owner": "user:myStore:me",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -15,14 +15,14 @@
             "editable": true,
             "deletable": true,
             "allowsChildren": true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured",
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:unstructured",
             "hasChildren": true,
             "contents": [
                 {
                     "id": null,
                     "path": "/c1/c2",
                     "name": "c2",
-                    "type": "system:unstructured",
+                    "type": "unstructured",
                     "displayName": null,
                     "owner": "user:myStore:me",
                     "createdTime": "2000-01-01T12:00:00.000Z",
@@ -31,14 +31,14 @@
                     "editable": true,
                     "deletable": true,
                     "allowsChildren": true,
-                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured",
+                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:unstructured",
                     "hasChildren": true,
                     "contents": [
                         {
                             "id": null,
                             "path": "/c1/c2/c3",
                             "name": "c3",
-                            "type": "system:unstructured",
+                            "type": "unstructured",
                             "displayName": null,
                             "owner": "user:myStore:me",
                             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -47,7 +47,7 @@
                             "editable": true,
                             "deletable": true,
                             "allowsChildren": true,
-                            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured",
+                            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:unstructured",
                             "hasChildren": false,
                             "contents": [ ]
                         }
@@ -57,7 +57,7 @@
                     "id": null,
                     "path": "/c1/c4",
                     "name": "c4",
-                    "type": "system:unstructured",
+                    "type": "unstructured",
                     "displayName": null,
                     "owner": "user:myStore:me",
                     "createdTime": "2000-01-01T12:00:00.000Z",
@@ -66,7 +66,7 @@
                     "editable": true,
                     "deletable": true,
                     "allowsChildren": true,
-                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured",
+                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:unstructured",
                     "hasChildren": false,
                     "contents": [ ]
                 }

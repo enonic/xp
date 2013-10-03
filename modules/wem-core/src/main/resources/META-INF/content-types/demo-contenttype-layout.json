@@ -2,7 +2,7 @@
     "name": "layout",
     "module": "demo",
     "displayName": "Layout",
-    "superType": "system:structured",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

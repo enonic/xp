@@ -2,7 +2,7 @@
     "name": "contact_set-in-set",
     "module": "demo",
     "displayName": "FormItemSet",
-    "superType": "system:structured",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

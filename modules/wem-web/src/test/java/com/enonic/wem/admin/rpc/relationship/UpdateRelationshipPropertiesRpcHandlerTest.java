@@ -72,7 +72,7 @@ public class UpdateRelationshipPropertiesRpcHandlerTest
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
         resultJson.put( "error",
-                        "Relationship [RelationshipKey{fromContent=123, toContent=321, type=system:like, managingData=null}] was not found" );
+                        "Relationship [RelationshipKey{fromContent=123, toContent=321, type=like, managingData=null}] was not found" );
 
         // exercise & verify
         testSuccess( "updateRelationshipProperties_param.json", resultJson );

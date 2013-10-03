@@ -36,8 +36,7 @@ final class MixinDaoHandlerCreate
     {
         final Node rootNode = session.getRootNode();
         final Node mixinsNode = rootNode.getNode( MixinDao.MIXINS_PATH );
-        final Node moduleNode = JcrHelper.getOrAddNode( mixinsNode, qualifiedName.getModuleName().toString() );
-        return JcrHelper.getOrAddNode( moduleNode, qualifiedName.getLocalName() );
+        return JcrHelper.getOrAddNode( mixinsNode, qualifiedName.getName() );
     }
 
 }

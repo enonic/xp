@@ -12,7 +12,7 @@ import com.enonic.wem.api.relationship.Relationships;
 
 /**
  * A Relationship is stored on the following path:
- * <path-to-fromContent>/relationships/<relationshipType-moduleName>/<relationshipType-localName>/[managingData/]<toContent-id>
+ * <path-to-fromContent>/relationships/<relationshipType-name>/[managingData/]<toContent-id>
  * Note: the managingData part is only included if set
  */
 

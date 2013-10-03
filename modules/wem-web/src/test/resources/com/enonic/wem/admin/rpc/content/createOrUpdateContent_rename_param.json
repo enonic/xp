@@ -5,7 +5,7 @@
         "myTextLine2": "value2",
         "myFormItemSet.myTextLine1": "value3"
     },
-    "qualifiedContentTypeName": "mymodule:my_content_type",
+    "qualifiedContentTypeName": "my_content_type",
     "contentId": "1fad493a-6a72-41a3-bac4-88aba3d83bcc",
     "contentName": "newName"
 }

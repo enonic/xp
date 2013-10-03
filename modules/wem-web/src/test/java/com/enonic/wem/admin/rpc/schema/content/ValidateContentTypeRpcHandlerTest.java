@@ -7,8 +7,9 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.content.ValidateContentType;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationError;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 
@@ -62,7 +63,7 @@ public class ValidateContentTypeRpcHandlerTest
     {
         // setup
         final ContentType contentType1 =
-            ContentType.newContentType().module( ModuleName.from( "mymodule" ) ).name( "content_type" ).build();
+            ContentType.newContentType().name( "content_type" ).superType( QualifiedContentTypeName.unstructured() ).build();
         final ContentType contentType2 = ContentType.newContentType( contentType1 ).name( "my_type2" ).build();
         final ContentTypeValidationError error1 = new ContentTypeValidationError( "Validation error message 1", contentType1 );
         final ContentTypeValidationError error2 = new ContentTypeValidationError( "Validation error message 2", contentType2 );

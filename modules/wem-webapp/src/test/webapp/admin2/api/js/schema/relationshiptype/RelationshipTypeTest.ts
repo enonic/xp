@@ -13,7 +13,6 @@ TestCase("RelationshiptType", {
             "editable": false,
             "fromSemantic": "relates to",
             "iconUrl": "http://localhost:8080/admin/rest/schema/image/RelationshipType:system:default",
-            "module": "system",
             "name": "default",
             "toSemantic": "related of",
             "createdTime": "01/01/2013",
@@ -30,7 +29,6 @@ TestCase("RelationshiptType", {
         assertEquals("related of", relationshipType.getToSemantic());
         assertEquals("http://localhost:8080/admin/rest/schema/image/RelationshipType:system:default", relationshipType.getIcon());
         assertEquals("default", relationshipType.getName());
-        assertEquals("system", relationshipType.getModule());
         assertEquals("Default", relationshipType.getDisplayName());
         assertEquals(new Date("01/01/2013"), relationshipType.getCreatedTime());
         assertEquals(new Date("02/02/2013"), relationshipType.getModifiedTime());

@@ -3,7 +3,7 @@ package com.enonic.wem.core.schema.relationship;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.AbstractSerializerTest;
@@ -36,12 +36,11 @@ public abstract class AbstractRelationshipTypeSerializerTest
         RelationshipType.Builder builder = RelationshipType.newRelationshipType();
         builder.name( "love" );
         builder.displayName( "Love" );
-        builder.module( ModuleName.SYSTEM );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
-        builder.addAllowedFromType( new QualifiedContentTypeName( ModuleName.SYSTEM, "person" ) );
-        builder.addAllowedFromType( new QualifiedContentTypeName( ModuleName.SYSTEM, "animal" ) );
-        builder.addAllowedToType( new QualifiedContentTypeName( ModuleName.SYSTEM, "person" ) );
+        builder.addAllowedFromType(  QualifiedContentTypeName.from( "person" ) );
+        builder.addAllowedFromType(  QualifiedContentTypeName.from( "animal" ) );
+        builder.addAllowedToType(  QualifiedContentTypeName.from( "person" ) );
         RelationshipType relationshipType = builder.build();
 
         // exercise
@@ -57,7 +56,6 @@ public abstract class AbstractRelationshipTypeSerializerTest
         RelationshipType.Builder builder = RelationshipType.newRelationshipType();
         builder.name( "love" );
         builder.displayName( "Love" );
-        builder.module( ModuleName.SYSTEM );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
         RelationshipType relationshipType = builder.build();
@@ -75,12 +73,11 @@ public abstract class AbstractRelationshipTypeSerializerTest
         RelationshipType.Builder builder = RelationshipType.newRelationshipType();
         builder.name( "love" );
         builder.displayName( "Love" );
-        builder.module( ModuleName.SYSTEM );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
-        builder.addAllowedFromType( new QualifiedContentTypeName( ModuleName.SYSTEM, "person" ) );
-        builder.addAllowedFromType( new QualifiedContentTypeName( ModuleName.SYSTEM, "animal" ) );
-        builder.addAllowedToType( new QualifiedContentTypeName( ModuleName.SYSTEM, "person" ) );
+        builder.addAllowedFromType(  QualifiedContentTypeName.from(  "person" ) );
+        builder.addAllowedFromType(  QualifiedContentTypeName.from(  "animal" ) );
+        builder.addAllowedToType(  QualifiedContentTypeName.from(  "person" ) );
         RelationshipType relationshipType = builder.build();
 
         // exercise
@@ -95,7 +92,6 @@ public abstract class AbstractRelationshipTypeSerializerTest
         RelationshipType.Builder builder = RelationshipType.newRelationshipType();
         builder.name( "love" );
         builder.displayName( "Love" );
-        builder.module( ModuleName.SYSTEM );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
         RelationshipType relationshipType = builder.build();
@@ -112,12 +108,11 @@ public abstract class AbstractRelationshipTypeSerializerTest
         RelationshipType.Builder builder = RelationshipType.newRelationshipType();
         builder.name( "love" );
         builder.displayName( "Love" );
-        builder.module( ModuleName.SYSTEM );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
-        builder.addAllowedFromType( new QualifiedContentTypeName( ModuleName.SYSTEM, "person" ) );
-        builder.addAllowedFromType( new QualifiedContentTypeName( ModuleName.SYSTEM, "animal" ) );
-        builder.addAllowedToType( new QualifiedContentTypeName( ModuleName.SYSTEM, "person" ) );
+        builder.addAllowedFromType( QualifiedContentTypeName.from(  "person" ) );
+        builder.addAllowedFromType( QualifiedContentTypeName.from(  "animal" ) );
+        builder.addAllowedToType( QualifiedContentTypeName.from(  "person" ) );
         RelationshipType relationshipType = builder.build();
 
         // exercise
@@ -139,7 +134,6 @@ public abstract class AbstractRelationshipTypeSerializerTest
         RelationshipType.Builder builder = RelationshipType.newRelationshipType();
         builder.name( "love" );
         builder.displayName( "Love" );
-        builder.module( ModuleName.SYSTEM );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
         RelationshipType relationshipType = builder.build();

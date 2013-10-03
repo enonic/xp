@@ -4,7 +4,6 @@ module api_schema_relationshiptype_json {
 
         iconUrl:string;
         name:string;
-        module:string;
         displayName:string;
         fromSemantic:string;
         toSemantic:string;

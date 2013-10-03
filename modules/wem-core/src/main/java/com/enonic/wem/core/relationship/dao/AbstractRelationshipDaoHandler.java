@@ -59,13 +59,7 @@ abstract class AbstractRelationshipDaoHandler<T>
             return null;
         }
 
-        final Node moduleNode = JcrHelper.getNodeOrNull( relationshipsNode, relationshipKey.getType().getModuleName().toString() );
-        if ( moduleNode == null )
-        {
-            return null;
-        }
-
-        final Node relationshipTypeNameNode = JcrHelper.getNodeOrNull( moduleNode, relationshipKey.getType().getLocalName() );
+        final Node relationshipTypeNameNode = JcrHelper.getNodeOrNull( relationshipsNode, relationshipKey.getType().getName() );
         if ( relationshipTypeNameNode == null )
         {
             return null;
@@ -99,44 +93,38 @@ abstract class AbstractRelationshipDaoHandler<T>
             return relationships.build();
         }
 
-        final NodeIterator moduleNodeIterator = relationshipsNode.getNodes();
-        while ( moduleNodeIterator.hasNext() )
+        final NodeIterator relationshipTypeNameIterator = relationshipsNode.getNodes();
+        while ( relationshipTypeNameIterator.hasNext() )
         {
-            final Node moduleNode = moduleNodeIterator.nextNode();
+            final Node relationshipTypeNameNode = relationshipTypeNameIterator.nextNode();
 
-            final NodeIterator relationshipTypeNameIterator = moduleNode.getNodes();
-            while ( relationshipTypeNameIterator.hasNext() )
+            final NodeIterator nodeIterator = relationshipTypeNameNode.getNodes();
+            while ( nodeIterator.hasNext() )
             {
-                final Node relationshipTypeNameNode = relationshipTypeNameIterator.nextNode();
-
-                final NodeIterator nodeIterator = relationshipTypeNameNode.getNodes();
-                while ( nodeIterator.hasNext() )
+                final Node node = nodeIterator.nextNode();
+                if ( node.getName().startsWith( RelationshipDao.TO_CONTENT_NODE_PREFIX ) )
                 {
-                    final Node node = nodeIterator.nextNode();
-                    if ( node.getName().startsWith( RelationshipDao.TO_CONTENT_NODE_PREFIX ) )
+                    final Relationship relationship = relationshipJcrMapper.toRelationship( node );
+                    relationships.add( relationship );
+                }
+                else if ( node.getName().equals( RelationshipDao.MANAGING_DATA_NODE ) )
+                {
+                    TraversingItemVisitor visitor = new TraversingItemVisitor.Default()
                     {
-                        final Relationship relationship = relationshipJcrMapper.toRelationship( node );
-                        relationships.add( relationship );
-                    }
-                    else if ( node.getName().equals( RelationshipDao.MANAGING_DATA_NODE ) )
-                    {
-                        TraversingItemVisitor visitor = new TraversingItemVisitor.Default()
+                        @Override
+                        protected void entering( final Node node, final int level )
+                            throws RepositoryException
                         {
-                            @Override
-                            protected void entering( final Node node, final int level )
-                                throws RepositoryException
+
+                            if ( node.getName().startsWith( RelationshipDao.TO_CONTENT_NODE_PREFIX ) )
                             {
-
-                                if ( node.getName().startsWith( RelationshipDao.TO_CONTENT_NODE_PREFIX ) )
-                                {
-                                    final Relationship relationship = relationshipJcrMapper.toRelationship( node );
-                                    relationships.add( relationship );
-                                }
+                                final Relationship relationship = relationshipJcrMapper.toRelationship( node );
+                                relationships.add( relationship );
                             }
-                        };
-                        visitor.visit( node );
+                        }
+                    };
+                    visitor.visit( node );
 
-                    }
                 }
             }
         }

@@ -23,7 +23,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.RenameContentException;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -55,7 +55,6 @@ public class CreateOrUpdateContentRpcHandlerTest
         ContentId contentId = ContentId.from( "123" );
         ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             build();
 
         CreateContentResult createContentResult = new CreateContentResult( contentId, ContentPath.from( "/myContent/my-child-content" ) );
@@ -82,7 +81,6 @@ public class CreateOrUpdateContentRpcHandlerTest
         ContentId contentId = ContentId.from( "123" );
         ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             build();
 
         CreateContentResult createContentResult = new CreateContentResult( contentId, ContentPath.from( "/myContent/my-child-content-2" ) );
@@ -110,7 +108,6 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             build();
 
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
@@ -132,7 +129,6 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             build();
         ContentPath parentContentPath = ContentPath.from( "/myContent/childContent" ).getParentPath();
 
@@ -157,7 +153,6 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             build();
 
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
@@ -179,7 +174,6 @@ public class CreateOrUpdateContentRpcHandlerTest
     {
         ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             build();
         RenameContent renameContent =
             new RenameContent().contentId( ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).newName( "newName" );

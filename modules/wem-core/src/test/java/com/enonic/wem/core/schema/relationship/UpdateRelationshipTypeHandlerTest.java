@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -55,12 +55,11 @@ public class UpdateRelationshipTypeHandlerTest
     {
         // setup
         RelationshipType relationshipType = RelationshipType.newRelationshipType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedFromType( QualifiedContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( QualifiedContentTypeName.from( "mymodule:person" ) ).
             createdTime( DateTime.now() ).
             modifiedTime( DateTime.now() ).
             build();

@@ -2,7 +2,7 @@
     "name": "article2",
     "module": "news",
     "displayName": "Article2",
-    "superType": "system:structured",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": false,
     "form": [

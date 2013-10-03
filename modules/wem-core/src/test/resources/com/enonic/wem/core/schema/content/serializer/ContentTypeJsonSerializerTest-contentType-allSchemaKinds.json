@@ -1,12 +1,12 @@
 {
     "name": "all_schemas",
-    "module": "mymodule",
-    "qualifiedName": "mymodule:all_schemas",
+    "qualifiedName": "all_schemas",
     "displayName": "All the Base Types",
     "contentDisplayNameScript": "$('firstName') + ' ' + $('lastName')",
-    "superType": "system:content",
+    "superType": "content",
     "isAbstract": false,
     "isFinal": true,
+    "isBuiltIn" : false,
     "allowChildContent": true,
     "form": [
         {
@@ -51,7 +51,7 @@
                     {
                         "MixinReference": {
                             "name": "myCommonInput",
-                            "reference": "system:my_shared_input"
+                            "reference": "my_shared_input"
                         }
                     }
                 ]
