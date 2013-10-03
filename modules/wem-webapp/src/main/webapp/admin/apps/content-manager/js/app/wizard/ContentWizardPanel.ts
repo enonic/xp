@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Content";
 
-        private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAbsoluteUri("resources/images/default_content.png");
+        private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAbsoluteUri("admin/resources/images/default_content.png");
 
         private persistedContent:api_content.Content;
 
@@ -35,7 +35,8 @@ module app_wizard {
             this.parentContent = parentContent;
             this.contentType = contentType;
             this.contentWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
-            this.formIcon = new api_app_wizard.FormIcon(ContentWizardPanel.DEFAULT_CONTENT_ICON_URL, "Click to upload icon", "rest/upload");
+            this.formIcon = new api_app_wizard.FormIcon(ContentWizardPanel.DEFAULT_CONTENT_ICON_URL, "Click to upload icon",
+                api_util.getAbsoluteUri("admin/rest/upload"));
 
             var closeAction = new api_app_wizard.CloseAction(this);
             var saveAction = new api_app_wizard.SaveAction(this);
