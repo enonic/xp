@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Content Type";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = 'admin/rest/schema/image/ContentType:structured';
+        private static DEFAULT_CHEMA_ICON_URL:string = api_util.getRestUri('schema/image/ContentType:structured');
 
         private saveAction:api_ui.Action;
 
@@ -22,8 +22,8 @@ module app_wizard {
 
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
-            new api_app_wizard.FormIcon(api_util.getAbsoluteUri(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL), "Click to upload icon",
-                api_util.getAbsoluteUri("admin/rest/upload"));
+            new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon",
+                api_util.getRestUri("upload"));
 
             this.closeAction = new api_app_wizard.CloseAction(this);
             this.saveAction = new api_app_wizard.SaveAction(this);

@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Space";
 
-        private static DEFAULT_SPACE_ICON_URL:string = "admin/rest/space/image/_";
+        private static DEFAULT_SPACE_ICON_URL:string = api_util.getRestUri("space/image/_");
 
         private closeAction:api_ui.Action;
 
@@ -32,8 +32,8 @@ module app_wizard {
 
             this.spaceWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
             this.formIcon =
-            new api_app_wizard.FormIcon(api_util.getAbsoluteUri(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL), "Click to upload icon",
-                api_util.getAbsoluteUri("admin/rest/upload"));
+            new api_app_wizard.FormIcon(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL, "Click to upload icon",
+                api_util.getRestUri("upload"));
 
             this.closeAction = new api_app_wizard.CloseAction(this);
             this.saveAction = new api_app_wizard.SaveAction(this);

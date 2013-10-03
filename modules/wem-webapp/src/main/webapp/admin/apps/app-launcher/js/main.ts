@@ -42,7 +42,7 @@ function isUserLoggedIn():boolean {
 
 window.onload = () => {
     var userLoggedIn = isUserLoggedIn();
-    var mainContainer = new app_home.HomeMainContainer(api_util.getAbsoluteUri('admin/rest/ui/background.jpg'));
+    var mainContainer = new app_home.HomeMainContainer(api_util.getRestUri('ui/background.jpg'));
     var appLauncher = new app_launcher.AppLauncher(mainContainer);
 
     var homeBrandingPanel = mainContainer.getBrandingPanel();

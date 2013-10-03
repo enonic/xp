@@ -30,7 +30,7 @@ module app_launcher {
 
         doPoll() {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', api_util.getAbsoluteUri('admin/rest/status'));
+            xhr.open('GET', api_util.getRestUri('status'));
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {

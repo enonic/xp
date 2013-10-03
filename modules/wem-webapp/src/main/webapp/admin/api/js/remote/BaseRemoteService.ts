@@ -10,7 +10,7 @@ module api_remote {
         }
 
         public init() {
-            var url:string = api_util.getAbsoluteUri("admin/rest/jsonrpc");
+            var url:string = api_util.getRestUri("jsonrpc");
             var jsonRpcProvider = new api_remote.JsonRpcProvider(url, this.methods, this.namespace);
             Ext.Direct.addProvider(jsonRpcProvider.ext);
         }

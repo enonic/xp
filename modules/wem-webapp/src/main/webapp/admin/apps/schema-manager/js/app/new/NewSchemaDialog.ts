@@ -8,17 +8,17 @@ module app_new {
             {
                 type: 'ContentType',
                 displayName: 'Content Type',
-                iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/ContentType:structured')
+                iconUrl: api_util.getRestUri('schema/image/ContentType:structured')
             },
             {
                 type: 'RelationshipType',
                 displayName: 'Relationship Type',
-                iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/RelationshipType:_') // default icon for RelationshipType
+                iconUrl: api_util.getRestUri('schema/image/RelationshipType:_') // default icon for RelationshipType
             },
             {
                 type: 'Mixin',
                 displayName: 'Mixin',
-                iconUrl: api_util.getAbsoluteUri('admin/rest/schema/image/Mixin:_') // default icon for Mixin
+                iconUrl: api_util.getRestUri('schema/image/Mixin:_') // default icon for Mixin
             }
         ];
 
