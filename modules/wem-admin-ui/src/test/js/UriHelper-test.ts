@@ -1,6 +1,9 @@
-describe("UriHelper", function () {
+///<reference path='../lib/jasmine.d.ts' />
+///<reference path='../../main/js/main.ts' />
 
-    it("create absolute url", function () {
+describe("UriHelper", () => {
+
+    it("create absolute url", () => {
 
         var url = api_util.getAbsoluteUri("a/path");
         expect(url).toBe("../../../a/path");

@@ -15,6 +15,10 @@ module.exports = function (grunt) {
                         sourcemap: true,
                         declaration: true
                     }
+                },
+                test: {
+                    src: ['src/test/js/*.ts'],
+                    outDir: 'target/generated/tests/'
                 }
             },
 
@@ -22,8 +26,7 @@ module.exports = function (grunt) {
                 options: {
                     browsers: ['PhantomJS'],
                     files: [
-                        'target/generated/**/*.js',
-                        'src/test/**/*.js'
+                        'target/generated/tests/**/*.js'
                     ],
                     frameworks: ['jasmine'],
                     preprocessors: {
@@ -44,5 +47,5 @@ module.exports = function (grunt) {
     );
 
     grunt.registerTask('all', ['ts']);
-
+    grunt.registerTask('test', ['ts:test', 'karma'])
 };
