@@ -1522,10 +1522,10 @@ declare module Slick {
 			public expandGroup(...varArgs: string[]): void;
 			public getGroups(): Group[];
 			public getIdxById(i:string): string;
-			public getRowById(i:string): T;
+			public getRowById(i:string): number;
 			public getItemById(i:string): T;
 			public getItemByIdx(i:string): T;
-			public mapRowsToIds(rowArray: T[]): string[];
+			public mapRowsToIds(rowArray: number[]): string[];
 			public setRefreshHints(hints: RefreshHints): void;
 			public setFilterArgs(args: any): void;
 			public refresh(): void;
