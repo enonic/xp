@@ -1,17 +1,22 @@
 package com.enonic.wem.core.item.dao;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Stopwatch;
+
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
-import com.enonic.wem.api.item.ItemPath;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
@@ -20,6 +25,8 @@ import static junit.framework.Assert.fail;
  */
 public abstract class AbstractItemDaoTest
 {
+    static final DateTime CREATED_TIME = new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC );
+
     private ItemDao dao;
 
     abstract ItemDao createDao();
@@ -31,24 +38,121 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_storeNew_given_a_parent_path_that_is_not_absolute_then_IllegalArgumentException_is_thrown()
+    public void when_storeNew_given_item_with_then_IllegalArgumentException_is_thrown()
         throws Exception
     {
         // setup
-        ItemPath parent = new ItemPath( "not-absolute" );
-        ItemId id = new ItemId();
-        Item item = Item.newItem( id, "myItem" ).property( "propertyOfItem", new Value.Text( "A" ) ).build();
+        Item item = Item.newItem( new ItemId() ).
+            path( "/myItem" ).
+            name( "myItem" ).
+            property( "propertyOfItem", new Value.Text( "A" ) ).
+            build();
 
         // exercise
         try
         {
-            dao.storeNew( item, parent );
+            dao.storeNew( item );
+            fail( "Expected IllegalArgumentException" );
+        }
+        catch ( Exception e )
+        {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+    }
+
+    @Test
+    public void when_storeNew_given_item_then_persisted_Item_is_returned()
+        throws Exception
+    {
+        // setup
+        Item item = Item.newItem().
+            path( "/myItem" ).
+            name( "myItem" ).
+            property( "propertyOfItem", new Value.Text( "A" ) ).
+            build();
+
+        // exercise
+        Item persisted = dao.storeNew( item );
+        assertNotNull( persisted.id() );
+        assertEquals( "myItem", persisted.name() );
+        assertEquals( "A", persisted.property( "propertyOfItem" ).getString() );
+    }
+
+    @Test
+    public void when_storeNew_performance_lots_of_children()
+        throws Exception
+    {
+        // setup
+        int count = 10000;
+        List<Item> list = new ArrayList<>( count );
+        for ( int i = 0; i < count; i++ )
+        {
+            list.add( Item.newItem().
+                path( "/myItem-" + i ).
+                name( "myItem-" + i ).
+                property( "propertyOfItem", new Value.Text( "A" ) ).
+                build() );
+        }
+
+        // exercise
+        Stopwatch sw = new Stopwatch();
+        sw.start();
+        for ( Item item : list )
+        {
+            dao.storeNew( item );
+        }
+        sw.stop();
+        System.out.println( sw.toString() );
+    }
+
+    @Test
+    public void when_storeNew_performance_huge_tree()
+        throws Exception
+    {
+        // TODO
+    }
+
+    @Test
+    public void when_getItemById_given_id_of_persisted_Item_then_persisted_Item_is_returned()
+        throws Exception
+    {
+        // setup
+        Item item = Item.newItem().
+            createdTime( CREATED_TIME ).
+            path( "/myItem" ).
+            name( "myItem" ).
+            property( "propertyOfItem", new Value.Text( "A" ) ).
+            build();
+
+        Item persisted = dao.storeNew( item );
+
+        // exercise
+        Item fetched = dao.getItemById( persisted.id() );
+        assertNotNull( fetched.id() );
+        assertEquals( persisted.name(), fetched.name() );
+        assertEquals( persisted.property( "propertyOfItem" ).getString(), fetched.property( "propertyOfItem" ).getString() );
+    }
+
+    @Test
+    public void when_storeNew_given_a_path_that_is_not_absolute_then_IllegalArgumentException_is_thrown()
+        throws Exception
+    {
+        // setup
+        Item item = Item.newItem().
+            path( "not-absolute" ).
+            name( "not-absolute" ).
+            property( "propertyOfItem", new Value.Text( "A" ) ).build();
+
+        // exercise
+        try
+        {
+            dao.storeNew( item );
             fail( "Expected exception" );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Path to parent Item must be absolute: not-absolute", e.getMessage() );
+            assertEquals( "Path to Item must be absolute: not-absolute", e.getMessage() );
         }
     }
 
@@ -57,20 +161,23 @@ public abstract class AbstractItemDaoTest
         throws Exception
     {
         // setup
-        ItemPath parent = new ItemPath( "/does-not-exist" );
-        ItemId id = new ItemId();
-        Item item = Item.newItem( id, "myItem" ).property( "propertyOfItem", new Value.Text( "A" ) ).build();
+        Item item = Item.newItem().
+            path( "/does-not-exist/myItem" ).
+            name( "myItem" ).
+            property( "propertyOfItem", new Value.Text( "A" ) ).
+            build();
 
         // exercise
         try
         {
-            dao.storeNew( item, parent );
+            dao.storeNew( item );
             fail( "Expected exception" );
         }
         catch ( Exception e )
         {
-            assertTrue( e instanceof IllegalArgumentException );
-            assertTrue( e.getCause() instanceof NoItemAtPathFound );
+            assertTrue( e instanceof NoItemAtPathFound );
+            NoItemAtPathFound noItemAtPathFound = (NoItemAtPathFound) e;
+            assertEquals( "/does-not-exist", noItemAtPathFound.getPath().toString() );
         }
     }
 
@@ -79,25 +186,28 @@ public abstract class AbstractItemDaoTest
         throws Exception
     {
         // setup
-        ItemPath parent = new ItemPath( "/" );
-        ItemId id = new ItemId();
+        ItemId id = dao.storeNew( Item.newItem().
+            path( "/myItem" ).
+            name( "myItem" ).
+            createdTime( CREATED_TIME ).
+            modifiedTime( CREATED_TIME ).
+            build() ).id();
 
-        dao.storeNew( Item.newItem( id, "myItem" ).
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
-            modifiedTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
-            build(), parent );
-
-        dao.updateExisting( Item.newItem( id, "myItem" ).
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
-            modifiedTime( new DateTime( 2013, 1, 1, 13, 0, 0, DateTimeZone.UTC ) ).
+        dao.updateExisting( Item.newItem( id ).
+            path( "/myItem" ).
+            name( "myItem" ).
+            createdTime( CREATED_TIME ).
+            modifiedTime( CREATED_TIME.plusHours( 1 ) ).
             build() );
 
         // exercise
         try
         {
-            dao.updateExisting( Item.newItem( id, "myItem" ).
-                createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
-                modifiedTime( new DateTime( 2013, 1, 1, 12, 5, 0, DateTimeZone.UTC ) ).
+            dao.updateExisting( Item.newItem( id ).
+                path( "/myItem" ).
+                name( "myItem" ).
+                createdTime( CREATED_TIME ).
+                modifiedTime( CREATED_TIME.plusMinutes( 5 ) ).
                 build() );
 
         }

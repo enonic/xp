@@ -94,6 +94,11 @@ public final class Item
         return modifier;
     }
 
+    public RootDataSet rootDataSet()
+    {
+        return this.rootDataSet;
+    }
+
     public Property property( final String path )
     {
         return rootDataSet.getProperty( path );
@@ -120,6 +125,11 @@ public final class Item
     public static Builder newItem()
     {
         return new Builder();
+    }
+
+    public static Builder newItem( final ItemId id )
+    {
+        return new Builder( id );
     }
 
     public static Builder newItem( final ItemId id, final String name )
@@ -157,14 +167,29 @@ public final class Item
         public Builder( final Item item )
         {
             this.id = item.id;
+            this.createdTime = item.createdTime;
+            this.creator = item.creator;
+            this.modifiedTime = item.modifiedTime;
+            this.modifier = item.modifier;
             this.name = item.name;
             this.dataSet = item.rootDataSet;
+        }
+
+        public Builder( final ItemId id )
+        {
+            this.id = id;
         }
 
         public Builder( final ItemId id, final String name )
         {
             this.id = id;
             this.name = name;
+        }
+
+        public Builder id( final ItemId value )
+        {
+            this.id = value;
+            return this;
         }
 
         public Builder name( final String value )
@@ -176,6 +201,12 @@ public final class Item
         public Builder path( final String value )
         {
             this.path = new ItemPath( value );
+            return this;
+        }
+
+        public Builder path( final ItemPath value )
+        {
+            this.path = value;
             return this;
         }
 

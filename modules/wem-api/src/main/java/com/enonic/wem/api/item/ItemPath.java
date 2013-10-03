@@ -26,9 +26,33 @@ public class ItemPath
         super( builder );
     }
 
+    public ItemPath asRelative()
+    {
+        if ( isRelative() )
+        {
+            return this;
+        }
+        return newItemPath( this ).absolute( false ).build();
+    }
+
+    public ItemPath getParentPath()
+    {
+        return new ItemPath( new Builder( this ).removeLastElement() );
+    }
+
     public static Builder newPath()
     {
         return new Builder();
+    }
+
+    public static Builder newItemPath( final ItemPath source )
+    {
+        return new Builder( source );
+    }
+
+    public static Builder newItemPath( final ItemPath parent, final String name )
+    {
+        return new Builder( parent ).addElement( name );
     }
 
     public Element getElement( int index )

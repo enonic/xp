@@ -10,6 +10,7 @@ import com.enonic.wem.core.content.ContentModule;
 import com.enonic.wem.core.home.HomeModule;
 import com.enonic.wem.core.index.IndexModule;
 import com.enonic.wem.core.initializer.InitializerModule;
+import com.enonic.wem.core.item.ItemModule;
 import com.enonic.wem.core.jcr.JcrModule;
 import com.enonic.wem.core.lifecycle.LifecycleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
@@ -32,6 +33,7 @@ public final class CoreModule
         install( new InitializerModule() );
         install( new ClientModule() );
         install( new CommandModule() );
+        install( new ItemModule() );
         install( new AccountModule() );
         install( new ContentModule() );
         install( new RelationshipModule() );

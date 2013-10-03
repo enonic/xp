@@ -1,7 +1,8 @@
 package com.enonic.wem.core.item.dao;
 
 
-import java.util.LinkedHashMap;
+import javax.jcr.Node;
+import javax.jcr.Session;
 
 import com.google.common.base.Preconditions;
 
@@ -9,17 +10,18 @@ import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
 
-public class ItemInMemoryDao
+public class ItemJcrDao
     implements ItemDao
 {
-    private final ItemIdByPath itemIdByPath;
 
-    private final ItemByItemId itemByItemId;
+    private final Session session;
 
-    public ItemInMemoryDao()
+    private final ItemJcrHelper jcrHelper;
+
+    public ItemJcrDao( final Session session )
     {
-        itemByItemId = new ItemByItemId( new LinkedHashMap<ItemId, Item>() );
-        itemIdByPath = new ItemIdByPath( new LinkedHashMap<ItemPath, ItemId>() );
+        this.session = session;
+        this.jcrHelper = new ItemJcrHelper( this.session );
     }
 
     @Override
@@ -31,28 +33,21 @@ public class ItemInMemoryDao
         Preconditions.checkArgument( path.isAbsolute(), "Path to Item must be absolute: " + path.toString() );
         final ItemPath parentPath = path.getParentPath();
 
-        if ( !itemIdByPath.pathHasItem( parentPath ) )
-        {
-            throw new NoItemAtPathFound( parentPath );
-        }
-
-        final Item itemWithId = Item.newItem( item ).id( new ItemId() ).build();
-
-        itemByItemId.storeNew( itemWithId );
-        itemIdByPath.put( itemWithId.path(), itemWithId.id() );
-        return itemWithId;
+        final Node parentItemNode = jcrHelper.getItemNodeByPath( parentPath );
+        return jcrHelper.persistNewItem( item, parentItemNode );
     }
 
     @Override
     public Item updateExisting( final Item item )
     {
-        itemByItemId.updateExisting( item );
-        return item;
+        Preconditions.checkNotNull( item.id(), "Item to store must have an ItemId specified" );
+        final Node existingItemNode = jcrHelper.getItemNodeById( item.id() );
+        return jcrHelper.updateItemNode( existingItemNode, item );
     }
 
     public Item getItemById( final ItemId id )
     {
-        return this.itemByItemId.get( id );
+        return this.jcrHelper.getItemById( id );
     }
 
     public Item getItemByPath( final ItemPath path )
@@ -60,6 +55,6 @@ public class ItemInMemoryDao
     {
         Preconditions.checkArgument( path.isAbsolute(), "path must be absolute: " + path.toString() );
 
-        return this.itemByItemId.get( itemIdByPath.get( path ) );
+        return this.jcrHelper.getItemByPath( path );
     }
 }

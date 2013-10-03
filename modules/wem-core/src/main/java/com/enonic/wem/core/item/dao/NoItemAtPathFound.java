@@ -13,4 +13,9 @@ public class NoItemAtPathFound
         super( "No item at path [" + path + "] found" );
         this.path = path;
     }
+
+    public ItemPath getPath()
+    {
+        return path;
+    }
 }

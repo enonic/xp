@@ -55,6 +55,8 @@ public interface JcrConstants
 
     public static final String SPACE_TYPE = "nt:unstructured";
 
+    public static final String ITEM_NODETYPE = "wem:item";
+
     public static final String USER_STORES_PATH = ROOT_NODE + "/" + USER_STORES_NODE + "/";
 
     public static final String USER_STORES_ABSOLUTE_PATH = "/" + USER_STORES_PATH;

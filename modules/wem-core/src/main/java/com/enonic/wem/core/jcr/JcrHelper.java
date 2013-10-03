@@ -24,6 +24,9 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.UserKey;
+
 public final class JcrHelper
 {
 
@@ -96,6 +99,19 @@ public final class JcrHelper
         {
             final String dateTimeValue = isoDateTimeFormatter.print( value );
             node.setProperty( propertyName, dateTimeValue );
+        }
+    }
+
+    public static void setPropertyUserKey( final Node node, final String propertyName, final UserKey value )
+        throws RepositoryException
+    {
+        if ( value == null )
+        {
+            node.setProperty( propertyName, (String) null );
+        }
+        else
+        {
+            node.setProperty( propertyName, value.toString() );
         }
     }
 
@@ -188,6 +204,20 @@ public final class JcrHelper
     {
         final String value = getPropertyString( node, propertyName );
         return value == null ? null : isoDateTimeFormatter.parseDateTime( value );
+    }
+
+    public static UserKey getPropertyUserKey( final Node node, final String propertyName )
+        throws RepositoryException
+    {
+        final String value = getPropertyString( node, propertyName );
+        return value == null ? null : AccountKey.from( value ).asUser();
+    }
+
+    public static AccountKey getPropertyAccountKey( final Node node, final String propertyName )
+        throws RepositoryException
+    {
+        final String value = getPropertyString( node, propertyName );
+        return value == null ? null : AccountKey.from( value );
     }
 
     public static byte[] getPropertyBinary( final Node node, final String propertyName )

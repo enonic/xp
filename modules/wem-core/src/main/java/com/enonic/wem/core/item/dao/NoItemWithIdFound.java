@@ -10,7 +10,7 @@ public class NoItemWithIdFound
 
     NoItemWithIdFound( final ItemId id )
     {
-        super( "No item with path " + id + " found" );
+        super( "No item with id " + id + " found" );
         this.id = id;
     }
 }
