@@ -6,8 +6,8 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
-
 import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 
@@ -46,7 +46,8 @@ public class ListMixinsRpcHandlerTest
             addFormItem( inputText1 ).
             build();
 
-        Input textArea1 = newInput().name( "text_area_1" ).inputType( TEXT_AREA ).label( "Text Area" ).required( true ).helpText(
+        Input textArea1 = newInput().name( "text_area_1" ).inputType( TEXT_AREA ).inputTypeConfig(
+            TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).label( "Text Area" ).required( true ).helpText(
             "Help text area" ).required( true ).build();
         Mixin mixin2 = Mixin.newMixin().
             name( "text_area_1" ).

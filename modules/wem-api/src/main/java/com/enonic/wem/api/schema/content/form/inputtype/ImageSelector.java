@@ -47,5 +47,11 @@ final class ImageSelector
         return new Value.ContentId( ValueTypes.CONTENT_ID.convert( value ) );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }
 

@@ -40,5 +40,11 @@ final class Money
         return new Value.DecimalNumber( ValueTypes.DECIMAL_NUMBER.convert( value ) );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }
 

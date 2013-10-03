@@ -40,4 +40,10 @@ final class TextLine
         return new Value.Text( value );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }

@@ -40,4 +40,10 @@ final class WholeNumber
         return new Value.WholeNumber( ValueTypes.WHOLE_NUMBER.convert( value ) );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }

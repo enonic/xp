@@ -53,4 +53,10 @@ final class SingleSelector
         return new Value.Text( value );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }

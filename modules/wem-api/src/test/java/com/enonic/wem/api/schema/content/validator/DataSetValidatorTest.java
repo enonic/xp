@@ -13,6 +13,7 @@ import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.inputtype.HtmlAreaConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.form.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
@@ -91,7 +92,8 @@ public class DataSetValidatorTest
         contentType.form().addFormItem(
             newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).inputTypeConfig( htmlAreaConfig ).build() );
         contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );
-        contentType.form().addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+            TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 50 ).build() ).build() );
         contentType.form().addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
         contentType.form().addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
         contentType.form().addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );

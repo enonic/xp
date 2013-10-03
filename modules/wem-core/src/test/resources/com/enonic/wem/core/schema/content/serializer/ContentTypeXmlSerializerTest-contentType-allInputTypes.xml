@@ -109,6 +109,10 @@
       <custom-text/>
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
+      <config>
+        <rows>10</rows>
+        <columns>10</columns>
+      </config>
     </input>
     <input type="WholeNumber" name="myWholeNumber">
       <label/>

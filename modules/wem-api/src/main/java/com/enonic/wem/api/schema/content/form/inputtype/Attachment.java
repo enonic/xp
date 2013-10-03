@@ -34,5 +34,11 @@ final class Attachment
     {
         return new Value.BinaryId( ValueTypes.ATTACHMENT_NAME.convert( value ) );
     }
+
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
 }
 

@@ -1,51 +1,61 @@
 {
-    "mixins" : [ {
-        "deletable" : false,
-        "displayName" : null,
-        "editable" : false,
-        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:input_text_1",
-        "items" : [ {
-            "customText" : null,
-            "formItemType" : "Input",
-            "helpText" : "Help text line 1",
-            "immutable" : false,
-            "indexed" : false,
-            "inputType" : {
-                "config" : null,
-                "name" : "TextLine"
-            },
-            "label" : "Line Text 1",
-            "name" : "input_text_1",
-            "occurrences" : {
-                "maximum" : 1,
-                "minimum" : 1
-            },
-            "validationRegexp" : null
-        } ],
-        "name" : "input_text_1"
-    }, {
-        "deletable" : false,
-        "displayName" : null,
-        "editable" : false,
-        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:text_area_1",
-        "items" : [ {
-            "customText" : null,
-            "formItemType" : "Input",
-            "helpText" : "Help text area",
-            "immutable" : false,
-            "indexed" : false,
-            "inputType" : {
-                "config" : null,
-                "name" : "TextArea"
-            },
-            "label" : "Text Area",
-            "name" : "text_area_1",
-            "occurrences" : {
-                "maximum" : 1,
-                "minimum" : 1
-            },
-            "validationRegexp" : null
-        } ],
-        "name" : "text_area_1"
-    } ]
+    "mixins": [
+        {
+            "deletable": false,
+            "displayName": null,
+            "editable": false,
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:input_text_1",
+            "items": [
+                {
+                    "customText": null,
+                    "formItemType": "Input",
+                    "helpText": "Help text line 1",
+                    "immutable": false,
+                    "indexed": false,
+                    "inputType": {
+                        "config": null,
+                        "name": "TextLine"
+                    },
+                    "label": "Line Text 1",
+                    "name": "input_text_1",
+                    "occurrences": {
+                        "maximum": 1,
+                        "minimum": 1
+                    },
+                    "validationRegexp": null
+                }
+            ],
+            "name": "input_text_1"
+        },
+        {
+            "deletable": false,
+            "displayName": null,
+            "editable": false,
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:text_area_1",
+            "items": [
+                {
+                    "customText": null,
+                    "formItemType": "Input",
+                    "helpText": "Help text area",
+                    "immutable": false,
+                    "indexed": false,
+                    "inputType": {
+                        "config": {
+                            "columns": 10,
+                            "rows": 10
+                        },
+                        "name": "TextArea"
+                    },
+                    "label": "Text Area",
+                    "name": "text_area_1",
+                    "occurrences": {
+                        "maximum": 1,
+                        "minimum": 1
+                    },
+                    "validationRegexp": null
+                }
+            ],
+            "name": "text_area_1"
+        }
+    ]
 }

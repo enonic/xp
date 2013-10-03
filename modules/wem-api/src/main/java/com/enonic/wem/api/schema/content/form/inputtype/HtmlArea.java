@@ -41,4 +41,10 @@ final class HtmlArea
         return new Value.Text( value );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }

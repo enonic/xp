@@ -6,7 +6,7 @@
     "superType": "content",
     "isAbstract": false,
     "isFinal": true,
-    "isBuiltIn" : false,
+    "isBuiltIn": false,
     "allowChildContent": true,
     "form": [
         {
@@ -216,7 +216,11 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "TextArea"
+                    "name": "TextArea",
+                    "config": {
+                        "rows": 10,
+                        "columns": 10
+                    }
                 }
             }
         },

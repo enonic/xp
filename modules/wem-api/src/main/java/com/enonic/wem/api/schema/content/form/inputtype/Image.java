@@ -33,4 +33,10 @@ final class Image
     {
         return new Value.AttachmentName( ValueTypes.ATTACHMENT_NAME.convert( value ) );
     }
+
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
 }
