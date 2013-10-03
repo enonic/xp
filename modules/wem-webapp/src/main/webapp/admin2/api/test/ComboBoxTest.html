@@ -38,7 +38,7 @@
     var createData = function(value) {
         var data = [];
         for (var i = 0; i < 15 ; i++) {
-            data.push({id: value+i, option: {iconUrl:"", title:"title "+i+value, description:"description"+i}})
+            data.push({id: value+i, value: {iconUrl:"", title:"title "+i+value, description:"description"+i}})
         }
         return data;
     }
@@ -57,6 +57,10 @@
                    '<div class="title">'+value.title+'</div>' +
                    '<div class="description">'+value.description+'</div>' +
                    '</div>';
+        },
+        maximumOccurrences: 3,
+        filter: function (item, args) {
+            return !args || !args.value || item.value.description.indexOf(args.value) != -1 || item.value.title.indexOf(args.value) != -1;
         }
     }
 
@@ -64,9 +68,11 @@
 
     combobox.addListener({
         onInputValueChanged: function (oldValue, newValue, grid) {
-            grid.getDataView().setItems(createData(newValue));
+            grid.getDataView().setFilterArgs({value: newValue});
+            grid.getDataView().refresh();
+//            grid.getDataView().setItems(createData(newValue));
         }
-    })
+    });
 
     document.getElementById("example").appendChild(combobox.getHTMLElement());
     combobox.init();

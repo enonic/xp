@@ -62,6 +62,18 @@ module api_grid {
             return this.dataView;
         }
 
+        getDataLength():number {
+            return this.slickGrid.getDataLength();
+        }
+
+        getDataItem(i:number) {
+            return this.slickGrid.getDataItem(i);
+        }
+
+        setOptions(options:GridOptions) {
+            this.slickGrid.setOptions(options);
+        }
+
         render() {
             this.slickGrid.render();
         }
@@ -83,6 +95,14 @@ module api_grid {
                 var el = this.slickGrid.getCellNode(data.row, data.cell);
                 callback(el);
             });
+        }
+
+        getSelectedRows():number[] {
+            return this.slickGrid.getSelectedRows();
+        }
+
+        setSelectedRows(rows:number[]) {
+            this.slickGrid.setSelectedRows(rows);
         }
 
         setSelectionModel(selectionModel: any) {
@@ -109,12 +129,24 @@ module api_grid {
             this.slickGrid.setActiveCell(row, cell);
         }
 
+        setCellCssStyles(key: string, hash: Slick.CellCssStylesHash) {
+            this.slickGrid.setCellCssStyles(key, hash);
+        }
+
+        getCellCssStyles(key: string):Slick.CellCssStylesHash {
+            return this.slickGrid.getCellCssStyles(key);
+        }
+
         subscribeOnSelectedRowsChanged(callback:(e, args) => void) {
             this.slickGrid.onSelectedRowsChanged.subscribe(callback);
         }
 
         subscribeOnRowsChanged(callback:(e, args) => void) {
             this.dataView.subscribeOnRowsChanged(callback);
+        }
+
+        subscribeOnRowCountChanged(callback:(e, args) => void) {
+            this.dataView.subscribeOnRowCountChanged(callback);
         }
 
         subscribeOnClick(callback:(e, args) => void) {

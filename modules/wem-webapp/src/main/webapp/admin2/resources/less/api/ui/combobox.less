@@ -15,7 +15,7 @@
   }
 
   input {
-    box-sizing: border-box;
+    .box-sizing(border-box);
     height: 37px;
     margin: 0 0 10px 0;
     padding: 4px 4px 4px 50px;
@@ -48,13 +48,15 @@
 
   .options-container {
     position: absolute;
-    box-sizing: border-box;
+    .box-sizing(border-box);
     top: 36px;
     width: 100%;
     margin: 0 0 0 0;
     padding: 0;
     border: 1px black solid;
     .box-shadow(2px 2px 2px @admin-medium-gray-border);
+    background: white;
+    z-index: 5;
 
     .slick-header {
       height: 0px;
@@ -69,6 +71,14 @@
       &:hover, &.active {
         background: @admin-light-gray-bg;
         cursor: pointer;
+      }
+
+      &.selected {
+        font-style: italic;
+
+        .info .title {
+          color: #d3d3d3;
+        }
       }
 
       .icon {
@@ -104,7 +114,7 @@
 
   .selected-option {
     .options-container > .slick-cell;
-    padding: 0;
+    padding: 3px 0;
 
     &:hover {
       background: none;
