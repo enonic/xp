@@ -3,22 +3,20 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-contrib-clean');
 
     grunt.initConfig({
 
+            clean: ['target'],
+
             ts: {
                 api: {
-                    src: ['src/main/js/main.ts'],
-                    out: 'target/generated/all.js',
+                    src: ['../wem-webapp/src/main/webapp/admin2/api/js/main.ts'],
+                    out: 'target/main/js/api.js',
                     options: {
-                        // target: 'es5',
-                        sourcemap: true,
-                        declaration: true
+                        sourcemap: false,
+                        declaration: false
                     }
-                },
-                test: {
-                    src: ['src/test/js/*.ts'],
-                    outDir: 'target/generated/tests/'
                 }
             },
 
@@ -26,7 +24,14 @@ module.exports = function (grunt) {
                 options: {
                     browsers: ['PhantomJS'],
                     files: [
-                        'target/generated/tests/**/*.js'
+                        '../wem-webapp/src/main/webapp/admin/resources/lib/ext/ext-all.js',
+                        '../wem-webapp/src/main/webapp/admin2/resources/lib/jquery-2.0.2.js',
+                        '../wem-webapp/src/main/webapp/admin2/resources/lib/mousetrap.min.js',
+                        '../wem-webapp/src/main/webapp/admin2/resources/lib/signals.js',
+                        '../wem-webapp/src/main/webapp/admin2/resources/lib/hasher.js',
+                        '../wem-webapp/src/main/webapp/admin2/resources/lib/crossroads.js',
+                        'target/main/js/api.js',
+                        'src/test/js/**/*.js'
                     ],
                     frameworks: ['jasmine'],
                     preprocessors: {
@@ -39,6 +44,9 @@ module.exports = function (grunt) {
                     }
                 },
                 dev: {
+                    autoWatch: true
+                },
+                ci: {
                     singleRun: true
                 }
             }
@@ -47,5 +55,6 @@ module.exports = function (grunt) {
     );
 
     grunt.registerTask('all', ['ts']);
-    grunt.registerTask('test', ['ts:test', 'karma'])
+    grunt.registerTask('test', ['clean', 'ts', 'karma:ci'])
+    grunt.registerTask('test-dev', ['clean', 'ts', 'karma:dev'])
 };
