@@ -108,9 +108,9 @@ module api_app_wizard {
                 var responseObj, uploadedResUrl;
                 if (response && response.status === 200) {
                     responseObj = Ext.decode(response.response);
-                    uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id
-                        : 'resources/images/x-user-photo.png';
-                    this.setSrc(uploadedResUrl);
+                    uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'admin/rest/upload/' + responseObj.items[0].id
+                        : 'admin/resources/images/x-user-photo.png';
+                    this.setSrc(api_util.getAbsoluteUri(uploadedResUrl));
                 }
 
                 this.progress.hide();

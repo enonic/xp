@@ -12,6 +12,6 @@ final class RestServletModule
         serve( "/admin/rest/*" ).with( RestServlet.class );
 
         // Temporary rest path's (should be deleted before production).
-        serve( "/dev/rest/*", "/old-admin/rest/*", "/admin/apps/space-manager/rest/*" ).with( RestServlet.class );
+        serve( "/dev/rest/*", "/old-admin/rest/*" ).with( RestServlet.class );
     }
 }

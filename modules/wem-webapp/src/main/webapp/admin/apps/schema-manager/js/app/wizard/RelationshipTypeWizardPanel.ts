@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Relationship Type";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/RelationshipType:_';
+        private static DEFAULT_CHEMA_ICON_URL:string = 'admin/rest/schema/image/RelationshipType:_';
 
         private saveAction:api_ui.Action;
 
@@ -23,7 +23,8 @@ module app_wizard {
 
             this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
-            new api_app_wizard.FormIcon(RelationshipTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
+            new api_app_wizard.FormIcon(api_util.getAbsoluteUri(RelationshipTypeWizardPanel.DEFAULT_CHEMA_ICON_URL), "Click to upload icon",
+                api_util.getAbsoluteUri("admin/rest/upload"));
 
             this.closeAction = new api_app_wizard.CloseAction(this);
             this.saveAction = new api_app_wizard.SaveAction(this);
@@ -57,9 +58,10 @@ module app_wizard {
                 format: 'XML'
             };
 
-            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams, (result:api_remote_relationshiptype.GetResult) => {
-                this.relationshipTypeForm.setFormData({"xml": result.relationshipTypeXml})
-            });
+            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
+                (result:api_remote_relationshiptype.GetResult) => {
+                    this.relationshipTypeForm.setFormData({"xml": result.relationshipTypeXml})
+                });
         }
 
         persistNewItem(successCallback?:() => void) {

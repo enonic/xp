@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Content Type";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/ContentType:structured';
+        private static DEFAULT_CHEMA_ICON_URL:string = 'admin/rest/schema/image/ContentType:structured';
 
         private saveAction:api_ui.Action;
 
@@ -22,7 +22,8 @@ module app_wizard {
 
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
-            new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
+            new api_app_wizard.FormIcon(api_util.getAbsoluteUri(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL), "Click to upload icon",
+                api_util.getAbsoluteUri("admin/rest/upload"));
 
             this.closeAction = new api_app_wizard.CloseAction(this);
             this.saveAction = new api_app_wizard.SaveAction(this);
@@ -58,9 +59,10 @@ module app_wizard {
                 format: 'XML'
             };
 
-            api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams, (result:api_remote_contenttype.GetResult) => {
-                this.contentTypeForm.setFormData({"xml":result.contentTypeXmls[0]});
-            })
+            api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams,
+                (result:api_remote_contenttype.GetResult) => {
+                    this.contentTypeForm.setFormData({"xml": result.contentTypeXmls[0]});
+                })
         }
 
         persistNewItem(successCallback?:() => void) {

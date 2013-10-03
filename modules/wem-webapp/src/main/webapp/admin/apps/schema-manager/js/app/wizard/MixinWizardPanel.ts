@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Mixin";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/Mixin:_';
+        private static DEFAULT_CHEMA_ICON_URL:string = 'admin/rest/schema/image/Mixin:_';
 
         private saveAction:api_ui.Action;
 
@@ -21,7 +21,9 @@ module app_wizard {
         constructor() {
 
             this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
-            this.formIcon = new api_app_wizard.FormIcon(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon", "rest/upload");
+            this.formIcon =
+            new api_app_wizard.FormIcon(api_util.getAbsoluteUri(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL), "Click to upload icon",
+                api_util.getAbsoluteUri("admin/rest/upload"));
 
             this.closeAction = new api_app_wizard.CloseAction(this);
             this.saveAction = new api_app_wizard.SaveAction(this);
