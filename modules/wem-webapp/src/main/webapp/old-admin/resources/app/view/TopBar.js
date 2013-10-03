@@ -80,11 +80,11 @@ Ext.define('Admin.view.TopBar', {
             items: [
                 {
                     xtype: 'adminImageButton',
-                    icon: Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                    icon: Admin.lib.UriHelper.getAbsoluteUri('old-admin/resources/images/tsi-profil.jpg'),
                     popupTpl: Templates_common_userPopUp,
                     popupData: {
                         userName: "Thomas Lund Sigdestad",
-                        photoUrl: Admin.lib.UriHelper.getAbsoluteUri('admin/resources/images/tsi-profil.jpg'),
+                        photoUrl: Admin.lib.UriHelper.getAbsoluteUri('old-admin/resources/images/tsi-profil.jpg'),
                         qName: 'system/tsi'
                     }
                 }

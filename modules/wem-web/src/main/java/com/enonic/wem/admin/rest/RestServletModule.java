@@ -8,10 +8,6 @@ final class RestServletModule
     @Override
     protected void configureServlets()
     {
-        // Main rest path (should be the only one).
         serve( "/admin/rest/*" ).with( RestServlet.class );
-
-        // Temporary rest path's (should be deleted before production).
-        serve( "/dev/rest/*", "/old-admin/rest/*" ).with( RestServlet.class );
     }
 }

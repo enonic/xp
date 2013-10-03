@@ -3,7 +3,7 @@ Ext.define('Admin.lib.UriHelper', {
     singleton: true,
 
     getContentManagerSearchUri: function () {
-        return this.getAbsoluteUri('admin/resources/data/contentManagerStub.json');
+        return this.getAbsoluteUri('old-admin/resources/data/contentManagerStub.json');
     },
 
     getAbsoluteUri: function (uri) {
