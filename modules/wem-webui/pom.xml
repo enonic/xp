@@ -11,9 +11,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-admin-ui</artifactId>
+  <artifactId>wem-webui</artifactId>
   <packaging>pom</packaging>
-  <name>Enonic WEM Admin UI</name>
+  <name>Enonic WEM Web UI</name>
 
   <properties>
     <npm.exec>npm</npm.exec>
