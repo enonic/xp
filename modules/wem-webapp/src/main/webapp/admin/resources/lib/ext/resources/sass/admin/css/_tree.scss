@@ -1,0 +1,70 @@
+@import "../variables/core";
+@import "../variables/grid";
+
+.admin-tree {
+    .x-grid-cell .x-grid-cell-inner {
+        line-height: 32px;
+        padding: 5px 10px 6px;
+    }
+
+    .x-grid-cell .x-grid-cell-inner .x-tree-icon {
+        height: 32px;
+        width: 32px;
+    }
+
+    .x-tree-elbow,
+    .x-tree-elbow-end,
+    .x-tree-elbow-plus,
+    .x-tree-elbow-end-plus,
+    .x-tree-elbow-empty,
+    .x-tree-elbow-line {
+        margin-top: 6px;
+        margin-bottom: 6px;
+        /* float left to appear before name renderer output */
+        float: left;
+    }
+
+    .admin-white-toolbar {
+        border-bottom-style: none !important;
+    }
+
+    .x-panel-body {
+        border: none !important;
+    }
+
+    .x-grid-cell-inner .x-tree-icon {
+        /* name renderer is responsible for icon */
+        display: none;
+    }
+
+    .admin-tree-thumbnail {
+        float: left;
+
+        img {
+            height: 32px;
+            width: 32px;
+            display: block;
+            margin: 0 15px 0 10px;
+        }
+    }
+
+    .admin-tree-description {
+        margin-top: 3px;
+        overflow: hidden;
+
+        h6, p {
+          @include ellipsis();
+        }
+
+        p {
+            margin: 0 !important;
+            line-height: 1.4 !important;
+            color: $admin-light-medium-grey;
+        }
+
+    }
+
+    .x-grid-row-selected .admin-tree-description p {
+        color: #fff !important;
+    }
+}

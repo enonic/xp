@@ -1,0 +1,50 @@
+@import "../variables/core";
+
+.admin-window {
+    background-color: #ffffff;
+
+    .delete-container {
+        box-shadow: 0 0 5px #777;
+        padding: 10px;
+        max-height: 150px;
+        overflow-y: auto;
+
+        h4 {
+            margin: 0;
+        }
+
+        img.icon {
+            height: 32px;
+            width: 32px;
+            display: inline-block;
+            float: left;
+            margin-right: 10px;
+
+        }
+
+        .delete-item {
+            padding:5px 0;
+        }
+
+    }
+    .x-box-inner,
+    .x-panel-body,
+    .x-box-layout-ct,
+    .x-panel {
+        overflow: visible;
+    }
+
+}
+
+.admin-window-header {
+    background-color: $admin-black;
+}
+
+.admin-window-header h1 {
+    color: #fff !important;
+    font-size: 18px !important;
+    margin: 0 !important;
+    padding: 0 0 0 28px !important;
+    line-height: 28px !important;
+    background-repeat: no-repeat;
+}

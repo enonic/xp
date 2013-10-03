@@ -1,0 +1,47 @@
+@import "../variables/core";
+
+a {
+    color: #0070de;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal !important;
+}
+
+h1 {
+    font-size: $admin-font-size-6 !important;
+    line-height: 40px;
+}
+
+h2 {
+    font-size: $admin-font-size-5 !important;
+    line-height: 40px;
+}
+
+h3 {
+    font-size: $admin-font-size-4 !important;
+    line-height: 40px;
+}
+
+h4 {
+    font-size: $admin-font-size-3 !important;
+    line-height: 20px;
+}
+
+h5 {
+    font-size: $admin-font-size-2 !important;
+    line-height: 20px;
+}
+
+h6 {
+    font-size: $admin-font-size-1 !important;
+    line-height: 16px;
+}
+
+p {
+    margin: 0 0 10px !important;
+}
+
+td {
+    font-size: $admin-font-size-default;
+}

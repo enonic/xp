@@ -1,0 +1,11 @@
+@import "../variables/core";
+@import "../variables/boundlist";
+
+.x-boundlist-selected {
+    color: $admin-selected-font-color !important;
+}
+
+.x-boundlist-selected.x-boundlist-item-over {
+    background-color: $boundlist-item-selected-background-color !important;
+    color: $admin-selected-font-color !important;
+}

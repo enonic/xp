@@ -1,0 +1,40 @@
+.admin-notification-container {
+  position: fixed;
+  z-index: 500000;
+  width: 100%;
+}
+
+.admin-notification-wrapper {
+  margin: auto;
+  width: 800px;
+}
+
+.admin-notification {
+  overflow: hidden;
+  color: white;
+  font-size: 1.2em;
+}
+
+.admin-notification-inner {
+  padding: 10px 0;
+  background-color: #4294DE;
+
+  a {
+    color: white;
+  }
+}
+
+.admin-notification-remove {
+  float: right;
+  width: 10px;
+  margin-right: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bolder;
+  color: white;
+}
+
+.admin-notification-content {
+  margin-right: 20px;
+  padding: 0 30px;
+}

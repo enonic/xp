@@ -1,0 +1,45 @@
+.x-btn-arrow {
+    background-image: url("../themes/images/default/button/admin-arrow.png") !important;
+}
+
+.x-btn-arrow-right {
+    padding-right: 18px !important;
+}
+
+.x-btn-split-right, .x-btn-over .x-btn-split-right {
+    background: url("../themes/images/default/button/admin-s-arrow.png") no-repeat scroll right center transparent !important;
+}
+
+// Toolbar menu button and split button (TODO: scale large)
+.x-btn-default-toolbar-medium .x-btn-arrow,
+.x-toolbar .x-btn-split-right {
+    background-image: url("../themes/images/default/button/admin-arrow-dark.png") !important;
+}
+
+.x-btn.wizard-nav-button {
+    background-color: transparent;
+    border: none;
+    position:fixed;
+    top:50%;
+}
+
+.wizard-nav-button-right {
+    right:30px;
+}
+
+.wizard-nav-button-left  {
+    left:30px;
+}
+
+.x-btn.wizard-nav-button .x-btn-icon {
+    color: #777777;
+}
+
+.x-btn.nobg {
+    background-color: transparent;
+    border:none;
+}
+
+.x-btn.icon-button {
+    padding:0;
+}
