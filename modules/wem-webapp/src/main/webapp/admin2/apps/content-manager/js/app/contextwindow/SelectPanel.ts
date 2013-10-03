@@ -23,14 +23,14 @@ module app_contextwindow {
             this.appendChild(this.grid);
 
             ComponentSelectEvent.on((event) => {
-                this.getData();
+                this.getData(event.getComponent().componentType.type);
             });
         }
 
-        private getData():void {
+        private getData(componentType:number):void {
             jQuery.ajax({
                 url: "/admin2/apps/content-manager/js/data/context-window/mock-components.jsp?componentType=" +
-                     this.contextWindow.getSelectedComponent().type,
+                     componentType,
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
                     this.grid.updateData(ComponentGrid.toSlickData(data));
                 }
