@@ -14,17 +14,6 @@
 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-
-  <jsp-config>
-    <jsp-property-group>
-      <description>Property group for common configuration for all the JSP's</description>
-      <url-pattern>*.jsp</url-pattern>
-      <url-pattern>*.html</url-pattern>
-      <el-ignored>false</el-ignored>
-      <page-encoding>UTF-8</page-encoding>
-    </jsp-property-group>
-  </jsp-config>
 
 </web-app>
