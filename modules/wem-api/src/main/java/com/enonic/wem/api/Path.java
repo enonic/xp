@@ -292,25 +292,25 @@ public class Path<T extends Path>
             return (T) this;
         }
 
-        public Builder<T> elementDivider( final char elementDivider )
+        public T elementDivider( final char elementDivider )
         {
             this.elementDivider = elementDivider;
             return getThis();
         }
 
-        public Builder trailingDivider( final boolean value )
+        public T trailingDivider( final boolean value )
         {
             this.trailingDivider = value;
-            return this;
+            return getThis();
         }
 
-        public Builder absolute( final boolean value )
+        public T absolute( final boolean value )
         {
             this.absolute = value;
-            return this;
+            return getThis();
         }
 
-        public Builder elements( final String elements )
+        public T elements( final String elements )
         {
             if ( elements.length() == 0 )
             {
@@ -333,7 +333,7 @@ public class Path<T extends Path>
             return getThis();
         }
 
-        public Builder addElement( final String value )
+        public T addElement( final String value )
         {
             if ( this.elements != null )
             {
@@ -350,10 +350,10 @@ public class Path<T extends Path>
             {
                 this.elementListBuilder.add( new Element( value ) );
             }
-            return this;
+            return getThis();
         }
 
-        public Builder addElement( final Element value )
+        public T addElement( final Element value )
         {
             if ( this.elements != null )
             {
@@ -371,16 +371,16 @@ public class Path<T extends Path>
                 this.elementListBuilder.add( value );
             }
 
-            return this;
+            return getThis();
         }
 
-        public Builder addElements( final Iterator<Element> elements )
+        public T addElements( final Iterator<Element> elements )
         {
             this.elementListBuilder.addAll( elements );
-            return this;
+            return getThis();
         }
 
-        public Builder<T> removeLastElement()
+        public T removeLastElement()
         {
             if ( this.elements != null )
             {
@@ -403,10 +403,10 @@ public class Path<T extends Path>
                 this.elementListBuilder = newList;
                 this.elements = null;
             }
-            return this;
+            return getThis();
         }
 
-        public Builder removeFirstElement()
+        public T removeFirstElement()
         {
             if ( this.elements != null )
             {
@@ -429,7 +429,7 @@ public class Path<T extends Path>
                 this.elementListBuilder = newList;
                 this.elements = null;
             }
-            return this;
+            return getThis();
         }
 
         public Path build()
