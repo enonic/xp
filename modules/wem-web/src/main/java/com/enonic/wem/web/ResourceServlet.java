@@ -18,7 +18,7 @@ public final class ResourceServlet
         throws ServletException, IOException
     {
         final String path = req.getRequestURI().substring( req.getContextPath().length() );
-        final InputStream in = getServletContext().getResourceAsStream( path );
+        final InputStream in = findResource( path );
 
         if ( in != null )
         {
@@ -35,5 +35,15 @@ public final class ResourceServlet
     {
         res.setContentType( getServletContext().getMimeType( path ) );
         ByteStreams.copy( in, res.getOutputStream() );
+    }
+
+    private InputStream findResource( final String path )
+    {
+        if ( path.endsWith( "/" ) )
+        {
+            return findResource( path + "index.html" );
+        }
+
+        return getServletContext().getResourceAsStream( path );
     }
 }
