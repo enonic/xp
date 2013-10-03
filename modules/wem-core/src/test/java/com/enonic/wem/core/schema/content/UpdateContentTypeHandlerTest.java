@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -57,7 +57,6 @@ public class UpdateContentTypeHandlerTest
 
         ContentType existingContentType = newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             superType( QualifiedContentTypeName.structured() ).
@@ -96,7 +95,6 @@ public class UpdateContentTypeHandlerTest
 
         ContentType existingContentType = newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             superType( QualifiedContentTypeName.structured() ).

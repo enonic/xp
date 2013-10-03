@@ -6,7 +6,7 @@
             "id": null,
             "path": "/a1/c1",
             "name": "c1",
-            "type": "system:unstructured",
+            "type": "unstructured",
             "displayName": "C1",
             "owner": "user:enonic:user1",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -15,13 +15,13 @@
             "editable": true,
             "deletable": true,
             "allowsChildren": true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:unstructured"
         },
         {
             "id": null,
             "path": "/a1/c2",
             "name": "c2",
-            "type": "system:unstructured",
+            "type": "unstructured",
             "displayName": "C2",
             "owner": "user:enonic:user1",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -30,13 +30,13 @@
             "editable": true,
             "deletable": true,
             "allowsChildren": true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:unstructured"
         },
         {
             "id": null,
             "path": "/a1/c3",
             "name": "c3",
-            "type": "system:unstructured",
+            "type": "unstructured",
             "displayName": "C3",
             "owner": "user:enonic:user1",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -45,13 +45,13 @@
             "editable": true,
             "deletable": true,
             "allowsChildren": true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:unstructured"
         },
         {
             "id": null,
             "path": "/a1/c4",
             "name": "c4",
-            "type": "system:unstructured",
+            "type": "unstructured",
             "displayName": "C4",
             "owner": "user:enonic:user1",
             "createdTime": "2000-01-01T12:00:00.000Z",
@@ -60,7 +60,7 @@
             "editable": true,
             "deletable": true,
             "allowsChildren": true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:system:unstructured"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:unstructured"
         }
     ]
 }

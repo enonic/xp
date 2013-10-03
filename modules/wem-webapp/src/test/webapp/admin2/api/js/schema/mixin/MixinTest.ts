@@ -13,7 +13,6 @@ TestCase("Mixin", {
             "editable": false,
             "iconUrl": "http://localhost:8080/admin/rest/schema/image/Mixin:demo:address",
             "items": [],
-            "module": "demo",
             "name": "address"
         };
         var mixinJson:api_schema_mixin_json.MixinJson = json;
@@ -21,7 +20,6 @@ TestCase("Mixin", {
 
         assertEquals(mixin.getDisplayName(), "Demo: Address");
         assertEquals(mixin.getIcon(), "http://localhost:8080/admin/rest/schema/image/Mixin:demo:address");
-        assertEquals(mixin.getModuleName(), "demo");
         assertEquals(mixin.getName(), "address");
         assertEquals(mixin.getSchemaKey(), "mixin:demo:address");
         assertEquals(mixin.getFormItems().length, 0);
@@ -104,7 +102,6 @@ TestCase("Mixin", {
                     }
                 }
             ],
-            "module": "demo",
             "name": "address"
         };
 
@@ -144,7 +141,6 @@ TestCase("Mixin", {
                     "validationRegexp": null
                 }
             ],
-            "module": "demo",
             "name": "address"
         };
 

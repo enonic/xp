@@ -2,7 +2,7 @@
     "name": "content_display_name_script",
     "module": "demo",
     "displayName": "Content Display name script",
-    "superType": "system:structured",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "contentDisplayNameScript": "$('firstName') + ' ' + $('middleName') + ' ' + $('lastName')",

@@ -1,5 +1,5 @@
 {
     "name" : "love",
-    "relationshipType": "<relationship-type><xml-format-not-validated-in-this-test/><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>"
+    "relationshipType": "<relationship-type><xml-format-not-validated-in-this-test/><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>"
 }
 

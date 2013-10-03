@@ -8,11 +8,10 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.Name;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.ModuleBasedQualifiedName;
-import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.content.QualifiedName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
-public abstract class BaseSchema<T extends ModuleBasedQualifiedName>
+public abstract class BaseSchema<T extends QualifiedName>
     implements Schema
 {
     private final Name name;
@@ -29,12 +28,9 @@ public abstract class BaseSchema<T extends ModuleBasedQualifiedName>
 
     private final Icon icon;
 
-    private final ModuleName moduleName;
-
     protected BaseSchema( Builder builder )
     {
         this.name = builder.name;
-        this.moduleName = builder.moduleName;
         this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -46,12 +42,6 @@ public abstract class BaseSchema<T extends ModuleBasedQualifiedName>
     public String getName()
     {
         return name != null ? name.toString() : null;
-    }
-
-    @Override
-    public ModuleName getModuleName()
-    {
-        return moduleName;
     }
 
     public abstract T getQualifiedName();
@@ -90,8 +80,6 @@ public abstract class BaseSchema<T extends ModuleBasedQualifiedName>
     {
         private Name name;
 
-        private ModuleName moduleName;
-
         private String displayName;
 
         private DateTime createdTime;
@@ -113,7 +101,6 @@ public abstract class BaseSchema<T extends ModuleBasedQualifiedName>
         {
             Preconditions.checkNotNull( schema, "schema cannot be null" );
             this.name = schema.name;
-            this.moduleName = schema.getModuleName();
             this.displayName = schema.displayName;
             this.createdTime = schema.createdTime;
             this.modifiedTime = schema.modifiedTime;
@@ -132,16 +119,9 @@ public abstract class BaseSchema<T extends ModuleBasedQualifiedName>
             return getThis();
         }
 
-        public T module( ModuleName value )
-        {
-            this.moduleName = value;
-            return getThis();
-        }
-
         public T qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
         {
             this.name = Name.from( qualifiedContentTypeName.getContentTypeName() );
-            this.moduleName = qualifiedContentTypeName.getModuleName();
             return getThis();
         }
 

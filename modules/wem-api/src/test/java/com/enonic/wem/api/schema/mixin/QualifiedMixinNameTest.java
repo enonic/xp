@@ -14,26 +14,26 @@ public class QualifiedMixinNameTest
             @Override
             public Object getObjectX()
             {
-                return new QualifiedMixinName( "mymodule:my_mixin" );
+                return QualifiedMixinName.from( "mymodule:my_mixin" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new QualifiedMixinName( "mymodule:my_other_mixin" ),
-                    new QualifiedMixinName( "myothermodule:my_mixin" )};
+                return new Object[]{QualifiedMixinName.from( "mymodule:my_other_mixin" ),
+                    QualifiedMixinName.from( "myothermodule:my_mixin" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new QualifiedMixinName( "mymodule:my_mixin" );
+                return QualifiedMixinName.from( "mymodule:my_mixin" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new QualifiedMixinName( "mymodule:my_mixin" );
+                return QualifiedMixinName.from( "mymodule:my_mixin" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

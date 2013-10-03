@@ -18,7 +18,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -75,7 +74,7 @@ public class CreateOrUpdateMixinRpcHandlerTest
         throws Exception
     {
         final Input input = newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build();
-        final Mixin existingMixin = newMixin().name( "some_input" ).addFormItem( input ).module( Module.SYSTEM.getName() ).build();
+        final Mixin existingMixin = newMixin().name( "some_input" ).addFormItem( input ).build();
         final Mixins mixins = Mixins.from( existingMixin );
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( mixins );
 

@@ -3,7 +3,7 @@
     "module": "enonic",
     "displayName": "Trampoline",
     "contentDisplayNameScript": "$('vendor') + ' - ' + $('name')",
-    "superType": "system:structured",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "allowChildContent": true,
@@ -116,7 +116,7 @@
                                 "name": "ImageSelector",
                                 "builtIn": true,
                                 "config": {
-                                    "relationshipType": "system:default"
+                                    "relationshipType": "default"
                                 }
                             }
                         }
@@ -141,7 +141,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "system:like"
+                        "relationshipType": "like"
                     }
                 }
             }
@@ -238,7 +238,7 @@
                                             "name": "ImageSelector",
                                             "builtIn": true,
                                             "config": {
-                                                "relationshipType": "system:default"
+                                                "relationshipType": "default"
                                             }
                                         }
                                     }

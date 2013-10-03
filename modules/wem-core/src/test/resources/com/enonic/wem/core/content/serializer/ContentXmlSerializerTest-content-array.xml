@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content>
   <name/>
-  <type>mymodule:my_type</type>
+  <type>my_type</type>
   <data>
     <myArray type="Text">1</myArray>
     <myArray type="Text">2</myArray>

@@ -56,15 +56,13 @@ public final class SchemaImageResource
         BufferedImage schemaImage = null;
         if ( schemaKey.isContentType() )
         {
-            final Icon contentTypeIcon =
-                findRootContentTypeIcon( new QualifiedContentTypeName( schemaKey.getModuleName(), schemaKey.getLocalName() ) );
+            final Icon contentTypeIcon = findRootContentTypeIcon( QualifiedContentTypeName.from( schemaKey.getLocalName() ) );
             schemaImage = helper.getIconImage( contentTypeIcon, size );
             mimeType = contentTypeIcon == null ? mimeType : contentTypeIcon.getMimeType();
         }
         else if ( schemaKey.isRelationshipType() )
         {
-            final Icon relationshipTypeIcon =
-                findRelationshipTypeIcon( new QualifiedRelationshipTypeName( schemaKey.getModuleName(), schemaKey.getLocalName() ) );
+            final Icon relationshipTypeIcon = findRelationshipTypeIcon( QualifiedRelationshipTypeName.from( schemaKey.getLocalName() ) );
             if ( relationshipTypeIcon == null )
             {
                 schemaImage = helper.getDefaultRelationshipTypeImage( size );
@@ -77,7 +75,7 @@ public final class SchemaImageResource
         }
         else if ( schemaKey.isMixin() )
         {
-            final Icon mixinIcon = findMixinIcon( new QualifiedMixinName( schemaKey.getModuleName(), schemaKey.getLocalName() ) );
+            final Icon mixinIcon = findMixinIcon( QualifiedMixinName.from( schemaKey.getLocalName() ) );
             if ( mixinIcon == null )
             {
                 schemaImage = helper.getDefaultMixinImage( size );

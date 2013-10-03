@@ -44,7 +44,6 @@ final class RelationshipTypeDaoHandlerCreate
     {
         final Node rootNode = session.getRootNode();
         final Node relationshipTypesNode = rootNode.getNode( RelationshipTypeDao.RELATIONSHIP_TYPES_PATH );
-        final Node moduleNode = JcrHelper.getOrAddNode( relationshipTypesNode, relationshipTypeName.getModuleName().toString() );
-        return JcrHelper.getOrAddNode( moduleNode, relationshipTypeName.getLocalName() );
+        return JcrHelper.getOrAddNode( relationshipTypesNode, relationshipTypeName.getName() );
     }
 }

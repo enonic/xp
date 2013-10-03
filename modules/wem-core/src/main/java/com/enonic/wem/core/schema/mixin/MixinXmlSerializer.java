@@ -6,7 +6,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.schema.content.serializer.FormItemsXmlSerializer;
@@ -49,7 +48,6 @@ public class MixinXmlSerializer
     private void generate( final Mixin mixin, final Element typeEl )
     {
         typeEl.addContent( new Element( "name" ).setText( mixin.getName() ) );
-        typeEl.addContent( new Element( "module" ).setText( mixin.getModuleName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( mixin.getDisplayName() ) );
 
         typeEl.addContent( formItemsSerializer.serialize( mixin.getFormItems() ) );
@@ -75,7 +73,6 @@ public class MixinXmlSerializer
     {
         final Mixin.Builder builder = newMixin();
         builder.name( mixinEl.getChildTextTrim( "name" ) );
-        builder.module( ModuleName.from( mixinEl.getChildTextTrim( "module" ) ) );
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
 
         Iterable<FormItem> formItems = formItemsSerializer.parse( mixinEl.getChild( "items" ) );

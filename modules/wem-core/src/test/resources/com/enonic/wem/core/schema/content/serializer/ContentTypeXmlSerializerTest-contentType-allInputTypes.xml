@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <type>
   <name>all_input_types</name>
-  <module>mymodule</module>
   <display-name>All the Input Types</display-name>
   <content-display-name-script/>
-  <super-type>system:content</super-type>
+  <super-type>content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
+  <is-built-in>false</is-built-in>
   <allow-child-content>true</allow-child-content>
   <form>
     <input type="Color" name="myColor">
@@ -134,7 +134,7 @@
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
       <config>
-        <relationship-type>system:like</relationship-type>
+        <relationship-type>like</relationship-type>
       </config>
     </input>
     <input type="ImageSelector" name="myImage">
@@ -145,7 +145,7 @@
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
       <config>
-        <relationship-type>system:default</relationship-type>
+        <relationship-type>default</relationship-type>
       </config>
     </input>
     <input type="custom:DummyCustomInputType" name="myCustomInput">

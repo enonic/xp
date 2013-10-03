@@ -3,7 +3,6 @@ module api_remote_mixin {
 
     export interface Mixin extends api_remote.Item {
         name:string;
-        module:string;
         displayName:string;
         FormItemSet?: api_remote_contenttype.FormItemSet;
         Layout?: api_remote_contenttype.Layout;

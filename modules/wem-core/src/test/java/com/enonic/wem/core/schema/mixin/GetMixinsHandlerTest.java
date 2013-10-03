@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
@@ -50,11 +50,9 @@ public class GetMixinsHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin mixin = newMixin().
             name( "age" ).
             displayName( "Age" ).
-            module( module ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixins mixins = Mixins.from( mixin );
@@ -75,17 +73,14 @@ public class GetMixinsHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin mixin = newMixin().
             name( "age" ).
             displayName( "Age" ).
-            module( module ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixin mixin2 = newMixin().
             name( "gender" ).
             displayName( "Gender" ).
-            module( module ).
             addFormItem( newInput().name( "gender" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixins mixins = Mixins.from( mixin, mixin2 );

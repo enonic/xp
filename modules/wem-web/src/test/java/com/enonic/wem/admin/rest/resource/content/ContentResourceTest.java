@@ -47,7 +47,7 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.api.facet.QueryFacet;
 import com.enonic.wem.api.facet.TermsFacet;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -85,7 +85,7 @@ public class ContentResourceTest
     public void get_content_by_path()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
 
@@ -106,7 +106,7 @@ public class ContentResourceTest
     public void get_content_summary_by_path()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
@@ -143,7 +143,7 @@ public class ContentResourceTest
     public void get_content_id_by_path_and_version()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
@@ -181,7 +181,7 @@ public class ContentResourceTest
     public void get_content_by_id()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
 
@@ -202,7 +202,7 @@ public class ContentResourceTest
     public void get_content_summary_by_id()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
@@ -239,7 +239,7 @@ public class ContentResourceTest
     public void get_content_id_by_id_and_version()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
 
@@ -278,11 +278,11 @@ public class ContentResourceTest
     public void list_content_by_path()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "mymodule:/" ).get( String.class );
+        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
 
         assertJson( "list_content_summary.json", jsonString );
     }
@@ -291,11 +291,11 @@ public class ContentResourceTest
     public void list_content_full_by_path()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
-        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "mymodule:/" ).
+        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).
             queryParam( "expand", "full" ).get( String.class );
 
         assertJson( "list_content_full.json", jsonString );
@@ -308,7 +308,7 @@ public class ContentResourceTest
 
         Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.empty() );
 
-        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "mymodule:/" ).get( String.class );
+        String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
 
         assertJson( "list_content_empty.json", jsonString );
     }
@@ -317,8 +317,8 @@ public class ContentResourceTest
     public void list_root_content_id_by_path()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( client.execute( Mockito.isA( GetRootContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "expand", "none" ).get( String.class );
@@ -330,11 +330,11 @@ public class ContentResourceTest
     public void list_content_by_id()
         throws Exception
     {
-        final Content cContent = createContent( "ccc", "my_c_content", "mymodule:my_type" );
+        final Content cContent = createContent( "ccc", "my_c_content", "my_type" );
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( cContent ) );
 
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
@@ -346,11 +346,11 @@ public class ContentResourceTest
     public void list_content_full_by_id()
         throws Exception
     {
-        final Content cContent = createContent( "ccc", "my_c_content", "mymodule:my_type" );
+        final Content cContent = createContent( "ccc", "my_c_content", "my_type" );
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( cContent ) );
 
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( client.execute( Mockito.isA( GetChildContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).
@@ -375,8 +375,8 @@ public class ContentResourceTest
     public void list_root_content_id_by_id()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
         Mockito.when( client.execute( Mockito.isA( GetRootContent.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         String jsonString = resource().path( "content/list" ).queryParam( "expand", "none" ).get( String.class );
@@ -388,7 +388,7 @@ public class ContentResourceTest
     public void find_content_with_facets()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
@@ -396,7 +396,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
 
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 
         final ContentData bContentData = bContent.getContentData();
 
@@ -412,7 +412,7 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+            ContentTypes.from( createContentType( "my_type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( createSpace( "my_space" ) ) );
 
@@ -425,7 +425,7 @@ public class ContentResourceTest
     public void find_content_summary_with_facets()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
@@ -433,7 +433,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
 
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 
         final ContentData bContentData = bContent.getContentData();
 
@@ -449,7 +449,7 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+            ContentTypes.from( createContentType( "my_type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( createSpace( "my_space" ) ) );
 
@@ -462,7 +462,7 @@ public class ContentResourceTest
     public void find_content_full_without_facets()
         throws Exception
     {
-        final Content aContent = createContent( "aaa", "my_a_content", "mymodule:my_type" );
+        final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
 
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
@@ -470,7 +470,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
 
-        final Content bContent = createContent( "bbb", "my_b_content", "mymodule:my_type" );
+        final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 
         final ContentData bContentData = bContent.getContentData();
 
@@ -486,7 +486,7 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+            ContentTypes.from( createContentType( "my_type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( createSpace( "my_space" ) ) );
 
@@ -513,7 +513,7 @@ public class ContentResourceTest
     {
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+            ContentTypes.from( createContentType( "my_type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 
@@ -530,7 +530,7 @@ public class ContentResourceTest
     {
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my_type" ) ) );
+            ContentTypes.from( createContentType( "my_type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( createDataValidationErrors() );
 
@@ -588,7 +588,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+            ContentTypes.from( createContentType( "my-type" ) ) );
 
         CreateContent command = new CreateContent().displayName( "Content One" ).parentContentPath( ContentPath.from( "parent-path" ) );
         Exception e = new Exception( "Exception occured." );
@@ -607,7 +607,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+            ContentTypes.from( createContentType( "my-type" ) ) );
 
         ContentId contentId = ContentId.from( "content-id" );
         ContentPath parentPath = ContentPath.from( "parent-path" );
@@ -628,7 +628,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+            ContentTypes.from( createContentType( "my-type" ) ) );
 
         UpdateContent command = new UpdateContent().selector( ContentId.from( "content-id" ) );
         Exception e = new Exception( "Exception occured." );
@@ -649,7 +649,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+            ContentTypes.from( createContentType( "my-type" ) ) );
 
         Exception e = new com.enonic.wem.api.content.ContentNotFoundException( ContentId.from( "content-id" ) );
 
@@ -669,7 +669,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+            ContentTypes.from( createContentType( "my-type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( null );
 
@@ -687,7 +687,7 @@ public class ContentResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
-            ContentTypes.from( createContentType( "mymodule", "my-type" ) ) );
+            ContentTypes.from( createContentType( "my-type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( UpdateContentResult.SUCCESS );
 
@@ -733,7 +733,7 @@ public class ContentResourceTest
             displayName( "My Content" ).
             modifiedTime( DateTime.parse( this.currentTime ) ).
             modifier( UserKey.superUser() ).
-            type( new QualifiedContentTypeName( contentTypeName ) ).
+            type( QualifiedContentTypeName.from( contentTypeName ) ).
             build();
     }
 
@@ -751,9 +751,9 @@ public class ContentResourceTest
 
             TermsFacet contentTypesFacet = new TermsFacet();
             contentTypesFacet.setName( "contentType" );
-            contentTypesFacet.addResult( "system:folder", "Folder", 5 );
-            contentTypesFacet.addResult( "system:image", "Image", 24 );
-            contentTypesFacet.addResult( "system:space", "Space", 4 );
+            contentTypesFacet.addResult( "folder", "Folder", 5 );
+            contentTypesFacet.addResult( "image", "Image", 24 );
+            contentTypesFacet.addResult( "space", "Space", 4 );
             facets.addFacet( contentTypesFacet );
 
             TermsFacet spacesFacet = new TermsFacet();
@@ -779,11 +779,10 @@ public class ContentResourceTest
         return result;
     }
 
-    private ContentType createContentType( String module, String name )
+    private ContentType createContentType( String name )
     {
         return ContentType.newContentType().
             displayName( "My type" ).
-            module( ModuleName.from( module ) ).
             name( name ).
             build();
     }

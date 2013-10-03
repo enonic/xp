@@ -2,7 +2,7 @@
     "id": null,
     "path": "/",
     "name": null,
-    "type": "system:unstructured",
+    "type": "unstructured",
     "displayName": null,
     "owner": null,
     "creator": null,

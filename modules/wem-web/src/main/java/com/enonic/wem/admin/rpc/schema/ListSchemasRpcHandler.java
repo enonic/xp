@@ -82,7 +82,7 @@ public final class ListSchemasRpcHandler
 
     private boolean matchesModuleFilter( final Schema schema, final Set<String> moduleNamesFilter )
     {
-        return moduleNamesFilter.isEmpty() || moduleNamesFilter.contains( schema.getModuleName().toString() );
+        return true; //moduleNamesFilter.isEmpty() || moduleNamesFilter.contains( schema.getModuleName().toString() );
     }
 
     private Set<SchemaKind> getTypesToInclude( final JsonRpcContext context )

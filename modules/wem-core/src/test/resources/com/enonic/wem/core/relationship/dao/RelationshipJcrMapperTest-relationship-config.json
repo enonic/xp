@@ -1,5 +1,5 @@
 {
-    "type": "system:link",
+    "type": "link",
     "fromContent": "111",
     "toContent": "222",
     "managingData": "mySet.myData",

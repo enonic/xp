@@ -12,7 +12,7 @@
             "modifier": null,
             "properties": { },
             "toContent": "222",
-            "type": "system:default"
+            "type": "default"
         },
         {
             "createdTime": null,
@@ -26,7 +26,7 @@
             "modifier": null,
             "properties": { },
             "toContent": "333",
-            "type": "system:default"
+            "type": "default"
         }
     ],
     "total": 2

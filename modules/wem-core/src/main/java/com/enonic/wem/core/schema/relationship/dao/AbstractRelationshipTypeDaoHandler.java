@@ -43,8 +43,7 @@ abstract class AbstractRelationshipTypeDaoHandler<T>
 
     protected final String getNodePath( final QualifiedRelationshipTypeName qualifiedName )
     {
-        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + qualifiedName.getModuleName() + "/" +
-            qualifiedName.getLocalName();
+        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + qualifiedName.getName();
     }
 
     protected final boolean relationshipTypeExists( final QualifiedRelationshipTypeName qualifiedName )

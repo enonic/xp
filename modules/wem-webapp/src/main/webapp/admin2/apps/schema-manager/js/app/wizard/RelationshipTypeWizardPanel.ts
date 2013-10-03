@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Relationship Type";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/RelationshipType:_:_';
+        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/RelationshipType:_';
 
         private saveAction:api_ui.Action;
 
@@ -53,7 +53,7 @@ module app_wizard {
             this.persistedRelationshipType = relationshipType;
 
             var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
-                qualifiedName: relationshipType.module + ":" + relationshipType.name,
+                qualifiedName: relationshipType.name,
                 format: 'XML'
             };
 

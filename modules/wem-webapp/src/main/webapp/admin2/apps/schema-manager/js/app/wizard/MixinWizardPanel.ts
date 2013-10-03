@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Mixin";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/Mixin:_:_';
+        private static DEFAULT_CHEMA_ICON_URL:string = '/admin/rest/schema/image/Mixin:_';
 
         private saveAction:api_ui.Action;
 
@@ -52,7 +52,7 @@ module app_wizard {
             this.persistedMixin = mixin;
 
             var mixinGetParams:api_remote_mixin.GetParams = {
-                qualifiedName: mixin.module + ":" + mixin.name,
+                qualifiedName: mixin.name,
                 format: 'XML'
             };
 

@@ -6,7 +6,7 @@ import javax.jcr.Node;
 import org.junit.Test;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -43,7 +43,6 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "mycontenttype" ).
             setAbstract( false ).
             displayName( "My content type" ).
@@ -56,7 +55,7 @@ public class ContentTypeDaoImplTest
         commit();
 
         // verify
-        Node contentNode = session.getNode( "/" + ContentTypeDao.CONTENT_TYPES_PATH + "mymodule/mycontenttype" );
+        Node contentNode = session.getNode( "/" + ContentTypeDao.CONTENT_TYPES_PATH + "mycontenttype" );
         assertNotNull( contentNode );
         assertArrayEquals( IMAGE_DATA, JcrHelper.getPropertyBinary( contentNode, IconJcrMapper.ICON_PROPERTY ) );
     }
@@ -67,7 +66,6 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "mycontenttype" ).
             setAbstract( true ).
             displayName( "My content type" ).
@@ -76,7 +74,7 @@ public class ContentTypeDaoImplTest
         contentTypeDao.create( contentType, session );
 
         // exercise
-        final ContentTypes contentTypes = contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:mycontenttype" ), session );
+        final ContentTypes contentTypes = contentTypeDao.select( QualifiedContentTypeNames.from( "mycontenttype" ), session );
         commit();
 
         // verify
@@ -84,7 +82,6 @@ public class ContentTypeDaoImplTest
         assertEquals( 1, contentTypes.getSize() );
         final ContentType contentType1 = contentTypes.first();
         assertEquals( "mycontenttype", contentType1.getName() );
-        assertEquals( "mymodule", contentType1.getModuleName().toString() );
         assertEquals( true, contentType1.isAbstract() );
         assertEquals( "My content type", contentType1.getDisplayName() );
         assertEquals( DUMMY_ICON, contentType1.getIcon() );
@@ -96,7 +93,6 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "mycontenttype" ).
             setAbstract( true ).
             displayName( "My content type" );
@@ -104,7 +100,6 @@ public class ContentTypeDaoImplTest
         contentTypeDao.create( contentTypeCreated1, session );
 
         final ContentType.Builder contentTypeBuilder2 = newContentType().
-            module( ModuleName.from( "othermodule" ) ).
             name( "somecontenttype" ).
             setAbstract( false ).
             displayName( "Another content type" );
@@ -119,16 +114,14 @@ public class ContentTypeDaoImplTest
         // verify
         assertNotNull( contentTypes );
         assertEquals( 2, contentTypes.getSize() );
-        final ContentType contentType1 = contentTypes.getContentType( new QualifiedContentTypeName( "mymodule:mycontenttype" ) );
-        final ContentType contentType2 = contentTypes.getContentType( new QualifiedContentTypeName( "othermodule:somecontenttype" ) );
+        final ContentType contentType1 = contentTypes.getContentType( QualifiedContentTypeName.from( "mycontenttype" ) );
+        final ContentType contentType2 = contentTypes.getContentType( QualifiedContentTypeName.from( "somecontenttype" ) );
 
         assertEquals( "mycontenttype", contentType1.getName() );
-        assertEquals( "mymodule", contentType1.getModuleName().toString() );
         assertEquals( true, contentType1.isAbstract() );
         assertEquals( "My content type", contentType1.getDisplayName() );
 
         assertEquals( "somecontenttype", contentType2.getName() );
-        assertEquals( "othermodule", contentType2.getModuleName().toString() );
         assertEquals( false, contentType2.isAbstract() );
         assertEquals( "Another content type", contentType2.getDisplayName() );
     }
@@ -139,7 +132,6 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             setAbstract( true ).
             displayName( "My content type" );
@@ -148,7 +140,7 @@ public class ContentTypeDaoImplTest
 
         // exercise
         final ContentTypes contentTypesAfterCreate =
-            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:my_content_type" ), session );
+            contentTypeDao.select( QualifiedContentTypeNames.from( "my_content_type" ), session );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
@@ -162,12 +154,11 @@ public class ContentTypeDaoImplTest
 
         // verify
         final ContentTypes contentTypesAfterUpdate =
-            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:my_content_type" ), session );
+            contentTypeDao.select( QualifiedContentTypeNames.from( "my_content_type" ), session );
         assertNotNull( contentTypesAfterUpdate );
         assertEquals( 1, contentTypesAfterUpdate.getSize() );
         final ContentType contentType1 = contentTypesAfterUpdate.first();
         assertEquals( "my_content_type", contentType1.getName() );
-        assertEquals( "mymodule", contentType1.getModuleName().toString() );
         assertEquals( false, contentType1.isAbstract() );
         assertEquals( "My content type-UPDATED", contentType1.getDisplayName() );
         assertEquals( DUMMY_ICON, contentType1.getIcon() );
@@ -179,7 +170,6 @@ public class ContentTypeDaoImplTest
     {
         // setup
         final ContentType.Builder contentTypeBuilder = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             setAbstract( true ).
             displayName( "My content type" );
@@ -188,7 +178,7 @@ public class ContentTypeDaoImplTest
 
         // exercise
         final ContentTypes contentTypesAfterCreate =
-            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:my_content_type" ), session );
+            contentTypeDao.select( QualifiedContentTypeNames.from( "my_content_type" ), session );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
@@ -197,7 +187,7 @@ public class ContentTypeDaoImplTest
 
         // verify
         final ContentTypes contentTypesAfterDelete =
-            contentTypeDao.select( QualifiedContentTypeNames.from( "mymodule:my_content_type" ), session );
+            contentTypeDao.select( QualifiedContentTypeNames.from( "my_content_type" ), session );
         assertNotNull( contentTypesAfterDelete );
         assertTrue( contentTypesAfterDelete.isEmpty() );
     }

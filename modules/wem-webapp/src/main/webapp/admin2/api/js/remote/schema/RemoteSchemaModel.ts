@@ -3,7 +3,6 @@ module api_remote_schema {
     export interface Schema {
         key:string;
         name:string;
-        module:string;
         qualifiedName:string;
         displayName:string;
         type:string;
@@ -15,7 +14,6 @@ module api_remote_schema {
     export interface SchemaTreeNode {
         key:string;
         name:string;
-        module:string;
         qualifiedName:string;
         displayName:string;
         type:string;

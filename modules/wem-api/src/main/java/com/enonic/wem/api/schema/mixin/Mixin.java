@@ -28,7 +28,7 @@ public class Mixin
     @Override
     public QualifiedMixinName getQualifiedName()
     {
-        return new QualifiedMixinName( getModuleName(), getName() );
+        return QualifiedMixinName.from(getName() );
     }
 
     public FormItems getFormItems()

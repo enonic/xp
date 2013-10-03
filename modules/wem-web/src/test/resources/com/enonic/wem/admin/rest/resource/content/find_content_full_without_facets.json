@@ -40,7 +40,7 @@
             "owner": "user:myStore:me",
             "path": "/my_a_content",
             "root": false,
-            "type": "mymodule:my_type"
+            "type": "my_type"
         },
         {
             "createdTime": "2013-08-23T12:55:09.162Z",
@@ -88,7 +88,7 @@
             "owner": "user:myStore:me",
             "path": "/my_b_content",
             "root": false,
-            "type": "mymodule:my_type"
+            "type": "my_type"
         }
     ],
     "facets": []

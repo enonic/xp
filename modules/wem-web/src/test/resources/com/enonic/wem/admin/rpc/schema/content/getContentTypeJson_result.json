@@ -3,13 +3,13 @@
     "contentTypes": [
         {
             "name": "my_type",
-            "module": "mymodule",
-            "qualifiedName": "mymodule:my_type",
+            "qualifiedName": "my_type",
             "displayName": null,
             "contentDisplayNameScript": null,
-            "superType": "system:unstructured",
+            "superType": "unstructured",
             "isAbstract": false,
             "isFinal": false,
+            "isBuiltIn" : false,
             "allowChildContent": true,
             "form": [
                 {
@@ -67,7 +67,7 @@
                     }
                 }
             ],
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:my_type"
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:my_type"
         }
     ]
 }

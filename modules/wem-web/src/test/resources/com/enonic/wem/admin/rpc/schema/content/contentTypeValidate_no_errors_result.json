@@ -4,13 +4,13 @@
     "errors": [ ],
     "contentType": {
         "name": "all_types",
-        "module": "mymodule",
-        "qualifiedName": "mymodule:all_types",
+        "qualifiedName": "all_types",
         "displayName": "All the Types",
         "contentDisplayNameScript": null,
-        "superType": "system:content",
+        "superType": "unstructured",
         "isAbstract": false,
         "isFinal": true,
+        "isBuiltIn" : false,
         "allowChildContent": true,
         "form": [
             {

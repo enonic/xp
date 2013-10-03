@@ -3,7 +3,6 @@ package com.enonic.wem.api.schema.content;
 
 import com.google.common.base.Objects;
 
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
@@ -24,6 +23,8 @@ public final class ContentType
 
     private final boolean allowChildContent;
 
+    private final boolean isBuiltIn;
+
     private final Form form;
 
     private final String contentDisplayNameScript;
@@ -32,7 +33,7 @@ public final class ContentType
     {
         super( builder );
 
-        if ( builder.superType == null && ( getModuleName() != null && !getModuleName().equals( Module.SYSTEM.getName() ) ) )
+        if ( builder.superType == null && !builder.isBuiltIn )
         {
             superType = QualifiedContentTypeName.unstructured();
         }
@@ -43,7 +44,7 @@ public final class ContentType
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
         this.allowChildContent = builder.allowChildContent;
-
+        this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder.build();
         this.contentDisplayNameScript = builder.contentDisplayNameScript;
     }
@@ -57,7 +58,7 @@ public final class ContentType
     @Override
     public QualifiedContentTypeName getQualifiedName()
     {
-        return new QualifiedContentTypeName( getModuleName(), getName() );
+        return QualifiedContentTypeName.from( getName() );
     }
 
     public QualifiedContentTypeName getSuperType()
@@ -80,6 +81,11 @@ public final class ContentType
         return allowChildContent;
     }
 
+    public boolean isBuiltIn()
+    {
+        return isBuiltIn;
+    }
+
     public Form form()
     {
         return this.form;
@@ -96,10 +102,10 @@ public final class ContentType
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
-        s.add( "module", getModuleName() );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
+        s.add( "isBuiltIn", isBuiltIn );
         s.add( "allowChildContent", allowChildContent );
         s.add( "form", form );
         s.add( "icon", getIcon() );
@@ -126,6 +132,8 @@ public final class ContentType
 
         private boolean allowChildContent;
 
+        private boolean isBuiltIn;
+
         private Form.Builder formBuilder = newForm();
 
         private QualifiedContentTypeName superType;
@@ -137,6 +145,7 @@ public final class ContentType
             super();
             formBuilder = newForm();
             allowChildContent = true;
+            isBuiltIn = false;
         }
 
         private Builder( final ContentType source )
@@ -145,6 +154,8 @@ public final class ContentType
             this.isAbstract = source.isAbstract();
             this.isFinal = source.isFinal();
             this.allowChildContent = source.allowChildContent();
+            this.isBuiltIn = source.isBuiltIn();
+
             this.superType = source.getSuperType();
             if ( source.form() != null )
             {
@@ -180,6 +191,12 @@ public final class ContentType
         public Builder allowChildContent( final boolean value )
         {
             this.allowChildContent = value;
+            return this;
+        }
+
+        public Builder builtIn( final boolean builtIn )
+        {
+            isBuiltIn = builtIn;
             return this;
         }
 

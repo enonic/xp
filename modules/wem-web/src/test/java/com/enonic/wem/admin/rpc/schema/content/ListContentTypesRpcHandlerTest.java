@@ -7,9 +7,10 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.form.Input;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
@@ -49,8 +50,8 @@ public class ListContentTypesRpcHandlerTest
             "Help text area" ).required( true ).build();
 
         final ContentType contentType1 = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_type" ).
+            superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
@@ -60,8 +61,8 @@ public class ListContentTypesRpcHandlerTest
             newInput().name( "inputText_1" ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build();
         final ContentType contentType2 = newContentType().
-            module( ModuleName.from( "othermodule" ) ).
             name( "the_content_type" ).
+            superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( inputTextCty2 ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2 );

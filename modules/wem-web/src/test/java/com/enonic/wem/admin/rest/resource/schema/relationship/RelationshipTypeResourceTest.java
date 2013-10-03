@@ -33,8 +33,7 @@ import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -87,16 +86,15 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "the_relationship_type" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:the_relationship_type" ) );
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
-        AbstractRelationshipTypeJson result = resource.get( "mymodule:the_relationship_type", RelationshipTypeResource.FORMAT_JSON );
+        AbstractRelationshipTypeJson result = resource.get( "the_relationship_type", RelationshipTypeResource.FORMAT_JSON );
         assertNotNull( result );
 
         RelationshipTypeResultJson resultJson = ( (RelationshipTypeJson) result ).getRelationshipType();
@@ -107,7 +105,7 @@ public class RelationshipTypeResourceTest
         assertEquals( null, resultJson.getToSemantic() );
         assertEquals( 0, resultJson.getAllowedFromTypes().size() );
         assertEquals( 0, resultJson.getAllowedToTypes().size() );
-        assertEquals( "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:the_relationship_type", resultJson.getIconUrl() );
+        assertEquals( "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type", resultJson.getIconUrl() );
     }
 
     @Test
@@ -115,23 +113,22 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "the_relationship_type" ).
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "mymodule:the_relationship_type" ) );
+            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
-        AbstractRelationshipTypeJson result = resource.get( "mymodule:the_relationship_type", RelationshipTypeResource.FORMAT_XML );
+        AbstractRelationshipTypeJson result = resource.get( "the_relationship_type", RelationshipTypeResource.FORMAT_XML );
         assertNotNull( result );
 
         RelationshipTypeConfigRpcJson resultJson = (RelationshipTypeConfigRpcJson) result;
 
-        assertEquals( "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:the_relationship_type", resultJson.getIconUrl() );
+        assertEquals( "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type", resultJson.getIconUrl() );
         assertEquals(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<relationship-type>\r\n  <name>the_relationship_type</name>\r\n  <display-name />\r\n  <module>mymodule</module>\r\n  <from-semantic />\r\n  <to-semantic />\r\n  <allowed-from-types />\r\n  <allowed-to-types />\r\n</relationship-type>\r\n\r\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<relationship-type>\r\n  <name>the_relationship_type</name>\r\n  <display-name />\r\n  <from-semantic />\r\n  <to-semantic />\r\n  <allowed-from-types />\r\n  <allowed-to-types />\r\n</relationship-type>\r\n\r\n",
             resultJson.getRelationshipTypeXml() );
     }
 
@@ -141,7 +138,7 @@ public class RelationshipTypeResourceTest
     {
         Mockito.when( client.execute( Mockito.any( GetRelationshipTypes.class ) ) ).thenReturn( RelationshipTypes.empty() );
 
-        resource.get( "mymodule:the_relationship_type", RelationshipTypeResource.FORMAT_XML );
+        resource.get( "the_relationship_type", RelationshipTypeResource.FORMAT_XML );
     }
 
     @Test
@@ -149,12 +146,10 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         final RelationshipType relationshipType1 = newRelationshipType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "the_relationship_type_1" ).
             build();
 
         final RelationshipType relationshipType2 = newRelationshipType().
-            module( ModuleName.from( "othermodule" ) ).
             name( "the_relationship_type_2" ).
             build();
 
@@ -210,10 +205,10 @@ public class RelationshipTypeResourceTest
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
-            new QualifiedRelationshipTypeName( Module.SYSTEM.getName(), "love" ) );
+             QualifiedRelationshipTypeName.from(  "love" ) );
 
         String relationshipType =
-            "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
+            "<relationship-type><name>love</name><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
 
         Mockito.when( this.uploadService.getItem( "reference" ) ).thenReturn( null );
         resource.create( relationshipType, "reference" );
@@ -227,14 +222,14 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         QualifiedRelationshipTypeNames qualifiedNames =
-            QualifiedRelationshipTypeNames.from( new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "love" ) );
+            QualifiedRelationshipTypeNames.from(  QualifiedRelationshipTypeName.from(  "love" ) );
 
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.from( qualifiedNames ) );
         Mockito.when( client.execute( isA( UpdateRelationshipType.class ) ) ).thenReturn( Boolean.TRUE );
 
         String relationshipType =
-            "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
+            "<relationship-type><name>love</name><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
 
         Mockito.when( this.uploadService.getItem( "reference" ) ).thenReturn( null );
         resource.update( relationshipType, "reference" );
@@ -249,11 +244,11 @@ public class RelationshipTypeResourceTest
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
-            new QualifiedRelationshipTypeName( Module.SYSTEM.getName(), "love" ) );
+             QualifiedRelationshipTypeName.from("love" ) );
         uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
 
         String relationshipType =
-            "<relationship-type><name>love</name><display-name>Love</display-name><module>system</module><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
+            "<relationship-type><name>love</name><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
         String iconReference = "edc1af66-ecb4-4f8a-8df4-0738418f84fc";
 
         resource.create( relationshipType, iconReference );

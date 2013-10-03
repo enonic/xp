@@ -127,7 +127,7 @@ public class SchemaResource
 
     private boolean matchesModuleFilter( final Schema schema, final Set<String> moduleNamesFilter )
     {
-        return moduleNamesFilter.isEmpty() || moduleNamesFilter.contains( schema.getModuleName().toString() );
+        return true; // moduleNamesFilter.isEmpty() || moduleNamesFilter.contains( schema.getModuleName().toString() );
     }
 
     @Inject

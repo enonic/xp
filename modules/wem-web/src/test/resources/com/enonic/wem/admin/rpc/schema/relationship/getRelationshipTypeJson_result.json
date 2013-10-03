@@ -3,11 +3,10 @@
     "relationshipType": {
         "name": "the_relationship_type",
         "displayName": null,
-        "module": "mymodule",
         "fromSemantic": null,
         "toSemantic": null,
         "allowedFromTypes": [ ],
         "allowedToTypes": [ ],
-        "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:mymodule:the_relationship_type"
+        "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type"
     }
 }

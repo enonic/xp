@@ -122,7 +122,7 @@ public final class QualifiedContentTypeNames
         @Override
         public QualifiedContentTypeName apply( final String value )
         {
-            return new QualifiedContentTypeName( value );
+            return QualifiedContentTypeName.from( value );
         }
     }
 

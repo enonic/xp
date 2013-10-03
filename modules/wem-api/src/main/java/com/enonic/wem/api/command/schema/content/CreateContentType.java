@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.form.Form;
 
@@ -24,7 +23,7 @@ public final class CreateContentType
 
     private boolean allowChildContent = true;
 
-    private ModuleName moduleName;
+    private boolean isBuiltIn = false;
 
     private Form form;
 
@@ -98,14 +97,14 @@ public final class CreateContentType
         return this;
     }
 
-    public ModuleName getModuleName()
+    public boolean isBuiltIn()
     {
-        return moduleName;
+        return isBuiltIn;
     }
 
-    public CreateContentType moduleName( final ModuleName moduleName )
+    public CreateContentType builtIn( final boolean builtIn )
     {
-        this.moduleName = moduleName;
+        isBuiltIn = builtIn;
         return this;
     }
 
@@ -159,14 +158,16 @@ public final class CreateContentType
         return Objects.equal( this.name, that.name ) && Objects.equal( this.displayName, that.displayName ) &&
             Objects.equal( this.superType, that.superType ) && Objects.equal( this.isAbstract, that.isAbstract ) &&
             Objects.equal( this.isFinal, that.isFinal ) && Objects.equal( this.allowChildContent, that.allowChildContent ) &&
-            Objects.equal( this.moduleName, that.moduleName ) && Objects.equal( this.form, that.form ) &&
+            Objects.equal( this.isBuiltIn, that.isBuiltIn ) &&
+            Objects.equal( this.form, that.form ) &&
             Objects.equal( this.icon, that.icon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildContent, moduleName, form, icon );
+        return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildContent, isBuiltIn,
+                                 form, icon );
     }
 
     @Override
@@ -174,6 +175,5 @@ public final class CreateContentType
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );
         Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
-        Preconditions.checkNotNull( this.moduleName, "moduleName cannot be null" );
     }
 }

@@ -26,9 +26,8 @@
             "validationRegexp": null
         }
     ],
-    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:mymodule:my_cty",
-    "module": "mymodule",
+    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:my_cty",
     "name": "my_cty",
-    "qualifiedName": "mymodule:my_cty",
-    "superType": "system:unstructured"
+    "qualifiedName": "my_cty",
+    "superType": "unstructured"
 }

@@ -188,7 +188,6 @@ public class ContentTypeResource
             superType( contentType.getSuperType() ).
             setAbstract( contentType.isAbstract() ).
             setFinal( contentType.isFinal() ).
-            moduleName( contentType.getModuleName() ).
             form( contentType.form() ).
             icon( contentType.getIcon() ).
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );

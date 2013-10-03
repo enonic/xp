@@ -21,7 +21,6 @@ public class SchemaJsonSerializer
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "key", schema.getSchemaKey().toString() );
         objectNode.put( "name", schema.getName() );
-        objectNode.put( "module", schema.getModuleName().toString() );
         objectNode.put( "qualifiedName", schema.getQualifiedName().toString() );
         objectNode.put( "displayName", schema.getDisplayName() );
         objectNode.put( "type", schema.getClass().getSimpleName() );

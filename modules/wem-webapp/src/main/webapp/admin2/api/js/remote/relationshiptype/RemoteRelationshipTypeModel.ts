@@ -4,7 +4,6 @@ module api_remote_relationshiptype {
         name:string;
         displayName:string;
         iconUrl:string;
-        module:string;
         fromSemantic:string;
         toSemantic:string;
         allowedFromTypes:string[];

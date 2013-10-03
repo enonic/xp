@@ -37,7 +37,7 @@ class MixinReferenceJsonSerializer
     {
         final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( JsonSerializerUtil.getStringValue( NAME, mixinReferenceObj ) );
-        builder.mixin( new QualifiedMixinName( JsonSerializerUtil.getStringValue( REFERENCE, mixinReferenceObj ) ) );
+        builder.mixin(  QualifiedMixinName.from( JsonSerializerUtil.getStringValue( REFERENCE, mixinReferenceObj ) ) );
         return builder.build();
     }
 }

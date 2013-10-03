@@ -98,7 +98,7 @@ public final class CreateOrUpdateContentRpcHandler
                 }
 
                 final QualifiedContentTypeName qualifiedContentTypeName =
-                    new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
+                    QualifiedContentTypeName.from( context.param( "qualifiedContentTypeName" ).required().asString() );
                 final ContentType contentType = getContentType( qualifiedContentTypeName );
                 final ContentData contentData =
                     new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
@@ -139,7 +139,7 @@ public final class CreateOrUpdateContentRpcHandler
             {
                 final String displayName = context.param( "displayName" ).notBlank().asString();
                 final QualifiedContentTypeName qualifiedContentTypeName =
-                    new QualifiedContentTypeName( context.param( "qualifiedContentTypeName" ).required().asString() );
+                    QualifiedContentTypeName.from( context.param( "qualifiedContentTypeName" ).required().asString() );
                 final ContentType contentType = getContentType( qualifiedContentTypeName );
                 final ContentData contentData =
                     new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );

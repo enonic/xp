@@ -81,7 +81,7 @@ public class MixinReference
 
         public Builder mixin( String qualifiedName )
         {
-            this.qualifiedMixinName = new QualifiedMixinName( qualifiedName );
+            this.qualifiedMixinName = QualifiedMixinName.from( qualifiedName );
             return this;
         }
 

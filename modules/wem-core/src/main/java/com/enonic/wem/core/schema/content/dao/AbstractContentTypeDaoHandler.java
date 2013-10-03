@@ -28,7 +28,7 @@ abstract class AbstractContentTypeDaoHandler
 
     protected final String getNodePath( final QualifiedContentTypeName contentTypeName )
     {
-        return ContentTypeDao.CONTENT_TYPES_PATH + contentTypeName.getModuleName() + "/" + contentTypeName.getLocalName();
+        return ContentTypeDao.CONTENT_TYPES_PATH + contentTypeName.getName();
     }
 
     protected final boolean contentTypeExists( final QualifiedContentTypeName contentTypeName )

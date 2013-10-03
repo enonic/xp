@@ -22,7 +22,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditors;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -72,7 +72,7 @@ public class UpdateContentHandlerTest
 
         Mockito.when( super.client.execute( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 
-        final QualifiedContentTypeName myContentTypeName = new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" );
+        final QualifiedContentTypeName myContentTypeName = QualifiedContentTypeName.from( "my_content_type" );
         final ContentType myContentType = newContentType().
             qualifiedName( myContentTypeName ).
             superType( QualifiedContentTypeName.structured() ).

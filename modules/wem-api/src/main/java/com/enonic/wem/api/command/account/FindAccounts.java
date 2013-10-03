@@ -36,13 +36,13 @@ public final class FindAccounts
         }
 
         final FindAccounts that = (FindAccounts) o;
-        return Objects.equal(this.query, that.query);
+        return Objects.equal( this.query, that.query );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.query);
+        return Objects.hashCode( this.query );
     }
 
     @Override

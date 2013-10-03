@@ -39,11 +39,11 @@ public final class CreateContentTypeHandler
             name( command.getName() ).
             displayName( command.getDisplayName() ).
             contentDisplayNameScript( command.getContentDisplayNameScript() ).
-            module( command.getModuleName() ).
             superType( command.getSuperType() ).
             setAbstract( command.isAbstract() ).
             setFinal( command.isFinal() ).
             allowChildContent( command.getAllowChildContent() ).
+            builtIn( command.isBuiltIn() ).
             icon( command.getIcon() ).
             createdTime( currentTime ).
             modifiedTime( currentTime ).

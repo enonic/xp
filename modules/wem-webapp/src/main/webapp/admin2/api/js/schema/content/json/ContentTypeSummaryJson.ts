@@ -14,8 +14,6 @@ module api_schema_content_json{
 
         iconUrl: string;
 
-        module:string;
-
         name:string;
 
         qualifiedName:string;

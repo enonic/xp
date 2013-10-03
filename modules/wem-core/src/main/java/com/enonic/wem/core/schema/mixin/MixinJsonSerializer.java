@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
@@ -32,7 +31,6 @@ public class MixinJsonSerializer
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "name", mixin.getName() );
-        objectNode.put( "module", mixin.getModuleName().toString() );
         objectNode.put( "displayName", mixin.getDisplayName() );
 
         objectNode.putArray( "items" ).addAll( (ArrayNode) formItemsSerializer.serialize( mixin.getFormItems() ) );
@@ -52,7 +50,6 @@ public class MixinJsonSerializer
     {
         final Mixin.Builder builder = Mixin.newMixin();
         builder.name( JsonSerializerUtil.getStringValue( "name", mixinNode ) );
-        builder.module( ModuleName.from( JsonSerializerUtil.getStringValue( "module", mixinNode ) ) );
         builder.displayName( JsonSerializerUtil.getStringValue( "displayName", mixinNode ) );
 
         Iterable<FormItem> formItems = formItemsSerializer.parse( mixinNode.get( "items" ) );

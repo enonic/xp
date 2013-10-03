@@ -100,7 +100,6 @@ public class CreateOrUpdateMixinRpcHandler
         final CreateMixin createCommand = mixin().create().
             displayName( mixin.getDisplayName() ).
             formItems( mixin.getFormItems() ).
-            moduleName( mixin.getModuleName() ).
             icon( icon );
         try
         {

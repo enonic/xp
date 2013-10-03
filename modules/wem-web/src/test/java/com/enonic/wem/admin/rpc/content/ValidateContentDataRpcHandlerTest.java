@@ -8,7 +8,6 @@ import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.form.Input;
@@ -46,7 +45,6 @@ public class ValidateContentDataRpcHandlerTest
     {
         // setup
         final ContentType contentType = newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "my_type" ).
             addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newFormItemSet().name( "mySet" ).required( true ).addFormItem(
@@ -68,7 +66,6 @@ public class ValidateContentDataRpcHandlerTest
         // setup
         final Input myInput = newInput().name( "my_input" ).inputType( InputTypes.TEXT_LINE ).minimumOccurrences( 1 ).build();
         final ContentType contentType = newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "my_type" ).
             addFormItem( myInput ).
             build();

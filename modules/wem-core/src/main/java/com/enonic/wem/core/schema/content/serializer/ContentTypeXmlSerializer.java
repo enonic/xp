@@ -7,7 +7,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.form.FormItem;
@@ -46,12 +45,12 @@ public class ContentTypeXmlSerializer
     private void generate( final ContentType type, final Element typeEl )
     {
         typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
-        typeEl.addContent( new Element( "module" ).setText( type.getModuleName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( type.getDisplayName() ) );
         typeEl.addContent( new Element( "content-display-name-script" ).setText( type.getContentDisplayNameScript() ) );
         typeEl.addContent( new Element( "super-type" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );
         typeEl.addContent( new Element( "is-abstract" ).setText( Boolean.toString( type.isAbstract() ) ) );
         typeEl.addContent( new Element( "is-final" ).setText( Boolean.toString( type.isFinal() ) ) );
+        typeEl.addContent( new Element( "is-built-in" ).setText( Boolean.toString( type.isBuiltIn() ) ) );
         typeEl.addContent( new Element( "allow-child-content" ).setText( Boolean.toString( type.allowChildContent() ) ) );
 
         final Element formEl = new Element( "form" );
@@ -76,25 +75,25 @@ public class ContentTypeXmlSerializer
     private ContentType parse( final Element contentTypeEl )
         throws IOException
     {
-        final String module = contentTypeEl.getChildText( "module" );
         final String name = contentTypeEl.getChildText( "name" );
         final String displayName = contentTypeEl.getChildText( "display-name" );
         final String displayNameScript = contentTypeEl.getChildText( "content-display-name-script" );
         final String superTypeString = StringUtils.trimToNull( contentTypeEl.getChildText( "super-type" ) );
-        final QualifiedContentTypeName superType = superTypeString != null ? new QualifiedContentTypeName( superTypeString ) : null;
+        final QualifiedContentTypeName superType = superTypeString != null ? QualifiedContentTypeName.from( superTypeString ) : null;
         final boolean isAbstract = Boolean.parseBoolean( contentTypeEl.getChildText( "is-abstract" ) );
         final boolean isFinal = Boolean.parseBoolean( contentTypeEl.getChildText( "is-final" ) );
+        final boolean builtIn = Boolean.parseBoolean( contentTypeEl.getChildText( "is-built-in" ) );
         final String allowChildContentValue = contentTypeEl.getChildText( "allow-child-content" );
         final boolean allowChildContent = StringUtils.isBlank( allowChildContentValue ) || Boolean.parseBoolean( allowChildContentValue );
 
         final ContentType.Builder contentTypeBuilder = newContentType().
             name( name ).
-            module( ModuleName.from( module ) ).
             displayName( displayName ).
             contentDisplayNameScript( displayNameScript ).
             superType( superType ).
             setAbstract( isAbstract ).
             setFinal( isFinal ).
+            builtIn( builtIn ).
             allowChildContent( allowChildContent );
 
         try

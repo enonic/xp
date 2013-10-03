@@ -3,7 +3,6 @@ package com.enonic.wem.core.schema.content;
 import org.apache.commons.lang.WordUtils;
 
 import com.enonic.wem.api.command.schema.content.CreateContentType;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
@@ -91,15 +90,16 @@ public class ContentTypesInitializer
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     private static final ContentType[] SYSTEM_TYPES =
-        {SPACE, STRUCTURED, UNSTRUCTURED, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
+        {UNSTRUCTURED, STRUCTURED, SPACE, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
             MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE};
 
     private static final String[] DEMO_CONTENT_TYPES =
         {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-formItemset.json",
             "demo-contenttype-blog.json", "demo-contenttype-article1.json", "demo-contenttype-article2.json",
             "demo-contenttype-relation.json", "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json",
-            "demo-contenttype-mixin-address.json", "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
-            "demo-contenttype-trampoline.json", "demo-contenttype-formItemset-min-occurrences.json"};
+            "demo-contenttype-mixin-address.json", "demo-contenttype-mixin-norwegian-counties.json",
+            "demo-contenttype-relation-article.json", "demo-contenttype-layout.json", "demo-contenttype-trampoline.json",
+            "demo-contenttype-formItemset-min-occurrences.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
@@ -157,7 +157,7 @@ public class ContentTypesInitializer
                 setAbstract( contentType.isAbstract() ).
                 setFinal( contentType.isFinal() ).
                 allowChildContent( contentType.allowChildContent() ).
-                moduleName( contentType.getModuleName() ).
+                builtIn( contentType.isBuiltIn() ).
                 form( contentType.form() ).
                 icon( contentType.getIcon() ).
                 contentDisplayNameScript( contentType.getContentDisplayNameScript() );
@@ -182,10 +182,9 @@ public class ContentTypesInitializer
     {
         final String displayName = WordUtils.capitalize( qualifiedName.getContentTypeName() );
         final String contentTypeName = qualifiedName.getContentTypeName();
-        final ContentType.Builder builder = newContentType();
-        builder.module( Module.SYSTEM.getName() );
-        builder.name( contentTypeName );
-        builder.displayName( displayName );
-        return builder;
+        return newContentType().
+            name( contentTypeName ).
+            displayName( displayName ).
+            builtIn( true );
     }
 }

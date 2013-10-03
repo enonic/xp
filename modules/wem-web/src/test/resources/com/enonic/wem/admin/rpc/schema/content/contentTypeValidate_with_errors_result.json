@@ -3,21 +3,21 @@
     "hasErrors": true,
     "errors": [
         {
-            "message": "Invalid content type: [mymodule:content_type]: Validation error message 1"
+            "message": "Invalid content type: [content_type]: Validation error message 1"
         },
         {
-            "message": "Invalid content type: [mymodule:my_type2]: Validation error message 2"
+            "message": "Invalid content type: [my_type2]: Validation error message 2"
         }
     ],
     "contentType": {
         "name": "all_types",
-        "module": "mymodule",
-        "qualifiedName": "mymodule:all_types",
+        "qualifiedName": "all_types",
         "displayName": "All the Types",
         "contentDisplayNameScript": null,
-        "superType": "system:content",
+        "superType": "unstructured",
         "isAbstract": false,
         "isFinal": true,
+        "isBuiltIn" : false,
         "allowChildContent": true,
         "form": [
             {

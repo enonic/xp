@@ -33,7 +33,6 @@ public final class CreateRelationshipTypeHandler
         final RelationshipType.Builder builder = newRelationshipType();
         builder.name( command.getName() );
         builder.displayName( command.getDisplayName() );
-        builder.module( command.getModule() );
         builder.fromSemantic( command.getFromSemantic() );
         builder.toSemantic( command.getToSemantic() );
         if ( command.getAllowedFromTypes() != null )
