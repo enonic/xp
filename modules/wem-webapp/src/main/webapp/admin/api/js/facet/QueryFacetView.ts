@@ -42,8 +42,8 @@ module api_facet {
             }
         }
 
-        deselectFacet() {
-            this.entryView.deselect();
+        deselectFacet(supressEvent?:boolean) {
+            this.entryView.deselect(supressEvent);
         }
 
         hasSelectedEntry():boolean {
@@ -52,7 +52,9 @@ module api_facet {
 
         getSelectedValues():string[] {
             var terms:string[] = [];
-            terms.push(this.entryView.getName());
+            if (this.entryView.isSelected()) {
+                terms.push(this.entryView.getName());
+            }
             return terms;
         }
 

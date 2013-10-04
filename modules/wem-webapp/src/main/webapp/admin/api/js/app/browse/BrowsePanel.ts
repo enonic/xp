@@ -59,7 +59,7 @@ module api_app_browse{
             this.treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
 
-                    var models:api_model.ContentExtModel[] = <any[]>event.selectedModels;
+                    var models:api_model.ContentSummaryExtModel[] = <any[]>event.selectedModels;
                     var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems(models);
                     this.browseItemPanel.setItems(browseItems);
                 }

@@ -1,6 +1,6 @@
 module api_model {
 
-    export interface ContentExtModel extends ExtModel {
+    export interface ContentSummaryExtModel extends ExtModel {
         data:{
             id:string;
             name:string;

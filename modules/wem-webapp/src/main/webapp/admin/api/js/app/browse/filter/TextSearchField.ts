@@ -25,9 +25,12 @@ module api_app_browse_filter {
             });
         }
 
-        clear() {
+        clear(supressEvent?:boolean) {
             window.clearTimeout(this.timerId);
             this.getHTMLElement()['value'] = '';
+            if (!supressEvent) {
+                this.notifyValueChanged();
+            }
         }
 
         setPlaceholder(placeholder:string) {

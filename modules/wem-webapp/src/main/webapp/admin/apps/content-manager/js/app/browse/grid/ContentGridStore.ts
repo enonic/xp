@@ -10,16 +10,18 @@ module app_browse_grid {
 
                 model: 'Admin.model.contentManager.ContentModel',
 
+                autoSync: false,
+
                 proxy: {
-                    type: 'direct',
-                    directFn: api_remote_content.RemoteContentService.content_find,
-                    simpleSortMode: true,
+                    type: 'rest',
+                    url: '/admin/rest/content/list',
                     reader: {
                         type: 'json',
                         root: 'contents',
                         totalProperty: 'total'
                     }
                 }
+
             });
         }
 

@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -7,6 +8,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.DateTimeFormatter;
@@ -74,9 +77,17 @@ public class ContentFindParams
         return ranges;
     }
 
-    public void setRanges( final Set<Range> ranges )
+    public void setRanges( ArrayNode rangesArray )
     {
-        this.ranges = ranges;
+        //TODO: had to do it the hard way because jackson failed to deserialize it automatically
+        if ( rangesArray != null )
+        {
+            this.ranges = new HashSet<>( rangesArray.size() );
+            for ( JsonNode jsonNode : rangesArray )
+            {
+                this.ranges.add( new Range( jsonNode ) );
+            }
+        }
     }
 
     public String getFacets()
@@ -101,9 +112,19 @@ public class ContentFindParams
 
     public class Range
     {
-        DateTime lower;
+        private DateTime lower;
 
-        DateTime upper;
+        private DateTime upper;
+
+        public Range()
+        {
+        }
+
+        public Range( JsonNode rangeJson )
+        {
+            setLower( rangeJson.get( "lower" ).asText() );
+            setUpper( rangeJson.get( "upper" ).asText() );
+        }
 
         public DateTime getLower()
         {

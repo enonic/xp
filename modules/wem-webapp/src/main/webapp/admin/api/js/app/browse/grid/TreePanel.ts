@@ -23,10 +23,7 @@ module api_app_browse_grid {
                 rootVisible: false,
                 viewConfig: {
                     trackOver: true,
-                    stripeRows: true,
-                    loadMask: {
-                        store: treeStore
-                    }
+                    stripeRows: true
                 },
                 store: treeStore,
                 columns: columns,

@@ -48,7 +48,7 @@ module api_remote_content {
         displayName: string;
         _type: string;
         count?:number;
-        terms?: {
+        entries?: {
             name?: string;
             displayName?: string;
             count?: number;

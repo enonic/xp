@@ -59,9 +59,9 @@ module api_facet {
             }
         }
 
-        deselectFacet() {
+        deselectFacet(supressEvent?:boolean) {
             this.entryViews.forEach((entryView:TermsFacetEntryView) => {
-                entryView.deselect();
+                entryView.deselect(supressEvent);
             });
         }
 

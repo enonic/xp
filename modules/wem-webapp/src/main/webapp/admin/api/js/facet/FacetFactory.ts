@@ -11,7 +11,7 @@ module api_facet {
                 if (remoteFacet._type == "terms") {
                     var facetEntries:TermsFacetEntry[] = [];
 
-                    remoteFacet.terms.forEach((remoteTermsFacetEntry:any) => {
+                    remoteFacet.entries.forEach((remoteTermsFacetEntry:any) => {
                         facetEntries.push(new TermsFacetEntry(remoteTermsFacetEntry.name, remoteTermsFacetEntry.displayName,
                             remoteTermsFacetEntry.count));
                     });

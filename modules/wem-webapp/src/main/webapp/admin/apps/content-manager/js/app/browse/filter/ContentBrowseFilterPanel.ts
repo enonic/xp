@@ -14,36 +14,36 @@ module app_browse_filter {
                 {
                     onReset: ()=> {
 
-                        var params = app_browse.createLoadContentParams({});
+                        new api_content.FindContentRequest().send().done(
+                            (jsonResponse:api_rest.JsonResponse) => {
+                                this.updateFacets(api_facet.FacetFactory.createFacets(jsonResponse.getJson().facets));
+                                new ContentBrowseResetEvent().fire();
+                            }
+                        );
 
-                        api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
-                            // set facet data
-                            this.updateFacets(api_facet.FacetFactory.createFacets(response.facets));
-                        });
-                        new ContentBrowseResetEvent().fire();
                     },
-                    onSearch: (values)=> {
+                    onSearch: (values:{[s:string] : string[]; })=> {
+
+                        var isClean = !this.hasFilterSet();
+                        if (isClean) {
+                            this.reset();
+                            return;
+                        }
+                        //TODO: ranges are passed as separate facets because each of them is of type QueryFacet
+                        new api_content.FindContentRequest(values['query'] ? values['query'][0] : undefined).
+                            setContentTypes(values['contentType']).
+                            setSpaces(values['space']).
+                            setRanges(values).
+                            setExpand(api_content.FindContentRequest.EXPAND_SUMMARY).
+                            send().done((jsonResponse:api_rest.JsonResponse) => {
+                                var response = jsonResponse.getJson();
+                                this.updateFacets(api_facet.FacetFactory.createFacets(response.facets));
+                                new ContentBrowseSearchEvent(response.contents).fire();
+                            });
+
                     }
                 }
             );
-        }
-
-        handleSearch(values:{[s:string] : string[]; }) {
-
-            var isClean = !this.hasFilterSet();
-            if (isClean) {
-                this.reset();
-                return;
-            }
-            var params = app_browse.createLoadContentParams(values);
-            api_remote_content.RemoteContentService.content_find(params, (response:api_remote_content.FindResult) => {
-                var ids = response.contents.map(function (item) {
-                    return item.id
-                });
-                new ContentBrowseSearchEvent(ids).fire();
-
-                this.updateFacets(api_facet.FacetFactory.createFacets(response.facets));
-            });
         }
 
         private lastModifiedGroupFacetFilter(facet:api_facet.Facet) {

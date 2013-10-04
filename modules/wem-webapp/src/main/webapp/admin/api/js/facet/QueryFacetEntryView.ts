@@ -46,8 +46,8 @@ module api_facet {
             return this.checkbox.isChecked();
         }
 
-        deselect() {
-            this.checkbox.setChecked(false);
+        deselect(supressEvent?:boolean) {
+            this.checkbox.setChecked(false, supressEvent);
         }
 
         private updateUI() {

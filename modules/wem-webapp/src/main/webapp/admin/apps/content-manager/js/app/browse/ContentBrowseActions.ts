@@ -149,7 +149,7 @@ module app_browse {
             return this.allActions;
         }
 
-        updateActionsEnabledState(models:api_model.ContentExtModel[]) {
+        updateActionsEnabledState(models:api_model.ContentSummaryExtModel[]) {
 
             if (models.length <= 0) {
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
@@ -178,9 +178,9 @@ module app_browse {
 
         }
 
-        private anyEditable(contents:api_model.ContentExtModel[]):boolean {
+        private anyEditable(contents:api_model.ContentSummaryExtModel[]):boolean {
             for (var i in contents) {
-                var content:api_model.ContentExtModel = contents[i];
+                var content:api_model.ContentSummaryExtModel = contents[i];
                 if (content.data.editable) {
                     return true;
                 }
@@ -188,9 +188,9 @@ module app_browse {
             return false;
         }
 
-        private anyDeleteable(contents:api_model.ContentExtModel[]):boolean {
+        private anyDeleteable(contents:api_model.ContentSummaryExtModel[]):boolean {
             for (var i in contents) {
-                var content:api_model.ContentExtModel = contents[i];
+                var content:api_model.ContentSummaryExtModel = contents[i];
                 if (content.data.deletable) {
                     return true;
                 }

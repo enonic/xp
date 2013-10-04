@@ -2,7 +2,7 @@
 ///<reference path='../../../api/js/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='model/ContentExtModel.ts' />
+///<reference path='model/ContentSummaryExtModel.ts' />
 ///<reference path='model/ContentTypeExtModel.ts' />
 
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
@@ -103,7 +103,7 @@ window.onload = () => {
         var newContentDialog = new app_new.NewContentDialog();
         app_browse.ShowNewContentDialogEvent.on((event) => {
 
-            var parentContent:api_model.ContentExtModel = event.getParentContent();
+            var parentContent:api_model.ContentSummaryExtModel = event.getParentContent();
 
             new api_content.GetContentByIdRequest(parentContent.data.id).send().
                 done((jsonResponse:api_rest.JsonResponse) => {

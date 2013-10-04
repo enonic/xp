@@ -22,7 +22,7 @@ module api_facet {
             return this.facet.getName();
         }
 
-        deselectFacet() {
+        deselectFacet(supressEvent?:boolean) {
             throw new Error("Must be implemented by inheritor");
         }
 

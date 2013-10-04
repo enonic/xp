@@ -22,9 +22,9 @@ module api_facet {
         }
 
 
-        deselectAll() {
+        deselectAll(supressEvent?:boolean) {
             this.facetGroupViews.forEach((facetView:FacetGroupView) => {
-                facetView.deselectGroup();
+                facetView.deselectGroup(supressEvent);
             });
             this.firstSelectedGroupView = null;
         }

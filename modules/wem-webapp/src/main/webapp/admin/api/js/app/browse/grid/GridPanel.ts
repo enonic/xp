@@ -20,10 +20,7 @@ module api_app_browse_grid {
                 columns: columns,
                 viewConfig: {
                     trackOver: true,
-                    stripeRows: true,
-                    loadMask: {
-                        store: gridStore
-                    }
+                    stripeRows: true
                 },
                 store: gridStore,
                 plugins: [

@@ -379,6 +379,7 @@ interface Ext_Packages extends IExt {
     data: {
         proxy: {
             Proxy: Ext_data_proxy_Proxy;
+            Rest: Ext_data_proxy_Rest;
         };
         writer: {
             Writer: Ext_data_writer_Writer;
@@ -2490,32 +2491,32 @@ interface Ext_window_MessageBox extends Ext_window_Window {
 
     setIcon(icon:string): Ext_window_MessageBox;
 
-/*    show(config:{
-        animateTarget?: string;
-        buttons?: number;
-        closable?: boolean;
-        cls?: string;
-        defaultTextHeight?: number;
-        fn?: (buttonId:string, text:string, opts:Object) => void;
-        buttonText?: Object;
-        scope?:Object;
-        icon?:string;
-        iconCls?: string;
-        maxWidth?; number;
-        minWidth?: number;
-        modal?: boolean;
-        msg?: string;
-        multiline?: boolean;
-        progress?: boolean;
-        progressText?: string;
-        prompt?: boolean;
-        proxyDrag?: boolean;
-        title?: string;
-        value?: string;
-        wait?: boolean;
-        waitConfig?: Object;
-        width?: number;
-    }): Ext_window_MessageBox;*/
+    /*    show(config:{
+     animateTarget?: string;
+     buttons?: number;
+     closable?: boolean;
+     cls?: string;
+     defaultTextHeight?: number;
+     fn?: (buttonId:string, text:string, opts:Object) => void;
+     buttonText?: Object;
+     scope?:Object;
+     icon?:string;
+     iconCls?: string;
+     maxWidth?; number;
+     minWidth?: number;
+     modal?: boolean;
+     msg?: string;
+     multiline?: boolean;
+     progress?: boolean;
+     progressText?: string;
+     prompt?: boolean;
+     proxyDrag?: boolean;
+     title?: string;
+     value?: string;
+     wait?: boolean;
+     waitConfig?: Object;
+     width?: number;
+     }): Ext_window_MessageBox;*/
 
     updateProgress(value?:number, progressText?:string, msg?:string): Ext_window_MessageBox;
 
@@ -4158,7 +4159,8 @@ interface Ext_data_Store extends Ext_data_AbstractStore {
 
     findExact(fieldName:string, value:Object, startIndex?:number): number;
 
-    findRecord(fieldName:string, value:Object, startIndex?:number, anyMatch?:boolean, caseSensitive?:boolean, exactMatch?:boolean): Ext_data_Model;
+    findRecord(fieldName:string, value:Object, startIndex?:number, anyMatch?:boolean, caseSensitive?:boolean,
+               exactMatch?:boolean): Ext_data_Model;
 
     first(grouped?:boolean): Ext_data_Model;        //Ext.data.Model/undefined
 
@@ -4316,6 +4318,49 @@ interface Ext_data_proxy_Proxy extends Ext_Base {
 
     update(operation:Ext_data_Operation, callback:Function, scope:Object): void;
 
+}
+
+
+interface Ext_data_proxy_Server extends Ext_data_proxy_Proxy {
+
+    buildRequest(operation:Ext_data_Operation): Ext_data_Request;
+
+    buildUrl(request:Ext_data_Request): string;
+
+    //create(): void;
+
+    destroy(): void;
+
+    doRequest(operation:Ext_data_Operation, callback:Function, scope:Object): void;
+
+    encodeFilters(filters:Ext_util_Filter[]) : string;
+
+    encodeSorters(sorters:Ext_util_Sorter[]) : string;
+
+    read(): void;
+
+    setExtraParam(name:string, value:any): void;
+
+    update(): void;
+
+}
+
+
+interface Ext_data_proxy_Ajax extends Ext_data_proxy_Server {
+
+    actionMethods : Object;
+
+    new(config?:Object): Ext_data_proxy_Ajax;
+
+    getMethod(request:Ext_data_Request): string;
+}
+
+
+interface Ext_data_proxy_Rest extends Ext_data_proxy_Ajax {
+
+    new(config?:Object): Ext_data_proxy_Rest;
+
+    buildUrl(request:Ext_data_Request):string;
 }
 
 
@@ -5344,6 +5389,7 @@ interface Ext_Version {}
 interface Ext_data_reader_Reader {}
 interface Ext_data_writer_Writer {}
 interface Ext_data_Operation {}
+interface Ext_data_Request {}
 interface Ext_data_Batch {}
 interface Ext_data_Store_PageMap {}
 

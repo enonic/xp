@@ -16,7 +16,7 @@ module api_app_browse_filter {
 
             this.searchField = new TextSearchField('Search');
             this.searchField.addValueChangedListener(() => {
-                this.doHandleSearch();
+                this.search();
             });
 
             this.clearFilter = new ClearFilterButton();
@@ -32,7 +32,7 @@ module api_app_browse_filter {
 
                         facetGroupView.addFacetEntrySelectionChangeListener((event:api_facet.FacetEntryViewSelectionChangedEvent) => {
 
-                            this.doHandleSearch();
+                            this.search();
                         });
 
                         this.facetContainer.addFacetGroupView(facetGroupView);
@@ -45,20 +45,6 @@ module api_app_browse_filter {
             this.appendChild(this.searchField);
             this.appendChild(this.clearFilter);
             this.appendChild(this.facetContainer);
-        }
-
-        private doHandleSearch() {
-            if (this.hasFilterSet()) {
-                this.clearFilter.show();
-            }
-            else {
-                this.clearFilter.hide();
-            }
-            this.handleSearch(this.getValues());
-        }
-
-        handleSearch(values:{ [s : string ] : string[]; }) {
-            throw new Error("Must be implemented by inheritors");
         }
 
         updateFacets(facets:api_facet.Facet[]) {
@@ -75,15 +61,22 @@ module api_app_browse_filter {
             return this.facetContainer.hasSelectedFacetEntries() || this.searchField.getHTMLElement()['value'].trim() != '';
         }
 
-        reset() {
-            this.searchField.clear();
-            this.facetContainer.deselectAll();
-            this.clearFilter.hide();
-            this.notifyReset();
+        search() {
+            if (this.hasFilterSet()) {
+                this.clearFilter.show();
+            }
+            else {
+                this.clearFilter.hide();
+            }
+            var values = this.getValues();
+            this.notifySearch(values);
         }
 
-        search() {
-            this.notifySearch(this.getValues());
+        reset() {
+            this.searchField.clear(true);
+            this.facetContainer.deselectAll(true);
+            this.clearFilter.hide();
+            this.notifyReset();
         }
 
         addListener(listener:BrowseFilterPanelListener) {

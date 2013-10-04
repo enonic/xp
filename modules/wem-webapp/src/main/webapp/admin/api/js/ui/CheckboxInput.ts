@@ -27,7 +27,7 @@ module api_ui {
             });
         }
 
-        setChecked(newValue:boolean):CheckboxInput {
+        setChecked(newValue:boolean, supressEvent?:boolean):CheckboxInput {
             var oldValue = this.isChecked();
 
             if (oldValue != newValue) {
@@ -38,7 +38,9 @@ module api_ui {
                     this.getEl().removeAttribute("checked");
                 }
 
-                this.notifyValueChanged(oldValue, newValue);
+                if(!supressEvent) {
+                    this.notifyValueChanged(oldValue, newValue);
+                }
                 // save new value to know which value was before input event.
                 this.oldValue = newValue;
             }

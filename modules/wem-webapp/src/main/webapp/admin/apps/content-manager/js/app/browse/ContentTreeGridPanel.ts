@@ -22,22 +22,13 @@ module app_browse {
             this.setItemId("ContentTreeGridPanel");
 
             app_browse_filter.ContentBrowseSearchEvent.on((event) => {
-                if (event.getResultContentIds().length > 0) {
-                    // show  ids
-                    this.setRemoteSearchParams({ contentIds: event.getResultContentIds() });
-                    this.refresh();
-                } else {
-                    // show none
-                    this.removeAll();
-                    this.updateResultCount(0);
-                }
+                this.loadData(event.getContentList());
             });
 
             app_browse_filter.ContentBrowseResetEvent.on((event) => {
-                this.setRemoteSearchParams({});
+                this.removeAll();
                 this.refresh();
             });
-
 
             this.addListener({
                 onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {

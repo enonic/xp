@@ -69,9 +69,9 @@ module api_facet {
             });
         }
 
-        deselectGroup() {
+        deselectGroup(supressEvent?:boolean) {
             this.facetViews.forEach((facetView:FacetView) => {
-                facetView.deselectFacet();
+                facetView.deselectFacet(supressEvent);
             });
         }
 

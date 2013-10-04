@@ -10,3 +10,4 @@
 ///<reference path='UpdateContentRequest.ts' />
 ///<reference path='ListContentByIdRequest.ts' />
 ///<reference path='ListContentByPathRequest.ts' />
+///<reference path='FindContentRequest.ts' />

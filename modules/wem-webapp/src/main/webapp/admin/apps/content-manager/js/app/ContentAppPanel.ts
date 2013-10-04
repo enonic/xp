@@ -75,9 +75,9 @@ module app {
             }
         }
 
-        private handleOpen(contents:api_model.ContentExtModel[]) {
+        private handleOpen(contents:api_model.ContentSummaryExtModel[]) {
 
-            contents.forEach((contentModel:api_model.ContentExtModel) => {
+            contents.forEach((contentModel:api_model.ContentSummaryExtModel) => {
 
                 var tabId = this.generateTabId(contentModel.data.path, false);
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
@@ -104,9 +104,9 @@ module app {
             });
         }
 
-        private handleEdit(contents:api_model.ContentExtModel[]) {
+        private handleEdit(contents:api_model.ContentSummaryExtModel[]) {
 
-            contents.forEach((contentModel:api_model.ContentExtModel) => {
+            contents.forEach((contentModel:api_model.ContentSummaryExtModel) => {
 
                 var tabId = this.generateTabId(contentModel.data.path, true);
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);

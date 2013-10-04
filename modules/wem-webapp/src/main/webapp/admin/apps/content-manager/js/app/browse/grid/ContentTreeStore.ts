@@ -12,11 +12,14 @@ module app_browse_grid {
 
                 folderSort: true,
                 autoLoad: false,
+                clearOnLoad: false,
+                autoSync: false,
+                defaultRootId: undefined,
+                nodeParam: 'parentId',
 
                 proxy: {
-                    type: 'direct',
-                    directFn: api_remote_content.RemoteContentService.content_tree,
-                    simpleSortMode: true,
+                    type: 'rest',
+                    url: '/admin/rest/content/list',
                     reader: {
                         type: 'json',
                         root: 'contents',

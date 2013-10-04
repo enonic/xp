@@ -1,14 +1,14 @@
 module app_wizard {
     export class BaseContentModelEvent extends api_event.Event {
 
-        private model:api_model.ContentExtModel[];
+        private model:api_model.ContentSummaryExtModel[];
 
-        constructor(name:string, model:api_model.ContentExtModel[]) {
+        constructor(name:string, model:api_model.ContentSummaryExtModel[]) {
             this.model = model;
             super(name);
         }
 
-        getModels():api_model.ContentExtModel[] {
+        getModels():api_model.ContentSummaryExtModel[] {
             return this.model;
         }
     }

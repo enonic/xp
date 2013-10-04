@@ -197,6 +197,21 @@ module api_app_browse_grid {
             this.refreshNeeded = false;
         }
 
+        loadData(data:Object[], append?:boolean) {
+            var activeList = this.getActiveList();
+            if (this.activeList == TreeGridPanel.GRID) {
+                activeList.getStore().loadData(data, append);
+            } else {
+                var root = (<Ext_tree_Panel>activeList).getRootNode();
+                if (!append) {
+                    (<Ext_tree_Panel>activeList).getRootNode().removeAll();
+                }
+                for (var i = 0; i < data.length; i++) {
+                    root.appendChild(root.createNode(data[i]));
+                }
+            }
+        }
+
         isRefreshNeeded():boolean {
             return this.refreshNeeded;
         }
