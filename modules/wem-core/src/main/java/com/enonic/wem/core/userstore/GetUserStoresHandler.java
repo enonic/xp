@@ -22,11 +22,6 @@ public class GetUserStoresHandler
 {
     private AccountDao accountDao;
 
-    public GetUserStoresHandler()
-    {
-        super( GetUserStores.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetUserStores command )
         throws Exception

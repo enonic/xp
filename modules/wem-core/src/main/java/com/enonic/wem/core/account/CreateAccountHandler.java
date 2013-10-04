@@ -20,15 +20,9 @@ import com.enonic.wem.core.index.IndexService;
 public final class CreateAccountHandler
     extends CommandHandler<CreateAccount>
 {
-
     private IndexService indexService;
 
     private AccountDao accountDao;
-
-    public CreateAccountHandler()
-    {
-        super( CreateAccount.class );
-    }
 
     @Override
     public void handle( final CommandContext context, final CreateAccount command )

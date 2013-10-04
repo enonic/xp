@@ -15,11 +15,6 @@ public class CreateBinaryHandler
 {
     private BinaryDao binaryDao;
 
-    public CreateBinaryHandler()
-    {
-        super( CreateBinary.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final CreateBinary command )
         throws Exception

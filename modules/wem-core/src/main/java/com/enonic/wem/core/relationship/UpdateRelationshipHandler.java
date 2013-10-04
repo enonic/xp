@@ -21,11 +21,6 @@ public final class UpdateRelationshipHandler
 {
     private RelationshipDao relationshipDao;
 
-    public UpdateRelationshipHandler()
-    {
-        super( UpdateRelationship.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final UpdateRelationship command )
         throws Exception

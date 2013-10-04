@@ -19,11 +19,6 @@ public final class DeleteContentTypeHandler
 
     private ContentDao contentDao;
 
-    public DeleteContentTypeHandler()
-    {
-        super( DeleteContentType.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteContentType command )
         throws Exception

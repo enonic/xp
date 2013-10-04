@@ -25,11 +25,6 @@ public class GetRootContentHandler
 
     private ContentDao contentDao;
 
-    public GetRootContentHandler()
-    {
-        super( GetRootContent.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetRootContent command )
         throws Exception

@@ -15,11 +15,6 @@ public final class ValidatePasswordHandler
 {
     private AccountDao accountDao;
 
-    public ValidatePasswordHandler()
-    {
-        super( ValidatePassword.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final ValidatePassword command )
         throws Exception

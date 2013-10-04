@@ -7,11 +7,6 @@ import com.enonic.wem.core.command.CommandHandler;
 public class GenerateContentNameHandler
     extends CommandHandler<GenerateContentName>
 {
-    public GenerateContentNameHandler()
-    {
-        super( GenerateContentName.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GenerateContentName command )
         throws Exception

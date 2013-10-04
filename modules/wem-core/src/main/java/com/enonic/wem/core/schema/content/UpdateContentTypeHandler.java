@@ -24,11 +24,6 @@ public final class UpdateContentTypeHandler
 {
     private ContentTypeDao contentTypeDao;
 
-    public UpdateContentTypeHandler()
-    {
-        super( UpdateContentType.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final UpdateContentType command )
         throws Exception

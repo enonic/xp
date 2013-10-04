@@ -21,11 +21,6 @@ public final class ValidateContentDataHandler
 {
     private ContentTypeDao contentTypeDao;
 
-    public ValidateContentDataHandler()
-    {
-        super( ValidateContentData.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final ValidateContentData command )
         throws Exception

@@ -15,11 +15,6 @@ public class DeleteUserStoreHandler
 {
     private AccountDao accountDao;
 
-    public DeleteUserStoreHandler()
-    {
-        super( DeleteUserStore.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteUserStore command )
         throws Exception

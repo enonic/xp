@@ -17,11 +17,6 @@ public final class RenameSpaceHandler
 {
     private SpaceDao spaceDao;
 
-    public RenameSpaceHandler()
-    {
-        super( RenameSpace.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final RenameSpace command )
         throws Exception

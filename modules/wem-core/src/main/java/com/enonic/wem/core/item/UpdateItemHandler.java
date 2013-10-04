@@ -16,11 +16,6 @@ import static com.enonic.wem.core.item.dao.UpdateItemArgs.newUpdateItemArgs;
 public class UpdateItemHandler
     extends CommandHandler<UpdateItem>
 {
-    public UpdateItemHandler()
-    {
-        super( UpdateItem.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final UpdateItem command )
         throws Exception

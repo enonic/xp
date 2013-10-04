@@ -31,11 +31,6 @@ public class GetSchemaTreeHandler
 
     private RelationshipTypeDao relationshipTypeDao;
 
-    public GetSchemaTreeHandler()
-    {
-        super( GetSchemaTree.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetSchemaTree command )
         throws Exception

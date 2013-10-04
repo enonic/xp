@@ -8,11 +8,6 @@ import com.enonic.wem.core.command.CommandHandler;
 public abstract class AbstractUserStoreHandler<T extends Command>
     extends CommandHandler<T>
 {
-    public AbstractUserStoreHandler( final Class<T> type )
-    {
-        super( type );
-    }
-
     protected UserStoreConnector getUserStoreConnector( final UserStoreName userStoreName )
     {
         // TODO: Implement real logic here when we get UserStoreConnector management.

@@ -40,11 +40,6 @@ public final class FindAccountsHandler
 
     private AccountSearchService accountSearchService;
 
-    public FindAccountsHandler()
-    {
-        super( FindAccounts.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final FindAccounts command )
         throws Exception

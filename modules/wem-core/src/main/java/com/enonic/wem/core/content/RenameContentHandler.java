@@ -21,11 +21,6 @@ public class RenameContentHandler
 
     private AttachmentDao attachmentDao;
 
-    public RenameContentHandler()
-    {
-        super( RenameContent.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final RenameContent command )
         throws Exception

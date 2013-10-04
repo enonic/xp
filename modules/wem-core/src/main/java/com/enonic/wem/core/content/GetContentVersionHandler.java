@@ -16,11 +16,6 @@ public class GetContentVersionHandler
 {
     private ContentDao contentDao;
 
-    public GetContentVersionHandler()
-    {
-        super( GetContentVersion.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetContentVersion command )
         throws Exception

@@ -13,11 +13,6 @@ public class GetResourceHandler
 {
     private ResourceDao resourceDao;
 
-    public GetResourceHandler()
-    {
-        super( GetResource.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetResource command )
         throws Exception

@@ -18,11 +18,6 @@ public class UpdateUserStoreHandler
 {
     private AccountDao accountDao;
 
-    public UpdateUserStoreHandler()
-    {
-        super( UpdateUserStore.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final UpdateUserStore command )
         throws Exception

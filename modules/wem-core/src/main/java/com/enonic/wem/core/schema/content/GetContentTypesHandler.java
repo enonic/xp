@@ -23,11 +23,6 @@ public final class GetContentTypesHandler
 
     private MixinDao mixinDao;
 
-    public GetContentTypesHandler()
-    {
-        super( GetContentTypes.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetContentTypes command )
         throws Exception

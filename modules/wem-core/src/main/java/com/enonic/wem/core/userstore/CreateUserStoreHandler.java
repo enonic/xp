@@ -16,11 +16,6 @@ public class CreateUserStoreHandler
 {
     private AccountDao accountDao;
 
-    public CreateUserStoreHandler()
-    {
-        super( CreateUserStore.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final CreateUserStore command )
         throws Exception

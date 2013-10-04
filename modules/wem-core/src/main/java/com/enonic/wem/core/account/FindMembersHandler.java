@@ -14,11 +14,6 @@ public final class FindMembersHandler
 {
     private AccountDao accountDao;
 
-    public FindMembersHandler()
-    {
-        super( FindMembers.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final FindMembers command )
         throws Exception

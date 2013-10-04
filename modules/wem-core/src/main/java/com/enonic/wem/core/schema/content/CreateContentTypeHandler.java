@@ -24,11 +24,6 @@ public final class CreateContentTypeHandler
 {
     private ContentTypeDao contentTypeDao;
 
-    public CreateContentTypeHandler()
-    {
-        super( CreateContentType.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final CreateContentType command )
         throws Exception

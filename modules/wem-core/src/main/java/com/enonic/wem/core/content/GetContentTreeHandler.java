@@ -11,13 +11,7 @@ import com.enonic.wem.core.content.dao.ContentDao;
 public class GetContentTreeHandler
     extends CommandHandler<GetContentTree>
 {
-
     private ContentDao contentDao;
-
-    public GetContentTreeHandler()
-    {
-        super( GetContentTree.class );
-    }
 
     @Override
     public void handle( final CommandContext context, final GetContentTree command )

@@ -28,11 +28,6 @@ public final class UpdateAccountsHandler
 
     private IndexService indexService;
 
-    public UpdateAccountsHandler()
-    {
-        super( UpdateAccounts.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final UpdateAccounts command )
         throws Exception

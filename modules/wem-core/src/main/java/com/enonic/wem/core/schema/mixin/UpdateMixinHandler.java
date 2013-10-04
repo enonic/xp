@@ -24,11 +24,6 @@ public final class UpdateMixinHandler
 {
     private MixinDao mixinDao;
 
-    public UpdateMixinHandler()
-    {
-        super( UpdateMixin.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final UpdateMixin command )
         throws Exception

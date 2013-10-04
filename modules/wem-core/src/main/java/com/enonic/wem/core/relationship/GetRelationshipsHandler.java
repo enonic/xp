@@ -14,11 +14,6 @@ public final class GetRelationshipsHandler
 {
     private RelationshipDao relationshipDao;
 
-    public GetRelationshipsHandler()
-    {
-        super( GetRelationships.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetRelationships command )
         throws Exception

@@ -16,11 +16,6 @@ public class GetChildContentHandler
     @Inject
     private ContentDao contentDao;
 
-    public GetChildContentHandler()
-    {
-        super( GetChildContent.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetChildContent command )
         throws Exception

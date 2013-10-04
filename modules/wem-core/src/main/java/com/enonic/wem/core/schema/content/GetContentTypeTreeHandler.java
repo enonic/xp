@@ -15,11 +15,6 @@ public class GetContentTypeTreeHandler
 {
     private ContentTypeDao contentTypeDao;
 
-    public GetContentTypeTreeHandler()
-    {
-        super( GetContentTypeTree.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetContentTypeTree command )
         throws Exception

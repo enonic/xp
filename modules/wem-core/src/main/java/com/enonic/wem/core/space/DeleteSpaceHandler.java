@@ -15,11 +15,6 @@ public final class DeleteSpaceHandler
 {
     private SpaceDao spaceDao;
 
-    public DeleteSpaceHandler()
-    {
-        super( DeleteSpace.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteSpace command )
         throws Exception

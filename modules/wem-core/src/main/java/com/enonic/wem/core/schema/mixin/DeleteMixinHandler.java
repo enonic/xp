@@ -16,11 +16,6 @@ public final class DeleteMixinHandler
 {
     private MixinDao mixinDao;
 
-    public DeleteMixinHandler()
-    {
-        super( DeleteMixin.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteMixin command )
         throws Exception

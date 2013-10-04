@@ -21,11 +21,6 @@ public final class GetAccountsHandler
 {
     private AccountDao accountDao;
 
-    public GetAccountsHandler()
-    {
-        super( GetAccounts.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetAccounts command )
         throws Exception

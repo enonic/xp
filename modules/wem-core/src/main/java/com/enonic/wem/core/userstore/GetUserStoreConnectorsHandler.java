@@ -10,11 +10,6 @@ import com.enonic.wem.core.command.CommandHandler;
 public class GetUserStoreConnectorsHandler
     extends CommandHandler<GetUserStoreConnectors>
 {
-    public GetUserStoreConnectorsHandler()
-    {
-        super( GetUserStoreConnectors.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetUserStoreConnectors command )
         throws Exception

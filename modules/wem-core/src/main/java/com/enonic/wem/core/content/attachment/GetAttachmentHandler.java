@@ -15,11 +15,6 @@ public class GetAttachmentHandler
 {
     private AttachmentDao attachmentDao;
 
-    public GetAttachmentHandler()
-    {
-        super( GetAttachment.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetAttachment command )
         throws Exception

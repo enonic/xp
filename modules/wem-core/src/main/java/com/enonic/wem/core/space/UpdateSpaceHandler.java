@@ -18,11 +18,6 @@ public final class UpdateSpaceHandler
 {
     private SpaceDao spaceDao;
 
-    public UpdateSpaceHandler()
-    {
-        super( UpdateSpace.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final UpdateSpace command )
         throws Exception

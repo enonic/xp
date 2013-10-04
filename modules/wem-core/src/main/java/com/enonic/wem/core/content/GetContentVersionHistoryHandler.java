@@ -24,11 +24,6 @@ public class GetContentVersionHistoryHandler
 
     private final ContentVersionComparator contentVersionComparator = new ContentVersionComparator();
 
-    public GetContentVersionHistoryHandler()
-    {
-        super( GetContentVersionHistory.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetContentVersionHistory command )
         throws Exception

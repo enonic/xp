@@ -14,11 +14,6 @@ public class DeleteAttachmentHandler
 {
     private AttachmentDao attachmentDao;
 
-    public DeleteAttachmentHandler()
-    {
-        super( DeleteAttachment.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteAttachment command )
         throws Exception

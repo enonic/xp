@@ -26,11 +26,6 @@ public final class FindMembershipsHandler
 
     private AccountSearchService accountSearchService;
 
-    public FindMembershipsHandler()
-    {
-        super( FindMemberships.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final FindMemberships command )
         throws Exception

@@ -19,11 +19,6 @@ public final class CreateRelationshipTypeHandler
 {
     private RelationshipTypeDao relationshipTypeDao;
 
-    public CreateRelationshipTypeHandler()
-    {
-        super( CreateRelationshipType.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final CreateRelationshipType command )
         throws Exception

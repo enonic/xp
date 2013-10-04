@@ -15,11 +15,6 @@ public class GetContentsHandler
 {
     private ContentDao contentDao;
 
-    public GetContentsHandler()
-    {
-        super( GetContents.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetContents command )
         throws Exception

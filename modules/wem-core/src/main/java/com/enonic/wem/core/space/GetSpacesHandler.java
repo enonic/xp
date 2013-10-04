@@ -22,11 +22,6 @@ public final class GetSpacesHandler
 {
     private SpaceDao spaceDao;
 
-    public GetSpacesHandler()
-    {
-        super( GetSpaces.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetSpaces command )
         throws Exception

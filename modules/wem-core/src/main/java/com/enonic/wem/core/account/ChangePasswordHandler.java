@@ -15,11 +15,6 @@ public final class ChangePasswordHandler
 {
     private AccountDao accountDao;
 
-    public ChangePasswordHandler()
-    {
-        super( ChangePassword.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final ChangePassword command )
         throws Exception

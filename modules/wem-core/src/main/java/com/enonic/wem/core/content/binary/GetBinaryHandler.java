@@ -14,11 +14,6 @@ public class GetBinaryHandler
 {
     private BinaryDao binaryDao;
 
-    public GetBinaryHandler()
-    {
-        super( GetBinary.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetBinary command )
         throws Exception

@@ -17,13 +17,7 @@ import static com.enonic.wem.api.schema.content.validator.ContentTypeValidator.n
 public class ValidateContentTypeHandler
     extends CommandHandler<ValidateContentType>
 {
-
     private ContentTypeDao contentTypeDao;
-
-    public ValidateContentTypeHandler()
-    {
-        super( ValidateContentType.class );
-    }
 
     @Override
     public void handle( final CommandContext context, final ValidateContentType command )

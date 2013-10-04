@@ -15,11 +15,6 @@ public class DeleteBinaryHandler
 {
     private BinaryDao binaryDao;
 
-    public DeleteBinaryHandler()
-    {
-        super( DeleteBinary.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteBinary command )
         throws Exception

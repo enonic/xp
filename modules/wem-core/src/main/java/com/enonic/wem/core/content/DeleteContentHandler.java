@@ -22,11 +22,6 @@ public class DeleteContentHandler
 
     private IndexService indexService;
 
-    public DeleteContentHandler()
-    {
-        super( DeleteContent.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteContent command )
         throws Exception

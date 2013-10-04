@@ -14,11 +14,6 @@ public class CreateAttachmentHandler
 {
     private AttachmentDao attachmentDao;
 
-    public CreateAttachmentHandler()
-    {
-        super( CreateAttachment.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final CreateAttachment command )
         throws Exception

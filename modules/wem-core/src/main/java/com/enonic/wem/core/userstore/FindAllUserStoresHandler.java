@@ -14,11 +14,6 @@ public class FindAllUserStoresHandler
 {
     private AccountDao accountDao;
 
-    public FindAllUserStoresHandler()
-    {
-        super( FindAllUserStores.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final FindAllUserStores command )
         throws Exception

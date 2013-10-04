@@ -30,11 +30,6 @@ public final class CreateSpaceHandler
 
     private IndexService indexService;
 
-    public CreateSpaceHandler()
-    {
-        super( CreateSpace.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final CreateSpace command )
         throws Exception

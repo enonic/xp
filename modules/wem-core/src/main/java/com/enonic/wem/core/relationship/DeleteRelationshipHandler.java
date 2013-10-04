@@ -16,11 +16,6 @@ public final class DeleteRelationshipHandler
 {
     private RelationshipDao relationshipDao;
 
-    public DeleteRelationshipHandler()
-    {
-        super( DeleteRelationship.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteRelationship command )
         throws Exception

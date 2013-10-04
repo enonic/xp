@@ -18,11 +18,6 @@ public class DeleteAccountHandler
 
     private IndexService indexService;
 
-    public DeleteAccountHandler()
-    {
-        super( DeleteAccount.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final DeleteAccount command )
         throws Exception

@@ -16,11 +16,6 @@ public final class GetMixinsHandler
 {
     private MixinDao mixinDao;
 
-    public GetMixinsHandler()
-    {
-        super( GetMixins.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final GetMixins command )
         throws Exception

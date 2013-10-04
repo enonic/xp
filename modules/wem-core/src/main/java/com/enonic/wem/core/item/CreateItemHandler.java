@@ -12,11 +12,6 @@ import com.enonic.wem.core.item.dao.ItemJcrDao;
 public class CreateItemHandler
     extends CommandHandler<CreateItem>
 {
-    public CreateItemHandler()
-    {
-        super( CreateItem.class );
-    }
-
     @Override
     public void handle( final CommandContext context, final CreateItem command )
         throws Exception

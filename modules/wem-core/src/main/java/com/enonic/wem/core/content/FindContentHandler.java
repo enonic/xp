@@ -16,13 +16,7 @@ import com.enonic.wem.core.index.search.SearchService;
 public class FindContentHandler
     extends CommandHandler<FindContent>
 {
-
     private SearchService searchService;
-
-    public FindContentHandler()
-    {
-        super( FindContent.class );
-    }
 
     @Override
     public void handle( final CommandContext context, final FindContent command )
