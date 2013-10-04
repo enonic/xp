@@ -1,5 +1,6 @@
 package com.enonic.wem.api.item;
 
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.data.RootDataSet;
@@ -13,6 +14,8 @@ public class CreateItem
     private String name;
 
     private ItemPath parent;
+
+    private Icon icon;
 
     private RootDataSet dataSet;
 
@@ -31,6 +34,12 @@ public class CreateItem
     public CreateItem parent( final ItemPath value )
     {
         this.parent = value;
+        return this;
+    }
+
+    public CreateItem icon( final Icon value )
+    {
+        this.icon = value;
         return this;
     }
 
@@ -53,6 +62,11 @@ public class CreateItem
     public ItemPath getParent()
     {
         return parent;
+    }
+
+    public Icon getIcon()
+    {
+        return icon;
     }
 
     public RootDataSet getDataSet()

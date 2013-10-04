@@ -12,9 +12,12 @@ import com.enonic.wem.api.command.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
 import com.enonic.wem.api.command.space.SpaceCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
+import com.enonic.wem.api.item.ItemCommands;
 
 public final class Commands
 {
+    private static final ItemCommands ITEM_COMMANDS = new ItemCommands();
+
     private static final SpaceCommands SPACE_COMMANDS = new SpaceCommands();
 
     private static final AccountCommands ACCOUNT_COMMANDS = new AccountCommands();
@@ -41,6 +44,11 @@ public final class Commands
 
     private Commands()
     {
+    }
+
+    public static ItemCommands item()
+    {
+        return ITEM_COMMANDS;
     }
 
     public static AccountCommands account()

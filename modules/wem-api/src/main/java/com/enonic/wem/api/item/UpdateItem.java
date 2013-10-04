@@ -11,7 +11,7 @@ public class UpdateItem
 {
     private UserKey modifier;
 
-    private ItemId itemId;
+    private ItemId itemToUpdate;
 
     private ItemEditor editor;
 
@@ -21,9 +21,9 @@ public class UpdateItem
         return this;
     }
 
-    public UpdateItem item( final ItemId value )
+    public UpdateItem itemToUpdate( final ItemId value )
     {
-        this.itemId = value;
+        this.itemToUpdate = value;
         return this;
     }
 
@@ -37,7 +37,7 @@ public class UpdateItem
     public void validate()
     {
         Preconditions.checkNotNull( this.modifier, "modifier cannot be null" );
-        Preconditions.checkNotNull( this.itemId, "itemId cannot be null" );
+        Preconditions.checkNotNull( this.itemToUpdate, "itemToUpdate cannot be null" );
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 
@@ -46,9 +46,9 @@ public class UpdateItem
         return modifier;
     }
 
-    public ItemId getItemId()
+    public ItemId getItemToUpdate()
     {
-        return itemId;
+        return itemToUpdate;
     }
 
     public ItemEditor getEditor()
