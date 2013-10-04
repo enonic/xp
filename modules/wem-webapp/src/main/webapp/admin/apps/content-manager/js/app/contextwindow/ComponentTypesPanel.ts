@@ -109,7 +109,7 @@ module app_contextwindow {
 
         private getData():void {
             jQuery.ajax({
-                url: "/admin2/apps/content-manager/js/data/context-window/mock-component-types.json",
+                url: "/admin/apps/content-manager/js/data/context-window/mock-component-types.json",
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
                     this.grid.updateData(ComponentGrid.toSlickData(data));
                 }
