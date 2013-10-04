@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.content.ContentSearchHit;
 import com.enonic.wem.core.index.content.ContentSearchResults;
@@ -19,7 +18,7 @@ public class FindContentHandler
     private SearchService searchService;
 
     @Override
-    public void handle( final CommandContext context, final FindContent command )
+    public void handle( final FindContent command )
         throws Exception
     {
         final ContentIndexQuery contentIndexQuery = command.getContentIndexQuery();

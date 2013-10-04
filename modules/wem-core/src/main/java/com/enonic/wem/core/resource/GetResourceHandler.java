@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.command.resource.GetResource;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.resource.dao.ResourceDao;
 
@@ -14,7 +13,7 @@ public class GetResourceHandler
     private ResourceDao resourceDao;
 
     @Override
-    public void handle( final CommandContext context, final GetResource command )
+    public void handle( final GetResource command )
         throws Exception
     {
         final Resource resource = resourceDao.getResource( command.getPath(), command.getModule() );

@@ -12,7 +12,6 @@ import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.IndexService;
 
@@ -25,7 +24,7 @@ public final class CreateAccountHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final CommandContext context, final CreateAccount command )
+    public void handle( final CreateAccount command )
         throws Exception
     {
         final Account account = command.getAccount();

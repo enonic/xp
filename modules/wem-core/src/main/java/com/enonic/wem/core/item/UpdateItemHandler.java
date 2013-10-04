@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.UpdateItem;
 import com.enonic.wem.api.item.UpdateItemResult;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.item.dao.ItemJcrDao;
 import com.enonic.wem.core.item.dao.UpdateItemArgs;
@@ -17,7 +16,7 @@ public class UpdateItemHandler
     extends CommandHandler<UpdateItem>
 {
     @Override
-    public void handle( final CommandContext context, final UpdateItem command )
+    public void handle( final UpdateItem command )
         throws Exception
     {
         final Session session = context.getJcrSession();

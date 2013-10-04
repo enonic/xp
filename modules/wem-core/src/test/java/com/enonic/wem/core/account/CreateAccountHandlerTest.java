@@ -45,6 +45,7 @@ public class CreateAccountHandlerTest
         final IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new CreateAccountHandler();
+        handler.setContext( context );
         handler.setAccountDao( accountDao );
         handler.setIndexService( indexService );
     }
@@ -95,7 +96,7 @@ public class CreateAccountHandlerTest
 
         // exercise
         CreateAccount command = Commands.account().create().account( user );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final AccountKey createdUserKey = command.getResult();
 
         // verify
@@ -115,7 +116,7 @@ public class CreateAccountHandlerTest
 
         // exercise
         CreateAccount command = Commands.account().create().account( group );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final AccountKey createdGroupKey = command.getResult();
 
         // verify
@@ -135,7 +136,7 @@ public class CreateAccountHandlerTest
 
         // exercise
         CreateAccount command = Commands.account().create().account( role );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final AccountKey createdRoleKey = command.getResult();
 
         // verify

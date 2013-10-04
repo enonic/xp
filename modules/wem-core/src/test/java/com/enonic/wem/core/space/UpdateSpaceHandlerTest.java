@@ -40,6 +40,7 @@ public class UpdateSpaceHandlerTest
 
         spaceDao = Mockito.mock( SpaceDao.class );
         handler = new UpdateSpaceHandler();
+        handler.setContext( this.context );
         handler.setSpaceDao( spaceDao );
     }
 
@@ -72,7 +73,7 @@ public class UpdateSpaceHandlerTest
                     build();
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         assertEquals( true, command.getResult() );
@@ -106,7 +107,7 @@ public class UpdateSpaceHandlerTest
                     build();
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
     }
 
 }

@@ -40,6 +40,7 @@ public class UpdateRelationshipTypeHandlerTest
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         handler = new UpdateRelationshipTypesHandler();
+        handler.setContext( this.context );
         handler.setRelationshipTypeDao( relationshipTypeDao );
     }
 
@@ -80,7 +81,7 @@ public class UpdateRelationshipTypeHandlerTest
                         build();
                 }
             } );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).update( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );

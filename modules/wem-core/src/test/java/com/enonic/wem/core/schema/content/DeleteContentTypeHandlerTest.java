@@ -42,6 +42,7 @@ public class DeleteContentTypeHandlerTest
         handler = new DeleteContentTypeHandler();
         handler.setContentTypeDao( contentTypeDao );
         handler.setContentDao( contentDao );
+        handler.setContext( this.context );
     }
 
     @Test
@@ -51,7 +52,7 @@ public class DeleteContentTypeHandlerTest
         // exercise
         final QualifiedContentTypeName names = QualifiedContentTypeName.from( "my:my_content_type" );
         final DeleteContentType command = Commands.contentType().delete().name( names );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( contentTypeDao, only() ).delete( isA( QualifiedContentTypeName.class ), any( Session.class ) );
@@ -71,7 +72,7 @@ public class DeleteContentTypeHandlerTest
 
         final DeleteContentType command = Commands.contentType().delete().name( inUsedName );
 
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( contentTypeDao, never() ).delete( isA( QualifiedContentTypeName.class ), any( Session.class ) );
@@ -91,7 +92,7 @@ public class DeleteContentTypeHandlerTest
                                                                                                            any( Session.class ) );
         final DeleteContentType command = Commands.contentType().delete().name( notFoundName );
 
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( contentTypeDao, only() ).delete( isA( QualifiedContentTypeName.class ), any( Session.class ) );

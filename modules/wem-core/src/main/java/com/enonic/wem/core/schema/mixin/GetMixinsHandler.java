@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
@@ -17,7 +16,7 @@ public final class GetMixinsHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final CommandContext context, final GetMixins command )
+    public void handle( final GetMixins command )
         throws Exception
     {
         final Session session = context.getJcrSession();

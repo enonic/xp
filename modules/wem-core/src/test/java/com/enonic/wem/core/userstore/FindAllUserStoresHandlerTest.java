@@ -29,6 +29,7 @@ public class FindAllUserStoresHandlerTest
         accountDao = Mockito.mock( AccountDao.class );
 
         handler = new FindAllUserStoresHandler();
+        handler.setContext( this.context );
         handler.setAccountDao( accountDao );
     }
 
@@ -40,7 +41,7 @@ public class FindAllUserStoresHandlerTest
         Mockito.when( accountDao.getUserStoreNames( session ) ).thenReturn( userStores );
 
         final FindAllUserStores command = Commands.userStore().findAll();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         UserStoreNames userStoreNames = command.getResult();
 
         assertEquals( UserStoreNames.from( "default", "enonic" ), userStoreNames );

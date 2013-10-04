@@ -35,6 +35,7 @@ public class CreateMixinHandlerTest
         mixinDao = Mockito.mock( MixinDao.class );
 
         handler = new CreateMixinHandler();
+        handler.setContext( this.context );
         handler.setMixinDao( mixinDao );
     }
 
@@ -49,7 +50,7 @@ public class CreateMixinHandlerTest
             Commands.mixin().create().name( "age" ).addFormItem( age ).displayName( "Age" );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( mixinDao, Mockito.atLeastOnce() ).create( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );

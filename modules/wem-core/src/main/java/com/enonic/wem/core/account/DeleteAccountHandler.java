@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.account.DeleteAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.IndexService;
 
@@ -19,7 +18,7 @@ public class DeleteAccountHandler
     private IndexService indexService;
 
     @Override
-    public void handle( final CommandContext context, final DeleteAccount command )
+    public void handle( final DeleteAccount command )
         throws Exception
     {
         final AccountKey accountKey = command.getKey();

@@ -14,7 +14,6 @@ import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.api.userstore.UserStores;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 
 
 public class GetUserStoresHandler
@@ -23,7 +22,7 @@ public class GetUserStoresHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final CommandContext context, final GetUserStores command )
+    public void handle( final GetUserStores command )
         throws Exception
     {
         final boolean includeConfig = command.isIncludeConfig();

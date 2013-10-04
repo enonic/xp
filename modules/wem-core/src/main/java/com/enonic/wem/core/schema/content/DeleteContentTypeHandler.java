@@ -6,7 +6,6 @@ import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
 import com.enonic.wem.api.exception.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -20,7 +19,7 @@ public final class DeleteContentTypeHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final CommandContext context, final DeleteContentType command )
+    public void handle( final DeleteContentType command )
         throws Exception
     {
         final QualifiedContentTypeName qualifiedContentTypeName = command.getName();

@@ -41,6 +41,7 @@ public class ValidateContentDataHandlerTest
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new ValidateContentDataHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -64,7 +65,7 @@ public class ValidateContentDataHandlerTest
         // exercise
         final ValidateContentData command =
             Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getQualifiedName() );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // test
         final DataValidationErrors result = command.getResult();
@@ -94,7 +95,7 @@ public class ValidateContentDataHandlerTest
         // exercise
         final ValidateContentData command =
             Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getQualifiedName() );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // test
         final DataValidationErrors result = command.getResult();

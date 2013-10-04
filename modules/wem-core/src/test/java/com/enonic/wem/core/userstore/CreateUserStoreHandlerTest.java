@@ -39,6 +39,7 @@ public class CreateUserStoreHandlerTest
         accountDao = Mockito.mock( AccountDao.class );
 
         handler = new CreateUserStoreHandler();
+        handler.setContext( this.context );
         handler.setAccountDao( accountDao );
     }
 
@@ -48,7 +49,7 @@ public class CreateUserStoreHandlerTest
     {
         final UserStore userStore = createUserStore();
         final CreateUserStore command = Commands.userStore().create().userStore( userStore );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         UserStoreName userStoreName = command.getResult();
 
         verify( accountDao, atLeastOnce() ).createUserStore( eq( userStore ), any( Session.class ) );

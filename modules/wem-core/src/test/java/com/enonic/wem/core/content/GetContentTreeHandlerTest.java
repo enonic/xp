@@ -32,7 +32,7 @@ public class GetContentTreeHandlerTest
         contentDao = Mockito.mock( ContentDao.class );
 
         handler = new GetContentTreeHandler();
-
+        handler.setContext( this.context );
         handler.setContentDao( contentDao );
     }
 
@@ -46,7 +46,7 @@ public class GetContentTreeHandlerTest
         Mockito.when( contentDao.getContentTree( Mockito.isA( Session.class ) ) ).thenReturn( new Tree<Content>() );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).getContentTree( Mockito.isA( Session.class ) );
@@ -64,7 +64,7 @@ public class GetContentTreeHandlerTest
             new Tree<Content>() );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).getContentTree( Mockito.isA( Session.class ), Mockito.eq( topLevelNodes ) );

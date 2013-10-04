@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import com.enonic.wem.api.command.schema.content.GetContentTypeTree;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.support.tree.Tree;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -16,7 +15,7 @@ public class GetContentTypeTreeHandler
     private ContentTypeDao contentTypeDao;
 
     @Override
-    public void handle( final CommandContext context, final GetContentTypeTree command )
+    public void handle( final GetContentTypeTree command )
         throws Exception
     {
         final ContentTypeTreeFactory factory = new ContentTypeTreeFactory( context.getJcrSession(), contentTypeDao );

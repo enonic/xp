@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
@@ -17,7 +16,7 @@ public final class GetRelationshipTypesHandler
     private RelationshipTypeDao relationshipTypeDao;
 
     @Override
-    public void handle( final CommandContext context, final GetRelationshipTypes command )
+    public void handle( final GetRelationshipTypes command )
         throws Exception
     {
         final Session session = context.getJcrSession();

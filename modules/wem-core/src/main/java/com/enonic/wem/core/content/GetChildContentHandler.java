@@ -17,7 +17,7 @@ public class GetChildContentHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final CommandContext context, final GetChildContent command )
+    public void handle( final GetChildContent command )
         throws Exception
     {
         Contents result = doGetContents( command.getParentPath(), context );

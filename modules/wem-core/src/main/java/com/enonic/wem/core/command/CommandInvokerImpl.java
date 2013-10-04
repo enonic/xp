@@ -29,7 +29,8 @@ public final class CommandInvokerImpl
         try
         {
             final CommandHandler handler = findHandler( command.getClass() );
-            handler.handle( context, command );
+            handler.setContext( context );
+            handler.handle( command );
         }
         catch ( final BaseException e )
         {

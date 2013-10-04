@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.space.Space;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.index.IndexService;
@@ -31,7 +30,7 @@ public final class CreateSpaceHandler
     private IndexService indexService;
 
     @Override
-    public void handle( final CommandContext context, final CreateSpace command )
+    public void handle( final CreateSpace command )
         throws Exception
     {
         final Session session = context.getJcrSession();

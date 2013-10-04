@@ -18,7 +18,6 @@ import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.account.FindAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.SearchSortOrder;
 import com.enonic.wem.core.index.account.AccountIndexField;
@@ -41,7 +40,7 @@ public final class FindAccountsHandler
     private AccountSearchService accountSearchService;
 
     @Override
-    public void handle( final CommandContext context, final FindAccounts command )
+    public void handle( final FindAccounts command )
         throws Exception
     {
         final AccountQuery selector = command.getQuery();

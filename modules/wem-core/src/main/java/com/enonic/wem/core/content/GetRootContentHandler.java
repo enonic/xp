@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.Spaces;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.space.dao.SpaceDao;
@@ -26,7 +25,7 @@ public class GetRootContentHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final CommandContext context, final GetRootContent command )
+    public void handle( final GetRootContent command )
         throws Exception
     {
 

@@ -4,7 +4,6 @@ package com.enonic.wem.core.item;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.item.CreateItem;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.item.dao.CreateItemArgs;
 import com.enonic.wem.core.item.dao.ItemJcrDao;
@@ -13,7 +12,7 @@ public class CreateItemHandler
     extends CommandHandler<CreateItem>
 {
     @Override
-    public void handle( final CommandContext context, final CreateItem command )
+    public void handle( final CreateItem command )
         throws Exception
     {
         final Session session = context.getJcrSession();

@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.RenameContentException;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -22,7 +21,7 @@ public class RenameContentHandler
     private AttachmentDao attachmentDao;
 
     @Override
-    public void handle( final CommandContext context, final RenameContent command )
+    public void handle( final RenameContent command )
         throws Exception
     {
         try

@@ -35,6 +35,7 @@ public class DeleteAttachmentHandlerTest
 
         attachmentDao = Mockito.mock( AttachmentDao.class );
         handler = new DeleteAttachmentHandler();
+        handler.setContext( this.context );
         handler.setAttachmentDao( attachmentDao );
     }
 
@@ -49,7 +50,7 @@ public class DeleteAttachmentHandlerTest
         // exercise
         final DeleteAttachment command =
             Commands.attachment().delete().contentSelector( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( attachmentDao, only() ).deleteAttachment( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),
@@ -69,7 +70,7 @@ public class DeleteAttachmentHandlerTest
         // exercise
         final DeleteAttachment command =
             Commands.attachment().delete().contentSelector( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( attachmentDao, only() ).deleteAttachment( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),

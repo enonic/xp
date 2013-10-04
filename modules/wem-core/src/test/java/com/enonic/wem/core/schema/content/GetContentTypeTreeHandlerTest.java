@@ -37,6 +37,7 @@ public class GetContentTypeTreeHandlerTest
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new GetContentTypeTreeHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -65,7 +66,7 @@ public class GetContentTypeTreeHandlerTest
 
         // exercise
         final GetContentTypeTree command = Commands.contentType().getTree();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );

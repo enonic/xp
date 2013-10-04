@@ -45,6 +45,7 @@ public class GetAccountsHandlerTest
         accountDao = Mockito.mock( AccountDao.class );
 
         handler = new GetAccountsHandler();
+        handler.setContext( this.context );
         handler.setAccountDao( accountDao );
     }
 
@@ -61,7 +62,7 @@ public class GetAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         final GetAccounts command = Commands.account().get().keys( accounts ).includeImage();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         Accounts accountResult = command.getResult();
 
         // verify
@@ -93,7 +94,7 @@ public class GetAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "group:enonic:group2", "role:enonic:contributors" );
 
         final GetAccounts command = Commands.account().get().keys( accounts ).includeMembers().includeImage();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         Accounts accountResult = command.getResult();
 
         // verify
@@ -167,7 +168,7 @@ public class GetAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "user:enonic:user1" );
 
         final GetAccounts command = Commands.account().get().keys( accounts ).includeProfile();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         Accounts accountResult = command.getResult();
 
         // verify

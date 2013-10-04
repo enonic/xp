@@ -65,6 +65,7 @@ public class UpdateContentHandlerTest
         IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new UpdateContentHandler();
+        handler.setContext( this.context );
         handler.setContentDao( contentDao );
         handler.setContentTypeDao( contentTypeDao );
         handler.setRelationshipService( relationshipService );
@@ -101,7 +102,7 @@ public class UpdateContentHandlerTest
             editor( ContentEditors.setContentData( unchangedContentData ) );
 
         // exercise
-        handler.handle( context, command );
+        handler.handle( command );
 
         // verify
         UpdateContentResult result = command.getResult();
@@ -132,7 +133,7 @@ public class UpdateContentHandlerTest
             editor( ContentEditors.setContentData( unchangedContentData ) );
 
         // exercise
-        handler.handle( context, command );
+        handler.handle( command );
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 0 ) ).update( Mockito.any( Content.class ), eq( true ), Mockito.any( Session.class ) );
@@ -161,7 +162,7 @@ public class UpdateContentHandlerTest
             editor( ContentEditors.setContentData( changedContentData ) );
 
         // exercise
-        handler.handle( context, command );
+        handler.handle( command );
 
         // verify
         Content storedContent = Content.newContent( createContent( existingContentData ) ).

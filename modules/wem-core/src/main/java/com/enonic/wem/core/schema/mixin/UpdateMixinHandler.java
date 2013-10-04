@@ -12,7 +12,6 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
@@ -25,7 +24,7 @@ public final class UpdateMixinHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final CommandContext context, final UpdateMixin command )
+    public void handle( final UpdateMixin command )
         throws Exception
     {
         final QualifiedMixinName qualifiedMixinName = command.getQualifiedName();

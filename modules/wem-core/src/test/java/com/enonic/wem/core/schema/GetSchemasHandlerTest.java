@@ -54,6 +54,7 @@ public class GetSchemasHandlerTest
         mixinDao = Mockito.mock( MixinDao.class );
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         handler = new GetSchemasHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
         handler.setMixinDao( mixinDao );
         handler.setRelationshipTypeDao( relationshipTypeDao );
@@ -94,7 +95,7 @@ public class GetSchemasHandlerTest
 
         // exercise
         final SchemaTypes command = Commands.schema().get();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );

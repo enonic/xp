@@ -9,7 +9,6 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.relationship.UpdateRelationship;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
@@ -22,7 +21,7 @@ public final class UpdateRelationshipHandler
     private RelationshipDao relationshipDao;
 
     @Override
-    public void handle( final CommandContext context, final UpdateRelationship command )
+    public void handle( final UpdateRelationship command )
         throws Exception
     {
         final Session session = context.getJcrSession();

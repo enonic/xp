@@ -46,6 +46,7 @@ public class FindAccountsHandlerTest
         accountSearchService = Mockito.mock( AccountSearchService.class );
 
         handler = new FindAccountsHandler();
+        handler.setContext( this.context );
         handler.setAccountDao( accountDao );
         handler.setAccountSearchService( accountSearchService );
     }
@@ -69,7 +70,7 @@ public class FindAccountsHandlerTest
         final AccountQuery query = new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.USER );
 
         final FindAccounts command = Commands.account().find().query( query );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         AccountQueryHits accountResult = command.getResult();
 
         // verify
@@ -105,7 +106,7 @@ public class FindAccountsHandlerTest
             new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
         final FindAccounts command = Commands.account().find().query( query );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         AccountQueryHits accountResult = command.getResult();
 
         // verify
@@ -146,7 +147,7 @@ public class FindAccountsHandlerTest
             new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
         final FindAccounts command = Commands.account().find().query( query );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         AccountQueryHits accountResult = command.getResult();
 
         // verify

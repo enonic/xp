@@ -52,6 +52,7 @@ public class UpdateAccountsHandlerTest
         final IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new UpdateAccountsHandler();
+        handler.setContext( this.context );
         handler.setAccountDao( accountDao );
         handler.setIndexService( indexService );
     }
@@ -81,7 +82,7 @@ public class UpdateAccountsHandlerTest
                     return false;
                 }
             } );
-            this.handler.handle( this.context, command );
+            this.handler.handle( command );
             UpdateResult updateResult = command.getResult();
 
             // verify
@@ -132,7 +133,7 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final UpdateResult updateResult = command.getResult();
 
         // verify
@@ -181,7 +182,7 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final UpdateResult updateResult = command.getResult();
 
         // verify
@@ -252,7 +253,7 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         UpdateResult updateResult = command.getResult();
 
         // verify
@@ -282,7 +283,7 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final UpdateResult updateResult = command.getResult();
 
         // verify
@@ -311,7 +312,7 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final UpdateResult updateResult = command.getResult();
 
         // verify

@@ -5,7 +5,6 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.command.content.binary.DeleteBinary;
 import com.enonic.wem.api.command.content.binary.DeleteBinaryResult;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.binary.dao.BinaryDao;
 
@@ -16,7 +15,7 @@ public class DeleteBinaryHandler
     private BinaryDao binaryDao;
 
     @Override
-    public void handle( final CommandContext context, final DeleteBinary command )
+    public void handle( final DeleteBinary command )
         throws Exception
     {
         final Session session = context.getJcrSession();

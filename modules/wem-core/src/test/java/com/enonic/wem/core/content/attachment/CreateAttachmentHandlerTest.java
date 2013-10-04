@@ -39,6 +39,7 @@ public class CreateAttachmentHandlerTest
         attachmentDao = Mockito.mock( AttachmentDao.class );
 
         handler = new CreateAttachmentHandler();
+        handler.setContext( this.context );
         handler.setAttachmentDao( attachmentDao );
     }
 
@@ -53,7 +54,7 @@ public class CreateAttachmentHandlerTest
             Commands.attachment().create().contentSelector( ContentPath.from( "myspace:/image" ) ).attachment( attachment );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         verify( attachmentDao, times( 1 ) ).createAttachment( isA( ContentPath.class ), isA( Attachment.class ), any( Session.class ) );

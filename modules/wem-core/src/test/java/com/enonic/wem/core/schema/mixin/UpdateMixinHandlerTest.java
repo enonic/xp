@@ -45,6 +45,7 @@ public class UpdateMixinHandlerTest
         mixinDao = Mockito.mock( MixinDao.class );
 
         handler = new UpdateMixinHandler();
+        handler.setContext( this.context );
         handler.setMixinDao( mixinDao );
     }
 
@@ -72,7 +73,7 @@ public class UpdateMixinHandlerTest
             addFormItem( formItemToSet ).build() );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         verify( mixinDao, atLeastOnce() ).update( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );
@@ -94,7 +95,7 @@ public class UpdateMixinHandlerTest
             addFormItem( formItemToSet ).build() );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         verify( mixinDao, never() ).update( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );

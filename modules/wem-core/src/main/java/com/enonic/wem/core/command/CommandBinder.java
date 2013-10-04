@@ -21,7 +21,7 @@ public final class CommandBinder
     {
         final ParameterizedType type = (ParameterizedType) handler.getGenericSuperclass();
         final Class<?> commandType = (Class<?>) type.getActualTypeArguments()[0];
-        this.binder.addBinding( commandType ).to( handler ).in( Scopes.SINGLETON );
+        this.binder.addBinding( commandType ).to( handler ).in( Scopes.NO_SCOPE );
     }
 
     public static CommandBinder from( final Binder binder )

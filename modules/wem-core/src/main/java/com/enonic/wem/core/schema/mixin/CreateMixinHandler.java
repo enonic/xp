@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
@@ -19,7 +18,7 @@ public final class CreateMixinHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final CommandContext context, final CreateMixin command )
+    public void handle( final CreateMixin command )
         throws Exception
     {
         final DateTime currentTime = DateTime.now();

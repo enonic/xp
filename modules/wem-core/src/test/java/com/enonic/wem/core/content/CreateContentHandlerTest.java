@@ -65,6 +65,7 @@ public class CreateContentHandlerTest
         indexService = Mockito.mock( IndexService.class );
 
         handler = new CreateContentHandler();
+        handler.setContext( this.context );
         handler.setContentDao( contentDao );
         handler.setContentTypeDao( contentTypeDao );
         handler.setRelationshipService( relationshipService );
@@ -108,7 +109,7 @@ public class CreateContentHandlerTest
         command.contentData( contentData );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );
@@ -136,7 +137,7 @@ public class CreateContentHandlerTest
         command.contentType( QualifiedContentTypeName.from( "my_content_type" ) );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );

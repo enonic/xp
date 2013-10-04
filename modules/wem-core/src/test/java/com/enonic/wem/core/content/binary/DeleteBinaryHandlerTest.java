@@ -33,6 +33,7 @@ public class DeleteBinaryHandlerTest
 
         binaryDao = Mockito.mock( BinaryDao.class );
         handler = new DeleteBinaryHandler();
+        handler.setContext( this.context );
         handler.setBinaryDao( binaryDao );
     }
 
@@ -47,7 +48,7 @@ public class DeleteBinaryHandlerTest
         // exercise
         final BinaryId binaryId = BinaryId.from( "edda7c84-d1ef-4d4b-b79e-71b696a716df" );
         final DeleteBinary command = Commands.binary().delete().binaryId( binaryId );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( binaryDao, only() ).deleteBinary( isA( BinaryId.class ), any( Session.class ) );
@@ -67,7 +68,7 @@ public class DeleteBinaryHandlerTest
         // exercise
         final BinaryId binaryId = BinaryId.from( "edda7c84-d1ef-4d4b-b79e-71b696a716df" );
         final DeleteBinary command = Commands.binary().delete().binaryId( binaryId );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         Mockito.verify( binaryDao, only() ).deleteBinary( isA( BinaryId.class ), any( Session.class ) );

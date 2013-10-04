@@ -1,14 +1,13 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.content.GenerateContentName;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
 public class GenerateContentNameHandler
     extends CommandHandler<GenerateContentName>
 {
     @Override
-    public void handle( final CommandContext context, final GenerateContentName command )
+    public void handle( final GenerateContentName command )
         throws Exception
     {
         final ContentPathNameGenerator nameGenerator = new ContentPathNameGenerator();

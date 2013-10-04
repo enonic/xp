@@ -9,7 +9,6 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.form.Form;
 import com.enonic.wem.api.schema.content.form.MixinReferencesToFormItemsTransformer;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.schema.mixin.InternalMixinFetcher;
@@ -24,7 +23,7 @@ public final class GetContentTypesHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final CommandContext context, final GetContentTypes command )
+    public void handle( final GetContentTypes command )
         throws Exception
     {
         final Session session = context.getJcrSession();

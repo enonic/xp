@@ -38,6 +38,7 @@ public class RenameSpaceHandlerTest extends AbstractCommandHandlerTest
 
         spaceDao = Mockito.mock( SpaceDao.class );
         handler = new RenameSpaceHandler();
+        handler.setContext( this.context );
         handler.setSpaceDao( spaceDao );
     }
 
@@ -61,7 +62,7 @@ public class RenameSpaceHandlerTest extends AbstractCommandHandlerTest
         // exercise
         final SpaceName spaceToRename = SpaceName.from( "mySpace" );
         final RenameSpace command = Commands.space().rename().space( spaceToRename).newName( "newSpaceName" );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         assertEquals( true, command.getResult() );
@@ -79,6 +80,6 @@ public class RenameSpaceHandlerTest extends AbstractCommandHandlerTest
         // exercise
         final SpaceName spaceToRename = SpaceName.from( "mySpace" );
         final RenameSpace command = Commands.space().rename().space( spaceToRename ).newName( "newSpaceName" );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
     }
 }

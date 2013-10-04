@@ -34,6 +34,7 @@ public class GetBinaryHandlerTest
 
         binaryDao = Mockito.mock( BinaryDao.class );
         handler = new GetBinaryHandler();
+        handler.setContext( this.context );
         handler.setBinaryDao( binaryDao );
     }
 
@@ -48,7 +49,7 @@ public class GetBinaryHandlerTest
         // exercise
         final BinaryId binaryId = BinaryId.from( "edda7c84-d1ef-4d4b-b79e-71b696a716df" );
         final GetBinary command = Commands.binary().get().binaryId( binaryId );
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
 
         // verify
         verify( binaryDao, atLeastOnce() ).getBinary( Mockito.eq( binaryId ), Mockito.any( Session.class ) );

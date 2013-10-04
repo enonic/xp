@@ -7,7 +7,6 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.userstore.CreateUserStore;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -17,7 +16,7 @@ public class CreateUserStoreHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final CommandContext context, final CreateUserStore command )
+    public void handle( final CreateUserStore command )
         throws Exception
     {
         final UserStore userStore = command.getUserStore();

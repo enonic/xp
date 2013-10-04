@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.binary.GetBinary;
 import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.binary.dao.BinaryDao;
 
@@ -15,7 +14,7 @@ public class GetBinaryHandler
     private BinaryDao binaryDao;
 
     @Override
-    public void handle( final CommandContext context, final GetBinary command )
+    public void handle( final GetBinary command )
         throws Exception
     {
         final Binary result = binaryDao.getBinary( command.getBinaryId(), context.getJcrSession() );

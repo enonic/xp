@@ -11,7 +11,6 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.OccurrenceValidator;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -22,7 +21,7 @@ public final class ValidateContentDataHandler
     private ContentTypeDao contentTypeDao;
 
     @Override
-    public void handle( final CommandContext context, final ValidateContentData command )
+    public void handle( final ValidateContentData command )
         throws Exception
     {
         final ContentData contentData = command.getContentData();

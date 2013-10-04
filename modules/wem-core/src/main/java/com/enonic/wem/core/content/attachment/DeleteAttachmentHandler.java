@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.content.attachment.DeleteAttachment;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 
@@ -15,7 +14,7 @@ public class DeleteAttachmentHandler
     private AttachmentDao attachmentDao;
 
     @Override
-    public void handle( final CommandContext context, final DeleteAttachment command )
+    public void handle( final DeleteAttachment command )
         throws Exception
     {
         final Session session = context.getJcrSession();

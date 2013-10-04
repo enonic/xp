@@ -6,7 +6,6 @@ import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
@@ -17,7 +16,7 @@ public class GetContentVersionHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final CommandContext context, final GetContentVersion command )
+    public void handle( final GetContentVersion command )
         throws Exception
     {
         final ContentSelector selector = command.getSelector();

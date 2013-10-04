@@ -32,6 +32,7 @@ public class ValidatePasswordHandlerTest
         accountDao = Mockito.mock( AccountDao.class );
 
         this.handler = new ValidatePasswordHandler();
+        this.handler.setContext( this.context );
         this.handler.setAccountDao( accountDao );
     }
 
@@ -47,7 +48,7 @@ public class ValidatePasswordHandlerTest
         // exercise
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
         command.validate();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final Boolean validPassword = command.getResult();
 
         // verify
@@ -68,7 +69,7 @@ public class ValidatePasswordHandlerTest
         // exercise
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( "forgotPassword" );
         command.validate();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
         final Boolean validPassword = command.getResult();
 
         // verify
@@ -85,7 +86,7 @@ public class ValidatePasswordHandlerTest
 
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
         command.validate();
-        this.handler.handle( this.context, command );
+        this.handler.handle( command );
     }
 
     @Test(expected = IllegalArgumentException.class)

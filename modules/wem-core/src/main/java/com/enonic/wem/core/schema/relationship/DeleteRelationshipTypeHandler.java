@@ -6,7 +6,6 @@ import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
 import com.enonic.wem.api.exception.RelationshipTypeNotFoundException;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
@@ -17,7 +16,7 @@ public final class DeleteRelationshipTypeHandler
     private RelationshipTypeDao relationshipTypeDao;
 
     @Override
-    public void handle( final CommandContext context, final DeleteRelationshipType command )
+    public void handle( final DeleteRelationshipType command )
         throws Exception
     {
         final QualifiedRelationshipTypeName relationshipTypeName = command.getQualifiedName();

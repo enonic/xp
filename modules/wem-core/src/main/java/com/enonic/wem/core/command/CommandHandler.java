@@ -4,6 +4,13 @@ import com.enonic.wem.api.command.Command;
 
 public abstract class CommandHandler<C extends Command>
 {
-    public abstract void handle( CommandContext context, C command )
+    protected CommandContext context;
+
+    public final void setContext( final CommandContext context )
+    {
+        this.context = context;
+    }
+
+    public abstract void handle( C command )
         throws Exception;
 }
