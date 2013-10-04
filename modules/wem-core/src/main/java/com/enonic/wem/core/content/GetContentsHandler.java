@@ -15,7 +15,7 @@ public class GetContentsHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final GetContents command )
+    public void handle()
         throws Exception
     {
         final ContentSelectors selectors = command.getSelectors();

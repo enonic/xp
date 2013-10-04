@@ -19,7 +19,7 @@ public class ValidateContentTypeHandler
     private ContentTypeDao contentTypeDao;
 
     @Override
-    public void handle( final ValidateContentType command )
+    public void handle()
         throws Exception
     {
         Session session = context.getJcrSession();

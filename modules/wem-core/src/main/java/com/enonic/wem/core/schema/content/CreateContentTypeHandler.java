@@ -24,7 +24,7 @@ public final class CreateContentTypeHandler
     private ContentTypeDao contentTypeDao;
 
     @Override
-    public void handle( final CreateContentType command )
+    public void handle()
         throws Exception
     {
         final DateTime currentTime = DateTime.now();

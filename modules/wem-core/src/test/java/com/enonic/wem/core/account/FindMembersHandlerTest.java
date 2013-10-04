@@ -54,7 +54,10 @@ public class FindMembersHandlerTest
 
         // exercise
         final FindMembers command = Commands.account().findMembers().key( groupAccount );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         // verify
@@ -79,7 +82,10 @@ public class FindMembersHandlerTest
 
         // exercise
         final FindMembers command = Commands.account().findMembers().key( roleAccount );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         // verify
@@ -99,7 +105,10 @@ public class FindMembersHandlerTest
         Mockito.when( accountDao.getMembers( Mockito.eq( userAccount ), Mockito.any( Session.class ) ) ).thenReturn( AccountKeys.empty() );
 
         final FindMembers command = Commands.account().findMembers().key( userAccount );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         assertNotNull( members );
@@ -116,7 +125,9 @@ public class FindMembersHandlerTest
             new AccountNotFoundException( groupAccount ) );
 
         final FindMembers command = Commands.account().findMembers().key( groupAccount );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
 }

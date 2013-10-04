@@ -70,7 +70,10 @@ public class FindAccountsHandlerTest
         final AccountQuery query = new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.USER );
 
         final FindAccounts command = Commands.account().find().query( query );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         AccountQueryHits accountResult = command.getResult();
 
         // verify
@@ -106,7 +109,10 @@ public class FindAccountsHandlerTest
             new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
         final FindAccounts command = Commands.account().find().query( query );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         AccountQueryHits accountResult = command.getResult();
 
         // verify
@@ -147,7 +153,10 @@ public class FindAccountsHandlerTest
             new AccountQuery().offset( 0 ).limit( 2 ).sortDesc( "userstore" ).types( AccountType.GROUP, AccountType.ROLE );
 
         final FindAccounts command = Commands.account().find().query( query );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         AccountQueryHits accountResult = command.getResult();
 
         // verify

@@ -19,7 +19,7 @@ public final class CreateRelationshipTypeHandler
     private RelationshipTypeDao relationshipTypeDao;
 
     @Override
-    public void handle( final CreateRelationshipType command )
+    public void handle()
         throws Exception
     {
         final DateTime currentTime = DateTime.now();

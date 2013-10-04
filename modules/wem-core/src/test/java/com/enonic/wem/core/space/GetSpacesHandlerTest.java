@@ -70,7 +70,8 @@ public class GetSpacesHandlerTest
         // exercise
         final SpaceNames names = SpaceNames.from( "mySpace", "myOtherSpace" );
         final GetSpaces command = Commands.space().get().names( names );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( spaceDao, times( 2 ) ).getSpace( Mockito.isA( SpaceName.class ), Mockito.any( Session.class ) );
@@ -106,7 +107,8 @@ public class GetSpacesHandlerTest
         // exercise
         final SpaceNames names = SpaceNames.from( "mySpace", "myOtherSpace" );
         final GetSpaces command = Commands.space().get().all();
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( spaceDao, times( 1 ) ).getAllSpaces( Mockito.any( Session.class ) );

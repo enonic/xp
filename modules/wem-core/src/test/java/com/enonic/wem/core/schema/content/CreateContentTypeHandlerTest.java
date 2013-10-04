@@ -67,7 +67,8 @@ public class CreateContentTypeHandlerTest
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( contentTypeDao, Mockito.atLeastOnce() ).create( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
@@ -102,7 +103,9 @@ public class CreateContentTypeHandlerTest
             form( contentType.form() ).
             icon( contentType.getIcon() ).
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
-        this.handler.handle( createCommand );
+
+        this.handler.setCommand( createCommand );
+        this.handler.handle();
     }
 
 }

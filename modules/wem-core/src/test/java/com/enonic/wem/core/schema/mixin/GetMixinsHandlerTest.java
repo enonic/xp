@@ -62,7 +62,9 @@ public class GetMixinsHandlerTest
         // exercise
         final QualifiedMixinNames names = QualifiedMixinNames.from( "mymodule:like" );
         final GetMixins command = Commands.mixin().get().names( names );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( mixinDao, atLeastOnce() ).select( Mockito.isA( QualifiedMixinNames.class ), Mockito.any( Session.class ) );
@@ -89,7 +91,9 @@ public class GetMixinsHandlerTest
 
         // exercise
         final GetMixins command = Commands.mixin().get().all();
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( mixinDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );

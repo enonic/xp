@@ -16,7 +16,7 @@ public final class RelationshipTypesExistsHandler
     private RelationshipTypeDao relationshipTypeDao;
 
     @Override
-    public void handle( final RelationshipTypesExists command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

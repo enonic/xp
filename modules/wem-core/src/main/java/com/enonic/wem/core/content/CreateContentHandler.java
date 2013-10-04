@@ -67,7 +67,7 @@ public class CreateContentHandler
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
 
     @Override
-    public void handle( final CreateContent command )
+    public void handle()
         throws Exception
     {
         try

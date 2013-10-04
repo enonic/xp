@@ -96,7 +96,8 @@ public class CreateAccountHandlerTest
 
         // exercise
         CreateAccount command = Commands.account().create().account( user );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final AccountKey createdUserKey = command.getResult();
 
         // verify
@@ -116,7 +117,8 @@ public class CreateAccountHandlerTest
 
         // exercise
         CreateAccount command = Commands.account().create().account( group );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final AccountKey createdGroupKey = command.getResult();
 
         // verify
@@ -136,7 +138,8 @@ public class CreateAccountHandlerTest
 
         // exercise
         CreateAccount command = Commands.account().create().account( role );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final AccountKey createdRoleKey = command.getResult();
 
         // verify

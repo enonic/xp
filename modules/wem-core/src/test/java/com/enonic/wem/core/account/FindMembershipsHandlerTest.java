@@ -59,7 +59,10 @@ public class FindMembershipsHandlerTest
 
         // exercise
         final FindMemberships command = Commands.account().findMemberships().key( account );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         // verify
@@ -83,7 +86,10 @@ public class FindMembershipsHandlerTest
 
         // exercise
         final FindMemberships command = Commands.account().findMemberships().key( account );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         // verify
@@ -108,7 +114,10 @@ public class FindMembershipsHandlerTest
 
         // exercise
         final FindMemberships command = Commands.account().findMemberships().key( account ).includeTransitive();
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         // verify
@@ -126,7 +135,9 @@ public class FindMembershipsHandlerTest
         final AccountKey groupAccount = GroupKey.from( "enonic:group1" );
 
         final FindMemberships command = Commands.account().findMemberships().key( groupAccount );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
     @Test(expected = AccountNotFoundException.class)
@@ -135,7 +146,9 @@ public class FindMembershipsHandlerTest
     {
         final AccountKey userAccount = UserKey.from( "enonic:user1" );
         final FindMemberships command = Commands.account().findMemberships().key( userAccount );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
     private void setSearchResults( final AccountKeys results )

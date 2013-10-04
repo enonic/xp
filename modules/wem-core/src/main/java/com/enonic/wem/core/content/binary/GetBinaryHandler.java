@@ -14,7 +14,7 @@ public class GetBinaryHandler
     private BinaryDao binaryDao;
 
     @Override
-    public void handle( final GetBinary command )
+    public void handle()
         throws Exception
     {
         final Binary result = binaryDao.getBinary( command.getBinaryId(), context.getJcrSession() );

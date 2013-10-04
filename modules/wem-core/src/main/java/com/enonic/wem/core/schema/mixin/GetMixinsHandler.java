@@ -16,7 +16,7 @@ public final class GetMixinsHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final GetMixins command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

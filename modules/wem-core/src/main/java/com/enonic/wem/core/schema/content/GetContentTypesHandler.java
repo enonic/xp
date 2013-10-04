@@ -23,7 +23,7 @@ public final class GetContentTypesHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final GetContentTypes command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

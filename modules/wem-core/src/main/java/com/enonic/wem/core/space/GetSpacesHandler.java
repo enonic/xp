@@ -22,7 +22,7 @@ public final class GetSpacesHandler
     private SpaceDao spaceDao;
 
     @Override
-    public void handle( final GetSpaces command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

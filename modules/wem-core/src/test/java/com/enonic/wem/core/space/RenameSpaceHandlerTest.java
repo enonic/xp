@@ -62,7 +62,9 @@ public class RenameSpaceHandlerTest extends AbstractCommandHandlerTest
         // exercise
         final SpaceName spaceToRename = SpaceName.from( "mySpace" );
         final RenameSpace command = Commands.space().rename().space( spaceToRename).newName( "newSpaceName" );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         assertEquals( true, command.getResult() );
@@ -80,6 +82,8 @@ public class RenameSpaceHandlerTest extends AbstractCommandHandlerTest
         // exercise
         final SpaceName spaceToRename = SpaceName.from( "mySpace" );
         final RenameSpace command = Commands.space().rename().space( spaceToRename ).newName( "newSpaceName" );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 }

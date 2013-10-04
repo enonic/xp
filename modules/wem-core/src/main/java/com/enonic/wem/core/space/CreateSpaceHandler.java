@@ -30,7 +30,7 @@ public final class CreateSpaceHandler
     private IndexService indexService;
 
     @Override
-    public void handle( final CreateSpace command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

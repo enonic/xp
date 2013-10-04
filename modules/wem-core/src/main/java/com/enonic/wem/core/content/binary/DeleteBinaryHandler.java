@@ -15,7 +15,7 @@ public class DeleteBinaryHandler
     private BinaryDao binaryDao;
 
     @Override
-    public void handle( final DeleteBinary command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

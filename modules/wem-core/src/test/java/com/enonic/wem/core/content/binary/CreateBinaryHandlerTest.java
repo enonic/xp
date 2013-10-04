@@ -48,7 +48,8 @@ public class CreateBinaryHandlerTest
         CreateBinary command = Commands.binary().create().binary( Binary.from( "some binary data".getBytes() ) );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( binaryDao, Mockito.times( 1 ) ).createBinary( Mockito.isA( Binary.class ), Mockito.any( Session.class ) );

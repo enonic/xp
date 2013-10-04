@@ -18,7 +18,7 @@ public final class UpdateSpaceHandler
     private SpaceDao spaceDao;
 
     @Override
-    public void handle( final UpdateSpace command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

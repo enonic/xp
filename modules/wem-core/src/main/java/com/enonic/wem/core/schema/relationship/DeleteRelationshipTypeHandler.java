@@ -16,7 +16,7 @@ public final class DeleteRelationshipTypeHandler
     private RelationshipTypeDao relationshipTypeDao;
 
     @Override
-    public void handle( final DeleteRelationshipType command )
+    public void handle()
         throws Exception
     {
         final QualifiedRelationshipTypeName relationshipTypeName = command.getQualifiedName();

@@ -62,7 +62,10 @@ public class GetAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "role:enonic:contributors", "user:enonic:user1" );
 
         final GetAccounts command = Commands.account().get().keys( accounts ).includeImage();
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         Accounts accountResult = command.getResult();
 
         // verify
@@ -94,7 +97,10 @@ public class GetAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "group:enonic:group1", "group:enonic:group2", "role:enonic:contributors" );
 
         final GetAccounts command = Commands.account().get().keys( accounts ).includeMembers().includeImage();
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         Accounts accountResult = command.getResult();
 
         // verify
@@ -168,7 +174,10 @@ public class GetAccountsHandlerTest
         final AccountKeys accounts = AccountKeys.from( "user:enonic:user1" );
 
         final GetAccounts command = Commands.account().get().keys( accounts ).includeProfile();
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         Accounts accountResult = command.getResult();
 
         // verify

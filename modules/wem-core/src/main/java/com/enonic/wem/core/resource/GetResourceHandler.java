@@ -13,7 +13,7 @@ public class GetResourceHandler
     private ResourceDao resourceDao;
 
     @Override
-    public void handle( final GetResource command )
+    public void handle()
         throws Exception
     {
         final Resource resource = resourceDao.getResource( command.getPath(), command.getModule() );

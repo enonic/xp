@@ -42,7 +42,10 @@ public class DeleteUserStoreHandlerTest
         Mockito.when( accountDao.deleteUserStore( Mockito.any( UserStoreName.class ), Mockito.any( Session.class ) ) ).thenReturn( true );
 
         final DeleteUserStore command = Commands.userStore().delete().name( UserStoreName.from( "enonic" ) );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final Boolean deleted = command.getResult();
 
         assertNotNull( deleted );
@@ -57,7 +60,10 @@ public class DeleteUserStoreHandlerTest
         Mockito.when( accountDao.deleteUserStore( Mockito.any( UserStoreName.class ), Mockito.any( Session.class ) ) ).thenReturn( false );
 
         final DeleteUserStore command = Commands.userStore().delete().name( UserStoreName.from( "enonic" ) );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final Boolean deleted = command.getResult();
 
         assertNotNull( deleted );

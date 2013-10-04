@@ -24,7 +24,7 @@ public final class UpdateMixinHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final UpdateMixin command )
+    public void handle()
         throws Exception
     {
         final QualifiedMixinName qualifiedMixinName = command.getQualifiedName();

@@ -44,7 +44,9 @@ public class DeleteSpaceHandlerTest
     {
         // exercise
         final DeleteSpace command = Commands.space().delete().name( SpaceName.from( "mySpace" ) );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( spaceDao, only() ).deleteSpace( isA( SpaceName.class ), any( Session.class ) );
@@ -63,7 +65,9 @@ public class DeleteSpaceHandlerTest
 
         // exercise
         final DeleteSpace command = Commands.space().delete().name( SpaceName.from( "mySpace" ) );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( spaceDao, only() ).deleteSpace( isA( SpaceName.class ), any( Session.class ) );

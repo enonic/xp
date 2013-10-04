@@ -17,7 +17,7 @@ public final class RenameSpaceHandler
     private SpaceDao spaceDao;
 
     @Override
-    public void handle( final RenameSpace command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

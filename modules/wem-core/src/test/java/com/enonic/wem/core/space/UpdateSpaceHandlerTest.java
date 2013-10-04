@@ -73,7 +73,8 @@ public class UpdateSpaceHandlerTest
                     build();
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         assertEquals( true, command.getResult() );
@@ -107,7 +108,8 @@ public class UpdateSpaceHandlerTest
                     build();
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
 }

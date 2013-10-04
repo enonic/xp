@@ -12,7 +12,7 @@ public class CreateItemHandler
     extends CommandHandler<CreateItem>
 {
     @Override
-    public void handle( final CreateItem command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

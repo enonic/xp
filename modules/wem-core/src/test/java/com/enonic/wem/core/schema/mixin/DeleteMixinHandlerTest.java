@@ -50,7 +50,9 @@ public class DeleteMixinHandlerTest
         // exercise
         final QualifiedMixinName name = QualifiedMixinName.from( "my:mixin" );
         final DeleteMixin command = Commands.mixin().delete().name( name );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( mixinDao, only() ).delete( isA( QualifiedMixinName.class ), any( Session.class ) );
@@ -71,7 +73,8 @@ public class DeleteMixinHandlerTest
 
         final DeleteMixin command = Commands.mixin().delete().name( notFoundName );
 
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( mixinDao, times( 1 ) ).delete( isA( QualifiedMixinName.class ), any( Session.class ) );

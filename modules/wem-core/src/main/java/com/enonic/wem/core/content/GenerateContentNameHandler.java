@@ -7,7 +7,7 @@ public class GenerateContentNameHandler
     extends CommandHandler<GenerateContentName>
 {
     @Override
-    public void handle( final GenerateContentName command )
+    public void handle()
         throws Exception
     {
         final ContentPathNameGenerator nameGenerator = new ContentPathNameGenerator();

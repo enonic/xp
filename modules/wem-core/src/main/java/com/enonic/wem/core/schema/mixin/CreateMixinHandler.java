@@ -18,7 +18,7 @@ public final class CreateMixinHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final CreateMixin command )
+    public void handle()
         throws Exception
     {
         final DateTime currentTime = DateTime.now();

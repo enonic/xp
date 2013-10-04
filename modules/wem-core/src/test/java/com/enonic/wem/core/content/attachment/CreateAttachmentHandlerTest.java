@@ -54,7 +54,8 @@ public class CreateAttachmentHandlerTest
             Commands.attachment().create().contentSelector( ContentPath.from( "myspace:/image" ) ).attachment( attachment );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( attachmentDao, times( 1 ) ).createAttachment( isA( ContentPath.class ), isA( Attachment.class ), any( Session.class ) );

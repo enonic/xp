@@ -15,7 +15,7 @@ public final class DeleteSpaceHandler
     private SpaceDao spaceDao;
 
     @Override
-    public void handle( final DeleteSpace command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

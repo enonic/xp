@@ -77,7 +77,8 @@ public class UpdateContentTypeHandlerTest
         command.editor( editor );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).update( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
@@ -115,7 +116,8 @@ public class UpdateContentTypeHandlerTest
         command.editor( editor );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
 }

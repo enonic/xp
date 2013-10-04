@@ -50,7 +50,8 @@ public class CreateMixinHandlerTest
             Commands.mixin().create().name( "age" ).addFormItem( age ).displayName( "Age" );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( mixinDao, Mockito.atLeastOnce() ).create( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );

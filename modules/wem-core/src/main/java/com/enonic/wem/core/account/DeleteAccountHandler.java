@@ -18,7 +18,7 @@ public class DeleteAccountHandler
     private IndexService indexService;
 
     @Override
-    public void handle( final DeleteAccount command )
+    public void handle()
         throws Exception
     {
         final AccountKey accountKey = command.getKey();

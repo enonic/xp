@@ -46,7 +46,8 @@ public class GetContentTreeHandlerTest
         Mockito.when( contentDao.getContentTree( Mockito.isA( Session.class ) ) ).thenReturn( new Tree<Content>() );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).getContentTree( Mockito.isA( Session.class ) );
@@ -64,7 +65,8 @@ public class GetContentTreeHandlerTest
             new Tree<Content>() );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).getContentTree( Mockito.isA( Session.class ), Mockito.eq( topLevelNodes ) );

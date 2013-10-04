@@ -22,7 +22,7 @@ public class GetUserStoresHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final GetUserStores command )
+    public void handle()
         throws Exception
     {
         final boolean includeConfig = command.isIncludeConfig();

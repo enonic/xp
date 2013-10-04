@@ -65,7 +65,8 @@ public class ValidateContentDataHandlerTest
         // exercise
         final ValidateContentData command =
             Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getQualifiedName() );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // test
         final DataValidationErrors result = command.getResult();
@@ -95,7 +96,8 @@ public class ValidateContentDataHandlerTest
         // exercise
         final ValidateContentData command =
             Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getQualifiedName() );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // test
         final DataValidationErrors result = command.getResult();

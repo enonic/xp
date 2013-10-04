@@ -15,7 +15,7 @@ public class GetAttachmentHandler
     private AttachmentDao attachmentDao;
 
     @Override
-    public void handle( final GetAttachment command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

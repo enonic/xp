@@ -16,7 +16,7 @@ public class GetContentVersionHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final GetContentVersion command )
+    public void handle()
         throws Exception
     {
         final ContentSelector selector = command.getSelector();

@@ -15,7 +15,7 @@ public final class ChangePasswordHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final ChangePassword command )
+    public void handle()
         throws Exception
     {
         final AccountKey user = command.getKey();

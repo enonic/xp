@@ -14,7 +14,7 @@ public class FindAllUserStoresHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final FindAllUserStores command )
+    public void handle()
         throws Exception
     {
         final UserStoreNames userStoreNames = accountDao.getUserStoreNames( context.getJcrSession() );

@@ -24,7 +24,7 @@ public final class UpdateContentTypeHandler
     private ContentTypeDao contentTypeDao;
 
     @Override
-    public void handle( final UpdateContentType command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

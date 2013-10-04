@@ -59,7 +59,9 @@ public class GetRelationshipTypesHandlerTest
         // exercise
         final QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "mymodule:like" );
         final GetRelationshipTypes command = Commands.relationshipType().get().qualifiedNames( names );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).select( Mockito.isA( QualifiedRelationshipTypeNames.class ),
@@ -91,7 +93,9 @@ public class GetRelationshipTypesHandlerTest
 
         // exercise
         final GetRelationshipTypes command = Commands.relationshipType().get().all();
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );

@@ -18,7 +18,7 @@ public class FindContentHandler
     private SearchService searchService;
 
     @Override
-    public void handle( final FindContent command )
+    public void handle()
         throws Exception
     {
         final ContentIndexQuery contentIndexQuery = command.getContentIndexQuery();

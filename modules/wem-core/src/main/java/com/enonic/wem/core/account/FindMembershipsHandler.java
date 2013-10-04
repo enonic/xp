@@ -26,7 +26,7 @@ public final class FindMembershipsHandler
     private AccountSearchService accountSearchService;
 
     @Override
-    public void handle( final FindMemberships command )
+    public void handle()
         throws Exception
     {
         final AccountKey account = command.getKey();

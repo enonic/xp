@@ -58,7 +58,8 @@ public class GetRootContentHandlerTest
         GetRootContent getRootContentCommand = new GetRootContent();
         Mockito.when( spaceDao.getAllSpaces( Mockito.isA( Session.class ) ) ).thenReturn( Spaces.empty() );
 
-        handler.handle( getRootContentCommand );
+        this.handler.setCommand( getRootContentCommand );
+        handler.handle();
 
         Mockito.verify( contentDao, Mockito.times( 0 ) ).select( Mockito.isA( ContentSelector.class ), Mockito.isA( Session.class ) );
 
@@ -74,7 +75,8 @@ public class GetRootContentHandlerTest
         Mockito.when( spaceDao.getAllSpaces( Mockito.isA( Session.class ) ) ).thenReturn(
             Spaces.from( createSpace( "test1" ), createSpace( "test2" ) ) );
 
-        handler.handle( getRootContentCommand );
+        this.handler.setCommand( getRootContentCommand );
+        handler.handle();
 
         Mockito.verify( contentDao, Mockito.times( 2 ) ).select( Mockito.isA( ContentSelector.class ), Mockito.isA( Session.class ) );
 
@@ -102,7 +104,8 @@ public class GetRootContentHandlerTest
         Mockito.when( contentDao.select( Mockito.eq( ContentPath.rootOf( test2.getName() ) ), Mockito.isA( Session.class ) ) ).thenReturn(
             root2 );
 
-        handler.handle( getRootContentCommand );
+        this.handler.setCommand( getRootContentCommand );
+        handler.handle();
 
         Mockito.verify( contentDao, Mockito.times( 2 ) ).select( Mockito.isA( ContentSelector.class ), Mockito.isA( Session.class ) );
 

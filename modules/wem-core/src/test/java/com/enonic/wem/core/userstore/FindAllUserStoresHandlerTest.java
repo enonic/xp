@@ -41,7 +41,10 @@ public class FindAllUserStoresHandlerTest
         Mockito.when( accountDao.getUserStoreNames( session ) ).thenReturn( userStores );
 
         final FindAllUserStores command = Commands.userStore().findAll();
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         UserStoreNames userStoreNames = command.getResult();
 
         assertEquals( UserStoreNames.from( "default", "enonic" ), userStoreNames );

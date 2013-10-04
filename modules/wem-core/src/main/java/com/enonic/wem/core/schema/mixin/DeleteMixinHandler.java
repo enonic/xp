@@ -16,7 +16,7 @@ public final class DeleteMixinHandler
     private MixinDao mixinDao;
 
     @Override
-    public void handle( final DeleteMixin command )
+    public void handle()
         throws Exception
     {
         final QualifiedMixinName qualifiedMixinName = command.getName();

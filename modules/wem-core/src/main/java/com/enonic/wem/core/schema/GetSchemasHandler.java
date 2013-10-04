@@ -31,7 +31,7 @@ public final class GetSchemasHandler
     private RelationshipTypeDao relationshipTypeDao;
 
     @Override
-    public void handle( final SchemaTypes command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

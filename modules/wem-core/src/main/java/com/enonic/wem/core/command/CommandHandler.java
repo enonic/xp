@@ -6,11 +6,18 @@ public abstract class CommandHandler<C extends Command>
 {
     protected CommandContext context;
 
+    protected C command;
+
     public final void setContext( final CommandContext context )
     {
         this.context = context;
     }
 
-    public abstract void handle( C command )
+    public final void setCommand( final C command )
+    {
+        this.command = command;
+    }
+
+    public abstract void handle()
         throws Exception;
 }

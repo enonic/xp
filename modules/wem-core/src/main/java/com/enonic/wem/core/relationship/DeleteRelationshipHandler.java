@@ -16,7 +16,7 @@ public final class DeleteRelationshipHandler
     private RelationshipDao relationshipDao;
 
     @Override
-    public void handle( final DeleteRelationship command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

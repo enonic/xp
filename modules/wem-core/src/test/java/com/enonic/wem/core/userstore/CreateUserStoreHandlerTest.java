@@ -49,7 +49,10 @@ public class CreateUserStoreHandlerTest
     {
         final UserStore userStore = createUserStore();
         final CreateUserStore command = Commands.userStore().create().userStore( userStore );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         UserStoreName userStoreName = command.getResult();
 
         verify( accountDao, atLeastOnce() ).createUserStore( eq( userStore ), any( Session.class ) );

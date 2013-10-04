@@ -54,7 +54,8 @@ public class FindContentHandlerTest
 
         final FindContent findContent = Commands.content().find().query( contentIndexQuery );
 
-        findContentHandler.handle( findContent );
+        findContentHandler.setCommand( findContent );
+        findContentHandler.handle();
 
         final ContentIndexQueryResult result = findContent.getResult();
 

@@ -66,7 +66,8 @@ public class GetContentTypeTreeHandlerTest
 
         // exercise
         final GetContentTypeTree command = Commands.contentType().getTree();
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );

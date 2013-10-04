@@ -14,7 +14,7 @@ public final class FindMembersHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final FindMembers command )
+    public void handle()
         throws Exception
     {
         final AccountKey accountKey = command.getKey();

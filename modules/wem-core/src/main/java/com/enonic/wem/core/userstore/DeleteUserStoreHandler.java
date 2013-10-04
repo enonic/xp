@@ -15,7 +15,7 @@ public class DeleteUserStoreHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final DeleteUserStore command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

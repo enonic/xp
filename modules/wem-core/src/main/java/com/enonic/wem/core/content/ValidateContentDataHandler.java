@@ -21,7 +21,7 @@ public final class ValidateContentDataHandler
     private ContentTypeDao contentTypeDao;
 
     @Override
-    public void handle( final ValidateContentData command )
+    public void handle()
         throws Exception
     {
         final ContentData contentData = command.getContentData();

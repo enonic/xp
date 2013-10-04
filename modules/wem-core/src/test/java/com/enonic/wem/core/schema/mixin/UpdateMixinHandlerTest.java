@@ -73,7 +73,8 @@ public class UpdateMixinHandlerTest
             addFormItem( formItemToSet ).build() );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( mixinDao, atLeastOnce() ).update( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );
@@ -95,7 +96,8 @@ public class UpdateMixinHandlerTest
             addFormItem( formItemToSet ).build() );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( mixinDao, never() ).update( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );

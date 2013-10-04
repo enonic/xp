@@ -46,7 +46,9 @@ public class DeleteRelationshipTypesHandlerTest
         // exercise
         final QualifiedRelationshipTypeName names = QualifiedRelationshipTypeName.from( "my:relationship_type" );
         final DeleteRelationshipType command = Commands.relationshipType().delete().qualifiedName( names );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( relationshipTypeDao, times( 1 ) ).delete( isA( QualifiedRelationshipTypeName.class ), any( Session.class ) );
@@ -67,7 +69,8 @@ public class DeleteRelationshipTypesHandlerTest
 
         final DeleteRelationshipType command = Commands.relationshipType().delete().qualifiedName( notFoundName );
 
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( relationshipTypeDao, times( 1 ) ).delete( isA( QualifiedRelationshipTypeName.class ), any( Session.class ) );

@@ -82,7 +82,10 @@ public class UpdateAccountsHandlerTest
                     return false;
                 }
             } );
-            this.handler.handle( command );
+
+            this.handler.setCommand( command );
+            this.handler.handle();
+
             UpdateResult updateResult = command.getResult();
 
             // verify
@@ -133,7 +136,8 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final UpdateResult updateResult = command.getResult();
 
         // verify
@@ -182,7 +186,8 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final UpdateResult updateResult = command.getResult();
 
         // verify
@@ -253,7 +258,8 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         UpdateResult updateResult = command.getResult();
 
         // verify
@@ -283,7 +289,8 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final UpdateResult updateResult = command.getResult();
 
         // verify
@@ -312,7 +319,8 @@ public class UpdateAccountsHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final UpdateResult updateResult = command.getResult();
 
         // verify

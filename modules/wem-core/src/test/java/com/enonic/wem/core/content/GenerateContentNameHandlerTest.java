@@ -30,7 +30,9 @@ public class GenerateContentNameHandlerTest
     {
 
         GenerateContentName generateContentName = Commands.content().generateContentName().displayName( "displayname" );
-        handler.handle( generateContentName );
+
+        this.handler.setCommand( generateContentName );
+        handler.handle();
 
         String contentName = generateContentName.getResult();
 

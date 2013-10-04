@@ -24,7 +24,7 @@ public final class CreateAccountHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final CreateAccount command )
+    public void handle()
         throws Exception
     {
         final Account account = command.getAccount();

@@ -20,7 +20,7 @@ public final class CreateRelationshipHandler
     private RelationshipDao relationshipDao;
 
     @Override
-    public void handle( final CreateRelationship command )
+    public void handle()
         throws Exception
     {
         final Relationship.Builder builder = newRelationship();

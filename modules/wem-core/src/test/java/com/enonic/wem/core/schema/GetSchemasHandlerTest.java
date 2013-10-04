@@ -95,7 +95,8 @@ public class GetSchemasHandlerTest
 
         // exercise
         final SchemaTypes command = Commands.schema().get();
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );

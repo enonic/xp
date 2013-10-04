@@ -13,7 +13,7 @@ public class GetContentTreeHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final GetContentTree command )
+    public void handle()
         throws Exception
     {
         if ( command.getContentSelectors() != null )

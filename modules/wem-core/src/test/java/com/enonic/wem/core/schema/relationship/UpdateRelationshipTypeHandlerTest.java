@@ -81,7 +81,8 @@ public class UpdateRelationshipTypeHandlerTest
                         build();
                 }
             } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).update( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );

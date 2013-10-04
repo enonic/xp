@@ -14,7 +14,7 @@ public class DeleteAttachmentHandler
     private AttachmentDao attachmentDao;
 
     @Override
-    public void handle( final DeleteAttachment command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

@@ -19,7 +19,7 @@ public final class DeleteContentTypeHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final DeleteContentType command )
+    public void handle()
         throws Exception
     {
         final QualifiedContentTypeName qualifiedContentTypeName = command.getName();

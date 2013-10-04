@@ -109,7 +109,8 @@ public class CreateContentHandlerTest
         command.contentData( contentData );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );
@@ -137,7 +138,8 @@ public class CreateContentHandlerTest
         command.contentType( QualifiedContentTypeName.from( "my_content_type" ) );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );

@@ -56,7 +56,9 @@ public class GetContentTypesHandlerTest
         // exercise
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "mymodule:my_content_type" );
         final GetContentTypes command = Commands.contentType().get().qualifiedNames( names );
-        this.handler.handle( command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).select( Mockito.isA( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) );

@@ -21,7 +21,7 @@ public final class GetAccountsHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final GetAccounts command )
+    public void handle()
         throws Exception
     {
         final boolean includeMembers = command.isIncludeMembers();

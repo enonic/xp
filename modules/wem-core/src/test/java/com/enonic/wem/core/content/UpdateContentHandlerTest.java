@@ -102,7 +102,8 @@ public class UpdateContentHandlerTest
             editor( ContentEditors.setContentData( unchangedContentData ) );
 
         // exercise
-        handler.handle( command );
+        this.handler.setCommand( command );
+        handler.handle();
 
         // verify
         UpdateContentResult result = command.getResult();
@@ -133,7 +134,8 @@ public class UpdateContentHandlerTest
             editor( ContentEditors.setContentData( unchangedContentData ) );
 
         // exercise
-        handler.handle( command );
+        this.handler.setCommand( command );
+        handler.handle();
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 0 ) ).update( Mockito.any( Content.class ), eq( true ), Mockito.any( Session.class ) );
@@ -162,7 +164,8 @@ public class UpdateContentHandlerTest
             editor( ContentEditors.setContentData( changedContentData ) );
 
         // exercise
-        handler.handle( command );
+        this.handler.setCommand( command );
+        handler.handle();
 
         // verify
         Content storedContent = Content.newContent( createContent( existingContentData ) ).

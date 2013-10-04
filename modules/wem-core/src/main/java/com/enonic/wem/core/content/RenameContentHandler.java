@@ -21,7 +21,7 @@ public class RenameContentHandler
     private AttachmentDao attachmentDao;
 
     @Override
-    public void handle( final RenameContent command )
+    public void handle()
         throws Exception
     {
         try

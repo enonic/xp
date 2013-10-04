@@ -31,7 +31,7 @@ public class GetSchemaTreeHandler
     private RelationshipTypeDao relationshipTypeDao;
 
     @Override
-    public void handle( final GetSchemaTree command )
+    public void handle()
         throws Exception
     {
         final Tree<Schema> typesTree = new Tree<Schema>();

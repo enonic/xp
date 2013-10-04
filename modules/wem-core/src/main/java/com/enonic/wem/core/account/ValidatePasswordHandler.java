@@ -15,7 +15,7 @@ public final class ValidatePasswordHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final ValidatePassword command )
+    public void handle()
         throws Exception
     {
         final AccountKey user = command.getKey();

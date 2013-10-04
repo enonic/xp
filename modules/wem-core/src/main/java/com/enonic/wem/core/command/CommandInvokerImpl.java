@@ -30,7 +30,8 @@ public final class CommandInvokerImpl
         {
             final CommandHandler handler = findHandler( command.getClass() );
             handler.setContext( context );
-            handler.handle( command );
+            handler.setCommand( command );
+            handler.handle();
         }
         catch ( final BaseException e )
         {

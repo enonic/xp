@@ -16,7 +16,7 @@ public class UpdateItemHandler
     extends CommandHandler<UpdateItem>
 {
     @Override
-    public void handle( final UpdateItem command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

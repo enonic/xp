@@ -15,7 +15,7 @@ public class CreateBinaryHandler
     private BinaryDao binaryDao;
 
     @Override
-    public void handle( final CreateBinary command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

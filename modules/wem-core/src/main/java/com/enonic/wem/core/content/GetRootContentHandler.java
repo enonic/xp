@@ -25,7 +25,7 @@ public class GetRootContentHandler
     private ContentDao contentDao;
 
     @Override
-    public void handle( final GetRootContent command )
+    public void handle()
         throws Exception
     {
 

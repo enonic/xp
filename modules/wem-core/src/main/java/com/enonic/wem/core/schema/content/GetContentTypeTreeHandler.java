@@ -15,7 +15,7 @@ public class GetContentTypeTreeHandler
     private ContentTypeDao contentTypeDao;
 
     @Override
-    public void handle( final GetContentTypeTree command )
+    public void handle()
         throws Exception
     {
         final ContentTypeTreeFactory factory = new ContentTypeTreeFactory( context.getJcrSession(), contentTypeDao );

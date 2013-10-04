@@ -40,7 +40,7 @@ public final class FindAccountsHandler
     private AccountSearchService accountSearchService;
 
     @Override
-    public void handle( final FindAccounts command )
+    public void handle()
         throws Exception
     {
         final AccountQuery selector = command.getQuery();

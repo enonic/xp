@@ -28,7 +28,7 @@ public final class UpdateAccountsHandler
     private IndexService indexService;
 
     @Override
-    public void handle( final UpdateAccounts command )
+    public void handle()
         throws Exception
     {
         final AccountKey accountKey = command.getKey();

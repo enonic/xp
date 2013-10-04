@@ -74,7 +74,8 @@ public class CreateSpaceHandlerTest
 
         // exercise
         final CreateSpace command = Commands.space().create().displayName( "My Space" ).name( "mySpace" ).icon( icon );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( spaceDao, times( 1 ) ).createSpace( isA( Space.class ), any( Session.class ) );

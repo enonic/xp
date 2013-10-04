@@ -24,7 +24,7 @@ public class GetContentVersionHistoryHandler
     private final ContentVersionComparator contentVersionComparator = new ContentVersionComparator();
 
     @Override
-    public void handle( final GetContentVersionHistory command )
+    public void handle()
         throws Exception
     {
         final ContentSelector selector = command.getSelector();

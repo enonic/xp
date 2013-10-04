@@ -64,7 +64,8 @@ public class UpdateUserStoreHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         UpdateResult updateResult = command.getResult();
 
         verify( accountDao, atLeastOnce() ).updateUserStore( isA( UserStore.class ), any( Session.class ) );
@@ -92,7 +93,8 @@ public class UpdateUserStoreHandlerTest
                 return false;
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         UpdateResult updateResult = command.getResult();
 
         verify( accountDao, never() ).updateUserStore( isA( UserStore.class ), any( Session.class ) );
@@ -120,7 +122,8 @@ public class UpdateUserStoreHandlerTest
                 return false;
             }
         } );
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         UpdateResult updateResult = command.getResult();
 
         assertFalse( updateResult.successful() );

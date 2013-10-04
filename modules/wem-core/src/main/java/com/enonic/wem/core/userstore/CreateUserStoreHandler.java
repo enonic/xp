@@ -16,7 +16,7 @@ public class CreateUserStoreHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final CreateUserStore command )
+    public void handle()
         throws Exception
     {
         final UserStore userStore = command.getUserStore();

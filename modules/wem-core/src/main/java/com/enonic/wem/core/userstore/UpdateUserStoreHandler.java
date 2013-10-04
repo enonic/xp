@@ -18,7 +18,7 @@ public class UpdateUserStoreHandler
     private AccountDao accountDao;
 
     @Override
-    public void handle( final UpdateUserStore command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

@@ -10,7 +10,7 @@ public class GetUserStoreConnectorsHandler
     extends CommandHandler<GetUserStoreConnectors>
 {
     @Override
-    public void handle( final GetUserStoreConnectors command )
+    public void handle()
         throws Exception
     {
         command.setResult( UserStoreConnectors.from() );

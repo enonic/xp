@@ -48,7 +48,8 @@ public class ValidatePasswordHandlerTest
         // exercise
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
         command.validate();
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final Boolean validPassword = command.getResult();
 
         // verify
@@ -69,7 +70,8 @@ public class ValidatePasswordHandlerTest
         // exercise
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( "forgotPassword" );
         command.validate();
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final Boolean validPassword = command.getResult();
 
         // verify
@@ -86,7 +88,8 @@ public class ValidatePasswordHandlerTest
 
         final ValidatePassword command = Commands.account().validatePassword().key( account ).password( userPassword );
         command.validate();
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
     @Test(expected = IllegalArgumentException.class)

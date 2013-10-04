@@ -70,7 +70,8 @@ public class RenameContentHandlerTest
         final RenameContent command = Commands.content().rename().contentId( contentId ).newName( "newName" );
 
         // exercise
-        this.handler.handle( command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentDao, Mockito.atLeastOnce() ).renameContent( isA( ContentId.class ), eq( "newName" ), any( Session.class ) );
