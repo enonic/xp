@@ -10,7 +10,8 @@ module app_browse_grid {
 
                 model: 'Admin.model.contentManager.ContentModel',
 
-                folderSort: true,
+                remoteSort: false,
+                folderSort: false,
                 autoLoad: false,
                 clearOnLoad: false,
                 autoSync: false,

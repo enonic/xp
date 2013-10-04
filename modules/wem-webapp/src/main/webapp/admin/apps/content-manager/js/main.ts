@@ -64,8 +64,6 @@
 
 ///<reference path='handler/DeleteContentHandler.ts' />
 
-///<reference path='store/ContentStore.ts' />
-///<reference path='store/ContentTreeStore.ts' />
 ///<reference path='store/ContentTypeStore.ts' />
 ///<reference path='store/ContentTypeTreeStore.ts' />
 

@@ -6,10 +6,6 @@ module api_content {
         public static EXPAND_SUMMARY = 'summary';
         public static EXPAND_FULL = 'full';
 
-        private static ONE_DAY = '< 1 day';
-        private static ONE_HOUR = '< 1 hour';
-        private static ONE_WEEK = '< 1 week';
-
         private fulltext:string;
 
         private includeFacets:boolean = true;
@@ -51,8 +47,8 @@ module api_content {
             return this;
         }
 
-        public setRanges(ranges:{ [s : string ] : string[]; }) {
-            this.ranges = this.createRangesFromFilterValues(ranges);
+        public setRanges(ranges:{lower:Date; upper:Date}[]) {
+            this.ranges = ranges;
             return this;
         }
 
@@ -147,46 +143,6 @@ module api_content {
                 }
             };
 
-        }
-
-        private createRangesFromFilterValues(values:{ [s : string ] : string[]; }):{lower:Date; upper:Date}[] {
-            var ranges = [];
-
-            if (values) {
-                var now = new Date();
-                var oneDayAgo = new Date();
-                var oneWeekAgo = new Date();
-                var oneHourAgo = new Date();
-                oneDayAgo.setDate(now.getDate() - 1);
-                oneWeekAgo.setDate(now.getDate() - 7);
-                Admin.lib.DateHelper.addHours(oneHourAgo, -1);
-
-                for (var prop in values) {
-                    if (values.hasOwnProperty(prop) && values[prop].length > 0) {
-                        var lower = null;
-
-                        switch (values[prop][0]) {
-                        case FindContentRequest.ONE_DAY:
-                            lower = oneDayAgo;
-                            break;
-                        case FindContentRequest.ONE_HOUR:
-                            lower = oneHourAgo;
-                            break;
-                        case FindContentRequest.ONE_WEEK:
-                            lower = oneWeekAgo;
-                            break;
-                        }
-
-                        if (lower) {
-                            ranges.push({
-                                lower: lower,
-                                upper: null
-                            })
-                        }
-                    }
-                }
-            }
-            return ranges;
         }
 
     }
