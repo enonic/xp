@@ -1,5 +1,5 @@
-///<reference path='Layout.ts' />
 ///<reference path='Component.ts' />
+///<reference path='Layout.ts' />
 
 ///<reference path='Image.ts' />
 ///<reference path='Paragraph.ts' />
