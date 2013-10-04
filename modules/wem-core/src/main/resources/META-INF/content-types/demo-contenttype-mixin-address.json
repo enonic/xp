@@ -1,6 +1,5 @@
 {
     "name": "using-mixin-address",
-    "module": "demo",
     "displayName": "Using mixin: address",
     "superType": "structured",
     "isAbstract": false,
@@ -9,7 +8,7 @@
         {
             "MixinReference": {
                 "name": "address",
-                "reference": "demo:address"
+                "reference": "address"
             }
         }
     ]
