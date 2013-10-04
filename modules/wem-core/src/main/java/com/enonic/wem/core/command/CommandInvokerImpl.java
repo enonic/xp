@@ -1,11 +1,10 @@
 package com.enonic.wem.core.command;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.google.common.collect.Maps;
+import com.google.inject.Provider;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.exception.BaseException;
@@ -15,11 +14,12 @@ import com.enonic.wem.api.exception.SystemException;
 public final class CommandInvokerImpl
     implements CommandInvoker
 {
-    private final Map<Class, CommandHandler> handlerMap;
+    private final Map<Class, Provider<CommandHandler>> handlers;
 
-    public CommandInvokerImpl()
+    @Inject
+    public CommandInvokerImpl( final Map<Class, Provider<CommandHandler>> handlers )
     {
-        this.handlerMap = Maps.newHashMap();
+        this.handlers = handlers;
     }
 
     @Override
@@ -43,21 +43,12 @@ public final class CommandInvokerImpl
 
     private synchronized CommandHandler findHandler( final Class type )
     {
-        final CommandHandler handler = this.handlerMap.get( type );
+        final Provider<CommandHandler> handler = this.handlers.get( type );
         if ( handler != null )
         {
-            return handler;
+            return handler.get();
         }
 
         throw new SystemException( "Handle for command [{0}] not found", type.getName() );
-    }
-
-    @Inject
-    public void setHandlers( final Set<CommandHandler> handlers )
-    {
-        for ( final CommandHandler handler : handlers )
-        {
-            this.handlerMap.put( handler.getType(), handler );
-        }
     }
 }
