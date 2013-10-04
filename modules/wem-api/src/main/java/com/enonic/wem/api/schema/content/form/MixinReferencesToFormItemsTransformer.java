@@ -72,9 +72,7 @@ public class MixinReferencesToFormItemsTransformer
                 }
                 else
                 {
-                    // TODO: what to do when mixin not found?
-                    formItem.setParent( null );
-                    formItems.add( formItem );
+                    throw new MixinNotFound( mixinReference.getQualifiedMixinName() );
                 }
             }
             else
