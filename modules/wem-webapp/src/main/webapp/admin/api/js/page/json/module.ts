@@ -1,4 +1,3 @@
-///<reference path='RegionItemJson.ts' />
 ///<reference path='LayoutJson.ts' />
 ///<reference path='ComponentJson.ts' />
 ///<reference path='ParagraphJson.ts' />

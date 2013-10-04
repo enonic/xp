@@ -4,6 +4,6 @@ module api_page_json{
 
         name:string;
 
-        regionItems:RegionItemJson[];
+        components:ComponentJson[];
     }
 }

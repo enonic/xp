@@ -5,6 +5,8 @@ public class PageTemplate
 {
     private PageTemplateId id;
 
+    private PageSetup pageSetup;
+
     private PageTemplate( final Builder builder )
     {
         this.id = builder.id;

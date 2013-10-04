@@ -4,13 +4,15 @@ module api_page{
 
         private name:string;
 
-        private regionItems:RegionItem[];
+        private components:Component[];
 
         constructor(regionJson:api_page_json.RegionJson) {
+
             this.name = regionJson.name;
-            regionJson.regionItems.forEach((regionItemJson:api_page_json.RegionItemJson) => {
-                var regionItem = RegionItemFactory.createRegionItem(regionItemJson);
-                this.regionItems.push(regionItem);
+
+            regionJson.components.forEach((componentJsonJson:api_page_json.ComponentJson) => {
+                var component = ComponentFactory.createComponent(componentJsonJson);
+                this.components.push(component);
             });
         }
 
@@ -18,8 +20,8 @@ module api_page{
             return this.name;
         }
 
-        getRegionItems():RegionItem[] {
-            return this.regionItems;
+        getComponents():Component[] {
+            return this.components;
         }
 
     }

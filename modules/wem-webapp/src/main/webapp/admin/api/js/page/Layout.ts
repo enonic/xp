@@ -1,6 +1,6 @@
 module api_page{
 
-    export class Layout extends RegionItem {
+    export class Layout extends Component {
 
         private regions:Region[];
 
