@@ -6,15 +6,14 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateId;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.ItemPath;
 import com.enonic.wem.api.item.ItemTranslatable;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.ChangeTraceable;
@@ -23,7 +22,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Content
-    implements IllegalEditAware<Content>, ItemTranslatable<Content>, ChangeTraceable
+    implements IllegalEditAware<Content>, ItemTranslatable, ChangeTraceable
 {
     private final String displayName;
 
@@ -153,59 +152,34 @@ public final class Content
         return !childrenIds.isEmpty();
     }
 
-    public Item toItem()
+    public Item toItem( final ItemPath parent )
     {
-        final Item.Builder itemBuilder = Item.newItem( new ItemId( this.id.toString() ), this.getName() );
-        if ( this.displayName != null )
-        {
-            itemBuilder.property( "displayName", new Value.Text( this.displayName ) );
-        }
-        if ( this.createdTime != null )
-        {
-            itemBuilder.createdTime( this.createdTime );
-        }
-        if ( this.modifiedTime != null )
-        {
-            itemBuilder.modifiedTime( this.modifiedTime );
-        }
-        if ( this.owner != null )
-        {
-            itemBuilder.property( "owner", new Value.Text( this.owner.toString() ) );
-        }
-        if ( this.creator != null )
-        {
-            itemBuilder.creator( this.creator );
-        }
-        if ( this.modifier != null )
-        {
-            itemBuilder.modifier( this.modifier );
-        }
-        if ( this.type != null )
-        {
-            itemBuilder.property( "type", new Value.Text( this.type.toString() ) );
-        }
-        if ( this.contentData != null )
-        {
-            itemBuilder.addDataSet( this.contentData.toDataSet( "data" ) );
-        }
-        return itemBuilder.build();
+        final Item.Builder builder = Item.newItem( new ItemId( this.id.toString() ), this.getName() );
+        builder.parent( parent );
+        builder.createdTime( this.createdTime );
+        builder.modifiedTime( this.modifiedTime );
+        builder.creator( this.creator );
+        builder.modifier( this.modifier );
+        builder.property( "displayName", this.displayName );
+        builder.property( "owner", this.owner != null ? this.owner.toString() : null );
+        builder.property( "type", this.type != null ? this.type.toString() : null );
+        builder.addDataSet( this.contentData != null ? this.contentData.toDataSet( "data" ) : null );
+
+        return builder.build();
     }
 
     @Override
-    public Content toObject( final Item item )
+    public void checkIllegalEdit( final Content to )
+        throws IllegalEditException
     {
-        return newContent().
-            id( ContentId.from( item.id().toString() ) ).
-            name( item.name() ).
-            displayName( item.property( "displayName" ).getString() ).
-            createdTime( item.getCreatedTime() ).
-            creator( item.getCreator() ).
-            modifiedTime( item.getModifiedTime() ).
-            modifier( item.getModifier() ).
-            owner( AccountKey.from( item.property( "owner" ).getString() ).asUser() ).
-            type( QualifiedContentTypeName.from( item.property( "type" ).getString() ) ).
-            contentData( new ContentData( item.dataSet( "data" ).toRootDataSet() ) ).
-            build();
+        IllegalEdit.check( "id", this.getId(), to.getId(), Content.class );
+        IllegalEdit.check( "versionId", this.getVersionId(), to.getVersionId(), Content.class );
+        IllegalEdit.check( "path", this.getPath(), to.getPath(), Content.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Content.class );
+        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), Content.class );
+        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
+        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
+        IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
     }
 
     @Override
@@ -223,20 +197,6 @@ public final class Content
         s.add( "modifier", modifier );
         s.add( "owner", owner );
         return s.toString();
-    }
-
-    @Override
-    public void checkIllegalEdit( final Content to )
-        throws IllegalEditException
-    {
-        IllegalEdit.check( "id", this.getId(), to.getId(), Content.class );
-        IllegalEdit.check( "versionId", this.getVersionId(), to.getVersionId(), Content.class );
-        IllegalEdit.check( "path", this.getPath(), to.getPath(), Content.class );
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Content.class );
-        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), Content.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
-        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
-        IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
     }
 
     public static Builder newContent()

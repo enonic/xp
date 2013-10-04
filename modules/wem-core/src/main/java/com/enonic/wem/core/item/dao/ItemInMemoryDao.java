@@ -23,31 +23,17 @@ public class ItemInMemoryDao
     }
 
     @Override
-    public Item storeNew( final Item item )
+    public Item createItem( final CreateItemArgs createItemArgs )
     {
-        Preconditions.checkArgument( item.id() == null, "New Item to store cannot have an ItemId: " + item.id() );
-        final ItemPath path = item.path();
-        Preconditions.checkNotNull( path, "Path of Item must be specified " );
-        Preconditions.checkArgument( path.isAbsolute(), "Path to Item must be absolute: " + path.toString() );
-        final ItemPath parentPath = path.getParentPath();
-
-        if ( !itemIdByPath.pathHasItem( parentPath ) )
-        {
-            throw new NoItemAtPathFound( parentPath );
-        }
-
-        final Item itemWithId = Item.newItem( item ).id( new ItemId() ).build();
-
-        itemByItemId.storeNew( itemWithId );
-        itemIdByPath.put( itemWithId.path(), itemWithId.id() );
-        return itemWithId;
+        // TODO
+        return null;
     }
 
     @Override
-    public Item updateExisting( final Item item )
+    public Item updateItem( final UpdateItemArgs updateItemArgs )
     {
-        itemByItemId.updateExisting( item );
-        return item;
+        // TODO
+        return null;
     }
 
     public Item getItemById( final ItemId id )

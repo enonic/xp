@@ -26,10 +26,12 @@ public final class GetMixinsHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
+        // TODO: final ItemDao itemDao = new ItemJcrDao( session );
 
         final Mixins mixins;
         if ( command.isGetAll() )
         {
+            // TODO: itemDao.getAllOfType();
             mixins = getAllMixins( session );
         }
         else

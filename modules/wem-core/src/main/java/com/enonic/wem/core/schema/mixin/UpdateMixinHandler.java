@@ -51,6 +51,32 @@ public final class UpdateMixinHandler
                 command.setResult( UpdateMixinResult.SUCCESS );
             }
             command.setResult( UpdateMixinResult.SUCCESS );
+
+            /*final ItemDao itemDao = new ItemJcrDao( context.getJcrSession() );
+            final UserKey updater = UserKey.superUser();
+            final MixinItemTranslator translator = new MixinItemTranslator();
+            final UpdateItemArgs updateItemArgs = newUpdateItemArgs().
+                updater( updater ).
+                itemToUpdate( new ItemId( mixin.getId() ) ).
+                icon( mixin.getIcon() ).
+                rootDataSet( translator.toRootDataSet( mixin ) ).
+                build();
+
+            itemDao.updateItem( updateItemArgs );
+
+            final SetItemEditor itemEditor = SetItemEditor.newSetItemEditor().
+                name( mixin.getName() ).
+                icon( mixin.getIcon() ).
+                rootDataSet( translator.toRootDataSet( mixin ) ).
+                build();
+
+            final UpdateItem updateCommand = Commands.item().update().
+                modifier( updater ).
+                itemToUpdate( new ItemId( mixin.getId() ) ).
+                readAt( editor.getReadAt() ).
+                editor( itemEditor );
+
+            context.getClient().execute( updateCommand );*/
         }
     }
 

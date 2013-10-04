@@ -17,7 +17,7 @@ class ItemJcrHelper
 {
     private static final String ITEMS_NODE = "items";
 
-    private static final String ITEMS_PATH = JcrConstants.ROOT_NODE + "/" + ITEMS_NODE + "/";
+    static final String ITEMS_PATH = JcrConstants.ROOT_NODE + "/" + ITEMS_NODE + "/";
 
     private final Session session;
 
@@ -36,7 +36,16 @@ class ItemJcrHelper
         }
         catch ( ItemExistsException e )
         {
-            throw new ItemAlreadyExist( item.path() );
+            try
+            {
+                final Node existingItemNode = parentItemNode.getNode( item.name() );
+                final Item existingItem = ItemJcrMapper.toItem( existingItemNode ).build();
+                throw new ItemAlreadyExist( existingItem.path() );
+            }
+            catch ( RepositoryException e1 )
+            {
+                throw new RuntimeException( "Failed to createChild", e );
+            }
         }
         catch ( RepositoryException e )
         {
@@ -86,7 +95,21 @@ class ItemJcrHelper
         }
     }
 
+    Item updateItemNode( final Node itemNode, final UpdateItemArgs updateItemArgs )
+    {
+        try
+        {
+            ItemJcrMapper.updateItemNode( updateItemArgs, itemNode );
+            return ItemJcrMapper.toItem( itemNode ).build();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to updateItemNode", e );
+        }
+    }
+
     Node getItemNodeById( final ItemId id )
+        throws NoItemWithIdFound
     {
         try
         {
@@ -124,4 +147,6 @@ class ItemJcrHelper
         final Node itemNode = getItemNodeByPath( path );
         return ItemJcrMapper.toItem( itemNode ).build();
     }
+
+
 }

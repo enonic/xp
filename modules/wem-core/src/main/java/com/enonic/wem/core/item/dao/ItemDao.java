@@ -13,7 +13,7 @@ public interface ItemDao
     public Item getItemByPath( ItemPath path )
         throws NoItemFoundException;
 
-    public Item storeNew( Item item );
+    public Item createItem( CreateItemArgs createItemArgs );
 
-    public Item updateExisting( final Item item );
+    public Item updateItem( final UpdateItemArgs updateItemArgs );
 }
