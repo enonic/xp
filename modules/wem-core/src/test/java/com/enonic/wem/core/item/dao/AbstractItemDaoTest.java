@@ -10,6 +10,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.wem.api.data.RootDataSet;
@@ -220,6 +221,7 @@ public abstract class AbstractItemDaoTest
             itemToUpdate( id ).
             name( "myItem" ).
             rootDataSet( changedData ).
+            readAt( Optional.<DateTime>absent() ).
             build() );
 
         // exercise: pretend item was read one minute before current modifiedTime
@@ -231,7 +233,7 @@ public abstract class AbstractItemDaoTest
                 itemToUpdate( id ).
                 name( "myItem" ).
                 rootDataSet( changedData ).
-                readAt( CREATED_TIME.plusMinutes( 59 ) ).
+                readAt( Optional.of( CREATED_TIME.plusMinutes( 59 ) ) ).
                 build() );
 
             fail( "Expected exception ItemModifiedSinceRead" );

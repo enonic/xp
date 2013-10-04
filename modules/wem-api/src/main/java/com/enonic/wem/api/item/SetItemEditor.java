@@ -3,13 +3,15 @@ package com.enonic.wem.api.item;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Optional;
+
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class SetItemEditor
     implements ItemEditor
 {
-    private final DateTime readAt;
+    private final Optional<DateTime> readAt;
 
     private final String name;
 
@@ -26,7 +28,7 @@ public class SetItemEditor
     }
 
     @Override
-    public DateTime getReadAt()
+    public Optional<DateTime> getReadAt()
     {
         return readAt;
     }
@@ -67,7 +69,7 @@ public class SetItemEditor
 
     public static class Builder
     {
-        private DateTime readAt;
+        private Optional<DateTime> readAt;
 
         private String name;
 
@@ -93,7 +95,7 @@ public class SetItemEditor
             return this;
         }
 
-        public Builder readAt( DateTime value )
+        public Builder readAt( Optional<DateTime> value )
         {
             this.readAt = value;
             return this;

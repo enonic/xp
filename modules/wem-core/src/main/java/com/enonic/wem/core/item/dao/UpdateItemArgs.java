@@ -3,6 +3,8 @@ package com.enonic.wem.core.item.dao;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Optional;
+
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
@@ -12,7 +14,7 @@ public class UpdateItemArgs
 {
     private final UserKey updater;
 
-    private final DateTime readAt;
+    private final Optional<DateTime> readAt;
 
     private final ItemId itemToUpdate;
 
@@ -42,7 +44,7 @@ public class UpdateItemArgs
         return itemToUpdate;
     }
 
-    DateTime readAt()
+    Optional<DateTime> readAt()
     {
         return this.readAt;
     }
@@ -73,7 +75,7 @@ public class UpdateItemArgs
 
         private ItemId itemToUpdate;
 
-        private DateTime readAt;
+        private Optional<DateTime> readAt;
 
         private String name;
 
@@ -93,7 +95,7 @@ public class UpdateItemArgs
             return this;
         }
 
-        public Builder readAt( DateTime value )
+        public Builder readAt( Optional<DateTime> value )
         {
             this.readAt = value;
             return this;

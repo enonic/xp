@@ -52,9 +52,9 @@ class ItemJcrMapper
         final DateTime now = DateTime.now();
 
         final Item existingItem = ItemJcrMapper.toItem( itemNode ).build();
-        if ( updateItemArgs.readAt() != null && existingItem.getModifiedTime().isAfter( updateItemArgs.readAt() ) )
+        if ( updateItemArgs.readAt().isPresent() && existingItem.getModifiedTime().isAfter( updateItemArgs.readAt().get() ) )
         {
-            throw new ItemModifiedSinceRead( updateItemArgs.readAt(), existingItem );
+            throw new ItemModifiedSinceRead( updateItemArgs.readAt().get(), existingItem );
         }
 
         JcrHelper.setPropertyDateTime( itemNode, MODIFIED_TIME, now );
