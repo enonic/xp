@@ -125,30 +125,4 @@ public class MixinReferencesToFormItemsTransformerTest
         assertEquals( "home.myFieldInLayout", transformedForm.getInput( "home.myFieldInLayout" ).getPath().toString() );
     }
 
-    @Test
-    public void mixinReferencesToFormItems_throws_exception_when_mixin_is_not_of_expected_type()
-    {
-        // setup
-        Mixin mixin = Mixin.newMixin().name( "address" ).addFormItem( newFormItemSet().name( "address" ).addFormItem(
-            newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-            newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
-
-        Form form = newForm().
-            addFormItem( newMixinReference().name( "home" ).mixin( mixin.getQualifiedName() ).build() ).
-            build();
-
-        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
-        mixinFetcher.add( mixin );
-
-        // exercise
-        try
-        {
-            transformer.transformForm( form );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Mixin expected to be of type Input: FormItemSet", e.getMessage() );
-        }
-    }
 }
