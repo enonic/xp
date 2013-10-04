@@ -44,6 +44,16 @@ public class ItemPathTest
     }
 
     @Test
+    public void ROOT()
+    {
+        assertEquals( "/", ItemPath.ROOT.toString() );
+        assertEquals( true, ItemPath.ROOT.isAbsolute() );
+        assertEquals( false, ItemPath.ROOT.isRelative() );
+        assertEquals( true, ItemPath.ROOT.isEmpty() );
+        assertEquals( false, ItemPath.ROOT.hasTrailingDivider() );
+    }
+
+    @Test
     public void getParentPaths()
     {
         ItemPath itemPath = new ItemPath( "/one/two/three" );
