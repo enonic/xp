@@ -47,8 +47,16 @@ module api_grid {
             return this.slickDataView.getLength();
         }
 
+        getRowById(id:string):number {
+            return this.slickDataView.getRowById(id);
+        }
+
         subscribeOnRowsChanged(callback:(e, args) => void) {
             this.slickDataView.onRowsChanged.subscribe(callback);
+        }
+
+        subscribeOnRowCountChanged(callback:(e, args) => void) {
+            this.slickDataView.onRowCountChanged.subscribe(callback);
         }
     }
 }

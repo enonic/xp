@@ -226,6 +226,14 @@ module api_dom {
             return parseFloat(this.getComputedProperty('padding-left'));
         }
 
+        getBorderTopWidth():number {
+            return parseFloat(this.getComputedProperty('border-top-width'));
+        }
+
+        getBorderBottomWidth():number {
+            return parseFloat(this.getComputedProperty('border-bottom-width'));
+        }
+
         setZindex(value:number):ElementHelper {
             this.el.style.zIndex = value.toString();
             return this;
