@@ -1,8 +1,5 @@
 package com.enonic.wem.core.item.dao;
 
-import org.junit.Ignore;
-
-@Ignore
 public class ItemInMemoryDaoTest
     extends AbstractItemDaoTest
 {
