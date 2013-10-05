@@ -95,12 +95,12 @@ class ItemJcrHelper
         }
     }
 
-    Item updateItemNode( final Node itemNode, final UpdateItemArgs updateItemArgs )
+    Item updateItemNode( final Node existingItemNode, final UpdateItemArgs updateItemArgs )
     {
         try
         {
-            ItemJcrMapper.updateItemNode( updateItemArgs, itemNode );
-            return ItemJcrMapper.toItem( itemNode ).build();
+            ItemJcrMapper.updateItemNode( updateItemArgs, existingItemNode );
+            return ItemJcrMapper.toItem( existingItemNode ).build();
         }
         catch ( RepositoryException e )
         {

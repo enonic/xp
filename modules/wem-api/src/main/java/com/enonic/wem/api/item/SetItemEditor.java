@@ -1,37 +1,25 @@
 package com.enonic.wem.api.item;
 
 
-import org.joda.time.DateTime;
-
-import com.google.common.base.Optional;
-
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class SetItemEditor
     implements ItemEditor
 {
-    private final Optional<DateTime> readAt;
-
     private final String name;
 
     private final Icon icon;
 
-    private final RootDataSet rootDataSet;
+    private final RootDataSet data;
 
     private SetItemEditor( final Builder builder )
     {
-        this.readAt = builder.readAt;
         this.name = builder.name;
         this.icon = builder.icon;
-        this.rootDataSet = builder.rootDataSet;
+        this.data = builder.data;
     }
 
-    @Override
-    public Optional<DateTime> getReadAt()
-    {
-        return readAt;
-    }
 
     @Override
     public Item edit( final Item toBeEdited )
@@ -49,7 +37,7 @@ public class SetItemEditor
             builder.icon( this.icon );
             changed = true;
         }
-        builder.rootDataSet( this.rootDataSet );
+        builder.rootDataSet( this.data );
         changed = true;
 
         if ( changed )
@@ -69,13 +57,11 @@ public class SetItemEditor
 
     public static class Builder
     {
-        private Optional<DateTime> readAt;
-
         private String name;
 
         private Icon icon;
 
-        private RootDataSet rootDataSet;
+        private RootDataSet data;
 
         public Builder name( String value )
         {
@@ -89,15 +75,9 @@ public class SetItemEditor
             return this;
         }
 
-        public Builder rootDataSet( RootDataSet value )
+        public Builder data( RootDataSet value )
         {
-            this.rootDataSet = value;
-            return this;
-        }
-
-        public Builder readAt( Optional<DateTime> value )
-        {
-            this.readAt = value;
+            this.data = value;
             return this;
         }
 

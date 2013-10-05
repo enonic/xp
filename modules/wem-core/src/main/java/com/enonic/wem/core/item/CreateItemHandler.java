@@ -23,7 +23,7 @@ public class CreateItemHandler
             parent( command.getParent() ).
             name( command.getName() ).
             icon( command.getIcon() ).
-            rootDataSet( command.getDataSet() ).
+            rootDataSet( command.getData() ).
             build();
 
         itemDao.createItem( createItemArgs );

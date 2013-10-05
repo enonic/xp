@@ -5,7 +5,11 @@ import javax.jcr.Session;
 
 import org.joda.time.DateTime;
 
+import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
+import com.enonic.wem.api.item.CreateItem;
+import com.enonic.wem.api.item.ItemPath;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
@@ -34,30 +38,20 @@ public final class CreateMixinHandler
         session.save();
         command.setResult( mixin.getQualifiedName() );
 
-        // new way
-        /*final ItemDao itemDao = new ItemJcrDao( context.getJcrSession() );
+        // Storing using Item
         final ItemPath parentItemPath = ItemPath.newPath( "/mixins" ).build();
         final UserKey creator = UserKey.superUser();
         final MixinItemTranslator translator = new MixinItemTranslator();
-        final CreateItemArgs createItemArgs = newCreateItemArgs().
-            creator( creator ).
-            parent( parentItemPath ).
-            name( command.getName() ).
-            icon( command.getIcon() ).
-            rootDataSet( translator.toRootDataSet( command ) ).
-            build();
-
-        itemDao.createItem( createItemArgs );
 
         final CreateItem createItemCommand = Commands.item().create().
             creator( creator ).
             name( command.getName() ).
             parent( parentItemPath ).
-            dataSet( translator.toRootDataSet( command ) );
+            data( translator.toRootDataSet( command ) );
 
-        final CreateItemResult createItemResult = context.getClient().execute( createItemCommand );
-        final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
-        // TODO: set result*/
+        //final CreateItemResult createItemResult = context.getClient().execute( createItemCommand );
+        //final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
+        //command.setResult( persistedMixin.getQualifiedName() );
     }
 
     @Inject

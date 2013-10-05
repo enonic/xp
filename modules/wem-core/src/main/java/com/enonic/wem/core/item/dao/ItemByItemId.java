@@ -26,12 +26,6 @@ class ItemByItemId
             throw new NoItemWithIdFound( item.id() );
         }
 
-        final Item persistedItem = itemByItemId.get( item.id() );
-        if ( persistedItem.getModifiedTime().isAfter( item.getModifiedTime() ) )
-        {
-            throw new ItemModifiedSinceRead( item.getModifiedTime(), persistedItem );
-        }
-
         itemByItemId.put( item.id(), item );
     }
 

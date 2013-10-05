@@ -51,12 +51,6 @@ class ItemJcrMapper
     {
         final DateTime now = DateTime.now();
 
-        final Item existingItem = ItemJcrMapper.toItem( itemNode ).build();
-        if ( updateItemArgs.readAt().isPresent() && existingItem.getModifiedTime().isAfter( updateItemArgs.readAt().get() ) )
-        {
-            throw new ItemModifiedSinceRead( updateItemArgs.readAt().get(), existingItem );
-        }
-
         JcrHelper.setPropertyDateTime( itemNode, MODIFIED_TIME, now );
         JcrHelper.setPropertyUserKey( itemNode, MODIFIER, updateItemArgs.updater() );
         iconJcrMapper.toJcr( updateItemArgs.icon(), itemNode );

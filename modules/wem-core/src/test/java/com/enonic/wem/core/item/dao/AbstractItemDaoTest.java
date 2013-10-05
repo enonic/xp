@@ -4,19 +4,14 @@ package com.enonic.wem.core.item.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
 
 import static com.enonic.wem.core.item.dao.CreateItemArgs.newCreateItemArgs;
@@ -30,8 +25,6 @@ import static junit.framework.Assert.fail;
  */
 public abstract class AbstractItemDaoTest
 {
-    static final DateTime CREATED_TIME = new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC );
-
     private ItemDao dao;
 
     abstract ItemDao createDao();
@@ -196,55 +189,6 @@ public abstract class AbstractItemDaoTest
         {
             assertTrue( e instanceof ItemAlreadyExist );
             assertEquals( "Item already exist: /myItem", e.getMessage() );
-        }
-    }
-
-    @Test
-    public void when_updateItem_given_an_Item_that_have_been_modified_since_read_then_ItemModifiedSinceRead_is_thrown()
-        throws Exception
-    {
-        // setup
-        DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
-        RootDataSet initialData = new RootDataSet();
-        initialData.setProperty( "propertyOfItem", new Value.Text( "A" ) );
-        ItemId id = dao.createItem( CreateItemArgs.newCreateItemArgs().
-            parent( ItemPath.ROOT ).
-            name( "myItem" ).
-            rootDataSet( initialData ).
-            build() ).id();
-
-        // setup: ensure modifiedTime is one hour after created time
-        DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.plusHours( 1 ).getMillis() );
-        RootDataSet changedData = new RootDataSet();
-        changedData.setProperty( "propertyOfItem", new Value.Text( "B" ) );
-        dao.updateItem( UpdateItemArgs.newUpdateItemArgs().
-            itemToUpdate( id ).
-            name( "myItem" ).
-            rootDataSet( changedData ).
-            readAt( Optional.<DateTime>absent() ).
-            build() );
-
-        // exercise: pretend item was read one minute before current modifiedTime
-        try
-        {
-            DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.plusMinutes( 5 ).getMillis() );
-
-            dao.updateItem( UpdateItemArgs.newUpdateItemArgs().
-                itemToUpdate( id ).
-                name( "myItem" ).
-                rootDataSet( changedData ).
-                readAt( Optional.of( CREATED_TIME.plusMinutes( 59 ) ) ).
-                build() );
-
-            fail( "Expected exception ItemModifiedSinceRead" );
-
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof ItemModifiedSinceRead );
-            assertEquals(
-                "Item has been modified since it was read by you. Persisted Item's modified time is [2013-01-01T13:00:00.000Z] while yours is [2013-01-01T12:59:00.000Z]",
-                e.getMessage() );
         }
     }
 }

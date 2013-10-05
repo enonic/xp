@@ -1,10 +1,6 @@
 package com.enonic.wem.core.item.dao;
 
 
-import org.joda.time.DateTime;
-
-import com.google.common.base.Optional;
-
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
@@ -13,8 +9,6 @@ import com.enonic.wem.api.item.ItemId;
 public class UpdateItemArgs
 {
     private final UserKey updater;
-
-    private final Optional<DateTime> readAt;
 
     private final ItemId itemToUpdate;
 
@@ -28,7 +22,6 @@ public class UpdateItemArgs
     {
         this.updater = builder.updater;
         this.itemToUpdate = builder.itemToUpdate;
-        this.readAt = builder.readAt;
         this.name = builder.name;
         this.icon = builder.icon;
         this.rootDataSet = builder.rootDataSet;
@@ -42,11 +35,6 @@ public class UpdateItemArgs
     ItemId itemToUpdate()
     {
         return itemToUpdate;
-    }
-
-    Optional<DateTime> readAt()
-    {
-        return this.readAt;
     }
 
     String name()
@@ -75,8 +63,6 @@ public class UpdateItemArgs
 
         private ItemId itemToUpdate;
 
-        private Optional<DateTime> readAt;
-
         private String name;
 
         private Icon icon;
@@ -92,12 +78,6 @@ public class UpdateItemArgs
         public Builder itemToUpdate( ItemId value )
         {
             this.itemToUpdate = value;
-            return this;
-        }
-
-        public Builder readAt( Optional<DateTime> value )
-        {
-            this.readAt = value;
             return this;
         }
 

@@ -37,7 +37,6 @@ public class UpdateItemHandler
         final UpdateItemArgs updateItemArgs = newUpdateItemArgs().
             itemToUpdate( command.getItemToUpdate() ).
             name( edited.name() ).
-            readAt( command.getEditor().getReadAt() ).
             build();
 
         final Item persistedItem = itemDao.updateItem( updateItemArgs );

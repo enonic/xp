@@ -17,7 +17,7 @@ public class CreateItem
 
     private Icon icon;
 
-    private RootDataSet dataSet;
+    private RootDataSet data;
 
     public CreateItem creator( final UserKey value )
     {
@@ -37,15 +37,21 @@ public class CreateItem
         return this;
     }
 
+    public CreateItem parent( final String value )
+    {
+        this.parent = new ItemPath( value );
+        return this;
+    }
+
     public CreateItem icon( final Icon value )
     {
         this.icon = value;
         return this;
     }
 
-    public CreateItem dataSet( final RootDataSet value )
+    public CreateItem data( final RootDataSet value )
     {
-        this.dataSet = value;
+        this.data = value;
         return this;
     }
 
@@ -69,9 +75,9 @@ public class CreateItem
         return icon;
     }
 
-    public RootDataSet getDataSet()
+    public RootDataSet getData()
     {
-        return dataSet;
+        return data;
     }
 
     @Override
