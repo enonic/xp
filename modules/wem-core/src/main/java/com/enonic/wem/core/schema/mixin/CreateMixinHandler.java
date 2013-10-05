@@ -9,8 +9,10 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.item.CreateItem;
+import com.enonic.wem.api.item.CreateItemResult;
 import com.enonic.wem.api.item.ItemPath;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinFactory;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
@@ -49,9 +51,9 @@ public final class CreateMixinHandler
             parent( parentItemPath ).
             data( translator.toRootDataSet( command ) );
 
-        //final CreateItemResult createItemResult = context.getClient().execute( createItemCommand );
-        //final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
-        //command.setResult( persistedMixin.getQualifiedName() );
+        final CreateItemResult createItemResult = context.getClient().execute( createItemCommand );
+        final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
+        // TODO when Item persisting is ready: command.setResult( persistedMixin.getQualifiedName() );
     }
 
     @Inject

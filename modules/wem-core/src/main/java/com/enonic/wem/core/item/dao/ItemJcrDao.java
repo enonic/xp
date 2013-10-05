@@ -25,6 +25,14 @@ public class ItemJcrDao
     {
         this.session = session;
         this.jcrHelper = new ItemJcrHelper( this.session );
+
+        // TODO: A temporary hack to ensure that paths to root containers of different types of items already exists
+        ensurePath( new ItemPath( "mixins" ) );
+    }
+
+    private void ensurePath( final ItemPath path )
+    {
+        jcrHelper.ensurePath( path );
     }
 
     @Override

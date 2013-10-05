@@ -26,6 +26,44 @@ class ItemJcrHelper
         this.session = session;
     }
 
+    private Node itemsNode()
+    {
+        try
+        {
+            final Node root = session.getRootNode();
+            return root.getNode( ITEMS_PATH );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to get itemsNode", e );
+        }
+    }
+
+    void ensurePath( final ItemPath path )
+    {
+        try
+        {
+            Node parentNode = itemsNode();
+            for ( int i = 0; i < path.elementCount(); i++ )
+            {
+                final String pathElement = path.getElementAsString( i );
+                if ( !parentNode.hasNode( pathElement ) )
+                {
+                    parentNode = parentNode.addNode( pathElement );
+                }
+                else
+                {
+                    parentNode = parentNode.getNode( pathElement );
+                }
+            }
+
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to ensurePath: " + path, e );
+        }
+    }
+
     Item persistNewItem( final Item item, final Node parentItemNode )
     {
         try
@@ -50,19 +88,6 @@ class ItemJcrHelper
         catch ( RepositoryException e )
         {
             throw new RuntimeException( "Failed to createChild", e );
-        }
-    }
-
-    private Node itemsNode()
-    {
-        try
-        {
-            Node root = session.getRootNode();
-            return root.getNode( ITEMS_PATH );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( "Failed to get itemsNode", e );
         }
     }
 
