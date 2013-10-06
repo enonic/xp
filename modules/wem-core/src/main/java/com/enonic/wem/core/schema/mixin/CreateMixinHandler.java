@@ -12,7 +12,6 @@ import com.enonic.wem.api.item.CreateItem;
 import com.enonic.wem.api.item.CreateItemResult;
 import com.enonic.wem.api.item.ItemPath;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinFactory;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
@@ -46,13 +45,12 @@ public final class CreateMixinHandler
         final MixinItemTranslator translator = new MixinItemTranslator();
 
         final CreateItem createItemCommand = Commands.item().create().
-            creator( creator ).
             name( command.getName() ).
             parent( parentItemPath ).
             data( translator.toRootDataSet( command ) );
 
         final CreateItemResult createItemResult = context.getClient().execute( createItemCommand );
-        final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
+        //final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
         // TODO when Item persisting is ready: command.setResult( persistedMixin.getQualifiedName() );
     }
 

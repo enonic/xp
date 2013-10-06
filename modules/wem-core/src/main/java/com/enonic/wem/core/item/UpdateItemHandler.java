@@ -23,7 +23,7 @@ public class UpdateItemHandler
 
         final ItemJcrDao itemDao = new ItemJcrDao( session );
 
-        final Item persisted = itemDao.getItemById( command.getItemToUpdate() );
+        final Item persisted = itemDao.getItemById( command.getItem() );
 
         Item edited = command.getEditor().edit( persisted );
         if ( edited == null )
@@ -35,7 +35,7 @@ public class UpdateItemHandler
         persisted.checkIllegalEdit( edited );
 
         final UpdateItemArgs updateItemArgs = newUpdateItemArgs().
-            itemToUpdate( command.getItemToUpdate() ).
+            itemToUpdate( command.getItem() ).
             name( edited.name() ).
             build();
 

@@ -3,6 +3,7 @@ package com.enonic.wem.core.item;
 
 import javax.jcr.Session;
 
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.item.CreateItem;
 import com.enonic.wem.api.item.CreateItemResult;
 import com.enonic.wem.api.item.Item;
@@ -21,7 +22,7 @@ public class CreateItemHandler
         final ItemJcrDao itemDao = new ItemJcrDao( session );
 
         final CreateItemArgs createItemArgs = CreateItemArgs.newCreateItemArgs().
-            creator( command.getCreator() ).
+            creator( UserKey.superUser() ).
             parent( command.getParent() ).
             name( command.getName() ).
             icon( command.getIcon() ).
