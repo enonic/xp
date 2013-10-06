@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemAtPathFound;
 
 class ItemIdByPath
 {

@@ -9,8 +9,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.ItemAlreadyExist;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemAtPathFound;
+import com.enonic.wem.api.item.NoItemWithIdFound;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 class ItemJcrHelper
@@ -92,6 +95,7 @@ class ItemJcrHelper
     }
 
     Node getItemNodeByPath( final ItemPath path )
+        throws NoItemAtPathFound
     {
         try
         {
@@ -151,6 +155,7 @@ class ItemJcrHelper
     }
 
     Item getItemById( final ItemId id )
+        throws NoItemWithIdFound
     {
         try
         {
@@ -168,6 +173,7 @@ class ItemJcrHelper
     }
 
     Item getItemByPath( final ItemPath path )
+        throws NoItemAtPathFound
     {
         final Node itemNode = getItemNodeByPath( path );
         return ItemJcrMapper.toItem( itemNode ).build();

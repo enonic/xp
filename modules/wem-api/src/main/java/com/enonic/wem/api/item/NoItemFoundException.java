@@ -1,4 +1,4 @@
-package com.enonic.wem.core.item.dao;
+package com.enonic.wem.api.item;
 
 
 public abstract class NoItemFoundException

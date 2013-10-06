@@ -11,6 +11,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemAtPathFound;
+import com.enonic.wem.api.item.NoItemWithIdFound;
 
 import static com.enonic.wem.api.item.Item.newItem;
 
@@ -65,12 +67,13 @@ public class ItemJcrDao
     }
 
     public Item getItemById( final ItemId id )
+        throws NoItemWithIdFound
     {
         return this.jcrHelper.getItemById( id );
     }
 
     public Item getItemByPath( final ItemPath path )
-        throws NoItemFoundException
+        throws NoItemAtPathFound
     {
         Preconditions.checkArgument( path.isAbsolute(), "path must be absolute: " + path.toString() );
 

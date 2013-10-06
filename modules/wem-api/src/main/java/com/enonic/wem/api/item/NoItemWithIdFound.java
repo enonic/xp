@@ -1,7 +1,5 @@
-package com.enonic.wem.core.item.dao;
+package com.enonic.wem.api.item;
 
-
-import com.enonic.wem.api.item.ItemId;
 
 public class NoItemWithIdFound
     extends NoItemFoundException

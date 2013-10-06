@@ -12,7 +12,9 @@ import com.google.common.base.Stopwatch;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.ItemAlreadyExist;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemAtPathFound;
 
 import static com.enonic.wem.core.item.dao.CreateItemArgs.newCreateItemArgs;
 import static junit.framework.Assert.assertEquals;

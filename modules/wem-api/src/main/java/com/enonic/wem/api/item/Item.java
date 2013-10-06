@@ -3,6 +3,8 @@ package com.enonic.wem.api.item;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Data;
@@ -40,6 +42,9 @@ public final class Item
 
     private Item( final Builder builder )
     {
+        Preconditions.checkNotNull( builder.parent, "parent must be specified" );
+        Preconditions.checkNotNull( builder.parent, "name must be specified" );
+
         this.id = builder.id;
         this.name = builder.name;
         this.parent = builder.parent;
@@ -270,6 +275,15 @@ public final class Item
             if ( value != null )
             {
                 this.dataSet.setProperty( path, new Value.Text( value ) );
+            }
+            return this;
+        }
+
+        public Builder property( final String path, final Long value )
+        {
+            if ( value != null )
+            {
+                this.dataSet.setProperty( path, new Value.WholeNumber( value ) );
             }
             return this;
         }

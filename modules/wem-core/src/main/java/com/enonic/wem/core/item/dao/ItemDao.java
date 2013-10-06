@@ -4,6 +4,8 @@ package com.enonic.wem.core.item.dao;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemFoundException;
+import com.enonic.wem.api.item.NoItemWithIdFound;
 
 public interface ItemDao
 {
