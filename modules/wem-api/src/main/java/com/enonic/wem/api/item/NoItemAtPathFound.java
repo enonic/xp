@@ -6,7 +6,7 @@ public class NoItemAtPathFound
 {
     private ItemPath path;
 
-    NoItemAtPathFound( ItemPath path )
+    public NoItemAtPathFound( ItemPath path )
     {
         super( "No item at path [" + path + "] found" );
         this.path = path;

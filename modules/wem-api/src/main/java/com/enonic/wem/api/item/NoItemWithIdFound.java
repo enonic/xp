@@ -6,7 +6,7 @@ public class NoItemWithIdFound
 {
     private final ItemId id;
 
-    NoItemWithIdFound( final ItemId id )
+    public NoItemWithIdFound( final ItemId id )
     {
         super( "No item with id " + id + " found" );
         this.id = id;
