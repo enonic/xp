@@ -40,4 +40,10 @@ final class DecimalNumber
         return new Value.Double( ValueTypes.DOUBLE.convert( value ) );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }

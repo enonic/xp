@@ -6,6 +6,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
+import com.enonic.wem.api.schema.content.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypeExtension;
 
 public class DummyCustomInputType2
@@ -27,6 +28,12 @@ public class DummyCustomInputType2
 
     @Override
     public Value newValue( final String value )
+    {
+        return null;
+    }
+
+    @Override
+    public InputTypeConfig getDefaultConfig()
     {
         return null;
     }

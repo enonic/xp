@@ -34,5 +34,11 @@ final class Date
     {
         return new Value.DateMidnight( ValueTypes.DATE_MIDNIGHT.convert( value ) );
     }
+
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
 }
 

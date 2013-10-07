@@ -53,6 +53,12 @@ final class Color
         return new Value.String( value );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
     private static ValueHolder parse( final String str )
     {
         final ValueHolder valueHolder = new ValueHolder();

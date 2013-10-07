@@ -42,5 +42,11 @@ final class Tags
         return new Value.String( value );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }
 

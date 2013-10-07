@@ -40,4 +40,10 @@ final class GeoLocation
         return new Value.GeographicCoordinate( value );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }

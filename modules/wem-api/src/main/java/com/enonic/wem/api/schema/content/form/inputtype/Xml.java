@@ -40,4 +40,10 @@ final class Xml
         return new Value.String( value );
     }
 
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
+    }
+
 }
