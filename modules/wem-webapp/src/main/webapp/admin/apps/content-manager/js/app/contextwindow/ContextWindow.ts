@@ -32,7 +32,7 @@ module app_contextwindow {
 
             this.componentTypesPanel = new ComponentTypesPanel(this);
             this.inspectorPanel = new InspectorPanel(this);
-            this.emulatorPanel = new EmulatorPanel();
+            this.emulatorPanel = new EmulatorPanel(this);
 
             this.addItem("Insert", this.componentTypesPanel);
             this.addItem("Inspect", this.inspectorPanel);

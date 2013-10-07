@@ -1,38 +1,45 @@
 {
     "devices": [
         {
+            "name": "Monitor full (default)",
+            "device_type": "monitor_full",
+            "width": "100%",
+            "height": "100%",
+            "rotatable": false
+        },
+        {
             "name": "iPhone 5",
             "device_type": "mobile",
-            "width": 320,
-            "height": 578,
+            "width": "320px",
+            "height": "578px",
             "rotatable": true
         },
         {
             "name": "Galaxy S3",
             "device_type": "mobile",
-            "width": 360,
-            "height": 640,
+            "width": "360px",
+            "height": "640px",
             "rotatable": true
         },
         {
             "name": "iPad 3",
             "device_type": "tablet",
-            "width": 768,
-            "height": 1024,
+            "width": "768px",
+            "height": "1024px",
             "rotatable": true
         },
         {
             "name": "13\" Notebook",
             "device_type": "monitor",
-            "width": 1280,
-            "height": 800,
+            "width": "1280px",
+            "height": "800px",
             "rotatable": false
         },
         {
             "name": "15\" Notebook",
             "device_type": "monitor",
-            "width": 1366,
-            "height": 768,
+            "width": "1366px",
+            "height": "768px",
             "rotatable": false
         }
 

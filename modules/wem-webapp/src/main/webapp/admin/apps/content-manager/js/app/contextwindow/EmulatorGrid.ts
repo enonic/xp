@@ -24,9 +24,12 @@ module app_contextwindow {
             var rowHtml:string[] = [];
             rowHtml.push('<div ');
             rowHtml.push(
+                'data-width="' + data.width +'"',
+                'data-height="'+ data.height +'"',
+                'data-type="' + data.device_type +'"',
                 '>',
                 '<h5>' + data.name + '</h5>',
-                '<h6>' + data.width + "x" + data.height + " " + data.device_type + '</h6>',
+                '<h6>' + data.width + " &times; " + data.height + " " + data.device_type + '</h6>',
                 '</div>'
             );
 
