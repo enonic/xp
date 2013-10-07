@@ -4,6 +4,7 @@ import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.binary.BinaryCommands;
+import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.resource.ResourceCommands;
 import com.enonic.wem.api.command.schema.SchemaCommands;
@@ -12,9 +13,12 @@ import com.enonic.wem.api.command.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
 import com.enonic.wem.api.command.space.SpaceCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
+import com.enonic.wem.api.item.ItemCommands;
 
 public final class Commands
 {
+    private static final ItemCommands ITEM_COMMANDS = new ItemCommands();
+
     private static final SpaceCommands SPACE_COMMANDS = new SpaceCommands();
 
     private static final AccountCommands ACCOUNT_COMMANDS = new AccountCommands();
@@ -39,8 +43,15 @@ public final class Commands
 
     private static final ResourceCommands RESOURCE_COMMANDS = new ResourceCommands();
 
+    private static final ModuleCommands MODULE_COMMANDS = new ModuleCommands();
+
     private Commands()
     {
+    }
+
+    public static ItemCommands item()
+    {
+        return ITEM_COMMANDS;
     }
 
     public static AccountCommands account()
@@ -101,6 +112,11 @@ public final class Commands
     public static ResourceCommands resource()
     {
         return RESOURCE_COMMANDS;
+    }
+
+    public static ModuleCommands module()
+    {
+        return MODULE_COMMANDS;
     }
 
 }

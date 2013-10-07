@@ -27,7 +27,7 @@ public class ColorTest
     {
         Content content = newContent().build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "myColor", new Value.Text( "40;40;40" ) );
+        contentData.setProperty( "myColor", new Value.String( "40;40;40" ) );
 
         Property myColor = contentData.getProperty( "myColor" );
 
@@ -39,7 +39,7 @@ public class ColorTest
     {
         Content content = newContent().build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "myColor", new Value.Text( ";40;40" ) );
+        contentData.setProperty( "myColor", new Value.String( ";40;40" ) );
 
         Property myColor = contentData.getProperty( "myColor" );
 
@@ -52,8 +52,9 @@ public class ColorTest
         {
             e.printStackTrace();
             assertTrue( e instanceof InvalidValueException );
-            assertEquals( "Invalid value in [Text{name=myColor, type=Text, value=;40;40}]: Integer value for color red not given: : ;40;40",
-                          e.getMessage() );
+            assertEquals(
+                "Invalid value in [String{name=myColor, type=String, value=;40;40}]: Integer value for color red not given: : ;40;40",
+                e.getMessage() );
         }
     }
 
@@ -62,7 +63,7 @@ public class ColorTest
     {
         Content content = newContent().build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "myColor", new Value.Text( "256;40;40" ) );
+        contentData.setProperty( "myColor", new Value.String( "256;40;40" ) );
 
         Property myColor = contentData.getProperty( "myColor" );
 
@@ -75,7 +76,7 @@ public class ColorTest
         {
             assertTrue( e instanceof InvalidValueException );
             assertEquals(
-                "Invalid value in [Text{name=myColor, type=Text, value=256;40;40}]: Value of color red must be between 0 and 255: 256;40;40",
+                "Invalid value in [String{name=myColor, type=String, value=256;40;40}]: Value of color red must be between 0 and 255: 256;40;40",
                 e.getMessage() );
         }
     }

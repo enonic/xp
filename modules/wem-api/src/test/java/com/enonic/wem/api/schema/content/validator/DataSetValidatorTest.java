@@ -8,12 +8,12 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.inputtype.HtmlAreaConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.form.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
@@ -30,7 +30,6 @@ public class DataSetValidatorTest
     public void before()
     {
         contentType = newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "my_type" ).
             build();
     }
@@ -46,7 +45,7 @@ public class DataSetValidatorTest
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getContentData().setProperty( "mySingleSelector", new Value.Text( "nonExistingOption" ) );
+        content.getContentData().setProperty( "mySingleSelector", new Value.String( "nonExistingOption" ) );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -68,8 +67,8 @@ public class DataSetValidatorTest
             singleSelectorConfig ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getContentData().setProperty( "mySingleSelector1", new Value.Text( "nonExistingOption" ) );
-        content.getContentData().setProperty( "mySingleSelector2", new Value.Text( "nonExistingOption" ) );
+        content.getContentData().setProperty( "mySingleSelector1", new Value.String( "nonExistingOption" ) );
+        content.getContentData().setProperty( "mySingleSelector2", new Value.String( "nonExistingOption" ) );
 
         // exercise & verify
         DataSetValidator validator = new DataSetValidator( contentType );
@@ -93,15 +92,16 @@ public class DataSetValidatorTest
         contentType.form().addFormItem(
             newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).inputTypeConfig( htmlAreaConfig ).build() );
         contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );
-        contentType.form().addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() );
+        contentType.form().addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+            TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 50 ).build() ).build() );
         contentType.form().addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
         contentType.form().addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
         contentType.form().addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
         content.getContentData().setProperty( "myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2012, 9, 11 ) ) );
-        content.getContentData().setProperty( "myDecimalNumber", new Value.DecimalNumber( 12.34 ) );
-        content.getContentData().setProperty( "mySingleSelector", new Value.Text( "o1" ) );
+        content.getContentData().setProperty( "myDecimalNumber", new Value.Double( 12.34 ) );
+        content.getContentData().setProperty( "mySingleSelector", new Value.String( "o1" ) );
         content.getContentData().setProperty( "myHtmlArea", new Value.HtmlPart( "<h1>Hello world</h1>" ) );
 
         // exercise
@@ -115,15 +115,15 @@ public class DataSetValidatorTest
     {
         // setup
         ContentData contentData = new ContentData();
-        contentData.setProperty( "name", new Value.Text( "Thomas" ) );
-        contentData.setProperty( "personalia.eyeColour", new Value.Text( "Blue" ) );
-        contentData.setProperty( "personalia.hairColour", new Value.Text( "Blonde" ) );
-        contentData.setProperty( "crimes[0].description", new Value.Text( "Stole tomatoes from neighbour" ) );
-        contentData.setProperty( "crimes[0].year", new Value.Text( "1989" ) );
-        contentData.setProperty( "crimes[1].description", new Value.Text( "Stole a chocolate from the Matbua shop" ) );
-        contentData.setProperty( "crimes[1].year", new Value.Text( "1990" ) );
+        contentData.setProperty( "name", new Value.String( "Thomas" ) );
+        contentData.setProperty( "personalia.eyeColour", new Value.String( "Blue" ) );
+        contentData.setProperty( "personalia.hairColour", new Value.String( "Blonde" ) );
+        contentData.setProperty( "crimes[0].description", new Value.String( "Stole tomatoes from neighbour" ) );
+        contentData.setProperty( "crimes[0].year", new Value.String( "1989" ) );
+        contentData.setProperty( "crimes[1].description", new Value.String( "Stole a chocolate from the Matbua shop" ) );
+        contentData.setProperty( "crimes[1].year", new Value.String( "1990" ) );
 
-        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getValueType() );
+        assertEquals( ValueTypes.STRING, contentData.getProperty( "personalia.eyeColour" ).getValueType() );
         Assert.assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
         Assert.assertEquals( "personalia.eyeColour", contentData.getProperty( "personalia.eyeColour" ).getPath().toString() );
 
@@ -138,7 +138,7 @@ public class DataSetValidatorTest
         crimes.add( newInput().name( "description" ).inputType( InputTypes.TEXT_LINE ).build() );
         crimes.add( newInput().name( "year" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        assertEquals( ValueTypes.TEXT, contentData.getProperty( "personalia.eyeColour" ).getValueType() );
+        assertEquals( ValueTypes.STRING, contentData.getProperty( "personalia.eyeColour" ).getValueType() );
         Assert.assertEquals( "Blue", contentData.getProperty( "personalia.eyeColour" ).getObject() );
 
         // verify

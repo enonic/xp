@@ -1,0 +1,94 @@
+@import "../variables/core";
+@import "../variables/grid";
+
+.x-grid-row .x-grid-cell {
+  font-size: $admin-font-size-small !important;
+  color: #000 !important;
+  vertical-align: middle !important;
+  border: none !important;
+}
+
+.x-grid-row-selected .x-grid-cell,
+.x-grid-row-selected .x-grid-cell-special {
+  color: $admin-selected-font-color !important;
+}
+
+// Special / Checkbox
+// TODO: $grid-cell-special-over-background-color is not read in ExtJs 4.1.0
+.x-grid-row-over .x-grid-cell-special {
+  background-color: $admin-over-background-color;
+}
+
+.x-grid-row .x-grid-cell-special,
+.x-grid-row-alt .x-grid-cell-special {
+  background-color: $grid-row-cell-background !important;
+  background-image: none !important;
+  border-right: none !important;
+}
+
+.x-grid-row-alt .x-grid-cell-special {
+  background-color: $grid-row-cell-alt-background !important;
+}
+
+.x-grid-cell-row-checker .x-grid-cell-inner {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+
+.x-grid-row-checker, .x-column-header-checkbox .x-column-header-text {
+  background-image: url("../themes/images/default/grid/admin-unchecked.gif") !important;
+}
+
+.x-grid-row-selected .x-grid-row-checker, .x-grid-row-checked .x-grid-row-checker {
+  background-image: url("../themes/images/default/grid/admin-checked.gif") !important;
+}
+
+.x-grid-row-over .x-grid-cell-special {
+  background-color: #efefef !important;
+}
+
+.x-grid-row-selected .x-grid-cell-special {
+  background-color: $grid-row-cell-selected-background-color !important;
+}
+
+// Admin
+.admin-grid {
+
+  .x-panel-body {
+    border: none !important;
+  }
+
+  .admin-white-toolbar {
+    border-bottom-style: none !important;
+  }
+
+  .admin-grid-thumbnail {
+    float: left;
+
+    img {
+      width: 32px;
+      height: 32px;
+      display: block;
+      margin-right: 15px
+    }
+  }
+
+  .admin-grid-description {
+    overflow: hidden;
+    margin-top: 3px;
+
+    h6, p  {
+      @include ellipsis();
+    }
+
+    p {
+      margin: 0 !important;
+      line-height: 1;
+    }
+  }
+
+  .x-grid-row-selected .admin-grid-name-renderer .admin-grid-name-renderer-path {
+    color: #fff !important;
+  }
+
+}

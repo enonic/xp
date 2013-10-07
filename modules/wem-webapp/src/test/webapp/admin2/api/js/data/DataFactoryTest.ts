@@ -14,13 +14,13 @@ TestCase("DataFactory", {
                 {
                     "name": "prop1",
                     "path": "mySet.prop1",
-                    "type": "WholeNumber",
+                    "type": "Long",
                     "value": "1"
                 },
                 {
                     "name": "prop2",
                     "path": "mySet.prop2",
-                    "type": "WholeNumber",
+                    "type": "Long",
                     "value": "2"
                 }
             ]

@@ -94,7 +94,7 @@ final class ContentJcrMapper
         final String contentType = getPropertyString( contentNode, TYPE );
         if ( contentType != null )
         {
-            contentBuilder.type( new QualifiedContentTypeName( contentType ) );
+            contentBuilder.type( QualifiedContentTypeName.from( contentType ) );
         }
         contentBuilder.id( ContentIdFactory.from( contentNode ) );
         contentBuilder.path( getPathFromNode( contentNode ) );

@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
@@ -15,13 +14,8 @@ public class GetContentsHandler
 {
     private ContentDao contentDao;
 
-    public GetContentsHandler()
-    {
-        super( GetContents.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final GetContents command )
+    public void handle()
         throws Exception
     {
         final ContentSelectors selectors = command.getSelectors();

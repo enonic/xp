@@ -19,7 +19,6 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyArray;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.MockContentTypeFetcher;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -38,7 +37,6 @@ import static org.junit.Assert.*;
 public abstract class AbstractContentSerializerTest
     extends AbstractSerializerTest
 {
-    private Module myModule = Module.newModule().name( "mymodule" ).build();
 
     protected MockContentTypeFetcher contentTypeFetcher = new MockContentTypeFetcher();
 
@@ -58,7 +56,7 @@ public abstract class AbstractContentSerializerTest
     public void property()
     {
         Content content = newContent().build();
-        content.getContentData().setProperty( "myInput", new Value.Text( "A value" ) );
+        content.getContentData().setProperty( "myInput", new Value.String( "A value" ) );
 
         String serialized = toString( content );
 
@@ -77,9 +75,9 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void set()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getContentData().setProperty( "mySet.myInput", new Value.Text( "1" ) );
-        content.getContentData().setProperty( "mySet.myOtherInput", new Value.Text( "2" ) );
+        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        content.getContentData().setProperty( "mySet.myInput", new Value.String( "1" ) );
+        content.getContentData().setProperty( "mySet.myOtherInput", new Value.String( "2" ) );
 
         String serialized = toString( content );
 
@@ -101,9 +99,9 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_values()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getContentData().setProperty( "myArray[0]", new Value.Text( "1" ) );
-        content.getContentData().setProperty( "myArray[1]", new Value.Text( "2" ) );
+        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        content.getContentData().setProperty( "myArray[0]", new Value.String( "1" ) );
+        content.getContentData().setProperty( "myArray[1]", new Value.String( "2" ) );
 
         String serialized = toString( content );
 
@@ -125,9 +123,9 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_set()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getContentData().setProperty( "mySet.myArray[0]", new Value.Text( "1" ) );
-        content.getContentData().setProperty( "mySet.myArray[1]", new Value.Text( "2" ) );
+        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        content.getContentData().setProperty( "mySet.myArray[0]", new Value.String( "1" ) );
+        content.getContentData().setProperty( "mySet.myArray[1]", new Value.String( "2" ) );
 
         String serialized = toString( content );
 
@@ -150,11 +148,11 @@ public abstract class AbstractContentSerializerTest
 
         Property mySet_myArray = mySet.getProperty( "myArray" );
         assertSame( mySet_myArray, parsedContentData.getProperty( "mySet.myArray" ) );
-        assertEquals( ValueTypes.TEXT, mySet_myArray.getValueType() );
+        assertEquals( ValueTypes.STRING, mySet_myArray.getValueType() );
         assertEquals( "mySet.myArray[0]", mySet_myArray.getPath().toString() );
 
         PropertyArray mySet_myArray_Array = mySet_myArray.getArray();
-        assertEquals( ValueTypes.TEXT, mySet_myArray_Array.getType() );
+        assertEquals( ValueTypes.STRING, mySet_myArray_Array.getType() );
         assertEquals( "1", mySet_myArray_Array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_myArray_Array.getValue( 1 ).asString() );
         assertEquals( "mySet.myArray[0]", mySet_myArray_Array.getData( 0 ).getPath().toString() );
@@ -164,11 +162,11 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_set()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getContentData().setProperty( "mySet[0].myInput", new Value.Text( "1" ) );
-        content.getContentData().setProperty( "mySet[0].myOtherInput", new Value.Text( "a" ) );
-        content.getContentData().setProperty( "mySet[1].myInput", new Value.Text( "2" ) );
-        content.getContentData().setProperty( "mySet[1].myOtherInput", new Value.Text( "b" ) );
+        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        content.getContentData().setProperty( "mySet[0].myInput", new Value.String( "1" ) );
+        content.getContentData().setProperty( "mySet[0].myOtherInput", new Value.String( "a" ) );
+        content.getContentData().setProperty( "mySet[1].myInput", new Value.String( "2" ) );
+        content.getContentData().setProperty( "mySet[1].myOtherInput", new Value.String( "b" ) );
 
         assertEquals( "mySet[1].myInput", content.getContentData().getProperty( "mySet[1].myInput" ).getPath().toString() );
         assertEquals( "mySet[0].myInput", content.getContentData().getProperty( "mySet[0].myInput" ).getPath().toString() );
@@ -197,12 +195,12 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void insertion_order_of_entries_within_a_DataSet_is_preserved()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getContentData().setProperty( "mySet.myArray[0]", new Value.Text( "1" ) );
-        content.getContentData().setProperty( "mySet.myInput", new Value.Text( "a" ) );
-        content.getContentData().setProperty( "mySet.myArray[1]", new Value.Text( "2" ) );
-        content.getContentData().setProperty( "mySet.myOtherInput", new Value.Text( "b" ) );
-        content.getContentData().setProperty( "mySet.myArray[2]", new Value.Text( "3" ) );
+        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        content.getContentData().setProperty( "mySet.myArray[0]", new Value.String( "1" ) );
+        content.getContentData().setProperty( "mySet.myInput", new Value.String( "a" ) );
+        content.getContentData().setProperty( "mySet.myArray[1]", new Value.String( "2" ) );
+        content.getContentData().setProperty( "mySet.myOtherInput", new Value.String( "b" ) );
+        content.getContentData().setProperty( "mySet.myArray[2]", new Value.String( "3" ) );
 
         String serialized = toString( content );
 
@@ -222,11 +220,11 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_array()
     {
-        Content content = newContent().type( new QualifiedContentTypeName( "mymodule:my_type" ) ).build();
-        content.getContentData().setProperty( "mySet[0].myArray[0]", new Value.Text( "1" ) );
-        content.getContentData().setProperty( "mySet[0].myArray[1]", new Value.Text( "2" ) );
-        content.getContentData().setProperty( "mySet[1].myArray[0]", new Value.Text( "3" ) );
-        content.getContentData().setProperty( "mySet[1].myArray[1]", new Value.Text( "4" ) );
+        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        content.getContentData().setProperty( "mySet[0].myArray[0]", new Value.String( "1" ) );
+        content.getContentData().setProperty( "mySet[0].myArray[1]", new Value.String( "2" ) );
+        content.getContentData().setProperty( "mySet[1].myArray[0]", new Value.String( "3" ) );
+        content.getContentData().setProperty( "mySet[1].myArray[1]", new Value.String( "4" ) );
 
         String serialized = toString( content );
 
@@ -258,7 +256,7 @@ public abstract class AbstractContentSerializerTest
         assertEquals( "mySet[0].myArray[0]", mySet_0_myArray.getPath().toString() );
 
         PropertyArray mySet_0_myArray_array = mySet_0_myArray.getArray();
-        assertEquals( ValueTypes.TEXT, mySet_0_myArray_array.getType() );
+        assertEquals( ValueTypes.STRING, mySet_0_myArray_array.getType() );
         assertEquals( "1", mySet_0_myArray_array.getValue( 0 ).asString() );
         assertEquals( "2", mySet_0_myArray_array.getValue( 1 ).asString() );
 
@@ -274,7 +272,7 @@ public abstract class AbstractContentSerializerTest
         assertEquals( "mySet[1].myArray[1]", mySet_1_myArray_1.getPath().toString() );
 
         PropertyArray mySet_1_myArray_array = mySet_1_myArray.getArray();
-        assertEquals( ValueTypes.TEXT, mySet_1_myArray_array.getType() );
+        assertEquals( ValueTypes.STRING, mySet_1_myArray_array.getType() );
         assertEquals( "3", mySet_1_myArray_array.getValue( 0 ).asString() );
         assertEquals( "4", mySet_1_myArray_array.getValue( 1 ).asString() );
 
@@ -290,7 +288,6 @@ public abstract class AbstractContentSerializerTest
         final FormItemSet formItemSet = newFormItemSet().name( "formItemSet" ).build();
         formItemSet.add( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() );
         final ContentType contentType = newContentType().
-            module( myModule.getName() ).
             name( "my_content_type" ).
             addFormItem( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).
             addFormItem( formItemSet ).
@@ -298,8 +295,8 @@ public abstract class AbstractContentSerializerTest
         contentTypeFetcher.add( contentType );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getContentData().setProperty( "myText", new Value.Text( "A value" ) );
-        content.getContentData().setProperty( "formItemSet.myText", new Value.Text( "A another value" ) );
+        content.getContentData().setProperty( "myText", new Value.String( "A value" ) );
+        content.getContentData().setProperty( "formItemSet.myText", new Value.String( "A another value" ) );
 
         String serialized = toString( content );
 
@@ -321,15 +318,14 @@ public abstract class AbstractContentSerializerTest
         formItemSet.add( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
-            module( myModule.getName() ).
             name( "my_content_type" ).
             addFormItem( formItemSet ).
             build();
         contentTypeFetcher.add( contentType );
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getContentData().setProperty( "formItemSet[0].myText", new Value.Text( "Value 1" ) );
-        content.getContentData().setProperty( "formItemSet[1].myText", new Value.Text( "Value 2" ) );
+        content.getContentData().setProperty( "formItemSet[0].myText", new Value.String( "Value 1" ) );
+        content.getContentData().setProperty( "formItemSet[1].myText", new Value.String( "Value 2" ) );
 
         String serialized = toString( content );
 
@@ -351,14 +347,13 @@ public abstract class AbstractContentSerializerTest
             newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final ContentType contentType = newContentType().
-            module( myModule.getName() ).
             name( "my_content_type" ).
             addFormItem( newInput().name( "myField" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( layout ).
             build();
 
         Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getContentData().setProperty( "myText", new Value.Text( "A value" ) );
+        content.getContentData().setProperty( "myText", new Value.String( "A value" ) );
 
         String serialized = toString( content );
 
@@ -375,9 +370,9 @@ public abstract class AbstractContentSerializerTest
     public void unstructured_with_arrays()
     {
         Content content = newContent().build();
-        content.getContentData().setProperty( "names[0]", new Value.Text( "Thomas" ) );
-        content.getContentData().setProperty( "names[1]", new Value.Text( "Sten Roger" ) );
-        content.getContentData().setProperty( "names[2]", new Value.Text( "Alex" ) );
+        content.getContentData().setProperty( "names[0]", new Value.String( "Thomas" ) );
+        content.getContentData().setProperty( "names[1]", new Value.String( "Sten Roger" ) );
+        content.getContentData().setProperty( "names[2]", new Value.String( "Alex" ) );
 
         String serialized = toString( content );
 
@@ -387,7 +382,7 @@ public abstract class AbstractContentSerializerTest
         // verify
         ContentData parsedContentData = parsedContent.getContentData();
         assertEquals( "Thomas", parsedContentData.getProperty( "names[0]" ).getObject() );
-        assertEquals( ValueTypes.TEXT, parsedContentData.getProperty( "names[0]" ).getValueType() );
+        assertEquals( ValueTypes.STRING, parsedContentData.getProperty( "names[0]" ).getValueType() );
         assertEquals( "Sten Roger", parsedContentData.getProperty( "names[1]" ).getObject() );
         assertEquals( "Alex", parsedContentData.getProperty( "names[2]" ).getObject() );
     }
@@ -397,7 +392,7 @@ public abstract class AbstractContentSerializerTest
     {
         final DateTime time = DateTime.now();
         final Content content = newContent().
-            type( new QualifiedContentTypeName( "mymodule:my_type" ) ).
+            type( QualifiedContentTypeName.from( "my_type" ) ).
             createdTime( time ).
             modifiedTime( time ).
             owner( AccountKey.superUser() ).
@@ -406,10 +401,10 @@ public abstract class AbstractContentSerializerTest
             displayName( "My content" ).
             path( ContentPath.from( "site1/mycontent" ) ).
             build();
-        content.getContentData().setProperty( "mySet[0].myArray[0]", new Value.Text( "1" ) );
-        content.getContentData().setProperty( "mySet[0].myArray[1]", new Value.Text( "2" ) );
-        content.getContentData().setProperty( "mySet[1].myArray[0]", new Value.Text( "3" ) );
-        content.getContentData().setProperty( "mySet[1].myArray[1]", new Value.Text( "4" ) );
+        content.getContentData().setProperty( "mySet[0].myArray[0]", new Value.String( "1" ) );
+        content.getContentData().setProperty( "mySet[0].myArray[1]", new Value.String( "2" ) );
+        content.getContentData().setProperty( "mySet[1].myArray[0]", new Value.String( "3" ) );
+        content.getContentData().setProperty( "mySet[1].myArray[1]", new Value.String( "4" ) );
 
         final String serialized = toString( content );
 

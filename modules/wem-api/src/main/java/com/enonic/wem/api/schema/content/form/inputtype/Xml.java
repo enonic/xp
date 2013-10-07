@@ -37,7 +37,13 @@ final class Xml
     @Override
     public Value newValue( final String value )
     {
-        return new Value.Text( value );
+        return new Value.String( value );
+    }
+
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return null;
     }
 
 }

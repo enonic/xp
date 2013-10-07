@@ -5,7 +5,7 @@
             "id": "aaa",
             "path": "/my_a_content",
             "name": "my_a_content",
-            "type": "mymodule:my_type",
+            "type": "my_type",
             "displayName": "My Content",
             "owner": "user:myStore:me",
             "creator": "user:system:admin",
@@ -17,7 +17,7 @@
                 {
                     "name": "myData",
                     "path": "myData",
-                    "type": "Text",
+                    "type": "String",
                     "value": "value1"
                 }
             ],
@@ -27,7 +27,7 @@
             "id": "bbb",
             "path": "/my_b_content",
             "name": "my_b_content",
-            "type": "mymodule:my_type",
+            "type": "my_type",
             "displayName": "My Content",
             "owner": "user:myStore:me",
             "creator": "user:system:admin",
@@ -39,7 +39,7 @@
                 {
                     "name": "myData",
                     "path": "myData",
-                    "type": "Text",
+                    "type": "String",
                     "value": "value1"
                 }
             ],

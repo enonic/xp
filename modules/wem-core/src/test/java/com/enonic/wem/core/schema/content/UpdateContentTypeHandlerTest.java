@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -43,6 +43,7 @@ public class UpdateContentTypeHandlerTest
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new UpdateContentTypeHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -57,7 +58,6 @@ public class UpdateContentTypeHandlerTest
 
         ContentType existingContentType = newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             superType( QualifiedContentTypeName.structured() ).
@@ -77,7 +77,8 @@ public class UpdateContentTypeHandlerTest
         command.editor( editor );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).update( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
@@ -96,7 +97,6 @@ public class UpdateContentTypeHandlerTest
 
         ContentType existingContentType = newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             superType( QualifiedContentTypeName.structured() ).
@@ -116,7 +116,8 @@ public class UpdateContentTypeHandlerTest
         command.editor( editor );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
 }

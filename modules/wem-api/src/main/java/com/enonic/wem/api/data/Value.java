@@ -59,10 +59,10 @@ public abstract class Value<T>
      *
      * @throws ClassCastException if value is not of type String.
      */
-    public String getString()
+    public java.lang.String getString()
         throws ClassCastException
     {
-        return (String) object;
+        return (java.lang.String) object;
     }
 
     /**
@@ -70,10 +70,10 @@ public abstract class Value<T>
      *
      * @throws ClassCastException if value is not of type Long.
      */
-    public Long getLong()
+    public java.lang.Long getLong()
         throws ClassCastException
     {
-        return (Long) object;
+        return (java.lang.Long) object;
     }
 
     /**
@@ -81,10 +81,10 @@ public abstract class Value<T>
      *
      * @throws ClassCastException if value is not of type Double.
      */
-    public Double getDouble()
+    public java.lang.Double getDouble()
         throws ClassCastException
     {
-        return (Double) object;
+        return (java.lang.Double) object;
     }
 
     /**
@@ -123,13 +123,12 @@ public abstract class Value<T>
     /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
      *
-     * @throws com.enonic.wem.api.data.type.InconvertibleValueException
-     *          if value is not convertible to String.
+     * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
      */
-    public String asString()
+    public java.lang.String asString()
         throws InconvertibleValueException
     {
-        final String converted = JavaTypeConverter.String.GET.convertFrom( object );
+        final java.lang.String converted = JavaTypeConverter.String.GET.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.String.GET );
@@ -158,10 +157,10 @@ public abstract class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to Long.
      */
-    public Long asLong()
+    public java.lang.Long asLong()
         throws InconvertibleValueException
     {
-        final Long converted = JavaTypeConverter.Long.GET.convertFrom( object );
+        final java.lang.Long converted = JavaTypeConverter.Long.GET.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.Long.GET );
@@ -174,10 +173,10 @@ public abstract class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to Double.
      */
-    public Double asDouble()
+    public java.lang.Double asDouble()
         throws InconvertibleValueException
     {
-        final Double converted = JavaTypeConverter.Double.GET.convertFrom( object );
+        final java.lang.Double converted = JavaTypeConverter.Double.GET.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.Double.GET );
@@ -257,12 +256,12 @@ public abstract class Value<T>
     }
 
     @Override
-    public String toString()
+    public java.lang.String toString()
     {
-        return String.valueOf( object );
+        return java.lang.String.valueOf( object );
     }
 
-    public Property newProperty( final String name )
+    public Property newProperty( final java.lang.String name )
     {
         return getType().newProperty( name, this );
     }
@@ -280,7 +279,7 @@ public abstract class Value<T>
             super( ValueTypes.DATE_MIDNIGHT, value.toDateMidnight() );
         }
 
-        public DateMidnight( final String value )
+        public DateMidnight( final java.lang.String value )
         {
             super( ValueTypes.DATE_MIDNIGHT, JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
         }
@@ -299,77 +298,77 @@ public abstract class Value<T>
             super( ValueTypes.DATE_TIME, value.toDateTime() );
         }
 
-        public DateTime( final String value )
+        public DateTime( final java.lang.String value )
         {
             super( ValueTypes.DATE_TIME, JavaTypeConverter.DateTime.GET.convertFromString( value ) );
         }
     }
 
-    public static final class WholeNumber
-        extends Value<Long>
+    public static final class Long
+        extends Value<java.lang.Long>
     {
-        public WholeNumber( final Long value )
+        public Long( final java.lang.Long value )
         {
-            super( ValueTypes.WHOLE_NUMBER, value );
+            super( ValueTypes.LONG, value );
         }
 
-        public WholeNumber( final Integer value )
+        public Long( final Integer value )
         {
-            super( ValueTypes.WHOLE_NUMBER, Long.valueOf( value ) );
+            super( ValueTypes.LONG, java.lang.Long.valueOf( value ) );
         }
 
-        public WholeNumber( final Short value )
+        public Long( final Short value )
         {
-            super( ValueTypes.WHOLE_NUMBER, Long.valueOf( value ) );
+            super( ValueTypes.LONG, java.lang.Long.valueOf( value ) );
         }
 
     }
 
-    public static final class DecimalNumber
-        extends Value<Double>
+    public static final class Double
+        extends Value<java.lang.Double>
     {
-        public DecimalNumber( final Double value )
+        public Double( final java.lang.Double value )
         {
-            super( ValueTypes.DECIMAL_NUMBER, value );
+            super( ValueTypes.DOUBLE, value );
         }
 
-        public DecimalNumber( final Float value )
+        public Double( final Float value )
         {
-            super( ValueTypes.DECIMAL_NUMBER, Double.valueOf( value ) );
+            super( ValueTypes.DOUBLE, java.lang.Double.valueOf( value ) );
         }
     }
 
-    public static final class Text
-        extends Value<String>
+    public static final class String
+        extends Value<java.lang.String>
     {
-        public Text( final String value )
+        public String( final java.lang.String value )
         {
-            super( ValueTypes.TEXT, value );
+            super( ValueTypes.STRING, value );
         }
     }
 
     public static final class Xml
-        extends Value<String>
+        extends Value<java.lang.String>
     {
-        public Xml( final String value )
+        public Xml( final java.lang.String value )
         {
             super( ValueTypes.XML, value );
         }
     }
 
     public static final class HtmlPart
-        extends Value<String>
+        extends Value<java.lang.String>
     {
-        public HtmlPart( final String value )
+        public HtmlPart( final java.lang.String value )
         {
             super( ValueTypes.HTML_PART, value );
         }
     }
 
     public static final class GeographicCoordinate
-        extends Value<String>
+        extends Value<java.lang.String>
     {
-        public GeographicCoordinate( final String value )
+        public GeographicCoordinate( final java.lang.String value )
         {
             super( ValueTypes.GEOGRAPHIC_COORDINATE, value );
         }
@@ -383,16 +382,16 @@ public abstract class Value<T>
             super( ValueTypes.CONTENT_ID, value );
         }
 
-        public ContentId( final String value )
+        public ContentId( final java.lang.String value )
         {
             super( ValueTypes.CONTENT_ID, com.enonic.wem.api.content.ContentId.from( value ) );
         }
     }
 
     public static final class AttachmentName
-        extends Value<String>
+        extends Value<java.lang.String>
     {
-        public AttachmentName( final String value )
+        public AttachmentName( final java.lang.String value )
         {
             super( ValueTypes.ATTACHMENT_NAME, value );
         }
@@ -406,7 +405,7 @@ public abstract class Value<T>
             super( ValueTypes.BINARY_ID, value );
         }
 
-        public BinaryId( final String value )
+        public BinaryId( final java.lang.String value )
         {
             super( ValueTypes.BINARY_ID, com.enonic.wem.api.content.binary.BinaryId.from( value ) );
         }

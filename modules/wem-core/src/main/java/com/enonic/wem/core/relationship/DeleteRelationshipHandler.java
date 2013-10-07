@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.command.relationship.DeleteRelationship;
 import com.enonic.wem.api.relationship.DeleteRelationshipResult;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
@@ -16,13 +15,8 @@ public final class DeleteRelationshipHandler
 {
     private RelationshipDao relationshipDao;
 
-    public DeleteRelationshipHandler()
-    {
-        super( DeleteRelationship.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final DeleteRelationship command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

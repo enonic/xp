@@ -6,8 +6,6 @@ import org.mockito.Mockito;
 
 import com.acme.DummyCustomInputType;
 
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.form.FieldSet;
@@ -19,6 +17,7 @@ import com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MockMixinFetcher;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
@@ -26,7 +25,6 @@ import com.enonic.wem.core.AbstractSerializerTest;
 import com.enonic.wem.core.schema.content.form.inputtype.InputTypeExtensions;
 import com.enonic.wem.core.schema.content.form.inputtype.InputTypeResolver;
 
-import static com.enonic.wem.api.module.Module.newModule;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
@@ -41,8 +39,6 @@ import static org.junit.Assert.*;
 public abstract class AbstractContentTypeSerializerTest
     extends AbstractSerializerTest
 {
-    private static final Module myModule = newModule().name( "mymodule" ).build();
-
     private ContentTypeSerializer serializer;
 
     abstract ContentTypeSerializer getSerializer();
@@ -69,19 +65,18 @@ public abstract class AbstractContentTypeSerializerTest
         throws Exception
     {
         Mixin inputMixin = newMixin().name( "my_shared_input" ).addFormItem(
-            Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).module(
-            Module.SYSTEM.getName() ).build();
+            Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
             newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         set.add( layout );
         set.add( newMixinReference().name( "myCommonInput" ).mixin( inputMixin ).build() );
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "all_schemas" ).module( myModule.getName() );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "all_schemas" );
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
         contentTypeBuilder.contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" );
-        contentTypeBuilder.superType( new QualifiedContentTypeName( "system:content" ) );
+        contentTypeBuilder.superType( QualifiedContentTypeName.from( "content" ) );
         contentTypeBuilder.setAbstract( false );
         contentTypeBuilder.setFinal( true );
 
@@ -169,7 +164,7 @@ public abstract class AbstractContentTypeSerializerTest
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
         set.add( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "type_with_set" ).module( myModule.getName() );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "type_with_set" );
         contentTypeBuilder.addFormItem( set );
         ContentType contentType = contentTypeBuilder.build();
 
@@ -187,14 +182,13 @@ public abstract class AbstractContentTypeSerializerTest
     public void parse_mixin()
     {
         // setup
-        Mixin mixin = newMixin().name( "address" ).module( ModuleName.from( "mymodule" ) ).addFormItem(
-            newFormItemSet().name( "address" ).addFormItem(
-                newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-                newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-                newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
-                newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
+        Mixin mixin = newMixin().name( "address" ).addFormItem( newFormItemSet().name( "address" ).addFormItem(
+            newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
+            newInput().name( "country" ).label( "Country" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
         contentTypeBuilder.addFormItem( MixinReference.newMixinReference( mixin ).name( "home" ).build() );
         contentTypeBuilder.addFormItem( MixinReference.newMixinReference( mixin ).name( "cabin" ).build() );
@@ -222,7 +216,6 @@ public abstract class AbstractContentTypeSerializerTest
         FormItemSet myOuterSet = newFormItemSet().name( "my-outer-set" ).addFormItem( myOuterInput ).addFormItem( myInnerSet ).build();
         final ContentType contentType = newContentType().
             name( "my_type" ).
-            module( myModule.getName() ).
             addFormItem( myOuterSet ).
             build();
 
@@ -249,7 +242,7 @@ public abstract class AbstractContentTypeSerializerTest
         fieldSetBuilder.add( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = fieldSetBuilder.build();
 
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" );
         contentTypeBuilder.addFormItem( layout );
 
         String serialized = toString( contentTypeBuilder.build() );
@@ -267,7 +260,7 @@ public abstract class AbstractContentTypeSerializerTest
     public void given_formItem_with_validationRegex_when_parsed_then_it_exists()
     {
         // setup
-        ContentType.Builder contentTypeBuilder = newContentType().name( "test" ).module( myModule.getName() );
+        ContentType.Builder contentTypeBuilder = newContentType().name( "test" );
         contentTypeBuilder.addFormItem( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).validationRegexp( "a*c" ).build() );
         String serialized = toString( contentTypeBuilder.build() );
 
@@ -285,7 +278,6 @@ public abstract class AbstractContentTypeSerializerTest
         Input input = newInput().name( "myCustomType" ).inputType( MY_TYPE ).build();
         ContentType contentType = newContentType().
             name( "test" ).
-            module( ModuleName.from( "mymodule" ) ).
             addFormItem( input ).build();
         String serialized = toString( contentType );
 
@@ -324,9 +316,8 @@ public abstract class AbstractContentTypeSerializerTest
 
         ContentType.Builder contentTypeBuilder = newContentType().
             name( "all_input_types" ).
-            module( myModule.getName() ).
             displayName( "All the Input Types" ).
-            superType( new QualifiedContentTypeName( "system:content" ) ).
+            superType( QualifiedContentTypeName.from( "content" ) ).
             setAbstract( false ).
             setFinal( true );
 
@@ -341,7 +332,8 @@ public abstract class AbstractContentTypeSerializerTest
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+            TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
         contentTypeBuilder.addFormItem(

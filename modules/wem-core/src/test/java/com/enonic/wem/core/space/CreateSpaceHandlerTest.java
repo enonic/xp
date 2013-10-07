@@ -50,6 +50,7 @@ public class CreateSpaceHandlerTest
         contentDao = Mockito.mock( ContentDao.class );
         indexService = Mockito.mock( IndexService.class );
         handler = new CreateSpaceHandler();
+        handler.setContext( this.context );
         handler.setSpaceDao( spaceDao );
         handler.setContentDao( contentDao );
         handler.setIndexService( indexService );
@@ -73,7 +74,8 @@ public class CreateSpaceHandlerTest
 
         // exercise
         final CreateSpace command = Commands.space().create().displayName( "My Space" ).name( "mySpace" ).icon( icon );
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( spaceDao, times( 1 ) ).createSpace( isA( Space.class ), any( Session.class ) );

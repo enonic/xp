@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -34,6 +34,7 @@ public class CreateRelationshipTypeHandlerTest
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         handler = new CreateRelationshipTypeHandler();
+        handler.setContext( this.context );
         handler.setRelationshipTypeDao( relationshipTypeDao );
     }
 
@@ -45,18 +46,19 @@ public class CreateRelationshipTypeHandlerTest
         final CreateRelationshipType command = Commands.relationshipType().create();
         command.name( "like" );
         command.displayName( "Like" );
-        command.module( ModuleName.from( "mymodule" ) );
         command.fromSemantic( "likes" );
         command.toSemantic( "liked by" );
-        command.allowedFromTypes( QualifiedContentTypeNames.from( "mymodule:person" ) );
-        command.allowedToTypes( QualifiedContentTypeNames.from( "mymodule:person" ) );
-        this.handler.handle( this.context, command );
+        command.allowedFromTypes( QualifiedContentTypeNames.from( "person" ) );
+        command.allowedToTypes( QualifiedContentTypeNames.from( "person" ) );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).create( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );
         final QualifiedRelationshipTypeName relationshipTypeName = command.getResult();
         assertNotNull( relationshipTypeName );
-        assertEquals( "mymodule:like", relationshipTypeName.toString() );
+        assertEquals( "like", relationshipTypeName.toString() );
     }
 
 }

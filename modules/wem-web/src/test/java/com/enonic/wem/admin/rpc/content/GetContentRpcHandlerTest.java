@@ -73,7 +73,7 @@ public class GetContentRpcHandlerTest
     private Content createContent( final String id, final String name )
     {
         final ContentData contentData = new ContentData();
-        contentData.setProperty( DataPath.from( "myData" ), new Value.Text( "value1" ) );
+        contentData.setProperty( DataPath.from( "myData" ), new Value.String( "value1" ) );
 
         return Content.newContent().
             id( ContentId.from( id ) ).
@@ -83,7 +83,7 @@ public class GetContentRpcHandlerTest
             displayName( "My Content" ).
             modifiedTime( DateTime.now() ).
             modifier( UserKey.superUser() ).
-            type( new QualifiedContentTypeName( "mymodule:my_type" ) ).
+            type( QualifiedContentTypeName.from( "my_type" ) ).
             contentData( contentData ).
             build();
     }

@@ -74,10 +74,10 @@ public final class InputTypes
         }
 
         registerDefaultInputType( ValueTypes.DATE_MIDNIGHT, DATE );
-        registerDefaultInputType( ValueTypes.TEXT, TEXT_AREA );
+        registerDefaultInputType( ValueTypes.STRING, TEXT_AREA );
         registerDefaultInputType( ValueTypes.XML, XML );
-        registerDefaultInputType( ValueTypes.WHOLE_NUMBER, WHOLE_NUMBER );
-        registerDefaultInputType( ValueTypes.DECIMAL_NUMBER, DECIMAL_NUMBER );
+        registerDefaultInputType( ValueTypes.LONG, WHOLE_NUMBER );
+        registerDefaultInputType( ValueTypes.DOUBLE, DECIMAL_NUMBER );
     }
 
     private static void register( InputType inputType )

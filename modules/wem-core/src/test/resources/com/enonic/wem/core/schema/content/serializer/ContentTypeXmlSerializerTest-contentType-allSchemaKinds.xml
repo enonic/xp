@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <type>
   <name>all_schemas</name>
-  <module>mymodule</module>
   <display-name>All the Base Types</display-name>
   <content-display-name-script>$('firstName') + ' ' + $('lastName')</content-display-name-script>
-  <super-type>system:content</super-type>
+  <super-type>content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
+  <is-built-in>false</is-built-in>
   <allow-child-content>true</allow-child-content>
   <form>
     <form-item-set name="mySet">
@@ -31,7 +31,7 @@
         </layout>
         <mixin-reference name="myCommonInput">
           <name>myCommonInput</name>
-          <reference>system:my_shared_input</reference>
+          <reference>my_shared_input</reference>
         </mixin-reference>
       </items>
     </form-item-set>

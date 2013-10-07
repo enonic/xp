@@ -4,7 +4,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.Version;
+import com.enonic.wem.Version;
 import com.enonic.wem.core.home.HomeDir;
 import com.enonic.wem.core.home.HomeResolver;
 

@@ -8,7 +8,6 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
@@ -37,6 +36,7 @@ public class GetContentTypesHandlerTest
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new GetContentTypesHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -47,7 +47,6 @@ public class GetContentTypesHandlerTest
         // setup
         final ContentType contentType = newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             build();
@@ -57,7 +56,9 @@ public class GetContentTypesHandlerTest
         // exercise
         final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "mymodule:my_content_type" );
         final GetContentTypes command = Commands.contentType().get().qualifiedNames( names );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).select( Mockito.isA( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) );

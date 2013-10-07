@@ -1,0 +1,78 @@
+/*      32px    */
+
+.icon-icomoon-content-32 {
+    background: transparent url("../images/icons/icoMoon/32x32/pictures.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-folder-32 {
+    background: transparent url("../images/icons/icoMoon/32x32/folder.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-file-32 {
+    background: transparent url("../images/icons/icoMoon/32x32/file.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-page-32 {
+    background: transparent url("../images/icons/icoMoon/32x32/newspaper.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-space-32 {
+    background: transparent url("../images/icons/icoMoon/32x32/database.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-shortcut-32 {
+    background: transparent url("../images/icons/icoMoon/32x32/share.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-structured-32 {
+    background: transparent url("../images/icons/icoMoon/32x32/paragraph-justify.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-unstructured-32 {
+    background: transparent url("../images/icons/icoMoon/32x32/paragraph-left.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-pencil-32 {
+    background-image: url("../images/icons/icoMoon/32x32/bright/edit.png") !important;
+    background-size: 100% auto;
+}
+
+.icon-icomoon-eye-32 {
+    background-image: url("../images/icons/icoMoon/32x32/bright/eye.png") !important;
+    background-size: 100% auto;
+}
+
+/*      128px    */
+
+.icon-icomoon-content-128 {
+    background: transparent url("../images/icons/icoMoon/128x128/pictures.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-folder-128 {
+    background: transparent url("../images/icons/icoMoon/128x128/folder.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-file-128 {
+    background: transparent url("../images/icons/icoMoon/128x128/file.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-page-128 {
+    background: transparent url("../images/icons/icoMoon/128x128/newspaper.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-space-128 {
+    background: transparent url("../images/icons/icoMoon/128x128/database.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-shortcut-128 {
+    background: transparent url("../images/icons/icoMoon/128x128/share.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-structured-128 {
+    background: transparent url("../images/icons/icoMoon/128x128/paragraph-justify.png") 0 0 no-repeat;
+}
+
+.icon-icomoon-unstructured-128 {
+    background: transparent url("../images/icons/icoMoon/128x128/paragraph-left.png") 0 0 no-repeat;
+}
+

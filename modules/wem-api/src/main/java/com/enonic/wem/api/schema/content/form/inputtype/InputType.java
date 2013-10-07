@@ -104,4 +104,6 @@ public abstract class InputType
     {
         return !( this instanceof InputTypeExtension );
     }
+
+    public abstract InputTypeConfig getDefaultConfig();
 }

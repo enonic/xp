@@ -2,7 +2,6 @@
     "success" : true,
     "mixin" : {
         "name" : "input_text1",
-        "module" : "mymodule",
         "displayName" : null,
         "items" : [ {
             "Input" : {
@@ -22,6 +21,6 @@
                 }
             }
         } ],
-        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1"
+        "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:input_text1"
     }
 }

@@ -3,6 +3,9 @@ package com.enonic.wem.api.item;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
+
+import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -21,6 +24,8 @@ public final class Item
 
     private final String name;
 
+    private final ItemPath parent;
+
     private final ItemPath path;
 
     private final DateTime createdTime;
@@ -31,21 +36,31 @@ public final class Item
 
     private final UserKey modifier;
 
+    private final Icon icon;
+
     private final RootDataSet rootDataSet;
 
     private Item( final Builder builder )
     {
+        Preconditions.checkNotNull( builder.parent, "parent must be specified" );
+        Preconditions.checkNotNull( builder.parent, "name must be specified" );
+
         this.id = builder.id;
         this.name = builder.name;
-        this.path = builder.path;
+        this.parent = builder.parent;
+        this.path = new ItemPath( this.parent, this.name );
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
         this.modifiedTime = builder.modifiedTime;
         this.modifier = builder.modifier;
+        this.icon = builder.icon;
         this.rootDataSet = new RootDataSet();
-        for ( final Data data : builder.dataSet )
+        if ( builder.dataSet != null )
         {
-            this.rootDataSet.add( data.copy() );
+            for ( final Data data : builder.dataSet )
+            {
+                this.rootDataSet.add( data.copy() );
+            }
         }
     }
 
@@ -57,6 +72,11 @@ public final class Item
     public String name()
     {
         return name;
+    }
+
+    public ItemPath parent()
+    {
+        return path;
     }
 
     public ItemPath path()
@@ -94,6 +114,16 @@ public final class Item
         return modifier;
     }
 
+    public Icon icon()
+    {
+        return icon;
+    }
+
+    public RootDataSet rootDataSet()
+    {
+        return this.rootDataSet;
+    }
+
     public Property property( final String path )
     {
         return rootDataSet.getProperty( path );
@@ -110,6 +140,7 @@ public final class Item
     {
         IllegalEdit.check( "id", this.id(), to.id(), Item.class );
         IllegalEdit.check( "name", this.name(), to.name(), Item.class );
+        IllegalEdit.check( "parent", this.parent(), to.parent(), Item.class );
         IllegalEdit.check( "path", this.path(), to.path(), Item.class );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Item.class );
         IllegalEdit.check( "creator", this.creator(), to.creator(), Item.class );
@@ -120,6 +151,11 @@ public final class Item
     public static Builder newItem()
     {
         return new Builder();
+    }
+
+    public static Builder newItem( final ItemId id )
+    {
+        return new Builder( id );
     }
 
     public static Builder newItem( final ItemId id, final String name )
@@ -138,7 +174,7 @@ public final class Item
 
         private String name;
 
-        private ItemPath path;
+        private ItemPath parent;
 
         private DateTime createdTime;
 
@@ -147,6 +183,8 @@ public final class Item
         private DateTime modifiedTime;
 
         private UserKey modifier;
+
+        private Icon icon;
 
         private RootDataSet dataSet = new RootDataSet();
 
@@ -158,13 +196,30 @@ public final class Item
         {
             this.id = item.id;
             this.name = item.name;
+            this.parent = item.parent;
+            this.createdTime = item.createdTime;
+            this.creator = item.creator;
+            this.modifiedTime = item.modifiedTime;
+            this.modifier = item.modifier;
+            this.icon = item.icon;
             this.dataSet = item.rootDataSet;
+        }
+
+        public Builder( final ItemId id )
+        {
+            this.id = id;
         }
 
         public Builder( final ItemId id, final String name )
         {
             this.id = id;
             this.name = name;
+        }
+
+        public Builder id( final ItemId value )
+        {
+            this.id = value;
+            return this;
         }
 
         public Builder name( final String value )
@@ -175,7 +230,13 @@ public final class Item
 
         public Builder path( final String value )
         {
-            this.path = new ItemPath( value );
+            this.parent = new ItemPath( value );
+            return this;
+        }
+
+        public Builder parent( final ItemPath value )
+        {
+            this.parent = value;
             return this;
         }
 
@@ -203,15 +264,45 @@ public final class Item
             return this;
         }
 
-        public Builder property( final String path, final Value value )
+        public Builder icon( final Icon value )
         {
-            this.dataSet.setProperty( path, value );
+            this.icon = value;
+            return this;
+        }
+
+        public Builder property( final String path, final String value )
+        {
+            if ( value != null )
+            {
+                this.dataSet.setProperty( path, new Value.String( value ) );
+            }
+            return this;
+        }
+
+        public Builder property( final String path, final Long value )
+        {
+            if ( value != null )
+            {
+                this.dataSet.setProperty( path, new Value.Long( value ) );
+            }
+            return this;
+        }
+
+        public Builder property( final String path, final DateTime value )
+        {
+            if ( value != null )
+            {
+                this.dataSet.setProperty( path, new Value.DateTime( value ) );
+            }
             return this;
         }
 
         public Builder addDataSet( final DataSet value )
         {
-            this.dataSet.add( value );
+            if ( value != null )
+            {
+                this.dataSet.add( value );
+            }
             return this;
         }
 

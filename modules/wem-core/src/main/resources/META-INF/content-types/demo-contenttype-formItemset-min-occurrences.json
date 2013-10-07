@@ -2,7 +2,7 @@
     "name": "form-item-set-min-occurrences",
     "module": "demo",
     "displayName": "FormItemSet Minimum Occurrences",
-    "superType": "system:structured",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [

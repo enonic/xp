@@ -1,31 +1,33 @@
 package com.enonic.wem.api.module;
 
-
-import com.enonic.wem.api.Name;
-
 public final class ModuleName
-    extends Name
 {
-    public static final ModuleName SYSTEM = new ModuleName( "system" );
+    private final String name;
 
     private ModuleName( final String name )
     {
-        super( name );
+        this.name = name;
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof ModuleName ) && super.equals( o );
+        return ( o instanceof ModuleName ) && ( (ModuleName) o ).name.equals( this.name );
     }
 
     @Override
     public int hashCode()
     {
-        return super.hashCode();
+        return name.hashCode();
     }
 
-    public static ModuleName from( String name )
+    @Override
+    public String toString()
+    {
+        return name;
+    }
+
+    public static ModuleName from( final String name )
     {
         return new ModuleName( name );
     }

@@ -1,0 +1,130 @@
+.floating-window {
+  position: fixed !important;
+  top: 100px;
+  left: 100px;
+  height: 480px;
+  width: 320px;
+  z-index: 100;
+
+  background-color: #252526;
+  box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
+
+  color: white;
+
+  &.minimized {
+    height:auto;
+  }
+
+  .tab-menu {
+    background-color: @admin-dark-gray;
+    font-size: 15px;
+    padding-top: 5px;
+    padding-left: 2px;
+    .tab-menu-button {
+      width: 25px;
+      height: 25px;
+      text-indent: 5px;
+      color: @admin-medium-gray-font;
+      cursor: pointer;
+      span {
+        font-family: @admin-font-family;
+        padding-left: 10px;
+        -webkit-font-smoothing: subpixel-antialiased;
+      }
+    }
+    .minimizer {
+      width: 25px;
+      position: absolute;
+      right: 5px;
+      top: 7px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      background-color: @admin-dark-gray;
+      width: 100%;
+      li {
+        margin-left: 25px;
+      }
+    }
+
+    .tab-menu-item {
+      color: @admin-medium-gray-font;
+      padding: 5px;
+      cursor: pointer;
+      &.active {
+        display: none;
+      }
+    }
+  }
+
+  input {
+    margin: 15px;
+    padding: 5px 3px;
+    width: calc(100% - 20px);
+    border: none;
+    background-color: @admin-dark-gray-font;
+    color: @admin-medium-gray-font;
+  }
+
+  &.context-window {
+    color: @admin-medium-gray-font;
+
+    .tab-menu {
+      cursor: move;
+    }
+
+    .component {
+      padding-left: 60px;
+      border-right: 0;
+      border-bottom: 1px dashed @admin-dark-gray-font;
+      background-color: #252526;
+
+      h5 {
+        margin: 0;
+        padding: 0;
+        font-size: 13px;
+        line-height: 1.50;
+        font-weight: normal;
+      }
+
+      h6 {
+        margin: 0;
+        padding: 0;
+        font-size: 11px;
+        font-weight: normal;
+      }
+    }
+
+    .detail-panel {
+      text-align: center;
+      font-size: 12px;
+
+      .icon {
+        margin: 50px auto 0 auto;
+        width: 64px;
+        height: 64px;
+        font-size: 64px;
+      }
+
+      h3 {
+        font-size: 26px;
+        text-transform: capitalize;
+        font-weight: normal;
+        margin-bottom: 10px;
+        margin-top: 10px;
+      }
+    }
+  }
+}
+
+.dragging-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  background-color: rgba(255, 255, 255, 0.5);
+}

@@ -1,7 +1,6 @@
 <relationship-type>
   <name>love</name>
   <display-name>Love</display-name>
-  <module>system</module>
   <from-semantic>loves</from-semantic>
   <to-semantic>loved by</to-semantic>
   <allowed-from-types/>

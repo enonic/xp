@@ -1,45 +1,38 @@
 package com.enonic.wem.core.item;
 
 
-import javax.inject.Inject;
+import javax.jcr.Session;
 
-import org.joda.time.DateTime;
-
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.item.CreateItem;
+import com.enonic.wem.api.item.CreateItemResult;
 import com.enonic.wem.api.item.Item;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.item.dao.ItemDao;
+import com.enonic.wem.core.item.dao.CreateItemArgs;
+import com.enonic.wem.core.item.dao.ItemJcrDao;
 
 public class CreateItemHandler
     extends CommandHandler<CreateItem>
 {
-    private ItemDao itemDao;
-
-    public CreateItemHandler()
-    {
-        super( CreateItem.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final CreateItem command )
+    public void handle()
         throws Exception
     {
-        final Item item = Item.newItem().
+        final Session session = context.getJcrSession();
+        final ItemJcrDao itemDao = new ItemJcrDao( session );
+
+        final CreateItemArgs createItemArgs = CreateItemArgs.newCreateItemArgs().
+            creator( UserKey.superUser() ).
+            parent( command.getParent() ).
             name( command.getName() ).
-            addDataSet( command.getDataSet() ).
-            createdTime( DateTime.now() ).
-            creator( command.getCreator() ).
+            icon( command.getIcon() ).
+            rootDataSet( command.getData() ).
             build();
 
-        itemDao.storeNew( item, command.getParent() );
+        final Item persistedItem = itemDao.createItem( createItemArgs );
+        session.save();
 
+        command.setResult( new CreateItemResult( persistedItem ) );
         // TODO: index item or in dao?
-    }
-
-    @Inject
-    public void setItemDao( final ItemDao itemDao )
-    {
-        this.itemDao = itemDao;
     }
 }

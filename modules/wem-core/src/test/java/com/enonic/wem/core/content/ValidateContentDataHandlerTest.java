@@ -10,7 +10,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
@@ -42,6 +41,7 @@ public class ValidateContentDataHandlerTest
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new ValidateContentDataHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -51,7 +51,6 @@ public class ValidateContentDataHandlerTest
     {
         // setup
         final ContentType contentType = newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "my_type" ).
             addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
                 newFormItemSet().name( "mySet" ).required( true ).addFormItem(
@@ -66,7 +65,8 @@ public class ValidateContentDataHandlerTest
         // exercise
         final ValidateContentData command =
             Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getQualifiedName() );
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // test
         final DataValidationErrors result = command.getResult();
@@ -83,7 +83,6 @@ public class ValidateContentDataHandlerTest
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
                 newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build();
         final ContentType contentType = ContentType.newContentType().
-            module( Module.SYSTEM.getName() ).
             name( "my_type" ).
             addFormItem( fieldSet ).
             build();
@@ -92,12 +91,13 @@ public class ValidateContentDataHandlerTest
             ContentTypes.from( contentType ) );
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getContentData().setProperty( "mySet.myInput", new Value.Text( "thing" ) );
+        content.getContentData().setProperty( "mySet.myInput", new Value.String( "thing" ) );
 
         // exercise
         final ValidateContentData command =
             Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getQualifiedName() );
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // test
         final DataValidationErrors result = command.getResult();

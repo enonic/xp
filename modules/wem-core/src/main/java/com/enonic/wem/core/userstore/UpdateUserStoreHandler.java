@@ -10,7 +10,6 @@ import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.api.userstore.editor.UserStoreEditor;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 
 
 public class UpdateUserStoreHandler
@@ -18,13 +17,8 @@ public class UpdateUserStoreHandler
 {
     private AccountDao accountDao;
 
-    public UpdateUserStoreHandler()
-    {
-        super( UpdateUserStore.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final UpdateUserStore command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

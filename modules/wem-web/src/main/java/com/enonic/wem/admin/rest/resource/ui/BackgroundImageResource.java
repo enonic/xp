@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -16,9 +15,6 @@ import com.enonic.wem.core.config.ConfigProperties;
 public final class BackgroundImageResource
 {
     private ConfigProperties configProperties;
-
-    @javax.ws.rs.core.Context
-    private ServletContext servletContext;
 
     @GET
     @Path("background.jpg")
@@ -35,7 +31,7 @@ public final class BackgroundImageResource
         }
         else
         {
-            return servletContext.getResourceAsStream( "/META-INF/admin/background.jpg" );
+            return getClass().getResourceAsStream( "background.jpg" );
         }
     }
 

@@ -4,7 +4,7 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 
 public class AttachmentName
-    extends ValueType<String>
+    extends ValueType<java.lang.String>
 {
     AttachmentName( int key )
     {
@@ -18,7 +18,7 @@ public class AttachmentName
     }
 
     @Override
-    public Property newProperty( final String name, final Value value )
+    public Property newProperty( final java.lang.String name, final Value value )
     {
         return new Property.AttachmentName( name, value.asString() );
     }

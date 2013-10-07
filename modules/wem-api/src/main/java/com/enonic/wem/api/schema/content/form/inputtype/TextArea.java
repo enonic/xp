@@ -14,13 +14,26 @@ final class TextArea
 {
     TextArea()
     {
+        super( TextAreaConfig.class );
+    }
+
+    @Override
+    public AbstractInputTypeConfigJsonSerializer getInputTypeConfigJsonSerializer()
+    {
+        return TextAreaConfigJsonSerializer.DEFAULT;
+    }
+
+    @Override
+    public AbstractInputTypeConfigXmlSerializer getInputTypeConfigXmlSerializer()
+    {
+        return TextAreaConfigXmlSerializer.DEFAULT;
     }
 
     @Override
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        ValueTypes.TEXT.checkValidity( property );
+        ValueTypes.STRING.checkValidity( property );
     }
 
     @Override
@@ -37,7 +50,13 @@ final class TextArea
     @Override
     public Value newValue( final String value )
     {
-        return new Value.Text( value );
+        return new Value.String( value );
+    }
+
+    @Override
+    public InputTypeConfig getDefaultConfig()
+    {
+        return TextAreaConfig.newTextAreaConfig().columns( 50 ).rows( 10 ).build();
     }
 
 }

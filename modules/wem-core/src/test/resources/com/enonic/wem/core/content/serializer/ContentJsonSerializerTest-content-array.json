@@ -2,7 +2,7 @@
     "id": null,
     "path": "/",
     "name": null,
-    "type": "mymodule:my_type",
+    "type": "my_type",
     "displayName": null,
     "owner": null,
     "creator": null,
@@ -14,13 +14,13 @@
         {
             "name": "myArray",
             "path": "myArray[0]",
-            "type": "Text",
+            "type": "String",
             "value": "1"
         },
         {
             "name": "myArray",
             "path": "myArray[1]",
-            "type": "Text",
+            "type": "String",
             "value": "2"
         }
     ]

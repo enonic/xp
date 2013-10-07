@@ -31,7 +31,7 @@ public class DeleteContentTypeRpcHandlerTest
     public void deleteSingleContentType()
         throws Exception
     {
-        final QualifiedContentTypeName existingName = new QualifiedContentTypeName( "my:existing_content_type" );
+        final QualifiedContentTypeName existingName = QualifiedContentTypeName.from( "my:existing_content_type" );
 
         ContentTypeDeletionResult contentDeletionResult = new ContentTypeDeletionResult();
         contentDeletionResult.success( existingName );
@@ -45,9 +45,9 @@ public class DeleteContentTypeRpcHandlerTest
     public void deleteVariousContentTypes()
         throws Exception
     {
-        final QualifiedContentTypeName existingName = new QualifiedContentTypeName( "my:existing_content_type" );
-        final QualifiedContentTypeName notFoundName = new QualifiedContentTypeName( "my:not_found_content_type" );
-        final QualifiedContentTypeName beingUsedName = new QualifiedContentTypeName( "my:being_used_content_type" );
+        final QualifiedContentTypeName existingName = QualifiedContentTypeName.from( "my:existing_content_type" );
+        final QualifiedContentTypeName notFoundName = QualifiedContentTypeName.from( "my:not_found_content_type" );
+        final QualifiedContentTypeName beingUsedName = QualifiedContentTypeName.from( "my:being_used_content_type" );
 
         Mockito.when( client.execute( eq( contentType().delete().name( existingName ) ) ) ).thenReturn( DeleteContentTypeResult.SUCCESS );
         Mockito.when( client.execute( eq( contentType().delete().name( notFoundName ) ) ) ).thenReturn( DeleteContentTypeResult.NOT_FOUND );

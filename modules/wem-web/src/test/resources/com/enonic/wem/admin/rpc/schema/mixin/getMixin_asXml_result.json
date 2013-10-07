@@ -1,5 +1,5 @@
 {
     "success" : true,
-    "mixinXml" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<mixin>\r\n  <name>input_text1</name>\r\n  <module>mymodule</module>\r\n  <display-name />\r\n  <items>\r\n    <input type=\"TextLine\" name=\"input_text1\">\r\n      <label>Line Text 1</label>\r\n      <immutable>false</immutable>\r\n      <indexed>false</indexed>\r\n      <custom-text />\r\n      <help-text>Help text line 1</help-text>\r\n      <occurrences minimum=\"1\" maximum=\"1\" />\r\n    </input>\r\n  </items>\r\n</mixin>\r\n\r\n",
-    "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:mymodule:input_text1"
+    "mixinXml" : "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<mixin>\r\n  <name>input_text1</name>\r\n  <display-name />\r\n  <items>\r\n    <input type=\"TextLine\" name=\"input_text1\">\r\n      <label>Line Text 1</label>\r\n      <immutable>false</immutable>\r\n      <indexed>false</indexed>\r\n      <custom-text />\r\n      <help-text>Help text line 1</help-text>\r\n      <occurrences minimum=\"1\" maximum=\"1\" />\r\n    </input>\r\n  </items>\r\n</mixin>\r\n\r\n",
+    "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:input_text1"
 }

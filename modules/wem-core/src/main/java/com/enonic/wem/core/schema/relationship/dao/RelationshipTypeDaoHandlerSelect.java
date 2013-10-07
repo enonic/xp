@@ -51,18 +51,12 @@ final class RelationshipTypeDaoHandlerSelect
         final Node relationshipTypesNode = JcrHelper.getNodeOrNull( rootNode, RelationshipTypeDao.RELATIONSHIP_TYPES_PATH );
 
         final List<RelationshipType> relationshipTypeList = Lists.newArrayList();
-        final NodeIterator relationshipTypeModuleNodes = relationshipTypesNode.getNodes();
-        while ( relationshipTypeModuleNodes.hasNext() )
+        final NodeIterator relationshipTypeNodes = relationshipTypesNode.getNodes();
+        while ( relationshipTypeNodes.hasNext() )
         {
-            final Node relationshipTypeModuleNode = relationshipTypeModuleNodes.nextNode();
-
-            final NodeIterator relationshipTypeNodes = relationshipTypeModuleNode.getNodes();
-            while ( relationshipTypeNodes.hasNext() )
-            {
-                final Node relationshipTypeNode = relationshipTypeNodes.nextNode();
-                final RelationshipType relationshipType = this.relationshipTypeJcrMapper.toRelationshipType( relationshipTypeNode );
-                relationshipTypeList.add( relationshipType );
-            }
+            final Node relationshipTypeNode = relationshipTypeNodes.nextNode();
+            final RelationshipType relationshipType = this.relationshipTypeJcrMapper.toRelationshipType( relationshipTypeNode );
+            relationshipTypeList.add( relationshipType );
         }
         return RelationshipTypes.from( relationshipTypeList );
     }

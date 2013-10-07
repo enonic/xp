@@ -20,10 +20,10 @@ public class SetContentDataEditorTest
     {
         // setup
         ContentData originalContentData = new ContentData();
-        originalContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        originalContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "abc" ).build() );
 
         ContentData unchangedContentData = new ContentData();
-        unchangedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        unchangedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "abc" ).build() );
 
         SetContentDataEditor editor = new SetContentDataEditor( unchangedContentData );
         Content toBeEdited = Content.newContent().name( "myContent" ).contentData( originalContentData ).build();
@@ -41,10 +41,10 @@ public class SetContentDataEditorTest
     {
         // setup
         ContentData originalContentData = new ContentData();
-        originalContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        originalContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "abc" ).build() );
 
         ContentData changedContentData = new ContentData();
-        changedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "123" ).build() );
+        changedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "123" ).build() );
 
         SetContentDataEditor editor = new SetContentDataEditor( changedContentData );
         Content toBeEdited = Content.newContent().name( "myContent" ).contentData( originalContentData ).build();

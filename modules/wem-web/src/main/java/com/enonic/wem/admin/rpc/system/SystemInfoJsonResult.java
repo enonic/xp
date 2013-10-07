@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rpc.system;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.api.Version;
+import com.enonic.wem.Version;
 
 final class SystemInfoJsonResult
     extends JsonResult

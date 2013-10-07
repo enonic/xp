@@ -1,31 +1,29 @@
 package com.enonic.wem.core.item;
 
 
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
+import javax.jcr.Session;
 
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.UpdateItem;
-import com.enonic.wem.core.command.CommandContext;
+import com.enonic.wem.api.item.UpdateItemResult;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.item.dao.ItemDao;
+import com.enonic.wem.core.item.dao.ItemJcrDao;
+import com.enonic.wem.core.item.dao.UpdateItemArgs;
+
+import static com.enonic.wem.core.item.dao.UpdateItemArgs.newUpdateItemArgs;
 
 public class UpdateItemHandler
     extends CommandHandler<UpdateItem>
 {
-    private ItemDao itemDao;
-
-    public UpdateItemHandler()
-    {
-        super( UpdateItem.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final UpdateItem command )
+    public void handle()
         throws Exception
     {
-        final Item persisted = itemDao.getItemById( command.getItemId() );
+        final Session session = context.getJcrSession();
+
+        final ItemJcrDao itemDao = new ItemJcrDao( session );
+
+        final Item persisted = itemDao.getItemById( command.getItem() );
 
         Item edited = command.getEditor().edit( persisted );
         if ( edited == null )
@@ -36,19 +34,15 @@ public class UpdateItemHandler
 
         persisted.checkIllegalEdit( edited );
 
-        edited = Item.newItem( edited ).
-            modifiedTime( DateTime.now() ).
-            modifier( command.getModifier() ).
+        final UpdateItemArgs updateItemArgs = newUpdateItemArgs().
+            itemToUpdate( command.getItem() ).
+            name( edited.name() ).
             build();
 
-        itemDao.updateExisting( edited );
-
+        final Item persistedItem = itemDao.updateItem( updateItemArgs );
+        session.save();
         // TODO: update index for item or in dao?
-    }
 
-    @Inject
-    public void setItemDao( final ItemDao itemDao )
-    {
-        this.itemDao = itemDao;
+        command.setResult( new UpdateItemResult( persistedItem ) );
     }
 }

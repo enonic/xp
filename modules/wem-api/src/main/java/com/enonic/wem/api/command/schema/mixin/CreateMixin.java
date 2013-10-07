@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.content.form.FormItems;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
@@ -16,8 +15,6 @@ public final class CreateMixin
     private String name;
 
     private FormItems formItems = new FormItems( null );
-
-    private ModuleName moduleName;
 
     private String displayName;
 
@@ -42,12 +39,6 @@ public final class CreateMixin
         return this;
     }
 
-    public CreateMixin moduleName( final ModuleName moduleName )
-    {
-        this.moduleName = moduleName;
-        return this;
-    }
-
     public CreateMixin displayName( final String displayName )
     {
         this.displayName = displayName;
@@ -68,11 +59,6 @@ public final class CreateMixin
     public FormItems getFormItems()
     {
         return formItems;
-    }
-
-    public ModuleName getModuleName()
-    {
-        return moduleName;
     }
 
     public String getDisplayName()
@@ -101,7 +87,6 @@ public final class CreateMixin
         final CreateMixin that = (CreateMixin) o;
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.formItems, that.formItems ) &&
-            Objects.equal( this.moduleName, that.moduleName ) &&
             Objects.equal( this.displayName, that.displayName ) &&
             Objects.equal( this.icon, that.icon );
     }
@@ -109,7 +94,7 @@ public final class CreateMixin
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.name, this.formItems, this.moduleName, this.displayName, this.icon );
+        return Objects.hashCode( this.name, this.formItems, this.displayName, this.icon );
     }
 
     @Override
@@ -117,7 +102,6 @@ public final class CreateMixin
     {
         Preconditions.checkNotNull( this.name, "name cannot be null" );
         Preconditions.checkNotNull( this.formItems, "formItems cannot be null" );
-        Preconditions.checkNotNull( this.moduleName, "moduleName cannot be null" );
         Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
     }
 }

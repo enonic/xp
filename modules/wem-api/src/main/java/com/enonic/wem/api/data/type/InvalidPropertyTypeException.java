@@ -10,7 +10,7 @@ public class InvalidPropertyTypeException
         super( buildMessage( property, expectedType ) );
     }
 
-    private static String buildMessage( final Property property, final ValueType expectedType )
+    private static java.lang.String buildMessage( final Property property, final ValueType expectedType )
     {
         return "Invalid property [" + property + "]. Type expected to be " + expectedType + ": " + property.getValueType();
     }

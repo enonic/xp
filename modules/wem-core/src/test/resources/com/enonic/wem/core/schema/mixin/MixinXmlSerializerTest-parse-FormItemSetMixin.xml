@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mixin>
   <name>address</name>
-  <module>mymodule</module>
   <display-name>Address Mixin</display-name>
   <items>
     <form-item-set name="address">

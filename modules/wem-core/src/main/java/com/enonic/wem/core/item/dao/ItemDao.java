@@ -4,6 +4,8 @@ package com.enonic.wem.core.item.dao;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemFoundException;
+import com.enonic.wem.api.item.NoItemWithIdFound;
 
 public interface ItemDao
 {
@@ -13,7 +15,7 @@ public interface ItemDao
     public Item getItemByPath( ItemPath path )
         throws NoItemFoundException;
 
-    public void storeNew( Item item, ItemPath parent );
+    public Item createItem( CreateItemArgs createItemArgs );
 
-    public void updateExisting( final Item item );
+    public Item updateItem( final UpdateItemArgs updateItemArgs );
 }

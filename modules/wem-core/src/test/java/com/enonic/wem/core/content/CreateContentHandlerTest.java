@@ -20,7 +20,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -65,6 +64,7 @@ public class CreateContentHandlerTest
         indexService = Mockito.mock( IndexService.class );
 
         handler = new CreateContentHandler();
+        handler.setContext( this.context );
         handler.setContentDao( contentDao );
         handler.setContentTypeDao( contentTypeDao );
         handler.setRelationshipService( relationshipService );
@@ -72,7 +72,7 @@ public class CreateContentHandlerTest
 
         Mockito.when( super.client.execute( Mockito.isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 
-        final QualifiedContentTypeName myContentTypeName = new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" );
+        final QualifiedContentTypeName myContentTypeName = QualifiedContentTypeName.from( "my_content_type" );
         final ContentType myContentType = newContentType().
             qualifiedName( myContentTypeName ).
             superType( QualifiedContentTypeName.structured() ).
@@ -100,15 +100,16 @@ public class CreateContentHandlerTest
         command.displayName( "My Content" );
         command.parentContentPath( ContentPath.from( "/" ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
-        command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" ) );
+        command.contentType( QualifiedContentTypeName.from( "my_content_type" ) );
         ContentData contentData = new ContentData();
-        contentData.setProperty( "myText", new Value.Text( "abc" ) );
+        contentData.setProperty( "myText", new Value.String( "abc" ) );
         contentData.setProperty( "myReference", new Value.ContentId( ContentId.from( "123" ) ) );
         contentData.setProperty( "mySet.myRelatedContent", new Value.ContentId( ContentId.from( "124" ) ) );
         command.contentData( contentData );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );
@@ -133,10 +134,11 @@ public class CreateContentHandlerTest
         final String rootPath = "/rootcontent";
         command.parentContentPath( ContentPath.from( rootPath ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
-        command.contentType( new QualifiedContentTypeName( ModuleName.SYSTEM, "my_content_type" ) );
+        command.contentType( QualifiedContentTypeName.from( "my_content_type" ) );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( contentDao, Mockito.times( 1 ) ).create( Mockito.isA( Content.class ), Mockito.any( Session.class ) );

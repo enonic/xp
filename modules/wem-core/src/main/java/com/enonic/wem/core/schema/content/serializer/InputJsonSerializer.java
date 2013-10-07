@@ -62,7 +62,7 @@ public class InputJsonSerializer
         jsonObject.put( HELP_TEXT, input.getHelpText() );
 
         final ObjectNode typeObject = (ObjectNode) inputTypeSerializer.serialize( input.getInputType() );
-        if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
+        if ( /*input.getInputType().requiresConfig() &&*/ input.getInputTypeConfig() != null )
         {
             final JsonNode inputTypeNode =
                 input.getInputType().getInputTypeConfigJsonSerializer().serialize( input.getInputTypeConfig(), objectMapper() );
@@ -119,6 +119,10 @@ public class InputJsonSerializer
             if ( inputTypeNode.has( CONFIG ) )
             {
                 builder.inputTypeConfig( inputTypeConfigSerializer.parse( inputTypeNode.get( CONFIG ), inputType.getClass() ) );
+            }
+            else
+            {
+                builder.inputTypeConfig( inputType.getDefaultConfig() );
             }
         }
     }

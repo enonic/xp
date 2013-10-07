@@ -49,11 +49,6 @@ public class RelationshipTypeResultJson
         return model.getName();
     }
 
-    public String getModule()
-    {
-        return model.getModuleName().toString();
-    }
-
     public String getDisplayName()
     {
         return model.getDisplayName();

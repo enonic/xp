@@ -1,6 +1,5 @@
 {
     "name" : "my_set",
-    "module" : "mymodule",
     "displayName" : "My Mixin",
     "items" : [ {
         "FormItemSet" : {

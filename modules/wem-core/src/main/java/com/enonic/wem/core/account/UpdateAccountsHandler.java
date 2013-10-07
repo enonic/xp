@@ -14,7 +14,6 @@ import com.enonic.wem.api.account.editor.AccountEditor;
 import com.enonic.wem.api.command.UpdateResult;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.IndexService;
 
@@ -28,13 +27,8 @@ public final class UpdateAccountsHandler
 
     private IndexService indexService;
 
-    public UpdateAccountsHandler()
-    {
-        super( UpdateAccounts.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final UpdateAccounts command )
+    public void handle()
         throws Exception
     {
         final AccountKey accountKey = command.getKey();

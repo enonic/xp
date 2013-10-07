@@ -11,12 +11,12 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.command.schema.SchemaTypes;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.support.tree.Tree;
@@ -37,51 +37,45 @@ public class SchemaResourceTest
         mockCurrentContextHttpRequest();
     }
 
-    private Mixin createMixin( String name, ModuleName module )
+    private Mixin createMixin( String displayName )
     {
-        return Mixin.newMixin().displayName( name ).name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
-            DateTime.parse( currentTime ) ).module( module ).addFormItem(
-            Input.newInput().name( name.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).build() ).build();
+        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
+            DateTime.parse( currentTime ) ).addFormItem(
+            Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+                TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() ).build();
     }
 
-    private ContentType createContentType( String name, ModuleName module )
+    private ContentType createContentType( String name )
     {
         return ContentType.newContentType().name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
-            DateTime.parse( currentTime ) ).module( module ).build();
+            DateTime.parse( currentTime ) ).build();
     }
 
-    private RelationshipType createRelationshipType( String name, ModuleName module )
+    private RelationshipType createRelationshipType( String name )
     {
-        return RelationshipType.newRelationshipType().createdTime( DateTime.parse( currentTime ) ).modifiedTime(
-            DateTime.parse( currentTime ) ).name( name ).module( module ).build();
-    }
-
-    private ModuleName createModuleName( String name )
-    {
-        return ModuleName.from( name );
+        return RelationshipType.newRelationshipType().name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
+            DateTime.parse( currentTime ) ).build();
     }
 
     private Schemas createSchemaList()
     {
-        ModuleName moduleName = createModuleName( "module" );
-        ContentType contentType = createContentType( "contenttype", moduleName );
-        Mixin mixin = createMixin( "mixin", moduleName );
-        RelationshipType relationshipType = createRelationshipType( "relationship", moduleName );
+        ContentType contentType = createContentType( "contenttype" );
+        Mixin mixin = createMixin( "mixin" );
+        RelationshipType relationshipType = createRelationshipType( "relationship" );
         return Schemas.from( contentType, mixin, relationshipType );
     }
 
     private Tree<Schema> createSchemaTree()
     {
         Tree<Schema> tree = new Tree<>();
-        ModuleName moduleName = createModuleName( "tree" );
-        ContentType rootContentType = createContentType( "rootcontenttype", moduleName );
-        ContentType childContentType = createContentType( "childcontenttype", moduleName );
+        ContentType rootContentType = createContentType( "rootcontenttype" );
+        ContentType childContentType = createContentType( "childcontenttype" );
         tree.createNode( rootContentType ).addChild( childContentType );
-        Mixin rootMixin = createMixin( "rootmixin", moduleName );
-        Mixin childMixin = createMixin( "childmixin", moduleName );
+        Mixin rootMixin = createMixin( "rootmixin" );
+        Mixin childMixin = createMixin( "childmixin" );
         tree.createNode( rootMixin ).addChild( childMixin );
-        RelationshipType rootRelationshipType = createRelationshipType( "rootrelationshiptype", moduleName );
-        RelationshipType childRelationshipType = createRelationshipType( "childrelationshiptype", moduleName );
+        RelationshipType rootRelationshipType = createRelationshipType( "rootrelationshiptype" );
+        RelationshipType childRelationshipType = createRelationshipType( "childrelationshiptype" );
         tree.createNode( rootRelationshipType ).addChild( childRelationshipType );
         return tree;
     }
@@ -137,9 +131,10 @@ public class SchemaResourceTest
     public void searchSchemaByTypes()
         throws Exception
     {
-        ModuleName moduleName = createModuleName( "module" );
-        ContentType contentType = createContentType( "contenttype", moduleName );
-        Mixin mixin = createMixin( "mixin", moduleName );
+        final SchemaResource schemaResource = new SchemaResource();
+        schemaResource.setClient( client );
+        ContentType contentType = createContentType( "contenttype" );
+        Mixin mixin = createMixin( "mixin" );
         Schemas schemas = Schemas.from( contentType, mixin );
         Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
 

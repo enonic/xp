@@ -5,13 +5,13 @@
         {
             "name": "myArray",
             "path": "myArray[0]",
-            "type": "Text",
+            "type": "String",
             "value": "arrayValue1"
         },
         {
             "name": "myArray",
             "path": "myArray[1]",
-            "type": "Text",
+            "type": "String",
             "value": "arrayValue2"
         },
         {
@@ -22,13 +22,13 @@
                 {
                     "name": "myArray",
                     "path": "mySetWithArray.myArray[0]",
-                    "type": "DecimalNumber",
+                    "type": "Double",
                     "value": "3.14159"
                 },
                 {
                     "name": "myArray",
                     "path": "mySetWithArray.myArray[1]",
-                    "type": "DecimalNumber",
+                    "type": "Double",
                     "value": "1.333"
                 }
             ]
@@ -44,5 +44,5 @@
     "owner": "user:myStore:me",
     "path": "/my_a_content",
     "root": false,
-    "type": "mymodule:my_type"
+    "type": "my_type"
 }

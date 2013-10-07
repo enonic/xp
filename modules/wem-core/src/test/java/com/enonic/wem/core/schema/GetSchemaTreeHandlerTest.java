@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetSchemaTree;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -54,6 +54,7 @@ public class GetSchemaTreeHandlerTest
         mixinDao = Mockito.mock( MixinDao.class );
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         handler = new GetSchemaTreeHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
         handler.setMixinDao( mixinDao );
         handler.setRelationshipTypeDao( relationshipTypeDao );
@@ -66,6 +67,7 @@ public class GetSchemaTreeHandlerTest
         // setup
         final ContentType unstructuredContentType = newContentType().
             qualifiedName( QualifiedContentTypeName.structured() ).
+            builtIn( true ).
             displayName( "Unstructured" ).
             setFinal( false ).
             setAbstract( false ).
@@ -73,7 +75,6 @@ public class GetSchemaTreeHandlerTest
 
         final ContentType contentType = newContentType().
             name( "my_content_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             setAbstract( false ).
             superType( unstructuredContentType.getQualifiedName() ).
@@ -86,26 +87,25 @@ public class GetSchemaTreeHandlerTest
             newInput().inputType( InputTypes.TEXT_LINE ).name( "postalCode" ).build() ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "postalPlace" ).build() ).build();
         final Mixin mixin = newMixin().name( "address" ).
-            module( ModuleName.from( "mymodule" ) ).
             addFormItem( formItemSet ).
             build();
         final Mixins mixinTypes = Mixins.from( mixin );
         Mockito.when( mixinDao.selectAll( any( Session.class ) ) ).thenReturn( mixinTypes );
 
         final RelationshipType relationshipType = newRelationshipType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( new QualifiedContentTypeName( "mymodule:person" ) ).
-            addAllowedToType( new QualifiedContentTypeName( "mymodule:person" ) ).
+            addAllowedFromType( QualifiedContentTypeName.from( "mymodule:person" ) ).
+            addAllowedToType( QualifiedContentTypeName.from( "mymodule:person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         Mockito.when( relationshipTypeDao.selectAll( any( Session.class ) ) ).thenReturn( relationshipTypes );
 
         // exercise
         final GetSchemaTree command = Commands.schema().getTree();
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );

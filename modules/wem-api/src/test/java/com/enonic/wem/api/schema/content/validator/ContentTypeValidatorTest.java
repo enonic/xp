@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeFetcher;
 
@@ -22,7 +22,6 @@ public class ContentTypeValidatorTest
     public void before()
     {
         contentType = ContentType.newContentType().
-            module( ModuleName.from( "test" ) ).
             name( "my_type" ).build();
         fetcher = Mockito.mock( ContentTypeFetcher.class );
 
@@ -35,7 +34,6 @@ public class ContentTypeValidatorTest
     public void recorded_content_type_with_no_final_super_type()
     {
         ContentType child = ContentType.newContentType().
-            module( ModuleName.from( "test" ) ).
             name( "my_type" ).
             superType( contentType.getQualifiedName() ).build();
         Mockito.when( fetcher.getContentType( child.getSuperType() ) ).thenReturn( contentType );
@@ -46,13 +44,12 @@ public class ContentTypeValidatorTest
     @Test
     public void recorded_content_type_with_final_super_type()
     {
-        ContentType parent = ContentType.newContentType().name( "my_final_parent" ).module( ModuleName.from( "test" ) ).setFinal().build();
-        ContentType child = ContentType.newContentType().name( "my_child" ).module( ModuleName.from( "test" ) ).superType(
-            parent.getQualifiedName() ).build();
+        ContentType parent = ContentType.newContentType().name( "my_final_parent" ).setFinal().build();
+        ContentType child = ContentType.newContentType().name( "my_child" ).superType( parent.getQualifiedName() ).build();
         Mockito.when( fetcher.getContentType( child.getSuperType() ) ).thenReturn( parent );
         recordedValidator.validate( child );
         assertTrue( recordedValidator.getResult().hasErrors() );
-        assertEquals( "Invalid content type: [test:my_child]: Cannot inherit from a final ContentType: test:my_final_parent",
+        assertEquals( "Invalid content type: [my_child]: Cannot inherit from a final ContentType: my_final_parent",
                       recordedValidator.getResult().getFirst().getErrorMessage() );
     }
 

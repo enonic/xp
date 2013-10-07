@@ -273,7 +273,7 @@ public class ContentResource
         contentIndexQuery.setSpaceNames( SpaceNames.from( params.getSpaces() ) );
 
         Set<ContentFindParams.Range> ranges = params.getRanges();
-        if ( ranges != null && !ranges.isEmpty() )
+        if ( ranges != null && ranges.size() > 0 )
         {
             for ( ContentFindParams.Range range : ranges )
             {
@@ -321,7 +321,7 @@ public class ContentResource
     @Path("validate")
     public ValidateContentJson validate( final ValidateContentParams params )
     {
-        final QualifiedContentTypeName qualifiedContentTypeName = new QualifiedContentTypeName( params.getQualifiedContentTypeName() );
+        final QualifiedContentTypeName qualifiedContentTypeName = QualifiedContentTypeName.from( params.getQualifiedContentTypeName() );
 
         GetContentTypes getContentType =
             Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );

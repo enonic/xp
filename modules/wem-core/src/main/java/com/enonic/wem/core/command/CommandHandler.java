@@ -4,18 +4,20 @@ import com.enonic.wem.api.command.Command;
 
 public abstract class CommandHandler<C extends Command>
 {
-    private final Class<C> type;
+    protected CommandContext context;
 
-    public CommandHandler( final Class<C> type )
+    protected C command;
+
+    public final void setContext( final CommandContext context )
     {
-        this.type = type;
+        this.context = context;
     }
 
-    public final Class<C> getType()
+    public final void setCommand( final C command )
     {
-        return this.type;
+        this.command = command;
     }
 
-    public abstract void handle( CommandContext context, C command )
+    public abstract void handle()
         throws Exception;
 }

@@ -146,7 +146,6 @@ public class RelationshipTypeResource
     {
         final CreateRelationshipType createCommand = Commands.relationshipType().create();
         createCommand.
-            module( relationshipType.getModuleName() ).
             name( relationshipType.getName() ).
             displayName( relationshipType.getDisplayName() ).
             fromSemantic( relationshipType.getFromSemantic() ).

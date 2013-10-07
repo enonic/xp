@@ -38,7 +38,7 @@ public class ContentTypeResourceTest
 
     private Client client;
 
-    private static final QualifiedContentTypeName MY_CTY_QUALIFIED_NAME = QualifiedContentTypeName.from( "mymodule:my_cty" );
+    private static final QualifiedContentTypeName MY_CTY_QUALIFIED_NAME = QualifiedContentTypeName.from( "my_cty" );
 
     public ContentTypeResourceTest()
     {
@@ -70,8 +70,8 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
-            name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
+            name( MY_CTY_QUALIFIED_NAME.getName() ).
+            superType( QualifiedContentTypeName.unstructured() ).
             displayName( "My ContentType" ).
             addFormItem( newInput().
                 name( "myTextLine" ).
@@ -140,12 +140,12 @@ public class ContentTypeResourceTest
 
         MixinReference myMixinReference = newMixinReference().
             name( "myMixinReference" ).
-            mixin( "mymodule:mymixin" ).
+            mixin( "mymixin" ).
             build();
 
         ContentType contentType = newContentType().
-            module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
-            name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
+            name( MY_CTY_QUALIFIED_NAME.getName() ).
+            superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( myTextLine ).
             addFormItem( myCustomInput ).
             addFormItem( myFieldSet ).
@@ -174,8 +174,8 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
-            name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
+            name( MY_CTY_QUALIFIED_NAME.getName() ).
+            superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( newInput().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
@@ -203,8 +203,8 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            module( MY_CTY_QUALIFIED_NAME.getModuleName() ).
-            name( MY_CTY_QUALIFIED_NAME.getLocalName() ).
+            name( MY_CTY_QUALIFIED_NAME.getName() ).
+            superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( newInput().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).

@@ -17,7 +17,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -72,7 +72,7 @@ public class RelationshipServiceImplTest
             addFormItem( newInput().name( "myRelated2" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( inputTypeConfig ).build() ).
             addFormItem(
                 newInput().name( "myRelated3" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( inputTypeConfig ).build() ).build();
-        ContentType contentType = newContentType().name( "my_type" ).module( ModuleName.SYSTEM ).form( form ).build();
+        ContentType contentType = newContentType().name( "my_type" ).form( form ).build();
 
         Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
@@ -93,7 +93,7 @@ public class RelationshipServiceImplTest
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();
         command.client( client );
         command.jcrSession( jcrSession );
-        command.contentType( QualifiedContentTypeName.from( ModuleName.SYSTEM, "my_relations" ) );
+        command.contentType( QualifiedContentTypeName.from(  "my_relations" ) );
         command.contentToUpdate( ContentId.from( "1" ) );
         command.contentBeforeEditing( dataBefore );
         command.contentAfterEditing( dataAfter );

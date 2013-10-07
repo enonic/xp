@@ -1,6 +1,5 @@
 package com.enonic.wem.api.item;
 
-
 public class UpdateItemResult
 {
     private final Item persistedItem;

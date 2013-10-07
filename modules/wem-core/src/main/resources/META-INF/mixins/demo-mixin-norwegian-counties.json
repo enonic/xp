@@ -1,6 +1,5 @@
 {
     "name": "norwegian-county",
-    "module": "demo",
     "displayName": "Demo: Norwegian countries",
     "items": [
         {

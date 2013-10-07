@@ -22,25 +22,25 @@ public class ValueTest
             @Override
             public Object getObjectX()
             {
-                return new Value.Text( "aaa" );
+                return new Value.String( "aaa" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new Value.Text( "bbb" ), new Value.HtmlPart( "aaa" )};
+                return new Object[]{new Value.String( "bbb" ), new Value.HtmlPart( "aaa" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new Value.Text( "aaa" );
+                return new Value.String( "aaa" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new Value.Text( "aaa" );
+                return new Value.String( "aaa" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -49,7 +49,7 @@ public class ValueTest
     @Test
     public void isJavaType()
     {
-        assertTrue( new Value.Text( "Some text" ).isJavaType( String.class ) );
+        assertTrue( new Value.String( "Some text" ).isJavaType( String.class ) );
         assertTrue( new Value.DateMidnight( org.joda.time.DateMidnight.now() ).isJavaType( org.joda.time.DateMidnight.class ) );
     }
 

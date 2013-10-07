@@ -10,12 +10,12 @@ import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.schema.content.form.Input.newInput;
@@ -49,19 +49,20 @@ public class GetContentTypeRpcHandlerTest
         final Input inputText2 =
             newInput().name( "inputText2" ).inputType( TEXT_LINE ).label( "Line Text 2" ).helpText( "Help text line 2" ).immutable(
                 true ).build();
-        final Input textArea1 = newInput().name( "textArea1" ).inputType( TEXT_AREA ).label( "Text Area" ).required( true ).helpText(
+        final Input textArea1 = newInput().name( "textArea1" ).inputType( TEXT_AREA ).inputTypeConfig(
+            TextAreaConfig.newTextAreaConfig().columns( 10 ).rows( 10 ).build() ).label( "Text Area" ).required( true ).helpText(
             "Help text area" ).required( true ).build();
 
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_type" ).
+            superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "mymodule:my_type" ) );
+        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( QualifiedContentTypeName.from( "my_type" ) );
         Mockito.when( client.execute( Commands.contentType().get().qualifiedNames( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentTypeJson_param.json", "getContentTypeJson_result.json" );
@@ -76,19 +77,20 @@ public class GetContentTypeRpcHandlerTest
         final Input inputText2 =
             newInput().name( "inputText2" ).inputType( TEXT_LINE ).label( "Line Text 2" ).helpText( "Help text line 2" ).immutable(
                 true ).build();
-        final Input textArea1 = newInput().name( "textArea1" ).inputType( TEXT_AREA ).label( "Text Area" ).required( true ).helpText(
+        final Input textArea1 = newInput().name( "textArea1" ).inputType( TEXT_AREA ).inputTypeConfig(
+            TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).label( "Text Area" ).required( true ).helpText(
             "Help text area" ).required( true ).build();
 
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_type" ).
+            superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( new QualifiedContentTypeName( "mymodule:my_type" ) );
+        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( QualifiedContentTypeName.from( "my_type" ) );
         Mockito.when( client.execute( Commands.contentType().get().qualifiedNames( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentTypeXml_param.json", "getContentTypeXml_result.json" );
@@ -102,7 +104,7 @@ public class GetContentTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "ContentTypes [mymodule:my_type] not found" );
+        resultJson.put( "error", "ContentTypes [my_type] not found" );
         testSuccess( "getContentTypeJson_param.json", resultJson );
     }
 
@@ -114,7 +116,7 @@ public class GetContentTypeRpcHandlerTest
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );
-        resultJson.put( "error", "ContentTypes [mymodule:my_type] not found" );
+        resultJson.put( "error", "ContentTypes [my_type] not found" );
         testSuccess( "getContentTypeXml_param.json", resultJson );
     }
 }

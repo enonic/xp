@@ -1,15 +1,14 @@
 {
     "name": "using-mixin-address",
-    "module": "demo",
     "displayName": "Using mixin: address",
-    "superType": "system:structured",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "form": [
         {
             "MixinReference": {
                 "name": "address",
-                "reference": "demo:address"
+                "reference": "address"
             }
         }
     ]

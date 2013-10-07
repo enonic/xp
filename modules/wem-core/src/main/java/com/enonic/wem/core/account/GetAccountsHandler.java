@@ -12,7 +12,6 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.Accounts;
 import com.enonic.wem.api.command.account.GetAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -21,13 +20,8 @@ public final class GetAccountsHandler
 {
     private AccountDao accountDao;
 
-    public GetAccountsHandler()
-    {
-        super( GetAccounts.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final GetAccounts command )
+    public void handle()
         throws Exception
     {
         final boolean includeMembers = command.isIncludeMembers();

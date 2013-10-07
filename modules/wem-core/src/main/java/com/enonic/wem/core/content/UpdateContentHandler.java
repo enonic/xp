@@ -66,14 +66,8 @@ public class UpdateContentHandler
 
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
-
-    public UpdateContentHandler()
-    {
-        super( UpdateContent.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final UpdateContent command )
+    public void handle()
         throws Exception
     {
         try

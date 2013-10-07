@@ -42,7 +42,7 @@
       position: relative;
     }
   </style>
-  <script type="text/javascript" src="../../admin2/live-edit/lib/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="../../admin/live-edit/lib/jquery-2.0.3.min.js"></script>
   <script type="text/javascript" src="lib/jquery.hotkeys.js"></script>
   <script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="lib/jstree/jquery.jstree.js"></script>
@@ -149,7 +149,7 @@
 
     var loadTree = function loadTree() {
       lazyLoadingDepth = 1;
-      $.getJSON('../rest/tools/jcr', function (data) {
+      $.getJSON('../../admin/rest/tools/jcr', function (data) {
         var nodeRoot = data.nodes[0];
         nodeRoot = jcrNodesToJstree(nodeRoot, 2);
 
@@ -163,7 +163,7 @@
                 callback([nodeRoot]); // root node
               } else {
                 var path = JSON.parse(node.attr("path"));
-                $.getJSON('../rest/tools/jcr', {'path': path.join('/'), 'depth': lazyLoadingDepth}, function (data) {
+                $.getJSON('../../admin/rest/tools/jcr', {'path': path.join('/'), 'depth': lazyLoadingDepth}, function (data) {
                   var node = data.nodes[0];
                   path.pop();
                   node = jcrNodesToJstree(node, 0, 0, path);

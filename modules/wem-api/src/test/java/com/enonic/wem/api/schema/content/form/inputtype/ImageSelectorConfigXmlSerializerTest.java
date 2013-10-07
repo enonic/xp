@@ -73,7 +73,7 @@ public class ImageSelectorConfigXmlSerializerTest
         StringBuilder xml = new StringBuilder();
         xml.append( "<config>\n" );
         xml.append( "<content-type-filter></content-type-filter>" );
-        xml.append( "<relationship-type>system:like</relationship-type>" );
+        xml.append( "<relationship-type>like</relationship-type>" );
         xml.append( "</config>\n" );
 
         // exercise

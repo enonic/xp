@@ -4,7 +4,7 @@
         "id": "abc",
         "path": "/my_content",
         "name": "my_content",
-        "type": "mymodule:my_type",
+        "type": "my_type",
         "displayName": "My Content",
         "owner": "user:myStore:me",
         "creator": "user:system:admin",
@@ -16,7 +16,7 @@
             {
                 "name": "myData",
                 "path": "myData",
-                "type": "Text",
+                "type": "String",
                 "value": "value1"
             }
         ],

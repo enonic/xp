@@ -16,7 +16,7 @@ public abstract class ValueType<T>
 {
     private final int key;
 
-    private final String name;
+    private final java.lang.String name;
 
     private final Class classType;
 
@@ -35,7 +35,7 @@ public abstract class ValueType<T>
         return key;
     }
 
-    public String getName()
+    public java.lang.String getName()
     {
         return name;
     }
@@ -100,7 +100,7 @@ public abstract class ValueType<T>
     }
 
     @Override
-    public String toString()
+    public java.lang.String toString()
     {
         return name;
     }
@@ -144,14 +144,14 @@ public abstract class ValueType<T>
     }
 
     /**
-     * Attempts to convert given String to this type.
+     * Attempts to convert given java.lang.String to this type.
      */
-    public T convert( final String object )
+    public T convert( final java.lang.String object )
     {
         return javaTypeConverter.convertFromString( object );
     }
 
-    public Property newProperty( final String name, final Object valueObj )
+    public Property newProperty( final java.lang.String name, final Object valueObj )
     {
         final Value value = newValue( valueObj );
         return newProperty( name, value );
@@ -159,5 +159,5 @@ public abstract class ValueType<T>
 
     public abstract Value newValue( Object value );
 
-    public abstract Property newProperty( final String name, final Value value );
+    public abstract Property newProperty( final java.lang.String name, final Value value );
 }

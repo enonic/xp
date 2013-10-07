@@ -50,7 +50,6 @@ public class MixinsInitializer
             final CreateMixin createMixin = Commands.mixin().create();
             createMixin.name( mixin.getName() );
             createMixin.displayName( mixin.getDisplayName() );
-            createMixin.moduleName( mixin.getModuleName() );
             createMixin.formItems( mixin.getFormItems() );
             createMixin.icon( mixin.getIcon() );
             client.execute( createMixin );

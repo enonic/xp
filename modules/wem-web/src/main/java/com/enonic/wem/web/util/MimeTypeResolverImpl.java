@@ -13,13 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.core.home.HomeDir;
-import com.enonic.wem.core.lifecycle.InitializingBean;
 
 /**
  * This class implements the mime type resolver.
  */
 public final class MimeTypeResolverImpl
-    implements MimeTypeResolver, InitializingBean
+    implements MimeTypeResolver
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( MimeTypeResolverImpl.class.getName() );
@@ -31,12 +30,12 @@ public final class MimeTypeResolverImpl
 
     public static final String SYSTEM_MIMETYPE_PROPERTIES = "mimetypes.properties";
 
+    private final static String MIME_TYPES_LOCATION = "config/mimetypes.properties";
+
     /**
      * Mime types collection.
      */
-    private Properties mimeTypes;
-
-    private String mimetypesLocation = "config/mimetypes.properties";
+    private final Properties mimeTypes;
 
     private final HomeDir homeDir;
 
@@ -47,15 +46,8 @@ public final class MimeTypeResolverImpl
     public MimeTypeResolverImpl( final HomeDir homeDir )
     {
         this.homeDir = homeDir;
-        loadMimeTypes( mimetypesLocation );
+        this.mimeTypes = loadMimeTypes( MIME_TYPES_LOCATION );
 
-    }
-
-    @Override
-    public void afterPropertiesSet()
-        throws Exception
-    {
-        this.mimeTypes = loadMimeTypes( mimetypesLocation );
     }
 
     /**

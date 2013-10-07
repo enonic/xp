@@ -25,8 +25,8 @@ import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
-import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
@@ -43,9 +43,9 @@ import static org.mockito.Mockito.verify;
 public class MixinResourceTest
     extends AbstractResourceTest
 {
-    private static QualifiedMixinName MY_MIXIN_QUALIFIED_NAME_1 = new QualifiedMixinName( "mymodule:input_text_1" );
+    private static QualifiedMixinName MY_MIXIN_QUALIFIED_NAME_1 = QualifiedMixinName.from( "input_text_1" );
 
-    private static QualifiedMixinName MY_MIXIN_QUALIFIED_NAME_2 = new QualifiedMixinName( "othermodule:text_area_1" );
+    private static QualifiedMixinName MY_MIXIN_QUALIFIED_NAME_2 = QualifiedMixinName.from( "text_area_1" );
 
     private static byte[] IMAGE_DATA =
         {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
@@ -80,11 +80,9 @@ public class MixinResourceTest
     public final void test_get_mixin()
         throws Exception
     {
-        Mixin mixin =
-            Mixin.newMixin().name(
-                MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).addFormItem(
-                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+                "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
@@ -98,11 +96,9 @@ public class MixinResourceTest
     public final void test_get_mixin_config()
         throws Exception
     {
-        Mixin mixin =
-            Mixin.newMixin().name(
-                MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).addFormItem(
-                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+                "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
@@ -127,7 +123,7 @@ public class MixinResourceTest
         catch ( UniformInterfaceException e )
         {
             Assert.assertEquals( 404, e.getResponse().getStatus() );
-            Assert.assertEquals( "Mixin [mymodule:input_text_1] was not found.", e.getResponse().getEntity( String.class ) );
+            Assert.assertEquals( "Mixin [input_text_1] was not found.", e.getResponse().getEntity( String.class ) );
         }
     }
 
@@ -146,7 +142,7 @@ public class MixinResourceTest
         catch ( UniformInterfaceException e )
         {
             Assert.assertEquals( 404, e.getResponse().getStatus() );
-            Assert.assertEquals( "Mixin [mymodule:input_text_1] was not found.", e.getResponse().getEntity( String.class ) );
+            Assert.assertEquals( "Mixin [input_text_1] was not found.", e.getResponse().getEntity( String.class ) );
         }
     }
 
@@ -154,17 +150,14 @@ public class MixinResourceTest
     public final void test_list_mixins()
         throws Exception
     {
-        Mixin mixin1 =
-            Mixin.newMixin().name(
-                MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).module( MY_MIXIN_QUALIFIED_NAME_1.getModuleName() ).addFormItem(
-                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getLocalName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin1 = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+                "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 =
-            Mixin.newMixin().name(
-                MY_MIXIN_QUALIFIED_NAME_2.getMixinName() ).module( MY_MIXIN_QUALIFIED_NAME_2.getModuleName() ).addFormItem(
-                newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getLocalName() ).inputType( TEXT_AREA ).label( "Text Area" ).required(
-                    true ).helpText( "Help text area" ).required( true ).build() ).build();
+        Mixin mixin2 = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_2.getMixinName() ).addFormItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getName() ).inputType( TEXT_AREA ).inputTypeConfig(
+                TextAreaConfig.newTextAreaConfig().columns( 10 ).rows( 10 ).build() ).label( "Text Area" ).required( true ).helpText(
+                "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
@@ -190,7 +183,7 @@ public class MixinResourceTest
     public void test_create_mixin_already_exists()
         throws Exception
     {
-        Mixin mixin = newMixin().name( "some_input" ).module( Module.SYSTEM.getName() ).addFormItem(
+        Mixin mixin = newMixin().name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
@@ -204,7 +197,7 @@ public class MixinResourceTest
         catch ( UniformInterfaceException e )
         {
             Assert.assertEquals( 409, e.getResponse().getStatus() );
-            Assert.assertEquals( "Mixin [mymodule:my_set] already exists.", e.getResponse().getEntity( String.class ) );
+            Assert.assertEquals( "Mixin [my_set] already exists.", e.getResponse().getEntity( String.class ) );
             verify( client, never() ).execute( isA( CreateMixin.class ) );
         }
     }
@@ -230,7 +223,7 @@ public class MixinResourceTest
     public void test_update_mixin()
         throws Exception
     {
-        Mixin mixin = newMixin().name( "some_input" ).module( Module.SYSTEM.getName() ).addFormItem(
+        Mixin mixin = newMixin().name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
@@ -258,7 +251,7 @@ public class MixinResourceTest
         catch ( UniformInterfaceException e )
         {
             Assert.assertEquals( 404, e.getResponse().getStatus() );
-            Assert.assertEquals( "Mixin [mymodule:my_set] not found.", e.getResponse().getEntity( String.class ) );
+            Assert.assertEquals( "Mixin [my_set] not found.", e.getResponse().getEntity( String.class ) );
             verify( client, never() ).execute( isA( UpdateMixin.class ) );
         }
     }

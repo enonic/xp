@@ -77,7 +77,7 @@ public class RelationshipConfigJsonSerializerTest
         // setup
         StringBuilder json = new StringBuilder();
         json.append( "{\n" );
-        json.append( "\"allowContentTypes\": [\"system:audio\", \"system:image\"]\n" );
+        json.append( "\"allowContentTypes\": [\"audio\", \"image\"]\n" );
         json.append( "}\n" );
 
         // exercise

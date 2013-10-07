@@ -11,7 +11,6 @@ import com.enonic.wem.api.schema.content.ContentTypeFetcher;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidator;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -24,13 +23,8 @@ public final class CreateContentTypeHandler
 {
     private ContentTypeDao contentTypeDao;
 
-    public CreateContentTypeHandler()
-    {
-        super( CreateContentType.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final CreateContentType command )
+    public void handle()
         throws Exception
     {
         final DateTime currentTime = DateTime.now();
@@ -39,11 +33,11 @@ public final class CreateContentTypeHandler
             name( command.getName() ).
             displayName( command.getDisplayName() ).
             contentDisplayNameScript( command.getContentDisplayNameScript() ).
-            module( command.getModuleName() ).
             superType( command.getSuperType() ).
             setAbstract( command.isAbstract() ).
             setFinal( command.isFinal() ).
             allowChildContent( command.getAllowChildContent() ).
+            builtIn( command.isBuiltIn() ).
             icon( command.getIcon() ).
             createdTime( currentTime ).
             modifiedTime( currentTime ).

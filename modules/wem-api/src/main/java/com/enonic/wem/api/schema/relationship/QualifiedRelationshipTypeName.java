@@ -1,38 +1,26 @@
 package com.enonic.wem.api.schema.relationship;
 
 
-import com.enonic.wem.api.Name;
-import com.enonic.wem.api.content.ModuleBasedQualifiedName;
-import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.api.content.QualifiedName;
 
 public final class QualifiedRelationshipTypeName
-    extends ModuleBasedQualifiedName
+    extends QualifiedName
 {
-    public static final QualifiedRelationshipTypeName DEFAULT = new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "default" );
+    public static final QualifiedRelationshipTypeName DEFAULT = new QualifiedRelationshipTypeName( "default" );
 
-    public static final QualifiedRelationshipTypeName PARENT = new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "parent" );
+    public static final QualifiedRelationshipTypeName PARENT = new QualifiedRelationshipTypeName( "parent" );
 
-    public static final QualifiedRelationshipTypeName LINK = new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "link" );
+    public static final QualifiedRelationshipTypeName LINK = new QualifiedRelationshipTypeName( "link" );
 
-    public static final QualifiedRelationshipTypeName LIKE = new QualifiedRelationshipTypeName( ModuleName.SYSTEM, "like" );
+    public static final QualifiedRelationshipTypeName LIKE = new QualifiedRelationshipTypeName( "like" );
 
-    public QualifiedRelationshipTypeName( final ModuleName moduleName, final String name )
+    private QualifiedRelationshipTypeName( final String name )
     {
-        super( moduleName, name );
+        super( name );
     }
 
-    public QualifiedRelationshipTypeName( final ModuleName moduleName, final Name name )
+    public static QualifiedRelationshipTypeName from( String relationTypeName )
     {
-        super( moduleName, name );
-    }
-
-    private QualifiedRelationshipTypeName( final String qualifiedName )
-    {
-        super( qualifiedName );
-    }
-
-    public static QualifiedRelationshipTypeName from( String qualifiedRelationTypeName )
-    {
-        return new QualifiedRelationshipTypeName( qualifiedRelationTypeName );
+        return new QualifiedRelationshipTypeName( relationTypeName );
     }
 }

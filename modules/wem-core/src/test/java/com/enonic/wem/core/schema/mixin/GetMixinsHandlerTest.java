@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
@@ -41,6 +41,7 @@ public class GetMixinsHandlerTest
         mixinDao = Mockito.mock( MixinDao.class );
 
         handler = new GetMixinsHandler();
+        handler.setContext( this.context );
         handler.setMixinDao( mixinDao );
     }
 
@@ -50,11 +51,9 @@ public class GetMixinsHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin mixin = newMixin().
             name( "age" ).
             displayName( "Age" ).
-            module( module ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixins mixins = Mixins.from( mixin );
@@ -63,7 +62,9 @@ public class GetMixinsHandlerTest
         // exercise
         final QualifiedMixinNames names = QualifiedMixinNames.from( "mymodule:like" );
         final GetMixins command = Commands.mixin().get().names( names );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( mixinDao, atLeastOnce() ).select( Mockito.isA( QualifiedMixinNames.class ), Mockito.any( Session.class ) );
@@ -75,17 +76,14 @@ public class GetMixinsHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin mixin = newMixin().
             name( "age" ).
             displayName( "Age" ).
-            module( module ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixin mixin2 = newMixin().
             name( "gender" ).
             displayName( "Gender" ).
-            module( module ).
             addFormItem( newInput().name( "gender" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         final Mixins mixins = Mixins.from( mixin, mixin2 );
@@ -93,7 +91,9 @@ public class GetMixinsHandlerTest
 
         // exercise
         final GetMixins command = Commands.mixin().get().all();
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( mixinDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );

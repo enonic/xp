@@ -60,19 +60,14 @@ final class MixinDaoHandlerSelect
 
         final List<Mixin> mixinList = Lists.newArrayList();
         final NodeIterator mixinModuleNodes = mixinsNode.getNodes();
-        while ( mixinModuleNodes.hasNext() )
+
+        final NodeIterator mixinNodes = mixinsNode.getNodes();
+        while ( mixinNodes.hasNext() )
         {
-            final Node mixinModuleNode = mixinModuleNodes.nextNode();
-
-            final NodeIterator mixinNodes = mixinModuleNode.getNodes();
-            while ( mixinNodes.hasNext() )
-            {
-                final Node mixinNode = mixinNodes.nextNode();
-                final Mixin mixin = this.mixinJcrMapper.toMixin( mixinNode );
-                mixinList.add( mixin );
-            }
+            final Node mixinNode = mixinNodes.nextNode();
+            final Mixin mixin = this.mixinJcrMapper.toMixin( mixinNode );
+            mixinList.add( mixin );
         }
-
         return Mixins.from( mixinList );
     }
 }

@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
@@ -15,8 +14,6 @@ public final class CreateRelationshipType
     private String name;
 
     private String displayName;
-
-    private ModuleName module;
 
     private String fromSemantic;
 
@@ -37,12 +34,6 @@ public final class CreateRelationshipType
     public CreateRelationshipType displayName( final String displayName )
     {
         this.displayName = displayName;
-        return this;
-    }
-
-    public CreateRelationshipType module( final ModuleName module )
-    {
-        this.module = module;
         return this;
     }
 
@@ -86,11 +77,6 @@ public final class CreateRelationshipType
         return displayName;
     }
 
-    public ModuleName getModule()
-    {
-        return module;
-    }
-
     public String getFromSemantic()
     {
         return fromSemantic;
@@ -132,7 +118,6 @@ public final class CreateRelationshipType
         final CreateRelationshipType that = (CreateRelationshipType) o;
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.displayName, that.displayName ) &&
-            Objects.equal( this.module, that.module ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
             Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
@@ -143,14 +128,13 @@ public final class CreateRelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, module, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes, icon );
+        return Objects.hashCode( name, displayName, fromSemantic, toSemantic, allowedFromTypes, allowedToTypes, icon );
     }
 
     @Override
     public void validate()
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
-        Preconditions.checkNotNull( module, "module cannot be null" );
         Preconditions.checkNotNull( fromSemantic, "fromSemantic cannot be null" );
         Preconditions.checkNotNull( toSemantic, "toSemantic cannot be null" );
     }

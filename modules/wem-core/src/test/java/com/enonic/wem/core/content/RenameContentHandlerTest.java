@@ -44,6 +44,7 @@ public class RenameContentHandlerTest
         attachmentDao = Mockito.mock( AttachmentDao.class );
 
         handler = new RenameContentHandler();
+        handler.setContext( this.context );
         handler.setContentDao( contentDao );
         handler.setAttachmentDao( attachmentDao );
     }
@@ -69,7 +70,8 @@ public class RenameContentHandlerTest
         final RenameContent command = Commands.content().rename().contentId( contentId ).newName( "newName" );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentDao, Mockito.atLeastOnce() ).renameContent( isA( ContentId.class ), eq( "newName" ), any( Session.class ) );

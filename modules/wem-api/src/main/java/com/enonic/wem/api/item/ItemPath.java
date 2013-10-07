@@ -4,11 +4,15 @@ package com.enonic.wem.api.item;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.Path;
 
 public class ItemPath
     extends Path<ItemPath>
 {
+    public final static ItemPath ROOT = new ItemPath( new Builder().absolute( true ).trailingDivider( false ) );
+
     private static final char ELEMENT_DIVIDER = '/';
 
     public ItemPath( final String path )
@@ -26,9 +30,33 @@ public class ItemPath
         super( builder );
     }
 
+    public ItemPath asRelative()
+    {
+        if ( isRelative() )
+        {
+            return this;
+        }
+        return newItemPath( this ).absolute( false ).build();
+    }
+
+    public ItemPath getParentPath()
+    {
+        return new ItemPath( new Builder( this ).removeLastElement() );
+    }
+
     public static Builder newPath()
     {
         return new Builder();
+    }
+
+    public static Builder newItemPath( final ItemPath source )
+    {
+        return new Builder( source );
+    }
+
+    public static Builder newItemPath( final ItemPath parent, final String name )
+    {
+        return new Builder( parent ).addElement( name );
     }
 
     public Element getElement( int index )
@@ -52,6 +80,7 @@ public class ItemPath
 
     public static Builder newPath( final ItemPath source )
     {
+        Preconditions.checkNotNull( source, "source to build copy from not given" );
         return new Builder( source );
     }
 

@@ -12,7 +12,6 @@ import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.IndexService;
 
@@ -20,18 +19,12 @@ import com.enonic.wem.core.index.IndexService;
 public final class CreateAccountHandler
     extends CommandHandler<CreateAccount>
 {
-
     private IndexService indexService;
 
     private AccountDao accountDao;
 
-    public CreateAccountHandler()
-    {
-        super( CreateAccount.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final CreateAccount command )
+    public void handle()
         throws Exception
     {
         final Account account = command.getAccount();

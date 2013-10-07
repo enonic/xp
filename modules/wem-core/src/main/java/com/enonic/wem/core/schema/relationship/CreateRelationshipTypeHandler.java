@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
@@ -19,13 +18,8 @@ public final class CreateRelationshipTypeHandler
 {
     private RelationshipTypeDao relationshipTypeDao;
 
-    public CreateRelationshipTypeHandler()
-    {
-        super( CreateRelationshipType.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final CreateRelationshipType command )
+    public void handle()
         throws Exception
     {
         final DateTime currentTime = DateTime.now();
@@ -33,7 +27,6 @@ public final class CreateRelationshipTypeHandler
         final RelationshipType.Builder builder = newRelationshipType();
         builder.name( command.getName() );
         builder.displayName( command.getDisplayName() );
-        builder.module( command.getModule() );
         builder.fromSemantic( command.getFromSemantic() );
         builder.toSemantic( command.getToSemantic() );
         if ( command.getAllowedFromTypes() != null )

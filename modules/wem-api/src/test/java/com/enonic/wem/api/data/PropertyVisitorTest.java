@@ -29,11 +29,11 @@ public class PropertyVisitorTest
             }
         };
         ContentData contentData = new ContentData();
-        contentData.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        contentData.add( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "abc" ).build() );
         contentData.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "abc" ).build() );
         mySet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         contentData.add( mySet );
 
@@ -59,14 +59,14 @@ public class PropertyVisitorTest
                 hits.add( reference );
             }
         };
-        propertyVisitor.restrictType( ValueTypes.TEXT );
+        propertyVisitor.restrictType( ValueTypes.STRING );
 
         ContentData contentData = new ContentData();
-        contentData.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        contentData.add( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "abc" ).build() );
         contentData.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "abc" ).build() );
+        mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "abc" ).build() );
         mySet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
         contentData.add( mySet );
 

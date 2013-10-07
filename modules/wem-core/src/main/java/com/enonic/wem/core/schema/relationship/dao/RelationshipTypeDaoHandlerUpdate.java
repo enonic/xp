@@ -47,6 +47,5 @@ final class RelationshipTypeDaoHandlerUpdate
 
         // Cannot be changes since they are a part of a Relationship's storage path in JCR.
         checkIllegalChange( "name", existing.getName(), relationshipType.getName() );
-        checkIllegalChange( "moduleName", existing.getModuleName(), relationshipType.getModuleName() );
     }
 }

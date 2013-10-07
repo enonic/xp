@@ -249,7 +249,7 @@ public class FormItemXmlSerializer
     {
         final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( formItemEl.getAttributeValue( NAME ) );
-        builder.mixin( new QualifiedMixinName( formItemEl.getChildText( REFERENCE ) ) );
+        builder.mixin( QualifiedMixinName.from( formItemEl.getChildText( REFERENCE ) ) );
         return builder.build();
     }
 

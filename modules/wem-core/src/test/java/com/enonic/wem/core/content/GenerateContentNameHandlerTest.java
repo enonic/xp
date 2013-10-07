@@ -21,6 +21,7 @@ public class GenerateContentNameHandlerTest
         super.initialize();
 
         handler = new GenerateContentNameHandler();
+        handler.setContext( this.context );
     }
 
     @Test
@@ -29,7 +30,9 @@ public class GenerateContentNameHandlerTest
     {
 
         GenerateContentName generateContentName = Commands.content().generateContentName().displayName( "displayname" );
-        handler.handle( this.context, generateContentName );
+
+        this.handler.setCommand( generateContentName );
+        handler.handle();
 
         String contentName = generateContentName.getResult();
 

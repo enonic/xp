@@ -2,7 +2,7 @@
     "id": null,
     "path": "/",
     "name": null,
-    "type": "mymodule:my_type",
+    "type": "my_type",
     "displayName": null,
     "owner": null,
     "creator": null,
@@ -19,13 +19,13 @@
                 {
                     "name": "myArray",
                     "path": "mySet[0].myArray[0]",
-                    "type": "Text",
+                    "type": "String",
                     "value": "1"
                 },
                 {
                     "name": "myArray",
                     "path": "mySet[0].myArray[1]",
-                    "type": "Text",
+                    "type": "String",
                     "value": "2"
                 }
             ]
@@ -38,13 +38,13 @@
                 {
                     "name": "myArray",
                     "path": "mySet[1].myArray[0]",
-                    "type": "Text",
+                    "type": "String",
                     "value": "3"
                 },
                 {
                     "name": "myArray",
                     "path": "mySet[1].myArray[1]",
-                    "type": "Text",
+                    "type": "String",
                     "value": "4"
                 }
             ]

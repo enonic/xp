@@ -87,22 +87,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.0.3.v20130506</version>
-        <configuration>
-          <httpConnector>
-            <port>8080</port>
-          </httpConnector>
-          <webApp>
-            <contextPath>/</contextPath>
-            <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>src/main/webapp</resourcesAsCSV>
-            </baseResource>
-          </webApp>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 

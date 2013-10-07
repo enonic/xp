@@ -7,7 +7,6 @@ import com.enonic.wem.api.command.space.RenameSpace;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.space.dao.SpaceDao;
 
@@ -17,13 +16,8 @@ public final class RenameSpaceHandler
 {
     private SpaceDao spaceDao;
 
-    public RenameSpaceHandler()
-    {
-        super( RenameSpace.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final RenameSpace command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

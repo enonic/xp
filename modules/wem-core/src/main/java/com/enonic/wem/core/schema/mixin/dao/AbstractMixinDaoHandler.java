@@ -28,7 +28,7 @@ abstract class AbstractMixinDaoHandler
 
     protected final String getNodePath( final QualifiedMixinName qualifiedName )
     {
-        return MixinDao.MIXINS_PATH + qualifiedName.getModuleName() + "/" + qualifiedName.getLocalName();
+        return MixinDao.MIXINS_PATH + qualifiedName.getName();
     }
 
     protected final boolean mixinExists( final QualifiedMixinName qualifiedName )

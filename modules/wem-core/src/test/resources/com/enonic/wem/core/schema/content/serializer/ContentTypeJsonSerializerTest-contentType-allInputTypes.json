@@ -1,12 +1,12 @@
 {
     "name": "all_input_types",
-    "module": "mymodule",
-    "qualifiedName": "mymodule:all_input_types",
+    "qualifiedName": "all_input_types",
     "displayName": "All the Input Types",
     "contentDisplayNameScript": null,
-    "superType": "system:content",
+    "superType": "content",
     "isAbstract": false,
     "isFinal": true,
+    "isBuiltIn": false,
     "allowChildContent": true,
     "form": [
         {
@@ -216,7 +216,11 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "TextArea"
+                    "name": "TextArea",
+                    "config": {
+                        "rows": 10,
+                        "columns": 10
+                    }
                 }
             }
         },
@@ -272,7 +276,7 @@
                 "type": {
                     "name": "Relationship",
                     "config": {
-                        "relationshipType": "system:like"
+                        "relationshipType": "like"
                     }
                 }
             }
@@ -293,7 +297,7 @@
                 "type": {
                     "name": "ImageSelector",
                     "config": {
-                        "relationshipType": "system:default"
+                        "relationshipType": "default"
                     }
                 }
             }

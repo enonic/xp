@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -45,6 +45,7 @@ public class UpdateMixinHandlerTest
         mixinDao = Mockito.mock( MixinDao.class );
 
         handler = new UpdateMixinHandler();
+        handler.setContext( this.context );
         handler.setMixinDao( mixinDao );
     }
 
@@ -53,11 +54,9 @@ public class UpdateMixinHandlerTest
         throws Exception
     {
         // setup
-        final ModuleName module = ModuleName.from( "mymodule" );
         final Mixin existingMixin = newMixin().
             name( "age" ).
             displayName( "Age" ).
-            module( module ).
             addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         Mockito.when(
@@ -74,7 +73,8 @@ public class UpdateMixinHandlerTest
             addFormItem( formItemToSet ).build() );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( mixinDao, atLeastOnce() ).update( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );
@@ -96,7 +96,8 @@ public class UpdateMixinHandlerTest
             addFormItem( formItemToSet ).build() );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( mixinDao, never() ).update( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );

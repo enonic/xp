@@ -1,0 +1,63 @@
+@include rotation(image-spinner-animation);
+
+.admin-image-upload {
+    .admin-upload-input {
+
+        .admin-drop-zone {
+            border: 3px dashed #a8c6fe !important;
+            background-color: #f1f5fe;
+
+            h4 {
+                font-weight: bold !important;
+                color: #555;
+                text-align: center;
+                margin-top: 95px !important;
+            }
+        }
+    }
+
+    .admin-progress-form {
+        padding: 0;
+
+        h3 {
+            text-align: center;
+        }
+
+        .admin-progress-bar {
+            background-color: #444;
+            margin: 25px 0;
+            @include background-image(linear-gradient(top, #444, #666));
+
+            .admin-progress {
+                background-color: #8db800;
+                @include background-image(linear-gradient(top, #a7d200, #8db800));
+                height: 32px;
+            }
+        }
+    }
+
+    .admin-loading-form {
+        height: 100%;
+        border: 1px solid $admin-field-border-color;
+
+        .loader {
+            background-image: url("../../../../../resources/images/icons/48x48/half-spinner.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            top: 50%;
+            left: 50%;
+            margin-top: -24px;
+            margin-left: -24px;
+
+            @include animate(image-spinner-animation);
+        }
+    }
+
+    .admin-image-form {
+        width: 500px;
+    }
+}
+

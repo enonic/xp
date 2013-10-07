@@ -1,7 +1,7 @@
 {
     "fromContent": "123",
     "toContent": "321",
-    "type": "system:like",
+    "type": "like",
     "properties": {
         "a": "1",
         "b": "2",

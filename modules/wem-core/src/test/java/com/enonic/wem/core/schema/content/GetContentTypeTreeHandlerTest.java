@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetContentTypeTree;
-import com.enonic.wem.api.module.ModuleName;
+
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -37,6 +37,7 @@ public class GetContentTypeTreeHandlerTest
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new GetContentTypeTreeHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -47,35 +48,35 @@ public class GetContentTypeTreeHandlerTest
         // setup
         final ContentType contentType1 = newContentType().
             qualifiedName( QualifiedContentTypeName.unstructured() ).
+            builtIn( true ).
             displayName( "Some root content type" ).
             build();
         final ContentType contentType2 = newContentType().
             name( "my_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My content type" ).
             superType( contentType1.getQualifiedName() ).
             build();
         final ContentType contentType3 = newContentType().
             name( "sub_type" ).
-            module( ModuleName.from( "mymodule" ) ).
             displayName( "My sub-content type" ).
-            superType( new QualifiedContentTypeName( "mymodule:my_type" ) ).
+            superType( QualifiedContentTypeName.from( "my_type" ) ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2, contentType3 );
         Mockito.when( contentTypeDao.selectAll( any( Session.class ) ) ).thenReturn( contentTypes );
 
         // exercise
         final GetContentTypeTree command = Commands.contentType().getTree();
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).selectAll( Mockito.any( Session.class ) );
         final Tree<ContentType> tree = command.getResult();
         assertEquals( 1, tree.size() );
         assertEquals( 3, tree.deepSize() );
-        assertEquals( "system:unstructured", tree.getRootNode( 0 ).getObject().getQualifiedName().toString() );
-        assertEquals( "mymodule:my_type", tree.getRootNode( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
-        assertEquals( "mymodule:sub_type", tree.getRootNode( 0 ).getChild( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
+        assertEquals( "unstructured", tree.getRootNode( 0 ).getObject().getQualifiedName().toString() );
+        assertEquals( "my_type", tree.getRootNode( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
+        assertEquals( "sub_type", tree.getRootNode( 0 ).getChild( 0 ).getChild( 0 ).getObject().getQualifiedName().toString() );
 
     }
 }

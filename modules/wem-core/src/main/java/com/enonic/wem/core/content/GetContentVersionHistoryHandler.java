@@ -12,7 +12,6 @@ import com.enonic.wem.api.command.content.GetContentVersionHistory;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionHistory;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
@@ -24,13 +23,8 @@ public class GetContentVersionHistoryHandler
 
     private final ContentVersionComparator contentVersionComparator = new ContentVersionComparator();
 
-    public GetContentVersionHistoryHandler()
-    {
-        super( GetContentVersionHistory.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final GetContentVersionHistory command )
+    public void handle()
         throws Exception
     {
         final ContentSelector selector = command.getSelector();

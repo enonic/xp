@@ -59,18 +59,13 @@ final class ContentTypeDaoHandlerSelect
         final Node contentTypesNode = JcrHelper.getNodeOrNull( rootNode, ContentTypeDao.CONTENT_TYPES_PATH );
 
         final List<ContentType> contentTypeList = Lists.newArrayList();
-        final NodeIterator contentTypeModuleNodes = contentTypesNode.getNodes();
-        while ( contentTypeModuleNodes.hasNext() )
-        {
-            final Node contentTypeModuleNode = contentTypeModuleNodes.nextNode();
 
-            final NodeIterator contentTypeNodes = contentTypeModuleNode.getNodes();
-            while ( contentTypeNodes.hasNext() )
-            {
-                final Node contentTypeNode = contentTypeNodes.nextNode();
-                final ContentType contentType = this.contentTypeJcrMapper.toContentType( contentTypeNode );
-                contentTypeList.add( contentType );
-            }
+        final NodeIterator contentTypeNodes = contentTypesNode.getNodes();
+        while ( contentTypeNodes.hasNext() )
+        {
+            final Node contentTypeNode = contentTypeNodes.nextNode();
+            final ContentType contentType = this.contentTypeJcrMapper.toContentType( contentTypeNode );
+            contentTypeList.add( contentType );
         }
 
         return ContentTypes.from( contentTypeList );

@@ -36,6 +36,7 @@ public class FindMembersHandlerTest
         accountDao = Mockito.mock( AccountDao.class );
 
         handler = new FindMembersHandler();
+        handler.setContext( this.context );
         handler.setAccountDao( accountDao );
     }
 
@@ -53,7 +54,10 @@ public class FindMembersHandlerTest
 
         // exercise
         final FindMembers command = Commands.account().findMembers().key( groupAccount );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         // verify
@@ -78,7 +82,10 @@ public class FindMembersHandlerTest
 
         // exercise
         final FindMembers command = Commands.account().findMembers().key( roleAccount );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         // verify
@@ -98,7 +105,10 @@ public class FindMembersHandlerTest
         Mockito.when( accountDao.getMembers( Mockito.eq( userAccount ), Mockito.any( Session.class ) ) ).thenReturn( AccountKeys.empty() );
 
         final FindMembers command = Commands.account().findMembers().key( userAccount );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final AccountKeys members = command.getResult();
 
         assertNotNull( members );
@@ -115,7 +125,9 @@ public class FindMembersHandlerTest
             new AccountNotFoundException( groupAccount ) );
 
         final FindMembers command = Commands.account().findMembers().key( groupAccount );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
 }

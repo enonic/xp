@@ -17,11 +17,11 @@ import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
@@ -45,10 +45,10 @@ public class ContentDataParserTest
         mySet.add( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() ).
+            addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+                TextAreaConfig.newTextAreaConfig().columns( 10 ).rows( 10 ).build() ).build() ).
             addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() ).
             addFormItem( newInput().name( "myDate" ).inputType( InputTypes.DATE ).build() ).
             addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() ).
@@ -93,7 +93,6 @@ public class ContentDataParserTest
         throws IOException
     {
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             addFormItem( newInput().name( "myImage" ).inputType( InputTypes.IMAGE_SELECTOR ).inputTypeConfig( newImageSelectorConfig().
                 relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
@@ -125,7 +124,6 @@ public class ContentDataParserTest
         mySet.add( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
 
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() ).
             addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).build() ).
@@ -167,7 +165,6 @@ public class ContentDataParserTest
         final FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
         formItemSet.add( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
         final ContentType my_content_type = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             addFormItem( formItemSet ).
             build();
@@ -192,7 +189,6 @@ public class ContentDataParserTest
         throws IOException
     {
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             addFormItem( newInput().name( "myGeoLocation" ).inputType( InputTypes.GEO_LOCATION ).build() ).build();
 
@@ -218,7 +214,6 @@ public class ContentDataParserTest
         throws IOException
     {
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             addFormItem( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).required( true ).build() ).build();
 
@@ -245,7 +240,6 @@ public class ContentDataParserTest
         final FormItemSet formItemSet = newFormItemSet().name( "myFormItemSet" ).build();
         formItemSet.add( newInput().name( "myColor" ).inputType( InputTypes.COLOR ).required( true ).build() );
         final ContentType contentType = newContentType().
-            module( ModuleName.from( "mymodule" ) ).
             name( "my_content_type" ).
             addFormItem( formItemSet ).
             build();

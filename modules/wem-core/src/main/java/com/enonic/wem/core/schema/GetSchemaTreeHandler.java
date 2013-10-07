@@ -14,7 +14,6 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.ContentTypeTreeFactory;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -31,13 +30,8 @@ public class GetSchemaTreeHandler
 
     private RelationshipTypeDao relationshipTypeDao;
 
-    public GetSchemaTreeHandler()
-    {
-        super( GetSchemaTree.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final GetSchemaTree command )
+    public void handle()
         throws Exception
     {
         final Tree<Schema> typesTree = new Tree<Schema>();

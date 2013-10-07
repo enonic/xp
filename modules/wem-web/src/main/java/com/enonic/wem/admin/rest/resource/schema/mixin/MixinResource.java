@@ -57,7 +57,7 @@ public class MixinResource
     @GET
     public MixinJson get( @QueryParam("qualifiedName") final String name )
     {
-        final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName( name );
+        final QualifiedMixinName qualifiedMixinName = QualifiedMixinName.from( name );
         final Mixin mixin = fetchMixin( qualifiedMixinName );
 
         if ( mixin == null )
@@ -74,7 +74,7 @@ public class MixinResource
     @Path("config")
     public MixinConfigJson getConfig( @QueryParam("qualifiedName") final String name )
     {
-        final QualifiedMixinName qualifiedMixinName = new QualifiedMixinName( name );
+        final QualifiedMixinName qualifiedMixinName = QualifiedMixinName.from( name );
         final Mixin mixin = fetchMixin( qualifiedMixinName );
 
         if ( mixin == null )
@@ -119,8 +119,7 @@ public class MixinResource
         }
 
         final CreateMixin createCommand =
-            mixin().create().displayName( mixin.getDisplayName() ).formItems( mixin.getFormItems() ).moduleName( mixin.getModuleName() ).icon(
-                icon );
+            mixin().create().displayName( mixin.getDisplayName() ).formItems( mixin.getFormItems() ).icon( icon );
 
         try
         {

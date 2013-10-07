@@ -2,7 +2,6 @@ package com.enonic.wem.admin.json.schema.content;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.ContentType;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -22,17 +21,12 @@ public class ContentTypeSummaryJson
         this.contentType = contentType;
         this.iconUrl = SchemaImageUriResolver.resolve( contentType.getSchemaKey() );
         this.editable = !this.contentType.isFinal();
-        this.deletable = !ModuleName.SYSTEM.equals( this.contentType.getModuleName() );
+        this.deletable =  true; // !ModuleName.SYSTEM.equals( this.contentType.getModuleName() );
     }
 
     public String getName()
     {
         return this.contentType.getName();
-    }
-
-    public String getModule()
-    {
-        return this.contentType.getModuleName().toString();
     }
 
     public String getQualifiedName()

@@ -6,5 +6,5 @@ import com.enonic.wem.api.content.rendering.Renderable;
 public class Page
     implements Renderable
 {
-
+    private PageSetup pageSetup;
 }

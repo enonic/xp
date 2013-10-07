@@ -8,7 +8,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
@@ -17,23 +16,20 @@ public final class SchemaKey
 {
     private final static char SEPARATOR = ':';
 
-    private final static Pattern REF_PATTERN = Pattern.compile( "^([^:]+):([^:]+):([^:]+)$" );
+    private final static Pattern REF_PATTERN = Pattern.compile( "^([^:]+):([^:]+)$" );
 
 
     private final String refString;
 
     private final SchemaKind type;
 
-    private final ModuleName moduleName;
-
     private final String localName;
 
-    private SchemaKey( final SchemaKind type, final ModuleName moduleName, final String localName )
+    private SchemaKey( final SchemaKind type, final String localName )
     {
         this.type = type;
-        this.moduleName = moduleName;
         this.localName = localName;
-        this.refString = Joiner.on( SEPARATOR ).join( this.type, this.moduleName, this.localName );
+        this.refString = Joiner.on( SEPARATOR ).join( this.type, this.localName );
     }
 
     public boolean isContentType()
@@ -51,11 +47,6 @@ public final class SchemaKey
         return this.type == SchemaKind.RELATIONSHIP_TYPE;
     }
 
-    public ModuleName getModuleName()
-    {
-        return this.moduleName;
-    }
-
     public String getLocalName()
     {
         return localName;
@@ -68,17 +59,17 @@ public final class SchemaKey
 
     public static SchemaKey from( final QualifiedContentTypeName contentTypeName )
     {
-        return new SchemaKey( SchemaKind.CONTENT_TYPE, contentTypeName.getModuleName(), contentTypeName.getLocalName() );
+        return new SchemaKey( SchemaKind.CONTENT_TYPE, contentTypeName.getName() );
     }
 
     public static SchemaKey from( final QualifiedMixinName mixinName )
     {
-        return new SchemaKey( SchemaKind.MIXIN, mixinName.getModuleName(), mixinName.getLocalName() );
+        return new SchemaKey( SchemaKind.MIXIN, mixinName.getName() );
     }
 
     public static SchemaKey from( final QualifiedRelationshipTypeName relationshipTypeName )
     {
-        return new SchemaKey( SchemaKind.RELATIONSHIP_TYPE, relationshipTypeName.getModuleName(), relationshipTypeName.getLocalName() );
+        return new SchemaKey( SchemaKind.RELATIONSHIP_TYPE, relationshipTypeName.getName() );
     }
 
     public static SchemaKey from( final String value )
@@ -92,15 +83,14 @@ public final class SchemaKey
         }
 
         final String type = matcher.group( 1 );
-        final ModuleName moduleName = ModuleName.from( matcher.group( 2 ) );
-        final String localName = matcher.group( 3 );
+        final String name = matcher.group( 2 );
 
         final SchemaKind typeKind = SchemaKind.from( type );
         if ( typeKind == null )
         {
             throw new IllegalArgumentException( "Not a valid SchemaKey [" + value + "]" );
         }
-        return new SchemaKey( typeKind, moduleName, localName );
+        return new SchemaKey( typeKind, name );
     }
 
 }
