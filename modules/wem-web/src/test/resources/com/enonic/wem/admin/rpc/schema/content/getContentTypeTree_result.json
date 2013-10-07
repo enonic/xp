@@ -10,7 +10,7 @@
             "superType": "unstructured",
             "isAbstract": false,
             "isFinal": false,
-            "isBuiltIn" : false,
+            "isBuiltIn": false,
             "allowChildContent": true,
             "form": [ ],
             "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:root",
@@ -23,7 +23,7 @@
                     "superType": "root",
                     "isAbstract": false,
                     "isFinal": false,
-                    "isBuiltIn" : false,
+                    "isBuiltIn": false,
                     "allowChildContent": true,
                     "form": [
                         {
@@ -76,7 +76,11 @@
                                 "validationRegexp": null,
                                 "helpText": "Help text area",
                                 "type": {
-                                    "name": "TextArea"
+                                    "name": "TextArea",
+                                    "config": {
+                                        "rows": 10,
+                                        "columns": 10
+                                    }
                                 }
                             }
                         }
@@ -91,7 +95,7 @@
                             "superType": "my_type",
                             "isAbstract": false,
                             "isFinal": false,
-                            "isBuiltIn" : false,
+                            "isBuiltIn": false,
                             "allowChildContent": true,
                             "form": [ ],
                             "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:sub_type",
@@ -106,3 +110,5 @@
         }
     ]
 }
+
+

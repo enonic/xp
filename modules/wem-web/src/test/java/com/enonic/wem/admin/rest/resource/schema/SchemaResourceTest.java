@@ -19,12 +19,12 @@ import com.enonic.wem.admin.rest.resource.schema.exception.InvalidSchemaTypeExce
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.command.schema.SchemaTypes;
-
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.support.tree.Tree;
@@ -49,23 +49,24 @@ public class SchemaResourceTest
     private Mixin createMixin( String displayName )
     {
         return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).addFormItem(
-            Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).build() ).build();
+            Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+                TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() ).build();
     }
 
-    private ContentType createContentType( String name)
+    private ContentType createContentType( String name )
     {
         return ContentType.newContentType().name( name ).build();
     }
 
-    private RelationshipType createRelationshipType( String name)
+    private RelationshipType createRelationshipType( String name )
     {
         return RelationshipType.newRelationshipType().name( name ).build();
     }
 
     private Schemas createSchemaList()
     {
-        ContentType contentType = createContentType( "contenttype");
-        Mixin mixin = createMixin( "mixin");
+        ContentType contentType = createContentType( "contenttype" );
+        Mixin mixin = createMixin( "mixin" );
         RelationshipType relationshipType = createRelationshipType( "relationship" );
         return Schemas.from( contentType, mixin, relationshipType );
     }
@@ -73,14 +74,14 @@ public class SchemaResourceTest
     private Tree<Schema> createSchemaTree()
     {
         Tree<Schema> tree = new Tree<>();
-        ContentType rootContentType = createContentType( "rootcontenttype");
-        ContentType childContentType = createContentType( "childcontenttype");
+        ContentType rootContentType = createContentType( "rootcontenttype" );
+        ContentType childContentType = createContentType( "childcontenttype" );
         tree.createNode( rootContentType ).addChild( childContentType );
-        Mixin rootMixin = createMixin( "rootmixin");
-        Mixin childMixin = createMixin( "childmixin");
+        Mixin rootMixin = createMixin( "rootmixin" );
+        Mixin childMixin = createMixin( "childmixin" );
         tree.createNode( rootMixin ).addChild( childMixin );
-        RelationshipType rootRelationshipType = createRelationshipType( "rootrelationshiptype");
-        RelationshipType childRelationshipType = createRelationshipType( "childrelationshiptype");
+        RelationshipType rootRelationshipType = createRelationshipType( "rootrelationshiptype" );
+        RelationshipType childRelationshipType = createRelationshipType( "childrelationshiptype" );
         tree.createNode( rootRelationshipType ).addChild( childRelationshipType );
         return tree;
     }
@@ -146,8 +147,8 @@ public class SchemaResourceTest
     {
         final SchemaResource schemaResource = new SchemaResource();
         schemaResource.setClient( client );
-        ContentType contentType = createContentType( "contenttype");
-        Mixin mixin = createMixin( "mixin");
+        ContentType contentType = createContentType( "contenttype" );
+        Mixin mixin = createMixin( "mixin" );
         Schemas schemas = Schemas.from( contentType, mixin );
         Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
 

@@ -17,6 +17,14 @@ module api_ui {
             this.getEl().setValue(text);
         }
 
+        setRows(rows:number) {
+            this.getEl().setAttribute("rows", rows.toString());
+        }
+
+        setColumns(columns:number) {
+            this.getEl().setAttribute("cols", columns.toString());
+        }
+
         setSize(size:TextAreaSize) {
             var sizeClass;
             switch (size) {

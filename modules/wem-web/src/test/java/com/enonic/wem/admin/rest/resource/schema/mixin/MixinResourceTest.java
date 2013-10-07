@@ -26,6 +26,7 @@ import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
@@ -79,11 +80,9 @@ public class MixinResourceTest
     public final void test_get_mixin()
         throws Exception
     {
-        Mixin mixin =
-            Mixin.newMixin().name(
-                MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
-                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+                "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
@@ -97,11 +96,9 @@ public class MixinResourceTest
     public final void test_get_mixin_config()
         throws Exception
     {
-        Mixin mixin =
-            Mixin.newMixin().name(
-                MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
-                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+                "Help text line 1" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
 
@@ -153,17 +150,14 @@ public class MixinResourceTest
     public final void test_list_mixins()
         throws Exception
     {
-        Mixin mixin1 =
-            Mixin.newMixin().name(
-                MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
-                newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required(
-                    true ).helpText( "Help text line 1" ).required( true ).build() ).build();
+        Mixin mixin1 = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
+                "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 =
-            Mixin.newMixin().name(
-                MY_MIXIN_QUALIFIED_NAME_2.getMixinName() ).addFormItem(
-                newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getName() ).inputType( TEXT_AREA ).label( "Text Area" ).required(
-                    true ).helpText( "Help text area" ).required( true ).build() ).build();
+        Mixin mixin2 = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_2.getMixinName() ).addFormItem(
+            newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getName() ).inputType( TEXT_AREA ).inputTypeConfig(
+                TextAreaConfig.newTextAreaConfig().columns( 10 ).rows( 10 ).build() ).label( "Text Area" ).required( true ).helpText(
+                "Help text area" ).required( true ).build() ).build();
 
         Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin1, mixin2 ) );
 
