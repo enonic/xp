@@ -26,7 +26,7 @@ module app_wizard_form_input_type {
 
         getValue(occurrence:api_dom.Element):api_data.Value {
             var inputEl = <api_ui.TextInput>occurrence;
-            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.TEXT);
+            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
         }
     }
 

@@ -29,5 +29,14 @@ module api_data{
         getType():ValueType {
             return this.value.getType();
         }
+
+        toPropertyJson():api_data_json.PropertyJson {
+
+            return <api_data_json.PropertyJson>{
+                name: this.getName(),
+                type: this.getType().toString(),
+                value: this.getString()
+            };
+        }
     }
 }

@@ -2,6 +2,6 @@
     "contentId": "content-id",
     "contentName": "content-name",
     "qualifiedContentTypeName": "my-type",
-    "contentData": {},
+    "contentData": [],
     "displayName": "Content One"
 }

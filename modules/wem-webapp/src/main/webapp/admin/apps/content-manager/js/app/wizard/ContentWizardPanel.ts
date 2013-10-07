@@ -125,18 +125,14 @@ module app_wizard {
 
         persistNewItem(successCallback?:() => void) {
 
-            var flattenedContentData:any = {};
             var contentData = this.contentForm.getContentData();
-            console.log("persistNewItem contentData: ", contentData);
-            this.flattenData(contentData, flattenedContentData);
-            console.log("persistNewItem flattenedContentData: ", flattenedContentData);
 
             new api_content.CreateContentRequest().
                 setContentName(this.contentWizardHeader.getName()).
                 setParentContentPath(this.parentContent.getPath().toString()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(flattenedContentData).
+                setContentData(contentData).
                 send().done((createResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
@@ -149,17 +145,13 @@ module app_wizard {
 
         updatePersistedItem(successCallback?:() => void) {
 
-            var flattenedContentData:any = {};
             var contentData = this.contentForm.getContentData();
-            console.log("updatePersistedItem contentData: ", flattenedContentData);
-            this.flattenData(contentData, flattenedContentData);
-            console.log("updatePersistedItem flattenedContentData: ", flattenedContentData);
 
             new api_content.UpdateContentRequest(this.persistedContent.getId()).
                 setContentName(this.contentWizardHeader.getName()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(flattenedContentData).
+                setContentData(contentData).
                 send().done((updateResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was updated!');
                     console.log('content update response', updateResponse);
@@ -168,19 +160,6 @@ module app_wizard {
                         successCallback.call(this);
                     }
                 });
-        }
-
-        private flattenData(contentData:api_data.DataSet, result:any) {
-            contentData.getDataArray().forEach((data:api_data.Data) => {
-                if (data instanceof api_data.Property) {
-                    var property:api_data.Property = <api_data.Property>data;
-                    result[data.getId().toString()] = property.getValue();
-                }
-                else if (data instanceof api_data.DataSet) {
-                    var dataSet = <api_data.DataSet>data;
-                    this.flattenData(dataSet, result);
-                }
-            });
         }
     }
 

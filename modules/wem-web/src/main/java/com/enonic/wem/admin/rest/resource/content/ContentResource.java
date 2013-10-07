@@ -85,6 +85,7 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.space.SpaceNames;
+import com.enonic.wem.core.content.serializer.ContentDataJsonSerializer;
 
 @Path("content")
 @Produces(MediaType.APPLICATION_JSON)
@@ -98,6 +99,8 @@ public class ContentResource
     private final String EXPAND_SUMMARY = "summary";
 
     private final String EXPAND_NONE = "none";
+
+    private ContentDataJsonSerializer contentDataJsonSerializer = new ContentDataJsonSerializer();
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam, @QueryParam("version") final Long versionParam,
@@ -419,16 +422,7 @@ public class ContentResource
 
     private ContentData parseContentData( QualifiedContentTypeName qualifiedContentTypeName, JsonNode contentData )
     {
-
-        final GetContentTypes getContentTypes = Commands.contentType().get().
-            qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) ).
-            mixinReferencesToFormItems( true );
-
-        final ContentType contentType = client.execute( getContentTypes ).first();
-
-        Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", qualifiedContentTypeName );
-
-        return new ContentDataParser( contentType ).parse( contentData );
+        return contentDataJsonSerializer.parse( contentData );
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentParams> attachmentParamsList )
