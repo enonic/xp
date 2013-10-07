@@ -136,7 +136,7 @@ module app_wizard {
                 setParentContentPath(this.parentContent.getPath().toString()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(flattenedContentData).
+                setContentData(contentData).
                 send().done((createResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
@@ -159,7 +159,7 @@ module app_wizard {
                 setContentName(this.contentWizardHeader.getName()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(flattenedContentData).
+                setContentData(contentData).
                 send().done((updateResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was updated!');
                     console.log('content update response', updateResponse);

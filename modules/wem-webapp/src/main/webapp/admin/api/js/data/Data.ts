@@ -21,7 +21,7 @@ module api_data{
         }
 
         getId():DataId {
-            return new DataId( this.name, this.arrayIndex );
+            return new DataId(this.name, this.arrayIndex);
         }
 
         getName():string {
@@ -34,6 +34,19 @@ module api_data{
 
         getArrayIndex():number {
             return this.arrayIndex;
+        }
+
+        toDataJson():api_data_json.DataJson {
+
+            if (this instanceof Property) {
+                return (<Property>this).toPropertyJson();
+            }
+            else if (this instanceof DataSet) {
+                return (<DataSet>this).toDataSetJson();
+            }
+            else {
+                throw new Error("Unsupported data: " + this);
+            }
         }
     }
 

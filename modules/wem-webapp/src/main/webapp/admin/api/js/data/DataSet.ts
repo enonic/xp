@@ -29,7 +29,7 @@ module api_data{
 
         getDataArray():Data[] {
             var datas = [];
-            for(var i in this.dataById){
+            for (var i in this.dataById) {
                 var data = this.dataById[i];
                 datas.push(data);
             }
@@ -79,6 +79,21 @@ module api_data{
                 }
             });
             return matches;
+        }
+
+        toDataSetJson():api_data_json.DataSetJson {
+
+            var dataArray:api_data_json.DataJson[] = [];
+
+            this.getDataArray().forEach((data:api_data.Data) => {
+                dataArray.push(data.toDataJson());
+            });
+
+            return <api_data_json.DataSetJson>{
+                name: this.getName(),
+                type: "DataSet",
+                value: dataArray
+            };
         }
 
     }

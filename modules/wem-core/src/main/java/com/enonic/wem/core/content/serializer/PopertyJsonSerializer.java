@@ -55,11 +55,11 @@ public class PopertyJsonSerializer
     {
         final String name = JsonSerializerUtil.getStringValue( DATA_NAME, dataNode );
 
-        final ValueType dataType = ValueTypes.parseByName( JsonSerializerUtil.getStringValue( DATA_TYPE, dataNode, null ) );
-        Preconditions.checkNotNull( dataType, "dataType was null" );
+        final ValueType valueType = ValueTypes.parseByName( JsonSerializerUtil.getStringValue( DATA_TYPE, dataNode, null ) );
+        Preconditions.checkNotNull( valueType, "valueType was null" );
 
         final JsonNode valueNode = dataNode.get( DATA_VALUE );
 
-        return dataType.newProperty( name, valueNode.textValue() );
+        return valueType.newProperty( name, valueNode.textValue() );
     }
 }

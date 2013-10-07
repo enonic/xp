@@ -1,8 +1,8 @@
 {
-    "temporary":false,
+    "temporary": false,
     "contentName": "content-path",
     "parentContentPath": "parent-path:/",
     "qualifiedContentTypeName": "my-type",
-    "contentData": {},
+    "contentData": [],
     "displayName": "Content One"
 }
