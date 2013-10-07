@@ -20,6 +20,7 @@ module api_ui_tab {
 
             this.tabMenuButton = this.createTabMenuButton();
             this.tabMenuButton.hide();
+            this.tabMenuButton.addClass("tab-menu-button");
             this.tabMenuButton.getEl().addEventListener("click", () => {
                 this.toggleMenu();
             });
@@ -37,6 +38,10 @@ module api_ui_tab {
 
         setButtonLabel(value:string) {
             this.tabMenuButton.setLabel(value);
+        }
+
+        setButtonClass(cls:string) {
+            this.tabMenuButton.addClass(cls);
         }
 
         getMenuEl(): api_dom.UlEl {

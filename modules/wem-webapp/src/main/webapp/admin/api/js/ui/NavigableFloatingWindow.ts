@@ -16,6 +16,10 @@ module api_ui {
             this.appendChild(this.deck);
         }
 
+        setMenuClass(cls:string) {
+            this.navigator.setButtonClass(cls);
+        }
+
         addItem<T extends api_ui.Panel>(label:string, panel:T, hidden?:boolean):number {
 
 
@@ -35,6 +39,14 @@ module api_ui {
 
         selectPanel<T extends api_ui.Panel>(panel:T) {
             this.deck.selectPanelFromIndex(this.deck.getPanelIndex(panel));
+        }
+
+        getNavigator():api_ui_tab.TabMenu {
+            return this.navigator;
+        }
+
+        getDeck():api_ui.DeckPanel {
+            return this.deck;
         }
 
         private addItemArray(item:any) {

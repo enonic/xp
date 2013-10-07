@@ -19,7 +19,7 @@ module LiveEdit.component.dragdropsort {
                 return;
             }
 
-            var componentUrl:string = '../../admin2/live-edit/data/mock-component-' + componentKey + '.html';
+            var componentUrl:string = '../../admin/live-edit/data/mock-component-' + componentKey + '.html';
 
             $.ajax({
                 url: componentUrl,

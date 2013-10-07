@@ -14,6 +14,7 @@ module app_contextwindow {
         private liveEditJQuery:JQueryStatic;
         private contextWindowOptions:ContextWindowOptions;
         private selectedComponent:Component;
+        private minimizer:Minimizer;
 
         constructor(options:ContextWindowOptions) {
             var dragStart = (event, ui) => {
@@ -27,6 +28,7 @@ module app_contextwindow {
             super({draggableOptions: { start: dragStart, stop: dragStop, handle: ".tab-menu" } });
             this.contextWindowOptions = options;
             this.addClass("context-window");
+            this.setMenuClass("live-edit-font-icon-menu");
 
             this.componentTypesPanel = new ComponentTypesPanel(this);
             this.inspectorPanel = new InspectorPanel(this);
@@ -35,6 +37,13 @@ module app_contextwindow {
             this.addItem("Insert", this.componentTypesPanel);
             this.addItem("Inspect", this.inspectorPanel);
             this.addItem("Emulator", this.emulatorPanel);
+
+            this.minimizer = new Minimizer(()=> {
+                this.minimize();
+            }, ()=> {
+                this.maximize();
+            });
+            this.getNavigator().appendChild(this.minimizer);
 
             ComponentSelectEvent.on((event) => {
                 this.selectPanel(this.inspectorPanel);
@@ -111,6 +120,45 @@ module app_contextwindow {
             //TODO: "contentwindow" is hacky because we need HTMLIFrameElement to fetch that property, but it is impossible to cast to ><
             return this.liveEditEl.getHTMLElement()["contentWindow"];
         }
+
+        minimize() {
+            this.getDeck().hide();
+            this.getEl().addClass("minimized");
+        }
+
+        maximize() {
+            this.getDeck().show();
+            this.getEl().removeClass("minimized");
+        }
+
+    }
+
+    class Minimizer extends api_dom.DivEl {
+
+        private minimized:boolean;
+
+        constructor(minimize:()=>void, maximize:()=>void, minimized:boolean = false) {
+            super("Minimizer");
+            this.minimized = minimized;
+            this.addClass("live-edit-font-icon-minimize");
+            this.addClass("minimizer");
+
+
+            this.getEl().addEventListener("click", (event) => {
+                if (this.minimized) {
+                    this.removeClass("live-edit-font-icon-maximize");
+                    this.addClass("live-edit-font-icon-minimize");
+                    maximize();
+                    this.minimized = false;
+                } else {
+                    this.removeClass("live-edit-font-icon-minimize");
+                    this.addClass("live-edit-font-icon-maximize");
+                    minimize();
+                    this.minimized = true;
+                }
+            });
+        }
+
 
     }
 }

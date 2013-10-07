@@ -74,7 +74,7 @@ module LiveEdit.component.mouseevent {
         setSelectMode(event:JQueryEventObject):void {
             console.log('Paragraph select mode');
 
-            this.selectedParagraph.getElement().css('cursor', 'url(../../admin2/live-edit/images/pencil.png) 0 40, text');
+            this.selectedParagraph.getElement().css('cursor', 'url(../../admin/live-edit/images/pencil.png) 0 40, text');
             this.currentMode = this.modes.SELECTED;
 
             // Make sure Chrome does not selects the text on context click
