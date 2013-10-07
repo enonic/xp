@@ -4,8 +4,8 @@ package com.enonic.wem.api.command.module;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
-import com.enonic.wem.api.module.ModuleVersions;
-import com.enonic.wem.api.module.Version;
+import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.form.Form;
 
@@ -14,7 +14,7 @@ public final class CreateModule
 {
     private String name;
 
-    private Version version;
+    private ModuleVersion version;
 
     private String displayName;
 
@@ -30,11 +30,11 @@ public final class CreateModule
 
     private ModuleFileEntry resourcesRoot;
 
-    private Version minSystemVersion;
+    private ModuleVersion minSystemVersion;
 
-    private Version maxSystemVersion;
+    private ModuleVersion maxSystemVersion;
 
-    private ModuleVersions moduleDependencies;
+    private ModuleKeys moduleDependencies;
 
     private QualifiedContentTypeNames contentTypeDependencies;
 
@@ -64,7 +64,7 @@ public final class CreateModule
         return this;
     }
 
-    public CreateModule version( final Version version )
+    public CreateModule version( final ModuleVersion version )
     {
         this.version = version;
         return this;
@@ -112,19 +112,19 @@ public final class CreateModule
         return this;
     }
 
-    public CreateModule minSystemVersion( final Version version )
+    public CreateModule minSystemVersion( final ModuleVersion version )
     {
         this.minSystemVersion = version;
         return this;
     }
 
-    public CreateModule maxSystemVersion( final Version version )
+    public CreateModule maxSystemVersion( final ModuleVersion version )
     {
         this.maxSystemVersion = version;
         return this;
     }
 
-    public CreateModule moduleDependencies( final ModuleVersions moduleDependencies )
+    public CreateModule moduleDependencies( final ModuleKeys moduleDependencies )
     {
         this.moduleDependencies = moduleDependencies;
         return this;
@@ -141,7 +141,7 @@ public final class CreateModule
         return name;
     }
 
-    Version getVersion()
+    ModuleVersion getVersion()
     {
         return version;
     }
@@ -181,17 +181,17 @@ public final class CreateModule
         return resourcesRoot;
     }
 
-    Version getMinSystemVersion()
+    ModuleVersion getMinSystemVersion()
     {
         return minSystemVersion;
     }
 
-    Version getMaxSystemVersion()
+    ModuleVersion getMaxSystemVersion()
     {
         return maxSystemVersion;
     }
 
-    ModuleVersions getModuleDependencies()
+    ModuleKeys getModuleDependencies()
     {
         return moduleDependencies;
     }

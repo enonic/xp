@@ -2,20 +2,20 @@ package com.enonic.wem.api.command.module;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.module.ModuleVersion;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.Resource;
 
 public final class GetModuleResource
     extends Command<Resource>
 {
-    private ModuleVersion moduleVersion;
+    private ModuleKey moduleKey;
 
     private String resourcePath; // ModulePath extends Path
 
 
-    public GetModuleResource module( final ModuleVersion moduleVersion )
+    public GetModuleResource module( final ModuleKey moduleKey )
     {
-        this.moduleVersion = moduleVersion;
+        this.moduleKey = moduleKey;
         return this;
     }
 
@@ -30,9 +30,9 @@ public final class GetModuleResource
         return resourcePath;
     }
 
-    ModuleVersion getModuleVersion()
+    ModuleKey getModuleKey()
     {
-        return moduleVersion;
+        return moduleKey;
     }
 
     @Override

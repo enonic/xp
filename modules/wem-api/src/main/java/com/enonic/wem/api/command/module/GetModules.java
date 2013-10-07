@@ -7,23 +7,23 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.module.ModuleVersions;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleKeys;
 
 public final class GetModules
     extends Command<List<Module>>
 {
     private boolean getAllModules = false;
 
-    private List<ModuleVersion> modules = Lists.newArrayList();
+    private List<ModuleKey> modules = Lists.newArrayList();
 
-    public GetModules module( final ModuleVersion module )
+    public GetModules module( final ModuleKey module )
     {
         this.modules.add( module );
         return this;
     }
 
-    public GetModules modules( final ModuleVersions modules )
+    public GetModules modules( final ModuleKeys modules )
     {
         this.modules.addAll( modules.getList() );
         return this;
@@ -40,7 +40,7 @@ public final class GetModules
         return getAllModules;
     }
 
-    List<ModuleVersion> getModules()
+    List<ModuleKey> getModules()
     {
         return modules;
     }

@@ -209,6 +209,13 @@ public final class ModuleFileEntry
             return this;
         }
 
+        public Builder removeAll()
+        {
+            entryList.clear();
+            builderEntryList.clear();
+            return this;
+        }
+
         public Builder add( final File file )
         {
             entryList.add( ModuleFileEntry.newFileEntry( file ) );

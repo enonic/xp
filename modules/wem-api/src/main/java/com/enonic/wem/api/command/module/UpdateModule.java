@@ -1,16 +1,16 @@
 package com.enonic.wem.api.command.module;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.module.ModuleVersion;
+import com.enonic.wem.api.module.ModuleKey;
 
 public final class UpdateModule
     extends Command<Boolean>
 {
-    private ModuleVersion module;
+    private ModuleKey module;
 
     private ModuleEditor editor;
 
-    public UpdateModule module( final ModuleVersion module )
+    public UpdateModule module( final ModuleKey module )
     {
         this.module = module;
         return this;
@@ -22,7 +22,7 @@ public final class UpdateModule
         return this;
     }
 
-    ModuleVersion getModule()
+    ModuleKey getModule()
     {
         return module;
     }

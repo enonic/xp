@@ -1,68 +1,102 @@
 package com.enonic.wem.api.module;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Preconditions;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class ModuleVersion
+    implements Comparable<ModuleVersion>
 {
-    private static final String SEPARATOR = "-";
+    private final static Pattern VERSION_PATTERN = Pattern.compile( "^(\\d+)\\.(\\d+)\\.(\\d+)$" );
 
-    private final ModuleName name;
+    private final int major;
 
-    private final Version version;
+    private final int minor;
 
-    public ModuleVersion( final ModuleName name, final Version version )
+    private final int revision;
+
+    private final String refString;
+
+    private ModuleVersion( final int major, final int minor, final int revision )
     {
-        Preconditions.checkNotNull( name );
-        Preconditions.checkNotNull( version );
-        this.name = name;
-        this.version = version;
+        this.major = major;
+        this.minor = minor;
+        this.revision = revision;
+        this.refString = major + "." + minor + "." + revision;
     }
 
-    public ModuleName getName()
+    public int getMajor()
     {
-        return name;
+        return major;
     }
 
-    public Version getVersion()
+    public int getMinor()
     {
-        return version;
+        return minor;
     }
 
-    @Override
+    public int getRevision()
+    {
+        return revision;
+    }
+
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || !( o instanceof ModuleVersion ) )
-        {
-            return false;
-        }
-        final ModuleVersion that = (ModuleVersion) o;
-        return name.equals( that.name ) && version.equals( that.version );
+        return ( o instanceof ModuleVersion ) && ( (ModuleVersion) o ).refString.equals( this.refString );
     }
 
-    @Override
     public int hashCode()
     {
-        int result = name.hashCode();
-        result = 31 * result + version.hashCode();
-        return result;
+        return this.refString.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return name.toString() + SEPARATOR + version.toString();
+        return refString;
     }
 
-    public static ModuleVersion parse( final String moduleVersion )
+    @Override
+    public int compareTo( final ModuleVersion other )
     {
-        final String name = StringUtils.substringBefore( moduleVersion, SEPARATOR );
-        final String version = StringUtils.substringAfter( moduleVersion, SEPARATOR );
-        return new ModuleVersion( ModuleName.from( name ), Version.from( version ) );
+        if ( other == this )
+        {
+            return 0;
+        }
+
+        int result = major - other.major;
+        if ( result != 0 )
+        {
+            return result;
+        }
+        result = minor - other.minor;
+        if ( result != 0 )
+        {
+            return result;
+        }
+        result = revision - other.revision;
+        if ( result != 0 )
+        {
+            return result;
+        }
+        return 0;
+    }
+
+    public static ModuleVersion from( final String version )
+    {
+        final Matcher matcher = VERSION_PATTERN.matcher( version );
+        if ( !matcher.find() )
+        {
+            throw new IllegalArgumentException( "Invalid module version: [" + version + "]" );
+        }
+
+        final int major = Integer.parseInt( matcher.group( 1 ).toUpperCase() );
+        final int minor = Integer.parseInt( matcher.group( 2 ).toUpperCase() );
+        final int rev = Integer.parseInt( matcher.group( 3 ).toUpperCase() );
+        return new ModuleVersion( major, minor, rev );
+    }
+
+    public static ModuleVersion from( final int major, final int minor, final int revision )
+    {
+        return new ModuleVersion( major, minor, revision );
     }
 }

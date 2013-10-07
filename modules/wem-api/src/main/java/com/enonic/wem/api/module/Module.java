@@ -1,13 +1,20 @@
 package com.enonic.wem.api.module;
 
-import com.google.common.base.Preconditions;
+import java.util.List;
+import java.util.Set;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.form.Form;
 
 public final class Module
 {
-    private final ModuleVersion moduleVersion;
+    private final ModuleKey moduleKey;
 
     private final String displayName;
 
@@ -23,18 +30,18 @@ public final class Module
 
     private final ModuleFileEntry resourcesRoot;
 
-    private final Version minSystemVersion;
+    private final ModuleVersion minSystemVersion;
 
-    private final Version maxSystemVersion;
+    private final ModuleVersion maxSystemVersion;
 
-    private final ModuleVersions moduleDependencies;
+    private final ModuleKeys moduleDependencies;
 
     private final QualifiedContentTypeNames contentTypeDependencies;
 
     private Module( final Module.Builder builder )
     {
-        Preconditions.checkNotNull( builder.moduleVersion, "moduleVersion must be specified" );
-        this.moduleVersion = builder.moduleVersion;
+        Preconditions.checkNotNull( builder.moduleKey, "moduleKey must be specified" );
+        this.moduleKey = builder.moduleKey;
         this.displayName = builder.displayName;
         this.info = builder.info;
         this.url = builder.url;
@@ -42,25 +49,25 @@ public final class Module
         this.vendorUrl = builder.vendorUrl;
         this.minSystemVersion = builder.minSystemVersion;
         this.maxSystemVersion = builder.maxSystemVersion;
-        this.moduleDependencies = builder.moduleDependencies;
-        this.contentTypeDependencies = builder.contentTypeDependencies;
-        this.config = builder.config;
+        this.moduleDependencies = ModuleKeys.from( builder.moduleDependencies );
+        this.contentTypeDependencies = QualifiedContentTypeNames.from( builder.contentTypeDependencies );
+        this.config = builder.config == null ? null : builder.config.copy();
         this.resourcesRoot = builder.resourcesRoot.build();
     }
 
-    public ModuleVersion getModuleVersion()
+    public ModuleKey getModuleKey()
     {
-        return moduleVersion;
+        return moduleKey;
     }
 
     public ModuleName getName()
     {
-        return moduleVersion.getName();
+        return moduleKey.getName();
     }
 
-    public Version getVersion()
+    public ModuleVersion getVersion()
     {
-        return moduleVersion.getVersion();
+        return moduleKey.getVersion();
     }
 
     public String getDisplayName()
@@ -93,17 +100,17 @@ public final class Module
         return config;
     }
 
-    public Version getMinSystemVersion()
+    public ModuleVersion getMinSystemVersion()
     {
         return minSystemVersion;
     }
 
-    public Version getMaxSystemVersion()
+    public ModuleVersion getMaxSystemVersion()
     {
         return maxSystemVersion;
     }
 
-    public ModuleVersions getModuleDependencies()
+    public ModuleKeys getModuleDependencies()
     {
         return moduleDependencies;
     }
@@ -135,7 +142,7 @@ public final class Module
 
     public static class Builder
     {
-        private ModuleVersion moduleVersion;
+        private ModuleKey moduleKey;
 
         private String displayName;
 
@@ -147,13 +154,13 @@ public final class Module
 
         private String vendorUrl;
 
-        private Version minSystemVersion;
+        private ModuleVersion minSystemVersion;
 
-        private Version maxSystemVersion;
+        private ModuleVersion maxSystemVersion;
 
-        private ModuleVersions moduleDependencies;
+        private List<ModuleKey> moduleDependencies = Lists.newArrayList();
 
-        private QualifiedContentTypeNames contentTypeDependencies;
+        private Set<QualifiedContentTypeName> contentTypeDependencies = Sets.newHashSet();
 
         private Form config;
 
@@ -166,7 +173,7 @@ public final class Module
 
         private Builder( final Module source )
         {
-            this.moduleVersion = source.moduleVersion;
+            this.moduleKey = source.moduleKey;
             this.displayName = source.displayName;
             this.info = source.info;
             this.url = source.url;
@@ -174,15 +181,15 @@ public final class Module
             this.vendorUrl = source.vendorUrl;
             this.minSystemVersion = source.minSystemVersion;
             this.maxSystemVersion = source.maxSystemVersion;
-            this.moduleDependencies = source.moduleDependencies;
-            this.contentTypeDependencies = source.contentTypeDependencies;
+            this.moduleDependencies.addAll( source.moduleDependencies.getList() );
+            this.contentTypeDependencies.addAll( source.contentTypeDependencies.getSet() );
             this.config = source.config;
             this.resourcesRoot = ModuleFileEntry.copyOf( source.resourcesRoot );
         }
 
-        public Builder moduleVersion( final ModuleVersion moduleVersion )
+        public Builder moduleKey( final ModuleKey moduleKey )
         {
-            this.moduleVersion = moduleVersion;
+            this.moduleKey = moduleKey;
             return this;
         }
 
@@ -216,15 +223,39 @@ public final class Module
             return this;
         }
 
-        public Builder minSystemVersion( final Version minSystemVersion )
+        public Builder minSystemVersion( final ModuleVersion minSystemVersion )
         {
             this.minSystemVersion = minSystemVersion;
             return this;
         }
 
-        public Builder maxSystemVersion( final Version maxSystemVersion )
+        public Builder maxSystemVersion( final ModuleVersion maxSystemVersion )
         {
             this.maxSystemVersion = maxSystemVersion;
+            return this;
+        }
+
+        public Builder addModuleDependency( final ModuleKey moduleDependency )
+        {
+            this.moduleDependencies.add( moduleDependency );
+            return this;
+        }
+
+        public Builder addModuleDependencies( final Iterable<ModuleKey> moduleDependencies )
+        {
+            Iterables.addAll( this.moduleDependencies, moduleDependencies );
+            return this;
+        }
+
+        public Builder addContentTypeDependency( final QualifiedContentTypeName contentTypeDependency )
+        {
+            this.contentTypeDependencies.add( contentTypeDependency );
+            return this;
+        }
+
+        public Builder addContentTypeDependencies( final Iterable<QualifiedContentTypeName> contentTypeDependencies )
+        {
+            Iterables.addAll( this.contentTypeDependencies, contentTypeDependencies );
             return this;
         }
 
@@ -237,6 +268,12 @@ public final class Module
         public Builder addFileEntry( final ModuleFileEntry resourcesRoot )
         {
             this.resourcesRoot.add( resourcesRoot );
+            return this;
+        }
+
+        public Builder removeFileEntries()
+        {
+            this.resourcesRoot.removeAll();
             return this;
         }
 
