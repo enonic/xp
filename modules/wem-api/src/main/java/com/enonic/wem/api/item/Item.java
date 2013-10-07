@@ -283,7 +283,7 @@ public final class Item
         {
             if ( value != null )
             {
-                this.dataSet.setProperty( path, new Value.WholeNumber( value ) );
+                this.dataSet.setProperty( path, new Value.Long( value ) );
             }
             return this;
         }

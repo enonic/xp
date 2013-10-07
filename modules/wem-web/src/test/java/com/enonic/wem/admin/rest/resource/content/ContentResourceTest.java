@@ -47,7 +47,6 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.api.facet.QueryFacet;
 import com.enonic.wem.api.facet.TermsFacet;
-
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -111,8 +110,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
@@ -148,8 +147,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( aContent );
 
@@ -207,8 +206,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
@@ -393,8 +392,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 
@@ -430,8 +429,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 
@@ -467,8 +466,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 

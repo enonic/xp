@@ -18,13 +18,13 @@
                         {
                             "name": "setProperty1",
                             "path": "mySet.setProperty1",
-                            "type": "WholeNumber",
+                            "type": "Long",
                             "value": "1"
                         },
                         {
                             "name": "setProperty2",
                             "path": "mySet.setProperty2",
-                            "type": "WholeNumber",
+                            "type": "Long",
                             "value": "2"
                         }
                     ]

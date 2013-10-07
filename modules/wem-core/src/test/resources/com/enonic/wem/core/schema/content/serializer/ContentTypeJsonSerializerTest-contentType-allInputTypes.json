@@ -6,7 +6,7 @@
     "superType": "content",
     "isAbstract": false,
     "isFinal": true,
-    "isBuiltIn" : false,
+    "isBuiltIn": false,
     "allowChildContent": true,
     "form": [
         {

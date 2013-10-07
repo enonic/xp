@@ -23,7 +23,7 @@ public final class ValueTypes
 
     public static final ContentId CONTENT_ID = new ContentId( 7 );
 
-    public static final WholeNumber WHOLE_NUMBER = new WholeNumber( 8 );
+    public static final Long LONG = new Long( 8 );
 
     public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 9 );
 
@@ -44,7 +44,7 @@ public final class ValueTypes
         register( DATE_MIDNIGHT );
         register( DATE_TIME );
         register( CONTENT_ID );
-        register( WHOLE_NUMBER );
+        register( LONG );
         register( DECIMAL_NUMBER );
         register( GEOGRAPHIC_COORDINATE );
         register( ATTACHMENT_NAME );

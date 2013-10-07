@@ -20,7 +20,7 @@ final class WholeNumber
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        ValueTypes.WHOLE_NUMBER.checkValidity( property );
+        ValueTypes.LONG.checkValidity( property );
     }
 
     @Override
@@ -37,7 +37,7 @@ final class WholeNumber
     @Override
     public Value newValue( final String value )
     {
-        return new Value.WholeNumber( ValueTypes.WHOLE_NUMBER.convert( value ) );
+        return new Value.Long( ValueTypes.LONG.convert( value ) );
     }
 
 }

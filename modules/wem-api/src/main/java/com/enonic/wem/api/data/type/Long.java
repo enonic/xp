@@ -4,10 +4,10 @@ package com.enonic.wem.api.data.type;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 
-public class WholeNumber
-    extends ValueType<Long>
+public class Long
+    extends ValueType<java.lang.Long>
 {
-    WholeNumber( int key )
+    Long( int key )
     {
         super( key, JavaTypeConverter.Long.GET );
     }
@@ -15,12 +15,12 @@ public class WholeNumber
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.WholeNumber( convert( value ) );
+        return new Value.Long( convert( value ) );
     }
 
     @Override
     public Property newProperty( final String name, final Value value )
     {
-        return new Property.WholeNumber( name, value );
+        return new Property.Long( name, value );
     }
 }

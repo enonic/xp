@@ -59,7 +59,7 @@ public class PropertyTest
     @Test
     public void getDouble_given_value_as_long()
     {
-        Property property = newProperty().name( "myNumber" ).type( ValueTypes.WHOLE_NUMBER ).value( (long) 2 ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.LONG ).value( (long) 2 ).build();
         assertEquals( Double.class, property.getDouble().getClass() );
         assertEquals( 2.0, property.getDouble() );
     }
@@ -73,7 +73,7 @@ public class PropertyTest
     @Test
     public void getLong_given_value_as_long()
     {
-        Property property = newProperty().name( "myNumber" ).type( ValueTypes.WHOLE_NUMBER ).value( 1l ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.LONG ).value( 1l ).build();
         assertEquals( new Long( 1 ), property.getLong() );
     }
 

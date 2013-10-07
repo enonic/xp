@@ -117,8 +117,8 @@ public class Property
         return getArray().getValue( arrayIndex ).asContentId();
     }
 
-    public Long getLong()
-        throws InconvertibleValueException
+    public java.lang.Long getLong()
+    throws InconvertibleValueException
     {
         return value.asLong();
     }
@@ -128,8 +128,8 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Long.
      */
-    public Long getLong( final int arrayIndex )
-        throws InconvertibleValueException
+    public java.lang.Long getLong( final int arrayIndex )
+    throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asLong();
     }
@@ -1007,53 +1007,53 @@ public class Property
         }
     }
 
-    public final static class WholeNumber
-        extends Property
+    public final static class Long
+    extends Property
     {
-        public WholeNumber( final String name, final Long value )
+        public Long( final String name, final java.lang.Long value )
         {
-            super( name, new Value.WholeNumber( value ) );
+            super( name, new Value.Long( value ) );
         }
 
-        public WholeNumber( final String name, final Integer value )
+        public Long( final String name, final Integer value )
         {
-            super( name, new Value.WholeNumber( value ) );
+            super( name, new Value.Long( value ) );
         }
 
-        private WholeNumber( final AbstractBaseBuilder builder )
+        private Long( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
 
-        public WholeNumber( final String name, final Value value )
+        public Long( final String name, final Value value )
         {
             super( name, value );
         }
 
-        WholeNumber( final WholeNumber source )
+        Long( final Long source )
         {
             super( source );
         }
 
-        public WholeNumber copy()
+        public Long copy()
         {
-            return new WholeNumber( this );
+            return new Long( this );
         }
 
-        public static WholeNumberBuilder newWholeNumber()
+        public static LongBuilder newLong()
         {
-            return new WholeNumberBuilder();
+            return new LongBuilder();
         }
 
-        public static class WholeNumberBuilder
-            extends AbstractNameBuilder<WholeNumberBuilder>
+        public static class LongBuilder
+            extends AbstractNameBuilder<LongBuilder>
         {
-            private WholeNumberBuilder()
+            private LongBuilder()
             {
-                setType( ValueTypes.WHOLE_NUMBER );
+                setType( ValueTypes.LONG );
             }
 
-            public WholeNumberBuilder value( final Long value )
+            public LongBuilder value( final java.lang.Long value )
             {
                 setValue( value );
                 return this;
@@ -1062,28 +1062,28 @@ public class Property
             @Override
             public Property build()
             {
-                return new WholeNumber( this );
+                return new Long( this );
             }
         }
 
-        public static WholeNumberValueBuilder newWholeNumber( final String name )
+        public static LongValueBuilder newLong( final String name )
         {
-            return new WholeNumberValueBuilder( name );
+            return new LongValueBuilder( name );
         }
 
-        public static class WholeNumberValueBuilder
-            extends AbstractBaseBuilder
+        public static class LongValueBuilder
+        extends AbstractBaseBuilder
         {
-            private WholeNumberValueBuilder( final String name )
+            private LongValueBuilder( final String name )
             {
-                setType( ValueTypes.WHOLE_NUMBER );
+                setType( ValueTypes.LONG );
                 setName( name );
             }
 
-            public WholeNumber value( final Long value )
+            public Long value( final java.lang.Long value )
             {
                 setValue( value );
-                return new WholeNumber( this );
+                return new Long( this );
             }
         }
     }

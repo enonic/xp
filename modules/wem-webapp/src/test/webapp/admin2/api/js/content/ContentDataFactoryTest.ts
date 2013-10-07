@@ -14,19 +14,19 @@ TestCase("ContentDataFactory", {
     "test given a Data array with two properties": function () {
 
         var dataArray = [
-                {
-                    "name": "prop1",
-                    "path": "mySet.prop1",
-                    "type": "WholeNumber",
-                    "value": "1"
-                },
-                {
-                    "name": "prop2",
-                    "path": "mySet.prop2",
-                    "type": "WholeNumber",
-                    "value": "2"
-                }
-            ];
+            {
+                "name": "prop1",
+                "path": "mySet.prop1",
+                "type": "Long",
+                "value": "1"
+            },
+            {
+                "name": "prop2",
+                "path": "mySet.prop2",
+                "type": "Long",
+                "value": "2"
+            }
+        ];
         var contentData:api_content.ContentData = api_content.ContentDataFactory.createContentData(dataArray);
 
         // exercise & verify

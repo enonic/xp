@@ -70,10 +70,10 @@ public abstract class Value<T>
      *
      * @throws ClassCastException if value is not of type Long.
      */
-    public Long getLong()
+    public java.lang.Long getLong()
         throws ClassCastException
     {
-        return (Long) object;
+        return (java.lang.Long) object;
     }
 
     /**
@@ -123,8 +123,7 @@ public abstract class Value<T>
     /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
      *
-     * @throws com.enonic.wem.api.data.type.InconvertibleValueException
-     *          if value is not convertible to String.
+     * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
      */
     public String asString()
         throws InconvertibleValueException
@@ -158,10 +157,10 @@ public abstract class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to Long.
      */
-    public Long asLong()
+    public java.lang.Long asLong()
         throws InconvertibleValueException
     {
-        final Long converted = JavaTypeConverter.Long.GET.convertFrom( object );
+        final java.lang.Long converted = JavaTypeConverter.Long.GET.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.Long.GET );
@@ -305,22 +304,22 @@ public abstract class Value<T>
         }
     }
 
-    public static final class WholeNumber
-        extends Value<Long>
+    public static final class Long
+        extends Value<java.lang.Long>
     {
-        public WholeNumber( final Long value )
+        public Long( final java.lang.Long value )
         {
-            super( ValueTypes.WHOLE_NUMBER, value );
+            super( ValueTypes.LONG, value );
         }
 
-        public WholeNumber( final Integer value )
+        public Long( final Integer value )
         {
-            super( ValueTypes.WHOLE_NUMBER, Long.valueOf( value ) );
+            super( ValueTypes.LONG, java.lang.Long.valueOf( value ) );
         }
 
-        public WholeNumber( final Short value )
+        public Long( final Short value )
         {
-            super( ValueTypes.WHOLE_NUMBER, Long.valueOf( value ) );
+            super( ValueTypes.LONG, java.lang.Long.valueOf( value ) );
         }
 
     }

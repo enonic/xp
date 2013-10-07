@@ -477,9 +477,9 @@ public class ContentTest
     {
         // setup
         ContentData contentData = new ContentData();
-        contentData.add( new Property.WholeNumber( "myNumber", 1 ) );
+        contentData.add( new Property.Long( "myNumber", 1 ) );
         contentData.add( new Property.Text( "myText", "text" ) );
-        contentData.setProperty( "mySet.myOtherNumber", new Value.WholeNumber( 2 ) );
+        contentData.setProperty( "mySet.myOtherNumber", new Value.Long( 2 ) );
 
         Content content = Content.newContent().
             id( ContentId.from( "ABC-123" ) ).
