@@ -16,6 +16,9 @@ public final class RelationshipKey
 
     private final ItemId toItem;
 
+    /**
+     * Path to the Data in the fromItem that is managing this Relationship.
+     */
     private final DataPath managingData;
 
     private RelationshipKey( final QualifiedRelationshipTypeName type, final ItemId fromContent, final ItemId toItem,
@@ -43,6 +46,11 @@ public final class RelationshipKey
     public ItemId getFromItem()
     {
         return fromItem;
+    }
+
+    public boolean isManaged()
+    {
+        return managingData != null;
     }
 
     public DataPath getManagingData()

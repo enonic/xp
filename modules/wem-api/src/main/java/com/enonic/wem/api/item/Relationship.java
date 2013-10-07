@@ -29,31 +29,19 @@ public final class Relationship
 
     private final UserKey modifier;
 
-    private final QualifiedRelationshipTypeName type;
-
-    private final ItemId fromItem;
-
-    private final ItemId toItem;
+    private final RelationshipKey key;
 
     private final ImmutableMap<String, String> properties;
-
-    /**
-     * Path to the Data in the fromItem that is managing this Relationship.
-     */
-    private final DataPath managingData;
 
     public Relationship( final Builder builder )
     {
         this.id = builder.id;
-        this.type = builder.type;
-        this.fromItem = builder.fromContent;
-        this.toItem = builder.toContent;
+        this.key = RelationshipKey.from( builder.type, builder.fromItem, builder.managingData, builder.toItem );
         this.createdTime = builder.createdTime;
         this.creator = builder.creator;
         this.modifiedTime = builder.modifiedTime;
         this.modifier = builder.modifier;
         this.properties = ImmutableMap.copyOf( builder.properties );
-        this.managingData = builder.managingData;
     }
 
     public RelationshipId getId()
@@ -63,7 +51,7 @@ public final class Relationship
 
     public RelationshipKey getKey()
     {
-        return RelationshipKey.from( type, fromItem, managingData, toItem );
+        return key;
     }
 
     public DateTime getCreatedTime()
@@ -88,17 +76,17 @@ public final class Relationship
 
     public QualifiedRelationshipTypeName getType()
     {
-        return type;
+        return key.getType();
     }
 
     public ItemId getFromItem()
     {
-        return fromItem;
+        return key.getFromItem();
     }
 
     public ItemId getToItem()
     {
-        return toItem;
+        return key.getToItem();
     }
 
     public ImmutableMap<String, String> getProperties()
@@ -113,12 +101,12 @@ public final class Relationship
 
     public boolean isManaged()
     {
-        return managingData != null;
+        return key.isManaged();
     }
 
     public DataPath getManagingData()
     {
-        return managingData;
+        return key.getManagingData();
     }
 
     @Override
@@ -154,9 +142,9 @@ public final class Relationship
 
         private QualifiedRelationshipTypeName type;
 
-        private ItemId fromContent;
+        private ItemId fromItem;
 
-        private ItemId toContent;
+        private ItemId toItem;
 
         private Map<String, String> properties = Maps.newLinkedHashMap();
 
@@ -173,11 +161,11 @@ public final class Relationship
             createdTime = relationship.createdTime;
             modifier = relationship.modifier;
             modifiedTime = relationship.modifiedTime;
-            type = relationship.type;
-            fromContent = relationship.fromItem;
-            toContent = relationship.toItem;
+            type = relationship.key.getType();
+            fromItem = relationship.key.getFromItem();
+            toItem = relationship.key.getToItem();
             properties.putAll( relationship.getProperties() );
-            managingData = relationship.managingData;
+            managingData = relationship.key.getManagingData();
         }
 
         private Builder()
@@ -197,15 +185,15 @@ public final class Relationship
             return this;
         }
 
-        public Builder fromContent( ItemId value )
+        public Builder fromItem( ItemId value )
         {
-            this.fromContent = value;
+            this.fromItem = value;
             return this;
         }
 
-        public Builder toContent( ItemId value )
+        public Builder toItem( ItemId value )
         {
-            this.toContent = value;
+            this.toItem = value;
             return this;
         }
 
