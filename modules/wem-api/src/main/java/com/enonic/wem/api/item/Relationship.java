@@ -11,12 +11,13 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.DataPath;
+import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Relationship
-    implements IllegalEditAware<Relationship>
+    implements IllegalEditAware<Relationship>, ChangeTraceable
 {
     private final RelationshipId id;
 
