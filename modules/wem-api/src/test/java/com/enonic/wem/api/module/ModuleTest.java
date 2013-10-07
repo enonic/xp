@@ -17,6 +17,7 @@ public class ModuleTest
             build();
 
         final Module module = Module.newModule().
+            moduleVersion( ModuleVersion.parse( "mymodule-1.0.0" ) ).
             displayName( "module display name" ).
             addFileEntry( publicDir ).
             build();
