@@ -11,9 +11,14 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
 public class RelationshipTypeResultJson
-    extends ItemJson
+    extends AbstractRelationshipTypeJson
+    implements ItemJson
 {
-    private final RelationshipType model;
+    private final boolean editable;
+
+    private final boolean deletable;
+
+    private final RelationshipType relationshipType;
 
     private final String iconUrl;
 
@@ -21,19 +26,22 @@ public class RelationshipTypeResultJson
 
     private final List<String> allowedToTypes;
 
-    public RelationshipTypeResultJson( final RelationshipType model )
+    public RelationshipTypeResultJson( final RelationshipType relationshipType )
     {
-        this.model = model;
-        this.iconUrl = SchemaImageUriResolver.resolve( model.getSchemaKey() );
+        this.relationshipType = relationshipType;
+        this.editable = true;
+        this.deletable = true;
 
-        this.allowedFromTypes = new ArrayList<>( model.getAllowedFromTypes().getSize() );
-        for ( QualifiedContentTypeName allowedFromType : model.getAllowedFromTypes() )
+        this.iconUrl = SchemaImageUriResolver.resolve( relationshipType.getSchemaKey() );
+
+        this.allowedFromTypes = new ArrayList<>( relationshipType.getAllowedFromTypes().getSize() );
+        for ( QualifiedContentTypeName allowedFromType : relationshipType.getAllowedFromTypes() )
         {
             this.allowedFromTypes.add( allowedFromType.toString() );
         }
 
-        this.allowedToTypes = new ArrayList<>( model.getAllowedToTypes().getSize() );
-        for ( QualifiedContentTypeName allowedToType : model.getAllowedToTypes() )
+        this.allowedToTypes = new ArrayList<>( relationshipType.getAllowedToTypes().getSize() );
+        for ( QualifiedContentTypeName allowedToType : relationshipType.getAllowedToTypes() )
         {
             this.allowedToTypes.add( allowedToType.toString() );
         }
@@ -46,22 +54,22 @@ public class RelationshipTypeResultJson
 
     public String getName()
     {
-        return model.getName();
+        return relationshipType.getName();
     }
 
     public String getDisplayName()
     {
-        return model.getDisplayName();
+        return relationshipType.getDisplayName();
     }
 
     public String getFromSemantic()
     {
-        return model.getFromSemantic();
+        return relationshipType.getFromSemantic();
     }
 
     public String getToSemantic()
     {
-        return model.getToSemantic();
+        return relationshipType.getToSemantic();
     }
 
     public List<String> getAllowedFromTypes()
@@ -76,23 +84,23 @@ public class RelationshipTypeResultJson
 
     public DateTime getCreatedTime()
     {
-        return model.getCreatedTime();
+        return relationshipType.getCreatedTime();
     }
 
     public DateTime getModifiedTime()
     {
-        return model.getModifiedTime();
+        return relationshipType.getModifiedTime();
     }
 
     @Override
     public boolean getEditable()
     {
-        return false;
+        return editable;
     }
 
     @Override
     public boolean getDeletable()
     {
-        return false;
+        return deletable;
     }
 }

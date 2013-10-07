@@ -4,7 +4,7 @@ import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.core.country.Country;
 
 public class CallingCodeJson
-    extends ItemJson
+    implements ItemJson
 {
     private final Country model;
 

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.ws.rs.core.MediaType;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -80,7 +81,9 @@ public class MixinResourceTest
     public final void test_get_mixin()
         throws Exception
     {
-        Mixin mixin = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+        Mixin mixin = Mixin.newMixin().
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
+            name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
@@ -96,7 +99,8 @@ public class MixinResourceTest
     public final void test_get_mixin_config()
         throws Exception
     {
-        Mixin mixin = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+        Mixin mixin = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name(
+            MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
@@ -150,11 +154,13 @@ public class MixinResourceTest
     public final void test_list_mixins()
         throws Exception
     {
-        Mixin mixin1 = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
+        Mixin mixin1 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name(
+            MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 = Mixin.newMixin().name( MY_MIXIN_QUALIFIED_NAME_2.getMixinName() ).addFormItem(
+        Mixin mixin2 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name(
+            MY_MIXIN_QUALIFIED_NAME_2.getMixinName() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getName() ).inputType( TEXT_AREA ).inputTypeConfig(
                 TextAreaConfig.newTextAreaConfig().columns( 10 ).rows( 10 ).build() ).label( "Text Area" ).required( true ).helpText(
                 "Help text area" ).required( true ).build() ).build();
@@ -183,7 +189,7 @@ public class MixinResourceTest
     public void test_create_mixin_already_exists()
         throws Exception
     {
-        Mixin mixin = newMixin().name( "some_input" ).addFormItem(
+        Mixin mixin = newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );

@@ -1,7 +1,9 @@
 {
     "createdTime": "2013-08-23T12:55:09.162Z",
     "creator": "user:system:admin",
+    "deletable": true,
     "displayName": "My Content",
+    "editable": true,
     "hasChildren": false,
     "iconUrl": "http://localhost/admin/rest/content/image/aaa",
     "id": "aaa",

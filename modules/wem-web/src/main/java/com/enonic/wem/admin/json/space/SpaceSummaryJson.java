@@ -6,7 +6,7 @@ import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class SpaceSummaryJson
-    extends ItemJson
+    implements ItemJson
 {
     private final Space space;
 

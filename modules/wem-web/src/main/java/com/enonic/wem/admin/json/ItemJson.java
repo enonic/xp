@@ -1,9 +1,9 @@
 package com.enonic.wem.admin.json;
 
 
-public abstract class ItemJson
+public interface ItemJson
 {
-    public abstract boolean getEditable();
+    public boolean getEditable();
 
-    public abstract boolean getDeletable();
+    public boolean getDeletable();
 }

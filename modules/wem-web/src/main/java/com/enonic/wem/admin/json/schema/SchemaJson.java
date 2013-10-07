@@ -8,7 +8,7 @@ import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.schema.Schema;
 
 public class SchemaJson
-    extends ItemJson
+    implements ItemJson
 {
 
     private String key;

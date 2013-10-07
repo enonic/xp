@@ -9,7 +9,7 @@ import com.enonic.wem.core.country.Country;
 import com.enonic.wem.core.country.Region;
 
 public class CountryJson
-    extends ItemJson
+    implements ItemJson
 {
     private final Country model;
 

@@ -4,7 +4,7 @@ import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.core.country.Region;
 
 public class RegionJson
-    extends ItemJson
+    implements ItemJson
 {
     private final Region model;
 

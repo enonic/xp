@@ -10,7 +10,7 @@ import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipId;
 
 public class RelationshipJson
-    extends ItemJson
+    implements ItemJson
 {
     private final Relationship model;
 

@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.schema.relationship.AbstractRelationshipTypeJson;
-import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigRpcJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
@@ -71,7 +71,7 @@ public class RelationshipTypeResource
             }
             else if ( format.equalsIgnoreCase( FORMAT_XML ) )
             {
-                return new RelationshipTypeConfigRpcJson( type );
+                return new RelationshipTypeConfigJson( type );
             }
         }
         throw new NotFoundException();

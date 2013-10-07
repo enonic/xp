@@ -18,7 +18,7 @@ import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.TestUtil;
 import com.enonic.wem.admin.json.schema.relationship.AbstractRelationshipTypeJson;
-import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigRpcJson;
+import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeResultJson;
@@ -33,7 +33,6 @@ import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
-
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -124,9 +123,8 @@ public class RelationshipTypeResourceTest
         AbstractRelationshipTypeJson result = resource.get( "the_relationship_type", RelationshipTypeResource.FORMAT_XML );
         assertNotNull( result );
 
-        RelationshipTypeConfigRpcJson resultJson = (RelationshipTypeConfigRpcJson) result;
+        RelationshipTypeConfigJson resultJson = (RelationshipTypeConfigJson) result;
 
-        assertEquals( "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type", resultJson.getIconUrl() );
         assertEquals(
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<relationship-type>\r\n  <name>the_relationship_type</name>\r\n  <display-name />\r\n  <from-semantic />\r\n  <to-semantic />\r\n  <allowed-from-types />\r\n  <allowed-to-types />\r\n</relationship-type>\r\n\r\n",
             resultJson.getRelationshipTypeXml() );
@@ -204,8 +202,7 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
-        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
-             QualifiedRelationshipTypeName.from(  "love" ) );
+        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( QualifiedRelationshipTypeName.from( "love" ) );
 
         String relationshipType =
             "<relationship-type><name>love</name><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
@@ -221,8 +218,7 @@ public class RelationshipTypeResourceTest
     public void testUpdate()
         throws Exception
     {
-        QualifiedRelationshipTypeNames qualifiedNames =
-            QualifiedRelationshipTypeNames.from(  QualifiedRelationshipTypeName.from(  "love" ) );
+        QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "love" ) );
 
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.from( qualifiedNames ) );
@@ -243,8 +239,7 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
-        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
-             QualifiedRelationshipTypeName.from("love" ) );
+        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( QualifiedRelationshipTypeName.from( "love" ) );
         uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
 
         String relationshipType =

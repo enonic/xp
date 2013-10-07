@@ -30,7 +30,9 @@
                     ]
                 }
             ],
+            "deletable": true,
             "displayName": "My Content",
+            "editable": true,
             "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/aaa",
             "id": "aaa",
@@ -78,7 +80,9 @@
                     ]
                 }
             ],
+            "deletable": true,
             "displayName": "My Content",
+            "editable": true,
             "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/bbb",
             "id": "bbb",
@@ -91,5 +95,5 @@
             "type": "my_type"
         }
     ],
-    "facets": []
+    "facets": [ ]
 }

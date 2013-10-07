@@ -2,23 +2,30 @@ package com.enonic.wem.admin.json.content;
 
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.DateTimeFormatter;
+import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.api.content.Content;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentSummaryJson
     extends ContentIdJson
-    implements ChangeTraceableJson
+    implements ChangeTraceableJson, ItemJson
 {
     private final Content content;
 
     private final String iconUrl;
+
+    private final boolean editable;
+
+    private final boolean deletable;
 
     public ContentSummaryJson( Content content )
     {
         super( content.getId() );
         this.content = content;
         this.iconUrl = ContentImageUriResolver.resolve( content );
+        this.editable = ( !this.content.isEmbedded() || !this.content.isTemporary() );
+        this.deletable = !this.content.hasChildren() && ( !this.content.isEmbedded() || !this.content.isTemporary() );
     }
 
     public String getIconUrl()
@@ -51,24 +58,9 @@ public class ContentSummaryJson
         return content.getOwner() != null ? content.getOwner().toString() : null;
     }
 
-    public String getCreator()
-    {
-        return content.getCreator() != null ? content.getCreator().toString() : null;
-    }
-
-    public String getModifier()
-    {
-        return content.getModifier() != null ? content.getModifier().toString() : null;
-    }
-
     public boolean isRoot()
     {
         return content.getPath().isRoot();
-    }
-
-    public String getModifiedTime()
-    {
-        return DateTimeFormatter.format( content.getModifiedTime() );
     }
 
     public String getCreatedTime()
@@ -76,9 +68,36 @@ public class ContentSummaryJson
         return DateTimeFormatter.format( content.getCreatedTime() );
     }
 
+    public String getCreator()
+    {
+        return content.getCreator() != null ? content.getCreator().toString() : null;
+    }
+
+    public String getModifiedTime()
+    {
+        return DateTimeFormatter.format( content.getModifiedTime() );
+    }
+
+    public String getModifier()
+    {
+        return content.getModifier() != null ? content.getModifier().toString() : null;
+    }
+
     public boolean getHasChildren()
     {
         return content.hasChildren();
+    }
+
+    @Override
+    public boolean getEditable()
+    {
+        return editable;
+    }
+
+    @Override
+    public boolean getDeletable()
+    {
+        return deletable;
     }
 
 }
