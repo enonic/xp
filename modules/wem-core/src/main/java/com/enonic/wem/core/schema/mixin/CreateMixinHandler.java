@@ -5,27 +5,25 @@ import javax.jcr.Session;
 
 import org.joda.time.DateTime;
 
+import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
+import com.enonic.wem.api.item.CreateItem;
+import com.enonic.wem.api.item.CreateItemResult;
+import com.enonic.wem.api.item.ItemPath;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
-
 
 public final class CreateMixinHandler
     extends CommandHandler<CreateMixin>
 {
     private MixinDao mixinDao;
 
-    public CreateMixinHandler()
-    {
-        super( CreateMixin.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final CreateMixin command )
+    public void handle()
         throws Exception
     {
         final DateTime currentTime = DateTime.now();
@@ -39,8 +37,21 @@ public final class CreateMixinHandler
         final Session session = context.getJcrSession();
         mixinDao.create( mixin, session );
         session.save();
-
         command.setResult( mixin.getQualifiedName() );
+
+        // Storing using Item
+        final ItemPath parentItemPath = ItemPath.newPath( "/mixins" ).build();
+        final UserKey creator = UserKey.superUser();
+        final MixinItemTranslator translator = new MixinItemTranslator();
+
+        final CreateItem createItemCommand = Commands.item().create().
+            name( command.getName() ).
+            parent( parentItemPath ).
+            data( translator.toRootDataSet( command ) );
+
+        final CreateItemResult createItemResult = context.getClient().execute( createItemCommand );
+        //final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
+        // TODO when Item persisting is ready: command.setResult( persistedMixin.getQualifiedName() );
     }
 
     @Inject

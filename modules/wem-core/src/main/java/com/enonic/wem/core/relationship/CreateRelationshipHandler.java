@@ -8,7 +8,6 @@ import org.joda.time.DateTime;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.relationship.CreateRelationship;
 import com.enonic.wem.api.relationship.Relationship;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
@@ -20,13 +19,8 @@ public final class CreateRelationshipHandler
 {
     private RelationshipDao relationshipDao;
 
-    public CreateRelationshipHandler()
-    {
-        super( CreateRelationship.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final CreateRelationship command )
+    public void handle()
         throws Exception
     {
         final Relationship.Builder builder = newRelationship();

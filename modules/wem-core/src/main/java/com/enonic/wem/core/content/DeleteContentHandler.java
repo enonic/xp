@@ -9,7 +9,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.index.IndexService;
@@ -22,13 +21,8 @@ public class DeleteContentHandler
 
     private IndexService indexService;
 
-    public DeleteContentHandler()
-    {
-        super( DeleteContent.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final DeleteContent command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

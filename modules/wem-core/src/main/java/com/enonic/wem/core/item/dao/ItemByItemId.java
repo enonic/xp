@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.NoItemWithIdFound;
 
 class ItemByItemId
 {
@@ -24,12 +25,6 @@ class ItemByItemId
         if ( !itemByItemId.containsKey( item.id() ) )
         {
             throw new NoItemWithIdFound( item.id() );
-        }
-
-        final Item persistedItem = itemByItemId.get( item.id() );
-        if ( persistedItem.getModifiedTime().isAfter( item.getModifiedTime() ) )
-        {
-            throw new ItemModifiedSinceRead( item.getModifiedTime(), persistedItem );
         }
 
         itemByItemId.put( item.id(), item );

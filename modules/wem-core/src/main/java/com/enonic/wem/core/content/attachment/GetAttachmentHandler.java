@@ -5,7 +5,6 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.command.content.attachment.GetAttachment;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 
@@ -15,13 +14,8 @@ public class GetAttachmentHandler
 {
     private AttachmentDao attachmentDao;
 
-    public GetAttachmentHandler()
-    {
-        super( GetAttachment.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final GetAttachment command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

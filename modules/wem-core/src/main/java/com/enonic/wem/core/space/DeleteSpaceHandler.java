@@ -5,7 +5,6 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.command.space.DeleteSpace;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.space.dao.SpaceDao;
 
@@ -15,13 +14,8 @@ public final class DeleteSpaceHandler
 {
     private SpaceDao spaceDao;
 
-    public DeleteSpaceHandler()
-    {
-        super( DeleteSpace.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final DeleteSpace command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

@@ -1,0 +1,64 @@
+.admin-image-upload-button-container {
+    position: relative;
+    cursor: pointer;
+    padding: 1px;
+    border-left: 1px;
+    border-top: 1px;
+
+    .admin-image-upload-button-progress-bar-container {
+        visibility: hidden;
+        position: absolute;
+        border: 1px solid #555;
+        background-color: #555;
+        bottom: 1px;
+        left: 1px;
+        right: 1px;
+        font-size: 1px;
+        border-radius: 4px;
+    }
+
+    .admin-image-upload-button-progress-bar {
+        font-size: 1px;
+        background: #dbeeff;
+        background: -moz-linear-gradient(top, #dbeeff 0%, #99BCE8 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dbeeff), color-stop(100%, #99BCE8));
+        background: -webkit-linear-gradient(top, #dbeeff 0%, #99BCE8 100%);
+        background: -o-linear-gradient(top, #dbeeff 0%, #99BCE8 100%);
+        background: -ms-linear-gradient(top, #dbeeff 0%, #99BCE8 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#dbeeff', endColorstr = '#99BCE8', GradientType = 0);
+        background: linear-gradient(top, #dbeeff 0%, #99BCE8 100%);
+        border-radius: 3px;
+    }
+}
+
+.admin-file-upload-drop-target {
+    border: 1px solid #98c9f2;
+    box-shadow: 0 0 3px #98c9f2;
+    padding: 0px;
+}
+
+.admin-image-upload-button-image-tip {
+    position: fixed;
+    top: 135px;
+
+    .x-tip {
+        left: 0;
+        width: 111px;
+        height: 38px;
+    }
+
+    .x-tip-anchor {
+        z-index: 1;
+        left: 49px;
+        top: -10px;
+    }
+
+    .x-tip-body {
+        text-align: center;
+    }
+}
+
+.admin-image-upload-button-image-tip,
+.admin-image-upload-button-image-tip>div {
+    overflow: visible;
+}

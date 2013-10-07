@@ -1,0 +1,27 @@
+div.admin-load-mask {
+  border: none;
+  padding: 4px;
+  border: 0 none;
+  background-color: #ffffff;
+
+  .admin-load-text {
+    background-position: left;
+    padding: 0 0 0 20px;
+    background-color: transparent;
+    border: 0 none;
+    height: 16px;
+  }
+}
+
+// Ext.Element.mask() is used
+// for masking floating components
+.x-mask {
+  background-color: #000 !important;
+}
+
+// Ext.LoadMask is used
+// for masking regular components
+.admin-mask-white {
+  background-color: #fff !important;
+  @include opacity(0.5);
+}

@@ -1,6 +1,5 @@
 {
     "name": "relationship-limited-allowed-to-types",
-    "module": "demo",
     "displayName": "Relationship limited allowed-to-types",
     "superType": "structured",
     "isAbstract": false,
@@ -23,7 +22,7 @@
                     "name": "Relationship",
                     "builtIn": true,
                     "config": {
-                        "relationshipType": "demo:citation"
+                        "relationshipType": "citation"
                     }
                 }
             }

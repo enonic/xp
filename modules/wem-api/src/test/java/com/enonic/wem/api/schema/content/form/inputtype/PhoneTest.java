@@ -12,12 +12,12 @@ public class PhoneTest
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
-        new Phone().checkBreaksRequiredContract( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "" ).build() );
+        new Phone().checkBreaksRequiredContract( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
-        new Phone().checkBreaksRequiredContract( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( " " ).build() );
+        new Phone().checkBreaksRequiredContract( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( " " ).build() );
     }
 }

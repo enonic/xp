@@ -35,6 +35,7 @@ public class DeleteAccountHandlerTest
         final IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new DeleteAccountHandler();
+        handler.setContext( this.context );
         handler.setAccountDao( accountDao );
         handler.setIndexService( indexService );
     }
@@ -48,7 +49,10 @@ public class DeleteAccountHandlerTest
 
         // exercise
         final DeleteAccount command = Commands.account().delete().key( account );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final Boolean deleted = command.getResult();
 
         // verify
@@ -65,7 +69,10 @@ public class DeleteAccountHandlerTest
 
         // exercise
         final DeleteAccount command = Commands.account().delete().key( account );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final Boolean deleted = command.getResult();
 
         // verify
@@ -82,7 +89,8 @@ public class DeleteAccountHandlerTest
 
         // exercise
         final DeleteAccount command = Commands.account().delete().key( account );
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         final Boolean deleted = command.getResult();
 
         // verify
@@ -98,7 +106,10 @@ public class DeleteAccountHandlerTest
 
         // exercise
         final DeleteAccount command = Commands.account().delete().key( account1 );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
+
         final Boolean deleted = command.getResult();
 
         // verify

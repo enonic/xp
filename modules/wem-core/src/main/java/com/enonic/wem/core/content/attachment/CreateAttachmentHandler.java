@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.content.attachment.CreateAttachment;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 
@@ -14,13 +13,8 @@ public class CreateAttachmentHandler
 {
     private AttachmentDao attachmentDao;
 
-    public CreateAttachmentHandler()
-    {
-        super( CreateAttachment.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final CreateAttachment command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

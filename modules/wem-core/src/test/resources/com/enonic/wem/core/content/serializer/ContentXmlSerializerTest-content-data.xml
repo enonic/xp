@@ -3,7 +3,7 @@
   <name/>
   <type>unstructured</type>
   <data>
-    <myInput type="Text">A value</myInput>
+    <myInput type="String">A value</myInput>
   </data>
 </content>
 

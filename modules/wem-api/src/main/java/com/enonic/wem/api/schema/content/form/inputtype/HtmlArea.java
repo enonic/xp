@@ -21,7 +21,7 @@ final class HtmlArea
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        ValueTypes.TEXT.checkValidity( property );
+        ValueTypes.STRING.checkValidity( property );
     }
 
     @Override
@@ -38,7 +38,7 @@ final class HtmlArea
     @Override
     public Value newValue( final String value )
     {
-        return new Value.Text( value );
+        return new Value.String( value );
     }
 
     @Override

@@ -275,6 +275,7 @@ public class Path<T extends Path>
 
         public Builder( final Path source )
         {
+            Preconditions.checkNotNull( source, "source to build copy from not given" );
             this.elementDivider = source.elementDivider;
             this.absolute = source.absolute;
             this.trailingDivider = source.trailingDivider;

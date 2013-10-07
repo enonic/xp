@@ -273,7 +273,7 @@ public class ContentResource
         contentIndexQuery.setSpaceNames( SpaceNames.from( params.getSpaces() ) );
 
         Set<ContentFindParams.Range> ranges = params.getRanges();
-        if ( ranges != null && !ranges.isEmpty() )
+        if ( ranges != null && ranges.size() > 0 )
         {
             for ( ContentFindParams.Range range : ranges )
             {

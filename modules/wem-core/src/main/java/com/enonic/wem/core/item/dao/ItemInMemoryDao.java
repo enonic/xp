@@ -3,11 +3,18 @@ package com.enonic.wem.core.item.dao;
 
 import java.util.LinkedHashMap;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.ItemAlreadyExist;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemAtPathFound;
+import com.enonic.wem.api.item.NoItemFoundException;
+
+import static com.enonic.wem.api.item.Item.newItem;
 
 public class ItemInMemoryDao
     implements ItemDao
@@ -23,31 +30,50 @@ public class ItemInMemoryDao
     }
 
     @Override
-    public Item storeNew( final Item item )
+    public Item createItem( final CreateItemArgs createItemArgs )
     {
-        Preconditions.checkArgument( item.id() == null, "New Item to store cannot have an ItemId: " + item.id() );
-        final ItemPath path = item.path();
-        Preconditions.checkNotNull( path, "Path of Item must be specified " );
-        Preconditions.checkArgument( path.isAbsolute(), "Path to Item must be absolute: " + path.toString() );
-        final ItemPath parentPath = path.getParentPath();
-
-        if ( !itemIdByPath.pathHasItem( parentPath ) )
+        Preconditions.checkArgument( createItemArgs.parent().isAbsolute(),
+                                     "Path to parent Item must be absolute: " + createItemArgs.parent().toString() );
+        if ( !itemIdByPath.pathHasItem( createItemArgs.parent() ) )
         {
-            throw new NoItemAtPathFound( parentPath );
+            throw new NoItemAtPathFound( createItemArgs.parent() );
         }
 
-        final Item itemWithId = Item.newItem( item ).id( new ItemId() ).build();
+        final Item newItem = newItem().
+            id( new ItemId() ).
+            createdTime( DateTime.now() ).
+            creator( createItemArgs.creator() ).
+            parent( createItemArgs.parent() ).
+            name( createItemArgs.name() ).
+            icon( createItemArgs.icon() ).
+            rootDataSet( createItemArgs.rootDataSet() ).
+            build();
 
-        itemByItemId.storeNew( itemWithId );
-        itemIdByPath.put( itemWithId.path(), itemWithId.id() );
-        return itemWithId;
+        if ( itemIdByPath.pathHasItem( newItem.path() ) )
+        {
+            throw new ItemAlreadyExist( newItem.path() );
+        }
+
+        itemByItemId.storeNew( newItem );
+        itemIdByPath.put( newItem.path(), newItem.id() );
+        return newItem;
     }
 
     @Override
-    public Item updateExisting( final Item item )
+    public Item updateItem( final UpdateItemArgs updateItemArgs )
     {
-        itemByItemId.updateExisting( item );
-        return item;
+        final Item existing = itemByItemId.get( updateItemArgs.itemToUpdate() );
+
+        final Item persistedItem = newItem( existing ).
+            modifiedTime( DateTime.now() ).
+            modifier( updateItemArgs.updater() ).
+            name( updateItemArgs.name() ).
+            icon( updateItemArgs.icon() ).
+            rootDataSet( updateItemArgs.rootDataSet() ).
+            build();
+
+        itemByItemId.updateExisting( persistedItem );
+        return persistedItem;
     }
 
     public Item getItemById( final ItemId id )

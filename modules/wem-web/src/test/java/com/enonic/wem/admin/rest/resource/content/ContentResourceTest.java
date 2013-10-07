@@ -47,7 +47,6 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.api.facet.QueryFacet;
 import com.enonic.wem.api.facet.TermsFacet;
-
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
@@ -89,11 +88,11 @@ public class ContentResourceTest
 
         final ContentData aContentData = aContent.getContentData();
 
-        aContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+        aContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
@@ -111,8 +110,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
@@ -148,8 +147,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( aContent );
 
@@ -185,11 +184,11 @@ public class ContentResourceTest
 
         final ContentData aContentData = aContent.getContentData();
 
-        aContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+        aContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
@@ -207,8 +206,8 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
 
@@ -243,11 +242,11 @@ public class ContentResourceTest
 
         final ContentData aContentData = aContent.getContentData();
 
-        aContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
-        aContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+        aContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
+        aContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
 
-        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
-        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
+        aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentVersion.class ) ) ).thenReturn( aContent );
 
@@ -393,18 +392,18 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 
         final ContentData bContentData = bContent.getContentData();
 
-        bContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
-        bContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+        bContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
+        bContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
 
-        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
-        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
 
         Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
             createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
@@ -430,18 +429,18 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 
         final ContentData bContentData = bContent.getContentData();
 
-        bContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
-        bContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+        bContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
+        bContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
 
-        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
-        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
 
         Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
             createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
@@ -467,18 +466,18 @@ public class ContentResourceTest
         final ContentData aContentData = aContent.getContentData();
         aContentData.setProperty( "myProperty", new Value.DateTime( DateTime.parse( this.currentTime ) ) );
 
-        aContentData.setProperty( "mySet.setProperty1", new Value.WholeNumber( 1 ) );
-        aContentData.setProperty( "mySet.setProperty2", new Value.WholeNumber( 2 ) );
+        aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
+        aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
 
         final ContentData bContentData = bContent.getContentData();
 
-        bContentData.setProperty( "myArray[0]", new Value.Text( "arrayValue1" ) );
-        bContentData.setProperty( "myArray[1]", new Value.Text( "arrayValue2" ) );
+        bContentData.setProperty( "myArray[0]", new Value.String( "arrayValue1" ) );
+        bContentData.setProperty( "myArray[1]", new Value.String( "arrayValue2" ) );
 
-        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.DecimalNumber( 3.14159 ) );
-        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.DecimalNumber( 1.333 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
+        bContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
 
         Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
             createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
@@ -715,7 +714,7 @@ public class ContentResourceTest
         List<DataValidationError> errors = new ArrayList<>( 2 );
 
         Input input = Input.newInput().name( "myInput" ).inputType( InputTypes.PHONE ).required( true ).maximumOccurrences( 3 ).build();
-        Property property = Property.newProperty( "myProperty" ).type( ValueTypes.TEXT ).value( "myValue" ).build();
+        Property property = Property.newProperty( "myProperty" ).type( ValueTypes.STRING ).value( "myValue" ).build();
 
         errors.add( new MaximumOccurrencesValidationError( input, 5 ) );
         errors.add( new MissingRequiredValueValidationError( input, property ) );

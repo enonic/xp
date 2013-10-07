@@ -1,8 +1,6 @@
 package com.enonic.wem.api.item;
 
-public interface ItemTranslatable<T>
+public interface ItemTranslatable
 {
-    Item toItem();
-
-    T toObject( Item item );
+    Item toItem( ItemPath parent );
 }

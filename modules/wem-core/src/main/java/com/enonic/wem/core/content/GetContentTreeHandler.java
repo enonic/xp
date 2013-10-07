@@ -3,7 +3,6 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.GetContentTree;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
@@ -11,16 +10,10 @@ import com.enonic.wem.core.content.dao.ContentDao;
 public class GetContentTreeHandler
     extends CommandHandler<GetContentTree>
 {
-
     private ContentDao contentDao;
 
-    public GetContentTreeHandler()
-    {
-        super( GetContentTree.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final GetContentTree command )
+    public void handle()
         throws Exception
     {
         if ( command.getContentSelectors() != null )

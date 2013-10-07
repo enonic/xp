@@ -11,7 +11,6 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.command.account.FindMemberships;
 import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.account.AccountSearchHit;
 import com.enonic.wem.core.index.account.AccountSearchQuery;
@@ -26,13 +25,8 @@ public final class FindMembershipsHandler
 
     private AccountSearchService accountSearchService;
 
-    public FindMembershipsHandler()
-    {
-        super( FindMemberships.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final FindMemberships command )
+    public void handle()
         throws Exception
     {
         final AccountKey account = command.getKey();

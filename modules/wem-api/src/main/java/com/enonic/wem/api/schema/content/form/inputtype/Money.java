@@ -21,7 +21,7 @@ final class Money
     public void checkValidity( final Property property )
         throws InvalidValueTypeException, InvalidValueException
     {
-        ValueTypes.DECIMAL_NUMBER.checkValidity( property );
+        ValueTypes.DOUBLE.checkValidity( property );
     }
 
     @Override
@@ -37,7 +37,7 @@ final class Money
     @Override
     public Value newValue( final String value )
     {
-        return new Value.DecimalNumber( ValueTypes.DECIMAL_NUMBER.convert( value ) );
+        return new Value.Double( ValueTypes.DOUBLE.convert( value ) );
     }
 
     @Override

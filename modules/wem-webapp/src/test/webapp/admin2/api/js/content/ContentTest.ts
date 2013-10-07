@@ -22,18 +22,18 @@ TestCase("Content", {
             {
                 "name": "prop1",
                 "path": "mySet.prop1",
-                "type": "WholeNumber",
+                "type": "Long",
                 "value": "1"
             },
             {
                 "name": "prop2",
                 "path": "mySet.prop2",
-                "type": "WholeNumber",
+                "type": "Long",
                 "value": "2"
             }
         ];
 
-        var contentJson:api_content_json.ContentJson  = <api_content_json.ContentJson>
+        var contentJson:api_content_json.ContentJson = <api_content_json.ContentJson>
         {
             id: "123",
             name: "mycontent",

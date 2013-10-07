@@ -1,0 +1,71 @@
+@import "../variables/core";
+
+$admin-field-border-color: #aaaaaa;
+$admin-field-focus-border-color: $admin-black;
+$admin-field-invalid-border-color: #c30;
+
+/**
+ * Fieldsets
+ */
+$fieldset-header-font-size: ceil($font-size * 1.2) !default;
+$fieldset-header-font-weight: bold !default;
+$fieldset-header-font-family: $font-family !default;
+$fieldset-header-line-height: 14px !default;
+$fieldset-header-font: #{$fieldset-header-font-size}/#{$fieldset-header-line-height} $fieldset-header-font-weight $fieldset-header-font-family !default;
+$fieldset-header-color: #444 !default;
+
+$fieldset-border: none !default;
+
+$fieldset-padding: 0 5px !default;
+$fieldset-header-padding: 0 0 9px 0 !default;
+
+/**
+ * @class Ext.form.field.Base
+ */
+$form-field-height: 26px !default;
+
+// Border
+$form-field-border-width: 1px !default;
+$form-field-border-color: $admin-field-border-color !default;
+$form-field-focus-border-color: $admin-field-focus-border-color !default;
+$form-field-invalid-border-color: $admin-field-invalid-border-color !default;
+
+// Padding
+$form-field-padding: 4px 9px !default;
+
+// Background
+$form-field-background-image: '' !default;
+
+// Toolbar
+$form-toolbar-field-height: $form-field-height !default;
+
+
+/**
+ * @class Ext.form.field.Checkbox
+ */
+$form-checkbox-image: 'form/admin-checkbox.gif' !default;
+$form-checkbox-size: 13px !default;
+
+/**
+ * @class Ext.form.field.Radio
+ */
+$form-radio-image: 'form/admin-radio.gif' !default;
+
+/**
+ * Trigger Field
+ */
+$form-trigger-width: 23px !default;
+$form-trigger-height: $form-field-height !default;
+
+$form-trigger-border-bottom-width: 1px !default;
+$form-trigger-border-bottom-style: solid !default;
+$form-trigger-border-bottom-color: $form-field-border-color !default;
+$form-trigger-border-bottom: $form-trigger-border-bottom-width $form-trigger-border-bottom-style $form-trigger-border-bottom-color !default;
+
+$form-trigger-border-bottom-color-over: adjust-color($base-color, $hue: -4.322deg, $saturation: -1.065%, $lightness: -16.863%) !default;
+$form-trigger-border-bottom-color-focus: adjust-color($base-color, $hue: -4.322deg, $saturation: -1.065%, $lightness: -16.863%) !default;
+$form-trigger-border-bottom-color-focus-over: null !default;
+$form-trigger-border-bottom-color-pressed: null !default;
+
+$form-trigger-icon-background-position: 7px 6px !default;
+

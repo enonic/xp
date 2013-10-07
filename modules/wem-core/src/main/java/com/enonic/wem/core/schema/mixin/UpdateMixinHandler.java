@@ -12,7 +12,6 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
@@ -24,13 +23,8 @@ public final class UpdateMixinHandler
 {
     private MixinDao mixinDao;
 
-    public UpdateMixinHandler()
-    {
-        super( UpdateMixin.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final UpdateMixin command )
+    public void handle()
         throws Exception
     {
         final QualifiedMixinName qualifiedMixinName = command.getQualifiedName();
@@ -51,6 +45,32 @@ public final class UpdateMixinHandler
                 command.setResult( UpdateMixinResult.SUCCESS );
             }
             command.setResult( UpdateMixinResult.SUCCESS );
+
+            /*final ItemDao itemDao = new ItemJcrDao( context.getJcrSession() );
+            final UserKey updater = UserKey.superUser();
+            final MixinItemTranslator translator = new MixinItemTranslator();
+            final UpdateItemArgs updateItemArgs = newUpdateItemArgs().
+                updater( updater ).
+                itemToUpdate( new ItemId( mixin.getId() ) ).
+                icon( mixin.getIcon() ).
+                rootDataSet( translator.toRootDataSet( mixin ) ).
+                build();
+
+            itemDao.updateItem( updateItemArgs );
+
+            final SetItemEditor itemEditor = SetItemEditor.newSetItemEditor().
+                name( mixin.getName() ).
+                icon( mixin.getIcon() ).
+                rootDataSet( translator.toRootDataSet( mixin ) ).
+                build();
+
+            final UpdateItem updateCommand = Commands.item().update().
+                modifier( updater ).
+                itemToUpdate( new ItemId( mixin.getId() ) ).
+                readAt( editor.getReadAt() ).
+                editor( itemEditor );
+
+            context.getClient().execute( updateCommand );*/
         }
     }
 

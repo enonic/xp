@@ -22,7 +22,7 @@ public class Property
         this.value = source.value;
     }
 
-    Property( final String name, final Value value )
+    Property( final java.lang.String name, final Value value )
     {
         super( name );
         Preconditions.checkNotNull( value, "value cannot be null" );
@@ -88,7 +88,7 @@ public class Property
         return value.getObject();
     }
 
-    public String getString()
+    public java.lang.String getString()
         throws InconvertibleValueException
     {
         return value.asString();
@@ -105,7 +105,7 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a String.
      */
-    public String getString( final int arrayIndex )
+    public java.lang.String getString( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asString();
@@ -117,7 +117,7 @@ public class Property
         return getArray().getValue( arrayIndex ).asContentId();
     }
 
-    public Long getLong()
+    public java.lang.Long getLong()
         throws InconvertibleValueException
     {
         return value.asLong();
@@ -128,13 +128,13 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Long.
      */
-    public Long getLong( final int arrayIndex )
+    public java.lang.Long getLong( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asLong();
     }
 
-    public Double getDouble()
+    public java.lang.Double getDouble()
         throws InconvertibleValueException
     {
         return value.asDouble();
@@ -145,7 +145,7 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Double.
      */
-    public Double getDouble( final int arrayIndex )
+    public java.lang.Double getDouble( final int arrayIndex )
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDouble();
@@ -185,7 +185,7 @@ public class Property
         return getArray().getValue( arrayIndex ).asDateTime();
     }
 
-    public String getAttachmentName()
+    public java.lang.String getAttachmentName()
         throws InconvertibleValueException
     {
         return value.asString();
@@ -255,7 +255,7 @@ public class Property
     }
 
     @Override
-    public String toString()
+    public java.lang.String toString()
     {
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "name", getName() );
@@ -274,7 +274,7 @@ public class Property
         return new Builder( property );
     }
 
-    public static TypeBuilder newProperty( final String name )
+    public static TypeBuilder newProperty( final java.lang.String name )
     {
         return new NameBuilder().name( name );
     }
@@ -288,7 +288,7 @@ public class Property
 
         }
 
-        public TypeBuilder name( final String name )
+        public TypeBuilder name( final java.lang.String name )
         {
             builder.name( name );
             return new TypeBuilder( builder );
@@ -385,7 +385,7 @@ public class Property
             return (T) this;
         }
 
-        public T name( final String value )
+        public T name( final java.lang.String value )
         {
             setName( value );
             return getThis();
@@ -396,7 +396,7 @@ public class Property
 
     public abstract static class AbstractBaseBuilder
     {
-        private String name;
+        private java.lang.String name;
 
         private Value value;
 
@@ -408,7 +408,7 @@ public class Property
         {
         }
 
-        void setName( final String value )
+        void setName( final java.lang.String value )
         {
             this.name = value;
         }
@@ -432,7 +432,7 @@ public class Property
     public final static class ContentId
         extends Property
     {
-        public ContentId( final String name, final com.enonic.wem.api.content.ContentId value )
+        public ContentId( final java.lang.String name, final com.enonic.wem.api.content.ContentId value )
         {
             super( name, new Value.ContentId( value ) );
         }
@@ -442,7 +442,7 @@ public class Property
             super( builder );
         }
 
-        public ContentId( final String name, final Value value )
+        public ContentId( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
@@ -476,7 +476,7 @@ public class Property
                 return this;
             }
 
-            public Builder value( final String value )
+            public Builder value( final java.lang.String value )
             {
                 setValue( JavaTypeConverter.ContentId.GET.convertFromString( value ) );
                 return this;
@@ -493,12 +493,12 @@ public class Property
     public final static class BinaryId
         extends Property
     {
-        public BinaryId( final String name, final com.enonic.wem.api.content.binary.BinaryId value )
+        public BinaryId( final java.lang.String name, final com.enonic.wem.api.content.binary.BinaryId value )
         {
             super( name, new Value.BinaryId( value ) );
         }
 
-        public BinaryId( final String name, final Value value )
+        public BinaryId( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
@@ -538,7 +538,7 @@ public class Property
                 return this;
             }
 
-            public Builder value( final String value )
+            public Builder value( final java.lang.String value )
             {
                 setValue( JavaTypeConverter.BinaryId.GET.convertFromString( value ) );
                 return this;
@@ -555,7 +555,7 @@ public class Property
     public final static class AttachmentName
         extends Property
     {
-        public AttachmentName( final String name, final String value )
+        public AttachmentName( final java.lang.String name, final java.lang.String value )
         {
             super( name, new Value.AttachmentName( value ) );
         }
@@ -589,7 +589,7 @@ public class Property
                 setType( ValueTypes.ATTACHMENT_NAME );
             }
 
-            public Builder value( final String value )
+            public Builder value( final java.lang.String value )
             {
                 setValue( value );
                 return this;
@@ -606,12 +606,12 @@ public class Property
     public static class GeographicCoordinate
         extends Property
     {
-        public GeographicCoordinate( final String name, final Value value )
+        public GeographicCoordinate( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
 
-        public GeographicCoordinate( final String name, final String value )
+        public GeographicCoordinate( final java.lang.String name, final java.lang.String value )
         {
             super( name, new Value.GeographicCoordinate( value ) );
         }
@@ -644,7 +644,7 @@ public class Property
                 setType( ValueTypes.GEOGRAPHIC_COORDINATE );
             }
 
-            public GeographicCoordinateBuilder value( final String value )
+            public GeographicCoordinateBuilder value( final java.lang.String value )
             {
                 setValue( value );
                 return this;
@@ -657,7 +657,7 @@ public class Property
             }
         }
 
-        public static GeographicCoordinateValueBuilder newGeographicCoordinate( final String name )
+        public static GeographicCoordinateValueBuilder newGeographicCoordinate( final java.lang.String name )
         {
             return new GeographicCoordinateValueBuilder( name );
         }
@@ -665,13 +665,13 @@ public class Property
         public static class GeographicCoordinateValueBuilder
             extends AbstractBaseBuilder
         {
-            private GeographicCoordinateValueBuilder( final String name )
+            private GeographicCoordinateValueBuilder( final java.lang.String name )
             {
                 setType( ValueTypes.GEOGRAPHIC_COORDINATE );
                 setName( name );
             }
 
-            public GeographicCoordinate value( final String value )
+            public GeographicCoordinate value( final java.lang.String value )
             {
                 setValue( value );
                 return new GeographicCoordinate( this );
@@ -683,12 +683,12 @@ public class Property
     public final static class Date
         extends Property
     {
-        public Date( final String name, final org.joda.time.DateMidnight value )
+        public Date( final java.lang.String name, final org.joda.time.DateMidnight value )
         {
             super( name, new Value.DateMidnight( value ) );
         }
 
-        public Date( final String name, final String value )
+        public Date( final java.lang.String name, final java.lang.String value )
         {
             super( name, new Value.DateMidnight( value ) );
         }
@@ -698,7 +698,7 @@ public class Property
             super( builder );
         }
 
-        public Date( final String name, final Value value )
+        public Date( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
@@ -732,7 +732,7 @@ public class Property
                 return this;
             }
 
-            public DateBuilder value( final String value )
+            public DateBuilder value( final java.lang.String value )
             {
                 setValue( JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
                 return this;
@@ -745,7 +745,7 @@ public class Property
             }
         }
 
-        public static DateValueBuilder newDate( final String name )
+        public static DateValueBuilder newDate( final java.lang.String name )
         {
             return new DateValueBuilder( name );
         }
@@ -753,7 +753,7 @@ public class Property
         public static class DateValueBuilder
             extends AbstractBaseBuilder
         {
-            private DateValueBuilder( final String name )
+            private DateValueBuilder( final java.lang.String name )
             {
                 setType( ValueTypes.DATE_MIDNIGHT );
                 setName( name );
@@ -765,7 +765,7 @@ public class Property
                 return new Date( this );
             }
 
-            public Date value( final String value )
+            public Date value( final java.lang.String value )
             {
                 setValue( JavaTypeConverter.DateMidnight.GET.convertFromString( value ) );
                 return new Date( this );
@@ -773,84 +773,84 @@ public class Property
         }
     }
 
-    public final static class DecimalNumber
+    public final static class Double
         extends Property
     {
-        public DecimalNumber( final String name, final Double value )
+        public Double( final java.lang.String name, final java.lang.Double value )
         {
-            super( name, new Value.DecimalNumber( value ) );
+            super( name, new Value.Double( value ) );
         }
 
-        private DecimalNumber( final AbstractBaseBuilder builder )
+        private Double( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
 
-        public DecimalNumber( final String name, final Value value )
+        public Double( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
 
-        DecimalNumber( final DecimalNumber source )
+        Double( final Double source )
         {
             super( source );
         }
 
-        public DecimalNumber copy()
+        public Double copy()
         {
-            return new DecimalNumber( this );
+            return new Double( this );
         }
 
-        public static DecimalNumberBuilder newDecimalNumber()
+        public static DoubleBuilder newDouble()
         {
-            return new DecimalNumberBuilder();
+            return new DoubleBuilder();
         }
 
-        public static class DecimalNumberBuilder
-            extends AbstractNameBuilder<DecimalNumberBuilder>
+        public static class DoubleBuilder
+            extends AbstractNameBuilder<DoubleBuilder>
         {
-            private DecimalNumberBuilder()
+            private DoubleBuilder()
             {
-                setType( ValueTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DOUBLE );
             }
 
-            public DecimalNumberBuilder( final String name )
+            public DoubleBuilder( final java.lang.String name )
             {
-                setType( ValueTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DOUBLE );
                 setName( name );
             }
 
-            public DecimalNumberBuilder value( final Double value )
+            public DoubleBuilder value( final java.lang.Double value )
             {
                 setValue( value );
                 return this;
             }
 
             @Override
-            public DecimalNumber build()
+            public Double build()
             {
-                return new DecimalNumber( this );
+                return new Double( this );
             }
         }
 
-        public static DecimalNumberValueBuilder newDecimalNumber( final String name )
+        public static DoubleValueBuilder newDouble( final java.lang.String name )
         {
-            return new DecimalNumberValueBuilder( name );
+            return new DoubleValueBuilder( name );
         }
 
-        public static class DecimalNumberValueBuilder
+        public static class DoubleValueBuilder
             extends AbstractBaseBuilder
         {
-            private DecimalNumberValueBuilder( final String name )
+            private DoubleValueBuilder( final java.lang.String name )
             {
-                setType( ValueTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DOUBLE );
                 setName( name );
             }
 
-            public DecimalNumber value( final Double value )
+            public Double value( final java.lang.Double value )
             {
                 setValue( value );
-                return new DecimalNumber( this );
+                return new Double( this );
             }
         }
     }
@@ -858,7 +858,7 @@ public class Property
     public static final class HtmlPart
         extends Property
     {
-        public HtmlPart( final String name, final String value )
+        public HtmlPart( final java.lang.String name, final java.lang.String value )
         {
             super( name, new Value.HtmlPart( value ) );
         }
@@ -868,7 +868,7 @@ public class Property
             super( builder );
         }
 
-        public HtmlPart( final String name, final Value value )
+        public HtmlPart( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
@@ -896,7 +896,7 @@ public class Property
                 setType( ValueTypes.HTML_PART );
             }
 
-            public HtmlPartBuilder value( final String value )
+            public HtmlPartBuilder value( final java.lang.String value )
             {
                 setValue( value );
                 return this;
@@ -909,7 +909,7 @@ public class Property
             }
         }
 
-        public static HtmlPartValueBuilder newHtmlPart( final String name )
+        public static HtmlPartValueBuilder newHtmlPart( final java.lang.String name )
         {
             return new HtmlPartValueBuilder( name );
         }
@@ -917,13 +917,13 @@ public class Property
         public static class HtmlPartValueBuilder
             extends AbstractBaseBuilder
         {
-            private HtmlPartValueBuilder( final String name )
+            private HtmlPartValueBuilder( final java.lang.String name )
             {
                 setType( ValueTypes.HTML_PART );
                 setName( name );
             }
 
-            public HtmlPart value( final String value )
+            public HtmlPart value( final java.lang.String value )
             {
                 setValue( value );
                 return new HtmlPart( this );
@@ -931,48 +931,48 @@ public class Property
         }
     }
 
-    public final static class Text
+    public final static class String
         extends Property
     {
-        public Text( final String name, final String value )
+        public String( final java.lang.String name, final java.lang.String value )
         {
-            super( name, new Value.Text( value ) );
+            super( name, new Value.String( value ) );
         }
 
-        private Text( final AbstractBaseBuilder builder )
+        private String( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
 
-        public Text( final String name, final Value value )
+        public String( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
 
-        Text( final Text source )
+        String( final String source )
         {
             super( source );
         }
 
-        public Text copy()
+        public String copy()
         {
-            return new Text( this );
+            return new String( this );
         }
 
-        public static TextBuilder newText()
+        public static StringBuilder newString()
         {
-            return new TextBuilder();
+            return new StringBuilder();
         }
 
-        public static class TextBuilder
-            extends AbstractNameBuilder<TextBuilder>
+        public static class StringBuilder
+            extends AbstractNameBuilder<StringBuilder>
         {
-            public TextBuilder()
+            public StringBuilder()
             {
-                setType( ValueTypes.TEXT );
+                setType( ValueTypes.STRING );
             }
 
-            public TextBuilder value( final String value )
+            public StringBuilder value( final java.lang.String value )
             {
                 setValue( value );
                 return this;
@@ -981,79 +981,79 @@ public class Property
             @Override
             public Property build()
             {
-                return new Text( this );
+                return new String( this );
             }
         }
 
-        public static TextValueBuilder newText( final String name )
+        public static StringValueBuilder newText( final java.lang.String name )
         {
-            return new TextValueBuilder( name );
+            return new StringValueBuilder( name );
         }
 
-        public static class TextValueBuilder
+        public static class StringValueBuilder
             extends AbstractBaseBuilder
         {
-            private TextValueBuilder( final String name )
+            private StringValueBuilder( final java.lang.String name )
             {
-                setType( ValueTypes.TEXT );
+                setType( ValueTypes.STRING );
                 setName( name );
             }
 
-            public Text value( final String value )
+            public String value( final java.lang.String value )
             {
                 setValue( value );
-                return new Text( this );
+                return new String( this );
             }
         }
     }
 
-    public final static class WholeNumber
+    public final static class Long
         extends Property
     {
-        public WholeNumber( final String name, final Long value )
+        public Long( final java.lang.String name, final java.lang.Long value )
         {
-            super( name, new Value.WholeNumber( value ) );
+            super( name, new Value.Long( value ) );
         }
 
-        public WholeNumber( final String name, final Integer value )
+        public Long( final java.lang.String name, final Integer value )
         {
-            super( name, new Value.WholeNumber( value ) );
+            super( name, new Value.Long( value ) );
         }
 
-        private WholeNumber( final AbstractBaseBuilder builder )
+        private Long( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
 
-        public WholeNumber( final String name, final Value value )
+        public Long( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
 
-        WholeNumber( final WholeNumber source )
+        Long( final Long source )
         {
             super( source );
         }
 
-        public WholeNumber copy()
+        public Long copy()
         {
-            return new WholeNumber( this );
+            return new Long( this );
         }
 
-        public static WholeNumberBuilder newWholeNumber()
+        public static LongBuilder newLong()
         {
-            return new WholeNumberBuilder();
+            return new LongBuilder();
         }
 
-        public static class WholeNumberBuilder
-            extends AbstractNameBuilder<WholeNumberBuilder>
+        public static class LongBuilder
+            extends AbstractNameBuilder<LongBuilder>
         {
-            private WholeNumberBuilder()
+            private LongBuilder()
             {
-                setType( ValueTypes.WHOLE_NUMBER );
+                setType( ValueTypes.LONG );
             }
 
-            public WholeNumberBuilder value( final Long value )
+            public LongBuilder value( final java.lang.Long value )
             {
                 setValue( value );
                 return this;
@@ -1062,28 +1062,28 @@ public class Property
             @Override
             public Property build()
             {
-                return new WholeNumber( this );
+                return new Long( this );
             }
         }
 
-        public static WholeNumberValueBuilder newWholeNumber( final String name )
+        public static LongValueBuilder newLong( final java.lang.String name )
         {
-            return new WholeNumberValueBuilder( name );
+            return new LongValueBuilder( name );
         }
 
-        public static class WholeNumberValueBuilder
+        public static class LongValueBuilder
             extends AbstractBaseBuilder
         {
-            private WholeNumberValueBuilder( final String name )
+            private LongValueBuilder( final java.lang.String name )
             {
-                setType( ValueTypes.WHOLE_NUMBER );
+                setType( ValueTypes.LONG );
                 setName( name );
             }
 
-            public WholeNumber value( final Long value )
+            public Long value( final java.lang.Long value )
             {
                 setValue( value );
-                return new WholeNumber( this );
+                return new Long( this );
             }
         }
     }
@@ -1091,7 +1091,7 @@ public class Property
     public static final class Xml
         extends Property
     {
-        public Xml( final String name, final String value )
+        public Xml( final java.lang.String name, final java.lang.String value )
         {
             super( name, new Value.Xml( value ) );
         }
@@ -1101,7 +1101,7 @@ public class Property
             super( builder );
         }
 
-        public Xml( final String name, final Value value )
+        public Xml( final java.lang.String name, final Value value )
         {
             super( name, value );
         }
@@ -1129,7 +1129,7 @@ public class Property
                 setType( ValueTypes.XML );
             }
 
-            public XmlBuilder value( final String value )
+            public XmlBuilder value( final java.lang.String value )
             {
                 setValue( value );
                 return this;
@@ -1142,7 +1142,7 @@ public class Property
             }
         }
 
-        public static XmlValueBuilder newXml( final String name )
+        public static XmlValueBuilder newXml( final java.lang.String name )
         {
             return new XmlValueBuilder( name );
         }
@@ -1150,13 +1150,13 @@ public class Property
         public static class XmlValueBuilder
             extends AbstractBaseBuilder
         {
-            private XmlValueBuilder( final String name )
+            private XmlValueBuilder( final java.lang.String name )
             {
                 setType( ValueTypes.XML );
                 setName( name );
             }
 
-            public Xml value( final String value )
+            public Xml value( final java.lang.String value )
             {
                 setValue( value );
                 return new Xml( this );

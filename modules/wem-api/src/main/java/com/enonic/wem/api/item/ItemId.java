@@ -17,6 +17,11 @@ public class ItemId
         this.value = value;
     }
 
+    public ItemId( final Object value )
+    {
+        this.value = value.toString();
+    }
+
     @Override
     public boolean equals( final Object o )
     {

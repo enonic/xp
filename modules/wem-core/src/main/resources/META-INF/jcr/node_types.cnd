@@ -52,6 +52,3 @@
 [wem:binaryContent] > wem:base, nt:unstructured, mix:referenceable
 
 [wem:item] > wem:base, nt:unstructured, mix:referenceable
-
-[wem:items] > wem:base
-+ * (wem:item)

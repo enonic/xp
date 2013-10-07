@@ -11,7 +11,7 @@ public class InvalidJavaTypeConverterException
         super( buildMessage( javaTypeConverter, value ) );
     }
 
-    private static String buildMessage( final JavaTypeConverter javaTypeConverter, final Value value )
+    private static java.lang.String buildMessage( final JavaTypeConverter javaTypeConverter, final Value value )
     {
         return "Expected Value of class " + javaTypeConverter + ": " + value.getType().getJavaTypeConverter();
     }

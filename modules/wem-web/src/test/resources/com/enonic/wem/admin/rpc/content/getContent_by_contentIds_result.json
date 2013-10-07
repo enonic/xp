@@ -17,7 +17,7 @@
                 {
                     "name": "myData",
                     "path": "myData",
-                    "type": "Text",
+                    "type": "String",
                     "value": "value1"
                 }
             ],
@@ -39,7 +39,7 @@
                 {
                     "name": "myData",
                     "path": "myData",
-                    "type": "Text",
+                    "type": "String",
                     "value": "value1"
                 }
             ],

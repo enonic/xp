@@ -14,6 +14,8 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 public abstract class BaseSchema<T extends QualifiedName>
     implements Schema
 {
+    private final SchemaId id;
+
     private final Name name;
 
     private final String displayName;
@@ -30,6 +32,7 @@ public abstract class BaseSchema<T extends QualifiedName>
 
     protected BaseSchema( Builder builder )
     {
+        this.id = builder.id;
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
@@ -37,6 +40,11 @@ public abstract class BaseSchema<T extends QualifiedName>
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.icon = builder.icon;
+    }
+
+    public SchemaId getId()
+    {
+        return id;
     }
 
     public String getName()
@@ -78,6 +86,8 @@ public abstract class BaseSchema<T extends QualifiedName>
 
     public static class Builder<T extends Builder>
     {
+        private SchemaId id;
+
         private Name name;
 
         private String displayName;
@@ -100,6 +110,7 @@ public abstract class BaseSchema<T extends QualifiedName>
         public Builder( final BaseSchema schema )
         {
             Preconditions.checkNotNull( schema, "schema cannot be null" );
+            this.id = schema.id;
             this.name = schema.name;
             this.displayName = schema.displayName;
             this.createdTime = schema.createdTime;
@@ -111,6 +122,12 @@ public abstract class BaseSchema<T extends QualifiedName>
         private T getThis()
         {
             return (T) this;
+        }
+
+        public T id( final SchemaId value )
+        {
+            this.id = value;
+            return getThis();
         }
 
         public T name( final String name )

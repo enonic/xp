@@ -15,7 +15,6 @@ import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
@@ -31,13 +30,8 @@ public final class GetSchemasHandler
 
     private RelationshipTypeDao relationshipTypeDao;
 
-    public GetSchemasHandler()
-    {
-        super( SchemaTypes.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final SchemaTypes command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

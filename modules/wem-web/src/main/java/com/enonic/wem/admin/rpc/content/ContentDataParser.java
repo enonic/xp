@@ -53,7 +53,7 @@ public final class ContentDataParser
                 }
                 else
                 {
-                    contentData.setProperty( path, new Value.Text( fieldValue ) );
+                    contentData.setProperty( path, new Value.String( fieldValue ) );
                 }
             }
         }

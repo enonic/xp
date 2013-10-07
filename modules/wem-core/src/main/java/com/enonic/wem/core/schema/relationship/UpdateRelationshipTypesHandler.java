@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
@@ -16,13 +15,8 @@ public final class UpdateRelationshipTypesHandler
 {
     private RelationshipTypeDao relationshipTypeDao;
 
-    public UpdateRelationshipTypesHandler()
-    {
-        super( UpdateRelationshipType.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final UpdateRelationshipType command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

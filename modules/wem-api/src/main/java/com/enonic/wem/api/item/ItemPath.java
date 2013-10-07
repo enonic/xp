@@ -4,11 +4,15 @@ package com.enonic.wem.api.item;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.Path;
 
 public class ItemPath
     extends Path<ItemPath>
 {
+    public final static ItemPath ROOT = new ItemPath( new Builder().absolute( true ).trailingDivider( false ) );
+
     private static final char ELEMENT_DIVIDER = '/';
 
     public ItemPath( final String path )
@@ -76,6 +80,7 @@ public class ItemPath
 
     public static Builder newPath( final ItemPath source )
     {
+        Preconditions.checkNotNull( source, "source to build copy from not given" );
         return new Builder( source );
     }
 

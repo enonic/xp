@@ -24,8 +24,8 @@ public class DataSetTest
             {
                 return DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", ValueTypes.TEXT ).
-                    set( "myData2", "bbb", ValueTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.STRING ).
+                    set( "myData2", "bbb", ValueTypes.STRING ).
                     build();
             }
 
@@ -34,16 +34,16 @@ public class DataSetTest
             {
                 return new Object[]{DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", ValueTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.STRING ).
                     build(), DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", ValueTypes.TEXT ).
-                    set( "myData2", "bbb", ValueTypes.TEXT ).
-                    set( "myData3", "bbb", ValueTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.STRING ).
+                    set( "myData2", "bbb", ValueTypes.STRING ).
+                    set( "myData3", "bbb", ValueTypes.STRING ).
                     build(), DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "111", ValueTypes.TEXT ).
-                    set( "myData2", "222", ValueTypes.TEXT ).
+                    set( "myData1", "111", ValueTypes.STRING ).
+                    set( "myData2", "222", ValueTypes.STRING ).
                     build()};
             }
 
@@ -52,8 +52,8 @@ public class DataSetTest
             {
                 return DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", ValueTypes.TEXT ).
-                    set( "myData2", "bbb", ValueTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.STRING ).
+                    set( "myData2", "bbb", ValueTypes.STRING ).
                     build();
             }
 
@@ -62,8 +62,8 @@ public class DataSetTest
             {
                 return DataSet.newDataSet().
                     name( "mySet" ).
-                    set( "myData1", "aaa", ValueTypes.TEXT ).
-                    set( "myData2", "bbb", ValueTypes.TEXT ).
+                    set( "myData1", "aaa", ValueTypes.STRING ).
+                    set( "myData2", "bbb", ValueTypes.STRING ).
                     build();
             }
         };
@@ -89,7 +89,7 @@ public class DataSetTest
     public void add_Property()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "A value" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "A value" ).build() );
 
         assertEquals( "mySet.myData", dataSet.getProperty( "myData" ).getPath().toString() );
         assertEquals( "A value", dataSet.getProperty( "myData" ).getString() );
@@ -99,8 +99,8 @@ public class DataSetTest
     public void addProperty()
     {
         ContentData contentData = new ContentData();
-        Property addedPropertyA = contentData.addProperty( "propA", new Value.Text( "A value" ) );
-        Property addedPropertyB = contentData.addProperty( "mySet.propB", new Value.Text( "A second value" ) );
+        Property addedPropertyA = contentData.addProperty( "propA", new Value.String( "A value" ) );
+        Property addedPropertyB = contentData.addProperty( "mySet.propB", new Value.String( "A second value" ) );
 
         assertSame( addedPropertyA, contentData.getProperty( "propA" ) );
         assertEquals( "propA", contentData.getProperty( "propA" ).getPath().toString() );
@@ -116,8 +116,8 @@ public class DataSetTest
     public void add_more()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "2" ).build() );
 
         assertEquals( "1", dataSet.getProperty( "myData" ).getString() );
         assertEquals( "1", dataSet.getProperty( "myData[0]" ).getString() );
@@ -128,7 +128,7 @@ public class DataSetTest
     public void add_given_data_of_type_text_when_adding_data_of_other_type_with_same_name_then_exception_is_thrown()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "A value" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "A value" ).build() );
 
         // exercise
         try
@@ -140,7 +140,7 @@ public class DataSetTest
         {
             // verify
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Array [mySet.myData] expects Property of type [Text]. Property [mySet.myData] was of type: HtmlPart",
+            assertEquals( "Array [mySet.myData] expects Property of type [String]. Property [mySet.myData] was of type: HtmlPart",
                           e.getMessage() );
         }
     }
@@ -149,8 +149,8 @@ public class DataSetTest
     public void size()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "2" ).build() );
 
         assertEquals( 2, dataSet.size() );
     }
@@ -159,9 +159,9 @@ public class DataSetTest
     public void dataCount()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
-        dataSet.add( Property.newProperty().name( "myOtherData" ).type( ValueTypes.TEXT ).value( "A" ).build() );
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myOtherData" ).type( ValueTypes.STRING ).value( "A" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "2" ).build() );
 
         assertEquals( 2, dataSet.nameCount( "myData" ) );
     }
@@ -170,7 +170,7 @@ public class DataSetTest
     public void dataCount_given_non_existing_data_then_0_is_returned()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "2" ).build() );
 
         assertEquals( 0, dataSet.nameCount( "nonExistingData" ) );
     }
@@ -178,8 +178,8 @@ public class DataSetTest
     @Test
     public void add_given_two_data_added_with_same_path_then_array_is_created()
     {
-        Property myArray1 = Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "1" ).build();
-        Property myArray2 = Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "2" ).build();
+        Property myArray1 = Property.newProperty().name( "myArray" ).type( ValueTypes.STRING ).value( "1" ).build();
+        Property myArray2 = Property.newProperty().name( "myArray" ).type( ValueTypes.STRING ).value( "2" ).build();
 
         DataSet dataSet = new ContentData();
         dataSet.add( myArray1 );
@@ -193,9 +193,9 @@ public class DataSetTest
     public void dataNames()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
-        dataSet.add( Property.newProperty().name( "myOtherData" ).type( ValueTypes.TEXT ).value( "A" ).build() );
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "2" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myOtherData" ).type( ValueTypes.STRING ).value( "A" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "2" ).build() );
 
         Iterator<String> dataNames = dataSet.dataNames().iterator();
         assertEquals( "myData", dataNames.next() );
@@ -207,7 +207,7 @@ public class DataSetTest
     public void getData()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "myData" ), new Value.Text( "something" ) );
+        dataSet.setProperty( DataPath.from( "myData" ), new Value.String( "something" ) );
 
         assertNotNull( dataSet.getData( "myData" ) );
     }
@@ -216,7 +216,7 @@ public class DataSetTest
     public void getDataSet_given_path_to_non_existing_DataSet_then_null_is_returned()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "mySet.myData" ), new Value.Text( "something" ) );
+        dataSet.setProperty( DataPath.from( "mySet.myData" ), new Value.String( "something" ) );
 
         assertNull( dataSet.getDataSet( "notExisting" ) );
         assertNull( dataSet.getDataSet( "notExisting", 0 ) );
@@ -226,7 +226,7 @@ public class DataSetTest
     public void getData_given_path_to_non_existing_data_then_null_is_returned()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "myData" ), new Value.Text( "something" ) );
+        dataSet.setProperty( DataPath.from( "myData" ), new Value.String( "something" ) );
 
         assertNull( dataSet.getProperty( "notExisting" ) );
         assertNull( dataSet.getProperty( "notExisting", 0 ) );
@@ -236,8 +236,8 @@ public class DataSetTest
     public void getData_given_array_when_getting_with_index_then_expected_data_is_returned()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "myArray[0]" ), new Value.Text( "2a" ) );
-        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.Text( "2b" ) );
+        dataSet.setProperty( DataPath.from( "myArray[0]" ), new Value.String( "2a" ) );
+        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.String( "2b" ) );
 
         assertEquals( "2a", dataSet.getProperty( "myArray", 0 ).getString() );
         assertEquals( "2b", dataSet.getProperty( "myArray", 1 ).getString() );
@@ -247,7 +247,7 @@ public class DataSetTest
     public void getData_given_name_with_index_then_exception_is_thrown()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "myData" ), new Value.Text( "1" ) );
+        dataSet.setProperty( DataPath.from( "myData" ), new Value.String( "1" ) );
 
         // exercise
         dataSet.getProperty( "myData[0]", 1 );
@@ -257,7 +257,7 @@ public class DataSetTest
     public void getValue()
     {
         DataSet dataSet = new ContentData();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "1" ).build() );
 
         assertEquals( "1", dataSet.getValue( "myData" ).getObject() );
         assertEquals( "1", dataSet.getValue( DataPath.from( "myData" ) ).getObject() );
@@ -267,10 +267,10 @@ public class DataSetTest
     public void getValue_when_having_array_of_set_within_single_set()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "personalia.crimes[0].description" ), new Value.Text( "Stole purse from old lady." ) );
-        dataSet.setProperty( DataPath.from( "personalia.crimes[0].year" ), new Value.Text( "2011" ) );
-        dataSet.setProperty( DataPath.from( "personalia.crimes[1].description" ), new Value.Text( "Drove car in 80 in 50 zone." ) );
-        dataSet.setProperty( DataPath.from( "personalia.crimes[1].year" ), new Value.Text( "2012" ) );
+        dataSet.setProperty( DataPath.from( "personalia.crimes[0].description" ), new Value.String( "Stole purse from old lady." ) );
+        dataSet.setProperty( DataPath.from( "personalia.crimes[0].year" ), new Value.String( "2011" ) );
+        dataSet.setProperty( DataPath.from( "personalia.crimes[1].description" ), new Value.String( "Drove car in 80 in 50 zone." ) );
+        dataSet.setProperty( DataPath.from( "personalia.crimes[1].year" ), new Value.String( "2012" ) );
 
         assertEquals( "Stole purse from old lady.", dataSet.getProperty( "personalia.crimes[0].description" ).getObject() );
         assertEquals( "2011", dataSet.getProperty( "personalia.crimes[0].year" ).getObject() );
@@ -282,8 +282,8 @@ public class DataSetTest
     public void getValue_when_having_multiple_mixin()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "persons[0].name" ), new Value.Text( "Arn" ) );
-        dataSet.setProperty( DataPath.from( "persons[0].eyeColour" ), new Value.Text( "Brown" ) );
+        dataSet.setProperty( DataPath.from( "persons[0].name" ), new Value.String( "Arn" ) );
+        dataSet.setProperty( DataPath.from( "persons[0].eyeColour" ), new Value.String( "Brown" ) );
 
         assertEquals( "Arn", dataSet.getProperty( "persons[0].name" ).getObject() );
         assertEquals( "Brown", dataSet.getProperty( "persons[0].eyeColour" ).getObject() );
@@ -305,7 +305,7 @@ public class DataSetTest
     public void setProperty_root_set_with_one_data()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "myData" ), new Value.Text( "1" ) );
+        dataSet.setProperty( DataPath.from( "myData" ), new Value.String( "1" ) );
 
         assertEquals( "1", dataSet.getProperty( "myData" ).getString() );
         assertEquals( "1", dataSet.getProperty( "myData" ).getValue( 0 ).asString() );
@@ -316,8 +316,8 @@ public class DataSetTest
     public void setProperty_root_set_with_two_entries()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "myData1" ), new Value.Text( "1" ) );
-        dataSet.setProperty( DataPath.from( "myData2" ), new Value.Text( "2" ) );
+        dataSet.setProperty( DataPath.from( "myData1" ), new Value.String( "1" ) );
+        dataSet.setProperty( DataPath.from( "myData2" ), new Value.String( "2" ) );
 
         assertEquals( "1", dataSet.getProperty( "myData1" ).getString() );
         assertEquals( "2", dataSet.getProperty( "myData2" ).getString() );
@@ -327,8 +327,8 @@ public class DataSetTest
     public void setProperty_subSet_with_two_entries()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "set.myData1" ), new Value.Text( "1" ) );
-        dataSet.setProperty( DataPath.from( "set.myData2" ), new Value.Text( "2" ) );
+        dataSet.setProperty( DataPath.from( "set.myData1" ), new Value.String( "1" ) );
+        dataSet.setProperty( DataPath.from( "set.myData2" ), new Value.String( "2" ) );
 
         assertEquals( "1", dataSet.getProperty( "set.myData1" ).getString() );
         assertEquals( "2", dataSet.getValue( "set.myData2" ).asString() );
@@ -338,8 +338,8 @@ public class DataSetTest
     public void setProperty_given_one_data_added_and_a_second_data_with_same_name_set_at_index_one_then_array_is_created()
     {
         DataSet dataSet = new ContentData();
-        dataSet.add( Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "1" ).build() );
-        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.Text( "2" ) );
+        dataSet.add( Property.newProperty().name( "myArray" ).type( ValueTypes.STRING ).value( "1" ).build() );
+        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.String( "2" ) );
 
         assertEquals( "1", dataSet.getValue( "myArray[0]" ).getObject() );
         assertEquals( "2", dataSet.getValue( "myArray[1]" ).getObject() );
@@ -349,11 +349,11 @@ public class DataSetTest
     public void setProperty_given_array_index_set_twice_then_value_of_last_is_returned()
     {
         DataSet dataSet = new ContentData();
-        dataSet.add( Property.newProperty().name( "myArray" ).type( ValueTypes.TEXT ).value( "1" ).build() );
+        dataSet.add( Property.newProperty().name( "myArray" ).type( ValueTypes.STRING ).value( "1" ).build() );
 
         // exercise
-        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.Text( "2a" ) );
-        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.Text( "2b" ) );
+        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.String( "2a" ) );
+        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.String( "2b" ) );
 
         // verify
         assertEquals( "2b", dataSet.getProperty( "myArray", 1 ).getString() );
@@ -365,7 +365,7 @@ public class DataSetTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.setProperty( "myData", new Value.WholeNumber( 123 ) );
+        dataSet.setProperty( "myData", new Value.Long( 123 ) );
 
         // verify
         assertEquals( new Long( 123 ), dataSet.getProperty( "myData" ).getLong() );
@@ -375,10 +375,10 @@ public class DataSetTest
     public void setProperty_given_unsuccessive_index_then_IllegalArgumentException_is_thrown()
     {
         DataSet rootSet = new ContentData();
-        rootSet.setProperty( "myText[0]", new Value.Text( "My value 1" ) );
+        rootSet.setProperty( "myText[0]", new Value.String( "My value 1" ) );
         try
         {
-            rootSet.setProperty( "myText[2]", new Value.Text( "My value 2" ) );
+            rootSet.setProperty( "myText[2]", new Value.String( "My value 2" ) );
             fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -392,8 +392,8 @@ public class DataSetTest
     public void getProperty_given_equal_values_at_successive_indexes_then_property_has_successive_indexes()
     {
         DataSet dataSet = new ContentData();
-        Value.WholeNumber value1 = new Value.WholeNumber( 0 );
-        Value.WholeNumber value2 = new Value.WholeNumber( 0 );
+        Value.Long value1 = new Value.Long( 0 );
+        Value.Long value2 = new Value.Long( 0 );
         dataSet.setProperty( "mySet.prop", value1 );
         dataSet.setProperty( "mySet.prop[1]", value2 );
 
@@ -405,10 +405,10 @@ public class DataSetTest
     public void iterator_data_is_returned_in_inserted_order()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "myData1" ), new Value.Text( "1" ) );
-        dataSet.setProperty( DataPath.from( "myArray[0]" ), new Value.Text( "a" ) );
-        dataSet.setProperty( DataPath.from( "myData2" ), new Value.Text( "2" ) );
-        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.Text( "b" ) );
+        dataSet.setProperty( DataPath.from( "myData1" ), new Value.String( "1" ) );
+        dataSet.setProperty( DataPath.from( "myArray[0]" ), new Value.String( "a" ) );
+        dataSet.setProperty( DataPath.from( "myData2" ), new Value.String( "2" ) );
+        dataSet.setProperty( DataPath.from( "myArray[1]" ), new Value.String( "b" ) );
 
         Iterator<Data> it = dataSet.iterator();
         assertEquals( DataId.from( "myData1", 0 ), it.next().getDataId() );
@@ -421,8 +421,8 @@ public class DataSetTest
     public void tostring_given_two_data()
     {
         DataSet dataSet = new ContentData();
-        dataSet.setProperty( DataPath.from( "myData" ), new Value.Text( "1" ) );
-        dataSet.setProperty( DataPath.from( "myOtherData" ), new Value.Text( "2" ) );
+        dataSet.setProperty( DataPath.from( "myData" ), new Value.String( "1" ) );
+        dataSet.setProperty( DataPath.from( "myOtherData" ), new Value.String( "2" ) );
 
         assertEquals( "{ myData, myOtherData }", dataSet.toString() );
     }
@@ -434,8 +434,8 @@ public class DataSetTest
         rootSet.add( DataSet.newDataSet().name( "mySet" ).build() );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.setProperty( DataPath.from( "myData[0]" ), new Value.Text( "1" ) );
-        mySet.setProperty( DataPath.from( "myData[1]" ), new Value.Text( "2" ) );
+        mySet.setProperty( DataPath.from( "myData[0]" ), new Value.String( "1" ) );
+        mySet.setProperty( DataPath.from( "myData[1]" ), new Value.String( "2" ) );
         rootSet.add( mySet );
 
         assertEquals( "mySet[1] { myData, myData[1] }", mySet.toString() );
@@ -445,7 +445,7 @@ public class DataSetTest
     public void toRootDataSet()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
-        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "A value" ).build() );
+        dataSet.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "A value" ).build() );
         RootDataSet rootDataSet = dataSet.toRootDataSet();
 
         assertEquals( true, rootDataSet.isRoot() );

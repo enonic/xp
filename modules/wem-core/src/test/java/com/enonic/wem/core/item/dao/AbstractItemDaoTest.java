@@ -4,17 +4,19 @@ package com.enonic.wem.core.item.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Stopwatch;
 
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.ItemAlreadyExist;
+import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemAtPathFound;
 
+import static com.enonic.wem.core.item.dao.CreateItemArgs.newCreateItemArgs;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -25,8 +27,6 @@ import static junit.framework.Assert.fail;
  */
 public abstract class AbstractItemDaoTest
 {
-    static final DateTime CREATED_TIME = new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC );
-
     private ItemDao dao;
 
     abstract ItemDao createDao();
@@ -38,68 +38,50 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_storeNew_given_item_with_then_IllegalArgumentException_is_thrown()
+    public void when_createItem_given_item_then_persisted_Item_is_returned()
         throws Exception
     {
         // setup
-        Item item = Item.newItem( new ItemId() ).
-            path( "/myItem" ).
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
+        CreateItemArgs createItemArgs = newCreateItemArgs().
+            parent( ItemPath.ROOT ).
             name( "myItem" ).
-            property( "propertyOfItem", new Value.Text( "A" ) ).
+            rootDataSet( rootDataSet ).
             build();
 
         // exercise
-        try
-        {
-            dao.storeNew( item );
-            fail( "Expected IllegalArgumentException" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof IllegalArgumentException );
-        }
-    }
-
-    @Test
-    public void when_storeNew_given_item_then_persisted_Item_is_returned()
-        throws Exception
-    {
-        // setup
-        Item item = Item.newItem().
-            path( "/myItem" ).
-            name( "myItem" ).
-            property( "propertyOfItem", new Value.Text( "A" ) ).
-            build();
-
-        // exercise
-        Item persisted = dao.storeNew( item );
+        Item persisted = dao.createItem( createItemArgs );
         assertNotNull( persisted.id() );
         assertEquals( "myItem", persisted.name() );
         assertEquals( "A", persisted.property( "propertyOfItem" ).getString() );
     }
 
     @Test
-    public void when_storeNew_performance_lots_of_children()
+    public void when_createItem_performance_lots_of_children()
         throws Exception
     {
         // setup
-        int count = 10000;
-        List<Item> list = new ArrayList<>( count );
+        int count = 1000;
+        List<CreateItemArgs> list = new ArrayList<>( count );
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
+
         for ( int i = 0; i < count; i++ )
         {
-            list.add( Item.newItem().
-                path( "/myItem-" + i ).
+            list.add( newCreateItemArgs().
+                parent( ItemPath.ROOT ).
                 name( "myItem-" + i ).
-                property( "propertyOfItem", new Value.Text( "A" ) ).
+                rootDataSet( rootDataSet ).
                 build() );
         }
 
         // exercise
         Stopwatch sw = new Stopwatch();
         sw.start();
-        for ( Item item : list )
+        for ( CreateItemArgs createItemArgs : list )
         {
-            dao.storeNew( item );
+            dao.createItem( createItemArgs );
         }
         sw.stop();
         System.out.println( sw.toString() );
@@ -117,14 +99,15 @@ public abstract class AbstractItemDaoTest
         throws Exception
     {
         // setup
-        Item item = Item.newItem().
-            createdTime( CREATED_TIME ).
-            path( "/myItem" ).
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
+        CreateItemArgs createItemArgs = newCreateItemArgs().
+            parent( ItemPath.ROOT ).
             name( "myItem" ).
-            property( "propertyOfItem", new Value.Text( "A" ) ).
+            rootDataSet( rootDataSet ).
             build();
 
-        Item persisted = dao.storeNew( item );
+        Item persisted = dao.createItem( createItemArgs );
 
         // exercise
         Item fetched = dao.getItemById( persisted.id() );
@@ -134,47 +117,51 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_storeNew_given_a_path_that_is_not_absolute_then_IllegalArgumentException_is_thrown()
+    public void when_createItem_given_a_path_to_parent_that_is_not_absolute_then_IllegalArgumentException_is_thrown()
         throws Exception
     {
         // setup
-        Item item = Item.newItem().
-            path( "not-absolute" ).
-            name( "not-absolute" ).
-            property( "propertyOfItem", new Value.Text( "A" ) ).build();
 
-        // exercise
-        try
-        {
-            dao.storeNew( item );
-            fail( "Expected exception" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Path to Item must be absolute: not-absolute", e.getMessage() );
-        }
-    }
-
-    @Test
-    public void when_storeNew_given_a_parent_path_to_an_item_that_does_not_exist_then_IllegalArgumentException_is_thrown()
-        throws Exception
-    {
-        // setup
-        Item item = Item.newItem().
-            path( "/does-not-exist/myItem" ).
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
+        CreateItemArgs createItemArgs = newCreateItemArgs().
+            parent( new ItemPath( "not-absolute-parent-path" ) ).
             name( "myItem" ).
-            property( "propertyOfItem", new Value.Text( "A" ) ).
+            rootDataSet( rootDataSet ).
             build();
 
         // exercise
         try
         {
-            dao.storeNew( item );
+            dao.createItem( createItemArgs );
             fail( "Expected exception" );
         }
         catch ( Exception e )
         {
+            assertTrue( e instanceof IllegalArgumentException );
+            assertEquals( "Path to parent Item must be absolute: not-absolute-parent-path", e.getMessage() );
+        }
+    }
+
+    @Test
+    public void when_createItem_given_a_parent_path_to_an_item_that_does_not_exist_then_NoItemAtPathFound_is_thrown()
+        throws Exception
+    {
+        // setup
+        CreateItemArgs createItemArgs = CreateItemArgs.newCreateItemArgs().
+            parent( new ItemPath( "/does-not-exist" ) ).
+            name( "myItem" ).
+            build();
+
+        // exercise
+        try
+        {
+            dao.createItem( createItemArgs );
+            fail( "Expected exception NoItemAtPathFound" );
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
             assertTrue( e instanceof NoItemAtPathFound );
             NoItemAtPathFound noItemAtPathFound = (NoItemAtPathFound) e;
             assertEquals( "/does-not-exist", noItemAtPathFound.getPath().toString() );
@@ -182,41 +169,28 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_updateExisting_given_an_Item_that_have_been_modified_since_read_then_ItemModifiedSinceRead_is_thrown()
+    public void when_createItem_given_an_already_persisted_item_then_ItemAlreadyExist_is_thrown()
         throws Exception
     {
         // setup
-        ItemId id = dao.storeNew( Item.newItem().
-            path( "/myItem" ).
+        dao.createItem( newCreateItemArgs().
+            parent( ItemPath.ROOT ).
             name( "myItem" ).
-            createdTime( CREATED_TIME ).
-            modifiedTime( CREATED_TIME ).
-            build() ).id();
-
-        dao.updateExisting( Item.newItem( id ).
-            path( "/myItem" ).
-            name( "myItem" ).
-            createdTime( CREATED_TIME ).
-            modifiedTime( CREATED_TIME.plusHours( 1 ) ).
             build() );
 
         // exercise
         try
         {
-            dao.updateExisting( Item.newItem( id ).
-                path( "/myItem" ).
+            dao.createItem( newCreateItemArgs().
+                parent( ItemPath.ROOT ).
                 name( "myItem" ).
-                createdTime( CREATED_TIME ).
-                modifiedTime( CREATED_TIME.plusMinutes( 5 ) ).
                 build() );
-
+            fail( "Expected exception ItemAlreadyExist" );
         }
         catch ( Exception e )
         {
-            assertTrue( e instanceof ItemModifiedSinceRead );
-            assertEquals(
-                "Item has been modified since it was read by you. Persisted Item's modified time is [2013-01-01T13:00:00.000Z] while yours is [2013-01-01T12:05:00.000Z]",
-                e.getMessage() );
+            assertTrue( e instanceof ItemAlreadyExist );
+            assertEquals( "Item already exist: /myItem", e.getMessage() );
         }
     }
 }

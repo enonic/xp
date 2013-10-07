@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.command.userstore.DeleteUserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -15,13 +14,8 @@ public class DeleteUserStoreHandler
 {
     private AccountDao accountDao;
 
-    public DeleteUserStoreHandler()
-    {
-        super( DeleteUserStore.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final DeleteUserStore command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

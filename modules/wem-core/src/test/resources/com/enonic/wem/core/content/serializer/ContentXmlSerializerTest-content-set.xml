@@ -4,8 +4,8 @@
   <type>my_type</type>
   <data>
     <mySet type="DataSet">
-      <myInput type="Text">1</myInput>
-      <myOtherInput type="Text">2</myOtherInput>
+      <myInput type="String">1</myInput>
+      <myOtherInput type="String">2</myOtherInput>
     </mySet>
   </data>
 </content>

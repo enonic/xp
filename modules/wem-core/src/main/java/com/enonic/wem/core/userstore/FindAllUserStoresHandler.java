@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import com.enonic.wem.api.command.userstore.FindAllUserStores;
 import com.enonic.wem.api.userstore.UserStoreNames;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -14,13 +13,8 @@ public class FindAllUserStoresHandler
 {
     private AccountDao accountDao;
 
-    public FindAllUserStoresHandler()
-    {
-        super( FindAllUserStores.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final FindAllUserStores command )
+    public void handle()
         throws Exception
     {
         final UserStoreNames userStoreNames = accountDao.getUserStoreNames( context.getJcrSession() );

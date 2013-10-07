@@ -31,7 +31,8 @@ public class ChangePasswordHandlerTest
         accountDao = Mockito.mock( AccountDao.class );
 
         this.handler = new ChangePasswordHandler();
-        handler.setAccountDao( accountDao );
+        this.handler.setContext( this.context );
+        this.handler.setAccountDao( accountDao );
     }
 
     @Test
@@ -45,7 +46,9 @@ public class ChangePasswordHandlerTest
 
         final ChangePassword command = Commands.account().changePassword().key( account ).password( newPassword );
         command.validate();
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         final Boolean passwordChanged = command.getResult();
 
@@ -62,7 +65,9 @@ public class ChangePasswordHandlerTest
 
         final ChangePassword command = Commands.account().changePassword().key( account ).password( newPassword );
         command.validate();
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
     @Test(expected = IllegalArgumentException.class)

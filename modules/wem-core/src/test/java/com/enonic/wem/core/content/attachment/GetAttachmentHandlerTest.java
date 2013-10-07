@@ -39,6 +39,7 @@ public class GetAttachmentHandlerTest
 
         attachmentDao = Mockito.mock( AttachmentDao.class );
         handler = new GetAttachmentHandler();
+        handler.setContext( this.context );
         handler.setAttachmentDao( attachmentDao );
     }
 
@@ -56,7 +57,9 @@ public class GetAttachmentHandlerTest
 
         final GetAttachment command =
             Commands.attachment().get().contentSelector( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( attachmentDao, atLeastOnce() ).getAttachment( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),

@@ -34,6 +34,7 @@ public class CreateRelationshipTypeHandlerTest
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         handler = new CreateRelationshipTypeHandler();
+        handler.setContext( this.context );
         handler.setRelationshipTypeDao( relationshipTypeDao );
     }
 
@@ -49,7 +50,9 @@ public class CreateRelationshipTypeHandlerTest
         command.toSemantic( "liked by" );
         command.allowedFromTypes( QualifiedContentTypeNames.from( "person" ) );
         command.allowedToTypes( QualifiedContentTypeNames.from( "person" ) );
-        this.handler.handle( this.context, command );
+
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).create( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );

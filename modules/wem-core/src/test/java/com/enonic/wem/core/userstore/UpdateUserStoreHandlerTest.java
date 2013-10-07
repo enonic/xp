@@ -43,6 +43,7 @@ public class UpdateUserStoreHandlerTest
         accountDao = Mockito.mock( AccountDao.class );
 
         handler = new UpdateUserStoreHandler();
+        handler.setContext( this.context );
         handler.setAccountDao( accountDao );
     }
 
@@ -63,7 +64,8 @@ public class UpdateUserStoreHandlerTest
                 return true;
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         UpdateResult updateResult = command.getResult();
 
         verify( accountDao, atLeastOnce() ).updateUserStore( isA( UserStore.class ), any( Session.class ) );
@@ -91,7 +93,8 @@ public class UpdateUserStoreHandlerTest
                 return false;
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         UpdateResult updateResult = command.getResult();
 
         verify( accountDao, never() ).updateUserStore( isA( UserStore.class ), any( Session.class ) );
@@ -119,7 +122,8 @@ public class UpdateUserStoreHandlerTest
                 return false;
             }
         } );
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
         UpdateResult updateResult = command.getResult();
 
         assertFalse( updateResult.successful() );

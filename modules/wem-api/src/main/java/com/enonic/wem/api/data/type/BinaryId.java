@@ -19,7 +19,7 @@ public class BinaryId
     }
 
     @Override
-    public Property newProperty( final String name, final Value value )
+    public Property newProperty( final java.lang.String name, final Value value )
     {
         return new Property.BinaryId( name, value );
     }

@@ -18,13 +18,13 @@
                         {
                             "name": "setProperty1",
                             "path": "mySet.setProperty1",
-                            "type": "WholeNumber",
+                            "type": "Long",
                             "value": "1"
                         },
                         {
                             "name": "setProperty2",
                             "path": "mySet.setProperty2",
-                            "type": "WholeNumber",
+                            "type": "Long",
                             "value": "2"
                         }
                     ]
@@ -49,13 +49,13 @@
                 {
                     "name": "myArray",
                     "path": "myArray[0]",
-                    "type": "Text",
+                    "type": "String",
                     "value": "arrayValue1"
                 },
                 {
                     "name": "myArray",
                     "path": "myArray[1]",
-                    "type": "Text",
+                    "type": "String",
                     "value": "arrayValue2"
                 },
                 {
@@ -66,13 +66,13 @@
                         {
                             "name": "myArray",
                             "path": "mySetWithArray.myArray[0]",
-                            "type": "DecimalNumber",
+                            "type": "Double",
                             "value": "3.14159"
                         },
                         {
                             "name": "myArray",
                             "path": "mySetWithArray.myArray[1]",
-                            "type": "DecimalNumber",
+                            "type": "Double",
                             "value": "1.333"
                         }
                     ]

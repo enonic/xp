@@ -35,7 +35,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.space.SpaceName;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
@@ -67,13 +66,8 @@ public class CreateContentHandler
 
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
 
-    public CreateContentHandler()
-    {
-        super( CreateContent.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final CreateContent command )
+    public void handle()
         throws Exception
     {
         try

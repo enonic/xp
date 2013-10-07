@@ -54,6 +54,7 @@ public class GetSchemaTreeHandlerTest
         mixinDao = Mockito.mock( MixinDao.class );
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         handler = new GetSchemaTreeHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
         handler.setMixinDao( mixinDao );
         handler.setRelationshipTypeDao( relationshipTypeDao );
@@ -103,7 +104,8 @@ public class GetSchemaTreeHandlerTest
 
         // exercise
         final GetSchemaTree command = Commands.schema().getTree();
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );

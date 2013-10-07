@@ -12,13 +12,13 @@ public class SingleSelectorTest
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
         new SingleSelector().checkBreaksRequiredContract(
-            Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "" ).build() );
+            Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
         new SingleSelector().checkBreaksRequiredContract(
-            Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( " " ).build() );
+            Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( " " ).build() );
     }
 }

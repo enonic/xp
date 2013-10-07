@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.schema.content.form.Input;
@@ -30,11 +31,13 @@ public class CreateMixinHandlerTest
     public void setUp()
         throws Exception
     {
+        super.client = Mockito.mock( Client.class );
         super.initialize();
 
         mixinDao = Mockito.mock( MixinDao.class );
 
         handler = new CreateMixinHandler();
+        handler.setContext( this.context );
         handler.setMixinDao( mixinDao );
     }
 
@@ -45,11 +48,11 @@ public class CreateMixinHandlerTest
         // setup
         final Input age = newInput().name( "age" ).
             inputType( InputTypes.TEXT_LINE ).build();
-        CreateMixin command =
-            Commands.mixin().create().name( "age" ).addFormItem( age ).displayName( "Age" );
+        CreateMixin command = Commands.mixin().create().name( "age" ).addFormItem( age ).displayName( "Age" );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         Mockito.verify( mixinDao, Mockito.atLeastOnce() ).create( Mockito.isA( Mixin.class ), Mockito.any( Session.class ) );

@@ -22,27 +22,27 @@ public class PropertyTest
             @Override
             public Object getObjectX()
             {
-                return newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
+                return newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "aaa" ).build();
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "bbb" ).build(),
-                    newProperty().name( "myOtherData" ).type( ValueTypes.TEXT ).value( "aaa" ).build(),
+                return new Object[]{newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "bbb" ).build(),
+                    newProperty().name( "myOtherData" ).type( ValueTypes.STRING ).value( "aaa" ).build(),
                     newProperty().name( "myData" ).type( ValueTypes.HTML_PART ).value( "aaa" ).build()};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
+                return newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "aaa" ).build();
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return newProperty().name( "myData" ).type( ValueTypes.TEXT ).value( "aaa" ).build();
+                return newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "aaa" ).build();
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -51,7 +51,7 @@ public class PropertyTest
     @Test
     public void getDate_given_value_as_string()
     {
-        Property property = newProperty().name( "myDate" ).type( ValueTypes.TEXT ).value( "2012-08-31" ).build();
+        Property property = newProperty().name( "myDate" ).type( ValueTypes.STRING ).value( "2012-08-31" ).build();
         assertEquals( DateMidnight.class, property.getDateMidnight().getClass() );
         assertEquals( new DateMidnight( 2012, 8, 31 ), property.getDateMidnight() );
     }
@@ -59,7 +59,7 @@ public class PropertyTest
     @Test
     public void getDouble_given_value_as_long()
     {
-        Property property = newProperty().name( "myNumber" ).type( ValueTypes.WHOLE_NUMBER ).value( (long) 2 ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.LONG ).value( (long) 2 ).build();
         assertEquals( Double.class, property.getDouble().getClass() );
         assertEquals( 2.0, property.getDouble() );
     }
@@ -73,21 +73,21 @@ public class PropertyTest
     @Test
     public void getLong_given_value_as_long()
     {
-        Property property = newProperty().name( "myNumber" ).type( ValueTypes.WHOLE_NUMBER ).value( 1l ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.LONG ).value( 1l ).build();
         assertEquals( new Long( 1 ), property.getLong() );
     }
 
     @Test
     public void getLong_given_value_as_decimal_number()
     {
-        Property property = newProperty().name( "myNumber" ).type( ValueTypes.DECIMAL_NUMBER ).value( 1.1 ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.DOUBLE ).value( 1.1 ).build();
         assertEquals( new Long( 1 ), property.getLong() );
     }
 
     @Test
     public void getLong_given_value_as_string()
     {
-        Property property = newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "1" ).build();
+        Property property = newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "1" ).build();
         assertEquals( new Long( 1 ), property.getLong() );
     }
 

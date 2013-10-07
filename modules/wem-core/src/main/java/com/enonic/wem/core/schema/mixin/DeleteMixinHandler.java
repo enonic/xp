@@ -6,7 +6,6 @@ import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.exception.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
@@ -16,13 +15,8 @@ public final class DeleteMixinHandler
 {
     private MixinDao mixinDao;
 
-    public DeleteMixinHandler()
-    {
-        super( DeleteMixin.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final DeleteMixin command )
+    public void handle()
         throws Exception
     {
         final QualifiedMixinName qualifiedMixinName = command.getName();

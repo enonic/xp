@@ -1,6 +1,5 @@
 {
     "name": "mixin-using-norwegian-county",
-    "module": "demo",
     "displayName": "Using mixin: norwegian-county",
     "superType": "structured",
     "isAbstract": false,
@@ -9,7 +8,7 @@
         {
             "MixinReference": {
                 "name": "norwegian-county",
-                "reference": "demo:norwegian-county"
+                "reference": "norwegian-county"
             }
         }
     ]

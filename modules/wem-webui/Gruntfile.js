@@ -11,7 +11,7 @@ module.exports = function (grunt) {
 
             ts: {
                 api: {
-                    src: ['../wem-webapp/src/main/webapp/admin2/api/js/main.ts'],
+                    src: ['../wem-webapp/src/main/webapp/admin/api/js/main.ts'],
                     out: 'target/main/js/api.js',
                     options: {
                         sourcemap: false,
@@ -25,11 +25,11 @@ module.exports = function (grunt) {
                     browsers: ['PhantomJS'],
                     files: [
                         '../wem-webapp/src/main/webapp/admin/resources/lib/ext/ext-all.js',
-                        '../wem-webapp/src/main/webapp/admin2/resources/lib/jquery-2.0.2.js',
-                        '../wem-webapp/src/main/webapp/admin2/resources/lib/mousetrap.min.js',
-                        '../wem-webapp/src/main/webapp/admin2/resources/lib/signals.js',
-                        '../wem-webapp/src/main/webapp/admin2/resources/lib/hasher.js',
-                        '../wem-webapp/src/main/webapp/admin2/resources/lib/crossroads.js',
+                        '../wem-webapp/src/main/webapp/admin/resources/lib/jquery-2.0.2.js',
+                        '../wem-webapp/src/main/webapp/admin/resources/lib/mousetrap.min.js',
+                        '../wem-webapp/src/main/webapp/admin/resources/lib/signals.js',
+                        '../wem-webapp/src/main/webapp/admin/resources/lib/hasher.js',
+                        '../wem-webapp/src/main/webapp/admin/resources/lib/crossroads.js',
                         'target/main/js/api.js',
                         'src/test/js/**/*.js'
                     ],

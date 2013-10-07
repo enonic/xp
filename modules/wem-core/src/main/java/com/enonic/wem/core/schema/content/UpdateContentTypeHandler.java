@@ -12,7 +12,6 @@ import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidator;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -24,13 +23,8 @@ public final class UpdateContentTypeHandler
 {
     private ContentTypeDao contentTypeDao;
 
-    public UpdateContentTypeHandler()
-    {
-        super( UpdateContentType.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final UpdateContentType command )
+    public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();

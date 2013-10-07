@@ -7,7 +7,6 @@ import com.enonic.wem.api.command.schema.content.ValidateContentType;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeFetcher;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidator;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -17,16 +16,10 @@ import static com.enonic.wem.api.schema.content.validator.ContentTypeValidator.n
 public class ValidateContentTypeHandler
     extends CommandHandler<ValidateContentType>
 {
-
     private ContentTypeDao contentTypeDao;
 
-    public ValidateContentTypeHandler()
-    {
-        super( ValidateContentType.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final ValidateContentType command )
+    public void handle()
         throws Exception
     {
         Session session = context.getJcrSession();

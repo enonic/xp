@@ -43,6 +43,7 @@ public class UpdateContentTypeHandlerTest
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new UpdateContentTypeHandler();
+        handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
     }
 
@@ -76,7 +77,8 @@ public class UpdateContentTypeHandlerTest
         command.editor( editor );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
 
         // verify
         verify( contentTypeDao, atLeastOnce() ).update( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
@@ -114,7 +116,8 @@ public class UpdateContentTypeHandlerTest
         command.editor( editor );
 
         // exercise
-        this.handler.handle( this.context, command );
+        this.handler.setCommand( command );
+        this.handler.handle();
     }
 
 }

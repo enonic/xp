@@ -9,21 +9,62 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.ItemAlreadyExist;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemAtPathFound;
+import com.enonic.wem.api.item.NoItemWithIdFound;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 class ItemJcrHelper
 {
     private static final String ITEMS_NODE = "items";
 
-    private static final String ITEMS_PATH = JcrConstants.ROOT_NODE + "/" + ITEMS_NODE + "/";
+    static final String ITEMS_PATH = JcrConstants.ROOT_NODE + "/" + ITEMS_NODE + "/";
 
     private final Session session;
 
     ItemJcrHelper( final Session session )
     {
         this.session = session;
+    }
+
+    private Node itemsNode()
+    {
+        try
+        {
+            final Node root = session.getRootNode();
+            return root.getNode( ITEMS_PATH );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to get itemsNode", e );
+        }
+    }
+
+    void ensurePath( final ItemPath path )
+    {
+        try
+        {
+            Node parentNode = itemsNode();
+            for ( int i = 0; i < path.elementCount(); i++ )
+            {
+                final String pathElement = path.getElementAsString( i );
+                if ( !parentNode.hasNode( pathElement ) )
+                {
+                    parentNode = parentNode.addNode( pathElement );
+                }
+                else
+                {
+                    parentNode = parentNode.getNode( pathElement );
+                }
+            }
+
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to ensurePath: " + path, e );
+        }
     }
 
     Item persistNewItem( final Item item, final Node parentItemNode )
@@ -36,7 +77,16 @@ class ItemJcrHelper
         }
         catch ( ItemExistsException e )
         {
-            throw new ItemAlreadyExist( item.path() );
+            try
+            {
+                final Node existingItemNode = parentItemNode.getNode( item.name() );
+                final Item existingItem = ItemJcrMapper.toItem( existingItemNode ).build();
+                throw new ItemAlreadyExist( existingItem.path() );
+            }
+            catch ( RepositoryException e1 )
+            {
+                throw new RuntimeException( "Failed to createChild", e );
+            }
         }
         catch ( RepositoryException e )
         {
@@ -44,20 +94,8 @@ class ItemJcrHelper
         }
     }
 
-    private Node itemsNode()
-    {
-        try
-        {
-            Node root = session.getRootNode();
-            return root.getNode( ITEMS_PATH );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( "Failed to get itemsNode", e );
-        }
-    }
-
     Node getItemNodeByPath( final ItemPath path )
+        throws NoItemAtPathFound
     {
         try
         {
@@ -86,7 +124,21 @@ class ItemJcrHelper
         }
     }
 
+    Item updateItemNode( final Node existingItemNode, final UpdateItemArgs updateItemArgs )
+    {
+        try
+        {
+            ItemJcrMapper.updateItemNode( updateItemArgs, existingItemNode );
+            return ItemJcrMapper.toItem( existingItemNode ).build();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to updateItemNode", e );
+        }
+    }
+
     Node getItemNodeById( final ItemId id )
+        throws NoItemWithIdFound
     {
         try
         {
@@ -103,6 +155,7 @@ class ItemJcrHelper
     }
 
     Item getItemById( final ItemId id )
+        throws NoItemWithIdFound
     {
         try
         {
@@ -120,8 +173,11 @@ class ItemJcrHelper
     }
 
     Item getItemByPath( final ItemPath path )
+        throws NoItemAtPathFound
     {
         final Node itemNode = getItemNodeByPath( path );
         return ItemJcrMapper.toItem( itemNode ).build();
     }
+
+
 }

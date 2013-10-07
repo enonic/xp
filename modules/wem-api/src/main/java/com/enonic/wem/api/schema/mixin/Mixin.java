@@ -1,15 +1,20 @@
 package com.enonic.wem.api.schema.mixin;
 
 
+import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.ItemTranslatable;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.form.FormItem;
 import com.enonic.wem.api.schema.content.form.FormItems;
 
+import static com.enonic.wem.api.item.Item.newItem;
+
 public class Mixin
     extends BaseSchema<QualifiedMixinName>
-    implements Schema
+    implements Schema, ItemTranslatable
 {
     private final FormItems formItems;
 
@@ -28,12 +33,29 @@ public class Mixin
     @Override
     public QualifiedMixinName getQualifiedName()
     {
-        return QualifiedMixinName.from(getName() );
+        return QualifiedMixinName.from( getName() );
     }
 
     public FormItems getFormItems()
     {
         return formItems;
+    }
+
+    @Override
+    public Item toItem( final ItemPath parent )
+    {
+        final Item.Builder builder = newItem();
+
+        builder.name( this.getName() );
+        builder.createdTime( this.getCreatedTime() );
+        builder.modifiedTime( this.getModifiedTime() );
+        builder.creator( this.getCreator() );
+        builder.modifier( this.getModifier() );
+        builder.property( "displayName", this.getDisplayName() );
+        // TODO: formItems
+        builder.icon( this.getIcon() );
+
+        return builder.build();
     }
 
     public static Builder newMixin()

@@ -18,6 +18,7 @@ public final class ObjectMapperHelper
         mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
         mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
         mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
+        mapper.registerModule( new JodaModule() );
         return mapper;
     }
 }

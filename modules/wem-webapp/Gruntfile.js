@@ -9,17 +9,8 @@ module.exports = function (grunt) {
 
         ts: {
             api: {
-                src: ['src/main/webapp/admin2/api/js/main.ts'],
-                out: 'src/main/webapp/admin2/api/js/api.js',
-                options: {
-                    // target: 'es5',
-                    sourcemap: true,
-                    declaration: true
-                }
-            },
-            api_test: {
-                src: ['src/test/webapp/admin2/api/js/**/*.ts'],
-                out: 'src/test/webapp/admin2/api/js/api-test.js',
+                src: ['src/main/webapp/admin/api/js/main.ts'],
+                out: 'src/main/webapp/admin/api/js/api.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true,
@@ -27,40 +18,40 @@ module.exports = function (grunt) {
                 }
             },
             space_manager: {
-                src: ['src/main/webapp/admin2/apps/space-manager/js/main.ts'],
-                out: 'src/main/webapp/admin2/apps/space-manager/js/all.js',
+                src: ['src/main/webapp/admin/apps/space-manager/js/main.ts'],
+                out: 'src/main/webapp/admin/apps/space-manager/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
                 }
             },
             content_manager: {
-                src: ['src/main/webapp/admin2/apps/content-manager/js/main.ts'],
-                out: 'src/main/webapp/admin2/apps/content-manager/js/all.js',
+                src: ['src/main/webapp/admin/apps/content-manager/js/main.ts'],
+                out: 'src/main/webapp/admin/apps/content-manager/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
                 }
             },
             schema_manager: {
-                src: ['src/main/webapp/admin2/apps/schema-manager/js/main.ts'],
-                out: 'src/main/webapp/admin2/apps/schema-manager/js/all.js',
+                src: ['src/main/webapp/admin/apps/schema-manager/js/main.ts'],
+                out: 'src/main/webapp/admin/apps/schema-manager/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
                 }
             },
             app_launcher: {
-                src: ['src/main/webapp/admin2/apps/app-launcher/js/main.ts'],
-                out: 'src/main/webapp/admin2/apps/app-launcher/js/all.js',
+                src: ['src/main/webapp/admin/apps/app-launcher/js/main.ts'],
+                out: 'src/main/webapp/admin/apps/app-launcher/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
                 }
             },
             live_edit: {
-                src: ['src/main/webapp/admin2/live-edit/js/Main.ts'],
-                out: 'src/main/webapp/admin2/live-edit/js/all.js',
+                src: ['src/main/webapp/admin/live-edit/js/Main.ts'],
+                out: 'src/main/webapp/admin/live-edit/js/all.js',
                 options: {
                     // target: 'es5',
                     sourcemap: true
@@ -74,13 +65,13 @@ module.exports = function (grunt) {
                     compress: true
                 },
                 files: {
-                    "src/main/webapp/admin2/live-edit/css/live-edit.css": "src/main/webapp/admin2/live-edit/css/less/live-edit.less"
+                    "src/main/webapp/admin2/live-edit/css/live-edit.css": "src/main/webapp/admin/live-edit/css/less/live-edit.less"
                 }
             }
         },
 
         watch: {
-            files: ['src/main/webapp/admin2/**/*.ts', 'src/test/webapp/admin2/**/*.ts'],
+            files: ['src/main/webapp/admin/**/*.ts', 'src/test/webapp/admin/**/*.ts'],
             tasks: ['ts']
         }
 

@@ -4,16 +4,21 @@ package com.enonic.wem.core.item.dao;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.NoItemAtPathFound;
+import com.enonic.wem.api.item.NoItemWithIdFound;
+
+import static com.enonic.wem.api.item.Item.newItem;
 
 public class ItemJcrDao
     implements ItemDao
 {
-
     private final Session session;
 
     private final ItemJcrHelper jcrHelper;
@@ -22,36 +27,53 @@ public class ItemJcrDao
     {
         this.session = session;
         this.jcrHelper = new ItemJcrHelper( this.session );
+
+        // TODO: A temporary hack to ensure that paths to root containers of different types of items already exists
+        ensurePath( new ItemPath( "mixins" ) );
+    }
+
+    private void ensurePath( final ItemPath path )
+    {
+        jcrHelper.ensurePath( path );
     }
 
     @Override
-    public Item storeNew( final Item item )
+    public Item createItem( final CreateItemArgs createItemArgs )
     {
-        Preconditions.checkArgument( item.id() == null, "New Item to store cannot have an ItemId: " + item.id() );
-        final ItemPath path = item.path();
-        Preconditions.checkNotNull( path, "Path of Item must be specified " );
-        Preconditions.checkArgument( path.isAbsolute(), "Path to Item must be absolute: " + path.toString() );
-        final ItemPath parentPath = path.getParentPath();
+        Preconditions.checkNotNull( createItemArgs.parent(), "Path of parent Item must be specified" );
+        Preconditions.checkArgument( createItemArgs.parent().isAbsolute(),
+                                     "Path to parent Item must be absolute: " + createItemArgs.parent() );
 
-        final Node parentItemNode = jcrHelper.getItemNodeByPath( parentPath );
-        return jcrHelper.persistNewItem( item, parentItemNode );
+        final Node parentItemNode = jcrHelper.getItemNodeByPath( createItemArgs.parent() );
+
+        final Item newItem = newItem().
+            createdTime( DateTime.now() ).
+            creator( createItemArgs.creator() ).
+            parent( createItemArgs.parent() ).
+            name( createItemArgs.name() ).
+            icon( createItemArgs.icon() ).
+            rootDataSet( createItemArgs.rootDataSet() ).
+            build();
+
+        return jcrHelper.persistNewItem( newItem, parentItemNode );
     }
 
     @Override
-    public Item updateExisting( final Item item )
+    public Item updateItem( final UpdateItemArgs updateItemArgs )
     {
-        Preconditions.checkNotNull( item.id(), "Item to store must have an ItemId specified" );
-        final Node existingItemNode = jcrHelper.getItemNodeById( item.id() );
-        return jcrHelper.updateItemNode( existingItemNode, item );
+        Preconditions.checkNotNull( updateItemArgs.itemToUpdate(), "itemToUpdate must be specified" );
+        final Node existingItemNode = jcrHelper.getItemNodeById( updateItemArgs.itemToUpdate() );
+        return jcrHelper.updateItemNode( existingItemNode, updateItemArgs );
     }
 
     public Item getItemById( final ItemId id )
+        throws NoItemWithIdFound
     {
         return this.jcrHelper.getItemById( id );
     }
 
     public Item getItemByPath( final ItemPath path )
-        throws NoItemFoundException
+        throws NoItemAtPathFound
     {
         Preconditions.checkArgument( path.isAbsolute(), "path must be absolute: " + path.toString() );
 

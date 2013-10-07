@@ -4,8 +4,8 @@
   <type>my_type</type>
   <data>
     <mySet type="DataSet">
-      <myArray type="Text">1</myArray>
-      <myArray type="Text">2</myArray>
+      <myArray type="String">1</myArray>
+      <myArray type="String">2</myArray>
     </mySet>
   </data>
 </content>

@@ -6,7 +6,6 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.account.ValidatePassword;
 import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -15,13 +14,8 @@ public final class ValidatePasswordHandler
 {
     private AccountDao accountDao;
 
-    public ValidatePasswordHandler()
-    {
-        super( ValidatePassword.class );
-    }
-
     @Override
-    public void handle( final CommandContext context, final ValidatePassword command )
+    public void handle()
         throws Exception
     {
         final AccountKey user = command.getKey();
