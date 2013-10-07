@@ -4,12 +4,12 @@
         "deletable": true,
         "displayName": null,
         "editable": true,
-        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:module:contenttype",
-        "key": "ContentType:module:contenttype",
+        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:contenttype",
+        "key": "ContentType:contenttype",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
-        "module": "module",
+        "module": null,
         "name": "contenttype",
-        "qualifyName": "module:contenttype",
+        "qualifyName": "contenttype",
         "type": "ContentType"
     },
     {
@@ -17,12 +17,14 @@
         "deletable": true,
         "displayName": "mixin",
         "editable": true,
-        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:module:mixin",
-        "key": "Mixin:module:mixin",
+        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mixin",
+        "key": "Mixin:mixin",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
-        "module": "module",
+        "module": null,
         "name": "mixin",
-        "qualifyName": "module:mixin",
+        "qualifyName": "mixin",
         "type": "Mixin"
     }
 ]
+
+

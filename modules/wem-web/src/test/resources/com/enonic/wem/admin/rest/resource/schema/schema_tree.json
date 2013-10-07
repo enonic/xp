@@ -6,12 +6,12 @@
             "displayName": null,
             "editable": true,
             "hasChildren": true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:tree:rootcontenttype",
-            "key": "ContentType:tree:rootcontenttype",
+            "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:rootcontenttype",
+            "key": "ContentType:rootcontenttype",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
-            "module": "tree",
+            "module": null,
             "name": "rootcontenttype",
-            "qualifyName": "tree:rootcontenttype",
+            "qualifyName": "rootcontenttype",
             "schemas": [
                 {
                     "createdTime": "2013-08-23T12:55:09.162Z",
@@ -19,12 +19,12 @@
                     "displayName": null,
                     "editable": true,
                     "hasChildren": false,
-                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:tree:childcontenttype",
-                    "key": "ContentType:tree:childcontenttype",
+                    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:childcontenttype",
+                    "key": "ContentType:childcontenttype",
                     "modifiedTime": "2013-08-23T12:55:09.162Z",
-                    "module": "tree",
+                    "module": null,
                     "name": "childcontenttype",
-                    "qualifyName": "tree:childcontenttype",
+                    "qualifyName": "childcontenttype",
                     "schemas": [ ],
                     "type": "ContentType"
                 }
@@ -37,12 +37,12 @@
             "displayName": "rootmixin",
             "editable": true,
             "hasChildren": true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:tree:rootmixin",
-            "key": "Mixin:tree:rootmixin",
+            "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:rootmixin",
+            "key": "Mixin:rootmixin",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
-            "module": "tree",
+            "module": null,
             "name": "rootmixin",
-            "qualifyName": "tree:rootmixin",
+            "qualifyName": "rootmixin",
             "schemas": [
                 {
                     "createdTime": "2013-08-23T12:55:09.162Z",
@@ -50,12 +50,12 @@
                     "displayName": "childmixin",
                     "editable": true,
                     "hasChildren": false,
-                    "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:tree:childmixin",
-                    "key": "Mixin:tree:childmixin",
+                    "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:childmixin",
+                    "key": "Mixin:childmixin",
                     "modifiedTime": "2013-08-23T12:55:09.162Z",
-                    "module": "tree",
+                    "module": null,
                     "name": "childmixin",
-                    "qualifyName": "tree:childmixin",
+                    "qualifyName": "childmixin",
                     "schemas": [ ],
                     "type": "Mixin"
                 }
@@ -68,12 +68,12 @@
             "displayName": null,
             "editable": true,
             "hasChildren": true,
-            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:tree:rootrelationshiptype",
-            "key": "RelationshipType:tree:rootrelationshiptype",
+            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:rootrelationshiptype",
+            "key": "RelationshipType:rootrelationshiptype",
             "modifiedTime": "2013-08-23T12:55:09.162Z",
-            "module": "tree",
+            "module": null,
             "name": "rootrelationshiptype",
-            "qualifyName": "tree:rootrelationshiptype",
+            "qualifyName": "rootrelationshiptype",
             "schemas": [
                 {
                     "createdTime": "2013-08-23T12:55:09.162Z",
@@ -81,12 +81,12 @@
                     "displayName": null,
                     "editable": true,
                     "hasChildren": false,
-                    "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:tree:childrelationshiptype",
-                    "key": "RelationshipType:tree:childrelationshiptype",
+                    "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:childrelationshiptype",
+                    "key": "RelationshipType:childrelationshiptype",
                     "modifiedTime": "2013-08-23T12:55:09.162Z",
-                    "module": "tree",
+                    "module": null,
                     "name": "childrelationshiptype",
-                    "qualifyName": "tree:childrelationshiptype",
+                    "qualifyName": "childrelationshiptype",
                     "schemas": [ ],
                     "type": "RelationshipType"
                 }
@@ -96,3 +96,5 @@
     ],
     "total": 6
 }
+
+
