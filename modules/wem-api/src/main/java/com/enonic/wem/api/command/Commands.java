@@ -4,6 +4,7 @@ import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.binary.BinaryCommands;
+import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.resource.ResourceCommands;
 import com.enonic.wem.api.command.schema.SchemaCommands;
@@ -41,6 +42,8 @@ public final class Commands
     private static final AttachmentCommands ATTACHMENT_COMMANDS = new AttachmentCommands();
 
     private static final ResourceCommands RESOURCE_COMMANDS = new ResourceCommands();
+
+    private static final ModuleCommands MODULE_COMMANDS = new ModuleCommands();
 
     private Commands()
     {
@@ -109,6 +112,11 @@ public final class Commands
     public static ResourceCommands resource()
     {
         return RESOURCE_COMMANDS;
+    }
+
+    public static ModuleCommands module()
+    {
+        return MODULE_COMMANDS;
     }
 
 }
