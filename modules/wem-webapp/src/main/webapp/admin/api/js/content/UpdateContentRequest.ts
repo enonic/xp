@@ -8,7 +8,7 @@ module api_content {
 
         private qualifiedContentTypeName:string;
 
-        private contentData:api_content.ContentData;
+        private contentData:ContentData;
 
         private displayName:string;
 

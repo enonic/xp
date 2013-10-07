@@ -85,7 +85,7 @@ module api_data{
 
             var dataArray:api_data_json.DataJson[] = [];
 
-            this.getDataArray().forEach((data:api_data.Data) => {
+            this.getDataArray().forEach((data:Data) => {
                 dataArray.push(data.toDataJson());
             });
 
