@@ -3,8 +3,8 @@
   <name/>
   <type>my_type</type>
   <data>
-    <myArray type="Text">1</myArray>
-    <myArray type="Text">2</myArray>
+    <myArray type="String">1</myArray>
+    <myArray type="String">2</myArray>
   </data>
 </content>
 

@@ -20,7 +20,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Value;
-
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
@@ -103,7 +102,7 @@ public class CreateContentHandlerTest
         command.owner( UserKey.from( "myStore:myUser" ) );
         command.contentType( QualifiedContentTypeName.from( "my_content_type" ) );
         ContentData contentData = new ContentData();
-        contentData.setProperty( "myText", new Value.Text( "abc" ) );
+        contentData.setProperty( "myText", new Value.String( "abc" ) );
         contentData.setProperty( "myReference", new Value.ContentId( ContentId.from( "123" ) ) );
         contentData.setProperty( "mySet.myRelatedContent", new Value.ContentId( ContentId.from( "124" ) ) );
         command.contentData( contentData );

@@ -274,7 +274,7 @@ public final class Item
         {
             if ( value != null )
             {
-                this.dataSet.setProperty( path, new Value.Text( value ) );
+                this.dataSet.setProperty( path, new Value.String( value ) );
             }
             return this;
         }

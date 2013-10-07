@@ -91,7 +91,7 @@ public class ValidateContentDataHandlerTest
             ContentTypes.from( contentType ) );
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
-        content.getContentData().setProperty( "mySet.myInput", new Value.Text( "thing" ) );
+        content.getContentData().setProperty( "mySet.myInput", new Value.String( "thing" ) );
 
         // exercise
         final ValidateContentData command =

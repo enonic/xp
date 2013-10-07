@@ -41,7 +41,7 @@ public class ContentDaoImplTest
     {
         // setup
         Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
 
         // exercise
         contentDao.create( content, session );
@@ -58,7 +58,7 @@ public class ContentDaoImplTest
     {
         // setup
         Content content = newContent().path( ContentPath.from( "otherspace:/" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
 
         // exercise
         contentDao.create( content, session );
@@ -96,7 +96,7 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
 
         // exercise
         contentDao.create( content, session );
@@ -115,10 +115,10 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content rootContent = newContent().path( ContentPath.from( "myspace:rootContent" ) ).build();
-        rootContent.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
+        rootContent.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
 
         Content belowRootContent = newContent().path( ContentPath.from( "myspace:rootContent/belowRootContent" ) ).build();
-        belowRootContent.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
+        belowRootContent.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
 
         // exercise
         contentDao.create( rootContent, session );
@@ -141,9 +141,9 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "1" ) );
-        content.getContentData().setProperty( "mySet.myData", new Value.Text( "2" ) );
-        content.getContentData().setProperty( "mySet.myOtherData", new Value.Text( "3" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "1" ) );
+        content.getContentData().setProperty( "mySet.myData", new Value.String( "2" ) );
+        content.getContentData().setProperty( "mySet.myOtherData", new Value.String( "3" ) );
 
         // exercise
         contentDao.create( content, session );
@@ -185,14 +185,14 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content newContent = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        newContent.getContentData().setProperty( "myData", new Value.Text( "initial value" ) );
+        newContent.getContentData().setProperty( "myData", new Value.String( "initial value" ) );
 
         // setup: create content to update
         contentDao.create( newContent, session );
         commit();
 
         Content updateContent = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        updateContent.getContentData().setProperty( "myData", new Value.Text( "changed value" ) );
+        updateContent.getContentData().setProperty( "myData", new Value.String( "changed value" ) );
 
         // exercise
         contentDao.update( updateContent, true, session );
@@ -212,7 +212,7 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
 
         contentDao.create( content, session );
         commit();
@@ -294,8 +294,8 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
-        content.getContentData().setProperty( "mySet.myData", new Value.Text( "myOtherValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
+        content.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue" ) );
         contentDao.create( content, session );
         commit();
 
@@ -318,13 +318,13 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
-        content.getContentData().setProperty( "mySet.myData", new Value.Text( "myOtherValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
+        content.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue" ) );
         contentDao.create( content, session );
 
         Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
-        content2.getContentData().setProperty( "myData", new Value.Text( "myValue2" ) );
-        content2.getContentData().setProperty( "mySet.myData", new Value.Text( "myOtherValue2" ) );
+        content2.getContentData().setProperty( "myData", new Value.String( "myValue2" ) );
+        content2.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue2" ) );
         contentDao.create( content2, session );
         commit();
 
@@ -353,13 +353,13 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
-        content.getContentData().setProperty( "mySet.myData", new Value.Text( "myOtherValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
+        content.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue" ) );
         ContentId contentId1 = contentDao.create( content, session );
 
         Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
-        content2.getContentData().setProperty( "myData", new Value.Text( "myValue2" ) );
-        content2.getContentData().setProperty( "mySet.myData", new Value.Text( "myOtherValue2" ) );
+        content2.getContentData().setProperty( "myData", new Value.String( "myValue2" ) );
+        content2.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue2" ) );
         ContentId contentId2 = contentDao.create( content2, session );
         commit();
 
@@ -388,8 +388,8 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
-        content.getContentData().setProperty( "mySet.myData", new Value.Text( "myOtherValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
+        content.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue" ) );
         ContentId contentId = contentDao.create( content, session );
         commit();
 
@@ -412,7 +412,7 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         contentDao.create( createContent( "myspace:parentWithoutChildren" ), session );
-        contentDao.create( createContent( "myspace:parentWithChild"), session );
+        contentDao.create( createContent( "myspace:parentWithChild" ), session );
         contentDao.create( createContent( "myspace:parentWithChild/child" ), session );
         commit();
 
@@ -479,8 +479,8 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.Text( "myValue" ) );
-        content.getContentData().setProperty( "mySet.myData", new Value.Text( "myOtherValue" ) );
+        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
+        content.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue" ) );
         ContentId contentId = contentDao.create( content, session );
         commit();
 

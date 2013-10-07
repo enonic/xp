@@ -8,7 +8,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.schema.content.form.InvalidValueException;
 
 public class GeographicCoordinate
-    extends ValueType<String>
+    extends ValueType<java.lang.String>
 {
     private static final double LATITUDE_RANGE_START = -90.0;
 
@@ -30,7 +30,7 @@ public class GeographicCoordinate
     }
 
     @Override
-    public Property newProperty( final String name, final Value value )
+    public Property newProperty( final java.lang.String name, final Value value )
     {
         return new Property.GeographicCoordinate( name, value );
     }
@@ -77,31 +77,31 @@ public class GeographicCoordinate
         }
     }
 
-    public static double getLatitude( final String value )
+    public static double getLatitude( final java.lang.String value )
     {
         return parse( value ).latitude;
     }
 
-    public static double getLongitude( final String value )
+    public static double getLongitude( final java.lang.String value )
     {
         return parse( value ).longitude;
     }
 
-    private static ValueHolder parse( final String str )
+    private static ValueHolder parse( final java.lang.String str )
     {
         final ValueHolder valueHolder = new ValueHolder();
         final StringTokenizer st = new StringTokenizer( str, "," );
-        valueHolder.latitude = Double.parseDouble( st.nextToken() );
-        valueHolder.longitude = Double.parseDouble( st.nextToken() );
+        valueHolder.latitude = java.lang.Double.parseDouble( st.nextToken() );
+        valueHolder.longitude = java.lang.Double.parseDouble( st.nextToken() );
         return valueHolder;
     }
 
 
     private static class ValueHolder
     {
-        private Double latitude;
+        private java.lang.Double latitude;
 
-        private Double longitude;
+        private java.lang.Double longitude;
 
     }
 }

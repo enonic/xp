@@ -18,7 +18,7 @@ public class Double
     }
 
     @Override
-    public Property newProperty( final String name, final Value value )
+    public Property newProperty( final java.lang.String name, final Value value )
     {
         return new Property.Double( name, value );
     }

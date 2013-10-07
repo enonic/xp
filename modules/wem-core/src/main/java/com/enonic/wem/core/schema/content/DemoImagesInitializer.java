@@ -80,7 +80,7 @@ public class DemoImagesInitializer
     private ContentData createContentData( final String attachmentName )
     {
         final ContentData dataSet = new ContentData();
-        dataSet.add( Property.newProperty( "mimeType" ).type( ValueTypes.TEXT ).value( "image/png" ).build() );
+        dataSet.add( Property.newProperty( "mimeType" ).type( ValueTypes.STRING ).value( "image/png" ).build() );
         dataSet.add( Property.newProperty( "image" ).type( ValueTypes.ATTACHMENT_NAME ).value( attachmentName ).build() );
         return dataSet;
     }

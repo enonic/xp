@@ -19,7 +19,7 @@ public class DateTime
     }
 
     @Override
-    public Property newProperty( final String name, final Value value )
+    public Property newProperty( final java.lang.String name, final Value value )
     {
         return new Property.Date( name, value );
     }

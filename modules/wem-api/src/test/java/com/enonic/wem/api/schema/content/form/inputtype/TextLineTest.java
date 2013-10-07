@@ -15,13 +15,14 @@ public class TextLineTest
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_empty_throws_exception()
     {
-        new TextLine().checkBreaksRequiredContract( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "" ).build() );
+        new TextLine().checkBreaksRequiredContract( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "" ).build() );
     }
 
     @Test(expected = BreaksRequiredContractException.class)
     public void breaksRequiredContract_textLine_which_is_blank_throws_exception()
     {
-        new TextLine().checkBreaksRequiredContract( Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( " " ).build() );
+        new TextLine().checkBreaksRequiredContract(
+            Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( " " ).build() );
     }
 
     @Test
@@ -30,7 +31,7 @@ public class TextLineTest
         try
         {
             new TextLine().checkBreaksRequiredContract(
-                Property.newProperty().name( "myText" ).type( ValueTypes.TEXT ).value( "something" ).build() );
+                Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "something" ).build() );
         }
         catch ( Exception e )
         {

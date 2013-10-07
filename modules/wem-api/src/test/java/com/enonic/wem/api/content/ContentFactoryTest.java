@@ -22,7 +22,7 @@ public class ContentFactoryTest
         // setup
         ContentData contentData = new ContentData();
         contentData.add( new Property.Long( "myNumber", 1 ) );
-        contentData.add( new Property.Text( "myText", "text" ) );
+        contentData.add( new Property.String( "myText", "text" ) );
         contentData.setProperty( "mySet.myOtherNumber", new Value.Long( 2 ) );
 
         Content content = Content.newContent().

@@ -4,10 +4,10 @@ package com.enonic.wem.api.data.type;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 
-public class Text
-    extends ValueType<String>
+public class String
+    extends ValueType<java.lang.String>
 {
-    Text( int key )
+    String( int key )
     {
         super( key, JavaTypeConverter.String.GET );
     }
@@ -15,12 +15,12 @@ public class Text
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.Text( convert( value ) );
+        return new Value.String( convert( value ) );
     }
 
     @Override
-    public Property newProperty( final String name, final Value value )
+    public Property newProperty( final java.lang.String name, final Value value )
     {
-        return new Property.Text( name, value );
+        return new Property.String( name, value );
     }
 }

@@ -19,13 +19,13 @@
                 {
                     "name": "myInput",
                     "path": "mySet[0].myInput",
-                    "type": "Text",
+                    "type": "String",
                     "value": "1"
                 },
                 {
                     "name": "myOtherInput",
                     "path": "mySet[0].myOtherInput",
-                    "type": "Text",
+                    "type": "String",
                     "value": "a"
                 }
             ]
@@ -39,13 +39,13 @@
                 {
                     "name": "myInput",
                     "path": "mySet[1].myInput",
-                    "type": "Text",
+                    "type": "String",
                     "value": "2"
                 },
                 {
                     "name": "myOtherInput",
                     "path": "mySet[1].myOtherInput",
-                    "type": "Text",
+                    "type": "String",
                     "value": "b"
                 }
             ]

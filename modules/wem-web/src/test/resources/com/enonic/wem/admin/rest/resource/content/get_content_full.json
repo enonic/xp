@@ -5,13 +5,13 @@
         {
             "name": "myArray",
             "path": "myArray[0]",
-            "type": "Text",
+            "type": "String",
             "value": "arrayValue1"
         },
         {
             "name": "myArray",
             "path": "myArray[1]",
-            "type": "Text",
+            "type": "String",
             "value": "arrayValue2"
         },
         {

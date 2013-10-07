@@ -31,12 +31,12 @@ public class PopertyJsonSerializerTest
         ObjectNode dataObj = jsonTestHelper.objectMapper().createObjectNode();
         dataObj.put( "name", "myData" );
         dataObj.put( "path", "myData" );
-        dataObj.put( "type", "Text" );
+        dataObj.put( "type", "String" );
         dataObj.put( "value", "A value" );
 
         Property property = serializer.parse( dataObj );
         assertEquals( "myData", property.getName() );
-        assertEquals( ValueTypes.TEXT, property.getValueType() );
+        assertEquals( ValueTypes.STRING, property.getValueType() );
         assertEquals( "A value", property.getObject() );
     }
 

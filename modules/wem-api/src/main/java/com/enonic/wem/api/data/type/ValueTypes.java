@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 
 public final class ValueTypes
 {
-    public static final Text TEXT = new Text( 1 );
+    public static final String STRING = new String( 1 );
 
     public static final BinaryId BINARY_ID = new BinaryId( 2 );
 
@@ -33,11 +33,11 @@ public final class ValueTypes
 
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
 
-    private static final Map<String, ValueType> typesByName = new HashMap<>();
+    private static final Map<java.lang.String, ValueType> typesByName = new HashMap<>();
 
     static
     {
-        register( TEXT );
+        register( STRING );
         register( BINARY_ID );
         register( HTML_PART );
         register( XML );
@@ -64,7 +64,7 @@ public final class ValueTypes
         return typesByKey.get( key );
     }
 
-    public static ValueType parseByName( String name )
+    public static ValueType parseByName( java.lang.String name )
     {
         return typesByName.get( name );
     }

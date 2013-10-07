@@ -14,7 +14,7 @@
         {
             "name": "myInput",
             "path": "myInput",
-            "type": "Text",
+            "type": "String",
             "value": "A value"
         }
     ]

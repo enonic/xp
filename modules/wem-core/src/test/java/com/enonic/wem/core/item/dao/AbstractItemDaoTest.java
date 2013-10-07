@@ -43,7 +43,7 @@ public abstract class AbstractItemDaoTest
     {
         // setup
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "propertyOfItem", new Value.Text( "A" ) );
+        rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
         CreateItemArgs createItemArgs = newCreateItemArgs().
             parent( ItemPath.ROOT ).
             name( "myItem" ).
@@ -65,7 +65,7 @@ public abstract class AbstractItemDaoTest
         int count = 1000;
         List<CreateItemArgs> list = new ArrayList<>( count );
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "propertyOfItem", new Value.Text( "A" ) );
+        rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
 
         for ( int i = 0; i < count; i++ )
         {
@@ -100,7 +100,7 @@ public abstract class AbstractItemDaoTest
     {
         // setup
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "propertyOfItem", new Value.Text( "A" ) );
+        rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
         CreateItemArgs createItemArgs = newCreateItemArgs().
             parent( ItemPath.ROOT ).
             name( "myItem" ).
@@ -123,7 +123,7 @@ public abstract class AbstractItemDaoTest
         // setup
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "propertyOfItem", new Value.Text( "A" ) );
+        rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
         CreateItemArgs createItemArgs = newCreateItemArgs().
             parent( new ItemPath( "not-absolute-parent-path" ) ).
             name( "myItem" ).

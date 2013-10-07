@@ -10,7 +10,7 @@ class MixinItemTranslator
     RootDataSet toRootDataSet( final CreateMixin createMixin )
     {
         final RootDataSet dataSet = new RootDataSet();
-        dataSet.setProperty( "displayName", new Value.Text( createMixin.getDisplayName() ) );
+        dataSet.setProperty( "displayName", new Value.String( createMixin.getDisplayName() ) );
 
         // TODO: Uncomment when change from CMS-2221 Create serializer for serializing form items to data
         // TODO: is ready

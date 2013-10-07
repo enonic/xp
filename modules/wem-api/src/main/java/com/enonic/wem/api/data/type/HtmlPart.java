@@ -5,7 +5,7 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 
 public class HtmlPart
-    extends ValueType<String>
+    extends ValueType<java.lang.String>
 {
     HtmlPart( int key )
     {
@@ -19,7 +19,7 @@ public class HtmlPart
     }
 
     @Override
-    public Property newProperty( final String name, final Value value )
+    public Property newProperty( final java.lang.String name, final Value value )
     {
         return new Property.HtmlPart( name, value );
     }
