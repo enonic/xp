@@ -68,6 +68,7 @@ public final class Runner
 
         final Context context = this.tomcat.addWebapp( "/", docBase );
         context.setResources( resources );
+        context.setJarScanner( new NopJarScanner() );
     }
 
     private void doStart()
