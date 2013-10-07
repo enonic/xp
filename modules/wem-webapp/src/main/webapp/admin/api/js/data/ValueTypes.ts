@@ -5,11 +5,11 @@ module api_data{
      */
     export class ValueTypes {
 
-        static TEXT = new ValueType("Text");
+        static STRING = new ValueType("String");
 
         static DATE_TIME = new ValueType("DateTime");
 
-        static ALL:ValueType[] = [ ValueTypes.TEXT, ValueTypes.DATE_TIME ];
+        static ALL:ValueType[] = [ ValueTypes.STRING, ValueTypes.DATE_TIME ];
 
         static fromName(name:string):ValueType {
             var match = null;
