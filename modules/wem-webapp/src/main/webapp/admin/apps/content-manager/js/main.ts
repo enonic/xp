@@ -42,6 +42,8 @@
 ///<reference path='app/contextwindow/ContextWindowEvents.ts' />
 ///<reference path='app/contextwindow/ComponentTypesPanel.ts' />
 ///<reference path='app/contextwindow/ComponentGrid.ts' />
+///<reference path='app/contextwindow/EmulatorGrid.ts' />
+///<reference path='app/contextwindow/EmulatorPanel.ts' />
 ///<reference path='app/contextwindow/SelectPanel.ts' />
 ///<reference path='app/contextwindow/DetailPanel.ts' />
 ///<reference path='app/contextwindow/InspectorPanel.ts' />

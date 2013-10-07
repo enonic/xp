@@ -7,7 +7,7 @@ module app_contextwindow {
     export class ContextWindow extends api_ui.NavigableFloatingWindow {
         private componentTypesPanel:ComponentTypesPanel;
         private inspectorPanel:InspectorPanel;
-        private emulatorPanel:api_ui.Panel;
+        private emulatorPanel:EmulatorPanel;
 
         private draggingMask:api_ui.DraggingMask;
         private liveEditEl:api_dom.IFrameEl;
@@ -32,7 +32,7 @@ module app_contextwindow {
 
             this.componentTypesPanel = new ComponentTypesPanel(this);
             this.inspectorPanel = new InspectorPanel(this);
-            this.emulatorPanel = new api_ui.Panel();
+            this.emulatorPanel = new EmulatorPanel();
 
             this.addItem("Insert", this.componentTypesPanel);
             this.addItem("Inspect", this.inspectorPanel);
