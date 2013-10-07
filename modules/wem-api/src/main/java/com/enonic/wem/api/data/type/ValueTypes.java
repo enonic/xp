@@ -25,7 +25,7 @@ public final class ValueTypes
 
     public static final Long LONG = new Long( 8 );
 
-    public static final DecimalNumber DECIMAL_NUMBER = new DecimalNumber( 9 );
+    public static final Double DOUBLE = new Double( 9 );
 
     public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 10 );
 
@@ -45,7 +45,7 @@ public final class ValueTypes
         register( DATE_TIME );
         register( CONTENT_ID );
         register( LONG );
-        register( DECIMAL_NUMBER );
+        register( DOUBLE );
         register( GEOGRAPHIC_COORDINATE );
         register( ATTACHMENT_NAME );
     }

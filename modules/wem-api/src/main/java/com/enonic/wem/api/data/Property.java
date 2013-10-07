@@ -134,8 +134,8 @@ public class Property
         return getArray().getValue( arrayIndex ).asLong();
     }
 
-    public Double getDouble()
-        throws InconvertibleValueException
+    public java.lang.Double getDouble()
+    throws InconvertibleValueException
     {
         return value.asDouble();
     }
@@ -145,8 +145,8 @@ public class Property
      *
      * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a Double.
      */
-    public Double getDouble( final int arrayIndex )
-        throws InconvertibleValueException
+    public java.lang.Double getDouble( final int arrayIndex )
+    throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asDouble();
     }
@@ -773,84 +773,84 @@ public class Property
         }
     }
 
-    public final static class DecimalNumber
-        extends Property
+    public final static class Double
+    extends Property
     {
-        public DecimalNumber( final String name, final Double value )
+        public Double( final String name, final java.lang.Double value )
         {
-            super( name, new Value.DecimalNumber( value ) );
+            super( name, new Value.Double( value ) );
         }
 
-        private DecimalNumber( final AbstractBaseBuilder builder )
+        private Double( final AbstractBaseBuilder builder )
         {
             super( builder );
         }
 
-        public DecimalNumber( final String name, final Value value )
+        public Double( final String name, final Value value )
         {
             super( name, value );
         }
 
-        DecimalNumber( final DecimalNumber source )
+        Double( final Double source )
         {
             super( source );
         }
 
-        public DecimalNumber copy()
+        public Double copy()
         {
-            return new DecimalNumber( this );
+            return new Double( this );
         }
 
-        public static DecimalNumberBuilder newDecimalNumber()
+        public static DoubleBuilder newDouble()
         {
-            return new DecimalNumberBuilder();
+            return new DoubleBuilder();
         }
 
-        public static class DecimalNumberBuilder
-            extends AbstractNameBuilder<DecimalNumberBuilder>
+        public static class DoubleBuilder
+            extends AbstractNameBuilder<DoubleBuilder>
         {
-            private DecimalNumberBuilder()
+            private DoubleBuilder()
             {
-                setType( ValueTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DOUBLE );
             }
 
-            public DecimalNumberBuilder( final String name )
+            public DoubleBuilder( final String name )
             {
-                setType( ValueTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DOUBLE );
                 setName( name );
             }
 
-            public DecimalNumberBuilder value( final Double value )
+            public DoubleBuilder value( final java.lang.Double value )
             {
                 setValue( value );
                 return this;
             }
 
             @Override
-            public DecimalNumber build()
+            public Double build()
             {
-                return new DecimalNumber( this );
+                return new Double( this );
             }
         }
 
-        public static DecimalNumberValueBuilder newDecimalNumber( final String name )
+        public static DoubleValueBuilder newDouble( final String name )
         {
-            return new DecimalNumberValueBuilder( name );
+            return new DoubleValueBuilder( name );
         }
 
-        public static class DecimalNumberValueBuilder
-            extends AbstractBaseBuilder
+        public static class DoubleValueBuilder
+        extends AbstractBaseBuilder
         {
-            private DecimalNumberValueBuilder( final String name )
+            private DoubleValueBuilder( final String name )
             {
-                setType( ValueTypes.DECIMAL_NUMBER );
+                setType( ValueTypes.DOUBLE );
                 setName( name );
             }
 
-            public DecimalNumber value( final Double value )
+            public Double value( final java.lang.Double value )
             {
                 setValue( value );
-                return new DecimalNumber( this );
+                return new Double( this );
             }
         }
     }

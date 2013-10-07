@@ -81,10 +81,10 @@ public abstract class Value<T>
      *
      * @throws ClassCastException if value is not of type Double.
      */
-    public Double getDouble()
-        throws ClassCastException
+    public java.lang.Double getDouble()
+    throws ClassCastException
     {
-        return (Double) object;
+        return (java.lang.Double) object;
     }
 
     /**
@@ -173,10 +173,10 @@ public abstract class Value<T>
      *
      * @throws InconvertibleValueException if value is not convertible to Double.
      */
-    public Double asDouble()
-        throws InconvertibleValueException
+    public java.lang.Double asDouble()
+    throws InconvertibleValueException
     {
-        final Double converted = JavaTypeConverter.Double.GET.convertFrom( object );
+        final java.lang.Double converted = JavaTypeConverter.Double.GET.convertFrom( object );
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.Double.GET );
@@ -324,17 +324,17 @@ public abstract class Value<T>
 
     }
 
-    public static final class DecimalNumber
-        extends Value<Double>
+    public static final class Double
+        extends Value<java.lang.Double>
     {
-        public DecimalNumber( final Double value )
+        public Double( final java.lang.Double value )
         {
-            super( ValueTypes.DECIMAL_NUMBER, value );
+            super( ValueTypes.DOUBLE, value );
         }
 
-        public DecimalNumber( final Float value )
+        public Double( final Float value )
         {
-            super( ValueTypes.DECIMAL_NUMBER, Double.valueOf( value ) );
+            super( ValueTypes.DOUBLE, java.lang.Double.valueOf( value ) );
         }
     }
 

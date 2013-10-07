@@ -80,7 +80,7 @@ public class PropertyTest
     @Test
     public void getLong_given_value_as_decimal_number()
     {
-        Property property = newProperty().name( "myNumber" ).type( ValueTypes.DECIMAL_NUMBER ).value( 1.1 ).build();
+        Property property = newProperty().name( "myNumber" ).type( ValueTypes.DOUBLE ).value( 1.1 ).build();
         assertEquals( new Long( 1 ), property.getLong() );
     }
 

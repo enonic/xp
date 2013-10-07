@@ -44,7 +44,7 @@ public class ContentIndexDocumentsFactoryTest
     {
         Content content = createContentWithMetadata();
 
-        content.getContentData().setProperty( "mydata.value1", new Value.DecimalNumber( 1.0 ) );
+        content.getContentData().setProperty( "mydata.value1", new Value.Double( 1.0 ) );
         content.getContentData().setProperty( "mydata.value2", new Value.DateMidnight( org.joda.time.DateMidnight.now() ) );
         content.getContentData().setProperty( "mydata.value2[1]", new Value.DateMidnight( org.joda.time.DateMidnight.now() ) );
         content.getContentData().setProperty( "mydata.value3.subvalue1", new Value.Text( "value3.1" ) );

@@ -33,7 +33,7 @@ public class GeographicCoordinateTest
         // setup
         Content content = newContent().build();
         ContentData contentData = content.getContentData();
-        contentData.setProperty( "myGeographicCoordinate", new Value.DecimalNumber( 1.1 ) );
+        contentData.setProperty( "myGeographicCoordinate", new Value.Double( 1.1 ) );
 
         GeographicCoordinate geographicCoordinate = ValueTypes.GEOGRAPHIC_COORDINATE;
         Property property = contentData.getProperty( "myGeographicCoordinate" );

@@ -22,13 +22,13 @@
                 {
                     "name": "myArray",
                     "path": "mySetWithArray.myArray[0]",
-                    "type": "DecimalNumber",
+                    "type": "Double",
                     "value": "3.14159"
                 },
                 {
                     "name": "myArray",
                     "path": "mySetWithArray.myArray[1]",
-                    "type": "DecimalNumber",
+                    "type": "Double",
                     "value": "1.333"
                 }
             ]

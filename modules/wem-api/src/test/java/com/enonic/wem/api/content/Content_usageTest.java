@@ -17,12 +17,12 @@ import com.enonic.wem.api.data.type.ValueTypes;
 
 import static com.enonic.wem.api.data.DataSet.newDataSet;
 import static com.enonic.wem.api.data.Property.Date.newDate;
-import static com.enonic.wem.api.data.Property.DecimalNumber.newDecimalNumber;
+import static com.enonic.wem.api.data.Property.Double.newDouble;
 import static com.enonic.wem.api.data.Property.HtmlPart.newHtmlPart;
 import static com.enonic.wem.api.data.Property.Text.newText;
 import static com.enonic.wem.api.data.Property.newProperty;
 import static com.enonic.wem.api.data.type.ValueTypes.DATE_MIDNIGHT;
-import static com.enonic.wem.api.data.type.ValueTypes.DECIMAL_NUMBER;
+import static com.enonic.wem.api.data.type.ValueTypes.DOUBLE;
 import static com.enonic.wem.api.data.type.ValueTypes.HTML_PART;
 import static com.enonic.wem.api.data.type.ValueTypes.LONG;
 import static com.enonic.wem.api.data.type.ValueTypes.TEXT;
@@ -42,14 +42,14 @@ public class Content_usageTest
         dataSet.setProperty( "myText", new Value.Text( "abc" ) );
         dataSet.setProperty( "myNum", new Value.Long( 123 ) );
         dataSet.setProperty( "myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.setProperty( "myDec", new Value.DecimalNumber( 123.123 ) );
+        dataSet.setProperty( "myDec", new Value.Double( 123.123 ) );
         dataSet.setProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
         assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
         assertEquals( LONG, dataSet.getProperty( "myNum" ).getValueType() );
         assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
     }
 
@@ -76,7 +76,7 @@ public class Content_usageTest
         dataSet.setProperty( "mySet.myText", new Value.Text( "abc" ) );
         dataSet.setProperty( "mySet.myNum", new Value.Long( 123 ) );
         dataSet.setProperty( "mySet.myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.setProperty( "mySet.myDec", new Value.DecimalNumber( 123.123 ) );
+        dataSet.setProperty( "mySet.myDec", new Value.Double( 123.123 ) );
         dataSet.setProperty( "mySet.myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
         // verify
@@ -95,7 +95,7 @@ public class Content_usageTest
         // exercise
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "abc" ).build() );
         dataSet.add( newProperty( "myNum" ).type( LONG ).value( 123L ).build() );
-        dataSet.add( newProperty( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
+        dataSet.add( newProperty( "myDec" ).type( DOUBLE ).value( 123.123 ).build() );
         dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ).build() );
         dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
@@ -103,12 +103,12 @@ public class Content_usageTest
         assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
         assertEquals( LONG, dataSet.getProperty( "myNum" ).getValueType() );
         assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertFalse( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertFalse( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertFalse( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertFalse( dataSet.getProperty( "myDec" ) instanceof Property.Double );
         assertFalse( dataSet.getProperty( "myDate" ) instanceof Property.Date );
         assertFalse( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
@@ -121,7 +121,7 @@ public class Content_usageTest
         // exercise
         dataSet.add( newText( "myText" ).value( "abc" ) );
         dataSet.add( Property.Long.newLong( "myNum" ).value( 123L ) );
-        dataSet.add( newDecimalNumber( "myDec" ).value( 123.123 ) );
+        dataSet.add( newDouble( "myDec" ).value( 123.123 ) );
         dataSet.add( newDate( "myDate" ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( newHtmlPart( "myHtml" ).value( "<p>abc</p>" ) );
 
@@ -129,12 +129,12 @@ public class Content_usageTest
         assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
         assertEquals( LONG, dataSet.getProperty( "myNum" ).getValueType() );
         assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.Double );
         assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
         assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
@@ -147,7 +147,7 @@ public class Content_usageTest
         // exercise
         dataSet.add( new Property.Text( "myText", "abc" ) );
         dataSet.add( new Property.Long( "myNum", 123L ) );
-        dataSet.add( new Property.DecimalNumber( "myDec", 123.123 ) );
+        dataSet.add( new Property.Double( "myDec", 123.123 ) );
         dataSet.add( new Property.Date( "myDate", new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
@@ -155,12 +155,12 @@ public class Content_usageTest
         assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
         assertEquals( LONG, dataSet.getProperty( "myNum" ).getValueType() );
         assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.Double );
         assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
         assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
@@ -173,7 +173,7 @@ public class Content_usageTest
         // exercise
         dataSet.addProperty( "myText", new Value.Text( "abc" ) );
         dataSet.addProperty( "myNum", new Value.Long( 123 ) );
-        dataSet.addProperty( "myDec", new Value.DecimalNumber( 123.123 ) );
+        dataSet.addProperty( "myDec", new Value.Double( 123.123 ) );
         dataSet.addProperty( "myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         dataSet.addProperty( "myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
@@ -181,12 +181,12 @@ public class Content_usageTest
         assertEquals( TEXT, dataSet.getProperty( "myText" ).getValueType() );
         assertEquals( LONG, dataSet.getProperty( "myNum" ).getValueType() );
         assertEquals( DATE_MIDNIGHT, dataSet.getProperty( "myDate" ).getValueType() );
-        assertEquals( DECIMAL_NUMBER, dataSet.getProperty( "myDec" ).getValueType() );
+        assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
         assertTrue( dataSet.getProperty( "myText" ) instanceof Property.Text );
         assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.DecimalNumber );
+        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.Double );
         assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
         assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
@@ -199,7 +199,7 @@ public class Content_usageTest
         // exercise
         contentData.addProperty( "mySet.myText", new Value.Text( "abc" ) );
         contentData.addProperty( "mySet.myNum", new Value.Long( 123 ) );
-        contentData.addProperty( "mySet.myDec", new Value.DecimalNumber( 123.123 ) );
+        contentData.addProperty( "mySet.myDec", new Value.Double( 123.123 ) );
         contentData.addProperty( "mySet.myDate", new Value.DateMidnight( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
         contentData.addProperty( "mySet.myHtml", new Value.HtmlPart( "<p>abc</p>" ) );
 
@@ -229,7 +229,7 @@ public class Content_usageTest
         DataSet dataSet = new ContentData();
         dataSet.add( newProperty( "myText" ).type( TEXT ).value( "abc" ).build() );
         dataSet.add( newProperty( "myNum" ).type( LONG ).value( 123L ).build() );
-        dataSet.add( newProperty( "myDec" ).type( DECIMAL_NUMBER ).value( 123.123 ).build() );
+        dataSet.add( newProperty( "myDec" ).type( DOUBLE ).value( 123.123 ).build() );
         dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ).build() );
         dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
 
@@ -393,7 +393,7 @@ public class Content_usageTest
     {
         if ( value instanceof Double )
         {
-            return ValueTypes.DECIMAL_NUMBER;
+            return ValueTypes.DOUBLE;
         }
         else
         {
@@ -405,7 +405,7 @@ public class Content_usageTest
     {
         if ( value instanceof Double )
         {
-            return newDecimalNumber().name( text ).value( (Double) value ).build();
+            return Property.Double.newDouble().name( text ).value( (Double) value ).build();
         }
         else
         {
@@ -417,7 +417,7 @@ public class Content_usageTest
     {
         if ( value instanceof Double )
         {
-            return new Value.DecimalNumber( ( (Double) value ) );
+            return new Value.Double( ( (Double) value ) );
         }
         else
         {
