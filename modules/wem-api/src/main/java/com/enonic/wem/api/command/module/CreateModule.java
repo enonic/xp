@@ -28,7 +28,7 @@ public final class CreateModule
 
     private Form config;
 
-    private ModuleFileEntry resourcesRoot;
+    private ModuleFileEntry moduleDirectoryEntry;
 
     private ModuleVersion minSystemVersion;
 
@@ -50,7 +50,7 @@ public final class CreateModule
         createModule.vendorName = module.getVendorName();
         createModule.vendorUrl = module.getVendorUrl();
         createModule.config = module.getConfig();
-        createModule.resourcesRoot = module.getResourcesRoot();
+        createModule.moduleDirectoryEntry = module.getModuleDirectoryEntry();
         createModule.minSystemVersion = module.getMinSystemVersion();
         createModule.maxSystemVersion = module.getMaxSystemVersion();
         createModule.moduleDependencies = module.getModuleDependencies();
@@ -106,9 +106,9 @@ public final class CreateModule
         return this;
     }
 
-    public CreateModule resourcesRoot( final ModuleFileEntry fileEntryRoot )
+    public CreateModule moduleDirectoryEntry( final ModuleFileEntry fileEntryRoot )
     {
-        this.resourcesRoot = resourcesRoot;
+        this.moduleDirectoryEntry = moduleDirectoryEntry;
         return this;
     }
 
@@ -176,9 +176,9 @@ public final class CreateModule
         return config;
     }
 
-    ModuleFileEntry getResourcesRoot()
+    ModuleFileEntry getModuleDirectoryEntry()
     {
-        return resourcesRoot;
+        return moduleDirectoryEntry;
     }
 
     ModuleVersion getMinSystemVersion()

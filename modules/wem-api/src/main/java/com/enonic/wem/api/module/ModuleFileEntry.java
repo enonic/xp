@@ -1,16 +1,18 @@
 package com.enonic.wem.api.module;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.concurrent.Immutable;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -127,7 +129,47 @@ public final class ModuleFileEntry
         return entries.values().iterator();
     }
 
-    String asTreeString()
+    @Override
+    public String toString()
+    {
+        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        s.add( "name", name );
+        s.add( "resource", resource );
+        s.add( "isDirectory", isDirectory );
+        s.add( "entries", entriesAsString() );
+        s.omitNullValues();
+        return s.toString();
+    }
+
+    private String entriesAsString()
+    {
+        final StringBuilder result = new StringBuilder();
+        entriesAsString( result );
+        return result.toString();
+    }
+
+    private void entriesAsString( final StringBuilder result )
+    {
+        result.append( this.name );
+        if ( this.isEmpty() )
+        {
+            return;
+        }
+        result.append( ": [" );
+        final ImmutableList<ModuleFileEntry> entryList = entries.values().asList();
+        for ( int i = 0; i < entryList.size(); i++ )
+        {
+            ModuleFileEntry entry = entryList.get( i );
+            entry.entriesAsString( result );
+            if ( i < entryList.size() - 1 )
+            {
+                result.append( ", " );
+            }
+        }
+        result.append( "]" );
+    }
+
+    public String asTreeString()
     {
         final StringBuilder result = new StringBuilder();
         asTree( "", result );
@@ -151,9 +193,9 @@ public final class ModuleFileEntry
         return new Builder( false, fileName ).resource( resource ).build();
     }
 
-    public static ModuleFileEntry newFileEntry( final File file )
+    public static ModuleFileEntry newFileEntry( final Path filePath )
     {
-        final Resource resource = new Resource( file.getName(), Files.asByteSource( file ) );
+        final Resource resource = new Resource( filePath, Files.asByteSource( filePath.toFile() ) );
         return new Builder( false, resource.getName() ).resource( resource ).build();
     }
 
@@ -216,31 +258,31 @@ public final class ModuleFileEntry
             return this;
         }
 
-        public Builder add( final File file )
+        public Builder addFile( final Path filePath )
         {
-            entryList.add( ModuleFileEntry.newFileEntry( file ) );
+            entryList.add( ModuleFileEntry.newFileEntry( filePath ) );
             return this;
         }
 
-        public Builder add( final String fileName, final ByteSource source )
+        public Builder addFile( final String fileName, final ByteSource source )
         {
             entryList.add( ModuleFileEntry.newFileEntry( fileName, source ) );
             return this;
         }
 
-        public Builder add( final ModuleFileEntry entry )
+        public Builder addEntry( final ModuleFileEntry entry )
         {
             entryList.add( entry );
             return this;
         }
 
-        public Builder add( final Iterable<ModuleFileEntry> entries )
+        public Builder addEntries( final Iterable<ModuleFileEntry> entries )
         {
             Iterables.addAll( entryList, entries );
             return this;
         }
 
-        public Builder add( final Builder entryBuilder )
+        public Builder addEntry( final Builder entryBuilder )
         {
             builderEntryList.add( entryBuilder );
             return this;
@@ -307,7 +349,7 @@ public final class ModuleFileEntry
         {
             for ( Builder entryBuilder : builderEntryList )
             {
-                add( entryBuilder.build() );
+                addEntry( entryBuilder.build() );
             }
             return new ModuleFileEntry( this );
         }

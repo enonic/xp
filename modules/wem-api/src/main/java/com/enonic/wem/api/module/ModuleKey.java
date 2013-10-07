@@ -12,7 +12,7 @@ public final class ModuleKey
 
     private final ModuleVersion version;
 
-    public ModuleKey( final ModuleName name, final ModuleVersion version )
+    private ModuleKey( final ModuleName name, final ModuleVersion version )
     {
         Preconditions.checkNotNull( name );
         Preconditions.checkNotNull( version );
@@ -59,7 +59,12 @@ public final class ModuleKey
         return name.toString() + SEPARATOR + version.toString();
     }
 
-    public static ModuleKey parse( final String moduleKey )
+    public static ModuleKey from( final ModuleName name, final ModuleVersion version )
+    {
+        return new ModuleKey( name, version );
+    }
+
+    public static ModuleKey from( final String moduleKey )
     {
         final String name = StringUtils.substringBefore( moduleKey, SEPARATOR );
         final String version = StringUtils.substringAfter( moduleKey, SEPARATOR );

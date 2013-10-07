@@ -2,6 +2,7 @@ package com.enonic.wem.api.resource;
 
 
 import java.io.File;
+import java.nio.file.Path;
 
 import com.google.common.io.ByteSource;
 
@@ -20,6 +21,13 @@ public class Resource
     public Resource( final String name, final ByteSource byteSource )
     {
         this.name = name;
+        this.byteSource = byteSource;
+    }
+
+    public Resource( final Path path, final ByteSource byteSource )
+    {
+        this.name = path.getFileName().toString();
+        this.file = path.toFile();
         this.byteSource = byteSource;
     }
 
