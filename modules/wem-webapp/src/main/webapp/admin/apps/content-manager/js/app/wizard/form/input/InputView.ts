@@ -6,7 +6,7 @@ module app_wizard_form_input {
 
         private properties:api_data.Property[];
 
-        private baseInputTypeView:app_wizard_form_input_type.BaseInputTypeView;
+        private inputTypeView:app_wizard_form_input_type.InputTypeView;
 
         private bottomButtonRow:api_dom.DivEl;
 
@@ -29,20 +29,19 @@ module app_wizard_form_input {
 
             var inputType:api_schema_content_form.InputTypeName = this.input.getInputType();
 
-            var newInputPrototype;
             if (InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
-                newInputPrototype = InputTypeManager.createView(inputType.getName(), inputTypeConfig);
+                this.inputTypeView = InputTypeManager.createView(inputType.getName(), inputTypeConfig);
             }
             else {
                 console.log("Input type [" + inputType.getName() + "] need to be registered first.");
-                newInputPrototype = InputTypeManager.createView("NoInputTypeFound");
+                this.inputTypeView = InputTypeManager.createView("NoInputTypeFound");
             }
 
-            this.baseInputTypeView = newInputPrototype;
-            this.baseInputTypeView.layout(this.input, this.properties);
-            this.appendChild(this.baseInputTypeView);
-            this.baseInputTypeView.getInputOccurrences().addListener(<app_wizard_form.FormItemOccurrencesListener>{
+            this.inputTypeView.layout(this.input, this.properties);
+            this.getEl().appendChild(this.inputTypeView.getHTMLElement());
+
+            this.inputTypeView.addFormItemOccurrencesListener(<app_wizard_form.FormItemOccurrencesListener>{
                 onOccurrenceAdded: (occurrenceAdded:app_wizard_form.FormItemOccurrence) => {
                     this.refresh();
                 },
@@ -53,8 +52,9 @@ module app_wizard_form_input {
 
             this.addButton = new api_ui.Button("Add");
             this.addButton.setClass("add-button");
+
             this.addButton.setClickListener(() => {
-                this.baseInputTypeView.getInputOccurrences().createAndAddOccurrence();
+                this.inputTypeView.createAndAddOccurrence();
             });
 
             this.bottomButtonRow = new api_dom.DivEl(null, "bottom-button-row");
@@ -63,8 +63,7 @@ module app_wizard_form_input {
         }
 
         refresh() {
-
-            this.addButton.setVisible(this.baseInputTypeView.getInputOccurrences().showAddButton());
+            this.addButton.setVisible(!this.inputTypeView.maximumOccurrencesReached());
         }
 
         getData():api_data.Data[] {
@@ -74,7 +73,7 @@ module app_wizard_form_input {
         getProperties():api_data.Property[] {
 
             var properties:api_data.Property[] = [];
-            this.baseInputTypeView.getValues().forEach((value:api_data.Value, index:number) => {
+            this.inputTypeView.getValues().forEach((value:api_data.Value, index:number) => {
                 properties[index] = new api_data.Property(this.input.getName(), value);
             });
             return properties;

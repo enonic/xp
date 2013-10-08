@@ -67,11 +67,8 @@ module app_wizard_form {
             return this.formItem;
         }
 
-        /*
-         * Whether add button for new occurrence should be shown or not.
-         */
-        showAddButton():boolean {
-            return !this.allowedOccurrences.maximumReached(this.countOccurrences());
+        maximumOccurrencesReached():boolean {
+            return this.allowedOccurrences.maximumReached(this.countOccurrences());
         }
 
         layout() {

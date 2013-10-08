@@ -54,7 +54,7 @@ module app_wizard_form_formitemset {
 
         refresh() {
 
-            this.addButton.setVisible(this.formItemSetOccurrences.showAddButton());
+            this.addButton.setVisible(!this.formItemSetOccurrences.maximumOccurrencesReached());
         }
 
         getData():api_data.Data[] {

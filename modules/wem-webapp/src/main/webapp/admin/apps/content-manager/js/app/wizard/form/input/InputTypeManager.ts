@@ -33,7 +33,7 @@ module app_wizard_form_input {
             }
         }
 
-        static createView(inputTypeName:string, inputTypeConfig?:any) {
+        static createView(inputTypeName:string, inputTypeConfig?:any):app_wizard_form_input_type.InputTypeView {
 
             if (InputTypeManager.isRegistered(inputTypeName)) {
                 var inputType = Object.create(InputTypeManager.inputTypes[inputTypeName].prototype);
