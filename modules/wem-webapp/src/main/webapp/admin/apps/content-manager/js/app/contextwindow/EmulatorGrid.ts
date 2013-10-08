@@ -26,19 +26,24 @@ module app_contextwindow {
             row.getEl().setData('height', data.height);
             row.getEl().setData('type', data.device_type);
 
+            var icon = new api_dom.DivEl();
+            icon.setClass('icon-' + data.device_type);
+            icon.addClass('icon');
+
             var title = new api_dom.H5El();
             title.getEl().setInnerHtml(data.name);
 
             var subtitle = new api_dom.H6El();
             subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device_type);
 
+            row.appendChild(icon);
             row.appendChild(title);
             row.appendChild(subtitle);
 
             if (data.rotatable == true) {
                 var rotator = new api_dom.DivEl();
                 rotator.addClass('rotate');
-                rotator.addClass('live-edit-font-icon-spinner');
+                rotator.addClass('icon-loop');
                 row.appendChild(rotator);
             }
 
