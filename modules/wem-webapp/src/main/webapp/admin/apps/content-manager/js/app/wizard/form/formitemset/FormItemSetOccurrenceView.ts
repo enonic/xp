@@ -8,7 +8,7 @@ module app_wizard_form_formitemset {
 
         private occurrenceCountEl:api_dom.SpanEl;
 
-        private removeButton:api_ui.Button;
+        private removeButton:api_dom.AEl;
 
         private constructedWithData:boolean;
 
@@ -32,8 +32,7 @@ module app_wizard_form_formitemset {
             var label = new FormItemSetLabel(this.formItemSet);
             this.appendChild(label);
 
-            this.removeButton = new api_ui.Button("X");
-            this.removeButton.setClass("remove-button");
+            this.removeButton = new api_dom.AEl(null, "remove-button");
             this.appendChild(this.removeButton);
             this.removeButton.setClickListener(() => {
                 this.notifyRemoveButtonClicked();
