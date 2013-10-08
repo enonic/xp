@@ -39,6 +39,10 @@ module api_grid {
             this.slickDataView.setItems(data);
         }
 
+        addItem(item:any) {
+            this.slickDataView.addItem(item);
+        }
+
         getItem(index: number):any {
             return this.slickDataView.getItem(index);
         }

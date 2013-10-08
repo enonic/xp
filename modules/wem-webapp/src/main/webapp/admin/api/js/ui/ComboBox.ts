@@ -10,6 +10,10 @@ module api_ui {
 
     export interface ComboBoxConfig {
 
+        iconUrl?: string;
+
+        rowHeight?: number;
+
         optionFormatter?: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
 
         selectedOptionFormatter?: (value:any) => string;
@@ -46,7 +50,7 @@ module api_ui {
 
         private maxHeight: number = 200;
 
-        private rowHeight: number = 50;
+        private rowHeight;
 
         /**
          * Indicates if combobox is currently has focus
@@ -65,62 +69,25 @@ module api_ui {
             this.selectedOptionFormatter = config.selectedOptionFormatter;
             this.maximumOccurrences = config.maximumOccurrences || 1;
             this.filter = config.filter;
+            this.rowHeight = config.rowHeight || 50;
 
-            this.icon = new api_dom.ImgEl(null, null, "input-icon");
+            if (config.iconUrl) {
+                this.icon = new api_dom.ImgEl(config.iconUrl, null, "input-icon");
+                this.appendChild(this.icon);
+            }
+
             this.input = new TextInput();
+            this.appendChild(this.input);
+
             this.emptyDropdown = new api_dom.DivEl(null, "empty-options");
             this.emptyDropdown.getEl().setInnerHtml("No matching items");
             this.emptyDropdown.hide();
+            this.appendChild(this.emptyDropdown);
+
             this.selectedOptions = new api_dom.DivEl(null, "selected-options");
             this.selectedOptions.hide();
-
-            this.appendChild(this.icon);
-            this.appendChild(this.input);
-            this.appendChild(this.emptyDropdown);
             this.appendChild(this.selectedOptions);
-        }
 
-        afterRender() {
-            this.initDropdown();
-            this.setupListeners();
-        }
-
-        isDropdownShown(): boolean {
-            return this.emptyDropdown.isVisible() || this.dropdown.isVisible();
-        }
-
-        showDropdown() {
-            var rowsLength = this.dropdown.getDataView().getLength();
-            if (rowsLength > 0) {
-                this.emptyDropdown.hide();
-                this.dropdown.show();
-
-                var rowsHeight =  rowsLength * this.rowHeight;
-                var dropdownEl = this.dropdown.getEl();
-                if (rowsHeight < this.maxHeight) {
-                    var borderWidth = dropdownEl.getBorderTopWidth() + dropdownEl.getBorderBottomWidth();
-                    dropdownEl.setHeight(rowsHeight + borderWidth + "px");
-                    this.dropdown.setOptions({autoHeight: true});
-                    this.dropdown.resizeCanvas();
-                } else if (dropdownEl.getHeight() < this.maxHeight) {
-                    dropdownEl.setHeight(this.maxHeight + "px");
-                    this.dropdown.setOptions({autoHeight: false});
-                    this.dropdown.resizeCanvas();
-                }
-
-                this.updateDropdownStyles()
-            } else {
-                this.dropdown.hide();
-                this.emptyDropdown.show();
-            }
-        }
-
-        hideDropdown() {
-            this.emptyDropdown.hide();
-            this.dropdown.hide();
-        }
-
-        private initDropdown() {
             var data = this.initData;
             var columns = [
                 {id: "option", name: "Options", field: "value", formatter: this.optionFormatter}
@@ -140,13 +107,42 @@ module api_ui {
             this.dropdown.getEl().setPosition("absolute");
             this.dropdown.hide();
 
-            this.appendChild(this.dropdown);
-
             if (this.filter) {
                 this.dropdown.setFilter(this.filter);
             }
 
-            this.dropdown.resizeCanvas();
+            this.appendChild(this.dropdown);
+
+            this.setupListeners();
+        }
+
+        isDropdownShown(): boolean {
+            return this.emptyDropdown.isVisible() || this.dropdown.isVisible();
+        }
+
+        showDropdown() {
+            var rowsLength = this.dropdown.getDataView().getLength();
+            if (rowsLength > 0) {
+                this.adjustDropdownSize();
+                this.updateDropdownStyles();
+
+                this.emptyDropdown.hide();
+                this.dropdown.show();
+            } else {
+                this.adjustEmptyDropdownSize();
+
+                this.dropdown.hide();
+                this.emptyDropdown.show();
+            }
+        }
+
+        hideDropdown() {
+            this.emptyDropdown.hide();
+            this.dropdown.hide();
+        }
+
+        addOption(id:string, value:string) {
+            this.dropdown.addItem({id: id, value: value});
         }
 
         private setupListeners() {
@@ -296,7 +292,7 @@ module api_ui {
 
             option.appendChild(removeButton);
             option.appendChild(optionValue);
-            optionValue.getEl().setInnerHtml(this.selectedOptionFormatter ? this.selectedOptionFormatter(item.value) : item.toString());
+            optionValue.getEl().setInnerHtml(this.selectedOptionFormatter ? this.selectedOptionFormatter(item.value) : item.value.toString());
 
             this.selectedOptions.appendChild(option);
             this.selectedOptions.show();
@@ -320,6 +316,33 @@ module api_ui {
 
             this.input.getEl().setDisabled(false);
             this.input.getHTMLElement().focus();
+        }
+
+        private adjustDropdownSize() {
+            var dropdownEl = this.dropdown.getEl();
+            var inputEl = this.input.getEl();
+
+            dropdownEl.setTopPx(inputEl.getHeight() - inputEl.getBorderBottomWidth());
+
+            if (dropdownEl.getWidth() != inputEl.getWidth()) {
+                dropdownEl.setWidth(inputEl.getWidth() + "px");
+            }
+
+            var rowsHeight =  this.dropdown.getDataView().getLength() * this.rowHeight;
+            if (rowsHeight < this.maxHeight) {
+                var borderWidth = dropdownEl.getBorderTopWidth() + dropdownEl.getBorderBottomWidth();
+                dropdownEl.setHeight(rowsHeight + borderWidth + "px");
+                this.dropdown.setOptions({autoHeight: true});
+            } else if (dropdownEl.getHeight() < this.maxHeight) {
+                dropdownEl.setHeight(this.maxHeight + "px");
+                this.dropdown.setOptions({autoHeight: false});
+            }
+
+            this.dropdown.resizeCanvas();
+        }
+
+        private adjustEmptyDropdownSize() {
+            this.emptyDropdown.getEl().setTopPx(this.input.getEl().getHeight() - this.input.getEl().getBorderBottomWidth());
         }
 
         addListener(listener:ComboBoxListener) {
