@@ -29,11 +29,11 @@ module app_contextwindow {
 
             jQuery(this.getHTMLElement()).on("click", ".rotate", (event:JQueryEventObject) => {
                 event.stopPropagation();
-                var width = jQuery(event.currentTarget).parent('div').data("height");
-                var height = jQuery(event.currentTarget).parent('div').data("width");
-                console.log(width, height);
-                this.contextWindow.getLiveEditEl().getEl().setWidth(width);
-                this.contextWindow.getLiveEditEl().getEl().setHeight(height);
+                var width = this.contextWindow.getLiveEditEl().getEl().getWidth();
+                var height = this.contextWindow.getLiveEditEl().getEl().getHeight();
+
+                this.contextWindow.getLiveEditEl().getEl().setHeight(width + "px");
+                this.contextWindow.getLiveEditEl().getEl().setWidth(height + "px");
             });
         }
 

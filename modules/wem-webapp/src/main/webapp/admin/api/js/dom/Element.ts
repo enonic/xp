@@ -221,6 +221,10 @@ module api_dom {
             }
         }
 
+        toString() {
+            return jQuery('<div>').append( jQuery(this.getHTMLElement()).clone() ).html();
+        }
+
         onMouseEnter(handler:(e:MouseEvent)=>any) {
             this.mouseEnterLeave(this.getHTMLElement(), 'mouseenter', handler);
         }

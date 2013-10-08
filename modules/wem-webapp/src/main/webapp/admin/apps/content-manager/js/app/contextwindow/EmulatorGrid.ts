@@ -14,30 +14,35 @@ module app_contextwindow {
                     width: 320,
                     cssClass: "component",
                     formatter: (row, cell, value, columnDef, dataContext) => {
-                        return this.buildRow(row, cell, value);
+                        return this.buildRow(row, cell, value).toString();
                     }
                 }
             ];
         }
 
-        private buildRow(row, cell, data):string {
-            var rowHtml:string[] = [];
-            rowHtml.push('<div ');
-            rowHtml.push(
-                'data-width="' + data.width +'"',
-                'data-height="'+ data.height +'"',
-                'data-type="' + data.device_type +'"',
-                '>',
-                '<h5>' + data.name + '</h5>',
-                '<h6>' + data.width + " &times; " + data.height + " " + data.device_type + '</h6>'
-            );
+        private buildRow(row, cell, data):api_dom.DivEl {
+            var row = new api_dom.DivEl();
+            row.getEl().setData('width', data.width);
+            row.getEl().setData('height', data.height);
+            row.getEl().setData('type', data.device_type);
+
+            var title = new api_dom.H5El();
+            title.getEl().setInnerHtml(data.name);
+
+            var subtitle = new api_dom.H6El();
+            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device_type);
+
+            row.appendChild(title);
+            row.appendChild(subtitle);
+
             if (data.rotatable == true) {
-                rowHtml.push('<div class="rotate live-edit-font-icon-spinner"></div>')
+                var rotator = new api_dom.DivEl();
+                rotator.addClass('rotate');
+                rotator.addClass('live-edit-font-icon-spinner');
+                row.appendChild(rotator);
             }
 
-            rowHtml.push('</div>');
-
-            return rowHtml.join("");
+            return row;
         }
 
         static toSlickData(data:any[]):any[] {
