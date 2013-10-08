@@ -26,6 +26,10 @@ module api_content{
 
         private owner:string;
 
+        private editable:boolean;
+
+        private deletable:boolean;
+
         constructor(json:api_content_json.ContentSummaryJson) {
             this.id = json.id;
             this.name = json.name;
@@ -39,6 +43,8 @@ module api_content{
             this.modifiedTime = new Date(json.modifiedTime);
             this.modifier = json.modifier;
             this.owner = json.owner;
+            this.deletable = json.deletable;
+            this.editable = json.editable;
         }
 
         getId():string {
@@ -87,6 +93,14 @@ module api_content{
 
         getModifier():string {
             return this.modifier;
+        }
+
+        isDeletable():boolean {
+            return this.deletable;
+        }
+
+        isEditable():boolean {
+            return this.editable;
         }
     }
 }

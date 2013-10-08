@@ -8,7 +8,7 @@ module app_browse_grid {
 
             this.extDataStore = <any> new Ext.data.TreeStore({
 
-                model: 'Admin.model.contentManager.ContentModel',
+                model: 'Admin.model.contentManager.ContentSummaryModel',
 
                 remoteSort: false,
                 folderSort: false,

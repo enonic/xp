@@ -75,27 +75,27 @@ module app {
             }
         }
 
-        private handleOpen(contents:api_model.ContentSummaryExtModel[]) {
+        private handleOpen(contents:api_content.ContentSummary[]) {
 
-            contents.forEach((contentModel:api_model.ContentSummaryExtModel) => {
+            contents.forEach((contentModel:api_content.ContentSummary) => {
 
-                var tabId = this.generateTabId(contentModel.data.path, false);
+                var tabId = this.generateTabId(contentModel.getPath().toString(), false);
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
 
                 } else {
-                    tabMenuItem = new api_app.AppBarTabMenuItem(contentModel.data.displayName, tabId);
+                    tabMenuItem = new api_app.AppBarTabMenuItem(contentModel.getDisplayName(), tabId);
                     var contentItemViewPanel = new app_view.ContentItemViewPanel({
                         showPreviewAction: app_browse.ContentBrowseActions.get().SHOW_PREVIEW,
                         showDetailsAction: app_browse.ContentBrowseActions.get().SHOW_DETAILS
                     });
 
                     var contentItem = new api_app_view.ViewItem(contentModel)
-                        .setDisplayName(contentModel.data.displayName)
-                        .setPath(contentModel.data.path)
-                        .setIconUrl(contentModel.data.iconUrl);
+                        .setDisplayName(contentModel.getDisplayName())
+                        .setPath(contentModel.getPath().toString())
+                        .setIconUrl(contentModel.getIconUrl());
 
                     contentItemViewPanel.setItem(contentItem);
 
@@ -104,11 +104,11 @@ module app {
             });
         }
 
-        private handleEdit(contents:api_model.ContentSummaryExtModel[]) {
+        private handleEdit(contents:api_content.ContentSummary[]) {
 
-            contents.forEach((contentModel:api_model.ContentSummaryExtModel) => {
+            contents.forEach((contentModel:api_content.ContentSummary) => {
 
-                var tabId = this.generateTabId(contentModel.data.path, true);
+                var tabId = this.generateTabId(contentModel.getPath().toString(), true);
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
@@ -117,8 +117,8 @@ module app {
                 } else {
 
 
-                    var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.data.id).send();
-                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentModel.data.type).send();
+                    var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.getId()).send();
+                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentModel.getType()).send();
                     jQuery.
                         when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
                         then((contentResponse:api_rest.JsonResponse, contentTypeResponse:api_rest.JsonResponse) => {

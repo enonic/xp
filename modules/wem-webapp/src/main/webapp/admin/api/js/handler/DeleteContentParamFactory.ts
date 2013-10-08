@@ -2,10 +2,10 @@ module api_handler {
 
     export class DeleteContentParamFactory {
 
-        static create(content:api_model.ContentSummaryExtModel[]):api_handler.DeleteContentParam {
+        static create(content:api_content.ContentSummary[]):api_handler.DeleteContentParam {
             var contentPaths:string[] = [];
             for (var i = 0; i < content.length; i++) {
-                contentPaths[i] = content[i].data.path;
+                contentPaths[i] = content[i].getPath().toString();
             }
 
             return  {

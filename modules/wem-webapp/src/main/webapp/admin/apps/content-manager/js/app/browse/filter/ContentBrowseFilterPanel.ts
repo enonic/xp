@@ -43,7 +43,8 @@ module app_browse_filter {
                                 var response = jsonResponse.getJson();
                                 this.updateFacets(api_facet.FacetFactory.createFacets(response.facets));
                                 new ContentBrowseSearchEvent(response.contents).fire();
-                            });
+                            })
+                        ;
 
                     }
                 }

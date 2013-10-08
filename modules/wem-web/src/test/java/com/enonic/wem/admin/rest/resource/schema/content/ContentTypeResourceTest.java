@@ -3,6 +3,7 @@ package com.enonic.wem.admin.rest.resource.schema.content;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -72,7 +73,7 @@ public class ContentTypeResourceTest
         // setup
         final ContentType contentType = newContentType().
             name( MY_CTY_QUALIFIED_NAME.getName() ).
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
             superType( QualifiedContentTypeName.unstructured() ).
             displayName( "My ContentType" ).
             addFormItem( newInput().
@@ -146,7 +147,7 @@ public class ContentTypeResourceTest
             build();
 
         ContentType contentType = newContentType().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
             name( MY_CTY_QUALIFIED_NAME.getName() ).
             superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( myTextLine ).
@@ -207,7 +208,7 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
             name( MY_CTY_QUALIFIED_NAME.getName() ).
             superType( QualifiedContentTypeName.unstructured() ).
             addFormItem( newInput().

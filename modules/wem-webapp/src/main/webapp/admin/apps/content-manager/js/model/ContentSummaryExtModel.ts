@@ -1,6 +1,5 @@
-Ext.define('Admin.model.contentManager.ContentModel', {
+Ext.define('Admin.model.contentManager.ContentSummaryModel', {
     extend: 'Ext.data.Model',
-    requires: ['Ext.data.UuidGenerator'],
 
     fields: <any[]>[
         'id', 'path', 'name', 'type', 'displayName', 'owner', 'modifier', 'iconUrl',

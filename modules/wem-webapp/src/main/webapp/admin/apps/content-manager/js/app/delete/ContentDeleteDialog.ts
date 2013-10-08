@@ -2,7 +2,7 @@ module app_delete {
 
     export class ContentDeleteDialog extends api_app_delete.DeleteDialog {
 
-        private contentToDelete:api_model.ContentSummaryExtModel[];
+        private contentToDelete:api_content.ContentSummary[];
 
         private deleteHandler:api_handler.DeleteContentHandler = new api_handler.DeleteContentHandler();
 
@@ -21,14 +21,14 @@ module app_delete {
             });
         }
 
-        setContentToDelete(contentModels:api_model.ContentSummaryExtModel[]) {
+        setContentToDelete(contentModels:api_content.ContentSummary[]) {
             this.contentToDelete = contentModels;
 
             var deleteItems:api_app_delete.DeleteItem[] = [];
             for (var i in contentModels) {
                 var contentModel = contentModels[i];
 
-                var deleteItem = new api_app_delete.DeleteItem(contentModel.data.iconUrl, contentModel.data.displayName);
+                var deleteItem = new api_app_delete.DeleteItem(contentModel.getIconUrl(), contentModel.getDisplayName());
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);

@@ -4380,6 +4380,7 @@ interface Ext_data_Model extends Ext_util_Observable {
     modified: Object;
     phantom: boolean;
     raw: Object;
+    data: Object;
     store: Ext_data_Store;
     stores: Ext_data_Store[];
 

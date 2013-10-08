@@ -56,19 +56,29 @@ module app_browse {
 
             this.contentTreeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
-                    this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
+                    var contentSummaries = this.extModelsToContentSummaries(event.selectedModels);
+                    this.browseActions.updateActionsEnabledState(contentSummaries);
                 }
             });
         }
 
-        extModelsToBrowseItems(models:api_model.ContentSummaryExtModel[]) {
+        extModelsToContentSummaries(models:Ext_data_Model[]):api_content.ContentSummary[] {
+
+            var summaries:api_content.ContentSummary[] = [];
+            for (var i = 0; i < models.length; i++) {
+                summaries.push(new api_content.ContentSummary(<api_content_json.ContentSummaryJson>models[i].data))
+            }
+            return summaries;
+        }
+
+        extModelsToBrowseItems(models:Ext_data_Model[]) {
 
             var browseItems:api_app_browse.BrowseItem[] = [];
-            models.forEach((model:api_model.ContentSummaryExtModel, index:number) => {
-                var item = new api_app_browse.BrowseItem(models[index]).
-                    setDisplayName(model.data.displayName).
-                    setPath(model.data.path).
-                    setIconUrl(model.data.iconUrl);
+            models.forEach((model:Ext_data_Model) => {
+                var item = new api_app_browse.BrowseItem(model).
+                    setDisplayName(model.data['displayName']).
+                    setPath(model.data['path']).
+                    setIconUrl(model.data['iconUrl']);
                 browseItems.push(item);
             });
             return browseItems;

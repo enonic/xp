@@ -103,9 +103,9 @@ window.onload = () => {
         var newContentDialog = new app_new.NewContentDialog();
         app_browse.ShowNewContentDialogEvent.on((event) => {
 
-            var parentContent:api_model.ContentSummaryExtModel = event.getParentContent();
+            var parentContent:api_content.ContentSummary = event.getParentContent();
 
-            new api_content.GetContentByIdRequest(parentContent.data.id).send().
+            new api_content.GetContentByIdRequest(parentContent.getId()).send().
                 done((jsonResponse:api_rest.JsonResponse) => {
                     var newParentContent = new api_content.Content(jsonResponse.getJson());
                     newContentDialog.setParentContent(newParentContent);

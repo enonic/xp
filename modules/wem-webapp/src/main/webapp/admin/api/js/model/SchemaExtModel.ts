@@ -1,6 +1,7 @@
 module api_model {
 
-    export interface SchemaExtModel extends ExtModel {
+    //TODO: deprecated, use domain Schema object instead outside grid
+    export interface SchemaExtModel extends Ext_data_Model {
         data: {
             key:string;
             name:string;

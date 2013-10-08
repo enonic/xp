@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -82,7 +83,7 @@ public class MixinResourceTest
         throws Exception
     {
         Mixin mixin = Mixin.newMixin().
-            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
+            createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
             name( MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
@@ -99,7 +100,7 @@ public class MixinResourceTest
     public final void test_get_mixin_config()
         throws Exception
     {
-        Mixin mixin = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name(
+        Mixin mixin = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
@@ -154,12 +155,12 @@ public class MixinResourceTest
     public final void test_list_mixins()
         throws Exception
     {
-        Mixin mixin1 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name(
+        Mixin mixin1 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_1.getMixinName() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mixin mixin2 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name(
+        Mixin mixin2 = Mixin.newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).name(
             MY_MIXIN_QUALIFIED_NAME_2.getMixinName() ).addFormItem(
             newInput().name( MY_MIXIN_QUALIFIED_NAME_2.getName() ).inputType( TEXT_AREA ).inputTypeConfig(
                 TextAreaConfig.newTextAreaConfig().columns( 10 ).rows( 10 ).build() ).label( "Text Area" ).required( true ).helpText(

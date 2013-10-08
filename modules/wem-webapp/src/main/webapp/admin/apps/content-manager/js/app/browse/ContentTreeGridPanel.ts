@@ -22,7 +22,7 @@ module app_browse {
             this.setItemId("ContentTreeGridPanel");
 
             app_browse_filter.ContentBrowseSearchEvent.on((event) => {
-                this.loadData(event.getContentList());
+                this.loadData(event.getJsonModels());
             });
 
             app_browse_filter.ContentBrowseResetEvent.on((event) => {

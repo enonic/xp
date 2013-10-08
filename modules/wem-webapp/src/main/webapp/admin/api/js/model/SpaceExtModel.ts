@@ -1,6 +1,7 @@
 module api_model {
 
-    export interface SpaceExtModel extends ExtModel {
+    //TODO: deprecated, use domain Space object instead outside grid
+    export interface SpaceExtModel extends Ext_data_Model {
         data:{
             name:string;
             displayName:string;

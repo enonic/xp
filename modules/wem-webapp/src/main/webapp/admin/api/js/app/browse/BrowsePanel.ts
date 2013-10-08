@@ -59,8 +59,7 @@ module api_app_browse{
             this.treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
 
-                    var models:api_model.ContentSummaryExtModel[] = <any[]>event.selectedModels;
-                    var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems(models);
+                    var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems(event.selectedModels);
                     this.browseItemPanel.setItems(browseItems);
                 }
             });
@@ -70,7 +69,7 @@ module api_app_browse{
             return this.browseToolbar.getActions();
         }
 
-        extModelsToBrowseItems(models:api_model.ExtModel[]):BrowseItem[] {
+        extModelsToBrowseItems(models:Ext_data_Model[]):BrowseItem[] {
             throw Error("To be implemented by inheritor");
         }
 

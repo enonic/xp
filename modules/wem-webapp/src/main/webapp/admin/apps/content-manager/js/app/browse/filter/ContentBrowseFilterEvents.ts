@@ -2,15 +2,15 @@ module app_browse_filter {
 
     export class ContentBrowseSearchEvent extends api_event.Event {
 
-        contentList:Object[];
+        private model:api_content_json.ContentSummaryJson[];
 
-        constructor(contentList?:Object[]) {
+        constructor(model?:api_content_json.ContentSummaryJson[]) {
             super('contentBrowseSearchEvent');
-            this.contentList = contentList || [];
+            this.model = model || [];
         }
 
-        getContentList() {
-            return this.contentList;
+        getJsonModels():api_content_json.ContentSummaryJson[] {
+            return this.model;
         }
 
         static on(handler:(event:ContentBrowseSearchEvent) => void) {
