@@ -15,7 +15,7 @@ import com.enonic.wem.api.schema.content.form.Form;
 
 public final class Module
 {
-    static final String MODULE_XML = "module.xml";
+    public static final String MODULE_XML = "module.xml";
 
     private final ModuleKey moduleKey;
 

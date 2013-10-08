@@ -14,7 +14,7 @@ public final class DeleteModule
         return this;
     }
 
-    ModuleKey getModule()
+    public ModuleKey getModule()
     {
         return module;
     }

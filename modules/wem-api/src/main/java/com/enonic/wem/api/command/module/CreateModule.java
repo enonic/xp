@@ -136,67 +136,67 @@ public final class CreateModule
         return this;
     }
 
-    String getName()
+    public String getName()
     {
         return name;
     }
 
-    ModuleVersion getVersion()
+    public ModuleVersion getVersion()
     {
         return version;
     }
 
-    String getDisplayName()
+    public String getDisplayName()
     {
         return displayName;
     }
 
-    String getInfo()
+    public String getInfo()
     {
         return info;
     }
 
-    String getUrl()
+    public String getUrl()
     {
         return url;
     }
 
-    String getVendorName()
+    public String getVendorName()
     {
         return vendorName;
     }
 
-    String getVendorUrl()
+    public String getVendorUrl()
     {
         return vendorUrl;
     }
 
-    Form getConfig()
+    public Form getConfig()
     {
         return config;
     }
 
-    ModuleFileEntry getModuleDirectoryEntry()
+    public ModuleFileEntry getModuleDirectoryEntry()
     {
         return moduleDirectoryEntry;
     }
 
-    ModuleVersion getMinSystemVersion()
+    public ModuleVersion getMinSystemVersion()
     {
         return minSystemVersion;
     }
 
-    ModuleVersion getMaxSystemVersion()
+    public ModuleVersion getMaxSystemVersion()
     {
         return maxSystemVersion;
     }
 
-    ModuleKeys getModuleDependencies()
+    public ModuleKeys getModuleDependencies()
     {
         return moduleDependencies;
     }
 
-    QualifiedContentTypeNames getContentTypeDependencies()
+    public QualifiedContentTypeNames getContentTypeDependencies()
     {
         return contentTypeDependencies;
     }

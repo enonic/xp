@@ -1,20 +1,54 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.core.module;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Preconditions;
+
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleFileEntry;
+import com.enonic.wem.api.module.ModuleKey;
 
 import static com.enonic.wem.api.module.Module.newModule;
 
 public final class ModuleImporter
 {
+
+    private final ModuleXmlSerializer xmlSerializer = new ModuleXmlSerializer();
+
     public Module importModuleFromZip( final Path zipFile )
+        throws IOException
     {
-        return null;
+        if ( !Files.exists( zipFile ) )
+        {
+            throw new NoSuchFileException( zipFile.toString() );
+        }
+        Preconditions.checkArgument( Files.isRegularFile( zipFile ), "Module file is not a file: " + zipFile );
+
+        final String moduleDirName = StringUtils.substringBeforeLast( zipFile.getFileName().toString(), ".zip" );
+        final ModuleKey moduleKey = ModuleKey.from( moduleDirName );
+        final Module.Builder moduleBuilder = newModule().moduleKey( moduleKey );
+
+        try (FileSystem zipFs = FileSystems.newFileSystem( zipFile, null ))
+        {
+            final Path moduleRootPath = zipFs.getPath( "/" );
+
+            final Path xmlFile = moduleRootPath.resolve( Module.MODULE_XML );
+            Preconditions.checkArgument( Files.isRegularFile( xmlFile ), "Module descriptor file not found: " + xmlFile );
+
+            readModuleXml( moduleBuilder, xmlFile );
+            final ModuleFileEntry.Builder rootEntry = moduleBuilder.getModuleDirectoryEntry();
+            importFiles( rootEntry, moduleRootPath, true );
+        }
+        return moduleBuilder.build();
     }
 
     public Module importModuleFromDirectory( final Path moduleDirectoryPath )
@@ -34,7 +68,6 @@ public final class ModuleImporter
 
         readModuleXml( moduleBuilder, xmlFile );
         final ModuleFileEntry.Builder rootEntry = moduleBuilder.getModuleDirectoryEntry();
-
         importFiles( rootEntry, moduleDirectoryPath, true );
 
         return moduleBuilder.build();
@@ -43,6 +76,7 @@ public final class ModuleImporter
     private void importFiles( final ModuleFileEntry.Builder parentEntry, final Path parentDirectory, final boolean rootLevel )
         throws IOException
     {
+        final String FS_SEPARATOR = parentDirectory.getFileSystem().getSeparator();
         try (DirectoryStream<Path> ds = Files.newDirectoryStream( parentDirectory ))
         {
             for ( Path path : ds )
@@ -53,7 +87,8 @@ public final class ModuleImporter
                 }
                 if ( Files.isDirectory( path ) )
                 {
-                    final ModuleFileEntry.Builder directoryEntry = ModuleFileEntry.directoryBuilder( path.getFileName().toString() );
+                    final String dirName = path.getFileName().toString().replace( FS_SEPARATOR, "" );
+                    final ModuleFileEntry.Builder directoryEntry = ModuleFileEntry.directoryBuilder( dirName );
                     importFiles( directoryEntry, path, false );
                     parentEntry.addEntry( directoryEntry );
                 }
@@ -66,7 +101,9 @@ public final class ModuleImporter
     }
 
     private void readModuleXml( final Module.Builder moduleBuilder, final Path xmlFile )
+        throws IOException
     {
-
+        final String xml = new String( Files.readAllBytes( xmlFile ), Charset.forName( "UTF-8" ) );
+        xmlSerializer.toModule( xml, moduleBuilder );
     }
 }

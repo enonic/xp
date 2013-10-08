@@ -1,9 +1,11 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.core.module;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -13,11 +15,16 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleFileEntry;
+
 public final class ModuleExporter
 {
     private final static Map<String, String> ZIP_FS_ENV = ImmutableMap.of( "create", "true" );
 
-    public void exportModuleToZip( final Module module, final Path targetDirectory )
+    private final ModuleXmlSerializer xmlSerializer = new ModuleXmlSerializer();
+
+    public Path exportModuleToZip( final Module module, final Path targetDirectory )
         throws IOException, URISyntaxException
     {
         final Path zipLocation = targetDirectory.resolve( module.getModuleKey().toString() + ".zip" );
@@ -36,11 +43,26 @@ public final class ModuleExporter
             exportFiles( parentEntry, rootPath );
             writeModuleXml( module, rootPath.resolve( Module.MODULE_XML ) );
         }
+
+        return zipLocation;
     }
 
-    public void exportModuleToDirectory( final Module module, final Path directory )
+    public Path exportModuleToDirectory( final Module module, final Path exportLocation )
+        throws IOException
     {
+        if ( !Files.isDirectory( exportLocation ) )
+        {
+            throw new FileNotFoundException( exportLocation.toString() );
+        }
 
+        final ModuleFileEntry parentEntry = module.getModuleDirectoryEntry();
+        final String directoryName = module.getModuleKey().toString();
+        final Path rootPath = exportLocation.resolve( directoryName );
+        Files.createDirectory( rootPath );
+        exportFiles( parentEntry, rootPath );
+        writeModuleXml( module, rootPath.resolve( Module.MODULE_XML ) );
+
+        return rootPath;
     }
 
     private void exportFiles( final ModuleFileEntry parentEntry, final Path parentDirectory )
@@ -65,7 +87,9 @@ public final class ModuleExporter
     }
 
     private void writeModuleXml( final Module module, final Path xmlFile )
+        throws IOException
     {
-
+        final String xml = xmlSerializer.toString( module );
+        Files.write( xmlFile, xml.getBytes( Charset.forName( "UTF-8" ) ) );
     }
 }

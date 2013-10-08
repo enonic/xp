@@ -27,7 +27,6 @@ public class Resource
     public Resource( final Path path, final ByteSource byteSource )
     {
         this.name = path.getFileName().toString();
-        this.file = path.toFile();
         this.byteSource = byteSource;
     }
 

@@ -10,7 +10,7 @@ public final class GetModuleResource
 {
     private ModuleKey moduleKey;
 
-    private String resourcePath; // ModulePath extends Path
+    private String resourcePath; // ResourcePath?
 
 
     public GetModuleResource module( final ModuleKey moduleKey )
@@ -25,12 +25,12 @@ public final class GetModuleResource
         return this;
     }
 
-    String getResourcePath()
+    public String getResourcePath()
     {
         return resourcePath;
     }
 
-    ModuleKey getModuleKey()
+    public ModuleKey getModuleKey()
     {
         return moduleKey;
     }

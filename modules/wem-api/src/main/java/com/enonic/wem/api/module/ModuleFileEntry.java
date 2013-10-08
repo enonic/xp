@@ -1,5 +1,7 @@
 package com.enonic.wem.api.module;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +20,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
+import com.google.common.io.ByteStreams;
+import com.sun.nio.zipfs.ZipPath;
 
 import com.enonic.wem.api.resource.Resource;
 
@@ -195,7 +198,22 @@ public final class ModuleFileEntry
 
     public static ModuleFileEntry newFileEntry( final Path filePath )
     {
-        final Resource resource = new Resource( filePath, Files.asByteSource( filePath.toFile() ) );
+        final Resource resource;
+        if ( filePath instanceof ZipPath )
+        {
+            try
+            {
+                resource = new Resource( filePath, ByteStreams.asByteSource( Files.readAllBytes( filePath ) ) );
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+        else
+        {
+            resource = new Resource( filePath, com.google.common.io.Files.asByteSource( filePath.toFile() ) );
+        }
         return new Builder( false, resource.getName() ).resource( resource ).build();
     }
 

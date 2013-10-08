@@ -17,12 +17,6 @@ public final class GetModules
 
     private List<ModuleKey> modules = Lists.newArrayList();
 
-    public GetModules module( final ModuleKey module )
-    {
-        this.modules.add( module );
-        return this;
-    }
-
     public GetModules modules( final ModuleKeys modules )
     {
         this.modules.addAll( modules.getList() );
@@ -40,7 +34,7 @@ public final class GetModules
         return getAllModules;
     }
 
-    List<ModuleKey> getModules()
+    public List<ModuleKey> getModules()
     {
         return modules;
     }

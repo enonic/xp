@@ -1,12 +1,21 @@
-package com.enonic.wem.api.module;
+package com.enonic.wem.core.module;
 
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Ignore;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
 
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleFileEntry;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.form.Form;
@@ -15,13 +24,60 @@ import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 public class ModuleExporterTest
 {
+    private Path tempDir;
+
+    @Before
+    public void createTempDir()
+        throws IOException
+    {
+        tempDir = Files.createTempDirectory( "wemtest" );
+    }
+
+    @After
+    public void deleteTempDir()
+    {
+        try
+        {
+            FileUtils.deleteDirectory( tempDir.toFile() );
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
+    }
+
     @Test
-    @Ignore
     public void testExportModuleToZip()
         throws Exception
+    {
+        final Module module = createModule();
+
+        final Path exportedModuleZip = new ModuleExporter().exportModuleToZip( module, tempDir );
+        System.out.println( "Module exported to " + exportedModuleZip );
+
+        assertNotNull( exportedModuleZip );
+        assertTrue( Files.exists( exportedModuleZip ) && Files.isRegularFile( exportedModuleZip ) );
+    }
+
+    @Test
+    public void testExportModuleToDirectory()
+        throws Exception
+    {
+        final Module module = createModule();
+
+        final Path exportedModuleDir = new ModuleExporter().exportModuleToDirectory( module, tempDir );
+        System.out.println( "Module exported to " + exportedModuleDir );
+
+        assertNotNull( exportedModuleDir );
+        assertTrue( Files.exists( exportedModuleDir ) && Files.isDirectory( exportedModuleDir ) );
+    }
+
+    private Module createModule()
     {
         final ModuleFileEntry publicDir = directoryBuilder( "public" ).
             addEntry( newFileEntry( "file1.txt", ByteStreams.asByteSource( "some data".getBytes() ) ) ).
@@ -55,8 +111,6 @@ public class ModuleExporterTest
             addFileEntry( templatesDir ).
             addFileEntry( directoryBuilder( "emptydir" ).build() ).
             build();
-
-        final String exportFile = "~/tmp/module/".replace( "~", System.getProperty( "user.home" ) );
-        new ModuleExporter().exportModuleToZip( module, Paths.get( exportFile ) );
+        return module;
     }
 }
