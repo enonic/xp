@@ -1,0 +1,17 @@
+[
+    {
+        "createdTime": "2013-08-23T12:55:09.162Z",
+        "deletable": true,
+        "displayName": "mixin",
+        "editable": true,
+        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mixin",
+        "key": "Mixin:mixin",
+        "modifiedTime": "2013-08-23T12:55:09.162Z",
+        "module": null,
+        "name": "mixin",
+        "qualifyName": "mixin",
+        "type": "Mixin"
+    }
+]
+
+

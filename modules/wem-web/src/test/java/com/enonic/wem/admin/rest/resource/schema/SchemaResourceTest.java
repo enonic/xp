@@ -1,21 +1,13 @@
 package com.enonic.wem.admin.rest.resource.schema;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
-import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.admin.json.schema.SchemaTreeJson;
-import com.enonic.wem.admin.rest.resource.schema.exception.InvalidSchemaTypeException;
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.command.schema.SchemaTypes;
@@ -28,39 +20,41 @@ import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.support.tree.Tree;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 
 public class SchemaResourceTest
+    extends AbstractResourceTest
 {
 
     private Client client;
 
+    private final String currentTime = "2013-08-23T12:55:09.162Z";
+
     @Before
     public void setup()
     {
-        HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( request.getScheme() ).thenReturn( "http" );
-        ServletRequestHolder.setRequest( request );
-        this.client = Mockito.mock( Client.class );
+        mockCurrentContextHttpRequest();
     }
 
     private Mixin createMixin( String displayName )
     {
-        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).addFormItem(
+        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
+            DateTime.parse( currentTime ) ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
                 TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() ).build();
     }
 
     private ContentType createContentType( String name )
     {
-        return ContentType.newContentType().name( name ).build();
+        return ContentType.newContentType().name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
+            DateTime.parse( currentTime ) ).build();
     }
 
     private RelationshipType createRelationshipType( String name )
     {
-        return RelationshipType.newRelationshipType().name( name ).build();
+        return RelationshipType.newRelationshipType().name( name ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
+            DateTime.parse( currentTime ) ).build();
     }
 
     private Schemas createSchemaList()
@@ -89,61 +83,53 @@ public class SchemaResourceTest
 
     @Test
     public void searchSchemaByQuery()
+        throws Exception
     {
-        final SchemaResource schemaResource = new SchemaResource();
-        schemaResource.setClient( client );
         Schemas schemas = createSchemaList();
         Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
-        List<SchemaJson> result = schemaResource.list( "", new HashSet<String>(), new ArrayList<String>() );
-        assertEquals( result.size(), 3 );
-        List<String> names = Lists.asList( "mixin", "relationship", new String[]{"contenttype"} );
-        for ( SchemaJson schemaJson : result )
-        {
-            assertTrue( names.contains( schemaJson.getName() ) );
-        }
 
-        result = schemaResource.list( "mixin", new HashSet<String>(), new ArrayList<String>() );
-        assertEquals( result.size(), 1 );
-        assertEquals( result.get( 0 ).getName(), "mixin" );
+        String json = resource().path( "schema/list" ).queryParam( "search", "" ).get( String.class );
+        assertJson( "schema_by_empty_query.json", json );
 
-        result = schemaResource.list( "", Sets.newHashSet( "module" ), new ArrayList<String>() );
-        assertEquals( result.size(), 3 );
-        for ( SchemaJson schemaJson : result )
-        {
-            assertTrue( names.contains( schemaJson.getName() ) );
-        }
-        //TODO: add json assertions when their form is decided
+        json = resource().path( "schema/list" ).queryParam( "search", "mixin" ).get( String.class );
+        assertJson( "schema_by_query.json", json );
+
+        json = resource().path( "schema/list" ).queryParam( "search", "mixin" ).queryParam( "modules", "module" ).get( String.class );
+        assertJson( "schema_by_query_and_modules.json", json );
+
 
     }
 
-    @Test(expected = InvalidSchemaTypeException.class)
+    @Test
     public void searchSchemaByWrongType()
     {
-        final SchemaResource schemaResource = new SchemaResource();
-        schemaResource.setClient( client );
-        schemaResource.list( "", new HashSet<String>(), Lists.asList( "SomeType", new String[]{"AnotherType"} ) );
+        try
+        {
+            resource().path( "schema/list" ).queryParam( "search", "" ).queryParam( "types", "SomeType" ).queryParam( "types",
+                                                                                                                      "AnotherType" ).get(
+                String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( e.getResponse().getStatus(), 406 );
+            assertEquals( e.getResponse().getEntity( String.class ), "Invalid parameter 'types': [SomeType, AnotherType]" );
+        }
     }
 
     @Test
     public void searchSchemaByModules()
+        throws Exception
     {
-        final SchemaResource schemaResource = new SchemaResource();
-        schemaResource.setClient( client );
-        Schemas schemas = createSchemaList();
-        Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
+        Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( createSchemaList() );
 
-        List<SchemaJson> result = schemaResource.list( "", Sets.newHashSet( "module" ), new ArrayList<String>() );
-        List<String> names = Lists.asList( "mixin", "relationship", new String[]{"contenttype"} );
-        assertEquals( result.size(), 3 );
-        for ( SchemaJson schemaJson : result )
-        {
-            assertTrue( names.contains( schemaJson.getName() ) );
-        }
-        //TODO: add json assertions when their form is decided
+        String json = resource().path( "schema/list" ).queryParam( "search", "" ).queryParam( "modules", "module" ).get( String.class );
+
+        assertJson( "schema_by_modules.json", json );
     }
 
     @Test
     public void searchSchemaByTypes()
+        throws Exception
     {
         final SchemaResource schemaResource = new SchemaResource();
         schemaResource.setClient( client );
@@ -152,46 +138,58 @@ public class SchemaResourceTest
         Schemas schemas = Schemas.from( contentType, mixin );
         Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
 
-        List<SchemaJson> result = schemaResource.list( "", new HashSet<String>(), Lists.asList( "mixin", new String[]{"content_type"} ) );
-        List<String> names = Lists.asList( "mixin", new String[]{"contenttype"} );
-        assertEquals( result.size(), 2 );
-        for ( SchemaJson schemaJson : result )
-        {
-            assertTrue( names.contains( schemaJson.getName() ) );
-        }
-        //TODO: add json assertions when their form is decided
+        String json = resource().path( "schema/list" ).queryParam( "search", "" ).queryParam( "types", "mixin" ).queryParam( "types",
+                                                                                                                             "content_type" ).get(
+            String.class );
+
+        assertJson( "schema_by_types.json", json );
     }
 
     @Test
     public void getSchemaTree()
+        throws Exception
     {
-        final SchemaResource schemaResource = new SchemaResource();
-        schemaResource.setClient( client );
         Tree<Schema> schemaTree = createSchemaTree();
         Mockito.when( client.execute( Mockito.isA( GetSchemaTree.class ) ) ).thenReturn( schemaTree );
-        SchemaTreeJson jsonTree = schemaResource.tree( new ArrayList<String>() );
-        assertEquals( jsonTree.getTotal(), 6 );
-        //TODO: add json assertions when their form is decided
+
+        String json = resource().path( "schema/tree" ).get( String.class );
+
+        assertJson( "schema_tree.json", json );
     }
 
     @Test
     public void getSchemaTreeWithTypesParam()
+        throws Exception
     {
-        final SchemaResource schemaResource = new SchemaResource();
-        schemaResource.setClient( client );
         Tree<Schema> schemaTree = createSchemaTree();
         Mockito.when( client.execute( Mockito.isA( GetSchemaTree.class ) ) ).thenReturn( schemaTree );
-        SchemaTreeJson jsonTree = schemaResource.tree( Lists.newArrayList( "content_type", "mixin", "relationship_type" ) );
-        assertEquals( jsonTree.getTotal(), 6 );
-        //TODO: add json assertions when their form is decided
+
+        String json = resource().path( "schema/tree" ).queryParam( "types", "content_type" ).
+            queryParam( "types", "mixin" ).queryParam( "types", "relationship_type" ).get( String.class );
+
+        assertJson( "schema_tree.json", json );
     }
 
-    @Test(expected = InvalidSchemaTypeException.class)
+    @Test
     public void getSchemaTreeWithWrongTypesParam()
     {
-        final SchemaResource schemaResource = new SchemaResource();
-        schemaResource.setClient( client );
-        schemaResource.tree( Lists.asList( "wrong_type", new String[]{"content_type"} ) );
+        try
+        {
+            resource().path( "schema/tree" ).queryParam( "types", "wrong_type" ).get( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( e.getResponse().getStatus(), 406 );
+            assertEquals( e.getResponse().getEntity( String.class ), "Invalid parameter 'types': [wrong_type]" );
+        }
     }
 
+    @Override
+    protected Object getResourceInstance()
+    {
+        client = Mockito.mock( Client.class );
+        final SchemaResource resource = new SchemaResource();
+        resource.setClient( client );
+        return resource;
+    }
 }
