@@ -39,7 +39,12 @@ module app_wizard_form_input {
             }
 
             this.inputTypeView.layout(this.input, this.properties);
-            this.getEl().appendChild(this.inputTypeView.getHTMLElement());
+            if( this.inputTypeView instanceof app_wizard_form_input_type.BaseInputTypeView ) {
+                this.appendChild( <app_wizard_form_input_type.BaseInputTypeView>this.inputTypeView );
+            }
+            else {
+                this.appendChild(api_dom.Element.fromHtmlElement(this.inputTypeView.getHTMLElement()))
+            }
 
             this.inputTypeView.addFormItemOccurrencesListener(<app_wizard_form.FormItemOccurrencesListener>{
                 onOccurrenceAdded: (occurrenceAdded:app_wizard_form.FormItemOccurrence) => {
