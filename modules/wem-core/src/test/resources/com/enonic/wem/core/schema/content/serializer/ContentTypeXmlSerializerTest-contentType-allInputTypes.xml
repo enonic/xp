@@ -102,7 +102,19 @@
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
-    <input type="TextArea" name="myTextArea">
+    <input type="TextArea" name="myTextArea_default">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <rows>10</rows>
+        <columns>50</columns>
+      </config>
+    </input>
+    <input type="TextArea" name="myTextArea_10cols_10_rows">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
@@ -162,3 +174,4 @@
     </input>
   </form>
 </type>
+
