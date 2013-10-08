@@ -41,7 +41,7 @@ module app_wizard_form_input {
 
             this.baseInputTypeView = newInputPrototype;
             this.baseInputTypeView.layout(this.input, this.properties);
-            this.getEl().appendChild(this.baseInputTypeView.getHTMLElement());
+            this.appendChild(this.baseInputTypeView);
             this.baseInputTypeView.getInputOccurrences().addListener(<app_wizard_form.FormItemOccurrencesListener>{
                 onOccurrenceAdded: (occurrenceAdded:app_wizard_form.FormItemOccurrence) => {
                     this.refresh();

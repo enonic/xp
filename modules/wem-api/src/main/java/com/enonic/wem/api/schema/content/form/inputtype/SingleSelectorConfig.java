@@ -126,6 +126,6 @@ public class SingleSelectorConfig
 
     public enum SelectorType
     {
-        DROPDOWN, RADIO;
+        DROPDOWN, RADIO, COMBOBOX;
     }
 }

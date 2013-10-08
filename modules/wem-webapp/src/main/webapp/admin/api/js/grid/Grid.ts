@@ -58,6 +58,14 @@ module api_grid {
             this.dataView.refresh();
         }
 
+        addItem(item:any) {
+            if (this.isRendered()) {
+                this.dataView.addItem(item)
+            } else {
+                this.data.push(item);
+            }
+        }
+
         getDataView():DataView {
             return this.dataView;
         }
