@@ -10,7 +10,7 @@ Ext.define('Admin.view.contentManager.contextwindow.emulator.Emulator', {
         type: 'fit'
     },
 
-    DEVICES_URL: '../admin2/apps/content-manager/js/data/context-window/devices.json',
+    DEVICES_URL: '../admin/apps/content-manager/js/data/context-window/devices.json',
 
     topTextCmp: undefined,
     listView: undefined,

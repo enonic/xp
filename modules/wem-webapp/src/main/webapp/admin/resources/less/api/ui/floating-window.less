@@ -97,6 +97,18 @@
         font-size: 11px;
         font-weight: normal;
       }
+
+      .rotate {
+        display:none;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
+      &.active {
+        .rotate {
+          display:block;
+        }
+      }
     }
 
     .emulator-panel {

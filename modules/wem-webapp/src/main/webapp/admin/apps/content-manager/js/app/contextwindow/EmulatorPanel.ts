@@ -26,6 +26,15 @@ module app_contextwindow {
                 this.contextWindow.getLiveEditEl().getEl().setWidth(width);
                 this.contextWindow.getLiveEditEl().getEl().setHeight(height);
             });
+
+            jQuery(this.getHTMLElement()).on("click", ".rotate", (event:JQueryEventObject) => {
+                event.stopPropagation();
+                var width = jQuery(event.currentTarget).parent('div').data("height");
+                var height = jQuery(event.currentTarget).parent('div').data("width");
+                console.log(width, height);
+                this.contextWindow.getLiveEditEl().getEl().setWidth(width);
+                this.contextWindow.getLiveEditEl().getEl().setHeight(height);
+            });
         }
 
         private getData():void {

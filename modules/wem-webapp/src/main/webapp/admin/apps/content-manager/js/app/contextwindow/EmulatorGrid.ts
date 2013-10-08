@@ -29,9 +29,13 @@ module app_contextwindow {
                 'data-type="' + data.device_type +'"',
                 '>',
                 '<h5>' + data.name + '</h5>',
-                '<h6>' + data.width + " &times; " + data.height + " " + data.device_type + '</h6>',
-                '</div>'
+                '<h6>' + data.width + " &times; " + data.height + " " + data.device_type + '</h6>'
             );
+            if (data.rotatable == true) {
+                rowHtml.push('<div class="rotate live-edit-font-icon-spinner"></div>')
+            }
+
+            rowHtml.push('</div>');
 
             return rowHtml.join("");
         }
