@@ -12,11 +12,13 @@ module app_wizard_form_input_type {
 
         public static TYPE = "DROPDOWN";
         public static TYPE_RADIO = "RADIO";
+        public static TYPE_COMBOBOX = "COMBOBOX";
 
         private config:SingleSelectorConfig;
 
         constructor(config?:SingleSelectorConfig) {
             super("SingleSelector");
+            this.addClass("single-selector");
             this.config = config;
         }
 
@@ -24,10 +26,17 @@ module app_wizard_form_input_type {
             var inputEl;
             var name = this.getInput().getName() + "-" + index;
 
-            if (this.config && this.config.type &&
-                SingleSelector.TYPE_RADIO == this.config.type.toUpperCase()) {
-
+            var type = this.config && this.config.type && this.config.type.toUpperCase();
+            if (SingleSelector.TYPE_RADIO == type) {
                 inputEl = new api_ui.RadioGroup(name);
+            } else if (SingleSelector.TYPE_COMBOBOX == type) {
+                inputEl = new api_ui.ComboBox(name, [], {rowHeight: 24, filter: this.comboboxFilter});
+                inputEl.addListener({
+                    onInputValueChanged: function (oldValue, newValue, grid) {
+                        grid.getDataView().setFilterArgs({searchString: newValue});
+                        grid.getDataView().refresh();
+                    }
+                });
             } else {
                 inputEl = new api_ui.Dropdown(name);
             }
@@ -50,6 +59,10 @@ module app_wizard_form_input_type {
         getValue(occurrence:api_dom.Element):api_data.Value {
             var inputEl = <api_dom.FormInputEl>occurrence;
             return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
+        }
+
+        private comboboxFilter(item:api_ui.OptionData, args) {
+            return !(args && args.searchString && item.value.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }
 
