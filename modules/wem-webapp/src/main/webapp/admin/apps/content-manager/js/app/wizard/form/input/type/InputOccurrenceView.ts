@@ -6,7 +6,7 @@ module app_wizard_form_input_type {
 
         private inputElement:api_dom.Element;
 
-        private removeButtonEl:api_dom.ButtonEl;
+        private removeButtonEl:api_dom.AEl;
 
         private occurrenceCountEl:api_dom.SpanEl;
 
@@ -20,8 +20,8 @@ module app_wizard_form_input_type {
             this.occurrenceCountEl = new api_dom.SpanEl(null, "occurrence-count");
             this.appendChild(this.occurrenceCountEl);
 
-            this.removeButtonEl = new api_ui.Button("X");
-            this.removeButtonEl.setClass("remove-button");
+            this.removeButtonEl = new api_dom.AEl(null, "remove-button");
+
             this.removeButtonEl.hide();
             this.appendChild(this.removeButtonEl);
             this.removeButtonEl.setClickListener(() => {
