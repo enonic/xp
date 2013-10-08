@@ -71,7 +71,7 @@ module app_browse {
             return summaries;
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]) {
+        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem[] {
 
             var browseItems:api_app_browse.BrowseItem[] = [];
             models.forEach((model:Ext_data_Model) => {
