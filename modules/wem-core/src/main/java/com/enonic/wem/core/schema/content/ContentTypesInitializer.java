@@ -99,7 +99,7 @@ public class ContentTypesInitializer
             "demo-contenttype-relation.json", "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json",
             "demo-contenttype-mixin-address.json", "demo-contenttype-mixin-norwegian-counties.json",
             "demo-contenttype-relation-article.json", "demo-contenttype-layout.json", "demo-contenttype-trampoline.json",
-            "demo-contenttype-formItemset-min-occurrences.json"};
+            "demo-contenttype-formItemset-min-occurrences.json", "demo-contenttype-singleSelectors.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 

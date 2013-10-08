@@ -1,0 +1,117 @@
+{
+    "name": "singleselectors",
+    "displayName": "Single selectors",
+    "superType": "structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "ss_radio",
+                "label": "Single Selector, radio",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "SingleSelector",
+                    "config": {
+                        "selectorType": "RADIO",
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                            ,
+                            {
+                                "label": "myOption 3",
+                                "value": "o3"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "ss_dropdown",
+                "label": "Single Selector, dropdown",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "SingleSelector",
+                    "config": {
+                        "selectorType": "DROPDOWN",
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                            ,
+                            {
+                                "label": "myOption 3",
+                                "value": "o3"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "ss_combobox",
+                "label": "Single Selector, combo-box",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "SingleSelector",
+                    "config": {
+                        "selectorType": "COMBOBOX",
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                            ,
+                            {
+                                "label": "myOption 3",
+                                "value": "o3"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}
