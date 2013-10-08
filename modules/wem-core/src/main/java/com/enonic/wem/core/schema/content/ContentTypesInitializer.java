@@ -94,12 +94,13 @@ public class ContentTypesInitializer
             MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE};
 
     private static final String[] DEMO_CONTENT_TYPES =
-        {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-formItemset.json",
-            "demo-contenttype-blog.json", "demo-contenttype-article1.json", "demo-contenttype-article2.json",
-            "demo-contenttype-relation.json", "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json",
-            "demo-contenttype-mixin-address.json", "demo-contenttype-mixin-norwegian-counties.json",
-            "demo-contenttype-relation-article.json", "demo-contenttype-layout.json", "demo-contenttype-trampoline.json",
-            "demo-contenttype-formItemset-min-occurrences.json", "demo-contenttype-singleSelectors.json"};
+        {"demo-contenttype-textarea.json", "demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json",
+            "demo-contenttype-formItemset.json", "demo-contenttype-blog.json", "demo-contenttype-article1.json",
+            "demo-contenttype-article2.json", "demo-contenttype-relation.json", "demo-contenttype-occurrences.json",
+            "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin-address.json",
+            "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
+            "demo-contenttype-trampoline.json", "demo-contenttype-formItemset-min-occurrences.json",
+            "demo-contenttype-singleSelectors.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 

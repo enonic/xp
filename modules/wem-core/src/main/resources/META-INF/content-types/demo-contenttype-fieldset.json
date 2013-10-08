@@ -26,8 +26,7 @@
                             "validationRegexp": null,
                             "helpText": null,
                             "type": {
-                                "name": "TextLine",
-                                "builtIn": true
+                                "name": "TextLine"
                             }
                         }
                     },
@@ -45,8 +44,7 @@
                             "validationRegexp": null,
                             "helpText": "HTML Area",
                             "type": {
-                                "name": "HtmlArea",
-                                "builtIn": true
+                                "name": "HtmlArea"
                             }
                         }
                     }

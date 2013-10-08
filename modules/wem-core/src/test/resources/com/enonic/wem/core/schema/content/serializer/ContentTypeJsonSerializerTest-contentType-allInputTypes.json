@@ -204,7 +204,29 @@
         },
         {
             "Input": {
-                "name": "myTextArea",
+                "name": "myTextArea_default",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextArea",
+                    "config": {
+                        "rows": 10,
+                        "columns": 50
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myTextArea_10cols_10_rows",
                 "label": null,
                 "immutable": false,
                 "occurrences": {
