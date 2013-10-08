@@ -65,12 +65,17 @@ module app_contextwindow {
                 row.addClass(this.componentGridOptions.rowClass)
             }
 
+            var icon = new api_dom.DivEl();
+            icon.setClass('live-edit-font-icon-' + data.typeName);
+            icon.addClass('icon');
+
             var title = new api_dom.H5El();
             title.getEl().setInnerHtml(data.name);
 
             var subtitle = new api_dom.H6El();
             subtitle.getEl().setInnerHtml(data.subtitle);
 
+            row.appendChild(icon);
             row.appendChild(title);
             row.appendChild(subtitle);
 
