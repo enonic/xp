@@ -14,13 +14,13 @@ module api_ui {
 
         rowHeight?: number;
 
-        optionFormatter?: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
+        optionFormatter?: (row:number, cell:number, value:any, columnDef:any, dataContext:Slick.SlickData) => string;
 
         selectedOptionFormatter?: (value:any) => string;
 
         maximumOccurrences?: number;
 
-        filter?: (item: any, args: any) => boolean;
+        filter?: (item:any, args:any) => boolean;
 
     }
 
@@ -32,23 +32,23 @@ module api_ui {
 
         private dropdown:api_grid.Grid;
 
-        private emptyDropdown: api_dom.DivEl;
+        private emptyDropdown:api_dom.DivEl;
 
-        private selectedOptions: api_dom.DivEl;
+        private selectedOptions:api_dom.DivEl;
 
-        private initData: any;
+        private initData:any;
 
-        private optionFormatter: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
+        private optionFormatter:(row:number, cell:number, value:any, columnDef:any, dataContext:Slick.SlickData) => string;
 
-        private selectedOptionFormatter: (value:any) => string;
+        private selectedOptionFormatter:(value:any) => string;
 
         private maximumOccurrences:number;
 
-        private filter: (item: any, args: any) => boolean;
+        private filter:(item:any, args:any) => boolean;
 
-        private selectedData: OptionData[] = [];
+        private selectedData:OptionData[] = [];
 
-        private maxHeight: number = 200;
+        private maxHeight:number = 200;
 
         private rowHeight;
 
@@ -56,11 +56,11 @@ module api_ui {
          * Indicates if combobox is currently has focus
          * @type {boolean}
          */
-        private active: boolean = false;
+        private active:boolean = false;
 
-        private listeners: ComboBoxListener[] = [];
+        private listeners:ComboBoxListener[] = [];
 
-        constructor(name: string, data:any, config:ComboBoxConfig) {
+        constructor(name:string, data:any, config:ComboBoxConfig) {
             super("div", null, "combobox");
             this.getEl().setAttribute("name", name);
 
@@ -89,10 +89,14 @@ module api_ui {
             this.appendChild(this.selectedOptions);
 
             var data = this.initData;
-            var columns = [
-                {id: "option", name: "Options", field: "value", formatter: this.optionFormatter}
+            var columns:api_grid.GridColumn[] = [
+                {
+                    id: "option",
+                    name: "Options",
+                    field: "value",
+                    formatter: this.optionFormatter}
             ];
-            var options = {
+            var options:api_grid.GridOptions = {
                 width: this.input.getEl().getWidth(),
                 height: this.maxHeight,
                 hideColumnHeaders: true,
@@ -116,7 +120,7 @@ module api_ui {
             this.setupListeners();
         }
 
-        isDropdownShown(): boolean {
+        isDropdownShown():boolean {
             return this.emptyDropdown.isVisible() || this.dropdown.isVisible();
         }
 
@@ -233,7 +237,7 @@ module api_ui {
 
             var item = <OptionData>this.dropdown.getDataItem(index);
 
-            for (var i = 0 ; i < this.selectedData.length ; i++) {
+            for (var i = 0; i < this.selectedData.length; i++) {
                 if (this.selectedData[i].id == item.id) {
                     return false;
                 }
@@ -245,7 +249,7 @@ module api_ui {
         private updateDropdownStyles() {
             var stylesHash = {};
             var dataView = this.dropdown.getDataView();
-            this.selectedData.forEach((item: OptionData) => {
+            this.selectedData.forEach((item:OptionData) => {
                 var row = dataView.getRowById(item.id);
                 stylesHash[row] = {option: "selected"};
             });
@@ -266,7 +270,7 @@ module api_ui {
                 var comboboxHtmlElement = combobox.getHTMLElement();
 
                 // check if event occured inside combobox then do nothing and return
-                for ( var element = event.target ; element ; element = (<any>element).parentNode ) {
+                for (var element = event.target; element; element = (<any>element).parentNode) {
                     if (element == comboboxHtmlElement) {
                         return;
                     }
@@ -292,7 +296,8 @@ module api_ui {
 
             option.appendChild(removeButton);
             option.appendChild(optionValue);
-            optionValue.getEl().setInnerHtml(this.selectedOptionFormatter ? this.selectedOptionFormatter(item.value) : item.value.toString());
+            optionValue.getEl().setInnerHtml(this.selectedOptionFormatter ? this.selectedOptionFormatter(item.value)
+                : item.value.toString());
 
             this.selectedOptions.appendChild(option);
             this.selectedOptions.show();
@@ -328,7 +333,7 @@ module api_ui {
                 dropdownEl.setWidth(inputEl.getWidth() + "px");
             }
 
-            var rowsHeight =  this.dropdown.getDataView().getLength() * this.rowHeight;
+            var rowsHeight = this.dropdown.getDataView().getLength() * this.rowHeight;
             if (rowsHeight < this.maxHeight) {
                 var borderWidth = dropdownEl.getBorderTopWidth() + dropdownEl.getBorderBottomWidth();
                 dropdownEl.setHeight(rowsHeight + borderWidth + "px");
