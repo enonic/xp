@@ -14,7 +14,7 @@ module app_browse_grid {
 
                 proxy: {
                     type: 'rest',
-                    url: '/admin/rest/content/list',
+                    url: api_util.getUri('admin/rest/content/list'),
                     reader: {
                         type: 'json',
                         root: 'contents',
