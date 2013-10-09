@@ -53,17 +53,6 @@ public final class BootContextListener
 
     private void configure( final ServletContext context )
     {
-        /*
-        context.addListener( new RequestContextListener() );
-
-        final FilterRegistration.Dynamic guiceFilter = context.addFilter( "guice", new GuiceFilter() );
-        guiceFilter.addMappingForUrlPatterns( EnumSet.of( DispatcherType.REQUEST ), true, "/*" );
-
-        final ServletRegistration.Dynamic resourceServlet = context.addServlet( "resource", new ResourceServlet() );
-        resourceServlet.setLoadOnStartup( 2 );
-        resourceServlet.addMapping( "/" );
-        */
-
         for ( final WebInitializer initializer : this.initializers )
         {
             initializer.initialize( context );
