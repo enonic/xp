@@ -65,6 +65,14 @@ module app_wizard_form_input_type {
                 this.comboBox.addOption(option.value, option.label)
             });
 
+            if (properties != null) {
+                var valueArray:string[] = [];
+                properties.forEach((property:api_data.Property) => {
+                    valueArray.push(property.getString());
+                });
+                this.comboBox.setValues(valueArray);
+            }
+
             this.appendChild(this.comboBox);
         }
 
