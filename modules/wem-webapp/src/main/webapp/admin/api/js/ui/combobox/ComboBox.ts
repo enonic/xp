@@ -69,7 +69,7 @@ module api_ui_combobox {
                 {
                     id: "option",
                     name: "Options",
-                    field: "value",
+                    field: "displayValue",
                     formatter: this.optionFormatter}
             ];
             var options:api_grid.GridOptions = {
@@ -134,25 +134,22 @@ module api_ui_combobox {
             this.dropdown.addItem({value: id, displayValue: value});
         }
 
-        setValue(...values: string[]) {
-            values.forEach((value: string) => {
-                var item = <OptionData>this.dropdown.getDataItemById(value);
-                this.selectOption(item);
-            });
+        setValue(value: string) {
+            var item = <OptionData>this.dropdown.getDataItemById(value);
+            this.selectOption(item);
         }
 
         setValues(values: string[]) {
             values.forEach((value: string) => {
-                var item = <OptionData>this.dropdown.getDataItemById(value);
-                this.selectOption(item);
+                this.setValue(value);
             });
         }
 
         getValue():string {
             var values = [];
-            for (var i = 0 ; i < this.selectedData.length ; i++) {
-                values.push(this.selectedData[i].value);
-            }
+            this.selectedData.forEach((item: OptionData) => {
+                values.push(item.value);
+            });
             return values.join(';');
         }
 
