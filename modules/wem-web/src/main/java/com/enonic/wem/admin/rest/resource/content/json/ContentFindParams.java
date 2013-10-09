@@ -31,6 +31,8 @@ public class ContentFindParams
 
     private String expand = "none";
 
+    private int count = -1;
+
     public String getFulltext()
     {
         return fulltext;
@@ -108,6 +110,19 @@ public class ContentFindParams
     public void setExpand( final String expand )
     {
         this.expand = expand;
+    }
+
+    public int getCount()
+    {
+        return count;
+    }
+
+    public void setCount( final Integer count )
+    {
+        if ( count != null )
+        {
+            this.count = count;
+        }
     }
 
     public class Range

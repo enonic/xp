@@ -23,6 +23,9 @@ module api_content {
 
         private expand:string = FindContentRequest.EXPAND_NONE;
 
+        // don't limit by default
+        private count:number = -1;
+
 
         constructor(fulltext?:string) {
             super();
@@ -68,6 +71,11 @@ module api_content {
             return this;
         }
 
+        public setCount(count:number) {
+            this.count = count;
+            return this;
+        }
+
 
         getParams():Object {
             return {
@@ -77,7 +85,8 @@ module api_content {
                 ranges: this.ranges || [],
                 facets: this.facets || this.getDefaultFacets(),
                 include: this.includeFacets,
-                expand: this.expand
+                expand: this.expand,
+                count: this.count
             };
         }
 

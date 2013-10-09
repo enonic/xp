@@ -10,18 +10,14 @@ module app_browse_filter {
 
             super(null, [contentTypeFacets, spaceFacets, lastModifiedFacets]);
 
+            this.resetFacets(true);
+
             this.addListener(
                 {
                     onReset: ()=> {
-
-                        new api_content.FindContentRequest().send().done(
-                            (jsonResponse:api_rest.JsonResponse) => {
-                                this.updateFacets(api_facet.FacetFactory.createFacets(jsonResponse.getJson().facets));
-                                new ContentBrowseResetEvent().fire();
-                            }
-                        );
-
+                        this.resetFacets();
                     },
+
                     onSearch: (values:{[s:string] : string[]; })=> {
 
                         var isClean = !this.hasFilterSet();
@@ -46,6 +42,18 @@ module app_browse_filter {
                             })
                         ;
 
+                    }
+                }
+            );
+        }
+
+        private resetFacets(supressEvent?:boolean) {
+            new api_content.FindContentRequest().setCount(0).send().done(
+                (jsonResponse:api_rest.JsonResponse) => {
+                    var termsFacets:api_facet.Facet[] = api_facet.FacetFactory.createFacets(jsonResponse.getJson().facets);
+                    this.updateFacets(termsFacets);
+                    if (!supressEvent) {
+                        new ContentBrowseResetEvent().fire();
                     }
                 }
             );

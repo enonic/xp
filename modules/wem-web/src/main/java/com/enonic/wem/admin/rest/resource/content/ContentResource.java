@@ -275,6 +275,11 @@ public class ContentResource
         contentIndexQuery.setContentTypeNames( QualifiedContentTypeNames.from( params.getContentTypes() ) );
         contentIndexQuery.setSpaceNames( SpaceNames.from( params.getSpaces() ) );
 
+        if ( params.getCount() >= 0 )
+        {
+            contentIndexQuery.setSize( params.getCount() );
+        }
+
         Set<ContentFindParams.Range> ranges = params.getRanges();
         if ( ranges != null && ranges.size() > 0 )
         {

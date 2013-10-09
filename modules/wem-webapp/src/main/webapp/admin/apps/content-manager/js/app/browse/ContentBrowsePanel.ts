@@ -33,13 +33,6 @@ module app_browse {
 
             this.contentFilterPanel = new app_browse_filter.ContentBrowseFilterPanel();
 
-            new api_content.FindContentRequest().send().done(
-                (jsonResponse:api_rest.JsonResponse) => {
-                    var termsFacets:api_facet.Facet[] = api_facet.FacetFactory.createFacets(jsonResponse.getJson().facets);
-                    this.contentFilterPanel.updateFacets(termsFacets);
-                }
-            );
-
             super({
                 browseToolbar: this.toolbar,
                 treeGridPanel: this.contentTreeGridPanel,
