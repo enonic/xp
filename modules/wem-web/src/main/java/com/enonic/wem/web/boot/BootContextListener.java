@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Stage;
 
 import com.enonic.wem.core.lifecycle.LifecycleManager;
 import com.enonic.wem.web.servlet.WebInitializer;
@@ -30,7 +31,7 @@ public final class BootContextListener
     private void createInjector()
     {
         LOG.info( "Creating injector for all beans." );
-        this.injector = Guice.createInjector( new BootModule() );
+        this.injector = Guice.createInjector( Stage.PRODUCTION, new BootModule() );
         this.injector.injectMembers( this );
     }
 
