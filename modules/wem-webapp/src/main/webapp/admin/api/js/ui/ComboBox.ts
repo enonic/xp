@@ -120,6 +120,14 @@ module api_ui {
             this.setupListeners();
         }
 
+        countSelected():number {
+            return this.selectedData.length;
+        }
+
+        getSelectedData():OptionData[] {
+            return this.selectedData;
+        }
+
         isDropdownShown():boolean {
             return this.emptyDropdown.isVisible() || this.dropdown.isVisible();
         }
