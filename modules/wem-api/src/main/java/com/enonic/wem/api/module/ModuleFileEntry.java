@@ -25,6 +25,8 @@ import com.sun.nio.zipfs.ZipPath;
 
 import com.enonic.wem.api.resource.Resource;
 
+import static com.enonic.wem.api.resource.Resource.newResource;
+
 @Immutable
 public final class ModuleFileEntry
     implements Iterable<ModuleFileEntry>
@@ -192,7 +194,7 @@ public final class ModuleFileEntry
 
     public static ModuleFileEntry newFileEntry( final String fileName, final ByteSource source )
     {
-        final Resource resource = new Resource( fileName, source );
+        final Resource resource = newResource().name( fileName ).byteSource( source ).build();
         return new Builder( false, fileName ).resource( resource ).build();
     }
 
@@ -203,7 +205,9 @@ public final class ModuleFileEntry
         {
             try
             {
-                resource = new Resource( filePath, ByteStreams.asByteSource( Files.readAllBytes( filePath ) ) );
+                resource = newResource().
+                    name( filePath.getFileName().toString() ).
+                    byteSource( ByteStreams.asByteSource( Files.readAllBytes( filePath ) ) ).build();
             }
             catch ( IOException e )
             {
@@ -212,7 +216,9 @@ public final class ModuleFileEntry
         }
         else
         {
-            resource = new Resource( filePath, com.google.common.io.Files.asByteSource( filePath.toFile() ) );
+            resource = newResource().
+                name( filePath.getFileName().toString() ).
+                byteSource( com.google.common.io.Files.asByteSource( filePath.toFile() ) ).build();
         }
         return new Builder( false, resource.getName() ).resource( resource ).build();
     }
@@ -248,8 +254,7 @@ public final class ModuleFileEntry
         private Builder( final ModuleFileEntry entry )
         {
             this.isDirectory = entry.isDirectory();
-            // TODO copy or make Resource immutable
-            this.resource = entry.resource == null ? null : new Resource( entry.resource.getName(), entry.resource.getByteSource() );
+            this.resource = entry.resource;
             this.name = entry.getName();
             for ( ModuleFileEntry subEntry : entry )
             {

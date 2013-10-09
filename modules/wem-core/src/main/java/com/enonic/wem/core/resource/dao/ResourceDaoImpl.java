@@ -9,6 +9,8 @@ import com.google.common.io.Files;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.config.SystemConfig;
 
+import static com.enonic.wem.api.resource.Resource.newResource;
+
 public class ResourceDaoImpl
     implements ResourceDao
 {
@@ -26,9 +28,11 @@ public class ResourceDaoImpl
             return null;
         }
 
-        Resource resource = new Resource( resourceFile.getName(), Files.asByteSource( resourceFile ) );
-        resource.setFile( resourceFile );
-        resource.setSize( resourceFile.length() );
+        final Resource resource = newResource().
+            name( resourceFile.getName() ).
+            byteSource( Files.asByteSource( resourceFile ) ).
+            size( resourceFile.length() ).
+            build();
 
         return resource;
     }

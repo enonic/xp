@@ -29,7 +29,7 @@ public class ResourceRequestHandler
             return Response.status( Response.Status.NOT_FOUND ).build();
         }
 
-        final String mimeType = mimeTypeResolver.getMimeType( resource.getFile().getName() );
+        final String mimeType = mimeTypeResolver.getMimeType( resource.getName() );
 
         try
         {
