@@ -137,6 +137,36 @@
         },
         {
             "Input": {
+                "name": "myComboBox",
+                "label": null,
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ComboBox",
+                    "config": {
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
                 "name": "mySingleSelector",
                 "label": null,
                 "immutable": false,

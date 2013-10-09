@@ -13,6 +13,8 @@ public final class InputTypes
 {
     public static final InputType COLOR = new Color();
 
+    public static final InputType COMBO_BOX = new ComboBox();
+
     public static final InputType DATE = new Date();
 
     public static final InputType DECIMAL_NUMBER = new DecimalNumber();
@@ -45,6 +47,7 @@ public final class InputTypes
 
     private static final ImmutableList<InputType> inputTypes = new ImmutableList.Builder<InputType>().
         add( COLOR ).
+        add( COMBO_BOX ).
         add( DATE ).
         add( DECIMAL_NUMBER ).
         add( GEO_LOCATION ).

@@ -65,6 +65,26 @@
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
+    <input type="ComboBox" name="myComboBox">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <options>
+          <option>
+            <label>myOption 1</label>
+            <value>o1</value>
+          </option>
+          <option>
+            <label>myOption 2</label>
+            <value>o2</value>
+          </option>
+        </options>
+      </config>
+    </input>
     <input type="SingleSelector" name="mySingleSelector">
       <label/>
       <immutable>false</immutable>

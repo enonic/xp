@@ -13,6 +13,7 @@ import com.enonic.wem.api.schema.content.form.FormItemSet;
 import com.enonic.wem.api.schema.content.form.Input;
 import com.enonic.wem.api.schema.content.form.Layout;
 import com.enonic.wem.api.schema.content.form.MixinReference;
+import com.enonic.wem.api.schema.content.form.inputtype.ComboBoxConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig;
 import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
@@ -113,6 +114,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertSerializedResult( "contentType-allInputTypes", actualSerialization );
 
         assertNotNull( actualContentType.form().getFormItem( "myColor" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myComboBox" ) );
         assertNotNull( actualContentType.form().getFormItem( "myDate" ) );
         assertNotNull( actualContentType.form().getFormItem( "myDecimalNumber" ) );
         assertNotNull( actualContentType.form().getFormItem( "myImage" ) );
@@ -143,6 +145,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType );
 
         assertEquals( "myColor", actualContentType.form().getFormItem( "myColor" ).getPath().toString() );
+        assertEquals( "myComboBox", actualContentType.form().getFormItem( "myComboBox" ).getPath().toString() );
         assertEquals( "myDate", actualContentType.form().getFormItem( "myDate" ).getPath().toString() );
         assertEquals( "myDecimalNumber", actualContentType.form().getFormItem( "myDecimalNumber" ).getPath().toString() );
         assertEquals( "myGeoLocation", actualContentType.form().getFormItem( "myGeoLocation" ).getPath().toString() );
@@ -306,9 +309,17 @@ public abstract class AbstractContentTypeSerializerTest
 
     private ContentType createContentTypeWithAllInputFormItemTypes()
     {
-        SingleSelectorConfig singleSelectorConfig =
-            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",
-                                                                                                                     "o2" ).build();
+        ComboBoxConfig comboBoxConfig = ComboBoxConfig.newComboBoxConfig().
+            addOption( "myOption 1", "o1" ).
+            addOption( "myOption 2", "o2" ).
+            build();
+
+        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().
+            typeDropdown().
+            addOption( "myOption 1", "o1" ).
+            addOption( "myOption 2", "o2" ).
+            build();
+
         RelationshipConfig relationshipConfig = newRelationshipConfig().
             relationshipType( QualifiedRelationshipTypeName.LIKE ).
             build();
@@ -331,6 +342,8 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( newInput().name( "myHtmlArea" ).inputType( InputTypes.HTML_AREA ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myMoney" ).inputType( InputTypes.MONEY ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );
+        contentTypeBuilder.addFormItem(
+            newInput().name( "myComboBox" ).inputType( InputTypes.COMBO_BOX ).inputTypeConfig( comboBoxConfig ).build() );
         contentTypeBuilder.addFormItem(
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
