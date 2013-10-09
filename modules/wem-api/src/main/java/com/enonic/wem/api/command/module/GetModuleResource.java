@@ -2,37 +2,23 @@ package com.enonic.wem.api.command.module;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleResourcePath;
 import com.enonic.wem.api.resource.Resource;
 
 public final class GetModuleResource
     extends Command<Resource>
 {
-    private ModuleKey moduleKey;
+    private ModuleResourcePath resourcePath;
 
-    private String resourcePath; // ResourcePath?
-
-
-    public GetModuleResource module( final ModuleKey moduleKey )
+    public GetModuleResource resourcePath( final ModuleResourcePath value )
     {
-        this.moduleKey = moduleKey;
+        this.resourcePath = value;
         return this;
     }
 
-    public GetModuleResource resourcePath( final String resourcePath )
-    {
-        this.resourcePath = resourcePath;
-        return this;
-    }
-
-    public String getResourcePath()
+    public ModuleResourcePath getResourcePath()
     {
         return resourcePath;
-    }
-
-    public ModuleKey getModuleKey()
-    {
-        return moduleKey;
     }
 
     @Override
