@@ -3,6 +3,7 @@ module api_grid {
         hideColumnHeaders?:boolean;
         width?:number;
         height?:number;
+        dataIdProperty?:string;
     }
 
     export interface GridColumn extends Slick.Column<any> {
@@ -45,7 +46,9 @@ module api_grid {
                     jQuery(".slick-header-columns").css("height", "0px");
                 }
             }
-            this.dataView.setItems(this.data);
+            this.options && this.options.dataIdProperty
+                ? this.dataView.setItems(this.data, this.options.dataIdProperty)
+                : this.dataView.setItems(this.data) ;
         }
 
         setData(data:any) {
@@ -74,8 +77,12 @@ module api_grid {
             return this.slickGrid.getDataLength();
         }
 
-        getDataItem(i:number) {
+        getDataItem(i:number):any {
             return this.slickGrid.getDataItem(i);
+        }
+
+        getDataItemById(id: string):any {
+            return this.dataView.getItemById(id);
         }
 
         setOptions(options:GridOptions) {

@@ -1,4 +1,4 @@
-module api_ui {
+module api_ui_combobox {
 
     export interface ComboBoxListener extends api_event.Listener {
 

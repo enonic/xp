@@ -35,8 +35,8 @@ module api_grid {
             this.slickDataView.refresh();
         }
 
-        setItems(data:any) {
-            this.slickDataView.setItems(data);
+        setItems(data:any, objectIdProperty?: string) {
+            this.slickDataView.setItems(data, objectIdProperty);
         }
 
         addItem(item:any) {
@@ -45,6 +45,10 @@ module api_grid {
 
         getItem(index: number):any {
             return this.slickDataView.getItem(index);
+        }
+
+        getItemById(id: string): any {
+            return this.slickDataView.getItemById(id);
         }
 
         getLength(): number {

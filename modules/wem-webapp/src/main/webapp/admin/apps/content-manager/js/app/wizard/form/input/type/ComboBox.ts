@@ -15,7 +15,7 @@ module app_wizard_form_input_type {
 
         private config:ComboBoxConfig;
 
-        private comboBox:api_ui.ComboBox;
+        private comboBox:api_ui_combobox.ComboBox;
 
 
         constructor(config?:ComboBoxConfig) {
@@ -52,7 +52,7 @@ module app_wizard_form_input_type {
 
             this.input = input;
 
-            this.comboBox = new api_ui.ComboBox(name, [], {rowHeight: 24, filter: this.comboboxFilter});
+            this.comboBox = new api_ui_combobox.ComboBox(name, [], {rowHeight: 24, filter: this.comboboxFilter});
 
             this.comboBox.addListener({
                 onInputValueChanged: function (oldValue, newValue, grid) {
@@ -71,15 +71,15 @@ module app_wizard_form_input_type {
         getValues():api_data.Value[] {
 
             var values:api_data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option:api_ui.OptionData)  => {
-                var value = new api_data.Value(option.id, api_data.ValueTypes.STRING);
+            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData)  => {
+                var value = new api_data.Value(option.value, api_data.ValueTypes.STRING);
                 values.push(value);
             });
             return values;
         }
 
-        private comboboxFilter(item:api_ui.OptionData, args) {
-            return !(args && args.searchString && item.value.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
+        private comboboxFilter(item:api_ui_combobox.OptionData, args) {
+            return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }
 

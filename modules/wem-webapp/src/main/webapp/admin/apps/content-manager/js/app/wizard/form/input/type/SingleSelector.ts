@@ -30,7 +30,7 @@ module app_wizard_form_input_type {
             if (SingleSelector.TYPE_RADIO == type) {
                 inputEl = new api_ui.RadioGroup(name);
             } else if (SingleSelector.TYPE_COMBOBOX == type) {
-                inputEl = new api_ui.ComboBox(name, [], {rowHeight: 24, filter: this.comboboxFilter});
+                inputEl = new api_ui_combobox.ComboBox(name, [], {rowHeight: 24, filter: this.comboboxFilter});
                 inputEl.addListener({
                     onInputValueChanged: function (oldValue, newValue, grid) {
                         grid.getDataView().setFilterArgs({searchString: newValue});
@@ -61,8 +61,8 @@ module app_wizard_form_input_type {
             return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
         }
 
-        private comboboxFilter(item:api_ui.OptionData, args) {
-            return !(args && args.searchString && item.value.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
+        private comboboxFilter(item:api_ui_combobox.OptionData, args) {
+            return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }
 

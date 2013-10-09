@@ -137,8 +137,10 @@
 ///<reference path='ui/TextInputListener.ts' />
 ///<reference path='ui/TextInput.ts' />
 ///<reference path='ui/AutosizeTextInput.ts' />
-///<reference path='ui/ComboBox.ts' />
-///<reference path='ui/ComboBoxListener.ts' />
+///<reference path='ui/combobox/ComboBox.ts' />
+///<reference path='ui/combobox/OptionData.ts' />
+///<reference path='ui/combobox/ComboBoxConfig.ts' />
+///<reference path='ui/combobox/ComboBoxListener.ts' />
 ///<reference path='ui/CheckboxInputListener.ts' />
 ///<reference path='ui/CheckboxInput.ts' />
 ///<reference path='ui/PasswordInput.ts' />

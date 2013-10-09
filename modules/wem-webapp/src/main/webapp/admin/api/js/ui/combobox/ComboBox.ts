@@ -1,34 +1,10 @@
-module api_ui {
-
-    export interface OptionData extends Slick.SlickData {
-
-        id:string;
-
-        value:any;
-
-    }
-
-    export interface ComboBoxConfig {
-
-        iconUrl?: string;
-
-        rowHeight?: number;
-
-        optionFormatter?: (row:number, cell:number, value:any, columnDef:any, dataContext:Slick.SlickData) => string;
-
-        selectedOptionFormatter?: (value:any) => string;
-
-        maximumOccurrences?: number;
-
-        filter?: (item:any, args:any) => boolean;
-
-    }
+module api_ui_combobox {
 
     export class ComboBox extends api_dom.FormInputEl implements api_event.Observable {
 
         private icon:api_dom.ImgEl;
 
-        private input:TextInput;
+        private input:api_ui.TextInput;
 
         private dropdown:api_grid.Grid;
 
@@ -76,7 +52,7 @@ module api_ui {
                 this.appendChild(this.icon);
             }
 
-            this.input = new TextInput();
+            this.input = new api_ui.TextInput();
             this.appendChild(this.input);
 
             this.emptyDropdown = new api_dom.DivEl(null, "empty-options");
@@ -103,7 +79,8 @@ module api_ui {
                 enableColumnReorder: false,
                 fullWidthRows: true,
                 forceFitColumns: true,
-                rowHeight: this.rowHeight
+                rowHeight: this.rowHeight,
+                dataIdProperty: "value"
             };
 
             this.dropdown = new api_grid.Grid(data, columns, options);
@@ -154,7 +131,22 @@ module api_ui {
         }
 
         addOption(id:string, value:string) {
-            this.dropdown.addItem({id: id, value: value});
+            this.dropdown.addItem({value: id, displayValue: value});
+        }
+
+        setValue(...values: string[]) {
+            values.forEach((value: string) => {
+                var item = <OptionData>this.dropdown.getDataItemById(value);
+                this.selectOption(item);
+            });
+        }
+
+        getValue():string {
+            var values = [];
+            for (var i = 0 ; i < this.selectedData.length ; i++) {
+                values.push(this.selectedData[i].value);
+            }
+            return values.join(';');
         }
 
         private setupListeners() {
@@ -220,11 +212,15 @@ module api_ui {
         }
 
         private selectRow(index:number) {
-            if (!this.canRowBeSelected(index)) {
+            var item = <OptionData>this.dropdown.getDataItem(index);
+
+            this.selectOption(item);
+        }
+
+        private selectOption(item: OptionData) {
+            if (!this.canSelect(item)) {
                 return;
             }
-
-            var item = <OptionData>this.dropdown.getDataItem(index);
 
             this.selectedData.push(item);
             this.showSelectedItem(item);
@@ -238,15 +234,13 @@ module api_ui {
             }
         }
 
-        private canRowBeSelected(index:number):boolean {
+        private canSelect(item:OptionData):boolean {
             if (this.selectedData.length == this.maximumOccurrences) {
                 return false;
             }
 
-            var item = <OptionData>this.dropdown.getDataItem(index);
-
             for (var i = 0; i < this.selectedData.length; i++) {
-                if (this.selectedData[i].id == item.id) {
+                if (this.selectedData[i].value == item.value) {
                     return false;
                 }
             }
@@ -258,7 +252,7 @@ module api_ui {
             var stylesHash = {};
             var dataView = this.dropdown.getDataView();
             this.selectedData.forEach((item:OptionData) => {
-                var row = dataView.getRowById(item.id);
+                var row = dataView.getRowById(item.value);
                 stylesHash[row] = {option: "selected"};
             });
             this.dropdown.setCellCssStyles("selected", stylesHash);
@@ -304,7 +298,7 @@ module api_ui {
 
             option.appendChild(removeButton);
             option.appendChild(optionValue);
-            optionValue.getEl().setInnerHtml(this.selectedOptionFormatter ? this.selectedOptionFormatter(item.value)
+            optionValue.getEl().setInnerHtml(this.selectedOptionFormatter ? this.selectedOptionFormatter(item.displayValue)
                 : item.value.toString());
 
             this.selectedOptions.appendChild(option);
