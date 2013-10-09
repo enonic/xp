@@ -10,7 +10,12 @@ import com.enonic.wem.core.home.HomeResolver;
 
 final class BootEnvironment
 {
-    private final static Logger LOG = LoggerFactory.getLogger( BootEnvironment.class );
+    protected final Logger log;
+
+    public BootEnvironment()
+    {
+        this.log = LoggerFactory.getLogger( getClass() );
+    }
 
     public void initialize()
     {
@@ -20,7 +25,7 @@ final class BootEnvironment
         }
         catch ( final Exception e )
         {
-            LOG.error( "Error occurred starting system", e );
+            this.log.error( "Error occurred starting system", e );
 
             if ( e instanceof RuntimeException )
             {
@@ -33,7 +38,7 @@ final class BootEnvironment
         }
     }
 
-    private void doInitialize()
+    protected void doInitialize()
         throws Exception
     {
         setSystemProperties();
@@ -63,7 +68,7 @@ final class BootEnvironment
         str.append( "  # " ).append( getFormattedOsInfo() ).append( "\n" );
         str.append( "  # Home directory is " ).append( HomeDir.get() ).append( "\n" );
 
-        LOG.info( str.toString() );
+        this.log.info( str.toString() );
     }
 
     private String getFormattedJvmInfo()

@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandlerBinder;
+import com.enonic.wem.admin.rest.service.upload.UploadService;
+import com.enonic.wem.admin.rest.service.upload.UploadServiceImpl;
 import com.enonic.wem.admin.rpc.account.ChangePasswordRpcHandler;
 import com.enonic.wem.admin.rpc.account.CreateOrUpdateAccountRpcHandler;
 import com.enonic.wem.admin.rpc.account.DeleteAccountsRpcHandler;
@@ -54,8 +56,6 @@ import com.enonic.wem.admin.rpc.userstore.GetUserstoreConnectorsRpcHandler;
 import com.enonic.wem.admin.rpc.util.GetCountriesRpcHandler;
 import com.enonic.wem.admin.rpc.util.GetLocalesRpcHandler;
 import com.enonic.wem.admin.rpc.util.GetTimeZonesRpcHandler;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
-import com.enonic.wem.admin.rest.service.upload.UploadServiceImpl;
 
 public final class RestModule
     extends AbstractModule
@@ -63,8 +63,6 @@ public final class RestModule
     @Override
     protected void configure()
     {
-        install( new RestServletModule() );
-
         bind( UploadService.class ).to( UploadServiceImpl.class ).in( Scopes.SINGLETON );
 
         final JsonRpcHandlerBinder handlers = JsonRpcHandlerBinder.from( binder() );

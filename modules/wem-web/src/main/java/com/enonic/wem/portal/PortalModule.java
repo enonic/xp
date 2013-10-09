@@ -13,6 +13,7 @@ import com.enonic.wem.portal.image.ImageService;
 import com.enonic.wem.portal.image.ImageServiceImpl;
 import com.enonic.wem.portal.resource.ResourceService;
 import com.enonic.wem.portal.resource.ResourceServiceImpl;
+import com.enonic.wem.web.servlet.WebInitializerBinder;
 import com.enonic.wem.web.util.MimeTypeResolver;
 import com.enonic.wem.web.util.MimeTypeResolverImpl;
 
@@ -22,7 +23,6 @@ public final class PortalModule
     @Override
     protected void configure()
     {
-        install( new PortalServletModule() );
         bind( ContentService.class ).to( ContentServiceImpl.class ).in( Scopes.SINGLETON );
         bind( AttachmentService.class ).to( AttachmentServiceImpl.class ).in( Scopes.SINGLETON );
         bind( SpaceService.class ).to( SpaceServiceImpl.class ).in( Scopes.SINGLETON );
@@ -31,5 +31,6 @@ public final class PortalModule
 
         bind( MimeTypeResolver.class ).to( MimeTypeResolverImpl.class ).in( Scopes.SINGLETON );
 
+        WebInitializerBinder.from( binder() ).add( PortalWebInitializer.class );
     }
 }

@@ -64,11 +64,6 @@
       <version>1.17.1</version>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.sisu.inject</groupId>
-      <artifactId>guice-servlet</artifactId>
-      <version>3.1.4</version>
-    </dependency>
-    <dependency>
       <groupId>com.sun.jersey.contribs</groupId>
       <artifactId>jersey-multipart</artifactId>
       <version>1.17.1</version>

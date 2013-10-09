@@ -1,27 +1,23 @@
 package com.enonic.wem.web.boot;
 
-import java.util.EnumSet;
+import java.util.Set;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletRegistration;
+import javax.servlet.ServletContextListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceFilter;
-import com.google.inject.servlet.GuiceServletContextListener;
 
 import com.enonic.wem.core.lifecycle.LifecycleManager;
-import com.enonic.wem.web.ResourceServlet;
-import com.enonic.wem.web.servlet.RequestContextListener;
+import com.enonic.wem.web.servlet.WebInitializer;
 
 public final class BootContextListener
-    extends GuiceServletContextListener
+    implements ServletContextListener
 {
     private final static Logger LOG = LoggerFactory.getLogger( BootContextListener.class );
 
@@ -29,11 +25,13 @@ public final class BootContextListener
 
     private Injector injector;
 
-    @Override
-    protected Injector getInjector()
+    private Set<WebInitializer> initializers;
+
+    private void createInjector()
     {
         LOG.info( "Creating injector for all beans." );
-        return this.injector = Guice.createInjector( new BootModule() );
+        this.injector = Guice.createInjector( new BootModule() );
+        this.injector.injectMembers( this );
     }
 
     @Override
@@ -42,8 +40,8 @@ public final class BootContextListener
         this.env = new BootEnvironment();
         this.env.initialize();
 
+        createInjector();
         configure( event.getServletContext() );
-        super.contextInitialized( event );
     }
 
     @Override
@@ -51,11 +49,11 @@ public final class BootContextListener
     {
         this.injector.getInstance( LifecycleManager.class ).dispose();
         this.env.destroy();
-        super.contextDestroyed( event );
     }
 
     private void configure( final ServletContext context )
     {
+        /*
         context.addListener( new RequestContextListener() );
 
         final FilterRegistration.Dynamic guiceFilter = context.addFilter( "guice", new GuiceFilter() );
@@ -64,5 +62,17 @@ public final class BootContextListener
         final ServletRegistration.Dynamic resourceServlet = context.addServlet( "resource", new ResourceServlet() );
         resourceServlet.setLoadOnStartup( 2 );
         resourceServlet.addMapping( "/" );
+        */
+
+        for ( final WebInitializer initializer : this.initializers )
+        {
+            initializer.initialize( context );
+        }
+    }
+
+    @Inject
+    public void setInitializers( final Set<WebInitializer> initializers )
+    {
+        this.initializers = initializers;
     }
 }
