@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.serializer;
+package com.enonic.wem.core.data.serializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,19 +21,26 @@ public final class DataJsonSerializer
 
     private final DataSetJsonSerializer dataSetSerializer;
 
-    private final PopertyJsonSerializer dataSerializer;
+    private final PropertyJsonSerializer propertySerializer;
 
     public DataJsonSerializer( final ObjectMapper objectMapper, final DataSetJsonSerializer dataSetSerializer )
     {
         super( objectMapper );
         this.dataSetSerializer = dataSetSerializer;
-        this.dataSerializer = new PopertyJsonSerializer( objectMapper );
+        this.propertySerializer = new PropertyJsonSerializer( objectMapper );
+    }
+
+    public DataJsonSerializer( final ObjectMapper objectMapper )
+    {
+        super( objectMapper );
+        this.dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
+        this.propertySerializer = new PropertyJsonSerializer( objectMapper );
     }
 
     public DataJsonSerializer()
     {
         dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
-        dataSerializer = new PopertyJsonSerializer( objectMapper() );
+        propertySerializer = new PropertyJsonSerializer( objectMapper() );
     }
 
     public final JsonNode serialize( final Data data )
@@ -41,7 +48,7 @@ public final class DataJsonSerializer
         if ( data instanceof Property )
         {
             final Property property = (Property) data;
-            return dataSerializer.serialize( property );
+            return propertySerializer.serialize( property );
         }
         else if ( data instanceof DataSet )
         {
@@ -58,11 +65,11 @@ public final class DataJsonSerializer
     {
         if ( entryNode.get( DATA_VALUE ).isArray() )
         {
-            return dataSetSerializer.parseDataSet( entryNode );
+            return dataSetSerializer.parse( entryNode );
         }
         else
         {
-            return dataSerializer.parseProperty( entryNode );
+            return propertySerializer.parseProperty( entryNode );
         }
     }
 }

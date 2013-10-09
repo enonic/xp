@@ -12,7 +12,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
-import com.enonic.wem.core.content.serializer.DataJsonSerializer;
+import com.enonic.wem.core.data.serializer.RootDataSetJsonSerializer;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
 
@@ -30,7 +30,7 @@ class ItemJcrMapper
 
     private static final String ROOT_DATA_SET = "rootDataSet";
 
-    private static DataJsonSerializer dataJsonSerializer = new DataJsonSerializer();
+    private static RootDataSetJsonSerializer rootDataSetJsonSerializer = new RootDataSetJsonSerializer();
 
     private static IconJcrMapper iconJcrMapper = new IconJcrMapper();
 
@@ -42,7 +42,7 @@ class ItemJcrMapper
         JcrHelper.setPropertyDateTime( itemNode, MODIFIED_TIME, item.getModifiedTime() );
         JcrHelper.setPropertyUserKey( itemNode, MODIFIER, item.getModifier() );
 
-        final String rootDataSetAsJsonString = dataJsonSerializer.toString( item.rootDataSet() );
+        final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( item.rootDataSet() );
         itemNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
     }
 
@@ -55,7 +55,7 @@ class ItemJcrMapper
         JcrHelper.setPropertyUserKey( itemNode, MODIFIER, updateItemArgs.updater() );
         iconJcrMapper.toJcr( updateItemArgs.icon(), itemNode );
 
-        final String rootDataSetAsJsonString = dataJsonSerializer.toString( updateItemArgs.rootDataSet() );
+        final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( updateItemArgs.rootDataSet() );
         itemNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
     }
 
@@ -75,7 +75,7 @@ class ItemJcrMapper
             builder.modifiedTime( getPropertyDateTime( itemNode, MODIFIED_TIME ) );
 
             final String dataSetAsString = itemNode.getProperty( ROOT_DATA_SET ).getString();
-            final DataSet dataSet = (DataSet) dataJsonSerializer.toObject( dataSetAsString );
+            final DataSet dataSet = (DataSet) rootDataSetJsonSerializer.toObject( dataSetAsString );
             builder.rootDataSet( dataSet.toRootDataSet() );
             return builder;
 

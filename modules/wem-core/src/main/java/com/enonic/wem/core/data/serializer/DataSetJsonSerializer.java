@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.serializer;
+package com.enonic.wem.core.data.serializer;
 
 
 import java.util.Iterator;
@@ -9,16 +9,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
-import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_NAME;
-import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_PATH;
-import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_TYPE;
-import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_VALUE;
+import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_NAME;
+import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_PATH;
+import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_TYPE;
+import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_VALUE;
 
 public class DataSetJsonSerializer
     extends AbstractJsonSerializer<DataSet>
@@ -51,7 +50,7 @@ public class DataSetJsonSerializer
         return dataSetObj;
     }
 
-    JsonNode serializeEntries( final DataSet dataSet )
+    public JsonNode serializeEntries( final DataSet dataSet )
     {
         final ArrayNode arrayNode = objectMapper().createArrayNode();
         for ( Data data : dataSet )
@@ -62,18 +61,16 @@ public class DataSetJsonSerializer
     }
 
     @Override
-    protected DataSet parse( final JsonNode dataSetNode )
+    protected DataSet parse( final JsonNode node )
     {
-        Preconditions.checkNotNull( dataSetNode, "dataSetNode cannot be null" );
+        Preconditions.checkNotNull( node, "dataSetNode cannot be null" );
+        Preconditions.checkArgument( node instanceof ObjectNode, "node expected to be a ObjectNode" );
+        @SuppressWarnings("ConstantConditions") ObjectNode dataSetNode = (ObjectNode) node;
 
-        final DataSet contentData = new ContentData();
-        final ArrayNode arrayNode = (ArrayNode) dataSetNode.get( DATA_VALUE );
-
-        parseEntries( arrayNode, contentData );
-        return contentData;
+        return parseDataSet( dataSetNode );
     }
 
-    DataSet parseDataSet( final JsonNode dataSetNode )
+    DataSet parseDataSet( final ObjectNode dataSetNode )
     {
         final String name = JsonSerializerUtil.getStringValue( DATA_NAME, dataSetNode );
         final DataSet dataSet = DataSet.newDataSet().name( name ).build();
@@ -82,7 +79,7 @@ public class DataSetJsonSerializer
         return dataSet;
     }
 
-    void parseEntries( final ArrayNode arrayNode, final DataSet dataSet )
+    public void parseEntries( final ArrayNode arrayNode, final DataSet dataSet )
     {
         final Iterator<JsonNode> dataIt = arrayNode.elements();
         while ( dataIt.hasNext() )

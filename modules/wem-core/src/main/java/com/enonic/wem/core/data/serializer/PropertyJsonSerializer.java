@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.serializer;
+package com.enonic.wem.core.data.serializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,21 +11,21 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
-import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_NAME;
-import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_PATH;
-import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_TYPE;
-import static com.enonic.wem.core.content.serializer.DataJsonSerializer.DATA_VALUE;
+import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_NAME;
+import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_PATH;
+import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_TYPE;
+import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_VALUE;
 
 
-public class PopertyJsonSerializer
+public class PropertyJsonSerializer
     extends AbstractJsonSerializer<Property>
 {
-    public PopertyJsonSerializer()
+    public PropertyJsonSerializer()
     {
         // default
     }
 
-    public PopertyJsonSerializer( final ObjectMapper objectMapper )
+    public PropertyJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
     }

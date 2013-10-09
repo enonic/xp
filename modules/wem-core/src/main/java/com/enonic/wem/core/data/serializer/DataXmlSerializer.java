@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.serializer;
+package com.enonic.wem.core.data.serializer;
 
 import java.util.Iterator;
 
@@ -6,10 +6,10 @@ import org.jdom.Element;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 
@@ -18,7 +18,15 @@ import static com.enonic.wem.api.data.DataSet.newDataSet;
 
 public final class DataXmlSerializer
 {
-    public final void generate( final Element parentDataSetEl, final Data data )
+    public final void generateRootDataSet( final Element dataEl, final RootDataSet rootDataSet )
+    {
+        for ( final Data data : rootDataSet )
+        {
+            generateData( dataEl, data );
+        }
+    }
+
+    private void generateData( final Element parentDataSetEl, final Data data )
     {
         if ( data.isDataSet() )
         {
@@ -30,14 +38,6 @@ public final class DataXmlSerializer
         }
     }
 
-    void generateContentData( final Element dataEl, final ContentData contentData )
-    {
-        for ( final Data data : contentData )
-        {
-            generate( dataEl, data );
-        }
-    }
-
     private void generateDataSet( final Element parentDataEl, final DataSet dataSet )
     {
         final String name = dataSet.getPath().getLastElement().getName();
@@ -45,7 +45,7 @@ public final class DataXmlSerializer
         parentDataEl.addContent( entryEl );
         for ( final Data subData : dataSet )
         {
-            generate( entryEl, subData );
+            generateData( entryEl, subData );
         }
     }
 
@@ -58,17 +58,19 @@ public final class DataXmlSerializer
         dataEl.addContent( property.getString() );
     }
 
-    public final void parse( Element parentEl, final DataSet parentDataSet )
+    public final RootDataSet parse( Element parentEl )
     {
+        final RootDataSet rootDataSet = new RootDataSet();
         final Iterator<Element> dataIt = parentEl.getChildren().iterator();
         while ( dataIt.hasNext() )
         {
             final Element dataEl = dataIt.next();
-            parseData( parentDataSet, dataEl );
+            parseData( rootDataSet, dataEl );
         }
+        return rootDataSet;
     }
 
-    final void parseData( final DataSet parentDataSet, final Element dataEl )
+    private void parseData( final DataSet parentDataSet, final Element dataEl )
     {
         final String name = dataEl.getName();
         final String typeAsString = dataEl.getAttributeValue( "type" );

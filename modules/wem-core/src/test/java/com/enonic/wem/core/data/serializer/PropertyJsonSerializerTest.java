@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.serializer;
+package com.enonic.wem.core.data.serializer;
 
 
 import org.junit.Before;
@@ -13,9 +13,9 @@ import com.enonic.wem.api.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 
-public class PopertyJsonSerializerTest
+public class PropertyJsonSerializerTest
 {
-    private PopertyJsonSerializer serializer = new PopertyJsonSerializer();
+    private PropertyJsonSerializer serializer = new PropertyJsonSerializer();
 
     private JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 

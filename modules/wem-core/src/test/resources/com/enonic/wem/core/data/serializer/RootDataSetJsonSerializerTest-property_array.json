@@ -1,0 +1,21 @@
+[
+    {
+        "name": "myProp",
+        "path": "myProp[0]",
+        "type": "String",
+        "value": "a"
+    },
+    {
+        "name": "myProp",
+        "path": "myProp[1]",
+        "type": "String",
+        "value": "b"
+    }
+    ,
+    {
+        "name": "myProp",
+        "path": "myProp[2]",
+        "type": "String",
+        "value": "c"
+    }
+]
