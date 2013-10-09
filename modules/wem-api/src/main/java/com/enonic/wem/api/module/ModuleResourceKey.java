@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.enonic.wem.api.Path;
 
-public class ModuleResourcePath
+public class ModuleResourceKey
 {
     private final ModuleKey moduleKey;
 
@@ -13,7 +13,7 @@ public class ModuleResourcePath
 
     private final String refString;
 
-    public ModuleResourcePath( final ModuleKey moduleKey, final Path path )
+    public ModuleResourceKey( final ModuleKey moduleKey, final Path path )
     {
         this.moduleKey = moduleKey;
         this.path = path;
@@ -42,7 +42,7 @@ public class ModuleResourcePath
             return false;
         }
 
-        final ModuleResourcePath that = (ModuleResourcePath) o;
+        final ModuleResourceKey that = (ModuleResourceKey) o;
 
         return Objects.equals( this.refString, that.refString );
     }

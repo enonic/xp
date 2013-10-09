@@ -2,14 +2,14 @@ package com.enonic.wem.api.content.page;
 
 
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourcePath;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 
 public class PageTemplate
 {
     PageTemplateId id;
 
-    ModuleResourcePath descriptor;
+    ModuleResourceKey descriptor;
 
     String displayName;
 
