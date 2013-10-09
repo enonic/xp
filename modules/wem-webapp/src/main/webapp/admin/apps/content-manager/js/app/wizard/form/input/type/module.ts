@@ -8,3 +8,4 @@
 ///<reference path='TextArea.ts' />
 ///<reference path='HtmlArea.ts' />
 ///<reference path='SingleSelector.ts' />
+///<reference path='ComboBox.ts' />

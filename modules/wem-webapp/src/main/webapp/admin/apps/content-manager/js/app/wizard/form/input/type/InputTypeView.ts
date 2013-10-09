@@ -10,6 +10,8 @@ module app_wizard_form_input_type {
 
         createAndAddOccurrence();
 
+        isManagingAdd():boolean;
+
         maximumOccurrencesReached():boolean;
 
         addFormItemOccurrencesListener(listener:app_wizard_form.FormItemOccurrencesListener);

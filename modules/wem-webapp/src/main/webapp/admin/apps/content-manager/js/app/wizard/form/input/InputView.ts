@@ -39,36 +39,41 @@ module app_wizard_form_input {
             }
 
             this.inputTypeView.layout(this.input, this.properties);
-            if( this.inputTypeView instanceof app_wizard_form_input_type.BaseInputTypeView ) {
-                this.appendChild( <app_wizard_form_input_type.BaseInputTypeView>this.inputTypeView );
+            if (this.inputTypeView instanceof app_wizard_form_input_type.BaseInputTypeView) {
+                this.appendChild(<app_wizard_form_input_type.BaseInputTypeView>this.inputTypeView);
             }
             else {
                 this.appendChild(api_dom.Element.fromHtmlElement(this.inputTypeView.getHTMLElement()))
             }
 
-            this.inputTypeView.addFormItemOccurrencesListener(<app_wizard_form.FormItemOccurrencesListener>{
-                onOccurrenceAdded: (occurrenceAdded:app_wizard_form.FormItemOccurrence) => {
-                    this.refresh();
-                },
-                onOccurrenceRemoved: (occurrenceRemoved:app_wizard_form.FormItemOccurrence) => {
-                    this.refresh();
-                }
-            });
+            if (!this.inputTypeView.isManagingAdd()) {
 
-            this.addButton = new api_ui.Button("Add");
-            this.addButton.setClass("add-button");
+                this.inputTypeView.addFormItemOccurrencesListener(<app_wizard_form.FormItemOccurrencesListener>{
+                    onOccurrenceAdded: (occurrenceAdded:app_wizard_form.FormItemOccurrence) => {
+                        this.refresh();
+                    },
+                    onOccurrenceRemoved: (occurrenceRemoved:app_wizard_form.FormItemOccurrence) => {
+                        this.refresh();
+                    }
+                });
 
-            this.addButton.setClickListener(() => {
-                this.inputTypeView.createAndAddOccurrence();
-            });
+                this.addButton = new api_ui.Button("Add");
+                this.addButton.setClass("add-button");
 
-            this.bottomButtonRow = new api_dom.DivEl(null, "bottom-button-row");
-            this.appendChild(this.bottomButtonRow);
-            this.bottomButtonRow.appendChild(this.addButton);
+                this.addButton.setClickListener(() => {
+                    this.inputTypeView.createAndAddOccurrence();
+                });
+
+                this.bottomButtonRow = new api_dom.DivEl(null, "bottom-button-row");
+                this.appendChild(this.bottomButtonRow);
+                this.bottomButtonRow.appendChild(this.addButton);
+            }
         }
 
         refresh() {
-            this.addButton.setVisible(!this.inputTypeView.maximumOccurrencesReached());
+            if (!this.inputTypeView.isManagingAdd()) {
+                this.addButton.setVisible(!this.inputTypeView.maximumOccurrencesReached());
+            }
         }
 
         getData():api_data.Data[] {

@@ -14,6 +14,10 @@ module app_wizard_form_input_type {
             return super.getHTMLElement();
         }
 
+        isManagingAdd():boolean {
+            return false;
+        }
+
         addFormItemOccurrencesListener(listener:app_wizard_form.FormItemOccurrencesListener) {
             this.inputOccurrences.addListener(listener);
         }
