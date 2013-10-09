@@ -48,7 +48,7 @@ module app_wizard_form_input_type {
             throw new Error("ComboBox manages occurrences self");
         }
 
-        layout(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
+        layout(input:api_schema_content_form.Input, properties:api_data.Property[]) {
 
             this.input = input;
 

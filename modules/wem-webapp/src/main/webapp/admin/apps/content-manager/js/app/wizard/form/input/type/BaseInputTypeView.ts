@@ -34,7 +34,7 @@ module app_wizard_form_input_type {
             this.inputOccurrences.createAndAddOccurrence();
         }
 
-        layout(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
+        layout(input:api_schema_content_form.Input, properties:api_data.Property[]) {
 
             this.input = input;
             this.inputOccurrences = new InputOccurrences(this, this.input, properties);
@@ -50,7 +50,7 @@ module app_wizard_form_input_type {
             return this.input;
         }
 
-        createInputOccurrenceElement(index:number, property?:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
             throw new Error("Must be implemented by inheritor");
         }
 

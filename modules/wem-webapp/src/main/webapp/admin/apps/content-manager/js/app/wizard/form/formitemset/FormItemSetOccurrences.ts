@@ -52,7 +52,8 @@ module app_wizard_form_formitemset {
         createNewOccurrenceView(occurrence:FormItemSetOccurrence):FormItemSetOccurrenceView {
 
             var formItemSetOccurrences:FormItemSetOccurrences = this;
-            var newOccurrenceView:FormItemSetOccurrenceView = new FormItemSetOccurrenceView(occurrence, this.formItemSet, null);
+            var dataSet:api_data.DataSet = this.dataSets != null ? this.dataSets[occurrence.getIndex()] : null;
+            var newOccurrenceView:FormItemSetOccurrenceView = new FormItemSetOccurrenceView(occurrence, this.formItemSet, dataSet);
             newOccurrenceView.addListener(<app_wizard_form.FormItemOccurrenceViewListener>{
                 onRemoveButtonClicked: (toBeRemoved:app_wizard_form.FormItemOccurrenceView, index:number) => {
                     formItemSetOccurrences.doRemoveOccurrence(toBeRemoved, index);
@@ -63,7 +64,7 @@ module app_wizard_form_formitemset {
 
         getDataSets():api_data.DataSet[] {
             var dataSets:api_data.DataSet[] = [];
-            this.getOccurrenceViews().forEach( (occurrenceView:FormItemSetOccurrenceView) => {
+            this.getOccurrenceViews().forEach((occurrenceView:FormItemSetOccurrenceView) => {
                 var dataSet = occurrenceView.getDataSet();
                 dataSets.push(dataSet);
             });

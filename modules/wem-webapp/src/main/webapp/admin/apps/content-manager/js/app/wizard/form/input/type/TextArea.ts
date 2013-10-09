@@ -16,7 +16,7 @@ module app_wizard_form_input_type {
             this.columns = config.columns;
         }
 
-        createInputOccurrenceElement(index:number, property?:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
 
             var inputEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
             if (this.rows) {

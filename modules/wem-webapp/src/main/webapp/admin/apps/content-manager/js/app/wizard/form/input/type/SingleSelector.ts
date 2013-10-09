@@ -22,7 +22,7 @@ module app_wizard_form_input_type {
             this.config = config;
         }
 
-        createInputOccurrenceElement(index:number, property?:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
             var inputEl;
             var name = this.getInput().getName() + "-" + index;
 

@@ -18,7 +18,7 @@ module app_wizard_form_input_type {
             this.input = input;
             this.properties = properties;
 
-            if (properties != null && properties.length > 0) {
+            if (properties != null) {
                 this.constructOccurrencesForData();
             }
             else {
@@ -54,8 +54,10 @@ module app_wizard_form_input_type {
 
         createNewOccurrenceView(occurrence:InputOccurrence):InputOccurrenceView {
 
-            var inputOccurrenceView:InputOccurrenceView = new InputOccurrenceView(occurrence,
-                this.baseInputTypeView.createInputOccurrenceElement(occurrence.getIndex()));
+            var property:api_data.Property = this.properties != null ? this.properties[occurrence.getIndex()] : null;
+            var inputElement = this.baseInputTypeView.createInputOccurrenceElement(occurrence.getIndex(), property);
+
+            var inputOccurrenceView:InputOccurrenceView = new InputOccurrenceView(occurrence, inputElement);
 
             var inputOccurrences:InputOccurrences = this;
             inputOccurrenceView.addListener(<app_wizard_form.FormItemOccurrenceViewListener>{

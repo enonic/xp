@@ -16,7 +16,7 @@ module app_wizard_form_input {
             super("InputView", "input-view", input);
 
             this.input = input;
-            this.properties = properties != null ? properties : [];
+            this.properties = properties;
 
             this.doLayout();
             this.refresh();

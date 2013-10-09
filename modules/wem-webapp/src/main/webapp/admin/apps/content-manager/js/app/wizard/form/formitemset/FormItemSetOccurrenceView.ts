@@ -17,7 +17,7 @@ module app_wizard_form_formitemset {
         private formItemViews:app_wizard_form.FormItemView[] = [];
 
         constructor(formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api_schema_content_form.FormItemSet,
-                    dataSet?:api_data.DataSet) {
+                    dataSet:api_data.DataSet) {
             super("FormItemSetOccurrenceView", "form-item-set-occurrence-view", formItemSetOccurrence);
             this.formItemSetOccurrence = formItemSetOccurrence;
             this.formItemSet = formItemSet;
