@@ -12,12 +12,25 @@ module app_delete {
             this.setDeleteAction(new ContentDeleteDialogAction());
 
             this.getDeleteAction().addExecutionListener(() => {
-                this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(this.contentToDelete),
-                    (result) => {
-                        this.close();
-                        //components.gridPanel.refresh();
-                        api_notify.showFeedback('Content was deleted!')
-                    });
+
+                var deleteRequest = new api_content.DeleteContentRequest();
+                for ( var i = 0; i < this.contentToDelete.length; i++ ) {
+                    deleteRequest.addContentPath(this.contentToDelete[i].getPath());
+                }
+
+                deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {
+                    var json = jsonResponse.getJson();
+
+                    var paths = [];
+                    for ( var i = 0; i < json.successes.length; i++ ) {
+                        paths.push(json.successes[i].path);
+                    }
+
+                    this.close();
+                    //components.gridPanel.refresh();
+
+                    api_notify.showFeedback('Paths [' + paths.join(', ') + '] deleted!')
+                });
             });
         }
 
