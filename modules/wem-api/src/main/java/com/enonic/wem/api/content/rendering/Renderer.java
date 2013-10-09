@@ -5,6 +5,7 @@ public class Renderer
 {
     public RenderingResult render( final Renderable renderable )
     {
+
         return null;
     }
 }

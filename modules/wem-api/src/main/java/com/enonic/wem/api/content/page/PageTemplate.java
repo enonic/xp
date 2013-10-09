@@ -1,11 +1,25 @@
 package com.enonic.wem.api.content.page;
 
 
+import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.module.ModuleResourcePath;
+import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+
 public class PageTemplate
 {
-    private PageTemplateId id;
+    PageTemplateId id;
 
-    private PageSetup pageSetup;
+    ModuleResourcePath descriptor;
+
+    String displayName;
+
+    RootDataSet liveEdit;
+
+    RootDataSet config;
+
+    QualifiedContentTypeNames canRender;
+
+    RootDataSet page;
 
     private PageTemplate( final Builder builder )
     {
