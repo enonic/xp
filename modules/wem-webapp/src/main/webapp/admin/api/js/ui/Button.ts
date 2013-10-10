@@ -2,14 +2,15 @@ module api_ui{
 
     export class Button extends api_dom.ButtonEl {
 
-        private labelEl:api_dom.LabelEl;
+        private labelEl:api_dom.SpanEl;
 
         constructor(label:string) {
             super("Button");
 
             this.setEnabled(true);
 
-            this.labelEl = new api_dom.LabelEl(label, <api_dom.Element>this);
+            this.labelEl = new api_dom.SpanEl(null, "label");
+            this.labelEl.getEl().setInnerHtml(label);
             this.appendChild(this.labelEl);
         }
 
