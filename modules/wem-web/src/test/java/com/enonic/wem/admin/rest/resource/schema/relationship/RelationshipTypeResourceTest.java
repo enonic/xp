@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -93,7 +94,7 @@ public class RelationshipTypeResourceTest
             QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
-        AbstractRelationshipTypeJson result = resource.get( "the_relationship_type", RelationshipTypeResource.FORMAT_JSON );
+        AbstractRelationshipTypeJson result = resource.get( "the_relationship_type" );
         assertNotNull( result );
 
         RelationshipTypeResultJson resultJson = ( (RelationshipTypeJson) result ).getRelationshipType();
@@ -120,7 +121,7 @@ public class RelationshipTypeResourceTest
             QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
-        AbstractRelationshipTypeJson result = resource.get( "the_relationship_type", RelationshipTypeResource.FORMAT_XML );
+        AbstractRelationshipTypeJson result = resource.getConfig( "the_relationship_type" );
         assertNotNull( result );
 
         RelationshipTypeConfigJson resultJson = (RelationshipTypeConfigJson) result;
@@ -130,13 +131,13 @@ public class RelationshipTypeResourceTest
             resultJson.getRelationshipTypeXml() );
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test(expected = WebApplicationException.class)
     public void testRequestGetRelationshipTypeJson_not_found()
         throws Exception
     {
         Mockito.when( client.execute( Mockito.any( GetRelationshipTypes.class ) ) ).thenReturn( RelationshipTypes.empty() );
 
-        resource.get( "the_relationship_type", RelationshipTypeResource.FORMAT_XML );
+        resource.getConfig( "the_relationship_type" );
     }
 
     @Test
