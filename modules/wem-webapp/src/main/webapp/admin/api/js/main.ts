@@ -28,9 +28,6 @@
 ///<reference path='handler/DeleteSpaceParam.ts' />
 ///<reference path='handler/DeleteSpaceParamFactory.ts' />
 ///<reference path='handler/DeleteSpacesHandler.ts' />
-///<reference path='handler/DeleteContentParam.ts' />
-///<reference path='handler/DeleteContentParamFactory.ts' />
-///<reference path='handler/DeleteContentHandler.ts' />
 ///<reference path='handler/DeleteSchemaParam.ts' />
 ///<reference path='handler/DeleteSchemaParamFactory.ts' />
 ///<reference path='handler/DeleteSchemaHandler.ts' />

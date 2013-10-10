@@ -4,8 +4,6 @@ module app_delete {
 
         private contentToDelete:api_content.ContentSummary[];
 
-        private deleteHandler:api_handler.DeleteContentHandler = new api_handler.DeleteContentHandler();
-
         constructor() {
             super("Content");
 
@@ -29,7 +27,7 @@ module app_delete {
                     this.close();
                     //components.gridPanel.refresh();
 
-                    api_notify.showFeedback('Paths [' + paths.join(', ') + '] deleted!')
+                    api_notify.showFeedback('Content [' + paths.join(', ') + '] deleted!')
                 });
             });
         }
