@@ -98,5 +98,6 @@ window.onload = () => {
 
     api_dom.Body.get().appendChild(mainContainer);
 
-    new app_launcher.AppRouter(applications, appLauncher);
+    var router = new app_launcher.AppRouter(applications, appLauncher);
+    appLauncher.setRouter(router);
 }

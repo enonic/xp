@@ -85,6 +85,13 @@ module components {
     export var gridPanel:app_browse.ContentTreeGridPanel;
     export var detailPanel:app_browse.ContentBrowseItemPanel;
 }
+
+var router;
+function setRouter(r) {
+    console.log("Setting rounter ", r);
+    router = r;
+}
+
 window.onload = () => {
         var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
         var appPanel = new app.ContentAppPanel(appBar);
