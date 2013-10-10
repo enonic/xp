@@ -1,8 +1,8 @@
-///<reference path='../../../api/js/ExtJs.d.ts' />
-///<reference path='../../../api/js/Mousetrap.d.ts' />
+///<reference path='../../../api/js/lib/ExtJs.d.ts' />
+///<reference path='../../../api/js/lib/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
-///<reference path='../../../api/js/crossroads.d.ts' />
-///<reference path='../../../api/js/hasher.d.ts' />
+///<reference path='../../../api/js/lib/crossroads.d.ts' />
+///<reference path='../../../api/js/lib/hasher.d.ts' />
 
 ///<reference path='app/home/Branding.ts' />
 ///<reference path='app/home/CenterPanel.ts' />

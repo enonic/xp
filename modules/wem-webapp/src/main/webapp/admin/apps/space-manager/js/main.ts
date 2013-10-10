@@ -1,5 +1,5 @@
-///<reference path='../../../api/js/ExtJs.d.ts' />
-///<reference path='../../../api/js/Mousetrap.d.ts' />
+///<reference path='../../../api/js/lib/ExtJs.d.ts' />
+///<reference path='../../../api/js/lib/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
 ///<reference path='model/SpaceModel.ts' />

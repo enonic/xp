@@ -3,7 +3,7 @@
  */
 
 // require ExtJs as long as it is used for implementation
-///<reference path='ExtJs.d.ts' />
+///<reference path='lib/ExtJs.d.ts' />
 
 ///<reference path='plugin/PersistentGridSelectionPlugin.ts' />
 ///<reference path='plugin/GridToolbarPlugin.ts' />
@@ -11,11 +11,11 @@
 ///<reference path='plugin/fileupload/PhotoUploadButton.ts' />
 ///<reference path='plugin/fileupload/PhotoUploadWindow.ts' />
 
-///<reference path='Mousetrap.d.ts' />
-///<reference path='jquery.d.ts' />
-///<reference path='jqueryui.d.ts' />
-///<reference path='codemirror.d.ts' />
-///<reference path='slickgrid.d.ts' />
+///<reference path='lib/Mousetrap.d.ts' />
+///<reference path='lib/jquery.d.ts' />
+///<reference path='lib/jqueryui.d.ts' />
+///<reference path='lib/codemirror.d.ts' />
+///<reference path='lib/slickgrid.d.ts' />
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
