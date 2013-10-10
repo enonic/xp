@@ -16,9 +16,9 @@
 
   input {
     .box-sizing(border-box);
-    height: 37px;
+    height: 24px;
+    padding: 3px 8px;
     margin: 0 0 10px 0;
-    padding: 4px 4px 4px 50px;
     border: 1px @admin-medium-gray-border solid;
     line-height: 16px;
     font-size: 15px;
@@ -34,11 +34,9 @@
     }
   }
 
-
   .empty-options {
     position: absolute;
     box-sizing: border-box;
-    top: 36px;
     width: 100%;
     margin: 0 0 0 0;
     padding: 0;
@@ -49,7 +47,6 @@
   .options-container {
     position: absolute;
     .box-sizing(border-box);
-    top: 36px;
     width: 100%;
     margin: 0 0 0 0;
     padding: 0;
@@ -64,8 +61,8 @@
     }
 
     .slick-cell {
-      height: 34px;
-      padding: 8px;
+      height: 24px;
+      padding: 3px 8px;
       border: none;
 
       &:hover, &.active {
@@ -112,20 +109,26 @@
 
   }
 
-  .selected-option {
-    .options-container > .slick-cell;
-    padding: 3px 0;
+  .selected-options {
+    float: none;
 
-    &:hover {
-      background: none;
-      cursor: default;
-    }
+    .selected-option {
+      .options-container > .slick-cell;
+      width: 100%;
+      padding-right: 0;
 
-    .remove {
-      float:right;
-      .icon-remove(2em, @admin-medium-gray-font);
-      text-decoration: none;
-      cursor: pointer;
+      &:hover {
+        background: none;
+        cursor: default;
+      }
+
+      .remove {
+        float:right;
+        .icon-remove(2em, @admin-medium-gray-font);
+        font-size: 9px;
+        text-decoration: none;
+        cursor: pointer;
+      }
     }
   }
 }
