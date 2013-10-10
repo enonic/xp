@@ -12,8 +12,6 @@ module api_ui_combobox {
 
         private selectedOptions:api_dom.DivEl;
 
-        private initData:any;
-
         private optionFormatter:(row:number, cell:number, value:any, columnDef:any, dataContext:Slick.SlickData) => string;
 
         private selectedOptionFormatter:(value:any) => string;
@@ -36,14 +34,13 @@ module api_ui_combobox {
 
         private listeners:ComboBoxListener[] = [];
 
-        constructor(name:string, data:any, config:ComboBoxConfig) {
+        constructor(name:string, data:any, config:ComboBoxConfig = {}) {
             super("div", null, "combobox");
             this.getEl().setAttribute("name", name);
 
-            this.initData = data;
             this.optionFormatter = config.optionFormatter;
             this.selectedOptionFormatter = config.selectedOptionFormatter;
-            this.maximumOccurrences = config.maximumOccurrences || 1;
+            this.maximumOccurrences = config.maximumOccurrences != undefined ? config.maximumOccurrences : 1;
             this.filter = config.filter;
             this.rowHeight = config.rowHeight || 50;
 
@@ -53,6 +50,9 @@ module api_ui_combobox {
             }
 
             this.input = new api_ui.TextInput();
+            if (this.maximumOccurrences == 0) {
+                this.input.getEl().setDisabled(true);
+            }
             this.appendChild(this.input);
 
             this.emptyDropdown = new api_dom.DivEl(null, "empty-options");
@@ -64,7 +64,6 @@ module api_ui_combobox {
             this.selectedOptions.hide();
             this.appendChild(this.selectedOptions);
 
-            var data = this.initData;
             var columns:api_ui_grid.GridColumn[] = [
                 {
                     id: "option",
@@ -303,7 +302,7 @@ module api_ui_combobox {
             option.appendChild(removeButton);
             option.appendChild(optionValue);
             optionValue.getEl().setInnerHtml(this.selectedOptionFormatter ? this.selectedOptionFormatter(item.displayValue)
-                : item.value.toString());
+                : item.displayValue.toString());
 
             this.selectedOptions.appendChild(option);
             this.selectedOptions.show();

@@ -26,6 +26,23 @@
         body {
             padding: 50px 0 0 50px;
         }
+
+        .combobox.iconed input {
+            height: 37px;
+            padding: 4px 4px 4px 50px;
+        }
+
+        .combobox.iconed .slick-cell {
+            height: 34px;
+            padding: 8px;
+            border: none;
+        }
+
+        .combobox.iconed .selected-option {
+            height: 37px;
+            padding: 3px 0;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -65,6 +82,8 @@
     }
 
     var combobox = new api_ui_combobox.ComboBox("name", createData(""), config);
+
+    combobox.addClass("iconed");
 
     combobox.addListener({
         onInputValueChanged: function (oldValue, newValue, grid) {

@@ -52,7 +52,12 @@ module app_wizard_form_input_type {
 
             this.input = input;
 
-            this.comboBox = new api_ui_combobox.ComboBox(name, [], {rowHeight: 24, filter: this.comboboxFilter});
+            var comboboxConfig = {
+                rowHeight: 24,
+                filter: this.comboboxFilter,
+                maximumOccurrences: input.getOccurrences().getMaximum()
+            };
+            this.comboBox = new api_ui_combobox.ComboBox(name, [], comboboxConfig);
 
             this.comboBox.addListener({
                 onInputValueChanged: function (oldValue, newValue, grid) {

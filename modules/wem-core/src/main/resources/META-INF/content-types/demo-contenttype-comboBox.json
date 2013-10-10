@@ -117,7 +117,7 @@
                 "immutable": false,
                 "occurrences": {
                     "minimum": 0,
-                    "maximum": 1
+                    "maximum": 3
                 },
                 "indexed": true,
                 "customText": null,
