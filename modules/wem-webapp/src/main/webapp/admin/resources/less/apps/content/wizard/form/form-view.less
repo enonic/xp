@@ -1,6 +1,28 @@
 .form-view {
+  font-size: 12px;
+  width: 650px;
 
-    font-size: 12px;
+  .add-button {
+    margin: 0;
+    padding: 6px 16px 6px 16px;
+    border: none;
+    background-color: @form-button-bg;
+    color: @form-button-font;
+    cursor: pointer;
 
-    width: 650px;
+    &:hover:not(:disabled) {
+      background-color: @form-button-bg-hover;
+    }
+
+    &:disabled {
+      color: @form-button-font-disabled;
+      cursor: default;
+    }
+
+    .label {
+      padding: 0 4px;
+      height: 16px;
+      line-height: 16px;
+    }
+  }
 }
