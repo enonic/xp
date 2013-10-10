@@ -19,7 +19,7 @@ module app_contextwindow {
             this.getData();
 
             // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
-            jQuery(this.getHTMLElement()).on("click", ".component", (event:JQueryEventObject) => {
+            jQuery(this.getHTMLElement()).on("click", ".grid-row", (event:JQueryEventObject) => {
                 var width = jQuery(event.currentTarget).children('div').data("width");
                 var height = jQuery(event.currentTarget).children('div').data("height");
                 var type = jQuery(event.currentTarget).children('div').data("device_type");

@@ -12,7 +12,7 @@ module app_contextwindow {
                     field: "device",
                     id: "device",
                     width: 320,
-                    cssClass: "component",
+                    cssClass: "grid-row",
                     formatter: (row, cell, value, columnDef, dataContext) => {
                         return this.buildRow(row, cell, value).toString();
                     }

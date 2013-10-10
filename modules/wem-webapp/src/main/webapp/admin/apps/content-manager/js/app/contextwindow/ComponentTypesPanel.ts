@@ -13,6 +13,7 @@ module app_contextwindow {
 
         constructor(contextWindow:ContextWindow) {
             super();
+            this.addClass('component-types-panel');
 
             this.contextWindow = contextWindow;
 

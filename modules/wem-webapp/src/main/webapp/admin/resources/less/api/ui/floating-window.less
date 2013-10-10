@@ -19,13 +19,13 @@
     background-color: @admin-dark-gray;
     font-size: 15px;
     padding-top: 5px;
-    padding-left: 2px;
     .tab-menu-button {
       width: 25px;
       height: 25px;
       text-indent: 5px;
       color: @admin-medium-gray-font;
       cursor: pointer;
+      font-weight:bold;
       span {
         font-family: @admin-font-family;
         padding-left: 10px;
@@ -46,6 +46,7 @@
       margin: 0;
       background-color: @admin-dark-gray;
       width: 100%;
+      box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.56);
       li {
         margin-left: 25px;
       }
@@ -77,11 +78,17 @@
       cursor: move;
     }
 
-    .component {
+    .grid-row {
       padding-left: 60px;
       border-right: 0;
       border-bottom: 1px dashed @admin-dark-gray-font;
       background-color: #252526;
+
+      .component-types-panel &:hover {
+        cursor: -moz-grab;
+        cursor: -webkit-grab;
+        cursor: grab;
+      }
 
       h5 {
         margin: 0;
@@ -111,6 +118,11 @@
         right: 10px;
         top: 10px;
       }
+
+      &:hover {
+        background-color: @admin-dark-gray;
+      }
+
       &.active {
         .rotate {
           display:block;
@@ -123,6 +135,10 @@
         font-size:12px;
         padding: 10px 45px;
       }
+      .grid-row.active {
+        background-color: @admin-dark-gray;
+      }
+
     }
 
     .detail-panel {
