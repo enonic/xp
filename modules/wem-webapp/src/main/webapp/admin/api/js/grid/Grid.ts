@@ -14,59 +14,35 @@ module api_grid {
 
         private defaultHeight = 400;
         private defaultWidth = 800;
-        private data:any[];
-        private columns:Slick.Column[];
         private slickGrid:Slick.Grid<any>;
-        private options:GridOptions;
         private dataView:DataView;
 
-        constructor(data:any, columns:GridColumn[], options?:GridOptions) {
+        constructor(data:any, columns:GridColumn[], options:GridOptions = {}) {
             super("Grid");
             this.addClass("grid");
 
-            this.data = data;
-            this.columns = columns;
-            this.options = options ? options : {};
+            if (options.hideColumnHeaders) {
+                this.addClass("no-header");
+            }
 
-            this.getEl().setHeight((this.options.height ? this.options.height : this.defaultHeight) + "px");
-            this.getEl().setWidth((this.options.width ? this.options.width : this.defaultWidth) + "px");
+            this.getEl().setHeight((options.height || this.defaultHeight) + "px");
+            this.getEl().setWidth((options.width || this.defaultWidth) + "px");
             this.dataView = new DataView(this);
-            this.slickGrid = new Slick.Grid(this.getHTMLElement(), this.dataView.slick(), this.columns, this.options);
+            this.slickGrid = new Slick.Grid(this.getHTMLElement(), this.dataView.slick(), columns, options);
 
+            this.dataView.setItems(data, options.dataIdProperty);
         }
 
         setFilter(f:(item:any, args:any) => boolean) {
             this.dataView.setFilter(f);
         }
 
-
-        afterRender() {
-            if (this.options) {
-                if (this.options.hideColumnHeaders) {
-                    jQuery(".slick-header-columns").css("height", "0px");
-                }
-            }
-            this.options && this.options.dataIdProperty
-                ? this.dataView.setItems(this.data, this.options.dataIdProperty)
-                : this.dataView.setItems(this.data) ;
-        }
-
-        setData(data:any) {
-            this.data = data;
-        }
-
         updateData(data:any) {
-            this.data = data;
             this.dataView.setItems(data);
-            this.dataView.refresh();
         }
 
         addItem(item:any) {
-            if (this.isRendered()) {
-                this.dataView.addItem(item)
-            } else {
-                this.data.push(item);
-            }
+            this.dataView.addItem(item);
         }
 
         getDataView():DataView {
