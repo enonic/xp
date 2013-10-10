@@ -40,7 +40,7 @@ module api_ui_combobox {
 
             this.optionFormatter = config.optionFormatter;
             this.selectedOptionFormatter = config.selectedOptionFormatter;
-            this.maximumOccurrences = config.maximumOccurrences != undefined ? config.maximumOccurrences : 1;
+            this.maximumOccurrences = config.maximumOccurrences != undefined ? config.maximumOccurrences : 0;
             this.filter = config.filter;
             this.rowHeight = config.rowHeight || 50;
 
@@ -50,9 +50,6 @@ module api_ui_combobox {
             }
 
             this.input = new api_ui.TextInput();
-            if (this.maximumOccurrences == 0) {
-                this.input.getEl().setDisabled(true);
-            }
             this.appendChild(this.input);
 
             this.emptyDropdown = new api_dom.DivEl(null, "empty-options");
@@ -133,20 +130,20 @@ module api_ui_combobox {
             this.dropdown.addItem({value: id, displayValue: value});
         }
 
-        setValue(value: string) {
+        setValue(value:string) {
             var item = <OptionData>this.dropdown.getDataItemById(value);
             this.selectOption(item);
         }
 
-        setValues(values: string[]) {
-            values.forEach((value: string) => {
+        setValues(values:string[]) {
+            values.forEach((value:string) => {
                 this.setValue(value);
             });
         }
 
         getValue():string {
             var values = [];
-            this.selectedData.forEach((item: OptionData) => {
+            this.selectedData.forEach((item:OptionData) => {
                 values.push(item.value);
             });
             return values.join(';');
@@ -220,7 +217,7 @@ module api_ui_combobox {
             this.selectOption(item);
         }
 
-        private selectOption(item: OptionData) {
+        private selectOption(item:OptionData) {
             if (!this.canSelect(item)) {
                 return;
             }
@@ -232,13 +229,20 @@ module api_ui_combobox {
             this.hideDropdown();
             this.input.setValue("");
 
-            if (this.selectedData.length == this.maximumOccurrences) {
+            if (this.maximumOccurrencesReached()) {
                 this.input.getEl().setDisabled(true);
             }
         }
 
+        private maximumOccurrencesReached() {
+            if (this.maximumOccurrences == 0) {
+                return false;
+            }
+            return this.selectedData.length >= this.maximumOccurrences;
+        }
+
         private canSelect(item:OptionData):boolean {
-            if (this.selectedData.length == this.maximumOccurrences) {
+            if (this.maximumOccurrencesReached()) {
                 return false;
             }
 
