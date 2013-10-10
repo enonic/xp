@@ -83,13 +83,23 @@ public final class ModuleFileEntry
 
     public Resource getResource( final String pathToResource )
     {
+        return getResource( ResourcePath.from( pathToResource ) );
+    }
+
+    public Resource getResource( final ResourcePath pathToResource )
+    {
         final ModuleFileEntry entry = getEntry( pathToResource );
         return entry == null ? null : entry.getResource();
     }
 
     public ModuleFileEntry getEntry( final String entryPath )
     {
-        final Iterator<String> pathElements = Splitter.on( "/" ).omitEmptyStrings().split( entryPath ).iterator();
+        return getEntry( ResourcePath.from( entryPath ) );
+    }
+
+    public ModuleFileEntry getEntry( final ResourcePath entryPath )
+    {
+        final Iterator<String> pathElements = entryPath.iterator();
         if ( !pathElements.hasNext() )
         {
             return null;
@@ -108,7 +118,7 @@ public final class ModuleFileEntry
         return entry;
     }
 
-    public boolean contains( final String entryPath )
+    public boolean contains( final ResourcePath entryPath )
     {
         return getEntry( entryPath ) != null;
     }
@@ -137,13 +147,13 @@ public final class ModuleFileEntry
     @Override
     public String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "name", name );
-        s.add( "resource", resource );
-        s.add( "isDirectory", isDirectory );
-        s.add( "entries", entriesAsString() );
-        s.omitNullValues();
-        return s.toString();
+        return Objects.toStringHelper( this ).
+            add( "name", name ).
+            add( "resource", resource ).
+            add( "isDirectory", isDirectory ).
+            add( "entries", entriesAsString() ).
+            omitNullValues().
+            toString();
     }
 
     private String entriesAsString()

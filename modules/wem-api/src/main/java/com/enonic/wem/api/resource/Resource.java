@@ -50,13 +50,13 @@ public final class Resource
     @Override
     public String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "name", name );
-        s.add( "byteSource", byteSource );
-        s.add( "postfix", postfix );
-        s.add( "size", size < 0 ? "unknown" : size );
-        s.omitNullValues();
-        return s.toString();
+        return Objects.toStringHelper( this ).
+            add( "name", name ).
+            add( "byteSource", byteSource ).
+            add( "postfix", postfix ).
+            add( "size", size < 0 ? "unknown" : size ).
+            omitNullValues().
+            toString();
     }
 
     public boolean contentEquals( final Resource other )

@@ -51,9 +51,7 @@ public final class ModuleKey
     @Override
     public int hashCode()
     {
-        int result = name.hashCode();
-        result = 31 * result + version.hashCode();
-        return result;
+        return refString.hashCode();
     }
 
     @Override

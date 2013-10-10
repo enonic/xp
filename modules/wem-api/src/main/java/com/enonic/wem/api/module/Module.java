@@ -3,6 +3,8 @@ package com.enonic.wem.api.module;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.concurrent.Immutable;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -13,6 +15,7 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.form.Form;
 
+@Immutable
 public final class Module
 {
     public static final String MODULE_XML = "module.xml";
@@ -133,21 +136,21 @@ public final class Module
     @Override
     public String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
-        s.add( "moduleKey", moduleKey );
-        s.add( "displayName", displayName );
-        s.add( "info", info );
-        s.add( "url", url );
-        s.add( "vendorName", vendorName );
-        s.add( "vendorUrl", vendorUrl );
-        s.add( "config", config );
-        s.add( "minSystemVersion", minSystemVersion );
-        s.add( "maxSystemVersion", maxSystemVersion );
-        s.add( "moduleDependencies", moduleDependencies );
-        s.add( "contentTypeDependencies", contentTypeDependencies );
-        s.add( "directoryEntry", moduleDirectoryEntry );
-        s.omitNullValues();
-        return s.toString();
+        return Objects.toStringHelper( this ).
+            add( "moduleKey", moduleKey ).
+            add( "displayName", displayName ).
+            add( "info", info ).
+            add( "url", url ).
+            add( "vendorName", vendorName ).
+            add( "vendorUrl", vendorUrl ).
+            add( "config", config ).
+            add( "minSystemVersion", minSystemVersion ).
+            add( "maxSystemVersion", maxSystemVersion ).
+            add( "moduleDependencies", moduleDependencies ).
+            add( "contentTypeDependencies", contentTypeDependencies ).
+            add( "directoryEntry", moduleDirectoryEntry ).
+            omitNullValues().
+            toString();
     }
 
     public static Builder newModule()

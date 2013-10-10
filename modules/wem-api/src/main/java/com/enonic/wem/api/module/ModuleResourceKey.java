@@ -3,17 +3,15 @@ package com.enonic.wem.api.module;
 
 import java.util.Objects;
 
-import com.enonic.wem.api.Path;
-
 public class ModuleResourceKey
 {
     private final ModuleKey moduleKey;
 
-    private final Path path;
+    private final ResourcePath path;
 
     private final String refString;
 
-    public ModuleResourceKey( final ModuleKey moduleKey, final Path path )
+    public ModuleResourceKey( final ModuleKey moduleKey, final ResourcePath path )
     {
         this.moduleKey = moduleKey;
         this.path = path;
@@ -25,7 +23,7 @@ public class ModuleResourceKey
         return moduleKey;
     }
 
-    public Path getPath()
+    public ResourcePath getPath()
     {
         return path;
     }
@@ -43,7 +41,6 @@ public class ModuleResourceKey
         }
 
         final ModuleResourceKey that = (ModuleResourceKey) o;
-
         return Objects.equals( this.refString, that.refString );
     }
 
