@@ -15,7 +15,7 @@ module app_wizard {
 
         private relationShipTypeWizardHeader:api_app_wizard.WizardHeaderWithName;
 
-        private persistedRelationshipType:api_remote_relationshiptype.RelationshipType;
+        private persistedRelationshipType:api_schema_relationshiptype.RelationshipType;
 
         private relationshipTypeForm:RelationshipTypeForm;
 
@@ -45,23 +45,23 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Relationship Type"), this.relationshipTypeForm);
         }
 
-        setPersistedItem(relationshipType:api_remote_relationshiptype.RelationshipType) {
+        setPersistedItem(relationshipType:api_schema_relationshiptype.RelationshipType) {
             super.setPersistedItem(relationshipType);
 
-            this.relationShipTypeWizardHeader.setName(relationshipType.name);
-            this.formIcon.setSrc(relationshipType.iconUrl);
+            this.relationShipTypeWizardHeader.setName(relationshipType.getName());
+            this.formIcon.setSrc(relationshipType.getIcon());
 
             this.persistedRelationshipType = relationshipType;
 
             var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
-                qualifiedName: relationshipType.name,
+                qualifiedName: relationshipType.getName(),
                 format: 'XML'
             };
 
-            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
-                (result:api_remote_relationshiptype.GetResult) => {
-                    this.relationshipTypeForm.setFormData({"xml": result.relationshipTypeXml})
-                });
+            new api_schema_relationshiptype.GetRelationshipTypeConfigByQualifiedNameRequest(relationshipType.getName()).send().done((response:any) => {
+                this.relationshipTypeForm.setFormData({"xml": response.json.relationshipTypeXml});
+            });
+
         }
 
         persistNewItem(successCallback?:() => void) {

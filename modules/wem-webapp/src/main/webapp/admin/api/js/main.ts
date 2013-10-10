@@ -181,11 +181,18 @@
 ///<reference path='content/json/module.ts' />
 ///<reference path='content/module.ts' />
 
+
 ///<reference path='schema/content/form/json/module.ts' />
 ///<reference path='schema/content/form/module.ts' />
 ///<reference path='schema/content/json/module.ts' />
 ///<reference path='schema/content/module.ts' />
 ///<reference path="schema/relationshiptype/json/RelationshipTypeJson.ts" />
+
+///<reference path='schema/mixin/module.ts'/>
+///<reference path='schema/mixin/json/module.ts'/>
+
+///<reference path='schema/relationshiptype/module.ts' />
+///<reference path='schema/relationshiptype/json/module.ts' />
 
 ///<reference path='page/json/module.ts' />
 ///<reference path='page/module.ts' />
