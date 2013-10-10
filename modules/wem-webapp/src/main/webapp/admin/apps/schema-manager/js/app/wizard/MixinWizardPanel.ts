@@ -14,7 +14,7 @@ module app_wizard {
 
         private mixinWizardHeader:api_app_wizard.WizardHeaderWithName;
 
-        private persistedMixin:api_remote_mixin.Mixin;
+        private persistedMixin:api_schema_mixin.Mixin;
 
         private mixinForm:MixinForm;
 
@@ -45,22 +45,18 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Mixin"), this.mixinForm);
         }
 
-        setPersistedItem(mixin:api_remote_mixin.Mixin) {
+        setPersistedItem(mixin:api_schema_mixin.Mixin) {
             super.setPersistedItem(mixin);
 
-            this.mixinWizardHeader.setName(mixin.name);
-            this.formIcon.setSrc(mixin.iconUrl);
+            this.mixinWizardHeader.setName(mixin.getName());
+            this.formIcon.setSrc(mixin.getIcon());
 
             this.persistedMixin = mixin;
 
-            var mixinGetParams:api_remote_mixin.GetParams = {
-                qualifiedName: mixin.name,
-                format: 'XML'
-            };
-
-            api_remote_mixin.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
-                this.mixinForm.setFormData({"xml": result.mixinXml})
+            new api_schema_mixin.GetMixinConfigByQualifiedNameRequest(mixin.getName()).send().done((response:any) => {
+                this.mixinForm.setFormData({"xml": response.json.mixinXml});
             });
+
         }
 
         persistNewItem(successCallback?:() => void) {

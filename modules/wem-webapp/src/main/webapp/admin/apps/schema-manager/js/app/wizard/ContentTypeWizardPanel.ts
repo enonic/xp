@@ -14,7 +14,7 @@ module app_wizard {
 
         private contentTypeWizardHeader:api_app_wizard.WizardHeaderWithName;
 
-        private persistedContentType:api_remote_contenttype.ContentType;
+        private persistedContentType:api_schema_content.ContentType;
 
         private contentTypeForm:app_wizard.ContentTypeForm;
 
@@ -46,23 +46,18 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Content Type"), this.contentTypeForm);
         }
 
-        setPersistedItem(contentType:api_remote_contenttype.ContentType) {
+        setPersistedItem(contentType:api_schema_content.ContentType) {
             super.setPersistedItem(contentType);
 
-            this.contentTypeWizardHeader.setName(contentType.name);
-            this.formIcon.setSrc(contentType.iconUrl);
+            this.contentTypeWizardHeader.setName(contentType.getName());
+            this.formIcon.setSrc(contentType.getIconUrl());
 
             this.persistedContentType = contentType;
 
-            var contentTypeGetParams:api_remote_contenttype.GetParams = {
-                qualifiedNames: [contentType.qualifiedName],
-                format: 'XML'
-            };
+            new api_schema_content.GetContentTypeConfigByQualifiedNameRequest(contentType.getQualifiedName()).send().done((response:any) => {
+                this.contentTypeForm.setFormData({"xml": response.json.contentTypeXml});
+            });
 
-            api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams,
-                (result:api_remote_contenttype.GetResult) => {
-                    this.contentTypeForm.setFormData({"xml": result.contentTypeXmls[0]});
-                })
         }
 
         persistNewItem(successCallback?:() => void) {

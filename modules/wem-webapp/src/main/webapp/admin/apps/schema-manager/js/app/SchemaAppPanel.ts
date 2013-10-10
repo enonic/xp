@@ -92,16 +92,11 @@ module app {
 
                         switch (schemaModel.data.type) {
                         case SchemaAppPanel.CONTENT_TYPE:
-                            var contentTypeGetParams:api_remote_contenttype.GetParams = {
-                                qualifiedNames: [schemaModel.data.qualifiedName],
-                                format: 'JSON'
-                            };
-                            api_remote_contenttype.RemoteContentTypeService.contentType_get(contentTypeGetParams,
-                                (result:api_remote_contenttype.GetResult) => {
+                            new api_schema_content.GetContentTypeByQualifiedNameRequest(schemaModel.data.qualifiedName).
+                                send().done((jsonResponse) => {
+                                    var contentType = new api_schema_content.ContentType(jsonResponse.json);
 
-                                    var contentType:api_remote_contenttype.ContentType = result.contentTypes[0];
-
-                                    tabMenuItem = new api_app.AppBarTabMenuItem(contentType.name, tabId, true);
+                                    tabMenuItem = new api_app.AppBarTabMenuItem(contentType.getName(), tabId, true);
 
                                     schemaWizardPanel = new app_wizard.ContentTypeWizardPanel();
                                     schemaWizardPanel.setPersistedItem(contentType);
@@ -110,35 +105,30 @@ module app {
                                 });
                             break;
                         case SchemaAppPanel.RELATIONSHIP_TYPE:
-                            var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
-                                qualifiedName: schemaModel.data.qualifiedName,
-                                format: 'JSON'
-                            };
-                            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
-                                (result:api_remote_relationshiptype.GetResult) => {
+                            new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(schemaModel.data.qualifiedName).
+                                send().done((jsonResponse) => {
+                                    var relationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.json.relationshipType);
 
-                                    tabMenuItem = new api_app.AppBarTabMenuItem(result.relationshipType.displayName, tabId, true);
+                                    tabMenuItem = new api_app.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
 
                                     schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel();
-                                    schemaWizardPanel.setPersistedItem(result.relationshipType);
+                                    schemaWizardPanel.setPersistedItem(relationshipType);
 
                                     this.addWizardPanel(tabMenuItem, schemaWizardPanel);
                                 });
                             break;
                         case SchemaAppPanel.MIXIN:
-                            var mixinGetParams:api_remote_mixin.GetParams = {
-                                qualifiedName: schemaModel.data.qualifiedName,
-                                format: 'JSON'
-                            };
-                            api_remote_mixin.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
+                            new api_schema_mixin.GetMixinByQualifiedNameRequest(schemaModel.data.qualifiedName).
+                                send().done((jsonResponse)=> {
+                                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.json);
+                                    tabMenuItem = new api_app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
 
-                                tabMenuItem = new api_app.AppBarTabMenuItem(result.mixin.displayName, tabId, true);
+                                    schemaWizardPanel = new app_wizard.MixinWizardPanel();
+                                    schemaWizardPanel.setPersistedItem(mixin);
 
-                                schemaWizardPanel = new app_wizard.MixinWizardPanel();
-                                schemaWizardPanel.setPersistedItem(result.mixin);
+                                    this.addWizardPanel(tabMenuItem, schemaWizardPanel);
+                                });
 
-                                this.addWizardPanel(tabMenuItem, schemaWizardPanel);
-                            });
                             break;
                         }
                     }

@@ -12,12 +12,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.NotFoundException;
 
-import com.enonic.wem.admin.json.schema.relationship.AbstractRelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
@@ -52,29 +52,45 @@ public class RelationshipTypeResource
     private UploadService uploadService;
 
     @GET
-    public AbstractRelationshipTypeJson get( @QueryParam("qualifiedRelationshipTypeName") final String name,
-                                             @QueryParam("format") final String format )
+    public RelationshipTypeJson get( @QueryParam("qualifiedName") final String name )
     {
-        final QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( name );
-        final GetRelationshipTypes getRelationshipTypes = Commands.relationshipType().get();
-        getRelationshipTypes.qualifiedNames( qualifiedNames );
+        final QualifiedRelationshipTypeName qualifiedRelationshipTypeName = QualifiedRelationshipTypeName.from( name );
+        final RelationshipType relationshipType = fetchRelationshipType( qualifiedRelationshipTypeName );
 
-        final RelationshipTypes relationshipTypes = client.execute( getRelationshipTypes );
-
-        if ( !relationshipTypes.isEmpty() )
+        if ( relationshipType == null )
         {
-            RelationshipType type = relationshipTypes.first();
-
-            if ( format.equalsIgnoreCase( FORMAT_JSON ) )
-            {
-                return new RelationshipTypeJson( type );
-            }
-            else if ( format.equalsIgnoreCase( FORMAT_XML ) )
-            {
-                return new RelationshipTypeConfigJson( type );
-            }
+            String message = String.format( "RelationshipType [%s] was not found.", qualifiedRelationshipTypeName );
+            throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
+                entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
-        throw new NotFoundException();
+
+        return new RelationshipTypeJson( relationshipType );
+    }
+
+    @GET
+    @Path("config")
+    public RelationshipTypeConfigJson getConfig( @QueryParam("qualifiedName") final String name )
+    {
+        final QualifiedRelationshipTypeName qualifiedRelationshipTypeName = QualifiedRelationshipTypeName.from( name );
+        final RelationshipType relationshipType = fetchRelationshipType( qualifiedRelationshipTypeName );
+
+        if ( relationshipType == null )
+        {
+            String message = String.format( "RelationshipType [%s] was not found.", qualifiedRelationshipTypeName );
+            throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
+                entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
+        }
+
+        return new RelationshipTypeConfigJson( relationshipType );
+
+    }
+
+    public RelationshipType fetchRelationshipType( final QualifiedRelationshipTypeName name )
+    {
+        final GetRelationshipTypes command =
+            Commands.relationshipType().get().qualifiedNames( QualifiedRelationshipTypeNames.from( name ) );
+        final RelationshipTypes relationshipTypes = client.execute( command );
+        return relationshipTypes.isEmpty() ? null : relationshipTypes.first();
     }
 
     @GET
