@@ -77,12 +77,23 @@
     .tab-menu {
       cursor: move;
     }
+    .slick-viewport {
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+
 
     .grid-row {
       padding-left: 60px;
       border-right: 0;
       border-bottom: 1px dashed @admin-dark-gray-font;
       background-color: #252526;
+      padding-bottom:10px;
+      padding-top: 5px;
+
+      &.slick-cell {
+        height:auto;
+      }
 
       .component-types-panel &:hover {
         cursor: -moz-grab;
