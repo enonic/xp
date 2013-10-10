@@ -1,9 +1,9 @@
-module api_grid {
+module api_ui_grid {
     export class DataView {
         private slickDataView:Slick.Data.DataView<any[]>;
         private grid:Grid;
 
-        constructor(grid:api_grid.Grid) {
+        constructor(grid:api_ui_grid.Grid) {
             this.slickDataView = new Slick.Data.DataView({ inlineFilters: true });
             this.grid = grid;
 

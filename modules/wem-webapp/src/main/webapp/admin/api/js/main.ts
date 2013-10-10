@@ -150,8 +150,8 @@
 ///<reference path='ui/form/Form.ts' />
 ///<reference path='ui/form/FormItem.ts' />
 
-///<reference path='grid/Grid.ts' />
-///<reference path='grid/DataView.ts' />
+///<reference path='ui/grid/Grid.ts' />
+///<reference path='ui/grid/DataView.ts' />
 
 ///<reference path='ui/dialog/DialogButton.ts' />
 ///<reference path='ui/dialog/ModalDialog.ts' />

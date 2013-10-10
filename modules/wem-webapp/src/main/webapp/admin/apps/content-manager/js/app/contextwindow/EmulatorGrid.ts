@@ -1,11 +1,11 @@
 module app_contextwindow {
-    export class EmulatorGrid extends api_grid.Grid {
+    export class EmulatorGrid extends api_ui_grid.Grid {
 
         constructor(data:any = {}) {
             super(data, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
         }
 
-        private createColumns():api_grid.GridColumn[] {
+        private createColumns():api_ui_grid.GridColumn[] {
             return [
                 {
                     name: "device",

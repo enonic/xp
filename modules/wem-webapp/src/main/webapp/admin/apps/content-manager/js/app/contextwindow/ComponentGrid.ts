@@ -5,7 +5,7 @@ module app_contextwindow {
         onClick?:(el) => void;
     }
 
-    export class ComponentGrid extends api_grid.Grid {
+    export class ComponentGrid extends api_ui_grid.Grid {
         private componentGridOptions:ComponentGridOptions;
 
         constructor(data:any = {}, options:ComponentGridOptions = {}) {
@@ -38,7 +38,7 @@ module app_contextwindow {
             this.getDataView().refresh();
         }
 
-        private createColumns():api_grid.GridColumn[] {
+        private createColumns():api_ui_grid.GridColumn[] {
             return [
                 {
                     name: "component",

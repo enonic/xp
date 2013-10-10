@@ -6,7 +6,7 @@ module api_ui_combobox {
 
         private input:api_ui.TextInput;
 
-        private dropdown:api_grid.Grid;
+        private dropdown:api_ui_grid.Grid;
 
         private emptyDropdown:api_dom.DivEl;
 
@@ -65,14 +65,14 @@ module api_ui_combobox {
             this.appendChild(this.selectedOptions);
 
             var data = this.initData;
-            var columns:api_grid.GridColumn[] = [
+            var columns:api_ui_grid.GridColumn[] = [
                 {
                     id: "option",
                     name: "Options",
                     field: "displayValue",
                     formatter: this.optionFormatter}
             ];
-            var options:api_grid.GridOptions = {
+            var options:api_ui_grid.GridOptions = {
                 width: this.input.getEl().getWidth(),
                 height: this.maxHeight,
                 hideColumnHeaders: true,
@@ -83,7 +83,7 @@ module api_ui_combobox {
                 dataIdProperty: "value"
             };
 
-            this.dropdown = new api_grid.Grid(data, columns, options);
+            this.dropdown = new api_ui_grid.Grid(data, columns, options);
             this.dropdown.addClass("options-container");
             this.dropdown.getEl().setPosition("absolute");
             this.dropdown.hide();

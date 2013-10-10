@@ -1,4 +1,4 @@
-module api_grid {
+module api_ui_grid {
     export interface GridOptions extends Slick.GridOptions<any> {
         hideColumnHeaders?:boolean;
         width?:number;
