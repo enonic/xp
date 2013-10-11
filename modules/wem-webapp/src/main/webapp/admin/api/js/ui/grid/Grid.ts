@@ -30,7 +30,9 @@ module api_ui_grid {
             this.dataView = new DataView(this);
             this.slickGrid = new Slick.Grid(this.getHTMLElement(), this.dataView.slick(), columns, options);
 
-            this.dataView.setItems(data, options.dataIdProperty);
+            if (data) {
+                this.dataView.setItems(data, options.dataIdProperty);
+            }
         }
 
         setFilter(f:(item:any, args:any) => boolean) {

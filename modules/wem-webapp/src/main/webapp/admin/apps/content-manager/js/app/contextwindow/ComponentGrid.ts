@@ -8,7 +8,7 @@ module app_contextwindow {
     export class ComponentGrid extends api_ui_grid.Grid {
         private componentGridOptions:ComponentGridOptions;
 
-        constructor(data:any = {}, options:ComponentGridOptions = {}) {
+        constructor(data:any = null, options:ComponentGridOptions = {}) {
             super(data, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
             this.componentGridOptions = options;
             this.setFilter(this.filter);

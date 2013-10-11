@@ -1,7 +1,7 @@
 module app_contextwindow {
     export class EmulatorGrid extends api_ui_grid.Grid {
 
-        constructor(data:any = {}) {
+        constructor(data:any = null) {
             super(data, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
         }
 
