@@ -4,46 +4,60 @@ module api_app_browse {
 
         private listeners:ItemsSelectionPanelListener[] = [];
         private items:BrowseItem[] = [];
+        private selectionItems:SelectionItem[] = [];
 
         constructor() {
             super("ItemsSelectionPanel");
+            this.getEl().setInnerHtml("Nothing selected");
         }
 
-        setItems(items:BrowseItem[]) {
-            this.removeChildren();
-            this.items = [];
-            if (items.length > 0) {
-                items.forEach((item:BrowseItem) => {
-                    this.addItem(item);
-                });
-            } else {
+        addItem(item:BrowseItem) {
+            if (this.indexOf(item) >= 0) {
+                return;
+            }
+
+            if (this.items.length == 0) {
+                this.removeChildren();
+            }
+
+            var removeCallback = () => {
+                this.removeItem(item);
+            };
+            var selectionItem = new SelectionItem(item, removeCallback);
+
+            this.appendChild(selectionItem);
+            this.selectionItems.push(selectionItem);
+            this.items.push(item);
+        }
+
+        removeItem(item:BrowseItem) {
+            var index = this.indexOf(item);
+            if (index < 0) {
+                return;
+            }
+
+            this.selectionItems[index].remove();
+            this.selectionItems.splice(index, 1);
+            this.items.splice(index, 1);
+
+            if (this.items.length == 0) {
                 this.getEl().setInnerHtml("Nothing selected");
             }
+
+            this.notifyDeselected(item);
         }
 
         getItems():BrowseItem[] {
             return this.items;
         }
 
-        private removeItem(selectionItem:SelectionItem) {
-            var index = this.items.indexOf(selectionItem.getBrowseItem());
-            if (index >= 0 && this.items.splice(index, 1)) {
-                selectionItem.remove();
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        private addItem(item:BrowseItem) {
-            var removeCallback = (selectionItem:SelectionItem) => {
-                if (this.removeItem(selectionItem)) {
-                    this.notifyDeselected(selectionItem.getBrowseItem());
+        private indexOf(item:BrowseItem):number {
+            for (var i = 0 ; i < this.items.length ; i++) {
+                if (item.getPath() == this.items[i].getPath()) {
+                    return i;
                 }
-            };
-
-            this.appendChild(new SelectionItem(item, removeCallback));
-            this.items.push(item);
+            }
+            return -1;
         }
 
         addListener(listener:ItemsSelectionPanelListener) {
@@ -70,7 +84,7 @@ module api_app_browse {
 
         private browseItem:api_app_browse.BrowseItem;
 
-        constructor(browseItem:BrowseItem, removeCallback?:(selectionItem:SelectionItem) => void) {
+        constructor(browseItem:BrowseItem, removeCallback?:() => void) {
             super("SelectionItem", "browse-selection-item");
             this.browseItem = browseItem;
             this.setIcon(this.browseItem.getIconUrl(), 32);
@@ -78,13 +92,13 @@ module api_app_browse {
             this.addRemoveButton(removeCallback);
         }
 
-        private addRemoveButton(callback?:(SelectionItem) => void) {
+        private addRemoveButton(callback?:() => void) {
             var removeEl = document.createElement("div");
             removeEl.className = "remove";
             removeEl.innerHTML = "&times;";
             removeEl.addEventListener("click", (event) => {
                 if (callback) {
-                    callback(this);
+                    callback();
                 }
             });
             this.getEl().appendChild(removeEl);
