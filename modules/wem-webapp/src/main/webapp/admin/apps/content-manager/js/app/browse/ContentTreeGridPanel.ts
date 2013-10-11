@@ -34,8 +34,9 @@ module app_browse {
                 onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
                     new app_browse.EditContentEvent([<any>event.clickedModel]).fire();
                 },
-                onSelectionChanged: (event)=> {
-                }
+                onSelectionChanged: null,
+                onSelect: null,
+                onDeselect: null
             });
         }
 

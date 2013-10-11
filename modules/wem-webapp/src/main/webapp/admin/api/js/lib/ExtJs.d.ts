@@ -2707,6 +2707,10 @@ interface Ext_selection_Model extends Ext_util_Observable {
 
 }
 
+interface Ext_selection_RowModel extends Ext_selection_Model {
+
+}
+
 
 /*      Toolbar package     */
 
