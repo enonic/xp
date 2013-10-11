@@ -39,7 +39,7 @@ module app_contextwindow {
 
         private getData():void {
             jQuery.ajax({
-                url: "/admin/apps/content-manager/js/data/context-window/devices.json",
+                url: api_util.getUri("apps/content-manager/js/data/context-window/devices.json"),
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
                     this.grid.updateData(EmulatorGrid.toSlickData(data));
                 }
