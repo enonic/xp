@@ -1,20 +1,30 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.Path;
 import com.enonic.wem.api.schema.content.form.Form;
 
 public class PageDescriptor
+    extends Descriptor
 {
-    String displayName;
+    ControllerSetup controller;
 
-    Path controller;
+    /**
+     * Only for display in PageTemplate.
+     */
+    Form pageTemplateConfig;
 
-    ControllerParams controllerParams;
-
-    Form liveEdit;
-
+    /**
+     * Only for display in Page.
+     */
     Form config;
 
-    Form page;
+    /**
+     * Only for display in LiveEdit.
+     */
+    Form liveEditConfig;
+
+    public ControllerSetup getControllerSetup()
+    {
+        return controller;
+    }
 }

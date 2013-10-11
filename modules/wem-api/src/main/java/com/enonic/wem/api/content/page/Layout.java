@@ -1,10 +1,14 @@
 package com.enonic.wem.api.content.page;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.enonic.wem.api.data.RootDataSet;
 
 public class Layout
     extends Component
 {
-    private Map<String, Region> regionsByName = new LinkedHashMap<>();
+    RootDataSet liveEditConfig;
+
+    /**
+     * Values will override any values in LayoutTemplate.pageConfig.
+     */
+    RootDataSet layoutConfig;
 }

@@ -4,40 +4,27 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 
-public class PageTemplate
-    extends Template<PageTemplate, PageTemplateId>
+public class LayoutTemplate
+    extends Template<LayoutTemplate, LayoutTemplateId>
 {
+
     /**
      * Template templateConfig.
      */
     RootDataSet templateConfig;
 
     /**
-     * Default page templateConfig that can be overridden in page (content).
+     * Default layout templateConfig that can be overridden in layout (content).
      */
-    RootDataSet pageConfig;
+    RootDataSet layoutConfig;
 
     QualifiedContentTypeNames canRender;
 
-    private PageTemplate( final Builder builder )
+    private LayoutTemplate( final Builder builder )
     {
-        this.id = builder.id;
+
     }
 
-    PageTemplateId id()
-    {
-        return id;
-    }
-
-    public RootDataSet getTemplateConfig()
-    {
-        return templateConfig;
-    }
-
-    public RootDataSet getPageConfig()
-    {
-        return pageConfig;
-    }
 
     public static class Builder
     {

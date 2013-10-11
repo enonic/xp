@@ -48,8 +48,15 @@ public class RootDataSetJsonSerializer
         Preconditions.checkNotNull( node, "node cannot be null" );
         Preconditions.checkArgument( node instanceof ArrayNode, "node expected to be a ArrayNode" );
 
+        //noinspection ConstantConditions
+        return parse( (ArrayNode) node );
+    }
+
+    public RootDataSet parse( final ArrayNode arrayNode )
+    {
+        Preconditions.checkNotNull( arrayNode, "arrayNode cannot be null" );
         final RootDataSet rootDataSet = new RootDataSet();
-        @SuppressWarnings("ConstantConditions") final ArrayNode arrayNode = (ArrayNode) node;
+        //noinspection ConstantConditions
         parseEntries( arrayNode, rootDataSet );
         return rootDataSet;
     }

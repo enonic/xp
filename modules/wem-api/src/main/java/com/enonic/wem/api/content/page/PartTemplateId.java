@@ -1,10 +1,10 @@
 package com.enonic.wem.api.content.page;
 
 
-public class PageTemplateId
+public class PartTemplateId
     extends TemplateId
 {
-    public PageTemplateId( final String id )
+    public PartTemplateId( final String id )
     {
         super( id );
     }

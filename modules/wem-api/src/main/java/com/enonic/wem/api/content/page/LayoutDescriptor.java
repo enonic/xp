@@ -1,20 +1,19 @@
 package com.enonic.wem.api.content.page;
 
-
 import com.enonic.wem.api.schema.content.form.Form;
 
-public class PartDescriptor
+public class LayoutDescriptor
     extends Descriptor
 {
     ControllerSetup controller;
 
     /**
-     * Only for display in PartTemplate.
+     * Only for display in LayoutTemplate.
      */
     Form templateConfig;
 
     /**
-     * Only for display in Part.
+     * Only for display in Layout.
      */
     Form config;
 

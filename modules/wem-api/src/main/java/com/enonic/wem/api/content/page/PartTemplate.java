@@ -2,15 +2,28 @@ package com.enonic.wem.api.content.page;
 
 
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 public class PartTemplate
+    extends Template<PartTemplate, PartTemplateId>
 {
-    String displayName;
+    /**
+     * Template templateConfig.
+     */
+    RootDataSet templateConfig;
 
-    ModuleResourceKey descriptor;
+    /**
+     * Default part templateConfig that can be overridden in part (content).
+     */
+    RootDataSet partConfig;
 
-    RootDataSet config;
 
-    RootDataSet liveEdit;
+    public RootDataSet getTemplateConfig()
+    {
+        return templateConfig;
+    }
+
+    public RootDataSet getPartConfig()
+    {
+        return partConfig;
+    }
 }
