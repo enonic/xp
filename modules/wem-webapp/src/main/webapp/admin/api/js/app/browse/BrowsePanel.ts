@@ -56,12 +56,19 @@ module api_app_browse{
             this.gridAndFilterAndDetailSplitPanel.setDistribution(15, 85);
             this.gridAndFilterAndDetailSplitPanel.setAlignment(api_ui.SplitPanelAlignment.VERTICAL);
 
-            this.treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
-                onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
+            this.treeGridPanel.addListener({
+                onSelectionChanged: null,
+                onSelect: (event:api_app_browse_grid.TreeGridSelectEvent) => {
 
-                    var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems(event.selectedModels);
-                    this.browseItemPanel.setItems(browseItems);
-                }
+                    var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems([event.selectedModel]);
+                    this.browseItemPanel.addItem(browseItems[0]);
+                },
+                onDeselect: (event:api_app_browse_grid.TreeGridDeselectEvent) => {
+
+                    var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems([event.deselectedModel]);
+                    this.browseItemPanel.removeItem(browseItems[0]);
+                },
+                onItemDoubleClicked: null
             });
         }
 
