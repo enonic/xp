@@ -58,6 +58,10 @@ module app_browse {
                     this.browseActions.updateActionsEnabledState(contentSummaries);
                 }
             });
+
+            ShowNewContentGridEvent.on( () => {
+                super.toggleShowingNewGrid();
+            });
         }
 
         extModelsToContentSummaries(models:Ext_data_Model[]):api_content.ContentSummary[] {

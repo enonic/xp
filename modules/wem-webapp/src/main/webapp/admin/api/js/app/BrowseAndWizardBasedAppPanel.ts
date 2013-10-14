@@ -19,6 +19,9 @@ module api_app {
             this.browsePanel = config.browsePanel;
             this.appBarTabMenu = config.appBar.getTabMenu();
 
+            // TODO: Hack to ensure that we get the key bindings for the browsePanel activated
+            api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(this.resolveActions(this.browsePanel)));
+
             this.addListener({
                 onPanelShown: (event:api_ui.PanelShownEvent) => {
                     if (event.panel === this.browsePanel) {

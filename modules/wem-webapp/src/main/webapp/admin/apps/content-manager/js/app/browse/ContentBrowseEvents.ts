@@ -173,4 +173,15 @@ module app_browse {
         }
     }
 
+    export class ShowNewContentGridEvent extends api_event.Event {
+
+        constructor() {
+            super('showNewContentGridEvent');
+        }
+
+        static on(handler:(event:ShowNewContentGridEvent) => void) {
+            api_event.onEvent('showNewContentGridEvent', handler);
+        }
+    }
+
 }

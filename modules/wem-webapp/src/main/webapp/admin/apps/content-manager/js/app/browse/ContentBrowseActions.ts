@@ -19,7 +19,7 @@ module app_browse {
     export class ShowNewContentDialogAction extends BaseContentBrowseAction {
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
-            super("New");
+            super("New", "mod+alt+n");
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 new ShowNewContentDialogEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())[0]).fire();
@@ -30,7 +30,7 @@ module app_browse {
     export class OpenContentAction extends BaseContentBrowseAction {
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
-            super("Open");
+            super("Open", "mod+o");
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 new OpenContentEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
@@ -41,7 +41,7 @@ module app_browse {
     export class EditContentAction extends BaseContentBrowseAction {
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
-            super("Edit");
+            super("Edit", "f4");
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 new EditContentEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
@@ -118,6 +118,17 @@ module app_browse {
         }
     }
 
+    export class ShowNewGridAction extends api_ui.Action {
+
+        constructor() {
+            super("NG", "mod+i");
+            this.setEnabled(true);
+            this.addExecutionListener(() => {
+                new ShowNewContentGridEvent().fire();
+            });
+        }
+    }
+
     export class ContentBrowseActions {
 
         public SHOW_NEW_CONTENT_DIALOG_ACTION:api_ui.Action;
@@ -129,6 +140,7 @@ module app_browse {
         public SHOW_PREVIEW:api_ui.Action;
         public SHOW_DETAILS:api_ui.Action;
         public BROWSE_CONTENT_SETTINGS:api_ui.Action;
+        public SHOW_NEW_CONTENT_GRID:api_ui.Action;
 
         private allActions:api_ui.Action[] = [];
 
@@ -154,9 +166,11 @@ module app_browse {
             this.SHOW_PREVIEW = new ShowPreviewAction(treeGridPanel);
             this.SHOW_DETAILS = new ShowDetailsAction(treeGridPanel);
             this.BROWSE_CONTENT_SETTINGS = new BrowseContentSettingsAction();
+            this.SHOW_NEW_CONTENT_GRID = new ShowNewGridAction();
 
             this.allActions.push(this.SHOW_NEW_CONTENT_DIALOG_ACTION, this.OPEN_CONTENT, this.EDIT_CONTENT, this.DELETE_CONTENT,
-                this.DUPLICATE_CONTENT, this.MOVE_CONTENT, this.SHOW_PREVIEW, this.SHOW_DETAILS, this.BROWSE_CONTENT_SETTINGS);
+                this.DUPLICATE_CONTENT, this.MOVE_CONTENT, this.SHOW_PREVIEW, this.SHOW_DETAILS, this.BROWSE_CONTENT_SETTINGS,
+                this.SHOW_NEW_CONTENT_GRID);
 
             ContentBrowseActions.INSTANCE = this;
         }

@@ -58,14 +58,19 @@ module api_app_browse{
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
 
-            this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
+            // this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
+            if (this.treeGridPanel2 != null) {
+                this.treeSwapperDeckPanel = new api_ui.DeckPanel();
+                this.treeSwapperDeckPanel.addPanel(this.browseItemPanel);
+                this.treeSwapperDeckPanel.addPanel(this.treeGridPanel2);
+                this.treeSwapperDeckPanel.showPanel(0);
 
-            /* TODO if (this.treeGridPanel2 != null) {
-                this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.treeGridPanel2);
+
+                this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.treeSwapperDeckPanel);
             }
             else {
                 this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
-            }*/
+            }
 
             this.gridAndFilterAndDetailSplitPanel = new api_ui.SplitPanel(this.filterPanel, this.gridAndDetailSplitPanel);
             this.gridAndFilterAndDetailSplitPanel.setDistribution(15, 85);
@@ -98,6 +103,15 @@ module api_app_browse{
         refreshGrid() {
             if (this.treeGridPanel.isRefreshNeeded()) {
                 this.treeGridPanel.refresh();
+            }
+        }
+
+        toggleShowingNewGrid() {
+            if( this.treeSwapperDeckPanel.getPanelShownIndex() == 0 ) {
+                this.treeSwapperDeckPanel.showPanel(1);
+            }
+            else {
+                this.treeSwapperDeckPanel.showPanel(0);
             }
         }
 
