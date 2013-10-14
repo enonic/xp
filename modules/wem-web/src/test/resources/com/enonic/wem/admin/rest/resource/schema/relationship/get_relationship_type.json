@@ -1,0 +1,17 @@
+{
+    "deletable": true,
+    "editable": true,
+    "relationshipType": {
+        "allowedFromTypes": [ ],
+        "allowedToTypes": [ ],
+        "createdTime": null,
+        "deletable": true,
+        "displayName": null,
+        "editable": true,
+        "fromSemantic": null,
+        "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type",
+        "modifiedTime": null,
+        "name": "the_relationship_type",
+        "toSemantic": null
+    }
+}

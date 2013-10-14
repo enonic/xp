@@ -15,10 +15,10 @@ import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
+import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateParams;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinDeleteJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinDeleteParams;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -169,12 +169,11 @@ public class MixinResource
     @POST
     @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
-    public MixinDeleteJson delete( MixinDeleteParams params )
+    public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
-        final QualifiedMixinNames qualifiedMixinNames =
-            QualifiedMixinNames.from( params.getQualifiedMixinNames().toArray( new String[0] ) );
+        final QualifiedMixinNames qualifiedMixinNames = QualifiedMixinNames.from( params.getQualifiedNames().toArray( new String[0] ) );
 
-        final MixinDeleteJson deletionResult = new MixinDeleteJson();
+        final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( QualifiedMixinName qualifiedMixinName : qualifiedMixinNames )
         {
             final DeleteMixin deleteMixin = Commands.mixin().delete().name( qualifiedMixinName );

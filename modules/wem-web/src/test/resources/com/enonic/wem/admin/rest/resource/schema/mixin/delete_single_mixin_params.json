@@ -1,5 +1,5 @@
 {
-    "qualifiedMixinNames": [
+    "qualifiedNames": [
         "my:existing_mixin"
     ]
 }
