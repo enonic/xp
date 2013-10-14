@@ -51,15 +51,18 @@ module app_launcher {
                         if (this.runAction(application, path)) {
                             clearInterval(intervalId);
                         }
-                    }, 500);
+                    }, 200);
                 });
             });
         }
 
         private runAction(app:Application, path:api_rest.Path):boolean {
             if (app.isLoaded()) {
-                app.getAppFrame().getHTMLElement()["contentWindow"].doAction(path);
-                return true;
+                if (app.getAppFrame().getHTMLElement()["contentWindow"].doAction) {
+                    app.getAppFrame().getHTMLElement()["contentWindow"].doAction(path);
+
+                    return true;
+                }
             }
             return false;
         }
@@ -72,8 +75,8 @@ module app_launcher {
 
         private arrayWithoutNulls(array:any[]):any[] {
             var arrayWithoutNulls:any[] = [];
-            for( var i = 0; i < array.length; i++ ) {
-                if( array[i] != null ) {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i] != null) {
                     arrayWithoutNulls.push(array[i]);
                 }
             }
