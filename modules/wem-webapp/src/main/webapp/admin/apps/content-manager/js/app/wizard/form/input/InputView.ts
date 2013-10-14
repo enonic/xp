@@ -88,5 +88,15 @@ module app_wizard_form_input {
             });
             return properties;
         }
+
+        validate(validationRecorder:app_wizard_form.ValidationRecorder) {
+
+            this.inputTypeView.validate(validationRecorder);
+        }
+
+        hasValidOccurrences():boolean {
+
+            return this.getData().length >= this.input.getOccurrences().getMaximum();
+        }
     }
 }

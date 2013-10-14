@@ -8,6 +8,8 @@ module app_wizard_form_input_type {
 
         getValues(): api_data.Value[];
 
+        validate(validationRecorder:app_wizard_form.ValidationRecorder);
+
         createAndAddOccurrence();
 
         isManagingAdd():boolean;

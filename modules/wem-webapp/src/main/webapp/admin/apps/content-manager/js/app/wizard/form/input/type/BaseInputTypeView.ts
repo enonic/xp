@@ -46,8 +46,21 @@ module app_wizard_form_input_type {
             return this.inputOccurrences.getValues();
         }
 
+        validate(validationRecorder:app_wizard_form.ValidationRecorder) {
+
+            this.getValues().forEach((value:api_data.Value, index:number) => {
+                if (this.valueBreaksRequiredContract(value)) {
+                    validationRecorder.registerBreaksRequiredContract(new api_data.DataId(this.input.getName(), index))
+                }
+            });
+        }
+
         getInput():api_schema_content_form.Input {
             return this.input;
+        }
+
+        valueBreaksRequiredContract(value:api_data.Value):boolean {
+            throw new Error("Must be implemented by inheritor");
         }
 
         createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {

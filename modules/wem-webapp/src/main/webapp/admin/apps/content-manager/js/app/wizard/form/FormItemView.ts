@@ -17,5 +17,16 @@ module app_wizard_form {
         getData():api_data.Data[] {
             throw new Error("Method needs to be implemented in inheritor");
         }
+
+        validate(validationRecorder:app_wizard_form.ValidationRecorder) {
+
+            // Default method to avoid having to implement method in Layout-s.
+        }
+
+        hasValidOccurrences():boolean {
+
+            // Default true to avoid having to implement method in Layout-s.
+            return true;
+        }
     }
 }

@@ -20,6 +20,11 @@ module app_wizard_form_input_type {
             var inputEl = <api_ui.TextInput>occurrence;
             return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
         }
+
+        valueBreaksRequiredContract(value:api_data.Value):boolean {
+            // TODO:
+            return true;
+        }
     }
 
     app_wizard_form_input.InputTypeManager.register("TextLine", TextLine);

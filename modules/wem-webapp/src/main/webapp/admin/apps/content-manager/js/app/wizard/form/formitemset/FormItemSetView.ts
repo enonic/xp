@@ -65,5 +65,15 @@ module app_wizard_form_formitemset {
 
             return this.formItemSetOccurrences.getDataSets();
         }
+
+        hasValidOccurrences():boolean {
+
+            return this.getData().length >= this.formItemSet.getOccurrences().getMaximum();
+        }
+
+        validate(validationRecorder:app_wizard_form.ValidationRecorder) {
+
+            // TODO:
+        }
     }
 }

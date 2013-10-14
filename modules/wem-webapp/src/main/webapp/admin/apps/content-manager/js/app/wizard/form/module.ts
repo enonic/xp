@@ -1,3 +1,4 @@
+///<reference path='ValidationRecorder.ts' />
 ///<reference path='FormItemOccurrenceViewListener.ts' />
 ///<reference path='FormItemOccurrenceView.ts' />
 ///<reference path='FormItemOccurrencesListener.ts' />

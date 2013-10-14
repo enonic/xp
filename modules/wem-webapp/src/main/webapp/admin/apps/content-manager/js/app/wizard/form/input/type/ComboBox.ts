@@ -91,6 +91,20 @@ module app_wizard_form_input_type {
             return values;
         }
 
+        validate(validationRecorder:app_wizard_form.ValidationRecorder) {
+
+            this.getValues().forEach((value:api_data.Value, index:number) => {
+                if (this.valueBreaksRequiredContract(value)) {
+                    validationRecorder.registerBreaksRequiredContract(new api_data.DataId(this.input.getName(), index))
+                }
+            });
+        }
+
+        valueBreaksRequiredContract(value:api_data.Value):boolean {
+            // TODO:
+            return false;
+        }
+
         private comboboxFilter(item:api_ui_combobox.OptionData, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
