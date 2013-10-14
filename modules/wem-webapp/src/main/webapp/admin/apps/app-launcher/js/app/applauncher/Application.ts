@@ -51,6 +51,10 @@ module app_launcher {
             return this.appFrame;
         }
 
+        getWindow() {
+            return this.getAppFrame().getHTMLElement()["contentWindow"];
+        }
+
         hasAppFrame():boolean {
             return this.appFrame != null;
         }

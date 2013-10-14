@@ -8,6 +8,8 @@
 ///<reference path='lib/ux/toggleslide/Thumb.ts' />
 ///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
 
+///<reference path='app/Router.ts' />
+
 ///<reference path='app/delete/ContentDeleteDialog.ts' />
 
 ///<reference path='app/wizard/ContentWizardEvents.ts' />
@@ -37,7 +39,6 @@
 ///<reference path='app/browse/grid/ContentTreeStore.ts' />
 ///<reference path='app/browse/grid/ContentGridStore.ts' />
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
-///<reference path='app/browse/ContentTreeGridPanel2.ts' />
 
 ///<reference path='app/contextwindow/Component.ts' />
 ///<reference path='app/contextwindow/ContextWindowEvents.ts' />
@@ -87,12 +88,6 @@ module components {
     export var detailPanel:app_browse.ContentBrowseItemPanel;
 }
 
-var router;
-function setRouter(r) {
-    console.log("Setting rounter ", r);
-    router = r;
-}
-
 window.onload = () => {
         var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
         var appPanel = new app.ContentAppPanel(appBar);
@@ -113,11 +108,37 @@ window.onload = () => {
 
             var parentContent:api_content.ContentSummary = event.getParentContent();
 
-            new api_content.GetContentByIdRequest(parentContent.getId()).send().
-                done((jsonResponse:api_rest.JsonResponse) => {
-                    var newParentContent = new api_content.Content(jsonResponse.getJson());
-                    newContentDialog.setParentContent(newParentContent);
-                    newContentDialog.open();
-                });
-        });
+        new api_content.GetContentByIdRequest(parentContent.getId()).send().
+            done((jsonResponse:api_rest.JsonResponse) => {
+                var newParentContent = new api_content.Content(jsonResponse.getJson());
+                newContentDialog.setParentContent(newParentContent);
+                newContentDialog.open();
+            });
+    });
+    window.parent["appLoaded"](jQuery(window.frameElement).data("wem-app"));
 };
+
+function route(path:api_rest.Path) {
+    var action = path.getElement(0);
+
+    if (action == "edit") {
+        var id = path.getElement(1);
+        if (id) {
+            var getContentByIdPromise = new api_content.GetContentByIdRequest(id).send();
+            jQuery.when(getContentByIdPromise).then((contentResponse:api_rest.JsonResponse) => {
+                new app_browse.EditContentEvent([new api_content.ContentSummary(contentResponse.getJson())]).fire();
+            });
+        }
+    }
+    if (action == "view") {
+        var id = path.getElement(1);
+        if (id) {
+            var getContentByIdPromise = new api_content.GetContentByIdRequest(id).send();
+            jQuery.when(getContentByIdPromise).then((contentResponse:api_rest.JsonResponse) => {
+                new app_browse.OpenContentEvent([new api_content.ContentSummary(contentResponse.getJson())]).fire();
+            });
+        }
+    } else {
+        new api_app.ShowAppBrowsePanelEvent().fire();
+    }
+}

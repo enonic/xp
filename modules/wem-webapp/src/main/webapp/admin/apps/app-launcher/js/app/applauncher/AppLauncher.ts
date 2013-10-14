@@ -50,9 +50,6 @@ module app_launcher {
             } else {
                 this.adminApplicationFrames.appendChild(app.getAppFrame());
                 this.showLoadMask();
-                console.log("appframe", app.getAppFrame().getHTMLElement()["contentWindow"]);
-
-
             }
         }
 

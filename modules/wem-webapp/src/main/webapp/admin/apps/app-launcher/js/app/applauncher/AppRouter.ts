@@ -58,8 +58,8 @@ module app_launcher {
 
         private runAction(app:Application, path:api_rest.Path):boolean {
             if (app.isLoaded()) {
-                if (app.getAppFrame().getHTMLElement()["contentWindow"].doAction) {
-                    app.getAppFrame().getHTMLElement()["contentWindow"].doAction(path);
+                if (app.getWindow().route) {
+                    app.getWindow().route(path);
 
                     return true;
                 }
