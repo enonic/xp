@@ -100,4 +100,10 @@ window.onload = () => {
 
     var router = new app_launcher.AppRouter(applications, appLauncher);
     appLauncher.setRouter(router);
+};
+
+
+function appLoaded(appName:string) {
+    var app = app_launcher.Applications.getAppByName(appName);
+    app.setLoaded(true);
 }

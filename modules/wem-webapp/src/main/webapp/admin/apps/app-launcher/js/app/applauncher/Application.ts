@@ -7,6 +7,7 @@ module app_launcher {
         private appUrl:string;
         private openTabs:number;
         private appFrame:api_dom.IFrameEl;
+        private loaded:boolean;
 
         constructor(name:string, appUrl:string, iconUrl:string, description?:string, appFrame:api_dom.IFrameEl = null) {
             this.name = name;
@@ -14,6 +15,10 @@ module app_launcher {
             this.appUrl = appUrl;
             this.description = description;
             this.openTabs = 0;
+        }
+
+        isLoaded():boolean {
+            return this.loaded;
         }
 
         getName():string {
@@ -58,6 +63,10 @@ module app_launcher {
 
         setOpenTabs(value:number):void {
             this.openTabs = value;
+        }
+
+        setLoaded(value:boolean) {
+            this.loaded = value;
         }
     }
 

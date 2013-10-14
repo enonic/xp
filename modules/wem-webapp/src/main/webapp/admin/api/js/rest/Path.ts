@@ -60,6 +60,10 @@ module api_rest {
             return this.elements;
         }
 
+        getElement(index:number):string {
+            return this.elements[index];
+        }
+
         hasParent():boolean {
             return this.elements.length > 0;
         }

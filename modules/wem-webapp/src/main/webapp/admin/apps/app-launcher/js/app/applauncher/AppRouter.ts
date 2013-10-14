@@ -40,20 +40,44 @@ module app_launcher {
 
         private setupAppsRouting() {
             this.applications.forEach((application:Application, idx:number) => {
-                var appRoutPattern = application.getName() + '/:action:/:id:'; // optional parameters in URL: action, id
-                crossroads.addRoute(appRoutPattern, (action:string, id:string) => {
-                    if (action && id) {
-                        console.log('Routing to app [' + application.getName() + '] ; Action: ' + action + ', Id=' + id);
-                    }
+                var appRoutPattern = application.getName() + '/:p1:/:p2:/:p3:'; // optional parameters in URL: action, id
+                crossroads.addRoute(appRoutPattern, (p1:string, p2:string, p3:string) => {
                     this.appLauncher.loadApplication(application);
+
+
+                    var path:api_rest.Path = new api_rest.Path(<string[]>this.arrayWithoutNulls(Array.prototype.slice.call(arguments)));
+
+                    var intervalId = setInterval(() => {
+                        if (this.runAction(application, path)) {
+                            clearInterval(intervalId);
+                        }
+                    }, 500);
                 });
             });
+        }
+
+        private runAction(app:Application, path:api_rest.Path):boolean {
+            if (app.isLoaded()) {
+                app.getAppFrame().getHTMLElement()["contentWindow"].doAction(path);
+                return true;
+            }
+            return false;
         }
 
         private setupHomeRouting() {
             crossroads.addRoute(AppRouter.HOME_HASH_ID, () => {
                 this.appLauncher.showLauncherScreen();
             });
+        }
+
+        private arrayWithoutNulls(array:any[]):any[] {
+            var arrayWithoutNulls:any[] = [];
+            for( var i = 0; i < array.length; i++ ) {
+                if( array[i] != null ) {
+                    arrayWithoutNulls.push(array[i]);
+                }
+            }
+            return arrayWithoutNulls;
         }
     }
 

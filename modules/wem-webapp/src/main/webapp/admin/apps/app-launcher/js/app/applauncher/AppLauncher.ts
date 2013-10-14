@@ -51,7 +51,8 @@ module app_launcher {
                 this.adminApplicationFrames.appendChild(app.getAppFrame());
                 this.showLoadMask();
                 console.log("appframe", app.getAppFrame().getHTMLElement()["contentWindow"]);
-                app.getAppFrame().getHTMLElement()["contentWindow"].setRouter(this.router);
+
+
             }
         }
 
