@@ -39,6 +39,7 @@
 ///<reference path='app/browse/grid/ContentTreeStore.ts' />
 ///<reference path='app/browse/grid/ContentGridStore.ts' />
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
+///<reference path='app/browse/ContentTreeGridPanel2.ts' />
 
 ///<reference path='app/contextwindow/Component.ts' />
 ///<reference path='app/contextwindow/ContextWindowEvents.ts' />
