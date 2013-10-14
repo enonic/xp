@@ -16,6 +16,7 @@
 ///<reference path='lib/jqueryui.d.ts' />
 ///<reference path='lib/codemirror.d.ts' />
 ///<reference path='lib/slickgrid.d.ts' />
+///<reference path='lib/slickgrid-plugins.d.ts' />
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />
@@ -227,6 +228,7 @@
 ///<reference path='app/browse/grid/TreePanel.ts' />
 ///<reference path='app/browse/grid/TreeGridPanelListener.ts' />
 ///<reference path='app/browse/grid/TreeGridPanel.ts' />
+///<reference path='app/browse/grid/TreeGridPanel2.ts' />
 
 ///<reference path='app/browse/BrowsePanel.ts' />
 ///<reference path='app/browse/BrowseItem.ts' />

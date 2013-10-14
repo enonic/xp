@@ -5,11 +5,15 @@ module app_contextwindow {
         onClick?:(el) => void;
     }
 
-    export class ComponentGrid extends api_ui_grid.Grid {
+    export class ComponentGrid extends api_ui_grid.Grid<ComponentData> {
+
         private componentGridOptions:ComponentGridOptions;
 
-        constructor(data:any = null, options:ComponentGridOptions = {}) {
-            super(data, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
+        private componentDataView:api_ui_grid.DataView<ComponentData>;
+
+        constructor(dataView:api_ui_grid.DataView<ComponentData>, options:ComponentGridOptions = {}) {
+            super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
+            this.componentDataView = dataView;
             this.componentGridOptions = options;
             this.setFilter(this.filter);
         }
@@ -32,13 +36,13 @@ module app_contextwindow {
         }
 
         updateFilter(searchString:string) {
-            this.getDataView().setFilterArgs({
+            this.componentDataView.setFilterArgs({
                 searchString: searchString
             });
-            this.getDataView().refresh();
+            this.componentDataView.refresh();
         }
 
-        private createColumns():api_ui_grid.GridColumn[] {
+        private createColumns():api_ui_grid.GridColumn<ComponentData>[] {
             return [
                 {
                     name: "component",

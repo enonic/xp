@@ -81,7 +81,11 @@
         }
     }
 
-    var combobox = new api_ui_combobox.ComboBox("name", createData(""), config);
+    var data = createData("");
+    var combobox = new api_ui_combobox.ComboBox("name", config);
+    for (var i = 0; i < data.length ; i++) {
+        combobox.addOption(data[i]);
+    }
 
     combobox.addClass("iconed");
 

@@ -57,7 +57,7 @@ module app_wizard_form_input_type {
                 filter: this.comboboxFilter,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
-            this.comboBox = new api_ui_combobox.ComboBox(name, [], comboboxConfig);
+            this.comboBox = new api_ui_combobox.ComboBox(name, comboboxConfig);
 
             this.comboBox.addListener({
                 onInputValueChanged: function (oldValue, newValue, grid) {
@@ -67,7 +67,7 @@ module app_wizard_form_input_type {
             });
 
             this.config.options.forEach((option:ComboBoxOption) => {
-                this.comboBox.addOption(option.value, option.label)
+                this.comboBox.addOption({value: option.value, displayValue: option.label})
             });
 
             if (properties != null) {
@@ -93,11 +93,7 @@ module app_wizard_form_input_type {
 
         validate(validationRecorder:app_wizard_form.ValidationRecorder) {
 
-            this.getValues().forEach((value:api_data.Value, index:number) => {
-                if (this.valueBreaksRequiredContract(value)) {
-                    validationRecorder.registerBreaksRequiredContract(new api_data.DataId(this.input.getName(), index))
-                }
-            });
+            // TODO:
         }
 
         valueBreaksRequiredContract(value:api_data.Value):boolean {

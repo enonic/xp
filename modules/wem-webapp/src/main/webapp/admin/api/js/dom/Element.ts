@@ -221,7 +221,7 @@ module api_dom {
             }
         }
 
-        toString() {
+        toString():string {
             return jQuery('<div>').append( jQuery(this.getHTMLElement()).clone() ).html();
         }
 

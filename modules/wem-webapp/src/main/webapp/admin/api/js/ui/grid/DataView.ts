@@ -1,29 +1,18 @@
 module api_ui_grid {
-    export class DataView {
-        private slickDataView:Slick.Data.DataView<any[]>;
-        private grid:Grid;
 
-        constructor(grid:api_ui_grid.Grid) {
+    export class DataView<T extends Slick.SlickData> {
+
+        private slickDataView:Slick.Data.DataView<T>;
+
+        constructor() {
             this.slickDataView = new Slick.Data.DataView({ inlineFilters: true });
-            this.grid = grid;
-
-            this.slickDataView.onRowCountChanged.subscribe((e, args) => {
-                this.grid.updateRowCount();
-                this.grid.render();
-            });
-
-            this.slickDataView.onRowsChanged.subscribe((e, args) => {
-                this.grid.invalidateRows(args.rows);
-                this.grid.render();
-            });
         }
 
-
-        slick():Slick.Data.DataView<any[]> {
+        slick():Slick.Data.DataView<T> {
             return this.slickDataView;
         }
 
-        setFilter(f:(item:any, args:any) => boolean) {
+        setFilter(f:(item:T, args:any) => boolean) {
             this.slickDataView.setFilter(f);
         }
 
@@ -35,19 +24,19 @@ module api_ui_grid {
             this.slickDataView.refresh();
         }
 
-        setItems(data:any, objectIdProperty?: string) {
-            this.slickDataView.setItems(data, objectIdProperty);
+        setItems(items:T[], objectIdProperty?: string) {
+            this.slickDataView.setItems(items, objectIdProperty);
         }
 
-        addItem(item:any) {
+        addItem(item:T) {
             this.slickDataView.addItem(item);
         }
 
-        getItem(index: number):any {
+        getItem(index: number):T {
             return this.slickDataView.getItem(index);
         }
 
-        getItemById(id: string): any {
+        getItemById(id: string):T {
             return this.slickDataView.getItemById(id);
         }
 
@@ -59,12 +48,12 @@ module api_ui_grid {
             return this.slickDataView.getRowById(id);
         }
 
-        subscribeOnRowsChanged(callback:(e, args) => void) {
+        subscribeOnRowsChanged(callback:(eventData:Slick.EventData, args) => void) {
             this.slickDataView.onRowsChanged.subscribe(callback);
         }
 
-        subscribeOnRowCountChanged(callback:(e, args) => void) {
-            this.slickDataView.onRowCountChanged.subscribe(callback);
+        subscribeOnRowCountChanged(listener:(eventData:Slick.EventData, args) => void) {
+            this.slickDataView.onRowCountChanged.subscribe(listener);
         }
     }
 }

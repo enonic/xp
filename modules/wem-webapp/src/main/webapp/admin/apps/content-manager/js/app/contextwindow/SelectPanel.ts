@@ -3,6 +3,7 @@ module app_contextwindow {
 
         private searchBox;
         private data:ComponentData[];
+        private dataView:api_ui_grid.DataView<ComponentData>;
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
 
@@ -10,9 +11,9 @@ module app_contextwindow {
             super("SelectPanel");
             this.addClass("select-panel");
             this.contextWindow = contextWindow;
-            var onClick = () => {
-            };
-            this.grid = new ComponentGrid(this.data, {onClick: onClick});
+
+            this.dataView = new api_ui_grid.DataView<ComponentData>();
+            this.grid = new ComponentGrid(this.dataView);
 
             this.searchBox = new api_ui.TextInput();
             this.searchBox.setPlaceholder("Search");
@@ -39,7 +40,7 @@ module app_contextwindow {
                 url: "/admin/apps/content-manager/js/data/context-window/mock-components.jsp?componentType=" +
                      componentType,
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
-                    this.grid.updateData(ComponentGrid.toSlickData(data));
+                    this.dataView.setItems(ComponentGrid.toSlickData(data));
                 }
             });
         }

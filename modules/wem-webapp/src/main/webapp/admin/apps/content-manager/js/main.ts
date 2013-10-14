@@ -37,6 +37,7 @@
 ///<reference path='app/browse/grid/ContentTreeStore.ts' />
 ///<reference path='app/browse/grid/ContentGridStore.ts' />
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
+///<reference path='app/browse/ContentTreeGridPanel2.ts' />
 
 ///<reference path='app/contextwindow/Component.ts' />
 ///<reference path='app/contextwindow/ContextWindowEvents.ts' />
@@ -86,75 +87,37 @@ module components {
     export var detailPanel:app_browse.ContentBrowseItemPanel;
 }
 
-function doAction(path:api_rest.Path) {
-    var action = path.getElement(0);
-    if (action == "edit") {
-        var json = [new api_content.ContentSummary({
-            deletable: true,
-            displayName: "MyContent",
-            editable: true,
-            iconUrl: "http://localhost:8080/admin/rest/content/image/6b19348f-6c71-471f-92b1-003dfa4c9b05",
-            id: "6b19348f-6c71-471f-92b1-003dfa4c9b05",
-            modifier: "user:system:anonymous",
-            name: "mycontent",
-            owner: "user:system:anonymous",
-            root: false,
-            type: "unstructured",
-            path: "",
-            hasChildren: false,
-            createdTime: "",
-            modifiedTime: ""
-        })];
-        new app_browse.EditContentEvent(json).fire();
-    } if (action == "view") {
-        var json = [new api_content.ContentSummary({
-            deletable: true,
-            displayName: "MyContent",
-            editable: true,
-            iconUrl: "http://localhost:8080/admin/rest/content/image/6b19348f-6c71-471f-92b1-003dfa4c9b05",
-            id: "6b19348f-6c71-471f-92b1-003dfa4c9b05",
-            modifier: "user:system:anonymous",
-            name: "mycontent",
-            owner: "user:system:anonymous",
-            root: false,
-            type: "unstructured",
-            path: "",
-            hasChildren: false,
-            createdTime: "",
-            modifiedTime: ""
-        })];
-        new app_browse.OpenContentEvent(json).fire();
-    } else {
-        new api_app.ShowAppBrowsePanelEvent().fire();
-    }
+var router;
+function setRouter(r) {
+    console.log("Setting rounter ", r);
+    router = r;
 }
 
 window.onload = () => {
-    var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
-    var appPanel = new app.ContentAppPanel(appBar);
+        var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
+        var appPanel = new app.ContentAppPanel(appBar);
 
-    api_dom.Body.get().appendChild(appBar);
-    api_dom.Body.get().appendChild(appPanel);
+        api_dom.Body.get().appendChild(appBar);
+        api_dom.Body.get().appendChild(appPanel);
 
-    appPanel.init();
+        appPanel.init();
 
-    var contentDeleteDialog = new app_delete.ContentDeleteDialog();
-    app_browse.ContentDeletePromptEvent.on((event) => {
-        contentDeleteDialog.setContentToDelete(event.getModels());
-        contentDeleteDialog.open();
-    });
+        var contentDeleteDialog = new app_delete.ContentDeleteDialog();
+        app_browse.ContentDeletePromptEvent.on((event) => {
+            contentDeleteDialog.setContentToDelete(event.getModels());
+            contentDeleteDialog.open();
+        });
 
-    var newContentDialog = new app_new.NewContentDialog();
-    app_browse.ShowNewContentDialogEvent.on((event) => {
+        var newContentDialog = new app_new.NewContentDialog();
+        app_browse.ShowNewContentDialogEvent.on((event) => {
 
-        var parentContent:api_content.ContentSummary = event.getParentContent();
+            var parentContent:api_content.ContentSummary = event.getParentContent();
 
-        new api_content.GetContentByIdRequest(parentContent.getId()).send().
-            done((jsonResponse:api_rest.JsonResponse) => {
-                var newParentContent = new api_content.Content(jsonResponse.getJson());
-                newContentDialog.setParentContent(newParentContent);
-                newContentDialog.open();
-            });
-    });
-    window.parent["appLoaded"](jQuery(window.frameElement).data("wem-app"));
+            new api_content.GetContentByIdRequest(parentContent.getId()).send().
+                done((jsonResponse:api_rest.JsonResponse) => {
+                    var newParentContent = new api_content.Content(jsonResponse.getJson());
+                    newContentDialog.setParentContent(newParentContent);
+                    newContentDialog.open();
+                });
+        });
 };

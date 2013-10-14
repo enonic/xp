@@ -6,7 +6,9 @@ module api_ui_combobox {
 
         private input:api_ui.TextInput;
 
-        private dropdown:api_ui_grid.Grid;
+        private dropdownData:api_ui_grid.DataView<OptionData>;
+
+        private dropdown:api_ui_grid.Grid<OptionData>;
 
         private emptyDropdown:api_dom.DivEl;
 
@@ -34,7 +36,7 @@ module api_ui_combobox {
 
         private listeners:ComboBoxListener[] = [];
 
-        constructor(name:string, data:any, config:ComboBoxConfig = {}) {
+        constructor(name:string, config:ComboBoxConfig = {}) {
             super("div", null, "combobox");
             this.getEl().setAttribute("name", name);
 
@@ -61,7 +63,7 @@ module api_ui_combobox {
             this.selectedOptions.hide();
             this.appendChild(this.selectedOptions);
 
-            var columns:api_ui_grid.GridColumn[] = [
+            var columns:api_ui_grid.GridColumn<OptionData>[] = [
                 {
                     id: "option",
                     name: "Options",
@@ -79,13 +81,14 @@ module api_ui_combobox {
                 dataIdProperty: "value"
             };
 
-            this.dropdown = new api_ui_grid.Grid(data, columns, options);
+            this.dropdownData = new api_ui_grid.DataView();
+            this.dropdown = new api_ui_grid.Grid<OptionData>(this.dropdownData, columns, options);
             this.dropdown.addClass("options-container");
             this.dropdown.getEl().setPosition("absolute");
             this.dropdown.hide();
 
             if (this.filter) {
-                this.dropdown.setFilter(this.filter);
+                this.dropdownData.setFilter(this.filter);
             }
 
             this.appendChild(this.dropdown);
@@ -106,7 +109,7 @@ module api_ui_combobox {
         }
 
         showDropdown() {
-            var rowsLength = this.dropdown.getDataView().getLength();
+            var rowsLength = this.dropdownData.getLength();
             if (rowsLength > 0) {
                 this.adjustDropdownSize();
                 this.updateDropdownStyles();
@@ -126,18 +129,19 @@ module api_ui_combobox {
             this.dropdown.hide();
         }
 
-        addOption(id:string, value:string) {
-            this.dropdown.addItem({value: id, displayValue: value});
+        addOption(option:OptionData) {
+            this.dropdownData.addItem( option );
         }
 
         setValue(value:string) {
-            var item = <OptionData>this.dropdown.getDataItemById(value);
+            var item = <OptionData>this.dropdownData.getItemById(value);
             this.selectOption(item);
         }
 
         setValues(values:string[]) {
             values.forEach((value:string) => {
-                this.setValue(value);
+                var item = <OptionData>this.dropdownData.getItemById(value);
+                this.selectOption(item);
             });
         }
 
@@ -180,7 +184,7 @@ module api_ui_combobox {
                     return;
                 }
 
-                var rowsLength = this.dropdown.getDataLength();
+                var rowsLength = this.dropdownData.getLength();
                 var activeCell = this.dropdown.getActiveCell();
 
                 if (event.which == 38) { // up
@@ -202,17 +206,17 @@ module api_ui_combobox {
                 return false;
             });
 
-            this.dropdown.subscribeOnRowsChanged((e, args) => {
+            this.dropdownData.subscribeOnRowsChanged((e, args) => {
                 this.updateDropdownStyles();
             });
 
-            this.dropdown.subscribeOnRowCountChanged((e, args) => {
+            this.dropdownData.subscribeOnRowCountChanged((e, args) => {
                 this.updateDropdownStyles();
             });
         }
 
         private selectRow(index:number) {
-            var item = <OptionData>this.dropdown.getDataItem(index);
+            var item = <OptionData>this.dropdownData.getItem(index);
 
             this.selectOption(item);
         }
@@ -257,9 +261,8 @@ module api_ui_combobox {
 
         private updateDropdownStyles() {
             var stylesHash = {};
-            var dataView = this.dropdown.getDataView();
             this.selectedData.forEach((item:OptionData) => {
-                var row = dataView.getRowById(item.value);
+                var row = this.dropdownData.getRowById(item.value);
                 stylesHash[row] = {option: "selected"};
             });
             this.dropdown.setCellCssStyles("selected", stylesHash);
@@ -342,7 +345,7 @@ module api_ui_combobox {
                 dropdownEl.setWidth(inputEl.getWidth() + "px");
             }
 
-            var rowsHeight = this.dropdown.getDataView().getLength() * this.rowHeight;
+            var rowsHeight = this.dropdownData.getLength() * this.rowHeight;
             if (rowsHeight < this.maxHeight) {
                 var borderWidth = dropdownEl.getBorderTopWidth() + dropdownEl.getBorderBottomWidth();
                 dropdownEl.setHeight(rowsHeight + borderWidth + "px");

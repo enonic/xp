@@ -1,5 +1,6 @@
 module app_contextwindow {
     export class EmulatorPanel extends api_ui.Panel {
+        private dataView:api_ui_grid.DataView<any>;
         private grid:EmulatorGrid;
         private contextWindow:ContextWindow;
 
@@ -13,7 +14,8 @@ module app_contextwindow {
             text.getEl().setInnerHtml("Emulate different client's physical sizes");
             this.appendChild(text);
 
-            this.grid = new EmulatorGrid();
+            this.dataView = new api_ui_grid.DataView<any>();
+            this.grid = new EmulatorGrid(this.dataView);
             this.appendChild(this.grid);
 
             this.getData();
@@ -41,7 +43,7 @@ module app_contextwindow {
             jQuery.ajax({
                 url: api_util.getUri("apps/content-manager/js/data/context-window/devices.json"),
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
-                    this.grid.updateData(EmulatorGrid.toSlickData(data));
+                    this.dataView.setItems(EmulatorGrid.toSlickData(data));
                 }
             });
         }

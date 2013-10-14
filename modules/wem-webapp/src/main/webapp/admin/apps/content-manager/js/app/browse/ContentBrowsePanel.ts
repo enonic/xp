@@ -8,6 +8,8 @@ module app_browse {
 
         private contentTreeGridPanel:app_browse.ContentTreeGridPanel;
 
+        private contentTreeGridPanel2:app_browse.ContentTreeGridPanel2;
+
         private contentFilterPanel:app_browse_filter.ContentBrowseFilterPanel;
 
         private contentBrowseItemPanel:ContentBrowseItemPanel;
@@ -33,9 +35,12 @@ module app_browse {
 
             this.contentFilterPanel = new app_browse_filter.ContentBrowseFilterPanel();
 
+            this.contentTreeGridPanel2 = new app_browse.ContentTreeGridPanel2();
+
             super({
                 browseToolbar: this.toolbar,
                 treeGridPanel: this.contentTreeGridPanel,
+                treeGridPanel2: this.contentTreeGridPanel2,
                 browseItemPanel: this.contentBrowseItemPanel,
                 filterPanel: this.contentFilterPanel});
 

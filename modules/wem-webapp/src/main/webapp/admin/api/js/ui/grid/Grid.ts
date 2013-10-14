@@ -1,23 +1,39 @@
 module api_ui_grid {
+
     export interface GridOptions extends Slick.GridOptions<any> {
+
         hideColumnHeaders?:boolean;
+
         width?:number;
+
         height?:number;
+
         dataIdProperty?:string;
+
+        autoRenderGridOnDataChanges?:boolean
+
+        checkableRows?:boolean;
     }
 
-    export interface GridColumn extends Slick.Column<any> {
+    export interface GridColumn<T extends Slick.SlickData> extends Slick.Column<T> {
 
     }
 
-    export class Grid extends api_dom.DivEl {
+    export class Grid<T extends Slick.SlickData> extends api_dom.DivEl {
 
         private defaultHeight = 400;
-        private defaultWidth = 800;
-        private slickGrid:Slick.Grid<any>;
-        private dataView:DataView;
 
-        constructor(data:any, columns:GridColumn[], options:GridOptions = {}) {
+        private defaultWidth = 800;
+
+        private defaultAutoRenderGridOnDataChanges = true;
+
+        private checkableRows:boolean;
+
+        private slickGrid:Slick.Grid<T>;
+
+        private dataView:DataView<T>;
+
+        constructor(dataView:DataView<T>, columns:GridColumn<T>[], options:GridOptions = {}) {
             super("Grid");
             this.addClass("grid");
 
@@ -25,42 +41,53 @@ module api_ui_grid {
                 this.addClass("no-header");
             }
 
+            var checkboxSelectorPlugin = null;
+            this.checkableRows = options.checkableRows || false;
+            if (this.checkableRows) {
+                checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
+                    cssClass: "slick-cell-checkboxsel"
+                });
+                columns.unshift(checkboxSelectorPlugin.getColumnDefinition());
+            }
+
             this.getEl().setHeight((options.height || this.defaultHeight) + "px");
             this.getEl().setWidth((options.width || this.defaultWidth) + "px");
-            this.dataView = new DataView(this);
-            this.slickGrid = new Slick.Grid(this.getHTMLElement(), this.dataView.slick(), columns, options);
-
-            if (data) {
-                this.dataView.setItems(data, options.dataIdProperty);
+            this.dataView = dataView;
+            this.slickGrid = new Slick.Grid<T>(this.getHTMLElement(), dataView.slick(), columns, options);
+            if (options.autoRenderGridOnDataChanges || this.defaultAutoRenderGridOnDataChanges) {
+                this.autoRenderGridOnDataChanges(this.dataView);
             }
+            if (checkboxSelectorPlugin != null) {
+                this.slickGrid.registerPlugin(checkboxSelectorPlugin);
+            }
+
+            // The only way to dataIdProperty before adding items
+            this.dataView.setItems([], options.dataIdProperty);
+        }
+
+        private autoRenderGridOnDataChanges(dataView:DataView<T>) {
+
+            dataView.subscribeOnRowCountChanged((eventData:Slick.EventData, args) => {
+                this.updateRowCount();
+                this.render();
+            });
+
+            dataView.subscribeOnRowsChanged((eventData:Slick.EventData, args) => {
+                this.invalidateRows(args.rows);
+                this.render();
+            });
+        }
+
+        setSelectionModel(selectionModel:Slick.SelectionModel<T, any>) {
+            this.slickGrid.setSelectionModel(selectionModel);
+        }
+
+        getDataView():DataView<T> {
+            return this.dataView;
         }
 
         setFilter(f:(item:any, args:any) => boolean) {
             this.dataView.setFilter(f);
-        }
-
-        updateData(data:any) {
-            this.dataView.setItems(data);
-        }
-
-        addItem(item:any) {
-            this.dataView.addItem(item);
-        }
-
-        getDataView():DataView {
-            return this.dataView;
-        }
-
-        getDataLength():number {
-            return this.slickGrid.getDataLength();
-        }
-
-        getDataItem(i:number):any {
-            return this.slickGrid.getDataItem(i);
-        }
-
-        getDataItemById(id: string):any {
-            return this.dataView.getItemById(id);
         }
 
         setOptions(options:GridOptions) {
@@ -98,10 +125,6 @@ module api_ui_grid {
             this.slickGrid.setSelectedRows(rows);
         }
 
-        setSelectionModel(selectionModel: any) {
-            this.slickGrid.setSelectionModel(selectionModel);
-        }
-
         resetActiveCell() {
             this.slickGrid.resetActiveCell();
         }
@@ -122,24 +145,16 @@ module api_ui_grid {
             this.slickGrid.setActiveCell(row, cell);
         }
 
-        setCellCssStyles(key: string, hash: Slick.CellCssStylesHash) {
+        setCellCssStyles(key:string, hash:Slick.CellCssStylesHash) {
             this.slickGrid.setCellCssStyles(key, hash);
         }
 
-        getCellCssStyles(key: string):Slick.CellCssStylesHash {
+        getCellCssStyles(key:string):Slick.CellCssStylesHash {
             return this.slickGrid.getCellCssStyles(key);
         }
 
         subscribeOnSelectedRowsChanged(callback:(e, args) => void) {
             this.slickGrid.onSelectedRowsChanged.subscribe(callback);
-        }
-
-        subscribeOnRowsChanged(callback:(e, args) => void) {
-            this.dataView.subscribeOnRowsChanged(callback);
-        }
-
-        subscribeOnRowCountChanged(callback:(e, args) => void) {
-            this.dataView.subscribeOnRowCountChanged(callback);
         }
 
         subscribeOnClick(callback:(e, args) => void) {
