@@ -4,7 +4,8 @@ module api_app_browse_grid {
 
         constructor() {
             super("TreeGridPanel2");
-            this.setClass("tree-grid-panel")
+            this.addClass("tree-grid-panel");
+            this.addClass("tree-grid-panel2");
         }
     }
 }

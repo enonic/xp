@@ -1,0 +1,43 @@
+.tree-grid-panel2 {
+  .grid {
+    width: 100% !important;
+    .grid-canvas {
+      width: 100% !important;
+    }
+
+    .selected {
+      background-color: @admin-blue;
+      color: white;
+    }
+
+    .slick-cell {
+      border: 0;
+    }
+
+    .slick-row {
+      &.odd {
+        background-color: #fafafa;
+      }
+      h6 {
+        font-size: 14px;
+        line-height: 16px;
+        float: left;
+      }
+      img {
+        display: block;
+        float: left;
+        margin-right: 15px;
+      }
+      p {
+        float: left;
+        line-height: 1.4;
+        color: #777777;
+        clear: left;
+      }
+      .selected p {
+        color: white;
+      }
+
+    }
+  }
+}

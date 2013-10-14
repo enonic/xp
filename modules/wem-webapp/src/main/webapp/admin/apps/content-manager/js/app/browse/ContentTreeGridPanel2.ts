@@ -16,11 +16,26 @@ module app_browse {
             super();
 
             this.nameFormatter = (row:number, cell:number, value:any, columnDef:any, item:api_content.ContentSummary) => {
-                var content:api_content.ContentSummary = item;
-                var html:string = "";
-                html += '<img src=' + content.getIconUrl() + ' width="25" height="25"/>';
-                html += content.getDisplayName();
-                return html;
+                console.log(item);
+                var rowEl = new api_dom.DivEl();
+
+                var icon = new api_dom.ImgEl();
+                icon.getEl().setSrc(item.getIconUrl());
+                icon.getEl().setWidth("32px");
+                icon.getEl().setHeight("32px");
+
+
+                var displayName = new api_dom.H6El();
+                displayName.getEl().setInnerHtml(item.getDisplayName());
+
+                var path = new api_dom.PEl();
+                path.getEl().setInnerHtml(item.getPath().toString());
+
+                rowEl.appendChild(icon);
+                rowEl.appendChild(displayName);
+                rowEl.appendChild(path);
+
+                return rowEl.toString();
             };
 
             var column1 = <api_ui_grid.GridColumn> {
@@ -45,7 +60,8 @@ module app_browse {
                 enableColumnReorder: false,
                 forceFitColumns: true,
                 hideColumnHeaders: true,
-                checkableRows: true
+                checkableRows: true,
+                rowHeight: 45
             };
 
             this.grid = new api_ui_grid.Grid<api_content.ContentSummary>(this.gridData, this.columns, this.gridOptions);
