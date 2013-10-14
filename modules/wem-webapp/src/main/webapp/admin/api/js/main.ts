@@ -228,7 +228,9 @@
 ///<reference path='app/browse/grid/TreePanel.ts' />
 ///<reference path='app/browse/grid/TreeGridPanelListener.ts' />
 ///<reference path='app/browse/grid/TreeGridPanel.ts' />
-///<reference path='app/browse/grid/TreeGridPanel2.ts' />
+///<reference path='app/browse/grid/GridPanel2.ts' />
+///<reference path='app/browse/grid/NameFormatter.ts' />
+///<reference path='app/browse/grid/DateTimeFormatter.ts' />
 
 ///<reference path='app/browse/BrowsePanel.ts' />
 ///<reference path='app/browse/BrowseItem.ts' />

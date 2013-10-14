@@ -6,7 +6,7 @@ module api_app_browse{
 
         treeGridPanel:api_app_browse_grid.TreeGridPanel;
 
-        treeGridPanel2?:api_app_browse_grid.TreeGridPanel2;
+        treeGridPanel2?:api_app_browse_grid.GridPanel2;
 
         browseItemPanel:BrowseItemPanel;
 
@@ -19,7 +19,7 @@ module api_app_browse{
 
         private treeGridPanel:api_app_browse_grid.TreeGridPanel;
 
-        private treeGridPanel2:api_app_browse_grid.TreeGridPanel2;
+        private gridPanel2:api_app_browse_grid.GridPanel2;
 
         private treeSwapperDeckPanel:api_ui.DeckPanel;
 
@@ -40,7 +40,7 @@ module api_app_browse{
 
             this.browseToolbar = params.browseToolbar;
             this.treeGridPanel = params.treeGridPanel;
-            this.treeGridPanel2 = params.treeGridPanel2;
+            this.gridPanel2 = params.treeGridPanel2;
             this.browseItemPanel = params.browseItemPanel;
             this.filterPanel = params.filterPanel;
 
@@ -59,10 +59,10 @@ module api_app_browse{
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
 
             // this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
-            if (this.treeGridPanel2 != null) {
+            if (this.gridPanel2 != null) {
                 this.treeSwapperDeckPanel = new api_ui.DeckPanel();
                 this.treeSwapperDeckPanel.addPanel(this.browseItemPanel);
-                this.treeSwapperDeckPanel.addPanel(this.treeGridPanel2);
+                this.treeSwapperDeckPanel.addPanel(this.gridPanel2);
                 this.treeSwapperDeckPanel.showPanel(0);
 
 
