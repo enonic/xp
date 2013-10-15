@@ -26,7 +26,6 @@
 ///<reference path='app/wizard/form/layout/module.ts' />
 
 
-
 ///<reference path='app/browse/filter/ContentBrowseFilterEvents.ts' />
 ///<reference path='app/browse/filter/ContentBrowseFilterPanel.ts' />
 
@@ -91,24 +90,24 @@ module components {
 }
 
 window.onload = () => {
-        var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
-        var appPanel = new app.ContentAppPanel(appBar);
+    var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
+    var appPanel = new app.ContentAppPanel(appBar);
 
-        api_dom.Body.get().appendChild(appBar);
-        api_dom.Body.get().appendChild(appPanel);
+    api_dom.Body.get().appendChild(appBar);
+    api_dom.Body.get().appendChild(appPanel);
 
-        appPanel.init();
+    appPanel.init();
 
-        var contentDeleteDialog = new app_delete.ContentDeleteDialog();
-        app_browse.ContentDeletePromptEvent.on((event) => {
-            contentDeleteDialog.setContentToDelete(event.getModels());
-            contentDeleteDialog.open();
-        });
+    var contentDeleteDialog = new app_delete.ContentDeleteDialog();
+    app_browse.ContentDeletePromptEvent.on((event) => {
+        contentDeleteDialog.setContentToDelete(event.getModels());
+        contentDeleteDialog.open();
+    });
 
-        var newContentDialog = new app_new.NewContentDialog();
-        app_browse.ShowNewContentDialogEvent.on((event) => {
+    var newContentDialog = new app_new.NewContentDialog();
+    app_browse.ShowNewContentDialogEvent.on((event) => {
 
-            var parentContent:api_content.ContentSummary = event.getParentContent();
+        var parentContent:api_content.ContentSummary = event.getParentContent();
 
         new api_content.GetContentByIdRequest(parentContent.getId()).send().
             done((jsonResponse:api_rest.JsonResponse) => {
@@ -123,24 +122,27 @@ window.onload = () => {
 function route(path:api_rest.Path) {
     var action = path.getElement(0);
 
-    if (action == "edit") {
-        var id = path.getElement(1);
-        if (id) {
-            var getContentByIdPromise = new api_content.GetContentByIdRequest(id).send();
-            jQuery.when(getContentByIdPromise).then((contentResponse:api_rest.JsonResponse) => {
-                new app_browse.EditContentEvent([new api_content.ContentSummary(contentResponse.getJson())]).fire();
-            });
-        }
-    }
-    if (action == "view") {
-        var id = path.getElement(1);
-        if (id) {
-            var getContentByIdPromise = new api_content.GetContentByIdRequest(id).send();
-            jQuery.when(getContentByIdPromise).then((contentResponse:api_rest.JsonResponse) => {
-                new app_browse.OpenContentEvent([new api_content.ContentSummary(contentResponse.getJson())]).fire();
-            });
-        }
-    } else {
-        new api_app.ShowAppBrowsePanelEvent().fire();
+    switch (action) {
+        case 'edit':
+            var id = path.getElement(1);
+            if (id) {
+                var getContentByIdPromise = new api_content.GetContentByIdRequest(id).send();
+                jQuery.when(getContentByIdPromise).then((contentResponse:api_rest.JsonResponse) => {
+                    new app_browse.EditContentEvent([new api_content.ContentSummary(contentResponse.getJson())]).fire();
+                });
+            }
+            break;
+        case 'view' :
+            var id = path.getElement(1);
+            if (id) {
+                var getContentByIdPromise = new api_content.GetContentByIdRequest(id).send();
+                jQuery.when(getContentByIdPromise).then((contentResponse:api_rest.JsonResponse) => {
+                    new app_browse.OpenContentEvent([new api_content.ContentSummary(contentResponse.getJson())]).fire();
+                });
+            }
+            break;
+        default:
+            new api_app.ShowAppBrowsePanelEvent().fire();
+            break;
     }
 }
