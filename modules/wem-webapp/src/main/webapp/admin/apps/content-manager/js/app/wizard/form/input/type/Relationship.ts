@@ -17,6 +17,9 @@ module app_wizard_form_input_type {
             super("Relationship", "relationship");
 
             this.findContentRequest = new api_content.FindContentRequest().setExpand("summary").setCount(100);
+            // TODO: fetch RelationshipType specified in config
+            // use RelationshipType.icon for icon to be displayed in text input
+            // use RelationshipType.getAllowedToTypes to restrict search to only content types listed here (if getAllowedToTypes() is empty it means every type of content)
         }
 
         getHTMLElement():HTMLElement {
@@ -68,7 +71,7 @@ module app_wizard_form_input_type {
                 selectedOptionFormatter: this.selectedOptionFormatter,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
-            var comboBox = new api_ui_combobox.ComboBox(input.getName(), comboboxConfig);
+            var comboBox = new api_ui_combobox.ComboBox<api_content.ContentSummary>(input.getName(), comboboxConfig);
 
             this.findContentRequest.setFulltext("").send()
                 .done((jsonResponse:api_rest.JsonResponse) => {
