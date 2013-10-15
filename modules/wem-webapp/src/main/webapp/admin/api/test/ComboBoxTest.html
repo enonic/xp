@@ -26,28 +26,11 @@
         body {
             padding: 50px 0 0 50px;
         }
-
-        .combobox.iconed input {
-            height: 37px;
-            padding: 4px 4px 4px 50px;
-        }
-
-        .combobox.iconed .slick-cell {
-            height: 34px;
-            padding: 8px;
-            border: none;
-        }
-
-        .combobox.iconed .selected-option {
-            height: 37px;
-            padding: 3px 0;
-            border: none;
-        }
     </style>
 </head>
 <body>
 
-    <div id="example"></div>
+    <div id="example" class="relationship"></div>
 
 <script type="text/javascript" src="../js/api.js"></script>
 <script>
@@ -86,8 +69,6 @@
     for (var i = 0; i < data.length ; i++) {
         combobox.addOption(data[i]);
     }
-
-    combobox.addClass("iconed");
 
     combobox.addListener({
         onInputValueChanged: function (oldValue, newValue, grid) {
