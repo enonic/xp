@@ -2,27 +2,20 @@ package com.enonic.wem.admin.rest.resource.schema.relationship;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.Files;
-import com.sun.jersey.api.NotFoundException;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
-import com.enonic.wem.TestUtil;
-import com.enonic.wem.admin.json.schema.relationship.AbstractRelationshipTypeJson;
-import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
-import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
-import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
-import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeResultJson;
+import junit.framework.Assert;
+
+import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
@@ -38,15 +31,14 @@ import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class RelationshipTypeResourceTest
+    extends AbstractResourceTest
 {
     private static byte[] IMAGE_DATA =
         {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
@@ -61,6 +53,12 @@ public class RelationshipTypeResourceTest
     @Before
     public void setup()
     {
+        mockCurrentContextHttpRequest();
+    }
+
+    @Override
+    protected Object getResourceInstance()
+    {
         resource = new RelationshipTypeResource();
 
         client = Mockito.mock( Client.class );
@@ -69,16 +67,7 @@ public class RelationshipTypeResourceTest
         uploadService = Mockito.mock( UploadService.class );
         resource.setUploadService( uploadService );
 
-        mockCurrentContextHttpRequest();
-    }
-
-    private void mockCurrentContextHttpRequest()
-    {
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( req.getScheme() ).thenReturn( "http" );
-        Mockito.when( req.getServerName() ).thenReturn( "localhost" );
-        Mockito.when( req.getLocalPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
+        return resource;
     }
 
     @Test
@@ -94,18 +83,11 @@ public class RelationshipTypeResourceTest
             QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
-        AbstractRelationshipTypeJson result = resource.get( "the_relationship_type" );
-        assertNotNull( result );
+        String response =
+            resource().path( "schema/relationship" ).queryParam( "qualifiedName", "the_relationship_type" ).get( String.class );
 
-        RelationshipTypeResultJson resultJson = ( (RelationshipTypeJson) result ).getRelationshipType();
+        assertJson( "get_relationship_type.json", response );
 
-        assertEquals( "the_relationship_type", resultJson.getName() );
-        assertEquals( null, resultJson.getDisplayName() );
-        assertEquals( null, resultJson.getFromSemantic() );
-        assertEquals( null, resultJson.getToSemantic() );
-        assertEquals( 0, resultJson.getAllowedFromTypes().size() );
-        assertEquals( 0, resultJson.getAllowedToTypes().size() );
-        assertEquals( "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type", resultJson.getIconUrl() );
     }
 
     @Test
@@ -121,23 +103,27 @@ public class RelationshipTypeResourceTest
             QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
-        AbstractRelationshipTypeJson result = resource.getConfig( "the_relationship_type" );
-        assertNotNull( result );
+        String response =
+            resource().path( "schema/relationship/config" ).queryParam( "qualifiedName", "the_relationship_type" ).get( String.class );
 
-        RelationshipTypeConfigJson resultJson = (RelationshipTypeConfigJson) result;
-
-        assertEquals(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<relationship-type>\r\n  <name>the_relationship_type</name>\r\n  <display-name />\r\n  <from-semantic />\r\n  <to-semantic />\r\n  <allowed-from-types />\r\n  <allowed-to-types />\r\n</relationship-type>\r\n\r\n",
-            resultJson.getRelationshipTypeXml() );
+        assertJson( "get_relationship_type_config.json", response );
     }
 
-    @Test(expected = WebApplicationException.class)
+    @Test
     public void testRequestGetRelationshipTypeJson_not_found()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( GetRelationshipTypes.class ) ) ).thenReturn( RelationshipTypes.empty() );
+        try
+        {
+            Mockito.when( client.execute( Mockito.any( GetRelationshipTypes.class ) ) ).thenReturn( RelationshipTypes.empty() );
 
-        resource.getConfig( "the_relationship_type" );
+            resource().path( "schema/relationship" ).queryParam( "qualifiedName", "relationship_type" ).get( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            Assert.assertEquals( 404, e.getResponse().getStatus() );
+            Assert.assertEquals( "RelationshipType [relationship_type] was not found.", e.getResponse().getEntity( String.class ) );
+        }
     }
 
     @Test
@@ -155,18 +141,9 @@ public class RelationshipTypeResourceTest
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType1, relationshipType2 );
         Mockito.when( client.execute( Commands.relationshipType().get().all() ) ).thenReturn( relationshipTypes );
 
-        RelationshipTypeListJson result = resource.list();
+        String response = resource().path( "schema/relationship/list" ).get( String.class );
 
-        assertNotNull( result );
-        assertEquals( 2, result.getTotal() );
-
-        List<String> names = new ArrayList<>( 2 );
-        for ( final RelationshipTypeResultJson model : result.getRelationshipTypes() )
-        {
-            names.add( model.getName() );
-        }
-
-        TestUtil.assertUnorderedArraysEquals( new String[]{"the_relationship_type_1", "the_relationship_type_2"}, names.toArray() );
+        assertJson( "get_relationship_type_list.json", response );
     }
 
     @Test
@@ -178,12 +155,16 @@ public class RelationshipTypeResourceTest
         Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).thenReturn(
             DeleteRelationshipTypeResult.SUCCESS );
 
-        resource.delete( Arrays.asList( "company:partner" ) );
+        String result =
+            resource().path( "schema/relationship/delete" ).entity( readFromFile( "delete_single_relationship_type_params.json" ),
+                                                                    MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+
+        assertJson( "delete_single_relationship_type.json", result );
 
         Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.any( DeleteRelationshipType.class ) );
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteMultipleRelationshipTypes()
         throws Exception
     {
@@ -193,7 +174,11 @@ public class RelationshipTypeResourceTest
             thenReturn( DeleteRelationshipTypeResult.SUCCESS ).
             thenReturn( DeleteRelationshipTypeResult.NOT_FOUND );
 
-        resource.delete( Arrays.asList( "company:partner", "company:client" ) );
+        String result =
+            resource().path( "schema/relationship/delete" ).entity( readFromFile( "delete_multiple_relationship_type_params.json" ),
+                                                                    MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+
+        assertJson( "delete_multiple_relationship_type.json", result );
 
         Mockito.verify( client, Mockito.times( 2 ) ).execute( Mockito.any( DeleteRelationshipType.class ) );
     }
@@ -205,11 +190,10 @@ public class RelationshipTypeResourceTest
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( QualifiedRelationshipTypeName.from( "love" ) );
 
-        String relationshipType =
-            "<relationship-type><name>love</name><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
-
         Mockito.when( this.uploadService.getItem( "reference" ) ).thenReturn( null );
-        resource.create( relationshipType, "reference" );
+
+        resource().path( "schema/relationship/create" ).entity( readFromFile( "create_relationship_type_params.json" ),
+                                                                MediaType.APPLICATION_JSON_TYPE ).post();
 
         verify( client, times( 1 ) ).execute( isA( CreateRelationshipType.class ) );
         verify( uploadService, times( 1 ) ).getItem( "reference" );
@@ -225,11 +209,10 @@ public class RelationshipTypeResourceTest
             RelationshipTypesExistsResult.from( qualifiedNames ) );
         Mockito.when( client.execute( isA( UpdateRelationshipType.class ) ) ).thenReturn( Boolean.TRUE );
 
-        String relationshipType =
-            "<relationship-type><name>love</name><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
-
         Mockito.when( this.uploadService.getItem( "reference" ) ).thenReturn( null );
-        resource.update( relationshipType, "reference" );
+
+        resource().path( "schema/relationship/update" ).entity( readFromFile( "update_relationship_type_params.json" ),
+                                                                MediaType.APPLICATION_JSON_TYPE ).post();
 
         verify( client, times( 1 ) ).execute( isA( UpdateRelationshipType.class ) );
         verify( uploadService, times( 1 ) ).getItem( "reference" );
@@ -239,15 +222,13 @@ public class RelationshipTypeResourceTest
     public void testCreateWithIcon()
         throws Exception
     {
+        final String iconReference = "edc1af66-ecb4-4f8a-8df4-0738418f84fc";
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( QualifiedRelationshipTypeName.from( "love" ) );
-        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
+        uploadFile( iconReference, "icon.png", IMAGE_DATA, "image/png" );
 
-        String relationshipType =
-            "<relationship-type><name>love</name><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>";
-        String iconReference = "edc1af66-ecb4-4f8a-8df4-0738418f84fc";
-
-        resource.create( relationshipType, iconReference );
+        resource().path( "schema/relationship/create" ).entity( readFromFile( "create_relationship_type_with_icon_params.json" ),
+                                                                MediaType.APPLICATION_JSON_TYPE ).post();
 
         verify( client, times( 1 ) ).execute( isA( CreateRelationshipType.class ) );
         verify( uploadService, times( 1 ) ).getItem( iconReference );

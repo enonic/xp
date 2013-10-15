@@ -1,0 +1,14 @@
+{
+    "failures": [
+        {
+            "qualifiedName": "company:client",
+            "reason": "Mixin [company:client] was not found"
+        }
+    ],
+    "success": false,
+    "successes": [
+        {
+            "qualifiedName": "company:partner"
+        }
+    ]
+}
