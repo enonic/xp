@@ -9,3 +9,4 @@
 ///<reference path='HtmlArea.ts' />
 ///<reference path='SingleSelector.ts' />
 ///<reference path='ComboBox.ts' />
+///<reference path='Relationship.ts' />

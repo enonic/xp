@@ -81,7 +81,7 @@ module api_ui_combobox {
                 dataIdProperty: "value"
             };
 
-            this.dropdownData = new api_ui_grid.DataView();
+            this.dropdownData = new api_ui_grid.DataView<OptionData>();
             this.dropdown = new api_ui_grid.Grid<OptionData>(this.dropdownData, columns, options);
             this.dropdown.addClass("options-container");
             this.dropdown.getEl().setPosition("absolute");
@@ -127,6 +127,10 @@ module api_ui_combobox {
         hideDropdown() {
             this.emptyDropdown.hide();
             this.dropdown.hide();
+        }
+
+        setOptions(options:OptionData[]) {
+            this.dropdownData.setItems(options);
         }
 
         addOption(option:OptionData) {
@@ -231,7 +235,6 @@ module api_ui_combobox {
 
             this.updateDropdownStyles();
             this.hideDropdown();
-            this.input.setValue("");
 
             if (this.maximumOccurrencesReached()) {
                 this.input.getEl().setDisabled(true);
@@ -312,6 +315,7 @@ module api_ui_combobox {
                 : item.displayValue.toString());
 
             this.selectedOptions.appendChild(option);
+            this.selectedOptions.getEl().setWidth(this.input.getEl().getWidth()+"px");
             this.selectedOptions.show();
 
             removeButton.getEl().addEventListener('click', (event:Event) => {
