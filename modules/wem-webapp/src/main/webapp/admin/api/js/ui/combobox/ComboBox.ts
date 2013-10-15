@@ -1,14 +1,14 @@
 module api_ui_combobox {
 
-    export class ComboBox extends api_dom.FormInputEl implements api_event.Observable {
+    export class ComboBox<T> extends api_dom.FormInputEl implements api_event.Observable {
 
         private icon:api_dom.ImgEl;
 
         private input:api_ui.TextInput;
 
-        private dropdownData:api_ui_grid.DataView<OptionData>;
+        private dropdownData:api_ui_grid.DataView<OptionData<T>>;
 
-        private dropdown:api_ui_grid.Grid<OptionData>;
+        private dropdown:api_ui_grid.Grid<OptionData<T>>;
 
         private emptyDropdown:api_dom.DivEl;
 
@@ -22,7 +22,7 @@ module api_ui_combobox {
 
         private filter:(item:any, args:any) => boolean;
 
-        private selectedData:OptionData[] = [];
+        private selectedData:OptionData<T>[] = [];
 
         private maxHeight:number = 200;
 
@@ -34,7 +34,7 @@ module api_ui_combobox {
          */
         private active:boolean = false;
 
-        private listeners:ComboBoxListener[] = [];
+        private listeners:ComboBoxListener<T>[] = [];
 
         constructor(name:string, config:ComboBoxConfig = {}) {
             super("div", null, "combobox");
@@ -63,7 +63,7 @@ module api_ui_combobox {
             this.selectedOptions.hide();
             this.appendChild(this.selectedOptions);
 
-            var columns:api_ui_grid.GridColumn<OptionData>[] = [
+            var columns:api_ui_grid.GridColumn<OptionData<T>>[] = [
                 {
                     id: "option",
                     name: "Options",
@@ -81,8 +81,8 @@ module api_ui_combobox {
                 dataIdProperty: "value"
             };
 
-            this.dropdownData = new api_ui_grid.DataView<OptionData>();
-            this.dropdown = new api_ui_grid.Grid<OptionData>(this.dropdownData, columns, options);
+            this.dropdownData = new api_ui_grid.DataView<OptionData<T>>();
+            this.dropdown = new api_ui_grid.Grid<OptionData<T>>(this.dropdownData, columns, options);
             this.dropdown.addClass("options-container");
             this.dropdown.getEl().setPosition("absolute");
             this.dropdown.hide();
@@ -100,7 +100,7 @@ module api_ui_combobox {
             return this.selectedData.length;
         }
 
-        getSelectedData():OptionData[] {
+        getSelectedData():OptionData<T>[] {
             return this.selectedData;
         }
 
@@ -129,29 +129,29 @@ module api_ui_combobox {
             this.dropdown.hide();
         }
 
-        setOptions(options:OptionData[]) {
+        setOptions(options:OptionData<T>[]) {
             this.dropdownData.setItems(options);
         }
 
-        addOption(option:OptionData) {
+        addOption(option:OptionData<T>) {
             this.dropdownData.addItem( option );
         }
 
         setValue(value:string) {
-            var item = <OptionData>this.dropdownData.getItemById(value);
+            var item = <OptionData<T>>this.dropdownData.getItemById(value);
             this.selectOption(item);
         }
 
         setValues(values:string[]) {
             values.forEach((value:string) => {
-                var item = <OptionData>this.dropdownData.getItemById(value);
+                var item = <OptionData<T>>this.dropdownData.getItemById(value);
                 this.selectOption(item);
             });
         }
 
         getValue():string {
             var values = [];
-            this.selectedData.forEach((item:OptionData) => {
+            this.selectedData.forEach((item:OptionData<T>) => {
                 values.push(item.value);
             });
             return values.join(';');
@@ -220,12 +220,12 @@ module api_ui_combobox {
         }
 
         private selectRow(index:number) {
-            var item = <OptionData>this.dropdownData.getItem(index);
+            var item = <OptionData<T>>this.dropdownData.getItem(index);
 
             this.selectOption(item);
         }
 
-        private selectOption(item:OptionData) {
+        private selectOption(item:OptionData<T>) {
             if (!this.canSelect(item)) {
                 return;
             }
@@ -248,7 +248,7 @@ module api_ui_combobox {
             return this.selectedData.length >= this.maximumOccurrences;
         }
 
-        private canSelect(item:OptionData):boolean {
+        private canSelect(item:OptionData<T>):boolean {
             if (this.maximumOccurrencesReached()) {
                 return false;
             }
@@ -264,7 +264,7 @@ module api_ui_combobox {
 
         private updateDropdownStyles() {
             var stylesHash = {};
-            this.selectedData.forEach((item:OptionData) => {
+            this.selectedData.forEach((item:OptionData<T>) => {
                 var row = this.dropdownData.getRowById(item.value);
                 stylesHash[row] = {option: "selected"};
             });
@@ -304,7 +304,7 @@ module api_ui_combobox {
             }
         }
 
-        private showSelectedItem(item:OptionData) {
+        private showSelectedItem(item:OptionData<T>) {
             var option = new api_dom.DivEl(null, 'selected-option');
             var removeButton = new api_dom.AEl(null, "remove");
             var optionValue = new api_dom.DivEl(null, 'option-value');
@@ -328,8 +328,8 @@ module api_ui_combobox {
             });
         }
 
-        private removeSelectedItem(item:OptionData) {
-            this.selectedData = this.selectedData.filter((element:OptionData, index:number) => {
+        private removeSelectedItem(item:OptionData<T>) {
+            this.selectedData = this.selectedData.filter((element:OptionData<T>, index:number) => {
                 return element != item;
             });
 
@@ -366,18 +366,18 @@ module api_ui_combobox {
             this.emptyDropdown.getEl().setTopPx(this.input.getEl().getHeight() - this.input.getEl().getBorderBottomWidth());
         }
 
-        addListener(listener:ComboBoxListener) {
+        addListener(listener:ComboBoxListener<T>) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:ComboBoxListener) {
+        removeListener(listener:ComboBoxListener<T>) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
         private notifyInputValueChanged(oldValue:string, newValue:string) {
-            this.listeners.forEach((listener:ComboBoxListener) => {
+            this.listeners.forEach((listener:ComboBoxListener<T>) => {
                 listener.onInputValueChanged(oldValue, newValue, this.dropdown);
             });
         }

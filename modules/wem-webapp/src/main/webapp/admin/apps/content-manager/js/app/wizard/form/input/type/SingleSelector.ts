@@ -42,7 +42,7 @@ module app_wizard_form_input_type {
 
         private createComboBoxElement(name:string, property:api_data.Property):api_dom.Element {
 
-            var inputEl:api_ui_combobox.ComboBox = new api_ui_combobox.ComboBox(name, {
+            var inputEl:api_ui_combobox.ComboBox<string> = new api_ui_combobox.ComboBox<string>(name, {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
                 maximumOccurrences: 1
@@ -116,7 +116,7 @@ module app_wizard_form_input_type {
             return false;
         }
 
-        private comboboxFilter(item:api_ui_combobox.OptionData, args) {
+        private comboboxFilter(item:api_ui_combobox.OptionData<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }

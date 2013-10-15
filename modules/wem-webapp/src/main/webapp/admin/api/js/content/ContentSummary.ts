@@ -30,6 +30,14 @@ module api_content{
 
         private deletable:boolean;
 
+        static fromJsonArray(jsonArray:api_content_json.ContentSummaryJson[]):ContentSummary[] {
+            var array:ContentSummary[] = [];
+            jsonArray.forEach((json:api_content_json.ContentSummaryJson) => {
+                array.push(new ContentSummary(json));
+            });
+            return array;
+        }
+
         constructor(json:api_content_json.ContentSummaryJson) {
             this.id = json.id;
             this.name = json.name;

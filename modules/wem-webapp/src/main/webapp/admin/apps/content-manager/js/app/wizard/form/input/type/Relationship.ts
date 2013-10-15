@@ -1,17 +1,66 @@
 module app_wizard_form_input_type {
 
-    export class Relationship extends ComboBox {
+    export interface RelationshipConfig {
+
+        relationshipType:string;
+    }
+
+    export class Relationship extends api_dom.DivEl implements InputTypeView {
+
+        private input:api_schema_content_form.Input;
+
+        private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
 
         private findContentRequest:api_content.FindContentRequest;
 
-        constructor() {
-            super({options:[]});
-            this.addClass("relationship");
+        constructor(config?:RelationshipConfig) {
+            super("Relationship", "relationship");
 
             this.findContentRequest = new api_content.FindContentRequest().setExpand("summary").setCount(100);
         }
 
-        createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox {
+        getHTMLElement():HTMLElement {
+            return super.getHTMLElement();
+        }
+
+        isManagingAdd():boolean {
+            return true;
+        }
+
+        addFormItemOccurrencesListener(listener:app_wizard_form.FormItemOccurrencesListener) {
+            throw new Error("Relationship manages occurrences self");
+        }
+
+        removeFormItemOccurrencesListener(listener:app_wizard_form.FormItemOccurrencesListener) {
+            throw new Error("Relationship manages occurrences self");
+        }
+
+        public maximumOccurrencesReached():boolean {
+            return this.input.getOccurrences().maximumReached(this.comboBox.countSelected());
+        }
+
+        createAndAddOccurrence() {
+            throw new Error("Relationship manages occurrences self");
+        }
+
+        layout(input:api_schema_content_form.Input, properties:api_data.Property[]) {
+
+            this.input = input;
+
+            this.comboBox = this.createComboBox(input);
+
+            if (properties != null) {
+                var valueArray:string[] = [];
+                properties.forEach((property:api_data.Property) => {
+                    valueArray.push(property.getString());
+                });
+                this.comboBox.setValues(valueArray);
+            }
+
+            this.appendChild(this.comboBox);
+        }
+
+        createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
             var comboboxConfig = {
                 iconUrl: "../../../admin/resources/images/default_content.png",
                 rowHeight: 50,
@@ -24,8 +73,8 @@ module app_wizard_form_input_type {
             this.findContentRequest.setFulltext("").send()
                 .done((jsonResponse:api_rest.JsonResponse) => {
                     var response = jsonResponse.getJson();
-                    var options = this.convertToComboBoxData(response.contents);
-                    this.getComboBox().setOptions(options);
+                    var options = this.convertToComboBoxData(api_content.ContentSummary.fromJsonArray(response.contents));
+                    this.comboBox.setOptions(options);
                 })
             ;
 
@@ -34,9 +83,9 @@ module app_wizard_form_input_type {
                     this.findContentRequest.setFulltext(newValue.trim()).send()
                         .done((jsonResponse:api_rest.JsonResponse) => {
                             var response = jsonResponse.getJson();
-                            var options = this.convertToComboBoxData(response.contents);
-                            this.getComboBox().setOptions(options);
-                            this.getComboBox().showDropdown();
+                            var options = this.convertToComboBoxData(api_content.ContentSummary.fromJsonArray(response.contents));
+                            this.comboBox.setOptions(options);
+                            this.comboBox.showDropdown();
                         })
                     ;
                 }
@@ -45,34 +94,50 @@ module app_wizard_form_input_type {
             return comboBox;
         }
 
-        private convertToComboBoxData(contents:any[]): api_ui_combobox.OptionData[] {
+        getValues():api_data.Value[] {
+
+            var values:api_data.Value[] = [];
+            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData<api_content.ContentSummary>)  => {
+                var value = new api_data.Value(option.value, api_data.ValueTypes.STRING);
+                values.push(value);
+            });
+            return values;
+        }
+
+        validate(validationRecorder:app_wizard_form.ValidationRecorder) {
+
+            // TODO:
+        }
+
+        valueBreaksRequiredContract(value:api_data.Value):boolean {
+            // TODO:
+            return false;
+        }
+
+        private convertToComboBoxData(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {
             var options = [];
-            contents.forEach((content:any) => {
+            contents.forEach((content:api_content.ContentSummary) => {
                 options.push({
-                    value: content.id,
-                    displayValue: {
-                        iconUrl: content.iconUrl,
-                        title: content.displayName,
-                        description: content.path
-                    }
+                    value: content.getId(),
+                    displayValue: content
                 });
             });
             return options;
         }
 
-        private optionFormatter(row, cell, value, columnDef, dataContext):string {
-            return '<img src="'+value.iconUrl+'" class="icon"/>' +
+        private optionFormatter(row, cell, content:api_content.ContentSummary, columnDef, dataContext):string {
+            return '<img src="' + content.getIconUrl() + '" class="icon"/>' +
                    '<div class="info">' +
-                   '<div class="title" title="'+value.title+'">'+value.title+'</div>' +
-                   '<div class="description" title="'+value.description+'">'+value.description+'</div>' +
+                   '<div class="title" title="' + content.getDisplayName() + '">' + content.getDisplayName() + '</div>' +
+                   '<div class="description" title="' + content.getPath().toString() + '">' + content.getPath().toString() + '</div>' +
                    '</div>';
         }
 
-        private selectedOptionFormatter(value) {
-            return '<img src="'+value.iconUrl+'" class="icon"/>' +
+        private selectedOptionFormatter(content:api_content.ContentSummary) {
+            return '<img src="' + content.getIconUrl() + '" class="icon"/>' +
                    '<div class="info">' +
-                   '<div class="title" title="'+value.title+'">'+value.title+'</div>' +
-                   '<div class="description" title="'+value.description+'">'+value.description+'</div>' +
+                   '<div class="title" title="' + content.getDisplayName() + '">' + content.getDisplayName() + '</div>' +
+                   '<div class="description" title="' + content.getPath().toString() + '">' + content.getPath().toString() + '</div>' +
                    '</div>';
         }
 

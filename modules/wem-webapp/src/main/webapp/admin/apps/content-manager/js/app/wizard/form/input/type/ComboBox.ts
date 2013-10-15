@@ -15,8 +15,7 @@ module app_wizard_form_input_type {
 
         private config:ComboBoxConfig;
 
-        private comboBox:api_ui_combobox.ComboBox;
-
+        private comboBox:api_ui_combobox.ComboBox<string>;
 
         constructor(config?:ComboBoxConfig) {
             super("ComboBox", "combo-box");
@@ -68,13 +67,13 @@ module app_wizard_form_input_type {
             this.appendChild(this.comboBox);
         }
 
-        createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox {
+        createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox<string> {
             var comboboxConfig = {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
-            var comboBox = new api_ui_combobox.ComboBox(name, comboboxConfig);
+            var comboBox = new api_ui_combobox.ComboBox<string>(name, comboboxConfig);
 
             comboBox.addListener({
                 onInputValueChanged: function (oldValue, newValue, grid) {
@@ -86,14 +85,10 @@ module app_wizard_form_input_type {
             return comboBox;
         }
 
-        getComboBox():api_ui_combobox.ComboBox {
-            return this.comboBox;
-        }
-
         getValues():api_data.Value[] {
 
             var values:api_data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData)  => {
+            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData<string>)  => {
                 var value = new api_data.Value(option.value, api_data.ValueTypes.STRING);
                 values.push(value);
             });
@@ -110,7 +105,7 @@ module app_wizard_form_input_type {
             return false;
         }
 
-        private comboboxFilter(item:api_ui_combobox.OptionData, args) {
+        private comboboxFilter(item:api_ui_combobox.OptionData<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }
