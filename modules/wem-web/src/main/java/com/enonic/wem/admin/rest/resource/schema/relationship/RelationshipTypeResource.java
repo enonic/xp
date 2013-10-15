@@ -1,7 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -12,8 +10,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
@@ -110,17 +106,12 @@ public class RelationshipTypeResource
         final QualifiedRelationshipTypeNames qualifiedNames =
             QualifiedRelationshipTypeNames.from( param.getQualifiedNames().toArray( new String[param.getQualifiedNames().size()] ) );
 
-        final List<String> failureList = Lists.newArrayList();
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( QualifiedRelationshipTypeName relationshipTypeName : qualifiedNames )
         {
             final DeleteRelationshipType deleteCommand = Commands.relationshipType().delete().qualifiedName( relationshipTypeName );
             final DeleteRelationshipTypeResult result = client.execute( deleteCommand );
 
-            if ( result.isNotFound() )
-            {
-                failureList.add( relationshipTypeName.toString() );
-            }
             switch ( result )
             {
                 case SUCCESS:
