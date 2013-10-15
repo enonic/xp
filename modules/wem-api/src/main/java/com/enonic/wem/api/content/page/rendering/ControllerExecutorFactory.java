@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.rendering;
+package com.enonic.wem.api.content.page.rendering;
 
 
 import com.enonic.wem.api.Client;
@@ -19,6 +19,11 @@ import com.enonic.wem.api.resource.Resource;
 public class ControllerExecutorFactory
 {
     private Client client;
+
+    public ControllerExecutorFactory( final Client client )
+    {
+        this.client = client;
+    }
 
     ControllerExecutor page( Page page )
     {

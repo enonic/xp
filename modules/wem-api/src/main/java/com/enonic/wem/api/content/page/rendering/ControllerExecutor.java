@@ -1,10 +1,11 @@
-package com.enonic.wem.api.content.rendering;
+package com.enonic.wem.api.content.page.rendering;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.rendering.RenderingResult;
 
 public class ControllerExecutor
 {
@@ -21,7 +22,7 @@ public class ControllerExecutor
         this.templateConfig = templateConfig;
     }
 
-    RenderingResult render()
+    RenderingResult execute()
     {
         // Resolve placeholders in controller params
         List<ControllerParam> params = resolvePlaceholders( controller.getParams() );

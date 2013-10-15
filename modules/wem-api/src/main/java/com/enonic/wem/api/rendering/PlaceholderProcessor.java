@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.rendering;
+package com.enonic.wem.api.rendering;
 
 
 public class PlaceholderProcessor

@@ -1,7 +1,10 @@
 package com.enonic.wem.api.content.page;
 
 
-public abstract class Component<ID extends TemplateId>
+import com.enonic.wem.api.rendering.Component;
+
+public abstract class PageComponent<ID extends TemplateId>
+    implements Component
 {
     ID templateId;
 
