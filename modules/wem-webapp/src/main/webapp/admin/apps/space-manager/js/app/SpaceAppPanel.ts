@@ -9,8 +9,7 @@ module app {
 
             super({
                 appBar: appBar,
-                browsePanel: browsePanel,
-                browsePanelActions: app_browse.SpaceBrowseActions.get().getAllActions()
+                browsePanel: browsePanel
             });
 
             this.handleGlobalEvents();

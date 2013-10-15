@@ -11,8 +11,7 @@ module app {
 
             super({
                 appBar: appBar,
-                browsePanel: browsePanel,
-                browsePanelActions: app_browse.SchemaBrowseActions.get().getAllActions()
+                browsePanel: browsePanel
             });
 
             this.handleGlobalEvents();

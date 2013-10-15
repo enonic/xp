@@ -3,8 +3,8 @@ module api_app {
     export interface BrowseBasedAppPanelConfig {
 
         appBar:api_app.AppBar;
+
         browsePanel:api_app_browse.BrowsePanel;
-        browsePanelActions:api_ui.Action[];
     }
 
     export class BrowseAndWizardBasedAppPanel extends api_app.AppPanel {
@@ -14,7 +14,7 @@ module api_app {
         private appBarTabMenu:api_app.AppBarTabMenu;
 
         constructor(config:BrowseBasedAppPanelConfig) {
-            super(config.appBar.getTabMenu(), config.browsePanel, config.browsePanelActions);
+            super(config.appBar.getTabMenu(), config.browsePanel);
 
             this.browsePanel = config.browsePanel;
             this.appBarTabMenu = config.appBar.getTabMenu();

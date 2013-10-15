@@ -64,6 +64,13 @@ module app_browse {
             });
         }
 
+        getActions():api_ui.Action[] {
+            var actions = super.getActions();
+            // TODO: Ensures shortcut for showing new experimental content grid without having the action in the toolbar
+            actions.push(app_browse.ContentBrowseActions.get().SHOW_NEW_CONTENT_GRID);
+            return actions;
+        }
+
         extModelsToContentSummaries(models:Ext_data_Model[]):api_content.ContentSummary[] {
 
             var summaries:api_content.ContentSummary[] = [];

@@ -8,8 +8,7 @@ module app {
 
             super({
                 appBar: appBar,
-                browsePanel: browsePanel,
-                browsePanelActions: app_browse.ContentBrowseActions.get().getAllActions()
+                browsePanel: browsePanel
             });
 
             app_new.NewContentEvent.on((event) => {
