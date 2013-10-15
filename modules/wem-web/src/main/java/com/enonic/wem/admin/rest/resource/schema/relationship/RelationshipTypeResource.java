@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,14 +13,15 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
+import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
+import com.enonic.wem.admin.rest.resource.schema.relationship.json.RelationshipTypeCreateOrUpdateParam;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -105,13 +105,13 @@ public class RelationshipTypeResource
     @POST
     @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void delete( @FormParam("qualifiedRelationshipTypeName") final List<String> names )
+    public SchemaDeleteJson delete( SchemaDeleteParams param )
     {
         final QualifiedRelationshipTypeNames qualifiedNames =
-            QualifiedRelationshipTypeNames.from( names.toArray( new String[names.size()] ) );
+            QualifiedRelationshipTypeNames.from( param.getQualifiedNames().toArray( new String[param.getQualifiedNames().size()] ) );
 
         final List<String> failureList = Lists.newArrayList();
-
+        final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( QualifiedRelationshipTypeName relationshipTypeName : qualifiedNames )
         {
             final DeleteRelationshipType deleteCommand = Commands.relationshipType().delete().qualifiedName( relationshipTypeName );
@@ -121,24 +121,32 @@ public class RelationshipTypeResource
             {
                 failureList.add( relationshipTypeName.toString() );
             }
+            switch ( result )
+            {
+                case SUCCESS:
+                    deletionResult.success( relationshipTypeName );
+                    break;
+
+                case NOT_FOUND:
+                    deletionResult.failure( relationshipTypeName,
+                                            String.format( "Mixin [%s] was not found", relationshipTypeName.toString() ) );
+                    break;
+
+            }
         }
 
-        if ( !failureList.isEmpty() )
-        {
-            final String nameNotDeleted = Joiner.on( ", " ).join( failureList );
-            throw new NotFoundException( String.format( "Relationship Type [%s] was not found", nameNotDeleted ) );
-        }
+        return deletionResult;
     }
 
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void create( @FormParam("relationshipType") final String xml, @FormParam("iconReference") final String iconReference )
+    public void create( RelationshipTypeCreateOrUpdateParam param )
     {
         final RelationshipType relationshipType;
         try
         {
-            relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( xml );
+            relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getRelationshipType() );
         }
         catch ( XmlParsingException e )
         {
@@ -148,7 +156,7 @@ public class RelationshipTypeResource
         final Icon icon;
         try
         {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
         }
         catch ( Exception e )
         {
@@ -183,12 +191,12 @@ public class RelationshipTypeResource
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void update( @FormParam("relationshipType") final String xml, @FormParam("iconReference") final String iconReference )
+    public void update( RelationshipTypeCreateOrUpdateParam param )
     {
         final RelationshipType relationshipType;
         try
         {
-            relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( xml );
+            relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getRelationshipType() );
         }
         catch ( XmlParsingException e )
         {
@@ -198,7 +206,7 @@ public class RelationshipTypeResource
         final Icon icon;
         try
         {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
         }
         catch ( Exception e )
         {
