@@ -7,11 +7,9 @@
     position: absolute;
     top: 5px;
     left: 13px;
-    z-index: 5;
+    z-index: 4;
     width: 25px;
     height: 25px;
-    border: 1px @admin-medium-gray-border solid;
-    opacity: 0.5;
   }
 
   input {
@@ -34,27 +32,19 @@
     }
   }
 
-  .empty-options {
-    position: absolute;
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0 0 0 0;
-    padding: 0;
-    border: 1px black solid;
-    .box-shadow(2px 2px 2px @admin-medium-gray-border);
-  }
-
-  .options-container {
+  .empty-options, .options-container {
     position: absolute;
     .box-sizing(border-box);
     width: 100%;
-    margin: 0 0 0 0;
+    margin: 0;
     padding: 0;
     border: 1px black solid;
     .box-shadow(2px 2px 2px @admin-medium-gray-border);
     background: white;
     z-index: 5;
+  }
 
+  .options-container {
     .slick-header {
       height: 0px;
       display: none;
@@ -72,32 +62,6 @@
 
       &.selected {
         font-style: italic;
-
-        .info .title {
-          color: #d3d3d3;
-        }
-      }
-
-      .icon {
-        float: left;
-        width: 32px;
-        height: 32px;
-        border: 1px @admin-medium-gray-border solid;
-        opacity: 0.5;
-      }
-
-      .info {
-        margin: 0 0 0 42px;
-
-        .title {
-          font-size: 14px;
-          line-height: 16px;
-        }
-
-        .description {
-          color: @admin-light-gray-font;
-          font-size: 12px;
-        }
       }
     }
 

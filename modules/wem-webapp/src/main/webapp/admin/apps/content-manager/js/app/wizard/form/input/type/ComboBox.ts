@@ -11,7 +11,7 @@ module app_wizard_form_input_type {
 
     export class ComboBox extends api_dom.DivEl implements InputTypeView {
 
-        private input:api_schema_content_form.Input
+        private input:api_schema_content_form.Input;
 
         private config:ComboBoxConfig;
 
@@ -19,8 +19,7 @@ module app_wizard_form_input_type {
 
 
         constructor(config?:ComboBoxConfig) {
-            super("ComboBox");
-            this.addClass("combo-box");
+            super("ComboBox", "combo-box");
             this.config = config;
         }
 
@@ -52,19 +51,7 @@ module app_wizard_form_input_type {
 
             this.input = input;
 
-            var comboboxConfig = {
-                rowHeight: 24,
-                filter: this.comboboxFilter,
-                maximumOccurrences: input.getOccurrences().getMaximum()
-            };
-            this.comboBox = new api_ui_combobox.ComboBox(name, comboboxConfig);
-
-            this.comboBox.addListener({
-                onInputValueChanged: function (oldValue, newValue, grid) {
-                    grid.getDataView().setFilterArgs({searchString: newValue});
-                    grid.getDataView().refresh();
-                }
-            });
+            this.comboBox = this.createComboBox(input);
 
             this.config.options.forEach((option:ComboBoxOption) => {
                 this.comboBox.addOption({value: option.value, displayValue: option.label})
@@ -79,6 +66,28 @@ module app_wizard_form_input_type {
             }
 
             this.appendChild(this.comboBox);
+        }
+
+        createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox {
+            var comboboxConfig = {
+                rowHeight: 24,
+                filter: this.comboboxFilter,
+                maximumOccurrences: input.getOccurrences().getMaximum()
+            };
+            var comboBox = new api_ui_combobox.ComboBox(name, comboboxConfig);
+
+            comboBox.addListener({
+                onInputValueChanged: function (oldValue, newValue, grid) {
+                    grid.getDataView().setFilterArgs({searchString: newValue});
+                    grid.getDataView().refresh();
+                }
+            });
+
+            return comboBox;
+        }
+
+        getComboBox():api_ui_combobox.ComboBox {
+            return this.comboBox;
         }
 
         getValues():api_data.Value[] {
