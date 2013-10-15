@@ -64,7 +64,7 @@ module app_wizard_form_input_type {
         }
 
         createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
-            var comboboxConfig = {
+            var comboboxConfig:api_ui_combobox.ComboBoxConfig<api_content.ContentSummary> = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>>{
                 iconUrl: "../../../admin/resources/images/default_content.png",
                 rowHeight: 50,
                 optionFormatter: this.optionFormatter,

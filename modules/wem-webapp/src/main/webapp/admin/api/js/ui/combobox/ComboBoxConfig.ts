@@ -1,14 +1,14 @@
 module api_ui_combobox {
 
-    export interface ComboBoxConfig {
+    export interface ComboBoxConfig<T> {
 
         iconUrl?: string;
 
         rowHeight?: number;
 
-        optionFormatter?: (row:number, cell:number, value:any, columnDef:any, dataContext:Slick.SlickData) => string;
+        optionFormatter?: (row:number, cell:number, value:T, columnDef:any, dataContext:Slick.SlickData) => string;
 
-        selectedOptionFormatter?: (value:any) => string;
+        selectedOptionFormatter?: (value:T) => string;
 
         maximumOccurrences?: number;
 

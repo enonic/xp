@@ -14,7 +14,7 @@ module api_ui_combobox {
 
         private selectedOptions:api_dom.DivEl;
 
-        private optionFormatter:(row:number, cell:number, value:any, columnDef:any, dataContext:Slick.SlickData) => string;
+        private optionFormatter:(row:number, cell:number, value:T, columnDef:any, dataContext:Slick.SlickData) => string;
 
         private selectedOptionFormatter:(value:any) => string;
 
@@ -36,7 +36,7 @@ module api_ui_combobox {
 
         private listeners:ComboBoxListener<T>[] = [];
 
-        constructor(name:string, config:ComboBoxConfig = {}) {
+        constructor(name:string, config:ComboBoxConfig<T> = {}) {
             super("div", null, "combobox");
             this.getEl().setAttribute("name", name);
 
