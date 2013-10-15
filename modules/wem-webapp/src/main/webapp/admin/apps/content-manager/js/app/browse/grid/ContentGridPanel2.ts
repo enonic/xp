@@ -10,42 +10,14 @@ module app_browse_grid {
 
         private gridData:api_ui_grid.DataView<api_content.ContentSummary>;
 
-        private nameFormatter:(row:number, cell:number, value:any, columnDef:any, dataContext:Slick.SlickData) => string;
-
         constructor() {
             super();
-
-            this.nameFormatter = (row:number, cell:number, value:any, columnDef:any, item:api_content.ContentSummary) => {
-                console.log(item);
-                var rowEl = new api_dom.DivEl();
-
-                var icon = new api_dom.ImgEl();
-                icon.getEl().setSrc(item.getIconUrl());
-                icon.getEl().setWidth("32px");
-                icon.getEl().setHeight("32px");
-
-                var displayName = new api_dom.H6El();
-                displayName.getEl().setInnerHtml(item.getDisplayName());
-
-                var path = new api_dom.PEl();
-                path.getEl().setInnerHtml(item.getPath().toString());
-
-                var textContainer = new api_dom.DivEl();
-                textContainer.addClass("text");
-                textContainer.appendChild(displayName);
-                textContainer.appendChild(path);
-
-                rowEl.appendChild(icon);
-                rowEl.appendChild(textContainer);
-
-                return rowEl.toString();
-            };
 
             var column1 = <api_ui_grid.GridColumn> {
                 name: "Name",
                 id: "displayName",
                 field: "displayName",
-                formatter: this.nameFormatter
+                formatter: this.getNameFormatter()
             };
             var column2 = <api_ui_grid.GridColumn> {
                 name: "ModifiedTime",

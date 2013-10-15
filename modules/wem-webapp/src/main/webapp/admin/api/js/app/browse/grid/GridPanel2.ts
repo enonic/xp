@@ -18,16 +18,19 @@ module api_app_browse_grid {
                 icon.getEl().setWidth("32px");
                 icon.getEl().setHeight("32px");
 
-
                 var displayName = new api_dom.H6El();
                 displayName.getEl().setInnerHtml(item.getDisplayName());
 
                 var path = new api_dom.PEl();
                 path.getEl().setInnerHtml(item.getPath().toString());
 
+                var textContainer = new api_dom.DivEl();
+                textContainer.addClass("text");
+                textContainer.appendChild(displayName);
+                textContainer.appendChild(path);
+
                 rowEl.appendChild(icon);
-                rowEl.appendChild(displayName);
-                rowEl.appendChild(path);
+                rowEl.appendChild(textContainer);
 
                 return rowEl.toString();
             };
