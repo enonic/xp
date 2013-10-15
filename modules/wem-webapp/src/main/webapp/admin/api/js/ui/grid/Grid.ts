@@ -45,7 +45,8 @@ module api_ui_grid {
             this.checkableRows = options.checkableRows || false;
             if (this.checkableRows) {
                 checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
-                    cssClass: "slick-cell-checkboxsel"
+                    cssClass: "slick-cell-checkboxsel",
+                    width: 40
                 });
                 columns.unshift(checkboxSelectorPlugin.getColumnDefinition());
             }
