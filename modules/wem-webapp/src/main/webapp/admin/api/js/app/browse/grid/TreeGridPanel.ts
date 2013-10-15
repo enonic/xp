@@ -161,7 +161,7 @@ module api_app_browse_grid {
             });
         }
 
-        private notifyTreeGridSelect(event: TreeGridSelectEvent) {
+        private notifyTreeGridSelect(event:TreeGridSelectEvent) {
 
             this.listeners.forEach((listener:TreeGridPanelListener) => {
                 if (listener.onSelect) {
@@ -170,7 +170,7 @@ module api_app_browse_grid {
             });
         }
 
-        private notifyTreeGridDeselect(event: TreeGridDeselectEvent) {
+        private notifyTreeGridDeselect(event:TreeGridDeselectEvent) {
 
             this.listeners.forEach((listener:TreeGridPanelListener) => {
                 if (listener.onDeselect) {
@@ -259,6 +259,7 @@ module api_app_browse_grid {
         }
 
         removeAll() {
+            this.deselectAll();
             var activeList = this.getActiveList();
             if (this.activeList == TreeGridPanel.GRID) {
                 activeList.removeAll();
@@ -267,24 +268,43 @@ module api_app_browse_grid {
             }
         }
 
-        deselect(item:api_app_browse.BrowseItem) {
-            var activeList = this.getActiveList(),
-                selModel = activeList.getSelectionModel();
-
-            if (!item) {
-                selModel.deselectAll();
+        remove(keyFieldValue:any) {
+            this.deselect(keyFieldValue);
+            var activeList = this.getActiveList();
+            if (this.activeList == TreeGridPanel.GRID) {
+                var store = this.getActiveList().getStore();
+                var model = store.findRecord(this.keyField, keyFieldValue);
+                if (model) {
+                    store.remove(model);
+                }
             } else {
-                var key = item.getModel().get(this.keyField);
-                var selNodes = selModel.getSelection();
-                var i;
-
-                for (i = 0; i < selNodes.length; i++) {
-                    var selNode = selNodes[i];
-                    if (key == selNode.get(this.keyField)) {
-                        selModel.deselect([selNode]);
+                var root = (<Ext_tree_Panel>activeList).getRootNode();
+                root.cascadeBy((childNode) => {
+                    if (childNode.get(this.keyField) == keyFieldValue) {
+                        childNode.remove(false);
+                        return false;
                     }
+                    return true;
+                }, this);
+            }
+        }
+
+        deselectAll() {
+            this.getActiveList().getSelectionModel().deselectAll();
+        }
+
+        deselect(keyFieldValue:any) {
+            var selModel = this.getActiveList().getSelectionModel(),
+                selNodes = selModel.getSelection(),
+                i;
+
+            for (i = 0; i < selNodes.length; i++) {
+                var selNode = selNodes[i];
+                if (keyFieldValue == selNode.get(this.keyField)) {
+                    selModel.deselect([selNode]);
                 }
             }
+
         }
 
         getSelection() {

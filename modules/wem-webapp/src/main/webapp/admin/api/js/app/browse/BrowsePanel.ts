@@ -46,7 +46,7 @@ module api_app_browse{
 
             this.browseItemPanel.addListener({
                 onDeselected: (item:BrowseItem) => {
-                    this.treeGridPanel.deselect(item);
+                    this.treeGridPanel.deselect(item.getPath());
                 },
                 onPanelShown: (item) => {
                 }

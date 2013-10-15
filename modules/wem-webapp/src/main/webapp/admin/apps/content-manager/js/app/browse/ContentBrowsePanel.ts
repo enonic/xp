@@ -52,6 +52,23 @@ module app_browse {
                 this.contentBrowseItemPanel.setPreviewMode(false);
             });
 
+            api_content.ContentDeletedEvent.on((event) => {
+                var contents:api_content.ContentSummary[] = event.getContents();
+                for (var i = 0; i < contents.length; i++) {
+                    this.contentTreeGridPanel.remove(contents[i].getPath().toString());
+                }
+            });
+
+            api_content.ContentCreatedEvent.on((event) => {
+                console.log('On content created', event.getPath());
+                this.contentTreeGridPanel.setRefreshNeeded(true);
+            });
+
+            api_content.ContentUpdatedEvent.on((event) => {
+                console.log('On content updated', event.getModel());
+                this.contentTreeGridPanel.setRefreshNeeded(true);
+            });
+
             this.contentTreeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
                     var contentSummaries = this.extModelsToContentSummaries(event.selectedModels);

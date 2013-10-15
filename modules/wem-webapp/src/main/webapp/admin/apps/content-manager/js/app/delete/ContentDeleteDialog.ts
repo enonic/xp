@@ -12,22 +12,32 @@ module app_delete {
             this.getDeleteAction().addExecutionListener(() => {
 
                 var deleteRequest = new api_content.DeleteContentRequest();
-                for ( var i = 0; i < this.contentToDelete.length; i++ ) {
+                for (var i = 0; i < this.contentToDelete.length; i++) {
                     deleteRequest.addContentPath(this.contentToDelete[i].getPath());
                 }
 
                 deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {
-                    var json = jsonResponse.getJson();
 
-                    var paths = [];
-                    for ( var i = 0; i < json.successes.length; i++ ) {
-                        paths.push(json.successes[i].path);
+                    var json = jsonResponse.getJson(),
+                        paths = [],
+                        deletedContents:api_content.ContentSummary[] = [];
+
+                    for (var i = 0; i < json.successes.length; i++) {
+                        var path = json.successes[i].path;
+                        paths.push(path);
+
+                        this.contentToDelete.forEach((content:api_content.ContentSummary) => {
+                            if(path == content.getPath()) {
+                                deletedContents.push(content);
+                            }
+                        })
                     }
 
                     this.close();
-                    //components.gridPanel.refresh();
 
-                    api_notify.showFeedback('Content [' + paths.join(', ') + '] deleted!')
+                    api_notify.showFeedback('Content [' + paths.join(', ') + '] deleted!');
+
+                    new api_content.ContentDeletedEvent(deletedContents).fire();
                 });
             });
         }

@@ -137,6 +137,9 @@ module app_wizard {
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
 
+                    var json = createResponse.getJson();
+                    new api_content.ContentCreatedEvent(api_content.ContentPath.fromString(json.contentPath)).fire();
+
                     if (successCallback) {
                         successCallback.call(this);
                     }
@@ -155,6 +158,8 @@ module app_wizard {
                 send().done((updateResponse:api_rest.JsonResponse) => {
                     api_notify.showFeedback('Content was updated!');
                     console.log('content update response', updateResponse);
+
+                    new api_content.ContentUpdatedEvent(this.persistedContent).fire();
 
                     if (successCallback) {
                         successCallback.call(this);

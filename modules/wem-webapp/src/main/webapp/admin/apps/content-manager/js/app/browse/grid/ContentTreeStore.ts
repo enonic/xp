@@ -13,7 +13,7 @@ module app_browse_grid {
                 remoteSort: false,
                 folderSort: false,
                 autoLoad: false,
-                clearOnLoad: false,
+                clearOnLoad: true,
                 autoSync: false,
                 defaultRootId: undefined,
                 nodeParam: 'parentId',

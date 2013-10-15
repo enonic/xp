@@ -12,3 +12,4 @@
 ///<reference path='ListContentByPathRequest.ts' />
 ///<reference path='FindContentRequest.ts' />
 ///<reference path='DeleteContentRequest.ts' />
+///<reference path='ContentEvents.ts' />
