@@ -8,16 +8,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.portal.AbstractResource;
-import com.enonic.wem.web.util.MimeTypeResolver;
+import com.enonic.wem.util.MediaTypes;
 
 public class ResourceRequestHandler
     extends AbstractResource
 {
     private ResourceService resourceService;
-
-    private MimeTypeResolver mimeTypeResolver;
 
     @GET
     public Response getResource()
@@ -29,11 +29,11 @@ public class ResourceRequestHandler
             return Response.status( Response.Status.NOT_FOUND ).build();
         }
 
-        final String mimeType = mimeTypeResolver.getMimeType( resource.getName() );
+        final MediaType mimeType = MediaTypes.instance().fromFile( resource.getName() );
 
         try
         {
-            return Response.ok( resource.getByteSource().read(), mimeType ).build();
+            return Response.ok( resource.getByteSource().read(), mimeType.toString() ).build();
         }
         catch ( IOException e )
         {
@@ -61,11 +61,5 @@ public class ResourceRequestHandler
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
-    }
-
-    @Inject
-    public void setMimeTypeResolver( final MimeTypeResolver mimeTypeResolver )
-    {
-        this.mimeTypeResolver = mimeTypeResolver;
     }
 }
