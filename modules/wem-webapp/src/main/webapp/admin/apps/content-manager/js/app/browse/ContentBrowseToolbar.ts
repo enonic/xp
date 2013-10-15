@@ -11,7 +11,6 @@ module app_browse {
             this.addAction(actions.DELETE_CONTENT);
             this.addAction(actions.DUPLICATE_CONTENT);
             this.addAction(actions.MOVE_CONTENT);
-            this.addAction(actions.SHOW_NEW_CONTENT_GRID);
             this.addGreedySpacer();
             this.addAction(actions.BROWSE_CONTENT_SETTINGS);
 
