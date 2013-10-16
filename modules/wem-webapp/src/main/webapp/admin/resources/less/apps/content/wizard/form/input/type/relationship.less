@@ -11,7 +11,7 @@
     border: none;
     .box-sizing(content-box);
 
-    &.selected .info .title {
+    &.selected .content-summary .display-name {
       color: #d3d3d3;
     }
 
@@ -22,10 +22,10 @@
       border: 1px @admin-medium-gray-border solid;
     }
 
-    .info {
+    .content-summary {
       margin: 0 0 0 42px;
 
-      .title {
+      .display-name {
         font-size: 14px;
         line-height: 16px;
         overflow: hidden;
@@ -33,7 +33,7 @@
         text-overflow: ellipsis;
       }
 
-      .description {
+      .path {
         color: @admin-light-gray-font;
         font-size: 12px;
         overflow: hidden;
