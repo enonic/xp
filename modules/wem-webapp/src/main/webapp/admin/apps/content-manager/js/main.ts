@@ -116,7 +116,9 @@ window.onload = () => {
                 newContentDialog.open();
             });
     });
-    window.parent["appLoaded"](jQuery(window.frameElement).data("wem-app"));
+    if (window.parent["appLoaded"]) {
+        window.parent["appLoaded"](jQuery(window.frameElement).data("wem-app"));
+    }
 };
 
 function route(path:api_rest.Path) {
