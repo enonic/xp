@@ -4,7 +4,7 @@
          metadata-complete="true">
 
   <listener>
-    <listener-class>com.enonic.wem.web.boot.BootContextListener</listener-class>
+    <listener-class>com.enonic.wem.boot.BootContextListener</listener-class>
   </listener>
 
   <mime-mapping>

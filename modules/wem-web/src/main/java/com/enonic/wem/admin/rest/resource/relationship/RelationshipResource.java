@@ -8,6 +8,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.sun.jersey.api.NotFoundException;
+
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.relationship.json.CreateRelationshipJson;
 import com.enonic.wem.admin.rest.resource.relationship.json.RelationshipCreateParams;
@@ -25,7 +27,6 @@ import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.portal.AbstractPortalException;
 
 @Path("relationship")
 @Produces(MediaType.APPLICATION_JSON)
@@ -83,9 +84,9 @@ public class RelationshipResource
             client.execute( updateCommand );
             return new UpdateRelationshipJson( params.getRelationshipKey().from() );
         }
-        catch ( UpdateRelationshipFailureException e )
+        catch ( final UpdateRelationshipFailureException e )
         {
-            throw new AbstractPortalException( e.getMessage() );
+            throw new NotFoundException( e.getMessage() );
         }
     }
 }
