@@ -14,13 +14,13 @@ module api_ui_combobox {
 
         private selectedOptions:api_dom.DivEl;
 
-        private optionFormatter:(row:number, cell:number, value:T, columnDef:any, dataContext:Slick.SlickData) => string;
+        private optionFormatter:(row:number, cell:number, value:T, columnDef:any, dataContext:OptionData<T>) => string;
 
-        private selectedOptionFormatter:(value:any) => string;
+        private selectedOptionFormatter:(value:T) => string;
 
         private maximumOccurrences:number;
 
-        private filter:(item:any, args:any) => boolean;
+        private filter:(item:T, args:any) => boolean;
 
         private selectedData:OptionData<T>[] = [];
 
@@ -44,7 +44,7 @@ module api_ui_combobox {
             this.selectedOptionFormatter = config.selectedOptionFormatter;
             this.maximumOccurrences = config.maximumOccurrences != undefined ? config.maximumOccurrences : 0;
             this.filter = config.filter;
-            this.rowHeight = config.rowHeight || 50;
+            this.rowHeight = config.rowHeight || 24;
 
             if (config.iconUrl) {
                 this.icon = new api_dom.ImgEl(config.iconUrl, null, "input-icon");
@@ -111,17 +111,14 @@ module api_ui_combobox {
         showDropdown() {
             var rowsLength = this.dropdownData.getLength();
             if (rowsLength > 0) {
-                this.adjustDropdownSize();
-                this.updateDropdownStyles();
-
                 this.emptyDropdown.hide();
                 this.dropdown.show();
             } else {
-                this.adjustEmptyDropdownSize();
-
                 this.dropdown.hide();
                 this.emptyDropdown.show();
             }
+
+            this.refresh();
         }
 
         hideDropdown() {
@@ -155,6 +152,23 @@ module api_ui_combobox {
                 values.push(item.value);
             });
             return values.join(';');
+        }
+
+        setInputIconUrl(iconUrl:string) {
+            if (!this.icon) {
+                this.icon = new api_dom.ImgEl();
+                this.icon.addClass("input-icon");
+                this.icon.insertBeforeEl(this.input);
+            }
+
+            this.icon.getEl().setSrc(iconUrl);
+        }
+
+        refresh() {
+            this.dropdown.render();
+            this.adjustDropdownSize();
+            this.adjustEmptyDropdownSize();
+            this.updateDropdownStyles();
         }
 
         private setupListeners() {
