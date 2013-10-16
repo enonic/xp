@@ -1,4 +1,4 @@
-package com.enonic.wem.web.boot;
+package com.enonic.wem.boot;
 
 import com.google.inject.AbstractModule;
 

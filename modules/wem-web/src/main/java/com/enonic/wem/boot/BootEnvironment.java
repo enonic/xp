@@ -1,4 +1,4 @@
-package com.enonic.wem.web.boot;
+package com.enonic.wem.boot;
 
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
