@@ -90,7 +90,9 @@ module app_wizard_form_input_type {
 
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
-                    this.updateComboBoxData(newValue);
+                    this.updateComboBoxData(newValue).done((jsonResponse:api_rest.JsonResponse) => {
+                        comboBox.showDropdown();
+                    });
                 }
             });
 
@@ -121,17 +123,16 @@ module app_wizard_form_input_type {
             this.comboBox.setInputIconUrl(iconUrl);
         }
 
-        private updateComboBoxData(searchString:string) {
+        private updateComboBoxData(searchString:string):JQueryPromise<api_rest.Response> {
             if (!this.contentRequestsAllowed || !this.comboBox) {
                 return;
             }
 
-            this.findContentRequest.setFulltext(searchString).send()
+            return this.findContentRequest.setFulltext(searchString).send()
                 .done((jsonResponse:api_rest.JsonResponse) => {
                     var response = jsonResponse.getJson();
                     var options = this.convertToComboBoxData(api_content.ContentSummary.fromJsonArray(response.contents));
                     this.comboBox.setOptions(options);
-                    this.comboBox.refresh();
                 })
             ;
         }
