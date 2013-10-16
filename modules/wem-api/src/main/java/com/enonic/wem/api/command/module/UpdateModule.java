@@ -22,12 +22,12 @@ public final class UpdateModule
         return this;
     }
 
-    ModuleKey getModuleKey()
+    public ModuleKey getModuleKey()
     {
         return moduleKey;
     }
 
-    ModuleEditor getEditor()
+    public ModuleEditor getEditor()
     {
         return editor;
     }
