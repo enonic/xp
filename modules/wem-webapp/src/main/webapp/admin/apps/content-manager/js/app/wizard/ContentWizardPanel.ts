@@ -172,12 +172,24 @@ module app_wizard {
 
         private frame:api_dom.IFrameEl;
 
-        constructor(url?:string) {
+        constructor(url:string = "../../../dev/live-edit-page/bootstrap.jsp?edit=true") {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
+
             this.frame = new api_dom.IFrameEl();
+            this.frame.addClass("live-edit-frame");
+            this.frame.setSrc(url);
             this.appendChild(this.frame);
-            this.frame.setSrc("../../../dev/live-edit-page/bootstrap.jsp?edit=true");
+
+            // Wait for iframe to be loaded before adding context window!
+            var intervalId = setInterval(() => {
+                if (this.frame.isLoaded()) {
+                    var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame});
+                    this.appendChild(contextWindow);
+                    clearInterval(intervalId);
+                }
+            }, 200);
+
         }
 
     }

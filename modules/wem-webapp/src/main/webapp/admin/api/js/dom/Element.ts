@@ -66,9 +66,21 @@ module api_dom {
             return this;
         }
 
+        showCallback() {
+
+        }
+
+        private doShowCallback() {
+            this.showCallback();
+            this.children.forEach((child) => {
+                child.doShowCallback();
+            })
+        }
+
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             jQuery(this.el.getHTMLElement()).show();
+            this.doShowCallback();
         }
 
         hide() {
