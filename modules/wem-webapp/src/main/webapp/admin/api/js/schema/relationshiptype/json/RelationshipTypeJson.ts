@@ -1,18 +1,19 @@
 module api_schema_relationshiptype_json {
 
-    export class RelationshipTypeJson {
+    export interface RelationshipTypeJson extends api_item.ItemJson{
 
         iconUrl:string;
-        name:string;
-        displayName:string;
-        fromSemantic:string;
-        toSemantic:string;
-        allowedFromTypes:string[];
-        allowedToTypes:string[];
-        modifiedTime:string;
-        createdTime:string;
-        editable:boolean;
-        deletable:boolean;
 
+        name:string;
+
+        displayName:string;
+
+        fromSemantic:string;
+
+        toSemantic:string;
+
+        allowedFromTypes:string[];
+
+        allowedToTypes:string[];
     }
 }

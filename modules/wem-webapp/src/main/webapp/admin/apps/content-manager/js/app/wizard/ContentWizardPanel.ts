@@ -1,6 +1,6 @@
 module app_wizard {
 
-    export class ContentWizardPanel extends api_app_wizard.WizardPanel {
+    export class ContentWizardPanel extends api_app_wizard.WizardPanel<api_content.Content> {
 
         public static NEW_WIZARD_HEADER = "New Content";
 
@@ -13,10 +13,6 @@ module app_wizard {
         private renderingNew:boolean;
 
         private contentType:api_schema_content.ContentType;
-
-        private duplicateAction:api_ui.Action;
-
-        private deleteAction:api_ui.Action;
 
         private formIcon:api_app_wizard.FormIcon;
 
@@ -38,17 +34,13 @@ module app_wizard {
             this.formIcon = new api_app_wizard.FormIcon(ContentWizardPanel.DEFAULT_CONTENT_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
-            var closeAction = new api_app_wizard.CloseAction(this);
-            var saveAction = new api_app_wizard.SaveAction(this);
-
-            this.duplicateAction = new DuplicateContentAction();
-            this.deleteAction = new DeleteContentAction();
+            var actions = new ContentWizardActions(this);
 
             var toolbar = new ContentWizardToolbar({
-                saveAction: saveAction,
-                duplicateAction: this.duplicateAction,
-                deleteAction: this.deleteAction,
-                closeAction: closeAction
+                saveAction: actions.getSaveAction(),
+                duplicateAction: actions.getDuplicateAction(),
+                deleteAction: actions.getDeleteAction(),
+                closeAction: actions.getCloseAction()
             });
 
             var livePanel = new LiveFormPanel();
@@ -57,6 +49,7 @@ module app_wizard {
                 formIcon: this.formIcon,
                 toolbar: toolbar,
                 header: this.contentWizardHeader,
+                actions: actions,
                 livePanel: livePanel
             });
 
@@ -102,6 +95,7 @@ module app_wizard {
         }
 
         renderNew() {
+            super.renderNew();
             this.contentForm.renderNew();
             this.renderingNew = true;
         }

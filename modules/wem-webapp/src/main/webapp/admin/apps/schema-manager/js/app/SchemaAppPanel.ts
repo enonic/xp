@@ -17,7 +17,7 @@ module app {
             this.handleGlobalEvents();
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel<any>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().addListener(
@@ -73,6 +73,7 @@ module app {
 
                     this.addWizardPanel(tabMenuItem, schemaWizardPanel);
                     schemaWizardPanel.reRender();
+                    schemaWizardPanel.renderNew();
                 }
             });
 

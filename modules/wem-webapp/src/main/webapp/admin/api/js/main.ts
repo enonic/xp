@@ -176,6 +176,7 @@
 ///<reference path='data/_module.ts' />
 
 ///<reference path='item/ItemJson.ts' />
+///<reference path='item/Item.ts' />
 
 ///<reference path='content/json/module.ts' />
 ///<reference path='content/module.ts' />
@@ -198,8 +199,8 @@
 
 ///<reference path='app/wizard/SaveAction.ts' />
 ///<reference path='app/wizard/CloseAction.ts' />
+///<reference path='app/wizard/WizardActions.ts' />
 ///<reference path='app/wizard/FormIcon.ts' />
-///<reference path='app/wizard/WizardEvents.ts' />
 ///<reference path='app/wizard/WizardHeaderListener.ts' />
 ///<reference path='app/wizard/WizardHeader.ts' />
 ///<reference path='app/wizard/WizardHeaderWithDisplayNameAndName.ts' />

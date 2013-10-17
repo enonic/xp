@@ -1,6 +1,6 @@
 module api_schema_content{
 
-    export class ContentTypeSummary {
+    export class ContentTypeSummary extends api_item.Item {
 
         private name:string;
 
@@ -20,15 +20,13 @@ module api_schema_content{
 
         private iconUrl:string;
 
-        private createdTime:Date;
-
-        private modifiedTime:Date;
-
         private modifier:string;
 
         private owner:string;
 
+
         constructor(json:api_schema_content_json.ContentTypeSummaryJson) {
+            super(json);
             this.name = json.name;
             this.qualifiedName = json.qualifiedName;
             this.displayName = json.displayName;
@@ -38,8 +36,6 @@ module api_schema_content{
             this.superType = json.superType;
             this.contentDisplayNameScript = json.contentDisplayNameScript;
             this.iconUrl = json.iconUrl;
-            this.createdTime = new Date(json.createdTime);
-            this.modifiedTime = new Date(json.modifiedTime);
             this.owner = json.owner;
             this.modifier = json.modifier;
         }
@@ -74,14 +70,6 @@ module api_schema_content{
 
         getContentDisplayNameScript():string {
             return this.contentDisplayNameScript;
-        }
-
-        getCreatedTime():Date {
-            return this.createdTime;
-        }
-
-        getModifiedTime():Date {
-            return this.modifiedTime;
         }
 
         getOwner():string {

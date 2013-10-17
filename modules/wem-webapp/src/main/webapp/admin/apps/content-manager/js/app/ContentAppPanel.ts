@@ -33,7 +33,7 @@ module app {
             });
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel<api_content.Content>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().addListener(
@@ -66,10 +66,9 @@ module app {
                         tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentWizardPanel.NEW_WIZARD_HEADER, tabId);
                         var wizardPanel = new app_wizard.ContentWizardPanel(newContentType, parentContent);
                         wizardPanel.renderNew();
-
                         this.addWizardPanel(tabMenuItem, wizardPanel);
-
                         wizardPanel.reRender();
+
                     });
             }
         }

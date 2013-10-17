@@ -15,7 +15,7 @@ module app {
             this.handleGlobalEvents();
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel<api_remote_space.Space>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().addListener(
@@ -46,6 +46,7 @@ module app {
                 } else {
                     tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.SpaceWizardPanel.NEW_WIZARD_HEADER, tabId);
                     var spaceWizardPanel = new app_wizard.SpaceWizardPanel();
+                    spaceWizardPanel.renderNew();
                     this.addWizardPanel(tabMenuItem, spaceWizardPanel);
                     spaceWizardPanel.reRender();
                 }

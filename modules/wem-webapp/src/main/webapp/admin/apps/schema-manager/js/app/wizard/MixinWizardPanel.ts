@@ -1,14 +1,10 @@
 module app_wizard {
 
-    export class MixinWizardPanel extends api_app_wizard.WizardPanel {
+    export class MixinWizardPanel extends api_app_wizard.WizardPanel<api_schema_mixin.Mixin> {
 
         public static NEW_WIZARD_HEADER = "New Mixin";
 
         private static DEFAULT_CHEMA_ICON_URL:string = api_util.getRestUri('schema/image/Mixin:_');
-
-        private saveAction:api_ui.Action;
-
-        private closeAction:api_ui.Action;
 
         private formIcon:api_app_wizard.FormIcon;
 
@@ -25,17 +21,19 @@ module app_wizard {
             new api_app_wizard.FormIcon(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
-            this.closeAction = new api_app_wizard.CloseAction(this);
-            this.saveAction = new api_app_wizard.SaveAction(this);
+            var actions = new MixinWizardActions(this);
 
             var toolbar = new MixinWizardToolbar({
-                saveAction: this.saveAction,
-                closeAction: this.closeAction
+                 saveAction: actions.getSaveAction(),
+                 duplicateAction: actions.getDuplicateAction(),
+                 deleteAction: actions.getDeleteAction(),
+                 closeAction: actions.getCloseAction()
             });
 
             super({
                 formIcon: this.formIcon,
                 toolbar: toolbar,
+                actions: actions,
                 header: this.mixinWizardHeader
             });
 
