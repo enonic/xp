@@ -13,7 +13,6 @@ module api_event {
 
         fire() {
             fireEvent(this);
-            console.log("Firing event", this.name);
         }
     }
 }
