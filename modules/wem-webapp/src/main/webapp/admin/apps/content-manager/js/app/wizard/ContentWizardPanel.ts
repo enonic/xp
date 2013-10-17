@@ -97,6 +97,10 @@ module app_wizard {
             });
         }
 
+        showCallback() {
+            app.Router.setHash("edit/" + this.persistedContent.getId());
+        }
+
         renderNew() {
             this.contentForm.renderNew();
             this.renderingNew = true;

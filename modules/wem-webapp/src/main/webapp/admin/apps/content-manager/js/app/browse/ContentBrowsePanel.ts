@@ -81,6 +81,10 @@ module app_browse {
             });
         }
 
+        showCallback() {
+            app.Router.setHash("browse");
+        }
+
         getActions():api_ui.Action[] {
             var actions = super.getActions();
             // TODO: Ensures shortcut for showing new experimental content grid without having the action in the toolbar

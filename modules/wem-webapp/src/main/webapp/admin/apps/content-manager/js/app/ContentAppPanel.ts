@@ -26,7 +26,6 @@ module app {
             api_app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
                 this.getAppBarTabMenu().deselectNavigationItem();
-                Router.setHash("browse");
             });
 
             app_browse.CloseContentEvent.on((event) => {
@@ -143,7 +142,6 @@ module app {
                                 contentWizardPanel.setPersistedItem(contentToEdit);
                                 this.addWizardPanel(tabMenuItem, contentWizardPanel);
                             }
-                            app.Router.setHash("edit/"+contentToEdit.getId());
                         });
 
                 }

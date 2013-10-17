@@ -45,7 +45,6 @@ module app_browse {
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 var content = this.extModelsToContentSummaries(treeGridPanel.getSelection());
-                app.Router.setHash("edit/"+content[content.length-1].getId());
                 new EditContentEvent(content).fire();
             });
         }
