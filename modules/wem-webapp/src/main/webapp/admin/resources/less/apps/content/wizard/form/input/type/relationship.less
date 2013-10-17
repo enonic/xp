@@ -11,8 +11,14 @@
     border: none;
     .box-sizing(content-box);
 
-    &.selected .content-summary .display-name {
-      color: #d3d3d3;
+    &.selected {
+      .icon {
+        opacity: 0.5;
+      }
+
+      .content-summary .display-name {
+        color: #d3d3d3;
+      }
     }
 
     .icon {
