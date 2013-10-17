@@ -44,7 +44,9 @@ module app_browse {
             super("Edit", "f4");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new EditContentEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
+                var content = this.extModelsToContentSummaries(treeGridPanel.getSelection());
+                app.Router.setHash("edit/"+content[content.length-1].getId());
+                new EditContentEvent(content).fire();
             });
         }
     }

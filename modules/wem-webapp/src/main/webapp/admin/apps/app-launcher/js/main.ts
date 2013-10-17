@@ -107,3 +107,9 @@ function appLoaded(appName:string) {
     var app = app_launcher.Applications.getAppByName(appName);
     app.setLoaded(true);
 }
+
+function setHash(path:string) {
+    hasher.changed.active = false;
+    hasher.setHash(path);
+    hasher.changed.active = true;
+}

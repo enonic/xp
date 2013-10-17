@@ -17,6 +17,7 @@
 ///<reference path='lib/codemirror.d.ts' />
 ///<reference path='lib/slickgrid.d.ts' />
 ///<reference path='lib/slickgrid-plugins.d.ts' />
+///<reference path='lib/hasher.d.ts' />
 
 ///<reference path='util/ImageLoader.ts' />
 ///<reference path='util/UriHelper.ts' />

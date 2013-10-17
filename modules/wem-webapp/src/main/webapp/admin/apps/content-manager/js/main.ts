@@ -117,9 +117,13 @@ window.onload = () => {
             });
     });
     if (window.parent["appLoaded"]) {
-        window.parent["appLoaded"](jQuery(window.frameElement).data("wem-app"));
+        window.parent["appLoaded"](getAppName());
     }
 };
+
+function getAppName():string {
+    return jQuery(window.frameElement).data("wem-app");
+}
 
 function route(path:api_rest.Path) {
     var action = path.getElement(0);
