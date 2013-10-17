@@ -245,6 +245,10 @@ module api_dom {
             this.mouseEnterLeave(this.getHTMLElement(), 'mouseleave', handler);
         }
 
+        setBackgroundImgUrl(backgroundImgUrl:string) {
+            this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
+        }
+
         private mouseEnterLeave(elem:HTMLElement, type:string, handler:(e:MouseEvent)=>any) {
             var mouseEnter = type === 'mouseenter',
                 ie = mouseEnter ? 'fromElement' : 'toElement',

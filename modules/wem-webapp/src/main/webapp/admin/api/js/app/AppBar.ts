@@ -52,6 +52,8 @@ module api_app {
             this.launcherButton.setClickListener((event) => {
                 appManager.showLauncher();
             });
+
+            this.setBackgroundImgUrl(api_util.getRestUri('ui/background.jpg'));
         }
 
         getTabMenu():AppBarTabMenu {
