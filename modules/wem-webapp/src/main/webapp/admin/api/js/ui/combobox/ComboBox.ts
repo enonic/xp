@@ -198,7 +198,10 @@ module api_ui_combobox {
                 if (event.which == 9) { // tab
                     this.hideDropdown();
                     return;
+                } else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
+                    return;
                 }
+
                 if (!this.dropdown.getActiveCell()) {
                     this.dropdown.setActiveCell(0, 0);
                 }
@@ -216,6 +219,7 @@ module api_ui_combobox {
                     this.dropdown.setActiveCell((activeCell.row + 1) % rowsLength, 0);
                 } else if (event.which == 13) { // enter
                     this.selectRow(activeCell.row);
+                    this.input.getEl().setValue("");
                 } else if (event.which == 27) { // esc
                     this.hideDropdown();
                 }
