@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.binary.BinaryId;
+import com.enonic.wem.api.data.type.InconvertibleValueException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertSame;
@@ -80,4 +81,28 @@ public class ValueTest
         assertEquals( value, new Value.DateMidnight( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).getDate() );
         assertEquals( value, new Value.DateMidnight( "2013-1-1" ).getDate() );
     }
+
+    @Test(expected = InconvertibleValueException.class)
+    public void convert_non_numeric_string_double()
+    {
+        new Value.String( "test" ).asDouble();
+    }
+
+    @Test
+    public void convert_numeric_string_double()
+    {
+        final Double doubleValue = new Value.String( "123" ).asDouble();
+        assertEquals( 123.0, doubleValue );
+    }
+
+    @Test
+    public void convert_numeric_string_with_point_double()
+    {
+        final Double doubleValue = new Value.String( "123.5" ).asDouble();
+        assertEquals( 123.5, doubleValue );
+    }
+
+
 }
+
+

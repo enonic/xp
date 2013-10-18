@@ -22,6 +22,7 @@ public final class Item
 {
     private final ItemId id;
 
+    // TODO: Class ItemName with restrictions; no whitespaces, not (only) underscore, likt 4.7 menu-item-name
     private final String name;
 
     private final ItemPath parent;
@@ -36,9 +37,12 @@ public final class Item
 
     private final UserKey modifier;
 
+    // TODO: Remove
     private final Icon icon;
 
     private final RootDataSet rootDataSet;
+
+    private final ItemIndexConfig itemIndexConfig;
 
     private Item( final Builder builder )
     {
@@ -54,6 +58,7 @@ public final class Item
         this.modifiedTime = builder.modifiedTime;
         this.modifier = builder.modifier;
         this.icon = builder.icon;
+        this.itemIndexConfig = builder.itemIndexConfig;
         this.rootDataSet = new RootDataSet();
         if ( builder.dataSet != null )
         {
@@ -129,6 +134,11 @@ public final class Item
         return rootDataSet.getProperty( path );
     }
 
+    public ItemIndexConfig getItemIndexConfig()
+    {
+        return itemIndexConfig;
+    }
+
     public DataSet dataSet( final String path )
     {
         return rootDataSet.getDataSet( path );
@@ -188,6 +198,8 @@ public final class Item
 
         private RootDataSet dataSet = new RootDataSet();
 
+        private ItemIndexConfig itemIndexConfig;
+
         public Builder()
         {
         }
@@ -203,6 +215,7 @@ public final class Item
             this.modifier = item.modifier;
             this.icon = item.icon;
             this.dataSet = item.rootDataSet;
+            this.itemIndexConfig = item.itemIndexConfig;
         }
 
         public Builder( final ItemId id )
@@ -264,6 +277,12 @@ public final class Item
             return this;
         }
 
+        public Builder itemIndexConfig( final ItemIndexConfig itemIndexConfig )
+        {
+            this.itemIndexConfig = itemIndexConfig;
+            return this;
+        }
+
         public Builder icon( final Icon value )
         {
             this.icon = value;
@@ -290,6 +309,7 @@ public final class Item
 
         public Builder property( final String path, final DateTime value )
         {
+
             if ( value != null )
             {
                 this.dataSet.setProperty( path, new Value.DateTime( value ) );

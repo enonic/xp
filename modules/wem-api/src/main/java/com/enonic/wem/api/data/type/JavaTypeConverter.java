@@ -153,7 +153,14 @@ public abstract class JavaTypeConverter<T>
             }
             else if ( value instanceof java.lang.String )
             {
-                return new java.lang.Double( (java.lang.String) value );
+                try
+                {
+                    return java.lang.Double.parseDouble( (java.lang.String) value );
+                }
+                catch ( NumberFormatException e )
+                {
+                    return null;
+                }
             }
             else if ( value instanceof java.lang.Long )
             {
@@ -229,19 +236,30 @@ public abstract class JavaTypeConverter<T>
 
         public org.joda.time.DateTime convertFrom( final Object value )
         {
-            if ( value instanceof org.joda.time.DateTime )
+            try
             {
-                return (org.joda.time.DateTime) value;
+                if ( value instanceof org.joda.time.DateMidnight )
+                {
+                    return (org.joda.time.DateTime) ( (org.joda.time.DateMidnight) value ).toDateTime();
+                }
+                if ( value instanceof org.joda.time.DateTime )
+                {
+                    return (org.joda.time.DateTime) value;
+                }
+                else if ( value instanceof java.lang.String )
+                {
+                    return FORMATTER.parseDateTime( (java.lang.String) value ).toDateTime();
+                }
+                else if ( value instanceof java.lang.Long )
+                {
+                    return new org.joda.time.DateTime( value );
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else if ( value instanceof java.lang.String )
-            {
-                return FORMATTER.parseDateTime( (java.lang.String) value ).toDateTime();
-            }
-            else if ( value instanceof java.lang.Long )
-            {
-                return new org.joda.time.DateTime( value );
-            }
-            else
+            catch ( IllegalArgumentException e )
             {
                 return null;
             }

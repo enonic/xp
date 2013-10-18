@@ -36,6 +36,21 @@ public abstract class Value<T>
         type.checkValidity( this );
     }
 
+    public boolean isDateType()
+    {
+        return ( this instanceof DateTime || this instanceof DateMidnight );
+    }
+
+    public boolean isNumericType()
+    {
+        return ( this instanceof Double || this instanceof Long );
+    }
+
+    public boolean isGeographicCoordinate()
+    {
+        return this instanceof GeographicCoordinate;
+    }
+
     public boolean isJavaType( Class javaType )
     {
         return javaType.isInstance( object );
@@ -123,7 +138,8 @@ public abstract class Value<T>
     /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
      *
-     * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
+     * @throws com.enonic.wem.api.data.type.InconvertibleValueException
+     *          if value is not convertible to String.
      */
     public java.lang.String asString()
         throws InconvertibleValueException
@@ -176,11 +192,15 @@ public abstract class Value<T>
     public java.lang.Double asDouble()
         throws InconvertibleValueException
     {
-        final java.lang.Double converted = JavaTypeConverter.Double.GET.convertFrom( object );
-        if ( object != null && converted == null )
+        final java.lang.Double converted;
+
+        converted = JavaTypeConverter.Double.GET.convertFrom( object );
+
+        if ( converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.Double.GET );
         }
+
         return converted;
     }
 

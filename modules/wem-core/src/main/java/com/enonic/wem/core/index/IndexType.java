@@ -2,6 +2,7 @@ package com.enonic.wem.core.index;
 
 public enum IndexType
 {
+    ITEM,
     ACCOUNT,
     CONTENT,
     BINARIES;

@@ -14,9 +14,5 @@ public class ItemType
 
         rootDataSet.setProperty( DataPath.from( parentPath, "enabled" ), new Value.String( java.lang.String.valueOf( config.enabled() ) ) );
 
-        if ( config.analyzer() != null )
-        {
-            rootDataSet.setProperty( DataPath.from( parentPath, "analyzer" ), new Value.String( config.analyzer() ) );
-        }
     }
 }
