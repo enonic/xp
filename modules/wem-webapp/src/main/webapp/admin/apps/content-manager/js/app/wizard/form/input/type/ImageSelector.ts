@@ -34,7 +34,7 @@ module app_wizard_form_input_type {
                     this.comboBox.setInputIconUrl(relationshipType.iconUrl);
                     this.findContentRequest.setContentTypes(relationshipType.allowedToTypes);
                     this.contentRequestsAllowed = true;
-                    this.updateComboBoxData("");
+                    this.loadOptions("");
                 })
             ;
         }
@@ -113,11 +113,11 @@ module app_wizard_form_input_type {
 
             var comboBox = new api_ui_combobox.ComboBox<api_content.ContentSummary>(input.getName(), comboBoxConfig);
 
-            this.updateComboBoxData("");
+            this.loadOptions("");
 
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
-                    this.updateComboBoxData(newValue).done((jsonResponse:api_rest.JsonResponse) => {
+                    this.loadOptions(newValue).done((jsonResponse:api_rest.JsonResponse) => {
                         this.comboBox.showDropdown();
                     });
                 }
@@ -126,7 +126,7 @@ module app_wizard_form_input_type {
             return comboBox;
         }
 
-        private updateComboBoxData(searchString:string):JQueryPromise<api_rest.Response> {
+        private loadOptions(searchString:string):JQueryPromise<api_rest.Response> {
             if (!this.contentRequestsAllowed || !this.comboBox) {
                 return;
             }
@@ -134,13 +134,13 @@ module app_wizard_form_input_type {
             return this.findContentRequest.setFulltext(searchString).send()
                 .done((jsonResponse:api_rest.JsonResponse) => {
                     var response = jsonResponse.getJson();
-                    var options = this.convertToComboBoxData(api_content.ContentSummary.fromJsonArray(response.contents));
+                    var options = this.createOptions(api_content.ContentSummary.fromJsonArray(response.contents));
                     this.comboBox.setOptions(options);
                 })
             ;
         }
 
-        private convertToComboBoxData(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {
+        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {
             var options = [];
             contents.forEach((content:api_content.ContentSummary) => {
                 options.push({

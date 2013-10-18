@@ -29,7 +29,7 @@ module app_wizard_form_input_type {
                     this.updateInputIcon(relationshipType.iconUrl);
                     this.findContentRequest.setContentTypes(relationshipType.allowedToTypes);
                     this.contentRequestsAllowed = true;
-                    this.updateComboBoxData("");
+                    this.loadOptions("");
                 })
             ;
         }
@@ -75,7 +75,7 @@ module app_wizard_form_input_type {
             this.appendChild(this.comboBox);
         }
 
-        createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
+        private createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
             var comboboxConfig = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>>{
                 rowHeight: 50,
                 optionFormatter: (row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.OptionData<api_content.ContentSummary>):string => {
@@ -86,11 +86,11 @@ module app_wizard_form_input_type {
             };
             var comboBox = new api_ui_combobox.ComboBox<api_content.ContentSummary>(input.getName(), comboboxConfig);
 
-            this.updateComboBoxData("");
+            this.loadOptions("");
 
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
-                    this.updateComboBoxData(newValue);
+                    this.loadOptions(newValue);
                 }
             });
 
@@ -121,7 +121,7 @@ module app_wizard_form_input_type {
             this.comboBox.setInputIconUrl(iconUrl);
         }
 
-        private updateComboBoxData(searchString:string) {
+        private loadOptions(searchString:string) {
             if (!this.contentRequestsAllowed || !this.comboBox) {
                 return;
             }
@@ -129,14 +129,14 @@ module app_wizard_form_input_type {
             this.findContentRequest.setFulltext(searchString).send()
                 .done((jsonResponse:api_rest.JsonResponse) => {
                     var response = jsonResponse.getJson();
-                    var options = this.convertToComboBoxData(api_content.ContentSummary.fromJsonArray(response.contents));
+                    var options = this.createOptions(api_content.ContentSummary.fromJsonArray(response.contents));
                     this.comboBox.setOptions(options);
                     this.comboBox.refresh();
                 })
             ;
         }
 
-        private convertToComboBoxData(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {
+        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {
             var options = [];
             contents.forEach((content:api_content.ContentSummary) => {
                 options.push({
