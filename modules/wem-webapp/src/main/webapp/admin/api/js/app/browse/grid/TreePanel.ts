@@ -6,6 +6,8 @@ module api_app_browse_grid {
 
         private listeners:TreePanelListener[] = [];
 
+        private expandedIds:string[] = [];
+
         constructor(treeStore:Ext_data_TreeStore, columns:any[], keyField:string, treeConfig?:Object) {
 
 
@@ -50,6 +52,10 @@ module api_app_browse_grid {
             this.extTreePanel.on("deselect", this.notifyDeselect, this);
             this.extTreePanel.on("itemdblclick", this.notifyItemDoubleClicked, this);
             this.extTreePanel.on("itemcontextmenu", this.handleItemContextMenuEvent, this);
+            this.extTreePanel.on("itemexpand", this.handleItemExpand, this);
+            this.extTreePanel.on("itemcollapse", this.handleItemCollapse, this);
+
+            treeStore.on("load", this.handleStoreLoad, this);
         }
 
         addListener(listener:TreePanelListener) {
@@ -114,6 +120,46 @@ module api_app_browse_grid {
                     });
                 }
             });
+        }
+
+        private handleItemExpand(node:Ext_data_NodeInterface, event:Ext_EventObject) {
+
+            var id = this.getNodeId(node);
+
+            for (var i = 0 ; i < this.expandedIds.length ; i++) {
+                if (this.expandedIds[i] == id) {
+                    return;
+                }
+            }
+            this.expandedIds.push(id);
+        }
+
+        private handleItemCollapse(node:Ext_data_NodeInterface, event:Ext_EventObject) {
+
+            var id = this.getNodeId(node);
+
+            for (var i = 0 ; i < this.expandedIds.length ; i++) {
+                if (this.expandedIds[i] == id) {
+                    this.expandedIds.splice(i, 1);
+                    return;
+                }
+            }
+        }
+
+        private handleStoreLoad(store:Ext_data_TreeStore, event:Ext_EventObject) {
+
+            for (var i = 0 ; i < this.expandedIds.length ; i++) {
+                var node = store.getNodeById(this.expandedIds[i]);
+                if (node && !node.isExpanded() && !node.hasChildNodes()) {
+                    node.expand();
+                    return;
+                }
+            }
+        }
+
+        private getNodeId(node:Ext_data_NodeInterface):string {
+            var path = node.getPath();
+            return path.substring(path.lastIndexOf("/") + 1);
         }
 
         getExt() {
