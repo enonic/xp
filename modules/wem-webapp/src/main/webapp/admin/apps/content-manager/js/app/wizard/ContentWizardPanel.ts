@@ -91,7 +91,9 @@ module app_wizard {
         }
 
         showCallback() {
-            app.Router.setHash("edit/" + this.persistedContent.getId());
+            if (this.persistedContent) {
+                app.Router.setHash("edit/" + this.persistedContent.getId());
+            }
         }
 
         renderNew() {
