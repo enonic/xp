@@ -91,8 +91,10 @@ module app_wizard {
         }
 
         showCallback() {
-            if (this.persistedContent) {
+            if(this.persistedContent) {
                 app.Router.setHash("edit/" + this.persistedContent.getId());
+            } else {
+                app.Router.setHash("new/" + this.contentType.getQualifiedName());
             }
         }
 
