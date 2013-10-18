@@ -1,9 +1,9 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,9 +11,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.schema.ContentTypeTreeJson;
@@ -23,6 +22,8 @@ import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.content.json.ValidateContentTypeJson;
+import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
+import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -102,44 +103,37 @@ public class ContentTypeResource
 
     @POST
     @Path("delete")
-    public void delete( @FormParam("qualifiedNames") final List<String> qualifiedNames )
+    @Consumes(MediaType.APPLICATION_JSON)
+    public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
-        final QualifiedContentTypeNames qualifiedContentTypeNames = QualifiedContentTypeNames.from( qualifiedNames );
+        final QualifiedContentTypeNames qualifiedContentTypeNames =
+            QualifiedContentTypeNames.from( params.getQualifiedNames().toArray( new String[0] ) );
 
-        final List<String> notFound = Lists.newArrayList();
-        final List<String> unableDelete = Lists.newArrayList();
-
+        final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( QualifiedContentTypeName contentTypeName : qualifiedContentTypeNames )
         {
             final DeleteContentType deleteContentType = Commands.contentType().delete().name( contentTypeName );
-            final DeleteContentTypeResult deleteResult = client.execute( deleteContentType );
-            switch ( deleteResult )
+            final DeleteContentTypeResult result = client.execute( deleteContentType );
+            switch ( result )
             {
                 case SUCCESS:
+                    deletionResult.success( contentTypeName );
                     break;
 
                 case NOT_FOUND:
-                    notFound.add( contentTypeName.toString() );
+                    deletionResult.failure( contentTypeName,
+                                            String.format( "ContentType [%s] was not found", contentTypeName.toString() ) );
+
                     break;
 
                 case UNABLE_TO_DELETE:
-                    unableDelete.add( contentTypeName.toString() );
+                    deletionResult.failure( contentTypeName,
+                                            String.format( "Unable to delete ContentType [%s]", contentTypeName.toString() ) );
                     break;
             }
         }
 
-        if ( !notFound.isEmpty() )
-        {
-            final String nameNotDeleted = Joiner.on( ", " ).join( notFound );
-            throw new NotFoundException( String.format( "ContentType [%s] was not found", nameNotDeleted ) );
-        }
-
-        if ( !unableDelete.isEmpty() )
-        {
-            final String nameNotDeleted = Joiner.on( ", " ).join( unableDelete );
-            throw new NotFoundException(
-                String.format( "Unable to delete content type [%s]: Content type is being used", nameNotDeleted ) );
-        }
+        return deletionResult;
     }
 
     @POST
