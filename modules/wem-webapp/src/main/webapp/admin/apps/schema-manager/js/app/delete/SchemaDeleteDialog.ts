@@ -4,8 +4,6 @@ module app_delete {
 
         private schemaToDelete:api_model.SchemaExtModel[];
 
-        private deleteHandler:api_handler.DeleteSchemaHandler = new api_handler.DeleteSchemaHandler();
-
         constructor() {
             super("Schema");
 
