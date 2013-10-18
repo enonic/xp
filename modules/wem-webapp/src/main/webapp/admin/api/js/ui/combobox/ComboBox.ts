@@ -52,6 +52,7 @@ module api_ui_combobox {
             }
 
             this.input = new api_ui.TextInput();
+            this.input.setPlaceholder("Type to search...");
             this.appendChild(this.input);
 
             this.emptyDropdown = new api_dom.DivEl(null, "empty-options");
@@ -194,6 +195,10 @@ module api_ui_combobox {
             });
 
             this.input.getEl().addEventListener('keydown', (event:any) => {
+                if (event.which == 9) { // tab
+                    this.hideDropdown();
+                    return;
+                }
                 if (!this.dropdown.getActiveCell()) {
                     this.dropdown.setActiveCell(0, 0);
                 }
@@ -211,6 +216,8 @@ module api_ui_combobox {
                     this.dropdown.setActiveCell((activeCell.row + 1) % rowsLength, 0);
                 } else if (event.which == 13) { // enter
                     this.selectRow(activeCell.row);
+                } else if (event.which == 27) { // esc
+                    this.hideDropdown();
                 }
 
                 this.input.getHTMLElement().focus();
@@ -251,6 +258,7 @@ module api_ui_combobox {
             this.hideDropdown();
 
             if (this.maximumOccurrencesReached()) {
+                this.input.setPlaceholder("Maximum reached");
                 this.input.getEl().setDisabled(true);
             }
         }
@@ -349,6 +357,7 @@ module api_ui_combobox {
 
             this.updateDropdownStyles();
 
+            this.input.setPlaceholder("Type to search...");
             this.input.getEl().setDisabled(false);
             this.input.getHTMLElement().focus();
         }
