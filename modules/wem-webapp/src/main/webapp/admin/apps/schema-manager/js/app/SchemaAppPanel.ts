@@ -106,8 +106,8 @@ module app {
                             break;
                         case SchemaAppPanel.RELATIONSHIP_TYPE:
                             new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(schemaModel.data.qualifiedName).
-                                send().done((jsonResponse:api_rest.JsonResponse) => {
-                                    var relationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.getJson().relationshipType);
+                                send().done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
+                                    var relationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.getResult());
 
                                     tabMenuItem = new api_app.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
 

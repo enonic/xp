@@ -4,7 +4,6 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
 
 public class RelationshipTypeConfigJson
-    extends AbstractRelationshipTypeJson
 {
     private final String contentTypeXml;
 

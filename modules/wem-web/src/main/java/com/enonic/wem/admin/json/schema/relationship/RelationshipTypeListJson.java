@@ -9,14 +9,14 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 public class RelationshipTypeListJson
 {
-    private final ImmutableList<RelationshipTypeResultJson> list;
+    private final ImmutableList<RelationshipTypeJson> list;
 
     public RelationshipTypeListJson( final RelationshipTypes relationshipTypes )
     {
-        final ImmutableList.Builder<RelationshipTypeResultJson> builder = ImmutableList.builder();
+        final ImmutableList.Builder<RelationshipTypeJson> builder = ImmutableList.builder();
         for ( final RelationshipType type : relationshipTypes.getList() )
         {
-            builder.add( new RelationshipTypeResultJson( type ) );
+            builder.add( new RelationshipTypeJson( type ) );
         }
 
         this.list = builder.build();
@@ -27,7 +27,7 @@ public class RelationshipTypeListJson
         return this.list.size();
     }
 
-    public List<RelationshipTypeResultJson> getRelationshipTypes()
+    public List<RelationshipTypeJson> getRelationshipTypes()
     {
         return this.list;
     }

@@ -30,7 +30,7 @@ module app_wizard_form_input_type {
 
             new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(config.relationshipType.name || "default").send()
                 .done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
-                    var relationshipType = <api_schema_relationshiptype_json.RelationshipTypeJson> jsonResponse.getJson().relationshipType;
+                    var relationshipType = jsonResponse.getResult();
                     this.comboBox.setInputIconUrl(relationshipType.iconUrl);
                     this.findContentRequest.setContentTypes(relationshipType.allowedToTypes);
                     this.contentRequestsAllowed = true;
