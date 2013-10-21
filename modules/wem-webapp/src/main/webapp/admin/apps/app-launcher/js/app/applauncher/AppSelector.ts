@@ -63,7 +63,9 @@ module app_launcher {
 
         afterRender() {
             super.afterRender();
-            this.homeAppSelector.addClass('fade-in-and-scale-up');
+            setTimeout(() => {
+                this.homeAppSelector.addClass('fade-in-and-scale-up');
+            }, 200);
         }
 
         private highlightNextAppTile() {
