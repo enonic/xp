@@ -6,7 +6,7 @@ module api_app_browse{
 
         treeGridPanel:api_app_browse_grid.TreeGridPanel;
 
-        treeGridPanel2?:api_app_browse_grid.GridPanel2;
+        treeGridPanel2?:api_app_browse_grid2.GridPanel2;
 
         browseItemPanel:BrowseItemPanel;
 
@@ -19,7 +19,7 @@ module api_app_browse{
 
         private treeGridPanel:api_app_browse_grid.TreeGridPanel;
 
-        private gridPanel2:api_app_browse_grid.GridPanel2;
+        private gridPanel2:api_app_browse_grid2.GridPanel2;
 
         private treeSwapperDeckPanel:api_ui.DeckPanel;
 

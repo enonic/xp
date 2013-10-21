@@ -1,6 +1,6 @@
 module api_schema_mixin {
 
-    export class Mixin extends api_item.Item {
+    export class Mixin extends api_item.BaseItem {
 
         private schemaKey:string;
 

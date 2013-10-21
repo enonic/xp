@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<link rel="stylesheet/less" type="text/css" href="../../../resources/less/styles.less">
+
+<link rel="stylesheet" type="text/css" href="../../../resources/lib/slickgrid/slick.grid.css">
+<link rel="stylesheet" type="text/css" href="../../../resources/lib/slickgrid/slick-default-theme.css">
+
+    <!-- Libraries -->
+<script type="text/javascript" src="../../../../admin/resources/lib/ext/ext-all-debug.js"></script>
+<script type="text/javascript" src="../../../../admin/resources/lib/plupload/js/plupload.full.js"></script>
+<script type="text/javascript" src="../../../resources/lib/jquery-2.0.2.js"></script>
+<script type="text/javascript" src="../../../resources/lib/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="../../../resources/lib/jquery.ui.live-draggable.js"></script>
+
+<script type="text/javascript" src="../../../resources/lib/slickgrid/lib/jquery.event.drag-2.2.js"></script>
+<script type="text/javascript" src="../../../resources/lib/slickgrid/lib/jquery.event.drop-2.2.js"></script>
+
+<script type="text/javascript" src="../../../resources/lib/slickgrid/slick.core.js"></script>
+<script type="text/javascript" src="../../../resources/lib/slickgrid/slick.dataview.js"></script>
+<script type="text/javascript" src="../../../resources/lib/slickgrid/slick.remotemodel.js"></script>
+<script type="text/javascript" src="../../../resources/lib/slickgrid/slick.rowselectionmodel.js"></script>
+<script type="text/javascript" src="../../../resources/lib/slickgrid/slick.rowselectionmodel.js"></script>
+<script type="text/javascript" src="../../../resources/lib/slickgrid/slick.checkboxselectcolumn.js"></script>
+<script type="text/javascript" src="../../../resources/lib/slickgrid/slick.formatters.js"></script>
+<script type="text/javascript" src="../../../resources/lib/slickgrid/slick.grid.js"></script>
+
+<script type="text/javascript">
+    $.noConflict();
+</script>
+<script type="text/javascript" src="../../../resources/lib/mousetrap.min.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript" src="../../../api/js/api.js"></script>
+<!-- Configuration -->
+<script type="text/javascript">
+
+    api_util.baseUri = '../../../..';
+
+</script>
+<script type="text/javascript" src="../../../resources/js/less.js"></script>
+<script type="text/javascript" src="../js/all.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+
+            var contentGrid = new app_browse_grid.ContentGridPanel2();
+            document.getElementById("content-grid").appendChild(contentGrid.getHTMLElement());
+            contentGrid.afterRender();
+        }
+    </script>
+<div id="content-grid"></div>
+</body>
+</html>

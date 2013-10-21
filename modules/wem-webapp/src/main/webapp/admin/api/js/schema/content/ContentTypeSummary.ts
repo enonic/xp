@@ -1,6 +1,6 @@
 module api_schema_content{
 
-    export class ContentTypeSummary extends api_item.Item {
+    export class ContentTypeSummary extends api_item.BaseItem {
 
         private name:string;
 

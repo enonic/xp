@@ -1,4 +1,4 @@
-module api_app_browse_grid {
+module api_app_browse_grid2 {
 
     export class DateTimeFormatter {
 

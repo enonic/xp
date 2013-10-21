@@ -175,8 +175,8 @@
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/_module.ts' />
 
-///<reference path='item/ItemJson.ts' />
-///<reference path='item/Item.ts' />
+///<reference path='item/_module.ts' />
+///<reference path='node/_module.ts' />
 
 ///<reference path='content/json/module.ts' />
 ///<reference path='content/module.ts' />
@@ -224,15 +224,8 @@
 ///<reference path='app/AppManager.ts'/>
 ///<reference path='app/AppManagerListener.ts'/>
 
-///<reference path='app/browse/grid/GridPanelListener.ts' />
-///<reference path='app/browse/grid/GridPanel.ts' />
-///<reference path='app/browse/grid/TreePanelListener.ts' />
-///<reference path='app/browse/grid/TreePanel.ts' />
-///<reference path='app/browse/grid/TreeGridPanelListener.ts' />
-///<reference path='app/browse/grid/TreeGridPanel.ts' />
-///<reference path='app/browse/grid/GridPanel2.ts' />
-///<reference path='app/browse/grid/NameFormatter.ts' />
-///<reference path='app/browse/grid/DateTimeFormatter.ts' />
+///<reference path='app/browse/grid/_module.ts' />
+///<reference path='app/browse/grid2/_module.ts' />
 
 ///<reference path='app/browse/BrowsePanel.ts' />
 ///<reference path='app/browse/BrowseItem.ts' />

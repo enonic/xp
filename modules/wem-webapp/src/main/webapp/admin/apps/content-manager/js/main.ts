@@ -37,7 +37,6 @@
 ///<reference path='app/browse/ContentBrowsePanel.ts' />
 ///<reference path='app/browse/grid/ContentTreeStore.ts' />
 ///<reference path='app/browse/grid/ContentGridStore.ts' />
-///<reference path='app/browse/grid/ContentNameFormatter.ts' />
 ///<reference path='app/browse/grid/ContentGridPanel2.ts' />
 ///<reference path='app/browse/ContentTreeGridPanel.ts' />
 

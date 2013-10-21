@@ -1,6 +1,6 @@
 module api_schema_relationshiptype {
 
-    export class RelationshipType extends api_item.Item{
+    export class RelationshipType extends api_item.BaseItem{
 
         private name:string;
 

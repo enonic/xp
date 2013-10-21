@@ -1,44 +1,16 @@
 module api_item{
 
-    export class Item {
+    export interface Item {
 
-        private id:string;
+        getId():string;
 
-        private createdTime:Date;
+        getCreatedTime():Date;
 
-        private modifiedTime:Date;
+        getModifiedTime():Date;
 
-        private deletable:boolean;
+        isDeletable():boolean;
 
-        private editable:boolean;
-
-        constructor(json:ItemJson) {
-            this.id = json.id;
-            this.createdTime = new Date(json.createdTime);
-            this.modifiedTime = new Date(json.modifiedTime);
-            this.deletable = json.deletable;
-            this.editable = json.editable;
-        }
-
-        getId():string {
-            return this.id;
-        }
-
-        getCreatedTime():Date {
-            return this.createdTime;
-        }
-
-        getModifiedTime():Date {
-            return this.modifiedTime;
-        }
-
-        isDeletable():boolean {
-            return this.deletable;
-        }
-
-        isEditable():boolean {
-            return this.editable;
-        }
+        isEditable():boolean;
     }
 
 }

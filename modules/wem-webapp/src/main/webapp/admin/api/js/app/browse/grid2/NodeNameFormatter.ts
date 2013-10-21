@@ -1,9 +1,13 @@
-module api_app_browse_grid {
+module api_app_browse_grid2 {
 
-    export class NameFormatter<T> {
+    export class NodeNameFormatter<T> {
 
-        static createHtml(mainName:string, subName:string, iconUrl:string):string {
+        static createHtml(node:api_node.Node, mainName:string, subName:string, iconUrl:string):string {
             var rowEl = new api_dom.DivEl();
+
+            if( node.hasChildren ) {
+
+            }
 
             var iconEl = new api_dom.ImgEl();
             iconEl.getEl().setSrc(iconUrl);

@@ -1,6 +1,6 @@
 module app_browse_grid {
 
-    export class ContentGridPanel2 extends api_app_browse_grid.GridPanel2 {
+    export class ContentGridPanel2 extends api_app_browse_grid2.GridPanel2 {
 
         private columns:api_ui_grid.GridColumn<api_content.ContentSummary>[] = [];
 
@@ -23,7 +23,7 @@ module app_browse_grid {
                 name: "ModifiedTime",
                 id: "modifiedTime",
                 field: "modifiedTime",
-                formatter:api_app_browse_grid.DateTimeFormatter.format
+                formatter:api_app_browse_grid2.DateTimeFormatter.format
             };
             this.columns = [column1, column2];
 

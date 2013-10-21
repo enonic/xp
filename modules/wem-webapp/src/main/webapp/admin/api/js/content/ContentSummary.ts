@@ -1,6 +1,6 @@
 module api_content{
 
-    export class ContentSummary extends api_item.Item {
+    export class ContentSummary extends api_item.BaseItem implements api_node.Node {
 
         private name:string;
 
