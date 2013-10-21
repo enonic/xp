@@ -1,18 +1,24 @@
 package com.enonic.wem.api.content.page;
 
 
-public class ControllerParam
+public final class ControllerParam
 {
-    private String name;
+    private final String name;
 
-    private Object value;
+    private String value;
+
+    public ControllerParam( final String name, final String value )
+    {
+        this.name = name;
+        this.value = value;
+    }
 
     public String getName()
     {
         return name;
     }
 
-    public Object getValue()
+    public String getValue()
     {
         return value;
     }

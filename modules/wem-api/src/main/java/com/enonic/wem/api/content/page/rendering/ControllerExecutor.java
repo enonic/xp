@@ -1,19 +1,26 @@
 package com.enonic.wem.api.content.page.rendering;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.collect.Lists;
+
+import com.enonic.wem.api.content.page.ControllerParam;
+import com.enonic.wem.api.content.page.ControllerParams;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.rendering.RenderingResult;
 
-public class ControllerExecutor
+import static com.enonic.wem.api.rendering.RenderingResult.newRenderingResult;
+
+public final class ControllerExecutor
 {
-    private Controller controller;
+    private final Controller controller;
 
-    private RootDataSet componentConfig;
+    private final RootDataSet componentConfig;
 
-    private RootDataSet templateConfig;
+    private final RootDataSet templateConfig;
 
     public ControllerExecutor( final Controller controller, final RootDataSet componentConfig, final RootDataSet templateConfig )
     {
@@ -25,16 +32,40 @@ public class ControllerExecutor
     RenderingResult execute()
     {
         // Resolve placeholders in controller params
-        List<ControllerParam> params = resolvePlaceholders( controller.getParams() );
+        ControllerParams params = resolvePlaceholders( controller.getParams() );
 
-        controller.execute();
-        return null;
+        final String controllerResult = controller.execute();
+        return newRenderingResult().success().build();
     }
 
-    private List<ControllerParam> resolvePlaceholders( List<ControllerParam> params )
+    private ControllerParams resolvePlaceholders( final ControllerParams params )
     {
-
-        return new ArrayList<>();
+        if ( params.isEmpty() )
+        {
+            return params;
+        }
+        final List<ControllerParam> resolvedParamList = Lists.newArrayList();
+        for ( ControllerParam param : params )
+        {
+            resolvedParamList.add( resolvePlaceholder( param ) );
+        }
+        return ControllerParams.from( resolvedParamList );
     }
 
+    private ControllerParam resolvePlaceholder( final ControllerParam param )
+    {
+        final String name = param.getName();
+        final boolean isPlaceHolder = name.startsWith( "${" ) && name.endsWith( "}" );
+        if ( isPlaceHolder )
+        {
+            final String key = StringUtils.substringBetween( name, "${", "}" );
+            if ( key.startsWith( "config" ) )
+            {
+                final String configKey = StringUtils.substringAfter( key, "config." );
+                final String value = componentConfig.getProperty( configKey ).getString();
+                return new ControllerParam( param.getName(), value );
+            }
+        }
+        return param;
+    }
 }

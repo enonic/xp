@@ -1,20 +1,22 @@
 package com.enonic.wem.api.content.page.rendering;
 
 
-import java.util.List;
+import com.enonic.wem.api.content.page.ControllerParams;
 
-public class Controller
+public abstract class Controller
 {
-    private List<ControllerParam> params;
+    private final ControllerParams params;
 
-    public List<ControllerParam> getParams()
+    protected Controller( final ControllerParams params )
+    {
+        this.params = params;
+    }
+
+    public ControllerParams getParams()
     {
         return params;
     }
 
-    public String execute()
-    {
+    public abstract String execute();
 
-        return null;
-    }
 }

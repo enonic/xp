@@ -1,23 +1,52 @@
 package com.enonic.wem.api.rendering;
 
 
+import java.util.concurrent.ConcurrentMap;
+
+import com.google.common.collect.Maps;
+
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.content.image.Image;
+import com.enonic.wem.api.content.image.ImageComponentType;
+import com.enonic.wem.api.content.page.Layout;
+import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.Part;
+import com.enonic.wem.api.content.page.rendering.LayoutComponentType;
+import com.enonic.wem.api.content.page.rendering.PageComponentType;
+import com.enonic.wem.api.content.page.rendering.PartComponentType;
 
-public class Renderer
+public final class Renderer
 {
-    private Client client = null;
+    private final ConcurrentMap<Class<? extends Component>, ComponentType> componentRegister;
 
-    RenderingResult renderComponent( Component component )
+    private final Client client ;
+
+    public Renderer( final Client client )
     {
+        this.client = client;
+        this.componentRegister = Maps.newConcurrentMap();
+        registerComponentType( Page.class, new PageComponentType() );
+        registerComponentType( Part.class, new PartComponentType() );
+        registerComponentType( Layout.class, new LayoutComponentType() );
+        registerComponentType( Image.class, new ImageComponentType() );
+    }
 
+    public RenderingResult renderComponent( final Component component )
+    {
         final ComponentType componentType = resolveComponentType( component );
-        componentType.execute( component, new Context(), client );
+        final Context context = new Context();
+        final RenderingResult result = componentType.execute( component, context, client );
 
-        return new RenderingResult();
+        return result;
     }
 
     private ComponentType resolveComponentType( final Component component )
     {
-        return null;
+        return this.componentRegister.get( component.getClass() );
+    }
+
+    public void registerComponentType( final Class<? extends Component> component, final ComponentType componentType )
+    {
+        this.componentRegister.put( component, componentType );
     }
 }

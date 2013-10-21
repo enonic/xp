@@ -3,22 +3,29 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.schema.content.form.Form;
 
 public class LayoutDescriptor
-    extends Descriptor
+    implements ComponentDescriptor
 {
-    ControllerSetup controller;
+    private String displayName;
+
+    private ControllerSetup controller;
 
     /**
      * Only for display in LayoutTemplate.
      */
-    Form templateConfig;
+    private Form templateConfig;
 
     /**
      * Only for display in Layout.
      */
-    Form config;
+    private Form config;
 
     /**
      * Only for display in Live Edit.
      */
-    Form liveEditConfig;
+    private Form liveEditConfig;
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
 }
