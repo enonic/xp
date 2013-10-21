@@ -1,6 +1,6 @@
 module api_content {
 
-    export class FindContentRequest extends ContentResourceRequest {
+    export class FindContentRequest<T> extends ContentResourceRequest<FindContentResult<T>> {
 
         public static EXPAND_NONE = 'none';
         public static EXPAND_SUMMARY = 'summary';

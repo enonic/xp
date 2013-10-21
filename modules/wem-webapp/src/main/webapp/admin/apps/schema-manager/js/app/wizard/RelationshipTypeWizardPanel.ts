@@ -50,8 +50,9 @@ module app_wizard {
 
             this.persistedRelationshipType = relationshipType;
 
-            new api_schema_relationshiptype.GetRelationshipTypeConfigByQualifiedNameRequest(relationshipType.getName()).send().done((response:any) => {
-                this.relationshipTypeForm.setFormData({"xml": response.json.relationshipTypeXml});
+            new api_schema_relationshiptype.GetRelationshipTypeConfigByQualifiedNameRequest(relationshipType.getName()).send().
+                done((response:api_rest.JsonResponse<api_schema_relationshiptype.GetRelationshipTypeConfigResult>) => {
+                this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
             });
 
         }

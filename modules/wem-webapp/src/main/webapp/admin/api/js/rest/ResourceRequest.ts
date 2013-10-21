@@ -1,6 +1,6 @@
 module api_rest {
 
-    export class ResourceRequest {
+    export class ResourceRequest<T> {
 
         private restPath:Path;
 
@@ -30,12 +30,12 @@ module api_rest {
 
             var deferred = jQuery.Deferred<Response>();
 
-            var jsonRequest = new JsonRequest().
+            var jsonRequest = new JsonRequest<T>().
             setMethod(this.method).
             setParams(this.getParams()).
             setPath(this.getRequestPath());
 
-            jsonRequest.setAsync((jsonResponse:JsonResponse) => {
+            jsonRequest.setAsync((jsonResponse:JsonResponse<T>) => {
                 deferred.resolve(jsonResponse);
             }, (requestError:RequestError) => {
                 deferred.fail(requestError);
@@ -43,5 +43,10 @@ module api_rest {
             jsonRequest.send();
             return deferred.promise();
         }
+
+        /*send2():ResponsePromise {
+
+        }*/
+
     }
 }

@@ -1,6 +1,6 @@
 module api_schema_relationshiptype {
 
-    export class GetRelationshipTypeConfigByQualifiedNameRequest extends RelationshipTypeResourceRequest {
+    export class GetRelationshipTypeConfigByQualifiedNameRequest extends RelationshipTypeResourceRequest<GetRelationshipTypeConfigResult> {
 
         private qualifiedName:string;
 

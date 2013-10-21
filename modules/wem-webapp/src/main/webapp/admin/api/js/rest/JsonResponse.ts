@@ -1,6 +1,6 @@
 module api_rest {
 
-    export class JsonResponse extends Response {
+    export class JsonResponse<T> extends Response {
 
         private json:any;
 
@@ -15,6 +15,10 @@ module api_rest {
 
         getJson():any {
             return this.json;
+        }
+
+        getResult():T {
+            return <T>this.json;
         }
     }
 }

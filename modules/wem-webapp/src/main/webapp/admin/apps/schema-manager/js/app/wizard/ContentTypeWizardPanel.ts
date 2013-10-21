@@ -52,8 +52,9 @@ module app_wizard {
 
             this.persistedContentType = contentType;
 
-            new api_schema_content.GetContentTypeConfigByQualifiedNameRequest(contentType.getQualifiedName()).send().done((response:any) => {
-                this.contentTypeForm.setFormData({"xml": response.json.contentTypeXml});
+            new api_schema_content.GetContentTypeConfigByQualifiedNameRequest(contentType.getQualifiedName()).send().
+                done((response:api_rest.JsonResponse<api_schema_content.GetContentTypeConfigResult>) => {
+                this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
             });
 
         }

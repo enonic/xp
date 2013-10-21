@@ -8,8 +8,10 @@
 ///<reference path='GetContentByPathRequest.ts' />
 ///<reference path='CreateContentRequest.ts' />
 ///<reference path='UpdateContentRequest.ts' />
+///<reference path='ListContentResult.ts' />
 ///<reference path='ListContentByIdRequest.ts' />
 ///<reference path='ListContentByPathRequest.ts' />
+///<reference path='FindContentResult.ts' />
 ///<reference path='FindContentRequest.ts' />
 ///<reference path='DeleteContentRequest.ts' />
 ///<reference path='ContentEvents.ts' />

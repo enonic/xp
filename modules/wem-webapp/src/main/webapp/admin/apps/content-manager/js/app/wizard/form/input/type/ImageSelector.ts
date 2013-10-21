@@ -18,7 +18,7 @@ module app_wizard_form_input_type {
 
         private uploadButton:api_ui.Button;
 
-        private findContentRequest:api_content.FindContentRequest;
+        private findContentRequest:api_content.FindContentRequest<api_content_json.ContentSummaryJson>;
 
         private contentRequestsAllowed:boolean;
 
@@ -29,7 +29,7 @@ module app_wizard_form_input_type {
             this.contentRequestsAllowed = false;  // requests aren't allowed until allowed contentTypes are specified
 
             new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(config.relationshipType.name || "default").send()
-                .done((jsonResponse:api_rest.JsonResponse) => {
+                .done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
                     var relationshipType = <api_schema_relationshiptype_json.RelationshipTypeJson> jsonResponse.getJson().relationshipType;
                     this.comboBox.setInputIconUrl(relationshipType.iconUrl);
                     this.findContentRequest.setContentTypes(relationshipType.allowedToTypes);
@@ -132,9 +132,9 @@ module app_wizard_form_input_type {
             }
 
             return this.findContentRequest.setFulltext(searchString).send()
-                .done((jsonResponse:api_rest.JsonResponse) => {
-                    var response = jsonResponse.getJson();
-                    var options = this.createOptions(api_content.ContentSummary.fromJsonArray(response.contents));
+                .done((jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
+                    var result = jsonResponse.getResult();
+                    var options = this.createOptions(api_content.ContentSummary.fromJsonArray(result.contents));
                     this.comboBox.setOptions(options);
                 })
             ;

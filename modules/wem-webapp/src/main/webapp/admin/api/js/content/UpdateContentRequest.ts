@@ -1,6 +1,6 @@
 module api_content {
 
-    export class UpdateContentRequest extends ContentResourceRequest {
+    export class UpdateContentRequest extends ContentResourceRequest<any> {
 
         private id:string;
 

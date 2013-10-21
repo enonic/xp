@@ -93,8 +93,8 @@ module app {
                         switch (schemaModel.data.type) {
                         case SchemaAppPanel.CONTENT_TYPE:
                             new api_schema_content.GetContentTypeByQualifiedNameRequest(schemaModel.data.qualifiedName).
-                                send().done((jsonResponse) => {
-                                    var contentType = new api_schema_content.ContentType(jsonResponse.json);
+                                send().done((jsonResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
+                                    var contentType = new api_schema_content.ContentType(jsonResponse.getResult());
 
                                     tabMenuItem = new api_app.AppBarTabMenuItem(contentType.getName(), tabId, true);
 
@@ -106,8 +106,8 @@ module app {
                             break;
                         case SchemaAppPanel.RELATIONSHIP_TYPE:
                             new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(schemaModel.data.qualifiedName).
-                                send().done((jsonResponse) => {
-                                    var relationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.json.relationshipType);
+                                send().done((jsonResponse:api_rest.JsonResponse) => {
+                                    var relationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.getJson().relationshipType);
 
                                     tabMenuItem = new api_app.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
 
@@ -119,8 +119,8 @@ module app {
                             break;
                         case SchemaAppPanel.MIXIN:
                             new api_schema_mixin.GetMixinByQualifiedNameRequest(schemaModel.data.qualifiedName).
-                                send().done((jsonResponse)=> {
-                                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.json);
+                                send().done((jsonResponse:api_rest.JsonResponse<api_schema_mixin_json.MixinJson>)=> {
+                                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.getResult());
                                     tabMenuItem = new api_app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
 
                                     schemaWizardPanel = new app_wizard.MixinWizardPanel();

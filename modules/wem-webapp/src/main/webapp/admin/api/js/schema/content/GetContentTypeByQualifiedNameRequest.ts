@@ -1,6 +1,6 @@
 module api_schema_content {
 
-    export class GetContentTypeByQualifiedNameRequest extends ContentTypeResourceRequest {
+    export class GetContentTypeByQualifiedNameRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeJson> {
 
         private qualifiedName:string;
 

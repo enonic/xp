@@ -1,6 +1,6 @@
 module api_schema_relationshiptype {
 
-    export class RelationshipTypeResourceRequest extends api_rest.ResourceRequest {
+    export class RelationshipTypeResourceRequest<T> extends api_rest.ResourceRequest<T> {
 
         private resourceUrl:api_rest.Path;
 

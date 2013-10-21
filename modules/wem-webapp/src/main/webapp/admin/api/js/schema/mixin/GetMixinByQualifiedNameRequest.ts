@@ -1,6 +1,7 @@
 module api_schema_mixin {
 
-    export class GetMixinByQualifiedNameRequest extends MixinResourceRequest {
+    export class GetMixinByQualifiedNameRequest extends MixinResourceRequest<api_schema_mixin_json.MixinJson> {
+
         private qualifiedName:string;
 
         constructor(qualifiedName:string) {

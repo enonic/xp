@@ -46,13 +46,9 @@ module app_browse_grid {
 
             this.appendChild(this.grid);
 
-
-            jQuery.when(new api_content.ListContentByIdRequest("").send()).
-                then((response:api_rest.JsonResponse) => {
-                    var contents:api_content.ContentSummary[] = [];
-                    response.getJson().contents.forEach((node) => {
-                        contents.push(new api_content.ContentSummary(node));
-                    });
+            new api_content.ListContentByIdRequest("").send().
+                then( (response:api_rest.JsonResponse<api_content.ListContentResult<api_content_json.ContentSummaryJson>>) => {
+                    var contents:api_content.ContentSummary[] = api_content.ContentSummary.fromJsonArray( response.getResult().contents );
                     this.initData(contents);
                 }
             );

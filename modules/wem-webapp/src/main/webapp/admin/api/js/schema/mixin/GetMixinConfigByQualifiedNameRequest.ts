@@ -1,6 +1,6 @@
 module api_schema_mixin {
 
-    export class GetMixinConfigByQualifiedNameRequest extends MixinResourceRequest {
+    export class GetMixinConfigByQualifiedNameRequest extends MixinResourceRequest<GetMixinConfigResult> {
 
         private qualifiedName:string;
 

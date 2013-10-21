@@ -13,7 +13,7 @@ module app_wizard_form_input_type {
 
         private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
 
-        private findContentRequest:api_content.FindContentRequest;
+        private findContentRequest:api_content.FindContentRequest<api_content_json.ContentSummaryJson>;
 
         private contentRequestsAllowed:boolean;
 
@@ -129,9 +129,9 @@ module app_wizard_form_input_type {
             }
 
             return this.findContentRequest.setFulltext(searchString).send()
-                .done((jsonResponse:api_rest.JsonResponse) => {
-                    var response = jsonResponse.getJson();
-                    var options = this.createOptions(api_content.ContentSummary.fromJsonArray(response.contents));
+                .done((jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
+                    var result = jsonResponse.getResult();
+                    var options = this.createOptions(api_content.ContentSummary.fromJsonArray(result.contents));
                     this.comboBox.setOptions(options);
                 })
             ;

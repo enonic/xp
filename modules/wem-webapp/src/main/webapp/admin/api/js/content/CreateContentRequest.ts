@@ -1,6 +1,6 @@
 module api_content {
 
-    export class CreateContentRequest extends ContentResourceRequest {
+    export class CreateContentRequest extends ContentResourceRequest<any> {
 
         private temporary:boolean = false;
 

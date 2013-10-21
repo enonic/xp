@@ -1,6 +1,6 @@
 module api_content {
 
-    export class ListContentByIdRequest extends ContentResourceRequest {
+    export class ListContentByIdRequest<T> extends ContentResourceRequest<ListContentResult<T>> {
 
         private parentId:string;
 

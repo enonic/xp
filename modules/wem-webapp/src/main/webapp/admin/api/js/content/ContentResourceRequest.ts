@@ -1,6 +1,6 @@
 module api_content {
 
-    export class ContentResourceRequest extends api_rest.ResourceRequest{
+    export class ContentResourceRequest<T> extends api_rest.ResourceRequest<T>{
 
         private resourcePath:api_rest.Path;
 

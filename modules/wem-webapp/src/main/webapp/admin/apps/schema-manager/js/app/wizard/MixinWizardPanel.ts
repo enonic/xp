@@ -51,8 +51,9 @@ module app_wizard {
 
             this.persistedMixin = mixin;
 
-            new api_schema_mixin.GetMixinConfigByQualifiedNameRequest(mixin.getName()).send().done((response:any) => {
-                this.mixinForm.setFormData({"xml": response.json.mixinXml});
+            new api_schema_mixin.GetMixinConfigByQualifiedNameRequest(mixin.getName()).send().
+                done((response:api_rest.JsonResponse<api_schema_mixin.GetMixinConfigResult>) => {
+                this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
             });
 
         }

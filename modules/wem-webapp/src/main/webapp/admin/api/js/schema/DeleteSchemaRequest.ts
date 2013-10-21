@@ -1,6 +1,6 @@
 module api_schema {
 
-    export class DeleteSchemaRequest extends api_rest.ResourceRequest {
+    export class DeleteSchemaRequest extends api_rest.ResourceRequest<any> {
 
         public static CONTENT_TYPE = "ContentType";
         public static RELATIONSHIP_TYPE = "RelationshipType";

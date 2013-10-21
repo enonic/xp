@@ -135,7 +135,8 @@ module app_wizard {
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setContentData(contentData).
-                send().done((createResponse:api_rest.JsonResponse) => {
+                send().done((createResponse:api_rest.JsonResponse<any>) => {
+
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
 
@@ -157,7 +158,7 @@ module app_wizard {
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setContentData(contentData).
-                send().done((updateResponse:api_rest.JsonResponse) => {
+                send().done((updateResponse:api_rest.JsonResponse<any>) => {
                     api_notify.showFeedback('Content was updated!');
                     console.log('content update response', updateResponse);
 

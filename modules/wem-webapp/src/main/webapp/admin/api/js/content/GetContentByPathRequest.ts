@@ -1,6 +1,6 @@
 module api_content {
 
-    export class GetContentByPathRequest extends ContentResourceRequest {
+    export class GetContentByPathRequest extends ContentResourceRequest<api_content_json.ContentJson> {
 
         private contentPath:ContentPath;
 

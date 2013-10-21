@@ -30,15 +30,15 @@ module app_browse_filter {
                         // but should all go under one facet name, i.e values['ranges']
                         var ranges = this.extractRangesFromFilterValues(values);
 
-                        new api_content.FindContentRequest(values['query'] ? values['query'][0] : undefined).
+                        new api_content.FindContentRequest<api_content.FindContentResult<api_content_json.ContentSummaryJson>>(values['query'] ? values['query'][0] : undefined).
                             setContentTypes(values['contentType']).
                             setSpaces(values['space']).
                             setRanges(ranges).
                             setExpand(api_content.FindContentRequest.EXPAND_SUMMARY).
-                            send().done((jsonResponse:api_rest.JsonResponse) => {
-                                var response = jsonResponse.getJson();
-                                this.updateFacets(api_facet.FacetFactory.createFacets(response.facets));
-                                new ContentBrowseSearchEvent(response.contents).fire();
+                            send().done((jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
+                                var result:api_content.FindContentResult<api_content_json.ContentSummaryJson> = jsonResponse.getResult();
+                                this.updateFacets(api_facet.FacetFactory.createFacets(result.facets));
+                                new ContentBrowseSearchEvent(result.contents).fire();
                             })
                         ;
 
