@@ -116,10 +116,17 @@ module api_ui_combobox {
                 this.dropdown.show();
             } else {
                 this.dropdown.hide();
+                this.emptyDropdown.getEl().setInnerHtml("No matching items");
                 this.emptyDropdown.show();
             }
 
             this.refresh();
+        }
+
+        showLabel(label:string) {
+            this.dropdown.hide();
+            this.emptyDropdown.getEl().setInnerHtml(label);
+            this.emptyDropdown.show();
         }
 
         hideDropdown() {
@@ -163,6 +170,13 @@ module api_ui_combobox {
             }
 
             this.icon.getEl().setSrc(iconUrl);
+        }
+
+        setDataLoading(isLoading:boolean) {
+            if (isLoading) {
+                this.emptyDropdown.getEl().setInnerHtml("Searching...");
+                this.emptyDropdown.show();
+            }
         }
 
         refresh() {

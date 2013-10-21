@@ -90,6 +90,7 @@ module app_wizard_form_input_type {
 
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
+                    this.comboBox.showLabel("Searching...");
                     this.loadOptions(newValue).done((jsonResponse:api_rest.JsonResponse) => {
                         comboBox.showDropdown();
                     });
