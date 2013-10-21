@@ -35,6 +35,8 @@ module api_app_browse{
 
         private gridAndToolbarContainer:api_ui.Panel;
 
+        private refreshNeeded:boolean = false;
+
         constructor(params:BrowsePanelParams) {
             super("BrowsePanel");
 
@@ -100,10 +102,20 @@ module api_app_browse{
             throw Error("To be implemented by inheritor");
         }
 
-        refreshGrid() {
-            if (this.treeGridPanel.isRefreshNeeded()) {
-                this.treeGridPanel.refresh();
+        refreshFilterAndGrid() {
+            if (this.isRefreshNeeded()) {
+                // do the search to update facets as well as the grid
+                this.filterPanel.search();
+                this.refreshNeeded = false;
             }
+        }
+
+        isRefreshNeeded():boolean {
+            return this.refreshNeeded;
+        }
+
+        setRefreshNeeded(refreshNeeded:boolean) {
+            this.refreshNeeded = refreshNeeded;
         }
 
         toggleShowingNewGrid() {

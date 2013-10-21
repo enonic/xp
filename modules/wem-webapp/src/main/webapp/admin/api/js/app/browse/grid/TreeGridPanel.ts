@@ -31,7 +31,6 @@ module api_app_browse_grid {
         private keyField:string = 'name';
         private activeList:string = "grid";
         private itemId:string;
-        private refreshNeeded:boolean = false;
 
         private contextMenu:api_ui_menu.ContextMenu;
 
@@ -232,7 +231,6 @@ module api_app_browse_grid {
             } else {
                 activeStore.load();
             }
-            this.refreshNeeded = false;
         }
 
         loadData(data:Object[], append?:boolean) {
@@ -248,14 +246,6 @@ module api_app_browse_grid {
                     root.appendChild(root.createNode(data[i]));
                 }
             }
-        }
-
-        isRefreshNeeded():boolean {
-            return this.refreshNeeded;
-        }
-
-        setRefreshNeeded(refreshNeeded:boolean) {
-            this.refreshNeeded = refreshNeeded;
         }
 
         removeAll() {
@@ -279,13 +269,18 @@ module api_app_browse_grid {
                 }
             } else {
                 var root = (<Ext_tree_Panel>activeList).getRootNode();
+                var nodesToRemove = [];
                 root.cascadeBy((childNode) => {
                     if (childNode.get(this.keyField) == keyFieldValue) {
-                        childNode.remove(false);
+                        nodesToRemove.push(childNode);
                         return false;
                     }
                     return true;
                 }, this);
+                for (var i = 0; i < nodesToRemove.length; i++) {
+                    // passing false to prevent store syncing
+                    nodesToRemove[i].remove(false);
+                }
             }
         }
 

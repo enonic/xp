@@ -61,12 +61,12 @@ module app_browse {
 
             api_content.ContentCreatedEvent.on((event) => {
                 console.log('On content created', event.getPath());
-                this.contentTreeGridPanel.setRefreshNeeded(true);
+                this.setRefreshNeeded(true);
             });
 
             api_content.ContentUpdatedEvent.on((event) => {
                 console.log('On content updated', event.getModel());
-                this.contentTreeGridPanel.setRefreshNeeded(true);
+                this.setRefreshNeeded(true);
             });
 
             this.contentTreeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{

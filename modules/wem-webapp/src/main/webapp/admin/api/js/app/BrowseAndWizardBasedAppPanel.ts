@@ -25,7 +25,7 @@ module api_app {
             this.addListener({
                 onPanelShown: (event:api_ui.PanelShownEvent) => {
                     if (event.panel === this.browsePanel) {
-                        this.browsePanel.refreshGrid();
+                        this.browsePanel.refreshFilterAndGrid();
                     }
 
                     var previousActions = this.resolveActions(event.previousPanel);
