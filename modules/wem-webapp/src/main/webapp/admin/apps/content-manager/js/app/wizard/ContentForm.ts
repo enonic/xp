@@ -4,7 +4,7 @@ module app_wizard {
 
         private form:api_form.Form;
 
-        private formView:app_wizard_form.FormView;
+        private formView:api_form.FormView;
 
         constructor(form:api_form.Form) {
             super("ContentForm");
@@ -24,7 +24,7 @@ module app_wizard {
 
         private layout(contentData?:api_content.ContentData) {
 
-            this.formView = new app_wizard_form.FormView(this.form, contentData);
+            this.formView = new api_form.FormView(this.form, contentData);
             this.appendChild(this.formView)
         }
 

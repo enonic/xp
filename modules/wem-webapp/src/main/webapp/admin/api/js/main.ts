@@ -58,6 +58,11 @@
 
 ///<reference path='form/json/_module.ts' />
 ///<reference path='form/_module.ts' />
+///<reference path='form/input/_module.ts' />
+///<reference path='form/input/type/_module.ts' />
+///<reference path='form/formitemset/_module.ts' />
+///<reference path='form/layout/_module.ts' />
+
 
 ///<reference path='node/_module.ts' />
 ///<reference path='item/_module.ts' />

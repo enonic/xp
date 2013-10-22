@@ -17,11 +17,6 @@
 
 
 ///<reference path='app/wizard/_module.ts' />
-///<reference path='app/wizard/form/_module.ts' />
-///<reference path='app/wizard/form/input/_module.ts' />
-///<reference path='app/wizard/form/input/type/_module.ts' />
-///<reference path='app/wizard/form/formitemset/_module.ts' />
-///<reference path='app/wizard/form/layout/_module.ts' />
 
 ///<reference path='handler/_module.ts' />
 
