@@ -70,5 +70,19 @@ module api_schema_content_form{
         getOccurrences():Occurrences {
             return this.occurrences;
         }
+
+        public toFormItemSetJson():api_schema_content_form_json.FormItemSetJson {
+
+            return <api_schema_content_form_json.FormItemSetJson>{
+                name: this.getName(),
+                formItemType: "FormItemSet",
+                customText : this.getCustomText(),
+                helpText : this.getHelpText(),
+                immutable : this.isImmutable(),
+                items : FormItem.formItemsToJson(this.getFormItems()),
+                label : this.getLabel(),
+                occurrences : this.getOccurrences().toJson(),
+            };
+        }
     }
 }

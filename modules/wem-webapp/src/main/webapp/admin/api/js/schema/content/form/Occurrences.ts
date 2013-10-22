@@ -29,5 +29,13 @@ module api_schema_content_form{
             }
             return occurrenceCount >= this.maximum;
         }
+
+        public toJson():api_schema_content_form_json.OccurrencesJson {
+
+            return <api_schema_content_form_json.OccurrencesJson>{
+                maximum : this.getMaximum(),
+                minimum : this.getMinimum()
+            };
+        }
     }
 }

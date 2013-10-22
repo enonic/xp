@@ -12,6 +12,6 @@ module api_schema_content_form_json{
 
         label:string;
 
-        occurrences:any;
+        occurrences:OccurrencesJson;
     }
 }

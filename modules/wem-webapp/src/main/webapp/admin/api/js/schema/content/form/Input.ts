@@ -69,5 +69,21 @@ module api_schema_content_form{
         getInputTypeConfig():any {
             return this.inputTypeConfig;
         }
+
+        public toInputJson():api_schema_content_form_json.InputJson {
+
+            return <api_schema_content_form_json.InputJson>{
+                name: this.getName(),
+                formItemType: "Input",
+                customText : this.getCustomText(),
+                helpText : this.getHelpText(),
+                immutable : this.isImmutable(),
+                indexed : this.isIndexed(),
+                label : this.getLabel(),
+                occurrences : this.getOccurrences().toJson(),
+                validationRegexp : this.getValidationRegex(),
+                inputType : this.getInputType().toJson()
+            };
+        }
     }
 }

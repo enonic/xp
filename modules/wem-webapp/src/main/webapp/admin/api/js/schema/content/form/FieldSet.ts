@@ -28,5 +28,15 @@ module api_schema_content_form{
         getFormItems():FormItem[] {
             return this.formItems;
         }
+
+        public toFieldSetJson():api_schema_content_form_json.FieldSetJson {
+
+            return <api_schema_content_form_json.FieldSetJson>{
+                name: this.getName(),
+                formItemType: "Layout",
+                items : FormItem.formItemsToJson(this.getFormItems()),
+                label : this.getLabel()
+            };
+        }
     }
 }

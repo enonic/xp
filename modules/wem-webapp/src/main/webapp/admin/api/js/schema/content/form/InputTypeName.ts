@@ -42,5 +42,12 @@ module api_schema_content_form{
         toString():string {
             return this.refString;
         }
+
+        public toJson():api_schema_content_form_json.InputTypeJson {
+
+            return <api_schema_content_form_json.InputTypeJson>{
+                name: this.toString()
+            };
+        }
     }
 }
