@@ -22,7 +22,7 @@ public class ContentTypeSummaryJson
     {
         this.contentType = contentType;
         this.iconUrl = SchemaImageUriResolver.resolve( contentType.getSchemaKey() );
-        this.editable = !this.contentType.isFinal();
+        this.editable = !this.contentType.isBuiltIn();
         this.deletable = !this.contentType.isBuiltIn();
     }
 
