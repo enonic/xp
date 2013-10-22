@@ -3,7 +3,7 @@
   <name>all_input_types</name>
   <display-name>All the Input Types</display-name>
   <content-display-name-script/>
-  <super-type>content</super-type>
+  <super-type>structured</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
   <is-built-in>false</is-built-in>

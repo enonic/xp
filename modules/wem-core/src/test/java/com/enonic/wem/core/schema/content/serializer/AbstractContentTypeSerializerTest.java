@@ -331,7 +331,7 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType.Builder contentTypeBuilder = newContentType().
             name( "all_input_types" ).
             displayName( "All the Input Types" ).
-            superType( QualifiedContentTypeName.from( "content" ) ).
+            superType( QualifiedContentTypeName.structured() ).
             setAbstract( false ).
             setFinal( true );
 

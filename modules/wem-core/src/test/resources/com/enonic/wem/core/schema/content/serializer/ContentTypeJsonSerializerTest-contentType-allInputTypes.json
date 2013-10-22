@@ -3,7 +3,7 @@
     "qualifiedName": "all_input_types",
     "displayName": "All the Input Types",
     "contentDisplayNameScript": null,
-    "superType": "content",
+    "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
     "isBuiltIn": false,
