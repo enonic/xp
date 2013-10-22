@@ -269,5 +269,9 @@ module api_dom {
             return window.getComputedStyle(this.el, pseudoElement).getPropertyValue(name);
         }
 
+        focuse() {
+            this.el.focus();
+        }
+
     }
 }
