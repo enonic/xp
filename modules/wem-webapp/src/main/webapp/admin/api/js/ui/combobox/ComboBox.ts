@@ -264,6 +264,34 @@ module api_ui_combobox {
             if (this.maximumOccurrencesReached()) {
                 this.input.setPlaceholder("Maximum reached");
                 this.input.getEl().setDisabled(true);
+                this.moveFocuseToNextInput();
+            }
+        }
+
+        private moveFocuseToNextInput() {
+            // get all inputs from this FormView
+            var focusableElements = document.querySelectorAll("input");
+
+            // find index of current input
+            var index = -1;
+            var inputEl = this.input.getHTMLElement();
+            for (var i = 0 ; i < focusableElements.length ; i++) {
+                if (inputEl == focusableElements.item(i)) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index < 0) {
+                return;
+            }
+
+            // set focus to the next visible input
+            for (var i = index + 1 ; i < focusableElements.length ; i++) {
+                var nextFocusable = api_dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(i));
+                if (nextFocusable.isVisible()) {
+                    nextFocusable.getEl().focuse();
+                    return;
+                }
             }
         }
 

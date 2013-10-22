@@ -25,7 +25,7 @@ module app_wizard_form_input_type {
 
             new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(config.relationshipType.name || "default").send()
                 .done((jsonResponse:api_rest.JsonResponse) => {
-                    var relationshipType = <api_schema_relationshiptype_json.RelationshipTypeJson> jsonResponse.getJson().relationshipType;
+                    var relationshipType = <api_schema_relationshiptype_json.RelationshipTypeJson> jsonResponse.getJson();
                     this.updateInputIcon(relationshipType.iconUrl);
                     this.findContentRequest.setContentTypes(relationshipType.allowedToTypes);
                     this.contentRequestsAllowed = true;
