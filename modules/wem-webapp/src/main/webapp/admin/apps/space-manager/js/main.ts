@@ -2,36 +2,15 @@
 ///<reference path='../../../api/js/lib/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='model/SpaceModel.ts' />
+///<reference path='model/_module.ts' />
 
-///<reference path='app/wizard/SpaceWizardEvents.ts' />
-///<reference path='app/wizard/SpaceWizardActions.ts' />
-///<reference path='app/wizard/SpaceWizardToolbar.ts' />
-///<reference path='app/wizard/SpaceForm.ts' />
-///<reference path='app/wizard/SpaceWizardPanel.ts' />
-
-///<reference path='app/browse/SpaceBrowseEvents.ts' />
-///<reference path='app/browse/SpaceBrowseActions.ts' />
-///<reference path='app/browse/SpaceBrowseToolbar.ts' />
-///<reference path='app/browse/SpaceBrowseItemPanel.ts' />
-///<reference path='app/browse/SpaceBrowsePanel.ts' />
-///<reference path='app/browse/SpaceTreeGridContextMenu.ts' />
-///<reference path='app/browse/grid/SpaceGridStore.ts' />
-///<reference path='app/browse/grid/SpaceTreeStore.ts' />
-///<reference path='app/browse/SpaceTreeGridPanel.ts' />
-
-///<reference path='app/browse/filter/SpaceBrowseFilterEvents.ts' />
-///<reference path='app/browse/filter/SpaceBrowseFilterPanel.ts' />
-
-///<reference path='app/view/SpaceItemStatisticsPanel.ts' />
-///<reference path='app/view/SpaceViewActions.ts' />
-///<reference path='app/view/SpaceItemViewToolbar.ts' />
-///<reference path='app/view/SpaceItemViewPanel.ts' />
-
-///<reference path='app/delete/DeletedEvent.ts' />
-///<reference path='app/delete/SpaceDeleteDialog.ts' />
-
-///<reference path='app/SpaceAppPanel.ts' />
+///<reference path='app/_module.ts' />
+///<reference path='app/browse/_module.ts' />
+///<reference path='app/browse/filter/_module.ts' />
+///<reference path='app/browse/grid/_module.ts' />
+///<reference path='app/delete/_module.ts' />
+///<reference path='app/view/_module.ts' />
+///<reference path='app/wizard/_module.ts' />
 
 
 declare var Ext;
