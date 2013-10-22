@@ -23,6 +23,18 @@ public final class LifecycleServiceImpl
 
     @Override
     public void startAll()
+    {
+        try
+        {
+            doStartAll();
+        }
+        catch ( final Exception e )
+        {
+            stopAll();
+        }
+    }
+
+    private void doStartAll()
         throws Exception
     {
         for ( final RunLevel level : RunLevel.all() )

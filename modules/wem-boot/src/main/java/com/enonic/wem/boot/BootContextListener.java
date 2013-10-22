@@ -15,6 +15,7 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import com.enonic.wem.core.lifecycle.LifecycleManager;
+import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.core.servlet.WebInitializer;
 
 public final class BootContextListener
@@ -43,11 +44,13 @@ public final class BootContextListener
 
         createInjector();
         configure( event.getServletContext() );
+        this.injector.getInstance( LifecycleService.class ).startAll();
     }
 
     @Override
     public void contextDestroyed( final ServletContextEvent event )
     {
+        this.injector.getInstance( LifecycleService.class ).stopAll();
         this.injector.getInstance( LifecycleManager.class ).dispose();
         this.env.destroy();
     }

@@ -86,17 +86,11 @@ public class LifecycleServiceImplTest
         assertEquals( 0, this.bean2.startCount );
         assertEquals( false, this.bean2.isRunning() );
 
-        try
-        {
-            this.service.startAll();
-            fail( "Should throw exception" );
-        }
-        catch ( final Exception e )
-        {
-            assertEquals( 1, this.bean1.startCount );
-            assertEquals( true, this.bean1.isRunning() );
-            assertEquals( 1, this.bean2.startCount );
-            assertEquals( false, this.bean2.isRunning() );
-        }
+        this.service.startAll();
+
+        assertEquals( 1, this.bean1.startCount );
+        assertEquals( false, this.bean1.isRunning() );
+        assertEquals( 1, this.bean2.startCount );
+        assertEquals( false, this.bean2.isRunning() );
     }
 }

@@ -9,15 +9,20 @@ import javax.inject.Inject;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.core.jcr.loader.JcrInitializer;
-import com.enonic.wem.core.lifecycle.InitializingBean;
-
+import com.enonic.wem.core.lifecycle.LifecycleBean;
+import com.enonic.wem.core.lifecycle.RunLevel;
 
 public final class StartupInitializer
-    implements InitializingBean
+    extends LifecycleBean
 {
     private JcrInitializer jcrInitializer;
 
     private List<InitializerTask> tasks;
+
+    public StartupInitializer()
+    {
+        super( RunLevel.L5 );
+    }
 
     @Inject
     public void setJcrInitializer( final JcrInitializer jcrInitializer )
@@ -34,10 +39,17 @@ public final class StartupInitializer
     }
 
     @Override
-    public void afterPropertiesSet()
+    protected void doStart()
         throws Exception
     {
         initialize( false );
+    }
+
+    @Override
+    protected void doStop()
+        throws Exception
+    {
+        // Do nothing
     }
 
     private void initializeTasks()

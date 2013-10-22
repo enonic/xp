@@ -11,17 +11,24 @@ import com.google.inject.Provider;
 
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.lifecycle.DisposableBean;
-import com.enonic.wem.core.lifecycle.InitializingBean;
 
 
 public final class JcrMicroKernelFactory
-    implements Provider<MicroKernel>, InitializingBean, DisposableBean
+    implements Provider<MicroKernel>, DisposableBean
 {
-    private MicroKernelImpl mk;
+    private final MicroKernelImpl mk;
 
-    private File location;
+    public JcrMicroKernelFactory()
+    {
+        this.mk = new MicroKernelImpl();
+    }
 
-    private boolean inMemoryRepo = false;
+    @Inject
+    public JcrMicroKernelFactory( final SystemConfig config )
+    {
+        final File location = new File( config.getDataDir(), "jcr" );
+        this.mk = new MicroKernelImpl( location.getAbsolutePath() );
+    }
 
     @Override
     public MicroKernel get()
@@ -29,35 +36,10 @@ public final class JcrMicroKernelFactory
         return this.mk;
     }
 
-    @Inject
-    public void setSystemConfig( final SystemConfig systemConfig )
-    {
-        this.location = new File( systemConfig.getDataDir(), "jcr" );
-    }
-
-    public void setInMemoryRepository( final boolean inMemory )
-    {
-        this.inMemoryRepo = inMemory;
-    }
-
     @Override
     public void destroy()
         throws Exception
     {
         this.mk.dispose();
-    }
-
-    @Override
-    public void afterPropertiesSet()
-        throws Exception
-    {
-        if ( inMemoryRepo )
-        {
-            this.mk = new MicroKernelImpl();
-        }
-        else
-        {
-            this.mk = new MicroKernelImpl( this.location.getAbsolutePath() );
-        }
     }
 }

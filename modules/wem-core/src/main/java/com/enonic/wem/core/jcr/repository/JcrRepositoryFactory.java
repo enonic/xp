@@ -23,28 +23,17 @@ import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
 
 import com.google.inject.Provider;
 
-import com.enonic.wem.core.lifecycle.InitializingBean;
-
 
 public final class JcrRepositoryFactory
-    implements Provider<Repository>, InitializingBean
+    implements Provider<Repository>
 {
-    private MicroKernel microKernel;
+    private final Repository repository;
 
-    private Repository repository;
-
-    @Override
-    public Repository get()
-    {
-        return this.repository;
-    }
-
-    @Override
-    public void afterPropertiesSet()
-        throws Exception
+    @Inject
+    public JcrRepositoryFactory( final MicroKernel microKernel )
     {
         final SecurityProvider securityProvider = new SecurityProviderImpl();
-        final Oak oak = new Oak( this.microKernel );
+        final Oak oak = new Oak( microKernel );
         oak.with( new InitialContent() );
         oak.with( JcrConflictHandler.JCR_CONFLICT_HANDLER );
         oak.with( new EditorHook( new VersionEditorProvider() ) );
@@ -61,9 +50,9 @@ public final class JcrRepositoryFactory
         this.repository = new RepositoryImpl( oak.createContentRepository(), oak.getExecutorService(), securityProvider );
     }
 
-    @Inject
-    public void setMicroKernel( final MicroKernel microKernel )
+    @Override
+    public Repository get()
     {
-        this.microKernel = microKernel;
+        return this.repository;
     }
 }

@@ -21,11 +21,11 @@ import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.index.elastic.IndexMapping;
 import com.enonic.wem.core.index.elastic.IndexMappingProvider;
 import com.enonic.wem.core.index.indexdocument.IndexDocument;
-import com.enonic.wem.core.lifecycle.InitializingBean;
-
+import com.enonic.wem.core.lifecycle.LifecycleBean;
+import com.enonic.wem.core.lifecycle.RunLevel;
 
 public class IndexService
-    implements InitializingBean
+    extends LifecycleBean
 {
     private final static Logger LOG = LoggerFactory.getLogger( IndexService.class );
 
@@ -37,8 +37,13 @@ public class IndexService
 
     private boolean doReindexOnEmptyIndex = true;
 
+    public IndexService()
+    {
+        super( RunLevel.L2 );
+    }
+
     @Override
-    public void afterPropertiesSet()
+    protected void doStart()
         throws Exception
     {
         elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );
@@ -53,6 +58,13 @@ public class IndexService
                 reindexService.reindexAccounts();
             }
         }
+    }
+
+    @Override
+    protected void doStop()
+        throws Exception
+    {
+        // Do nothing
     }
 
     private boolean indexExists()

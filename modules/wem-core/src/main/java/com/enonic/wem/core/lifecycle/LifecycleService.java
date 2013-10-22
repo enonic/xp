@@ -5,8 +5,7 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(LifecycleServiceImpl.class)
 public interface LifecycleService
 {
-    public void startAll()
-        throws Exception;
+    public void startAll();
 
     public void stopAll();
 }
