@@ -16,6 +16,7 @@ import com.enonic.wem.core.lifecycle.LifecycleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
+import com.enonic.wem.core.servlet.ServletModule;
 import com.enonic.wem.core.space.SpaceModule;
 import com.enonic.wem.core.userstore.UserStoreModule;
 import com.enonic.wem.migrate.MigrateModule;
@@ -26,6 +27,8 @@ public final class CoreModule
     @Override
     protected void configure()
     {
+        install( new ServletModule() );
+
         install( new HomeModule() );
         install( new LifecycleModule() );
         install( new ConfigModule() );
