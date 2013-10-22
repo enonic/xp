@@ -4,25 +4,10 @@
 ///<reference path='../../../api/js/lib/crossroads.d.ts' />
 ///<reference path='../../../api/js/lib/hasher.d.ts' />
 
-///<reference path='app/home/Branding.ts' />
-///<reference path='app/home/CenterPanel.ts' />
-///<reference path='app/home/HomeMainContainer.ts' />
-///<reference path='app/home/LinksContainer.ts' />
-///<reference path='app/home/InstallationInfo.ts' />
-///<reference path='app/home/VersionInfo.ts' />
-///<reference path='app/applauncher/Application.ts' />
-///<reference path='app/applauncher/Applications.ts' />
-///<reference path='app/applauncher/AppTile.ts' />
-///<reference path='app/applauncher/AppInfo.ts' />
-///<reference path='app/applauncher/AppSelectorListener.ts' />
-///<reference path='app/applauncher/AppSelector.ts' />
-///<reference path='app/applauncher/AppLauncher.ts' />
-///<reference path='app/applauncher/LostConnectionDetector.ts' />
-///<reference path='app/applauncher/LostConnectionDetectorListener.ts' />
-///<reference path='app/applauncher/AppRouter.ts' />
-///<reference path='app/login/LoginForm.ts' />
-///<reference path='app/login/UserStore.ts' />
-///<reference path='app/login/Authenticator.ts' />
+///<reference path='app/applauncher/_module.ts' />
+///<reference path='app/home/_module.ts' />
+///<reference path='app/login/_module.ts' />
+
 
 declare var Ext;
 declare var Admin;
