@@ -25,6 +25,7 @@
     <module>modules/wem-api</module>
     <module>modules/wem-core</module>
     <module>modules/wem-admin</module>
+    <module>modules/wem-admin-ui</module>
     <module>modules/wem-portal</module>
     <module>modules/wem-boot</module>
     <module>modules/wem-webapp</module>
