@@ -13,7 +13,7 @@ import com.enonic.wem.portal.image.ImageService;
 import com.enonic.wem.portal.image.ImageServiceImpl;
 import com.enonic.wem.portal.resource.ResourceService;
 import com.enonic.wem.portal.resource.ResourceServiceImpl;
-import com.enonic.wem.web.servlet.WebInitializerBinder;
+import com.enonic.wem.core.servlet.WebInitializerBinder;
 
 public final class PortalModule
     extends AbstractModule

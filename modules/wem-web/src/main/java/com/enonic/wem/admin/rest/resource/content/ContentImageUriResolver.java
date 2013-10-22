@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.servlet.ServletRequestUrlHelper;
 
 public final class ContentImageUriResolver
 {

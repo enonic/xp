@@ -3,7 +3,7 @@ package com.enonic.wem.admin.rest.resource.account;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.RoleAccount;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.servlet.ServletRequestUrlHelper;
 
 public final class AccountImageUriResolver
 {

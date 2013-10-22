@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcModule;
 import com.enonic.wem.admin.rest.RestModule;
-import com.enonic.wem.web.servlet.WebInitializerBinder;
+import com.enonic.wem.core.servlet.WebInitializerBinder;
 
 public final class AdminModule
     extends AbstractModule

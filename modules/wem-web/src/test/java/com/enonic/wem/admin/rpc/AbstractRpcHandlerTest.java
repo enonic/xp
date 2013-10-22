@@ -16,7 +16,7 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.jsonrpc.processor.JsonRpcProcessorImpl;
 import com.enonic.wem.admin.jsonrpc.processor.JsonRpcRequest;
 import com.enonic.wem.admin.jsonrpc.processor.JsonRpcResponse;
-import com.enonic.wem.web.servlet.ServletRequestHolder;
+import com.enonic.wem.core.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;
 

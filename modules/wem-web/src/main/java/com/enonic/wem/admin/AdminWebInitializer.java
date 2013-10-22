@@ -5,7 +5,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
 import com.enonic.wem.admin.rest.RestServlet;
-import com.enonic.wem.web.servlet.WebInitializer;
+import com.enonic.wem.core.servlet.WebInitializer;
 
 public final class AdminWebInitializer
     implements WebInitializer

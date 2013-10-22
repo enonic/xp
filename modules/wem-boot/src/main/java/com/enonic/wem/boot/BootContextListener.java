@@ -15,7 +15,7 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import com.enonic.wem.core.lifecycle.LifecycleManager;
-import com.enonic.wem.web.servlet.WebInitializer;
+import com.enonic.wem.core.servlet.WebInitializer;
 
 public final class BootContextListener
     implements ServletContextListener

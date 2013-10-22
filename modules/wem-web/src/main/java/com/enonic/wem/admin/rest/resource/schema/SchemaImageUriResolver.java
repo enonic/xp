@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.resource.schema;
 
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.servlet.ServletRequestUrlHelper;
 
 public final class SchemaImageUriResolver
 {

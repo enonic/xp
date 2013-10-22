@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rest.resource.space;
 
 import com.enonic.wem.api.space.SpaceName;
-import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
+import com.enonic.wem.core.servlet.ServletRequestUrlHelper;
 
 public final class SpaceImageUriResolver
 {

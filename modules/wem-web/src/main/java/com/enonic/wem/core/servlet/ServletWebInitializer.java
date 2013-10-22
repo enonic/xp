@@ -1,4 +1,4 @@
-package com.enonic.wem.web.servlet;
+package com.enonic.wem.core.servlet;
 
 import javax.servlet.ServletContext;
 
