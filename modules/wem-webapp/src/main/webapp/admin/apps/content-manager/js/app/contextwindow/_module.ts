@@ -1,0 +1,10 @@
+///<reference path='Component.ts' />
+///<reference path='ContextWindowEvents.ts' />
+///<reference path='ComponentTypesPanel.ts' />
+///<reference path='ComponentGrid.ts' />
+///<reference path='EmulatorGrid.ts' />
+///<reference path='EmulatorPanel.ts' />
+///<reference path='SelectPanel.ts' />
+///<reference path='DetailPanel.ts' />
+///<reference path='InspectorPanel.ts' />
+///<reference path='ContextWindow.ts' />

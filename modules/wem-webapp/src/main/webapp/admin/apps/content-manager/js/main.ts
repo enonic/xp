@@ -2,80 +2,33 @@
 ///<reference path='../../../api/js/lib/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='model/ContentSummaryExtModel.ts' />
-///<reference path='model/ContentTypeExtModel.ts' />
+///<reference path='model/_module.ts' />
 
-///<reference path='lib/ux/toggleslide/Thumb.ts' />
-///<reference path='lib/ux/toggleslide/ToggleSlide.ts' />
+///<reference path='lib/ux/toggleslide/_module.ts' />
 
-///<reference path='app/Router.ts' />
-
-///<reference path='app/delete/ContentDeleteDialog.ts' />
-
-///<reference path='app/wizard/ContentWizardEvents.ts' />
-///<reference path='app/wizard/ContentWizardActions.ts' />
-///<reference path='app/wizard/ContentForm.ts' />
-///<reference path='app/wizard/ContentWizardToolbar.ts' />
-///<reference path='app/wizard/ContentWizardPanel.ts' />
-
-///<reference path='app/wizard/form/input/InputTypeManager.ts' />
-///<reference path='app/wizard/form/module.ts' />
-///<reference path='app/wizard/form/input/type/module.ts' />
-///<reference path='app/wizard/form/input/module.ts' />
-///<reference path='app/wizard/form/formitemset/module.ts' />
-///<reference path='app/wizard/form/layout/module.ts' />
+///<reference path='app/_module.ts' />
+///<reference path='app/browse/_module.ts' />
+///<reference path='app/browse/filter/_module.ts' />
+///<reference path='app/browse/grid/_module.ts' />
+///<reference path='app/contextwindow/_module.ts' />
+///<reference path='app/delete/_module.ts' />
+///<reference path='app/new/_module.ts' />
+///<reference path='app/view/_module.ts' />
 
 
-///<reference path='app/browse/filter/ContentBrowseFilterEvents.ts' />
-///<reference path='app/browse/filter/ContentBrowseFilterPanel.ts' />
+///<reference path='app/wizard/_module.ts' />
+///<reference path='app/wizard/form/_module.ts' />
+///<reference path='app/wizard/form/input/_module.ts' />
+///<reference path='app/wizard/form/input/type/_module.ts' />
+///<reference path='app/wizard/form/formitemset/_module.ts' />
+///<reference path='app/wizard/form/layout/_module.ts' />
 
-///<reference path='app/browse/ContentBrowseEvents.ts' />
-///<reference path='app/browse/ContentBrowseActions.ts' />
-///<reference path='app/browse/ContentBrowseToolbar.ts' />
-///<reference path='app/browse/ContentTreeGridContextMenu.ts' />
-///<reference path='app/browse/ContentBrowseItemPanel.ts' />
-///<reference path='app/browse/ContentBrowsePanel.ts' />
-///<reference path='app/browse/grid/ContentTreeStore.ts' />
-///<reference path='app/browse/grid/ContentGridStore.ts' />
-///<reference path='app/browse/grid/ContentGridPanel2.ts' />
-///<reference path='app/browse/ContentTreeGridPanel.ts' />
+///<reference path='handler/_module.ts' />
 
-///<reference path='app/contextwindow/Component.ts' />
-///<reference path='app/contextwindow/ContextWindowEvents.ts' />
-///<reference path='app/contextwindow/ComponentTypesPanel.ts' />
-///<reference path='app/contextwindow/ComponentGrid.ts' />
-///<reference path='app/contextwindow/EmulatorGrid.ts' />
-///<reference path='app/contextwindow/EmulatorPanel.ts' />
-///<reference path='app/contextwindow/SelectPanel.ts' />
-///<reference path='app/contextwindow/DetailPanel.ts' />
-///<reference path='app/contextwindow/InspectorPanel.ts' />
-///<reference path='app/contextwindow/ContextWindow.ts' />
+///<reference path='store/_module.ts' />
 
-///<reference path='app/view/ContentItemViewActions.ts' />
-///<reference path='app/view/ContentItemViewToolbar.ts' />
-///<reference path='app/view/ContentItemStatisticsPanel.ts' />
-///<reference path='app/view/ContentItemViewPanel.ts' />
+///<reference path='lib/_module.ts' />
 
-///<reference path='app/new/NewContentEvent.ts' />
-///<reference path='app/new/NewContentDialog.ts' />
-///<reference path='app/new/RecentContentTypes.ts' />
-///<reference path='app/new/AllContentTypesList.ts' />
-///<reference path='app/new/ContentTypesListListener.ts' />
-///<reference path='app/new/ContentTypesList.ts' />
-///<reference path='app/new/ContentTypeListItem.ts' />
-///<reference path='app/new/RecentContentTypesList.ts' />
-///<reference path='app/new/RecommendedContentTypesList.ts' />
-
-///<reference path='handler/DeleteContentHandler.ts' />
-
-///<reference path='store/ContentTypeStore.ts' />
-///<reference path='store/ContentTypeTreeStore.ts' />
-
-///<reference path='lib/UriHelper.ts' />
-///<reference path='lib/DateHelper.ts' />
-///<reference path='lib/Sortable.ts' />
-
-///<reference path='app/ContentAppPanel.ts' />
 
 declare var Ext;
 declare var Admin;
