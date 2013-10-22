@@ -11,9 +11,9 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-web</artifactId>
+  <artifactId>wem-admin</artifactId>
   <packaging>jar</packaging>
-  <name>Enonic WEM Web</name>
+  <name>Enonic WEM Admin</name>
 
   <dependencies>
     <dependency>
