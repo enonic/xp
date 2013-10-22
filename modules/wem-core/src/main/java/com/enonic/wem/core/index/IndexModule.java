@@ -6,7 +6,7 @@ import org.elasticsearch.node.Node;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
-import com.enonic.wem.core.index.elastic.ElasticClientFactory;
+import com.enonic.wem.core.index.elastic.ElasticClientProvider;
 import com.enonic.wem.core.index.elastic.ElasticNodeFactory;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexService;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
@@ -19,7 +19,7 @@ public final class IndexModule
     protected void configure()
     {
         bind( Node.class ).toProvider( ElasticNodeFactory.class ).in( Scopes.SINGLETON );
-        bind( Client.class ).toProvider( ElasticClientFactory.class ).in( Scopes.SINGLETON );
+        bind( Client.class ).toProvider( ElasticClientProvider.class );
         bind( SearchService.class ).in( Scopes.SINGLETON );
         bind( IndexService.class ).in( Scopes.SINGLETON );
         bind( ElasticsearchIndexService.class ).to( ElasticsearchIndexServiceImpl.class ).in( Scopes.SINGLETON );
