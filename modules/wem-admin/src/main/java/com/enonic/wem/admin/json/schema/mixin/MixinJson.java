@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.json.schema.content.form.FormItemJson;
-import com.enonic.wem.admin.json.schema.content.form.FormItemJsonFactory;
+import com.enonic.wem.admin.json.form.FormItemJson;
+import com.enonic.wem.admin.json.form.FormItemJsonFactory;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;

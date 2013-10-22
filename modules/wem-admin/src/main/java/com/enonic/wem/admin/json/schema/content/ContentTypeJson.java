@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema.content;
 
-import com.enonic.wem.admin.json.schema.content.form.FormJson;
+import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.schema.content.ContentType;
 
 @SuppressWarnings("UnusedDeclaration")

@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.schema.content.form.inputtype;
+package com.enonic.wem.admin.json.form.inputtype;
 
 import com.enonic.wem.api.form.inputtype.InputType;
 

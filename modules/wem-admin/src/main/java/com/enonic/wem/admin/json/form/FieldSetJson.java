@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.json.schema.content.form;
+package com.enonic.wem.admin.json.form;
 
 import com.enonic.wem.api.form.FieldSet;
 
