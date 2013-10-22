@@ -11,36 +11,17 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-itest</artifactId>
+  <artifactId>wem-boot</artifactId>
   <packaging>jar</packaging>
-  <name>Enonic WEM ITest</name>
-
-  <properties>
-    <skipITs>false</skipITs>
-  </properties>
+  <name>Enonic WEM Boot</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-boot</artifactId>
+      <artifactId>wem-web</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>once</forkMode>
-          <argLine>-Xmx2048m -XX:MaxPermSize=700m -Djava.awt.headless=true</argLine>
-          <redirectTestOutputToFile>true</redirectTestOutputToFile>
-          <skip>${skipITs}</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
         
