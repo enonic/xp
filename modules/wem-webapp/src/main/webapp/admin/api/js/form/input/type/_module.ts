@@ -9,6 +9,8 @@
 ///<reference path='HtmlArea.ts' />
 ///<reference path='SingleSelector.ts' />
 ///<reference path='ComboBox.ts' />
+///<reference path='ContentSummaryLoaderListener.ts' />
+///<reference path='ContentSummaryLoader.ts' />
 ///<reference path='Relationship.ts' />
 ///<reference path='ImageSelector.ts' />
 ///<reference path='Image.ts' />
