@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.InvalidPropertyTypeException;
-import com.enonic.wem.api.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 
@@ -160,7 +160,7 @@ public final class Input
         {
             throw new InvalidDataException( property, e );
         }
-        catch ( InvalidValueTypeException e )
+        catch ( ValueOfUnexpectedClassException e )
         {
             throw new InvalidDataException( property, e );
         }

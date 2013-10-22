@@ -5,8 +5,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.data.type.PropertyTool;
+import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
 import com.enonic.wem.api.form.InvalidValueException;
@@ -32,7 +32,7 @@ final class Relationship
 
     @Override
     public void checkValidity( final Property property )
-        throws InvalidValueTypeException, InvalidValueException
+        throws ValueOfUnexpectedClassException, InvalidValueException
     {
         PropertyTool.checkValueType( property, ValueTypes.CONTENT_ID );
     }

@@ -23,16 +23,8 @@ public abstract class Value<T>
         Preconditions.checkNotNull( type, "type cannot be null" );
         Preconditions.checkNotNull( value, "value cannot be null" );
         Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
-
         this.type = type;
-        final boolean valueIsOfExpectedJavaClass = type.isValueOfExpectedJavaClass( value );
-        if ( !valueIsOfExpectedJavaClass )
-        {
-            throw new IllegalArgumentException(
-                "Value expected to be of Java type [" + type.getJavaTypeConverter().getType() + "]: " + value.getClass() );
-        }
-
-        object = value;
+        this.object = value;
         type.checkValidity( this );
     }
 
@@ -123,7 +115,8 @@ public abstract class Value<T>
     /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
      *
-     * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
+     * @throws com.enonic.wem.api.data.type.InconvertibleValueException
+     *          if value is not convertible to String.
      */
     public java.lang.String asString()
         throws InconvertibleValueException

@@ -7,7 +7,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.InvalidValueTypeException;
+import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.form.InvalidValueException;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -23,7 +23,7 @@ public class ColorTest
 
     @Test
     public void given_data_that_validates_checkValidity_throws_nothing()
-        throws InvalidValueTypeException, InvalidValueException
+        throws ValueOfUnexpectedClassException, InvalidValueException
     {
         Content content = newContent().build();
         ContentData contentData = content.getContentData();

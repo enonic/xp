@@ -37,7 +37,7 @@ public class GeographicCoordinate
 
     @Override
     public void checkValidity( final Value value )
-        throws InvalidValueTypeException, InvalidValueException
+        throws ValueOfUnexpectedClassException, InvalidValueException
     {
         super.checkValidity( value );
 
@@ -57,9 +57,9 @@ public class GeographicCoordinate
 
     @Override
     public void checkValidity( final Property property )
-        throws InvalidValueTypeException, InvalidValueException
+        throws ValueOfUnexpectedClassException, InvalidValueException
     {
-        checkValueIsOfExpectedJavaClass( property );
+        checkValueIsOfExpectedClass( property );
 
         final Value value = property.getValue();
 

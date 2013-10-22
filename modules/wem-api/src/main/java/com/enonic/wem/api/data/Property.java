@@ -4,8 +4,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.type.InconvertibleValueException;
-import com.enonic.wem.api.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.data.type.JavaTypeConverter;
+import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.InvalidDataException;
@@ -45,7 +45,7 @@ public class Property
         {
             getValueType().checkValidity( this );
         }
-        catch ( InvalidValueTypeException e )
+        catch ( ValueOfUnexpectedClassException e )
         {
             throw new InvalidDataException( this, e );
         }
@@ -215,7 +215,7 @@ public class Property
         {
             getValueType().checkValidity( this );
         }
-        catch ( InvalidValueTypeException e )
+        catch ( ValueOfUnexpectedClassException e )
         {
             throw new InvalidDataException( this, e );
         }

@@ -26,7 +26,7 @@ public class GeographicCoordinateTest
         assertEquals( 10.752245, GeographicCoordinate.getLongitude( "59.913869,10.752245" ), 0 );
     }
 
-    @Test(expected = InvalidValueTypeException.class)
+    @Test(expected = ValueOfUnexpectedClassException.class)
     public void given_data_with_value_as_double_then_checkValidity_throws_InvalidValueTypeException()
         throws Exception
     {
