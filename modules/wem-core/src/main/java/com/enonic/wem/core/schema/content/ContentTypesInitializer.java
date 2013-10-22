@@ -100,7 +100,7 @@ public class ContentTypesInitializer
             "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin-address.json",
             "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
             "demo-contenttype-trampoline.json", "demo-contenttype-formItemset-min-occurrences.json",
-            "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json"};
+            "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json", "demo-contenttype-all-input-types.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
@@ -112,8 +112,14 @@ public class ContentTypesInitializer
     private static Form createMediaImageForm()
     {
         return Form.newForm().
-            addFormItem( Input.newInput().name( "image" ).inputType( InputTypes.IMAGE ).label( "Media" ).build() ).
-            addFormItem( Input.newInput().name( "mimeType" ).inputType( InputTypes.TEXT_LINE ).label( "Mime type" ).build() ).
+            addFormItem( Input.newInput().name( "image" ).
+                inputType( InputTypes.IMAGE ).label( "Media" ).build() ).
+            addFormItem( Input.newInput().name( "mimeType" ).
+                inputType( InputTypes.TEXT_LINE ).
+                label( "Mime type" ).
+                occurrences( 0, 1 ).
+                build() ).
+
             build();
     }
 
