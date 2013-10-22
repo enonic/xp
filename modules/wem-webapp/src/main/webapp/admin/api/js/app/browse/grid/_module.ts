@@ -4,6 +4,3 @@
 ///<reference path='TreePanel.ts' />
 ///<reference path='TreeGridPanelListener.ts' />
 ///<reference path='TreeGridPanel.ts' />
-///<reference path='GridPanel2.ts' />
-///<reference path='NameFormatter.ts' />
-///<reference path='DateTimeFormatter.ts' />

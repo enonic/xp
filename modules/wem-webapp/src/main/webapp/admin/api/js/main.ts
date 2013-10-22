@@ -56,6 +56,7 @@
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/_module.ts' />
 
+///<reference path='node/_module.ts' />
 ///<reference path='item/_module.ts' />
 
 ///<reference path='content/json/_module.ts' />
@@ -78,6 +79,7 @@
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
 ///<reference path='app/browse/grid/_module.ts' />
+///<reference path='app/browse/grid2/_module.ts' />
 ///<reference path='app/delete/_module.ts' />
 ///<reference path='app/view/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />
