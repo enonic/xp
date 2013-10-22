@@ -1,0 +1,15 @@
+///<reference path='Facet.ts' />
+///<reference path='FacetEntry.ts' />
+///<reference path='TermsFacetEntry.ts' />
+///<reference path='TermsFacet.ts' />
+///<reference path='QueryFacet.ts' />
+///<reference path='FacetFactory.ts' />
+///<reference path='FacetEntryViewSelectionChangedEvent.ts' />
+///<reference path='FacetEntryView.ts' />
+///<reference path='FacetView.ts' />
+///<reference path='TermsFacetEntryView.ts' />
+///<reference path='TermsFacetView.ts' />
+///<reference path='QueryFacetEntryView.ts' />
+///<reference path='QueryFacetView.ts' />
+///<reference path='FacetGroupView.ts' />
+///<reference path='FacetContainer.ts' />

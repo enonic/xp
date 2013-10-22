@@ -1,0 +1,15 @@
+///<reference path='SaveAction.ts' />
+///<reference path='CloseAction.ts' />
+///<reference path='WizardActions.ts' />
+///<reference path='FormIcon.ts' />
+///<reference path='WizardHeaderListener.ts' />
+///<reference path='WizardHeader.ts' />
+///<reference path='WizardHeaderWithDisplayNameAndName.ts' />
+///<reference path='WizardHeaderWithName.ts' />
+///<reference path='WizardStepDeckPanel.ts' />
+///<reference path='WizardStepNavigator.ts' />
+///<reference path='WizardStepNavigationArrow.ts' />
+///<reference path='WizardStep.ts' />
+///<reference path='WizardPanelListener.ts' />
+///<reference path='WizardPanel.ts' />
+///<reference path='SaveBeforeCloseDialog.ts' />
