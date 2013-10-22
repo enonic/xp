@@ -1,17 +1,12 @@
 package com.enonic.wem.portal.attachment;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
 import com.enonic.wem.portal.AbstractResource;
 
 public class AttachmentRequestHandler
     extends AbstractResource
 {
+    /*
     private AttachmentService attachmentService;
-
 
     @GET
     @Path("{key}")
@@ -52,4 +47,5 @@ public class AttachmentRequestHandler
     {
         this.attachmentService = attachmentService;
     }
+    */
 }

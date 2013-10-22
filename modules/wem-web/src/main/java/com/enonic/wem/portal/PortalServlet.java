@@ -1,17 +1,13 @@
 package com.enonic.wem.portal;
 
 import javax.inject.Singleton;
-
-import com.sun.jersey.api.core.ResourceConfig;
-import com.sun.jersey.server.impl.container.filter.NormalizeFilter;
-
-import com.enonic.wem.portal.dispatch.PortalDispatcherHandler;
-import com.enonic.wem.web.jaxrs.JaxRsServlet;
+import javax.servlet.http.HttpServlet;
 
 @Singleton
 public final class PortalServlet
-    extends JaxRsServlet
+    extends HttpServlet
 {
+    /*
     @Override
     protected void configure()
     {
@@ -20,5 +16,5 @@ public final class PortalServlet
 
         addClass( PortalDispatcherHandler.class );
         addClass( NormalizeFilter.class );
-    }
+    }*/
 }

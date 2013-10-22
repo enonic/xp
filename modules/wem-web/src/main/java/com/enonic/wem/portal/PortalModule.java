@@ -24,8 +24,9 @@ public final class PortalModule
         bind( ContentService.class ).to( ContentServiceImpl.class ).in( Scopes.SINGLETON );
         bind( AttachmentService.class ).to( AttachmentServiceImpl.class ).in( Scopes.SINGLETON );
         bind( SpaceService.class ).to( SpaceServiceImpl.class ).in( Scopes.SINGLETON );
-        bind( ImageService.class ).to( ImageServiceImpl.class ).in( Scopes.SINGLETON );
         bind( ResourceService.class ).to( ResourceServiceImpl.class ).in( Scopes.SINGLETON );
+        bind( ImageService.class ).to( ImageServiceImpl.class ).in( Scopes.SINGLETON );
+
         WebInitializerBinder.from( binder() ).add( PortalWebInitializer.class );
     }
 }

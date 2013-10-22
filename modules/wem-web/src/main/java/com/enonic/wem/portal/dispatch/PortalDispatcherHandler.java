@@ -1,16 +1,12 @@
 package com.enonic.wem.portal.dispatch;
 
-import javax.inject.Inject;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
-import com.enonic.wem.api.space.Space;
 import com.enonic.wem.portal.AbstractResource;
 
-@Path("/{workspace}/{mode}")
+// @Path("/{workspace}/{mode}")
 public class PortalDispatcherHandler
     extends AbstractResource
 {
+    /*
     private SpaceService spaceService;
 
     @PathParam("workspace")
@@ -54,4 +50,5 @@ public class PortalDispatcherHandler
     {
         this.spaceService = spaceService;
     }
+    */
 }

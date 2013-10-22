@@ -1,15 +1,8 @@
 package com.enonic.wem.portal;
 
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
-
-import com.sun.jersey.api.core.ResourceContext;
-
-import com.enonic.wem.portal.dispatch.PortalRequest;
-
 public class AbstractResource
 {
+    /*
     protected ResourceContext resourceContext;
 
     protected HttpHeaders httpHeaders;
@@ -38,4 +31,5 @@ public class AbstractResource
     {
         return this.resourceContext.getResource( PortalRequest.class );
     }
+    */
 }

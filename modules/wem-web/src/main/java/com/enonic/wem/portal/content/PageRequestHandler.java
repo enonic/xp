@@ -1,13 +1,11 @@
 package com.enonic.wem.portal.content;
 
-import javax.inject.Inject;
-
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.portal.AbstractResource;
 
 public class PageRequestHandler
     extends AbstractResource
 {
+    /*
     private ContentService contentService;
 
     public String getPage()
@@ -30,5 +28,5 @@ public class PageRequestHandler
     {
         this.contentService = contentService;
     }
-
+    */
 }

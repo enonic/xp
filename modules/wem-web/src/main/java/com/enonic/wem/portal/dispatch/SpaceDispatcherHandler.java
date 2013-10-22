@@ -1,16 +1,11 @@
 package com.enonic.wem.portal.dispatch;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-
 import com.enonic.wem.portal.AbstractResource;
-import com.enonic.wem.portal.content.PageRequestHandler;
 
 public class SpaceDispatcherHandler
     extends AbstractResource
 {
+    /*
     @GET
     @Produces("text/plain")
     public String doGet()
@@ -32,5 +27,5 @@ public class SpaceDispatcherHandler
     {
         return this.resourceContext.getResource( UnderscoreDispatcherResource.class );
     }
-
+    */
 }

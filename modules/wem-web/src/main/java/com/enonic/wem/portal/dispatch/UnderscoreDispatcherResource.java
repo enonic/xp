@@ -1,16 +1,11 @@
 package com.enonic.wem.portal.dispatch;
 
-import javax.ws.rs.Path;
-
 import com.enonic.wem.portal.AbstractResource;
-import com.enonic.wem.portal.attachment.AttachmentRequestHandler;
-import com.enonic.wem.portal.image.ImageRequestHandler;
-import com.enonic.wem.portal.resource.ResourceRequestHandler;
 
 public class UnderscoreDispatcherResource
     extends AbstractResource
 {
-
+    /*
     @Path("attachment")
     public AttachmentRequestHandler handleAttachment()
     {
@@ -29,6 +24,5 @@ public class UnderscoreDispatcherResource
     {
         return this.resourceContext.getResource( ResourceRequestHandler.class );
     }
-
-
+    */
 }

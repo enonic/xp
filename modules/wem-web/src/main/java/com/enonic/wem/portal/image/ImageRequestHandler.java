@@ -1,19 +1,11 @@
 package com.enonic.wem.portal.image;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MultivaluedMap;
-
 import com.enonic.wem.portal.AbstractResource;
 
 public class ImageRequestHandler
     extends AbstractResource
 {
-
+    /*
     private ImageService imageService;
 
     @GET
@@ -70,4 +62,5 @@ public class ImageRequestHandler
     {
         this.imageService = imageService;
     }
+    */
 }

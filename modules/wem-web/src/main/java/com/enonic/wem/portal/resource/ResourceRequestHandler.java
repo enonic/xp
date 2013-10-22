@@ -1,22 +1,11 @@
 package com.enonic.wem.portal.resource;
 
-import java.io.IOException;
-
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
-
-import com.google.common.net.MediaType;
-
-import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.portal.AbstractResource;
-import com.enonic.wem.util.MediaTypes;
 
 public class ResourceRequestHandler
     extends AbstractResource
 {
+    /*
     private ResourceService resourceService;
 
     @GET
@@ -62,4 +51,5 @@ public class ResourceRequestHandler
     {
         this.resourceService = resourceService;
     }
+    */
 }
