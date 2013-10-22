@@ -5,14 +5,7 @@ module app_browse {
         contextMenu:api_ui_menu.ContextMenu;
     }
 
-    export interface IOverlayData {
-        bgColor: string;
-        txColor: string;
-        letter: string;
-    }
-
     export class SchemaTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
-        private overlayData: Object;
 
         constructor(params:SpaceTreeGridPanelParams) {
 
@@ -23,12 +16,6 @@ module app_browse {
                 gridConfig: this.createGridConfig(),
                 treeConfig: this.createTreeConfig(),
                 contextMenu: params.contextMenu});
-
-            var overlayData: { [id: string] : IOverlayData; } = {};
-            overlayData["Mixin"] = { bgColor: "red", txColor: "white", letter: "M"};
-            overlayData["ContentType"] = { bgColor: "yellow", txColor: "black", letter: "C"};
-            overlayData["RelationshipType"] = {bgColor: "blue", txColor: "white", letter: "R"};
-            this.overlayData = overlayData;
 
             this.setItemId("SchemaTreeGridPanel");
 
@@ -107,9 +94,9 @@ module app_browse {
 
         private nameRenderer(value, metaData, record) {
             // typescript swears when extracting this as the class field
-            var nameTemplate = '<div class="admin-{0}-thumbnail">' +
+            var nameTemplate = '<div class="admin-{0}-thumbnail {4}">' +
                                '<img src="{1}"/>' +
-                               '<div class="overlay"><div style="color: {4}; background: {5};">{6}</div></div>' +
+                               '<span class="overlay"/>' +
                                '</div>' +
                                '<div class="admin-{0}-description">' +
                                '<h6>{2}</h6>' +
@@ -118,11 +105,7 @@ module app_browse {
 
             var content = record.data;
             var activeListType = this.getActiveList().getItemId();
-            var overlayData = this.overlayData[content.type];
-            return Ext.String.format( nameTemplate, activeListType, content.iconUrl, value, content.name,
-                                      overlayData.txColor,
-                                      overlayData.bgColor,
-                                      overlayData.letter );
+            return Ext.String.format( nameTemplate, activeListType, content.iconUrl, value, content.name, content.type);
         }
 
         private prettyDateRenderer(value) {

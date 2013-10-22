@@ -25,21 +25,52 @@
 }
 
 .admin-tree {
-  .admin-tree-thumbnail {
-    .overlay {
-      height: 0;
-    }
 
-    .overlay > div {
+  .admin-tree-thumbnail {
+    position: relative;
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      right: 15px; // equal to the right margin
       color: white;
-      height: 20px;
-      left: 31px;
       line-height: 12px;
       padding: 3px;
-      position: relative;
-      top: -36px;
-      vertical-align: top;
-      width: 15px;
+    }
+
+    &.ContentType {
+
+      .overlay {
+        color: black;
+        background-color: yellow;
+
+        &:before {
+          content: "C";
+        }
+      }
+    }
+
+    &.Mixin {
+
+      .overlay {
+        background-color: red;
+
+        &:before {
+          content: "M";
+        }
+      }
+    }
+
+    &.RelationshipType {
+
+      .overlay {
+        background-color: blue;
+
+        &:before {
+          content: "R";
+        }
+      }
     }
   }
+
 }
