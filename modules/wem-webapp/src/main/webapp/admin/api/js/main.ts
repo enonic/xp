@@ -63,10 +63,10 @@
 ///<reference path='content/_module.ts' />
 
 ///<reference path='schema/_module.ts' />
-///<reference path='schema/content/form/json/module.ts' />
-///<reference path='schema/content/form/module.ts' />
-///<reference path='schema/content/json/module.ts' />
-///<reference path='schema/content/module.ts' />
+///<reference path='schema/content/form/json/_module.ts' />
+///<reference path='schema/content/form/_module.ts' />
+///<reference path='schema/content/json/_module.ts' />
+///<reference path='schema/content/_module.ts' />
 ///<reference path='schema/mixin/_module.ts'/>
 ///<reference path='schema/mixin/json/_module.ts'/>
 ///<reference path='schema/relationshiptype/_module.ts' />
