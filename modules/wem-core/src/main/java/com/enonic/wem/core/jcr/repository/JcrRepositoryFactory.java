@@ -1,6 +1,7 @@
 package com.enonic.wem.core.jcr.repository;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.jcr.Repository;
 
 import org.apache.jackrabbit.mk.api.MicroKernel;
@@ -23,7 +24,7 @@ import org.apache.jackrabbit.oak.spi.security.SecurityProvider;
 
 import com.google.inject.Provider;
 
-
+@Singleton
 public final class JcrRepositoryFactory
     implements Provider<Repository>
 {

@@ -32,7 +32,7 @@ public class JcrInitializerTest
     public final void after()
         throws Exception
     {
-        jcrMicroKernelFactory.destroy();
+        jcrMicroKernelFactory.stop();
     }
 
     @Test

@@ -12,7 +12,6 @@ import com.enonic.wem.core.index.IndexModule;
 import com.enonic.wem.core.initializer.InitializerModule;
 import com.enonic.wem.core.item.ItemModule;
 import com.enonic.wem.core.jcr.JcrModule;
-import com.enonic.wem.core.lifecycle.LifecycleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
@@ -30,7 +29,6 @@ public final class CoreModule
         install( new ServletModule() );
 
         install( new HomeModule() );
-        install( new LifecycleModule() );
         install( new ConfigModule() );
         install( new JcrModule() );
         install( new InitializerModule() );

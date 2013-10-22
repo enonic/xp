@@ -84,18 +84,8 @@ public final class LifecycleServiceImpl
             return;
         }
 
-        if ( !isSingleton( binding ) )
-        {
-            return;
-        }
-
         final LifecycleBean bean = (LifecycleBean) binding.getProvider().get();
         this.map.put( bean.getRunLevel(), bean );
-    }
-
-    private boolean isSingleton( final Binding<?> binding )
-    {
-        return binding.acceptScopingVisitor( new SingletonScopeVisitor() );
     }
 
     private boolean isLifecycleBean( final Binding<?> binding )

@@ -45,6 +45,6 @@ public class JcrTestHelper
     public void destroyMicroKernelFactory()
         throws Exception
     {
-        this.jcrMicroKernelFactory.destroy();
+        this.jcrMicroKernelFactory.stop();
     }
 }

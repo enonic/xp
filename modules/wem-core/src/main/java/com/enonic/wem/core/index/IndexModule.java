@@ -18,7 +18,7 @@ public final class IndexModule
     @Override
     protected void configure()
     {
-        bind( Node.class ).toProvider( ElasticNodeProvider.class ).in( Scopes.SINGLETON );
+        bind( Node.class ).toProvider( ElasticNodeProvider.class );
         bind( Client.class ).toProvider( ElasticClientProvider.class );
         bind( SearchService.class ).in( Scopes.SINGLETON );
         bind( IndexService.class ).in( Scopes.SINGLETON );
