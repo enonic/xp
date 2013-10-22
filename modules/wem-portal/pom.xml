@@ -11,14 +11,14 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>wem-boot</artifactId>
+  <artifactId>wem-portal</artifactId>
   <packaging>jar</packaging>
-  <name>Enonic WEM Boot</name>
+  <name>Enonic WEM Portal</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>wem-portal</artifactId>
+      <artifactId>wem-web</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
