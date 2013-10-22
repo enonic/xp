@@ -60,8 +60,6 @@ public abstract class InputType
         return null;
     }
 
-    public abstract void checkValidity( final Property property );
-
     public abstract void checkBreaksRequiredContract( final Property property );
 
     public abstract Value newValue( final String value );

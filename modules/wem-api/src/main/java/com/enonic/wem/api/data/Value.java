@@ -6,8 +6,10 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.type.InconvertibleValueException;
 import com.enonic.wem.api.data.type.JavaTypeConverter;
+import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.form.InvalidValueException;
 
 /**
  * A generic holder for the value of a Property.
@@ -19,6 +21,7 @@ public abstract class Value<T>
     private final Object object;
 
     private Value( final ValueType type, final T value )
+        throws ValueOfUnexpectedClassException, InvalidValueException
     {
         Preconditions.checkNotNull( type, "type cannot be null" );
         Preconditions.checkNotNull( value, "value cannot be null" );

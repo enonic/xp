@@ -150,7 +150,6 @@ public final class Input
             }
 
             checkValidityAccordingToInputTypeConfig( property );
-            type.checkValidity( property );
         }
         catch ( InvalidValueException e )
         {

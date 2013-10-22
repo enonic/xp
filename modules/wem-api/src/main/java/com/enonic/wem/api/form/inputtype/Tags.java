@@ -4,9 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
-import com.enonic.wem.api.form.InvalidValueException;
 
 /**
  * TODO: An array of strings
@@ -16,13 +14,6 @@ final class Tags
 {
     Tags()
     {
-    }
-
-    @Override
-    public void checkValidity( final Property property )
-        throws ValueOfUnexpectedClassException, InvalidValueException
-    {
-        // TODO
     }
 
     @Override

@@ -4,23 +4,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
-import com.enonic.wem.api.form.InvalidValueException;
 
 final class Xml
     extends InputType
 {
     Xml()
     {
-    }
-
-    @Override
-    public void checkValidity( final Property property )
-        throws ValueOfUnexpectedClassException, InvalidValueException
-    {
-        ValueTypes.XML.checkValidity( property );
     }
 
     @Override

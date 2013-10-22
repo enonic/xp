@@ -2,13 +2,10 @@ package com.enonic.wem.api.data.type;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.InvalidValueException;
 
-import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
 
 
@@ -24,22 +21,6 @@ public class GeographicCoordinateTest
     public void getLongitude()
     {
         assertEquals( 10.752245, GeographicCoordinate.getLongitude( "59.913869,10.752245" ), 0 );
-    }
-
-    @Test(expected = ValueOfUnexpectedClassException.class)
-    public void given_data_with_value_as_double_then_checkValidity_throws_InvalidValueTypeException()
-        throws Exception
-    {
-        // setup
-        Content content = newContent().build();
-        ContentData contentData = content.getContentData();
-        contentData.setProperty( "myGeographicCoordinate", new Value.Double( 1.1 ) );
-
-        GeographicCoordinate geographicCoordinate = ValueTypes.GEOGRAPHIC_COORDINATE;
-        Property property = contentData.getProperty( "myGeographicCoordinate" );
-
-        // exercise
-        geographicCoordinate.checkValidity( property );
     }
 
     @Test

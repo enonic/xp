@@ -55,28 +55,6 @@ public class GeographicCoordinate
         }
     }
 
-    @Override
-    public void checkValidity( final Property property )
-        throws ValueOfUnexpectedClassException, InvalidValueException
-    {
-        checkValueIsOfExpectedClass( property );
-
-        final Value value = property.getValue();
-
-        final ValueHolder valueHolder = parse( value.getString() );
-        if ( valueHolder.latitude < LATITUDE_RANGE_START || valueHolder.latitude > LATITUDE_RANGE_END )
-        {
-            throw new InvalidValueException( property,
-                                             "latitude not within range from " + LATITUDE_RANGE_START + " to " + LATITUDE_RANGE_END );
-        }
-
-        if ( valueHolder.longitude < LONGITUDE_RANGE_START || valueHolder.longitude > LONGITUDE_RANGE_END )
-        {
-            throw new InvalidValueException( property,
-                                             "longitude not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
-        }
-    }
-
     public static double getLatitude( final java.lang.String value )
     {
         return parse( value ).latitude;

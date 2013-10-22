@@ -5,11 +5,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.type.InconvertibleValueException;
 import com.enonic.wem.api.data.type.JavaTypeConverter;
-import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.form.InvalidDataException;
-import com.enonic.wem.api.form.InvalidValueException;
 
 public class Property
     extends Data
@@ -39,19 +36,6 @@ public class Property
         else
         {
             this.value = builder.value;
-        }
-
-        try
-        {
-            getValueType().checkValidity( this );
-        }
-        catch ( ValueOfUnexpectedClassException e )
-        {
-            throw new InvalidDataException( this, e );
-        }
-        catch ( InvalidValueException e )
-        {
-            throw new InvalidDataException( this, e );
         }
     }
 
@@ -206,23 +190,6 @@ public class Property
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asBinaryId();
-    }
-
-    public void checkValueTypeValidity()
-        throws InvalidDataException
-    {
-        try
-        {
-            getValueType().checkValidity( this );
-        }
-        catch ( ValueOfUnexpectedClassException e )
-        {
-            throw new InvalidDataException( this, e );
-        }
-        catch ( InvalidValueException e )
-        {
-            throw new InvalidDataException( this, e );
-        }
     }
 
     @Override

@@ -54,21 +54,6 @@ public abstract class ValueType<T>
      * Checks by default if given property's value is of correct Java class.
      * Can be overridden by concrete classes to do extensive validation.
      *
-     * @param property the property to check the validity of
-     * @throws ValueOfUnexpectedClassException
-     *
-     * @throws InvalidValueException
-     */
-    public void checkValidity( final Property property )
-        throws ValueOfUnexpectedClassException, InvalidValueException
-    {
-        checkValueIsOfExpectedClass( property );
-    }
-
-    /**
-     * Checks by default if given property's value is of correct Java class.
-     * Can be overridden by concrete classes to do extensive validation.
-     *
      * @param value the value to check the validity of
      * @throws ValueOfUnexpectedClassException
      *

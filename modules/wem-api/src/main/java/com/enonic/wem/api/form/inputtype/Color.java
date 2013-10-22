@@ -9,9 +9,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
 import com.enonic.wem.api.form.BreaksRequiredContractException;
-import com.enonic.wem.api.form.InvalidValueException;
 
 final class Color
     extends InputType
@@ -28,22 +26,6 @@ final class Color
         if ( StringUtils.isBlank( stringValue ) )
         {
             throw new BreaksRequiredContractException( property, this );
-        }
-    }
-
-    @Override
-    public void checkValidity( final Property property )
-        throws ValueOfUnexpectedClassException, InvalidValueException
-    {
-        final Value value = property.getValue();
-
-        try
-        {
-            parse( value.getString() );
-        }
-        catch ( Exception e )
-        {
-            throw new InvalidValueException( property, e.getMessage() );
         }
     }
 
