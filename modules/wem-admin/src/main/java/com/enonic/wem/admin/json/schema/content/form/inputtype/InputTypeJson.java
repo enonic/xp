@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema.content.form.inputtype;
 
-import com.enonic.wem.api.schema.content.form.inputtype.InputType;
+import com.enonic.wem.api.form.inputtype.InputType;
 
 @SuppressWarnings("UnusedDeclaration")
 public class InputTypeJson

@@ -10,17 +10,17 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.content.GetContentTypeTree;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_AREA;
+import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_AREA;
-import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
 import static org.mockito.Matchers.isA;
 
 public class GetContentTypeTreeRpcHandlerTest

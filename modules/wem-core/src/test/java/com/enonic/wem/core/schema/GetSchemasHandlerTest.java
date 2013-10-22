@@ -8,12 +8,11 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
-
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -23,9 +22,9 @@ import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
 import static org.junit.Assert.*;

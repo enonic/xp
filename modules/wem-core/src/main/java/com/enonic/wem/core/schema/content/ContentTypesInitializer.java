@@ -3,13 +3,13 @@ package com.enonic.wem.core.schema.content;
 import org.apache.commons.lang.WordUtils;
 
 import com.enonic.wem.api.command.schema.content.CreateContentType;
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.support.BaseInitializer;
 

@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.form.FormItemPath;
+import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.form.FormItemPath;
-import com.enonic.wem.api.schema.content.form.Input;
 
 public final class ContentDataParser
 {

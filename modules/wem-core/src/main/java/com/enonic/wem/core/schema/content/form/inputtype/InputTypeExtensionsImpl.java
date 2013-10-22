@@ -2,8 +2,8 @@ package com.enonic.wem.core.schema.content.form.inputtype;
 
 import java.util.LinkedHashMap;
 
-import com.enonic.wem.api.schema.content.form.inputtype.InputType;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypeExtension;
+import com.enonic.wem.api.form.inputtype.InputType;
+import com.enonic.wem.api.form.inputtype.InputTypeExtension;
 import com.enonic.wem.core.plugin.ext.ExtensionPoint;
 
 public class InputTypeExtensionsImpl

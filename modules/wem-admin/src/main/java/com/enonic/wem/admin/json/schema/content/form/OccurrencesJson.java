@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema.content.form;
 
-import com.enonic.wem.api.schema.content.form.Occurrences;
+import com.enonic.wem.api.form.Occurrences;
 
 @SuppressWarnings("UnusedDeclaration")
 public class OccurrencesJson

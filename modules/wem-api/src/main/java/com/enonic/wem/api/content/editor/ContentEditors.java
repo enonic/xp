@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.editor;
 
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.schema.content.form.Form;
+import com.enonic.wem.api.form.Form;
 
 public abstract class ContentEditors
 {

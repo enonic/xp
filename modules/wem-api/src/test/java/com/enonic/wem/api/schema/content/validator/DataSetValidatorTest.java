@@ -8,17 +8,17 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.inputtype.HtmlAreaConfig;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.inputtype.HtmlAreaConfig;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.form.inputtype.SingleSelectorConfig;
-import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 
 import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
 

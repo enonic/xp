@@ -13,8 +13,8 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.form.Form;
 
 public final class CreateContent
     extends Command<CreateContentResult>

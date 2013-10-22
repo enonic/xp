@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.schema.content.form.Form;
+import com.enonic.wem.api.form.Form;
 
 public class PartDescriptor
     implements ComponentDescriptor

@@ -18,12 +18,12 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;

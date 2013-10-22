@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.schema.content.form.InvalidValueException;
+import com.enonic.wem.api.form.InvalidValueException;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;

@@ -1,7 +1,7 @@
 package com.enonic.wem.api.content.editor;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.schema.content.form.Form;
+import com.enonic.wem.api.form.Form;
 
 import static com.enonic.wem.api.content.Content.newContent;
 

@@ -2,12 +2,12 @@ package com.enonic.wem.api.command.module;
 
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.content.form.Form;
 
 public final class CreateModule
     extends Command<Module>

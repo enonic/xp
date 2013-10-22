@@ -11,6 +11,9 @@ import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
 
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
@@ -18,9 +21,6 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;

@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema.content.form;
 
-import com.enonic.wem.api.schema.content.form.Layout;
+import com.enonic.wem.api.form.Layout;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class LayoutJson

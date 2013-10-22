@@ -9,12 +9,12 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemPath;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.InvalidDataException;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.FormItemPath;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.InvalidDataException;
 
 /**
  * Validates that given DataSet is valid, meaning it is of valid:

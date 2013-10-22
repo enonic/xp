@@ -4,7 +4,7 @@ package com.enonic.wem.core.schema.content.form.inputtype;
 import com.acme.DummyCustomInputType;
 import com.acme.DummyCustomInputType2;
 
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypeExtension;
+import com.enonic.wem.api.form.inputtype.InputTypeExtension;
 import com.enonic.wem.core.plugin.ext.ExtensionPointTest;
 
 

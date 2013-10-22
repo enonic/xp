@@ -11,9 +11,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.content.form.Form;
 
 @Immutable
 public final class Module

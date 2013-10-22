@@ -11,12 +11,12 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.command.schema.SchemaTypes;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.support.tree.Tree;
@@ -39,8 +39,8 @@ public class SchemaResourceTest
 
     private Mixin createMixin( String displayName )
     {
-        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).createdTime( DateTime.parse( currentTime ) ).modifiedTime(
-            DateTime.parse( currentTime ) ).addFormItem(
+        return Mixin.newMixin().name( displayName.toLowerCase() ).displayName( displayName ).createdTime(
+            DateTime.parse( currentTime ) ).modifiedTime( DateTime.parse( currentTime ) ).addFormItem(
             Input.newInput().name( displayName.toLowerCase() ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
                 TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() ).build();
     }

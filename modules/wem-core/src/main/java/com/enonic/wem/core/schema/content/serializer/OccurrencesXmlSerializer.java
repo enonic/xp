@@ -4,9 +4,9 @@ package com.enonic.wem.core.schema.content.serializer;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
-import com.enonic.wem.api.schema.content.form.Occurrences;
+import com.enonic.wem.api.form.Occurrences;
 
-import static com.enonic.wem.api.schema.content.form.Occurrences.newOccurrences;
+import static com.enonic.wem.api.form.Occurrences.newOccurrences;
 
 class OccurrencesXmlSerializer
 {

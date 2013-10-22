@@ -9,14 +9,14 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class CreateMixinHandlerTest

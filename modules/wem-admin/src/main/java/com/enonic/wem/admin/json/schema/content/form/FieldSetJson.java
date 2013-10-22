@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema.content.form;
 
-import com.enonic.wem.api.schema.content.form.FieldSet;
+import com.enonic.wem.api.form.FieldSet;
 
 @SuppressWarnings("UnusedDeclaration")
 public class FieldSetJson

@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.api.schema.content.form.FormItem;
+import com.enonic.wem.api.form.FormItem;
 
 @SuppressWarnings("UnusedDeclaration")
 public class FormItemJsonArray

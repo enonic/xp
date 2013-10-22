@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema.content.form;
 
-import com.enonic.wem.api.schema.content.form.FormItemSet;
+import com.enonic.wem.api.form.FormItemSet;
 
 @SuppressWarnings("UnusedDeclaration")
 public class FormItemSetJson

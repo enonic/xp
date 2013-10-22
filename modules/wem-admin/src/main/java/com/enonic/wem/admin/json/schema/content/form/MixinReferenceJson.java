@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.json.schema.content.form;
 
-import com.enonic.wem.api.schema.content.form.MixinReference;
+import com.enonic.wem.api.form.MixinReference;
 
 @SuppressWarnings("UnusedDeclaration")
 public class MixinReferenceJson

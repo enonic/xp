@@ -11,6 +11,9 @@ import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
 
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
@@ -18,9 +21,6 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
@@ -57,24 +57,24 @@ public class ModuleImporterTest
         final Module module = createModule();
         final Path exportedModuleDir = new ModuleExporter().exportModuleToDirectory( module, tempDir );
 
-        final Module importedModule = new ModuleImporter().importModuleFromDirectory( exportedModuleDir);
+        final Module importedModule = new ModuleImporter().importModuleFromDirectory( exportedModuleDir );
 
         assertNotNull( importedModule );
-        assertEquals("testmodule-1.0.0", importedModule.getModuleKey().toString() );
-        assertEquals("testmodule", importedModule.getName().toString() );
-        assertEquals("1.0.0", importedModule.getVersion().toString() );
-        assertEquals("module display name", importedModule.getDisplayName());
+        assertEquals( "testmodule-1.0.0", importedModule.getModuleKey().toString() );
+        assertEquals( "testmodule", importedModule.getName().toString() );
+        assertEquals( "1.0.0", importedModule.getVersion().toString() );
+        assertEquals( "module display name", importedModule.getDisplayName() );
 //        assertEquals("module-info", importedModule.getInfo());
         // TODO verify properties in XML, after implementing ModuleXmlSerializer
-        assertEquals("public", importedModule.getModuleDirectoryEntry().getEntry( "public" ).getName());
-        assertEquals("templates", importedModule.getModuleDirectoryEntry().getEntry( "templates" ).getName());
-        assertTrue(importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).isFile() );
-        assertTrue(importedModule.getModuleDirectoryEntry().getEntry( "templates/template1.txt" ).isFile() );
+        assertEquals( "public", importedModule.getModuleDirectoryEntry().getEntry( "public" ).getName() );
+        assertEquals( "templates", importedModule.getModuleDirectoryEntry().getEntry( "templates" ).getName() );
+        assertTrue( importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).isFile() );
+        assertTrue( importedModule.getModuleDirectoryEntry().getEntry( "templates/template1.txt" ).isFile() );
 
         assertArrayEquals( "some more data".getBytes(), importedModule.getModuleDirectoryEntry().getEntry(
             "templates/template1.txt" ).getResource().getByteSource().read() );
-        assertArrayEquals( "some data".getBytes(), importedModule.getModuleDirectoryEntry().getEntry(
-            "public/file1.txt" ).getResource().getByteSource().read() );
+        assertArrayEquals( "some data".getBytes(),
+                           importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).getResource().getByteSource().read() );
 
     }
 
@@ -87,21 +87,21 @@ public class ModuleImporterTest
 
         final Module importedModule = new ModuleImporter().importModuleFromZip( exportedModuleZip );
 
-        assertEquals("testmodule-1.0.0", importedModule.getModuleKey().toString() );
-        assertEquals("testmodule", importedModule.getName().toString() );
-        assertEquals("1.0.0", importedModule.getVersion().toString() );
-        assertEquals("module display name", importedModule.getDisplayName());
+        assertEquals( "testmodule-1.0.0", importedModule.getModuleKey().toString() );
+        assertEquals( "testmodule", importedModule.getName().toString() );
+        assertEquals( "1.0.0", importedModule.getVersion().toString() );
+        assertEquals( "module display name", importedModule.getDisplayName() );
 //        assertEquals("module-info", importedModule.getInfo());
         // TODO verify properties in XML, after implementing ModuleXmlSerializer
-        assertEquals("public", importedModule.getModuleDirectoryEntry().getEntry( "public" ).getName());
-        assertEquals("templates", importedModule.getModuleDirectoryEntry().getEntry( "templates" ).getName());
-        assertTrue(importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).isFile() );
-        assertTrue(importedModule.getModuleDirectoryEntry().getEntry( "templates/template1.txt" ).isFile() );
+        assertEquals( "public", importedModule.getModuleDirectoryEntry().getEntry( "public" ).getName() );
+        assertEquals( "templates", importedModule.getModuleDirectoryEntry().getEntry( "templates" ).getName() );
+        assertTrue( importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).isFile() );
+        assertTrue( importedModule.getModuleDirectoryEntry().getEntry( "templates/template1.txt" ).isFile() );
 
         assertArrayEquals( "some more data".getBytes(), importedModule.getModuleDirectoryEntry().getEntry(
             "templates/template1.txt" ).getResource().getByteSource().read() );
-        assertArrayEquals( "some data".getBytes(), importedModule.getModuleDirectoryEntry().getEntry(
-            "public/file1.txt" ).getResource().getByteSource().read() );
+        assertArrayEquals( "some data".getBytes(),
+                           importedModule.getModuleDirectoryEntry().getEntry( "public/file1.txt" ).getResource().getByteSource().read() );
     }
 
     private Module createModule()

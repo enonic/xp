@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.schema.content.form.FormItem;
+import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;

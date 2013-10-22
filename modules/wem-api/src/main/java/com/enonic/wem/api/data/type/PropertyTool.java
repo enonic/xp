@@ -1,7 +1,7 @@
 package com.enonic.wem.api.data.type;
 
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.schema.content.form.InvalidDataException;
+import com.enonic.wem.api.form.InvalidDataException;
 
 public class PropertyTool
 {

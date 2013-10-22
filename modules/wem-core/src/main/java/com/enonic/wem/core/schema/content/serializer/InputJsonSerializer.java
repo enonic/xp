@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputType;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.form.Input.newInput;
 
 public class InputJsonSerializer
     extends AbstractJsonSerializer<Input>

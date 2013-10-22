@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.schema.content.form.Occurrences;
+import com.enonic.wem.api.form.Occurrences;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 
-import static com.enonic.wem.api.schema.content.form.Occurrences.newOccurrences;
+import static com.enonic.wem.api.form.Occurrences.newOccurrences;
 
 class OccurrencesJsonSerializer
     extends AbstractJsonSerializer<Occurrences>

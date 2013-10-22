@@ -1,9 +1,9 @@
 package com.enonic.wem.core.schema.content.form.inputtype;
 
 
-import com.enonic.wem.api.schema.content.form.inputtype.InputType;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypeName;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.InputType;
+import com.enonic.wem.api.form.inputtype.InputTypeName;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 
 public class InputTypeResolver
 {

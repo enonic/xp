@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.schema.content.form.InvalidValueException;
+import com.enonic.wem.api.form.InvalidValueException;
 
 public class GeographicCoordinate
     extends ValueType<java.lang.String>

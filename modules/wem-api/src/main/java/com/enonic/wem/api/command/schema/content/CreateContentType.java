@@ -5,8 +5,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.form.Form;
 
 public final class CreateContentType
     extends Command<QualifiedContentTypeName>
@@ -166,8 +166,7 @@ public final class CreateContentType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildContent, isBuiltIn,
-                                 form, icon );
+        return Objects.hashCode( name, displayName, superType, isAbstract, isFinal, allowChildContent, isBuiltIn, form, icon );
     }
 
     @Override

@@ -3,9 +3,9 @@ package com.enonic.wem.api.schema.content.editor;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.form.Form;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 

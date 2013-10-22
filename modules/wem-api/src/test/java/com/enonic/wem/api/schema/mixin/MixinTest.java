@@ -2,13 +2,13 @@ package com.enonic.wem.api.schema.mixin;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.schema.content.form.MixinReference.newMixinReference;
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
@@ -18,8 +18,7 @@ public class MixinTest
     @Test
     public void adding_a_formItemSetMixin_to_another_formItemSetMixin_throws_exception()
     {
-        Mixin ageMixin = newMixin().name( "age" ).addFormItem(
-            newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
+        Mixin ageMixin = newMixin().name( "age" ).addFormItem( newInput().name( "age" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final FormItemSet personFormItemSet = newFormItemSet().name( "person" ).addFormItem(
             newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(

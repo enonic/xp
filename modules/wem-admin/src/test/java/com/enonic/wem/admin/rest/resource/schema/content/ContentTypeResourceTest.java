@@ -15,21 +15,21 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.form.FieldSet;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.content.form.FieldSet;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.MixinReference;
 
+import static com.enonic.wem.api.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.form.MixinReference.newMixinReference;
+import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.schema.content.form.MixinReference.newMixinReference;
-import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
 
 public class ContentTypeResourceTest
     extends AbstractResourceTest

@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 
 import com.acme.DummyCustomInputType;
 
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 
 import static junit.framework.Assert.assertSame;
 

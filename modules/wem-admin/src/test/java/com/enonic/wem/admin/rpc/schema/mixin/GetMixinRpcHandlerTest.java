@@ -9,16 +9,15 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
-
-import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 
 import static com.enonic.wem.api.command.Commands.mixin;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.schema.content.form.inputtype.InputTypes.TEXT_LINE;
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 
 public class GetMixinRpcHandlerTest
     extends AbstractRpcHandlerTest

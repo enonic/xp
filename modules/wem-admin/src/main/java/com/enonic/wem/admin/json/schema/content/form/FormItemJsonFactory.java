@@ -1,11 +1,11 @@
 package com.enonic.wem.admin.json.schema.content.form;
 
 import com.enonic.wem.admin.json.schema.content.form.inputtype.InputJson;
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.Layout;
-import com.enonic.wem.api.schema.content.form.MixinReference;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.Layout;
+import com.enonic.wem.api.form.MixinReference;
 
 public class FormItemJsonFactory
 {

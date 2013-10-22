@@ -8,8 +8,8 @@ import com.enonic.wem.api.data.type.InvalidValueTypeException;
 import com.enonic.wem.api.data.type.JavaTypeConverter;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.schema.content.form.InvalidDataException;
-import com.enonic.wem.api.schema.content.form.InvalidValueException;
+import com.enonic.wem.api.form.InvalidDataException;
+import com.enonic.wem.api.form.InvalidValueException;
 
 public class Property
     extends Data

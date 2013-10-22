@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.type.ValueType;
-import com.enonic.wem.api.schema.content.form.InvalidDataException;
+import com.enonic.wem.api.form.InvalidDataException;
 
 public class DataSet
     extends Data

@@ -17,18 +17,18 @@ import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.RelationshipConfig;
+import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
-import com.enonic.wem.api.schema.content.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
+import static com.enonic.wem.api.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
-import static com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static org.junit.Assert.*;
 
 public class ContentDataParserTest
