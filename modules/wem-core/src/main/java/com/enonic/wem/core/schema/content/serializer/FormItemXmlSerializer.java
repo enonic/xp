@@ -12,7 +12,7 @@ import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.core.schema.content.form.inputtype.InputTypeResolver;
+import com.enonic.wem.core.form.inputtype.InputTypeResolver;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;

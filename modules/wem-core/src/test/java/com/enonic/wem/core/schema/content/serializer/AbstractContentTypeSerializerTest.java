@@ -23,8 +23,8 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MockMixinFetcher;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
-import com.enonic.wem.core.schema.content.form.inputtype.InputTypeExtensions;
-import com.enonic.wem.core.schema.content.form.inputtype.InputTypeResolver;
+import com.enonic.wem.core.form.inputtype.InputTypeExtensions;
+import com.enonic.wem.core.form.inputtype.InputTypeResolver;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;

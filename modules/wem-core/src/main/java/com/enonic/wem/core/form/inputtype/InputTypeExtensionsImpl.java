@@ -1,4 +1,4 @@
-package com.enonic.wem.core.schema.content.form.inputtype;
+package com.enonic.wem.core.form.inputtype;
 
 import java.util.LinkedHashMap;
 
