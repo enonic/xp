@@ -1,4 +1,4 @@
-module api_schema_content_form{
+module api_form{
 
     export class Input extends FormItem {
 
@@ -20,7 +20,7 @@ module api_schema_content_form{
 
         private inputTypeConfig:any;
 
-        constructor(json:api_schema_content_form_json.InputJson) {
+        constructor(json:api_form_json.InputJson) {
 
             super(json.name);
             this.inputType = InputTypeName.parseInputTypeName(json.inputType.name);
@@ -70,9 +70,9 @@ module api_schema_content_form{
             return this.inputTypeConfig;
         }
 
-        public toInputJson():api_schema_content_form_json.InputJson {
+        public toInputJson():api_form_json.InputJson {
 
-            return <api_schema_content_form_json.InputJson>{
+            return <api_form_json.InputJson>{
                 name: this.getName(),
                 formItemType: "Input",
                 customText : this.getCustomText(),

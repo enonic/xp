@@ -4,7 +4,7 @@ module app_wizard_form_formitemset {
 
         private formItemSetOccurrence:FormItemSetOccurrence;
 
-        private formItemSet:api_schema_content_form.FormItemSet;
+        private formItemSet:api_form.FormItemSet;
 
         private occurrenceCountEl:api_dom.SpanEl;
 
@@ -16,7 +16,7 @@ module app_wizard_form_formitemset {
 
         private formItemViews:app_wizard_form.FormItemView[] = [];
 
-        constructor(formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api_schema_content_form.FormItemSet,
+        constructor(formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api_form.FormItemSet,
                     dataSet:api_data.DataSet) {
             super("FormItemSetOccurrenceView", "form-item-set-occurrence-view", formItemSetOccurrence);
             this.formItemSetOccurrence = formItemSetOccurrence;
@@ -54,18 +54,18 @@ module app_wizard_form_formitemset {
         }
 
         private doLayoutWithoutData(parentEl:api_dom.DivEl) {
-            this.formItemSet.getFormItems().forEach((formItem:api_schema_content_form.FormItem) => {
+            this.formItemSet.getFormItems().forEach((formItem:api_form.FormItem) => {
 
-                if (formItem instanceof api_schema_content_form.FormItemSet) {
-                    var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
+                if (formItem instanceof api_form.FormItemSet) {
+                    var formItemSet:api_form.FormItemSet = <api_form.FormItemSet>formItem;
 
                     console.log("FormItemSetOccurrenceView.doLayout() laying out FormItemSet: ", formItemSet);
                     var formItemSetView = new FormItemSetView(formItemSet);
                     parentEl.appendChild(formItemSetView);
                     this.formItemViews.push(formItemSetView);
                 }
-                else if (formItem instanceof api_schema_content_form.Input) {
-                    var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
+                else if (formItem instanceof api_form.Input) {
+                    var input:api_form.Input = <api_form.Input>formItem;
 
                     console.log("FormItemSetOccurrenceView.doLayout()  laying out Input: ", input);
                     var inputContainerView = new app_wizard_form_input.InputView(input);
@@ -77,10 +77,10 @@ module app_wizard_form_formitemset {
 
         private doLayoutWithData(parentEl:api_dom.DivEl) {
 
-            this.formItemSet.getFormItems().forEach((formItem:api_schema_content_form.FormItem) => {
+            this.formItemSet.getFormItems().forEach((formItem:api_form.FormItem) => {
 
-                if (formItem instanceof api_schema_content_form.FormItemSet) {
-                    var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>formItem;
+                if (formItem instanceof api_form.FormItemSet) {
+                    var formItemSet:api_form.FormItemSet = <api_form.FormItemSet>formItem;
 
                     console.log("FormItemSetOccurrenceView.doLayout() laying out FormItemSet: ", formItemSet);
                     var dataSets:api_data.DataSet[] = this.dataSet.getDataSetsByName(formItemSet.getName());
@@ -89,8 +89,8 @@ module app_wizard_form_formitemset {
                     parentEl.appendChild(formItemSetView);
                     this.formItemViews.push(formItemSetView);
                 }
-                else if (formItem instanceof api_schema_content_form.Input) {
-                    var input:api_schema_content_form.Input = <api_schema_content_form.Input>formItem;
+                else if (formItem instanceof api_form.Input) {
+                    var input:api_form.Input = <api_form.Input>formItem;
 
                     console.log("FormItemSetOccurrenceView.doLayout() laying out Input: ", input);
                     var properties:api_data.Property[] = this.dataSet.getPropertiesByName(input.getName());

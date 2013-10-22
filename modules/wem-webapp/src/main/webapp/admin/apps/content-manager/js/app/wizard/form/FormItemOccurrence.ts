@@ -4,13 +4,13 @@ module app_wizard_form {
 
         private occurrences:FormItemOccurrences;
 
-        private formItem:api_schema_content_form.FormItem;
+        private formItem:api_form.FormItem;
 
-        private allowedOccurrences:api_schema_content_form.Occurrences;
+        private allowedOccurrences:api_form.Occurrences;
 
         private index:number;
 
-        constructor(occurrences:FormItemOccurrences, index:number, allowedOccurrences:api_schema_content_form.Occurrences) {
+        constructor(occurrences:FormItemOccurrences, index:number, allowedOccurrences:api_form.Occurrences) {
             this.occurrences = occurrences;
             this.formItem = occurrences.getFormItem();
             this.allowedOccurrences = allowedOccurrences;

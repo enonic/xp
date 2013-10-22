@@ -2,7 +2,7 @@ module app_wizard_form_input {
 
     export class InputView extends app_wizard_form.FormItemView {
 
-        private input:api_schema_content_form.Input;
+        private input:api_form.Input;
 
         private properties:api_data.Property[];
 
@@ -12,7 +12,7 @@ module app_wizard_form_input {
 
         private addButton:api_ui.Button;
 
-        constructor(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
+        constructor(input:api_form.Input, properties?:api_data.Property[]) {
             super("InputView", "input-view", input);
 
             this.input = input;
@@ -27,7 +27,7 @@ module app_wizard_form_input {
             var label = new InputLabel(this.input);
             this.appendChild(label);
 
-            var inputType:api_schema_content_form.InputTypeName = this.input.getInputType();
+            var inputType:api_form.InputTypeName = this.input.getInputType();
 
             if (InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();

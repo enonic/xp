@@ -8,20 +8,20 @@ module app_wizard_form {
 
         private occurrenceViewContainer:api_dom.Element;
 
-        private formItem:api_schema_content_form.FormItem;
+        private formItem:api_form.FormItem;
 
-        private allowedOccurrences:api_schema_content_form.Occurrences;
+        private allowedOccurrences:api_form.Occurrences;
 
         private listeners:FormItemOccurrencesListener[] = [];
 
-        constructor(formItem:api_schema_content_form.FormItem, occurrenceViewContainer:api_dom.Element,
-                    allowedOccurrences?:api_schema_content_form.Occurrences) {
+        constructor(formItem:api_form.FormItem, occurrenceViewContainer:api_dom.Element,
+                    allowedOccurrences?:api_form.Occurrences) {
             this.formItem = formItem;
             this.occurrenceViewContainer = occurrenceViewContainer;
             this.allowedOccurrences = allowedOccurrences;
         }
 
-        getAllowedOccurrences():api_schema_content_form.Occurrences {
+        getAllowedOccurrences():api_form.Occurrences {
             throw new Error("Must be implemented by inheritor");
         }
 
@@ -63,7 +63,7 @@ module app_wizard_form {
             this.occurrences.push(occurrence);
         }
 
-        getFormItem():api_schema_content_form.FormItem {
+        getFormItem():api_form.FormItem {
             return this.formItem;
         }
 

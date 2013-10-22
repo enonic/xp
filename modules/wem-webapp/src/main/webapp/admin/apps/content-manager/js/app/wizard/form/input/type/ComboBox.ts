@@ -11,7 +11,7 @@ module app_wizard_form_input_type {
 
     export class ComboBox extends api_dom.DivEl implements InputTypeView {
 
-        private input:api_schema_content_form.Input;
+        private input:api_form.Input;
 
         private config:ComboBoxConfig;
 
@@ -46,7 +46,7 @@ module app_wizard_form_input_type {
             throw new Error("ComboBox manages occurrences self");
         }
 
-        layout(input:api_schema_content_form.Input, properties:api_data.Property[]) {
+        layout(input:api_form.Input, properties:api_data.Property[]) {
 
             this.input = input;
 
@@ -67,7 +67,7 @@ module app_wizard_form_input_type {
             this.appendChild(this.comboBox);
         }
 
-        createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox<string> {
+        createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<string> {
             var comboboxConfig = {
                 rowHeight: 24,
                 filter: this.comboboxFilter,

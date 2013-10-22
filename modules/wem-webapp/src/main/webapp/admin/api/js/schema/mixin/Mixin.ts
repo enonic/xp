@@ -10,7 +10,7 @@ module api_schema_mixin {
 
         private qualifiedName:string;
 
-        private formItems:api_schema_content_form.FormItem[];
+        private formItems:api_form.FormItem[];
 
         private icon:string;
 
@@ -20,8 +20,8 @@ module api_schema_mixin {
             this.displayName = json.displayName;
             this.qualifiedName = this.name;
             this.formItems = [];
-            json.items.forEach((item:api_schema_content_form_json.FormItemJson) => {
-                this.formItems.push(new api_schema_content_form[item.formItemType](item));
+            json.items.forEach((item:api_form_json.FormItemJson) => {
+                this.formItems.push(new api_form[item.formItemType](item));
             });
             this.icon = json.iconUrl;
             this.schemaKey = "mixin:" + this.qualifiedName;
@@ -40,7 +40,7 @@ module api_schema_mixin {
             return this.qualifiedName;
         }
 
-        getFormItems():api_schema_content_form.FormItem[] {
+        getFormItems():api_form.FormItem[] {
             return this.formItems;
         }
 

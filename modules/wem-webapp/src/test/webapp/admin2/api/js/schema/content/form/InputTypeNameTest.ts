@@ -5,7 +5,7 @@ TestCase("InputTypeNameTest", {
 
     "test parseInputTypeName when custom": function () {
 
-        var inputTypeName = api_schema_content_form.InputTypeName.parseInputTypeName('custom:MyCustom');
+        var inputTypeName = api_form.InputTypeName.parseInputTypeName('custom:MyCustom');
 
         // exercise & verify
         assertEquals("MyCustom", inputTypeName.getName());
@@ -14,7 +14,7 @@ TestCase("InputTypeNameTest", {
     ,
     "test parseInputTypeName when builtIn": function () {
 
-        var inputTypeName = api_schema_content_form.InputTypeName.parseInputTypeName('TextLine');
+        var inputTypeName = api_form.InputTypeName.parseInputTypeName('TextLine');
 
         // exercise & verify
         assertEquals("TextLine", inputTypeName.getName());

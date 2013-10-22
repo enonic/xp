@@ -2,9 +2,9 @@ module app_wizard_form_layout {
 
     export class FieldSetLabel extends api_dom.DivEl {
 
-        private fieldSet:api_schema_content_form.FieldSet;
+        private fieldSet:api_form.FieldSet;
 
-        constructor(fieldSet:api_schema_content_form.FieldSet) {
+        constructor(fieldSet:api_form.FieldSet) {
             super("FieldSetLabel", "field-set-label");
 
             this.fieldSet = fieldSet;

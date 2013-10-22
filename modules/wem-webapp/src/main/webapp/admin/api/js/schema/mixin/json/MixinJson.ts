@@ -6,7 +6,7 @@ module api_schema_mixin_json {
 
         displayName:string;
 
-        items:api_schema_content_form_json.FormItemJson[];
+        items:api_form_json.FormItemJson[];
 
         iconUrl:string;
     }

@@ -56,6 +56,9 @@
 ///<reference path='data/json/_module.ts' />
 ///<reference path='data/_module.ts' />
 
+///<reference path='form/json/_module.ts' />
+///<reference path='form/_module.ts' />
+
 ///<reference path='node/_module.ts' />
 ///<reference path='item/_module.ts' />
 
@@ -63,8 +66,7 @@
 ///<reference path='content/_module.ts' />
 
 ///<reference path='schema/_module.ts' />
-///<reference path='schema/content/form/json/_module.ts' />
-///<reference path='schema/content/form/_module.ts' />
+
 ///<reference path='schema/content/json/_module.ts' />
 ///<reference path='schema/content/_module.ts' />
 ///<reference path='schema/mixin/_module.ts'/>

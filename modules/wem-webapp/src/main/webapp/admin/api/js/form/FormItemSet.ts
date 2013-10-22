@@ -1,4 +1,4 @@
-module api_schema_content_form{
+module api_form{
 
     export class FormItemSet extends FormItem {
 
@@ -16,7 +16,7 @@ module api_schema_content_form{
 
         private helpText:string;
 
-        constructor(formItemSetJson:api_schema_content_form_json.FormItemSetJson) {
+        constructor(formItemSetJson:api_form_json.FormItemSetJson) {
             super(formItemSetJson.name);
             this.label = formItemSetJson.label;
             this.immutable = formItemSetJson.immutable;
@@ -25,7 +25,7 @@ module api_schema_content_form{
             this.helpText = formItemSetJson.helpText;
 
             if (formItemSetJson.items != null) {
-                formItemSetJson.items.forEach((formItemJson:api_schema_content_form_json.FormItemJson) => {
+                formItemSetJson.items.forEach((formItemJson:api_form_json.FormItemJson) => {
                     this.addFormItem( FormItemFactory.createFormItem(formItemJson) );
                 });
             }
@@ -71,9 +71,9 @@ module api_schema_content_form{
             return this.occurrences;
         }
 
-        public toFormItemSetJson():api_schema_content_form_json.FormItemSetJson {
+        public toFormItemSetJson():api_form_json.FormItemSetJson {
 
-            return <api_schema_content_form_json.FormItemSetJson>{
+            return <api_form_json.FormItemSetJson>{
                 name: this.getName(),
                 formItemType: "FormItemSet",
                 customText : this.getCustomText(),

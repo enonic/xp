@@ -1,4 +1,4 @@
-module api_schema_content_form{
+module api_form{
 
     export class FormItem {
 
@@ -12,7 +12,7 @@ module api_schema_content_form{
             return this.name;
         }
 
-        public toFormItemJson():api_schema_content_form_json.FormItemJson {
+        public toFormItemJson():api_form_json.FormItemJson {
 
             if (this instanceof Input) {
                 return (<Input>this).toInputJson();
@@ -28,9 +28,9 @@ module api_schema_content_form{
             }
         }
 
-        public static formItemsToJson(formItems:FormItem[]):api_schema_content_form_json.FormItemJson[] {
+        public static formItemsToJson(formItems:FormItem[]):api_form_json.FormItemJson[] {
 
-            var formItemArray:api_schema_content_form_json.FormItemJson[] = [];
+            var formItemArray:api_form_json.FormItemJson[] = [];
             formItems.forEach((formItem:FormItem) => {
                 formItemArray.push(formItem.toFormItemJson());
             });

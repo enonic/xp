@@ -108,7 +108,7 @@ TestCase("Mixin", {
         var mixinJson:api_schema_mixin_json.MixinJson = json;
         var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(mixinJson);
 
-        var formItemSet:api_schema_content_form.FormItemSet = <api_schema_content_form.FormItemSet>mixin.getFormItems()[0];
+        var formItemSet:api_form.FormItemSet = <api_form.FormItemSet>mixin.getFormItems()[0];
         assertEquals(formItemSet.getName(), "address");
         assertEquals(formItemSet.getCustomText(), "custom text");
         assertEquals(formItemSet.getHelpText(), "help text");
@@ -147,7 +147,7 @@ TestCase("Mixin", {
         var mixinJson:api_schema_mixin_json.MixinJson = json;
         var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(mixinJson);
 
-        var input:api_schema_content_form.Input = <api_schema_content_form.Input>mixin.getFormItems()[0];
+        var input:api_form.Input = <api_form.Input>mixin.getFormItems()[0];
         assertEquals(input.getName(), "street");
         assertEquals(input.getCustomText(), "custom text");
         assertEquals(input.getHelpText(), "help text");

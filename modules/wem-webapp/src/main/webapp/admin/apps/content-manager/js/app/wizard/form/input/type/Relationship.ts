@@ -9,7 +9,7 @@ module app_wizard_form_input_type {
 
     export class Relationship extends api_dom.DivEl implements InputTypeView {
 
-        private input:api_schema_content_form.Input;
+        private input:api_form.Input;
 
         private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
 
@@ -58,7 +58,7 @@ module app_wizard_form_input_type {
             throw new Error("Relationship manages occurrences self");
         }
 
-        layout(input:api_schema_content_form.Input, properties:api_data.Property[]) {
+        layout(input:api_form.Input, properties:api_data.Property[]) {
 
             this.input = input;
 
@@ -75,7 +75,7 @@ module app_wizard_form_input_type {
             this.appendChild(this.comboBox);
         }
 
-        private createComboBox(input:api_schema_content_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
+        private createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
             var comboboxConfig = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>>{
                 rowHeight: 50,
                 optionFormatter: (row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.OptionData<api_content.ContentSummary>):string => {

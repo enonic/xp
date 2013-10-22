@@ -1,4 +1,4 @@
-module api_schema_content_form{
+module api_form{
 
     export class Layout extends FormItem {
 
@@ -6,7 +6,7 @@ module api_schema_content_form{
             super(name);
         }
 
-        public toLayoutJson():api_schema_content_form_json.LayoutJson {
+        public toLayoutJson():api_form_json.LayoutJson {
 
             if (this instanceof FieldSet) {
                 return (<FieldSet>this).toFieldSetJson();

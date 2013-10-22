@@ -1,4 +1,4 @@
-module api_schema_content_form{
+module api_form{
 
     export class FieldSet extends Layout {
 
@@ -6,12 +6,12 @@ module api_schema_content_form{
 
         private formItems:FormItem[] = [];
 
-        constructor(fieldSetJson:api_schema_content_form_json.FieldSetJson) {
+        constructor(fieldSetJson:api_form_json.FieldSetJson) {
             super(fieldSetJson.name);
             this.label = fieldSetJson.label;
 
             if (fieldSetJson.items != null) {
-                fieldSetJson.items.forEach((formItemJson:api_schema_content_form_json.FormItemJson) => {
+                fieldSetJson.items.forEach((formItemJson:api_form_json.FormItemJson) => {
                     this.addFormItem(FormItemFactory.createFormItem(formItemJson));
                 });
             }
@@ -29,9 +29,9 @@ module api_schema_content_form{
             return this.formItems;
         }
 
-        public toFieldSetJson():api_schema_content_form_json.FieldSetJson {
+        public toFieldSetJson():api_form_json.FieldSetJson {
 
-            return <api_schema_content_form_json.FieldSetJson>{
+            return <api_form_json.FieldSetJson>{
                 name: this.getName(),
                 formItemType: "Layout",
                 items : FormItem.formItemsToJson(this.getFormItems()),

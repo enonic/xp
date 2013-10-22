@@ -2,15 +2,15 @@ module app_wizard_form {
 
     export class FormItemView extends api_dom.DivEl {
 
-        private formItem:api_schema_content_form.FormItem;
+        private formItem:api_form.FormItem;
 
-        constructor(idPrefix:string, className:string, formItem:api_schema_content_form.FormItem) {
+        constructor(idPrefix:string, className:string, formItem:api_form.FormItem) {
             super(idPrefix, className);
 
             this.formItem = formItem;
         }
 
-        getFormItem():api_schema_content_form.FormItem {
+        getFormItem():api_form.FormItem {
             return this.formItem;
         }
 

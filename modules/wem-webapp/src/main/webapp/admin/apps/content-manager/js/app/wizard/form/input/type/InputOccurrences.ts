@@ -7,11 +7,11 @@ module app_wizard_form_input_type {
 
         private baseInputTypeView:BaseInputTypeView;
 
-        private input:api_schema_content_form.Input;
+        private input:api_form.Input;
 
         private properties:api_data.Property[];
 
-        constructor(baseInputTypeView:BaseInputTypeView, input:api_schema_content_form.Input, properties:api_data.Property[]) {
+        constructor(baseInputTypeView:BaseInputTypeView, input:api_form.Input, properties:api_data.Property[]) {
             super(input, baseInputTypeView, input.getOccurrences());
 
             this.baseInputTypeView = baseInputTypeView;
@@ -26,11 +26,11 @@ module app_wizard_form_input_type {
             }
         }
 
-        getInput():api_schema_content_form.Input {
+        getInput():api_form.Input {
             return this.input;
         }
 
-        getAllowedOccurrences():api_schema_content_form.Occurrences {
+        getAllowedOccurrences():api_form.Occurrences {
             return this.input.getOccurrences();
         }
 

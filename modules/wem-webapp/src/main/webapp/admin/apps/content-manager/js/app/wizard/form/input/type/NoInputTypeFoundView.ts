@@ -6,7 +6,7 @@ module app_wizard_form_input_type {
             super("NoInputTypeFound");
         }
 
-        layout(input:api_schema_content_form.Input, properties?:api_data.Property[]) {
+        layout(input:api_form.Input, properties?:api_data.Property[]) {
 
             var divEl = new api_dom.DivEl();
             divEl.getEl().setInnerHtml("Warning: no input type found: " + input.getInputType().toString());

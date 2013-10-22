@@ -2,7 +2,7 @@ module app_wizard_form_formitemset {
 
     export class FormItemSetView extends app_wizard_form.FormItemView {
 
-        private formItemSet:api_schema_content_form.FormItemSet;
+        private formItemSet:api_form.FormItemSet;
 
         private dataSets:api_data.DataSet[];
 
@@ -16,7 +16,7 @@ module app_wizard_form_formitemset {
 
         private collapseButton:api_ui.Button;
 
-        constructor(formItemSet:api_schema_content_form.FormItemSet, dataSets?:api_data.DataSet[]) {
+        constructor(formItemSet:api_form.FormItemSet, dataSets?:api_data.DataSet[]) {
             super("FormItemSetView", "form-item-set-view", formItemSet);
 
             this.formItemSet = formItemSet;

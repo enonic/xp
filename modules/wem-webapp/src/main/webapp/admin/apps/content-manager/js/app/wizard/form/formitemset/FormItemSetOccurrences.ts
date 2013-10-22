@@ -5,11 +5,11 @@ module app_wizard_form_formitemset {
      */
     export class FormItemSetOccurrences extends app_wizard_form.FormItemOccurrences {
 
-        private formItemSet:api_schema_content_form.FormItemSet;
+        private formItemSet:api_form.FormItemSet;
 
         private dataSets:api_data.DataSet[];
 
-        constructor(occurrenceViewContainer:api_dom.Element, formItemSet:api_schema_content_form.FormItemSet, dataSets:api_data.DataSet[]) {
+        constructor(occurrenceViewContainer:api_dom.Element, formItemSet:api_form.FormItemSet, dataSets:api_data.DataSet[]) {
             super(formItemSet, occurrenceViewContainer, formItemSet.getOccurrences());
 
             this.formItemSet = formItemSet;
@@ -23,11 +23,11 @@ module app_wizard_form_formitemset {
             }
         }
 
-        getFormItemSet():api_schema_content_form.FormItemSet {
+        getFormItemSet():api_form.FormItemSet {
             return this.formItemSet;
         }
 
-        getAllowedOccurrences():api_schema_content_form.Occurrences {
+        getAllowedOccurrences():api_form.Occurrences {
             return this.formItemSet.getOccurrences();
         }
 

@@ -1,4 +1,4 @@
-module api_schema_content_form{
+module api_form{
 
     export class Form {
 
@@ -30,7 +30,7 @@ module api_schema_content_form{
             return <Input>this.formItemByName[name];
         }
 
-        toJson():api_schema_content_form_json.FormItemJson[] {
+        toJson():api_form_json.FormItemJson[] {
 
             return FormItem.formItemsToJson(this.getFormItems());
         }
