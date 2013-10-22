@@ -123,6 +123,15 @@ public final class Form
             return this;
         }
 
+        public Builder addFormItems( final Iterable<FormItem> formItems )
+        {
+            for ( FormItem formItem : formItems )
+            {
+                addFormItem( formItem );
+            }
+            return this;
+        }
+
         public Form build()
         {
             return new Form( this );

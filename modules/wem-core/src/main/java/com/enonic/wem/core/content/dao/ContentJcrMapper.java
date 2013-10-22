@@ -11,7 +11,9 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.form.Form;
 import com.enonic.wem.core.content.serializer.ContentDataJsonSerializer;
+import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
 import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
@@ -27,6 +29,8 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 final class ContentJcrMapper
 {
     static final String TYPE = "type";
+
+    static final String FORM = "form";
 
     static final String DATA = "data";
 
@@ -44,22 +48,16 @@ final class ContentJcrMapper
 
     static final String VERSION_ID = "versionId";
 
+    private FormItemsJsonSerializer formItemsJsonSerializer = new FormItemsJsonSerializer();
+
     private ContentDataJsonSerializer contentDataSerializer = new ContentDataJsonSerializer();
 
     void toJcr( final Content content, final Node contentNode )
         throws RepositoryException
     {
-        if ( content.getType() != null )
-        {
-            contentNode.setProperty( TYPE, content.getType().toString() );
-        }
-        else
-        {
-            contentNode.setProperty( TYPE, (String) null );
-        }
-
-        final String dataAsJson = contentDataSerializer.toString( content.getContentData() );
-        contentNode.setProperty( DATA, dataAsJson );
+        contentNode.setProperty( TYPE, content.getType() != null ? content.getType().toString() : null );
+        contentNode.setProperty( FORM, content.getForm() != null ? formItemsJsonSerializer.toString( content.getForm() ) : null );
+        contentNode.setProperty( DATA, contentDataSerializer.toString( content.getContentData() ) );
         setPropertyDateTime( contentNode, CREATED_TIME, content.getCreatedTime() );
         setPropertyDateTime( contentNode, MODIFIED_TIME, content.getModifiedTime() );
         contentNode.setProperty( CREATOR, content.getModifier() == null ? null : content.getCreator().toString() );
@@ -72,8 +70,14 @@ final class ContentJcrMapper
     void toContent( final Node contentNode, final Content.Builder contentBuilder )
         throws RepositoryException
     {
-        final String dataAsJson = contentNode.getProperty( DATA ).getString();
-        final ContentData contentData = contentDataSerializer.toObject( dataAsJson );
+        if ( contentNode.hasProperty( FORM ) )
+        {
+            final Form form =
+                Form.newForm().addFormItems( formItemsJsonSerializer.toObject( contentNode.getProperty( FORM ).getString() ) ).build();
+            contentBuilder.form( form );
+        }
+
+        final ContentData contentData = contentDataSerializer.toObject( contentNode.getProperty( DATA ).getString() );
         contentBuilder.contentData( contentData );
 
         contentBuilder.createdTime( getPropertyDateTime( contentNode, CREATED_TIME ) );

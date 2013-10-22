@@ -15,6 +15,7 @@ import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
 import com.enonic.wem.api.item.ItemTranslatable;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.form.Form;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
@@ -30,6 +31,8 @@ public final class Content
     private final ContentPath path;
 
     private final ContentId id;
+
+    private final Form form;
 
     private final ContentData contentData;
 
@@ -55,6 +58,7 @@ public final class Content
         this.type = builder.type;
         this.path = builder.path;
         this.id = builder.contentId;
+        this.form = builder.form;
         this.contentData = builder.contentData;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -126,6 +130,11 @@ public final class Content
     public UserKey getOwner()
     {
         return owner;
+    }
+
+    public Form getForm()
+    {
+        return form;
     }
 
     public ContentData getContentData()
@@ -213,6 +222,8 @@ public final class Content
 
         private QualifiedContentTypeName type;
 
+        private Form form;
+
         private ContentData contentData;
 
         private String displayName;
@@ -245,6 +256,7 @@ public final class Content
             this.contentId = content.id;
             this.path = content.path;
             this.type = content.type;
+            this.form = content.form; // TODO make DataSet immutable, or make copy
             this.contentData = content.contentData; // TODO make DataSet immutable, or make copy
             this.displayName = content.displayName;
             this.owner = content.owner;
@@ -277,6 +289,12 @@ public final class Content
         public Builder type( final QualifiedContentTypeName type )
         {
             this.type = type;
+            return this;
+        }
+
+        public Builder form( final Form form )
+        {
+            this.contentData = contentData;
             return this;
         }
 

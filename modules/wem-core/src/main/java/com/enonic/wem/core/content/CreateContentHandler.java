@@ -90,6 +90,7 @@ public class CreateContentHandler
 
             builder.path( contentPath );
             builder.displayName( displayName );
+            builder.form( command.getForm() );
             builder.contentData( command.getContentData() );
             builder.type( command.getContentType() );
             builder.createdTime( DateTime.now() );
