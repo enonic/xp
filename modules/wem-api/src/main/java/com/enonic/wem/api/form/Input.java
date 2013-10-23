@@ -18,11 +18,11 @@ public final class Input
 
     private final String label;
 
-    private final boolean immutable;
+    private final Boolean immutable;
 
     private final Occurrences occurrences;
 
-    private final boolean indexed;
+    private final Boolean indexed;
 
     private final String customText;
 
@@ -72,17 +72,17 @@ public final class Input
         return label;
     }
 
-    public boolean isRequired()
+    public Boolean isRequired()
     {
         return occurrences.impliesRequired();
     }
 
-    public boolean isImmutable()
+    public Boolean isImmutable()
     {
         return immutable;
     }
 
-    public boolean isMultiple()
+    public Boolean isMultiple()
     {
         return occurrences.isMultiple();
     }
@@ -92,7 +92,7 @@ public final class Input
         return occurrences;
     }
 
-    public boolean isIndexed()
+    public Boolean isIndexed()
     {
         return indexed;
     }
@@ -190,11 +190,11 @@ public final class Input
 
         private String label;
 
-        private boolean immutable;
+        private Boolean immutable = false;
 
         private Occurrences occurrences = newOccurrences().minimum( 0 ).maximum( 1 ).build();
 
-        private boolean indexed;
+        private Boolean indexed = false;
 
         private String customText;
 
@@ -240,7 +240,7 @@ public final class Input
             return this;
         }
 
-        public Builder immutable( boolean value )
+        public Builder immutable( Boolean value )
         {
             immutable = value;
             return this;
@@ -270,7 +270,7 @@ public final class Input
             return this;
         }
 
-        public Builder required( boolean value )
+        public Builder required( Boolean value )
         {
             if ( value && !occurrences.impliesRequired() )
             {
@@ -283,7 +283,7 @@ public final class Input
             return this;
         }
 
-        public Builder multiple( boolean value )
+        public Builder multiple( Boolean value )
         {
             if ( value )
             {
@@ -296,7 +296,7 @@ public final class Input
             return this;
         }
 
-        public Builder indexed( boolean value )
+        public Builder indexed( Boolean value )
         {
             indexed = value;
             return this;

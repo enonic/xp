@@ -65,6 +65,10 @@ public abstract class JavaTypeConverter<T>
             {
                 return value.toString();
             }
+            else if ( value instanceof Boolean )
+            {
+                return value.toString();
+            }
             else if ( value instanceof com.enonic.wem.api.content.binary.BinaryId )
             {
                 return value.toString();
