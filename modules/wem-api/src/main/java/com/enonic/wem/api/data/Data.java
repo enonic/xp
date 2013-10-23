@@ -165,5 +165,7 @@ public abstract class Data
     }
 
     public abstract Data copy();
+
+    public abstract boolean valueEquals( Data data );
 }
 
