@@ -19,9 +19,9 @@ module api_ui{
             if (this.action.hasMnemonic()) {
                 var htmlNodes:Node[] = this.action.getMnemonic().underlineMnemonic(this.action.getLabel());
                 this.getEl().appendChildren(htmlNodes);
-            } else {
-                var labelNode = new api_dom.TextNode(this.action.getLabel());
-                this.getEl().appendChild(labelNode.getText());
+            }
+            else {
+                this.getEl().appendChild(document.createTextNode(this.action.getLabel()));
             }
 
             if (this.action.hasShortcut() && showTooltip) {

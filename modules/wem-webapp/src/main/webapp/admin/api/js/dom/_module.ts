@@ -1,5 +1,3 @@
-///<reference path='TextNodeHelper.ts' />
-///<reference path='TextNode.ts' />
 ///<reference path='ElementHelper.ts' />
 ///<reference path='ImgElHelper.ts' />
 ///<reference path='Element.ts' />

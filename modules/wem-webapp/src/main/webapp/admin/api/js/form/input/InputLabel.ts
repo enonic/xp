@@ -10,10 +10,10 @@ module api_form_input {
             this.input = input;
 
             var nodes:Node[] = [];
-            nodes.push(new api_dom.TextNode(input.getLabel()).getText());
+            nodes.push(document.createTextNode(input.getLabel()));
 
             if( input.getOccurrences().required() ) {
-                nodes.push( new api_dom.TextNode(" ").getText() );
+                nodes.push( document.createTextNode(" ") );
                 var requiredMarker = new api_dom.SpanEl(null, "required");
                 nodes.push( requiredMarker.getHTMLElement() );
             }

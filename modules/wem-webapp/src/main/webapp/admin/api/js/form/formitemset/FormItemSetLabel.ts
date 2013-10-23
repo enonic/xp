@@ -10,14 +10,14 @@ module api_form_formitemset {
             this.formItemSet = formItemSet;
 
             var nodes:Node[] = [];
-            nodes.push(new api_dom.TextNode(formItemSet.getLabel()).getText());
+            nodes.push(document.createTextNode(formItemSet.getLabel()));
 
             if( formItemSet.getOccurrences().required() ) {
-                nodes.push( new api_dom.TextNode(" ").getText() );
+                nodes.push( document.createTextNode(" ") );
                 var requiredMarker = new api_dom.SpanEl(null, "required");
                 nodes.push( requiredMarker.getHTMLElement() );
             }
-            nodes.push( new api_dom.TextNode(":").getText() );
+            nodes.push( document.createTextNode(":") );
             this.getEl().appendChildren(nodes);
         }
     }
