@@ -53,7 +53,16 @@ public final class Item
         this.name = builder.name;
         this.parent = builder.parent;
         this.path = new ItemPath( this.parent, this.name );
-        this.createdTime = builder.createdTime;
+
+        if ( builder.createdTime == null )
+        {
+            this.createdTime = DateTime.now();
+        }
+        else
+        {
+            this.createdTime = builder.createdTime;
+        }
+
         this.creator = builder.creator;
         this.modifiedTime = builder.modifiedTime;
         this.modifier = builder.modifier;

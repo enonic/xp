@@ -16,6 +16,7 @@ public final class PropertyIndexConfig
         this.tokenizedEnabled = builder.tokenizedEnabled;
     }
 
+
     public boolean enabled()
     {
         return enabled;
@@ -25,6 +26,7 @@ public final class PropertyIndexConfig
     {
         return new Builder();
     }
+
 
     public boolean isFulltextEnabled()
     {

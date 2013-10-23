@@ -3,7 +3,7 @@ package com.enonic.wem.core.index.indexdocument;
 public enum IndexBaseType
 {
 
-    DATE,
+    DATETIME,
     NUMBER,
     TOKENIZED,
     ANALYZED,

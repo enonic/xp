@@ -2,7 +2,10 @@ package com.enonic.wem.core.index;
 
 public enum IndexType
 {
-    ITEM,
+    ENTITY,
+    NODE,
+    RELATION,
+    POLICY,
     ACCOUNT,
     CONTENT,
     BINARIES;

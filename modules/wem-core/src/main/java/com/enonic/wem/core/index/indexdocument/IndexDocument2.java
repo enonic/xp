@@ -17,18 +17,19 @@ public class IndexDocument2
 
     private final String index;
 
-    private final Set<AbstractIndexDocumentItem> indexDocumentEntries;
+    private final Set<AbstractIndexDocumentItem> indexDocumentItems;
 
     private boolean refreshOnStore = false;
 
-    private String analyzerName;
+    private String analyzer;
 
     private IndexDocument2( final Builder builder )
     {
         this.id = builder.id;
         this.indexType = builder.indexType;
         this.index = builder.index;
-        this.indexDocumentEntries = builder.indexDocumentEntries;
+        this.indexDocumentItems = builder.indexDocumentEntries;
+        this.analyzer = builder.analyzer;
     }
 
     public static Builder newIndexDocument()
@@ -51,9 +52,9 @@ public class IndexDocument2
         return index;
     }
 
-    public Set<AbstractIndexDocumentItem> getIndexDocumentEntries()
+    public Set<AbstractIndexDocumentItem> getIndexDocumentItems()
     {
-        return indexDocumentEntries;
+        return indexDocumentItems;
     }
 
     public boolean doRefreshOnStore()
@@ -61,14 +62,22 @@ public class IndexDocument2
         return refreshOnStore;
     }
 
-    public void setRefreshOnStore( final boolean refreshOnStore )
+    public String getAnalyzer()
     {
-        this.refreshOnStore = refreshOnStore;
+        return analyzer;
     }
 
-    public void setAnalyzerName( final String analyzerName )
+    public AbstractIndexDocumentItem getItemWithName( final String name, final IndexBaseType baseType )
     {
-        this.analyzerName = analyzerName;
+        for ( AbstractIndexDocumentItem item : this.getIndexDocumentItems() )
+        {
+            if ( item.getFieldBaseName().equals( name ) && item.getIndexBaseType().equals( baseType ) )
+            {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     public static class Builder
@@ -88,25 +97,25 @@ public class IndexDocument2
         }
 
 
-        public Builder setId( final ItemId id )
+        public Builder id( final ItemId id )
         {
             this.id = id;
             return this;
         }
 
-        public Builder setIndexType( final IndexType indexType )
+        public Builder indexType( final IndexType indexType )
         {
             this.indexType = indexType;
             return this;
         }
 
-        public Builder setIndex( final String index )
+        public Builder index( final String index )
         {
             this.index = index;
             return this;
         }
 
-        public Builder setAnalyzer( final String analyzer )
+        public Builder analyzer( final String analyzer )
         {
             this.analyzer = analyzer;
             return this;
