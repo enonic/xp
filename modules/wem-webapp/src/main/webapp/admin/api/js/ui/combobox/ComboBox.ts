@@ -114,19 +114,25 @@ module api_ui_combobox {
             if (rowsLength > 0) {
                 this.emptyDropdown.hide();
                 this.dropdown.show();
+                this.adjustDropdownSize();
+                this.updateDropdownStyles();
             } else {
                 this.dropdown.hide();
+                this.adjustEmptyDropdownSize();
                 this.emptyDropdown.getEl().setInnerHtml("No matching items");
                 this.emptyDropdown.show();
             }
 
-            this.refresh();
+            this.dropdown.render();
         }
 
-        showLabel(label:string) {
-            this.dropdown.hide();
-            this.emptyDropdown.getEl().setInnerHtml(label);
-            this.emptyDropdown.show();
+        setLabel(label:string) {
+            if (this.dropdown.isVisible() || this.emptyDropdown.isVisible()) {
+                this.dropdown.hide();
+                this.adjustEmptyDropdownSize();
+                this.emptyDropdown.getEl().setInnerHtml(label);
+                this.emptyDropdown.show();
+            }
         }
 
         hideDropdown() {
@@ -136,6 +142,9 @@ module api_ui_combobox {
 
         setOptions(options:OptionData<T>[]) {
             this.dropdownData.setItems(options);
+            if (this.dropdown.isVisible() || this.emptyDropdown.isVisible()) {
+                this.showDropdown();
+            }
         }
 
         addOption(option:OptionData<T>) {
@@ -177,13 +186,6 @@ module api_ui_combobox {
                 this.emptyDropdown.getEl().setInnerHtml("Searching...");
                 this.emptyDropdown.show();
             }
-        }
-
-        refresh() {
-            this.dropdown.render();
-            this.adjustDropdownSize();
-            this.adjustEmptyDropdownSize();
-            this.updateDropdownStyles();
         }
 
         private setupListeners() {

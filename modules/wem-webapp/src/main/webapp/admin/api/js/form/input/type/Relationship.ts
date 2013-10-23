@@ -13,21 +13,32 @@ module api_form_input_type {
 
         private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
 
-        private findContentRequest:api_content.FindContentRequest<api_content_json.ContentSummaryJson>;
+        private contentSummaryLoader:ContentSummaryLoader;
 
         private contentRequestsAllowed:boolean;
 
         constructor(config?:RelationshipConfig) {
             super("Relationship", "relationship");
 
-            this.findContentRequest = new api_content.FindContentRequest().setExpand("summary").setCount(100);
-            this.contentRequestsAllowed = false; // requests aren't allowed until allowed contentTypes are specified
+            this.contentSummaryLoader = new ContentSummaryLoader();
+            this.contentSummaryLoader.addListener({
+                onLoading: () => {
+                    this.comboBox.setLabel("Searching...");
+                },
+                onLoaded: (contentSummaries:api_content.ContentSummary[]) => {
+                    var options = this.createOptions(contentSummaries);
+                    this.comboBox.setOptions(options);
+                }
+            });
+
+            // requests aren't allowed until allowed contentTypes are specified
+            this.contentRequestsAllowed = false;
 
             new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(config.relationshipType.name || "default").send()
                 .done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
                     var relationshipType = jsonResponse.getResult();
                     this.updateInputIcon(relationshipType.iconUrl);
-                    this.findContentRequest.setContentTypes(relationshipType.allowedToTypes);
+                    this.contentSummaryLoader.setAllowedContentTypes(relationshipType.allowedToTypes);
                     this.contentRequestsAllowed = true;
                     this.loadOptions("");
                 })
@@ -90,10 +101,7 @@ module api_form_input_type {
 
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
-                    this.comboBox.showLabel("Searching...");
-                    this.loadOptions(newValue).done((jsonResponse:api_rest.JsonResponse) => {
-                        comboBox.showDropdown();
-                    });
+                    this.loadOptions(newValue);
                 }
             });
 
@@ -124,18 +132,12 @@ module api_form_input_type {
             this.comboBox.setInputIconUrl(iconUrl);
         }
 
-        private loadOptions(searchString:string):JQueryPromise<api_rest.Response> {
+        private loadOptions(searchString:string) {
             if (!this.contentRequestsAllowed || !this.comboBox) {
                 return;
             }
 
-            return this.findContentRequest.setFulltext(searchString).send()
-                .done((jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
-                    var result = jsonResponse.getResult();
-                    var options = this.createOptions(api_content.ContentSummary.fromJsonArray(result.contents));
-                    this.comboBox.setOptions(options);
-                })
-            ;
+            this.contentSummaryLoader.search(searchString);
         }
 
         private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {
