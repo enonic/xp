@@ -133,6 +133,13 @@ module api_dom {
             return this;
         }
 
+        appendChildren(children:Node[]):ElementHelper {
+            children.forEach((child:Node) => {
+                this.el.appendChild(child);
+            });
+            return this;
+        }
+
         setData(name:string, value:string):ElementHelper {
             jQuery(this.el).attr('data-' + name, value);
             return this;
