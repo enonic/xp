@@ -2,21 +2,21 @@ module app_browse {
 
     export class BaseContentModelEvent extends api_event.Event {
 
-        private model:api_model.ContentSummaryExtModel[];
+        private model:api_content.ContentSummary[];
 
-        constructor(name:string, model:api_model.ContentSummaryExtModel[]) {
+        constructor(name:string, model:api_content.ContentSummary[]) {
             this.model = model;
             super(name);
         }
 
-        getModels():api_model.ContentSummaryExtModel[] {
+        getModels():api_content.ContentSummary[] {
             return this.model;
         }
     }
 
     export class GridSelectionChangeEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentSummaryExtModel[]) {
+        constructor(model:api_content.ContentSummary[]) {
             super('gridChange', model);
         }
 
@@ -27,14 +27,14 @@ module app_browse {
 
     export class ShowNewContentDialogEvent extends BaseContentModelEvent {
 
-        private parentContent:api_model.ContentSummaryExtModel;
+        private parentContent:api_content.ContentSummary;
 
-        constructor(parentContent:api_model.ContentSummaryExtModel) {
+        constructor(parentContent:api_content.ContentSummary) {
             super('showNewContentDialog', [parentContent]);
             this.parentContent = parentContent;
         }
 
-        getParentContent():api_model.ContentSummaryExtModel {
+        getParentContent():api_content.ContentSummary {
             return this.parentContent;
         }
 
@@ -44,7 +44,7 @@ module app_browse {
     }
 
     export class EditContentEvent extends BaseContentModelEvent {
-        constructor(model:api_model.ContentSummaryExtModel[]) {
+        constructor(model:api_content.ContentSummary[]) {
             super('editContent', model);
         }
 
@@ -55,7 +55,7 @@ module app_browse {
 
     export class OpenContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentSummaryExtModel[]) {
+        constructor(model:api_content.ContentSummary[]) {
             super('openContent', model);
         }
 
@@ -66,7 +66,7 @@ module app_browse {
 
     export class ShowDetailsEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentSummaryExtModel[]) {
+        constructor(model:api_content.ContentSummary[]) {
             super('showDetails', model);
         }
 
@@ -78,7 +78,7 @@ module app_browse {
 
     export class ShowPreviewEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentSummaryExtModel[]) {
+        constructor(model:api_content.ContentSummary[]) {
             super('showPreview', model);
         }
 
@@ -90,7 +90,7 @@ module app_browse {
 
     export class DuplicateContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentSummaryExtModel[]) {
+        constructor(model:api_content.ContentSummary[]) {
             super('duplicateContent', model);
         }
 
@@ -102,7 +102,7 @@ module app_browse {
 
     export class ContentDeletePromptEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentSummaryExtModel[]) {
+        constructor(model:api_content.ContentSummary[]) {
             super('deleteContent', model);
         }
 
@@ -113,7 +113,7 @@ module app_browse {
 
     export class MoveContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_model.ContentSummaryExtModel[]) {
+        constructor(model:api_content.ContentSummary[]) {
             super('moveContent', model);
         }
 
@@ -170,6 +170,17 @@ module app_browse {
 
         static on(handler:(event:CloseContentEvent) => void) {
             api_event.onEvent('closeContentEvent', handler);
+        }
+    }
+
+    export class ShowNewContentGridEvent extends api_event.Event {
+
+        constructor() {
+            super('showNewContentGridEvent');
+        }
+
+        static on(handler:(event:ShowNewContentGridEvent) => void) {
+            api_event.onEvent('showNewContentGridEvent', handler);
         }
     }
 

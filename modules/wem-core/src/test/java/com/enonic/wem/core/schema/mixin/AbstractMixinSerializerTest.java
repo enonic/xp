@@ -3,15 +3,14 @@ package com.enonic.wem.core.schema.mixin;
 import org.junit.Before;
 import org.junit.Test;
 
-
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.FormItems;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.FormItems;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.AbstractSerializerTest;
 
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.form.Input.newInput;
 import static org.junit.Assert.*;
 
 
@@ -76,8 +75,7 @@ public abstract class AbstractMixinSerializerTest
         formItemSetBuilder.addFormItem( myInput );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
-        Mixin myFormItemSetMixin =
-            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).addFormItem( myFormItemSet ).build();
+        Mixin myFormItemSetMixin = Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).addFormItem( myFormItemSet ).build();
 
         // exercise
         String serialized = toString( myFormItemSetMixin );
@@ -133,8 +131,7 @@ public abstract class AbstractMixinSerializerTest
             Input.newInput().name( "myOtherInput" ).label( "My other input" ).inputType( InputTypes.TEXT_LINE ).build() );
         FormItemSet myFormItemSet = formItemSetBuilder.build();
 
-        Mixin myFormItemSetMixin =
-            Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).addFormItem( myFormItemSet ).build();
+        Mixin myFormItemSetMixin = Mixin.newMixin().name( "my_set" ).displayName( "My Mixin" ).addFormItem( myFormItemSet ).build();
 
         // exercise
         final String serialized = toString( myFormItemSetMixin );

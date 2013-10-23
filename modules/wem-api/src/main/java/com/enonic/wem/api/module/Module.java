@@ -3,17 +3,23 @@ package com.enonic.wem.api.module;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.concurrent.Immutable;
+
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.content.form.Form;
 
+@Immutable
 public final class Module
 {
+    public static final String MODULE_XML = "module.xml";
+
     private final ModuleKey moduleKey;
 
     private final String displayName;
@@ -28,7 +34,7 @@ public final class Module
 
     private final Form config;
 
-    private final ModuleFileEntry resourcesRoot;
+    private final ModuleFileEntry moduleDirectoryEntry;
 
     private final ModuleVersion minSystemVersion;
 
@@ -41,6 +47,8 @@ public final class Module
     private Module( final Module.Builder builder )
     {
         Preconditions.checkNotNull( builder.moduleKey, "moduleKey must be specified" );
+        builder.moduleDirectoryEntry.name( builder.moduleKey.toString() );
+
         this.moduleKey = builder.moduleKey;
         this.displayName = builder.displayName;
         this.info = builder.info;
@@ -52,7 +60,7 @@ public final class Module
         this.moduleDependencies = ModuleKeys.from( builder.moduleDependencies );
         this.contentTypeDependencies = QualifiedContentTypeNames.from( builder.contentTypeDependencies );
         this.config = builder.config == null ? null : builder.config.copy();
-        this.resourcesRoot = builder.resourcesRoot.build();
+        this.moduleDirectoryEntry = builder.moduleDirectoryEntry.build();
     }
 
     public ModuleKey getModuleKey()
@@ -120,14 +128,29 @@ public final class Module
         return contentTypeDependencies;
     }
 
-    public ModuleFileEntry getResourcesRoot()
+    public ModuleFileEntry getModuleDirectoryEntry()
     {
-        return resourcesRoot;
+        return moduleDirectoryEntry;
     }
 
-    void validate()
+    @Override
+    public String toString()
     {
-        //TODO check for mandatory properties, -> generic interface?
+        return Objects.toStringHelper( this ).
+            add( "moduleKey", moduleKey ).
+            add( "displayName", displayName ).
+            add( "info", info ).
+            add( "url", url ).
+            add( "vendorName", vendorName ).
+            add( "vendorUrl", vendorUrl ).
+            add( "config", config ).
+            add( "minSystemVersion", minSystemVersion ).
+            add( "maxSystemVersion", maxSystemVersion ).
+            add( "moduleDependencies", moduleDependencies ).
+            add( "contentTypeDependencies", contentTypeDependencies ).
+            add( "directoryEntry", moduleDirectoryEntry ).
+            omitNullValues().
+            toString();
     }
 
     public static Builder newModule()
@@ -164,11 +187,11 @@ public final class Module
 
         private Form config;
 
-        private ModuleFileEntry.Builder resourcesRoot;
+        private final ModuleFileEntry.Builder moduleDirectoryEntry;
 
         private Builder()
         {
-            this.resourcesRoot = ModuleFileEntry.directoryBuilder( "" );
+            this.moduleDirectoryEntry = ModuleFileEntry.directoryBuilder( "" );
         }
 
         private Builder( final Module source )
@@ -184,7 +207,7 @@ public final class Module
             this.moduleDependencies.addAll( source.moduleDependencies.getList() );
             this.contentTypeDependencies.addAll( source.contentTypeDependencies.getSet() );
             this.config = source.config;
-            this.resourcesRoot = ModuleFileEntry.copyOf( source.resourcesRoot );
+            this.moduleDirectoryEntry = ModuleFileEntry.copyOf( source.moduleDirectoryEntry );
         }
 
         public Builder moduleKey( final ModuleKey moduleKey )
@@ -265,15 +288,26 @@ public final class Module
             return this;
         }
 
+        public ModuleFileEntry.Builder getModuleDirectoryEntry()
+        {
+            return this.moduleDirectoryEntry;
+        }
+
         public Builder addFileEntry( final ModuleFileEntry resourcesRoot )
         {
-            this.resourcesRoot.add( resourcesRoot );
+            this.moduleDirectoryEntry.addEntry( resourcesRoot );
+            return this;
+        }
+
+        public Builder removeFileEntry( final String entryName )
+        {
+            this.moduleDirectoryEntry.remove( entryName );
             return this;
         }
 
         public Builder removeFileEntries()
         {
-            this.resourcesRoot.removeAll();
+            this.moduleDirectoryEntry.removeAll();
             return this;
         }
 

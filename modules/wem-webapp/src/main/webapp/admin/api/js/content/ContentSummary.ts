@@ -1,8 +1,6 @@
 module api_content{
 
-    export class ContentSummary {
-
-        private id:string;
+    export class ContentSummary extends api_item.BaseItem implements api_node.Node {
 
         private name:string;
 
@@ -18,16 +16,20 @@ module api_content{
 
         private iconUrl:string;
 
-        private createdTime:Date;
-
-        private modifiedTime:Date;
-
         private modifier:string;
 
         private owner:string;
 
+        static fromJsonArray(jsonArray:api_content_json.ContentSummaryJson[]):ContentSummary[] {
+            var array:ContentSummary[] = [];
+            jsonArray.forEach((json:api_content_json.ContentSummaryJson) => {
+                array.push(new ContentSummary(json));
+            });
+            return array;
+        }
+
         constructor(json:api_content_json.ContentSummaryJson) {
-            this.id = json.id;
+            super(json);
             this.name = json.name;
             this.displayName = json.displayName;
             this.path = ContentPath.fromString(json.path);
@@ -35,14 +37,8 @@ module api_content{
             this.children = json.hasChildren;
             this.type = json.type;
             this.iconUrl = json.iconUrl;
-            this.createdTime = new Date(json.createdTime);
-            this.modifiedTime = new Date(json.modifiedTime);
             this.modifier = json.modifier;
             this.owner = json.owner;
-        }
-
-        getId():string {
-            return this.id;
         }
 
         getName():string {
@@ -71,14 +67,6 @@ module api_content{
 
         getIconUrl():string {
             return this.iconUrl;
-        }
-
-        getCreatedTime():Date {
-            return this.createdTime;
-        }
-
-        getModifiedTime():Date {
-            return this.modifiedTime;
         }
 
         getOwner():string {

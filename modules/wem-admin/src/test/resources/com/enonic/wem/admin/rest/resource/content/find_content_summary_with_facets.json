@@ -1,0 +1,97 @@
+{
+    "contents": [
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "creator": "user:system:admin",
+            "deletable": true,
+            "displayName": "My Content",
+            "editable": true,
+            "hasChildren": false,
+            "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+            "id": "aaa",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_a_content",
+            "owner": "user:myStore:me",
+            "path": "/my_a_content",
+            "root": false,
+            "type": "my_type"
+        },
+        {
+            "createdTime": "2013-08-23T12:55:09.162Z",
+            "creator": "user:system:admin",
+            "deletable": true,
+            "displayName": "My Content",
+            "editable": true,
+            "hasChildren": false,
+            "iconUrl": "http://localhost/admin/rest/content/image/bbb",
+            "id": "bbb",
+            "modifiedTime": "2013-08-23T12:55:09.162Z",
+            "modifier": "user:system:admin",
+            "name": "my_b_content",
+            "owner": "user:myStore:me",
+            "path": "/my_b_content",
+            "root": false,
+            "type": "my_type"
+        }
+    ],
+    "facets": [
+        {
+            "_type": "terms",
+            "entries": [
+                {
+                    "count": 5,
+                    "displayName": "Folder",
+                    "name": "folder"
+                },
+                {
+                    "count": 24,
+                    "displayName": "Image",
+                    "name": "image"
+                },
+                {
+                    "count": 4,
+                    "displayName": "Space",
+                    "name": "space"
+                }
+            ],
+            "name": "contentType"
+        },
+        {
+            "_type": "terms",
+            "entries": [
+                {
+                    "count": 30,
+                    "displayName": "Bildearkiv",
+                    "name": "bildearkiv"
+                },
+                {
+                    "count": 1,
+                    "displayName": "Bluman Trampoliner",
+                    "name": "bluman trampoliner"
+                },
+                {
+                    "count": 1,
+                    "displayName": "Bluman Intranett",
+                    "name": "bluman intranett"
+                }
+            ],
+            "name": "space"
+        },
+        {
+            "_type": "query",
+            "count": 0,
+            "name": "< 1 hour"
+        },
+        {
+            "_type": "query",
+            "count": 0,
+            "name": "< 1 week"
+        },
+        {
+            "_type": "query",
+            "count": 0,
+            "name": "< 1 day"
+        }
+    ]
+}

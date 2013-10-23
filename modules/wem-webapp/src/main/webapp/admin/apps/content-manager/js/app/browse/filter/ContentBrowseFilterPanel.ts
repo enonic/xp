@@ -10,18 +10,14 @@ module app_browse_filter {
 
             super(null, [contentTypeFacets, spaceFacets, lastModifiedFacets]);
 
+            this.resetFacets(true);
+
             this.addListener(
                 {
                     onReset: ()=> {
-
-                        new api_content.FindContentRequest().send().done(
-                            (jsonResponse:api_rest.JsonResponse) => {
-                                this.updateFacets(api_facet.FacetFactory.createFacets(jsonResponse.getJson().facets));
-                                new ContentBrowseResetEvent().fire();
-                            }
-                        );
-
+                        this.resetFacets();
                     },
+
                     onSearch: (values:{[s:string] : string[]; })=> {
 
                         var isClean = !this.hasFilterSet();
@@ -34,17 +30,30 @@ module app_browse_filter {
                         // but should all go under one facet name, i.e values['ranges']
                         var ranges = this.extractRangesFromFilterValues(values);
 
-                        new api_content.FindContentRequest(values['query'] ? values['query'][0] : undefined).
+                        new api_content.FindContentRequest<api_content.FindContentResult<api_content_json.ContentSummaryJson>>(values['query'] ? values['query'][0] : undefined).
                             setContentTypes(values['contentType']).
                             setSpaces(values['space']).
                             setRanges(ranges).
                             setExpand(api_content.FindContentRequest.EXPAND_SUMMARY).
-                            send().done((jsonResponse:api_rest.JsonResponse) => {
-                                var response = jsonResponse.getJson();
-                                this.updateFacets(api_facet.FacetFactory.createFacets(response.facets));
-                                new ContentBrowseSearchEvent(response.contents).fire();
-                            });
+                            send().done((jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
+                                var result:api_content.FindContentResult<api_content_json.ContentSummaryJson> = jsonResponse.getResult();
+                                this.updateFacets(api_facet.FacetFactory.createFacets(result.facets));
+                                new ContentBrowseSearchEvent(result.contents).fire();
+                            })
+                        ;
 
+                    }
+                }
+            );
+        }
+
+        private resetFacets(supressEvent?:boolean) {
+            new api_content.FindContentRequest().setCount(0).send().done(
+                (jsonResponse:api_rest.JsonResponse) => {
+                    var termsFacets:api_facet.Facet[] = api_facet.FacetFactory.createFacets(jsonResponse.getJson().facets);
+                    this.updateFacets(termsFacets);
+                    if (!supressEvent) {
+                        new ContentBrowseResetEvent().fire();
                     }
                 }
             );

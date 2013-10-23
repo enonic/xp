@@ -9,5 +9,5 @@ public interface ContentSerializer
     public String toString( Content content )
         throws SerializingException;
 
-    public Content toContent( String xml );
+    public Content toContent( String serializedFormat );
 }

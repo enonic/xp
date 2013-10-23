@@ -1,0 +1,31 @@
+{
+    "relationshipTypes": [
+        {
+            "allowedFromTypes": [ ],
+            "allowedToTypes": [ ],
+            "createdTime": null,
+            "deletable": true,
+            "displayName": null,
+            "editable": true,
+            "fromSemantic": null,
+            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type_1",
+            "modifiedTime": null,
+            "name": "the_relationship_type_1",
+            "toSemantic": null
+        },
+        {
+            "allowedFromTypes": [ ],
+            "allowedToTypes": [ ],
+            "createdTime": null,
+            "deletable": true,
+            "displayName": null,
+            "editable": true,
+            "fromSemantic": null,
+            "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type_2",
+            "modifiedTime": null,
+            "name": "the_relationship_type_2",
+            "toSemantic": null
+        }
+    ],
+    "total": 2
+}

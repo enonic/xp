@@ -2,6 +2,7 @@ package com.enonic.wem.core;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.XmlTestHelper;
@@ -16,6 +17,11 @@ public class SerializingTestHelper
     {
         jsonTestHelper = new JsonTestHelper( testInstance, prettyPrint );
         xmlTestHelper = new XmlTestHelper( testInstance );
+    }
+
+    public ObjectMapper objectMapper()
+    {
+        return jsonTestHelper.objectMapper();
     }
 
     public JsonNode loadTestJson( final String fileName )

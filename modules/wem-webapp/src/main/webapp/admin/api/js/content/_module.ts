@@ -1,0 +1,17 @@
+///<reference path='ContentPath.ts' />
+///<reference path='ContentSummary.ts' />
+///<reference path='ContentData.ts' />
+///<reference path='ContentDataFactory.ts' />
+///<reference path='Content.ts' />
+///<reference path='ContentResourceRequest.ts' />
+///<reference path='GetContentByIdRequest.ts' />
+///<reference path='GetContentByPathRequest.ts' />
+///<reference path='CreateContentRequest.ts' />
+///<reference path='UpdateContentRequest.ts' />
+///<reference path='ListContentResult.ts' />
+///<reference path='ListContentByIdRequest.ts' />
+///<reference path='ListContentByPathRequest.ts' />
+///<reference path='FindContentResult.ts' />
+///<reference path='FindContentRequest.ts' />
+///<reference path='DeleteContentRequest.ts' />
+///<reference path='ContentEvents.ts' />

@@ -20,8 +20,7 @@
                 "validationRegexp": null,
                 "helpText": "Article title",
                 "type": {
-                    "name": "TextLine",
-                    "builtIn": true
+                    "name": "TextLine"
                 }
             }
         },
@@ -39,8 +38,7 @@
                 "validationRegexp": null,
                 "helpText": "Preface of the article",
                 "type": {
-                    "name": "TextLine",
-                    "builtIn": true
+                    "name": "TextLine"
                 }
             }
         },
@@ -58,8 +56,7 @@
                 "validationRegexp": null,
                 "helpText": "Body of the article",
                 "type": {
-                    "name": "TextArea",
-                    "builtIn": true
+                    "name": "TextArea"
                 }
             }
         }

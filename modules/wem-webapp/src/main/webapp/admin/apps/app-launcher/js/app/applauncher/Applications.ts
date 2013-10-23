@@ -34,5 +34,15 @@ module app_launcher {
         static getAllApps():Application[] {
             return Applications.applications;
         }
+
+        static getAppByName(name:string):Application {
+            var app:Application = null;
+            Applications.getAllApps().forEach((currentApp:Application) => {
+               if (currentApp.getName() == name) {
+                   app = currentApp;
+               }
+            });
+            return app;
+        }
     }
 }

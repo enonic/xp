@@ -1,6 +1,6 @@
 module api_rest {
 
-    export class JsonRequest {
+    export class JsonRequest<T> {
 
         private path:Path;
 
@@ -14,24 +14,24 @@ module api_rest {
 
         private errorCallback:(requestError:RequestError) => void = null;
 
-        private jsonResponse:JsonResponse;
+        private jsonResponse:JsonResponse<T>;
 
-        setPath(value:Path):JsonRequest {
+        setPath(value:Path):JsonRequest<T> {
             this.path = value;
             return this;
         }
 
-        setMethod(value:string):JsonRequest {
+        setMethod(value:string):JsonRequest<T> {
             this.method = value;
             return this;
         }
 
-        setParams(params:Object):JsonRequest {
+        setParams(params:Object):JsonRequest<T> {
             this.params = params;
             return this;
         }
 
-        setAsync(successCallback:(response:JsonResponse) => void, errorCallback?:(requestError:RequestError) => void):JsonRequest {
+        setAsync(successCallback:(response:JsonResponse<T>) => void, errorCallback?:(requestError:RequestError) => void):JsonRequest<T> {
             this.async = true;
             this.successCallback = successCallback;
             this.errorCallback = errorCallback;
@@ -52,8 +52,6 @@ module api_rest {
             request.open(this.method, this.path.toString(), this.async);
             request.setRequestHeader("Accept", "application/json");
             request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            request.setRequestHeader("Content-Length", "" + paramString.length);
-            request.setRequestHeader("Connection", "close");
             request.send(paramString);
             return request;
         }
@@ -94,7 +92,7 @@ module api_rest {
             }
         }
 
-        getJsonResponse():JsonResponse {
+        getJsonResponse():JsonResponse<T> {
             return this.jsonResponse;
         }
 

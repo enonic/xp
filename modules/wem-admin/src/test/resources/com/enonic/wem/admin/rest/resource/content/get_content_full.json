@@ -1,0 +1,50 @@
+{
+    "createdTime": "2013-08-23T12:55:09.162Z",
+    "creator": "user:system:admin",
+    "data": [
+        {
+            "name": "myArray",
+            "path": "myArray[0]",
+            "type": "String",
+            "value": "arrayValue1"
+        },
+        {
+            "name": "myArray",
+            "path": "myArray[1]",
+            "type": "String",
+            "value": "arrayValue2"
+        },
+        {
+            "name": "mySetWithArray",
+            "path": "mySetWithArray",
+            "type": "DataSet",
+            "value": [
+                {
+                    "name": "myArray",
+                    "path": "mySetWithArray.myArray[0]",
+                    "type": "Double",
+                    "value": "3.14159"
+                },
+                {
+                    "name": "myArray",
+                    "path": "mySetWithArray.myArray[1]",
+                    "type": "Double",
+                    "value": "1.333"
+                }
+            ]
+        }
+    ],
+    "deletable": true,
+    "displayName": "My Content",
+    "editable": true,
+    "hasChildren": false,
+    "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+    "id": "aaa",
+    "modifiedTime": "2013-08-23T12:55:09.162Z",
+    "modifier": "user:system:admin",
+    "name": "my_a_content",
+    "owner": "user:myStore:me",
+    "path": "/my_a_content",
+    "root": false,
+    "type": "my_type"
+}

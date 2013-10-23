@@ -2,9 +2,7 @@ module app_delete {
 
     export class ContentDeleteDialog extends api_app_delete.DeleteDialog {
 
-        private contentToDelete:api_model.ContentSummaryExtModel[];
-
-        private deleteHandler:api_handler.DeleteContentHandler = new api_handler.DeleteContentHandler();
+        private contentToDelete:api_content.ContentSummary[];
 
         constructor() {
             super("Content");
@@ -12,23 +10,46 @@ module app_delete {
             this.setDeleteAction(new ContentDeleteDialogAction());
 
             this.getDeleteAction().addExecutionListener(() => {
-                this.deleteHandler.doDelete(api_handler.DeleteContentParamFactory.create(this.contentToDelete),
-                    (result) => {
-                        this.close();
-                        //components.gridPanel.refresh();
-                        api_notify.showFeedback('Content was deleted!')
-                    });
+
+                var deleteRequest = new api_content.DeleteContentRequest();
+                for (var i = 0; i < this.contentToDelete.length; i++) {
+                    deleteRequest.addContentPath(this.contentToDelete[i].getPath());
+                }
+
+                deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {
+
+                    var json = jsonResponse.getJson(),
+                        paths = [],
+                        deletedContents:api_content.ContentSummary[] = [];
+
+                    for (var i = 0; i < json.successes.length; i++) {
+                        var path = json.successes[i].path;
+                        paths.push(path);
+
+                        this.contentToDelete.forEach((content:api_content.ContentSummary) => {
+                            if(path == content.getPath()) {
+                                deletedContents.push(content);
+                            }
+                        })
+                    }
+
+                    this.close();
+
+                    api_notify.showFeedback('Content [' + paths.join(', ') + '] deleted!');
+
+                    new api_content.ContentDeletedEvent(deletedContents).fire();
+                });
             });
         }
 
-        setContentToDelete(contentModels:api_model.ContentSummaryExtModel[]) {
+        setContentToDelete(contentModels:api_content.ContentSummary[]) {
             this.contentToDelete = contentModels;
 
             var deleteItems:api_app_delete.DeleteItem[] = [];
             for (var i in contentModels) {
                 var contentModel = contentModels[i];
 
-                var deleteItem = new api_app_delete.DeleteItem(contentModel.data.iconUrl, contentModel.data.displayName);
+                var deleteItem = new api_app_delete.DeleteItem(contentModel.getIconUrl(), contentModel.getDisplayName());
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);

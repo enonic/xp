@@ -20,8 +20,17 @@ module api_ui {
             this.label = label;
 
             if (shortcut) {
-                this.shortcut = new KeyBinding(shortcut).setCallback(() => {
+                this.shortcut = new KeyBinding(shortcut).setCallback((e:ExtendedKeyboardEvent, combo:string) => {
+
+                    // preventing Browser shortcuts to kick in
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        // internet explorer
+                        e.returnValue = false;
+                    }
                     this.execute();
+                    return false;
                 });
             }
         }

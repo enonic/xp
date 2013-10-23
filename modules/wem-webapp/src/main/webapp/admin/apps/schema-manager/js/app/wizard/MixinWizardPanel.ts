@@ -1,20 +1,16 @@
 module app_wizard {
 
-    export class MixinWizardPanel extends api_app_wizard.WizardPanel {
+    export class MixinWizardPanel extends api_app_wizard.WizardPanel<api_schema_mixin.Mixin> {
 
         public static NEW_WIZARD_HEADER = "New Mixin";
 
         private static DEFAULT_CHEMA_ICON_URL:string = api_util.getRestUri('schema/image/Mixin:_');
 
-        private saveAction:api_ui.Action;
-
-        private closeAction:api_ui.Action;
-
         private formIcon:api_app_wizard.FormIcon;
 
         private mixinWizardHeader:api_app_wizard.WizardHeaderWithName;
 
-        private persistedMixin:api_remote_mixin.Mixin;
+        private persistedMixin:api_schema_mixin.Mixin;
 
         private mixinForm:MixinForm;
 
@@ -25,17 +21,19 @@ module app_wizard {
             new api_app_wizard.FormIcon(MixinWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
-            this.closeAction = new api_app_wizard.CloseAction(this);
-            this.saveAction = new api_app_wizard.SaveAction(this);
+            var actions = new MixinWizardActions(this);
 
             var toolbar = new MixinWizardToolbar({
-                saveAction: this.saveAction,
-                closeAction: this.closeAction
+                 saveAction: actions.getSaveAction(),
+                 duplicateAction: actions.getDuplicateAction(),
+                 deleteAction: actions.getDeleteAction(),
+                 closeAction: actions.getCloseAction()
             });
 
             super({
                 formIcon: this.formIcon,
                 toolbar: toolbar,
+                actions: actions,
                 header: this.mixinWizardHeader
             });
 
@@ -45,22 +43,19 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Mixin"), this.mixinForm);
         }
 
-        setPersistedItem(mixin:api_remote_mixin.Mixin) {
+        setPersistedItem(mixin:api_schema_mixin.Mixin) {
             super.setPersistedItem(mixin);
 
-            this.mixinWizardHeader.setName(mixin.name);
-            this.formIcon.setSrc(mixin.iconUrl);
+            this.mixinWizardHeader.setName(mixin.getName());
+            this.formIcon.setSrc(mixin.getIcon());
 
             this.persistedMixin = mixin;
 
-            var mixinGetParams:api_remote_mixin.GetParams = {
-                qualifiedName: mixin.name,
-                format: 'XML'
-            };
-
-            api_remote_mixin.RemoteMixinService.mixin_get(mixinGetParams, (result:api_remote_mixin.GetResult) => {
-                this.mixinForm.setFormData({"xml": result.mixinXml})
+            new api_schema_mixin.GetMixinConfigByQualifiedNameRequest(mixin.getName()).send().
+                done((response:api_rest.JsonResponse<api_schema_mixin.GetMixinConfigResult>) => {
+                this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
             });
+
         }
 
         persistNewItem(successCallback?:() => void) {

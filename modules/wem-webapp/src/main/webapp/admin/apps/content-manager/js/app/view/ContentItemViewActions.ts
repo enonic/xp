@@ -24,7 +24,7 @@ module app_view {
     export class CloseContentAction extends api_ui.Action {
 
         constructor(panel:api_ui.Panel, checkCanRemovePanel:boolean = true) {
-            super("Close");
+            super("Close", "mod+f4");
 
             this.addExecutionListener(() => {
                 new app_browse.CloseContentEvent(panel, checkCanRemovePanel).fire();

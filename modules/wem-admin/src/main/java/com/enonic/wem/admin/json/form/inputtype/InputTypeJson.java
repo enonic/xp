@@ -1,0 +1,31 @@
+package com.enonic.wem.admin.json.form.inputtype;
+
+import com.enonic.wem.api.form.inputtype.InputType;
+
+@SuppressWarnings("UnusedDeclaration")
+public class InputTypeJson
+{
+    private final InputType inputType;
+
+    private Object configJson;
+
+    public InputTypeJson( final InputType inputType )
+    {
+        this.inputType = inputType;
+    }
+
+    public String getName()
+    {
+        return inputType.getName();
+    }
+
+    public void setConfig( final Object configJson )
+    {
+        this.configJson = configJson;
+    }
+
+    public Object getConfig()
+    {
+        return configJson;
+    }
+}

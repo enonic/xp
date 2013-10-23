@@ -1,47 +1,19 @@
-///<reference path='../../../api/js/ExtJs.d.ts' />
-///<reference path='../../../api/js/Mousetrap.d.ts' />
+///<reference path='../../../api/js/lib/ExtJs.d.ts' />
+///<reference path='../../../api/js/lib/Mousetrap.d.ts' />
 ///<reference path='../../../api/js/api.d.ts' />
 
-///<reference path='model/SchemaModel.ts' />
+///<reference path='model/_module.ts' />
 
-///<reference path='app/browse/filter/SchemaBrowseFilterEvents.ts'/>
-///<reference path='app/browse/filter/SchemaBrowseFilterPanel.ts'/>
+///<reference path='app/_module.ts' />
+///<reference path='app/browse/_module.ts' />
+///<reference path='app/browse/filter/_module.ts' />
+///<reference path='app/browse/grid/_module.ts' />
+///<reference path='app/delete/_module.ts' />
+///<reference path='app/new/_module.ts' />
+///<reference path='app/view/_module.ts' />
+///<reference path='app/wizard/_module.ts' />
 
-///<reference path='app/browse/SchemaBrowseEvents.ts' />
-///<reference path='app/browse/SchemaBrowseActions.ts' />
-///<reference path='app/browse/SchemaBrowseToolbar.ts' />
-///<reference path='app/browse/SchemaBrowseItemPanel.ts' />
-///<reference path='app/browse/SchemaBrowsePanel.ts' />
-///<reference path='app/delete/SchemaDeleteDialog.ts' />
-///<reference path='app/browse/SchemaTreeGridContextMenu.ts' />
-///<reference path='app/browse/grid/SchemaGridStore.ts' />
-///<reference path='app/browse/grid/SchemaTreeStore.ts' />
-///<reference path='app/browse/SchemaTreeGridPanel.ts' />
 
-///<reference path='app/new/NewSchemaEvent.ts' />
-///<reference path='app/new/SchemaTypesListListener.ts' />
-///<reference path='app/new/SchemaTypesList.ts' />
-///<reference path='app/new/NewSchemaDialog.ts' />
-
-///<reference path='app/view/SchemaViewActions.ts' />
-///<reference path='app/view/SchemaItemStatisticsPanel.ts' />
-///<reference path='app/view/SchemaItemViewToolbar.ts' />
-///<reference path='app/view/SchemaItemViewPanel.ts' />
-
-///<reference path='app/wizard/ContentTypeForm.ts' />
-///<reference path='app/wizard/ContentTypeWizardPanel.ts' />
-///<reference path='app/wizard/ContentTypeWizardToolbar.ts' />
-///<reference path='app/wizard/ContentTypeWizardEvents.ts' />
-///<reference path='app/wizard/RelationshipTypeForm.ts' />
-///<reference path='app/wizard/RelationshipTypeWizardPanel.ts' />
-///<reference path='app/wizard/RelationshipTypeWizardToolbar.ts' />
-///<reference path='app/wizard/RelationshipTypeWizardEvents.ts' />
-///<reference path='app/wizard/MixinForm.ts' />
-///<reference path='app/wizard/MixinWizardPanel.ts' />
-///<reference path='app/wizard/MixinWizardToolbar.ts' />
-///<reference path='app/wizard/MixinWizardEvents.ts' />
-
-///<reference path='app/SchemaAppPanel.ts' />
 
 declare var Ext;
 declare var Admin;

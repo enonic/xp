@@ -45,7 +45,7 @@ public class IndexServiceImplTest
 
         indexService.setElasticsearchIndexService( elasticsearchIndexService );
 
-        indexService.afterPropertiesSet();
+        indexService.start();
 
         Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( IndexConstants.WEM_INDEX );
     }
@@ -65,7 +65,7 @@ public class IndexServiceImplTest
 
         indexService.setElasticsearchIndexService( elasticsearchIndexService );
 
-        indexService.afterPropertiesSet();
+        indexService.start();
 
         Mockito.verify( elasticsearchIndexService, Mockito.never() ).createIndex( IndexConstants.WEM_INDEX );
     }
@@ -87,7 +87,7 @@ public class IndexServiceImplTest
 
         indexService.setElasticsearchIndexService( elasticsearchIndexService );
 
-        indexService.afterPropertiesSet();
+        indexService.start();
 
         // Since index already exists exception, do not continue to add mapping
         Mockito.verify( elasticsearchIndexService, Mockito.never() ).putMapping( Mockito.isA( IndexMapping.class ) );
@@ -110,7 +110,7 @@ public class IndexServiceImplTest
 
         indexService.setElasticsearchIndexService( elasticsearchIndexService );
 
-        indexService.afterPropertiesSet();
+        indexService.start();
 
         // Since index already exists exception, do not continue to add mapping
         Mockito.verify( elasticsearchIndexService, Mockito.never() ).putMapping( Mockito.isA( IndexMapping.class ) );
@@ -134,7 +134,7 @@ public class IndexServiceImplTest
 
         indexService.setElasticsearchIndexService( elasticsearchIndexService );
 
-        indexService.afterPropertiesSet();
+        indexService.start();
 
         Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( IndexConstants.WEM_INDEX );
         Mockito.verify( reindexService, Mockito.times( 1 ) ).reindexAccounts();

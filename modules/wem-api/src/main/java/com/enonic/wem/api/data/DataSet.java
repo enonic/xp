@@ -15,7 +15,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.type.ValueType;
-import com.enonic.wem.api.schema.content.form.InvalidDataException;
 
 public class DataSet
     extends Data
@@ -122,7 +121,6 @@ public class DataSet
     }
 
     public final Property[] setProperty( final DataPath path, final Value... values )
-        throws InvalidDataException
     {
         if ( path.elementCount() > 1 )
         {

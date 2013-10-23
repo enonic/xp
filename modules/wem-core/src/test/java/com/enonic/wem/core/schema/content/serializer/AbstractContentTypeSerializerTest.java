@@ -6,31 +6,33 @@ import org.mockito.Mockito;
 
 import com.acme.DummyCustomInputType;
 
+import com.enonic.wem.api.form.FieldSet;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.Layout;
+import com.enonic.wem.api.form.MixinReference;
+import com.enonic.wem.api.form.inputtype.ComboBoxConfig;
+import com.enonic.wem.api.form.inputtype.ImageSelectorConfig;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.RelationshipConfig;
+import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.form.FieldSet;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.Layout;
-import com.enonic.wem.api.schema.content.form.MixinReference;
-import com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
-import com.enonic.wem.api.schema.content.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MockMixinFetcher;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
-import com.enonic.wem.core.schema.content.form.inputtype.InputTypeExtensions;
-import com.enonic.wem.core.schema.content.form.inputtype.InputTypeResolver;
+import com.enonic.wem.core.form.inputtype.InputTypeExtensions;
+import com.enonic.wem.core.form.inputtype.InputTypeResolver;
 
+import static com.enonic.wem.api.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.form.MixinReference.newMixinReference;
+import static com.enonic.wem.api.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
+import static com.enonic.wem.api.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.schema.content.form.MixinReference.newMixinReference;
-import static com.enonic.wem.api.schema.content.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
-import static com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig.newRelationshipConfig;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
@@ -112,6 +114,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertSerializedResult( "contentType-allInputTypes", actualSerialization );
 
         assertNotNull( actualContentType.form().getFormItem( "myColor" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myComboBox" ) );
         assertNotNull( actualContentType.form().getFormItem( "myDate" ) );
         assertNotNull( actualContentType.form().getFormItem( "myDecimalNumber" ) );
         assertNotNull( actualContentType.form().getFormItem( "myImage" ) );
@@ -123,7 +126,8 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType.form().getFormItem( "mySingleSelector" ) );
         assertNotNull( actualContentType.form().getFormItem( "myTags" ) );
         assertNotNull( actualContentType.form().getFormItem( "myTextLine" ) );
-        assertNotNull( actualContentType.form().getFormItem( "myTextArea" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myTextArea_default" ) );
+        assertNotNull( actualContentType.form().getFormItem( "myTextArea_10cols_10_rows" ) );
         assertNotNull( actualContentType.form().getFormItem( "myWholeNumber" ) );
         assertNotNull( actualContentType.form().getFormItem( "myXml" ) );
         assertNotNull( actualContentType.form().getFormItem( "myCustomInput" ) );
@@ -141,6 +145,7 @@ public abstract class AbstractContentTypeSerializerTest
         assertNotNull( actualContentType );
 
         assertEquals( "myColor", actualContentType.form().getFormItem( "myColor" ).getPath().toString() );
+        assertEquals( "myComboBox", actualContentType.form().getFormItem( "myComboBox" ).getPath().toString() );
         assertEquals( "myDate", actualContentType.form().getFormItem( "myDate" ).getPath().toString() );
         assertEquals( "myDecimalNumber", actualContentType.form().getFormItem( "myDecimalNumber" ).getPath().toString() );
         assertEquals( "myGeoLocation", actualContentType.form().getFormItem( "myGeoLocation" ).getPath().toString() );
@@ -150,7 +155,9 @@ public abstract class AbstractContentTypeSerializerTest
         assertEquals( "mySingleSelector", actualContentType.form().getFormItem( "mySingleSelector" ).getPath().toString() );
         assertEquals( "myTags", actualContentType.form().getFormItem( "myTags" ).getPath().toString() );
         assertEquals( "myTextLine", actualContentType.form().getFormItem( "myTextLine" ).getPath().toString() );
-        assertEquals( "myTextArea", actualContentType.form().getFormItem( "myTextArea" ).getPath().toString() );
+        assertEquals( "myTextArea_default", actualContentType.form().getFormItem( "myTextArea_default" ).getPath().toString() );
+        assertEquals( "myTextArea_10cols_10_rows",
+                      actualContentType.form().getFormItem( "myTextArea_10cols_10_rows" ).getPath().toString() );
         assertEquals( "myWholeNumber", actualContentType.form().getFormItem( "myWholeNumber" ).getPath().toString() );
         assertEquals( "myXml", actualContentType.form().getFormItem( "myXml" ).getPath().toString() );
         assertEquals( "myCustomInput", actualContentType.form().getFormItem( "myCustomInput" ).getPath().toString() );
@@ -302,9 +309,17 @@ public abstract class AbstractContentTypeSerializerTest
 
     private ContentType createContentTypeWithAllInputFormItemTypes()
     {
-        SingleSelectorConfig singleSelectorConfig =
-            SingleSelectorConfig.newSingleSelectorConfig().typeDropdown().addOption( "myOption 1", "o1" ).addOption( "myOption 2",
-                                                                                                                     "o2" ).build();
+        ComboBoxConfig comboBoxConfig = ComboBoxConfig.newComboBoxConfig().
+            addOption( "myOption 1", "o1" ).
+            addOption( "myOption 2", "o2" ).
+            build();
+
+        SingleSelectorConfig singleSelectorConfig = SingleSelectorConfig.newSingleSelectorConfig().
+            typeDropdown().
+            addOption( "myOption 1", "o1" ).
+            addOption( "myOption 2", "o2" ).
+            build();
+
         RelationshipConfig relationshipConfig = newRelationshipConfig().
             relationshipType( QualifiedRelationshipTypeName.LIKE ).
             build();
@@ -316,7 +331,7 @@ public abstract class AbstractContentTypeSerializerTest
         ContentType.Builder contentTypeBuilder = newContentType().
             name( "all_input_types" ).
             displayName( "All the Input Types" ).
-            superType( QualifiedContentTypeName.from( "content" ) ).
+            superType( QualifiedContentTypeName.structured() ).
             setAbstract( false ).
             setFinal( true );
 
@@ -328,10 +343,15 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( newInput().name( "myMoney" ).inputType( InputTypes.MONEY ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).build() );
         contentTypeBuilder.addFormItem(
+            newInput().name( "myComboBox" ).inputType( InputTypes.COMBO_BOX ).inputTypeConfig( comboBoxConfig ).build() );
+        contentTypeBuilder.addFormItem(
             newInput().name( "mySingleSelector" ).inputType( InputTypes.SINGLE_SELECTOR ).inputTypeConfig( singleSelectorConfig ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
-        contentTypeBuilder.addFormItem( newInput().name( "myTextArea" ).inputType( InputTypes.TEXT_AREA ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTextArea_default" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+            InputTypes.TEXT_AREA.getDefaultConfig() ).build() );
+        contentTypeBuilder.addFormItem( newInput().name( "myTextArea_10cols_10_rows" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+            TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myWholeNumber" ).inputType( InputTypes.WHOLE_NUMBER ).build() );
         contentTypeBuilder.addFormItem( newInput().name( "myXml" ).inputType( InputTypes.XML ).build() );
         contentTypeBuilder.addFormItem(

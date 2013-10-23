@@ -20,7 +20,6 @@ module api_app_wizard {
         constructor(public iconUrl:string, public iconTitle:string, public uploadUrl?:string) {
             super("FormIcon", "form-icon");
             var el = this.getEl();
-            var me = this;
 
             this.tooltip = new api_ui.Tooltip(this, iconTitle, 0, 0);
 
@@ -35,32 +34,22 @@ module api_app_wizard {
             if (this.uploadUrl) {
                 this.progress = new api_ui.ProgressBar();
                 el.appendChild(this.progress.getHTMLElement());
-
-                var firstClickHandler = (event:Event) => {
-                    if (!me.uploader) {
-                        if (!plupload) {
-                            console.log('FormIcon: plupload not found, check if it is included in page.');
-                        } else {
-                            me.uploader = me.initUploader(me.getId());
-                            me.getHTMLElement().click();
-                        }
-                    }
-                    me.getEl().removeEventListener("click", firstClickHandler);
-                };
-
-                this.getEl().addEventListener("click", firstClickHandler);
             }
 
-            this.ext = this.initExt();
         }
 
-        private initExt() {
-            return new Ext.Component({
-                contentEl: this.getHTMLElement()
-            });
+        afterRender() {
+            super.afterRender();
+            if (!this.uploader && this.uploadUrl) {
+                this.uploader = this.initUploader(this.getId());
+            }
         }
 
         private initUploader(elId:string) {
+
+            if (!plupload) {
+                console.log('FormIcon: plupload not found, check if it is included in page.');
+            }
 
             var uploader = new plupload.Uploader({
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
@@ -69,8 +58,8 @@ module api_app_wizard {
                 url: this.uploadUrl,
                 multipart: true,
                 drop_element: elId,
-                flash_swf_url: 'common/js/fileupload/plupload/js/plupload.flash.swf',
-                silverlight_xap_url: 'common/js/fileupload/plupload/js/plupload.silverlight.xap',
+                flash_swf_url: api_util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
+                silverlight_xap_url: api_util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
                 filters: [
                     {title: 'Image files', extensions: 'jpg,gif,png'}
                 ]

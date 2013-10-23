@@ -1,18 +1,10 @@
 module app_wizard {
 
-    export class SpaceWizardPanel extends api_app_wizard.WizardPanel {
+    export class SpaceWizardPanel extends api_app_wizard.WizardPanel<api_remote_space.Space> {
 
         public static NEW_WIZARD_HEADER = "New Space";
 
         private static DEFAULT_SPACE_ICON_URL:string = api_util.getRestUri("space/image/_");
-
-        private closeAction:api_ui.Action;
-
-        private saveAction:api_ui.Action;
-
-        private duplicateAction:api_ui.Action;
-
-        private deleteAction:api_ui.Action;
 
         private formIcon:api_app_wizard.FormIcon;
 
@@ -35,21 +27,19 @@ module app_wizard {
             new api_app_wizard.FormIcon(SpaceWizardPanel.DEFAULT_SPACE_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
-            this.closeAction = new api_app_wizard.CloseAction(this);
-            this.saveAction = new api_app_wizard.SaveAction(this);
-            this.duplicateAction = new DuplicateSpaceAction();
-            this.deleteAction = new DeleteSpaceAction();
+            var actions = new SpaceWizardActions(this);
 
             var toolbar = new SpaceWizardToolbar({
-                saveAction: this.saveAction,
-                duplicateAction: this.duplicateAction,
-                deleteAction: this.deleteAction,
-                closeAction: this.closeAction
+                saveAction: actions.getSaveAction(),
+                duplicateAction: actions.getDuplicateAction(),
+                deleteAction: actions.getDeleteAction(),
+                closeAction: actions.getCloseAction()
             });
 
             super({
                 formIcon: this.formIcon,
                 toolbar: toolbar,
+                actions: actions,
                 header: this.spaceWizardHeader
             });
 

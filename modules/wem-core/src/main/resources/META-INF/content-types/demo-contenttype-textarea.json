@@ -1,0 +1,93 @@
+{
+    "name": "textarea",
+    "displayName": "Text Area",
+    "superType": "structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "textarea_default",
+                "label": "Text Area (default)",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextArea"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "textarea_10x10",
+                "label": "Text Area (10x10)",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextArea",
+                    "config": {
+                        "columns": 10,
+                        "rows": 10
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "textarea_80x10",
+                "label": "Text Area (80x10)",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextArea",
+                    "config": {
+                        "columns": 80,
+                        "rows": 10
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "textarea_50x5",
+                "label": "Text Area (50x5",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextArea",
+                    "config": {
+                        "columns": 50,
+                        "rows": 5
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,36 +1,53 @@
 module app_contextwindow {
-    export class EmulatorGrid extends api_grid.Grid {
+    export class EmulatorGrid extends api_ui_grid.Grid<any> {
 
-        constructor(data:any = {}) {
-            super(data, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
+        constructor(dataView:api_ui_grid.DataView<any>) {
+            super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
         }
 
-        private createColumns():api_grid.GridColumn[] {
+        private createColumns():api_ui_grid.GridColumn<any>[] {
             return [
                 {
                     name: "device",
                     field: "device",
                     id: "device",
                     width: 320,
-                    cssClass: "component",
+                    cssClass: "grid-row",
                     formatter: (row, cell, value, columnDef, dataContext) => {
-                        return this.buildRow(row, cell, value);
+                        return this.buildRow(row, cell, value).toString();
                     }
                 }
             ];
         }
 
-        private buildRow(row, cell, data):string {
-            var rowHtml:string[] = [];
-            rowHtml.push('<div ');
-            rowHtml.push(
-                '>',
-                '<h5>' + data.name + '</h5>',
-                '<h6>' + data.width + "x" + data.height + " " + data.device_type + '</h6>',
-                '</div>'
-            );
+        private buildRow(row, cell, data):api_dom.DivEl {
+            var row = new api_dom.DivEl();
+            row.getEl().setData('width', data.width);
+            row.getEl().setData('height', data.height);
+            row.getEl().setData('type', data.device_type);
 
-            return rowHtml.join("");
+            var icon = new api_dom.DivEl();
+            icon.setClass('icon-' + data.device_type);
+            icon.addClass('icon');
+
+            var title = new api_dom.H5El();
+            title.getEl().setInnerHtml(data.name);
+
+            var subtitle = new api_dom.H6El();
+            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device_type);
+
+            row.appendChild(icon);
+            row.appendChild(title);
+            row.appendChild(subtitle);
+
+            if (data.rotatable == true) {
+                var rotator = new api_dom.DivEl();
+                rotator.addClass('rotate');
+                rotator.addClass('icon-loop');
+                row.appendChild(rotator);
+            }
+
+            return row;
         }
 
         static toSlickData(data:any[]):any[] {

@@ -8,15 +8,15 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipKey;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.form.Input.newInput;
 import static junit.framework.Assert.assertEquals;
 
 public class SyncRelationshipsTest

@@ -1,0 +1,9 @@
+///<reference path='NewContentEvent.ts' />
+///<reference path='NewContentDialog.ts' />
+///<reference path='RecentContentTypes.ts' />
+///<reference path='AllContentTypesList.ts' />
+///<reference path='ContentTypesListListener.ts' />
+///<reference path='ContentTypesList.ts' />
+///<reference path='ContentTypeListItem.ts' />
+///<reference path='RecentContentTypesList.ts' />
+///<reference path='RecommendedContentTypesList.ts' />

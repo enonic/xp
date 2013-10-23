@@ -22,7 +22,7 @@ module app_browse {
             this.setItemId("ContentTreeGridPanel");
 
             app_browse_filter.ContentBrowseSearchEvent.on((event) => {
-                this.loadData(event.getContentList());
+                this.loadData(event.getJsonModels());
             });
 
             app_browse_filter.ContentBrowseResetEvent.on((event) => {
@@ -34,8 +34,9 @@ module app_browse {
                 onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
                     new app_browse.EditContentEvent([<any>event.clickedModel]).fire();
                 },
-                onSelectionChanged: (event)=> {
-                }
+                onSelectionChanged: null,
+                onSelect: null,
+                onDeselect: null
             });
         }
 

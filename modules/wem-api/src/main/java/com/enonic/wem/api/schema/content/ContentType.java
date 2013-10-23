@@ -3,13 +3,13 @@ package com.enonic.wem.api.schema.content;
 
 import com.google.common.base.Objects;
 
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.FormItem;
 
-import static com.enonic.wem.api.schema.content.form.Form.newForm;
+import static com.enonic.wem.api.form.Form.newForm;
 
 public final class ContentType
     extends BaseSchema<QualifiedContentTypeName>

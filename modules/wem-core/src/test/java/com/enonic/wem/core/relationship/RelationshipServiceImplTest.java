@@ -17,20 +17,19 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;
-
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.inputtype.InputTypeConfig;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypeConfig;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
+import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
 
 public class RelationshipServiceImplTest
 {
@@ -93,7 +92,7 @@ public class RelationshipServiceImplTest
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();
         command.client( client );
         command.jcrSession( jcrSession );
-        command.contentType( QualifiedContentTypeName.from(  "my_relations" ) );
+        command.contentType( QualifiedContentTypeName.from( "my_relations" ) );
         command.contentToUpdate( ContentId.from( "1" ) );
         command.contentBeforeEditing( dataBefore );
         command.contentAfterEditing( dataAfter );

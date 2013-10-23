@@ -1,0 +1,101 @@
+.combobox {
+  position: relative;
+  display: inline-block;
+  margin: 3px;
+
+  .input-icon {
+    position: absolute;
+    top: 5px;
+    left: 13px;
+    z-index: 4;
+    width: 25px;
+    height: 25px;
+  }
+
+  input {
+    .box-sizing(border-box);
+    height: 24px;
+    padding: 3px 8px;
+    margin: 0 0 10px 0;
+    border: 1px @admin-medium-gray-border solid;
+    line-height: 16px;
+    font-size: 15px;
+
+    &:focus {
+      border-color: @admin-black;
+      box-shadow: none;
+      outline: none;
+    }
+
+    &:disabled {
+      background: none;
+    }
+
+    .placeholder(0.85em, italic);
+  }
+
+  .empty-options, .options-container {
+    position: absolute;
+    .box-sizing(border-box);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 1px black solid;
+    .box-shadow(2px 2px 2px @admin-medium-gray-border);
+    background: white;
+    z-index: 5;
+  }
+
+  .options-container {
+    .slick-header {
+      height: 0px;
+      display: none;
+    }
+
+    .slick-cell {
+      height: 24px;
+      padding: 3px 8px;
+      border: none;
+
+      &:hover, &.active {
+        background: @admin-light-gray-bg;
+        cursor: pointer;
+      }
+
+      &.selected {
+        font-style: italic;
+        color: #d3d3d3;
+      }
+    }
+
+    .item-empty {
+      min-height: 0;
+      padding: 2px 8px;
+      font-size: 14px;
+    }
+
+  }
+
+  .selected-options {
+    float: none;
+
+    .selected-option {
+      .options-container > .slick-cell;
+      width: 100%;
+      padding-right: 0;
+
+      &:hover {
+        background: none;
+        cursor: default;
+      }
+
+      .remove {
+        float:right;
+        .icon-remove(2em, @admin-medium-gray-font);
+        font-size: 9px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    }
+  }
+}

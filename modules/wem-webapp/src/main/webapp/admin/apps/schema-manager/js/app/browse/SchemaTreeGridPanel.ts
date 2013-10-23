@@ -43,8 +43,9 @@ module app_browse {
                 onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
                     new app_browse.EditSchemaEvent([<any>event.clickedModel]).fire();
                 },
-                onSelectionChanged: (event) => {
-                }
+                onSelectionChanged: null,
+                onSelect: null,
+                onDeselect: null
             });
         }
 
@@ -93,8 +94,9 @@ module app_browse {
 
         private nameRenderer(value, metaData, record) {
             // typescript swears when extracting this as the class field
-            var nameTemplate = '<div class="admin-{0}-thumbnail">' +
+            var nameTemplate = '<div class="admin-{0}-thumbnail {4}">' +
                                '<img src="{1}"/>' +
+                               '<span class="overlay"/>' +
                                '</div>' +
                                '<div class="admin-{0}-description">' +
                                '<h6>{2}</h6>' +
@@ -103,7 +105,7 @@ module app_browse {
 
             var content = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.name);
+            return Ext.String.format( nameTemplate, activeListType, content.iconUrl, value, content.name, content.type);
         }
 
         private prettyDateRenderer(value) {

@@ -1,21 +1,16 @@
 module app_wizard {
 
-    export class RelationshipTypeWizardPanel extends api_app_wizard.WizardPanel {
+    export class RelationshipTypeWizardPanel extends api_app_wizard.WizardPanel<api_schema_relationshiptype.RelationshipType> {
 
         public static NEW_WIZARD_HEADER = "New Relationship Type";
 
         private static DEFAULT_CHEMA_ICON_URL:string = api_util.getRestUri('schema/image/RelationshipType:_');
 
-        private saveAction:api_ui.Action;
-
-        private closeAction:api_ui.Action;
-
         private formIcon:api_app_wizard.FormIcon;
-
 
         private relationShipTypeWizardHeader:api_app_wizard.WizardHeaderWithName;
 
-        private persistedRelationshipType:api_remote_relationshiptype.RelationshipType;
+        private persistedRelationshipType:api_schema_relationshiptype.RelationshipType;
 
         private relationshipTypeForm:RelationshipTypeForm;
 
@@ -26,17 +21,19 @@ module app_wizard {
             new api_app_wizard.FormIcon(RelationshipTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
-            this.closeAction = new api_app_wizard.CloseAction(this);
-            this.saveAction = new api_app_wizard.SaveAction(this);
+            var actions = new RelationshipTypeWizardActions(this);
 
             var toolbar = new RelationshipTypeWizardToolbar({
-                saveAction: this.saveAction,
-                closeAction: this.closeAction
+                saveAction: actions.getSaveAction(),
+                duplicateAction: actions.getDuplicateAction(),
+                deleteAction: actions.getDeleteAction(),
+                closeAction: actions.getCloseAction()
             });
 
             super({
                 formIcon: this.formIcon,
                 toolbar: toolbar,
+                actions: actions,
                 header: this.relationShipTypeWizardHeader
             });
 
@@ -45,23 +42,19 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Relationship Type"), this.relationshipTypeForm);
         }
 
-        setPersistedItem(relationshipType:api_remote_relationshiptype.RelationshipType) {
+        setPersistedItem(relationshipType:api_schema_relationshiptype.RelationshipType) {
             super.setPersistedItem(relationshipType);
 
-            this.relationShipTypeWizardHeader.setName(relationshipType.name);
-            this.formIcon.setSrc(relationshipType.iconUrl);
+            this.relationShipTypeWizardHeader.setName(relationshipType.getName());
+            this.formIcon.setSrc(relationshipType.getIcon());
 
             this.persistedRelationshipType = relationshipType;
 
-            var relationshipTypeGetParams:api_remote_relationshiptype.GetParams = {
-                qualifiedName: relationshipType.name,
-                format: 'XML'
-            };
+            new api_schema_relationshiptype.GetRelationshipTypeConfigByQualifiedNameRequest(relationshipType.getName()).send().
+                done((response:api_rest.JsonResponse<api_schema_relationshiptype.GetRelationshipTypeConfigResult>) => {
+                this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
+            });
 
-            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_get(relationshipTypeGetParams,
-                (result:api_remote_relationshiptype.GetResult) => {
-                    this.relationshipTypeForm.setFormData({"xml": result.relationshipTypeXml})
-                });
         }
 
         persistNewItem(successCallback?:() => void) {

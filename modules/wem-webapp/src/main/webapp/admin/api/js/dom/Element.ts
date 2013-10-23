@@ -66,9 +66,21 @@ module api_dom {
             return this;
         }
 
+        showCallback() {
+
+        }
+
+        private doShowCallback() {
+            this.showCallback();
+            this.children.forEach((child) => {
+                child.doShowCallback();
+            })
+        }
+
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             jQuery(this.el.getHTMLElement()).show();
+            this.doShowCallback();
         }
 
         hide() {
@@ -221,12 +233,20 @@ module api_dom {
             }
         }
 
+        toString():string {
+            return jQuery('<div>').append( jQuery(this.getHTMLElement()).clone() ).html();
+        }
+
         onMouseEnter(handler:(e:MouseEvent)=>any) {
             this.mouseEnterLeave(this.getHTMLElement(), 'mouseenter', handler);
         }
 
         onMouseLeave(handler:(e:MouseEvent)=>any) {
             this.mouseEnterLeave(this.getHTMLElement(), 'mouseleave', handler);
+        }
+
+        setBackgroundImgUrl(backgroundImgUrl:string) {
+            this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
         }
 
         private mouseEnterLeave(elem:HTMLElement, type:string, handler:(e:MouseEvent)=>any) {

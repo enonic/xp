@@ -1,8 +1,8 @@
 package com.enonic.wem.api.schema.mixin.editor;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.FormItems;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public final class SetMixinEditor

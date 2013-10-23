@@ -9,12 +9,12 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.schema.content.form.BreaksRequiredContractException;
-import com.enonic.wem.api.schema.content.form.FieldSet;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
+import com.enonic.wem.api.form.BreaksRequiredContractException;
+import com.enonic.wem.api.form.FieldSet;
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
 
 
 final class MinimumOccurrencesValidator

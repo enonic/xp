@@ -27,15 +27,6 @@ module app_home {
         getCenterPanel():CenterPanel {
             return this.centerPanel;
         }
-
-        getBackgroundImgUrl():string {
-            return this.backgroundImgUrl;
-        }
-
-        setBackgroundImgUrl(backgroundImgUrl:string) {
-            this.backgroundImgUrl = backgroundImgUrl;
-            this.getHTMLElement().style.backgroundImage = "url('" + backgroundImgUrl + "')";
-        }
     }
 
 }

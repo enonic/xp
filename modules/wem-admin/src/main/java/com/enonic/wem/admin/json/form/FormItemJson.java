@@ -1,0 +1,24 @@
+package com.enonic.wem.admin.json.form;
+
+import com.enonic.wem.api.form.FormItem;
+
+@SuppressWarnings("UnusedDeclaration")
+public abstract class FormItemJson
+{
+    private FormItem formItem;
+
+    protected FormItemJson( FormItem formItem )
+    {
+        this.formItem = formItem;
+    }
+
+    public String getName()
+    {
+        return formItem.getName();
+    }
+
+    public String getFormItemType()
+    {
+        return this.formItem.getClass().getSimpleName();
+    }
+}

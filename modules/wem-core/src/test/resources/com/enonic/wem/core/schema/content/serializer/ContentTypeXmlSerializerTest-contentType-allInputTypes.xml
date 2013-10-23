@@ -3,7 +3,7 @@
   <name>all_input_types</name>
   <display-name>All the Input Types</display-name>
   <content-display-name-script/>
-  <super-type>content</super-type>
+  <super-type>structured</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>
   <is-built-in>false</is-built-in>
@@ -65,6 +65,26 @@
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
+    <input type="ComboBox" name="myComboBox">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <options>
+          <option>
+            <label>myOption 1</label>
+            <value>o1</value>
+          </option>
+          <option>
+            <label>myOption 2</label>
+            <value>o2</value>
+          </option>
+        </options>
+      </config>
+    </input>
     <input type="SingleSelector" name="mySingleSelector">
       <label/>
       <immutable>false</immutable>
@@ -102,13 +122,29 @@
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
     </input>
-    <input type="TextArea" name="myTextArea">
+    <input type="TextArea" name="myTextArea_default">
       <label/>
       <immutable>false</immutable>
       <indexed>false</indexed>
       <custom-text/>
       <help-text/>
       <occurrences minimum="0" maximum="1"/>
+      <config>
+        <rows>10</rows>
+        <columns>50</columns>
+      </config>
+    </input>
+    <input type="TextArea" name="myTextArea_10cols_10_rows">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+      <config>
+        <rows>10</rows>
+        <columns>10</columns>
+      </config>
     </input>
     <input type="WholeNumber" name="myWholeNumber">
       <label/>
@@ -158,3 +194,4 @@
     </input>
   </form>
 </type>
+

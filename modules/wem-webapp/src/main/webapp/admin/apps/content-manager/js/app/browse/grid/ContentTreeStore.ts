@@ -8,19 +8,19 @@ module app_browse_grid {
 
             this.extDataStore = <any> new Ext.data.TreeStore({
 
-                model: 'Admin.model.contentManager.ContentModel',
+                model: 'Admin.model.contentManager.ContentSummaryModel',
 
                 remoteSort: false,
                 folderSort: false,
                 autoLoad: false,
-                clearOnLoad: false,
+                clearOnLoad: true,
                 autoSync: false,
                 defaultRootId: undefined,
                 nodeParam: 'parentId',
 
                 proxy: {
                     type: 'rest',
-                    url: '/admin/rest/content/list',
+                    url: api_util.getUri('admin/rest/content/list'),
                     reader: {
                         type: 'json',
                         root: 'contents',

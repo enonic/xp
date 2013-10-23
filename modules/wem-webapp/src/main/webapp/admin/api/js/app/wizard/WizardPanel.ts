@@ -8,14 +8,18 @@ module api_app_wizard {
 
         header:WizardHeader;
 
+        actions:WizardActions<any>;
+
         livePanel?:api_ui.Panel;
     }
 
-    export class WizardPanel extends api_ui.Panel implements api_ui.Closeable, api_event.Observable, api_ui.ActionContainer {
+    export class WizardPanel<T> extends api_ui.Panel implements api_ui.Closeable, api_event.Observable, api_ui.ActionContainer {
 
-        private persistedItem:any;
+        private persistedItem:T;
 
         private toolbar:api_ui_toolbar.Toolbar;
+
+        private actions:WizardActions<T>;
 
         private header:WizardHeader;
 
@@ -42,6 +46,7 @@ module api_app_wizard {
 
             this.header = params.header;
             this.toolbar = params.toolbar;
+            this.actions = params.actions;
 
             this.getEl().addClass("wizard-panel");
             this.backPanel = new api_ui.DeckPanel("WizardBackPanel");
@@ -117,8 +122,13 @@ module api_app_wizard {
             });
         }
 
-        setPersistedItem(item:any) {
+        renderNew() {
+            this.actions.enableActionsForNew();
+        }
+
+        setPersistedItem(item:T) {
             this.persistedItem = item;
+            this.actions.enableActionsForExisting(item);
         }
 
 

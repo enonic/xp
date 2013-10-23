@@ -4,8 +4,8 @@ import org.jdom.Element;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.schema.content.form.inputtype.AbstractInputTypeConfigXmlSerializer;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypeConfig;
+import com.enonic.wem.api.form.inputtype.AbstractInputTypeConfigXmlSerializer;
+import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 
 public class InputTypeConfigXmlSerializer
 {

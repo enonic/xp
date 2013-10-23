@@ -11,7 +11,7 @@ TestCase("ContentType", {
 
     "test getDisplayName when displayName field does not exist in json": function () {
 
-        var formJson:api_schema_content_form_json.FormItemJson[] = [
+        var formJson:api_form_json.FormItemJson[] = [
             {
                 formItemType: "Input",
                 name: "myRequiredInput",
@@ -96,7 +96,7 @@ TestCase("ContentType", {
         assertEquals("user:system:root", contentType.getOwner());
         assertEquals("user:system:anonymous", contentType.getModifier());
 
-        var form:api_schema_content_form.Form = contentType.getForm();
+        var form:api_form.Form = contentType.getForm();
         var myRequiredInput = form.getInputByName("myRequiredInput")
         assertEquals("My Required Input", myRequiredInput.getLabel());
         assertEquals(1, myRequiredInput.getOccurrences().getMinimum());

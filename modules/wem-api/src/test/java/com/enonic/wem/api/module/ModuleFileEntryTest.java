@@ -1,6 +1,6 @@
 package com.enonic.wem.api.module;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class ModuleFileEntryTest
     @Test
     public void testCreateModuleFileEntryFromFile()
     {
-        final ModuleFileEntry entry = newFileEntry( new File( "/temp/file.ext" ) );
+        final ModuleFileEntry entry = newFileEntry( Paths.get( "/temp/file.ext" ) );
 
         // verify
         assertEquals( "file.ext", entry.getName() );
@@ -59,8 +59,8 @@ public class ModuleFileEntryTest
     public void testCreateModuleFileEntryDirectoryWithFiles()
     {
         final ModuleFileEntry directory = directoryBuilder( "public" ).
-            add( new File( "/temp/text1.txt" ) ).
-            add( new File( "/temp/text2.txt" ) ).
+            addFile( Paths.get( "/temp/text1.txt" ) ).
+            addFile( Paths.get( "/temp/text2.txt" ) ).
             build();
 
         // verify
@@ -79,15 +79,15 @@ public class ModuleFileEntryTest
     public void testCreateModuleFileEntryDirectoryWith2Levels()
     {
         final ModuleFileEntry.Builder directoryBuilder = directoryBuilder( "public" ).
-            add( new File( "/temp/text1.txt" ) ).
-            add( new File( "/temp/text2.txt" ) ).
-            add( "text3.txt", asByteSource( "data".getBytes() ) );
+            addFile( Paths.get( "/temp/text1.txt" ) ).
+            addFile( Paths.get( "/temp/text2.txt" ) ).
+            addFile( "text3.txt", asByteSource( "data".getBytes() ) );
 
         final ModuleFileEntry.Builder subDirectory = directoryBuilder( "javascript" ).
-            add( new File( "/temp/file.js" ) ).
-            add( new File( "/temp/file2.js" ) );
+            addFile( Paths.get( "/temp/file.js" ) ).
+            addFile( Paths.get( "/temp/file2.js" ) );
 
-        final ModuleFileEntry directory = directoryBuilder.add( subDirectory ).build();
+        final ModuleFileEntry directory = directoryBuilder.addEntry( subDirectory ).build();
 
         // verify
         assertEquals( "public", directory.getName() );
@@ -103,15 +103,15 @@ public class ModuleFileEntryTest
     public void testGetEntryByPath()
     {
         final ModuleFileEntry.Builder directoryBuilder = directoryBuilder( "public" ).
-            add( new File( "/temp/text1.txt" ) ).
-            add( new File( "/temp/text2.txt" ) ).
-            add( new File( "/temp/text3.txt" ) );
+            addFile( Paths.get( "/temp/text1.txt" ) ).
+            addFile( Paths.get( "/temp/text2.txt" ) ).
+            addFile( Paths.get( "/temp/text3.txt" ) );
 
         final ModuleFileEntry.Builder subDirectory = directoryBuilder( "javascript" ).
-            add( new File( "/temp/file.js" ) ).
-            add( new File( "/temp/file2.js" ) );
+            addFile( Paths.get( "/temp/file.js" ) ).
+            addFile( Paths.get( "/temp/file2.js" ) );
 
-        final ModuleFileEntry directory = directoryBuilder.add( subDirectory ).build();
+        final ModuleFileEntry directory = directoryBuilder.addEntry( subDirectory ).build();
 
         // verify
         assertEquals( "javascript", directory.getEntry( "/javascript" ).getName() );
@@ -130,20 +130,20 @@ public class ModuleFileEntryTest
     public void testEditByCopy()
     {
         final ModuleFileEntry.Builder directoryBuilder = directoryBuilder( "public" ).
-            add( new File( "/temp/text1.txt" ) ).
-            add( new File( "/temp/text2.txt" ) ).
-            add( new File( "/temp/text3.txt" ) );
+            addFile( Paths.get( "/temp/text1.txt" ) ).
+            addFile( Paths.get( "/temp/text2.txt" ) ).
+            addFile( Paths.get( "/temp/text3.txt" ) );
         final ModuleFileEntry.Builder subDirectory = directoryBuilder( "javascript" ).
-            add( new File( "/temp/file.js" ) ).
-            add( new File( "/temp/file2.js" ) );
-        final ModuleFileEntry directory = directoryBuilder.add( subDirectory ).build();
+            addFile( Paths.get( "/temp/file.js" ) ).
+            addFile( Paths.get( "/temp/file2.js" ) );
+        final ModuleFileEntry directory = directoryBuilder.addEntry( subDirectory ).build();
         System.out.println( directory.asTreeString() + "\r\n----\r\n" );
 
         final ModuleFileEntry.Builder editedDir = ModuleFileEntry.copyOf( directory ).
             name( "private" ).
             remove( "text1.txt" );
         editedDir.getEntry( "text3.txt" ).name( "text3.txt.backup" );
-        editedDir.getEntry( "javascript" ).add( directoryBuilder( "emptyDir" ) );
+        editedDir.getEntry( "javascript" ).addEntry( directoryBuilder( "emptyDir" ) );
 
         System.out.println( editedDir.build().asTreeString() );
     }

@@ -31,7 +31,6 @@ module api_app_browse_grid {
         private keyField:string = 'name';
         private activeList:string = "grid";
         private itemId:string;
-        private refreshNeeded:boolean = false;
 
         private contextMenu:api_ui_menu.ContextMenu;
 
@@ -83,6 +82,16 @@ module api_app_browse_grid {
                         selectedModels: event.selectedModels
                     });
                 },
+                onSelect: (event:TreeSelectEvent) => {
+                    this.notifyTreeGridSelect({
+                        selectedModel: event.selectedModel
+                    });
+                },
+                onDeselect: (event:TreeDeselectEvent) => {
+                    this.notifyTreeGridDeselect({
+                        deselectedModel: event.deselectedModel
+                    });
+                },
                 onItemDoubleClicked: (event:TreeItemDoubleClickedEvent) => {
 
                     console.log("TreeGridPanel onItemDoubleClicked from tree", event);
@@ -107,6 +116,16 @@ module api_app_browse_grid {
                     this.notifyTreeGridSelectionChanged({
                         selectionCount: event.selectionCount,
                         selectedModels: event.selectedModels
+                    });
+                },
+                onSelect: (event:TreeSelectEvent) => {
+                    this.notifyTreeGridSelect({
+                        selectedModel: event.selectedModel
+                    });
+                },
+                onDeselect: (event:TreeDeselectEvent) => {
+                    this.notifyTreeGridDeselect({
+                        deselectedModel: event.deselectedModel
                     });
                 },
                 onItemDoubleClicked: (event:GridItemDoubleClickedEvent) => {
@@ -137,6 +156,24 @@ module api_app_browse_grid {
             this.listeners.forEach((listener:TreeGridPanelListener)=> {
                 if (listener.onSelectionChanged) {
                     listener.onSelectionChanged(event);
+                }
+            });
+        }
+
+        private notifyTreeGridSelect(event:TreeGridSelectEvent) {
+
+            this.listeners.forEach((listener:TreeGridPanelListener) => {
+                if (listener.onSelect) {
+                    listener.onSelect(event);
+                }
+            });
+        }
+
+        private notifyTreeGridDeselect(event:TreeGridDeselectEvent) {
+
+            this.listeners.forEach((listener:TreeGridPanelListener) => {
+                if (listener.onDeselect) {
+                    listener.onDeselect(event);
                 }
             });
         }
@@ -194,7 +231,6 @@ module api_app_browse_grid {
             } else {
                 activeStore.load();
             }
-            this.refreshNeeded = false;
         }
 
         loadData(data:Object[], append?:boolean) {
@@ -212,15 +248,8 @@ module api_app_browse_grid {
             }
         }
 
-        isRefreshNeeded():boolean {
-            return this.refreshNeeded;
-        }
-
-        setRefreshNeeded(refreshNeeded:boolean) {
-            this.refreshNeeded = refreshNeeded;
-        }
-
         removeAll() {
+            this.deselectAll();
             var activeList = this.getActiveList();
             if (this.activeList == TreeGridPanel.GRID) {
                 activeList.removeAll();
@@ -229,24 +258,48 @@ module api_app_browse_grid {
             }
         }
 
-        deselect(item:api_app_browse.BrowseItem) {
-            var activeList = this.getActiveList(),
-                selModel = activeList.getSelectionModel();
-
-            if (!item) {
-                selModel.deselectAll();
+        remove(keyFieldValue:any) {
+            this.deselect(keyFieldValue);
+            var activeList = this.getActiveList();
+            if (this.activeList == TreeGridPanel.GRID) {
+                var store = this.getActiveList().getStore();
+                var model = store.findRecord(this.keyField, keyFieldValue);
+                if (model) {
+                    store.remove(model);
+                }
             } else {
-                var key = item.getModel().get(this.keyField);
-                var selNodes = selModel.getSelection();
-                var i;
-
-                for (i = 0; i < selNodes.length; i++) {
-                    var selNode = selNodes[i];
-                    if (key == selNode.get(this.keyField)) {
-                        selModel.deselect([selNode]);
+                var root = (<Ext_tree_Panel>activeList).getRootNode();
+                var nodesToRemove = [];
+                root.cascadeBy((childNode) => {
+                    if (childNode.get(this.keyField) == keyFieldValue) {
+                        nodesToRemove.push(childNode);
+                        return false;
                     }
+                    return true;
+                }, this);
+                for (var i = 0; i < nodesToRemove.length; i++) {
+                    // passing false to prevent store syncing
+                    nodesToRemove[i].remove(false);
                 }
             }
+        }
+
+        deselectAll() {
+            this.getActiveList().getSelectionModel().deselectAll();
+        }
+
+        deselect(keyFieldValue:any) {
+            var selModel = this.getActiveList().getSelectionModel(),
+                selNodes = selModel.getSelection(),
+                i;
+
+            for (i = 0; i < selNodes.length; i++) {
+                var selNode = selNodes[i];
+                if (keyFieldValue == selNode.get(this.keyField)) {
+                    selModel.deselect([selNode]);
+                }
+            }
+
         }
 
         getSelection() {

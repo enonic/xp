@@ -133,8 +133,15 @@ module api_dom {
             return this;
         }
 
+        appendChildren(children:Node[]):ElementHelper {
+            children.forEach((child:Node) => {
+                this.el.appendChild(child);
+            });
+            return this;
+        }
+
         setData(name:string, value:string):ElementHelper {
-            jQuery(this.el).data(name, value);
+            jQuery(this.el).attr('data-' + name, value);
             return this;
         }
 
@@ -267,6 +274,10 @@ module api_dom {
 
         getComputedProperty(name:string, pseudoElement: string = null):string {
             return window.getComputedStyle(this.el, pseudoElement).getPropertyValue(name);
+        }
+
+        focuse() {
+            this.el.focus();
         }
 
     }

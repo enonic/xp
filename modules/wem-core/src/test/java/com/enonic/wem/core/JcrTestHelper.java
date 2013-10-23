@@ -20,12 +20,7 @@ public class JcrTestHelper
         try
         {
             jcrMicroKernelFactory = new JcrMicroKernelFactory();
-            jcrMicroKernelFactory.setInMemoryRepository( true );
-            jcrMicroKernelFactory.afterPropertiesSet();
-
-            final JcrRepositoryFactory jcrRepositoryFactory = new JcrRepositoryFactory();
-            jcrRepositoryFactory.setMicroKernel( jcrMicroKernelFactory.get() );
-            jcrRepositoryFactory.afterPropertiesSet();
+            final JcrRepositoryFactory jcrRepositoryFactory = new JcrRepositoryFactory( jcrMicroKernelFactory.get() );
             final Repository repo = jcrRepositoryFactory.get();
 
             final JcrSessionProviderImpl sessionProvider = new JcrSessionProviderImpl();
@@ -50,6 +45,6 @@ public class JcrTestHelper
     public void destroyMicroKernelFactory()
         throws Exception
     {
-        this.jcrMicroKernelFactory.destroy();
+        this.jcrMicroKernelFactory.stop();
     }
 }

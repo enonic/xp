@@ -96,7 +96,7 @@ module api_ui {
 
         private combination:string;
 
-        private callback:(e:ExtendedKeyboardEvent, combo:string) => any;
+        private callback:(e:ExtendedKeyboardEvent, combo:string) => boolean;
 
         private action:string;
 
@@ -107,8 +107,8 @@ module api_ui {
             this.action = action;
         }
 
-        setCallback(value:(e:ExtendedKeyboardEvent, combo:string) => any):KeyBinding {
-            this.callback = value;
+        setCallback(func:(e:ExtendedKeyboardEvent, combo:string) => boolean):KeyBinding {
+            this.callback = func;
             return this;
         }
 
@@ -121,7 +121,7 @@ module api_ui {
             return this.combination;
         }
 
-        getCallback():(e:ExtendedKeyboardEvent, combo:string) => any {
+        getCallback():(e:ExtendedKeyboardEvent, combo:string) => boolean {
             return this.callback;
         }
 

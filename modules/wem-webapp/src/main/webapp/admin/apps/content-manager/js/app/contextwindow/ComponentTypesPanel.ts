@@ -7,16 +7,19 @@ module app_contextwindow {
 
     export class ComponentTypesPanel extends api_ui.Panel {
         private searchBox;
+        private dataView:api_ui_grid.DataView<ComponentData>;
         private data:ComponentData[];
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
 
         constructor(contextWindow:ContextWindow) {
             super();
+            this.addClass('component-types-panel');
 
             this.contextWindow = contextWindow;
+            this.dataView = new api_ui_grid.DataView<ComponentData>();
 
-            this.grid = new ComponentGrid(this.data, {draggableRows: true, rowClass: "comp"});
+            this.grid = new ComponentGrid(this.dataView, {draggableRows: true, rowClass: "comp"});
 
             this.searchBox = new api_ui.TextInput();
             this.searchBox.setPlaceholder("Search");
@@ -109,9 +112,9 @@ module app_contextwindow {
 
         private getData():void {
             jQuery.ajax({
-                url: "/admin/apps/content-manager/js/data/context-window/mock-component-types.json",
+                url: api_util.getAdminUri("apps/content-manager/js/data/context-window/mock-component-types.json"),
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
-                    this.grid.updateData(ComponentGrid.toSlickData(data));
+                    this.dataView.setItems(ComponentGrid.toSlickData(data));
                 }
             });
         }

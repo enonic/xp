@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.jdom.Element;
 
-import com.enonic.wem.api.schema.content.form.FormItem;
+import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 public final class FormItemsXmlSerializer

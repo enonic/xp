@@ -9,6 +9,12 @@ module api_ui {
             this.doOffset = true;
         }
 
+        showCallback() {
+            if(this.doOffset) {
+                this.calculateOffset();
+            }
+        }
+
         afterRender() {
             if(this.doOffset) {
                 this.calculateOffset();

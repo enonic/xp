@@ -6,6 +6,7 @@ module app_launcher {
         private adminApplicationFrames:api_dom.DivEl;
         private appIframes:{[name: string]: api_dom.IFrameEl;};
         private lostConnectionDetector:app_launcher.LostConnectionDetector;
+        private router:AppRouter;
 
         constructor(mainContainer:api_dom.DivEl) {
             this.mainContainer = mainContainer;
@@ -36,33 +37,26 @@ module app_launcher {
                 console.warn('Missing URL for app "' + app.getName() + '". Cannot be opened.');
                 return;
             }
-            var appName = app.getName();
-            var appIframe:api_dom.IFrameEl = this.appIframes[ appName];
-            var iFrameExist:boolean = !!appIframe;
 
             this.mainContainer.hide();
-            for (var name in this.appIframes) {
-                var iframe:api_dom.IFrameEl = this.appIframes[name];
-                if (iframe.getEl().getAttribute('data-wem-app') !== appName) {
-                    iframe.hide();
+            Applications.getAllApps().forEach((currentApp:Application) => {
+                if (currentApp != app) {
+                    currentApp.hide();
                 }
-            }
+            });
 
-            if (iFrameExist) {
-                appIframe.show();
+            if (app.hasAppFrame()) {
+                app.getAppFrame().show();
             } else {
-                appIframe = this.createIframe(app.getAppUrl(), appName);
-                this.adminApplicationFrames.appendChild(appIframe);
+                this.adminApplicationFrames.appendChild(app.getAppFrame());
                 this.showLoadMask();
-                this.appIframes[appName] = appIframe;
             }
         }
 
         showLauncherScreen() {
-            for (var name in this.appIframes) {
-                var iframe:api_dom.IFrameEl = this.appIframes[name];
-                iframe.hide();
-            }
+            Applications.getAllApps().forEach((app:Application) => {
+                app.hide();
+            });
             this.mainContainer.show();
             hasher.setHash(AppRouter.HOME_HASH_ID);
         }
@@ -71,12 +65,8 @@ module app_launcher {
             // TODO implement loadMask
         }
 
-        private createIframe(url:string, name:string):api_dom.IFrameEl {
-            var iframe = new api_dom.IFrameEl();
-            iframe.getEl().setHeight('100%').setWidth('100%').getHTMLElement().style.border = '0';
-            iframe.setSrc(url);
-            iframe.getEl().setAttribute('data-wem-app', name);
-            return iframe;
+        setRouter(router:AppRouter) {
+            this.router = router;
         }
     }
 }

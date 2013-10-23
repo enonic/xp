@@ -3,8 +3,8 @@ module api_app {
     export interface BrowseBasedAppPanelConfig {
 
         appBar:api_app.AppBar;
+
         browsePanel:api_app_browse.BrowsePanel;
-        browsePanelActions:api_ui.Action[];
     }
 
     export class BrowseAndWizardBasedAppPanel extends api_app.AppPanel {
@@ -14,15 +14,18 @@ module api_app {
         private appBarTabMenu:api_app.AppBarTabMenu;
 
         constructor(config:BrowseBasedAppPanelConfig) {
-            super(config.appBar.getTabMenu(), config.browsePanel, config.browsePanelActions);
+            super(config.appBar.getTabMenu(), config.browsePanel);
 
             this.browsePanel = config.browsePanel;
             this.appBarTabMenu = config.appBar.getTabMenu();
 
+            // TODO: Hack to ensure that we get the key bindings for the browsePanel activated
+            api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(this.resolveActions(this.browsePanel)));
+
             this.addListener({
                 onPanelShown: (event:api_ui.PanelShownEvent) => {
                     if (event.panel === this.browsePanel) {
-                        this.browsePanel.refreshGrid();
+                        this.browsePanel.refreshFilterAndGrid();
                     }
 
                     var previousActions = this.resolveActions(event.previousPanel);
@@ -54,7 +57,7 @@ module api_app {
             });
         }
 
-        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+        addWizardPanel(tabMenuItem:AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel<any>) {
             super.addNavigablePanelToFront(tabMenuItem, wizardPanel);
 
             tabMenuItem.addListener({
@@ -72,7 +75,7 @@ module api_app {
 
         canRemovePanel(panel:api_ui.Panel):boolean {
             if (panel instanceof api_app_wizard.WizardPanel) {
-                var wizardPanel:api_app_wizard.WizardPanel = <api_app_wizard.WizardPanel>panel;
+                var wizardPanel:api_app_wizard.WizardPanel<any> = <api_app_wizard.WizardPanel<any>>panel;
                 return wizardPanel.canClose();
             }
             return true;

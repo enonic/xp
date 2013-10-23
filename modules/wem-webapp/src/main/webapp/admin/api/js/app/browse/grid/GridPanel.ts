@@ -59,6 +59,28 @@ module api_app_browse_grid {
             });
         }
 
+        private notifySelect(rowModel:Ext_selection_RowModel, model:Ext_data_Model) {
+
+            this.listeners.forEach((listener:GridPanelListener) => {
+                if (listener.onSelect) {
+                    listener.onSelect({
+                        selectedModel: model
+                    });
+                }
+            });
+        }
+
+        private notifyDeselect(rowModel:Ext_selection_RowModel, model:Ext_data_Model) {
+
+            this.listeners.forEach((listener:GridPanelListener) => {
+                if (listener.onDeselect) {
+                    listener.onDeselect({
+                        deselectedModel: model
+                    });
+                }
+            });
+        }
+
         private notifyItemDoubleClicked(view:Ext_view_View, record:Ext_data_Model) {
 
             this.listeners.forEach((listener:GridPanelListener)=> {

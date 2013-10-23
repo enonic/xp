@@ -1,0 +1,358 @@
+{
+    "name": "all_input_types",
+    "qualifiedName": "all_input_types",
+    "displayName": "All the Input Types",
+    "contentDisplayNameScript": null,
+    "superType": "structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "isBuiltIn": false,
+    "allowChildContent": true,
+    "form": [
+        {
+            "Input": {
+                "name": "myColor",
+                "label": "My Color",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Color"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myDate",
+                "label": "My Date",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Date"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myDecimalNumber",
+                "label": "My DecimalNumber",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "DecimalNumber"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myGeoLocation",
+                "label": "My GeoLocation",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "GeoLocation"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myHtmlArea",
+                "label": "My HtmlArea",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "HtmlArea"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myMoney",
+                "label": "Money",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Money"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myPhone",
+                "label": "Phone",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Phone"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myComboBox",
+                "label": "ComboBox",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ComboBox",
+                    "config": {
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "mySingleSelector",
+                "label": "My SingleSelector",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "SingleSelector",
+                    "config": {
+                        "selectorType": "DROPDOWN",
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myTags",
+                "label": "My Tags",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Tags"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myTextLine",
+                "label": "My TextLine",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextLine"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myTextArea_default",
+                "label": "My TextArea, default",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextArea",
+                    "config": {
+                        "rows": 10,
+                        "columns": 50
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myTextArea_10cols_10_rows",
+                "label": "My TextArea",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "TextArea",
+                    "config": {
+                        "rows": 10,
+                        "columns": 10
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myWholeNumber",
+                "label": "My WholeNumber",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "WholeNumber"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myXml",
+                "label": "My Xml",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Xml"
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myRelationship",
+                "label": "My Relationship",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "Relationship",
+                    "config": {
+                        "relationshipType": "like"
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "myImageSelector",
+                "label": "My ImageSelector",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": false,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ImageSelector",
+                    "config": {
+                        "relationshipType": "default"
+                    }
+                }
+            }
+        }
+    ]
+}

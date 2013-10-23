@@ -5,11 +5,15 @@ module app_contextwindow {
         onClick?:(el) => void;
     }
 
-    export class ComponentGrid extends api_grid.Grid {
+    export class ComponentGrid extends api_ui_grid.Grid<ComponentData> {
+
         private componentGridOptions:ComponentGridOptions;
 
-        constructor(data:any = {}, options:ComponentGridOptions = {}) {
-            super(data, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
+        private componentDataView:api_ui_grid.DataView<ComponentData>;
+
+        constructor(dataView:api_ui_grid.DataView<ComponentData>, options:ComponentGridOptions = {}) {
+            super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
+            this.componentDataView = dataView;
             this.componentGridOptions = options;
             this.setFilter(this.filter);
         }
@@ -32,48 +36,54 @@ module app_contextwindow {
         }
 
         updateFilter(searchString:string) {
-            this.getDataView().setFilterArgs({
+            this.componentDataView.setFilterArgs({
                 searchString: searchString
             });
-            this.getDataView().refresh();
+            this.componentDataView.refresh();
         }
 
-        private createColumns():api_grid.GridColumn[] {
+        private createColumns():api_ui_grid.GridColumn<ComponentData>[] {
             return [
                 {
                     name: "component",
                     field: "component",
                     id: "component",
                     width: 320,
-                    cssClass: "component",
+                    cssClass: "grid-row",
                     formatter: (row, cell, value, columnDef, dataContext) => {
-                        return this.buildRow(row, cell, value);
+                        return this.buildRow(row, cell, value).toString();
                     }
                 }
             ];
         }
 
-        private buildRow(row, cell, data):string {
-            var rowHtml:string[] = [];
-            rowHtml.push('<div ');
-
-            if (this.componentGridOptions.rowClass) {
-                rowHtml.push('class="' + this.componentGridOptions.rowClass + '" ');
-            }
+        private buildRow(row, cell, data):api_dom.DivEl {
+            var row = new api_dom.DivEl();
+            row.getEl().setData('live-edit-key', data.key);
+            row.getEl().setData('live-edit-name', data.name);
+            row.getEl().setData('live-edit-type', data.typeName);
             if (this.componentGridOptions.draggableRows) {
-                rowHtml.push('data-context-window-draggable="true" ');
+                row.getEl().setData('context-window-draggable', 'true');
             }
-            rowHtml.push(
-                'data-live-edit-key="' + data.key + '" ',
-                'data-live-edit-name="' + data.name + '" ',
-                'data-live-edit-type = "' + data.typeName + '"',
-                '>',
-                '<h5>' + data.name + '</h5>',
-                '<h6>' + data.subtitle + '</h6>',
-                '</div>'
-            );
+            if (this.componentGridOptions.rowClass) {
+                row.addClass(this.componentGridOptions.rowClass)
+            }
 
-            return rowHtml.join("");
+            var icon = new api_dom.DivEl();
+            icon.setClass('live-edit-font-icon-' + data.typeName);
+            icon.addClass('icon');
+
+            var title = new api_dom.H5El();
+            title.getEl().setInnerHtml(data.name);
+
+            var subtitle = new api_dom.H6El();
+            subtitle.getEl().setInnerHtml(data.subtitle);
+
+            row.appendChild(icon);
+            row.appendChild(title);
+            row.appendChild(subtitle);
+
+            return row;
         }
 
         static toSlickData(data:any[]):any[] {

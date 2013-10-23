@@ -38,6 +38,14 @@ module app_browse {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }
             });
+
+            app_wizard.SpaceCreatedEvent.on((event) => {
+                this.setRefreshNeeded(true);
+            });
+
+            app_wizard.SpaceUpdatedEvent.on((event) => {
+                this.setRefreshNeeded(true);
+            });
         }
 
         extModelsToBrowseItems(models:api_model.SpaceExtModel[]) {

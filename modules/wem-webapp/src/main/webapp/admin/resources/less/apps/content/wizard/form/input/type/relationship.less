@@ -1,0 +1,59 @@
+.relationship .combobox {
+
+  input {
+    height: 37px;
+    padding: 4px 4px 4px 50px;
+  }
+
+  .slick-cell {
+    height: 34px;
+    padding: 8px;
+    border: none;
+    .box-sizing(content-box);
+
+    &.selected {
+      .icon {
+        opacity: 0.5;
+      }
+
+      .content-summary .display-name {
+        color: #d3d3d3;
+      }
+    }
+
+    .icon {
+      float: left;
+      width: 32px;
+      height: 32px;
+      border: 1px @admin-medium-gray-border solid;
+    }
+
+    .content-summary {
+      margin: 0 0 0 42px;
+
+      .display-name {
+        font-size: 14px;
+        line-height: 16px;
+        overflow: hidden;
+        white-space: pre;
+        text-overflow: ellipsis;
+      }
+
+      .path {
+        color: @admin-light-gray-font;
+        font-size: 12px;
+        overflow: hidden;
+        white-space: pre;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .selected-option {
+    .slick-cell;
+    height: 37px;
+    padding: 3px 0;
+    border: none;
+  }
+
+}

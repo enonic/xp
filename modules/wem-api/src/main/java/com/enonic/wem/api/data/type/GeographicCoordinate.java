@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.schema.content.form.InvalidValueException;
+import com.enonic.wem.api.form.InvalidValueException;
 
 public class GeographicCoordinate
     extends ValueType<java.lang.String>
@@ -37,7 +37,7 @@ public class GeographicCoordinate
 
     @Override
     public void checkValidity( final Value value )
-        throws InvalidValueTypeException, InvalidValueException
+        throws ValueOfUnexpectedClassException, InvalidValueException
     {
         super.checkValidity( value );
 
@@ -51,28 +51,6 @@ public class GeographicCoordinate
         if ( valueHolder.longitude < LONGITUDE_RANGE_START || valueHolder.longitude > LONGITUDE_RANGE_END )
         {
             throw new InvalidValueException( value,
-                                             "longitude not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
-        }
-    }
-
-    @Override
-    public void checkValidity( final Property property )
-        throws InvalidValueTypeException, InvalidValueException
-    {
-        checkValueIsOfExpectedJavaClass( property );
-
-        final Value value = property.getValue();
-
-        final ValueHolder valueHolder = parse( value.getString() );
-        if ( valueHolder.latitude < LATITUDE_RANGE_START || valueHolder.latitude > LATITUDE_RANGE_END )
-        {
-            throw new InvalidValueException( property,
-                                             "latitude not within range from " + LATITUDE_RANGE_START + " to " + LATITUDE_RANGE_END );
-        }
-
-        if ( valueHolder.longitude < LONGITUDE_RANGE_START || valueHolder.longitude > LONGITUDE_RANGE_END )
-        {
-            throw new InvalidValueException( property,
                                              "longitude not within range from " + LONGITUDE_RANGE_START + " to " + LONGITUDE_RANGE_END );
         }
     }

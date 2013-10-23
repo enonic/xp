@@ -1,31 +1,20 @@
 package com.enonic.wem.api.command.module;
 
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.module.Modules;
 
 public final class GetModules
-    extends Command<List<Module>>
+    extends Command<Modules>
 {
     private boolean getAllModules = false;
 
-    private List<ModuleKey> modules = Lists.newArrayList();
-
-    public GetModules module( final ModuleKey module )
-    {
-        this.modules.add( module );
-        return this;
-    }
+    private ModuleKeys modules;
 
     public GetModules modules( final ModuleKeys modules )
     {
-        this.modules.addAll( modules.getList() );
+        this.modules = modules;
         return this;
     }
 
@@ -40,7 +29,7 @@ public final class GetModules
         return getAllModules;
     }
 
-    List<ModuleKey> getModules()
+    public ModuleKeys getModules()
     {
         return modules;
     }

@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputType;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.form.Input.newInput;
 
 public class InputJsonSerializer
     extends AbstractJsonSerializer<Input>
@@ -62,7 +62,7 @@ public class InputJsonSerializer
         jsonObject.put( HELP_TEXT, input.getHelpText() );
 
         final ObjectNode typeObject = (ObjectNode) inputTypeSerializer.serialize( input.getInputType() );
-        if ( input.getInputType().requiresConfig() && input.getInputTypeConfig() != null )
+        if ( /*input.getInputType().requiresConfig() &&*/ input.getInputTypeConfig() != null )
         {
             final JsonNode inputTypeNode =
                 input.getInputType().getInputTypeConfigJsonSerializer().serialize( input.getInputTypeConfig(), objectMapper() );
@@ -119,6 +119,10 @@ public class InputJsonSerializer
             if ( inputTypeNode.has( CONFIG ) )
             {
                 builder.inputTypeConfig( inputTypeConfigSerializer.parse( inputTypeNode.get( CONFIG ), inputType.getClass() ) );
+            }
+            else
+            {
+                builder.inputTypeConfig( inputType.getDefaultConfig() );
             }
         }
     }

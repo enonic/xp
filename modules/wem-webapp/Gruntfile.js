@@ -94,6 +94,10 @@ module.exports = function (grunt) {
         'ts:api',
         'ts:schema_manager'
     ]);
+    grunt.registerTask('al', [
+        'ts:api',
+        'ts:app_launcher'
+    ]);
     grunt.registerTask('live_edit_build_all', [
         'ts:live_edit',
         'less:live_edit'

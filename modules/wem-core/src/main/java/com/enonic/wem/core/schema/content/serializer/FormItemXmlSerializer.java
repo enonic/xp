@@ -3,21 +3,21 @@ package com.enonic.wem.core.schema.content.serializer;
 
 import org.jdom.Element;
 
-import com.enonic.wem.api.schema.content.form.FieldSet;
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.Layout;
-import com.enonic.wem.api.schema.content.form.MixinReference;
-import com.enonic.wem.api.schema.content.form.inputtype.InputType;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypeName;
+import com.enonic.wem.api.form.FieldSet;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.Layout;
+import com.enonic.wem.api.form.MixinReference;
+import com.enonic.wem.api.form.inputtype.InputType;
+import com.enonic.wem.api.form.inputtype.InputTypeName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.core.schema.content.form.inputtype.InputTypeResolver;
+import com.enonic.wem.core.form.inputtype.InputTypeResolver;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 
-import static com.enonic.wem.api.schema.content.form.FieldSet.newFieldSet;
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.form.FieldSet.newFieldSet;
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
 
 public class FormItemXmlSerializer
 {

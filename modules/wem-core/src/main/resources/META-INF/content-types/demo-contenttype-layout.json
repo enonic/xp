@@ -26,8 +26,7 @@
                             "validationRegexp": null,
                             "helpText": null,
                             "type": {
-                                "name": "TextLine",
-                                "builtIn": true
+                                "name": "TextLine"
                             }
                         }
                     }
@@ -48,8 +47,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "TextLine",
-                    "builtIn": true
+                    "name": "TextLine"
                 }
             }
         },
@@ -85,8 +83,7 @@
                                         "validationRegexp": null,
                                         "helpText": "Give this address a label",
                                         "type": {
-                                            "name": "TextLine",
-                                            "builtIn": true
+                                            "name": "TextLine"
                                         }
                                     }
                                 },
@@ -104,8 +101,7 @@
                                         "validationRegexp": null,
                                         "helpText": "Street",
                                         "type": {
-                                            "name": "TextLine",
-                                            "builtIn": true
+                                            "name": "TextLine"
                                         }
                                     }
                                 },
@@ -123,8 +119,7 @@
                                         "validationRegexp": null,
                                         "helpText": "Postal Code",
                                         "type": {
-                                            "name": "TextLine",
-                                            "builtIn": true
+                                            "name": "TextLine"
                                         }
                                     }
                                 },
@@ -142,8 +137,7 @@
                                         "validationRegexp": null,
                                         "helpText": "Postal Address",
                                         "type": {
-                                            "name": "TextLine",
-                                            "builtIn": true
+                                            "name": "TextLine"
                                         }
                                     }
                                 }
@@ -167,8 +161,7 @@
                 "validationRegexp": null,
                 "helpText": null,
                 "type": {
-                    "name": "TextLine",
-                    "builtIn": true
+                    "name": "TextLine"
                 }
             }
         }

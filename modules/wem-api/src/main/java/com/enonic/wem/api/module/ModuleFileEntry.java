@@ -1,24 +1,31 @@
 package com.enonic.wem.api.module;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.concurrent.Immutable;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
+import com.google.common.io.ByteStreams;
+import com.sun.nio.zipfs.ZipPath;
 
 import com.enonic.wem.api.resource.Resource;
+
+import static com.enonic.wem.api.resource.Resource.newResource;
 
 @Immutable
 public final class ModuleFileEntry
@@ -76,13 +83,23 @@ public final class ModuleFileEntry
 
     public Resource getResource( final String pathToResource )
     {
+        return getResource( ResourcePath.from( pathToResource ) );
+    }
+
+    public Resource getResource( final ResourcePath pathToResource )
+    {
         final ModuleFileEntry entry = getEntry( pathToResource );
         return entry == null ? null : entry.getResource();
     }
 
     public ModuleFileEntry getEntry( final String entryPath )
     {
-        final Iterator<String> pathElements = Splitter.on( "/" ).omitEmptyStrings().split( entryPath ).iterator();
+        return getEntry( ResourcePath.from( entryPath ) );
+    }
+
+    public ModuleFileEntry getEntry( final ResourcePath entryPath )
+    {
+        final Iterator<String> pathElements = entryPath.iterator();
         if ( !pathElements.hasNext() )
         {
             return null;
@@ -101,7 +118,7 @@ public final class ModuleFileEntry
         return entry;
     }
 
-    public boolean contains( final String entryPath )
+    public boolean contains( final ResourcePath entryPath )
     {
         return getEntry( entryPath ) != null;
     }
@@ -127,7 +144,47 @@ public final class ModuleFileEntry
         return entries.values().iterator();
     }
 
-    String asTreeString()
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper( this ).
+            add( "name", name ).
+            add( "resource", resource ).
+            add( "isDirectory", isDirectory ).
+            add( "entries", entriesAsString() ).
+            omitNullValues().
+            toString();
+    }
+
+    private String entriesAsString()
+    {
+        final StringBuilder result = new StringBuilder();
+        entriesAsString( result );
+        return result.toString();
+    }
+
+    private void entriesAsString( final StringBuilder result )
+    {
+        result.append( this.name );
+        if ( this.isEmpty() )
+        {
+            return;
+        }
+        result.append( ": [" );
+        final ImmutableList<ModuleFileEntry> entryList = entries.values().asList();
+        for ( int i = 0; i < entryList.size(); i++ )
+        {
+            ModuleFileEntry entry = entryList.get( i );
+            entry.entriesAsString( result );
+            if ( i < entryList.size() - 1 )
+            {
+                result.append( ", " );
+            }
+        }
+        result.append( "]" );
+    }
+
+    public String asTreeString()
     {
         final StringBuilder result = new StringBuilder();
         asTree( "", result );
@@ -147,13 +204,32 @@ public final class ModuleFileEntry
 
     public static ModuleFileEntry newFileEntry( final String fileName, final ByteSource source )
     {
-        final Resource resource = new Resource( fileName, source );
+        final Resource resource = newResource().name( fileName ).byteSource( source ).build();
         return new Builder( false, fileName ).resource( resource ).build();
     }
 
-    public static ModuleFileEntry newFileEntry( final File file )
+    public static ModuleFileEntry newFileEntry( final Path filePath )
     {
-        final Resource resource = new Resource( file.getName(), Files.asByteSource( file ) );
+        final Resource resource;
+        if ( filePath instanceof ZipPath )
+        {
+            try
+            {
+                resource = newResource().
+                    name( filePath.getFileName().toString() ).
+                    byteSource( ByteStreams.asByteSource( Files.readAllBytes( filePath ) ) ).build();
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+        else
+        {
+            resource = newResource().
+                name( filePath.getFileName().toString() ).
+                byteSource( com.google.common.io.Files.asByteSource( filePath.toFile() ) ).build();
+        }
         return new Builder( false, resource.getName() ).resource( resource ).build();
     }
 
@@ -188,8 +264,7 @@ public final class ModuleFileEntry
         private Builder( final ModuleFileEntry entry )
         {
             this.isDirectory = entry.isDirectory();
-            // TODO copy or make Resource immutable
-            this.resource = entry.resource == null ? null : new Resource( entry.resource.getName(), entry.resource.getByteSource() );
+            this.resource = entry.resource;
             this.name = entry.getName();
             for ( ModuleFileEntry subEntry : entry )
             {
@@ -216,31 +291,31 @@ public final class ModuleFileEntry
             return this;
         }
 
-        public Builder add( final File file )
+        public Builder addFile( final Path filePath )
         {
-            entryList.add( ModuleFileEntry.newFileEntry( file ) );
+            entryList.add( ModuleFileEntry.newFileEntry( filePath ) );
             return this;
         }
 
-        public Builder add( final String fileName, final ByteSource source )
+        public Builder addFile( final String fileName, final ByteSource source )
         {
             entryList.add( ModuleFileEntry.newFileEntry( fileName, source ) );
             return this;
         }
 
-        public Builder add( final ModuleFileEntry entry )
+        public Builder addEntry( final ModuleFileEntry entry )
         {
             entryList.add( entry );
             return this;
         }
 
-        public Builder add( final Iterable<ModuleFileEntry> entries )
+        public Builder addEntries( final Iterable<ModuleFileEntry> entries )
         {
             Iterables.addAll( entryList, entries );
             return this;
         }
 
-        public Builder add( final Builder entryBuilder )
+        public Builder addEntry( final Builder entryBuilder )
         {
             builderEntryList.add( entryBuilder );
             return this;
@@ -307,7 +382,7 @@ public final class ModuleFileEntry
         {
             for ( Builder entryBuilder : builderEntryList )
             {
-                add( entryBuilder.build() );
+                addEntry( entryBuilder.build() );
             }
             return new ModuleFileEntry( this );
         }

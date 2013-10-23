@@ -13,12 +13,15 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 public final class CreateContent
     extends Command<CreateContentResult>
 {
     public static final String THUMBNAIL_NAME = "_thumb.png";
+
+    private Form form;
 
     private ContentData contentData;
 
@@ -45,6 +48,12 @@ public final class CreateContent
     public CreateContent parentContentPath( final ContentPath parentContentPath )
     {
         this.parentContentPath = parentContentPath;
+        return this;
+    }
+
+    public CreateContent form( final Form value )
+    {
+        this.form = value;
         return this;
     }
 
@@ -108,6 +117,11 @@ public final class CreateContent
     public QualifiedContentTypeName getContentType()
     {
         return contentType;
+    }
+
+    public Form getForm()
+    {
+        return form;
     }
 
     public ContentData getContentData()

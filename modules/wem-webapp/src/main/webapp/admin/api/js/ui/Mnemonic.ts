@@ -31,15 +31,15 @@ module api_ui {
             if (mStart == 0) {
                 var underlineEl = new api_dom.Element("u");
                 nodes.push(underlineEl.getHTMLElement());
-                underlineEl.getEl().appendChild(new api_dom.TextNode(text.charAt(0)).getText());
-                nodes.push(new api_dom.TextNode(text.substr(1, text.length)).getText());
+                underlineEl.getEl().appendChild(document.createTextNode(text.charAt(0)));
+                nodes.push(document.createTextNode(text.substr(1, text.length)));
             }
             else {
-                nodes.push(new api_dom.TextNode(text.substr(0, mStart)).getText());
+                nodes.push(document.createTextNode(text.substr(0, mStart)));
                 var underlineEl = new api_dom.Element("u");
                 nodes.push(underlineEl.getHTMLElement());
-                underlineEl.getEl().appendChild(new api_dom.TextNode(text.charAt(mStart)).getText());
-                nodes.push(new api_dom.TextNode(text.substr(mStart + 1, text.length)).getText());
+                underlineEl.getEl().appendChild(document.createTextNode(text.charAt(mStart)));
+                nodes.push(document.createTextNode(text.substr(mStart + 1, text.length)));
             }
 
             return nodes;

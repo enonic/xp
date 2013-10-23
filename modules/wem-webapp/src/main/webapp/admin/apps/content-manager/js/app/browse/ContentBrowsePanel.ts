@@ -8,6 +8,8 @@ module app_browse {
 
         private contentTreeGridPanel:app_browse.ContentTreeGridPanel;
 
+        private contentTreeGridPanel2:app_browse_grid.ContentGridPanel2;
+
         private contentFilterPanel:app_browse_filter.ContentBrowseFilterPanel;
 
         private contentBrowseItemPanel:ContentBrowseItemPanel;
@@ -33,16 +35,12 @@ module app_browse {
 
             this.contentFilterPanel = new app_browse_filter.ContentBrowseFilterPanel();
 
-            new api_content.FindContentRequest().send().done(
-                (jsonResponse:api_rest.JsonResponse) => {
-                    var termsFacets:api_facet.Facet[] = api_facet.FacetFactory.createFacets(jsonResponse.getJson().facets);
-                    this.contentFilterPanel.updateFacets(termsFacets);
-                }
-            );
+            this.contentTreeGridPanel2 = new app_browse_grid.ContentGridPanel2();
 
             super({
                 browseToolbar: this.toolbar,
                 treeGridPanel: this.contentTreeGridPanel,
+                treeGridPanel2: this.contentTreeGridPanel2,
                 browseItemPanel: this.contentBrowseItemPanel,
                 filterPanel: this.contentFilterPanel});
 
@@ -54,21 +52,63 @@ module app_browse {
                 this.contentBrowseItemPanel.setPreviewMode(false);
             });
 
+            api_content.ContentDeletedEvent.on((event) => {
+                var contents:api_content.ContentSummary[] = event.getContents();
+                for (var i = 0; i < contents.length; i++) {
+                    this.contentTreeGridPanel.remove(contents[i].getPath().toString());
+                }
+            });
+
+            api_content.ContentCreatedEvent.on((event) => {
+                console.log('On content created', event.getPath());
+                this.setRefreshNeeded(true);
+            });
+
+            api_content.ContentUpdatedEvent.on((event) => {
+                console.log('On content updated', event.getModel());
+                this.setRefreshNeeded(true);
+            });
+
             this.contentTreeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
-                    this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
+                    var contentSummaries = this.extModelsToContentSummaries(event.selectedModels);
+                    this.browseActions.updateActionsEnabledState(contentSummaries);
                 }
+            });
+
+            ShowNewContentGridEvent.on( () => {
+                super.toggleShowingNewGrid();
             });
         }
 
-        extModelsToBrowseItems(models:api_model.ContentSummaryExtModel[]) {
+        showCallback() {
+            app.Router.setHash("browse");
+        }
+
+        getActions():api_ui.Action[] {
+            var actions = super.getActions();
+            // TODO: Ensures shortcut for showing new experimental content grid without having the action in the toolbar
+            actions.push(app_browse.ContentBrowseActions.get().SHOW_NEW_CONTENT_GRID);
+            return actions;
+        }
+
+        extModelsToContentSummaries(models:Ext_data_Model[]):api_content.ContentSummary[] {
+
+            var summaries:api_content.ContentSummary[] = [];
+            for (var i = 0; i < models.length; i++) {
+                summaries.push(new api_content.ContentSummary(<api_content_json.ContentSummaryJson>models[i].data))
+            }
+            return summaries;
+        }
+
+        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem[] {
 
             var browseItems:api_app_browse.BrowseItem[] = [];
-            models.forEach((model:api_model.ContentSummaryExtModel, index:number) => {
-                var item = new api_app_browse.BrowseItem(models[index]).
-                    setDisplayName(model.data.displayName).
-                    setPath(model.data.path).
-                    setIconUrl(model.data.iconUrl);
+            models.forEach((model:Ext_data_Model) => {
+                var item = new api_app_browse.BrowseItem(model).
+                    setDisplayName(model.data['displayName']).
+                    setPath(model.data['path']).
+                    setIconUrl(model.data['iconUrl']);
                 browseItems.push(item);
             });
             return browseItems;

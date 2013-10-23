@@ -20,10 +20,6 @@ module api_schema_content_json{
 
         superType:string;
 
-        createdTime:string;
-
-        modifiedTime:string;
-
         owner:string;
 
         modifier:string;

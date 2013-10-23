@@ -6,13 +6,13 @@ import com.enonic.wem.api.module.ModuleKey;
 public final class UpdateModule
     extends Command<Boolean>
 {
-    private ModuleKey module;
+    private ModuleKey moduleKey;
 
     private ModuleEditor editor;
 
-    public UpdateModule module( final ModuleKey module )
+    public UpdateModule module( final ModuleKey moduleKey )
     {
-        this.module = module;
+        this.moduleKey = moduleKey;
         return this;
     }
 
@@ -22,12 +22,12 @@ public final class UpdateModule
         return this;
     }
 
-    ModuleKey getModule()
+    public ModuleKey getModuleKey()
     {
-        return module;
+        return moduleKey;
     }
 
-    ModuleEditor getEditor()
+    public ModuleEditor getEditor()
     {
         return editor;
     }

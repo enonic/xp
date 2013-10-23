@@ -18,12 +18,12 @@ import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.FormItemPath;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipKey;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.FormItemPath;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.RelationshipConfig;
 
 import static com.enonic.wem.api.relationship.RelationshipKey.newRelationshipKey;
 import static com.enonic.wem.core.relationship.RelationshipFactory.newRelationshipFactory;

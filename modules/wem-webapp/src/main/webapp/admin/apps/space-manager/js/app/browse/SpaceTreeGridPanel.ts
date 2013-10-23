@@ -20,20 +20,13 @@ module  app_browse {
 
             this.setItemId("SpaceTreeGridPanel");
 
-            app_wizard.SpaceCreatedEvent.on((event) => {
-                this.setRefreshNeeded(true);
-            });
-
-            app_wizard.SpaceUpdatedEvent.on((event) => {
-                this.setRefreshNeeded(true);
-            });
-
             this.addListener({
                 onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
                     new app_browse.EditSpaceEvent([<any>event.clickedModel]).fire();
                 },
-                onSelectionChanged: (event) => {
-                }
+                onSelectionChanged: null,
+                onSelect: null,
+                onDeselect: null
             });
         }
 

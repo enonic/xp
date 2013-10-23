@@ -40,3 +40,25 @@
   -moz-box-sizing: @value;
   box-sizing: @value;
 }
+
+.placeholder(@size, @style) {
+  &::-webkit-input-placeholder {
+    font-size: @size;
+    font-style: @style;
+  }
+
+  &::-moz-placeholder {
+    font-size: @size;
+    font-style: @style;
+  }
+
+  &:-moz-placeholder {
+    font-size: @size;
+    font-style: @style;
+  }
+
+  &:-ms-input-placeholder {
+    font-size: @size;
+    font-style: @style;
+  }
+}

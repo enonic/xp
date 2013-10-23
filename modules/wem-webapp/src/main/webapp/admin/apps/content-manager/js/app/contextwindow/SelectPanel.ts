@@ -3,6 +3,7 @@ module app_contextwindow {
 
         private searchBox;
         private data:ComponentData[];
+        private dataView:api_ui_grid.DataView<ComponentData>;
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
 
@@ -10,9 +11,9 @@ module app_contextwindow {
             super("SelectPanel");
             this.addClass("select-panel");
             this.contextWindow = contextWindow;
-            var onClick = () => {
-            };
-            this.grid = new ComponentGrid(this.data, {onClick: onClick});
+
+            this.dataView = new api_ui_grid.DataView<ComponentData>();
+            this.grid = new ComponentGrid(this.dataView);
 
             this.searchBox = new api_ui.TextInput();
             this.searchBox.setPlaceholder("Search");
@@ -28,7 +29,7 @@ module app_contextwindow {
             });
 
             // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
-            jQuery(this.getHTMLElement()).on("click", ".component", (event:JQueryEventObject) => {
+            jQuery(this.getHTMLElement()).on("click", ".grid-row", (event:JQueryEventObject) => {
                 var key = jQuery(event.currentTarget).children('div').data("live-edit-key");
                 this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent(key);
             });
@@ -36,10 +37,10 @@ module app_contextwindow {
 
         private getData(componentType:number):void {
             jQuery.ajax({
-                url: "/admin/apps/content-manager/js/data/context-window/mock-components.jsp?componentType=" +
-                     componentType,
+                url: api_util.getAdminUri("apps/content-manager/js/data/context-window/mock-components.jsp?componentType=" +
+                     componentType),
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
-                    this.grid.updateData(ComponentGrid.toSlickData(data));
+                    this.dataView.setItems(ComponentGrid.toSlickData(data));
                 }
             });
         }

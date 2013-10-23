@@ -8,8 +8,7 @@ module app {
 
             super({
                 appBar: appBar,
-                browsePanel: browsePanel,
-                browsePanelActions: app_browse.ContentBrowseActions.get().getAllActions()
+                browsePanel: browsePanel
             });
 
             app_new.NewContentEvent.on((event) => {
@@ -34,7 +33,7 @@ module app {
             });
         }
 
-        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel) {
+        addWizardPanel(tabMenuItem:api_app.AppBarTabMenuItem, wizardPanel:api_app_wizard.WizardPanel<api_content.Content>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().addListener(
@@ -67,35 +66,34 @@ module app {
                         tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentWizardPanel.NEW_WIZARD_HEADER, tabId);
                         var wizardPanel = new app_wizard.ContentWizardPanel(newContentType, parentContent);
                         wizardPanel.renderNew();
-
                         this.addWizardPanel(tabMenuItem, wizardPanel);
-
                         wizardPanel.reRender();
+
                     });
             }
         }
 
-        private handleOpen(contents:api_model.ContentSummaryExtModel[]) {
+        private handleOpen(contents:api_content.ContentSummary[]) {
 
-            contents.forEach((contentModel:api_model.ContentSummaryExtModel) => {
+            contents.forEach((contentModel:api_content.ContentSummary) => {
 
-                var tabId = this.generateTabId(contentModel.data.path, false);
+                var tabId = this.generateTabId(contentModel.getPath().toString(), false);
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
                     this.selectPanel(tabMenuItem);
 
                 } else {
-                    tabMenuItem = new api_app.AppBarTabMenuItem(contentModel.data.displayName, tabId);
+                    tabMenuItem = new api_app.AppBarTabMenuItem(contentModel.getDisplayName(), tabId);
                     var contentItemViewPanel = new app_view.ContentItemViewPanel({
                         showPreviewAction: app_browse.ContentBrowseActions.get().SHOW_PREVIEW,
                         showDetailsAction: app_browse.ContentBrowseActions.get().SHOW_DETAILS
                     });
 
                     var contentItem = new api_app_view.ViewItem(contentModel)
-                        .setDisplayName(contentModel.data.displayName)
-                        .setPath(contentModel.data.path)
-                        .setIconUrl(contentModel.data.iconUrl);
+                        .setDisplayName(contentModel.getDisplayName())
+                        .setPath(contentModel.getPath().toString())
+                        .setIconUrl(contentModel.getIconUrl());
 
                     contentItemViewPanel.setItem(contentItem);
 
@@ -104,11 +102,11 @@ module app {
             });
         }
 
-        private handleEdit(contents:api_model.ContentSummaryExtModel[]) {
+        private handleEdit(contents:api_content.ContentSummary[]) {
 
-            contents.forEach((contentModel:api_model.ContentSummaryExtModel) => {
+            contents.forEach((contentModel:api_content.ContentSummary) => {
 
-                var tabId = this.generateTabId(contentModel.data.path, true);
+                var tabId = this.generateTabId(contentModel.getPath().toString(), true);
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
@@ -117,26 +115,25 @@ module app {
                 } else {
 
 
-                    var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.data.id).send();
-                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentModel.data.type).send();
+                    var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.getId()).send();
+                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentModel.getType()).send();
                     jQuery.
                         when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
-                        then((contentResponse:api_rest.JsonResponse, contentTypeResponse:api_rest.JsonResponse) => {
+                        then((contentResponse:api_rest.JsonResponse<api_content_json.ContentJson>, contentTypeResponse:api_rest.JsonResponse) => {
 
-                            var contentToEdit:api_content.Content = new api_content.Content(<api_content_json.ContentJson>contentResponse.getJson());
+                            var contentToEdit:api_content.Content = new api_content.Content(contentResponse.getResult());
                             var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(<api_schema_content_json.ContentTypeJson>contentTypeResponse.getJson());
                             tabMenuItem = new api_app.AppBarTabMenuItem(contentToEdit.getDisplayName(), tabId, true);
 
                             if (contentToEdit.getPath().hasParent()) {
                                 new api_content.GetContentByPathRequest(contentToEdit.getPath().getParentPath()).send().
-                                    done((parentContentResponse:api_rest.JsonResponse) => {
-                                        var parentContent:api_content.Content = new api_content.Content(<api_content_json.ContentJson>parentContentResponse.getJson());
+                                    done((parentContentResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
+                                        var parentContent:api_content.Content = new api_content.Content(parentContentResponse.getResult());
 
                                         var contentWizardPanel = new app_wizard.ContentWizardPanel(contentType, parentContent);
 
                                         contentWizardPanel.setPersistedItem(contentToEdit);
                                         this.addWizardPanel(tabMenuItem, contentWizardPanel);
-
                                     });
                             }
                             else {

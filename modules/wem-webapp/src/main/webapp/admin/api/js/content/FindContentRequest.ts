@@ -1,6 +1,6 @@
 module api_content {
 
-    export class FindContentRequest extends ContentResourceRequest {
+    export class FindContentRequest<T> extends ContentResourceRequest<FindContentResult<T>> {
 
         public static EXPAND_NONE = 'none';
         public static EXPAND_SUMMARY = 'summary';
@@ -22,6 +22,9 @@ module api_content {
         private facets:Object;
 
         private expand:string = FindContentRequest.EXPAND_NONE;
+
+        // don't limit by default
+        private count:number = -1;
 
 
         constructor(fulltext?:string) {
@@ -68,6 +71,11 @@ module api_content {
             return this;
         }
 
+        public setCount(count:number) {
+            this.count = count;
+            return this;
+        }
+
 
         getParams():Object {
             return {
@@ -77,7 +85,8 @@ module api_content {
                 ranges: this.ranges || [],
                 facets: this.facets || this.getDefaultFacets(),
                 include: this.includeFacets,
-                expand: this.expand
+                expand: this.expand,
+                count: this.count
             };
         }
 

@@ -1,6 +1,6 @@
 module api_content {
 
-    export class CreateContentRequest extends ContentResourceRequest {
+    export class CreateContentRequest extends ContentResourceRequest<any> {
 
         private temporary:boolean = false;
 
@@ -10,9 +10,7 @@ module api_content {
 
         private qualifiedContentTypeName:string;
 
-        private contentData:{
-            [key:string]: string;
-        };
+        private contentData:ContentData;
 
         private displayName:string;
 
@@ -31,7 +29,7 @@ module api_content {
             return this;
         }
 
-        setContentName(contentName:string):CreateContentRequest  {
+        setContentName(contentName:string):CreateContentRequest {
             this.contentName = contentName;
             return this;
         }
@@ -46,7 +44,7 @@ module api_content {
             return this;
         }
 
-        setContentData(contentData:{ [key:string]:string }):CreateContentRequest {
+        setContentData(contentData:api_content.ContentData):CreateContentRequest {
             this.contentData = contentData;
             return this;
         }
@@ -69,7 +67,7 @@ module api_content {
                 contentName: this.contentName,
                 parentContentPath: this.parentContentPath,
                 qualifiedContentTypeName: this.qualifiedContentTypeName,
-                contentData: this.contentData,
+                contentData: this.contentData.toJson(),
                 displayName: this.displayName,
                 attachments: this.attachments
             };

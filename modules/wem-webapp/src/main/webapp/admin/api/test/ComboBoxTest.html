@@ -30,7 +30,7 @@
 </head>
 <body>
 
-    <div id="example"></div>
+    <div id="example" class="relationship"></div>
 
 <script type="text/javascript" src="../js/api.js"></script>
 <script>
@@ -38,7 +38,7 @@
     var createData = function(value) {
         var data = [];
         for (var i = 0; i < 15 ; i++) {
-            data.push({id: value+i, value: {iconUrl:"", title:"title "+i+value, description:"description"+i}})
+            data.push({value: value+i, displayValue: {iconUrl:"", title:"title "+i+value, description:"description"+i}})
         }
         return data;
     }
@@ -60,11 +60,15 @@
         },
         maximumOccurrences: 3,
         filter: function (item, args) {
-            return !args || !args.value || item.value.description.indexOf(args.value) != -1 || item.value.title.indexOf(args.value) != -1;
+            return !args || !args.value || item.displayValue.description.indexOf(args.value) != -1 || item.displayValue.title.indexOf(args.value) != -1;
         }
     }
 
-    var combobox = new api_ui.ComboBox("name", createData(""), config);
+    var data = createData("");
+    var combobox = new api_ui_combobox.ComboBox("name", config);
+    for (var i = 0; i < data.length ; i++) {
+        combobox.addOption(data[i]);
+    }
 
     combobox.addListener({
         onInputValueChanged: function (oldValue, newValue, grid) {
@@ -76,6 +80,8 @@
 
     document.getElementById("example").appendChild(combobox.getHTMLElement());
     combobox.init();
+
+    combobox.setValue("3");
 
 </script>
 

@@ -14,18 +14,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import junit.framework.Assert;
 
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypeConfig;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.content.form.inputtype.SingleSelectorConfig;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypeConfig;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.core.content.JsonFactoryHolder;
 
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
-import static com.enonic.wem.api.schema.content.form.Occurrences.newOccurrences;
-import static com.enonic.wem.api.schema.content.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.form.Occurrences.newOccurrences;
+import static com.enonic.wem.api.form.inputtype.SingleSelectorConfig.newSingleSelectorConfig;
 
 public class FormItemJsonSerializerTest
 {

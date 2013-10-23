@@ -1,14 +1,14 @@
 package com.enonic.wem.api.schema.mixin;
 
 
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemPath;
 import com.enonic.wem.api.item.ItemTranslatable;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.FormItems;
 
 import static com.enonic.wem.api.item.Item.newItem;
 

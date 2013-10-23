@@ -5,17 +5,17 @@ import javax.jcr.Node;
 
 import org.junit.Test;
 
-
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.core.AbstractJcrTest;
 
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
+import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.junit.Assert.*;
 
@@ -66,7 +66,8 @@ public class MixinDaoImplTest
 
         Mixin updatedMixin = newMixin().name( "my_input" ).
             displayName( "My Updated Mixin" ).addFormItem(
-            newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_AREA ).build() ).build();
+            newInput().name( "my_input" ).label( "My input" ).inputType( InputTypes.TEXT_AREA ).inputTypeConfig(
+                TextAreaConfig.newTextAreaConfig().rows( 10 ).columns( 10 ).build() ).build() ).build();
         mixinDao.update( updatedMixin, session );
         commit();
 

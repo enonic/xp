@@ -8,11 +8,11 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.form.FormItem;
+import com.enonic.wem.api.form.FormItemPath;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.form.FormItem;
-import com.enonic.wem.api.schema.content.form.FormItemPath;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.Input;
 
 
 class MaximumOccurrencesValidator

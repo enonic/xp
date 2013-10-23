@@ -2,12 +2,12 @@ package com.enonic.wem.api.command.module;
 
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.content.form.Form;
 
 public final class CreateModule
     extends Command<Module>
@@ -28,7 +28,7 @@ public final class CreateModule
 
     private Form config;
 
-    private ModuleFileEntry resourcesRoot;
+    private ModuleFileEntry moduleDirectoryEntry;
 
     private ModuleVersion minSystemVersion;
 
@@ -50,7 +50,7 @@ public final class CreateModule
         createModule.vendorName = module.getVendorName();
         createModule.vendorUrl = module.getVendorUrl();
         createModule.config = module.getConfig();
-        createModule.resourcesRoot = module.getResourcesRoot();
+        createModule.moduleDirectoryEntry = module.getModuleDirectoryEntry();
         createModule.minSystemVersion = module.getMinSystemVersion();
         createModule.maxSystemVersion = module.getMaxSystemVersion();
         createModule.moduleDependencies = module.getModuleDependencies();
@@ -106,9 +106,9 @@ public final class CreateModule
         return this;
     }
 
-    public CreateModule resourcesRoot( final ModuleFileEntry fileEntryRoot )
+    public CreateModule moduleDirectoryEntry( final ModuleFileEntry fileEntryRoot )
     {
-        this.resourcesRoot = resourcesRoot;
+        this.moduleDirectoryEntry = moduleDirectoryEntry;
         return this;
     }
 
@@ -136,67 +136,67 @@ public final class CreateModule
         return this;
     }
 
-    String getName()
+    public String getName()
     {
         return name;
     }
 
-    ModuleVersion getVersion()
+    public ModuleVersion getVersion()
     {
         return version;
     }
 
-    String getDisplayName()
+    public String getDisplayName()
     {
         return displayName;
     }
 
-    String getInfo()
+    public String getInfo()
     {
         return info;
     }
 
-    String getUrl()
+    public String getUrl()
     {
         return url;
     }
 
-    String getVendorName()
+    public String getVendorName()
     {
         return vendorName;
     }
 
-    String getVendorUrl()
+    public String getVendorUrl()
     {
         return vendorUrl;
     }
 
-    Form getConfig()
+    public Form getConfig()
     {
         return config;
     }
 
-    ModuleFileEntry getResourcesRoot()
+    public ModuleFileEntry getModuleDirectoryEntry()
     {
-        return resourcesRoot;
+        return moduleDirectoryEntry;
     }
 
-    ModuleVersion getMinSystemVersion()
+    public ModuleVersion getMinSystemVersion()
     {
         return minSystemVersion;
     }
 
-    ModuleVersion getMaxSystemVersion()
+    public ModuleVersion getMaxSystemVersion()
     {
         return maxSystemVersion;
     }
 
-    ModuleKeys getModuleDependencies()
+    public ModuleKeys getModuleDependencies()
     {
         return moduleDependencies;
     }
 
-    QualifiedContentTypeNames getContentTypeDependencies()
+    public QualifiedContentTypeNames getContentTypeDependencies()
     {
         return contentTypeDependencies;
     }

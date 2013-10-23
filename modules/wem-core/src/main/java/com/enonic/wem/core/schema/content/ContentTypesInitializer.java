@@ -3,13 +3,13 @@ package com.enonic.wem.core.schema.content;
 import org.apache.commons.lang.WordUtils;
 
 import com.enonic.wem.api.command.schema.content.CreateContentType;
+import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
-import com.enonic.wem.api.schema.content.form.Form;
-import com.enonic.wem.api.schema.content.form.Input;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.support.BaseInitializer;
 
@@ -94,12 +94,13 @@ public class ContentTypesInitializer
             MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE};
 
     private static final String[] DEMO_CONTENT_TYPES =
-        {"demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json", "demo-contenttype-formItemset.json",
-            "demo-contenttype-blog.json", "demo-contenttype-article1.json", "demo-contenttype-article2.json",
-            "demo-contenttype-relation.json", "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json",
-            "demo-contenttype-mixin-address.json", "demo-contenttype-mixin-norwegian-counties.json",
-            "demo-contenttype-relation-article.json", "demo-contenttype-layout.json", "demo-contenttype-trampoline.json",
-            "demo-contenttype-formItemset-min-occurrences.json"};
+        {"demo-contenttype-textarea.json", "demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json",
+            "demo-contenttype-formItemset.json", "demo-contenttype-blog.json", "demo-contenttype-article1.json",
+            "demo-contenttype-article2.json", "demo-contenttype-relation.json", "demo-contenttype-occurrences.json",
+            "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin-address.json",
+            "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
+            "demo-contenttype-trampoline.json", "demo-contenttype-formItemset-min-occurrences.json",
+            "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json", "demo-contenttype-all-input-types.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 
@@ -111,8 +112,14 @@ public class ContentTypesInitializer
     private static Form createMediaImageForm()
     {
         return Form.newForm().
-            addFormItem( Input.newInput().name( "image" ).inputType( InputTypes.IMAGE ).label( "Media" ).build() ).
-            addFormItem( Input.newInput().name( "mimeType" ).inputType( InputTypes.TEXT_LINE ).label( "Mime type" ).build() ).
+            addFormItem( Input.newInput().name( "image" ).
+                inputType( InputTypes.IMAGE ).label( "Media" ).build() ).
+            addFormItem( Input.newInput().name( "mimeType" ).
+                inputType( InputTypes.TEXT_LINE ).
+                label( "Mime type" ).
+                occurrences( 0, 1 ).
+                build() ).
+
             build();
     }
 

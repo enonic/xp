@@ -1,6 +1,6 @@
 module api_schema_content {
 
-    export class ContentTypeResourceRequest extends api_rest.ResourceRequest {
+    export class ContentTypeResourceRequest<T> extends api_rest.ResourceRequest<T> {
 
         private resourceUrl:api_rest.Path;
 

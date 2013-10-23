@@ -1,24 +1,27 @@
 module api_schema_mixin {
 
-    export class Mixin {
+    export class Mixin extends api_item.BaseItem {
 
-        private name:string;
-        private displayName:string;
-        private qualifiedName:string;
-        private formItems:api_schema_content_form.FormItem[];
-        private createdTime:Date;
-        private modifiedTime:Date;
-        private icon:string;
         private schemaKey:string;
 
+        private name:string;
+
+        private displayName:string;
+
+        private qualifiedName:string;
+
+        private formItems:api_form.FormItem[];
+
+        private icon:string;
 
         constructor(json:api_schema_mixin_json.MixinJson) {
+            super(json);
             this.name = json.name;
             this.displayName = json.displayName;
             this.qualifiedName = this.name;
             this.formItems = [];
-            json.items.forEach((item:api_schema_content_form_json.FormItemJson) => {
-                this.formItems.push(new api_schema_content_form[item.formItemType](item));
+            json.items.forEach((item:api_form_json.FormItemJson) => {
+                this.formItems.push(new api_form[item.formItemType](item));
             });
             this.icon = json.iconUrl;
             this.schemaKey = "mixin:" + this.qualifiedName;
@@ -37,16 +40,8 @@ module api_schema_mixin {
             return this.qualifiedName;
         }
 
-        getFormItems():api_schema_content_form.FormItem[] {
+        getFormItems():api_form.FormItem[] {
             return this.formItems;
-        }
-
-        getCreatedTime():Date {
-            return this.createdTime;
-        }
-
-        getModifiedTime():Date {
-            return this.modifiedTime;
         }
 
         getIcon():string {

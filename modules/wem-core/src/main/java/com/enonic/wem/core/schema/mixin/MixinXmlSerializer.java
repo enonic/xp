@@ -6,7 +6,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
-import com.enonic.wem.api.schema.content.form.FormItem;
+import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.schema.content.serializer.FormItemsXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;

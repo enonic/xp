@@ -12,12 +12,15 @@ public final class ModuleKey
 
     private final ModuleVersion version;
 
-    public ModuleKey( final ModuleName name, final ModuleVersion version )
+    private final String refString;
+
+    private ModuleKey( final ModuleName name, final ModuleVersion version )
     {
         Preconditions.checkNotNull( name );
         Preconditions.checkNotNull( version );
         this.name = name;
         this.version = version;
+        this.refString = name.toString() + SEPARATOR + version.toString();
     }
 
     public ModuleName getName()
@@ -42,24 +45,27 @@ public final class ModuleKey
             return false;
         }
         final ModuleKey that = (ModuleKey) o;
-        return name.equals( that.name ) && version.equals( that.version );
+        return refString.equals( that.refString );
     }
 
     @Override
     public int hashCode()
     {
-        int result = name.hashCode();
-        result = 31 * result + version.hashCode();
-        return result;
+        return refString.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return name.toString() + SEPARATOR + version.toString();
+        return refString;
     }
 
-    public static ModuleKey parse( final String moduleKey )
+    public static ModuleKey from( final ModuleName name, final ModuleVersion version )
+    {
+        return new ModuleKey( name, version );
+    }
+
+    public static ModuleKey from( final String moduleKey )
     {
         final String name = StringUtils.substringBefore( moduleKey, SEPARATOR );
         final String version = StringUtils.substringAfter( moduleKey, SEPARATOR );

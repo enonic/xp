@@ -1,0 +1,37 @@
+{
+    "abstract": false,
+    "allowChildContent": true,
+    "contentDisplayNameScript": null,
+    "createdTime": "2013-01-01T12:00:00.000Z",
+    "creator": null,
+    "deletable": true,
+    "displayName": "My ContentType",
+    "editable": true,
+    "final": false,
+    "form": [
+        {
+            "customText": null,
+            "formItemType": "Input",
+            "helpText": null,
+            "immutable": false,
+            "indexed": false,
+            "inputType": {
+                "config": null,
+                "name": "TextLine"
+            },
+            "label": "My text line",
+            "name": "myTextLine",
+            "occurrences": {
+                "maximum": 1,
+                "minimum": 1
+            },
+            "validationRegexp": null
+        }
+    ],
+    "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:my_cty",
+    "modifiedTime": null,
+    "modifier": null,
+    "name": "my_cty",
+    "qualifiedName": "my_cty",
+    "superType": "unstructured"
+}

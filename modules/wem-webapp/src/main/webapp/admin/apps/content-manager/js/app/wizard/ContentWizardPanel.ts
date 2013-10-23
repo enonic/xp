@@ -1,6 +1,6 @@
 module app_wizard {
 
-    export class ContentWizardPanel extends api_app_wizard.WizardPanel {
+    export class ContentWizardPanel extends api_app_wizard.WizardPanel<api_content.Content> {
 
         public static NEW_WIZARD_HEADER = "New Content";
 
@@ -13,10 +13,6 @@ module app_wizard {
         private renderingNew:boolean;
 
         private contentType:api_schema_content.ContentType;
-
-        private duplicateAction:api_ui.Action;
-
-        private deleteAction:api_ui.Action;
 
         private formIcon:api_app_wizard.FormIcon;
 
@@ -38,17 +34,13 @@ module app_wizard {
             this.formIcon = new api_app_wizard.FormIcon(ContentWizardPanel.DEFAULT_CONTENT_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
-            var closeAction = new api_app_wizard.CloseAction(this);
-            var saveAction = new api_app_wizard.SaveAction(this);
-
-            this.duplicateAction = new DuplicateContentAction();
-            this.deleteAction = new DeleteContentAction();
+            var actions = new ContentWizardActions(this);
 
             var toolbar = new ContentWizardToolbar({
-                saveAction: saveAction,
-                duplicateAction: this.duplicateAction,
-                deleteAction: this.deleteAction,
-                closeAction: closeAction
+                saveAction: actions.getSaveAction(),
+                duplicateAction: actions.getDuplicateAction(),
+                deleteAction: actions.getDeleteAction(),
+                closeAction: actions.getCloseAction()
             });
 
             var livePanel = new LiveFormPanel();
@@ -57,6 +49,7 @@ module app_wizard {
                 formIcon: this.formIcon,
                 toolbar: toolbar,
                 header: this.contentWizardHeader,
+                actions: actions,
                 livePanel: livePanel
             });
 
@@ -97,7 +90,16 @@ module app_wizard {
             });
         }
 
+        showCallback() {
+            if(this.persistedContent) {
+                app.Router.setHash("edit/" + this.persistedContent.getId());
+            } else {
+                app.Router.setHash("new/" + this.contentType.getQualifiedName());
+            }
+        }
+
         renderNew() {
+            super.renderNew();
             this.contentForm.renderNew();
             this.renderingNew = true;
         }
@@ -125,21 +127,21 @@ module app_wizard {
 
         persistNewItem(successCallback?:() => void) {
 
-            var flattenedContentData:any = {};
             var contentData = this.contentForm.getContentData();
-            console.log("persistNewItem contentData: ", contentData);
-            this.flattenData(contentData, flattenedContentData);
-            console.log("persistNewItem flattenedContentData: ", flattenedContentData);
 
             new api_content.CreateContentRequest().
                 setContentName(this.contentWizardHeader.getName()).
                 setParentContentPath(this.parentContent.getPath().toString()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(flattenedContentData).
-                send().done((createResponse:api_rest.JsonResponse) => {
+                setContentData(contentData).
+                send().done((createResponse:api_rest.JsonResponse<any>) => {
+
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
+
+                    var json = createResponse.getJson();
+                    new api_content.ContentCreatedEvent(api_content.ContentPath.fromString(json.contentPath)).fire();
 
                     if (successCallback) {
                         successCallback.call(this);
@@ -149,38 +151,23 @@ module app_wizard {
 
         updatePersistedItem(successCallback?:() => void) {
 
-            var flattenedContentData:any = {};
             var contentData = this.contentForm.getContentData();
-            console.log("updatePersistedItem contentData: ", flattenedContentData);
-            this.flattenData(contentData, flattenedContentData);
-            console.log("updatePersistedItem flattenedContentData: ", flattenedContentData);
 
             new api_content.UpdateContentRequest(this.persistedContent.getId()).
                 setContentName(this.contentWizardHeader.getName()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(flattenedContentData).
-                send().done((updateResponse:api_rest.JsonResponse) => {
+                setContentData(contentData).
+                send().done((updateResponse:api_rest.JsonResponse<any>) => {
                     api_notify.showFeedback('Content was updated!');
                     console.log('content update response', updateResponse);
+
+                    new api_content.ContentUpdatedEvent(this.persistedContent).fire();
 
                     if (successCallback) {
                         successCallback.call(this);
                     }
                 });
-        }
-
-        private flattenData(contentData:api_data.DataSet, result:any) {
-            contentData.getDataArray().forEach((data:api_data.Data) => {
-                if (data instanceof api_data.Property) {
-                    var property:api_data.Property = <api_data.Property>data;
-                    result[data.getId().toString()] = property.getValue();
-                }
-                else if (data instanceof api_data.DataSet) {
-                    var dataSet = <api_data.DataSet>data;
-                    this.flattenData(dataSet, result);
-                }
-            });
         }
     }
 
@@ -188,12 +175,24 @@ module app_wizard {
 
         private frame:api_dom.IFrameEl;
 
-        constructor(url?:string) {
+        constructor(url:string = "../../../dev/live-edit-page/bootstrap.jsp?edit=true") {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
+
             this.frame = new api_dom.IFrameEl();
+            this.frame.addClass("live-edit-frame");
+            this.frame.setSrc(url);
             this.appendChild(this.frame);
-            this.frame.setSrc("../../../dev/live-edit-page/bootstrap.jsp?edit=true");
+
+            // Wait for iframe to be loaded before adding context window!
+            var intervalId = setInterval(() => {
+                if (this.frame.isLoaded()) {
+                    var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame});
+                    this.appendChild(contextWindow);
+                    clearInterval(intervalId);
+                }
+            }, 200);
+
         }
 
     }

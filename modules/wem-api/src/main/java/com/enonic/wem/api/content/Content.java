@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageTemplateId;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.ItemPath;
@@ -32,6 +32,8 @@ public final class Content
 
     private final ContentId id;
 
+    private final Form form;
+
     private final ContentData contentData;
 
     private final DateTime createdTime;
@@ -48,8 +50,6 @@ public final class Content
 
     private final ImmutableList<ContentId> childrenIds;
 
-    private final PageTemplateId pageTemplate;
-
     private final Page page;
 
     private Content( final Builder builder )
@@ -58,6 +58,7 @@ public final class Content
         this.type = builder.type;
         this.path = builder.path;
         this.id = builder.contentId;
+        this.form = builder.form;
         this.contentData = builder.contentData;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -67,7 +68,6 @@ public final class Content
         this.versionId = builder.versionId;
         this.childrenIds = builder.childrenIdsBuilder.build();
         this.page = builder.page;
-        this.pageTemplate = builder.pageTemplate;
     }
 
     public boolean isTemporary()
@@ -130,6 +130,11 @@ public final class Content
     public UserKey getOwner()
     {
         return owner;
+    }
+
+    public Form getForm()
+    {
+        return form;
     }
 
     public ContentData getContentData()
@@ -217,6 +222,8 @@ public final class Content
 
         private QualifiedContentTypeName type;
 
+        private Form form;
+
         private ContentData contentData;
 
         private String displayName;
@@ -237,8 +244,6 @@ public final class Content
 
         private Page page;
 
-        private PageTemplateId pageTemplate;
-
         public Builder()
         {
             this.path = ContentPath.ROOT;
@@ -251,6 +256,7 @@ public final class Content
             this.contentId = content.id;
             this.path = content.path;
             this.type = content.type;
+            this.form = content.form; // TODO make DataSet immutable, or make copy
             this.contentData = content.contentData; // TODO make DataSet immutable, or make copy
             this.displayName = content.displayName;
             this.owner = content.owner;
@@ -262,7 +268,6 @@ public final class Content
             this.childrenIdsBuilder = ImmutableList.builder();
             this.childrenIdsBuilder.addAll( content.childrenIds );
             this.page = content.page;
-            this.pageTemplate = content.pageTemplate;
         }
 
         public Builder path( final ContentPath path )
@@ -284,6 +289,12 @@ public final class Content
         public Builder type( final QualifiedContentTypeName type )
         {
             this.type = type;
+            return this;
+        }
+
+        public Builder form( final Form form )
+        {
+            this.contentData = contentData;
             return this;
         }
 
@@ -350,12 +361,6 @@ public final class Content
         public Builder page( final Page page )
         {
             this.page = page;
-            return this;
-        }
-
-        public Builder pageTemplate( final PageTemplateId pageTemplate )
-        {
-            this.pageTemplate = pageTemplate;
             return this;
         }
 

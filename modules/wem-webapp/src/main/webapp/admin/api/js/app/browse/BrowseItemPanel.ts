@@ -28,20 +28,26 @@ module api_app_browse {
 
         }
 
-        setItems(items:api_app_browse.BrowseItem[]) {
-            if (items.length == 0) {
+        addItem(item:BrowseItem) {
+            this.itemsSelectionPanel.addItem(item);
+            this.updateDisplayedPanel();
+        }
 
-                this.itemsSelectionPanel.setItems(items);
-                this.showPanel(0);
-            }
-            else if (items.length == 1) {
+        removeItem(item:BrowseItem) {
+            this.itemsSelectionPanel.removeItem(item);
+            this.updateDisplayedPanel();
+        }
 
-                this.itemStatisticsPanel.setItem(items[0].toViewItem());
+        getItems():BrowseItem[] {
+            return this.itemsSelectionPanel.getItems();
+        }
+
+        updateDisplayedPanel() {
+            var selectedItems = this.getItems();
+            if (selectedItems.length == 1) {
+                this.itemStatisticsPanel.setItem(selectedItems[0].toViewItem());
                 this.showPanel(1);
-
-            } else if (items.length > 1) {
-
-                this.itemsSelectionPanel.setItems(items);
+            } else {
                 this.showPanel(0);
             }
         }

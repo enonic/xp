@@ -21,7 +21,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "default"
                     }
@@ -43,7 +42,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "like"
                     }
@@ -65,7 +63,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "default"
                     }
@@ -88,7 +85,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "default"
                     }
@@ -111,7 +107,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "default"
                     }
@@ -134,7 +129,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "default"
                     }
@@ -157,7 +151,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "default"
                     }
@@ -180,7 +173,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "default"
                     }

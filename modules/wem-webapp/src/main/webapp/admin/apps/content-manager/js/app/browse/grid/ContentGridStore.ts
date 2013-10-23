@@ -8,13 +8,13 @@ module app_browse_grid {
 
             this.extDataStore = <any> new Ext.data.Store({
 
-                model: 'Admin.model.contentManager.ContentModel',
+                model: 'Admin.model.contentManager.ContentSummaryModel',
 
                 autoSync: false,
 
                 proxy: {
                     type: 'rest',
-                    url: '/admin/rest/content/list',
+                    url: api_util.getUri('admin/rest/content/list'),
                     reader: {
                         type: 'json',
                         root: 'contents',

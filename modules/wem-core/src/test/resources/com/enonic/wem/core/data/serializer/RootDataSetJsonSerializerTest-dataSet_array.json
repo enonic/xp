@@ -1,0 +1,28 @@
+[
+    {
+        "name": "mySet",
+        "path": "mySet[0]",
+        "type": "DataSet",
+        "value": [
+            {
+                "name": "myProp",
+                "path": "mySet[0].myProp",
+                "type": "String",
+                "value": "a"
+            }
+        ]
+    },
+    {
+        "name": "mySet",
+        "path": "mySet[1]",
+        "type": "DataSet",
+        "value": [
+            {
+                "name": "myProp",
+                "path": "mySet[1].myProp",
+                "type": "String",
+                "value": "b"
+            }
+        ]
+    }
+]

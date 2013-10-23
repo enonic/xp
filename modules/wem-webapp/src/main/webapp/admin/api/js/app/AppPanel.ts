@@ -4,13 +4,10 @@ module api_app{
 
         private homePanel:api_ui.Panel;
 
-        private homePanelActions:api_ui.Action[];
-
-        constructor(tabNavigator:AppBarTabMenu, homePanel:api_ui.Panel, homePanelActions:api_ui.Action[]) {
+        constructor(tabNavigator:AppBarTabMenu, homePanel:api_ui.Panel) {
             super(tabNavigator);
 
             this.homePanel = homePanel;
-            this.homePanelActions = homePanelActions;
             var homePanelMenuItem = new AppBarTabMenuItem("home", "home");
             homePanelMenuItem.setVisibleInMenu(false);
             homePanelMenuItem.setRemovable(false);

@@ -1,6 +1,6 @@
 module api_content {
 
-    export class UpdateContentRequest extends ContentResourceRequest {
+    export class UpdateContentRequest extends ContentResourceRequest<any> {
 
         private id:string;
 
@@ -8,9 +8,7 @@ module api_content {
 
         private qualifiedContentTypeName:string;
 
-        private contentData:{
-            [key:string]: string;
-        };
+        private contentData:ContentData;
 
         private displayName:string;
 
@@ -30,7 +28,7 @@ module api_content {
             return this;
         }
 
-        setContentName(contentName:string):UpdateContentRequest  {
+        setContentName(contentName:string):UpdateContentRequest {
             this.contentName = contentName;
             return this;
         }
@@ -40,7 +38,7 @@ module api_content {
             return this;
         }
 
-        setContentData(contentData:{ [key:string]:string }):UpdateContentRequest {
+        setContentData(contentData:api_content.ContentData):UpdateContentRequest {
             this.contentData = contentData;
             return this;
         }
@@ -61,7 +59,7 @@ module api_content {
                 contentId: this.id,
                 contentName: this.contentName,
                 qualifiedContentTypeName: this.qualifiedContentTypeName,
-                contentData: this.contentData,
+                contentData: this.contentData.toJson(),
                 displayName: this.displayName,
                 attachments: this.attachments
             };

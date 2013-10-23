@@ -20,8 +20,8 @@ public final class JcrModule
     protected void configure()
     {
         bind( JcrSessionProvider.class ).to( JcrSessionProviderImpl.class ).in( Scopes.SINGLETON );
-        bind( MicroKernel.class ).toProvider( JcrMicroKernelFactory.class ).in( Scopes.SINGLETON );
-        bind( Repository.class ).toProvider( JcrRepositoryFactory.class ).in( Scopes.SINGLETON );
+        bind( MicroKernel.class ).toProvider( JcrMicroKernelFactory.class );
+        bind( Repository.class ).toProvider( JcrRepositoryFactory.class );
         bind( JcrInitializer.class ).in( Scopes.SINGLETON );
     }
 }

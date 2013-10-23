@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.schema.content.form.InvalidValueException;
+import com.enonic.wem.api.form.InvalidValueException;
 
 /**
  * ValueTypes should only be created when:
@@ -54,28 +54,16 @@ public abstract class ValueType<T>
      * Checks by default if given property's value is of correct Java class.
      * Can be overridden by concrete classes to do extensive validation.
      *
-     * @param property the property to check the validity of
-     * @throws InvalidValueTypeException
-     */
-    public void checkValidity( final Property property )
-        throws InvalidValueTypeException, InvalidValueException
-    {
-        checkValueIsOfExpectedJavaClass( property );
-    }
-
-    /**
-     * Checks by default if given property's value is of correct Java class.
-     * Can be overridden by concrete classes to do extensive validation.
-     *
      * @param value the value to check the validity of
-     * @throws InvalidValueTypeException
+     * @throws ValueOfUnexpectedClassException
+     *
+     * @throws InvalidValueException
      */
     public void checkValidity( final Value value )
-        throws InvalidJavaTypeConverterException, InvalidValueException
+        throws ValueOfUnexpectedClassException, InvalidValueException
     {
-        checkValueIsOfExpectedJavaClass( value );
+        checkValueIsOfExpectedClass( value );
     }
-
 
     @Override
     public boolean equals( final Object o )
@@ -105,33 +93,33 @@ public abstract class ValueType<T>
         return name;
     }
 
-    public boolean isValueOfExpectedJavaClass( final Object value )
+    public boolean isObjectOfExpectedClass( final Object object )
     {
-        Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
-        return javaTypeConverter.isInstance( value );
+        Preconditions.checkNotNull( object, "Cannot check the type of a object that is null" );
+        return javaTypeConverter.isInstance( object );
     }
 
-    public boolean isValueOfExpectedJavaClass( final Value value )
+    public boolean isValueOfExpectedClass( final Value value )
     {
         Preconditions.checkNotNull( value, "Cannot check the type of a value that is null" );
         return javaTypeConverter.isInstance( value.getObject() );
     }
 
-    void checkValueIsOfExpectedJavaClass( final Property property )
-        throws InvalidValueTypeException
+    public void checkValueIsOfExpectedClass( final Property property )
+        throws ValueOfUnexpectedClassException
     {
-        if ( !isValueOfExpectedJavaClass( ( property.getObject() ) ) )
+        if ( !isObjectOfExpectedClass( ( property.getObject() ) ) )
         {
-            throw new InvalidValueTypeException( javaTypeConverter, property );
+            throw new ValueOfUnexpectedClassException( javaTypeConverter, property );
         }
     }
 
-    void checkValueIsOfExpectedJavaClass( final Value value )
-        throws InvalidJavaTypeConverterException
+    public void checkValueIsOfExpectedClass( final Value value )
+        throws ValueOfUnexpectedClassException
     {
-        if ( !isValueOfExpectedJavaClass( value ) )
+        if ( !isValueOfExpectedClass( value ) )
         {
-            throw new InvalidJavaTypeConverterException( javaTypeConverter, value );
+            throw new ValueOfUnexpectedClassException( javaTypeConverter, value );
         }
     }
 

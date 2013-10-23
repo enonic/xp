@@ -3,14 +3,13 @@ package com.enonic.wem.api.schema.content;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.form.FieldSet;
+import com.enonic.wem.api.form.FormItemSet;
+import com.enonic.wem.api.form.inputtype.InputTypes;
 
-import com.enonic.wem.api.schema.content.form.FieldSet;
-import com.enonic.wem.api.schema.content.form.FormItemSet;
-import com.enonic.wem.api.schema.content.form.inputtype.InputTypes;
-
+import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
+import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static com.enonic.wem.api.schema.content.form.FormItemSet.newFormItemSet;
-import static com.enonic.wem.api.schema.content.form.Input.newInput;
 import static org.junit.Assert.*;
 
 public class ContentTypeTest

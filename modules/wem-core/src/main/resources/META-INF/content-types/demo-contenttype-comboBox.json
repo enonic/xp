@@ -1,0 +1,189 @@
+{
+    "name": "combobox",
+    "displayName": "Combo box",
+    "superType": "structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "combobox_min0_max1",
+                "label": "Combo box, min 0, max 1",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ComboBox",
+                    "config": {
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                            ,
+                            {
+                                "label": "myOption 3",
+                                "value": "o3"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "combobox_min1_max1",
+                "label": "Combo box, min 1, max 1",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ComboBox",
+                    "config": {
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                            ,
+                            {
+                                "label": "myOption 3",
+                                "value": "o3"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "combobox_min0_max0",
+                "label": "Combo box, min 0, max 0",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ComboBox",
+                    "config": {
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                            ,
+                            {
+                                "label": "myOption 3",
+                                "value": "o3"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "combobox_min0_max3",
+                "label": "Combo box, min 0, max 3",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 3
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ComboBox",
+                    "config": {
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                            ,
+                            {
+                                "label": "myOption 3",
+                                "value": "o3"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "combobox_min2_max4",
+                "label": "Combo box, min 2, max 4",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 2,
+                    "maximum": 4
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ComboBox",
+                    "config": {
+                        "options": [
+                            {
+                                "label": "myOption 1",
+                                "value": "o1"
+                            },
+                            {
+                                "label": "myOption 2",
+                                "value": "o2"
+                            }
+                            ,
+                            {
+                                "label": "myOption 3",
+                                "value": "o3"
+                            }
+                            ,
+                            {
+                                "label": "myOption 4",
+                                "value": "o4"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,6 +1,6 @@
 module api_content {
 
-    export class ListContentByPathRequest extends ContentResourceRequest {
+    export class ListContentByPathRequest<T> extends ContentResourceRequest<ListContentResult<T>> {
 
         private parentPath:ContentPath;
 

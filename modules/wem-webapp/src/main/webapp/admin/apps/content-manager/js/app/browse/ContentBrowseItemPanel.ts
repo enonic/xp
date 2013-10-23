@@ -11,8 +11,6 @@ module app_browse {
 
         private previewMode:boolean;
 
-        private items:api_app_browse.BrowseItem[];
-
         constructor(params:ContentBrowseItemPanelParams) {
             super(<api_app_browse.BrowseItemPanelParams>{
                 actionMenuActions: params.actionMenuActions
@@ -22,21 +20,19 @@ module app_browse {
             this.addPanel(this.previewPanel);
         }
 
-        public setItems(items:api_app_browse.BrowseItem[]) {
-            this.items = items;
-            if (this.previewMode && items.length == 1) {
-                this.previewPanel.setItem(items[0]);
-                // preview panel is the last one
-                this.showPanel(this.getSize() - 1);
-            } else {
-                super.setItems(items);
-            }
-        }
-
         public setPreviewMode(enabled:boolean) {
             this.previewMode = enabled;
-            // refresh the view
-            this.setItems(this.items);
+            this.updateDisplayedPanel();
+        }
+
+        updateDisplayedPanel() {
+            var selectedItems = this.getItems();
+            if (this.previewMode && selectedItems.length == 1) {
+                this.previewPanel.setItem(selectedItems[0]);
+                this.showPanel(this.getSize() - 1);
+            } else {
+                super.updateDisplayedPanel();
+            }
         }
 
         public isPreviewMode():boolean {

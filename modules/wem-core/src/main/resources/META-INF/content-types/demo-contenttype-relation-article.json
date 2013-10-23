@@ -20,7 +20,6 @@
                 "helpText": null,
                 "type": {
                     "name": "Relationship",
-                    "builtIn": true,
                     "config": {
                         "relationshipType": "citation"
                     }

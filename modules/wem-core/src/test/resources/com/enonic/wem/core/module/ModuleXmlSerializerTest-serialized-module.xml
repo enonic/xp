@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <display-name>module display name</display-name>
+  <info>module-info</info>
+  <url>http://enonic.net</url>
+  <key>mymodule-1.0.0</key>
+  <vendor>
+    <name>Enonic</name>
+    <url>https://www.enonic.com</url>
+  </vendor>
+  <dependencies system-min-version="5.0.0" system-max-version="6.0.0">
+    <module>modulefoo-1.0.0</module>
+    <module>modA-1.0.0</module>
+    <module>modB-1.0.0</module>
+    <content-type>article</content-type>
+    <content-type>ctype2</content-type>
+    <content-type>ctype1</content-type>
+    <content-type>ctype3</content-type>
+  </dependencies>
+  <form name="config">
+    <input type="TextLine" name="some-name">
+      <label/>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+      <custom-text/>
+      <help-text/>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </form>
+</module>
+
+
