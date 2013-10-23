@@ -10,14 +10,29 @@ module api_form_input_type {
 
         validate(validationRecorder:api_form.ValidationRecorder);
 
-        createAndAddOccurrence();
-
+        /*
+         * Whether the InputTypeView it self is managing adding new occurrences or not.
+         */
         isManagingAdd():boolean;
 
+        /*
+         * Is only invoked if InputTypeView is not managing add.
+         */
+        createAndAddOccurrence();
+
+        /*
+         * Is only invoked if InputTypeView is not managing add.
+         */
         maximumOccurrencesReached():boolean;
 
+        /*
+         * Is only invoked if InputTypeView is not managing add.
+         */
         addFormItemOccurrencesListener(listener:api_form.FormItemOccurrencesListener);
 
+        /*
+         * Is only invoked if InputTypeView is not managing add.
+         */
         removeFormItemOccurrencesListener(listener:api_form.FormItemOccurrencesListener);
     }
 }
