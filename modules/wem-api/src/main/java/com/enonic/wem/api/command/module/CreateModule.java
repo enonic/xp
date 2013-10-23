@@ -1,6 +1,8 @@
 package com.enonic.wem.api.command.module;
 
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
@@ -108,7 +110,7 @@ public final class CreateModule
 
     public CreateModule moduleDirectoryEntry( final ModuleFileEntry fileEntryRoot )
     {
-        this.moduleDirectoryEntry = moduleDirectoryEntry;
+        this.moduleDirectoryEntry = fileEntryRoot;
         return this;
     }
 
@@ -204,6 +206,7 @@ public final class CreateModule
     @Override
     public void validate()
     {
-
+        Preconditions.checkNotNull( this.name, "name cannot be null" );
+        Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
     }
 }

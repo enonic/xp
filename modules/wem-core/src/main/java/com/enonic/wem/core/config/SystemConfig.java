@@ -10,6 +10,8 @@ public interface SystemConfig
 
     public File getConfigDir();
 
+    public File getModuleDir();
+
     public boolean isMigrateEnabled();
 
     public String getMigrateJdbcDriver();
