@@ -19,6 +19,10 @@ module api_form{
             return this.minimum;
         }
 
+        required():boolean {
+            return this.minimum > 0;
+        }
+
         minimumReached(occurrenceCount:number) {
             return occurrenceCount > this.minimum;
         }

@@ -9,7 +9,16 @@ module api_form_formitemset {
 
             this.formItemSet = formItemSet;
 
-            this.getEl().setInnerHtml(this.formItemSet.getLabel() + ":");
+            var nodes:Node[] = [];
+            nodes.push(new api_dom.TextNode(formItemSet.getLabel()).getText());
+
+            if( formItemSet.getOccurrences().required() ) {
+                nodes.push( new api_dom.TextNode(" ").getText() );
+                var requiredMarker = new api_dom.SpanEl(null, "required");
+                nodes.push( requiredMarker.getHTMLElement() );
+            }
+            nodes.push( new api_dom.TextNode(":").getText() );
+            this.getEl().appendChildren(nodes);
         }
     }
 }

@@ -9,7 +9,15 @@ module api_form_input {
 
             this.input = input;
 
-            this.getEl().setInnerHtml(input.getLabel());
+            var nodes:Node[] = [];
+            nodes.push(new api_dom.TextNode(input.getLabel()).getText());
+
+            if( input.getOccurrences().required() ) {
+                nodes.push( new api_dom.TextNode(" ").getText() );
+                var requiredMarker = new api_dom.SpanEl(null, "required");
+                nodes.push( requiredMarker.getHTMLElement() );
+            }
+            this.getEl().appendChildren(nodes);
         }
     }
 }
