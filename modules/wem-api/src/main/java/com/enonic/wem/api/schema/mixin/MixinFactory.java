@@ -1,7 +1,7 @@
 package com.enonic.wem.api.schema.mixin;
 
 
-import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.entity.Node;
 
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 

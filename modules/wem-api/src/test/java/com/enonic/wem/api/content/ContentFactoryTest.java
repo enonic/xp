@@ -7,8 +7,8 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.item.Node;
-import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 import static org.junit.Assert.*;

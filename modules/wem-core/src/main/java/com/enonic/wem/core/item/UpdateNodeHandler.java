@@ -3,9 +3,9 @@ package com.enonic.wem.core.item;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.item.Node;
-import com.enonic.wem.api.item.UpdateItemResult;
-import com.enonic.wem.api.item.UpdateNode;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.UpdateItemResult;
+import com.enonic.wem.api.entity.UpdateNode;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.item.dao.NodeJcrDao;
 import com.enonic.wem.core.item.dao.UpdateNodeArgs;

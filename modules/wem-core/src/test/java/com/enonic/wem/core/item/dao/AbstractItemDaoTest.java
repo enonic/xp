@@ -11,10 +11,10 @@ import com.google.common.base.Stopwatch;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.item.NoNodeAtPathFound;
-import com.enonic.wem.api.item.Node;
-import com.enonic.wem.api.item.NodeAlreadyExist;
-import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeAlreadyExist;
+import com.enonic.wem.api.entity.NodePath;
 
 import static com.enonic.wem.core.item.dao.CreateNodeArguments.newCreateNodeArgs;
 import static junit.framework.Assert.assertEquals;

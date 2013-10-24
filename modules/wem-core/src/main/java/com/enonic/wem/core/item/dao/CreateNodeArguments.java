@@ -4,7 +4,7 @@ package com.enonic.wem.core.item.dao;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.entity.NodePath;
 
 public class CreateNodeArguments
 {

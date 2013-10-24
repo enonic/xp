@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.item.PropertyIndexConfig;
+import com.enonic.wem.api.entity.PropertyIndexConfig;
 
 public class IndexDocumentItemFactory
 {

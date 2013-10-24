@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodeTranslatable;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
-import com.enonic.wem.api.item.Node;
-import com.enonic.wem.api.item.NodePath;
-import com.enonic.wem.api.item.NodeTranslatable;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;

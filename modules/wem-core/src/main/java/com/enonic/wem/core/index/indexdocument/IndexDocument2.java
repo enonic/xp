@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.item.EntityId;
+import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.core.index.IndexType;
 
 public class IndexDocument2

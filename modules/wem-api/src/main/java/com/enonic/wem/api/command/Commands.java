@@ -17,7 +17,7 @@ import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
 import com.enonic.wem.api.command.space.SpaceCommands;
 import com.enonic.wem.api.command.template.TemplateCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
-import com.enonic.wem.api.item.NodeCommands;
+import com.enonic.wem.api.entity.NodeCommands;
 
 public final class Commands
 {

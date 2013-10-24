@@ -1,4 +1,4 @@
-package com.enonic.wem.api.item;
+package com.enonic.wem.api.entity;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;

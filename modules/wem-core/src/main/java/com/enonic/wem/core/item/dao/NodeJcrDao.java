@@ -7,11 +7,11 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.item.EntityId;
-import com.enonic.wem.api.item.NoItemWithIdFound;
-import com.enonic.wem.api.item.NoNodeAtPathFound;
-import com.enonic.wem.api.item.Node;
-import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.NoItemWithIdFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
 
 public class NodeJcrDao
     implements NodeDao

@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.item.EntityId;
-import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.NodePath;
 
 import static junit.framework.Assert.assertNotNull;
 

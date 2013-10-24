@@ -7,14 +7,14 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.item.EntityId;
-import com.enonic.wem.api.item.NoItemFoundException;
-import com.enonic.wem.api.item.NoNodeAtPathFound;
-import com.enonic.wem.api.item.Node;
-import com.enonic.wem.api.item.NodeAlreadyExist;
-import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.NoItemFoundException;
+import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeAlreadyExist;
+import com.enonic.wem.api.entity.NodePath;
 
-import static com.enonic.wem.api.item.Node.newNode;
+import static com.enonic.wem.api.entity.Node.newNode;
 
 public class NodeInMemoryDao
     implements NodeDao

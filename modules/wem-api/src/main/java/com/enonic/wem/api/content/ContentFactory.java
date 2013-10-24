@@ -3,7 +3,7 @@ package com.enonic.wem.api.content;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 import static com.enonic.wem.api.content.Content.newContent;

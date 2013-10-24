@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.item.PropertyIndexConfig;
+import com.enonic.wem.api.entity.PropertyIndexConfig;
 
 import static org.junit.Assert.*;
 

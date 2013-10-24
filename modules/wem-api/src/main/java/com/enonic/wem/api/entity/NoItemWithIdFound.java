@@ -1,4 +1,4 @@
-package com.enonic.wem.api.item;
+package com.enonic.wem.api.entity;
 
 
 public class NoItemWithIdFound

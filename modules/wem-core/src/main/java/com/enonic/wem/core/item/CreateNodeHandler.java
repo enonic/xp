@@ -4,9 +4,9 @@ package com.enonic.wem.core.item;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.item.CreateNode;
-import com.enonic.wem.api.item.CreateNodeResult;
-import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.entity.CreateNode;
+import com.enonic.wem.api.entity.CreateNodeResult;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.item.dao.CreateNodeArguments;
 import com.enonic.wem.core.item.dao.NodeJcrDao;

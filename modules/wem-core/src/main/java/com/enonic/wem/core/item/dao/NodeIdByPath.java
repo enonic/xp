@@ -3,9 +3,9 @@ package com.enonic.wem.core.item.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.enonic.wem.api.item.EntityId;
-import com.enonic.wem.api.item.NoNodeAtPathFound;
-import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NodePath;
 
 class NodeIdByPath
 {
