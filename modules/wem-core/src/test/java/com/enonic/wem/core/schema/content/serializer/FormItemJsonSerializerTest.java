@@ -76,9 +76,9 @@ public class FormItemJsonSerializerTest
         Assert.assertTrue( formItem instanceof Input );
         Assert.assertEquals( "myTextLine", formItem.getName() );
         Input parsedInput = (Input) formItem;
-        Assert.assertEquals( true, parsedInput.isRequired() );
-        Assert.assertEquals( true, parsedInput.isIndexed() );
-        Assert.assertEquals( true, parsedInput.isImmutable() );
+        Assert.assertEquals( Boolean.TRUE, parsedInput.isRequired() );
+        Assert.assertEquals( Boolean.TRUE, parsedInput.isIndexed() );
+        Assert.assertEquals( Boolean.TRUE, parsedInput.isImmutable() );
         Assert.assertEquals( null, parsedInput.getLabel() );
         Assert.assertEquals( null, parsedInput.getHelpText() );
         Assert.assertEquals( "Custom text", parsedInput.getCustomText() );
@@ -111,9 +111,9 @@ public class FormItemJsonSerializerTest
         Assert.assertEquals( "mySingleSelector", formItem.getName() );
         Input parsedInput = (Input) formItem;
         Assert.assertEquals( "My SingleSelector", parsedInput.getLabel() );
-        Assert.assertEquals( false, parsedInput.isRequired() );
-        Assert.assertEquals( false, parsedInput.isIndexed() );
-        Assert.assertEquals( false, parsedInput.isImmutable() );
+        Assert.assertEquals( Boolean.FALSE, parsedInput.isRequired() );
+        Assert.assertEquals( Boolean.FALSE, parsedInput.isIndexed() );
+        Assert.assertEquals( Boolean.FALSE, parsedInput.isImmutable() );
         Assert.assertEquals( InputTypes.SINGLE_SELECTOR, parsedInput.getInputType() );
         InputTypeConfig inputTypeConfig = parsedInput.getInputTypeConfig();
         Assert.assertNotNull( inputTypeConfig );
