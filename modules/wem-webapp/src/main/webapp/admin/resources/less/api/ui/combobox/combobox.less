@@ -14,6 +14,7 @@
 
   input {
     .box-sizing(border-box);
+    width: 255px;
     height: 24px;
     padding: 3px 8px;
     margin: 0 0 10px 0;
@@ -76,7 +77,8 @@
 
   }
 
-  .selected-options {
+  &+.selected-options {
+    width: 255px;
     float: none;
 
     .selected-option {

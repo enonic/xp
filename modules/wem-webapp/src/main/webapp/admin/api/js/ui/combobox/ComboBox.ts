@@ -12,11 +12,9 @@ module api_ui_combobox {
 
         private emptyDropdown:api_dom.DivEl;
 
-        private selectedOptions:api_dom.DivEl;
+        private selectedOptionsView:ComboBoxSelectedOptionsView<T>;
 
         private optionFormatter:(row:number, cell:number, value:T, columnDef:any, dataContext:OptionData<T>) => string;
-
-        private selectedOptionFormatter:(value:T) => string;
 
         private maximumOccurrences:number;
 
@@ -36,12 +34,12 @@ module api_ui_combobox {
 
         private listeners:ComboBoxListener<T>[] = [];
 
-        constructor(name:string, config:ComboBoxConfig<T> = {}) {
+        constructor(name:string, config:ComboBoxConfig<T>) {
             super("div", null, "combobox");
             this.getEl().setAttribute("name", name);
 
             this.optionFormatter = config.optionFormatter;
-            this.selectedOptionFormatter = config.selectedOptionFormatter;
+            this.selectedOptionsView = config.selectedOptionsView;
             this.maximumOccurrences = config.maximumOccurrences != undefined ? config.maximumOccurrences : 0;
             this.filter = config.filter;
             this.rowHeight = config.rowHeight || 24;
@@ -59,10 +57,6 @@ module api_ui_combobox {
             this.emptyDropdown.getEl().setInnerHtml("No matching items");
             this.emptyDropdown.hide();
             this.appendChild(this.emptyDropdown);
-
-            this.selectedOptions = new api_dom.DivEl(null, "selected-options");
-            this.selectedOptions.hide();
-            this.appendChild(this.selectedOptions);
 
             var columns:api_ui_grid.GridColumn<OptionData<T>>[] = [
                 {
@@ -181,13 +175,6 @@ module api_ui_combobox {
             this.icon.getEl().setSrc(iconUrl);
         }
 
-        setDataLoading(isLoading:boolean) {
-            if (isLoading) {
-                this.emptyDropdown.getEl().setInnerHtml("Searching...");
-                this.emptyDropdown.show();
-            }
-        }
-
         private setupListeners() {
             this.getEl().addEventListener('click', () => {
                 this.setOnBlurListener();
@@ -258,6 +245,12 @@ module api_ui_combobox {
             this.dropdownData.subscribeOnRowCountChanged((e, args) => {
                 this.updateDropdownStyles();
             });
+
+            this.selectedOptionsView.addListener({
+                onSelectedOptionRemoved: (item:OptionData<T>) => {
+                    this.removeSelectedItem(item);
+                }
+            });
         }
 
         private selectRow(index:number) {
@@ -272,7 +265,7 @@ module api_ui_combobox {
             }
 
             this.selectedData.push(item);
-            this.showSelectedItem(item);
+            this.selectedOptionsView.addItem(item);
 
             this.updateDropdownStyles();
             this.hideDropdown();
@@ -374,30 +367,6 @@ module api_ui_combobox {
             }
         }
 
-        private showSelectedItem(item:OptionData<T>) {
-            var option = new api_dom.DivEl(null, 'selected-option');
-            var removeButton = new api_dom.AEl(null, "remove");
-            var optionValue = new api_dom.DivEl(null, 'option-value');
-
-            option.appendChild(removeButton);
-            option.appendChild(optionValue);
-            optionValue.getEl().setInnerHtml(this.selectedOptionFormatter ? this.selectedOptionFormatter(item.displayValue)
-                : item.displayValue.toString());
-
-            this.selectedOptions.appendChild(option);
-            this.selectedOptions.getEl().setWidth(this.input.getEl().getWidth()+"px");
-            this.selectedOptions.show();
-
-            removeButton.getEl().addEventListener('click', (event:Event) => {
-                option.remove();
-                this.removeSelectedItem(item);
-
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
-        }
-
         private removeSelectedItem(item:OptionData<T>) {
             this.selectedData = this.selectedData.filter((element:OptionData<T>, index:number) => {
                 return element != item;
@@ -453,4 +422,5 @@ module api_ui_combobox {
             });
         }
     }
+
 }

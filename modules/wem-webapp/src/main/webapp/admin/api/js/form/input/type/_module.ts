@@ -12,5 +12,7 @@
 ///<reference path='ContentSummaryLoaderListener.ts' />
 ///<reference path='ContentSummaryLoader.ts' />
 ///<reference path='Relationship.ts' />
+///<reference path='RelationshipSelectedOptionsView.ts' />
 ///<reference path='ImageSelector.ts' />
+///<reference path='ImageSelectorSelectedOptionsView.ts' />
 ///<reference path='Image.ts' />
