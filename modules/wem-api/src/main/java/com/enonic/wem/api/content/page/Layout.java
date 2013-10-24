@@ -7,28 +7,17 @@ public final class Layout
     extends PageComponent<LayoutTemplateId>
     implements RegionPlaceableComponent
 {
-    private final RootDataSet liveEditConfig;
-
-    /**
-     * Values will override any values in LayoutTemplate.pageConfig.
-     */
-    private final RootDataSet layoutConfig;
+    private final RootDataSet config;
 
     public Layout( final Builder builder )
     {
         super( builder.layoutTemplateId );
-        this.liveEditConfig = builder.liveEditConfig;
-        this.layoutConfig = builder.layoutConfig;
+        this.config = builder.config;
     }
 
-    public RootDataSet getLiveEditConfig()
+    public RootDataSet getConfig()
     {
-        return liveEditConfig;
-    }
-
-    public RootDataSet getLayoutConfig()
-    {
-        return layoutConfig;
+        return config;
     }
 
     public static Builder newLayout()
@@ -38,27 +27,18 @@ public final class Layout
 
     public static class Builder
     {
-        private RootDataSet layoutConfig;
-
-        private RootDataSet liveEditConfig;
+        private RootDataSet config;
 
         private LayoutTemplateId layoutTemplateId;
 
         private Builder()
         {
-            this.layoutConfig = RootDataSet.newDataSet().build().toRootDataSet();
-            this.liveEditConfig = RootDataSet.newDataSet().build().toRootDataSet();
+            this.config = RootDataSet.newDataSet().build().toRootDataSet();
         }
 
-        public Builder layoutConfig( final RootDataSet config )
+        public Builder config( final RootDataSet config )
         {
-            this.layoutConfig = config;
-            return this;
-        }
-
-        public Builder liveEditConfig( final RootDataSet config )
-        {
-            this.liveEditConfig = config;
+            this.config = config;
             return this;
         }
 

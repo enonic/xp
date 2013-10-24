@@ -21,6 +21,7 @@ public final class PageComponentType
     implements ComponentType<Page>
 {
     private final ControllerFactory controllerFactory;
+
     private final Client client;
 
     public PageComponentType( final Client client )

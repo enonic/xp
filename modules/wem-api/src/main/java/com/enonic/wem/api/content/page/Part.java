@@ -10,18 +10,10 @@ public final class Part
 {
     private final RootDataSet config;
 
-    private final RootDataSet liveEditConfig;
-
     public Part( final Builder builder )
     {
         super( builder.partTemplateId );
-        this.liveEditConfig = builder.liveEditConfig;
         this.config = builder.config;
-    }
-
-    public RootDataSet getLiveEditConfig()
-    {
-        return liveEditConfig;
     }
 
     public RootDataSet getConfig()
@@ -38,25 +30,16 @@ public final class Part
     {
         private RootDataSet config;
 
-        private RootDataSet liveEditConfig;
-
         private PartTemplateId partTemplateId;
 
         private Builder()
         {
             this.config = RootDataSet.newDataSet().build().toRootDataSet();
-            this.liveEditConfig = RootDataSet.newDataSet().build().toRootDataSet();
         }
 
-        public Builder partConfig( final RootDataSet config )
+        public Builder config( final RootDataSet config )
         {
             this.config = config;
-            return this;
-        }
-
-        public Builder liveEditConfig( final RootDataSet config )
-        {
-            this.liveEditConfig = config;
             return this;
         }
 
