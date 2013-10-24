@@ -15,7 +15,7 @@ public interface NodeDao
     public Node getNodeByPath( NodePath path )
         throws NoItemFoundException;
 
-    public Node createNode( CreateNodeArgs createNodeArgs );
+    public Node createNode( CreateNodeArguments createNodeArguments );
 
     public Node updateNode( final UpdateNodeArgs updateNodeArgs );
 }

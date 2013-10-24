@@ -30,23 +30,23 @@ public class NodeInMemoryDao
     }
 
     @Override
-    public Node createNode( final CreateNodeArgs createNodeArgs )
+    public Node createNode( final CreateNodeArguments createNodeArguments )
     {
-        Preconditions.checkArgument( createNodeArgs.parent().isAbsolute(),
-                                     "Path to parent Item must be absolute: " + createNodeArgs.parent().toString() );
-        if ( !nodeIdByPath.pathHasItem( createNodeArgs.parent() ) )
+        Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
+                                     "Path to parent Item must be absolute: " + createNodeArguments.parent().toString() );
+        if ( !nodeIdByPath.pathHasItem( createNodeArguments.parent() ) )
         {
-            throw new NoNodeAtPathFound( createNodeArgs.parent() );
+            throw new NoNodeAtPathFound( createNodeArguments.parent() );
         }
 
         final Node newNode = Node.newNode().
             id( new ItemId() ).
             createdTime( DateTime.now() ).
-            creator( createNodeArgs.creator() ).
-            parent( createNodeArgs.parent() ).
-            name( createNodeArgs.name() ).
-            icon( createNodeArgs.icon() ).
-            rootDataSet( createNodeArgs.rootDataSet() ).
+            creator( createNodeArguments.creator() ).
+            parent( createNodeArguments.parent() ).
+            name( createNodeArguments.name() ).
+            icon( createNodeArguments.icon() ).
+            rootDataSet( createNodeArguments.rootDataSet() ).
             build();
 
         if ( nodeIdByPath.pathHasItem( newNode.path() ) )

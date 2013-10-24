@@ -35,21 +35,21 @@ public class NodeJcrDao
     }
 
     @Override
-    public Node createNode( final CreateNodeArgs createNodeArgs )
+    public Node createNode( final CreateNodeArguments createNodeArguments )
     {
-        Preconditions.checkNotNull( createNodeArgs.parent(), "Path of parent Item must be specified" );
-        Preconditions.checkArgument( createNodeArgs.parent().isAbsolute(),
-                                     "Path to parent Item must be absolute: " + createNodeArgs.parent() );
+        Preconditions.checkNotNull( createNodeArguments.parent(), "Path of parent Item must be specified" );
+        Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
+                                     "Path to parent Item must be absolute: " + createNodeArguments.parent() );
 
-        final javax.jcr.Node parentNodeNode = jcrHelper.getItemNodeByPath( createNodeArgs.parent() );
+        final javax.jcr.Node parentNodeNode = jcrHelper.getItemNodeByPath( createNodeArguments.parent() );
 
         final Node newNode = Node.newNode().
             createdTime( DateTime.now() ).
-            creator( createNodeArgs.creator() ).
-            parent( createNodeArgs.parent() ).
-            name( createNodeArgs.name() ).
-            icon( createNodeArgs.icon() ).
-            rootDataSet( createNodeArgs.rootDataSet() ).
+            creator( createNodeArguments.creator() ).
+            parent( createNodeArguments.parent() ).
+            name( createNodeArguments.name() ).
+            icon( createNodeArguments.icon() ).
+            rootDataSet( createNodeArguments.rootDataSet() ).
             build();
 
         return jcrHelper.persistNewItem( newNode, parentNodeNode );
