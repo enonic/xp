@@ -40,6 +40,8 @@ module api_app_wizard {
 
         private formPanel:api_ui.Panel;
 
+        private focusElement:JQuery;
+
 
         constructor(params:WizardPanelParams) {
             super("WizardPanel");
@@ -79,6 +81,18 @@ module api_app_wizard {
 
             if (params.livePanel) {
                 this.backPanel.addPanel(params.livePanel);
+            }
+
+            jQuery(this.getHTMLElement()).on("focus", "*", (e) => {
+                e.stopPropagation();
+                this.focusElement = jQuery(e.target);
+                console.log(this.focusElement);
+            });
+        }
+
+        showCallback() {
+            if (this.focusElement) {
+                this.focusElement.focus();
             }
         }
 

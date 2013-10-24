@@ -15,7 +15,7 @@ module api_ui {
 
         static bindKey(binding:KeyBinding) {
 
-            console.log("KeyBindings.bindKey", binding);
+            //console.log("KeyBindings.bindKey", binding);
             Mousetrap.bind(binding.getCombination(), binding.getCallback(), binding.getAction());
             KeyBindings.mousetraps[binding.getCombination()] = binding;
         }

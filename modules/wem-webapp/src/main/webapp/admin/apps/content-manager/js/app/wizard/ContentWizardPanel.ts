@@ -96,6 +96,7 @@ module app_wizard {
             } else {
                 app.Router.setHash("new/" + this.contentType.getQualifiedName());
             }
+            super.showCallback();
         }
 
         renderNew() {
