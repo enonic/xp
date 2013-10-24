@@ -13,7 +13,7 @@ public final class InitializerTaskBinder
         this.binder = Multibinder.newSetBinder( binder, InitializerTask.class );
     }
 
-    public InitializerTaskBinder bind( final Class<? extends InitializerTask> task )
+    public InitializerTaskBinder add( final Class<? extends InitializerTask> task )
     {
         this.binder.addBinding().to( task ).in( Scopes.SINGLETON );
         return this;

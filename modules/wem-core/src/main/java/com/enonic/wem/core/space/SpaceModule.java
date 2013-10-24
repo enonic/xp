@@ -14,7 +14,7 @@ public final class SpaceModule
     protected void configure()
     {
         bind( SpaceDao.class ).to( SpaceDaoImpl.class );
-        InitializerTaskBinder.from( binder() ).bind( SpacesInitializer.class );
+        InitializerTaskBinder.from( binder() ).add( SpacesInitializer.class );
 
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( CreateSpaceHandler.class );

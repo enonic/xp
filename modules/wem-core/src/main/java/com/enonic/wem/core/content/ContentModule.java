@@ -29,7 +29,7 @@ public final class ContentModule
         bind( AttachmentDao.class ).to( AttachmentDaoImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
-        tasks.bind( ContentInitializer.class );
+        tasks.add( ContentInitializer.class );
 
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( CreateContentHandler.class );

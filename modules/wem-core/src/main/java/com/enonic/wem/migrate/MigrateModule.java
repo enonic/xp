@@ -11,7 +11,7 @@ public final class MigrateModule
     @Override
     protected void configure()
     {
-        InitializerTaskBinder.from( binder() ).bind( DataMigrator.class );
+        InitializerTaskBinder.from( binder() ).add( DataMigrator.class );
         MigrateTaskBinder.from( binder() ).bind( AccountMigrateTask.class );
     }
 }

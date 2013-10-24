@@ -42,10 +42,10 @@ public final class SchemaModule
         bind( RelationshipTypeDao.class ).to( RelationshipTypeDaoImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
-        tasks.bind( ContentTypesInitializer.class );
-        tasks.bind( MixinsInitializer.class );
-        tasks.bind( RelationshipTypesInitializer.class );
-        tasks.bind( DemoImagesInitializer.class );
+        tasks.add( ContentTypesInitializer.class );
+        tasks.add( MixinsInitializer.class );
+        tasks.add( RelationshipTypesInitializer.class );
+        tasks.add( DemoImagesInitializer.class );
 
         final CommandBinder commands = CommandBinder.from( binder() );
 
