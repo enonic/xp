@@ -42,7 +42,7 @@ public final class CreateMixinHandler
         // Storing using Item
         final ItemPath parentItemPath = ItemPath.newPath( "/mixins" ).build();
         final UserKey creator = UserKey.superUser();
-        final MixinItemTranslator translator = new MixinItemTranslator();
+        final MixinDataSetTranslator translator = new MixinDataSetTranslator();
 
         final CreateItem createItemCommand = Commands.item().create().
             name( command.getName() ).
@@ -50,7 +50,7 @@ public final class CreateMixinHandler
             data( translator.toRootDataSet( command ) );
 
         final CreateItemResult createItemResult = context.getClient().execute( createItemCommand );
-        //final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
+        // final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
         // TODO when Item persisting is ready: command.setResult( persistedMixin.getQualifiedName() );
     }
 
