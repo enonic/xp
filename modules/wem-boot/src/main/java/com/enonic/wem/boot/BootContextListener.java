@@ -49,7 +49,11 @@ public final class BootContextListener
     @Override
     public void contextDestroyed( final ServletContextEvent event )
     {
-        this.injector.getInstance( LifecycleService.class ).stopAll();
+        if ( this.injector != null )
+        {
+            this.injector.getInstance( LifecycleService.class ).stopAll();
+        }
+
         this.env.destroy();
     }
 
