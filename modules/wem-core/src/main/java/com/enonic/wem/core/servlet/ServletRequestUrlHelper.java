@@ -11,7 +11,7 @@ public final class ServletRequestUrlHelper
         return createUrl( ServletRequestHolder.getRequest(), path );
     }
 
-    public static String createUrl( final HttpServletRequest req, final String path )
+    private static String createUrl( final HttpServletRequest req, final String path )
     {
         final StringBuilder str = new StringBuilder();
 
@@ -48,6 +48,10 @@ public final class ServletRequestUrlHelper
         final int port = req.getLocalPort();
 
         if ( scheme.equals( "http" ) && ( port == 80 ) )
+        {
+            return false;
+        }
+        else if ( scheme.equals( "https" ) && ( port == 443 ) )
         {
             return false;
         }
