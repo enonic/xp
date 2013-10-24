@@ -2,14 +2,21 @@ declare var plupload;
 
 module api_app_wizard {
 
-    export class FormIcon extends api_dom.ButtonEl {
+    export interface FormIconListener extends api_event.Listener {
 
-        ext;
+        onUploadStarted?();
+
+        onUploadFinished?(uploadId:string, mimeType:string, uploadName:string);
+    }
+
+    export class FormIcon extends api_dom.ButtonEl implements api_event.Observable {
 
         private uploader;
         private img:api_dom.ImgEl;
         private progress:api_ui.ProgressBar;
         private tooltip:api_ui.Tooltip;
+
+        private listeners:FormIconListener[] = [];
 
         /*
          * Icon widget with tooltip and upload possibility
@@ -45,6 +52,20 @@ module api_app_wizard {
             }
         }
 
+        setSrc(src:string) {
+            this.img.getEl().setSrc(src);
+        }
+
+        addListener(listener:FormIconListener) {
+            this.listeners.push(listener);
+        }
+
+        removeListener(listener:FormIconListener) {
+            this.listeners = this.listeners.filter(function (curr) {
+                return curr != listener;
+            });
+        }
+
         private initUploader(elId:string) {
 
             if (!plupload) {
@@ -65,18 +86,21 @@ module api_app_wizard {
                 ]
             });
 
-            uploader.bind('Init', function (up, params) {
+            uploader.bind('Init', (up, params) => {
                 console.log('uploader init', up, params);
             });
 
-            uploader.bind('FilesAdded', function (up, files) {
+            uploader.bind('FilesAdded', (up, files) => {
                 console.log('uploader files added', up, files);
             });
 
-            uploader.bind('QueueChanged', function (up) {
+            uploader.bind('QueueChanged', (up) => {
                 console.log('uploader queue changed', up);
 
-                up.start();
+                if (up.files.length > 0) {
+                    up.start();
+                    this.notifyUploadStarted();
+                }
             });
 
             uploader.bind('UploadFile', (up, file) => {
@@ -94,20 +118,26 @@ module api_app_wizard {
             uploader.bind('FileUploaded', (up, file, response) => {
                 console.log('uploader file uploaded', up, file, response);
 
-                var responseObj, uploadedResUrl;
+                var responseObj;
                 if (response && response.status === 200) {
+
                     responseObj = Ext.decode(response.response);
-                    uploadedResUrl = (responseObj.items && responseObj.items.length > 0) ? 'rest/upload/' + responseObj.items[0].id
-                        : 'resources/images/x-user-photo.png';
-                    this.setSrc(api_util.getAdminUri(uploadedResUrl));
+                    if (responseObj.items && responseObj.items.length > 0) {
+                        var file = responseObj.items[0];
+                        this.notifyUploadFinished(file.id, file.mimeType, file.name);
+                    }
                 }
 
                 this.progress.hide();
 
             });
 
-            uploader.bind('UploadComplete', function (up, files) {
+            uploader.bind('UploadComplete', (up, files) => {
                 console.log('uploader upload complete', up, files);
+
+                up.total.reset();
+                var uploadedFiles = up.splice();
+
             });
 
             uploader.init();
@@ -115,8 +145,20 @@ module api_app_wizard {
             return uploader;
         }
 
-        setSrc(src:string) {
-            this.img.getEl().setSrc(src);
+        private notifyUploadStarted() {
+            this.listeners.forEach((listener:FormIconListener) => {
+                if (listener.onUploadStarted) {
+                    listener.onUploadStarted();
+                }
+            });
+        }
+
+        private notifyUploadFinished(uploadId:string, mimeType:string, uploadName:string) {
+            this.listeners.forEach((listener:FormIconListener) => {
+                if (listener.onUploadFinished) {
+                    listener.onUploadFinished(uploadId, mimeType, uploadName);
+                }
+            });
         }
 
     }

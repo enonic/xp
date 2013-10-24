@@ -79,10 +79,20 @@ public class UpdateContentHandler
                 throw new ContentNotFoundException( command.getSelector() );
             }
 
+            final Client client = context.getClient();
+            final ContentId contentId = persistedContent.getId();
             final List<Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent );
 
-            Content edited = command.getEditor().edit( persistedContent );
             //TODO: the result is null if nothing was edited, but should be SUCCESS ?
+            Content edited = command.getEditor().edit( persistedContent );
+
+            //TODO: Attachments have no editor and thus need to be checked separately, but probably should have one ?
+            if ( !command.getAttachments().isEmpty() )
+            {
+                addAttachments( client, contentId, command.getAttachments() );
+                addMediaThumbnail( client, session, command, persistedContent, contentId );
+            }
+
             if ( edited != null )
             {
                 persistedContent.checkIllegalEdit( edited );
@@ -111,8 +121,6 @@ public class UpdateContentHandler
                     }
                 }.restrictType( ValueTypes.CONTENT_ID ).traverse( edited.getContentData() );
 
-                final Client client = context.getClient();
-                final ContentId contentId = persistedContent.getId();
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
                     client( client ).
                     jcrSession( session ).
@@ -128,8 +136,6 @@ public class UpdateContentHandler
                 final boolean createNewVersion = true;
                 contentDao.update( edited, createNewVersion, session );
                 session.save();
-                addAttachments( client, contentId, command.getAttachments() );
-                addMediaThumbnail( client, session, command, edited, contentId );
 
                 createEmbeddedContents( session, edited, temporaryContents );
 

@@ -26,6 +26,8 @@ module app_wizard {
 
         private templatesPanel:api_ui.Panel;
 
+        private iconUploadId:string;
+
         constructor(contentType:api_schema_content.ContentType, parentContent:api_content.Content) {
 
             this.parentContent = parentContent;
@@ -33,6 +35,16 @@ module app_wizard {
             this.contentWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
             this.formIcon = new api_app_wizard.FormIcon(ContentWizardPanel.DEFAULT_CONTENT_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
+
+            this.formIcon.addListener({
+
+                onUploadFinished: (uploadId:string, mimeType:string, uploadName:string) => {
+
+                    this.iconUploadId = uploadId;
+
+                    this.formIcon.setSrc(api_util.getRestUri('upload/' + uploadId));
+                }
+            });
 
             var actions = new ContentWizardActions(this);
 
@@ -126,17 +138,25 @@ module app_wizard {
             this.contentForm.renderExisting(contentData);
         }
 
-        persistNewItem(successCallback?:() => void) {
+        persistNewItem(successCallback?:(contentId:string, contentPath:string) => void) {
 
-            var contentData = this.contentForm.getContentData();
-
-            new api_content.CreateContentRequest().
+            var createRequest = new api_content.CreateContentRequest().
                 setContentName(this.contentWizardHeader.getName()).
                 setParentContentPath(this.parentContent.getPath().toString()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(contentData).
-                send().done((createResponse:api_rest.JsonResponse<any>) => {
+                setContentData(this.contentForm.getContentData());
+
+                if(this.iconUploadId) {
+                    createRequest.setAttachments([
+                        {
+                            uploadId: this.iconUploadId,
+                            attachmentName: '_thumb.png'
+                        }
+                    ])
+                }
+
+                createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
 
                     api_notify.showFeedback('Content was created!');
                     console.log('content create response', createResponse);
@@ -145,30 +165,38 @@ module app_wizard {
                     new api_content.ContentCreatedEvent(api_content.ContentPath.fromString(json.contentPath)).fire();
 
                     if (successCallback) {
-                        successCallback.call(this);
+                        successCallback.call(this, json.contentId, json.contentPath);
                     }
                 });
         }
 
         updatePersistedItem(successCallback?:() => void) {
 
-            var contentData = this.contentForm.getContentData();
-
-            new api_content.UpdateContentRequest(this.persistedContent.getId()).
+            var updateRequest = new api_content.UpdateContentRequest(this.persistedContent.getId()).
                 setContentName(this.contentWizardHeader.getName()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(contentData).
-                send().done((updateResponse:api_rest.JsonResponse<any>) => {
-                    api_notify.showFeedback('Content was updated!');
-                    console.log('content update response', updateResponse);
+                setContentData(this.contentForm.getContentData());
 
-                    new api_content.ContentUpdatedEvent(this.persistedContent).fire();
-
-                    if (successCallback) {
-                        successCallback.call(this);
+            if(this.iconUploadId) {
+                updateRequest.setAttachments([
+                    {
+                        uploadId: this.iconUploadId,
+                        attachmentName: '_thumb.png'
                     }
-                });
+                ])
+            }
+
+            updateRequest.send().done((updateResponse:api_rest.JsonResponse<any>) => {
+                api_notify.showFeedback('Content was updated!');
+                console.log('content update response', updateResponse);
+
+                new api_content.ContentUpdatedEvent(this.persistedContent).fire();
+
+                if (successCallback) {
+                    successCallback.call(this);
+                }
+            });
         }
     }
 

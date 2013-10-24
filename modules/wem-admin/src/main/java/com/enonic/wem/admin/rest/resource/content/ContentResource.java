@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.inject.Inject;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
@@ -458,5 +459,11 @@ public class ContentResource
             mimeType( uploadItem.getMimeType() ).
             binary( binary ).
             build();
+    }
+
+    @Inject
+    public void setUploadService( final UploadService uploadService )
+    {
+        this.uploadService = uploadService;
     }
 }
