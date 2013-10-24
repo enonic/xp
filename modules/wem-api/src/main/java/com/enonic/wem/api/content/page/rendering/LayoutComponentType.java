@@ -1,7 +1,6 @@
 package com.enonic.wem.api.content.page.rendering;
 
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.page.Layout;
 import com.enonic.wem.api.rendering.ComponentType;
 import com.enonic.wem.api.rendering.Context;
@@ -11,7 +10,7 @@ public class LayoutComponentType
     implements ComponentType<Layout>
 {
     @Override
-    public RenderingResult execute( final Layout layout, final Context context, final Client client )
+    public RenderingResult execute( final Layout layout, final Context context)
     {
         return null;
     }

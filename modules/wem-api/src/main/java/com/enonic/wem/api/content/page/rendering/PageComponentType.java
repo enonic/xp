@@ -20,8 +20,17 @@ import com.enonic.wem.api.resource.Resource;
 public final class PageComponentType
     implements ComponentType<Page>
 {
+    private final ControllerFactory controllerFactory;
+    private final Client client;
+
+    public PageComponentType( final Client client )
+    {
+        this.client = client;
+        controllerFactory = new ControllerFactory( client );
+    }
+
     @Override
-    public RenderingResult execute( final Page page, final Context context, final Client client )
+    public RenderingResult execute( final Page page, final Context context )
     {
         final PageTemplate template = getPageTemplate( page.getTemplateId(), client );
         final PageDescriptor descriptor = getPageDescriptor( template.getDescriptor(), client );
@@ -29,9 +38,9 @@ public final class PageComponentType
         final ModuleResourceKey controllerResource = descriptor.getControllerResource();
         final RootDataSet pageConfig = page.getConfig();
 
-        final Controller controller = new Controller( controllerResource, pageConfig, context);
+        final Controller controller = controllerFactory.create( controllerResource, pageConfig );
 
-        return controller.execute();
+        return controller.execute( context );
     }
 
     private PageTemplate getPageTemplate( final TemplateId templateId, final Client client )

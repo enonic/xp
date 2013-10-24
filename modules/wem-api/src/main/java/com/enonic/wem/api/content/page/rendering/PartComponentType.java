@@ -1,7 +1,6 @@
 package com.enonic.wem.api.content.page.rendering;
 
 
-import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.page.Part;
 import com.enonic.wem.api.rendering.ComponentType;
 import com.enonic.wem.api.rendering.Context;
@@ -11,7 +10,7 @@ public class PartComponentType
     implements ComponentType<Part>
 {
     @Override
-    public RenderingResult execute( final Part part, final Context context, final Client client )
+    public RenderingResult execute( final Part part, final Context context )
     {
         return null;
     }

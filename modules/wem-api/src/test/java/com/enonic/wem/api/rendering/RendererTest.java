@@ -3,6 +3,8 @@ package com.enonic.wem.api.rendering;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteStreams;
+
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.command.template.GetTemplate;
@@ -33,8 +35,9 @@ public class RendererTest
             build();
         when( client.execute( isA( GetTemplate.class ) ) ).thenReturn( template );
 
-        final Resource resource = newResource().name( "page-descriptor" ).build();
-        when( client.execute( isA( GetModuleResource.class ) ) ).thenReturn( resource );
+        final Resource pageDescriptorResource = newResource().name( "page-descriptor" ).build();
+        final Resource controllerResource = newResource().name( "controller.js" ) .byteSource( ByteStreams.asByteSource( "test();".getBytes() ) ).build();
+        when( client.execute( isA( GetModuleResource.class ) ) ).thenReturn( pageDescriptorResource ).thenReturn( controllerResource );
 
         // exercise
         final Renderer renderer = new Renderer( client );

@@ -19,13 +19,13 @@ public final class Renderer
 {
     private final ConcurrentMap<Class<? extends Component>, ComponentType> componentRegister;
 
-    private final Client client ;
+    private final Client client;
 
     public Renderer( final Client client )
     {
         this.client = client;
         this.componentRegister = Maps.newConcurrentMap();
-        registerComponentType( Page.class, new PageComponentType() );
+        registerComponentType( Page.class, new PageComponentType( client ) );
         registerComponentType( Part.class, new PartComponentType() );
         registerComponentType( Layout.class, new LayoutComponentType() );
         registerComponentType( Image.class, new ImageComponentType() );
@@ -35,7 +35,7 @@ public final class Renderer
     {
         final ComponentType componentType = resolveComponentType( component );
         final Context context = new Context();
-        final RenderingResult result = componentType.execute( component, context, client );
+        final RenderingResult result = componentType.execute( component, context );
 
         return result;
     }
