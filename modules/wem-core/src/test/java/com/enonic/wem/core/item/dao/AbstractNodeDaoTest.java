@@ -25,7 +25,7 @@ import static junit.framework.Assert.fail;
 /**
  * Base test class for all ItemDao implementations.
  */
-public abstract class AbstractItemDaoTest
+public abstract class AbstractNodeDaoTest
 {
     private NodeDao dao;
 
@@ -38,7 +38,7 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_createItem_given_item_then_persisted_Item_is_returned()
+    public void when_createNode_given_item_then_persisted_Item_is_returned()
         throws Exception
     {
         // setup
@@ -58,7 +58,7 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_createItem_performance_lots_of_children()
+    public void when_createNode_performance_lots_of_children()
         throws Exception
     {
         // setup
@@ -95,7 +95,7 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_getItemById_given_id_of_persisted_Item_then_persisted_Item_is_returned()
+    public void when_getNodeById_given_id_of_persisted_Item_then_persisted_Item_is_returned()
         throws Exception
     {
         // setup
@@ -117,7 +117,7 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_createItem_given_a_path_to_parent_that_is_not_absolute_then_IllegalArgumentException_is_thrown()
+    public void when_createNode_given_a_path_to_parent_that_is_not_absolute_then_IllegalArgumentException_is_thrown()
         throws Exception
     {
         // setup
@@ -144,7 +144,7 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_createItem_given_a_parent_path_to_an_item_that_does_not_exist_then_NoItemAtPathFound_is_thrown()
+    public void when_createNode_given_a_parent_path_to_an_item_that_does_not_exist_then_NoNodeAtPathFound_is_thrown()
         throws Exception
     {
         // setup
@@ -169,7 +169,7 @@ public abstract class AbstractItemDaoTest
     }
 
     @Test
-    public void when_createItem_given_an_already_persisted_item_then_ItemAlreadyExist_is_thrown()
+    public void when_createNode_given_an_already_persisted_item_then_NodeAlreadyExist_is_thrown()
         throws Exception
     {
         // setup

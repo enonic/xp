@@ -4,7 +4,7 @@ package com.enonic.wem.core.item;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.UpdateItemResult;
+import com.enonic.wem.api.entity.UpdateEntityResult;
 import com.enonic.wem.api.entity.UpdateNode;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.item.dao.NodeJcrDao;
@@ -23,7 +23,7 @@ public class UpdateNodeHandler
 
         final NodeJcrDao itemDao = new NodeJcrDao( session );
 
-        final Node persisted = itemDao.getNodeById( command.getItem() );
+        final Node persisted = itemDao.getNodeById( command.getNode() );
 
         Node edited = command.getEditor().edit( persisted );
         if ( edited == null )
@@ -35,7 +35,7 @@ public class UpdateNodeHandler
         persisted.checkIllegalEdit( edited );
 
         final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().
-            itemToUpdate( command.getItem() ).
+            itemToUpdate( command.getNode() ).
             name( edited.name() ).
             build();
 
@@ -43,6 +43,6 @@ public class UpdateNodeHandler
         session.save();
         // TODO: update index for item or in dao?
 
-        command.setResult( new UpdateItemResult( persistedNode ) );
+        command.setResult( new UpdateEntityResult( persistedNode ) );
     }
 }

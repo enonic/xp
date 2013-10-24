@@ -9,7 +9,7 @@ import com.enonic.wem.api.content.AbstractEqualsTest;
 
 import static junit.framework.Assert.assertEquals;
 
-public class ItemPathTest
+public class NodePathTest
 {
     @Test
     public void equals()

@@ -1,10 +1,10 @@
 package com.enonic.wem.api.entity;
 
 
-public abstract class NoItemFoundException
+public abstract class NoEntityFoundException
     extends RuntimeException
 {
-    NoItemFoundException( final String message )
+    NoEntityFoundException( final String message )
     {
         super( message );
     }

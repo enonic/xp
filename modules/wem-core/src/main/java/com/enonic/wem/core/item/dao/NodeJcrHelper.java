@@ -8,7 +8,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoItemWithIdFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFound;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeAlreadyExist;
@@ -137,7 +137,7 @@ class NodeJcrHelper
     }
 
     javax.jcr.Node getItemNodeById( final EntityId id )
-        throws NoItemWithIdFound
+        throws NoEntityWithIdFound
     {
         try
         {
@@ -145,7 +145,7 @@ class NodeJcrHelper
         }
         catch ( ItemNotFoundException e )
         {
-            throw new NoItemWithIdFound( id );
+            throw new NoEntityWithIdFound( id );
         }
         catch ( RepositoryException e )
         {
@@ -154,7 +154,7 @@ class NodeJcrHelper
     }
 
     Node getItemById( final EntityId id )
-        throws NoItemWithIdFound
+        throws NoEntityWithIdFound
     {
         try
         {
@@ -163,7 +163,7 @@ class NodeJcrHelper
         }
         catch ( ItemNotFoundException e )
         {
-            throw new NoItemWithIdFound( id );
+            throw new NoEntityWithIdFound( id );
         }
         catch ( RepositoryException e )
         {

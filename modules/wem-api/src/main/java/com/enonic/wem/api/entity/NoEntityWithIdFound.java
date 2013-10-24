@@ -1,12 +1,12 @@
 package com.enonic.wem.api.entity;
 
 
-public class NoItemWithIdFound
-    extends NoItemFoundException
+public class NoEntityWithIdFound
+    extends NoEntityFoundException
 {
     private final EntityId id;
 
-    public NoItemWithIdFound( final EntityId id )
+    public NoEntityWithIdFound( final EntityId id )
     {
         super( "No item with id " + id + " found" );
         this.id = id;

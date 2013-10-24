@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoItemFoundException;
+import com.enonic.wem.api.entity.NoEntityFoundException;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeAlreadyExist;
@@ -82,7 +82,7 @@ public class NodeInMemoryDao
     }
 
     public Node getNodeByPath( final NodePath path )
-        throws NoItemFoundException
+        throws NoEntityFoundException
     {
         Preconditions.checkArgument( path.isAbsolute(), "path must be absolute: " + path.toString() );
 

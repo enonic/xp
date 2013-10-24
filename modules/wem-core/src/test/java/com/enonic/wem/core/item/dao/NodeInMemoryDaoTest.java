@@ -1,7 +1,7 @@
 package com.enonic.wem.core.item.dao;
 
-public class ItemInMemoryDaoTest
-    extends AbstractItemDaoTest
+public class NodeInMemoryDaoTest
+    extends AbstractNodeDaoTest
 {
 
     private NodeInMemoryDao dao = new NodeInMemoryDao();

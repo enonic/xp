@@ -6,14 +6,14 @@ import org.junit.After;
 import com.enonic.wem.core.JcrTestHelper;
 
 
-public class ItemJcrDaoTest
-    extends AbstractItemDaoTest
+public class NodeJcrDaoTest
+    extends AbstractNodeDaoTest
 {
     private final JcrTestHelper jcrTestHelper;
 
     private final NodeJcrDao dao;
 
-    public ItemJcrDaoTest()
+    public NodeJcrDaoTest()
     {
         jcrTestHelper = new JcrTestHelper();
         dao = new NodeJcrDao( jcrTestHelper.getSession() );

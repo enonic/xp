@@ -1,10 +1,10 @@
 package com.enonic.wem.api.entity;
 
-public class UpdateItemResult
+public class UpdateEntityResult
 {
     private final Node persistedNode;
 
-    public UpdateItemResult( final Node persistedNode )
+    public UpdateEntityResult( final Node persistedNode )
     {
         this.persistedNode = persistedNode;
     }
