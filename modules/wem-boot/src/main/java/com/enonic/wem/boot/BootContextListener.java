@@ -24,15 +24,16 @@ public final class BootContextListener
 
     private BootEnvironment env;
 
-    private Injector injector;
-
     private Set<WebInitializer> initializers;
+
+    private LifecycleService lifecycleService;
 
     private void createInjector()
     {
         LOG.info( "Creating injector for all beans." );
-        this.injector = Guice.createInjector( Stage.PRODUCTION, new BootModule() );
-        this.injector.injectMembers( this );
+
+        final Injector injector = Guice.createInjector( Stage.PRODUCTION, new BootModule() );
+        injector.injectMembers( this );
     }
 
     @Override
@@ -43,15 +44,15 @@ public final class BootContextListener
 
         createInjector();
         configure( event.getServletContext() );
-        this.injector.getInstance( LifecycleService.class ).startAll();
+        this.lifecycleService.startAll();
     }
 
     @Override
     public void contextDestroyed( final ServletContextEvent event )
     {
-        if ( this.injector != null )
+        if ( this.lifecycleService != null )
         {
-            this.injector.getInstance( LifecycleService.class ).stopAll();
+            this.lifecycleService.stopAll();
         }
 
         this.env.destroy();
@@ -69,5 +70,11 @@ public final class BootContextListener
     public void setInitializers( final Set<WebInitializer> initializers )
     {
         this.initializers = initializers;
+    }
+
+    @Inject
+    public void setLifecycleService( final LifecycleService lifecycleService )
+    {
+        this.lifecycleService = lifecycleService;
     }
 }
