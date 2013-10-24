@@ -17,11 +17,11 @@ import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
 import com.enonic.wem.api.command.space.SpaceCommands;
 import com.enonic.wem.api.command.template.TemplateCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
-import com.enonic.wem.api.item.ItemCommands;
+import com.enonic.wem.api.item.NodeCommands;
 
 public final class Commands
 {
-    private static final ItemCommands ITEM_COMMANDS = new ItemCommands();
+    private static final NodeCommands ITEM_COMMANDS = new NodeCommands();
 
     private static final SpaceCommands SPACE_COMMANDS = new SpaceCommands();
 
@@ -61,7 +61,7 @@ public final class Commands
     {
     }
 
-    public static ItemCommands item()
+    public static NodeCommands item()
     {
         return ITEM_COMMANDS;
     }

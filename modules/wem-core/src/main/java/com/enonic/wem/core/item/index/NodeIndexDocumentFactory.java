@@ -8,8 +8,8 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.item.ItemIndexConfig;
+import com.enonic.wem.api.item.EntityIndexConfig;
+import com.enonic.wem.api.item.Node;
 import com.enonic.wem.api.item.PropertyIndexConfig;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
@@ -17,7 +17,7 @@ import com.enonic.wem.core.index.indexdocument.IndexDocument2;
 import com.enonic.wem.core.index.indexdocument.IndexDocumentItemFactory;
 
 
-public class ItemIndexDocumentFactory
+public class NodeIndexDocumentFactory
 {
     protected static final String CREATED_TIME_PROPERTY_NAME = "createdTime";
 
@@ -41,71 +41,71 @@ public class ItemIndexDocumentFactory
         fulltextEnabled( true ).
         build();
 
-    public Collection<IndexDocument2> create( final Item item )
+    public Collection<IndexDocument2> create( final Node node )
     {
         Set<IndexDocument2> indexDocuments = Sets.newHashSet();
 
-        indexDocuments.add( createDataDocument( item ) );
+        indexDocuments.add( createDataDocument( node ) );
 
         return indexDocuments;
     }
 
-    private IndexDocument2 createDataDocument( final Item item )
+    private IndexDocument2 createDataDocument( final Node node )
     {
-        final ItemIndexConfig itemIndexConfig = item.getItemIndexConfig();
+        final EntityIndexConfig entityIndexConfig = node.getEntityIndexConfig();
 
         final IndexDocument2.Builder builder = IndexDocument2.newIndexDocument().
-            id( item.id() ).
+            id( node.id() ).
             index( IndexConstants.NODB_INDEX ).
             indexType( IndexType.NODE ).
-            analyzer( itemIndexConfig.getAnalyzer() );
+            analyzer( entityIndexConfig.getAnalyzer() );
 
-        addItemMetaData( item, builder );
-        addItemData( item, builder );
+        addNodeMetaData( node, builder );
+        addNodeProperties( node, builder );
 
         return builder.build();
     }
 
-    private void addItemMetaData( final Item item, final IndexDocument2.Builder builder )
+    private void addNodeMetaData( final Node node, final IndexDocument2.Builder builder )
     {
         // TODO: Add the rest of the metadata
 
-        builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY_NAME, new Value.DateTime( item.getCreatedTime() ),
+        builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY_NAME, new Value.DateTime( node.getCreatedTime() ),
                                                              metadataPropertyIndexConfig ) );
 
-        builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_NAME, new Value.String( item.path().toString() ),
+        builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_NAME, new Value.String( node.path().toString() ),
                                                              metadataPropertyIndexConfig ) );
 
-        if ( item.getCreator() != null )
+        if ( node.getCreator() != null )
         {
             builder.addEntries(
-                IndexDocumentItemFactory.create( CREATOR_PROPERTY_NAME, new Value.String( item.getCreator().getQualifiedName() ),
+                IndexDocumentItemFactory.create( CREATOR_PROPERTY_NAME, new Value.String( node.getCreator().getQualifiedName() ),
                                                  metadataPropertyIndexConfig ) );
         }
 
-        if ( item.getModifiedTime() != null )
+        if ( node.getModifiedTime() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( MODIFIED_TIME_PROPERTY_NAME, new Value.DateTime( item.getModifiedTime() ),
+            builder.addEntries( IndexDocumentItemFactory.create( MODIFIED_TIME_PROPERTY_NAME, new Value.DateTime( node.getModifiedTime() ),
                                                                  metadataPropertyIndexConfig ) );
         }
 
-        if ( item.getModifier() != null )
+        if ( node.getModifier() != null )
         {
             builder.addEntries(
-                IndexDocumentItemFactory.create( MODIFIER_PROPERTY_NAME, new Value.String( item.getModifier().getQualifiedName() ),
+                IndexDocumentItemFactory.create( MODIFIER_PROPERTY_NAME, new Value.String( node.getModifier().getQualifiedName() ),
                                                  metadataPropertyIndexConfig ) );
         }
 
     }
 
-    private void addItemData( final Item item, final IndexDocument2.Builder builder )
+    private void addNodeProperties( final Node node, final IndexDocument2.Builder builder )
     {
         PropertyVisitor visitor = new PropertyVisitor()
         {
             @Override
             public void visit( final Property property )
             {
-                PropertyIndexConfig propertyIndexConfig = item.getItemIndexConfig().getPropertyIndexConfig( property.getPath() );
+                PropertyIndexConfig propertyIndexConfig = node.getEntityIndexConfig().getPropertyIndexConfig( property.getPath() );
 
                 if ( propertyIndexConfig == null )
                 {
@@ -116,7 +116,7 @@ public class ItemIndexDocumentFactory
             }
         };
 
-        visitor.traverse( item.rootDataSet() );
+        visitor.traverse( node.rootDataSet() );
     }
 
 

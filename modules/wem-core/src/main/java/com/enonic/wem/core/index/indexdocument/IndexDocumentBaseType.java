@@ -1,8 +1,7 @@
 package com.enonic.wem.core.index.indexdocument;
 
-public enum IndexBaseType
+public enum IndexDocumentBaseType
 {
-
     DATETIME,
     NUMBER,
     TOKENIZED,

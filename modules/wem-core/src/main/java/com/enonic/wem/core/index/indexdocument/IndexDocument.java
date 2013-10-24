@@ -8,6 +8,12 @@ import com.enonic.wem.core.index.IndexType;
 
 public class IndexDocument
 {
+    /**
+     * An index document contains all properties to be indexed.
+     * All properties have a IndexDocumentBaseType, which again is used to determine the fieldname, the value-formatting etc
+     * when doing the actual indexing.
+     */
+
 
     private final String id;
 

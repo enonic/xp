@@ -4,24 +4,24 @@ package com.enonic.wem.core.item;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.item.CreateItem;
-import com.enonic.wem.api.item.CreateItemResult;
-import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.CreateNode;
+import com.enonic.wem.api.item.CreateNodeResult;
+import com.enonic.wem.api.item.Node;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.item.dao.CreateItemArgs;
-import com.enonic.wem.core.item.dao.ItemJcrDao;
+import com.enonic.wem.core.item.dao.CreateNodeArgs;
+import com.enonic.wem.core.item.dao.NodeJcrDao;
 
-public class CreateItemHandler
-    extends CommandHandler<CreateItem>
+public class CreateNodeHandler
+    extends CommandHandler<CreateNode>
 {
     @Override
     public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();
-        final ItemJcrDao itemDao = new ItemJcrDao( session );
+        final NodeJcrDao itemDao = new NodeJcrDao( session );
 
-        final CreateItemArgs createItemArgs = CreateItemArgs.newCreateItemArgs().
+        final CreateNodeArgs createNodeArgs = CreateNodeArgs.newCreateNodeArgs().
             creator( UserKey.superUser() ).
             parent( command.getParent() ).
             name( command.getName() ).
@@ -29,10 +29,10 @@ public class CreateItemHandler
             rootDataSet( command.getData() ).
             build();
 
-        final Item persistedItem = itemDao.createItem( createItemArgs );
+        final Node persistedNode = itemDao.createNode( createNodeArgs );
         session.save();
 
-        command.setResult( new CreateItemResult( persistedItem ) );
+        command.setResult( new CreateNodeResult( persistedNode ) );
         // TODO: index item or in dao?
     }
 }

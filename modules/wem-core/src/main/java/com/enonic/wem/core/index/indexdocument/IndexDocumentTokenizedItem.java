@@ -12,9 +12,9 @@ class IndexDocumentTokenizedItem
     }
 
     @Override
-    public IndexBaseType getIndexBaseType()
+    public IndexDocumentBaseType getIndexBaseType()
     {
-        return IndexBaseType.TOKENIZED;
+        return IndexDocumentBaseType.TOKENIZED;
     }
 
     @Override

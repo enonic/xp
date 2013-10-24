@@ -11,12 +11,12 @@ import com.google.common.base.Stopwatch;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.item.ItemAlreadyExist;
-import com.enonic.wem.api.item.ItemPath;
-import com.enonic.wem.api.item.NoItemAtPathFound;
+import com.enonic.wem.api.item.NoNodeAtPathFound;
+import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.item.NodeAlreadyExist;
+import com.enonic.wem.api.item.NodePath;
 
-import static com.enonic.wem.core.item.dao.CreateItemArgs.newCreateItemArgs;
+import static com.enonic.wem.core.item.dao.CreateNodeArgs.newCreateNodeArgs;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -27,9 +27,9 @@ import static junit.framework.Assert.fail;
  */
 public abstract class AbstractItemDaoTest
 {
-    private ItemDao dao;
+    private NodeDao dao;
 
-    abstract ItemDao createDao();
+    abstract NodeDao createDao();
 
     @Before
     public void before()
@@ -44,14 +44,14 @@ public abstract class AbstractItemDaoTest
         // setup
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
-        CreateItemArgs createItemArgs = newCreateItemArgs().
-            parent( ItemPath.ROOT ).
+        CreateNodeArgs createNodeArgs = newCreateNodeArgs().
+            parent( NodePath.ROOT ).
             name( "myItem" ).
             rootDataSet( rootDataSet ).
             build();
 
         // exercise
-        Item persisted = dao.createItem( createItemArgs );
+        Node persisted = dao.createNode( createNodeArgs );
         assertNotNull( persisted.id() );
         assertEquals( "myItem", persisted.name() );
         assertEquals( "A", persisted.property( "propertyOfItem" ).getString() );
@@ -63,14 +63,14 @@ public abstract class AbstractItemDaoTest
     {
         // setup
         int count = 1000;
-        List<CreateItemArgs> list = new ArrayList<>( count );
+        List<CreateNodeArgs> list = new ArrayList<>( count );
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
 
         for ( int i = 0; i < count; i++ )
         {
-            list.add( newCreateItemArgs().
-                parent( ItemPath.ROOT ).
+            list.add( newCreateNodeArgs().
+                parent( NodePath.ROOT ).
                 name( "myItem-" + i ).
                 rootDataSet( rootDataSet ).
                 build() );
@@ -79,9 +79,9 @@ public abstract class AbstractItemDaoTest
         // exercise
         Stopwatch sw = new Stopwatch();
         sw.start();
-        for ( CreateItemArgs createItemArgs : list )
+        for ( CreateNodeArgs createNodeArgs : list )
         {
-            dao.createItem( createItemArgs );
+            dao.createNode( createNodeArgs );
         }
         sw.stop();
         System.out.println( sw.toString() );
@@ -101,16 +101,16 @@ public abstract class AbstractItemDaoTest
         // setup
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
-        CreateItemArgs createItemArgs = newCreateItemArgs().
-            parent( ItemPath.ROOT ).
+        CreateNodeArgs createNodeArgs = newCreateNodeArgs().
+            parent( NodePath.ROOT ).
             name( "myItem" ).
             rootDataSet( rootDataSet ).
             build();
 
-        Item persisted = dao.createItem( createItemArgs );
+        Node persisted = dao.createNode( createNodeArgs );
 
         // exercise
-        Item fetched = dao.getItemById( persisted.id() );
+        Node fetched = dao.getNodeById( persisted.id() );
         assertNotNull( fetched.id() );
         assertEquals( persisted.name(), fetched.name() );
         assertEquals( persisted.property( "propertyOfItem" ).getString(), fetched.property( "propertyOfItem" ).getString() );
@@ -124,8 +124,8 @@ public abstract class AbstractItemDaoTest
 
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
-        CreateItemArgs createItemArgs = newCreateItemArgs().
-            parent( new ItemPath( "not-absolute-parent-path" ) ).
+        CreateNodeArgs createNodeArgs = newCreateNodeArgs().
+            parent( new NodePath( "not-absolute-parent-path" ) ).
             name( "myItem" ).
             rootDataSet( rootDataSet ).
             build();
@@ -133,7 +133,7 @@ public abstract class AbstractItemDaoTest
         // exercise
         try
         {
-            dao.createItem( createItemArgs );
+            dao.createNode( createNodeArgs );
             fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -148,23 +148,23 @@ public abstract class AbstractItemDaoTest
         throws Exception
     {
         // setup
-        CreateItemArgs createItemArgs = CreateItemArgs.newCreateItemArgs().
-            parent( new ItemPath( "/does-not-exist" ) ).
+        CreateNodeArgs createNodeArgs = CreateNodeArgs.newCreateNodeArgs().
+            parent( new NodePath( "/does-not-exist" ) ).
             name( "myItem" ).
             build();
 
         // exercise
         try
         {
-            dao.createItem( createItemArgs );
+            dao.createNode( createNodeArgs );
             fail( "Expected exception NoItemAtPathFound" );
         }
         catch ( Exception e )
         {
             e.printStackTrace();
-            assertTrue( e instanceof NoItemAtPathFound );
-            NoItemAtPathFound noItemAtPathFound = (NoItemAtPathFound) e;
-            assertEquals( "/does-not-exist", noItemAtPathFound.getPath().toString() );
+            assertTrue( e instanceof NoNodeAtPathFound );
+            NoNodeAtPathFound noNodeAtPathFound = (NoNodeAtPathFound) e;
+            assertEquals( "/does-not-exist", noNodeAtPathFound.getPath().toString() );
         }
     }
 
@@ -173,24 +173,24 @@ public abstract class AbstractItemDaoTest
         throws Exception
     {
         // setup
-        dao.createItem( newCreateItemArgs().
-            parent( ItemPath.ROOT ).
+        dao.createNode( newCreateNodeArgs().
+            parent( NodePath.ROOT ).
             name( "myItem" ).
             build() );
 
         // exercise
         try
         {
-            dao.createItem( newCreateItemArgs().
-                parent( ItemPath.ROOT ).
+            dao.createNode( newCreateNodeArgs().
+                parent( NodePath.ROOT ).
                 name( "myItem" ).
                 build() );
             fail( "Expected exception ItemAlreadyExist" );
         }
         catch ( Exception e )
         {
-            assertTrue( e instanceof ItemAlreadyExist );
-            assertEquals( "Item already exist: /myItem", e.getMessage() );
+            assertTrue( e instanceof NodeAlreadyExist );
+            assertEquals( "Node already exist: /myItem", e.getMessage() );
         }
     }
 }

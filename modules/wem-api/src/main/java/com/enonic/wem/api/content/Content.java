@@ -11,10 +11,10 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.item.Item;
 import com.enonic.wem.api.item.ItemId;
-import com.enonic.wem.api.item.ItemPath;
-import com.enonic.wem.api.item.ItemTranslatable;
+import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.item.NodeTranslatable;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -22,7 +22,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Content
-    implements IllegalEditAware<Content>, ItemTranslatable, ChangeTraceable
+    implements IllegalEditAware<Content>, NodeTranslatable, ChangeTraceable
 {
     private final String displayName;
 
@@ -157,9 +157,9 @@ public final class Content
         return !childrenIds.isEmpty();
     }
 
-    public Item toItem( final ItemPath parent )
+    public Node toNode( final NodePath parent )
     {
-        final Item.Builder builder = Item.newItem( new ItemId( this.id.toString() ), this.getName() );
+        final Node.Builder builder = Node.newNode( new ItemId( this.id.toString() ), this.getName() );
         builder.parent( parent );
         builder.createdTime( this.createdTime );
         builder.modifiedTime( this.modifiedTime );

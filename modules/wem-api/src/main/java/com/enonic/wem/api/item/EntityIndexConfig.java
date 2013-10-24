@@ -7,19 +7,19 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 
-public class ItemIndexConfig
+public class EntityIndexConfig
 {
 
     private final String analyzer;
 
     private final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs;
 
-    public static Builder newItemIndexConfig()
+    public static Builder newEntityIndexConfig()
     {
         return new Builder();
     }
 
-    private ItemIndexConfig( final Builder builder )
+    private EntityIndexConfig( final Builder builder )
     {
 
         this.analyzer = builder.analyzer;
@@ -60,9 +60,9 @@ public class ItemIndexConfig
             return this;
         }
 
-        public ItemIndexConfig build()
+        public EntityIndexConfig build()
         {
-            return new ItemIndexConfig( this );
+            return new EntityIndexConfig( this );
         }
 
     }

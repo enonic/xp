@@ -14,7 +14,7 @@ public abstract class AbstractIndexDocumentItem<T>
         return fieldBaseName;
     }
 
-    public abstract IndexBaseType getIndexBaseType();
+    public abstract IndexDocumentBaseType getIndexBaseType();
 
     public abstract T getValue();
 

@@ -10,25 +10,22 @@ import org.junit.Test;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.item.Item;
+import com.enonic.wem.api.item.EntityIndexConfig;
 import com.enonic.wem.api.item.ItemId;
-import com.enonic.wem.api.item.ItemIndexConfig;
-import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.item.NodePath;
 import com.enonic.wem.api.item.PropertyIndexConfig;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.indexdocument.AbstractIndexDocumentItem;
-import com.enonic.wem.core.index.indexdocument.IndexBaseType;
 import com.enonic.wem.core.index.indexdocument.IndexDocument2;
+import com.enonic.wem.core.index.indexdocument.IndexDocumentBaseType;
 
 import static org.junit.Assert.*;
 
-public class ItemIndexDocumentFactoryTest
+public class NodeIndexDocumentFactoryTest
 {
-
-    private static final int NUMBER_OF_METADATA_ITEMS = 5;
-
-    ItemIndexDocumentFactory factory = new ItemIndexDocumentFactory();
+    private NodeIndexDocumentFactory factory = new NodeIndexDocumentFactory();
 
     @Test
     public void index_document_meta_data()
@@ -43,19 +40,19 @@ public class ItemIndexDocumentFactoryTest
 
         DateTime modifiedDateTime = new DateTime( 2013, 01, 02, 03, 04, 05 );
 
-        Item item = Item.newItem().
+        Node node = Node.newNode().
             id( new ItemId( "myId" ) ).
             rootDataSet( rootDataSet ).
-            parent( ItemPath.ROOT ).
+            parent( NodePath.ROOT ).
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ).asUser() ).
             modifiedTime( modifiedDateTime ).
-            itemIndexConfig( ItemIndexConfig.newItemIndexConfig().
+            itemIndexConfig( EntityIndexConfig.newEntityIndexConfig().
                 analyzer( myAnalyzerName ).
                 build() ).
             build();
 
-        final Collection<IndexDocument2> indexDocument = factory.create( item );
+        final Collection<IndexDocument2> indexDocument = factory.create( node );
 
         assertFalse( indexDocument.isEmpty() );
         assertEquals( indexDocument.size(), 1 );
@@ -67,17 +64,17 @@ public class ItemIndexDocumentFactoryTest
         assertEquals( IndexType.NODE, firstAndOnlyDoc.getIndexType() );
 
         final AbstractIndexDocumentItem createdTimeItem =
-            firstAndOnlyDoc.getItemWithName( ItemIndexDocumentFactory.CREATED_TIME_PROPERTY_NAME, IndexBaseType.DATETIME );
+            firstAndOnlyDoc.getItemWithName( NodeIndexDocumentFactory.CREATED_TIME_PROPERTY_NAME, IndexDocumentBaseType.DATETIME );
 
-        assertEquals( item.getCreatedTime(), createdTimeItem.getValue() );
+        assertEquals( node.getCreatedTime(), createdTimeItem.getValue() );
 
         final AbstractIndexDocumentItem creator =
-            firstAndOnlyDoc.getItemWithName( ItemIndexDocumentFactory.CREATOR_PROPERTY_NAME, IndexBaseType.STRING );
+            firstAndOnlyDoc.getItemWithName( NodeIndexDocumentFactory.CREATOR_PROPERTY_NAME, IndexDocumentBaseType.STRING );
 
         assertEquals( "test:creator", creator.getValue() );
 
         final AbstractIndexDocumentItem modifier =
-            firstAndOnlyDoc.getItemWithName( ItemIndexDocumentFactory.MODIFIER_PROPERTY_NAME, IndexBaseType.STRING );
+            firstAndOnlyDoc.getItemWithName( NodeIndexDocumentFactory.MODIFIER_PROPERTY_NAME, IndexDocumentBaseType.STRING );
 
         assertEquals( "test:modifier", modifier.getValue() );
 
@@ -91,11 +88,11 @@ public class ItemIndexDocumentFactoryTest
         rootDataSet.addProperty( "a", new Value.String( "myValue2" ) );
         rootDataSet.addProperty( "a", new Value.String( "myValue3" ) );
 
-        Item item = Item.newItem().
+        Node node = Node.newNode().
             id( new ItemId( "myId" ) ).
             rootDataSet( rootDataSet ).
-            parent( ItemPath.ROOT ).
-            itemIndexConfig( ItemIndexConfig.newItemIndexConfig().
+            parent( NodePath.ROOT ).
+            itemIndexConfig( EntityIndexConfig.newEntityIndexConfig().
                 analyzer( "default" ).
                 addPropertyIndexConfig( "a", PropertyIndexConfig.
                     newPropertyIndexConfig().
@@ -106,7 +103,7 @@ public class ItemIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument2> indexDocument = factory.create( item );
+        final Collection<IndexDocument2> indexDocument = factory.create( node );
 
         assertFalse( indexDocument.isEmpty() );
         assertEquals( indexDocument.size(), 1 );
@@ -116,7 +113,7 @@ public class ItemIndexDocumentFactoryTest
         final Set<AbstractIndexDocumentItem> indexDocumentEntries = firstAndOnlyDocument.getIndexDocumentItems();
 
         // All three values should have an entry for: string, analyzed, tokenized, orderby, thus 12 elements, plus the number of meta-data
-        assertEquals( 12 + NUMBER_OF_METADATA_ITEMS, indexDocumentEntries.size() );
+        assertEquals( 12 + 5, indexDocumentEntries.size() );
     }
 
     @Test
@@ -129,18 +126,18 @@ public class ItemIndexDocumentFactoryTest
         rootDataSet.addProperty( "a/b", new Value.Double( 3.0 ) );
         rootDataSet.setProperty( "a/b/c", new Value.DateMidnight( DateMidnight.now() ) );
 
-        Item item = Item.newItem().
+        Node node = Node.newNode().
             id( new ItemId( "myId" ) ).
             rootDataSet( rootDataSet ).
-            parent( ItemPath.ROOT ).
-            itemIndexConfig( ItemIndexConfig.newItemIndexConfig().
+            parent( NodePath.ROOT ).
+            itemIndexConfig( EntityIndexConfig.newEntityIndexConfig().
                 analyzer( "default" ).
                 build() ).
             build();
 
-        ItemIndexDocumentFactory factory = new ItemIndexDocumentFactory();
+        NodeIndexDocumentFactory factory = new NodeIndexDocumentFactory();
 
-        final Collection<IndexDocument2> indexDocument = factory.create( item );
+        final Collection<IndexDocument2> indexDocument = factory.create( node );
 
         assertFalse( indexDocument.isEmpty() );
         assertEquals( indexDocument.size(), 1 );

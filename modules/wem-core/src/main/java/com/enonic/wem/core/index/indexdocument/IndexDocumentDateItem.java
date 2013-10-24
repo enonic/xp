@@ -14,9 +14,9 @@ public class IndexDocumentDateItem
     }
 
     @Override
-    public IndexBaseType getIndexBaseType()
+    public IndexDocumentBaseType getIndexBaseType()
     {
-        return IndexBaseType.DATETIME;
+        return IndexDocumentBaseType.DATETIME;
     }
 
     @Override

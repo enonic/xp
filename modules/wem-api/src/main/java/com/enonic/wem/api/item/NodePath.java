@@ -8,40 +8,40 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Path;
 
-public class ItemPath
-    extends Path<ItemPath>
+public class NodePath
+    extends Path<NodePath>
 {
-    public final static ItemPath ROOT = new ItemPath( new Builder().absolute( true ).trailingDivider( false ) );
+    public final static NodePath ROOT = new NodePath( new Builder().absolute( true ).trailingDivider( false ) );
 
     private static final char ELEMENT_DIVIDER = '/';
 
-    public ItemPath( final String path )
+    public NodePath( final String path )
     {
         super( newPath( path ) );
     }
 
-    public ItemPath( final ItemPath parent, final String element )
+    public NodePath( final NodePath parent, final String element )
     {
         super( newPath( parent ).addElement( element ) );
     }
 
-    public ItemPath( final Builder builder )
+    public NodePath( final Builder builder )
     {
         super( builder );
     }
 
-    public ItemPath asRelative()
+    public NodePath asRelative()
     {
         if ( isRelative() )
         {
             return this;
         }
-        return newItemPath( this ).absolute( false ).build();
+        return newNodePath( this ).absolute( false ).build();
     }
 
-    public ItemPath getParentPath()
+    public NodePath getParentPath()
     {
-        return new ItemPath( new Builder( this ).removeLastElement() );
+        return new NodePath( new Builder( this ).removeLastElement() );
     }
 
     public static Builder newPath()
@@ -49,12 +49,12 @@ public class ItemPath
         return new Builder();
     }
 
-    public static Builder newItemPath( final ItemPath source )
+    public static Builder newNodePath( final NodePath source )
     {
         return new Builder( source );
     }
 
-    public static Builder newItemPath( final ItemPath parent, final String name )
+    public static Builder newNodePath( final NodePath parent, final String name )
     {
         return new Builder( parent ).addElement( name );
     }
@@ -64,9 +64,9 @@ public class ItemPath
         return (Element) super.getElement( index );
     }
 
-    public List<ItemPath> getParentPaths()
+    public List<NodePath> getParentPaths()
     {
-        List<ItemPath> parentPaths = new ArrayList<>();
+        List<NodePath> parentPaths = new ArrayList<>();
 
         final Builder builder = new Builder( this );
         for ( int i = 0; i < elementCount(); i++ )
@@ -78,13 +78,13 @@ public class ItemPath
         return parentPaths;
     }
 
-    public static Builder newPath( final ItemPath source )
+    public static Builder newPath( final NodePath source )
     {
         Preconditions.checkNotNull( source, "source to build copy from not given" );
         return new Builder( source );
     }
 
-    public static ItemPath.Builder newPath( final String path )
+    public static NodePath.Builder newPath( final String path )
     {
         final Builder builder = new Builder();
         builder.elementDivider( ELEMENT_DIVIDER );
@@ -102,21 +102,21 @@ public class ItemPath
     }
 
     public static class Builder
-        extends Path.Builder<ItemPath.Builder>
+        extends Path.Builder<NodePath.Builder>
     {
         public Builder()
         {
 
         }
 
-        public Builder( final ItemPath source )
+        public Builder( final NodePath source )
         {
             super( source );
         }
 
-        public ItemPath build()
+        public NodePath build()
         {
-            return new ItemPath( this );
+            return new NodePath( this );
         }
     }
 }

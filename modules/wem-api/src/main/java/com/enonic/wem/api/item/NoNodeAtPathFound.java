@@ -1,18 +1,18 @@
 package com.enonic.wem.api.item;
 
 
-public class NoItemAtPathFound
+public class NoNodeAtPathFound
     extends NoItemFoundException
 {
-    private ItemPath path;
+    private NodePath path;
 
-    public NoItemAtPathFound( ItemPath path )
+    public NoNodeAtPathFound( NodePath path )
     {
         super( "No item at path [" + path + "] found" );
         this.path = path;
     }
 
-    public ItemPath getPath()
+    public NodePath getPath()
     {
         return path;
     }

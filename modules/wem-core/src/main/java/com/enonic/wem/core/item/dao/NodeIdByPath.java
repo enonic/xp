@@ -4,24 +4,24 @@ import java.util.List;
 import java.util.Map;
 
 import com.enonic.wem.api.item.ItemId;
-import com.enonic.wem.api.item.ItemPath;
-import com.enonic.wem.api.item.NoItemAtPathFound;
+import com.enonic.wem.api.item.NoNodeAtPathFound;
+import com.enonic.wem.api.item.NodePath;
 
-class ItemIdByPath
+class NodeIdByPath
 {
-    private final Map<ItemPath, ItemId> itemIdByPath;
+    private final Map<NodePath, ItemId> itemIdByPath;
 
-    ItemIdByPath( Map<ItemPath, ItemId> itemIdByPath )
+    NodeIdByPath( Map<NodePath, ItemId> itemIdByPath )
     {
         this.itemIdByPath = itemIdByPath;
     }
 
-    boolean pathHasItem( final ItemPath path )
+    boolean pathHasItem( final NodePath path )
     {
-        final List<ItemPath> parentPaths = path.getParentPaths();
+        final List<NodePath> parentPaths = path.getParentPaths();
         for ( int i = parentPaths.size() - 1; i >= 0; i-- )
         {
-            final ItemPath parentPath = parentPaths.get( i );
+            final NodePath parentPath = parentPaths.get( i );
             if ( !parentPath.isRoot() && !itemIdByPath.containsKey( parentPath ) )
             {
                 return false;
@@ -31,17 +31,17 @@ class ItemIdByPath
         return path.isRoot() || itemIdByPath.containsKey( path );
     }
 
-    void put( final ItemPath path, final ItemId id )
+    void put( final NodePath path, final ItemId id )
     {
         itemIdByPath.put( path, id );
     }
 
-    ItemId get( final ItemPath path )
+    ItemId get( final NodePath path )
     {
         final ItemId id = itemIdByPath.get( path );
         if ( id == null )
         {
-            throw new NoItemAtPathFound( path );
+            throw new NoNodeAtPathFound( path );
         }
         return id;
     }

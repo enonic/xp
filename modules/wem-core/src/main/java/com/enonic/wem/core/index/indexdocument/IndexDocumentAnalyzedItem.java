@@ -13,9 +13,9 @@ public class IndexDocumentAnalyzedItem
     }
 
     @Override
-    public IndexBaseType getIndexBaseType()
+    public IndexDocumentBaseType getIndexBaseType()
     {
-        return IndexBaseType.ANALYZED;
+        return IndexDocumentBaseType.ANALYZED;
     }
 
     @Override

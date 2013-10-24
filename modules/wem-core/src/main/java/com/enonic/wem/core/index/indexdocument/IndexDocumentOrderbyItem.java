@@ -12,9 +12,9 @@ class IndexDocumentOrderbyItem
     }
 
     @Override
-    public IndexBaseType getIndexBaseType()
+    public IndexDocumentBaseType getIndexBaseType()
     {
-        return IndexBaseType.SORTABLE;
+        return IndexDocumentBaseType.SORTABLE;
     }
 
     @Override

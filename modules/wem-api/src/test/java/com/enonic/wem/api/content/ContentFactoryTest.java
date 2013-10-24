@@ -7,8 +7,8 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.item.NodePath;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 import static org.junit.Assert.*;
@@ -36,10 +36,10 @@ public class ContentFactoryTest
             type( QualifiedContentTypeName.from( "mymodule:mycty" ) ).
             contentData( contentData ).build();
 
-        Item item = content.toItem( new ItemPath( "/parent" ) );
+        Node node = content.toNode( new NodePath( "/parent" ) );
 
         // exercise
-        Content translated = ContentFactory.fromItem( item );
+        Content translated = ContentFactory.fromItem( node );
 
         // verify
         assertEquals( content.getId(), translated.getId() );

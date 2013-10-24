@@ -3,20 +3,19 @@ package com.enonic.wem.core.item.dao;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.item.ItemAlreadyExist;
 import com.enonic.wem.api.item.ItemId;
-import com.enonic.wem.api.item.ItemPath;
-import com.enonic.wem.api.item.NoItemAtPathFound;
 import com.enonic.wem.api.item.NoItemWithIdFound;
+import com.enonic.wem.api.item.NoNodeAtPathFound;
+import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.item.NodeAlreadyExist;
+import com.enonic.wem.api.item.NodePath;
 import com.enonic.wem.core.jcr.JcrConstants;
 
-class ItemJcrHelper
+class NodeJcrHelper
 {
     private static final String ITEMS_NODE = "items";
 
@@ -24,29 +23,29 @@ class ItemJcrHelper
 
     private final Session session;
 
-    ItemJcrHelper( final Session session )
+    NodeJcrHelper( final Session session )
     {
         this.session = session;
     }
 
-    private Node itemsNode()
+    private javax.jcr.Node nodesNode()
     {
         try
         {
-            final Node root = session.getRootNode();
+            final javax.jcr.Node root = session.getRootNode();
             return root.getNode( ITEMS_PATH );
         }
         catch ( RepositoryException e )
         {
-            throw new RuntimeException( "Failed to get itemsNode", e );
+            throw new RuntimeException( "Failed to get nodesJcrNode", e );
         }
     }
 
-    void ensurePath( final ItemPath path )
+    void ensurePath( final NodePath path )
     {
         try
         {
-            Node parentNode = itemsNode();
+            javax.jcr.Node parentNode = nodesNode();
             for ( int i = 0; i < path.elementCount(); i++ )
             {
                 final String pathElement = path.getElementAsString( i );
@@ -67,21 +66,21 @@ class ItemJcrHelper
         }
     }
 
-    Item persistNewItem( final Item item, final Node parentItemNode )
+    Node persistNewItem( final Node node, final javax.jcr.Node parentNodeNode )
     {
         try
         {
-            final Node newItemNode = parentItemNode.addNode( item.name(), JcrConstants.ITEM_NODETYPE );
-            updateItemNode( newItemNode, item );
-            return ItemJcrMapper.toItem( newItemNode ).build();
+            final javax.jcr.Node newNodeJcrNode = parentNodeNode.addNode( node.name(), JcrConstants.ITEM_NODETYPE );
+            updateItemNode( newNodeJcrNode, node );
+            return NodeJcrMapper.toNode( newNodeJcrNode ).build();
         }
         catch ( ItemExistsException e )
         {
             try
             {
-                final Node existingItemNode = parentItemNode.getNode( item.name() );
-                final Item existingItem = ItemJcrMapper.toItem( existingItemNode ).build();
-                throw new ItemAlreadyExist( existingItem.path() );
+                final javax.jcr.Node existingNodeNode = parentNodeNode.getNode( node.name() );
+                final Node existingNode = NodeJcrMapper.toNode( existingNodeNode ).build();
+                throw new NodeAlreadyExist( existingNode.path() );
             }
             catch ( RepositoryException e1 )
             {
@@ -94,16 +93,16 @@ class ItemJcrHelper
         }
     }
 
-    Node getItemNodeByPath( final ItemPath path )
-        throws NoItemAtPathFound
+    javax.jcr.Node getItemNodeByPath( final NodePath path )
+        throws NoNodeAtPathFound
     {
         try
         {
-            return itemsNode().getNode( path.asRelative().toString() );
+            return nodesNode().getNode( path.asRelative().toString() );
         }
         catch ( PathNotFoundException e )
         {
-            throw new NoItemAtPathFound( path );
+            throw new NoNodeAtPathFound( path );
         }
         catch ( RepositoryException e )
         {
@@ -111,12 +110,12 @@ class ItemJcrHelper
         }
     }
 
-    Item updateItemNode( final Node itemNode, final Item item )
+    Node updateItemNode( final javax.jcr.Node nodeNode, final Node node )
     {
         try
         {
-            ItemJcrMapper.toJcr( item, itemNode );
-            return ItemJcrMapper.toItem( itemNode ).build();
+            NodeJcrMapper.toJcr( node, nodeNode );
+            return NodeJcrMapper.toNode( nodeNode ).build();
         }
         catch ( RepositoryException e )
         {
@@ -124,12 +123,12 @@ class ItemJcrHelper
         }
     }
 
-    Item updateItemNode( final Node existingItemNode, final UpdateItemArgs updateItemArgs )
+    Node updateItemNode( final javax.jcr.Node existingNodeNode, final UpdateNodeArgs updateNodeArgs )
     {
         try
         {
-            ItemJcrMapper.updateItemNode( updateItemArgs, existingItemNode );
-            return ItemJcrMapper.toItem( existingItemNode ).build();
+            NodeJcrMapper.updateNodeJcrNode( updateNodeArgs, existingNodeNode );
+            return NodeJcrMapper.toNode( existingNodeNode ).build();
         }
         catch ( RepositoryException e )
         {
@@ -137,7 +136,7 @@ class ItemJcrHelper
         }
     }
 
-    Node getItemNodeById( final ItemId id )
+    javax.jcr.Node getItemNodeById( final ItemId id )
         throws NoItemWithIdFound
     {
         try
@@ -154,13 +153,13 @@ class ItemJcrHelper
         }
     }
 
-    Item getItemById( final ItemId id )
+    Node getItemById( final ItemId id )
         throws NoItemWithIdFound
     {
         try
         {
-            final Node itemNode = session.getNodeByIdentifier( id.toString() );
-            return ItemJcrMapper.toItem( itemNode ).build();
+            final javax.jcr.Node nodeNode = session.getNodeByIdentifier( id.toString() );
+            return NodeJcrMapper.toNode( nodeNode ).build();
         }
         catch ( ItemNotFoundException e )
         {
@@ -172,11 +171,11 @@ class ItemJcrHelper
         }
     }
 
-    Item getItemByPath( final ItemPath path )
-        throws NoItemAtPathFound
+    Node getItemByPath( final NodePath path )
+        throws NoNodeAtPathFound
     {
-        final Node itemNode = getItemNodeByPath( path );
-        return ItemJcrMapper.toItem( itemNode ).build();
+        final javax.jcr.Node nodeNode = getItemNodeByPath( path );
+        return NodeJcrMapper.toNode( nodeNode ).build();
     }
 
 

@@ -67,7 +67,7 @@ public class IndexDocument2
         return analyzer;
     }
 
-    public AbstractIndexDocumentItem getItemWithName( final String name, final IndexBaseType baseType )
+    public AbstractIndexDocumentItem getItemWithName( final String name, final IndexDocumentBaseType baseType )
     {
         for ( AbstractIndexDocumentItem item : this.getIndexDocumentItems() )
         {

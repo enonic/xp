@@ -5,20 +5,20 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.command.Command;
 
 
-public class UpdateItem
+public class UpdateNode
     extends Command<UpdateItemResult>
 {
     private ItemId item;
 
-    private ItemEditor editor;
+    private NodeEditor editor;
 
-    public UpdateItem item( final ItemId value )
+    public UpdateNode item( final ItemId value )
     {
         this.item = value;
         return this;
     }
 
-    public UpdateItem editor( final ItemEditor value )
+    public UpdateNode editor( final NodeEditor value )
     {
         this.editor = value;
         return this;
@@ -36,7 +36,7 @@ public class UpdateItem
         return item;
     }
 
-    public ItemEditor getEditor()
+    public NodeEditor getEditor()
     {
         return editor;
     }

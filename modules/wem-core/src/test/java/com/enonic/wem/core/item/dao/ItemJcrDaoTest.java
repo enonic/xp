@@ -11,12 +11,12 @@ public class ItemJcrDaoTest
 {
     private final JcrTestHelper jcrTestHelper;
 
-    private final ItemJcrDao dao;
+    private final NodeJcrDao dao;
 
     public ItemJcrDaoTest()
     {
         jcrTestHelper = new JcrTestHelper();
-        dao = new ItemJcrDao( jcrTestHelper.getSession() );
+        dao = new NodeJcrDao( jcrTestHelper.getSession() );
     }
 
     @After
@@ -28,7 +28,7 @@ public class ItemJcrDaoTest
     }
 
     @Override
-    ItemDao createDao()
+    NodeDao createDao()
     {
         return dao;
     }

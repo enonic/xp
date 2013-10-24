@@ -12,9 +12,9 @@ public class IndexDocumentNumberItem
     }
 
     @Override
-    public IndexBaseType getIndexBaseType()
+    public IndexDocumentBaseType getIndexBaseType()
     {
-        return IndexBaseType.NUMBER;
+        return IndexDocumentBaseType.NUMBER;
     }
 
     @Override

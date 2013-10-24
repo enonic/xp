@@ -4,8 +4,8 @@ package com.enonic.wem.api.item;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.data.RootDataSet;
 
-public class SetItemEditor
-    implements ItemEditor
+public class SetNodeEditor
+    implements NodeEditor
 {
     private final String name;
 
@@ -13,7 +13,7 @@ public class SetItemEditor
 
     private final RootDataSet data;
 
-    private SetItemEditor( final Builder builder )
+    private SetNodeEditor( final Builder builder )
     {
         this.name = builder.name;
         this.icon = builder.icon;
@@ -22,9 +22,9 @@ public class SetItemEditor
 
 
     @Override
-    public Item edit( final Item toBeEdited )
+    public Node edit( final Node toBeEdited )
     {
-        Item.Builder builder = Item.newItem( toBeEdited );
+        Node.Builder builder = Node.newNode( toBeEdited );
 
         boolean changed = false;
         if ( !toBeEdited.name().equals( this.name ) )
@@ -81,9 +81,9 @@ public class SetItemEditor
             return this;
         }
 
-        public SetItemEditor build()
+        public SetNodeEditor build()
         {
-            return new SetItemEditor( this );
+            return new SetNodeEditor( this );
         }
     }
 }

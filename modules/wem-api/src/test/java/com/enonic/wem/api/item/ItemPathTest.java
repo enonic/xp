@@ -19,25 +19,25 @@ public class ItemPathTest
             @Override
             public Object getObjectX()
             {
-                return new ItemPath( "/myPath/myItem" );
+                return new NodePath( "/myPath/myItem" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{new ItemPath( "/myPath" )};
+                return new Object[]{new NodePath( "/myPath" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new ItemPath( "/myPath/myItem" );
+                return new NodePath( "/myPath/myItem" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return new ItemPath( "/myPath/myItem" );
+                return new NodePath( "/myPath/myItem" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -46,18 +46,18 @@ public class ItemPathTest
     @Test
     public void ROOT()
     {
-        assertEquals( "/", ItemPath.ROOT.toString() );
-        assertEquals( true, ItemPath.ROOT.isAbsolute() );
-        assertEquals( false, ItemPath.ROOT.isRelative() );
-        assertEquals( true, ItemPath.ROOT.isEmpty() );
-        assertEquals( false, ItemPath.ROOT.hasTrailingDivider() );
+        assertEquals( "/", NodePath.ROOT.toString() );
+        assertEquals( true, NodePath.ROOT.isAbsolute() );
+        assertEquals( false, NodePath.ROOT.isRelative() );
+        assertEquals( true, NodePath.ROOT.isEmpty() );
+        assertEquals( false, NodePath.ROOT.hasTrailingDivider() );
     }
 
     @Test
     public void getParentPaths()
     {
-        ItemPath itemPath = new ItemPath( "/one/two/three" );
-        List<ItemPath> parentPaths = itemPath.getParentPaths();
+        NodePath nodePath = new NodePath( "/one/two/three" );
+        List<NodePath> parentPaths = nodePath.getParentPaths();
         assertEquals( 3, parentPaths.size() );
         assertEquals( "/one/two", parentPaths.get( 0 ).toString() );
         assertEquals( "/one", parentPaths.get( 1 ).toString() );

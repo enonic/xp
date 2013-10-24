@@ -15,8 +15,8 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.item.NodePath;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
@@ -493,21 +493,21 @@ public class ContentTest
             contentData( contentData ).build();
 
         // exercise
-        Item item = content.toItem( ItemPath.ROOT );
+        Node node = content.toNode( NodePath.ROOT );
 
         // verify
-        assertEquals( "ABC-123", item.id().toString() );
-        assertEquals( "myContent", item.name() );
-        assertEquals( "My Content", item.property( "displayName" ).getString() );
-        assertEquals( "user:mystore:someuser", item.getCreator().toString() );
-        assertEquals( "user:mystore:someotheruser", item.getModifier().toString() );
-        assertEquals( "user:mystore:someuser", item.property( "owner" ).getString() );
-        assertEquals( content.getCreatedTime(), item.getCreatedTime() );
-        assertEquals( content.getModifiedTime(), item.getModifiedTime() );
-        assertEquals( "mymodule:mycty", item.property( "type" ).getString() );
-        assertEquals( "1", item.property( "data.myNumber" ).getString() );
-        assertEquals( "text", item.property( "data.myText" ).getString() );
-        assertEquals( "2", item.property( "data.mySet.myOtherNumber" ).getString() );
+        assertEquals( "ABC-123", node.id().toString() );
+        assertEquals( "myContent", node.name() );
+        assertEquals( "My Content", node.property( "displayName" ).getString() );
+        assertEquals( "user:mystore:someuser", node.getCreator().toString() );
+        assertEquals( "user:mystore:someotheruser", node.getModifier().toString() );
+        assertEquals( "user:mystore:someuser", node.property( "owner" ).getString() );
+        assertEquals( content.getCreatedTime(), node.getCreatedTime() );
+        assertEquals( content.getModifiedTime(), node.getModifiedTime() );
+        assertEquals( "mymodule:mycty", node.property( "type" ).getString() );
+        assertEquals( "1", node.property( "data.myNumber" ).getString() );
+        assertEquals( "text", node.property( "data.myText" ).getString() );
+        assertEquals( "2", node.property( "data.mySet.myOtherNumber" ).getString() );
     }
 
     @Test

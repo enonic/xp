@@ -11,7 +11,7 @@ public final class ItemModule
     protected void configure()
     {
         final CommandBinder commands = CommandBinder.from( binder() );
-        commands.add( CreateItemHandler.class );
-        commands.add( UpdateItemHandler.class );
+        commands.add( CreateNodeHandler.class );
+        commands.add( UpdateNodeHandler.class );
     }
 }

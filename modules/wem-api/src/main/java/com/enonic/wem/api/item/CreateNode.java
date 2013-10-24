@@ -5,10 +5,10 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.data.RootDataSet;
 
 
-public class CreateItem
-    extends Command<CreateItemResult>
+public class CreateNode
+    extends Command<CreateNodeResult>
 {
-    private ItemPath parent;
+    private NodePath parent;
 
     private String name;
 
@@ -16,31 +16,31 @@ public class CreateItem
 
     private RootDataSet data;
 
-    public CreateItem parent( final ItemPath value )
+    public CreateNode parent( final NodePath value )
     {
         this.parent = value;
         return this;
     }
 
-    public CreateItem parent( final String value )
+    public CreateNode parent( final String value )
     {
-        this.parent = new ItemPath( value );
+        this.parent = new NodePath( value );
         return this;
     }
 
-    public CreateItem name( final String value )
+    public CreateNode name( final String value )
     {
         this.name = value;
         return this;
     }
 
-    public CreateItem icon( final Icon value )
+    public CreateNode icon( final Icon value )
     {
         this.icon = value;
         return this;
     }
 
-    public CreateItem data( final RootDataSet value )
+    public CreateNode data( final RootDataSet value )
     {
         this.data = value;
         return this;
@@ -51,7 +51,7 @@ public class CreateItem
         return name;
     }
 
-    public ItemPath getParent()
+    public NodePath getParent()
     {
         return parent;
     }

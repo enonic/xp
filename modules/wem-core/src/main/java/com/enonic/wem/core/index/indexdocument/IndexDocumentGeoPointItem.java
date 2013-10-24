@@ -15,9 +15,9 @@ public class IndexDocumentGeoPointItem
     }
 
     @Override
-    public IndexBaseType getIndexBaseType()
+    public IndexDocumentBaseType getIndexBaseType()
     {
-        return IndexBaseType.GEO_POINT;
+        return IndexDocumentBaseType.GEO_POINT;
     }
 
     @Override

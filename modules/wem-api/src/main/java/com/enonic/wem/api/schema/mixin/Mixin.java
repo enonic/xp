@@ -3,18 +3,16 @@ package com.enonic.wem.api.schema.mixin;
 
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
-import com.enonic.wem.api.item.Item;
-import com.enonic.wem.api.item.ItemPath;
-import com.enonic.wem.api.item.ItemTranslatable;
+import com.enonic.wem.api.item.Node;
+import com.enonic.wem.api.item.NodePath;
+import com.enonic.wem.api.item.NodeTranslatable;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
 
-import static com.enonic.wem.api.item.Item.newItem;
-
 public class Mixin
     extends BaseSchema<QualifiedMixinName>
-    implements Schema, ItemTranslatable
+    implements Schema, NodeTranslatable
 {
     private final FormItems formItems;
 
@@ -42,9 +40,9 @@ public class Mixin
     }
 
     @Override
-    public Item toItem( final ItemPath parent )
+    public Node toNode( final NodePath parent )
     {
-        final Item.Builder builder = newItem();
+        final Node.Builder builder = Node.newNode();
 
         builder.name( this.getName() );
         builder.createdTime( this.getCreatedTime() );

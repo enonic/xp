@@ -4,10 +4,10 @@ public class ItemInMemoryDaoTest
     extends AbstractItemDaoTest
 {
 
-    private ItemInMemoryDao dao = new ItemInMemoryDao();
+    private NodeInMemoryDao dao = new NodeInMemoryDao();
 
     @Override
-    ItemDao createDao()
+    NodeDao createDao()
     {
         return dao;
     }

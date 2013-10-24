@@ -4,13 +4,13 @@ package com.enonic.wem.core.item.dao;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.ItemId;
 
-public class CreateItemArgs
+public class UpdateNodeArgs
 {
-    private final UserKey creator;
+    private final UserKey updater;
 
-    private final ItemPath parent;
+    private final ItemId itemToUpdate;
 
     private final String name;
 
@@ -18,23 +18,23 @@ public class CreateItemArgs
 
     private final RootDataSet rootDataSet;
 
-    CreateItemArgs( Builder builder )
+    UpdateNodeArgs( Builder builder )
     {
-        this.creator = builder.creator;
-        this.parent = builder.parent;
+        this.updater = builder.updater;
+        this.itemToUpdate = builder.itemToUpdate;
         this.name = builder.name;
         this.icon = builder.icon;
         this.rootDataSet = builder.rootDataSet;
     }
 
-    UserKey creator()
+    UserKey updater()
     {
-        return creator;
+        return updater;
     }
 
-    ItemPath parent()
+    ItemId itemToUpdate()
     {
-        return parent;
+        return itemToUpdate;
     }
 
     String name()
@@ -52,16 +52,16 @@ public class CreateItemArgs
         return rootDataSet;
     }
 
-    public static Builder newCreateItemArgs()
+    public static Builder newUpdateItemArgs()
     {
         return new Builder();
     }
 
     public static class Builder
     {
-        private UserKey creator;
+        private UserKey updater;
 
-        private ItemPath parent;
+        private ItemId itemToUpdate;
 
         private String name;
 
@@ -69,15 +69,15 @@ public class CreateItemArgs
 
         private RootDataSet rootDataSet;
 
-        public Builder creator( UserKey value )
+        public Builder updater( UserKey value )
         {
-            this.creator = value;
+            this.updater = value;
             return this;
         }
 
-        public Builder parent( ItemPath value )
+        public Builder itemToUpdate( ItemId value )
         {
-            this.parent = value;
+            this.itemToUpdate = value;
             return this;
         }
 
@@ -99,9 +99,9 @@ public class CreateItemArgs
             return this;
         }
 
-        public CreateItemArgs build()
+        public UpdateNodeArgs build()
         {
-            return new CreateItemArgs( this );
+            return new UpdateNodeArgs( this );
         }
     }
 }

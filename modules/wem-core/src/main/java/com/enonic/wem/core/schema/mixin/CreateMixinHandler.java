@@ -8,9 +8,9 @@ import org.joda.time.DateTime;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.item.CreateItem;
-import com.enonic.wem.api.item.CreateItemResult;
-import com.enonic.wem.api.item.ItemPath;
+import com.enonic.wem.api.item.CreateNode;
+import com.enonic.wem.api.item.CreateNodeResult;
+import com.enonic.wem.api.item.NodePath;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.mixin.dao.MixinDao;
@@ -40,16 +40,16 @@ public final class CreateMixinHandler
         command.setResult( mixin.getQualifiedName() );
 
         // Storing using Item
-        final ItemPath parentItemPath = ItemPath.newPath( "/mixins" ).build();
+        final NodePath parentNodePath = NodePath.newPath( "/mixins" ).build();
         final UserKey creator = UserKey.superUser();
         final MixinItemTranslator translator = new MixinItemTranslator();
 
-        final CreateItem createItemCommand = Commands.item().create().
+        final CreateNode createNodeCommand = Commands.item().create().
             name( command.getName() ).
-            parent( parentItemPath ).
+            parent( parentNodePath ).
             data( translator.toRootDataSet( command ) );
 
-        final CreateItemResult createItemResult = context.getClient().execute( createItemCommand );
+        final CreateNodeResult createNodeResult = context.getClient().execute( createNodeCommand );
         //final Mixin persistedMixin = MixinFactory.fromItem( createItemResult.getPersistedItem() );
         // TODO when Item persisting is ready: command.setResult( persistedMixin.getQualifiedName() );
     }
