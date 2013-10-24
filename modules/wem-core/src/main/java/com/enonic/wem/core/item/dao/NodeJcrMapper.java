@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.Node;
 import com.enonic.wem.api.item.NodePath;
 import com.enonic.wem.core.data.serializer.RootDataSetJsonSerializer;
@@ -65,8 +65,8 @@ class NodeJcrMapper
             NodePath nodePath = resolveNodePath( nodeNode );
             NodePath parentNodePath = nodePath.getParentPath();
 
-            final ItemId itemId = new ItemId( nodeNode.getIdentifier() );
-            final Node.Builder builder = Node.newNode( itemId, nodeNode.getName() );
+            final EntityId entityId = new EntityId( nodeNode.getIdentifier() );
+            final Node.Builder builder = Node.newNode( entityId, nodeNode.getName() );
             builder.parent( parentNodePath );
             builder.creator( JcrHelper.getPropertyUserKey( nodeNode, CREATOR ) );
             builder.createdTime( getPropertyDateTime( nodeNode, CREATED_TIME ) );

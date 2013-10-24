@@ -10,8 +10,8 @@ import org.junit.Test;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.EntityIndexConfig;
-import com.enonic.wem.api.item.ItemId;
 import com.enonic.wem.api.item.Node;
 import com.enonic.wem.api.item.NodePath;
 import com.enonic.wem.api.item.PropertyIndexConfig;
@@ -41,7 +41,7 @@ public class NodeIndexDocumentFactoryTest
         DateTime modifiedDateTime = new DateTime( 2013, 01, 02, 03, 04, 05 );
 
         Node node = Node.newNode().
-            id( new ItemId( "myId" ) ).
+            id( new EntityId( "myId" ) ).
             rootDataSet( rootDataSet ).
             parent( NodePath.ROOT ).
             creator( UserKey.from( "test:creator" ) ).
@@ -89,7 +89,7 @@ public class NodeIndexDocumentFactoryTest
         rootDataSet.addProperty( "a", new Value.String( "myValue3" ) );
 
         Node node = Node.newNode().
-            id( new ItemId( "myId" ) ).
+            id( new EntityId( "myId" ) ).
             rootDataSet( rootDataSet ).
             parent( NodePath.ROOT ).
             itemIndexConfig( EntityIndexConfig.newEntityIndexConfig().
@@ -127,7 +127,7 @@ public class NodeIndexDocumentFactoryTest
         rootDataSet.setProperty( "a/b/c", new Value.DateMidnight( DateMidnight.now() ) );
 
         Node node = Node.newNode().
-            id( new ItemId( "myId" ) ).
+            id( new EntityId( "myId" ) ).
             rootDataSet( rootDataSet ).
             parent( NodePath.ROOT ).
             itemIndexConfig( EntityIndexConfig.newEntityIndexConfig().

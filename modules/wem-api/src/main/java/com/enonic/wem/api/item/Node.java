@@ -19,7 +19,6 @@ public final class Node
     extends Entity
     implements ChangeTraceable, IllegalEditAware<Node>
 {
-    // TODO: Class ItemName with restrictions; no whitespaces, not (only) underscore, likt 4.7 menu-item-name
     private final String name;
 
     private final NodePath parent;
@@ -51,7 +50,7 @@ public final class Node
         this.entityIndexConfig = builder.entityIndexConfig;
     }
 
-    public ItemId id()
+    public EntityId id()
     {
         return id;
     }
@@ -145,12 +144,12 @@ public final class Node
         return new Builder();
     }
 
-    public static Builder newNode( final ItemId id )
+    public static Builder newNode( final EntityId id )
     {
         return new Builder( id );
     }
 
-    public static Builder newNode( final ItemId id, final String name )
+    public static Builder newNode( final EntityId id, final String name )
     {
         return new Builder( id, name );
     }
@@ -181,7 +180,7 @@ public final class Node
         {
         }
 
-        public Builder( final ItemId id )
+        public Builder( final EntityId id )
         {
             this.id = id;
         }
@@ -200,7 +199,7 @@ public final class Node
             this.entityIndexConfig = node.entityIndexConfig;
         }
 
-        public Builder( final ItemId id, final String name )
+        public Builder( final EntityId id, final String name )
         {
             this.id = id;
             this.name = name;

@@ -1,7 +1,7 @@
 package com.enonic.wem.core.item.dao;
 
 
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.NoItemFoundException;
 import com.enonic.wem.api.item.NoItemWithIdFound;
 import com.enonic.wem.api.item.Node;
@@ -9,7 +9,7 @@ import com.enonic.wem.api.item.NodePath;
 
 public interface NodeDao
 {
-    public Node getNodeById( ItemId id )
+    public Node getNodeById( EntityId id )
         throws NoItemWithIdFound;
 
     public Node getNodeByPath( NodePath path )

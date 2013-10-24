@@ -7,7 +7,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.NoItemWithIdFound;
 import com.enonic.wem.api.item.NoNodeAtPathFound;
 import com.enonic.wem.api.item.Node;
@@ -136,7 +136,7 @@ class NodeJcrHelper
         }
     }
 
-    javax.jcr.Node getItemNodeById( final ItemId id )
+    javax.jcr.Node getItemNodeById( final EntityId id )
         throws NoItemWithIdFound
     {
         try
@@ -153,7 +153,7 @@ class NodeJcrHelper
         }
     }
 
-    Node getItemById( final ItemId id )
+    Node getItemById( final EntityId id )
         throws NoItemWithIdFound
     {
         try

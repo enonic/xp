@@ -8,11 +8,11 @@ import com.enonic.wem.api.command.Command;
 public class UpdateNode
     extends Command<UpdateItemResult>
 {
-    private ItemId item;
+    private EntityId item;
 
     private NodeEditor editor;
 
-    public UpdateNode item( final ItemId value )
+    public UpdateNode item( final EntityId value )
     {
         this.item = value;
         return this;
@@ -31,7 +31,7 @@ public class UpdateNode
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 
-    public ItemId getItem()
+    public EntityId getItem()
     {
         return item;
     }

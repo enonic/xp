@@ -3,21 +3,21 @@ package com.enonic.wem.api.item;
 
 import java.util.UUID;
 
-public class ItemId
+public class EntityId
 {
     private final String value;
 
-    public ItemId()
+    public EntityId()
     {
         this.value = UUID.randomUUID().toString();
     }
 
-    public ItemId( final String value )
+    public EntityId( final String value )
     {
         this.value = value;
     }
 
-    public ItemId( final Object value )
+    public EntityId( final Object value )
     {
         this.value = value.toString();
     }
@@ -34,9 +34,9 @@ public class ItemId
             return false;
         }
 
-        final ItemId itemId = (ItemId) o;
+        final EntityId entityId = (EntityId) o;
 
-        return value.equals( itemId.value );
+        return value.equals( entityId.value );
     }
 
     @Override

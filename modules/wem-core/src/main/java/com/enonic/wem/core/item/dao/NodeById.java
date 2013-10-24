@@ -2,15 +2,15 @@ package com.enonic.wem.core.item.dao;
 
 import java.util.Map;
 
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.NoItemWithIdFound;
 import com.enonic.wem.api.item.Node;
 
 class NodeById
 {
-    private final Map<ItemId, Node> nodeByNodeId;
+    private final Map<EntityId, Node> nodeByNodeId;
 
-    NodeById( Map<ItemId, Node> nodeByNodeId )
+    NodeById( Map<EntityId, Node> nodeByNodeId )
     {
         this.nodeByNodeId = nodeByNodeId;
     }
@@ -30,12 +30,12 @@ class NodeById
         nodeByNodeId.put( node.id(), node );
     }
 
-    public boolean containsKey( final ItemId id )
+    public boolean containsKey( final EntityId id )
     {
         return nodeByNodeId.containsKey( id );
     }
 
-    public Node get( final ItemId id )
+    public Node get( final EntityId id )
     {
         final Node node = nodeByNodeId.get( id );
         if ( node == null )

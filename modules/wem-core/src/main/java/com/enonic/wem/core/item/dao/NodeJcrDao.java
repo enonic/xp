@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.NoItemWithIdFound;
 import com.enonic.wem.api.item.NoNodeAtPathFound;
 import com.enonic.wem.api.item.Node;
@@ -63,7 +63,7 @@ public class NodeJcrDao
         return jcrHelper.updateItemNode( existingNodeNode, updateNodeArgs );
     }
 
-    public Node getNodeById( final ItemId id )
+    public Node getNodeById( final EntityId id )
         throws NoItemWithIdFound
     {
         return this.jcrHelper.getItemById( id );

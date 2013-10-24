@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.NoItemFoundException;
 import com.enonic.wem.api.item.NoNodeAtPathFound;
 import com.enonic.wem.api.item.Node;
@@ -25,8 +25,8 @@ public class NodeInMemoryDao
 
     public NodeInMemoryDao()
     {
-        nodeById = new NodeById( new LinkedHashMap<ItemId, Node>() );
-        nodeIdByPath = new NodeIdByPath( new LinkedHashMap<NodePath, ItemId>() );
+        nodeById = new NodeById( new LinkedHashMap<EntityId, Node>() );
+        nodeIdByPath = new NodeIdByPath( new LinkedHashMap<NodePath, EntityId>() );
     }
 
     @Override
@@ -40,7 +40,7 @@ public class NodeInMemoryDao
         }
 
         final Node newNode = Node.newNode().
-            id( new ItemId() ).
+            id( new EntityId() ).
             createdTime( DateTime.now() ).
             creator( createNodeArguments.creator() ).
             parent( createNodeArguments.parent() ).
@@ -76,7 +76,7 @@ public class NodeInMemoryDao
         return persistedNode;
     }
 
-    public Node getNodeById( final ItemId id )
+    public Node getNodeById( final EntityId id )
     {
         return this.nodeById.get( id );
     }

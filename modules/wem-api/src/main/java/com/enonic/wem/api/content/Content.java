@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.Node;
 import com.enonic.wem.api.item.NodePath;
 import com.enonic.wem.api.item.NodeTranslatable;
@@ -159,7 +159,7 @@ public final class Content
 
     public Node toNode( final NodePath parent )
     {
-        final Node.Builder builder = Node.newNode( new ItemId( this.id.toString() ), this.getName() );
+        final Node.Builder builder = Node.newNode( new EntityId( this.id.toString() ), this.getName() );
         builder.parent( parent );
         builder.createdTime( this.createdTime );
         builder.modifiedTime( this.modifiedTime );

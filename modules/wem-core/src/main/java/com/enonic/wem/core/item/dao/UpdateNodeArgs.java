@@ -4,13 +4,13 @@ package com.enonic.wem.core.item.dao;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 
 public class UpdateNodeArgs
 {
     private final UserKey updater;
 
-    private final ItemId itemToUpdate;
+    private final EntityId itemToUpdate;
 
     private final String name;
 
@@ -32,7 +32,7 @@ public class UpdateNodeArgs
         return updater;
     }
 
-    ItemId itemToUpdate()
+    EntityId itemToUpdate()
     {
         return itemToUpdate;
     }
@@ -61,7 +61,7 @@ public class UpdateNodeArgs
     {
         private UserKey updater;
 
-        private ItemId itemToUpdate;
+        private EntityId itemToUpdate;
 
         private String name;
 
@@ -75,7 +75,7 @@ public class UpdateNodeArgs
             return this;
         }
 
-        public Builder itemToUpdate( ItemId value )
+        public Builder itemToUpdate( EntityId value )
         {
             this.itemToUpdate = value;
             return this;

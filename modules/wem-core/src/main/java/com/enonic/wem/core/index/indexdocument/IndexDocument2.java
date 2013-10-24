@@ -5,13 +5,13 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.core.index.IndexType;
 
 public class IndexDocument2
 {
 
-    private final ItemId id;
+    private final EntityId id;
 
     private final IndexType indexType;
 
@@ -82,7 +82,7 @@ public class IndexDocument2
 
     public static class Builder
     {
-        private ItemId id;
+        private EntityId id;
 
         private IndexType indexType;
 
@@ -97,7 +97,7 @@ public class IndexDocument2
         }
 
 
-        public Builder id( final ItemId id )
+        public Builder id( final EntityId id )
         {
             this.id = id;
             return this;

@@ -3,15 +3,15 @@ package com.enonic.wem.core.item.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.enonic.wem.api.item.ItemId;
+import com.enonic.wem.api.item.EntityId;
 import com.enonic.wem.api.item.NoNodeAtPathFound;
 import com.enonic.wem.api.item.NodePath;
 
 class NodeIdByPath
 {
-    private final Map<NodePath, ItemId> itemIdByPath;
+    private final Map<NodePath, EntityId> itemIdByPath;
 
-    NodeIdByPath( Map<NodePath, ItemId> itemIdByPath )
+    NodeIdByPath( Map<NodePath, EntityId> itemIdByPath )
     {
         this.itemIdByPath = itemIdByPath;
     }
@@ -31,14 +31,14 @@ class NodeIdByPath
         return path.isRoot() || itemIdByPath.containsKey( path );
     }
 
-    void put( final NodePath path, final ItemId id )
+    void put( final NodePath path, final EntityId id )
     {
         itemIdByPath.put( path, id );
     }
 
-    ItemId get( final NodePath path )
+    EntityId get( final NodePath path )
     {
-        final ItemId id = itemIdByPath.get( path );
+        final EntityId id = itemIdByPath.get( path );
         if ( id == null )
         {
             throw new NoNodeAtPathFound( path );

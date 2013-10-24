@@ -4,9 +4,9 @@ package com.enonic.wem.api.item;
 public class NoItemWithIdFound
     extends NoItemFoundException
 {
-    private final ItemId id;
+    private final EntityId id;
 
-    public NoItemWithIdFound( final ItemId id )
+    public NoItemWithIdFound( final EntityId id )
     {
         super( "No item with id " + id + " found" );
         this.id = id;

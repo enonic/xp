@@ -10,7 +10,7 @@ import com.enonic.wem.api.data.Value;
 
 public class Entity
 {
-    protected final ItemId id;
+    protected final EntityId id;
 
     protected final DateTime createdTime;
 
@@ -36,7 +36,7 @@ public class Entity
 
     public static class Builder<B extends Builder>
     {
-        protected ItemId id;
+        protected EntityId id;
 
         protected DateTime createdTime = DateTime.now();
 
@@ -48,12 +48,12 @@ public class Entity
         {
         }
 
-        public Builder( final ItemId id )
+        public Builder( final EntityId id )
         {
             this.id = id;
         }
 
-        public B id( final ItemId id )
+        public B id( final EntityId id )
         {
             this.id = id;
             return getThisBuilder();
