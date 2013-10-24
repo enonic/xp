@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import com.google.inject.Provider;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.exception.SystemException;
 
 
@@ -33,7 +32,7 @@ public final class CommandInvokerImpl
             handler.setCommand( command );
             handler.handle();
         }
-        catch ( final BaseException e )
+        catch ( final RuntimeException e )
         {
             throw e;
         }
