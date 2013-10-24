@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.core.account.AccountModule;
 import com.enonic.wem.core.client.ClientModule;
-import com.enonic.wem.core.command.CommandModule;
 import com.enonic.wem.core.config.ConfigModule;
 import com.enonic.wem.core.content.ContentModule;
 import com.enonic.wem.core.home.HomeModule;
@@ -33,7 +32,6 @@ public final class CoreModule
         install( new JcrModule() );
         install( new InitializerModule() );
         install( new ClientModule() );
-        install( new CommandModule() );
         install( new ItemModule() );
         install( new AccountModule() );
         install( new ContentModule() );

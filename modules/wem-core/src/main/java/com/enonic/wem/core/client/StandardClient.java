@@ -1,6 +1,7 @@
 package com.enonic.wem.core.client;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Command;
@@ -8,7 +9,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandContextFactory;
 import com.enonic.wem.core.command.CommandInvoker;
 
-
+@Singleton
 public final class StandardClient
     implements Client
 {
@@ -55,13 +56,8 @@ public final class StandardClient
 
     private CommandContext createContext()
     {
-        if ( this.commandContextFactory != null )
-        {
-            final CommandContext context = this.commandContextFactory.create();
-            context.setClient( this );
-            return context;
-        }
-
-        return null;
+        final CommandContext context = this.commandContextFactory.create();
+        context.setClient( this );
+        return context;
     }
 }

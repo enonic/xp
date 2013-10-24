@@ -10,8 +10,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.util.Types;
 
-import com.enonic.wem.core.initializer.InitializerTask;
-
 import static org.junit.Assert.*;
 
 public class CommandBinderTest

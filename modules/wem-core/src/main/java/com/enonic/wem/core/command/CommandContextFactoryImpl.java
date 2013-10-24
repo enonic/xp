@@ -2,7 +2,6 @@ package com.enonic.wem.core.command;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
@@ -19,7 +18,7 @@ public final class CommandContextFactoryImpl
         {
             return doCreate();
         }
-        catch ( final BaseException e )
+        catch ( final RuntimeException e )
         {
             throw e;
         }
@@ -29,7 +28,7 @@ public final class CommandContextFactoryImpl
         }
     }
 
-    protected CommandContext doCreate()
+    private CommandContext doCreate()
         throws Exception
     {
         final CommandContext context = new CommandContext();
