@@ -41,30 +41,36 @@ module api_form_input_type {
         }
 
         private createComboBoxElement(name:string, property:api_data.Property):api_dom.Element {
+            var inputEl = new api_dom.DivEl();
 
-            var inputEl:api_ui_combobox.ComboBox<string> = new api_ui_combobox.ComboBox<string>(name, {
+            var selectedOptionsView = new api_ui_combobox.ComboBoxSelectedOptionsView<string>();
+            var comboBox = new api_ui_combobox.ComboBox<string>(name, {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
+                selectedOptionsView: selectedOptionsView,
                 maximumOccurrences: 1
             });
-                inputEl.addListener({
-                    onInputValueChanged: function (oldValue, newValue, grid) {
-                        grid.getDataView().setFilterArgs({searchString: newValue});
-                        grid.getDataView().refresh();
-                    }
-                });
+            comboBox.addListener({
+                onInputValueChanged: function (oldValue, newValue, grid) {
+                    grid.getDataView().setFilterArgs({searchString: newValue});
+                    grid.getDataView().refresh();
+                }
+            });
 
             if (this.config) {
                 var option;
                 for (var i = 0; i < this.config.options.length; i++) {
                     option = this.config.options[i];
-                    inputEl.addOption({ value: option.value, displayValue: option.label});
+                    comboBox.addOption({ value: option.value, displayValue: option.label});
                 }
             }
 
             if (property) {
-                inputEl.setValue(property.getString());
+                comboBox.setValue(property.getString());
             }
+
+            inputEl.appendChild(comboBox);
+            inputEl.appendChild(selectedOptionsView);
 
             return inputEl;
         }

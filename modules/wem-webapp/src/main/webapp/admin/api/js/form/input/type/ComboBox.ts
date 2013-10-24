@@ -17,6 +17,8 @@ module api_form_input_type {
 
         private comboBox:api_ui_combobox.ComboBox<string>;
 
+        private selectedOptionsView:api_ui_combobox.ComboBoxSelectedOptionsView<string>;
+
         constructor(config?:ComboBoxConfig) {
             super("ComboBox", "combo-box");
             this.config = config;
@@ -50,6 +52,7 @@ module api_form_input_type {
 
             this.input = input;
 
+            this.selectedOptionsView = new api_ui_combobox.ComboBoxSelectedOptionsView<string>();
             this.comboBox = this.createComboBox(input);
 
             this.config.options.forEach((option:ComboBoxOption) => {
@@ -65,12 +68,14 @@ module api_form_input_type {
             }
 
             this.appendChild(this.comboBox);
+            this.appendChild(this.selectedOptionsView);
         }
 
         createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<string> {
             var comboboxConfig = {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
+                selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
             var comboBox = new api_ui_combobox.ComboBox<string>(name, comboboxConfig);

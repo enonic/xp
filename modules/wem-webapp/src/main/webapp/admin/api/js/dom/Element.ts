@@ -155,8 +155,8 @@ module api_dom {
         }
 
         removeChild(child:api_dom.Element) {
-            if (this.el.getHTMLElement().contains(child.getHTMLElement())) {
-                this.el.getHTMLElement().removeChild(child.getHTMLElement());
+            if (this.getHTMLElement().contains(child.getHTMLElement())) {
+                this.getHTMLElement().removeChild(child.getHTMLElement());
                 this.children = this.children.filter((element) => {
                     return element != child;
                 });
@@ -178,7 +178,7 @@ module api_dom {
         }
 
         private insert(child:Element, parent:Element, index:number) {
-            child.setParent(this);
+            child.setParent(parent);
             parent.getChildren().splice(index, 0, child);
             if (parent.isRendered()) {
                 child.init();
@@ -226,10 +226,8 @@ module api_dom {
         }
 
         remove() {
-            var htmlEl = this.el.getHTMLElement();
-            var parent = htmlEl.parentElement;
-            if (parent) {
-                parent.removeChild(htmlEl);
+            if (this.parent) {
+                this.parent.removeChild(this);
             }
         }
 

@@ -13,6 +13,8 @@ module api_form_input_type {
 
         private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
 
+        private selectedOptionsView:RelationshipSelectedOptionsView;
+
         private contentSummaryLoader:ContentSummaryLoader;
 
         private contentRequestsAllowed:boolean;
@@ -73,6 +75,7 @@ module api_form_input_type {
 
             this.input = input;
 
+            this.selectedOptionsView = new RelationshipSelectedOptionsView();
             this.comboBox = this.createComboBox(input);
 
             if (properties != null) {
@@ -84,15 +87,14 @@ module api_form_input_type {
             }
 
             this.appendChild(this.comboBox);
+            this.appendChild(this.selectedOptionsView);
         }
 
         private createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
             var comboboxConfig = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>>{
                 rowHeight: 50,
-                optionFormatter: (row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.OptionData<api_content.ContentSummary>):string => {
-                    return this.optionFormatter(content);
-                },
-                selectedOptionFormatter: this.optionFormatter,
+                optionFormatter: this.optionFormatter,
+                selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
             var comboBox = new api_ui_combobox.ComboBox<api_content.ContentSummary>(input.getName(), comboboxConfig);
@@ -151,7 +153,7 @@ module api_form_input_type {
             return options;
         }
 
-        private optionFormatter(content:api_content.ContentSummary):string {
+        private optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.OptionData<api_content.ContentSummary>):string {
             var img = new api_dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());

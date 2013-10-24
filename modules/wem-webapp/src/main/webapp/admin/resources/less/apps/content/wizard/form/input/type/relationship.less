@@ -1,59 +1,76 @@
-.relationship .combobox {
+.relationship {
+  margin-left: 110px;
 
-  input {
-    height: 37px;
-    padding: 4px 4px 4px 50px;
-  }
+  .combobox {
 
-  .slick-cell {
-    height: 34px;
-    padding: 8px;
-    border: none;
-    .box-sizing(content-box);
+    input {
+      height: 37px;
+      padding: 4px 4px 4px 50px;
+    }
 
-    &.selected {
+    .slick-cell {
+      height: 34px;
+      padding: 8px;
+      border: none;
+      .box-sizing(content-box);
+
+      &.selected {
+        .icon {
+          opacity: 0.5;
+        }
+
+        .content-summary .display-name {
+          color: #d3d3d3;
+        }
+      }
+
       .icon {
-        opacity: 0.5;
+        float: left;
+        width: 32px;
+        height: 32px;
+        border: 1px @admin-medium-gray-border solid;
       }
 
-      .content-summary .display-name {
-        color: #d3d3d3;
-      }
-    }
+      .content-summary {
+        margin: 0 0 0 42px;
 
-    .icon {
-      float: left;
-      width: 32px;
-      height: 32px;
-      border: 1px @admin-medium-gray-border solid;
-    }
+        .display-name {
+          font-size: 14px;
+          line-height: 16px;
+          overflow: hidden;
+          white-space: pre;
+          text-overflow: ellipsis;
+        }
 
-    .content-summary {
-      margin: 0 0 0 42px;
-
-      .display-name {
-        font-size: 14px;
-        line-height: 16px;
-        overflow: hidden;
-        white-space: pre;
-        text-overflow: ellipsis;
-      }
-
-      .path {
-        color: @admin-light-gray-font;
-        font-size: 12px;
-        overflow: hidden;
-        white-space: pre;
-        text-overflow: ellipsis;
+        .path {
+          color: @admin-light-gray-font;
+          font-size: 12px;
+          overflow: hidden;
+          white-space: pre;
+          text-overflow: ellipsis;
+        }
       }
     }
   }
 
-  .selected-option {
-    .slick-cell;
-    height: 37px;
-    padding: 3px 0;
-    border: none;
-  }
+  .selected-options {
+    width: 255px;
+    padding: 3px;
+    box-sizing: content-box;
 
+    .selected-option {
+      .combobox > .slick-cell;
+      height: 37px;
+      padding: 3px 0;
+      border: none;
+
+      .remove {
+        float:right;
+        .icon-remove(2em, @admin-medium-gray-font);
+        font-size: 9px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    }
+  }
 }

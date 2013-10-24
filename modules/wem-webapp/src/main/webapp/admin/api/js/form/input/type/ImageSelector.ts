@@ -18,6 +18,8 @@ module api_form_input_type {
 
         private uploadButton:api_ui.Button;
 
+        private selectedOptionsView:ImageSelectorSelectedOptionsView;
+
         private contentSummaryLoader:ContentSummaryLoader;
 
         private contentRequestsAllowed:boolean;
@@ -54,6 +56,7 @@ module api_form_input_type {
 
             this.input = input;
 
+            this.selectedOptionsView = new ImageSelectorSelectedOptionsView();
             this.comboBox = this.createComboBox(input);
 
             if (properties != null) {
@@ -73,6 +76,8 @@ module api_form_input_type {
             this.uploadButton = new api_ui.Button("");
             this.uploadButton.addClass("upload-button");
             this.appendChild(this.uploadButton);
+
+            this.appendChild(this.selectedOptionsView);
         }
 
         getValues(): api_data.Value[] {
@@ -115,10 +120,8 @@ module api_form_input_type {
         private createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
             var comboBoxConfig = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>> {
                 rowHeight: 50,
-                optionFormatter: (row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.OptionData<api_content.ContentSummary>):string => {
-                    return this.optionFormatter(content);
-                },
-                selectedOptionFormatter: this.optionFormatter,
+                optionFormatter:  this.optionFormatter,
+                selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
 
@@ -154,7 +157,7 @@ module api_form_input_type {
             return options;
         }
 
-        private optionFormatter(content:api_content.ContentSummary):string {
+        private optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.OptionData<api_content.ContentSummary>):string {
             var img = new api_dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());
