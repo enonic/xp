@@ -1,7 +1,6 @@
 package com.enonic.wem.api.data;
 
 
-import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.AbstractEqualsTest;
@@ -11,6 +10,8 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import static com.enonic.wem.api.data.Property.GeographicCoordinate.newGeographicCoordinate;
 import static com.enonic.wem.api.data.Property.newProperty;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 public class PropertyTest
 {
@@ -49,11 +50,11 @@ public class PropertyTest
     }
 
     @Test
-    public void getDate_given_value_as_string()
+    public void valueEquals()
     {
-        Property property = newProperty().name( "myDate" ).type( ValueTypes.STRING ).value( "2012-08-31" ).build();
-        assertEquals( DateMidnight.class, property.getDateMidnight().getClass() );
-        assertEquals( new DateMidnight( 2012, 8, 31 ), property.getDateMidnight() );
+        assertTrue( new Property.String( "myProperty", "MyValue" ).equals( new Property.String( "myProperty", "MyValue" ) ) );
+        assertFalse( new Property.String( "myProperty", "MyValue" ).valueEquals( new Property.Xml( "myProperty", "MyValue" ) ) );
+        assertFalse( new Property.String( "myProperty", "MyValue" ).valueEquals( new Property.String( "myProperty", "AnotherValue" ) ) );
     }
 
     @Test

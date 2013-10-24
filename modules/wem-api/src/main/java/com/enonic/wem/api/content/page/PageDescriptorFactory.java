@@ -14,12 +14,11 @@ public class PageDescriptorFactory
     {
         final ResourcePath resourcePath = ResourcePath.from( "/controllers" ).resolve( resource.getName() );
         final ModuleResourceKey controllerResourceKey = new ModuleResourceKey( ModuleKey.from( "mymod-1.0.0" ), resourcePath );
-        final ControllerSetup controllerSetup = new ControllerSetup( controllerResourceKey );
 
         // TODO deserialize from resource
         final PageDescriptor pageDescriptor = newPageDescriptor().
             displayName( "my page descriptor" ).
-            controllerSetup( controllerSetup ).
+            controllerResource( controllerResourceKey ).
             build();
 
         return pageDescriptor;

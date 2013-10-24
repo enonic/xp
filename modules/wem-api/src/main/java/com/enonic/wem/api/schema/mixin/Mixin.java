@@ -1,6 +1,10 @@
 package com.enonic.wem.api.schema.mixin;
 
 
+import java.util.List;
+
+import com.enonic.wem.api.data.Data;
+import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.item.Node;
@@ -9,6 +13,7 @@ import com.enonic.wem.api.item.NodeTranslatable;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
+import com.enonic.wem.api.support.SerializerForFormItemToData;
 
 public class Mixin
     extends BaseSchema<QualifiedMixinName>
@@ -50,7 +55,15 @@ public class Mixin
         builder.creator( this.getCreator() );
         builder.modifier( this.getModifier() );
         builder.property( "displayName", this.getDisplayName() );
-        // TODO: formItems
+
+        final DataSet formAsData = new DataSet( "formItems" );
+        final List<Data> dataList = new SerializerForFormItemToData().serializeFormItems( this.formItems );
+        for ( final Data data : dataList )
+        {
+            formAsData.add( data );
+        }
+        builder.addDataSet( formAsData );
+
         builder.icon( this.getIcon() );
 
         return builder.build();

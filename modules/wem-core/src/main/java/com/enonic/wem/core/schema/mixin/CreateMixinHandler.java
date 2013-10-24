@@ -42,7 +42,7 @@ public final class CreateMixinHandler
         // Storing using Item
         final NodePath parentNodePath = NodePath.newPath( "/mixins" ).build();
         final UserKey creator = UserKey.superUser();
-        final MixinItemTranslator translator = new MixinItemTranslator();
+        final MixinDataSetTranslator translator = new MixinDataSetTranslator();
 
         final CreateNode createNodeCommand = Commands.item().create().
             name( command.getName() ).

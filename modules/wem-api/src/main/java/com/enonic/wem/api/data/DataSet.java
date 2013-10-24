@@ -451,6 +451,30 @@ public class DataSet
         return Objects.equals( getName(), other.getName() ) && Objects.equals( dataById, other.dataById );
     }
 
+    public boolean valueEquals( final Data data )
+    {
+        final DataSet other = data.toDataSet();
+
+        if ( this.dataById.size() != other.dataById.size() )
+        {
+            return false;
+        }
+
+        for ( Map.Entry<DataId, Data> thisEntry : dataById.entrySet() )
+        {
+            final Data otherValue = other.dataById.get( thisEntry.getKey() );
+            if ( otherValue == null )
+            {
+                return false;
+            }
+            if ( !otherValue.valueEquals( thisEntry.getValue() ) )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public int hashCode()
     {

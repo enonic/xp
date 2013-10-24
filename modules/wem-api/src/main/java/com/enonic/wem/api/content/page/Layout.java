@@ -1,9 +1,11 @@
 package com.enonic.wem.api.content.page;
 
+import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class Layout
     extends PageComponent<LayoutTemplateId>
+    implements RegionPlaceableComponent
 {
     private final RootDataSet liveEditConfig;
 

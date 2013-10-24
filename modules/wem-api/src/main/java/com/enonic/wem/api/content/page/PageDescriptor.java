@@ -2,61 +2,39 @@ package com.enonic.wem.api.content.page;
 
 
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class PageDescriptor
     implements ComponentDescriptor
 {
     private final String displayName;
 
-    private final ControllerSetup controllerSetup;
+    private final ModuleResourceKey controllerResource;
 
-    /**
-     * Only for display in PageTemplate.
-     */
-    private final Form pageTemplateConfig;
-
-    /**
-     * Only for display in Page.
-     */
     private final Form config;
-
-    /**
-     * Only for display in LiveEdit.
-     */
-    private final Form liveEditConfig;
 
     private PageDescriptor( final Builder builder )
     {
         this.displayName = builder.displayName;
-        this.controllerSetup = builder.controllerSetup;
-        this.pageTemplateConfig = builder.pageTemplateConfig != null ? builder.pageTemplateConfig : Form.newForm().build();
+        this.controllerResource = builder.controllerResource;
         this.config = builder.config != null ? builder.config : Form.newForm().build();
-        this.liveEditConfig = builder.liveEditConfig != null ? builder.liveEditConfig : Form.newForm().build();
     }
 
+    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
-    public ControllerSetup getControllerSetup()
+    public ModuleResourceKey getControllerResource()
     {
-        return controllerSetup;
+        return controllerResource;
     }
 
-    public Form getPageTemplateConfig()
-    {
-        return pageTemplateConfig;
-    }
-
+    @Override
     public Form getConfig()
     {
         return config;
-    }
-
-    public Form getLiveEditConfig()
-    {
-        return liveEditConfig;
     }
 
     public static PageDescriptor.Builder newPageDescriptor()
@@ -68,13 +46,9 @@ public final class PageDescriptor
     {
         private String displayName;
 
-        private ControllerSetup controllerSetup;
-
-        private Form pageTemplateConfig;
+        private ModuleResourceKey controllerResource;
 
         private Form config;
-
-        private Form liveEditConfig;
 
         private Builder()
         {
@@ -86,27 +60,15 @@ public final class PageDescriptor
             return this;
         }
 
-        public Builder controllerSetup( final ControllerSetup value )
+        public Builder controllerResource( final ModuleResourceKey controllerResource )
         {
-            this.controllerSetup = value;
+            this.controllerResource = controllerResource;
             return this;
         }
 
-        public Builder pageTemplateConfig( final Form value )
-        {
-            this.pageTemplateConfig = value;
-            return this;
-        }
-
-        public Builder pageConfig( final Form value )
+        public Builder config( final Form value )
         {
             this.config = value;
-            return this;
-        }
-
-        public Builder liveEditConfig( final Form value )
-        {
-            this.liveEditConfig = value;
             return this;
         }
 

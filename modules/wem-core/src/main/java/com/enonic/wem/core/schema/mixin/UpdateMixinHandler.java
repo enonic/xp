@@ -48,7 +48,7 @@ public final class UpdateMixinHandler
 
             /*final ItemDao itemDao = new ItemJcrDao( context.getJcrSession() );
             final UserKey updater = UserKey.superUser();
-            final MixinItemTranslator translator = new MixinItemTranslator();
+            final MixinDataSetTranslator translator = new MixinDataSetTranslator();
             final UpdateItemArgs updateItemArgs = newUpdateItemArgs().
                 updater( updater ).
                 itemToUpdate( new ItemId( mixin.getId() ) ).

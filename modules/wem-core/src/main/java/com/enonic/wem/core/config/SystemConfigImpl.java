@@ -31,6 +31,12 @@ final class SystemConfigImpl
     }
 
     @Override
+    public File getModuleDir()
+    {
+        return new File( getDataDir(), "modules" );
+    }
+
+    @Override
     public boolean isMigrateEnabled()
     {
         return "true".equals( this.config.getProperty( "cms.migrate.enabled" ) );

@@ -215,6 +215,12 @@ public class Property
         return Objects.equal( getName(), property.getName() ) && Objects.equal( value, property.value );
     }
 
+    public boolean valueEquals( final Data data )
+    {
+        final Property other = data.toProperty();
+        return other.getValue().equals( this.getValue() );
+    }
+
     @Override
     public int hashCode()
     {

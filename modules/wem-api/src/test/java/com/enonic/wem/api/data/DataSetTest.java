@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.type.ValueTypes;
 
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;
 
 public class DataSetTest
@@ -68,6 +69,37 @@ public class DataSetTest
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
+    }
+
+    @Test
+    public void valueEquals_given_DataSet_with_equal_Property_then_true_is_returned()
+    {
+        DataSet a = new DataSet( "a" );
+        a.setProperty( "p1", new Value.String( "v1" ) );
+        DataSet b = new DataSet( "b" );
+        b.setProperty( "p1", new Value.String( "v1" ) );
+
+        assertTrue( a.valueEquals( b ) );
+    }
+
+    @Test
+    public void valueEquals_given_DataSet_with_unequal_Property_then_false_is_returned()
+    {
+        DataSet a = new DataSet( "a" );
+        a.setProperty( "p1", new Value.String( "v1" ) );
+        DataSet b = new DataSet( "b" );
+        b.setProperty( "p1", new Value.String( "v2" ) );
+
+        assertFalse( a.valueEquals( b ) );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void valueEquals_given_a_Property_then_exception_is_thrown()
+    {
+        DataSet a = new DataSet( "a" );
+        a.setProperty( "p1", new Value.String( "v1" ) );
+
+        assertTrue( a.valueEquals( new Property.String( "b", "1" ) ) );
     }
 
     @Test
