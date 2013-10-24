@@ -8,12 +8,11 @@ import com.enonic.wem.api.rendering.Context;
 import com.enonic.wem.api.rendering.RenderingResult;
 
 public class LayoutComponentType
-    extends ComponentType<Layout>
+    implements ComponentType<Layout>
 {
     @Override
     public RenderingResult execute( final Layout layout, final Context context, final Client client )
     {
-        // TODO
         return null;
     }
 }

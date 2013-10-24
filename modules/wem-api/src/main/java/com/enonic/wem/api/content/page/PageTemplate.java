@@ -8,15 +8,7 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 public final class PageTemplate
     extends Template<PageTemplateId>
 {
-    /**
-     * Template templateConfig.
-     */
-    private  RootDataSet templateConfig;
-
-    /**
-     * Default page templateConfig that can be overridden in page (content).
-     */
-    private RootDataSet pageConfig;
+    private final RootDataSet config;
 
     private final QualifiedContentTypeNames canRender;
 
@@ -24,16 +16,12 @@ public final class PageTemplate
     {
         super( builder.id, builder.displayName, builder.descriptor );
         this.canRender  =builder.canRender;
+        this.config = null;
     }
 
-    public RootDataSet getTemplateConfig()
+    public RootDataSet getConfig()
     {
-        return templateConfig;
-    }
-
-    public RootDataSet getPageConfig()
-    {
-        return pageConfig;
+        return config;
     }
 
     public QualifiedContentTypeNames getCanRender()

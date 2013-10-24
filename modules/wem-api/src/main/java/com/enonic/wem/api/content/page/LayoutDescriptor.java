@@ -1,20 +1,21 @@
 package com.enonic.wem.api.content.page;
 
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public class LayoutDescriptor
     implements ComponentDescriptor
 {
     private String displayName;
 
-    private ControllerSetup controllerSetup;
+    private final ModuleResourceKey controllerResource;
 
     private Form config;
 
     private LayoutDescriptor( final Builder builder )
     {
         this.displayName = builder.displayName;
-        this.controllerSetup = builder.controllerSetup;
+        this.controllerResource = builder.controllerResource;
         this.config = builder.config != null ? builder.config : Form.newForm().build();
     }
 
@@ -24,9 +25,9 @@ public class LayoutDescriptor
         return displayName;
     }
 
-    public ControllerSetup getControllerSetup()
+    public ModuleResourceKey getControllerResource()
     {
-        return controllerSetup;
+        return controllerResource;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class LayoutDescriptor
     {
         private String displayName;
 
-        private ControllerSetup controllerSetup;
+        private ModuleResourceKey controllerResource;
 
         private Form config;
 
@@ -58,9 +59,9 @@ public class LayoutDescriptor
             return this;
         }
 
-        public Builder controllerSetup( final ControllerSetup value )
+        public Builder controllerResource( final ModuleResourceKey controllerResource )
         {
-            this.controllerSetup = value;
+            this.controllerResource = controllerResource;
             return this;
         }
 

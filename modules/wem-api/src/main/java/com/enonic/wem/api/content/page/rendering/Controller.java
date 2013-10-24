@@ -1,22 +1,31 @@
 package com.enonic.wem.api.content.page.rendering;
 
 
-import com.enonic.wem.api.content.page.ControllerParams;
+import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.rendering.Context;
+import com.enonic.wem.api.rendering.RenderingResult;
 
-public abstract class Controller
+import static com.enonic.wem.api.rendering.RenderingResult.newRenderingResult;
+
+public final class Controller
 {
-    private final ControllerParams params;
+    private final ModuleResourceKey javascriptResource;
 
-    protected Controller( final ControllerParams params )
+    private final RootDataSet config;
+
+    private final Context context;
+
+    public Controller( final ModuleResourceKey javascriptResource, final RootDataSet config, final Context context )
     {
-        this.params = params;
+        this.javascriptResource = javascriptResource;
+        this.config = config;
+        this.context = context;
     }
 
-    public ControllerParams getParams()
+    public RenderingResult execute()
     {
-        return params;
+        return newRenderingResult().success().build();
     }
-
-    public abstract String execute();
 
 }
