@@ -42,6 +42,9 @@ public final class CoreModule
         install( new UserStoreModule() );
         install( new ResourceModule() );
 
+        // Add this to enable hazelcast
+        // install( new HazelcastModule() );
+
         // TODO: Move to plugin. Need some service starting system first.
         install( new MigrateModule() );
     }
