@@ -96,13 +96,6 @@ public class MixinResource
         return new MixinListJson( mixins );
     }
 
-    private Mixin fetchMixin( final QualifiedMixinName qualifiedName )
-    {
-        final QualifiedMixinNames qualifiedNames = QualifiedMixinNames.from( qualifiedName );
-        final Mixins mixins = client.execute( mixin().get().names( qualifiedNames ) );
-        return mixins.isEmpty() ? null : mixins.first();
-    }
-
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -221,5 +214,10 @@ public class MixinResource
         {
             throw new WebApplicationException( e );
         }
+    }
+
+    private Mixin fetchMixin( final QualifiedMixinName qualifiedName )
+    {
+        return client.execute( mixin().get().byQualifiedName( qualifiedName ) );
     }
 }

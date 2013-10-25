@@ -18,6 +18,11 @@ public class FormItems
 
     private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<>();
 
+    public FormItems()
+    {
+        this.containerFormItem = null;
+    }
+
     public FormItems( final FormItem containerFormItem )
     {
         this.containerFormItem = containerFormItem;

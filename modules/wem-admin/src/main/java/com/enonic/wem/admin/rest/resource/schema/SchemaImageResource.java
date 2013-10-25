@@ -20,7 +20,6 @@ import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -116,8 +115,7 @@ public final class SchemaImageResource
 
     private Icon findMixinIcon( final QualifiedMixinName mixinName )
     {
-        final QualifiedMixinNames mixinNames = QualifiedMixinNames.from( mixinName );
-        Mixin mixin = client.execute( mixin().get().names( mixinNames ) ).first();
+        final Mixin mixin = client.execute( mixin().get().byQualifiedName( mixinName ) );
         return mixin == null ? null : mixin.getIcon();
     }
 

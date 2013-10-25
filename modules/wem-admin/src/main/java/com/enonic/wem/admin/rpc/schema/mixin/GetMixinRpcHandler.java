@@ -6,9 +6,7 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 
 
 public class GetMixinRpcHandler
@@ -52,8 +50,6 @@ public class GetMixinRpcHandler
 
     private Mixin fetchMixin( final QualifiedMixinName qualifiedName )
     {
-        final QualifiedMixinNames qualifiedNames = QualifiedMixinNames.from( qualifiedName );
-        final Mixins mixinsResult = client.execute( Commands.mixin().get().names( qualifiedNames ) );
-        return mixinsResult.isEmpty() ? null : mixinsResult.first();
+        return client.execute( Commands.mixin().get().byQualifiedName( qualifiedName ) );
     }
 }

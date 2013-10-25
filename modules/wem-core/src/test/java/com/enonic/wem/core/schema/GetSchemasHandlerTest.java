@@ -6,8 +6,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
+import com.enonic.wem.api.command.schema.mixin.GetMixins;
+import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -19,8 +22,6 @@ import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
-import com.enonic.wem.core.schema.mixin.dao.MixinDao;
-import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -39,24 +40,17 @@ public class GetSchemasHandlerTest
 
     private ContentTypeDao contentTypeDao;
 
-    private MixinDao mixinDao;
-
-    private RelationshipTypeDao relationshipTypeDao;
-
     @Before
     public void setUp()
         throws Exception
     {
+        super.client = Mockito.mock( Client.class );
         super.initialize();
 
         contentTypeDao = Mockito.mock( ContentTypeDao.class );
-        mixinDao = Mockito.mock( MixinDao.class );
-        relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
         handler = new GetSchemasHandler();
         handler.setContext( this.context );
         handler.setContentTypeDao( contentTypeDao );
-        handler.setMixinDao( mixinDao );
-        handler.setRelationshipTypeDao( relationshipTypeDao );
     }
 
     @Test
@@ -79,8 +73,8 @@ public class GetSchemasHandlerTest
         final Mixin mixin = newMixin().name( "address" ).
             addFormItem( formItemSet ).
             build();
-        final Mixins mixinTypes = Mixins.from( mixin );
-        Mockito.when( mixinDao.selectAll( any( Session.class ) ) ).thenReturn( mixinTypes );
+        final Mixins mixins = Mixins.from( mixin );
+        Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( mixins );
 
         final RelationshipType relationshipType = newRelationshipType().
             name( "like" ).
@@ -90,7 +84,7 @@ public class GetSchemasHandlerTest
             addAllowedToType( QualifiedContentTypeName.from( "mymodule:person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        Mockito.when( relationshipTypeDao.selectAll( any( Session.class ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( client.execute( Mockito.isA( GetRelationshipTypes.class ) ) ).thenReturn( relationshipTypes );
 
         // exercise
         final SchemaTypes command = Commands.schema().get();
@@ -99,8 +93,6 @@ public class GetSchemasHandlerTest
 
         // verify
         verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
-        verify( mixinDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
-        verify( relationshipTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
         assertEquals( 3, command.getResult().getSize() );
     }
 

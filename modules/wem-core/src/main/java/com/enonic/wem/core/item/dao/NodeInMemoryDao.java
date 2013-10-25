@@ -2,6 +2,7 @@ package com.enonic.wem.core.item.dao;
 
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
@@ -87,5 +88,24 @@ public class NodeInMemoryDao
         Preconditions.checkArgument( path.isAbsolute(), "path must be absolute: " + path.toString() );
 
         return this.nodeById.get( nodeIdByPath.get( path ) );
+    }
+
+    @Override
+    public List<Node> getNodesByParentPath( final NodePath parent )
+        throws NoEntityFoundException
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteNodeById( final EntityId id )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteNodeByPath( final NodePath path )
+    {
+        throw new UnsupportedOperationException();
     }
 }

@@ -2,10 +2,12 @@ package com.enonic.wem.api.form;
 
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MockMixinFetcher;
 
 import static com.enonic.wem.api.form.Form.newForm;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
@@ -15,10 +17,16 @@ import static org.junit.Assert.*;
 
 public class MixinReferencesToFormItemsTransformerTest
 {
+    private MixinReferencesToFormItemsTransformer transformer;
 
-    private MockMixinFetcher mixinFetcher = new MockMixinFetcher();
+    private Client client;
 
-    private MixinReferencesToFormItemsTransformer transformer = new MixinReferencesToFormItemsTransformer( mixinFetcher );
+
+    public MixinReferencesToFormItemsTransformerTest()
+    {
+        client = Mockito.mock( Client.class );
+        transformer = new MixinReferencesToFormItemsTransformer( client );
+    }
 
     @Test
     public void transform_input()
@@ -33,7 +41,7 @@ public class MixinReferencesToFormItemsTransformerTest
             addFormItem( newMixinReference( mixin ).name( "personalNo" ).build() ).
             build();
 
-        mixinFetcher.add( mixin );
+        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         // exercise
         Form transformedForm = transformer.transformForm( form );
@@ -59,7 +67,7 @@ public class MixinReferencesToFormItemsTransformerTest
             addFormItem( newMixinReference( mixin ).name( "address" ).build() ).
             build();
 
-        mixinFetcher.add( mixin );
+        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         // exercise
         Form transformedForm = transformer.transformForm( form );
@@ -86,7 +94,7 @@ public class MixinReferencesToFormItemsTransformerTest
             addFormItem( MixinReference.newMixinReference( mixin ).name( "cabin" ).build() ).
             build();
 
-        mixinFetcher.add( mixin );
+        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         // exercise
         Form transformedForm = transformer.transformForm( form );
@@ -115,7 +123,7 @@ public class MixinReferencesToFormItemsTransformerTest
             addFormItem( MixinReference.newMixinReference( mixin ).name( "home" ).build() ).
             build();
 
-        mixinFetcher.add( mixin );
+        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         // exercise
         Form transformedForm = transformer.transformForm( form );

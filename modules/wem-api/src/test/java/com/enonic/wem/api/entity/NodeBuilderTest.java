@@ -13,41 +13,6 @@ import static org.junit.Assert.*;
 public class NodeBuilderTest
 {
     @Test
-    public void validate_given_no_parent_then_exception()
-        throws Exception
-    {
-
-        try
-        {
-            Node.newNode().name( "myNode" ).build();
-        }
-        catch ( NullPointerException e )
-        {
-            assertEquals( "parent must be specified", e.getMessage() );
-            return;
-        }
-
-        fail( "expected missing parent exception" );
-    }
-
-    @Test
-    public void validate_given_no_name_then_exception()
-        throws Exception
-    {
-        try
-        {
-            Node.newNode().parent( NodePath.ROOT ).build();
-        }
-        catch ( NullPointerException e )
-        {
-            assertEquals( "name must be specified", e.getMessage() );
-            return;
-        }
-
-        fail( "expected missing parent exception" );
-    }
-
-    @Test
     public void build_given_no_properties_then_rootDataSet_not_null()
         throws Exception
     {

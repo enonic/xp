@@ -5,8 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.mixin.GetMixins;
-import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.wem.api.command.schema.mixin.GetMixin;
 
 public class MixinsInitializerTest
 {
@@ -15,7 +14,7 @@ public class MixinsInitializerTest
         throws Exception
     {
         Client client = Mockito.mock( Client.class );
-        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
 
         MixinsInitializer mixinsInitializer = new MixinsInitializer();
         mixinsInitializer.setClient( client );

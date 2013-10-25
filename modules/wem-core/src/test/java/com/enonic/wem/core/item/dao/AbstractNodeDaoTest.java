@@ -23,7 +23,7 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 /**
- * Base test class for all ItemDao implementations.
+ * Base test class for all NodeDao implementations.
  */
 public abstract class AbstractNodeDaoTest
 {

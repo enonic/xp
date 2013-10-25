@@ -2,19 +2,22 @@ package com.enonic.wem.core.schema.mixin;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
-import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
+import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.item.dao.NodeDao;
 import com.enonic.wem.core.item.dao.NodeJcrDao;
 
 
-public final class DeleteMixinHandler
-    extends CommandHandler<DeleteMixin>
+public final class GetMixinHandler
+    extends CommandHandler<GetMixin>
 {
+    private final static MixinItemTranslator MIXIN_TO_ITEM_TRANSLATOR = new MixinItemTranslator();
+
     private NodeDao nodeDao;
 
     @VisibleForTesting
@@ -32,17 +35,21 @@ public final class DeleteMixinHandler
             nodeDao = new NodeJcrDao( context.getJcrSession() );
         }
 
-        final QualifiedMixinName qualifiedMixinName = command.getName();
         try
         {
-
-            nodeDao.deleteNodeByPath( new NodePath( "/mixins/" + qualifiedMixinName.toString() ) );
-            context.getJcrSession().save();
-            command.setResult( DeleteMixinResult.SUCCESS );
+            final Mixin mixin = getMixin( command.getQualifiedName(), nodeDao );
+            command.setResult( mixin );
         }
         catch ( NoNodeAtPathFound e )
         {
-            command.setResult( DeleteMixinResult.NOT_FOUND );
+            command.setResult( null );
         }
+    }
+
+    private Mixin getMixin( final QualifiedMixinName qualifiedName, final NodeDao nodeDao )
+    {
+        // TODO: Use Node API when ready to fetch node
+        final Node node = nodeDao.getNodeByPath( new NodePath( "/mixins/" + qualifiedName.toString() ) );
+        return MIXIN_TO_ITEM_TRANSLATOR.fromItem( node );
     }
 }

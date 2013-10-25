@@ -34,6 +34,7 @@ public class RootDataSetJsonSerializer
     @Override
     public JsonNode serialize( final RootDataSet rootDataSet )
     {
+        Preconditions.checkNotNull( rootDataSet, "rootDataSet cannot be null" );
         final ArrayNode arrayNode = objectMapper().createArrayNode();
         for ( Data data : rootDataSet )
         {

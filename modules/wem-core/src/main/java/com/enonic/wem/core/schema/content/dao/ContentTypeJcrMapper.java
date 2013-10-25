@@ -5,6 +5,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
@@ -40,6 +41,7 @@ class ContentTypeJcrMapper
         final ContentType contentType = jsonSerializer.toObject( contentTypeJson );
         final Icon icon = iconJcrMapper.toIcon( contentTypeNode );
         return newContentType( contentType ).
+            id( new SchemaId( contentTypeNode.getIdentifier() ) ).
             icon( icon ).
             createdTime( JcrHelper.getPropertyDateTime( contentTypeNode, "createdTime" ) ).
             modifiedTime( JcrHelper.getPropertyDateTime( contentTypeNode, "modifiedTime" ) ).

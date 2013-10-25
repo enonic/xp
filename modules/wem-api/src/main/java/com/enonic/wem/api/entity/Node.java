@@ -41,10 +41,7 @@ public final class Node
         this.name = builder.name;
         this.parent = builder.parent;
 
-        Preconditions.checkNotNull( this.parent, "parent must be specified" );
-        Preconditions.checkNotNull( this.name, "name must be specified" );
-
-        this.path = new NodePath( this.parent, this.name );
+        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
 
         this.modifier = builder.modifier;
         this.icon = builder.icon;

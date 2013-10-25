@@ -8,6 +8,7 @@ import javax.jcr.Session;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
@@ -17,18 +18,12 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
-import com.enonic.wem.core.schema.mixin.dao.MixinDao;
-import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 
 public final class GetSchemasHandler
     extends CommandHandler<SchemaTypes>
 {
     private ContentTypeDao contentTypeDao;
-
-    private MixinDao mixinDao;
-
-    private RelationshipTypeDao relationshipTypeDao;
 
     @Override
     public void handle()
@@ -45,13 +40,13 @@ public final class GetSchemasHandler
 
         if ( command.isIncludeType( SchemaKind.MIXIN ) )
         {
-            final Mixins mixins = mixinDao.selectAll( session );
+            final Mixins mixins = context.getClient().execute( Commands.mixin().get().all() );
             Iterables.addAll( schemaList, mixins );
         }
 
         if ( command.isIncludeType( SchemaKind.RELATIONSHIP_TYPE ) )
         {
-            final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( session );
+            final RelationshipTypes relationshipTypes = context.getClient().execute( Commands.relationshipType().get().all() );
             Iterables.addAll( schemaList, relationshipTypes );
         }
 
@@ -64,17 +59,5 @@ public final class GetSchemasHandler
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
-    }
-
-    @Inject
-    public void setMixinDao( final MixinDao mixinDao )
-    {
-        this.mixinDao = mixinDao;
-    }
-
-    @Inject
-    public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
-    {
-        this.relationshipTypeDao = relationshipTypeDao;
     }
 }

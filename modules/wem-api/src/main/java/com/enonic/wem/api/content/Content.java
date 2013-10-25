@@ -10,10 +10,6 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodeTranslatable;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.ChangeTraceable;
@@ -22,7 +18,7 @@ import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Content
-    implements IllegalEditAware<Content>, NodeTranslatable, ChangeTraceable
+    implements IllegalEditAware<Content>, ChangeTraceable
 {
     private final String displayName;
 
@@ -155,22 +151,6 @@ public final class Content
     public boolean hasChildren()
     {
         return !childrenIds.isEmpty();
-    }
-
-    public Node toNode( final NodePath parent )
-    {
-        final Node.Builder builder = Node.newNode( new EntityId( this.id.toString() ), this.getName() );
-        builder.parent( parent );
-        builder.createdTime( this.createdTime );
-        builder.modifiedTime( this.modifiedTime );
-        builder.creator( this.creator );
-        builder.modifier( this.modifier );
-        builder.property( "displayName", this.displayName );
-        builder.property( "owner", this.owner != null ? this.owner.toString() : null );
-        builder.property( "type", this.type != null ? this.type.toString() : null );
-        builder.addDataSet( this.contentData != null ? this.contentData.toDataSet( "data" ) : null );
-
-        return builder.build();
     }
 
     @Override

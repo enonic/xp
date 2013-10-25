@@ -61,4 +61,15 @@ public class DataIdTest
         assertEquals( "myEntry[1]", DataId.from( "myEntry", 1 ).toString() );
         assertEquals( "myEntry[2]", DataId.from( "myEntry", 2 ).toString() );
     }
+
+    @Test
+    public void fromString()
+    {
+        assertEquals( "abc", DataId.from( "abc" ).toString() );
+        assertEquals( "abc[3]", DataId.from( "abc[3]" ).toString() );
+        assertEquals( "a[1]", DataId.from( "a[1]" ).toString() );
+
+        assertEquals( "a", DataId.from( "a[0]" ).toString() );
+        assertEquals( "abc", DataId.from( "abc[0]" ).toString() );
+    }
 }

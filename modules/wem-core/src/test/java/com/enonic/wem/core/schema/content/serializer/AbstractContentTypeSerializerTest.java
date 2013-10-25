@@ -20,7 +20,6 @@ import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MockMixinFetcher;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
 import com.enonic.wem.core.form.inputtype.InputTypeExtensions;
@@ -198,9 +197,6 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
         contentTypeBuilder.addFormItem( MixinReference.newMixinReference( mixin ).name( "home" ).build() );
         contentTypeBuilder.addFormItem( MixinReference.newMixinReference( mixin ).name( "cabin" ).build() );
-
-        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
-        mixinFetcher.add( mixin );
 
         String serialized = toString( contentTypeBuilder.build() );
 

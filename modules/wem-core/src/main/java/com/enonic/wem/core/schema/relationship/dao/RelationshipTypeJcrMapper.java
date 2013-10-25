@@ -4,6 +4,7 @@ package com.enonic.wem.core.schema.relationship.dao;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeJsonSerializer;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
@@ -42,6 +43,7 @@ class RelationshipTypeJcrMapper
             createdTime( getPropertyDateTime( relationshipTypeNode, CREATED_TIME ) ).
             modifiedTime( getPropertyDateTime( relationshipTypeNode, MODIFIED_TIME ) ).
             icon( iconJcrMapper.toIcon( relationshipTypeNode ) ).
+            id( new SchemaId( relationshipTypeNode.getIdentifier() ) ).
             build();
     }
 

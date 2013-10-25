@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
@@ -17,18 +18,12 @@ import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.ContentTypeTreeFactory;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
-import com.enonic.wem.core.schema.mixin.dao.MixinDao;
-import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 
 public class GetSchemaTreeHandler
     extends CommandHandler<GetSchemaTree>
 {
     private ContentTypeDao contentTypeDao;
-
-    private MixinDao mixinDao;
-
-    private RelationshipTypeDao relationshipTypeDao;
 
     @Override
     public void handle()
@@ -45,14 +40,14 @@ public class GetSchemaTreeHandler
         if ( command.isIncludingKind( SchemaKind.RELATIONSHIP_TYPE ) )
         {
             // add all RelationshipTypes on root
-            final RelationshipTypes relationshipTypes = relationshipTypeDao.selectAll( context.getJcrSession() );
+            final RelationshipTypes relationshipTypes = context.getClient().execute( Commands.relationshipType().get().all() );
             typesTree.createNodes( relationshipTypes );
         }
 
         if ( command.isIncludingKind( SchemaKind.MIXIN ) )
         {
             // add all Mixins on root
-            final Mixins mixins = mixinDao.selectAll( context.getJcrSession() );
+            final Mixins mixins = context.getClient().execute( Commands.mixin().get().all() );
             typesTree.createNodes( mixins );
         }
 
@@ -81,22 +76,9 @@ public class GetSchemaTreeHandler
         }
     }
 
-
     @Inject
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
-    }
-
-    @Inject
-    public void setRelationshipTypeDao( final RelationshipTypeDao relationshipTypeDao )
-    {
-        this.relationshipTypeDao = relationshipTypeDao;
-    }
-
-    @Inject
-    public void setMixinDao( final MixinDao mixinDao )
-    {
-        this.mixinDao = mixinDao;
     }
 }

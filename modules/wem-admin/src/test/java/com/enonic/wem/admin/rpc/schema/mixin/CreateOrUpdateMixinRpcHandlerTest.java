@@ -16,12 +16,11 @@ import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.command.schema.mixin.GetMixins;
+import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.Mixins;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
@@ -58,7 +57,7 @@ public class CreateOrUpdateMixinRpcHandlerTest
     public void testCreateMixin()
         throws Exception
     {
-        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( client.execute( isA( GetMixin.class ) ) ).thenReturn( null );
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
@@ -75,8 +74,7 @@ public class CreateOrUpdateMixinRpcHandlerTest
     {
         final Input input = newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build();
         final Mixin existingMixin = newMixin().name( "some_input" ).addFormItem( input ).build();
-        final Mixins mixins = Mixins.from( existingMixin );
-        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( mixins );
+        Mockito.when( client.execute( isA( GetMixin.class ) ) ).thenReturn( existingMixin );
 
         final ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
@@ -91,7 +89,7 @@ public class CreateOrUpdateMixinRpcHandlerTest
     public void testCreateMixinWithIcon()
         throws Exception
     {
-        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( client.execute( isA( GetMixin.class ) ) ).thenReturn( null );
         uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
 
         final ObjectNode resultJson = objectNode();

@@ -1,8 +1,12 @@
 package com.enonic.wem.core.item.dao;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -178,5 +182,24 @@ class NodeJcrHelper
         return NodeJcrMapper.toNode( nodeNode ).build();
     }
 
+    List<Node> getNodesByParentPath( final NodePath parent )
+        throws NoNodeAtPathFound
+    {
+        List<Node> childNodes = new ArrayList<>();
+        final javax.jcr.Node parentNode = getItemNodeByPath( parent );
+        try
+        {
+            final NodeIterator childIterator = parentNode.getNodes();
+            while ( childIterator.hasNext() )
+            {
+                childNodes.add( NodeJcrMapper.toNode( childIterator.nextNode() ).build() );
+            }
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to getItemsByPath", e );
+        }
+        return childNodes;
+    }
 
 }

@@ -14,6 +14,8 @@ public class DataId
     {
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkArgument( index >= 0, "index must be zero or more" );
+        Preconditions.checkArgument( !name.contains( "[" ), "name cannot contain [" );
+        Preconditions.checkArgument( !name.contains( "]" ), "name cannot contain ]" );
         this.name = name;
         this.index = index;
         this.refString = toString( name, index );
@@ -82,5 +84,24 @@ public class DataId
     public static DataId from( final DataPath.Element pathElement )
     {
         return new DataId( pathElement.getName(), pathElement.hasIndex() ? pathElement.getIndex() : 0 );
+    }
+
+    public static DataId from( final String dataId )
+    {
+        if ( !dataId.contains( "[" ) )
+        {
+            return new DataId( dataId, 0 );
+        }
+
+        int bracketStart = dataId.indexOf( "[" );
+        int bracketEnd = dataId.indexOf( "]" );
+        if ( bracketEnd < bracketStart )
+        {
+            throw new IllegalArgumentException( "Illegal syntax of DataId. End bracket is before start bracket: " + dataId );
+        }
+        final String name = dataId.substring( 0, bracketStart );
+        final String indexAsString = dataId.substring( bracketStart + 1, bracketEnd );
+        final Integer index = Integer.valueOf( indexAsString );
+        return new DataId( name, index );
     }
 }

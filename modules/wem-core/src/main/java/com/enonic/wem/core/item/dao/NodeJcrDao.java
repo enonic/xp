@@ -1,6 +1,9 @@
 package com.enonic.wem.core.item.dao;
 
 
+import java.util.List;
+
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
@@ -8,6 +11,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.NoEntityFoundException;
 import com.enonic.wem.api.entity.NoEntityWithIdFound;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
@@ -63,6 +67,35 @@ public class NodeJcrDao
         return jcrHelper.updateItemNode( existingNodeNode, updateNodeArgs );
     }
 
+    @Override
+    public void deleteNodeById( final EntityId id )
+    {
+        Preconditions.checkNotNull( id, "entity to delete must be specified" );
+        javax.jcr.Node node = jcrHelper.getItemNodeById( id );
+        try
+        {
+            node.remove();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to deleteNodeById", e );
+        }
+    }
+
+    @Override
+    public void deleteNodeByPath( final NodePath path )
+    {
+        Preconditions.checkNotNull( path, "node to delete must be specified" );
+        try
+        {
+            jcrHelper.getItemNodeByPath( path ).remove();
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to deleteNodeByPath", e );
+        }
+    }
+
     public Node getNodeById( final EntityId id )
         throws NoEntityWithIdFound
     {
@@ -75,5 +108,14 @@ public class NodeJcrDao
         Preconditions.checkArgument( path.isAbsolute(), "path must be absolute: " + path.toString() );
 
         return this.jcrHelper.getItemByPath( path );
+    }
+
+    @Override
+    public List<Node> getNodesByParentPath( final NodePath parent )
+        throws NoEntityFoundException
+    {
+        Preconditions.checkArgument( parent.isAbsolute(), "parent path must be absolute: " + parent.toString() );
+
+        return this.jcrHelper.getNodesByParentPath( parent );
     }
 }

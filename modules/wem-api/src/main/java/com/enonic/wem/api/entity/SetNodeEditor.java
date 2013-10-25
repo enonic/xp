@@ -32,13 +32,22 @@ public class SetNodeEditor
             builder.name( this.name );
             changed = true;
         }
-        if ( !toBeEdited.icon().equals( this.icon ) )
+        if ( toBeEdited.icon() != null && !toBeEdited.icon().equals( this.icon ) )
         {
             builder.icon( this.icon );
             changed = true;
         }
-        builder.rootDataSet( this.data );
-        changed = true;
+        else if ( this.icon != null )
+        {
+            builder.icon( this.icon );
+            changed = true;
+        }
+
+        if ( !toBeEdited.rootDataSet.valueEquals( this.data ) )
+        {
+            builder.rootDataSet( this.data );
+            changed = true;
+        }
 
         if ( changed )
         {

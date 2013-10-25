@@ -8,12 +8,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.mixin.GetMixins;
+import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 
 import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -48,9 +46,7 @@ public class GetMixinRpcHandlerTest
             addFormItem( inputText1 ).
             build();
 
-        Mixins mixins = Mixins.from( mixin );
-        QualifiedMixinNames names = QualifiedMixinNames.from( QualifiedMixinName.from( "mymixin" ) );
-        Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
+        Mockito.when( client.execute( mixin().get().byQualifiedName( QualifiedMixinName.from( "mymixin" ) ) ) ).thenReturn( mixin );
 
         testSuccess( "getMixin_asJson_param.json", "getMixin_asJson_result.json" );
     }
@@ -66,9 +62,7 @@ public class GetMixinRpcHandlerTest
             addFormItem( inputText1 ).
             build();
 
-        Mixins mixins = Mixins.from( mixin );
-        QualifiedMixinNames names = QualifiedMixinNames.from( QualifiedMixinName.from( "mymixin" ) );
-        Mockito.when( client.execute( mixin().get().names( names ) ) ).thenReturn( mixins );
+        Mockito.when( client.execute( mixin().get().byQualifiedName( QualifiedMixinName.from( "mymixin" ) ) ) ).thenReturn( mixin );
 
         testSuccess( "getMixin_asXml_param.json", "getMixin_asXml_result.json" );
     }
@@ -77,7 +71,7 @@ public class GetMixinRpcHandlerTest
     public void testRequestGetMixin_not_found()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", false );

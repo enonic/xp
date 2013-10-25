@@ -1,6 +1,6 @@
-package com.enonic.wem.api.exception;
+package com.enonic.wem.api.schema.mixin;
 
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.exception.BaseException;
 
 public final class MixinNotFoundException
     extends BaseException

@@ -1,24 +1,19 @@
 package com.enonic.wem.api.content;
 
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.data.DataSet.newDataSet;
@@ -469,45 +464,6 @@ public class ContentTest
             assertTrue( e instanceof IllegalArgumentException );
             assertEquals( "Array [myData] expects Property of type [String]. Property [myData] was of type: DateMidnight", e.getMessage() );
         }
-    }
-
-    @Test
-    public void toItem()
-    {
-        // setup
-        ContentData contentData = new ContentData();
-        contentData.add( new Property.Long( "myNumber", 1 ) );
-        contentData.add( new Property.String( "myText", "text" ) );
-        contentData.setProperty( "mySet.myOtherNumber", new Value.Long( 2 ) );
-
-        Content content = Content.newContent().
-            id( ContentId.from( "ABC-123" ) ).
-            name( "myContent" ).
-            displayName( "My Content" ).
-            creator( UserKey.from( "mystore:someuser" ) ).
-            createdTime( DateTime.parse( "2012-12-12T12:00:00" ) ).
-            modifiedTime( DateTime.parse( "2012-12-12T13:00:00" ) ).
-            modifier( UserKey.from( "mystore:someotheruser" ) ).
-            owner( UserKey.from( "mystore:someuser" ) ).
-            type( QualifiedContentTypeName.from( "mymodule:mycty" ) ).
-            contentData( contentData ).build();
-
-        // exercise
-        Node node = content.toNode( NodePath.ROOT );
-
-        // verify
-        assertEquals( "ABC-123", node.id().toString() );
-        assertEquals( "myContent", node.name() );
-        assertEquals( "My Content", node.property( "displayName" ).getString() );
-        assertEquals( "user:mystore:someuser", node.getCreator().toString() );
-        assertEquals( "user:mystore:someotheruser", node.getModifier().toString() );
-        assertEquals( "user:mystore:someuser", node.property( "owner" ).getString() );
-        assertEquals( content.getCreatedTime(), node.getCreatedTime() );
-        assertEquals( content.getModifiedTime(), node.getModifiedTime() );
-        assertEquals( "mymodule:mycty", node.property( "type" ).getString() );
-        assertEquals( "1", node.property( "data.myNumber" ).getString() );
-        assertEquals( "text", node.property( "data.myText" ).getString() );
-        assertEquals( "2", node.property( "data.mySet.myOtherNumber" ).getString() );
     }
 
     @Test

@@ -25,6 +25,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
+import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -88,7 +89,7 @@ public class MixinResourceTest
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
+        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         String response =
             resource().path( "schema/mixin" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
@@ -105,7 +106,7 @@ public class MixinResourceTest
             newInput().name( MY_MIXIN_QUALIFIED_NAME_1.getName() ).inputType( TEXT_LINE ).label( "Line Text 1" ).required( true ).helpText(
                 "Help text line 1" ).required( true ).build() ).build();
 
-        Mockito.when( client.execute( Mockito.isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
+        Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         String result = resource().path( "schema/mixin/config" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
             String.class );
@@ -117,7 +118,7 @@ public class MixinResourceTest
     public final void test_get_mixin_not_found()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
         try
         {
             String result =
@@ -135,12 +136,11 @@ public class MixinResourceTest
     @Test
     public final void test_get_mixin_config_not_found()
     {
-        Mockito.when( client.execute( Mockito.any( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
+        Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
         try
         {
-            String result =
-                resource().path( "schema/mixin/config" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
-                    String.class );
+            resource().path( "schema/mixin/config" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
+                String.class );
 
             Assert.assertFalse( "Exception should've been thrown already", true );
         }
@@ -193,12 +193,12 @@ public class MixinResourceTest
         Mixin mixin = newMixin().createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
-        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
+        Mockito.when( client.execute( isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         try
         {
-            String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
-                                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+            resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
+                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
             Assert.assertFalse( "Exception should've been thrown already", true );
         }
         catch ( UniformInterfaceException e )
@@ -233,7 +233,7 @@ public class MixinResourceTest
         Mixin mixin = newMixin().name( "some_input" ).addFormItem(
             newInput().name( "some_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
-        Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.from( mixin ) );
+        Mockito.when( client.execute( isA( GetMixin.class ) ) ).thenReturn( mixin );
 
         uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
 
@@ -251,8 +251,8 @@ public class MixinResourceTest
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
         try
         {
-            String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
-                                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+            resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
+                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
             Assert.assertFalse( "Exception should've been thrown already", true );
         }
         catch ( UniformInterfaceException e )
