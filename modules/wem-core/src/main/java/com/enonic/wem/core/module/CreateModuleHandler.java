@@ -18,7 +18,7 @@ public class CreateModuleHandler
 
     private SystemConfig systemConfig;
 
-    private ModuleExporter moduleExporter = new ModuleExporter();
+    private ModuleExporter moduleExporter;
 
     @Override
     public void handle()
@@ -59,5 +59,11 @@ public class CreateModuleHandler
     public void setSystemConfig( final SystemConfig systemConfig )
     {
         this.systemConfig = systemConfig;
+    }
+
+    @Inject
+    public void setModuleExporter( final ModuleExporter moduleExporter )
+    {
+        this.moduleExporter = moduleExporter;
     }
 }

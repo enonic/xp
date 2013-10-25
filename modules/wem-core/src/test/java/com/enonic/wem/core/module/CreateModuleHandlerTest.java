@@ -46,6 +46,7 @@ public class CreateModuleHandlerTest
         handler = new CreateModuleHandler();
         handler.setContext( this.context );
         handler.setSystemConfig( systemConfig );
+        handler.setModuleExporter( new ModuleExporter() );
     }
 
     @After
