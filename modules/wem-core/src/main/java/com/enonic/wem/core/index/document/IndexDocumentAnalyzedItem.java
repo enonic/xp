@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
 public class IndexDocumentAnalyzedItem
     extends AbstractIndexDocumentItem<String>
@@ -13,9 +13,9 @@ public class IndexDocumentAnalyzedItem
     }
 
     @Override
-    public IndexDocumentBaseType getIndexBaseType()
+    public IndexValueType getIndexBaseType()
     {
-        return IndexDocumentBaseType.ANALYZED;
+        return IndexValueType.ANALYZED;
     }
 
     @Override

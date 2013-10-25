@@ -13,8 +13,8 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.indexdocument.IndexDocument2;
-import com.enonic.wem.core.index.indexdocument.IndexDocumentItemFactory;
+import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
 
 
 public class NodeIndexDocumentFactory
@@ -26,6 +26,8 @@ public class NodeIndexDocumentFactory
     protected static final String MODIFIED_TIME_PROPERTY_NAME = "modifiedTime";
 
     protected static final String MODIFIER_PROPERTY_NAME = "modifier";
+
+    protected static final String PARENT_PROPERTY_NAME = "path";
 
     protected static final String PATH_PROPERTY_NAME = "path";
 
@@ -43,6 +45,8 @@ public class NodeIndexDocumentFactory
 
     public Collection<IndexDocument2> create( final Node node )
     {
+        node.validateForPersistence();
+
         Set<IndexDocument2> indexDocuments = Sets.newHashSet();
 
         indexDocuments.add( createDataDocument( node ) );
@@ -74,6 +78,9 @@ public class NodeIndexDocumentFactory
                                                              metadataPropertyIndexConfig ) );
 
         builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_NAME, new Value.String( node.path().toString() ),
+                                                             metadataPropertyIndexConfig ) );
+
+        builder.addEntries( IndexDocumentItemFactory.create( PARENT_PROPERTY_NAME, new Value.String( node.parent().toString() ),
                                                              metadataPropertyIndexConfig ) );
 
         if ( node.getCreator() != null )

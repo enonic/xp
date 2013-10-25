@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
 public class IndexDocumentStringItem
     extends AbstractIndexDocumentItem<String>
@@ -12,9 +12,9 @@ public class IndexDocumentStringItem
     }
 
     @Override
-    public IndexDocumentBaseType getIndexBaseType()
+    public IndexValueType getIndexBaseType()
     {
-        return IndexDocumentBaseType.STRING;
+        return IndexValueType.STRING;
     }
 
     @Override

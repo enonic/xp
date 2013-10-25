@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
 import java.util.Set;
 

@@ -7,8 +7,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.index.IndexConstants;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
-import com.enonic.wem.core.index.indexdocument.IndexDocumentEntry;
+import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocumentEntry;
 
 public class IndexSourceFactory
 {

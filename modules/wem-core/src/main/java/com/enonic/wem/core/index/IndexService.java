@@ -17,10 +17,10 @@ import com.enonic.wem.core.index.account.AccountDeleteDocumentFactory;
 import com.enonic.wem.core.index.account.AccountIndexDocumentFactory;
 import com.enonic.wem.core.index.content.ContentDeleteDocumentFactory;
 import com.enonic.wem.core.index.content.ContentIndexDocumentsFactory;
+import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.index.elastic.IndexMapping;
 import com.enonic.wem.core.index.elastic.IndexMappingProvider;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
 import com.enonic.wem.core.lifecycle.RunLevel;
 

@@ -36,6 +36,11 @@ public class EntityIndexConfig
         return propertyIndexConfigs.get( dataPath );
     }
 
+    public Map<DataPath, PropertyIndexConfig> getPropertyIndexConfigs()
+    {
+        return propertyIndexConfigs;
+    }
+
     public static class Builder
     {
         private String analyzer;

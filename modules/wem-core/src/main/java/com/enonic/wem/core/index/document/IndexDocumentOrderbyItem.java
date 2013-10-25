@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
 class IndexDocumentOrderbyItem
     extends AbstractIndexDocumentItem<String>
@@ -12,9 +12,9 @@ class IndexDocumentOrderbyItem
     }
 
     @Override
-    public IndexDocumentBaseType getIndexBaseType()
+    public IndexValueType getIndexBaseType()
     {
-        return IndexDocumentBaseType.SORTABLE;
+        return IndexValueType.SORTABLE;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
 
 import java.util.Set;
@@ -67,7 +67,7 @@ public class IndexDocument2
         return analyzer;
     }
 
-    public AbstractIndexDocumentItem getItemWithName( final String name, final IndexDocumentBaseType baseType )
+    public AbstractIndexDocumentItem getItemWithName( final String name, final IndexValueType baseType )
     {
         for ( AbstractIndexDocumentItem item : this.getIndexDocumentItems() )
         {

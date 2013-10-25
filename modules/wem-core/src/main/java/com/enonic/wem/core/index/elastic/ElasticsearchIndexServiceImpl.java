@@ -38,12 +38,12 @@ import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.content.ContentSearchHit;
 import com.enonic.wem.core.index.content.ContentSearchResults;
+import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
 import com.enonic.wem.core.index.elastic.result.FacetFactory;
 import com.enonic.wem.core.index.elastic.searchsource.SearchSourceFactory;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
 
 
 public class ElasticsearchIndexServiceImpl

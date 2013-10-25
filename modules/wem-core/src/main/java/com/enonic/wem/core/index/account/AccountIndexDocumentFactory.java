@@ -13,7 +13,7 @@ import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.profile.UserProfile;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument;
 
 public class AccountIndexDocumentFactory
 {

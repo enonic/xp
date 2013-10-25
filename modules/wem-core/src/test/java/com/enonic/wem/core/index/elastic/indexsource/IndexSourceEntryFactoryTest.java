@@ -6,7 +6,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.enonic.wem.core.index.indexdocument.IndexDocumentEntry;
+import com.enonic.wem.core.index.document.IndexDocumentEntry;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;

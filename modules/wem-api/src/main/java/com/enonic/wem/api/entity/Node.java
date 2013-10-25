@@ -25,29 +25,34 @@ public final class Node
 
     private final NodePath path;
 
-    private final DateTime modifiedTime;
-
     private final UserKey modifier;
+
+    private final UserKey creator;
 
     // TODO: Remove
     private final Icon icon;
 
-    private final EntityIndexConfig entityIndexConfig;
-
     private Node( final Builder builder )
     {
         super( builder );
-        Preconditions.checkNotNull( builder.parent, "parent must be specified" );
-        Preconditions.checkNotNull( builder.parent, "name must be specified" );
+
+        this.creator = builder.creator;
 
         this.name = builder.name;
         this.parent = builder.parent;
+
+        Preconditions.checkNotNull( this.parent, "parent must be specified" );
+        Preconditions.checkNotNull( this.name, "name must be specified" );
+
         this.path = new NodePath( this.parent, this.name );
 
-        this.modifiedTime = builder.modifiedTime;
         this.modifier = builder.modifier;
         this.icon = builder.icon;
-        this.entityIndexConfig = builder.entityIndexConfig;
+    }
+
+    public void validateForPersistence()
+    {
+        Preconditions.checkNotNull( this.createdTime, "createdTime must be specified" );
     }
 
     public EntityId id()
@@ -166,15 +171,11 @@ public final class Node
 
         private NodePath parent;
 
-        private DateTime modifiedTime;
-
         private UserKey modifier;
 
+        private UserKey creator;
+
         private Icon icon;
-
-        private RootDataSet dataSet = new RootDataSet();
-
-        private EntityIndexConfig entityIndexConfig;
 
         public Builder()
         {
@@ -223,21 +224,15 @@ public final class Node
             return this;
         }
 
-        public Builder modifiedTime( final DateTime value )
+        public Builder creator( final UserKey value )
         {
-            this.modifiedTime = value;
+            this.creator = value;
             return this;
         }
 
         public Builder modifier( final UserKey value )
         {
             this.modifier = value;
-            return this;
-        }
-
-        public Builder itemIndexConfig( final EntityIndexConfig entityIndexConfig )
-        {
-            this.entityIndexConfig = entityIndexConfig;
             return this;
         }
 

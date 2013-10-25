@@ -1,6 +1,6 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
-public enum IndexDocumentBaseType
+public enum IndexValueType
 {
     DATETIME,
     NUMBER,

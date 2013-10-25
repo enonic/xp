@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
 public abstract class AbstractIndexDocumentItem<T>
 {
@@ -14,7 +14,7 @@ public abstract class AbstractIndexDocumentItem<T>
         return fieldBaseName;
     }
 
-    public abstract IndexDocumentBaseType getIndexBaseType();
+    public abstract IndexValueType getIndexBaseType();
 
     public abstract T getValue();
 

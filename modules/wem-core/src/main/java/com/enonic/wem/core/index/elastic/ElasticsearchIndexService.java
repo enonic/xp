@@ -6,7 +6,7 @@ import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.content.ContentSearchResults;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument;
 
 public interface ElasticsearchIndexService
 {

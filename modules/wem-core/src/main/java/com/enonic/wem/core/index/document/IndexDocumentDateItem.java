@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
 import org.joda.time.DateTime;
 
@@ -14,9 +14,9 @@ public class IndexDocumentDateItem
     }
 
     @Override
-    public IndexDocumentBaseType getIndexBaseType()
+    public IndexValueType getIndexBaseType()
     {
-        return IndexDocumentBaseType.DATETIME;
+        return IndexValueType.DATETIME;
     }
 
     @Override

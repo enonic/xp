@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.indexdocument;
+package com.enonic.wem.core.index.document;
 
 import com.enonic.wem.api.data.Value;
 
@@ -15,9 +15,9 @@ public class IndexDocumentGeoPointItem
     }
 
     @Override
-    public IndexDocumentBaseType getIndexBaseType()
+    public IndexValueType getIndexBaseType()
     {
-        return IndexDocumentBaseType.GEO_POINT;
+        return IndexValueType.GEO_POINT;
     }
 
     @Override

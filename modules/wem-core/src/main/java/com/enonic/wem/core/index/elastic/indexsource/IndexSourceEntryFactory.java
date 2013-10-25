@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.core.index.indexdocument.IndexDocumentEntry;
+import com.enonic.wem.core.index.document.IndexDocumentEntry;
 
 final class IndexSourceEntryFactory
 {

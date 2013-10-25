@@ -11,8 +11,8 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
-import com.enonic.wem.core.index.indexdocument.IndexDocumentEntry;
+import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocumentEntry;
 
 import static org.junit.Assert.*;
 

@@ -2,7 +2,6 @@ package com.enonic.wem.api.entity;
 
 import org.joda.time.DateTime;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
@@ -14,15 +13,17 @@ public class Entity
 
     protected final DateTime createdTime;
 
-    protected final UserKey creator;
-
     protected final RootDataSet rootDataSet;
+
+    protected final DateTime modifiedTime;
+
+    protected final EntityIndexConfig entityIndexConfig;
 
     protected Entity( final Builder builder )
     {
         this.id = builder.id;
         this.createdTime = builder.createdTime;
-        this.creator = builder.creator;
+        this.modifiedTime = builder.modifiedTime;
 
         this.rootDataSet = new RootDataSet();
         if ( builder.dataSet != null )
@@ -32,17 +33,21 @@ public class Entity
                 this.rootDataSet.add( data.copy() );
             }
         }
+
+        this.entityIndexConfig = builder.entityIndexConfig;
     }
 
     public static class Builder<B extends Builder>
     {
         protected EntityId id;
 
-        protected DateTime createdTime = DateTime.now();
+        protected DateTime createdTime;
 
-        protected UserKey creator;
+        protected DateTime modifiedTime;
 
-        private RootDataSet dataSet = new RootDataSet();
+        protected RootDataSet dataSet = new RootDataSet();
+
+        protected EntityIndexConfig entityIndexConfig;
 
         public Builder()
         {
@@ -65,9 +70,9 @@ public class Entity
             return getThisBuilder();
         }
 
-        public B creator( final UserKey value )
+        public B modifiedTime( final DateTime value )
         {
-            this.creator = value;
+            this.modifiedTime = value;
             return getThisBuilder();
         }
 
@@ -99,6 +104,16 @@ public class Entity
             return getThisBuilder();
         }
 
+        public B property( final String path, final Value value )
+        {
+
+            if ( value != null )
+            {
+                this.dataSet.setProperty( path, value );
+            }
+            return getThisBuilder();
+        }
+
         public B addDataSet( final DataSet value )
         {
             if ( value != null )
@@ -114,6 +129,11 @@ public class Entity
             return getThisBuilder();
         }
 
+        public B entityIndexConfig( final EntityIndexConfig entityIndexConfig )
+        {
+            this.entityIndexConfig = entityIndexConfig;
+            return getThisBuilder();
+        }
 
         public Entity build()
         {
@@ -125,7 +145,5 @@ public class Entity
         {
             return (B) this;
         }
-
     }
-
 }
