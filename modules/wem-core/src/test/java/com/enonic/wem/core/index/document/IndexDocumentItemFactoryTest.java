@@ -66,8 +66,8 @@ public class IndexDocumentItemFactoryTest
     public void geopoint_property()
         throws Exception
     {
-        Property arrayProperty = Property.newProperty().type( ValueTypes.GEOGRAPHIC_COORDINATE ).name( "myGeoPoint" ).value(
-            new Value.GeographicCoordinate( "41.12,-71.34" ) ).build();
+        Property arrayProperty =
+            Property.newProperty().type( ValueTypes.GEO_POINT ).name( "myGeoPoint" ).value( new Value.GeoPoint( "41.12,-71.34" ) ).build();
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();

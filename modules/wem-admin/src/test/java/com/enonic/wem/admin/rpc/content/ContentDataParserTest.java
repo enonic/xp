@@ -206,7 +206,7 @@ public class ContentDataParserTest
         // verify
 
         assertEquals( "40.446195,-79.948862", parsedContentData.getProperty( "myGeoLocation" ).getString() );
-        assertEquals( ValueTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getProperty( "myGeoLocation" ).getValueType() );
+        assertEquals( ValueTypes.GEO_POINT, parsedContentData.getProperty( "myGeoLocation" ).getValueType() );
     }
 
     @Test

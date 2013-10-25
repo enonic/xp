@@ -43,7 +43,7 @@ public abstract class Value<T>
 
     public boolean isGeographicCoordinate()
     {
-        return this instanceof GeographicCoordinate;
+        return this instanceof GeoPoint;
     }
 
     public boolean isJavaType( Class javaType )
@@ -380,12 +380,12 @@ public abstract class Value<T>
         }
     }
 
-    public static final class GeographicCoordinate
+    public static final class GeoPoint
         extends Value<java.lang.String>
     {
-        public GeographicCoordinate( final java.lang.String value )
+        public GeoPoint( final java.lang.String value )
         {
-            super( ValueTypes.GEOGRAPHIC_COORDINATE, value );
+            super( ValueTypes.GEO_POINT, value );
         }
     }
 

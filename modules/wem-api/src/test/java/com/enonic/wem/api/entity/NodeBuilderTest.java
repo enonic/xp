@@ -114,13 +114,13 @@ public class NodeBuilderTest
         final Node myNode = Node.newNode().
             name( "myNode" ).
             parent( NodePath.ROOT ).
-            property( "testPath", new Value.GeographicCoordinate( "79,80" ) ).
+            property( "testPath", new Value.GeoPoint( "79,80" ) ).
             build();
 
         final Property testProperty = myNode.property( "testPath" );
 
         assertNotNull( testProperty );
-        assertTrue( testProperty.getValue() instanceof Value.GeographicCoordinate );
+        assertTrue( testProperty.getValue() instanceof Value.GeoPoint );
     }
 
     @Test

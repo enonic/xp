@@ -7,7 +7,7 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.InvalidValueException;
 
-public class GeographicCoordinate
+public class GeoPoint
     extends ValueType<java.lang.String>
 {
     private static final double LATITUDE_RANGE_START = -90.0;
@@ -18,7 +18,7 @@ public class GeographicCoordinate
 
     private static final double LONGITUDE_RANGE_END = 180.0;
 
-    GeographicCoordinate( int key )
+    GeoPoint( int key )
     {
         super( key, JavaTypeConverter.String.GET );
     }
@@ -26,7 +26,7 @@ public class GeographicCoordinate
     @Override
     public Value newValue( final Object value )
     {
-        return new Value.GeographicCoordinate( convert( value ) );
+        return new Value.GeoPoint( convert( value ) );
     }
 
     @Override

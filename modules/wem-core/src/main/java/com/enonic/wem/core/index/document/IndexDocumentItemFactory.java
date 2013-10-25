@@ -81,7 +81,7 @@ public class IndexDocumentItemFactory
 
     private static IndexDocumentGeoPointItem createGeoPointItemType( final String propertyName, final Value propertyValue )
     {
-        return new IndexDocumentGeoPointItem( propertyName, (Value.GeographicCoordinate) propertyValue );
+        return new IndexDocumentGeoPointItem( propertyName, (Value.GeoPoint) propertyValue );
     }
 
     private static IndexDocumentStringItem createStringItemType( final String propertyName, final Value propertyValue )

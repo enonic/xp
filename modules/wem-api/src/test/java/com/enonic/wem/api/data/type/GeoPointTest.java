@@ -9,18 +9,18 @@ import com.enonic.wem.api.form.InvalidValueException;
 import static org.junit.Assert.*;
 
 
-public class GeographicCoordinateTest
+public class GeoPointTest
 {
     @Test
     public void getLatitude()
     {
-        assertEquals( 59.913869, GeographicCoordinate.getLatitude( "59.913869,10.752245" ), 0 );
+        assertEquals( 59.913869, GeoPoint.getLatitude( "59.913869,10.752245" ), 0 );
     }
 
     @Test
     public void getLongitude()
     {
-        assertEquals( 10.752245, GeographicCoordinate.getLongitude( "59.913869,10.752245" ), 0 );
+        assertEquals( 10.752245, GeoPoint.getLongitude( "59.913869,10.752245" ), 0 );
     }
 
     @Test
@@ -33,7 +33,7 @@ public class GeographicCoordinateTest
         // exercise
         try
         {
-            contentData.setProperty( "myGeographicCoordinate", new Value.GeographicCoordinate( "90.0,180.2" ) );
+            contentData.setProperty( "myGeographicCoordinate", new Value.GeoPoint( "90.0,180.2" ) );
             fail( "Expected Exception" );
         }
         catch ( Exception e )

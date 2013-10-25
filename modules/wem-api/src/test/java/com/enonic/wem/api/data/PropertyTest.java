@@ -103,7 +103,7 @@ public class PropertyTest
     @Test
     public void geographicalCoordinate()
     {
-        assertEquals( "90,123", newProperty( "myGeo" ).type( ValueTypes.GEOGRAPHIC_COORDINATE ).value( "90,123" ).build().getString() );
+        assertEquals( "90,123", newProperty( "myGeo" ).type( ValueTypes.GEO_POINT ).value( "90,123" ).build().getString() );
         assertEquals( "90,123", newGeographicCoordinate( "myGeo" ).value( "90,123" ).getString() );
         assertEquals( "90,123", newGeographicCoordinate().name( "myGeo" ).value( "90,123" ).build().getString() );
         assertEquals( "90,123", new Property.GeographicCoordinate( "myGeo", "90,123" ).getString() );

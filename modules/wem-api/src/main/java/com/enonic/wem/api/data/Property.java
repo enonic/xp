@@ -586,7 +586,7 @@ public class Property
 
         public GeographicCoordinate( final java.lang.String name, final java.lang.String value )
         {
-            super( name, new Value.GeographicCoordinate( value ) );
+            super( name, new Value.GeoPoint( value ) );
         }
 
         public GeographicCoordinate( final AbstractBaseBuilder builder )
@@ -614,7 +614,7 @@ public class Property
         {
             public GeographicCoordinateBuilder()
             {
-                setType( ValueTypes.GEOGRAPHIC_COORDINATE );
+                setType( ValueTypes.GEO_POINT );
             }
 
             public GeographicCoordinateBuilder value( final java.lang.String value )
@@ -640,7 +640,7 @@ public class Property
         {
             private GeographicCoordinateValueBuilder( final java.lang.String name )
             {
-                setType( ValueTypes.GEOGRAPHIC_COORDINATE );
+                setType( ValueTypes.GEO_POINT );
                 setName( name );
             }
 

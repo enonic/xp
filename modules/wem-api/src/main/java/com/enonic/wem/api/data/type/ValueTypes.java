@@ -27,7 +27,7 @@ public final class ValueTypes
 
     public static final Double DOUBLE = new Double( 9 );
 
-    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 10 );
+    public static final GeoPoint GEO_POINT = new GeoPoint( 10 );
 
     public static final AttachmentName ATTACHMENT_NAME = new AttachmentName( 11 );
 
@@ -46,7 +46,7 @@ public final class ValueTypes
         register( CONTENT_ID );
         register( LONG );
         register( DOUBLE );
-        register( GEOGRAPHIC_COORDINATE );
+        register( GEO_POINT );
         register( ATTACHMENT_NAME );
     }
 
