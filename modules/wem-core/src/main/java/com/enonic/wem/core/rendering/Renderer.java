@@ -1,4 +1,4 @@
-package com.enonic.wem.api.rendering;
+package com.enonic.wem.core.rendering;
 
 
 import java.util.concurrent.ConcurrentMap;
@@ -7,13 +7,10 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.image.Image;
-import com.enonic.wem.api.content.image.ImageComponentType;
+import com.enonic.wem.api.content.page.Component;
 import com.enonic.wem.api.content.page.Layout;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.Part;
-import com.enonic.wem.api.content.page.rendering.LayoutComponentType;
-import com.enonic.wem.api.content.page.rendering.PageComponentType;
-import com.enonic.wem.api.content.page.rendering.PartComponentType;
 
 public final class Renderer
 {

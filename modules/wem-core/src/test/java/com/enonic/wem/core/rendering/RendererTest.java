@@ -1,4 +1,4 @@
-package com.enonic.wem.api.rendering;
+package com.enonic.wem.core.rendering;
 
 import org.junit.Test;
 import org.mockito.Mockito;
