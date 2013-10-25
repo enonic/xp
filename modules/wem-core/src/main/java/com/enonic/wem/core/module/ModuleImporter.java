@@ -19,7 +19,7 @@ import com.enonic.wem.api.module.ModuleKey;
 
 import static com.enonic.wem.api.module.Module.newModule;
 
-public final class ModuleImporter
+public class ModuleImporter
 {
 
     private final ModuleXmlSerializer xmlSerializer = new ModuleXmlSerializer();
