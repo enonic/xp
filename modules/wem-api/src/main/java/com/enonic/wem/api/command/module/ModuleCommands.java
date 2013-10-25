@@ -18,9 +18,14 @@ public final class ModuleCommands
         return new DeleteModule();
     }
 
-    public GetModules get()
+    public GetModules list()
     {
         return new GetModules();
+    }
+
+    public GetModule get()
+    {
+        return new GetModule();
     }
 
     public GetModules getAll()
