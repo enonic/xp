@@ -86,7 +86,6 @@ module api_app_wizard {
             jQuery(this.getHTMLElement()).on("focus", "*", (e) => {
                 e.stopPropagation();
                 this.focusElement = jQuery(e.target);
-                console.log(this.focusElement);
             });
         }
 
