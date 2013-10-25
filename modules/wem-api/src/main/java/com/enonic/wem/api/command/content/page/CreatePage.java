@@ -3,11 +3,12 @@ package com.enonic.wem.api.command.content.page;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplateId;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class CreatePage
-    extends Command<CreatePageResult>
+    extends Command<Page>
 {
     private ContentId contentId;
 
@@ -36,6 +37,5 @@ public class CreatePage
     @Override
     public void validate()
     {
-        // TODO
     }
 }

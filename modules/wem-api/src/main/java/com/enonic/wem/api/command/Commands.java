@@ -5,8 +5,7 @@ import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.binary.BinaryCommands;
 import com.enonic.wem.api.command.content.page.PageCommands;
-import com.enonic.wem.api.command.content.page.PageTemplateCommands;
-import com.enonic.wem.api.command.content.page.PartTemplateCommands;
+import com.enonic.wem.api.command.content.template.TemplateCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.resource.ResourceCommands;
@@ -15,7 +14,6 @@ import com.enonic.wem.api.command.schema.content.ContentTypeCommands;
 import com.enonic.wem.api.command.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
 import com.enonic.wem.api.command.space.SpaceCommands;
-import com.enonic.wem.api.command.template.TemplateCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
 import com.enonic.wem.api.entity.NodeCommands;
 
@@ -32,10 +30,6 @@ public final class Commands
     private static final ContentCommands CONTENT_COMMANDS = new ContentCommands();
 
     private static final PageCommands PAGE_COMMANDS = new PageCommands();
-
-    private static final PageTemplateCommands PAGE_TEMPLATE_COMMANDS = new PageTemplateCommands();
-
-    private static final PartTemplateCommands PART_TEMPLATE_COMMANDS = new PartTemplateCommands();
 
     private static final TemplateCommands TEMPLATE_COMMANDS = new TemplateCommands();
 
@@ -86,14 +80,9 @@ public final class Commands
         return PAGE_COMMANDS;
     }
 
-    public static PageTemplateCommands pageTemplate()
+    public static TemplateCommands template()
     {
-        return PAGE_TEMPLATE_COMMANDS;
-    }
-
-    public static PartTemplateCommands partTemplate()
-    {
-        return PART_TEMPLATE_COMMANDS;
+        return TEMPLATE_COMMANDS;
     }
 
     public static RelationshipCommands relationship()

@@ -4,11 +4,12 @@ package com.enonic.wem.api.content.page.rendering;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.GetModuleResource;
-import com.enonic.wem.api.command.template.GetTemplate;
+import com.enonic.wem.api.command.content.template.GetTemplate;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorFactory;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateId;
 import com.enonic.wem.api.content.page.TemplateId;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
@@ -44,9 +45,9 @@ public final class PageComponentType
         return controller.execute( context );
     }
 
-    private PageTemplate getPageTemplate( final TemplateId templateId, final Client client )
+    private PageTemplate getPageTemplate( final PageTemplateId templateId, final Client client )
     {
-        final GetTemplate command = Commands.pageTemplate().get().byId( templateId );
+        final GetTemplate command = Commands.template().get().templateId( templateId );
         return (PageTemplate) client.execute( command );
     }
 
