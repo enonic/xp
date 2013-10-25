@@ -2,8 +2,6 @@ package com.enonic.wem.core.rendering;
 
 
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.core.rendering.Context;
-import com.enonic.wem.core.rendering.RenderingResult;
 
 import static com.enonic.wem.core.rendering.RenderingResult.newRenderingResult;
 

@@ -5,5 +5,5 @@ import com.enonic.wem.api.content.page.Component;
 
 public interface ComponentType<T extends Component>
 {
-    RenderingResult execute( T component, Context context);
+    RenderingResult execute( T component, Context context );
 }

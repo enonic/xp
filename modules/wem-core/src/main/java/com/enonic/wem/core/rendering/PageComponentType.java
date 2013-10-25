@@ -3,8 +3,8 @@ package com.enonic.wem.core.rendering;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.command.content.template.GetTemplate;
+import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorFactory;
@@ -12,11 +12,6 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateId;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.core.rendering.ComponentType;
-import com.enonic.wem.core.rendering.Context;
-import com.enonic.wem.core.rendering.Controller;
-import com.enonic.wem.core.rendering.ControllerFactory;
-import com.enonic.wem.core.rendering.RenderingResult;
 import com.enonic.wem.api.resource.Resource;
 
 public final class PageComponentType
