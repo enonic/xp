@@ -3,7 +3,7 @@ module api_form_input_type {
     /*
      * A kind of a controller, which add/remove InputOccurrenceView-s to the BaseInputTypeView
      */
-    export class InputOccurrences extends api_form.FormItemOccurrences {
+    export class InputOccurrences extends api_form.FormItemOccurrences<InputOccurrenceView> {
 
         private baseInputTypeView:BaseInputTypeView;
 
@@ -47,8 +47,8 @@ module api_form_input_type {
             }
         }
 
-        createNewOccurrence(formItemOccurrences:api_form.FormItemOccurrences,
-                            insertAtIndex:number):api_form.FormItemOccurrence {
+        createNewOccurrence(formItemOccurrences:api_form.FormItemOccurrences<InputOccurrenceView>,
+                            insertAtIndex:number):api_form.FormItemOccurrence<InputOccurrenceView> {
             return new InputOccurrence(<InputOccurrences>formItemOccurrences, insertAtIndex)
         }
 

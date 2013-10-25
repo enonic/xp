@@ -43,9 +43,23 @@ module api_form_formitemset {
             this.addButton.setClass("add-button");
             this.addButton.setClickListener(() => {
                 this.formItemSetOccurrences.createAndAddOccurrence();
+                if (this.formItemSetOccurrences.isCollapsed()) {
+                    this.collapseButton.getHTMLElement().click();
+                }
+
             });
             this.collapseButton = new api_ui.Button("Collapse");
             this.collapseButton.setClass("collapse-button");
+            this.collapseButton.setClickListener(() => {
+                if (this.formItemSetOccurrences.isCollapsed()) {
+                    this.collapseButton.setText("Collapse");
+                    this.formItemSetOccurrences.toggleOccurences(true);
+                } else {
+                    this.collapseButton.setText("Expand");
+                    this.formItemSetOccurrences.toggleOccurences(false);
+                }
+
+            });
 
             this.bottomButtonRow.appendChild(this.addButton);
             this.bottomButtonRow.appendChild(this.collapseButton);

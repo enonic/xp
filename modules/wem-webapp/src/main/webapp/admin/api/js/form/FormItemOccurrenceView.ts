@@ -2,11 +2,11 @@ module api_form {
 
     export class FormItemOccurrenceView extends api_dom.DivEl {
 
-        private formItemOccurrence:FormItemOccurrence;
+        private formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>;
 
         private listeners:FormItemOccurrenceViewListener[] = [];
 
-        constructor(idPrefix:string, className, formItemOccurrence:FormItemOccurrence) {
+        constructor(idPrefix:string, className, formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>) {
             super(idPrefix, className);
             this.formItemOccurrence = formItemOccurrence;
         }

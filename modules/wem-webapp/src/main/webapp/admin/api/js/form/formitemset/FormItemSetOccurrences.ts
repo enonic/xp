@@ -3,11 +3,13 @@ module api_form_formitemset {
     /*
      * A kind of a controller, which adds/removes FormItemSetOccurrenceView-s
      */
-    export class FormItemSetOccurrences extends api_form.FormItemOccurrences {
+    export class FormItemSetOccurrences extends api_form.FormItemOccurrences<FormItemSetOccurrenceView> {
 
         private formItemSet:api_form.FormItemSet;
 
         private dataSets:api_data.DataSet[];
+
+        private occurrencesCollapsed:boolean = false;
 
         constructor(occurrenceViewContainer:api_dom.Element, formItemSet:api_form.FormItemSet, dataSets:api_data.DataSet[]) {
             super(formItemSet, occurrenceViewContainer, formItemSet.getOccurrences());
@@ -44,8 +46,8 @@ module api_form_formitemset {
             }
         }
 
-        createNewOccurrence(formItemOccurrences:api_form.FormItemOccurrences,
-                            insertAtIndex:number):api_form.FormItemOccurrence {
+        createNewOccurrence(formItemOccurrences:api_form.FormItemOccurrences<FormItemSetOccurrenceView>,
+                            insertAtIndex:number):api_form.FormItemOccurrence<FormItemSetOccurrenceView> {
             return new FormItemSetOccurrence(<FormItemSetOccurrences>formItemOccurrences, insertAtIndex)
         }
 
@@ -55,7 +57,7 @@ module api_form_formitemset {
             var dataSet:api_data.DataSet = this.dataSets != null ? this.dataSets[occurrence.getIndex()] : null;
             var newOccurrenceView:FormItemSetOccurrenceView = new FormItemSetOccurrenceView(occurrence, this.formItemSet, dataSet);
             newOccurrenceView.addListener(<api_form.FormItemOccurrenceViewListener>{
-                onRemoveButtonClicked: (toBeRemoved:api_form.FormItemOccurrenceView, index:number) => {
+                onRemoveButtonClicked: (toBeRemoved:FormItemSetOccurrenceView, index:number) => {
                     formItemSetOccurrences.doRemoveOccurrence(toBeRemoved, index);
                 }
             });
@@ -69,6 +71,18 @@ module api_form_formitemset {
                 dataSets.push(dataSet);
             });
             return dataSets;
+        }
+
+        toggleOccurences(show:boolean) {
+            var views = <FormItemSetOccurrenceView[]>this.getOccurrenceViews();
+            this.occurrencesCollapsed = !show;
+            views.forEach((formItemSetOccurenceView:FormItemSetOccurrenceView) => {
+                formItemSetOccurenceView.toggleContainer(show);
+            });
+        }
+
+        isCollapsed():boolean {
+            return this.occurrencesCollapsed;
         }
     }
 }

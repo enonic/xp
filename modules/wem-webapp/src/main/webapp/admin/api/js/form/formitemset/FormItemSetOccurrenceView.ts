@@ -16,6 +16,8 @@ module api_form_formitemset {
 
         private formItemViews:api_form.FormItemView[] = [];
 
+        private formItemSetOccurrencesContainer:api_dom.DivEl;
+
         constructor(formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api_form.FormItemSet,
                     dataSet:api_data.DataSet) {
             super("FormItemSetOccurrenceView", "form-item-set-occurrence-view", formItemSetOccurrence);
@@ -42,14 +44,14 @@ module api_form_formitemset {
             this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.getIndex() + 1));
             this.appendChild(this.occurrenceCountEl);
 
-            var formItemSetOccurrencesContainer = new api_dom.DivEl(null, "form-item-set-occurrences-container");
-            this.appendChild(formItemSetOccurrencesContainer);
+            this.formItemSetOccurrencesContainer = new api_dom.DivEl(null, "form-item-set-occurrences-container");
+            this.appendChild(this.formItemSetOccurrencesContainer);
 
             if (this.constructedWithData) {
-                this.doLayoutWithData(formItemSetOccurrencesContainer);
+                this.doLayoutWithData(this.formItemSetOccurrencesContainer);
             }
             else {
-                this.doLayoutWithoutData(formItemSetOccurrencesContainer);
+                this.doLayoutWithoutData(this.formItemSetOccurrencesContainer);
             }
         }
 
@@ -119,6 +121,14 @@ module api_form_formitemset {
                 });
             });
             return dataSet;
+        }
+
+        toggleContainer(show:boolean) {
+            if (show) {
+                this.formItemSetOccurrencesContainer.show();
+            } else {
+                this.formItemSetOccurrencesContainer.hide();
+            }
         }
     }
 

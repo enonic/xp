@@ -1,8 +1,8 @@
 module api_form {
 
-    export class FormItemOccurrence {
+    export class FormItemOccurrence<V extends FormItemOccurrenceView> {
 
-        private occurrences:FormItemOccurrences;
+        private occurrences:FormItemOccurrences<V>;
 
         private formItem:FormItem;
 
@@ -10,7 +10,7 @@ module api_form {
 
         private index:number;
 
-        constructor(occurrences:FormItemOccurrences, index:number, allowedOccurrences:Occurrences) {
+        constructor(occurrences:FormItemOccurrences<V>, index:number, allowedOccurrences:Occurrences) {
             this.occurrences = occurrences;
             this.formItem = occurrences.getFormItem();
             this.allowedOccurrences = allowedOccurrences;
