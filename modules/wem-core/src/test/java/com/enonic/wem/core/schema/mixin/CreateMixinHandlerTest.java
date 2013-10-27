@@ -41,7 +41,7 @@ public class CreateMixinHandlerTest
     {
         // setup
         Node node = Node.newNode().
-            id( new EntityId( "abc" ) ).
+            id( EntityId.from( "abc" ) ).
             name( "age" ).
             property( "displayName", "Age" ).
             addDataSet( new DataSet( "formItems" ) ).

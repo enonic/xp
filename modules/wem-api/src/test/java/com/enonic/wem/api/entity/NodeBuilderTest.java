@@ -134,12 +134,12 @@ public class NodeBuilderTest
         throws Exception
     {
 
-        final Node myNode = Node.newNode( new EntityId( "myid" ) ).
+        final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
             name( "myName" ).
             parent( NodePath.ROOT ).
             build();
 
-        final Node myEditedNode = Node.newNode( new EntityId( "myid" ) ).
+        final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
             name( "myName" ).
             parent( NodePath.newPath( "test" ).build() ).
             build();
@@ -152,12 +152,12 @@ public class NodeBuilderTest
         throws Exception
     {
 
-        final Node myNode = Node.newNode( new EntityId( "myid" ) ).
+        final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
             name( "myName" ).
             parent( NodePath.ROOT ).
             build();
 
-        final Node myEditedNode = Node.newNode( new EntityId( "myid" ) ).
+        final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
             name( "myChangedeName" ).
             parent( NodePath.ROOT ).
             build();
@@ -170,12 +170,12 @@ public class NodeBuilderTest
         throws Exception
     {
 
-        final Node myNode = Node.newNode( new EntityId( "myid" ) ).
+        final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
             name( "myName" ).
             parent( NodePath.ROOT ).
             build();
 
-        final Node myEditedNode = Node.newNode( new EntityId( "myid" ) ).
+        final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
             name( "myName" ).
             parent( NodePath.ROOT ).
             modifier( UserKey.from( "test:modifier" ) ).
@@ -189,12 +189,12 @@ public class NodeBuilderTest
         throws Exception
     {
 
-        final Node myNode = Node.newNode( new EntityId( "myid" ) ).
+        final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
             name( "myName" ).
             parent( NodePath.ROOT ).
             build();
 
-        final Node myEditedNode = Node.newNode( new EntityId( "myid" ) ).
+        final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
             name( "myName" ).
             parent( NodePath.ROOT ).
             property( "data", "myData" ).

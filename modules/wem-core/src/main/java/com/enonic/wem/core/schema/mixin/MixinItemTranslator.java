@@ -41,7 +41,7 @@ class MixinItemTranslator
     UpdateNode toUpdateItemCommand( final SchemaId id, final NodeEditor editor )
     {
         return Commands.item().update().
-            item( new EntityId( id ) ).
+            item( EntityId.from( id ) ).
             editor( editor );
     }
 

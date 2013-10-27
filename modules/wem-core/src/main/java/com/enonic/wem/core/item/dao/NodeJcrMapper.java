@@ -65,7 +65,7 @@ class NodeJcrMapper
             NodePath nodePath = resolveNodePath( nodeNode );
             NodePath parentNodePath = nodePath.getParentPath();
 
-            final EntityId entityId = new EntityId( nodeNode.getIdentifier() );
+            final EntityId entityId = EntityId.from( nodeNode.getIdentifier() );
             final Node.Builder builder = Node.newNode( entityId, nodeNode.getName() );
             builder.parent( parentNodePath );
             builder.creator( JcrHelper.getPropertyUserKey( nodeNode, CREATOR ) );

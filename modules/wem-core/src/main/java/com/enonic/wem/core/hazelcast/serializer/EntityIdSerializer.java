@@ -28,7 +28,7 @@ public final class EntityIdSerializer
     public EntityId read( final ObjectDataInput in )
         throws IOException
     {
-        return new EntityId( in.readUTF() );
+        return EntityId.from( in.readUTF() );
     }
 
     @Override

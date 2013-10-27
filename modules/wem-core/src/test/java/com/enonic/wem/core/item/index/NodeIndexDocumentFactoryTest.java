@@ -43,7 +43,7 @@ public class NodeIndexDocumentFactoryTest
         DateTime modifiedDateTime = new DateTime( 2013, 01, 02, 03, 04, 05 );
 
         Node node = Node.newNode().
-            id( new EntityId( "myId" ) ).
+            id( EntityId.from( "myId" ) ).
             rootDataSet( rootDataSet ).
             parent( NodePath.ROOT ).
             createdTime( DateTime.now() ).
@@ -94,7 +94,7 @@ public class NodeIndexDocumentFactoryTest
         rootDataSet.addProperty( "a", new Value.String( "myValue3" ) );
 
         Node node = Node.newNode().
-            id( new EntityId( "myId" ) ).
+            id( EntityId.from( "myId" ) ).
             rootDataSet( rootDataSet ).
             parent( NodePath.ROOT ).
             createdTime( DateTime.now() ).
@@ -135,7 +135,7 @@ public class NodeIndexDocumentFactoryTest
         rootDataSet.setProperty( "a/b/c", new Value.DateMidnight( DateMidnight.now() ) );
 
         Node node = Node.newNode().
-            id( new EntityId( "myId" ) ).
+            id( EntityId.from( "myId" ) ).
             rootDataSet( rootDataSet ).
             parent( NodePath.ROOT ).
             createdTime( DateTime.now() ).
