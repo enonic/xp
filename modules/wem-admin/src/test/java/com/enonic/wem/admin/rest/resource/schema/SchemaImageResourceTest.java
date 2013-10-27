@@ -226,7 +226,7 @@ public class SchemaImageResourceTest
         final List<Mixin> list = Lists.newArrayList();
         list.add( mixin );
         final Mixins result = Mixins.from( list );
-        final GetMixins command = new GetMixins().names( QualifiedMixinNames.from( mixin.getQualifiedName() ) );
+        final GetMixins command = new GetMixins().qualifiedNames( QualifiedMixinNames.from( mixin.getQualifiedName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 

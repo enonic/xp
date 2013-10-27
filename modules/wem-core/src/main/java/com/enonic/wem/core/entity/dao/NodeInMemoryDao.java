@@ -2,7 +2,6 @@ package com.enonic.wem.core.entity.dao;
 
 
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import org.joda.time.DateTime;
 
@@ -14,6 +13,7 @@ import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeAlreadyExist;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.Nodes;
 
 import static com.enonic.wem.api.entity.Node.newNode;
 
@@ -91,7 +91,7 @@ public class NodeInMemoryDao
     }
 
     @Override
-    public List<Node> getNodesByParentPath( final NodePath parent )
+    public Nodes getNodesByParentPath( final NodePath parent )
         throws NoEntityFoundException
     {
         throw new UnsupportedOperationException();

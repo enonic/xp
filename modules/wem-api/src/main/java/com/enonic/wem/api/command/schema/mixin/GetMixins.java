@@ -19,9 +19,9 @@ public final class GetMixins
         return this.qualifiedMixinNames;
     }
 
-    public GetMixins names( final QualifiedMixinNames qualifiedMixinNames )
+    public GetMixins qualifiedNames( final QualifiedMixinNames qualifiedNames )
     {
-        this.qualifiedMixinNames = qualifiedMixinNames;
+        this.qualifiedMixinNames = qualifiedNames;
         return this;
     }
 

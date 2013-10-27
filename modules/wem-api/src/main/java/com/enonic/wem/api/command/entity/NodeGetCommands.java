@@ -15,4 +15,9 @@ public class NodeGetCommands
     {
         return new GetNodeByPath( path );
     }
+
+    public GetNodesByParent byParent( final NodePath parent )
+    {
+        return new GetNodesByParent( parent );
+    }
 }

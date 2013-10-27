@@ -12,7 +12,7 @@ public final class MixinGetCommands
 
     public GetMixins byQualifiedNames( final QualifiedMixinNames qualifiedNames )
     {
-        return new GetMixins().names( qualifiedNames );
+        return new GetMixins().qualifiedNames( qualifiedNames );
     }
 
     public GetMixins all()

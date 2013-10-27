@@ -10,7 +10,7 @@ import com.enonic.wem.core.command.CommandHandler;
 public final class CreateMixinHandler
     extends CommandHandler<CreateMixin>
 {
-    private final static MixinItemTranslator MIXIN_TO_ITEM_TRANSLATOR = new MixinItemTranslator();
+    private final static MixinNodeTranslator MIXIN_TO_ITEM_TRANSLATOR = new MixinNodeTranslator();
 
     @Override
     public void handle()
@@ -19,7 +19,7 @@ public final class CreateMixinHandler
         final CreateNode createNodeCommand = MIXIN_TO_ITEM_TRANSLATOR.toCreateItemCommand( command );
         final CreateNodeResult createNodeResult = context.getClient().execute( createNodeCommand );
 
-        final Mixin persistedMixin = MIXIN_TO_ITEM_TRANSLATOR.fromItem( createNodeResult.getPersistedNode() );
+        final Mixin persistedMixin = MIXIN_TO_ITEM_TRANSLATOR.fromNode( createNodeResult.getPersistedNode() );
         command.setResult( persistedMixin.getQualifiedName() );
     }
 }

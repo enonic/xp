@@ -3,75 +3,56 @@ package com.enonic.wem.core.schema.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
-
+import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.GetNodeByPath;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.dao.NodeDao;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
 
 public final class GetMixinsHandler
     extends CommandHandler<GetMixins>
 {
-    private final static MixinItemTranslator MIXIN_TO_ITEM_TRANSLATOR = new MixinItemTranslator();
-
-    private NodeDao nodeDao;
-
-    @VisibleForTesting
-    public void setNodeJcrDao( NodeJcrDao nodeDao )
-    {
-        this.nodeDao = nodeDao;
-    }
+    private final static MixinNodeTranslator MIXIN_NODE_TRANSLATOR = new MixinNodeTranslator();
 
     @Override
     public void handle()
         throws Exception
     {
-        if ( this.nodeDao == null )
-        {
-            nodeDao = new NodeJcrDao( context.getJcrSession() );
-        }
-
         final Mixins mixins;
 
         if ( command.isGetAll() )
         {
-            mixins = getAllMixins( nodeDao );
+            mixins = getAllMixins();
         }
         else
         {
             final QualifiedMixinNames qualifiedNames = command.getQualifiedMixinNames();
-            mixins = getMixins( qualifiedNames, nodeDao );
+            mixins = getMixins( qualifiedNames );
         }
 
         command.setResult( mixins );
     }
 
-    private Mixins getAllMixins( final NodeDao nodeDao )
+    private Mixins getAllMixins()
     {
-        final List<Node> nodes = nodeDao.getNodesByParentPath( new NodePath( "/mixins" ) );
-        final List<Mixin> mixinList = new ArrayList<>( nodes.size() );
-        for ( Node node : nodes )
-        {
-            mixinList.add( MIXIN_TO_ITEM_TRANSLATOR.fromItem( node ) );
-        }
-        return Mixins.from( mixinList );
+        final Nodes nodes = context.getClient().execute( Commands.node().get().byParent( new NodePath( "/mixins" ) ) );
+        return MIXIN_NODE_TRANSLATOR.fromNodes( nodes );
     }
 
-    private Mixins getMixins( final QualifiedMixinNames qualifiedMixinNames, final NodeDao nodeDao )
+    private Mixins getMixins( final QualifiedMixinNames qualifiedMixinNames )
     {
         final List<Mixin> mixinList = new ArrayList<>( qualifiedMixinNames.getSize() );
         for ( QualifiedMixinName qualifiedName : qualifiedMixinNames )
         {
-            final Mixin mixin = getMixin( qualifiedName, nodeDao );
+            final Mixin mixin = getMixin( qualifiedName );
             if ( mixin != null )
             {
                 mixinList.add( mixin );
@@ -80,12 +61,16 @@ public final class GetMixinsHandler
         return Mixins.from( mixinList );
     }
 
-    private Mixin getMixin( final QualifiedMixinName qualifiedName, final NodeDao nodeDao )
+    private Mixin getMixin( final QualifiedMixinName qualifiedName )
     {
         try
         {
-            final Node node = nodeDao.getNodeByPath( new NodePath( "/mixins/" + qualifiedName.toString() ) );
-            return MIXIN_TO_ITEM_TRANSLATOR.fromItem( node );
+            final NodePath nodePath = new NodePath( "/mixins/" + qualifiedName.toString() );
+            final GetNodeByPath getNodeByPathCommand = Commands.node().get().byPath( nodePath );
+
+            context.getClient().execute( getNodeByPathCommand );
+            final Node node = getNodeByPathCommand.getResult();
+            return MIXIN_NODE_TRANSLATOR.fromNode( node );
         }
         catch ( NoNodeAtPathFound e )
         {

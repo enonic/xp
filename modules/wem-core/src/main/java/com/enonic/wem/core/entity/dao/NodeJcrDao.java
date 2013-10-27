@@ -1,8 +1,6 @@
 package com.enonic.wem.core.entity.dao;
 
 
-import java.util.List;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -16,6 +14,7 @@ import com.enonic.wem.api.entity.NoEntityWithIdFound;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.Nodes;
 
 public class NodeJcrDao
     implements NodeDao
@@ -111,7 +110,7 @@ public class NodeJcrDao
     }
 
     @Override
-    public List<Node> getNodesByParentPath( final NodePath parent )
+    public Nodes getNodesByParentPath( final NodePath parent )
         throws NoEntityFoundException
     {
         Preconditions.checkArgument( parent.isAbsolute(), "parent path must be absolute: " + parent.toString() );

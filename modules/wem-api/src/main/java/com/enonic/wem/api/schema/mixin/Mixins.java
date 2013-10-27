@@ -64,4 +64,25 @@ public final class Mixins
             return value.getQualifiedName();
         }
     }
+
+    public static Builder newMixins()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<Mixin> builder = ImmutableList.builder();
+
+        public Builder add( Mixin node )
+        {
+            builder.add( node );
+            return this;
+        }
+
+        public Mixins build()
+        {
+            return new Mixins( builder.build() );
+        }
+    }
 }

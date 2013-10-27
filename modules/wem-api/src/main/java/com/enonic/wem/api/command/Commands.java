@@ -19,7 +19,7 @@ import com.enonic.wem.api.command.userstore.UserStoreCommands;
 
 public final class Commands
 {
-    private static final NodeCommands ITEM_COMMANDS = new NodeCommands();
+    private static final NodeCommands NODE_COMMANDS = new NodeCommands();
 
     private static final SpaceCommands SPACE_COMMANDS = new SpaceCommands();
 
@@ -55,9 +55,9 @@ public final class Commands
     {
     }
 
-    public static NodeCommands item()
+    public static NodeCommands node()
     {
-        return ITEM_COMMANDS;
+        return NODE_COMMANDS;
     }
 
     public static AccountCommands account()

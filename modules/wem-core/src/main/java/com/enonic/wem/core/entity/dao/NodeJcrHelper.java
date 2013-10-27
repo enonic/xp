@@ -1,9 +1,6 @@
 package com.enonic.wem.core.entity.dao;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NodeIterator;
@@ -17,6 +14,7 @@ import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeAlreadyExist;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 class NodeJcrHelper
@@ -182,10 +180,10 @@ class NodeJcrHelper
         return NodeJcrMapper.toNode( nodeNode ).build();
     }
 
-    List<Node> getNodesByParentPath( final NodePath parent )
+    Nodes getNodesByParentPath( final NodePath parent )
         throws NoNodeAtPathFound
     {
-        List<Node> childNodes = new ArrayList<>();
+        Nodes.Builder childNodes = Nodes.newNodes();
         final javax.jcr.Node parentNode = getItemNodeByPath( parent );
         try
         {
@@ -199,7 +197,7 @@ class NodeJcrHelper
         {
             throw new RuntimeException( "Failed to getItemsByPath", e );
         }
-        return childNodes;
+        return childNodes.build();
     }
 
 }

@@ -15,15 +15,17 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.support.SerializerForFormItemToData;
 
 import static com.enonic.wem.api.entity.SetNodeEditor.newSetItemEditor;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 
-class MixinItemTranslator
+class MixinNodeTranslator
 {
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
@@ -31,7 +33,7 @@ class MixinItemTranslator
     {
         final NodePath parentItemPath = NodePath.newPath( "/mixins" ).build();
 
-        return Commands.item().create().
+        return Commands.node().create().
             name( createMixin.getName() ).
             parent( parentItemPath ).
             icon( createMixin.getIcon() ).
@@ -40,7 +42,7 @@ class MixinItemTranslator
 
     UpdateNode toUpdateItemCommand( final SchemaId id, final NodeEditor editor )
     {
-        return Commands.item().update().
+        return Commands.node().update().
             item( EntityId.from( id ) ).
             editor( editor );
     }
@@ -78,7 +80,17 @@ class MixinItemTranslator
             data( rootDataSet ).build();
     }
 
-    Mixin fromItem( final Node node )
+    Mixins fromNodes( final Nodes nodes )
+    {
+        Mixins.Builder mixins = Mixins.newMixins();
+        for ( Node node : nodes )
+        {
+            mixins.add( fromNode( node ) );
+        }
+        return mixins.build();
+    }
+
+    Mixin fromNode( final Node node )
     {
         final DataSet formItemsAsDataSet = node.dataSet( "formItems" );
         final FormItems formItems = SERIALIZER_FOR_FORM_ITEM_TO_DATA.deserializeFormItems( formItemsAsDataSet );
