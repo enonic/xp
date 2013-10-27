@@ -3,7 +3,7 @@ package com.enonic.wem.api.schema.relationship;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.AbstractEqualsTest;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 public class QualifiedRelationshipTypeNamesTest
 {

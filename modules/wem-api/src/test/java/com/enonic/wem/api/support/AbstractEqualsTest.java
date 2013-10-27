@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content;
+package com.enonic.wem.api.support;
 
 
 import org.junit.Assert;

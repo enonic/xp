@@ -2,7 +2,7 @@ package com.enonic.wem.api.schema.mixin;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.AbstractEqualsTest;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 public class QualifiedMixinNameTest
 {

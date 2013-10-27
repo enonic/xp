@@ -4,9 +4,9 @@ package com.enonic.wem.api.command.relationship;
 import org.junit.Test;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 public class CreateRelationshipTest
 {

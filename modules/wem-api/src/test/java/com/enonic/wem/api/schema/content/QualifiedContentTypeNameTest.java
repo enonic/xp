@@ -3,7 +3,7 @@ package com.enonic.wem.api.schema.content;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.AbstractEqualsTest;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static org.junit.Assert.*;
 

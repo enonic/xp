@@ -5,9 +5,9 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.*;

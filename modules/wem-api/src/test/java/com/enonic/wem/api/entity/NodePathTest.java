@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.AbstractEqualsTest;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static junit.framework.Assert.assertEquals;
 

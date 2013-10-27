@@ -1,6 +1,7 @@
 package com.enonic.wem.api.entity;
 
 
+import java.util.Objects;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
@@ -32,15 +33,14 @@ public class EntityId
             return false;
         }
 
-        final EntityId entityId = (EntityId) o;
-
-        return value.equals( entityId.value );
+        final EntityId other = (EntityId) o;
+        return Objects.equals( value, other.value );
     }
 
     @Override
     public int hashCode()
     {
-        return value.hashCode();
+        return Objects.hash( value );
     }
 
     public String toString()

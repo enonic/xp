@@ -3,9 +3,9 @@ package com.enonic.wem.api.data;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static com.enonic.wem.api.data.Property.GeographicCoordinate.newGeographicCoordinate;
 import static com.enonic.wem.api.data.Property.newProperty;

@@ -4,10 +4,10 @@ package com.enonic.wem.api.data;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.enonic.wem.api.content.AbstractEqualsTest;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.data.type.InconvertibleValueException;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertSame;
