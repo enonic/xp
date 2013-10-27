@@ -8,8 +8,8 @@ import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.item.dao.NodeDao;
-import com.enonic.wem.core.item.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.NodeDao;
+import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
 
 public final class DeleteMixinHandler

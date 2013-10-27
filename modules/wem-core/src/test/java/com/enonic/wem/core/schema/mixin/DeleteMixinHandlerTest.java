@@ -12,7 +12,7 @@ import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.item.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;

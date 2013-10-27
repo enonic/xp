@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.entity.CreateNode;
+import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -14,7 +15,6 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.UpdateNode;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.mixin.Mixin;

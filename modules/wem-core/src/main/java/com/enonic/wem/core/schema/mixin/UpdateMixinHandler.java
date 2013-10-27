@@ -1,16 +1,16 @@
 package com.enonic.wem.core.schema.mixin;
 
+import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.UpdateNode;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.item.dao.NodeDao;
-import com.enonic.wem.core.item.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.NodeDao;
+import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
 
 public final class UpdateMixinHandler

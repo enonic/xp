@@ -2,9 +2,9 @@ package com.enonic.wem.api.command.schema.mixin;
 
 public final class MixinCommands
 {
-    public GetMixinCommands get()
+    public MixinGetCommands get()
     {
-        return new GetMixinCommands();
+        return new MixinGetCommands();
     }
 
     public CreateMixin create()
