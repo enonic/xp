@@ -17,7 +17,7 @@ public class NodeBuilderTest
         throws Exception
     {
         final Node myNode = Node.newNode().name( "myNode" ).parent( NodePath.ROOT ).build();
-        assertNotNull( myNode.rootDataSet() );
+        assertNotNull( myNode.data() );
     }
 
     @Test

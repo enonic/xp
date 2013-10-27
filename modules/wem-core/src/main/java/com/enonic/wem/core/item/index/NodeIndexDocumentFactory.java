@@ -123,7 +123,7 @@ public class NodeIndexDocumentFactory
             }
         };
 
-        visitor.traverse( node.rootDataSet() );
+        visitor.traverse( node.data() );
     }
 
 

@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 
@@ -26,9 +27,9 @@ public class Entity
         this.modifiedTime = builder.modifiedTime;
 
         this.rootDataSet = new RootDataSet();
-        if ( builder.dataSet != null )
+        if ( builder.data != null )
         {
-            for ( final Data data : builder.dataSet )
+            for ( final Data data : builder.data )
             {
                 this.rootDataSet.add( data.copy() );
             }
@@ -36,6 +37,42 @@ public class Entity
 
         this.entityIndexConfig = builder.entityIndexConfig;
     }
+
+    public EntityId id()
+    {
+        return id;
+    }
+
+    public DateTime getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public DateTime getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
+    public RootDataSet data()
+    {
+        return this.rootDataSet;
+    }
+
+    public DataSet dataSet( final String path )
+    {
+        return rootDataSet.getDataSet( path );
+    }
+
+    public Property property( final String path )
+    {
+        return rootDataSet.getProperty( path );
+    }
+
+    public EntityIndexConfig getEntityIndexConfig()
+    {
+        return entityIndexConfig;
+    }
+
 
     public static class Builder<B extends Builder>
     {
@@ -45,12 +82,20 @@ public class Entity
 
         protected DateTime modifiedTime;
 
-        protected RootDataSet dataSet = new RootDataSet();
+        protected RootDataSet data = new RootDataSet();
 
         protected EntityIndexConfig entityIndexConfig;
 
         public Builder()
         {
+        }
+
+        public Builder( final Entity entity )
+        {
+            this.createdTime = entity.createdTime;
+            this.modifiedTime = entity.modifiedTime;
+            this.data = entity.rootDataSet;
+            this.entityIndexConfig = entity.entityIndexConfig;
         }
 
         public Builder( final EntityId id )
@@ -80,7 +125,7 @@ public class Entity
         {
             if ( value != null )
             {
-                this.dataSet.setProperty( path, new Value.String( value ) );
+                this.data.setProperty( path, new Value.String( value ) );
             }
             return getThisBuilder();
         }
@@ -89,7 +134,7 @@ public class Entity
         {
             if ( value != null )
             {
-                this.dataSet.setProperty( path, new Value.Long( value ) );
+                this.data.setProperty( path, new Value.Long( value ) );
             }
             return getThisBuilder();
         }
@@ -99,7 +144,7 @@ public class Entity
 
             if ( value != null )
             {
-                this.dataSet.setProperty( path, new Value.DateTime( value ) );
+                this.data.setProperty( path, new Value.DateTime( value ) );
             }
             return getThisBuilder();
         }
@@ -109,7 +154,7 @@ public class Entity
 
             if ( value != null )
             {
-                this.dataSet.setProperty( path, value );
+                this.data.setProperty( path, value );
             }
             return getThisBuilder();
         }
@@ -118,14 +163,14 @@ public class Entity
         {
             if ( value != null )
             {
-                this.dataSet.add( value );
+                this.data.add( value );
             }
             return getThisBuilder();
         }
 
         public B rootDataSet( final RootDataSet value )
         {
-            this.dataSet = value;
+            this.data = value;
             return getThisBuilder();
         }
 

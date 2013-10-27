@@ -41,7 +41,7 @@ class NodeJcrMapper
         JcrHelper.setPropertyDateTime( nodeNode, MODIFIED_TIME, node.getModifiedTime() );
         JcrHelper.setPropertyUserKey( nodeNode, MODIFIER, node.getModifier() );
 
-        final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( node.rootDataSet() );
+        final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( node.data() );
         nodeNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
     }
 

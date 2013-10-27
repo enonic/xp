@@ -1,15 +1,10 @@
 package com.enonic.wem.api.entity;
 
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
@@ -52,11 +47,6 @@ public final class Node
         Preconditions.checkNotNull( this.createdTime, "createdTime must be specified" );
     }
 
-    public EntityId id()
-    {
-        return id;
-    }
-
     public String name()
     {
         return name;
@@ -72,11 +62,6 @@ public final class Node
         return path;
     }
 
-    public DateTime getCreatedTime()
-    {
-        return createdTime;
-    }
-
     public UserKey creator()
     {
         return creator;
@@ -85,11 +70,6 @@ public final class Node
     public UserKey getCreator()
     {
         return creator;
-    }
-
-    public DateTime getModifiedTime()
-    {
-        return modifiedTime;
     }
 
     public UserKey modifier()
@@ -107,37 +87,20 @@ public final class Node
         return icon;
     }
 
-    public RootDataSet rootDataSet()
-    {
-        return this.rootDataSet;
-    }
-
-    public Property property( final String path )
-    {
-        return rootDataSet.getProperty( path );
-    }
-
-    public EntityIndexConfig getEntityIndexConfig()
-    {
-        return entityIndexConfig;
-    }
-
-    public DataSet dataSet( final String path )
-    {
-        return rootDataSet.getDataSet( path );
-    }
-
     @Override
     public void checkIllegalEdit( final Node to )
         throws IllegalEditException
     {
+        // TODO: Unfortunately Java does not like us to also let super class implement checkIllegalEdit(Entity)
+        // TODO: Therefor it's here... :(
         IllegalEdit.check( "id", this.id(), to.id(), Node.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Node.class );
+        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Node.class );
+
         IllegalEdit.check( "name", this.name(), to.name(), Node.class );
         IllegalEdit.check( "parent", this.parent(), to.parent(), Node.class );
         IllegalEdit.check( "path", this.path(), to.path(), Node.class );
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Node.class );
         IllegalEdit.check( "creator", this.creator(), to.creator(), Node.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Node.class );
         IllegalEdit.check( "modifier", this.modifier(), to.modifier(), Node.class );
     }
 
@@ -185,16 +148,13 @@ public final class Node
 
         public Builder( final Node node )
         {
+            super( node );
             this.id = node.id;
             this.name = node.name;
             this.parent = node.parent;
-            this.createdTime = node.createdTime;
             this.creator = node.creator;
-            this.modifiedTime = node.modifiedTime;
             this.modifier = node.modifier;
             this.icon = node.icon;
-            this.dataSet = node.rootDataSet;
-            this.entityIndexConfig = node.entityIndexConfig;
         }
 
         public Builder( final EntityId id, final String name )

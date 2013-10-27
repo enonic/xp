@@ -38,7 +38,7 @@ public class UpdateNodeHandler
             itemToUpdate( command.getNode() ).
             name( edited.name() ).
             icon( edited.icon() ).
-            rootDataSet( edited.rootDataSet() ).
+            rootDataSet( edited.data() ).
             build();
 
         final Node persistedNode = itemDao.updateNode( updateNodeArgs );

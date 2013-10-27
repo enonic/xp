@@ -9,9 +9,9 @@ import com.enonic.wem.api.data.Property;
 
 public class EntityIndexConfig
 {
-
     private final String analyzer;
 
+    // TODO: Replace with immutable Map from Guava
     private final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs;
 
     public static Builder newEntityIndexConfig()
