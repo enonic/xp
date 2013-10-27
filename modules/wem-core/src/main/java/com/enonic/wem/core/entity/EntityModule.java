@@ -15,6 +15,8 @@ public final class EntityModule
         commands.add( UpdateNodeHandler.class );
         commands.add( GetNodeByIdHandler.class );
         commands.add( GetNodeByPathHandler.class );
+        commands.add( GetNodesByIdsHandler.class );
+        commands.add( GetNodesByPathsHandler.class );
         commands.add( GetNodesByParentHandler.class );
     }
 }
