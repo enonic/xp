@@ -1,8 +1,8 @@
 package com.enonic.wem.core.schema.mixin;
 
+import com.enonic.wem.api.command.entity.CreateNode;
+import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.entity.CreateNode;
-import com.enonic.wem.api.entity.CreateNodeResult;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.CommandHandler;
 

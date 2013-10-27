@@ -4,12 +4,12 @@ package com.enonic.wem.core.schema.mixin;
 import java.util.List;
 
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.entity.CreateNode;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;

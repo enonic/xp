@@ -6,6 +6,7 @@ import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.binary.BinaryCommands;
 import com.enonic.wem.api.command.content.page.PageCommands;
 import com.enonic.wem.api.command.content.template.TemplateCommands;
+import com.enonic.wem.api.command.entity.NodeCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
 import com.enonic.wem.api.command.resource.ResourceCommands;
@@ -15,7 +16,6 @@ import com.enonic.wem.api.command.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
 import com.enonic.wem.api.command.space.SpaceCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
-import com.enonic.wem.api.entity.NodeCommands;
 
 public final class Commands
 {

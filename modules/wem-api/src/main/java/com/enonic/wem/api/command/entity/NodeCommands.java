@@ -1,5 +1,7 @@
-package com.enonic.wem.api.entity;
+package com.enonic.wem.api.command.entity;
 
+
+import com.enonic.wem.api.entity.UpdateNode;
 
 public class NodeCommands
 {
