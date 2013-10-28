@@ -50,6 +50,7 @@ public final class ValueTypes
         register( DOUBLE );
         register( GEO_POINT );
         register( ATTACHMENT_NAME );
+        register( ENTITY_ID );
     }
 
     private static void register( ValueType valueType )
