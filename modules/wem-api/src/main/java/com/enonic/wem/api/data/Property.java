@@ -84,6 +84,12 @@ public class Property
         return value.asContentId();
     }
 
+    public com.enonic.wem.api.entity.EntityId getEntityId()
+        throws InconvertibleValueException
+    {
+        return value.asEntityId();
+    }
+
     /**
      * Returns the value of the Property at the given array index as a String.
      *
@@ -99,6 +105,12 @@ public class Property
         throws InconvertibleValueException
     {
         return getArray().getValue( arrayIndex ).asContentId();
+    }
+
+    public com.enonic.wem.api.entity.EntityId getEntityId( final int arrayIndex )
+        throws InconvertibleValueException
+    {
+        return getArray().getValue( arrayIndex ).asEntityId();
     }
 
     public java.lang.Long getLong()
@@ -459,6 +471,67 @@ public class Property
             public ContentId build()
             {
                 return new ContentId( this );
+            }
+        }
+    }
+
+    public final static class EntityId
+        extends Property
+    {
+        public EntityId( final java.lang.String name, final com.enonic.wem.api.entity.EntityId value )
+        {
+            super( name, new Value.EntityId( value ) );
+        }
+
+        private EntityId( final AbstractBaseBuilder builder )
+        {
+            super( builder );
+        }
+
+        public EntityId( final java.lang.String name, final Value value )
+        {
+            super( name, value );
+        }
+
+        EntityId( final EntityId source )
+        {
+            super( source );
+        }
+
+        public EntityId copy()
+        {
+            return new EntityId( this );
+        }
+
+        public static Builder newEntityId()
+        {
+            return new Builder();
+        }
+
+        public static class Builder
+            extends AbstractNameBuilder<Builder>
+        {
+            public Builder()
+            {
+                setType( ValueTypes.ENTITY_ID );
+            }
+
+            public Builder value( final com.enonic.wem.api.entity.EntityId value )
+            {
+                setValue( value );
+                return this;
+            }
+
+            public Builder value( final java.lang.String value )
+            {
+                setValue( JavaTypeConverter.EntityId.GET.convertFromString( value ) );
+                return this;
+            }
+
+            @Override
+            public EntityId build()
+            {
+                return new EntityId( this );
             }
         }
     }

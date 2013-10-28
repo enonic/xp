@@ -31,6 +31,8 @@ public final class ValueTypes
 
     public static final AttachmentName ATTACHMENT_NAME = new AttachmentName( 11 );
 
+    public static final EntityId ENTITY_ID = new EntityId( 12 );
+
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
 
     private static final Map<java.lang.String, ValueType> typesByName = new HashMap<>();

@@ -131,6 +131,17 @@ public abstract class Value<T>
     }
 
     /**
+     * Attempts to return value as com.enonic.wem.api.entity.EntityId using casting.
+     *
+     * @throws ClassCastException if value is not of type com.enonic.wem.api.entity.EntityId.
+     */
+    public com.enonic.wem.api.entity.EntityId getEntityId()
+        throws ClassCastException
+    {
+        return (com.enonic.wem.api.entity.EntityId) object;
+    }
+
+    /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
      *
      * @throws com.enonic.wem.api.data.type.InconvertibleValueException
@@ -159,6 +170,22 @@ public abstract class Value<T>
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.ContentId.GET );
+        }
+        return converted;
+    }
+
+    /**
+     * Attempts to return value as com.enonic.wem.api.entity.EntityId, using best effort converting if value is not of type com.enonic.wem.api.entity.EntityId.
+     *
+     * @throws InconvertibleValueException if value is not convertible to com.enonic.wem.api.entity.EntityId.
+     */
+    public com.enonic.wem.api.entity.EntityId asEntityId()
+        throws InconvertibleValueException
+    {
+        final com.enonic.wem.api.entity.EntityId converted = JavaTypeConverter.EntityId.GET.convertFrom( object );
+        if ( object != null && converted == null )
+        {
+            throw new InconvertibleValueException( object, JavaTypeConverter.EntityId.GET );
         }
         return converted;
     }
@@ -400,6 +427,20 @@ public abstract class Value<T>
         public ContentId( final java.lang.String value )
         {
             super( ValueTypes.CONTENT_ID, com.enonic.wem.api.content.ContentId.from( value ) );
+        }
+    }
+
+    public static final class EntityId
+        extends Value<com.enonic.wem.api.entity.EntityId>
+    {
+        public EntityId( final com.enonic.wem.api.entity.EntityId value )
+        {
+            super( ValueTypes.ENTITY_ID, value );
+        }
+
+        public EntityId( final java.lang.String value )
+        {
+            super( ValueTypes.ENTITY_ID, com.enonic.wem.api.entity.EntityId.from( value ) );
         }
     }
 
