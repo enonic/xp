@@ -6,26 +6,21 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.DeleteNodeByPath;
+import com.enonic.wem.api.command.entity.DeleteNodeResult;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
-import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 
 public class DeleteMixinHandlerTest
     extends AbstractCommandHandlerTest
 {
     private DeleteMixinHandler handler;
 
-    private NodeJcrDao nodeDao;
+    //private NodeJcrDao nodeDao;
 
     @Before
     public void setUp()
@@ -34,18 +29,20 @@ public class DeleteMixinHandlerTest
         super.client = Mockito.mock( Client.class );
         super.initialize();
 
-        this.nodeDao = Mockito.mock( NodeJcrDao.class );
+        // this.nodeDao = Mockito.mock( NodeJcrDao.class );
 
         handler = new DeleteMixinHandler();
         handler.setContext( this.context );
-        handler.setNodeJcrDao( nodeDao );
+        //handler.setNodeJcrDao( nodeDao );
     }
 
 
     @Test
-    public void deleteSingleMixin()
+    public void delete_given_mixin_then_delete_node_by_path()
         throws Exception
     {
+        Mockito.when( client.execute( Mockito.isA( DeleteNodeByPath.class ) ) ).thenReturn( DeleteNodeResult.SUCCESS );
+
         // exercise
         final MixinName name = MixinName.from( "mixin" );
         final DeleteMixin command = Commands.mixin().delete().name( name );
@@ -54,31 +51,30 @@ public class DeleteMixinHandlerTest
         this.handler.handle();
 
         // verify
-        Mockito.verify( nodeDao, only() ).deleteNodeByPath( isA( NodePath.class ) );
+        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( DeleteNodeByPath.class ) );
 
         final DeleteMixinResult result = command.getResult();
         assertEquals( DeleteMixinResult.SUCCESS, result );
     }
 
     @Test
-    public void deleteMissingMixin()
+    public void delete_given_no_node_found_then_not_found()
         throws Exception
     {
+        Mockito.when( client.execute( Mockito.isA( DeleteNodeByPath.class ) ) ).thenReturn( DeleteNodeResult.NOT_FOUND );
+
         // exercise
-        final NodePath notFoundName = new NodePath( "/mixins/not_found_mixin" );
-
-        Mockito.doThrow( new NoNodeAtPathFound( notFoundName ) ).
-            when( nodeDao ).deleteNodeByPath( eq( notFoundName ) );
-
-        final DeleteMixin command = Commands.mixin().delete().name( MixinName.from( "not_found_mixin" ) );
+        final MixinName name = MixinName.from( "mixin" );
+        final DeleteMixin command = Commands.mixin().delete().name( name );
 
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        Mockito.verify( nodeDao, times( 1 ) ).deleteNodeByPath( isA( NodePath.class ) );
+        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( DeleteNodeByPath.class ) );
 
-        DeleteMixinResult result = command.getResult();
+        final DeleteMixinResult result = command.getResult();
         assertEquals( DeleteMixinResult.NOT_FOUND, result );
     }
+
 }

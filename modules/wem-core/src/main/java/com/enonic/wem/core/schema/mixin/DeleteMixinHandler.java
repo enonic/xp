@@ -1,48 +1,39 @@
 package com.enonic.wem.core.schema.mixin;
 
-import com.google.common.annotations.VisibleForTesting;
-
+import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.DeleteNodeByPath;
+import com.enonic.wem.api.command.entity.DeleteNodeResult;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.dao.NodeDao;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
 
 public final class DeleteMixinHandler
     extends CommandHandler<DeleteMixin>
 {
-    private NodeDao nodeDao;
-
-    @VisibleForTesting
-    public void setNodeJcrDao( NodeJcrDao nodeDao )
-    {
-        this.nodeDao = nodeDao;
-    }
-
     @Override
     public void handle()
         throws Exception
     {
-        if ( this.nodeDao == null )
-        {
-            nodeDao = new NodeJcrDao( context.getJcrSession() );
-        }
-
         final MixinName mixinName = command.getName();
-        try
-        {
 
-            nodeDao.deleteNodeByPath( new NodePath( "/mixins/" + mixinName.toString() ) );
-            context.getJcrSession().save();
-            command.setResult( DeleteMixinResult.SUCCESS );
-        }
-        catch ( NoNodeAtPathFound e )
+        final DeleteNodeByPath deleteNodeByPathCommand =
+            Commands.node().delete().byPath( new NodePath( "/mixins/" + mixinName.toString() ) );
+
+        final DeleteNodeResult result = context.getClient().execute( deleteNodeByPathCommand );
+
+        switch ( result )
         {
-            command.setResult( DeleteMixinResult.NOT_FOUND );
+            case SUCCESS:
+                command.setResult( DeleteMixinResult.SUCCESS );
+                break;
+            case NOT_FOUND:
+                command.setResult( DeleteMixinResult.NOT_FOUND );
+                break;
+            default:
+                command.setResult( DeleteMixinResult.UNABLE_TO_DELETE );
         }
     }
 }

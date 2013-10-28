@@ -17,4 +17,10 @@ public class NodeCommands
     {
         return new NodeGetCommands();
     }
+
+    public NodeDeleteCommands delete()
+    {
+        return new NodeDeleteCommands();
+    }
+
 }

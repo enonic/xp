@@ -2,6 +2,7 @@ package com.enonic.wem.api.entity;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.data.DataPath;
@@ -11,8 +12,7 @@ public class EntityIndexConfig
 {
     private final String analyzer;
 
-    // TODO: Replace with immutable Map from Guava
-    private final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs;
+    private final ImmutableMap<DataPath, PropertyIndexConfig> propertyIndexConfigs;
 
     public static Builder newEntityIndexConfig()
     {
@@ -21,9 +21,8 @@ public class EntityIndexConfig
 
     private EntityIndexConfig( final Builder builder )
     {
-
         this.analyzer = builder.analyzer;
-        this.propertyIndexConfigs = builder.propertyIndexConfigs;
+        this.propertyIndexConfigs = ImmutableMap.copyOf( builder.propertyIndexConfigs );
     }
 
     public String getAnalyzer()

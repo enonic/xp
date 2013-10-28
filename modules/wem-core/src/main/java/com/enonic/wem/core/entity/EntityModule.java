@@ -13,6 +13,8 @@ public final class EntityModule
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( CreateNodeHandler.class );
         commands.add( UpdateNodeHandler.class );
+        commands.add( DeleteNodeByPathHandler.class );
+        commands.add( DeleteNodeByIdHandler.class );
         commands.add( GetNodeByIdHandler.class );
         commands.add( GetNodeByPathHandler.class );
         commands.add( GetNodesByIdsHandler.class );
