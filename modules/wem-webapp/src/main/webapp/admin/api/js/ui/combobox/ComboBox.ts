@@ -259,7 +259,7 @@ module api_ui_combobox {
             this.selectOption(item);
         }
 
-        private selectOption(item:OptionData<T>) {
+        selectOption(item:OptionData<T>) {
             if (!this.canSelect(item)) {
                 return;
             }
@@ -368,9 +368,11 @@ module api_ui_combobox {
         }
 
         private removeSelectedItem(item:OptionData<T>) {
-            this.selectedData = this.selectedData.filter((element:OptionData<T>, index:number) => {
-                return element != item;
-            });
+            var itemIndex = this.selectedData.indexOf(item);
+            if (itemIndex < 0) {
+                return;
+            }
+            this.selectedData.splice(itemIndex, 1);
 
             this.updateDropdownStyles();
 
