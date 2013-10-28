@@ -45,7 +45,7 @@ public class NodeIndexDocumentFactory
 
     public Collection<IndexDocument2> create( final Node node )
     {
-        node.validateForPersistence();
+        node.validateForIndexing();
 
         Set<IndexDocument2> indexDocuments = Sets.newHashSet();
 
@@ -72,16 +72,23 @@ public class NodeIndexDocumentFactory
 
     private void addNodeMetaData( final Node node, final IndexDocument2.Builder builder )
     {
-        // TODO: Add the rest of the metadata
+        if ( node.getCreatedTime() != null )
+        {
+            builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY_NAME, new Value.DateTime( node.getCreatedTime() ),
+                                                                 metadataPropertyIndexConfig ) );
+        }
 
-        builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY_NAME, new Value.DateTime( node.getCreatedTime() ),
-                                                             metadataPropertyIndexConfig ) );
+        if ( node.path() != null )
+        {
+            builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_NAME, new Value.String( node.path().toString() ),
+                                                                 metadataPropertyIndexConfig ) );
+        }
 
-        builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_NAME, new Value.String( node.path().toString() ),
-                                                             metadataPropertyIndexConfig ) );
-
-        builder.addEntries( IndexDocumentItemFactory.create( PARENT_PROPERTY_NAME, new Value.String( node.parent().toString() ),
-                                                             metadataPropertyIndexConfig ) );
+        if ( node.parent() != null )
+        {
+            builder.addEntries( IndexDocumentItemFactory.create( PARENT_PROPERTY_NAME, new Value.String( node.parent().toString() ),
+                                                                 metadataPropertyIndexConfig ) );
+        }
 
         if ( node.getCreator() != null )
         {

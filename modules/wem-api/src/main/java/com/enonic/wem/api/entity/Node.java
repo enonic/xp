@@ -42,9 +42,19 @@ public final class Node
         this.icon = builder.icon;
     }
 
+    public void validateForIndexing()
+    {
+        Preconditions.checkNotNull( this.id, "Id must be set" );
+        Preconditions.checkNotNull( this.entityIndexConfig, "EntityIndexConfig must be set" );
+    }
+
     public void validateForPersistence()
     {
-        Preconditions.checkNotNull( this.createdTime, "createdTime must be specified" );
+        Preconditions.checkNotNull( this.createdTime, "createdTime must be set" );
+        Preconditions.checkNotNull( this.id, "Id must be set" );
+        Preconditions.checkNotNull( this.name, "Name must be set" );
+        Preconditions.checkNotNull( this.creator, "creator must be set" );
+        Preconditions.checkNotNull( this.parent, "parent must be set" );
     }
 
     public String name()
@@ -86,6 +96,7 @@ public final class Node
     {
         return icon;
     }
+
 
     @Override
     public void checkIllegalEdit( final Node to )

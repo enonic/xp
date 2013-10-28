@@ -35,7 +35,15 @@ public class Entity
             }
         }
 
-        this.entityIndexConfig = builder.entityIndexConfig;
+        if ( builder.entityIndexConfig != null )
+        {
+            this.entityIndexConfig = builder.entityIndexConfig;
+        }
+        else
+        {
+            this.entityIndexConfig = EntityIndexConfig.newEntityIndexConfig().build();
+        }
+
     }
 
     public EntityId id()
