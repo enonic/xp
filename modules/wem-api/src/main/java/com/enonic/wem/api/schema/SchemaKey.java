@@ -52,6 +52,30 @@ public final class SchemaKey
         return localName;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final SchemaKey schemaKey = (SchemaKey) o;
+
+        return refString.equals( schemaKey.refString );
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return refString.hashCode();
+    }
+
     public String toString()
     {
         return refString;

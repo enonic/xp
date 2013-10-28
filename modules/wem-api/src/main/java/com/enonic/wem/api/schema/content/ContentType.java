@@ -2,18 +2,22 @@ package com.enonic.wem.api.schema.content;
 
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
+import com.enonic.wem.api.support.illegaledit.IllegalEdit;
+import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
+import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static com.enonic.wem.api.form.Form.newForm;
 
 public final class ContentType
     extends BaseSchema<ContentTypeName>
-    implements Schema
+    implements Schema, IllegalEditAware<ContentType>
 {
     private final ContentTypeName superType;
 
@@ -29,6 +33,8 @@ public final class ContentType
 
     private final String contentDisplayNameScript;
 
+    private final ImmutableList<ContentTypeName> inheritors;
+
     private ContentType( final Builder builder )
     {
         super( builder );
@@ -41,6 +47,7 @@ public final class ContentType
         {
             this.superType = builder.superType;
         }
+        this.inheritors = builder.inheritors.build();
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
         this.allowChildContent = builder.allowChildContent;
@@ -59,6 +66,22 @@ public final class ContentType
     public ContentTypeName getQualifiedName()
     {
         return ContentTypeName.from( getName() );
+    }
+
+    @Override
+    public boolean hasChildren()
+    {
+        return hasInheritors();
+    }
+
+    public boolean hasInheritors()
+    {
+        return inheritors.size() > 0;
+    }
+
+    public boolean inherit( final ContentTypeName contentType )
+    {
+        return this.superType.equals( contentType );
     }
 
     public ContentTypeName getSuperType()
@@ -94,6 +117,19 @@ public final class ContentType
     public String getContentDisplayNameScript()
     {
         return contentDisplayNameScript;
+    }
+
+    @Override
+    public void checkIllegalEdit( final ContentType to )
+        throws IllegalEditException
+    {
+        IllegalEdit.check( "id", this.getId(), to.getId(), ContentType.class );
+        IllegalEdit.check( "schemaKey", this.getSchemaKey(), to.getSchemaKey(), ContentType.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), ContentType.class );
+        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), ContentType.class );
+        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), ContentType.class );
+        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), ContentType.class );
+        IllegalEdit.check( "inheritors", this.inheritors, to.inheritors, ContentType.class );
     }
 
     @Override
@@ -140,6 +176,8 @@ public final class ContentType
 
         private String contentDisplayNameScript;
 
+        private ImmutableList.Builder<ContentTypeName> inheritors = new ImmutableList.Builder<>();
+
         private Builder()
         {
             super();
@@ -155,6 +193,8 @@ public final class ContentType
             this.isFinal = source.isFinal();
             this.allowChildContent = source.allowChildContent();
             this.isBuiltIn = source.isBuiltIn();
+            this.inheritors = ImmutableList.builder();
+            this.inheritors.addAll( source.inheritors );
 
             this.superType = source.getSuperType();
             if ( source.form() != null )
@@ -227,6 +267,21 @@ public final class ContentType
         public Builder form( final Form form )
         {
             this.formBuilder = newForm( form );
+            return this;
+        }
+
+        public Builder addInheritor( final ContentTypeName value )
+        {
+            this.inheritors.add( value );
+            return this;
+        }
+
+        public Builder addInheritor( final ContentTypeNames inheritors )
+        {
+            for ( ContentTypeName inheritor : inheritors )
+            {
+                this.inheritors.add( inheritor );
+            }
             return this;
         }
 

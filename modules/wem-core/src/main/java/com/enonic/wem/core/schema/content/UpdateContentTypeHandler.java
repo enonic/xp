@@ -17,7 +17,6 @@ import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.schema.content.validator.ContentTypeValidator.newContentTypeValidator;
 
-
 public final class UpdateContentTypeHandler
     extends CommandHandler<UpdateContentType>
 {
@@ -41,6 +40,7 @@ public final class UpdateContentTypeHandler
             final ContentType edited = editor.edit( persistedContentType );
             if ( edited != null )
             {
+                persistedContentType.checkIllegalEdit( edited );
                 validate( edited, session );
                 contentTypeDao.update( edited, session );
                 session.save();

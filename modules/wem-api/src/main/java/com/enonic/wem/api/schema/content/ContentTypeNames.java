@@ -126,7 +126,7 @@ public final class ContentTypeNames
         }
     }
 
-    public static Builder newQualifiedContentTypeNames()
+    public static Builder newContentTypeNames()
     {
         return new Builder();
     }

@@ -30,6 +30,12 @@ public class Mixin
         return MixinName.from( getName() );
     }
 
+    @Override
+    public boolean hasChildren()
+    {
+        return false;
+    }
+
     public FormItems getFormItems()
     {
         return formItems;

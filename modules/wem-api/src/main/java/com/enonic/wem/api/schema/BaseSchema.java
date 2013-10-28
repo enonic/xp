@@ -6,30 +6,28 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.Name;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public abstract class BaseSchema<T extends SchemaName>
-implements Schema
+    implements Schema
 {
-    private final SchemaId id;
+    final SchemaId id;
 
-    private final SchemaName name;
+    final SchemaName name;
 
-    private final String displayName;
+    final String displayName;
 
-    private final DateTime createdTime;
+    final DateTime createdTime;
 
-    private final DateTime modifiedTime;
+    final DateTime modifiedTime;
 
-    private final UserKey creator;
+    final UserKey creator;
 
-    private final UserKey modifier;
+    final UserKey modifier;
 
-    private final Icon icon;
+    final Icon icon;
 
-    protected BaseSchema( Builder builder )
+    protected BaseSchema( final Builder builder )
     {
         this.id = builder.id;
         this.name = builder.name;

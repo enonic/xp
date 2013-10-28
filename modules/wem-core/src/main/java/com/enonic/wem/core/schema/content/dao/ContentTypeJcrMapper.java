@@ -37,8 +37,21 @@ class ContentTypeJcrMapper
     ContentType toContentType( final Node contentTypeNode )
         throws RepositoryException
     {
+        return toContentType( contentTypeNode, null );
+    }
+
+    ContentType toContentType( final Node contentTypeNode, final ContentTypeInheritorResolver contentTypeInheritorResolver )
+        throws RepositoryException
+    {
         final String contentTypeJson = contentTypeNode.getProperty( CONTENT_TYPE ).getString();
-        final ContentType contentType = jsonSerializer.toObject( contentTypeJson );
+        ContentType contentType = jsonSerializer.toObject( contentTypeJson );
+        if ( contentTypeInheritorResolver != null )
+        {
+            contentType = ContentType.newContentType( contentType ).
+                addInheritor( contentTypeInheritorResolver.resolveInheritors( contentType ) ).
+                build();
+        }
+
         final Icon icon = iconJcrMapper.toIcon( contentTypeNode );
         return newContentType( contentType ).
             id( new SchemaId( contentTypeNode.getIdentifier() ) ).

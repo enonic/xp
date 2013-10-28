@@ -49,6 +49,12 @@ public final class RelationshipType
         return RelationshipTypeName.from( getName() );
     }
 
+    @Override
+    public boolean hasChildren()
+    {
+        return false;
+    }
+
     public String getFromSemantic()
     {
         return fromSemantic;

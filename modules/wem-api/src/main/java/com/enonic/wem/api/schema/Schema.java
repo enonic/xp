@@ -21,4 +21,6 @@ public interface Schema
 
     DateTime getModifiedTime();
 
+    boolean hasChildren();
+
 }

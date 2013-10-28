@@ -12,9 +12,12 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.jcr.JcrHelper;
+
+import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static com.enonic.wem.api.schema.content.ContentTypes.newContentTypes;
 
 
 final class ContentTypeDaoHandlerSelect
@@ -28,10 +31,11 @@ final class ContentTypeDaoHandlerSelect
     ContentTypes select( final ContentTypeNames contentTypeNames )
         throws RepositoryException
     {
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( doFetchAll() );
         final List<ContentType> contentTypeList = Lists.newArrayList();
         for ( ContentTypeName contentTypeName : contentTypeNames )
         {
-            final ContentType contentType = doSelect( contentTypeName );
+            final ContentType contentType = doSelect( contentTypeName, contentTypeInheritorResolver );
             if ( contentType != null )
             {
                 contentTypeList.add( contentType );
@@ -40,7 +44,7 @@ final class ContentTypeDaoHandlerSelect
         return ContentTypes.from( contentTypeList );
     }
 
-    private ContentType doSelect( final ContentTypeName contentTypeName )
+    private ContentType doSelect( final ContentTypeName contentTypeName, final ContentTypeInheritorResolver contentTypeInheritorResolver )
         throws RepositoryException
     {
         final Node contentTypeNode = this.getContentTypeNode( contentTypeName );
@@ -49,10 +53,10 @@ final class ContentTypeDaoHandlerSelect
             return null;
         }
 
-        return this.contentTypeJcrMapper.toContentType( contentTypeNode );
+        return this.contentTypeJcrMapper.toContentType( contentTypeNode, contentTypeInheritorResolver );
     }
 
-    ContentTypes selectAll()
+    private ContentTypes doFetchAll()
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
@@ -64,10 +68,24 @@ final class ContentTypeDaoHandlerSelect
         while ( contentTypeNodes.hasNext() )
         {
             final Node contentTypeNode = contentTypeNodes.nextNode();
-            final ContentType contentType = this.contentTypeJcrMapper.toContentType( contentTypeNode );
+            final ContentType contentType = this.contentTypeJcrMapper.toContentType( contentTypeNode, null );
             contentTypeList.add( contentType );
         }
 
         return ContentTypes.from( contentTypeList );
+    }
+
+    ContentTypes selectAll()
+        throws RepositoryException
+    {
+        final ContentTypes contentTypes = doFetchAll();
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( contentTypes );
+        final ContentTypes.Builder builder = newContentTypes();
+        for ( ContentType contentType : contentTypes )
+        {
+            builder.add(
+                newContentType( contentType ).addInheritor( contentTypeInheritorResolver.resolveInheritors( contentType ) ).build() );
+        }
+        return builder.build();
     }
 }

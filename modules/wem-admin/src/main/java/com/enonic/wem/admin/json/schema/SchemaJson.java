@@ -29,16 +29,19 @@ public class SchemaJson
 
     private String iconUrl;
 
+    private boolean hasChildren;
+
     public SchemaJson( Schema schema )
     {
-        this.setKey( schema.getSchemaKey().toString() );
-        this.setName( schema.getName() );
-        this.setQualifyName( schema.getQualifiedName().toString() );
-        this.setDisplayName( schema.getDisplayName() );
-        this.setType( schema.getClass().getSimpleName() );
-        this.setCreatedTime( schema.getCreatedTime() );
-        this.setModifiedTime( schema.getModifiedTime() );
-        this.setIconUrl( SchemaImageUriResolver.resolve( schema.getSchemaKey() ) );
+        this.key = schema.getSchemaKey().toString();
+        this.name = schema.getName();
+        this.qualifyName = schema.getQualifiedName().toString();
+        this.displayName = schema.getDisplayName();
+        this.type = schema.getClass().getSimpleName();
+        this.createdTime = schema.getCreatedTime();
+        this.modifiedTime = schema.getModifiedTime();
+        this.iconUrl = SchemaImageUriResolver.resolve( schema.getSchemaKey() );
+        this.hasChildren = schema.hasChildren();
     }
 
     public String getKey()
@@ -129,6 +132,11 @@ public class SchemaJson
     public void setIconUrl( final String iconUrl )
     {
         this.iconUrl = iconUrl;
+    }
+
+    public boolean hasChildren()
+    {
+        return this.hasChildren;
     }
 
     @Override
