@@ -141,6 +141,15 @@ public final class ContentTypeNames
             return this;
         }
 
+        public Builder addAll( final Iterable<ContentTypeName> iterable )
+        {
+            for ( final ContentTypeName contentTypeName : iterable )
+            {
+                this.set.add( contentTypeName );
+            }
+            return this;
+        }
+
         public ContentTypeNames build()
         {
             return new ContentTypeNames( this.set.build() );

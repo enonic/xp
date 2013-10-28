@@ -2,7 +2,6 @@ package com.enonic.wem.api.schema.content;
 
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
@@ -33,7 +32,7 @@ public final class ContentType
 
     private final String contentDisplayNameScript;
 
-    private final ImmutableList<ContentTypeName> inheritors;
+    private final boolean hasInheritors;
 
     private ContentType( final Builder builder )
     {
@@ -47,7 +46,7 @@ public final class ContentType
         {
             this.superType = builder.superType;
         }
-        this.inheritors = builder.inheritors.build();
+        this.hasInheritors = builder.inheritors;
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
         this.allowChildContent = builder.allowChildContent;
@@ -76,7 +75,7 @@ public final class ContentType
 
     public boolean hasInheritors()
     {
-        return inheritors.size() > 0;
+        return this.hasInheritors;
     }
 
     public boolean inherit( final ContentTypeName contentType )
@@ -129,7 +128,7 @@ public final class ContentType
         IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), ContentType.class );
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), ContentType.class );
         IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), ContentType.class );
-        IllegalEdit.check( "inheritors", this.inheritors, to.inheritors, ContentType.class );
+        IllegalEdit.check( "inheritors", this.hasInheritors(), to.hasInheritors(), ContentType.class );
     }
 
     @Override
@@ -176,7 +175,7 @@ public final class ContentType
 
         private String contentDisplayNameScript;
 
-        private ImmutableList.Builder<ContentTypeName> inheritors = new ImmutableList.Builder<>();
+        private boolean inheritors;
 
         private Builder()
         {
@@ -193,15 +192,13 @@ public final class ContentType
             this.isFinal = source.isFinal();
             this.allowChildContent = source.allowChildContent();
             this.isBuiltIn = source.isBuiltIn();
-            this.inheritors = ImmutableList.builder();
-            this.inheritors.addAll( source.inheritors );
-
+            this.inheritors = source.hasInheritors();
             this.superType = source.getSuperType();
             if ( source.form() != null )
             {
                 this.formBuilder = newForm( source.form() );
             }
-            this.contentDisplayNameScript = source.contentDisplayNameScript;
+            this.contentDisplayNameScript = source.getContentDisplayNameScript();
         }
 
         public Builder name( final ContentTypeName value )
@@ -270,18 +267,9 @@ public final class ContentType
             return this;
         }
 
-        public Builder addInheritor( final ContentTypeName value )
+        public Builder inheritors( final boolean value )
         {
-            this.inheritors.add( value );
-            return this;
-        }
-
-        public Builder addInheritor( final ContentTypeNames inheritors )
-        {
-            for ( ContentTypeName inheritor : inheritors )
-            {
-                this.inheritors.add( inheritor );
-            }
+            this.inheritors = value;
             return this;
         }
 

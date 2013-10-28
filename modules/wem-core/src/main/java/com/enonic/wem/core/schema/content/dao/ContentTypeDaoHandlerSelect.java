@@ -83,8 +83,8 @@ final class ContentTypeDaoHandlerSelect
         final ContentTypes.Builder builder = newContentTypes();
         for ( ContentType contentType : contentTypes )
         {
-            builder.add(
-                newContentType( contentType ).addInheritor( contentTypeInheritorResolver.resolveInheritors( contentType ) ).build() );
+            builder.add( newContentType( contentType ).inheritors(
+                contentTypeInheritorResolver.resolveInheritors( contentType ).isNotEmpty() ).build() );
         }
         return builder.build();
     }

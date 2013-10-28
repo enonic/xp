@@ -48,7 +48,7 @@ class ContentTypeJcrMapper
         if ( contentTypeInheritorResolver != null )
         {
             contentType = ContentType.newContentType( contentType ).
-                addInheritor( contentTypeInheritorResolver.resolveInheritors( contentType ) ).
+                inheritors( contentTypeInheritorResolver.resolveInheritors( contentType ).isNotEmpty() ).
                 build();
         }
 
