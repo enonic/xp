@@ -1,5 +1,7 @@
 package com.enonic.wem.api.command.module;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.module.ModuleKey;
 
@@ -35,5 +37,7 @@ public final class UpdateModule
     @Override
     public void validate()
     {
+        Preconditions.checkNotNull( this.moduleKey, "module key cannot be null" );
+        Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 }
