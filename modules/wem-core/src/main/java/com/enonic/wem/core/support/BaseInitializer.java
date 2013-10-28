@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.QualifiedName;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 public abstract class BaseInitializer
