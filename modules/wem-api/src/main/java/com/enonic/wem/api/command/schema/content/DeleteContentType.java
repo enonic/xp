@@ -5,19 +5,19 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class DeleteContentType
     extends Command<DeleteContentTypeResult>
 {
-    private QualifiedContentTypeName contentTypeName;
+    private ContentTypeName contentTypeName;
 
-    public QualifiedContentTypeName getName()
+    public ContentTypeName getName()
     {
         return this.contentTypeName;
     }
 
-    public DeleteContentType name( final QualifiedContentTypeName contentTypeName )
+    public DeleteContentType name( final ContentTypeName contentTypeName )
     {
         this.contentTypeName = contentTypeName;
         return this;

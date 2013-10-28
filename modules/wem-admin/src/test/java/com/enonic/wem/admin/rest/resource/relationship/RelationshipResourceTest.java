@@ -19,7 +19,7 @@ import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
 import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.relationship.dao.RelationshipIdFactory;
 
 import static com.enonic.wem.api.relationship.Relationship.newRelationship;
@@ -44,7 +44,7 @@ public class RelationshipResourceTest
         Relationships relationships = Relationships.from( newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.DEFAULT ).
             build() );
 
         Mockito.when( client.execute( isA( GetRelationships.class ) ) ).thenReturn( relationships );
@@ -60,10 +60,10 @@ public class RelationshipResourceTest
     {
         Relationships relationships = Relationships.from( newRelationship().fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.DEFAULT ).
             build(), newRelationship().fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "333" ) ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.DEFAULT ).
             build() );
 
         Mockito.when( client.execute( isA( GetRelationships.class ) ) ).thenReturn( relationships );
@@ -102,7 +102,7 @@ public class RelationshipResourceTest
         throws Exception
     {
         RelationshipKey relationshipKey = RelationshipKey.newRelationshipKey().
-            type( QualifiedRelationshipTypeName.LIKE ).
+            type( RelationshipTypeName.LIKE ).
             fromContent( ContentId.from( "123" ) ).
             toContent( ContentId.from( "321" ) ).
             build();

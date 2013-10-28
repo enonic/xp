@@ -5,21 +5,21 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public final class GetMixin
     extends Command<Mixin>
 {
-    private QualifiedMixinName qualifiedName;
+    private MixinName name;
 
-    public QualifiedMixinName getQualifiedName()
+    public MixinName getName()
     {
-        return this.qualifiedName;
+        return this.name;
     }
 
-    public GetMixin qualifiedName( final QualifiedMixinName value )
+    public GetMixin name( final MixinName value )
     {
-        this.qualifiedName = value;
+        this.name = value;
         return this;
     }
 
@@ -37,19 +37,19 @@ public final class GetMixin
         }
 
         final GetMixin that = (GetMixin) o;
-        return Objects.equal( this.qualifiedName, that.qualifiedName );
+        return Objects.equal( this.name, that.name );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedName );
+        return Objects.hashCode( this.name );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedName, "qualifiedName cannot be null" );
+        Preconditions.checkNotNull( this.name, "name cannot be null" );
     }
 
 }

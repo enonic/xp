@@ -35,9 +35,9 @@ import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.tree.Tree;
@@ -61,9 +61,9 @@ public class ContentTypeResource
     public ContentTypeJson get( @QueryParam("qualifiedName") final String qualifiedNameAsString,
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
-        final QualifiedContentTypeName qualifiedName = QualifiedContentTypeName.from( qualifiedNameAsString );
+        final ContentTypeName qualifiedName = ContentTypeName.from( qualifiedNameAsString );
         final GetContentTypes getContentTypes = Commands.contentType().get().
-            qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) ).
+            qualifiedNames( ContentTypeNames.from( qualifiedName ) ).
             mixinReferencesToFormItems( mixinReferencesToFormItems );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
@@ -78,9 +78,9 @@ public class ContentTypeResource
     @Path("config")
     public ContentTypeConfigJson getConfig( @QueryParam("qualifiedName") final String qualifiedNameAsString )
     {
-        final QualifiedContentTypeName qualifiedName = QualifiedContentTypeName.from( qualifiedNameAsString );
+        final ContentTypeName qualifiedName = ContentTypeName.from( qualifiedNameAsString );
         final GetContentTypes getContentTypes = Commands.contentType().get().
-            qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) ).
+            qualifiedNames( ContentTypeNames.from( qualifiedName ) ).
             mixinReferencesToFormItems( false );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
@@ -106,11 +106,10 @@ public class ContentTypeResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
-        final QualifiedContentTypeNames qualifiedContentTypeNames =
-            QualifiedContentTypeNames.from( params.getQualifiedNames().toArray( new String[0] ) );
+        final ContentTypeNames contentTypeNames = ContentTypeNames.from( params.getQualifiedNames().toArray( new String[0] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
-        for ( QualifiedContentTypeName contentTypeName : qualifiedContentTypeNames )
+        for ( ContentTypeName contentTypeName : contentTypeNames )
         {
             final DeleteContentType deleteContentType = Commands.contentType().delete().name( contentTypeName );
             final DeleteContentTypeResult result = client.execute( deleteContentType );
@@ -277,9 +276,9 @@ public class ContentTypeResource
         return new ValidateContentTypeJson( validationResult, contentType );
     }
 
-    private boolean contentTypeExists( final QualifiedContentTypeName qualifiedName )
+    private boolean contentTypeExists( final ContentTypeName qualifiedName )
     {
-        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) );
+        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( ContentTypeNames.from( qualifiedName ) );
         return !client.execute( getContentTypes ).isEmpty();
     }
 

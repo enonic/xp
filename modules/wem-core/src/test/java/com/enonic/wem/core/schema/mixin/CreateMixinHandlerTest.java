@@ -13,7 +13,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
 import static com.enonic.wem.api.form.Input.newInput;
@@ -61,9 +61,9 @@ public class CreateMixinHandlerTest
         // verify
         Mockito.verify( client, Mockito.atLeastOnce() ).execute( Mockito.isA( CreateNode.class ) );
 
-        QualifiedMixinName mixinName = command.getResult();
-        assertNotNull( mixinName );
-        assertEquals( "age", mixinName.toString() );
+        Mixin mixin = command.getResult();
+        assertNotNull( mixin );
+        assertEquals( "age", mixin.getName() );
     }
 
 }

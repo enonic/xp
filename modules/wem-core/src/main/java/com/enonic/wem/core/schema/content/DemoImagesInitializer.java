@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
@@ -68,7 +68,7 @@ public class DemoImagesInitializer
 
         final Attachment attachment = newAttachment().name( fileName ).binary( binary ).mimeType( "image/jpeg" ).build();
         final CreateContent createContent = Commands.content().create().
-            contentType( QualifiedContentTypeName.imageMedia() ).
+            contentType( ContentTypeName.imageMedia() ).
             displayName( displayName ).
             name( fileName ).
             parentContentPath( parent ).

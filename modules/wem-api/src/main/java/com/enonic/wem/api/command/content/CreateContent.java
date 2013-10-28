@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class CreateContent
     extends Command<CreateContentResult>
@@ -25,7 +25,7 @@ public final class CreateContent
 
     private ContentData contentData;
 
-    private QualifiedContentTypeName contentType;
+    private ContentTypeName contentType;
 
     private UserKey owner;
 
@@ -39,7 +39,7 @@ public final class CreateContent
 
     private Map<String, Attachment> attachments = Maps.newHashMap();
 
-    public CreateContent contentType( final QualifiedContentTypeName value )
+    public CreateContent contentType( final ContentTypeName value )
     {
         this.contentType = value;
         return this;
@@ -114,7 +114,7 @@ public final class CreateContent
         return parentContentPath;
     }
 
-    public QualifiedContentTypeName getContentType()
+    public ContentTypeName getContentType()
     {
         return contentType;
     }

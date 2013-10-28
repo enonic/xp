@@ -6,7 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class UpdateContentParams
 {
@@ -14,7 +14,7 @@ public class UpdateContentParams
 
     private String contentName;
 
-    private QualifiedContentTypeName qualifiedContentTypeName;
+    private ContentTypeName qualifiedContentTypeName;
 
     private JsonNode contentData;
 
@@ -42,14 +42,14 @@ public class UpdateContentParams
         this.contentName = contentName;
     }
 
-    public QualifiedContentTypeName getQualifiedContentTypeName()
+    public ContentTypeName getQualifiedContentTypeName()
     {
         return qualifiedContentTypeName;
     }
 
     public void setQualifiedContentTypeName( final String qualifiedContentTypeName )
     {
-        this.qualifiedContentTypeName = QualifiedContentTypeName.from( qualifiedContentTypeName );
+        this.qualifiedContentTypeName = ContentTypeName.from( qualifiedContentTypeName );
     }
 
     public JsonNode getContentData()

@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -24,7 +24,7 @@ public class RelationshipTest
         relationBuilder.creator( UserKey.from( "myStore:myUser" ) );
         relationBuilder.modifiedTime( DateTime.parse( "2012-01-01T12:00:00" ) );
         relationBuilder.modifier( UserKey.from( "myStore:myUser" ) );
-        relationBuilder.type( QualifiedRelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "like" ) );
         relationBuilder.property( "stars", "4" );
 
         // exercise
@@ -37,7 +37,7 @@ public class RelationshipTest
         assertEquals( DateTime.parse( "2012-01-01T12:00:00" ), relationship.getCreatedTime() );
         assertEquals( "myUser", relationship.getModifier().getLocalName() );
         assertEquals( DateTime.parse( "2012-01-01T12:00:00" ), relationship.getModifiedTime() );
-        assertEquals( "like", relationship.getType().getName() );
+        assertEquals( "like", relationship.getType().toString() );
         assertEquals( "4", relationship.getProperty( "stars" ) );
     }
 
@@ -48,7 +48,7 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.type( QualifiedRelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "like" ) );
         relationBuilder.managed( DataPath.from( "myData" ) );
 
         // exercise
@@ -68,7 +68,7 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.type( QualifiedRelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "like" ) );
 
         // exercise
         Relationship relationship = relationBuilder.build();
@@ -87,7 +87,7 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.type( QualifiedRelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "like" ) );
         relationBuilder.property( "key", null );
 
         // exercise
@@ -101,7 +101,7 @@ public class RelationshipTest
         final Relationship.Builder relationBuilder = Relationship.newRelationship();
         relationBuilder.fromContent( ContentId.from( "a" ) );
         relationBuilder.toContent( ContentId.from( "b" ) );
-        relationBuilder.type( QualifiedRelationshipTypeName.from( "like" ) );
+        relationBuilder.type( RelationshipTypeName.from( "like" ) );
         relationBuilder.property( null, "value" );
 
         // exercise

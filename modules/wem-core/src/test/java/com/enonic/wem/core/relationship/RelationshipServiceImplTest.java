@@ -23,9 +23,9 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
 import static com.enonic.wem.api.form.Input.newInput;
@@ -64,7 +64,7 @@ public class RelationshipServiceImplTest
 
         // setup: content type
         InputTypeConfig inputTypeConfig =
-            RelationshipConfig.newRelationshipConfig().relationshipType( QualifiedRelationshipTypeName.DEFAULT ).build();
+            RelationshipConfig.newRelationshipConfig().relationshipType( RelationshipTypeName.DEFAULT ).build();
 
         Form form = Form.newForm().
             addFormItem( newInput().name( "myRelated1" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( inputTypeConfig ).build() ).
@@ -92,7 +92,7 @@ public class RelationshipServiceImplTest
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();
         command.client( client );
         command.jcrSession( jcrSession );
-        command.contentType( QualifiedContentTypeName.from( "my_relations" ) );
+        command.contentType( ContentTypeName.from( "my_relations" ) );
         command.contentToUpdate( ContentId.from( "1" ) );
         command.contentBeforeEditing( dataBefore );
         command.contentAfterEditing( dataAfter );
@@ -102,7 +102,7 @@ public class RelationshipServiceImplTest
         Relationship createdRelationship = Relationship.newRelationship().
             creator( AccountKey.anonymous() ).
             createdTime( NOW ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.DEFAULT ).
             fromContent( ContentId.from( "1" ) ).
             toContent( ContentId.from( "333" ) ).
             managed( DataPath.from( "myRelated3" ) ).

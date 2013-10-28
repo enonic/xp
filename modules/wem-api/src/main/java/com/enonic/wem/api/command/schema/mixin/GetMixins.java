@@ -4,24 +4,24 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 
 public final class GetMixins
     extends Command<Mixins>
 {
-    private QualifiedMixinNames qualifiedMixinNames;
+    private MixinNames mixinNames;
 
     private boolean getAllContentTypes = false;
 
-    public QualifiedMixinNames getQualifiedMixinNames()
+    public MixinNames getMixinNames()
     {
-        return this.qualifiedMixinNames;
+        return this.mixinNames;
     }
 
-    public GetMixins qualifiedNames( final QualifiedMixinNames qualifiedNames )
+    public GetMixins qualifiedNames( final MixinNames qualifiedNames )
     {
-        this.qualifiedMixinNames = qualifiedNames;
+        this.mixinNames = qualifiedNames;
         return this;
     }
 
@@ -50,14 +50,13 @@ public final class GetMixins
         }
 
         final GetMixins that = (GetMixins) o;
-        return Objects.equal( this.qualifiedMixinNames, that.qualifiedMixinNames ) &&
-            ( this.getAllContentTypes == that.getAllContentTypes );
+        return Objects.equal( this.mixinNames, that.mixinNames ) && ( this.getAllContentTypes == that.getAllContentTypes );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedMixinNames, this.getAllContentTypes );
+        return Objects.hashCode( this.mixinNames, this.getAllContentTypes );
     }
 
     @Override
@@ -65,12 +64,11 @@ public final class GetMixins
     {
         if ( getAllContentTypes )
         {
-            Preconditions.checkArgument( this.qualifiedMixinNames == null,
-                                         "Cannot specify both get all and get content type qualifiedMixinNames" );
+            Preconditions.checkArgument( this.mixinNames == null, "Cannot specify both get all and get content type mixinNames" );
         }
         else
         {
-            Preconditions.checkNotNull( this.qualifiedMixinNames, "Content type cannot be null" );
+            Preconditions.checkNotNull( this.mixinNames, "Content type cannot be null" );
         }
     }
 

@@ -6,7 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class CreateContentParams
 {
@@ -16,7 +16,7 @@ public class CreateContentParams
 
     private ContentPath parentContentPath;
 
-    private QualifiedContentTypeName qualifiedContentTypeName;
+    private ContentTypeName qualifiedContentTypeName;
 
     private ArrayNode contentData;
 
@@ -55,14 +55,14 @@ public class CreateContentParams
         this.parentContentPath = ContentPath.from( parentContentPath );
     }
 
-    public QualifiedContentTypeName getQualifiedContentTypeName()
+    public ContentTypeName getQualifiedContentTypeName()
     {
         return qualifiedContentTypeName;
     }
 
     public void setQualifiedContentTypeName( final String qualifiedContentTypeName )
     {
-        this.qualifiedContentTypeName = QualifiedContentTypeName.from( qualifiedContentTypeName );
+        this.qualifiedContentTypeName = ContentTypeName.from( qualifiedContentTypeName );
     }
 
     public ArrayNode getContentData()

@@ -1,12 +1,12 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class PageTemplate
     extends Template<PageTemplateId>
 {
-    private final QualifiedContentTypeNames canRender;
+    private final ContentTypeNames canRender;
 
     private PageTemplate( final Builder builder )
     {
@@ -14,7 +14,7 @@ public final class PageTemplate
         this.canRender = builder.canRender;
     }
 
-    public QualifiedContentTypeNames getCanRender()
+    public ContentTypeNames getCanRender()
     {
         return canRender;
     }
@@ -27,13 +27,13 @@ public final class PageTemplate
     public static class Builder
         extends BaseTemplateBuilder<Builder, PageTemplateId>
     {
-        private QualifiedContentTypeNames canRender;
+        private ContentTypeNames canRender;
 
         private Builder()
         {
         }
 
-        public Builder canRender( final QualifiedContentTypeNames canRender )
+        public Builder canRender( final ContentTypeNames canRender )
         {
             this.canRender = canRender;
             return this;

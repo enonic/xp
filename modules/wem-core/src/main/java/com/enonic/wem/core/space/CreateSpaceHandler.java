@@ -9,7 +9,7 @@ import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -46,7 +46,7 @@ public final class CreateSpaceHandler
 
         final Content rootContent = newContent().
             path( ContentPath.rootOf( space.getName() ) ).
-            type( QualifiedContentTypeName.space() ).
+            type( ContentTypeName.space() ).
             createdTime( space.getCreatedTime() ).
             modifiedTime( space.getModifiedTime() ).
             displayName( space.getDisplayName() ).

@@ -14,7 +14,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
 
 import static junit.framework.Assert.assertEquals;
@@ -46,7 +46,7 @@ public class RelationshipJcrMapperTest
         Node relationshipNode = session.getRootNode().addNode( "relationship" );
 
         mapper.toJcr( Relationship.newRelationship().
-            type( QualifiedRelationshipTypeName.LINK ).
+            type( RelationshipTypeName.LINK ).
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             managed( DataPath.from( "mySet.myData" ) ).
@@ -72,7 +72,7 @@ public class RelationshipJcrMapperTest
         Node relationshipNode = session.getRootNode().addNode( "relationship" );
 
         mapper.toJcr( Relationship.newRelationship().
-            type( QualifiedRelationshipTypeName.LINK ).
+            type( RelationshipTypeName.LINK ).
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
             creator( AccountKey.superUser() ).
@@ -85,7 +85,7 @@ public class RelationshipJcrMapperTest
         // verify
         assertEquals( AccountKey.superUser(), relationship.getCreator() );
         assertEquals( NOW, relationship.getCreatedTime() );
-        assertEquals( QualifiedRelationshipTypeName.LINK, relationship.getType() );
+        assertEquals( RelationshipTypeName.LINK, relationship.getType() );
         assertEquals( ContentId.from( "111" ), relationship.getFromContent() );
         assertEquals( ContentId.from( "222" ), relationship.getToContent() );
     }

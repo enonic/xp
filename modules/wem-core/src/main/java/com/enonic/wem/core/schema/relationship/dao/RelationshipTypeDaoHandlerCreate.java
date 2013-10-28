@@ -5,7 +5,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.exception.SystemException;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -29,7 +29,7 @@ final class RelationshipTypeDaoHandlerCreate
     protected final void doHandle()
         throws RepositoryException
     {
-        final QualifiedRelationshipTypeName relationshipTypeName = relationshipType.getQualifiedName();
+        final RelationshipTypeName relationshipTypeName = relationshipType.getQualifiedName();
         if ( relationshipTypeExists( relationshipTypeName ) )
         {
             throw new SystemException( "RelationshipType already exists: {0}", relationshipTypeName.toString() );
@@ -39,11 +39,11 @@ final class RelationshipTypeDaoHandlerCreate
         this.relationshipTypeJcrMapper.toJcr( relationshipType, relationshipTypeNode );
     }
 
-    private Node createRelationshipTypeNode( final QualifiedRelationshipTypeName relationshipTypeName )
+    private Node createRelationshipTypeNode( final RelationshipTypeName relationshipTypeName )
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
         final Node relationshipTypesNode = rootNode.getNode( RelationshipTypeDao.RELATIONSHIP_TYPES_PATH );
-        return JcrHelper.getOrAddNode( relationshipTypesNode, relationshipTypeName.getName() );
+        return JcrHelper.getOrAddNode( relationshipTypesNode, relationshipTypeName.toString() );
     }
 }

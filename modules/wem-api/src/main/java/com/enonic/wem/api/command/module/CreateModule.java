@@ -9,7 +9,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class CreateModule
     extends Command<Module>
@@ -38,7 +38,7 @@ public final class CreateModule
 
     private ModuleKeys moduleDependencies;
 
-    private QualifiedContentTypeNames contentTypeDependencies;
+    private ContentTypeNames contentTypeDependencies;
 
     public static CreateModule fromModule( Module module )
     {
@@ -132,7 +132,7 @@ public final class CreateModule
         return this;
     }
 
-    public CreateModule contentTypeDependencies( final QualifiedContentTypeNames contentTypeDependencies )
+    public CreateModule contentTypeDependencies( final ContentTypeNames contentTypeDependencies )
     {
         this.contentTypeDependencies = contentTypeDependencies;
         return this;
@@ -198,7 +198,7 @@ public final class CreateModule
         return moduleDependencies;
     }
 
-    public QualifiedContentTypeNames getContentTypeDependencies()
+    public ContentTypeNames getContentTypeDependencies()
     {
         return contentTypeDependencies;
     }

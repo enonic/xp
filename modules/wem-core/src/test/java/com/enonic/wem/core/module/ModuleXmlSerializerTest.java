@@ -10,8 +10,8 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.AbstractSerializerTest;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 
@@ -71,7 +71,7 @@ public class ModuleXmlSerializerTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
-        final QualifiedContentTypeNames requiredCtypes = QualifiedContentTypeNames.from( "ctype1", "ctype2", "ctype3" );
+        final ContentTypeNames requiredCtypes = ContentTypeNames.from( "ctype1", "ctype2", "ctype3" );
         final ModuleKeys requiredModules = ModuleKeys.from( ModuleKey.from( "modA-1.0.0" ), ModuleKey.from( "modB-1.0.0" ) );
         return Module.newModule().
             moduleKey( ModuleKey.from( "mymodule-1.0.0" ) ).
@@ -83,7 +83,7 @@ public class ModuleXmlSerializerTest
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
             maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
             addModuleDependency( ModuleKey.from( "modulefoo-1.0.0" ) ).
-            addContentTypeDependency( QualifiedContentTypeName.from( "article" ) ).
+            addContentTypeDependency( ContentTypeName.from( "article" ) ).
             addModuleDependencies( requiredModules ).
             addContentTypeDependencies( requiredCtypes ).
             config( config ).

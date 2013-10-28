@@ -24,8 +24,8 @@ import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleSquareFilter;
@@ -64,7 +64,7 @@ public class ContentImageResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final QualifiedContentTypeName contentType = content.getType();
+        final ContentTypeName contentType = content.getType();
 
         if ( thumbnail )
         {
@@ -113,7 +113,7 @@ public class ContentImageResource
         return image == null ? content.getName() : image.getString();
     }
 
-    private Icon findRootContentTypeIcon( final QualifiedContentTypeName contentTypeName )
+    private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )
     {
         ContentType contentType = getContentType( contentTypeName );
         while ( contentType != null && contentType.getIcon() == null )
@@ -123,13 +123,13 @@ public class ContentImageResource
         return contentType == null ? null : contentType.getIcon();
     }
 
-    private ContentType getContentType( final QualifiedContentTypeName contentTypeName )
+    private ContentType getContentType( final ContentTypeName contentTypeName )
     {
         if ( contentTypeName == null )
         {
             return null;
         }
-        final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( contentTypeName );
+        final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentTypeName );
         return client.execute( contentType().get().qualifiedNames( qualifiedNames ) ).first();
     }
 

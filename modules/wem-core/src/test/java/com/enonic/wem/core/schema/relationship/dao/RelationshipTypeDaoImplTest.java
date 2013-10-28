@@ -5,10 +5,10 @@ import javax.jcr.Node;
 import org.junit.Test;
 
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.AbstractJcrTest;
@@ -36,8 +36,8 @@ public class RelationshipTypeDaoImplTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "person" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "person" ) ).
             build();
 
         // exercise
@@ -58,8 +58,8 @@ public class RelationshipTypeDaoImplTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "person" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "person" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
@@ -67,13 +67,13 @@ public class RelationshipTypeDaoImplTest
             name( "hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "thing" ) ).
             build();
         relationshipTypeDao.create( hates, session );
 
         // exercise
-        RelationshipTypes relationshipTypes = relationshipTypeDao.select( QualifiedRelationshipTypeNames.from( "like" ), session );
+        RelationshipTypes relationshipTypes = relationshipTypeDao.select( RelationshipTypeNames.from( "like" ), session );
         commit();
 
         // verify
@@ -93,8 +93,8 @@ public class RelationshipTypeDaoImplTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "thing" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
@@ -102,8 +102,8 @@ public class RelationshipTypeDaoImplTest
             name( "hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "thing" ) ).
             build();
         relationshipTypeDao.create( hates, session );
 
@@ -114,8 +114,8 @@ public class RelationshipTypeDaoImplTest
         // verify
         assertNotNull( relationshipTypes );
         assertEquals( 2, relationshipTypes.getSize() );
-        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "like" ) );
-        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "hate" ) );
+        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( RelationshipTypeName.from( "like" ) );
+        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( RelationshipTypeName.from( "hate" ) );
 
         assertEquals( "like", retrievedRelationshipType1.getName() );
         assertEquals( like, retrievedRelationshipType1 );
@@ -132,8 +132,8 @@ public class RelationshipTypeDaoImplTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "thing" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
@@ -141,21 +141,21 @@ public class RelationshipTypeDaoImplTest
             name( "hate" ).
             fromSemantic( "hates" ).
             toSemantic( "hated by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "mymodule:thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "thing" ) ).
             build();
         relationshipTypeDao.create( hates, session );
 
         // exercise
-        QualifiedRelationshipTypeNames names = QualifiedRelationshipTypeNames.from( "like", "hate" );
+        RelationshipTypeNames names = RelationshipTypeNames.from( "like", "hate" );
         RelationshipTypes relationshipTypes = relationshipTypeDao.select( names, session );
         commit();
 
         // verify
         assertNotNull( relationshipTypes );
         assertEquals( 2, relationshipTypes.getSize() );
-        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "like" ) );
-        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( QualifiedRelationshipTypeName.from( "hate" ) );
+        RelationshipType retrievedRelationshipType1 = relationshipTypes.get( RelationshipTypeName.from( "like" ) );
+        RelationshipType retrievedRelationshipType2 = relationshipTypes.get( RelationshipTypeName.from( "hate" ) );
 
         assertEquals( "like", retrievedRelationshipType1.getName() );
         assertEquals( like, retrievedRelationshipType1 );
@@ -172,13 +172,13 @@ public class RelationshipTypeDaoImplTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "thing" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
         // exercise
-        QualifiedRelationshipTypeNames name = QualifiedRelationshipTypeNames.from( "like" );
+        RelationshipTypeNames name = RelationshipTypeNames.from( "like" );
         RelationshipTypes relationshipTypesAfterCreate = relationshipTypeDao.select( name, session );
         assertNotNull( relationshipTypesAfterCreate );
         assertEquals( 1, relationshipTypesAfterCreate.getSize() );
@@ -186,23 +186,23 @@ public class RelationshipTypeDaoImplTest
         RelationshipType relationshipTypeUpdate = newRelationshipType( like ).
             fromSemantic( "accepts" ).
             toSemantic( "accepted by" ).
-            setAllowedFromTypes( QualifiedContentTypeNames.from( "worker" ) ).
-            setAllowedToTypes( QualifiedContentTypeNames.from( "task" ) ).
+            setAllowedFromTypes( ContentTypeNames.from( "worker" ) ).
+            setAllowedToTypes( ContentTypeNames.from( "task" ) ).
             build();
         relationshipTypeDao.update( relationshipTypeUpdate, session );
         commit();
 
         // verify
         RelationshipTypes relationshipTypesAfterUpdate =
-            relationshipTypeDao.select( QualifiedRelationshipTypeNames.from( "like" ), session );
+            relationshipTypeDao.select( RelationshipTypeNames.from( "like" ), session );
         assertNotNull( relationshipTypesAfterUpdate );
         assertEquals( 1, relationshipTypesAfterUpdate.getSize() );
         RelationshipType relationshipType1 = relationshipTypesAfterUpdate.first();
         assertEquals( "like", relationshipType1.getName() );
         assertEquals( "accepts", relationshipType1.getFromSemantic() );
         assertEquals( "accepted by", relationshipType1.getToSemantic() );
-        assertEquals( QualifiedContentTypeNames.from( "worker" ), relationshipType1.getAllowedFromTypes() );
-        assertEquals( QualifiedContentTypeNames.from( "task" ), relationshipType1.getAllowedToTypes() );
+        assertEquals( ContentTypeNames.from( "worker" ), relationshipType1.getAllowedFromTypes() );
+        assertEquals( ContentTypeNames.from( "task" ), relationshipType1.getAllowedToTypes() );
     }
 
     @Test
@@ -214,18 +214,18 @@ public class RelationshipTypeDaoImplTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "thing" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "thing" ) ).
             build();
         relationshipTypeDao.create( like, session );
 
         // exercise
-        QualifiedRelationshipTypeNames name = QualifiedRelationshipTypeNames.from( "like" );
+        RelationshipTypeNames name = RelationshipTypeNames.from( "like" );
         RelationshipTypes relationshipTypesAfterCreate = relationshipTypeDao.select( name, session );
         assertNotNull( relationshipTypesAfterCreate );
         assertEquals( 1, relationshipTypesAfterCreate.getSize() );
 
-        relationshipTypeDao.delete( QualifiedRelationshipTypeName.from( "like" ), session );
+        relationshipTypeDao.delete( RelationshipTypeName.from( "like" ), session );
         commit();
 
         // verify

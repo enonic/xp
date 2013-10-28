@@ -12,8 +12,8 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -59,17 +59,17 @@ public class UpdateRelationshipTypeHandlerTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "mymodule:person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "mymodule:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "person" ) ).
             createdTime( DateTime.now() ).
             modifiedTime( DateTime.now() ).
             build();
-        Mockito.when( relationshipTypeDao.select( isA( QualifiedRelationshipTypeName.class ), any( Session.class ) ) ).thenReturn(
+        Mockito.when( relationshipTypeDao.select( isA( RelationshipTypeName.class ), any( Session.class ) ) ).thenReturn(
             relationshipType );
 
         // exercise
         UpdateRelationshipType command = Commands.relationshipType().update().
-            selector( QualifiedRelationshipTypeName.from( "mymodule:like" ) ).
+            selector( RelationshipTypeName.from( "like" ) ).
             editor( new RelationshipTypeEditor()
             {
                 @Override

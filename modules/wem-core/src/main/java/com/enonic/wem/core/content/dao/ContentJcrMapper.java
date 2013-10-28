@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.content.serializer.ContentDataJsonSerializer;
 import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
 
@@ -98,7 +98,7 @@ final class ContentJcrMapper
         final String contentType = getPropertyString( contentNode, TYPE );
         if ( contentType != null )
         {
-            contentBuilder.type( QualifiedContentTypeName.from( contentType ) );
+            contentBuilder.type( ContentTypeName.from( contentType ) );
         }
         contentBuilder.id( ContentIdFactory.from( contentNode ) );
         contentBuilder.path( getPathFromNode( contentNode ) );

@@ -5,11 +5,11 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public final class CreateRelationshipType
-    extends Command<QualifiedRelationshipTypeName>
+    extends Command<RelationshipTypeName>
 {
     private String name;
 
@@ -19,9 +19,9 @@ public final class CreateRelationshipType
 
     private String toSemantic;
 
-    private QualifiedContentTypeNames allowedFromTypes;
+    private ContentTypeNames allowedFromTypes;
 
-    private QualifiedContentTypeNames allowedToTypes;
+    private ContentTypeNames allowedToTypes;
 
     private Icon icon;
 
@@ -49,13 +49,13 @@ public final class CreateRelationshipType
         return this;
     }
 
-    public CreateRelationshipType allowedFromTypes( final QualifiedContentTypeNames allowedFromTypes )
+    public CreateRelationshipType allowedFromTypes( final ContentTypeNames allowedFromTypes )
     {
         this.allowedFromTypes = allowedFromTypes;
         return this;
     }
 
-    public CreateRelationshipType allowedToTypes( final QualifiedContentTypeNames allowedToTypes )
+    public CreateRelationshipType allowedToTypes( final ContentTypeNames allowedToTypes )
     {
         this.allowedToTypes = allowedToTypes;
         return this;
@@ -87,12 +87,12 @@ public final class CreateRelationshipType
         return toSemantic;
     }
 
-    public QualifiedContentTypeNames getAllowedFromTypes()
+    public ContentTypeNames getAllowedFromTypes()
     {
         return allowedFromTypes;
     }
 
-    public QualifiedContentTypeNames getAllowedToTypes()
+    public ContentTypeNames getAllowedToTypes()
     {
         return allowedToTypes;
     }

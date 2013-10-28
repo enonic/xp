@@ -10,8 +10,8 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetContentTypeTree;
 
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -47,7 +47,7 @@ public class GetContentTypeTreeHandlerTest
     {
         // setup
         final ContentType contentType1 = newContentType().
-            qualifiedName( QualifiedContentTypeName.unstructured() ).
+            name( ContentTypeName.unstructured() ).
             builtIn( true ).
             displayName( "Some root content type" ).
             build();
@@ -59,7 +59,7 @@ public class GetContentTypeTreeHandlerTest
         final ContentType contentType3 = newContentType().
             name( "sub_type" ).
             displayName( "My sub-content type" ).
-            superType( QualifiedContentTypeName.from( "my_type" ) ).
+            superType( ContentTypeName.from( "my_type" ) ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2, contentType3 );
         Mockito.when( contentTypeDao.selectAll( any( Session.class ) ) ).thenReturn( contentTypes );

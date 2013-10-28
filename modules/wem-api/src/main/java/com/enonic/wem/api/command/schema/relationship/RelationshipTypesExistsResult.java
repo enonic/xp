@@ -1,15 +1,15 @@
 package com.enonic.wem.api.command.schema.relationship;
 
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 
 public class RelationshipTypesExistsResult
 {
     // DO NOT COMMIT ?
-    private final QualifiedRelationshipTypeNames qualifiedNames;
+    private final RelationshipTypeNames qualifiedNames;
 
-    private RelationshipTypesExistsResult( final QualifiedRelationshipTypeNames qualifiedNames )
+    private RelationshipTypesExistsResult( final RelationshipTypeNames qualifiedNames )
     {
         this.qualifiedNames = qualifiedNames;
     }
@@ -24,22 +24,22 @@ public class RelationshipTypesExistsResult
         return qualifiedNames.isEmpty();
     }
 
-    public boolean exists( QualifiedRelationshipTypeName qualifiedName )
+    public boolean exists( RelationshipTypeName qualifiedName )
     {
         return qualifiedNames.contains( qualifiedName );
     }
 
-    public QualifiedRelationshipTypeNames getQualifiedNames()
+    public RelationshipTypeNames getQualifiedNames()
     {
         return qualifiedNames;
     }
 
     public static RelationshipTypesExistsResult empty()
     {
-        return new RelationshipTypesExistsResult( QualifiedRelationshipTypeNames.empty() );
+        return new RelationshipTypesExistsResult( RelationshipTypeNames.empty() );
     }
 
-    public static RelationshipTypesExistsResult from( final QualifiedRelationshipTypeNames existing )
+    public static RelationshipTypesExistsResult from( final RelationshipTypeNames existing )
     {
         return new RelationshipTypesExistsResult( existing );
     }

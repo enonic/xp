@@ -12,7 +12,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.relationship.GetRelationships;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.Relationships;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.relationship.Relationship.newRelationship;
 import static org.mockito.Matchers.isA;
@@ -41,7 +41,7 @@ public class GetRelationshipRpcHandlerTest
         Relationships relationships = Relationships.from( newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.DEFAULT ).
             build() );
         Mockito.when( client.execute( isA( GetRelationships.class ) ) ).thenReturn( relationships );
 
@@ -67,11 +67,11 @@ public class GetRelationshipRpcHandlerTest
         Relationships relationships = Relationships.from( newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.DEFAULT ).
             build(), newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "333" ) ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.DEFAULT ).
             build() );
         Mockito.when( client.execute( isA( GetRelationships.class ) ) ).thenReturn( relationships );
 

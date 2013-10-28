@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.AbstractSerializerTest;
 
@@ -38,9 +38,9 @@ public abstract class AbstractRelationshipTypeSerializerTest
         builder.displayName( "Love" );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
-        builder.addAllowedFromType(  QualifiedContentTypeName.from( "person" ) );
-        builder.addAllowedFromType(  QualifiedContentTypeName.from( "animal" ) );
-        builder.addAllowedToType(  QualifiedContentTypeName.from( "person" ) );
+        builder.addAllowedFromType(  ContentTypeName.from( "person" ) );
+        builder.addAllowedFromType(  ContentTypeName.from( "animal" ) );
+        builder.addAllowedToType(  ContentTypeName.from( "person" ) );
         RelationshipType relationshipType = builder.build();
 
         // exercise
@@ -75,9 +75,9 @@ public abstract class AbstractRelationshipTypeSerializerTest
         builder.displayName( "Love" );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
-        builder.addAllowedFromType(  QualifiedContentTypeName.from(  "person" ) );
-        builder.addAllowedFromType(  QualifiedContentTypeName.from(  "animal" ) );
-        builder.addAllowedToType(  QualifiedContentTypeName.from(  "person" ) );
+        builder.addAllowedFromType(  ContentTypeName.from( "person" ) );
+        builder.addAllowedFromType(  ContentTypeName.from( "animal" ) );
+        builder.addAllowedToType(  ContentTypeName.from( "person" ) );
         RelationshipType relationshipType = builder.build();
 
         // exercise
@@ -110,9 +110,9 @@ public abstract class AbstractRelationshipTypeSerializerTest
         builder.displayName( "Love" );
         builder.fromSemantic( "loves" );
         builder.toSemantic( "loved by" );
-        builder.addAllowedFromType( QualifiedContentTypeName.from(  "person" ) );
-        builder.addAllowedFromType( QualifiedContentTypeName.from(  "animal" ) );
-        builder.addAllowedToType( QualifiedContentTypeName.from(  "person" ) );
+        builder.addAllowedFromType( ContentTypeName.from( "person" ) );
+        builder.addAllowedFromType( ContentTypeName.from( "animal" ) );
+        builder.addAllowedToType( ContentTypeName.from( "person" ) );
         RelationshipType relationshipType = builder.build();
 
         // exercise

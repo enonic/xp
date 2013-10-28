@@ -1,18 +1,18 @@
 package com.enonic.wem.api.command.schema.mixin;
 
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
+import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 
 public final class MixinGetCommands
 {
-    public GetMixin byQualifiedName( final QualifiedMixinName qualifiedName )
+    public GetMixin byName( final MixinName name )
     {
-        return new GetMixin().qualifiedName( qualifiedName );
+        return new GetMixin().name( name );
     }
 
-    public GetMixins byQualifiedNames( final QualifiedMixinNames qualifiedNames )
+    public GetMixins byNames( final MixinNames names )
     {
-        return new GetMixins().qualifiedNames( qualifiedNames );
+        return new GetMixins().qualifiedNames( names );
     }
 
     public GetMixins all()

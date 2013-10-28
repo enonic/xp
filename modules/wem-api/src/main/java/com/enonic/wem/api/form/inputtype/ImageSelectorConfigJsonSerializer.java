@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
 
@@ -37,7 +37,7 @@ public class ImageSelectorConfigJsonSerializer
         final JsonNode relationshipTypeNode = inputTypeConfigNode.get( "relationshipType" );
         if ( relationshipTypeNode != null && !relationshipTypeNode.isNull() )
         {
-            builder.relationshipType( QualifiedRelationshipTypeName.from( relationshipTypeNode.textValue() ) );
+            builder.relationshipType( RelationshipTypeName.from( relationshipTypeNode.textValue() ) );
         }
         return builder.build();
     }

@@ -7,8 +7,8 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.support.BaseInitializer;
@@ -21,72 +21,72 @@ import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newS
 public class ContentTypesInitializer
     extends BaseInitializer
 {
-    static final ContentType SPACE = createSystemType( QualifiedContentTypeName.space() ).
+    static final ContentType SPACE = createSystemType( ContentTypeName.space() ).
         setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType STRUCTURED = createSystemType( QualifiedContentTypeName.structured() ).
+    static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
         setFinal( false ).setAbstract( true ).build();
 
-    static final ContentType UNSTRUCTURED = createSystemType( QualifiedContentTypeName.unstructured() ).
+    static final ContentType UNSTRUCTURED = createSystemType( ContentTypeName.unstructured() ).
         setFinal( false ).setAbstract( false ).build();
 
-    static final ContentType FOLDER = createSystemType( QualifiedContentTypeName.folder() ).
+    static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
         setFinal( false ).setAbstract( false ).build();
 
-    static final ContentType PAGE = createSystemType( QualifiedContentTypeName.page() ).setFinal( true ).setAbstract( false ).build();
+    static final ContentType PAGE = createSystemType( ContentTypeName.page() ).setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType SHORTCUT = createSystemType( QualifiedContentTypeName.shortcut() ).
+    static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
         setFinal( true ).setAbstract( false ).build();
 
-    static final ContentType MEDIA = createSystemType( QualifiedContentTypeName.media() ).
+    static final ContentType MEDIA = createSystemType( ContentTypeName.media() ).
         setFinal( false ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_TEXT =
-        createSystemType( QualifiedContentTypeName.textMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.textMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_DATA =
-        createSystemType( QualifiedContentTypeName.dataMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.dataMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_AUDIO =
-        createSystemType( QualifiedContentTypeName.audioMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.audioMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_VIDEO =
-        createSystemType( QualifiedContentTypeName.videoMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.videoMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_IMAGE =
-        createSystemType( QualifiedContentTypeName.imageMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).form( createMediaImageForm() ).build();
 
     static final ContentType MEDIA_VECTOR =
-        createSystemType( QualifiedContentTypeName.vectorMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_ARCHIVE =
-        createSystemType( QualifiedContentTypeName.archiveMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.archiveMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_DOCUMENT =
-        createSystemType( QualifiedContentTypeName.documentMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.documentMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_SPREADSHEET =
-        createSystemType( QualifiedContentTypeName.spreadsheetMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.spreadsheetMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_PRESENTATION =
-        createSystemType( QualifiedContentTypeName.presentationMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.presentationMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_CODE =
-        createSystemType( QualifiedContentTypeName.codeMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.codeMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_EXECUTABLE =
-        createSystemType( QualifiedContentTypeName.executableMedia() ).superType( QualifiedContentTypeName.media() ).
+        createSystemType( ContentTypeName.executableMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     private static final ContentType[] SYSTEM_TYPES =
@@ -136,7 +136,7 @@ public class ContentTypesInitializer
         for ( ContentType contentType : SYSTEM_TYPES )
         {
             contentType = newContentType( contentType ).
-                icon( loadIcon( contentType.getQualifiedName() ) ).
+                icon( loadIcon( contentType.getQualifiedName().toString() ) ).
                 build();
             createOrUpdate( contentType );
         }
@@ -153,7 +153,7 @@ public class ContentTypesInitializer
 
     private void createOrUpdate( final ContentType contentType )
     {
-        final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( contentType.getQualifiedName() );
+        final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentType.getQualifiedName() );
         final boolean contentTypeExists = !client.execute( contentType().get().qualifiedNames( qualifiedNames ) ).isEmpty();
         if ( !contentTypeExists )
         {
@@ -185,7 +185,7 @@ public class ContentTypesInitializer
         }
     }
 
-    private static ContentType.Builder createSystemType( final QualifiedContentTypeName qualifiedName )
+    private static ContentType.Builder createSystemType( final ContentTypeName qualifiedName )
     {
         final String displayName = WordUtils.capitalize( qualifiedName.getContentTypeName() );
         final String contentTypeName = qualifiedName.getContentTypeName();

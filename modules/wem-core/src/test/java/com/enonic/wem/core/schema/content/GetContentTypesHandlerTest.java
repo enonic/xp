@@ -9,8 +9,8 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -51,17 +51,17 @@ public class GetContentTypesHandlerTest
             setAbstract( false ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeDao.select( isA( QualifiedContentTypeNames.class ), any( Session.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( contentTypeDao.select( isA( ContentTypeNames.class ), any( Session.class ) ) ).thenReturn( contentTypes );
 
         // exercise
-        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( "mymodule:my_content_type" );
+        final ContentTypeNames names = ContentTypeNames.from( "my_content_type" );
         final GetContentTypes command = Commands.contentType().get().qualifiedNames( names );
 
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        verify( contentTypeDao, atLeastOnce() ).select( Mockito.isA( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) );
+        verify( contentTypeDao, atLeastOnce() ).select( Mockito.isA( ContentTypeNames.class ), Mockito.any( Session.class ) );
         assertEquals( 1, command.getResult().getSize() );
     }
 

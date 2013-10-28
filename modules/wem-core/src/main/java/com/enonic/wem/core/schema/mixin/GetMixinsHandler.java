@@ -11,9 +11,9 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -34,7 +34,7 @@ public final class GetMixinsHandler
         }
         else
         {
-            final QualifiedMixinNames qualifiedNames = command.getQualifiedMixinNames();
+            final MixinNames qualifiedNames = command.getMixinNames();
             mixins = getMixins( qualifiedNames );
         }
 
@@ -47,10 +47,10 @@ public final class GetMixinsHandler
         return MIXIN_NODE_TRANSLATOR.fromNodes( nodes );
     }
 
-    private Mixins getMixins( final QualifiedMixinNames qualifiedMixinNames )
+    private Mixins getMixins( final MixinNames mixinNames )
     {
-        final List<Mixin> mixinList = new ArrayList<>( qualifiedMixinNames.getSize() );
-        for ( QualifiedMixinName qualifiedName : qualifiedMixinNames )
+        final List<Mixin> mixinList = new ArrayList<>( mixinNames.getSize() );
+        for ( MixinName qualifiedName : mixinNames )
         {
             final Mixin mixin = getMixin( qualifiedName );
             if ( mixin != null )
@@ -61,7 +61,7 @@ public final class GetMixinsHandler
         return Mixins.from( mixinList );
     }
 
-    private Mixin getMixin( final QualifiedMixinName qualifiedName )
+    private Mixin getMixin( final MixinName qualifiedName )
     {
         try
         {

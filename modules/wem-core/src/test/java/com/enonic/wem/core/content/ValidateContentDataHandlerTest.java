@@ -14,7 +14,7 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -57,7 +57,7 @@ public class ValidateContentDataHandlerTest
                     newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
             build();
 
-        Mockito.when( contentTypeDao.select( Mockito.any( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) ) ).thenReturn(
+        Mockito.when( contentTypeDao.select( Mockito.any( ContentTypeNames.class ), Mockito.any( Session.class ) ) ).thenReturn(
             ContentTypes.from( contentType ) );
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();
@@ -87,7 +87,7 @@ public class ValidateContentDataHandlerTest
             addFormItem( fieldSet ).
             build();
 
-        Mockito.when( contentTypeDao.select( Mockito.any( QualifiedContentTypeNames.class ), Mockito.any( Session.class ) ) ).thenReturn(
+        Mockito.when( contentTypeDao.select( Mockito.any( ContentTypeNames.class ), Mockito.any( Session.class ) ) ).thenReturn(
             ContentTypes.from( contentType ) );
 
         final Content content = newContent().type( contentType.getQualifiedName() ).build();

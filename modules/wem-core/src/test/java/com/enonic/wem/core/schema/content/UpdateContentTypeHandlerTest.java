@@ -11,9 +11,9 @@ import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.command.schema.content.UpdateContentTypeResult;
 
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -52,7 +52,7 @@ public class UpdateContentTypeHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( contentTypeDao.select( Mockito.eq( QualifiedContentTypeNames.from( QualifiedContentTypeName.structured() ) ),
+        Mockito.when( contentTypeDao.select( Mockito.eq( ContentTypeNames.from( ContentTypeName.structured() ) ),
                                              Mockito.any( Session.class ) ) ).thenReturn(
             ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
 
@@ -60,19 +60,19 @@ public class UpdateContentTypeHandlerTest
             name( "my_content_type" ).
             displayName( "My content type" ).
             setAbstract( false ).
-            superType( QualifiedContentTypeName.structured() ).
+            superType( ContentTypeName.structured() ).
             build();
 
         ContentTypes contentTypes = ContentTypes.from( existingContentType );
-        Mockito.when( contentTypeDao.select( isA( QualifiedContentTypeName.class ), any( Session.class ) ) ).thenReturn(
+        Mockito.when( contentTypeDao.select( isA( ContentTypeName.class ), any( Session.class ) ) ).thenReturn(
             existingContentType );
 
         UpdateContentType command =
-            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "mymodule:my_content_type" ) );
+            Commands.contentType().update().qualifiedName( ContentTypeName.from( "my_content_type" ) );
         final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).
-            superType( QualifiedContentTypeName.structured() ).
+            superType( ContentTypeName.structured() ).
             build();
         command.editor( editor );
 
@@ -91,7 +91,7 @@ public class UpdateContentTypeHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( contentTypeDao.select( Mockito.eq( QualifiedContentTypeNames.from( QualifiedContentTypeName.shortcut() ) ),
+        Mockito.when( contentTypeDao.select( Mockito.eq( ContentTypeNames.from( ContentTypeName.shortcut() ) ),
                                              Mockito.any( Session.class ) ) ).thenReturn(
             ContentTypes.from( ContentTypesInitializer.SHORTCUT ) );
 
@@ -99,19 +99,19 @@ public class UpdateContentTypeHandlerTest
             name( "my_content_type" ).
             displayName( "My content type" ).
             setAbstract( false ).
-            superType( QualifiedContentTypeName.structured() ).
+            superType( ContentTypeName.structured() ).
             build();
 
         Mockito.when(
-            contentTypeDao.select( eq( QualifiedContentTypeName.from( "mymodule:my_content_type" ) ), any( Session.class ) ) ).thenReturn(
+            contentTypeDao.select( eq( ContentTypeName.from( "my_content_type" ) ), any( Session.class ) ) ).thenReturn(
             existingContentType );
 
         UpdateContentType command =
-            Commands.contentType().update().qualifiedName( QualifiedContentTypeName.from( "mymodule:my_content_type" ) );
+            Commands.contentType().update().qualifiedName( ContentTypeName.from( "my_content_type" ) );
         final ContentTypeEditor editor = newSetContentTypeEditor().
             displayName( "Changed" ).
             setAbstract( false ).
-            superType( QualifiedContentTypeName.shortcut() ).
+            superType( ContentTypeName.shortcut() ).
             build();
         command.editor( editor );
 

@@ -13,7 +13,7 @@ import com.enonic.wem.api.command.schema.content.GetContentTypeTree;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 
@@ -62,7 +62,7 @@ public class GetContentTypeTreeRpcHandlerTest
         final ContentType contentType2 = newContentType().
             name( "my_type" ).
             displayName( "My content type" ).
-            superType( QualifiedContentTypeName.from( "root" ) ).
+            superType( ContentTypeName.from( "root" ) ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
@@ -70,7 +70,7 @@ public class GetContentTypeTreeRpcHandlerTest
         final ContentType contentType3 = newContentType().
             name( "sub_type" ).
             displayName( "My sub-content type" ).
-            superType( QualifiedContentTypeName.from( "my_type" ) ).
+            superType( ContentTypeName.from( "my_type" ) ).
             build();
 
         final Tree<ContentType> contentTypeTree = new Tree<ContentType>( Lists.newArrayList( contentType1 ) );

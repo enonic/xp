@@ -16,8 +16,8 @@ import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.exception.BaseException;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.editor.SetRelationshipTypeEditor;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
@@ -128,10 +128,10 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
         }
     }
 
-    private boolean exists( final QualifiedRelationshipTypeName qualifiedName )
+    private boolean exists( final RelationshipTypeName qualifiedName )
     {
         final RelationshipTypesExists existsCommand =
-            relationshipType().exists().qualifiedNames( QualifiedRelationshipTypeNames.from( qualifiedName ) );
+            relationshipType().exists().qualifiedNames( RelationshipTypeNames.from( qualifiedName ) );
         final RelationshipTypesExistsResult existsResult = client.execute( existsCommand );
         return existsResult.exists( qualifiedName );
     }

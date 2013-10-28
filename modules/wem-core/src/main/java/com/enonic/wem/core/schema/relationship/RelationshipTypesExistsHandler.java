@@ -5,7 +5,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
@@ -21,8 +21,8 @@ public final class RelationshipTypesExistsHandler
     {
         final Session session = context.getJcrSession();
 
-        final QualifiedRelationshipTypeNames qualifiedNames = command.getQualifiedNames();
-        final QualifiedRelationshipTypeNames existing = relationshipTypeDao.exists( qualifiedNames, session );
+        final RelationshipTypeNames qualifiedNames = command.getQualifiedNames();
+        final RelationshipTypeNames existing = relationshipTypeDao.exists( qualifiedNames, session );
 
         command.setResult( RelationshipTypesExistsResult.from( existing ) );
     }

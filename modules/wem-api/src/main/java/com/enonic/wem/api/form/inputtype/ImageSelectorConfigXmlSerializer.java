@@ -4,7 +4,7 @@ package com.enonic.wem.api.form.inputtype;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
 
@@ -33,7 +33,7 @@ public class ImageSelectorConfigXmlSerializer
         final Element relationshipTypeEl = inputTypeConfigEl.getChild( "relationship-type" );
         if ( relationshipTypeEl != null && StringUtils.isNotBlank( relationshipTypeEl.getText() ) )
         {
-            builder.relationshipType( QualifiedRelationshipTypeName.from( relationshipTypeEl.getText() ) );
+            builder.relationshipType( RelationshipTypeName.from( relationshipTypeEl.getText() ) );
         }
         return builder.build();
     }

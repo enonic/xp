@@ -10,7 +10,7 @@ import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
@@ -47,7 +47,7 @@ public class DeleteMixinHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedMixinName name = QualifiedMixinName.from( "my:mixin" );
+        final MixinName name = MixinName.from( "mixin" );
         final DeleteMixin command = Commands.mixin().delete().name( name );
 
         this.handler.setCommand( command );
@@ -70,7 +70,7 @@ public class DeleteMixinHandlerTest
         Mockito.doThrow( new NoNodeAtPathFound( notFoundName ) ).
             when( nodeDao ).deleteNodeByPath( eq( notFoundName ) );
 
-        final DeleteMixin command = Commands.mixin().delete().name( QualifiedMixinName.from( "not_found_mixin" ) );
+        final DeleteMixin command = Commands.mixin().delete().name( MixinName.from( "not_found_mixin" ) );
 
         this.handler.setCommand( command );
         this.handler.handle();

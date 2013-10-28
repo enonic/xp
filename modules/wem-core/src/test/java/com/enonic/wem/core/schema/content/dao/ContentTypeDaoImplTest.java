@@ -9,9 +9,9 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
@@ -73,7 +73,7 @@ public class ContentTypeDaoImplTest
         contentTypeDao.create( contentType, session );
 
         // exercise
-        final ContentTypes contentTypes = contentTypeDao.select( QualifiedContentTypeNames.from( "mycontenttype" ), session );
+        final ContentTypes contentTypes = contentTypeDao.select( ContentTypeNames.from( "mycontenttype" ), session );
         commit();
 
         // verify
@@ -113,8 +113,8 @@ public class ContentTypeDaoImplTest
         // verify
         assertNotNull( contentTypes );
         assertEquals( 2, contentTypes.getSize() );
-        final ContentType contentType1 = contentTypes.getContentType( QualifiedContentTypeName.from( "mycontenttype" ) );
-        final ContentType contentType2 = contentTypes.getContentType( QualifiedContentTypeName.from( "somecontenttype" ) );
+        final ContentType contentType1 = contentTypes.getContentType( ContentTypeName.from( "mycontenttype" ) );
+        final ContentType contentType2 = contentTypes.getContentType( ContentTypeName.from( "somecontenttype" ) );
 
         assertEquals( "mycontenttype", contentType1.getName() );
         assertEquals( true, contentType1.isAbstract() );
@@ -138,7 +138,7 @@ public class ContentTypeDaoImplTest
         contentTypeDao.create( contentType, session );
 
         // exercise
-        final ContentTypes contentTypesAfterCreate = contentTypeDao.select( QualifiedContentTypeNames.from( "my_content_type" ), session );
+        final ContentTypes contentTypesAfterCreate = contentTypeDao.select( ContentTypeNames.from( "my_content_type" ), session );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
@@ -151,7 +151,7 @@ public class ContentTypeDaoImplTest
         commit();
 
         // verify
-        final ContentTypes contentTypesAfterUpdate = contentTypeDao.select( QualifiedContentTypeNames.from( "my_content_type" ), session );
+        final ContentTypes contentTypesAfterUpdate = contentTypeDao.select( ContentTypeNames.from( "my_content_type" ), session );
         assertNotNull( contentTypesAfterUpdate );
         assertEquals( 1, contentTypesAfterUpdate.getSize() );
         final ContentType contentType1 = contentTypesAfterUpdate.first();
@@ -174,7 +174,7 @@ public class ContentTypeDaoImplTest
         contentTypeDao.create( contentType, session );
 
         // exercise
-        final ContentTypes contentTypesAfterCreate = contentTypeDao.select( QualifiedContentTypeNames.from( "my_content_type" ), session );
+        final ContentTypes contentTypesAfterCreate = contentTypeDao.select( ContentTypeNames.from( "my_content_type" ), session );
         assertNotNull( contentTypesAfterCreate );
         assertEquals( 1, contentTypesAfterCreate.getSize() );
 
@@ -182,7 +182,7 @@ public class ContentTypeDaoImplTest
         commit();
 
         // verify
-        final ContentTypes contentTypesAfterDelete = contentTypeDao.select( QualifiedContentTypeNames.from( "my_content_type" ), session );
+        final ContentTypes contentTypesAfterDelete = contentTypeDao.select( ContentTypeNames.from( "my_content_type" ), session );
         assertNotNull( contentTypesAfterDelete );
         assertTrue( contentTypesAfterDelete.isEmpty() );
     }

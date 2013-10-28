@@ -6,8 +6,8 @@ import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 
 
 public final class DeleteRelationshipTypeRpcHandler
@@ -22,11 +22,11 @@ public final class DeleteRelationshipTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final QualifiedRelationshipTypeNames qualifiedNames =
-            QualifiedRelationshipTypeNames.from( context.param( "qualifiedRelationshipTypeNames" ).required().asStringArray() );
+        final RelationshipTypeNames qualifiedNames =
+            RelationshipTypeNames.from( context.param( "qualifiedRelationshipTypeNames" ).required().asStringArray() );
 
         final RelationshipTypeDeletionResult deletionResult = new RelationshipTypeDeletionResult();
-        for ( QualifiedRelationshipTypeName relationshipTypeName : qualifiedNames )
+        for ( RelationshipTypeName relationshipTypeName : qualifiedNames )
         {
             final DeleteRelationshipType deleteCommand = Commands.relationshipType().delete().qualifiedName( relationshipTypeName );
             final DeleteRelationshipTypeResult result = client.execute( deleteCommand );

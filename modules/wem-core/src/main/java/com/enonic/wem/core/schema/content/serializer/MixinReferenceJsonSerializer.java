@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.form.MixinReference;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
@@ -29,7 +29,7 @@ class MixinReferenceJsonSerializer
     {
         final ObjectNode jsonObject = objectMapper().createObjectNode();
         jsonObject.put( NAME, mixinReference.getName() );
-        jsonObject.put( REFERENCE, mixinReference.getQualifiedMixinName().toString() );
+        jsonObject.put( REFERENCE, mixinReference.getMixinName().toString() );
         return jsonObject;
     }
 
@@ -37,7 +37,7 @@ class MixinReferenceJsonSerializer
     {
         final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( JsonSerializerUtil.getStringValue( NAME, mixinReferenceObj ) );
-        builder.mixin( QualifiedMixinName.from( JsonSerializerUtil.getStringValue( REFERENCE, mixinReferenceObj ) ) );
+        builder.mixin( MixinName.from( JsonSerializerUtil.getStringValue( REFERENCE, mixinReferenceObj ) ) );
         return builder.build();
     }
 }

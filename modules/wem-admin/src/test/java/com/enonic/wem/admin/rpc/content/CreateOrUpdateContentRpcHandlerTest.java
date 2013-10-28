@@ -26,7 +26,7 @@ import com.enonic.wem.api.content.RenameContentException;
 
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static org.mockito.Matchers.isA;
 
@@ -87,7 +87,7 @@ public class CreateOrUpdateContentRpcHandlerTest
 
         Mockito.when( client.execute( isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
         final Contents contents =
-            Contents.from( Content.newContent().name( "my-child-content" ).type( QualifiedContentTypeName.unstructured() ).build() );
+            Contents.from( Content.newContent().name( "my-child-content" ).type( ContentTypeName.unstructured() ).build() );
         Mockito.when( client.execute( isA( GetContents.class ) ) ).thenReturn( contents ).thenReturn( Contents.empty() );
         Mockito.when( client.execute( isA( CreateContent.class ) ) ).thenReturn( createContentResult );
 

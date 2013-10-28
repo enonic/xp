@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.content.QualifiedName;
+import com.enonic.wem.api.Name;
 
 public class SchemaDeleteJson
 {
@@ -12,14 +12,14 @@ public class SchemaDeleteJson
 
     private List<FailureJson> failures = Lists.newArrayList();
 
-    public void success( final QualifiedName qualifiedName )
+    public void success( final Name qualifiedName )
     {
         successes.add( new SuccessJson( qualifiedName ) );
     }
 
-    public void failure( final QualifiedName qualifiedMixinName, final String reason )
+    public void failure( final Name name, final String reason )
     {
-        failures.add( new FailureJson( qualifiedMixinName, reason ) );
+        failures.add( new FailureJson( name, reason ) );
     }
 
     public boolean isSuccess()
@@ -39,34 +39,34 @@ public class SchemaDeleteJson
 
     public class SuccessJson
     {
-        private final QualifiedName qualifiedName;
+        private final Name name;
 
-        public SuccessJson( final QualifiedName qualifiedName )
+        public SuccessJson( final Name name )
         {
-            this.qualifiedName = qualifiedName;
+            this.name = name;
         }
 
-        public String getQualifiedName()
+        public String getName()
         {
-            return qualifiedName.toString();
+            return name.toString();
         }
     }
 
     public class FailureJson
     {
-        private final QualifiedName qualifiedName;
+        private final Name name;
 
         private final String reason;
 
-        public FailureJson( final QualifiedName qualifiedName, final String reason )
+        public FailureJson( final Name name, final String reason )
         {
-            this.qualifiedName = qualifiedName;
+            this.name = name;
             this.reason = reason;
         }
 
-        public String getQualifiedName()
+        public String getName()
         {
-            return qualifiedName.toString();
+            return name.toString();
         }
 
         public String getReason()

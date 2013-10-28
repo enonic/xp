@@ -15,7 +15,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.jcr.JcrConstants;
 
@@ -65,7 +65,7 @@ public interface ContentDao
 
     Tree<Content> getContentTree( Session session );
 
-    int countContentTypeUsage( QualifiedContentTypeName qualifiedContentTypeName, Session session );
+    int countContentTypeUsage( ContentTypeName qualifiedContentTypeName, Session session );
 
     Content getContentVersion( ContentSelector contentSelector, ContentVersionId versionId, Session session );
 

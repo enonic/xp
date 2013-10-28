@@ -5,7 +5,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.exception.RelationshipTypeNotFoundException;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
 final class RelationshipTypeDaoHandlerUpdate
@@ -28,7 +28,7 @@ final class RelationshipTypeDaoHandlerUpdate
         throws RepositoryException
     {
 
-        final QualifiedRelationshipTypeName qualifiedName = relationshipType.getQualifiedName();
+        final RelationshipTypeName qualifiedName = relationshipType.getQualifiedName();
         final Node node = getRelationshipTypeNode( qualifiedName );
         if ( node == null )
         {

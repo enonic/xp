@@ -20,13 +20,13 @@ import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
@@ -60,7 +60,7 @@ public class SchemaImageResourceTest
         final ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
             displayName( "My content type" ).
-            superType( QualifiedContentTypeName.from( "unstructured" ) ).
+            superType( ContentTypeName.from( "unstructured" ) ).
             icon( icon ).
             build();
         setupContentType( contentType );
@@ -176,8 +176,8 @@ public class SchemaImageResourceTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "person" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "person" ) ).
             icon( icon ).
             build();
         setupRelationshipType( relationshipType );
@@ -198,8 +198,8 @@ public class SchemaImageResourceTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "person" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "person" ) ).
             build();
         setupRelationshipType( relationshipType );
 
@@ -217,7 +217,7 @@ public class SchemaImageResourceTest
         list.add( contentType );
         final ContentTypes result = ContentTypes.from( list );
         final GetContentTypes command =
-            new GetContentTypes().qualifiedNames( QualifiedContentTypeNames.from( contentType.getQualifiedName() ) );
+            new GetContentTypes().qualifiedNames( ContentTypeNames.from( contentType.getQualifiedName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 
@@ -226,7 +226,7 @@ public class SchemaImageResourceTest
         final List<Mixin> list = Lists.newArrayList();
         list.add( mixin );
         final Mixins result = Mixins.from( list );
-        final GetMixins command = new GetMixins().qualifiedNames( QualifiedMixinNames.from( mixin.getQualifiedName() ) );
+        final GetMixins command = new GetMixins().qualifiedNames( MixinNames.from( mixin.getQualifiedName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 
@@ -236,7 +236,7 @@ public class SchemaImageResourceTest
         list.add( relationshipType );
         final RelationshipTypes result = RelationshipTypes.from( list );
         final GetRelationshipTypes command =
-            new GetRelationshipTypes().qualifiedNames( QualifiedRelationshipTypeNames.from( relationshipType.getQualifiedName() ) );
+            new GetRelationshipTypes().qualifiedNames( RelationshipTypeNames.from( relationshipType.getQualifiedName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 

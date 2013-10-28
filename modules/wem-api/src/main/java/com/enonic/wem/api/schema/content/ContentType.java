@@ -12,10 +12,10 @@ import com.enonic.wem.api.schema.SchemaKey;
 import static com.enonic.wem.api.form.Form.newForm;
 
 public final class ContentType
-    extends BaseSchema<QualifiedContentTypeName>
+    extends BaseSchema<ContentTypeName>
     implements Schema
 {
-    private final QualifiedContentTypeName superType;
+    private final ContentTypeName superType;
 
     private final boolean isAbstract;
 
@@ -35,7 +35,7 @@ public final class ContentType
 
         if ( builder.superType == null && !builder.isBuiltIn )
         {
-            superType = QualifiedContentTypeName.unstructured();
+            superType = ContentTypeName.unstructured();
         }
         else
         {
@@ -56,12 +56,12 @@ public final class ContentType
     }
 
     @Override
-    public QualifiedContentTypeName getQualifiedName()
+    public ContentTypeName getQualifiedName()
     {
-        return QualifiedContentTypeName.from( getName() );
+        return ContentTypeName.from( getName() );
     }
 
-    public QualifiedContentTypeName getSuperType()
+    public ContentTypeName getSuperType()
     {
         return superType;
     }
@@ -136,7 +136,7 @@ public final class ContentType
 
         private Form.Builder formBuilder = newForm();
 
-        private QualifiedContentTypeName superType;
+        private ContentTypeName superType;
 
         private String contentDisplayNameScript;
 
@@ -162,6 +162,18 @@ public final class ContentType
                 this.formBuilder = newForm( source.form() );
             }
             this.contentDisplayNameScript = source.contentDisplayNameScript;
+        }
+
+        public Builder name( final ContentTypeName value )
+        {
+            super.name( value );
+            return this;
+        }
+
+        public Builder name( final String value )
+        {
+            super.name( ContentTypeName.from( value ) );
+            return this;
         }
 
         public Builder setAbstract( final boolean value )
@@ -200,7 +212,7 @@ public final class ContentType
             return this;
         }
 
-        public Builder superType( final QualifiedContentTypeName superType )
+        public Builder superType( final ContentTypeName superType )
         {
             this.superType = superType;
             return this;

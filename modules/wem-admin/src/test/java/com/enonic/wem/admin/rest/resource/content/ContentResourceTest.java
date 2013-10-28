@@ -51,7 +51,7 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
@@ -732,7 +732,7 @@ public class ContentResourceTest
             displayName( "My Content" ).
             modifiedTime( DateTime.parse( this.currentTime ) ).
             modifier( UserKey.superUser() ).
-            type( QualifiedContentTypeName.from( contentTypeName ) ).
+            type( ContentTypeName.from( contentTypeName ) ).
             build();
     }
 

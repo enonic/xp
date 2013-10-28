@@ -12,7 +12,7 @@ import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.schema.content.serializer.FormItemsXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
@@ -62,7 +62,7 @@ public final class ModuleXmlSerializer
             dependencies.addContent( new Element( "module" ).setText( moduleKey.toString() ) );
         }
 
-        for ( QualifiedContentTypeName qualifiedName : module.getContentTypeDependencies() )
+        for ( ContentTypeName qualifiedName : module.getContentTypeDependencies() )
         {
             dependencies.addContent( new Element( "content-type" ).setText( qualifiedName.toString() ) );
         }
@@ -114,7 +114,7 @@ public final class ModuleXmlSerializer
                         moduleBuilder.addModuleDependency( ModuleKey.from( child.getText() ) );
                         break;
                     case "content-type":
-                        moduleBuilder.addContentTypeDependency( QualifiedContentTypeName.from( child.getText() ) );
+                        moduleBuilder.addContentTypeDependency( ContentTypeName.from( child.getText() ) );
                         break;
                 }
             }

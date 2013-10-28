@@ -52,7 +52,7 @@ public class MixinReferencesToFormItemsTransformer
             if ( formItem instanceof MixinReference )
             {
                 final MixinReference mixinReference = (MixinReference) formItem;
-                final Mixin mixin = client.execute( Commands.mixin().get().byQualifiedName( mixinReference.getQualifiedMixinName() ) );
+                final Mixin mixin = client.execute( Commands.mixin().get().byName( mixinReference.getMixinName() ) );
                 if ( mixin != null )
                 {
                     FormItems mixinFormItems = mixin.getFormItems();
@@ -73,7 +73,7 @@ public class MixinReferencesToFormItemsTransformer
                 }
                 else
                 {
-                    throw new MixinNotFound( mixinReference.getQualifiedMixinName() );
+                    throw new MixinNotFound( mixinReference.getMixinName() );
                 }
             }
             else

@@ -26,7 +26,7 @@ import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
 import com.enonic.wem.api.relationship.editor.RelationshipEditors;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 @Path("relationship")
 @Produces(MediaType.APPLICATION_JSON)
@@ -48,7 +48,7 @@ public class RelationshipResource
     @Consumes(MediaType.APPLICATION_JSON)
     public CreateRelationshipJson create( final RelationshipCreateParams params )
     {
-        final QualifiedRelationshipTypeName typeName = QualifiedRelationshipTypeName.from( params.getType() );
+        final RelationshipTypeName typeName = RelationshipTypeName.from( params.getType() );
         final ContentId fromContentId = ContentId.from( params.getFromContent() );
         final ContentId toContentId = ContentId.from( params.getToContent() );
 

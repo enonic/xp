@@ -6,7 +6,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 final class ContentDaoHandlerCountContentTypeUsage
     extends AbstractContentDaoHandler
@@ -16,7 +16,7 @@ final class ContentDaoHandlerCountContentTypeUsage
         super( session );
     }
 
-    int handle( QualifiedContentTypeName qualifiedContentTypeName )
+    int handle( ContentTypeName qualifiedContentTypeName )
         throws RepositoryException
     {
         if ( qualifiedContentTypeName == null )
@@ -35,7 +35,7 @@ final class ContentDaoHandlerCountContentTypeUsage
     }
 
 
-    private int countContentTypeUsageInNode( final QualifiedContentTypeName qualifiedContentTypeName, ContentAndNode parentContentAndNode )
+    private int countContentTypeUsageInNode( final ContentTypeName qualifiedContentTypeName, ContentAndNode parentContentAndNode )
         throws RepositoryException
     {
         int count = 0;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 final class DeleteMixinJsonResult
     extends JsonResult
@@ -30,19 +30,19 @@ final class DeleteMixinJsonResult
         for ( MixinDeletionResult.Failure failure : failures )
         {
             final ObjectNode objectNode = array.addObject();
-            objectNode.put( "qualifiedMixinName", failure.qualifiedMixinName.toString() );
+            objectNode.put( "mixinName", failure.mixinName.toString() );
             objectNode.put( "reason", failure.reason );
         }
         return array;
     }
 
-    private ArrayNode serializeSuccesses( Iterable<QualifiedMixinName> successes )
+    private ArrayNode serializeSuccesses( Iterable<MixinName> successes )
     {
         final ArrayNode array = arrayNode();
-        for ( QualifiedMixinName success : successes )
+        for ( MixinName success : successes )
         {
             final ObjectNode objectNode = array.addObject();
-            objectNode.put( "qualifiedMixinName", success.toString() );
+            objectNode.put( "mixinName", success.toString() );
         }
         return array;
     }

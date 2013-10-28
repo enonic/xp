@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
 public class RelationshipTypeJson
@@ -32,13 +32,13 @@ public class RelationshipTypeJson
         this.deletable = true;
 
         this.allowedFromTypes = new ArrayList<>( relationshipType.getAllowedFromTypes().getSize() );
-        for ( QualifiedContentTypeName allowedFromType : relationshipType.getAllowedFromTypes() )
+        for ( ContentTypeName allowedFromType : relationshipType.getAllowedFromTypes() )
         {
             this.allowedFromTypes.add( allowedFromType.toString() );
         }
 
         this.allowedToTypes = new ArrayList<>( relationshipType.getAllowedToTypes().getSize() );
-        for ( QualifiedContentTypeName allowedToType : relationshipType.getAllowedToTypes() )
+        for ( ContentTypeName allowedToType : relationshipType.getAllowedToTypes() )
         {
             this.allowedToTypes.add( allowedToType.toString() );
         }

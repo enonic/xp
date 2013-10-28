@@ -20,6 +20,6 @@ public final class CreateMixinHandler
         final CreateNodeResult createNodeResult = context.getClient().execute( createNodeCommand );
 
         final Mixin persistedMixin = MIXIN_TO_ITEM_TRANSLATOR.fromNode( createNodeResult.getPersistedNode() );
-        command.setResult( persistedMixin.getQualifiedName() );
+        command.setResult( persistedMixin );
     }
 }

@@ -6,7 +6,7 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 
 public class GetMixinRpcHandler
@@ -26,9 +26,9 @@ public class GetMixinRpcHandler
         throws Exception
     {
         final String format = context.param( "format" ).required().asString();
-        final QualifiedMixinName qualifiedMixinName = QualifiedMixinName.from( context.param( "qualifiedName" ).required().asString() );
+        final MixinName mixinName = MixinName.from( context.param( "qualifiedName" ).required().asString() );
 
-        final Mixin mixin = fetchMixin( qualifiedMixinName );
+        final Mixin mixin = fetchMixin( mixinName );
 
         if ( mixin != null )
         {
@@ -44,12 +44,12 @@ public class GetMixinRpcHandler
         }
         else
         {
-            context.setResult( new JsonErrorResult( "Mixin [{0}] was not found", qualifiedMixinName ) );
+            context.setResult( new JsonErrorResult( "Mixin [{0}] was not found", mixinName ) );
         }
     }
 
-    private Mixin fetchMixin( final QualifiedMixinName qualifiedName )
+    private Mixin fetchMixin( final MixinName qualifiedName )
     {
-        return client.execute( Commands.mixin().get().byQualifiedName( qualifiedName ) );
+        return client.execute( Commands.mixin().get().byName( qualifiedName ) );
     }
 }

@@ -5,25 +5,25 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 final class MixinDeletionResult
 {
-    private List<QualifiedMixinName> successes = Lists.newArrayList();
+    private List<MixinName> successes = Lists.newArrayList();
 
     private List<Failure> failures = Lists.newArrayList();
 
-    public void success( final QualifiedMixinName qualifiedMixinName )
+    public void success( final MixinName mixinName )
     {
-        successes.add( qualifiedMixinName );
+        successes.add( mixinName );
     }
 
-    public void failure( final QualifiedMixinName qualifiedMixinName, final String reason )
+    public void failure( final MixinName mixinName, final String reason )
     {
-        failures.add( new Failure( qualifiedMixinName, reason ) );
+        failures.add( new Failure( mixinName, reason ) );
     }
 
-    public Iterable<QualifiedMixinName> successes()
+    public Iterable<MixinName> successes()
     {
         return successes;
     }
@@ -40,13 +40,13 @@ final class MixinDeletionResult
 
     public class Failure
     {
-        public final QualifiedMixinName qualifiedMixinName;
+        public final MixinName mixinName;
 
         public final String reason;
 
-        public Failure( final QualifiedMixinName qualifiedMixinName, final String reason )
+        public Failure( final MixinName mixinName, final String reason )
         {
-            this.qualifiedMixinName = qualifiedMixinName;
+            this.mixinName = mixinName;
             this.reason = reason;
         }
     }

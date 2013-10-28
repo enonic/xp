@@ -20,9 +20,9 @@ import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
@@ -40,7 +40,7 @@ public class ContentTypeResourceTest
 
     private Client client;
 
-    private static final QualifiedContentTypeName MY_CTY_QUALIFIED_NAME = QualifiedContentTypeName.from( "my_cty" );
+    private static final ContentTypeName MY_CTY_QUALIFIED_NAME = ContentTypeName.from( "my_cty" );
 
     public ContentTypeResourceTest()
     {
@@ -72,9 +72,9 @@ public class ContentTypeResourceTest
     {
         // setup
         final ContentType contentType = newContentType().
-            name( MY_CTY_QUALIFIED_NAME.getName() ).
+            name( MY_CTY_QUALIFIED_NAME ).
             createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            superType( ContentTypeName.unstructured() ).
             displayName( "My ContentType" ).
             addFormItem( newInput().
                 name( "myTextLine" ).
@@ -85,7 +85,7 @@ public class ContentTypeResourceTest
             build();
 
         Mockito.when( client.execute(
-            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
+            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
             ContentTypes.from( contentType ) );
 
         // execute
@@ -148,8 +148,8 @@ public class ContentTypeResourceTest
 
         ContentType contentType = newContentType().
             createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
-            name( MY_CTY_QUALIFIED_NAME.getName() ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            name( MY_CTY_QUALIFIED_NAME ).
+            superType( ContentTypeName.unstructured() ).
             addFormItem( myTextLine ).
             addFormItem( myCustomInput ).
             addFormItem( myFieldSet ).
@@ -158,7 +158,7 @@ public class ContentTypeResourceTest
             build();
 
         Mockito.when( client.execute(
-            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
+            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
             ContentTypes.from( contentType ) );
 
         // execute
@@ -179,8 +179,8 @@ public class ContentTypeResourceTest
         // setup
         final ContentType contentType = newContentType().
             createdTime( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).
-            name( MY_CTY_QUALIFIED_NAME.getName() ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            name( MY_CTY_QUALIFIED_NAME ).
+            superType( ContentTypeName.unstructured() ).
             addFormItem( newInput().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
@@ -190,7 +190,7 @@ public class ContentTypeResourceTest
             build();
 
         Mockito.when( client.execute(
-            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
+            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
             ContentTypes.from( contentType ) );
 
         // execute
@@ -209,8 +209,8 @@ public class ContentTypeResourceTest
         // setup
         final ContentType contentType = newContentType().
             createdTime( new DateTime( 2013, 1, 1, 12, 0, 0, DateTimeZone.UTC ) ).
-            name( MY_CTY_QUALIFIED_NAME.getName() ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            name( MY_CTY_QUALIFIED_NAME ).
+            superType( ContentTypeName.unstructured() ).
             addFormItem( newInput().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).

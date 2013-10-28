@@ -7,10 +7,10 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.Mixin;
 
 public final class CreateMixin
-    extends Command<QualifiedMixinName>
+    extends Command<Mixin>
 {
     private String name;
 

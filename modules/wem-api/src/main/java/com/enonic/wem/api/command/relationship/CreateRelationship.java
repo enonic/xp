@@ -10,12 +10,12 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.RelationshipId;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public class CreateRelationship
     extends Command<RelationshipId>
 {
-    private QualifiedRelationshipTypeName type;
+    private RelationshipTypeName type;
 
     private ContentId fromContent;
 
@@ -23,12 +23,12 @@ public class CreateRelationship
 
     private Map<String, String> properties = Maps.newLinkedHashMap();
 
-    public QualifiedRelationshipTypeName getType()
+    public RelationshipTypeName getType()
     {
         return type;
     }
 
-    public CreateRelationship type( final QualifiedRelationshipTypeName type )
+    public CreateRelationship type( final RelationshipTypeName type )
     {
         this.type = type;
         return this;

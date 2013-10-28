@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
 public class RelationshipKeyTest
@@ -19,7 +19,7 @@ public class RelationshipKeyTest
             public Object getObjectX()
             {
                 return RelationshipKey.newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.PARENT ).
+                    type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( DataPath.from( "myInput" ) ).
@@ -30,27 +30,27 @@ public class RelationshipKeyTest
             public Object[] getObjectsThatNotEqualsX()
             {
                 return new Object[]{RelationshipKey.newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.LINK ).
+                    type( RelationshipTypeName.LINK ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( DataPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.PARENT ).
+                    type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "333" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( DataPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.PARENT ).
+                    type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "444" ) ).
                     managingData( DataPath.from( "myInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.PARENT ).
+                    type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( DataPath.from( "myOtherInput" ) ).
                     build(), RelationshipKey.newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.PARENT ).
+                    type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     build()};
@@ -60,7 +60,7 @@ public class RelationshipKeyTest
             public Object getObjectThatEqualsXButNotTheSame()
             {
                 return RelationshipKey.newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.PARENT ).
+                    type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( DataPath.from( "myInput" ) ).
@@ -71,7 +71,7 @@ public class RelationshipKeyTest
             public Object getObjectThatEqualsXButNotTheSame2()
             {
                 return RelationshipKey.newRelationshipKey().
-                    type( QualifiedRelationshipTypeName.PARENT ).
+                    type( RelationshipTypeName.PARENT ).
                     fromContent( ContentId.from( "111" ) ).
                     toContent( ContentId.from( "222" ) ).
                     managingData( DataPath.from( "myInput" ) ).

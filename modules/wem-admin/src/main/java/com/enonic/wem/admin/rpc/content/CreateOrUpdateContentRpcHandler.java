@@ -36,8 +36,8 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 import static com.enonic.wem.api.command.Commands.content;
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
@@ -97,8 +97,8 @@ public final class CreateOrUpdateContentRpcHandler
                     return;
                 }
 
-                final QualifiedContentTypeName qualifiedContentTypeName =
-                    QualifiedContentTypeName.from( context.param( "qualifiedContentTypeName" ).required().asString() );
+                final ContentTypeName qualifiedContentTypeName =
+                    ContentTypeName.from( context.param( "qualifiedContentTypeName" ).required().asString() );
                 final ContentType contentType = getContentType( qualifiedContentTypeName );
                 final ContentData contentData =
                     new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
@@ -138,8 +138,8 @@ public final class CreateOrUpdateContentRpcHandler
             try
             {
                 final String displayName = context.param( "displayName" ).notBlank().asString();
-                final QualifiedContentTypeName qualifiedContentTypeName =
-                    QualifiedContentTypeName.from( context.param( "qualifiedContentTypeName" ).required().asString() );
+                final ContentTypeName qualifiedContentTypeName =
+                    ContentTypeName.from( context.param( "qualifiedContentTypeName" ).required().asString() );
                 final ContentType contentType = getContentType( qualifiedContentTypeName );
                 final ContentData contentData =
                     new ContentDataParser( contentType ).parse( context.param( "contentData" ).required().asObject() );
@@ -168,10 +168,10 @@ public final class CreateOrUpdateContentRpcHandler
         }
     }
 
-    private ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
+    private ContentType getContentType( final ContentTypeName qualifiedContentTypeName )
     {
         final GetContentTypes getContentTypes =
-            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
+            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( qualifiedContentTypeName ) );
         getContentTypes.mixinReferencesToFormItems( true );
         final ContentType contentType = client.execute( getContentTypes ).first();
         Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", qualifiedContentTypeName );

@@ -5,17 +5,17 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.exception.RelationshipTypeNotFoundException;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 final class RelationshipTypeDaoHandlerDelete
     extends AbstractRelationshipTypeDaoHandler
 
 {
-    private QualifiedRelationshipTypeName qualifiedRelationshipTypeName;
+    private RelationshipTypeName relationshipTypeName;
 
-    RelationshipTypeDaoHandlerDelete qualifiedRelationshipTypeName( final QualifiedRelationshipTypeName qualifiedRelationshipTypeName )
+    RelationshipTypeDaoHandlerDelete qualifiedRelationshipTypeName( final RelationshipTypeName relationshipTypeName )
     {
-        this.qualifiedRelationshipTypeName = qualifiedRelationshipTypeName;
+        this.relationshipTypeName = relationshipTypeName;
         return this;
     }
 
@@ -27,11 +27,11 @@ final class RelationshipTypeDaoHandlerDelete
     protected void doHandle()
         throws RepositoryException
     {
-        final Node relationshipTypeNode = getRelationshipTypeNode( qualifiedRelationshipTypeName );
+        final Node relationshipTypeNode = getRelationshipTypeNode( relationshipTypeName );
 
         if ( relationshipTypeNode == null )
         {
-            throw new RelationshipTypeNotFoundException( qualifiedRelationshipTypeName );
+            throw new RelationshipTypeNotFoundException( relationshipTypeName );
         }
 
         relationshipTypeNode.remove();

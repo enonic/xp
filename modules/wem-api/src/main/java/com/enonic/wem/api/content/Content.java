@@ -11,7 +11,7 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
@@ -22,7 +22,7 @@ public final class Content
 {
     private final String displayName;
 
-    private final QualifiedContentTypeName type;
+    private final ContentTypeName type;
 
     private final ContentPath path;
 
@@ -81,7 +81,7 @@ public final class Content
         return path.isPathToEmbeddedContent();
     }
 
-    public QualifiedContentTypeName getType()
+    public ContentTypeName getType()
     {
         return type;
     }
@@ -200,7 +200,7 @@ public final class Content
 
         private ContentId contentId;
 
-        private QualifiedContentTypeName type;
+        private ContentTypeName type;
 
         private Form form;
 
@@ -266,7 +266,7 @@ public final class Content
             return this;
         }
 
-        public Builder type( final QualifiedContentTypeName type )
+        public Builder type( final ContentTypeName type )
         {
             this.type = type;
             return this;
@@ -350,7 +350,7 @@ public final class Content
 
             if ( type == null )
             {
-                type = QualifiedContentTypeName.unstructured();
+                type = ContentTypeName.unstructured();
             }
             if ( versionId == null )
             {

@@ -58,40 +58,47 @@ module app_wizard {
 
         }
 
-        persistNewItem(successCallback?:() => void) {
+        persistNewItem( successCallback?:() => void ) {
             var formData = this.mixinForm.getFormData();
-            var createParams:api_remote_mixin.CreateOrUpdateParams = {
-                name: this.mixinWizardHeader.getName(),
-                mixin: formData.xml,
-                iconReference: this.getIconUrl()
-            };
 
-            api_remote_mixin.RemoteMixinService.mixin_createOrUpdate(createParams, () => {
-                new app_wizard.MixinCreatedEvent().fire();
-                api_notify.showFeedback('Mixin was created!');
+            var createRequest = new api_schema_mixin.CreateMixinRequest().
+                setName( this.mixinWizardHeader.getName() ).
+                setConfig( formData.xml ).
+                setIconReference( this.getIconUrl() );
 
-                if (successCallback) {
-                    successCallback.call(this);
-                }
-            });
+            createRequest.send().done( ( response:api_rest.JsonResponse<api_schema_mixin_json.MixinJson> ) => {
+
+                   api_notify.showFeedback( 'Mixin was created!' );
+
+                   new api_schema_mixin.MixinCreatedEvent( response.getResult().name ).fire();
+
+                   if ( successCallback )
+                   {
+                       successCallback.call( this );
+                   }
+               } );
         }
 
-        updatePersistedItem(successCallback?:() => void) {
+        updatePersistedItem( successCallback?:() => void ) {
             var formData = this.mixinForm.getFormData();
-            var updateParams:api_remote_mixin.CreateOrUpdateParams = {
-                name: this.mixinWizardHeader.getName(),
-                mixin: formData.xml,
-                iconReference: this.getIconUrl()
-            };
 
-            api_remote_mixin.RemoteMixinService.mixin_createOrUpdate(updateParams, () => {
-                new app_wizard.MixinUpdatedEvent().fire();
-                api_notify.showFeedback('Mixin was saved!');
+            var updateRequest = new api_schema_mixin.UpdateMixinRequest().
+                setMixinToUpdate( this.persistedMixin.getName() ).
+                setName( this.mixinWizardHeader.getName() ).
+                setConfig( formData.xml ).
+                setIconReference( this.getIconUrl() );
 
-                if (successCallback) {
-                    successCallback.call(this);
-                }
-            });
+            updateRequest.send().done( ( response:api_rest.JsonResponse<api_schema_mixin_json.MixinJson> ) => {
+
+                   api_notify.showFeedback( 'Mixin was updated!' );
+
+                   new api_schema_mixin.MixinUpdatedEvent( response.getResult().name ).fire();
+
+                   if ( successCallback )
+                   {
+                       successCallback.call( this );
+                   }
+               } );
         }
     }
 }

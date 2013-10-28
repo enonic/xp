@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
@@ -30,7 +30,7 @@ public final class Relationship
 
     private final UserKey modifier;
 
-    private final QualifiedRelationshipTypeName type;
+    private final RelationshipTypeName type;
 
     private final ContentId fromContent;
 
@@ -87,7 +87,7 @@ public final class Relationship
         return modifier;
     }
 
-    public QualifiedRelationshipTypeName getType()
+    public RelationshipTypeName getType()
     {
         return type;
     }
@@ -153,7 +153,7 @@ public final class Relationship
 
         private DateTime createdTime;
 
-        private QualifiedRelationshipTypeName type;
+        private RelationshipTypeName type;
 
         private ContentId fromContent;
 
@@ -192,7 +192,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder type( QualifiedRelationshipTypeName value )
+        public Builder type( RelationshipTypeName value )
         {
             this.type = value;
             return this;

@@ -6,16 +6,16 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class CreateContentType
-    extends Command<QualifiedContentTypeName>
+    extends Command<ContentTypeName>
 {
     private String name;
 
     private String displayName;
 
-    private QualifiedContentTypeName superType;
+    private ContentTypeName superType;
 
     private boolean isAbstract;
 
@@ -53,12 +53,12 @@ public final class CreateContentType
         return this;
     }
 
-    public QualifiedContentTypeName getSuperType()
+    public ContentTypeName getSuperType()
     {
         return superType;
     }
 
-    public CreateContentType superType( final QualifiedContentTypeName superType )
+    public CreateContentType superType( final ContentTypeName superType )
     {
         this.superType = superType;
         return this;

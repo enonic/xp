@@ -18,7 +18,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.tree.Tree;
 
 
@@ -222,7 +222,7 @@ public class ContentDaoImpl
     }
 
     @Override
-    public int countContentTypeUsage( final QualifiedContentTypeName qualifiedContentTypeName, Session session )
+    public int countContentTypeUsage( final ContentTypeName qualifiedContentTypeName, Session session )
     {
         try
         {

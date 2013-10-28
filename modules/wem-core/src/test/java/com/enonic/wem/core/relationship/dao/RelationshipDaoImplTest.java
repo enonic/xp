@@ -18,16 +18,16 @@ import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.Relationships;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentDaoImpl;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.relationship.RelationshipKey.newRelationshipKey;
-import static com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName.LIKE;
-import static com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName.LINK;
-import static com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName.PARENT;
+import static com.enonic.wem.api.schema.relationship.RelationshipTypeName.LIKE;
+import static com.enonic.wem.api.schema.relationship.RelationshipTypeName.LINK;
+import static com.enonic.wem.api.schema.relationship.RelationshipTypeName.PARENT;
 import static org.junit.Assert.*;
 
 public class RelationshipDaoImplTest
@@ -212,24 +212,24 @@ public class RelationshipDaoImplTest
         assertEquals( LIKE, likeRelationshipToC.getType() );
     }
 
-    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type )
+    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final RelationshipTypeName type )
     {
         return createRelationship( contentA, contentB, type, (DataPath) null );
     }
 
-    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type,
+    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final RelationshipTypeName type,
                                              final DateTime createdTime )
     {
         return createRelationship( contentA, contentB, type, null, createdTime );
     }
 
-    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type,
+    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final RelationshipTypeName type,
                                              final DataPath managingData )
     {
         return createRelationship( contentA, contentB, type, managingData, NOW );
     }
 
-    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final QualifiedRelationshipTypeName type,
+    private Relationship createRelationship( final ContentId contentA, final ContentId contentB, final RelationshipTypeName type,
                                              final DataPath managingData, final DateTime createdTime )
     {
         return Relationship.newRelationship().

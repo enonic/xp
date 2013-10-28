@@ -7,7 +7,7 @@ import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
 
 public class Mixin
-    extends BaseSchema<QualifiedMixinName>
+    extends BaseSchema<MixinName>
     implements Schema
 {
     private final FormItems formItems;
@@ -25,9 +25,9 @@ public class Mixin
     }
 
     @Override
-    public QualifiedMixinName getQualifiedName()
+    public MixinName getQualifiedName()
     {
-        return QualifiedMixinName.from( getName() );
+        return MixinName.from( getName() );
     }
 
     public FormItems getFormItems()
@@ -59,6 +59,18 @@ public class Mixin
         {
             super( mixin );
             this.formItems = mixin.formItems;
+        }
+
+        public Builder name( final MixinName value )
+        {
+            super.name( value );
+            return this;
+        }
+
+        public Builder name( final String value )
+        {
+            super.name( MixinName.from( value ) );
+            return this;
         }
 
         public Builder formItems( FormItems value )

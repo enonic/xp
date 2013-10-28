@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
-public class QualifiedMixinNameTest
+public class MixinNameTest
 {
     @Test
     public void equals()
@@ -14,26 +14,25 @@ public class QualifiedMixinNameTest
             @Override
             public Object getObjectX()
             {
-                return QualifiedMixinName.from( "mymodule:my_mixin" );
+                return MixinName.from( "my_mixin" );
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                return new Object[]{QualifiedMixinName.from( "mymodule:my_other_mixin" ),
-                    QualifiedMixinName.from( "myothermodule:my_mixin" )};
+                return new Object[]{MixinName.from( "my_other_mixin" )};
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return QualifiedMixinName.from( "mymodule:my_mixin" );
+                return MixinName.from( "my_mixin" );
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return QualifiedMixinName.from( "mymodule:my_mixin" );
+                return MixinName.from( "my_mixin" );
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();

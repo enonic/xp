@@ -9,7 +9,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -36,7 +36,7 @@ public class SetContentTypeEditorTest
             name( "test" ).
             displayName( "test" ).
             contentDisplayNameScript( "myScript()" ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            superType( ContentTypeName.unstructured() ).
             setAbstract( true ).
             setFinal( false ).
             createdTime( TIME1 ).
@@ -50,7 +50,7 @@ public class SetContentTypeEditorTest
         editorBuilder.displayName( "test" );
         editorBuilder.setAbstract( true );
         editorBuilder.setFinal( false );
-        editorBuilder.superType( QualifiedContentTypeName.unstructured() );
+        editorBuilder.superType( ContentTypeName.unstructured() );
         editorBuilder.icon( Icon.from( "imgdata".getBytes(), "image/png" ) );
         editorBuilder.contentDisplayNameScript( "myScript()" );
 
@@ -72,7 +72,7 @@ public class SetContentTypeEditorTest
         final ContentType contentType = newContentType().
             name( "test" ).
             contentDisplayNameScript( "myScript()" ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            superType( ContentTypeName.unstructured() ).
             setAbstract( true ).
             setFinal( true ).
             createdTime( TIME1 ).
@@ -84,7 +84,7 @@ public class SetContentTypeEditorTest
         editorBuilder.displayName( "NEW NAME" );
         editorBuilder.setAbstract( false );
         editorBuilder.setFinal( false );
-        editorBuilder.superType( QualifiedContentTypeName.structured() );
+        editorBuilder.superType( ContentTypeName.structured() );
         editorBuilder.icon( Icon.from( "imgdata".getBytes(), "image/png" ) );
         editorBuilder.contentDisplayNameScript( "newScript()" );
         final Form form = Form.newForm().addFormItem( formItemSet ).build();
@@ -99,7 +99,7 @@ public class SetContentTypeEditorTest
         assertEquals( TIME1, result.getCreatedTime() );
         assertEquals( TIME2, result.getModifiedTime() );
         assertEquals( "newScript()", result.getContentDisplayNameScript() );
-        assertEquals( QualifiedContentTypeName.structured(), result.getSuperType() );
+        assertEquals( ContentTypeName.structured(), result.getSuperType() );
         assertEquals( Icon.from( "imgdata".getBytes(), "image/png" ), result.getIcon() );
         assertEquals( form.toString(), result.form().toString() );
     }

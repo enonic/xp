@@ -11,30 +11,30 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
 public final class RelationshipType
-    extends BaseSchema
+    extends BaseSchema<RelationshipTypeName>
     implements Schema, IllegalEditAware<RelationshipType>
 {
     private final String fromSemantic;
 
     private final String toSemantic;
 
-    private final QualifiedContentTypeNames allowedFromTypes;
+    private final ContentTypeNames allowedFromTypes;
 
-    private final QualifiedContentTypeNames allowedToTypes;
+    private final ContentTypeNames allowedToTypes;
 
     private RelationshipType( final Builder builder )
     {
         super( builder );
         this.fromSemantic = builder.fromSemantic;
         this.toSemantic = builder.toSemantic;
-        this.allowedFromTypes = QualifiedContentTypeNames.from( builder.allowedFromTypes );
-        this.allowedToTypes = QualifiedContentTypeNames.from( builder.allowedToTypes );
+        this.allowedFromTypes = ContentTypeNames.from( builder.allowedFromTypes );
+        this.allowedToTypes = ContentTypeNames.from( builder.allowedToTypes );
     }
 
     @Override
@@ -44,9 +44,9 @@ public final class RelationshipType
     }
 
     @Override
-    public QualifiedRelationshipTypeName getQualifiedName()
+    public RelationshipTypeName getQualifiedName()
     {
-        return QualifiedRelationshipTypeName.from( getName() );
+        return RelationshipTypeName.from( getName() );
     }
 
     public String getFromSemantic()
@@ -59,12 +59,12 @@ public final class RelationshipType
         return toSemantic;
     }
 
-    public QualifiedContentTypeNames getAllowedFromTypes()
+    public ContentTypeNames getAllowedFromTypes()
     {
         return allowedFromTypes;
     }
 
-    public QualifiedContentTypeNames getAllowedToTypes()
+    public ContentTypeNames getAllowedToTypes()
     {
         return allowedToTypes;
     }
@@ -124,9 +124,9 @@ public final class RelationshipType
 
         private String toSemantic;
 
-        private List<QualifiedContentTypeName> allowedFromTypes = Lists.newArrayList();
+        private List<ContentTypeName> allowedFromTypes = Lists.newArrayList();
 
-        private List<QualifiedContentTypeName> allowedToTypes = Lists.newArrayList();
+        private List<ContentTypeName> allowedToTypes = Lists.newArrayList();
 
         private Builder()
         {
@@ -142,6 +142,18 @@ public final class RelationshipType
             this.allowedToTypes = Lists.newArrayList( relationshipType.allowedToTypes );
         }
 
+        public Builder name( final RelationshipTypeName value )
+        {
+            super.name( value );
+            return this;
+        }
+
+        public Builder name( final String value )
+        {
+            super.name( RelationshipTypeName.from( value ) );
+            return this;
+        }
+
         public Builder fromSemantic( String value )
         {
             this.fromSemantic = value;
@@ -154,44 +166,44 @@ public final class RelationshipType
             return this;
         }
 
-        public Builder addAllowedFromType( QualifiedContentTypeName contentTypeName )
+        public Builder addAllowedFromType( ContentTypeName contentTypeName )
         {
             allowedFromTypes.add( contentTypeName );
             return this;
         }
 
-        public Builder addAllowedFromTypes( Iterable<QualifiedContentTypeName> contentTypeNames )
+        public Builder addAllowedFromTypes( Iterable<ContentTypeName> contentTypeNames )
         {
-            for ( QualifiedContentTypeName contentType : contentTypeNames )
+            for ( ContentTypeName contentType : contentTypeNames )
             {
                 allowedFromTypes.add( contentType );
             }
             return this;
         }
 
-        public Builder setAllowedFromTypes( Iterable<QualifiedContentTypeName> contentTypeNames )
+        public Builder setAllowedFromTypes( Iterable<ContentTypeName> contentTypeNames )
         {
             allowedFromTypes.clear();
             Iterables.addAll( allowedFromTypes, contentTypeNames );
             return this;
         }
 
-        public Builder addAllowedToType( QualifiedContentTypeName contentTypeName )
+        public Builder addAllowedToType( ContentTypeName contentTypeName )
         {
             allowedToTypes.add( contentTypeName );
             return this;
         }
 
-        public Builder addAllowedToTypes( Iterable<QualifiedContentTypeName> contentTypeNames )
+        public Builder addAllowedToTypes( Iterable<ContentTypeName> contentTypeNames )
         {
-            for ( QualifiedContentTypeName contentType : contentTypeNames )
+            for ( ContentTypeName contentType : contentTypeNames )
             {
                 allowedToTypes.add( contentType );
             }
             return this;
         }
 
-        public Builder setAllowedToTypes( Iterable<QualifiedContentTypeName> contentTypeNames )
+        public Builder setAllowedToTypes( Iterable<ContentTypeName> contentTypeNames )
         {
             allowedToTypes.clear();
             Iterables.addAll( allowedToTypes, contentTypeNames );

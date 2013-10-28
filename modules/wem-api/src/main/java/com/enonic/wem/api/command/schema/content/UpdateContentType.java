@@ -4,18 +4,18 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 
 public final class UpdateContentType
     extends Command<UpdateContentTypeResult>
 {
-    private QualifiedContentTypeName qualifiedName;
+    private ContentTypeName qualifiedName;
 
     private ContentTypeEditor editor;
 
 
-    public UpdateContentType qualifiedName( final QualifiedContentTypeName qualifiedName )
+    public UpdateContentType qualifiedName( final ContentTypeName qualifiedName )
     {
         this.qualifiedName = qualifiedName;
         return this;
@@ -27,7 +27,7 @@ public final class UpdateContentType
         return this;
     }
 
-    public QualifiedContentTypeName getQualifiedName()
+    public ContentTypeName getQualifiedName()
     {
         return qualifiedName;
     }

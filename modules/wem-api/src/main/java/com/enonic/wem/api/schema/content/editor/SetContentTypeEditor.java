@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
@@ -14,7 +14,7 @@ public final class SetContentTypeEditor
 {
     private final String displayName;
 
-    private final QualifiedContentTypeName superType;
+    private final ContentTypeName superType;
 
     private final Boolean isAbstract;
 
@@ -46,7 +46,7 @@ public final class SetContentTypeEditor
     {
         private String displayName;
 
-        private QualifiedContentTypeName superType;
+        private ContentTypeName superType;
 
         private Boolean isAbstract;
 
@@ -68,7 +68,7 @@ public final class SetContentTypeEditor
             return this;
         }
 
-        public Builder superType( final QualifiedContentTypeName superType )
+        public Builder superType( final ContentTypeName superType )
         {
             this.superType = superType;
             return this;

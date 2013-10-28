@@ -10,7 +10,7 @@ import org.jdom.JDOMException;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.data.serializer.DataXmlSerializer;
 import com.enonic.wem.core.support.util.JdomHelper;
 
@@ -91,7 +91,7 @@ public class ContentXmlSerializer
         final String typeAsString = contentEl.getChildText( "type" );
         if ( typeAsString != null )
         {
-            final QualifiedContentTypeName qualifiedContentTypeName = QualifiedContentTypeName.from( typeAsString );
+            final ContentTypeName qualifiedContentTypeName = ContentTypeName.from( typeAsString );
             contentBuilder.type( qualifiedContentTypeName );
         }
 

@@ -2,17 +2,17 @@
     "success": false,
     "successes": [
         {
-            "qualifiedContentTypeName": "my:existing_content_type"
+            "qualifiedContentTypeName": "existing_content_type"
         }
     ],
     "failures": [
         {
-            "qualifiedContentTypeName": "my:not_found_content_type",
-            "reason": "ContentType [my:not_found_content_type] was not found"
+            "qualifiedContentTypeName": "not_found_content_type",
+            "reason": "ContentType [not_found_content_type] was not found"
         },
         {
-            "qualifiedContentTypeName": "my:being_used_content_type",
-            "reason": "Unable to delete content type [my:being_used_content_type]: Content type is being used"
+            "qualifiedContentTypeName": "being_used_content_type",
+            "reason": "Unable to delete content type [being_used_content_type]: Content type is being used"
         }
     ]
 }

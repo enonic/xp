@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.SpaceAlreadyExistException;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.space.Space;
 import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.api.space.Spaces;
@@ -72,7 +72,7 @@ public class SpaceDaoImplTest
     {
         final Content rootContent = newContent().
             path( ContentPath.rootOf( space.getName() ) ).
-            type( QualifiedContentTypeName.space() ).
+            type( ContentTypeName.space() ).
             displayName( space.getDisplayName() ).
             build();
         return contentDao.create( rootContent, session );

@@ -18,7 +18,7 @@ public final class UpdateMixinHandler
     public void handle()
         throws Exception
     {
-        final Mixin mixin = context.getClient().execute( Commands.mixin().get().byQualifiedName( command.getQualifiedName() ) );
+        final Mixin mixin = context.getClient().execute( Commands.mixin().get().byName( command.getName() ) );
         if ( mixin == null )
         {
             command.setResult( UpdateMixinResult.NOT_FOUND );

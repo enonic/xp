@@ -5,8 +5,8 @@ import com.enonic.wem.api.exception.BaseException;
 public final class MixinNotFoundException
     extends BaseException
 {
-    public MixinNotFoundException( final QualifiedMixinName qualifiedMixinName )
+    public MixinNotFoundException( final MixinName mixinName )
     {
-        super( "Mixin [{0}] was not found", qualifiedMixinName );
+        super( "Mixin [{0}] was not found", mixinName );
     }
 }

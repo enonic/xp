@@ -13,7 +13,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
 import com.enonic.wem.api.relationship.UpdateRelationshipFailureException;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.relationship.UpdateRelationshipFailureException.newUpdateRelationshipsResult;
 import static org.mockito.Matchers.isA;
@@ -40,7 +40,7 @@ public class UpdateRelationshipPropertiesRpcHandlerTest
         throws Exception
     {
         RelationshipKey relationshipKey = RelationshipKey.newRelationshipKey().
-            type( QualifiedRelationshipTypeName.LIKE ).
+            type( RelationshipTypeName.LIKE ).
             fromContent( ContentId.from( "123" ) ).
             toContent( ContentId.from( "321" ) ).
             build();
@@ -60,7 +60,7 @@ public class UpdateRelationshipPropertiesRpcHandlerTest
         throws Exception
     {
         RelationshipKey relationshipKey = RelationshipKey.newRelationshipKey().
-            type( QualifiedRelationshipTypeName.LIKE ).
+            type( RelationshipTypeName.LIKE ).
             fromContent( ContentId.from( "123" ) ).
             toContent( ContentId.from( "321" ) ).
             build();

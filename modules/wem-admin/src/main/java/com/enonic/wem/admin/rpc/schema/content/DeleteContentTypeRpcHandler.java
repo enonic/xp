@@ -6,8 +6,8 @@ import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 
 public final class DeleteContentTypeRpcHandler
@@ -22,11 +22,11 @@ public final class DeleteContentTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final QualifiedContentTypeNames contentTypeNames =
-            QualifiedContentTypeNames.from( context.param( "qualifiedContentTypeNames" ).required().asStringArray() );
+        final ContentTypeNames contentTypeNames =
+            ContentTypeNames.from( context.param( "qualifiedContentTypeNames" ).required().asStringArray() );
 
         final ContentTypeDeletionResult deletionResult = new ContentTypeDeletionResult();
-        for ( QualifiedContentTypeName contentTypeName : contentTypeNames )
+        for ( ContentTypeName contentTypeName : contentTypeNames )
         {
             final DeleteContentType deleteContentType = Commands.contentType().delete().name( contentTypeName );
             final DeleteContentTypeResult deleteResult = client.execute( deleteContentType );

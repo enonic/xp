@@ -11,9 +11,9 @@ import javax.jcr.Session;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
@@ -25,11 +25,11 @@ final class ContentTypeDaoHandlerSelect
         super( session );
     }
 
-    ContentTypes select( final QualifiedContentTypeNames contentTypeNames )
+    ContentTypes select( final ContentTypeNames contentTypeNames )
         throws RepositoryException
     {
         final List<ContentType> contentTypeList = Lists.newArrayList();
-        for ( QualifiedContentTypeName contentTypeName : contentTypeNames )
+        for ( ContentTypeName contentTypeName : contentTypeNames )
         {
             final ContentType contentType = doSelect( contentTypeName );
             if ( contentType != null )
@@ -40,7 +40,7 @@ final class ContentTypeDaoHandlerSelect
         return ContentTypes.from( contentTypeList );
     }
 
-    private ContentType doSelect( final QualifiedContentTypeName contentTypeName )
+    private ContentType doSelect( final ContentTypeName contentTypeName )
         throws RepositoryException
     {
         final Node contentTypeNode = this.getContentTypeNode( contentTypeName );

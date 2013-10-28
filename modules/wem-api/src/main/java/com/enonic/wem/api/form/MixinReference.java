@@ -4,24 +4,24 @@ package com.enonic.wem.api.form;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public class MixinReference
     extends FormItem
 {
-    private final QualifiedMixinName qualifiedMixinName;
+    private final MixinName mixinName;
 
     private MixinReference( Builder builder )
     {
         super( builder.name );
 
-        Preconditions.checkNotNull( builder.qualifiedMixinName, "qualifiedMixinName is required" );
-        this.qualifiedMixinName = builder.qualifiedMixinName;
+        Preconditions.checkNotNull( builder.mixinName, "mixinName is required" );
+        this.mixinName = builder.mixinName;
     }
 
-    public QualifiedMixinName getQualifiedMixinName()
+    public MixinName getMixinName()
     {
-        return qualifiedMixinName;
+        return mixinName;
     }
 
     public static Builder newMixinReference()
@@ -49,7 +49,7 @@ public class MixinReference
     {
         private String name;
 
-        private QualifiedMixinName qualifiedMixinName;
+        private MixinName mixinName;
 
         public Builder()
         {
@@ -59,12 +59,12 @@ public class MixinReference
         public Builder( MixinReference source )
         {
             this.name = source.getName();
-            this.qualifiedMixinName = source.qualifiedMixinName;
+            this.mixinName = source.mixinName;
         }
 
         public Builder( final Mixin mixin )
         {
-            this.qualifiedMixinName = mixin.getQualifiedName();
+            this.mixinName = mixin.getQualifiedName();
         }
 
         public Builder name( String value )
@@ -75,19 +75,19 @@ public class MixinReference
 
         public Builder mixin( final Mixin mixin )
         {
-            this.qualifiedMixinName = mixin.getQualifiedName();
+            this.mixinName = mixin.getQualifiedName();
             return this;
         }
 
         public Builder mixin( String qualifiedName )
         {
-            this.qualifiedMixinName = QualifiedMixinName.from( qualifiedName );
+            this.mixinName = MixinName.from( qualifiedName );
             return this;
         }
 
-        public Builder mixin( QualifiedMixinName qualifiedName )
+        public Builder mixin( MixinName qualifiedName )
         {
-            this.qualifiedMixinName = qualifiedName;
+            this.mixinName = qualifiedName;
             return this;
         }
 

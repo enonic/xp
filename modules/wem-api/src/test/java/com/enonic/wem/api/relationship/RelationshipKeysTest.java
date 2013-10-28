@@ -5,26 +5,26 @@ import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
 public class RelationshipKeysTest
 {
     private static final RelationshipKey parent_111_222_myInput = RelationshipKey.newRelationshipKey().
-        type( QualifiedRelationshipTypeName.PARENT ).
+        type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "111" ) ).
         toContent( ContentId.from( "222" ) ).
         managingData( DataPath.from( "myInput" ) ).build();
 
 
     private static final RelationshipKey parent_111_222_myOtherInput = RelationshipKey.newRelationshipKey().
-        type( QualifiedRelationshipTypeName.PARENT ).
+        type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "111" ) ).
         toContent( ContentId.from( "222" ) ).
         managingData( DataPath.from( "myOtherInput" ) ).build();
 
     private static final RelationshipKey parent_555_222_myInput = RelationshipKey.newRelationshipKey().
-        type( QualifiedRelationshipTypeName.PARENT ).
+        type( RelationshipTypeName.PARENT ).
         fromContent( ContentId.from( "555" ) ).
         toContent( ContentId.from( "222" ) ).
         managingData( DataPath.from( "myInput" ) ).build();

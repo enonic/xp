@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.space.SpaceNames;
 
 public class ContentIndexQuery
@@ -20,7 +20,7 @@ public class ContentIndexQuery
 
     private String facets;
 
-    private QualifiedContentTypeNames contentTypeNames;
+    private ContentTypeNames contentTypeNames;
 
     private SpaceNames spaceNames;
 
@@ -68,12 +68,12 @@ public class ContentIndexQuery
         return facets;
     }
 
-    public QualifiedContentTypeNames getContentTypeNames()
+    public ContentTypeNames getContentTypeNames()
     {
         return contentTypeNames;
     }
 
-    public void setContentTypeNames( final QualifiedContentTypeNames contentTypeNames )
+    public void setContentTypeNames( final ContentTypeNames contentTypeNames )
     {
         this.contentTypeNames = contentTypeNames;
     }

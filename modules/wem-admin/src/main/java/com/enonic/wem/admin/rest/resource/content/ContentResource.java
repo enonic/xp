@@ -82,8 +82,8 @@ import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.core.content.serializer.ContentDataJsonSerializer;
@@ -273,7 +273,7 @@ public class ContentResource
         final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( params.getFulltext() );
         contentIndexQuery.setIncludeFacets( params.isIncludeFacets() );
-        contentIndexQuery.setContentTypeNames( QualifiedContentTypeNames.from( params.getContentTypes() ) );
+        contentIndexQuery.setContentTypeNames( ContentTypeNames.from( params.getContentTypes() ) );
         contentIndexQuery.setSpaceNames( SpaceNames.from( params.getSpaces() ) );
 
         if ( params.getCount() >= 0 )
@@ -330,10 +330,9 @@ public class ContentResource
     @Path("validate")
     public ValidateContentJson validate( final ValidateContentParams params )
     {
-        final QualifiedContentTypeName qualifiedContentTypeName = QualifiedContentTypeName.from( params.getQualifiedContentTypeName() );
+        final ContentTypeName qualifiedContentTypeName = ContentTypeName.from( params.getQualifiedContentTypeName() );
 
-        GetContentTypes getContentType =
-            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
+        GetContentTypes getContentType = Commands.contentType().get().qualifiedNames( ContentTypeNames.from( qualifiedContentTypeName ) );
         final ContentType contentType = client.execute( getContentType ).first();
 
         final ContentData contentData = new ContentDataParser( contentType ).parse( params.getContentData() );
@@ -426,7 +425,7 @@ public class ContentResource
     }
 
 
-    private ContentData parseContentData( QualifiedContentTypeName qualifiedContentTypeName, JsonNode contentData )
+    private ContentData parseContentData( ContentTypeName qualifiedContentTypeName, JsonNode contentData )
     {
         return contentDataJsonSerializer.parse( contentData );
     }

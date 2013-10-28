@@ -8,15 +8,14 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.Name;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.QualifiedName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public abstract class BaseSchema<T extends QualifiedName>
-    implements Schema
+public abstract class BaseSchema<T extends SchemaName>
+implements Schema
 {
     private final SchemaId id;
 
-    private final Name name;
+    private final SchemaName name;
 
     private final String displayName;
 
@@ -88,7 +87,7 @@ public abstract class BaseSchema<T extends QualifiedName>
     {
         private SchemaId id;
 
-        private Name name;
+        private SchemaName name;
 
         private String displayName;
 
@@ -130,15 +129,9 @@ public abstract class BaseSchema<T extends QualifiedName>
             return getThis();
         }
 
-        public T name( final String name )
+        public T name( final SchemaName value )
         {
-            this.name = name != null ? Name.from( name ) : null;
-            return getThis();
-        }
-
-        public T qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
-        {
-            this.name = Name.from( qualifiedContentTypeName.getContentTypeName() );
+            this.name = value;
             return getThis();
         }
 

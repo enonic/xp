@@ -6,8 +6,8 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -42,6 +42,6 @@ public class ContentTypesInitializerTest
 
         assertEquals( true, ContentTypesInitializer.MEDIA_TEXT.isFinal() );
         assertEquals( false, ContentTypesInitializer.MEDIA_TEXT.isAbstract() );
-        assertEquals( QualifiedContentTypeName.media(), ContentTypesInitializer.MEDIA_TEXT.getSuperType() );
+        assertEquals( ContentTypeName.media(), ContentTypesInitializer.MEDIA_TEXT.getSuperType() );
     }
 }

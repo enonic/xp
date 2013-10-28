@@ -1,8 +1,8 @@
 package com.enonic.wem.api.schema.relationship.editor;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
@@ -16,9 +16,9 @@ public final class SetRelationshipTypeEditor
 
     private final String toSemantic;
 
-    private final QualifiedContentTypeNames allowedFromTypes;
+    private final ContentTypeNames allowedFromTypes;
 
-    private final QualifiedContentTypeNames allowedToTypes;
+    private final ContentTypeNames allowedToTypes;
 
     private final Icon icon;
 
@@ -45,9 +45,9 @@ public final class SetRelationshipTypeEditor
 
         private String toSemantic;
 
-        private QualifiedContentTypeNames allowedFromTypes;
+        private ContentTypeNames allowedFromTypes;
 
-        private QualifiedContentTypeNames allowedToTypes;
+        private ContentTypeNames allowedToTypes;
 
         private Icon icon;
 
@@ -69,13 +69,13 @@ public final class SetRelationshipTypeEditor
             return this;
         }
 
-        public Builder allowedFromTypes( final QualifiedContentTypeNames value )
+        public Builder allowedFromTypes( final ContentTypeNames value )
         {
             this.allowedFromTypes = value;
             return this;
         }
 
-        public Builder allowedToTypes( final QualifiedContentTypeNames value )
+        public Builder allowedToTypes( final ContentTypeNames value )
         {
             this.allowedToTypes = value;
             return this;
@@ -116,14 +116,14 @@ public final class SetRelationshipTypeEditor
         }
         if ( allowedFromTypes != null )
         {
-            for ( QualifiedContentTypeName contentTypeName : allowedFromTypes )
+            for ( ContentTypeName contentTypeName : allowedFromTypes )
             {
                 builder.addAllowedFromType( contentTypeName );
             }
         }
         if ( allowedToTypes != null )
         {
-            for ( QualifiedContentTypeName contentTypeName : allowedToTypes )
+            for ( ContentTypeName contentTypeName : allowedToTypes )
             {
                 builder.addAllowedToType( contentTypeName );
             }

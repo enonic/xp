@@ -21,7 +21,7 @@ public final class GetMixinHandler
     {
         try
         {
-            final NodePath nodePath = new NodePath( "/mixins/" + command.getQualifiedName().toString() );
+            final NodePath nodePath = new NodePath( "/mixins/" + command.getName().toString() );
             final GetNodeByPath getNodeByPathCommand = Commands.node().get().byPath( nodePath );
 
             context.getClient().execute( getNodeByPathCommand );

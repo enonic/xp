@@ -1,6 +1,6 @@
 {
     "name" : "all_types",
-    "contentType": "<type><xml-format-not-validated-in-this-test/><form><input type=\"TextLine\" built-in=\"true\" name=\"myTextLine\"> <label /> <immutable>false</immutable> <indexed>false</indexed> <customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></form></type>",
+    "contentType": "<type><name>mycty</name><xml-format-not-validated-in-this-test/><form><input type=\"TextLine\" built-in=\"true\" name=\"myTextLine\"> <label /> <immutable>false</immutable> <indexed>false</indexed> <customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></form></type>",
     "iconReference": "edc1af66-ecb4-4f8a-8df4-0738418f84fc"
 }
 

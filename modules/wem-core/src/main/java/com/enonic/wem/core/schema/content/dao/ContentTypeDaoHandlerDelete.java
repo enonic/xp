@@ -6,7 +6,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.exception.ContentTypeNotFoundException;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 
 final class ContentTypeDaoHandlerDelete
@@ -17,14 +17,14 @@ final class ContentTypeDaoHandlerDelete
         super( session );
     }
 
-    void handle( final QualifiedContentTypeName qualifiedContentTypeName )
+    void handle( final ContentTypeName contentTypeName )
         throws RepositoryException
     {
-        final Node contentTypeNode = getContentTypeNode( qualifiedContentTypeName );
+        final Node contentTypeNode = getContentTypeNode( contentTypeName );
 
         if ( contentTypeNode == null )
         {
-            throw new ContentTypeNotFoundException( qualifiedContentTypeName );
+            throw new ContentTypeNotFoundException( contentTypeName );
         }
 
         contentTypeNode.remove();

@@ -14,8 +14,8 @@ import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
@@ -57,7 +57,7 @@ public class GetSchemaTreeHandlerTest
     {
         // setup
         final ContentType unstructuredContentType = newContentType().
-            qualifiedName( QualifiedContentTypeName.structured() ).
+            name( ContentTypeName.structured() ).
             builtIn( true ).
             displayName( "Unstructured" ).
             setFinal( false ).
@@ -87,8 +87,8 @@ public class GetSchemaTreeHandlerTest
             name( "like" ).
             fromSemantic( "likes" ).
             toSemantic( "liked by" ).
-            addAllowedFromType( QualifiedContentTypeName.from( "mymodule:person" ) ).
-            addAllowedToType( QualifiedContentTypeName.from( "mymodule:person" ) ).
+            addAllowedFromType( ContentTypeName.from( "person" ) ).
+            addAllowedToType( ContentTypeName.from( "person" ) ).
             build();
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         Mockito.when( client.execute( Mockito.isA( GetRelationshipTypes.class ) ) ).thenReturn( relationshipTypes );

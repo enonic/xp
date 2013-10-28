@@ -9,6 +9,10 @@ public class DateTimeFormatter
 
     public static String format( DateTime dateTime )
     {
+        if ( dateTime == null )
+        {
+            return null;
+        }
         return isoDateTimeFormatter.print( dateTime );
     }
 

@@ -4,24 +4,24 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 
 public final class GetContentTypes
     extends Command<ContentTypes>
 {
-    private QualifiedContentTypeNames qualifiedNames;
+    private ContentTypeNames qualifiedNames;
 
     private boolean getAllContentTypes = false;
 
     private boolean mixinReferencesToFormItems = false;
 
-    public QualifiedContentTypeNames getQualifiedNames()
+    public ContentTypeNames getQualifiedNames()
     {
         return this.qualifiedNames;
     }
 
-    public GetContentTypes qualifiedNames( final QualifiedContentTypeNames qualifiedNames )
+    public GetContentTypes qualifiedNames( final ContentTypeNames qualifiedNames )
     {
         this.qualifiedNames = qualifiedNames;
         return this;

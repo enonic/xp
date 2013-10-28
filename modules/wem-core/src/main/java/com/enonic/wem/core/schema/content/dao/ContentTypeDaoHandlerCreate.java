@@ -6,7 +6,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
@@ -21,7 +21,7 @@ final class ContentTypeDaoHandlerCreate
     void create( final ContentType contentType )
         throws RepositoryException
     {
-        final QualifiedContentTypeName contentTypeName = contentType.getQualifiedName();
+        final ContentTypeName contentTypeName = contentType.getQualifiedName();
         if ( contentTypeExists( contentTypeName ) )
         {
             throw new SystemException( "Content type already exists: {0}", contentTypeName.toString() );
@@ -31,12 +31,12 @@ final class ContentTypeDaoHandlerCreate
         this.contentTypeJcrMapper.toJcr( contentType, contentTypeNode );
     }
 
-    private Node createContentTypeNode( final QualifiedContentTypeName contentTypeName )
+    private Node createContentTypeNode( final ContentTypeName contentTypeName )
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
         final Node contentTypesNode = rootNode.getNode( ContentTypeDao.CONTENT_TYPES_PATH );
-        return JcrHelper.getOrAddNode( contentTypesNode, contentTypeName.getName() );
+        return JcrHelper.getOrAddNode( contentTypesNode, contentTypeName.toString() );
     }
 
 }

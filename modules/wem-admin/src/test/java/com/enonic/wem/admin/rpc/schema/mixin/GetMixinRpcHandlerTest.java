@@ -11,7 +11,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -46,7 +46,7 @@ public class GetMixinRpcHandlerTest
             addFormItem( inputText1 ).
             build();
 
-        Mockito.when( client.execute( mixin().get().byQualifiedName( QualifiedMixinName.from( "mymixin" ) ) ) ).thenReturn( mixin );
+        Mockito.when( client.execute( mixin().get().byName( MixinName.from( "mymixin" ) ) ) ).thenReturn( mixin );
 
         testSuccess( "getMixin_asJson_param.json", "getMixin_asJson_result.json" );
     }
@@ -62,7 +62,7 @@ public class GetMixinRpcHandlerTest
             addFormItem( inputText1 ).
             build();
 
-        Mockito.when( client.execute( mixin().get().byQualifiedName( QualifiedMixinName.from( "mymixin" ) ) ) ).thenReturn( mixin );
+        Mockito.when( client.execute( mixin().get().byName( MixinName.from( "mymixin" ) ) ) ).thenReturn( mixin );
 
         testSuccess( "getMixin_asXml_param.json", "getMixin_asXml_result.json" );
     }

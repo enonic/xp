@@ -7,8 +7,8 @@ import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
@@ -30,7 +30,7 @@ public final class GetContentTypesHandler
         }
         else
         {
-            final QualifiedContentTypeNames qualifiedNames = command.getQualifiedNames();
+            final ContentTypeNames qualifiedNames = command.getQualifiedNames();
             contentTypes = getContentTypes( session, qualifiedNames );
         }
 
@@ -49,7 +49,7 @@ public final class GetContentTypesHandler
         return contentTypeDao.selectAll( session );
     }
 
-    private ContentTypes getContentTypes( final Session session, final QualifiedContentTypeNames contentTypeNames )
+    private ContentTypes getContentTypes( final Session session, final ContentTypeNames contentTypeNames )
     {
         return contentTypeDao.select( contentTypeNames, session );
     }

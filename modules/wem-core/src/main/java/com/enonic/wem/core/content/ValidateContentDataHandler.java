@@ -7,8 +7,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.OccurrenceValidator;
 import com.enonic.wem.core.command.CommandHandler;
@@ -25,10 +25,10 @@ public final class ValidateContentDataHandler
         throws Exception
     {
         final ContentData contentData = command.getContentData();
-        final QualifiedContentTypeName qualifiedContentTypeName = command.getContentType();
+        final ContentTypeName contentTypeName = command.getContentType();
         final ContentType contentType =
-            contentTypeDao.select( QualifiedContentTypeNames.from( qualifiedContentTypeName ), context.getJcrSession() ).first();
-        Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", qualifiedContentTypeName );
+            contentTypeDao.select( ContentTypeNames.from( contentTypeName ), context.getJcrSession() ).first();
+        Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", contentTypeName );
 
         final OccurrenceValidator occurrenceValidator = new OccurrenceValidator( contentType );
 

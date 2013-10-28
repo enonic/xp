@@ -4,19 +4,19 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public final class DeleteRelationshipType
     extends Command<DeleteRelationshipTypeResult>
 {
-    private QualifiedRelationshipTypeName qualifiedName;
+    private RelationshipTypeName qualifiedName;
 
-    public QualifiedRelationshipTypeName getQualifiedName()
+    public RelationshipTypeName getQualifiedName()
     {
         return this.qualifiedName;
     }
 
-    public DeleteRelationshipType qualifiedName( final QualifiedRelationshipTypeName qualifiedNames )
+    public DeleteRelationshipType qualifiedName( final RelationshipTypeName qualifiedNames )
     {
         this.qualifiedName = qualifiedNames;
         return this;

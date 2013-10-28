@@ -18,9 +18,9 @@ import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
 import com.enonic.wem.core.form.inputtype.InputTypeExtensions;
 import com.enonic.wem.core.form.inputtype.InputTypeResolver;
@@ -76,7 +76,7 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
         contentTypeBuilder.contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" );
-        contentTypeBuilder.superType( QualifiedContentTypeName.from( "content" ) );
+        contentTypeBuilder.superType( ContentTypeName.from( "content" ) );
         contentTypeBuilder.setAbstract( false );
         contentTypeBuilder.setFinal( true );
 
@@ -317,17 +317,17 @@ public abstract class AbstractContentTypeSerializerTest
             build();
 
         RelationshipConfig relationshipConfig = newRelationshipConfig().
-            relationshipType( QualifiedRelationshipTypeName.LIKE ).
+            relationshipType( RelationshipTypeName.LIKE ).
             build();
 
         ImageSelectorConfig imageSelectorConfig = newImageSelectorConfig().
-            relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
+            relationshipType( RelationshipTypeName.DEFAULT ).
             build();
 
         ContentType.Builder contentTypeBuilder = newContentType().
             name( "all_input_types" ).
             displayName( "All the Input Types" ).
-            superType( QualifiedContentTypeName.structured() ).
+            superType( ContentTypeName.structured() ).
             setAbstract( false ).
             setFinal( true );
 

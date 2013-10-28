@@ -16,6 +16,6 @@ public class MixinReferenceJson
 
     public String getReference()
     {
-        return mixinReference.getQualifiedMixinName().toString();
+        return mixinReference.getMixinName().toString();
     }
 }

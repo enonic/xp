@@ -14,7 +14,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipKey;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static junit.framework.Assert.assertEquals;
@@ -25,7 +25,7 @@ public class SyncRelationshipsTest
     private static final com.enonic.wem.api.content.ContentId CONTENT_TO_UPDATE = com.enonic.wem.api.content.ContentId.from( "100" );
 
     private static final RelationshipConfig RELATIONSHIP_CONFIG_LIKE =
-        RelationshipConfig.newRelationshipConfig().relationshipType( QualifiedRelationshipTypeName.LIKE ).build();
+        RelationshipConfig.newRelationshipConfig().relationshipType( RelationshipTypeName.LIKE ).build();
 
     private static final ContentId CONTENT_ID_201 = ContentId.from( "201" );
 
@@ -54,7 +54,7 @@ public class SyncRelationshipsTest
 
         // verify: relationshipKey
         RelationshipKey relationshipKey = relationship.getKey();
-        assertEquals( QualifiedRelationshipTypeName.LIKE, relationshipKey.getType() );
+        assertEquals( RelationshipTypeName.LIKE, relationshipKey.getType() );
         assertEquals( DataPath.from( "myRelated" ), relationshipKey.getManagingData() );
         assertEquals( CONTENT_TO_UPDATE, relationshipKey.getFromContent() );
         assertEquals( CONTENT_ID_201, relationshipKey.getToContent() );
@@ -85,7 +85,7 @@ public class SyncRelationshipsTest
 
         // verify: relationshipKey
         RelationshipKey relationshipKey = relationship.getKey();
-        assertEquals( QualifiedRelationshipTypeName.LIKE, relationshipKey.getType() );
+        assertEquals( RelationshipTypeName.LIKE, relationshipKey.getType() );
         assertEquals( DataPath.from( "myRelated" ), relationshipKey.getManagingData() );
         assertEquals( CONTENT_TO_UPDATE, relationshipKey.getFromContent() );
         assertEquals( CONTENT_ID_201, relationshipKey.getToContent() );
@@ -120,7 +120,7 @@ public class SyncRelationshipsTest
 
         // verify: relationshipKey
         RelationshipKey relationshipKey = relationship.getKey();
-        assertEquals( QualifiedRelationshipTypeName.LIKE, relationshipKey.getType() );
+        assertEquals( RelationshipTypeName.LIKE, relationshipKey.getType() );
         assertEquals( DataPath.from( "mySet.myRelated" ), relationshipKey.getManagingData() );
         assertEquals( CONTENT_TO_UPDATE, relationshipKey.getFromContent() );
         assertEquals( CONTENT_ID_201, relationshipKey.getToContent() );
@@ -150,7 +150,7 @@ public class SyncRelationshipsTest
         RelationshipKey relationshipKey = syncRelationships.getRelationshipsToDelete().get( 0 );
 
         // verify: relationshipKey
-        assertEquals( QualifiedRelationshipTypeName.LIKE, relationshipKey.getType() );
+        assertEquals( RelationshipTypeName.LIKE, relationshipKey.getType() );
         assertEquals( DataPath.from( "myRelated" ), relationshipKey.getManagingData() );
         assertEquals( CONTENT_TO_UPDATE, relationshipKey.getFromContent() );
         assertEquals( CONTENT_ID_201, relationshipKey.getToContent() );

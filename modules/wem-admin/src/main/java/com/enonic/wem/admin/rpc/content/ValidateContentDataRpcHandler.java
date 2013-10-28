@@ -8,8 +8,8 @@ import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 import static com.enonic.wem.api.command.Commands.content;
@@ -29,25 +29,25 @@ public final class ValidateContentDataRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final String contentTypeParam = context.param( "qualifiedContentTypeName" ).required().asString();
+        final String contentTypeParam = context.param( "contentTypeName" ).required().asString();
         final ObjectNode contentDataParam = context.param( "contentData" ).required().asObject();
 
-        final QualifiedContentTypeName qualifiedContentTypeName =  QualifiedContentTypeName.from( contentTypeParam );
+        final ContentTypeName contentTypeName =  ContentTypeName.from( contentTypeParam );
 
-        final ContentType contentType = getContentType( qualifiedContentTypeName );
+        final ContentType contentType = getContentType( contentTypeName );
         final ContentData contentData = new ContentDataParser( contentType ).parse( contentDataParam );
 
         final DataValidationErrors validationErrors =
-            client.execute( content().validate().contentData( contentData ).contentType( qualifiedContentTypeName ) );
+            client.execute( content().validate().contentData( contentData ).contentType( contentTypeName ) );
 
         final ValidateContentDataJsonResult result = new ValidateContentDataJsonResult( validationErrors );
         context.setResult( result );
     }
 
-    private ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
+    private ContentType getContentType( final ContentTypeName contentTypeName )
     {
         final GetContentTypes getContentType =
-            contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedContentTypeName ) );
+            contentType().get().qualifiedNames( ContentTypeNames.from( contentTypeName ) );
         final ContentTypes contentTypes = client.execute( getContentType );
         return contentTypes.first();
     }

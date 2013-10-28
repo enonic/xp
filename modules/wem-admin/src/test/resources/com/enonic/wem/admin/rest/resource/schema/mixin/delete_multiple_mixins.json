@@ -1,18 +1,18 @@
 {
     "failures": [
         {
-            "qualifiedName": "my:being_used_mixin",
-            "reason": "Mixin [my:being_used_mixin] was not found"
+            "name": "being_used_mixin",
+            "reason": "Mixin [being_used_mixin] was not found"
         },
         {
-            "qualifiedName": "my:not_existing_mixin",
-            "reason": "Unable to delete Mixin [my:not_existing_mixin]"
+            "name": "not_existing_mixin",
+            "reason": "Unable to delete Mixin [not_existing_mixin]"
         }
     ],
     "success": false,
     "successes": [
         {
-            "qualifiedName": "my:existing_mixin"
+            "name": "existing_mixin"
         }
     ]
 }

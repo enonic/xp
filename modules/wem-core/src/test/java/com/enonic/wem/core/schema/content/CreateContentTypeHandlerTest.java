@@ -9,9 +9,9 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -45,7 +45,7 @@ public class CreateContentTypeHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( contentTypeDao.select( Mockito.eq( QualifiedContentTypeNames.from( QualifiedContentTypeName.structured() ) ),
+        Mockito.when( contentTypeDao.select( Mockito.eq( ContentTypeNames.from( ContentTypeName.structured() ) ),
                                              Mockito.any( Session.class ) ) ).thenReturn(
             ContentTypes.from( ContentTypesInitializer.STRUCTURED ) );
 
@@ -53,7 +53,7 @@ public class CreateContentTypeHandlerTest
             name( "my_content_type" ).
             displayName( "My content type" ).
             setAbstract( false ).
-            superType( QualifiedContentTypeName.structured() ).
+            superType( ContentTypeName.structured() ).
             build();
 
         CreateContentType command = contentType().create().
@@ -72,7 +72,7 @@ public class CreateContentTypeHandlerTest
 
         // verify
         Mockito.verify( contentTypeDao, Mockito.atLeastOnce() ).create( Mockito.isA( ContentType.class ), Mockito.any( Session.class ) );
-        QualifiedContentTypeName contentTypeName = command.getResult();
+        ContentTypeName contentTypeName = command.getResult();
         assertNotNull( contentTypeName );
         assertEquals( "my_content_type", contentTypeName.toString() );
     }
@@ -82,7 +82,7 @@ public class CreateContentTypeHandlerTest
         throws Exception
     {
         // setup
-        Mockito.when( contentTypeDao.select( Mockito.eq( QualifiedContentTypeNames.from( QualifiedContentTypeName.shortcut() ) ),
+        Mockito.when( contentTypeDao.select( Mockito.eq( ContentTypeNames.from( ContentTypeName.shortcut() ) ),
                                              Mockito.any( Session.class ) ) ).thenReturn(
             ContentTypes.from( ContentTypesInitializer.SHORTCUT ) );
 
@@ -90,7 +90,7 @@ public class CreateContentTypeHandlerTest
             name( "my_content_type" ).
             displayName( "Inheriting a final ContentType" ).
             setAbstract( false ).
-            superType( QualifiedContentTypeName.shortcut() ).
+            superType( ContentTypeName.shortcut() ).
             build();
 
         // exercise
