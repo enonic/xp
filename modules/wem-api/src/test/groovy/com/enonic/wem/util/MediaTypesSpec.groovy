@@ -12,6 +12,7 @@ class MediaTypesSpec extends Specification
         def mediaTypes = MediaTypes.instance()
 
         expect:
+        mediaTypes.fromExt( ext ) != null
         type == mediaTypes.fromExt( ext ).toString()
 
         where:
