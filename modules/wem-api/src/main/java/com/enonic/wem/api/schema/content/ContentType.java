@@ -80,7 +80,7 @@ public final class ContentType
 
     public boolean inherit( final ContentTypeName contentType )
     {
-        return this.superType.equals( contentType );
+        return this.superType != null && this.superType.equals( contentType );
     }
 
     public ContentTypeName getSuperType()
