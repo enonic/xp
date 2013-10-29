@@ -117,7 +117,7 @@ public class ContentTypesInitializer
             addFormItem( Input.newInput().name( "mimeType" ).
                 inputType( InputTypes.TEXT_LINE ).
                 label( "Mime type" ).
-                occurrences( 0, 1 ).
+                occurrences( 1, 1 ).
                 build() ).
 
             build();
