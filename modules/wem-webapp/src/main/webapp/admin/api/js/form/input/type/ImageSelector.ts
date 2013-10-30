@@ -85,6 +85,16 @@ module api_form_input_type {
             this.uploadButton = new api_ui.Button("");
             this.uploadButton.addClass("upload-button");
             this.uploadButton.setClickListener((event:any) => {
+                var inputMaximum = input.getOccurrences().getMaximum();
+                var countSelected = this.comboBox.countSelected();
+                var rest = -1;
+                if (inputMaximum == 0) {
+                    rest = 0;
+                } else {
+                    rest = inputMaximum - countSelected;
+                    rest = (rest == 0) ? -1 : rest;
+                }
+                this.uploadDialog.setMaximumOccurrences(rest);
                 this.uploadDialog.open();
             });
             this.appendChild(this.uploadButton);
@@ -144,6 +154,16 @@ module api_form_input_type {
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
+                },
+                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                    if (!comboBox.maximumOccurrencesReached()) {
+                        this.uploadButton.setEnabled(true);
+                    }
+                },
+                onOptionSelected: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                    if (this.comboBox.maximumOccurrencesReached()) {
+                        this.uploadButton.setEnabled(false);
+                    }
                 }
             });
 
