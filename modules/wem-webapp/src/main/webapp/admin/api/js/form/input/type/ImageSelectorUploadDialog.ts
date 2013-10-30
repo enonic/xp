@@ -20,12 +20,18 @@ module api_form_input_type {
             description.getEl().setInnerHtml("Images uploaded will be embedded directly in this content, you may move them to the library later if desired");
             this.appendChildToContentPanel(description);
 
-            this.uploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"));
-            this.uploader.setButtonsVisible(false);
+            var uploaderConfig = {
+                multiSelection: true,
+                buttonsVisible: false,
+                imageVisible: false
+            };
+            this.uploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
             this.uploader.addListener({
                 onFileUploaded: (id:string, name:string, mimeType:string) => {
-                    this.close();
                     this.notifyImageUploaded(id, name, mimeType);
+                },
+                onUploadComplete: () => {
+                    this.close();
                 }
             });
             this.appendChildToContentPanel(this.uploader);
@@ -39,6 +45,10 @@ module api_form_input_type {
 
             api_dom.Body.get().appendChild(this);
 
+        }
+
+        setMaximumOccurrences(value:number) {
+            this.uploader.setMaximumOccurrences(value);
         }
 
         open() {
