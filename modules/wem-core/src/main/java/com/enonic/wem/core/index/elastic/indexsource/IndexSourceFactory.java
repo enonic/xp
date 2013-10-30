@@ -13,6 +13,7 @@ import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.document.IndexDocumentEntry;
 
+@Deprecated
 public class IndexSourceFactory
 {
     private static final Joiner allFieldJoiner = Joiner.on( " " );
@@ -31,7 +32,7 @@ public class IndexSourceFactory
 
         for ( final AbstractIndexDocumentItem indexDocumentItem : indexDocumentItems )
         {
-            final String fieldName = IndexFieldNameResolver.create( indexDocumentItem );
+            final String fieldName = IndexFieldNameResolver.resolve( indexDocumentItem );
             builder.addItem( new IndexSourceItem( fieldName, indexDocumentItem.getValue() ) );
         }
 
@@ -42,9 +43,9 @@ public class IndexSourceFactory
     {
         final String analyzer = indexDocument.getAnalyzer();
 
-        if ( Strings.isNullOrEmpty( analyzer ) )
+        if ( !Strings.isNullOrEmpty( analyzer ) )
         {
-            builder.addItem( new IndexSourceItem( "_document_analyzer", analyzer ) );
+            builder.addItem( new IndexSourceItem( IndexConstants.ANALYZER_VALUE_FIELD, analyzer ) );
         }
     }
 

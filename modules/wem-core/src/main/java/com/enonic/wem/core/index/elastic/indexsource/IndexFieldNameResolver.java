@@ -9,7 +9,7 @@ public class IndexFieldNameResolver
 {
     private final static String SEPARATOR = ".";
 
-    public static String create( final AbstractIndexDocumentItem item )
+    public static String resolve( final AbstractIndexDocumentItem item )
     {
         Preconditions.checkNotNull( item, "item could not be null" );
 

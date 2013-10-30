@@ -1,11 +1,14 @@
 package com.enonic.wem.core.index.elastic.indexsource;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+@Deprecated
 public class IndexSource
 {
     private final ImmutableSet<IndexSourceItem> indexSourceItems;
@@ -25,17 +28,19 @@ public class IndexSource
         return new Builder();
     }
 
-    public IndexSourceItem getIndexSourceEntryWithName( final String name )
+    public List<IndexSourceItem> getIndexSourceEntryWithName( final String name )
     {
+        List<IndexSourceItem> foundItems = Lists.newArrayList();
+
         for ( IndexSourceItem indexSourceItem : indexSourceItems )
         {
             if ( indexSourceItem.getKey().equals( name ) )
             {
-                return indexSourceItem;
+                foundItems.add( indexSourceItem );
             }
         }
 
-        return null;
+        return foundItems;
     }
 
     public static class Builder

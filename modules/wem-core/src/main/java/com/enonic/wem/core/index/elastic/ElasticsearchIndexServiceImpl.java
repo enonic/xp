@@ -108,9 +108,7 @@ public class ElasticsearchIndexServiceImpl
             final IndexType indexType = indexDocument.getIndexType();
             final String indexName = indexDocument.getIndex();
 
-            final IndexSource indexSource = IndexSourceFactory.create( indexDocument );
-
-            final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexSource );
+            final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
 
             final IndexRequest req = Requests.indexRequest().
                 id( id ).

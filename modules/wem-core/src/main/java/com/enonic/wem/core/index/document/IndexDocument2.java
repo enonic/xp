@@ -3,6 +3,7 @@ package com.enonic.wem.core.index.document;
 
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.entity.EntityId;
@@ -17,7 +18,7 @@ public class IndexDocument2
 
     private final String index;
 
-    private final Set<AbstractIndexDocumentItem> indexDocumentItems;
+    private final ImmutableSet<AbstractIndexDocumentItem> indexDocumentItems;
 
     private boolean refreshOnStore = false;
 
@@ -28,7 +29,7 @@ public class IndexDocument2
         this.id = builder.id;
         this.indexType = builder.indexType;
         this.index = builder.index;
-        this.indexDocumentItems = builder.indexDocumentEntries;
+        this.indexDocumentItems = ImmutableSet.copyOf( builder.indexDocumentEntries );
         this.analyzer = builder.analyzer;
     }
 
@@ -95,7 +96,6 @@ public class IndexDocument2
         public Builder()
         {
         }
-
 
         public Builder id( final EntityId id )
         {

@@ -123,7 +123,7 @@ public class NodeIndexDocumentFactoryTest
         final AbstractIndexDocumentItem createdTimeItem =
             indexDocument.getItemWithName( NodeIndexDocumentFactory.CREATED_TIME_PROPERTY_NAME, IndexValueType.DATETIME );
 
-        assertEquals( node.getCreatedTime(), createdTimeItem.getValue() );
+        assertEquals( node.getCreatedTime().toDate(), createdTimeItem.getValue() );
 
         final AbstractIndexDocumentItem creator =
             indexDocument.getItemWithName( NodeIndexDocumentFactory.CREATOR_PROPERTY_NAME, IndexValueType.STRING );

@@ -22,7 +22,7 @@ public class IndexFieldNameResolverTest
     {
         IndexDocumentStringItem item = new IndexDocumentStringItem( "baseName", "myValue" );
 
-        final String fieldName = IndexFieldNameResolver.create( item );
+        final String fieldName = IndexFieldNameResolver.resolve( item );
 
         assertEquals( "basename", fieldName );
     }
@@ -34,7 +34,7 @@ public class IndexFieldNameResolverTest
     {
         IndexDocumentGeoPointItem item = new IndexDocumentGeoPointItem( "baseName", new Value.GeoPoint( "80, 80" ) );
 
-        final String fieldName = IndexFieldNameResolver.create( item );
+        final String fieldName = IndexFieldNameResolver.resolve( item );
 
         assertEquals( "basename._geopoint", fieldName );
     }
@@ -46,7 +46,7 @@ public class IndexFieldNameResolverTest
     {
         IndexDocumentNumberItem item = new IndexDocumentNumberItem( "baseName", 1.0 );
 
-        final String fieldName = IndexFieldNameResolver.create( item );
+        final String fieldName = IndexFieldNameResolver.resolve( item );
 
         assertEquals( "basename._number", fieldName );
     }
@@ -57,7 +57,7 @@ public class IndexFieldNameResolverTest
     {
         IndexDocumentDateItem item = new IndexDocumentDateItem( "baseName", DateTime.now() );
 
-        final String fieldName = IndexFieldNameResolver.create( item );
+        final String fieldName = IndexFieldNameResolver.resolve( item );
 
         assertEquals( "basename._datetime", fieldName );
     }
@@ -69,7 +69,7 @@ public class IndexFieldNameResolverTest
     {
         IndexDocumentAnalyzedItem item = new IndexDocumentAnalyzedItem( "baseName", "myValue" );
 
-        final String fieldName = IndexFieldNameResolver.create( item );
+        final String fieldName = IndexFieldNameResolver.resolve( item );
 
         assertEquals( "basename._analyzed", fieldName );
     }
@@ -80,7 +80,7 @@ public class IndexFieldNameResolverTest
     {
         IndexDocumentTokenizedItem item = new IndexDocumentTokenizedItem( "baseName", "myValue" );
 
-        final String fieldName = IndexFieldNameResolver.create( item );
+        final String fieldName = IndexFieldNameResolver.resolve( item );
 
         assertEquals( "basename._tokenized", fieldName );
     }
@@ -91,7 +91,7 @@ public class IndexFieldNameResolverTest
     {
         IndexDocumentOrderbyItem item = new IndexDocumentOrderbyItem( "baseName", "myValue" );
 
-        final String fieldName = IndexFieldNameResolver.create( item );
+        final String fieldName = IndexFieldNameResolver.resolve( item );
 
         assertEquals( "basename._orderby", fieldName );
     }
