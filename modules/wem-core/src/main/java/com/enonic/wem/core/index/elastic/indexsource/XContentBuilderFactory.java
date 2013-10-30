@@ -47,11 +47,11 @@ public class XContentBuilderFactory
     private static void addFields( final XContentBuilder result, final IndexSource indexSource )
         throws Exception
     {
-        final Set<IndexSourceEntry> indexSourceEntries = indexSource.getIndexSourceEntries();
+        final Set<IndexSourceItem> indexSourceEntries = indexSource.indexSourceItems();
 
-        for ( IndexSourceEntry indexSourceEntry : indexSourceEntries )
+        for ( IndexSourceItem indexSourceItem : indexSourceEntries )
         {
-            addField( result, indexSourceEntry.getKey(), indexSourceEntry.getValue() );
+            addField( result, indexSourceItem.getKey(), indexSourceItem.getValue() );
         }
     }
 

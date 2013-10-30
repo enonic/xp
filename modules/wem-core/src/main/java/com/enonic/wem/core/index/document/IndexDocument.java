@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.index.IndexType;
 
+@Deprecated
 public class IndexDocument
 {
     /**

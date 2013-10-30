@@ -3,38 +3,62 @@ package com.enonic.wem.core.index.elastic.indexsource;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public class IndexSource
 {
-    private final Set<IndexSourceEntry> indexSourceEntries = Sets.newHashSet();
+    private final ImmutableSet<IndexSourceItem> indexSourceItems;
 
-    public void addIndexSourceEntry( final IndexSourceEntry indexSourceEntry )
+    private IndexSource( final Builder builder )
     {
-        indexSourceEntries.add( indexSourceEntry );
+        this.indexSourceItems = ImmutableSet.copyOf( builder.indexSourceItems );
     }
 
-    public void addIndexSourceEntries( final Collection<IndexSourceEntry> indexSourceEntries )
+    public Set<IndexSourceItem> indexSourceItems()
     {
-        this.indexSourceEntries.addAll( indexSourceEntries );
+        return indexSourceItems;
     }
 
-    public Set<IndexSourceEntry> getIndexSourceEntries()
+    public static Builder newIndexSource()
     {
-        return indexSourceEntries;
+        return new Builder();
     }
 
-    public IndexSourceEntry getIndexSourceEntryWithName( final String name )
+    public IndexSourceItem getIndexSourceEntryWithName( final String name )
     {
-        for ( IndexSourceEntry indexSourceEntry : indexSourceEntries )
+        for ( IndexSourceItem indexSourceItem : indexSourceItems )
         {
-            if ( indexSourceEntry.getKey().equals( name ) )
+            if ( indexSourceItem.getKey().equals( name ) )
             {
-                return indexSourceEntry;
+                return indexSourceItem;
             }
         }
 
         return null;
+    }
+
+    public static class Builder
+    {
+        private final Set<IndexSourceItem> indexSourceItems = Sets.newHashSet();
+
+        public Builder addItem( final IndexSourceItem item )
+        {
+            this.indexSourceItems.add( item );
+            return this;
+        }
+
+
+        public Builder addItems( final Collection<IndexSourceItem> items )
+        {
+            this.indexSourceItems.addAll( items );
+            return this;
+        }
+
+        public IndexSource build()
+        {
+            return new IndexSource( this );
+        }
     }
 
 }

@@ -23,34 +23,34 @@ public class IndexSourceFactory
 
     public static IndexSource create( final IndexDocument2 indexDocument )
     {
-        final IndexSource indexSource = new IndexSource();
+        final IndexSource.Builder builder = IndexSource.newIndexSource();
 
-        setDocumentAnalyzer( indexDocument, indexSource );
+        setDocumentAnalyzer( indexDocument, builder );
 
-        final Set<AbstractIndexDocumentItem> indexDocumentEntries = indexDocument.getIndexDocumentItems();
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = indexDocument.getIndexDocumentItems();
 
-        for ( final AbstractIndexDocumentItem indexDocumentEntry : indexDocumentEntries )
+        for ( final AbstractIndexDocumentItem indexDocumentItem : indexDocumentItems )
         {
-            final String fieldName = IndexFieldNameResolver.create( indexDocumentEntry );
-            indexSource.addIndexSourceEntry( new IndexSourceEntry( fieldName, indexDocumentEntry.getValue() ) );
+            final String fieldName = IndexFieldNameResolver.create( indexDocumentItem );
+            builder.addItem( new IndexSourceItem( fieldName, indexDocumentItem.getValue() ) );
         }
 
-        return indexSource;
+        return builder.build();
     }
 
-    private static void setDocumentAnalyzer( final IndexDocument2 indexDocument, final IndexSource indexSource )
+    private static void setDocumentAnalyzer( final IndexDocument2 indexDocument, final IndexSource.Builder builder )
     {
         final String analyzer = indexDocument.getAnalyzer();
 
         if ( Strings.isNullOrEmpty( analyzer ) )
         {
-            indexSource.addIndexSourceEntry( new IndexSourceEntry( "_document_analyzer", analyzer ) );
+            builder.addItem( new IndexSourceItem( "_document_analyzer", analyzer ) );
         }
     }
 
     public static IndexSource create( final IndexDocument indexDocument )
     {
-        final IndexSource indexSource = new IndexSource();
+        final IndexSource.Builder builder = IndexSource.newIndexSource();
 
         final Set<IndexDocumentEntry> indexDocumentEntries = indexDocument.getIndexDocumentEntries();
 
@@ -63,17 +63,17 @@ public class IndexSourceFactory
                 allUserData.addValue( indexDocumentEntry.getValue() );
             }
 
-            indexSource.addIndexSourceEntries( IndexSourceEntryFactory.create( indexDocumentEntry ) );
+            builder.addItems( IndexSourceEntryFactory.create( indexDocumentEntry ) );
         }
 
         //indexSource.addIndexSourceEntries( buildAllFieldValue( allUserData ) );
 
-        return indexSource;
+        return builder.build();
     }
 
-    private static Collection<IndexSourceEntry> buildAllFieldValue( final AllUserData allUserData )
+    private static Collection<IndexSourceItem> buildAllFieldValue( final AllUserData allUserData )
     {
-        Set<IndexSourceEntry> indexSourceEntries = Sets.newHashSet();
+        Set<IndexSourceItem> indexSourceEntries = Sets.newHashSet();
 
         addSetIfExists( indexSourceEntries, IndexConstants.ALL_USERDATA_STRING_FIELD, allUserData.getStringValues() );
         addSetIfExists( indexSourceEntries, IndexConstants.ALL_USERDATA_NUMBER_FIELD, allUserData.getNumberValues() );
@@ -82,11 +82,11 @@ public class IndexSourceFactory
         return indexSourceEntries;
     }
 
-    private static void addSetIfExists( final Collection<IndexSourceEntry> indexSourceEntries, final String fieldName, final Set<?> set )
+    private static void addSetIfExists( final Collection<IndexSourceItem> indexSourceEntries, final String fieldName, final Set<?> set )
     {
         if ( set != null && set.size() > 0 )
         {
-            indexSourceEntries.add( new IndexSourceEntry( fieldName, set ) );
+            indexSourceEntries.add( new IndexSourceItem( fieldName, set ) );
         }
     }
 

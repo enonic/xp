@@ -18,14 +18,14 @@ public class XContentBuilderFactoryTest
     public void testCreateXContentBuilder()
         throws Exception
     {
-        IndexSource indexSource = new IndexSource();
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test1_string", "value1" ) );
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test2_double", 2.0 ) );
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test3_long", 3L ) );
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test4_date", new DateTime( 2013, 1, 1, 1, 1, 1 ) ) );
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test5_array", new String[]{"one", "two", "three"} ) );
+        IndexSource.Builder builder = IndexSource.newIndexSource();
+        builder.addItem( new IndexSourceItem( "test1_string", "value1" ) );
+        builder.addItem( new IndexSourceItem( "test2_double", 2.0 ) );
+        builder.addItem( new IndexSourceItem( "test3_long", 3L ) );
+        builder.addItem( new IndexSourceItem( "test4_date", new DateTime( 2013, 1, 1, 1, 1, 1 ) ) );
+        builder.addItem( new IndexSourceItem( "test5_array", new String[]{"one", "two", "three"} ) );
 
-        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexSource );
+        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( builder.build() );
 
         final Tuple<XContentType, Map<String, Object>> xContentTypeMapTuple = XContentHelper.convertToMap( xContentBuilder.bytes(), true );
         final Map<String, Object> objectValueMap = xContentTypeMapTuple.v2();

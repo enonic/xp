@@ -22,7 +22,7 @@ public class IndexSourceEntryFactoryTest
     {
         IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", 1, true, true );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
+        final Set<IndexSourceItem> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 3, indexSourceEntries.size() );
         expectKeys( indexSourceEntries, new String[]{"test", "test" + IndexSourceEntryFactory.NUMERIC_FIELD_POSTFIX,
@@ -35,7 +35,7 @@ public class IndexSourceEntryFactoryTest
     {
         IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", 1L, true, true );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
+        final Set<IndexSourceItem> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 3, indexSourceEntries.size() );
         expectKeys( indexSourceEntries, new String[]{"test", "test" + IndexSourceEntryFactory.NUMERIC_FIELD_POSTFIX,
@@ -48,7 +48,7 @@ public class IndexSourceEntryFactoryTest
     {
         IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", 1.0, true, true );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
+        final Set<IndexSourceItem> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 3, indexSourceEntries.size() );
 
@@ -62,7 +62,7 @@ public class IndexSourceEntryFactoryTest
     {
         IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", "value", true, true );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
+        final Set<IndexSourceItem> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 2, indexSourceEntries.size() );
 
@@ -75,7 +75,7 @@ public class IndexSourceEntryFactoryTest
     {
         IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "test", "value", false, false );
 
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
+        final Set<IndexSourceItem> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 1, indexSourceEntries.size() );
 
@@ -86,7 +86,7 @@ public class IndexSourceEntryFactoryTest
     public void testDateField()
     {
         IndexDocumentEntry indexDocumentEntry = new IndexDocumentEntry( "myDate", DateTime.now().toDate(), false, false );
-        final Set<IndexSourceEntry> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
+        final Set<IndexSourceItem> indexSourceEntries = indexSourceEntryFactory.create( indexDocumentEntry );
 
         assertEquals( 2, indexSourceEntries.size() );
 
@@ -94,11 +94,11 @@ public class IndexSourceEntryFactoryTest
 
     }
 
-    private void expectKeys( final Set<IndexSourceEntry> indexSourceEntries, final String[] expectedKeys )
+    private void expectKeys( final Set<IndexSourceItem> indexSourceEntries, final String[] expectedKeys )
     {
         for ( String expectedKey : expectedKeys )
         {
-            final Iterator<IndexSourceEntry> iterator = indexSourceEntries.iterator();
+            final Iterator<IndexSourceItem> iterator = indexSourceEntries.iterator();
 
             while ( iterator.hasNext() )
             {
