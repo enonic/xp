@@ -39,6 +39,7 @@ import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.content.ContentSearchHit;
 import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
@@ -97,6 +98,31 @@ public class ElasticsearchIndexServiceImpl
             this.client.index( req ).actionGet();
         }
     }
+
+    @Override
+    public void indexDocuments( Collection<IndexDocument2> indexDocuments )
+    {
+        for ( IndexDocument2 indexDocument : indexDocuments )
+        {
+            final String id = indexDocument.getId();
+            final IndexType indexType = indexDocument.getIndexType();
+            final String indexName = indexDocument.getIndex();
+
+            final IndexSource indexSource = IndexSourceFactory.create( indexDocument );
+
+            final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexSource );
+
+            final IndexRequest req = Requests.indexRequest().
+                id( id ).
+                index( indexName ).
+                type( indexType.getIndexTypeName() ).
+                source( xContentBuilder ).
+                refresh( indexDocument.doRefreshOnStore() );
+
+            this.client.index( req ).actionGet();
+        }
+    }
+
 
     @Override
     public void delete( final DeleteDocument deleteDocument )

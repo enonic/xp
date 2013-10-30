@@ -13,11 +13,15 @@ import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
 import com.enonic.wem.core.index.account.AccountDeleteDocumentFactory;
 import com.enonic.wem.core.index.account.AccountIndexDocumentFactory;
 import com.enonic.wem.core.index.content.ContentDeleteDocumentFactory;
 import com.enonic.wem.core.index.content.ContentIndexDocumentsFactory;
 import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.index.elastic.IndexMapping;
 import com.enonic.wem.core.index.elastic.IndexMappingProvider;
@@ -77,6 +81,7 @@ public class IndexService
         try
         {
             elasticsearchIndexService.createIndex( IndexConstants.WEM_INDEX );
+            elasticsearchIndexService.createIndex( IndexConstants.NODB_INDEX );
         }
         catch ( IndexAlreadyExistsException e )
         {
@@ -84,7 +89,13 @@ public class IndexService
             return;
         }
 
-        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( IndexConstants.WEM_INDEX );
+        applyMappings( IndexConstants.WEM_INDEX );
+        applyMappings( IndexConstants.NODB_INDEX );
+    }
+
+    private void applyMappings( final String indexName )
+    {
+        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( indexName );
 
         for ( IndexMapping indexMapping : allIndexMappings )
         {
@@ -113,6 +124,23 @@ public class IndexService
         }
     }
 
+    public void indexNode( final Node node )
+    {
+        NodeIndexDocumentFactory nodeIndexDocumentFactory = new NodeIndexDocumentFactory();
+
+        final Collection<IndexDocument2> indexDocuments = nodeIndexDocumentFactory.create( node );
+        elasticsearchIndexService.indexDocuments( indexDocuments );
+    }
+
+    public void deleteNode( final Node node )
+    {
+        elasticsearchIndexService.delete( new DeleteDocument( IndexConstants.NODB_INDEX, IndexType.NODE, node.id().toString() ) );
+    }
+
+    public void deleteNode( final EntityId entityId )
+    {
+        elasticsearchIndexService.delete( new DeleteDocument( IndexConstants.NODB_INDEX, IndexType.NODE, entityId.toString() ) );
+    }
 
     public void deleteAccount( final AccountKey accountKey )
     {

@@ -4,10 +4,13 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.document.IndexDocumentEntry;
 
 public class IndexSourceFactory
@@ -16,6 +19,33 @@ public class IndexSourceFactory
 
     private IndexSourceFactory()
     {
+    }
+
+    public static IndexSource create( final IndexDocument2 indexDocument )
+    {
+        final IndexSource indexSource = new IndexSource();
+
+        setDocumentAnalyzer( indexDocument, indexSource );
+
+        final Set<AbstractIndexDocumentItem> indexDocumentEntries = indexDocument.getIndexDocumentItems();
+
+        for ( final AbstractIndexDocumentItem indexDocumentEntry : indexDocumentEntries )
+        {
+            final String fieldName = IndexFieldNameResolver.create( indexDocumentEntry );
+            indexSource.addIndexSourceEntry( new IndexSourceEntry( fieldName, indexDocumentEntry.getValue() ) );
+        }
+
+        return indexSource;
+    }
+
+    private static void setDocumentAnalyzer( final IndexDocument2 indexDocument, final IndexSource indexSource )
+    {
+        final String analyzer = indexDocument.getAnalyzer();
+
+        if ( Strings.isNullOrEmpty( analyzer ) )
+        {
+            indexSource.addIndexSourceEntry( new IndexSourceEntry( "_document_analyzer", analyzer ) );
+        }
     }
 
     public static IndexSource create( final IndexDocument indexDocument )

@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity.index;
 import java.util.Collection;
 import java.util.Set;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Property;
@@ -119,14 +120,17 @@ public class NodeIndexDocumentFactory
             @Override
             public void visit( final Property property )
             {
-                PropertyIndexConfig propertyIndexConfig = node.getEntityIndexConfig().getPropertyIndexConfig( property.getPath() );
-
-                if ( propertyIndexConfig == null )
+                if ( property.getValue() != null && !Strings.isNullOrEmpty( property.getValue().asString() ) )
                 {
-                    propertyIndexConfig = defaultPropertyIndexConfig;
-                }
+                    PropertyIndexConfig propertyIndexConfig = node.getEntityIndexConfig().getPropertyIndexConfig( property.getPath() );
 
-                builder.addEntries( IndexDocumentItemFactory.create( property, propertyIndexConfig ) );
+                    if ( propertyIndexConfig == null )
+                    {
+                        propertyIndexConfig = defaultPropertyIndexConfig;
+                    }
+
+                    builder.addEntries( IndexDocumentItemFactory.create( property, propertyIndexConfig ) );
+                }
             }
         };
 
