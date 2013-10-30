@@ -275,6 +275,8 @@ module api_ui_combobox {
                 this.input.getEl().setDisabled(true);
                 this.moveFocuseToNextInput();
             }
+
+            this.notifyOptionSelected(item);
         }
 
         private moveFocuseToNextInput() {
@@ -304,7 +306,7 @@ module api_ui_combobox {
             }
         }
 
-        private maximumOccurrencesReached() {
+        maximumOccurrencesReached() {
             if (this.maximumOccurrences == 0) {
                 return false;
             }
@@ -379,6 +381,8 @@ module api_ui_combobox {
             this.input.setPlaceholder("Type to search...");
             this.input.getEl().setDisabled(false);
             this.input.getHTMLElement().focus();
+
+            this.notifySelectedOptionRemoved(item);
         }
 
         private adjustDropdownSize() {
@@ -421,6 +425,22 @@ module api_ui_combobox {
         private notifyInputValueChanged(oldValue:string, newValue:string) {
             this.listeners.forEach((listener:ComboBoxListener<T>) => {
                 listener.onInputValueChanged(oldValue, newValue, this.dropdown);
+            });
+        }
+
+        private notifyOptionSelected(item:OptionData<T>) {
+            this.listeners.forEach((listener:ComboBoxListener<T>) => {
+                if (listener.onOptionSelected) {
+                    listener.onOptionSelected(item);
+                }
+            });
+        }
+
+        private notifySelectedOptionRemoved(item:OptionData<T>) {
+            this.listeners.forEach((listener:ComboBoxListener<T>) => {
+                if (listener.onSelectedOptionRemoved) {
+                    listener.onSelectedOptionRemoved(item);
+                }
             });
         }
     }

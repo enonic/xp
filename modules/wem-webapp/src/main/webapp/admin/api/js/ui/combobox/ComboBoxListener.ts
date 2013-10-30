@@ -4,6 +4,10 @@ module api_ui_combobox {
 
         onInputValueChanged: (oldValue: string, newValue: string, grid: api_ui_grid.Grid<OptionData<T>>) => void;
 
+        onOptionSelected: (item:OptionData<T>) => void;
+
+        onSelectedOptionRemoved: (item:OptionData<T>) => void;
+
     }
 
 }
