@@ -2,10 +2,6 @@ package com.enonic.wem.core.index;
 
 public class IndexConstants
 {
-    public final static String WEM_INDEX = "wem";
-
-    public final static String NODB_INDEX = "nodb";
-
     public final static String FIELD_TYPE_SPERATATOR = ".";
 
     public final static String NUMBER_FIELD_POSTFIX = "number";

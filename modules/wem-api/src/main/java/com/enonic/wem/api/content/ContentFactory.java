@@ -12,7 +12,6 @@ public class ContentFactory
 {
     public static Content fromItem( final Node node )
     {
-
         return newContent().
             id( ContentId.from( node.id().toString() ) ).
             name( node.name() ).

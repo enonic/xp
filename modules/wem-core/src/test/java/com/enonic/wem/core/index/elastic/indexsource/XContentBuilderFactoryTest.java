@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument2;
@@ -29,7 +30,7 @@ public class XContentBuilderFactoryTest
         throws Exception
     {
         IndexDocument2 indexDocument = IndexDocument2.newIndexDocument().
-            index( IndexConstants.NODB_INDEX ).
+            index( Index.NODB ).
             indexType( IndexType.NODE ).
             analyzer( "myAnalyzer" ).
             build();
@@ -50,7 +51,7 @@ public class XContentBuilderFactoryTest
         throws Exception
     {
         IndexDocument2 indexDocument = IndexDocument2.newIndexDocument().
-            index( IndexConstants.NODB_INDEX ).
+            index( Index.NODB ).
             indexType( IndexType.NODE ).
             addEntry( new IndexDocumentStringItem( "myField", "myValue1" ) ).
             addEntry( new IndexDocumentStringItem( "myField", "myValue2" ) ).

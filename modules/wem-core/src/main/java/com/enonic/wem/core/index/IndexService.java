@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import com.enonic.wem.core.index.elastic.IndexMappingProvider;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
 import com.enonic.wem.core.lifecycle.RunLevel;
 
+@Singleton
 public class IndexService
     extends LifecycleBean
 {
@@ -50,11 +52,34 @@ public class IndexService
     protected void doStart()
         throws Exception
     {
-        elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );
+        doInitializeOldWemIndex();
+        doInitializeNoDbIndex();
+    }
 
-        if ( !indexExists() )
+    private void doInitializeNoDbIndex()
+        throws Exception
+    {
+        elasticsearchIndexService.getIndexStatus( Index.NODB, true );
+
+        if ( !indexExists( Index.NODB ) )
         {
-            createIndex();
+            createIndex( Index.NODB );
+
+            if ( doReindexOnEmptyIndex )
+            {
+                // TODO: Reindex stuff here
+            }
+        }
+    }
+
+    private void doInitializeOldWemIndex()
+        throws Exception
+    {
+        elasticsearchIndexService.getIndexStatus( Index.WEM, true );
+
+        if ( !indexExists( Index.WEM ) )
+        {
+            createIndex( Index.WEM );
 
             if ( doReindexOnEmptyIndex )
             {
@@ -71,31 +96,29 @@ public class IndexService
         // Do nothing
     }
 
-    private boolean indexExists()
+    private boolean indexExists( final Index index )
     {
-        return elasticsearchIndexService.indexExists( IndexConstants.WEM_INDEX );
+        return elasticsearchIndexService.indexExists( index );
     }
 
-    private void createIndex()
+    private void createIndex( final Index index )
     {
         try
         {
-            elasticsearchIndexService.createIndex( IndexConstants.WEM_INDEX );
-            elasticsearchIndexService.createIndex( IndexConstants.NODB_INDEX );
+            elasticsearchIndexService.createIndex( index );
         }
         catch ( IndexAlreadyExistsException e )
         {
-            LOG.warn( "Tried to create index, but index already exists, skipping" );
+            LOG.warn( "Tried to create index " + index + ", but index already exists, skipping" );
             return;
         }
 
-        applyMappings( IndexConstants.WEM_INDEX );
-        applyMappings( IndexConstants.NODB_INDEX );
+        applyMappings( index );
     }
 
-    private void applyMappings( final String indexName )
+    private void applyMappings( final Index index )
     {
-        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( indexName );
+        final List<IndexMapping> allIndexMappings = indexMappingProvider.getMappingsForIndex( index );
 
         for ( IndexMapping indexMapping : allIndexMappings )
         {
@@ -103,9 +126,9 @@ public class IndexService
         }
     }
 
-    private void deleteIndex()
+    private void deleteIndex( final Index index )
     {
-        elasticsearchIndexService.deleteIndex( IndexConstants.WEM_INDEX );
+        elasticsearchIndexService.deleteIndex( index );
     }
 
     public void indexAccount( final Account account )
@@ -134,12 +157,12 @@ public class IndexService
 
     public void deleteNode( final Node node )
     {
-        elasticsearchIndexService.delete( new DeleteDocument( IndexConstants.NODB_INDEX, IndexType.NODE, node.id().toString() ) );
+        elasticsearchIndexService.delete( new DeleteDocument( Index.NODB, IndexType.NODE, node.id().toString() ) );
     }
 
     public void deleteNode( final EntityId entityId )
     {
-        elasticsearchIndexService.delete( new DeleteDocument( IndexConstants.NODB_INDEX, IndexType.NODE, entityId.toString() ) );
+        elasticsearchIndexService.delete( new DeleteDocument( Index.NODB, IndexType.NODE, entityId.toString() ) );
     }
 
     public void deleteAccount( final AccountKey accountKey )
@@ -182,18 +205,19 @@ public class IndexService
         this.reindexService = reindexService;
     }
 
-    public void reIndex()
+    public void reIndex( final Index index )
         throws Exception
     {
-        if ( !indexExists() )
+        if ( !indexExists( index ) )
         {
             return;
         }
 
-        deleteIndex();
-        elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );
-        createIndex();
-        elasticsearchIndexService.getIndexStatus( IndexConstants.WEM_INDEX, true );
+        deleteIndex( index );
+        elasticsearchIndexService.getIndexStatus( index, true );
+        createIndex( index );
+        elasticsearchIndexService.getIndexStatus( index, true );
+
         this.reindexService.reindexContent();
         this.reindexService.reindexAccounts();
     }

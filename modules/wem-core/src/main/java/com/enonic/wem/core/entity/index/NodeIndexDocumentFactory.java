@@ -12,7 +12,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
-import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
@@ -61,7 +61,7 @@ public class NodeIndexDocumentFactory
 
         final IndexDocument2.Builder builder = IndexDocument2.newIndexDocument().
             id( node.id() ).
-            index( IndexConstants.NODB_INDEX ).
+            index( Index.NODB ).
             indexType( IndexType.NODE ).
             analyzer( entityIndexConfig.getAnalyzer() );
 

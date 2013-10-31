@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 
 public class IndexDocument2
@@ -16,7 +17,7 @@ public class IndexDocument2
 
     private final IndexType indexType;
 
-    private final String index;
+    private final Index index;
 
     private final ImmutableSet<AbstractIndexDocumentItem> indexDocumentItems;
 
@@ -48,7 +49,7 @@ public class IndexDocument2
         return indexType;
     }
 
-    public String getIndex()
+    public Index getIndex()
     {
         return index;
     }
@@ -87,7 +88,7 @@ public class IndexDocument2
 
         private IndexType indexType;
 
-        private String index;
+        private Index index;
 
         private String analyzer;
 
@@ -109,7 +110,7 @@ public class IndexDocument2
             return this;
         }
 
-        public Builder index( final String index )
+        public Builder index( final Index index )
         {
             this.index = index;
             return this;

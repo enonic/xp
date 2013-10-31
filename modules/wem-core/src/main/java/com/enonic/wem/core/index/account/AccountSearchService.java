@@ -16,7 +16,7 @@ import org.elasticsearch.search.facet.Facets;
 import org.elasticsearch.search.facet.terms.TermsFacet;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.facet.FacetEntry;
 
@@ -29,9 +29,8 @@ public class AccountSearchService
 
     public AccountSearchResults search( AccountSearchQuery query )
     {
-        final SearchRequest req =
-            Requests.searchRequest( IndexConstants.WEM_INDEX ).types( IndexType.ACCOUNT.getIndexTypeName() ).searchType(
-                getSearchType( query ) ).source( this.translator.build( query ) );
+        final SearchRequest req = Requests.searchRequest( Index.WEM.getName() ).types( IndexType.ACCOUNT.getIndexTypeName() ).searchType(
+            getSearchType( query ) ).source( this.translator.build( query ) );
 
         final SearchResponse res = this.client.search( req ).actionGet();
 
@@ -102,7 +101,7 @@ public class AccountSearchService
     void deleteIndex( String id, boolean flushDataAfterDelete )
     {
         final DeleteRequest deleteRequest =
-            new DeleteRequest().index( IndexConstants.WEM_INDEX ).type( IndexType.ACCOUNT.getIndexTypeName() ).id( id );
+            new DeleteRequest().index( Index.WEM.getName() ).type( IndexType.ACCOUNT.getIndexTypeName() ).id( id );
         this.client.delete( deleteRequest ).actionGet();
 
         if ( flushDataAfterDelete )
@@ -113,7 +112,7 @@ public class AccountSearchService
 
     private void flush()
     {
-        this.client.admin().indices().flush( new FlushRequest( IndexConstants.WEM_INDEX ).refresh( true ) ).actionGet();
+        this.client.admin().indices().flush( new FlushRequest( Index.WEM.getName() ).refresh( true ) ).actionGet();
     }
 
     @Inject

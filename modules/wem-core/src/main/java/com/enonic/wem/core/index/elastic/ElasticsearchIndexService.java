@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.core.index.DeleteDocument;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.document.IndexDocument;
@@ -11,11 +12,11 @@ import com.enonic.wem.core.index.document.IndexDocument2;
 
 public interface ElasticsearchIndexService
 {
-    public IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow );
+    public IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow );
 
-    public boolean indexExists( String indexName );
+    public boolean indexExists( Index index );
 
-    public void createIndex( String indexName );
+    public void createIndex( Index index );
 
     public void putMapping( IndexMapping indexMapping );
 
@@ -27,5 +28,5 @@ public interface ElasticsearchIndexService
 
     public ContentSearchResults search( final ContentIndexQuery contentIndexQuery );
 
-    public void deleteIndex( final String indexName );
+    public void deleteIndex( final Index index );
 }

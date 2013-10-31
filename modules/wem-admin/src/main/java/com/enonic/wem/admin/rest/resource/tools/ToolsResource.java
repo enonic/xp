@@ -7,6 +7,7 @@ import javax.ws.rs.QueryParam;
 
 import com.google.inject.Inject;
 
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.initializer.StartupInitializer;
 
@@ -36,7 +37,7 @@ public final class ToolsResource
         throws Exception
     {
         this.startupInitializer.initialize( true );
-        this.indexService.reIndex();
+        this.indexService.reIndex( Index.WEM );
         return "Done.";
     }
 
@@ -46,7 +47,7 @@ public final class ToolsResource
     public String reIndexData( @QueryParam("redirect") final String redirect )
         throws Exception
     {
-        this.indexService.reIndex();
+        this.indexService.reIndex( Index.WEM );
         return "Done.";
     }
 }
