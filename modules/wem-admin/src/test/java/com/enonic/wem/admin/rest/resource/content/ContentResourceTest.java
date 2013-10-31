@@ -43,15 +43,14 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.api.facet.QueryFacet;
 import com.enonic.wem.api.facet.TermsFacet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
@@ -714,7 +713,7 @@ public class ContentResourceTest
         List<DataValidationError> errors = new ArrayList<>( 2 );
 
         Input input = Input.newInput().name( "myInput" ).inputType( InputTypes.PHONE ).required( true ).maximumOccurrences( 3 ).build();
-        Property property = Property.newProperty( "myProperty" ).type( ValueTypes.STRING ).value( "myValue" ).build();
+        Property property = new Property.String( "myProperty", "myValue" );
 
         errors.add( new MaximumOccurrencesValidationError( input, 5 ) );
         errors.add( new MissingRequiredValueValidationError( input, property ) );

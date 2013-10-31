@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -77,16 +76,14 @@ public class RelationshipServiceImplTest
 
         // setup: content before editing
         ContentData dataBefore = new ContentData();
-        dataBefore.add(
-            Property.newProperty().name( "myRelated1" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
-        dataBefore.add(
-            Property.newProperty().name( "myRelated2" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
+        dataBefore.add( new Property.ContentId( "myRelated1", ContentId.from( "111" ) ) );
+        dataBefore.add( new Property.ContentId( "myRelated2", ContentId.from( "222" ) ) );
 
         // setup: content after editing
         ContentData dataAfter = new ContentData();
-        dataAfter.add( Property.newProperty().name( "myRelated1" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
-        dataAfter.add( Property.newProperty().name( "myRelated2" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
-        dataAfter.add( Property.newProperty().name( "myRelated3" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "333" ) ).build() );
+        dataAfter.add( new Property.ContentId( "myRelated1", ContentId.from( "111" ) ) );
+        dataAfter.add( new Property.ContentId( "myRelated2", ContentId.from( "222" ) ) );
+        dataAfter.add( new Property.ContentId( "myRelated3", ContentId.from( "333" ) ) );
 
         // exercise
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();

@@ -17,8 +17,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.data.DataSet.newDataSet;
-import static com.enonic.wem.api.data.Property.Xml.newXml;
-import static com.enonic.wem.api.data.Property.newProperty;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -74,8 +72,8 @@ public class ContentTest
     @Test
     public void array()
     {
-        Property first = newProperty().name( "array" ).type( ValueTypes.STRING ).value( "First" ).build();
-        Property second = newProperty().name( "array" ).type( ValueTypes.STRING ).value( "Second" ).build();
+        Property first = new Property.String( "array", "First" );
+        Property second = new Property.String( "array", "Second" );
 
         ContentData contentData = new ContentData();
         contentData.add( first );
@@ -175,10 +173,10 @@ public class ContentTest
     public void add_array_of_set_within_set()
     {
         DataSet address1 = newDataSet().name( "address" ).build();
-        address1.add( newProperty().name( "street" ).type( ValueTypes.STRING ).value( "Kirkegata 1-3" ).build() );
+        address1.add( new Property.String( "street", "Kirkegata 1-3" ) );
 
         DataSet address2 = newDataSet().name( "address" ).build();
-        address2.add( newProperty().name( "street" ).type( ValueTypes.STRING ).value( "Sonsteli" ).build() );
+        address2.add( new Property.String( "street", "Sonsteli" ) );
 
         DataSet company = newDataSet().name( "company" ).build();
         company.add( address1 );
@@ -464,44 +462,5 @@ public class ContentTest
             assertTrue( e instanceof IllegalArgumentException );
             assertEquals( "Array [myData] expects Property of type [String]. Property [myData] was of type: DateMidnight", e.getMessage() );
         }
-    }
-
-    @Test
-    public void new_way()
-    {
-        ContentData contentData = new ContentData();
-        contentData.add( newProperty().type( ValueTypes.STRING ).name( "myData" ).value( "1" ).build() );
-        contentData.add( Property.String.newString().name( "myData" ).value( "1" ).build() );
-        contentData.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
-
-        assertEquals( "1", contentData.getProperty( "myData" ).getValue().asString() );
-        assertEquals( "1", contentData.getProperty( "myData" ).getString() );
-    }
-
-    @Test
-    public void new_way2()
-    {
-        ContentData contentData = new ContentData();
-
-        contentData.add( new Property.String( "myData", "1" ) );
-        contentData.add( new Property.String( "myArray", "1" ) );
-        contentData.add( new Property.String( "myArray", "2" ) );
-        //contentData.add( new Xml( "myXml", "<root></root>" ) );
-
-        Content content = newContent().name( "myContent" ).contentData( contentData ).build();
-
-        assertEquals( "1", contentData.getProperty( "myArray" ).getObject() );
-        assertEquals( "1", contentData.getProperty( "myArray", 0 ).getObject() );
-        assertEquals( "2", contentData.getProperty( "myArray[1]" ).getObject() );
-        assertEquals( true, contentData.getProperty( "myArray[1]" ).isArray() );
-        assertEquals( true, contentData.getProperty( "myArray" ).isArray() );
-        assertEquals( false, contentData.getProperty( "myData" ).isArray() );
-        assertEquals( 0, contentData.getProperty( "myData" ).getArrayIndex() );
-        assertEquals( 0, contentData.getProperty( "myArray" ).getArrayIndex() );
-        assertEquals( 1, contentData.getProperty( "myArray[1]" ).getArrayIndex() );
-        assertEquals( 2, contentData.nameCount( "myArray" ) );
-        assertEquals( 1, contentData.nameCount( "myData" ) );
-
-        Property myArray = content.getContentData().getProperty( "myArray" );
     }
 }

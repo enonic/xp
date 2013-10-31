@@ -10,7 +10,6 @@ import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.support.BaseInitializer;
 
@@ -80,8 +79,8 @@ public class DemoImagesInitializer
     private ContentData createContentData( final String attachmentName )
     {
         final ContentData dataSet = new ContentData();
-        dataSet.add( Property.newProperty( "mimeType" ).type( ValueTypes.STRING ).value( "image/png" ).build() );
-        dataSet.add( Property.newProperty( "image" ).type( ValueTypes.ATTACHMENT_NAME ).value( attachmentName ).build() );
+        dataSet.add( new Property.String( "mimeType", "image/png" ) );
+        dataSet.add( new Property.AttachmentName( "image", attachmentName ) );
         return dataSet;
     }
 

@@ -29,12 +29,12 @@ public class PropertyVisitorTest
             }
         };
         ContentData contentData = new ContentData();
-        contentData.add( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "abc" ).build() );
-        contentData.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        contentData.add( new Property.String( "myText", "abc" ) );
+        contentData.add( new Property.Date( "myDate", DateMidnight.now() ) );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "abc" ).build() );
-        mySet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        mySet.add( new Property.String( "myText", "abc" ) );
+        mySet.add( new Property.Date( "myDate", DateMidnight.now() ) );
         contentData.add( mySet );
 
         propertyVisitor.traverse( contentData );
@@ -62,12 +62,12 @@ public class PropertyVisitorTest
         propertyVisitor.restrictType( ValueTypes.STRING );
 
         ContentData contentData = new ContentData();
-        contentData.add( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "abc" ).build() );
-        contentData.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        contentData.add( new Property.String( "myText", "abc" ) );
+        contentData.add( new Property.Date( "myDate", DateMidnight.now() ) );
 
         DataSet mySet = DataSet.newDataSet().name( "mySet" ).build();
-        mySet.add( Property.newProperty().name( "myText" ).type( ValueTypes.STRING ).value( "abc" ).build() );
-        mySet.add( Property.newProperty().name( "myDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( DateMidnight.now() ).build() );
+        mySet.add( new Property.String( "myText", "abc" ) );
+        mySet.add( new Property.Date( "myDate", DateMidnight.now() ) );
         contentData.add( mySet );
 
         propertyVisitor.traverse( contentData );

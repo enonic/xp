@@ -27,7 +27,7 @@ public class EntityIndexConfigTest
         final PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).autocompleteEnabled( true ).fulltextEnabled( true ).build();
 
-        final Property myProperty = Property.newProperty().name( "test" ).value( new Value.String( "testValue" ) ).build();
+        final Property myProperty = new Property( "test", new Value.String( "testValue" ) );
 
         final EntityIndexConfig indexConfig =
             EntityIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( myProperty, propertyIndexConfig ).build();

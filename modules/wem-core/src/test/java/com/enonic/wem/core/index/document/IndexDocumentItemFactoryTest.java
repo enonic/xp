@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 
 import static org.junit.Assert.*;
@@ -19,12 +18,12 @@ public class IndexDocumentItemFactoryTest
     public void double_property()
         throws Exception
     {
-        Property dateProperty = Property.newProperty().type( ValueTypes.DOUBLE ).value( 123.0 ).name( "myDoubleField" ).build();
+        Property property = new Property.Double( "myDoubleField", 123.0 );
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( dateProperty, propertyIndexConfig );
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
 
         // Should yield number, string, orderby
         assertEquals( 3, indexDocumentItems.size() );
@@ -34,12 +33,12 @@ public class IndexDocumentItemFactoryTest
     public void int_property()
         throws Exception
     {
-        Property dateProperty = Property.newProperty().type( ValueTypes.LONG ).value( 123L ).name( "myLongField" ).build();
+        Property property = new Property.Long( "myDoubleField", 123L );
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( dateProperty, propertyIndexConfig );
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
 
         // Should yield number, string, orderby
         assertEquals( 3, indexDocumentItems.size() );
@@ -49,13 +48,12 @@ public class IndexDocumentItemFactoryTest
     public void date_property()
         throws Exception
     {
-        Property dateProperty =
-            Property.newProperty().type( ValueTypes.DATE_MIDNIGHT ).value( DateTime.now().toDateMidnight() ).name( "myDateField" ).build();
+        Property property = new Property.Date( "myDateField", DateTime.now().toDateMidnight() );
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( dateProperty, propertyIndexConfig );
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
 
         // Should yield date, string, orderby
         assertEquals( 3, indexDocumentItems.size() );
@@ -66,13 +64,12 @@ public class IndexDocumentItemFactoryTest
     public void geopoint_property()
         throws Exception
     {
-        Property arrayProperty =
-            Property.newProperty().type( ValueTypes.GEO_POINT ).name( "myGeoPoint" ).value( new Value.GeoPoint( "41.12,-71.34" ) ).build();
+        Property property = new Property( "myGeoPoint", new Value.GeoPoint( "41.12,-71.34" ) );
 
         PropertyIndexConfig propertyIndexConfig =
             PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( arrayProperty, propertyIndexConfig );
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
 
         // Should yield string, geo-point, orderby
         assertEquals( 3, indexDocumentItems.size() );
