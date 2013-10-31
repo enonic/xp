@@ -3,7 +3,7 @@ package com.enonic.wem.core.index;
 public enum Index
 {
     WEM( "wem" ),
-    NODB( "noDb" );
+    NODB( "nodb" );
 
     private final String name;
 
