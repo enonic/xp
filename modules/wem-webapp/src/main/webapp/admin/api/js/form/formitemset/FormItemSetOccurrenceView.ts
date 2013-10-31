@@ -104,6 +104,10 @@ module api_form_formitemset {
             });
         }
 
+        getFormItemViews():api_form.FormItemView[] {
+            return this.formItemViews;
+        }
+
         refresh() {
 
             this.occurrenceCountEl.setHtml("#" + (this.formItemSetOccurrence.getIndex() + 1));

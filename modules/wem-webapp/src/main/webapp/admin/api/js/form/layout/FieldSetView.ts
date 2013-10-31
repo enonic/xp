@@ -17,6 +17,10 @@ module api_form_layout {
             return null;
         }
 
+        getFormItemViews():api_form.FormItemView[] {
+            return this.formItemViews;
+        }
+
         private doLayout() {
 
             var label = new FieldSetLabel(this.fieldSet);

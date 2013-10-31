@@ -80,8 +80,11 @@ module api_form_input {
             return this.getProperties();
         }
 
-        getProperties():api_data.Property[] {
+        getValue(index:number):api_data.Value {
+            return this.inputTypeView.getValues()[index];
+        }
 
+        getProperties():api_data.Property[] {
             var properties:api_data.Property[] = [];
             this.inputTypeView.getValues().forEach((value:api_data.Value, index:number) => {
                 properties[index] = new api_data.Property(this.input.getName(), value);

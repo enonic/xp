@@ -16,7 +16,62 @@ module api_form {
             this.doLayout();
         }
 
-        private doLayout() {
+        getInputViewByPath(path:api_data.DataPath, formItemViews:FormItemView[] = this.formItemViews):api_form_input.InputView {
+            var inputView:api_form_input.InputView = null;
+            console.log("input path->", path);
+            // Loop through all formItemViews
+            formItemViews.forEach((formItemView:FormItemView) => {
+                console.log(formItemView.getFormItem().getName());
+                // If name matches first path elements name
+                console.log("first path element", path.getElement(0));
+                if (formItemView.getFormItem().getName() == path.getElement(0).getName()) {
+                    console.log("name matched!");
+                    // If formItemView is InputView, end of path is reached
+                    if (formItemView instanceof api_form_input.InputView) {
+                        console.log("matched formitemView")
+                        inputView = <api_form_input.InputView>formItemView;
+                    } else {
+                        var formItemSetView = <api_form_formitemset.FormItemSetView>formItemView;
+                        console.log("calling on formItemSetView");
+                        //console.log(path.newWithOutFirstElement(), formItemSetView.getFormItemViews());
+                        this.getInputViewByPath(path.newWithOutFirstElement(), formItemSetView.getFormItemViews());
+                    }
+
+                }
+            });
+
+            return inputView;
+
+
+//            var returnItem:api_form_input.InputView = null;
+//            if (path.getElements().length == 1) {
+//                this.formItemViews.forEach((formItem:FormItemView, index) => {
+//                    console.log("form item views" + formItem.getFormItem().getName());
+//                    if (formItem instanceof api_form_input.InputView) {
+//                        if (formItem.getFormItem().getName() == path.getElement(0)) {
+//                            returnItem = <api_form_input.InputView>formItem;
+//                        }
+//                    }
+//                });
+//            } else if (path.getElements().length > 1) {
+//                this.formItemViews.forEach((formItem:FormItemView) => {
+//                        if (formItem.getFormItem().getName() == path.getElement(0)) {
+//                            if (formItem instanceof api_form_input.InputView) {
+//                                throw new Error("Expected FormItemSetView")
+//                            } else if (formItem instanceof api_form_formitemset.FormItemSetView) {
+//                                var formItemSetView = <api_form_formitemset.FormItemSetView>formItem;
+//                                formItemSetView.getInputViewByPath(path.newWithOutFirstElement());
+//                            }
+//                        }
+//                    }
+//                );
+//            }
+
+            //return returnItem;
+        }
+
+        private
+            doLayout() {
 
             if (this.contentData == null) {
                 this.contentData = new api_content.ContentData();
@@ -50,7 +105,7 @@ module api_form {
                     if (formItem instanceof FormItemSet) {
                         var formItemSet:FormItemSet = <FormItemSet>formItem;
                         console.log("FormView.doLayout() laying out FormItemSet: ", formItemSet);
-                        var dataSets:api_data.DataSet[] = this.contentData.getDataSetsByName(formItemSet.getName());
+                        var dataSets:api_data.DataSet[] = this.contentData.getDataSetsByName(formItemSet.getName());
                         var formItemSetView = new api_form_formitemset.FormItemSetView(formItemSet, dataSets);
                         this.appendChild(formItemSetView);
                         this.formItemViews.push(formItemSetView);

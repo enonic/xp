@@ -11,6 +11,8 @@ module api_form_formitemset {
 
         private occurrencesCollapsed:boolean = false;
 
+        private formItemSetOccurrenceViews:api_form_formitemset.FormItemSetOccurrenceView[] = [];
+
         constructor(occurrenceViewContainer:api_dom.Element, formItemSet:api_form.FormItemSet, dataSets:api_data.DataSet[]) {
             super(formItemSet, occurrenceViewContainer, formItemSet.getOccurrences());
 
@@ -23,6 +25,7 @@ module api_form_formitemset {
             else {
                 this.constructOccurrencesForNoData();
             }
+
         }
 
         getFormItemSet():api_form.FormItemSet {
@@ -61,7 +64,12 @@ module api_form_formitemset {
                     formItemSetOccurrences.doRemoveOccurrence(toBeRemoved, index);
                 }
             });
+            this.formItemSetOccurrenceViews.push(newOccurrenceView);
             return newOccurrenceView;
+        }
+
+        getFormItemSetOccurrenceViews():FormItemSetOccurrenceView[] {
+            return this.formItemSetOccurrenceViews;
         }
 
         getDataSets():api_data.DataSet[] {

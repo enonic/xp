@@ -6,6 +6,8 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("resources/images/default_content.png");
 
+        private static DISPLAY_NAME_REGEX:RegExp = /\$\('(\w+)'\)/g;
+
         private persistedContent:api_content.Content;
 
         private parentContent:api_content.Content;
@@ -27,6 +29,8 @@ module app_wizard {
         private templatesPanel:api_ui.Panel;
 
         private iconUploadId:string;
+
+        private displayNameChangeInputs:string[];
 
         constructor(contentType:api_schema_content.ContentType, parentContent:api_content.Content) {
 
@@ -100,10 +104,60 @@ module app_wizard {
             ShowContentFormEvent.on((event) => {
                 this.toggleFormPanel(true);
             });
+
+
+            this.displayNameChangeInputs = [];
+
+            this.getEl().addEventListener("keyup", (e) => {
+
+//                if (contentType.getContentDisplayNameScript()) {
+//                    var script = contentType.getContentDisplayNameScript();
+//                    var regex = ContentWizardPanel.DISPLAY_NAME_REGEX;
+//                    var result;
+//                    while ((result = result = regex.exec(script)) != null) {
+//                        var path = api_data.DataPath.fromString(result[1]);
+//                        this.contentForm.getInputViewByPath(path);
+//                        console.log("starting...", path);
+//                    }
+//                }
+                this.contentForm.getInputViewByPath(api_data.DataPath.fromString("basic.vendor"));
+            });
+
+            /*if (contentType.getContentDisplayNameScript()) {
+             var script = contentType.getContentDisplayNameScript();
+             var regex = ContentWizardPanel.DISPLAY_NAME_REGEX;
+             var result;
+             while ((result = result = regex.exec(script)) != null) {
+             this.bindDisplayNameChangeListener(result[1]);
+             }
+             }*/
+        }
+
+        private updateDisplayName() {
+            console.log(this.displayNameChangeInputs);
+            console.log("THIS", this.getId());
+            var inputs = [];
+            this.displayNameChangeInputs.forEach((inputName) => {
+                inputs.push(jQuery(this.getHTMLElement()).find('input[name="' + inputName + '"]'));
+            });
+            var script = this.contentType.getContentDisplayNameScript();
+            var regex = ContentWizardPanel.DISPLAY_NAME_REGEX;
+            var result;
+            var displayName = this.contentType.getContentDisplayNameScript();
+
+            var i = 0;
+            while ((result = result = regex.exec(script)) != null) {
+                if (inputs[i]) {
+                    displayName = displayName.replace(result[0], "'" + inputs[i].val() + "'");
+                }
+                i++;
+            }
+            console.log("Display name is", displayName);
+            this.contentWizardHeader.setDisplayName(eval(displayName));
         }
 
         showCallback() {
-            if(this.persistedContent) {
+            if (this.persistedContent) {
                 app.Router.setHash("edit/" + this.persistedContent.getId());
             } else {
                 app.Router.setHash("new/" + this.contentType.getQualifiedName());
@@ -114,6 +168,7 @@ module app_wizard {
         renderNew() {
             super.renderNew();
             this.contentForm.renderNew();
+            //this.contentForm.getInputViewByPath(null);
             this.renderingNew = true;
         }
 
@@ -147,27 +202,27 @@ module app_wizard {
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setContentData(this.contentForm.getContentData());
 
-                if(this.iconUploadId) {
-                    createRequest.setAttachments([
-                        {
-                            uploadId: this.iconUploadId,
-                            attachmentName: '_thumb.png'
-                        }
-                    ])
-                }
-
-                createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
-
-                    api_notify.showFeedback('Content was created!');
-                    console.log('content create response', createResponse);
-
-                    var json = createResponse.getJson();
-                    new api_content.ContentCreatedEvent(api_content.ContentPath.fromString(json.contentPath)).fire();
-
-                    if (successCallback) {
-                        successCallback.call(this, json.contentId, json.contentPath);
+            if (this.iconUploadId) {
+                createRequest.setAttachments([
+                    {
+                        uploadId: this.iconUploadId,
+                        attachmentName: '_thumb.png'
                     }
-                });
+                ])
+            }
+
+            createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
+
+                api_notify.showFeedback('Content was created!');
+                console.log('content create response', createResponse);
+
+                var json = createResponse.getJson();
+                new api_content.ContentCreatedEvent(api_content.ContentPath.fromString(json.contentPath)).fire();
+
+                if (successCallback) {
+                    successCallback.call(this, json.contentId, json.contentPath);
+                }
+            });
         }
 
         updatePersistedItem(successCallback?:() => void) {
@@ -178,7 +233,7 @@ module app_wizard {
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setContentData(this.contentForm.getContentData());
 
-            if(this.iconUploadId) {
+            if (this.iconUploadId) {
                 updateRequest.setAttachments([
                     {
                         uploadId: this.iconUploadId,
@@ -196,6 +251,14 @@ module app_wizard {
                 if (successCallback) {
                     successCallback.call(this);
                 }
+            });
+        }
+
+        private bindDisplayNameChangeListener(inputName:string) {
+            console.log("adding to displayname change", inputName);
+            this.displayNameChangeInputs.push(inputName);
+            jQuery(this.getHTMLElement()).on("keyup", "input[name='" + inputName + "']", () => {
+                this.updateDisplayName();
             });
         }
     }

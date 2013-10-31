@@ -31,5 +31,9 @@ module app_wizard {
         getContentData() {
             return this.formView.rebuildContentData();
         }
+
+        getInputViewByPath(path:api_data.DataPath) {
+            return this.formView.getInputViewByPath(path);
+        }
     }
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<script type="text/javascript">
+    var string = "$('vendor') + ' - ' + $('name')";
+    var regex = /\$\('(\w+)'\)/g;
+    var result;
+    var newStr = string;
+    while ((result = result = regex.exec(string)) != null) {
+        var msg = "Found " + result + ".  ";
+        console.log(msg);
+        var fetchedField = "'test'";
+        console.log(result[0]);
+        newStr = newStr.replace(result[0], fetchedField);
+
+    }
+    console.log(eval(newStr));
+
+</script>
+<input type="text" id="test" />
+</body>
+</html>
