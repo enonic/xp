@@ -1,7 +1,10 @@
-package com.enonic.wem.query;
+package com.enonic.wem.query.expr;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+
+import com.enonic.wem.query.Expression;
+import com.enonic.wem.query.OrderSpec;
 
 public final class OrderBy
     implements Expression
@@ -11,7 +14,7 @@ public final class OrderBy
     public OrderBy( final OrderSpec... orderList )
     {
         Preconditions.checkNotNull( orderList, "OrderList cannot be null" );
-        Preconditions.checkArgument( orderList.length == 0, "OrderList cannot be empty" );
+        Preconditions.checkArgument( orderList.length != 0, "OrderList cannot be empty" );
         this.orderList = orderList;
     }
 
@@ -23,6 +26,7 @@ public final class OrderBy
     @Override
     public String toString()
     {
-        return "ORDER BY " + Joiner.on( " " ).join( this.orderList );
+        return "ORDER BY " + Joiner.on( ", " ).join( this.orderList );
     }
+
 }

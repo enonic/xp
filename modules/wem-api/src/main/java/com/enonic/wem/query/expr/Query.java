@@ -1,4 +1,7 @@
-package com.enonic.wem.query;
+package com.enonic.wem.query.expr;
+
+import com.enonic.wem.query.Constraint;
+import com.enonic.wem.query.Expression;
 
 public final class Query
     implements Expression
@@ -44,4 +47,5 @@ public final class Query
 
         return str.toString();
     }
+
 }

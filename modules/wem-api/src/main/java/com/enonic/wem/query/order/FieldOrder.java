@@ -1,6 +1,9 @@
-package com.enonic.wem.query;
+package com.enonic.wem.query.order;
 
 import com.google.common.base.Preconditions;
+
+import com.enonic.wem.query.OrderSpec;
+import com.enonic.wem.query.expr.FieldExpr;
 
 public final class FieldOrder
     extends OrderSpec
@@ -24,4 +27,5 @@ public final class FieldOrder
     {
         return this.field.toString() + " " + getDirection().toString();
     }
+
 }

@@ -1,4 +1,6 @@
-package com.enonic.wem.query;
+package com.enonic.wem.query.expr;
+
+import com.enonic.wem.query.Constraint;
 
 public final class NotExpr
     implements Constraint
@@ -20,4 +22,5 @@ public final class NotExpr
     {
         return "NOT (" + this.constraint.toString() + ")";
     }
+
 }

@@ -1,6 +1,8 @@
-package com.enonic.wem.query;
+package com.enonic.wem.query.expr;
 
 import com.google.common.base.Joiner;
+
+import com.enonic.wem.query.Constraint;
 
 public final class ComparisonExpr
     implements Constraint
@@ -141,4 +143,5 @@ public final class ComparisonExpr
     {
         return new ComparisonExpr( field, Operator.NOT_IN, values );
     }
+
 }
