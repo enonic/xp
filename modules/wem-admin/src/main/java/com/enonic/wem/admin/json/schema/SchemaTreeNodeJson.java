@@ -11,8 +11,6 @@ public class SchemaTreeNodeJson
     extends SchemaJson
 {
 
-    private boolean hasChildren;
-
     private List<SchemaTreeNodeJson> schemas;
 
     public SchemaTreeNodeJson( final TreeNode<Schema> schema )
@@ -24,16 +22,6 @@ public class SchemaTreeNodeJson
         {
             schemas.add( new SchemaTreeNodeJson( node ) );
         }
-    }
-
-    public boolean isHasChildren()
-    {
-        return hasChildren;
-    }
-
-    public void setHasChildren( final boolean hasChildren )
-    {
-        this.hasChildren = hasChildren;
     }
 
     public List<SchemaTreeNodeJson> getSchemas()

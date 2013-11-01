@@ -17,7 +17,7 @@ public class SchemaJson
 
     private String module;
 
-    private String qualifyName;
+    private String qualifiedName;
 
     private String displayName;
 
@@ -35,7 +35,7 @@ public class SchemaJson
     {
         this.key = schema.getSchemaKey().toString();
         this.name = schema.getName();
-        this.qualifyName = schema.getQualifiedName().toString();
+        this.qualifiedName = schema.getQualifiedName().toString();
         this.displayName = schema.getDisplayName();
         this.type = schema.getClass().getSimpleName();
         this.createdTime = schema.getCreatedTime();
@@ -74,14 +74,14 @@ public class SchemaJson
         this.module = module;
     }
 
-    public String getQualifyName()
+    public String getQualifiedName()
     {
-        return qualifyName;
+        return qualifiedName;
     }
 
-    public void setQualifyName( final String qualifyName )
+    public void setQualifiedName( final String qualifiedName )
     {
-        this.qualifyName = qualifyName;
+        this.qualifiedName = qualifiedName;
     }
 
     public String getDisplayName()
@@ -134,9 +134,14 @@ public class SchemaJson
         this.iconUrl = iconUrl;
     }
 
-    public boolean hasChildren()
+    public boolean isHasChildren()
     {
-        return this.hasChildren;
+        return hasChildren;
+    }
+
+    public void setHasChildren( final boolean hasChildren )
+    {
+        this.hasChildren = hasChildren;
     }
 
     @Override

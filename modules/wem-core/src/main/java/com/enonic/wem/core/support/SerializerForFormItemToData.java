@@ -164,9 +164,12 @@ public class SerializerForFormItemToData
     public FormItems deserializeFormItems( final Iterable<Data> formItemsAsData )
     {
         FormItems formItems = new FormItems();
-        for ( final Data formItemAsData : formItemsAsData )
+        if ( formItemsAsData != null )
         {
-            formItems.add( deserializeFormItem( formItemAsData ) );
+            for ( final Data formItemAsData : formItemsAsData )
+            {
+                formItems.add( deserializeFormItem( formItemAsData ) );
+            }
         }
         return formItems;
     }

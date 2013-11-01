@@ -4,12 +4,13 @@
         "deletable": true,
         "displayName": null,
         "editable": true,
+        "hasChildren" : false,
         "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:contenttype",
         "key": "ContentType:contenttype",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "module": null,
         "name": "contenttype",
-        "qualifyName": "contenttype",
+        "qualifiedName": "contenttype",
         "type": "ContentType"
     }
 ]

@@ -7,7 +7,7 @@ Ext.define('Admin.model.contentManager.ContentSummaryModel', {
         { name: 'createdTime', type: 'date', defaultValue: new Date() },
         { name: 'editable', type: 'boolean' },
         { name: 'deletable', type: 'boolean' },
-        { name: 'hasChildren', type: 'boolean' },
+        { name: 'hasChildren', type: 'boolean', defaultValue: false },
         { name: 'root', type: 'boolean', defaultValue: false },
         {
             name: 'leaf', // property needed for ContentTreeStore

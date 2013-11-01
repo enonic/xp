@@ -20,7 +20,7 @@ module app_browse {
             this.setItemId("SchemaTreeGridPanel");
 
             this.setActiveList(api_app_browse_grid.TreeGridPanel.TREE);
-            this.setKeyField("key");
+            this.setKeyField("name");
 
             app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
                 if (event.getFilterParams()) {

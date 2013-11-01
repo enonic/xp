@@ -11,7 +11,7 @@
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "module": null,
             "name": "rootcontenttype",
-            "qualifyName": "rootcontenttype",
+            "qualifiedName": "rootcontenttype",
             "schemas": [
                 {
                     "createdTime": "2013-08-23T12:55:09.162Z",
@@ -24,7 +24,7 @@
                     "modifiedTime": "2013-08-23T12:55:09.162Z",
                     "module": null,
                     "name": "childcontenttype",
-                    "qualifyName": "childcontenttype",
+                    "qualifiedName": "childcontenttype",
                     "schemas": [ ],
                     "type": "ContentType"
                 }
@@ -42,7 +42,7 @@
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "module": null,
             "name": "rootmixin",
-            "qualifyName": "rootmixin",
+            "qualifiedName": "rootmixin",
             "schemas": [
                 {
                     "createdTime": "2013-08-23T12:55:09.162Z",
@@ -55,7 +55,7 @@
                     "modifiedTime": "2013-08-23T12:55:09.162Z",
                     "module": null,
                     "name": "childmixin",
-                    "qualifyName": "childmixin",
+                    "qualifiedName": "childmixin",
                     "schemas": [ ],
                     "type": "Mixin"
                 }
@@ -73,7 +73,7 @@
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "module": null,
             "name": "rootrelationshiptype",
-            "qualifyName": "rootrelationshiptype",
+            "qualifiedName": "rootrelationshiptype",
             "schemas": [
                 {
                     "createdTime": "2013-08-23T12:55:09.162Z",
@@ -86,7 +86,7 @@
                     "modifiedTime": "2013-08-23T12:55:09.162Z",
                     "module": null,
                     "name": "childrelationshiptype",
-                    "qualifyName": "childrelationshiptype",
+                    "qualifiedName": "childrelationshiptype",
                     "schemas": [ ],
                     "type": "RelationshipType"
                 }
