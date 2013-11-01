@@ -38,5 +38,9 @@ module api_data{
                 value: this.getString()
             };
         }
+
+        equals(property:Property):boolean {
+            return super.equals(property) && this.value.equals(property.getValue());
+        }
     }
 }

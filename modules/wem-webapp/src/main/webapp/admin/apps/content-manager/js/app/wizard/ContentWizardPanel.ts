@@ -201,6 +201,21 @@ module app_wizard {
                 }
             });
         }
+
+        hasUnsavedChanges():boolean {
+            if (this.persistedContent == undefined) {
+                return true;
+            } else {
+                return !this.stringsEqual(this.persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
+                       || !this.stringsEqual(this.persistedContent.getName(), this.contentWizardHeader.getName())
+                       || !this.persistedContent.getContentData().equals(this.contentForm.getContentData());
+            }
+        }
+
+        private stringsEqual(str1:string, str2:string):boolean {
+            // strings are equal if both of them are empty or not specified or they are identical
+            return (!!str1 && !!str2) || (str1 == str2);
+        }
     }
 
     /*class AttachmentCollector extends api_data.PropertyVisitor {
