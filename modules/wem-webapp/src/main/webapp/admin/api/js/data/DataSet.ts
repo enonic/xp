@@ -96,5 +96,25 @@ module api_data{
             };
         }
 
+        equals(dataSet:DataSet):boolean {
+            var dataArray1 = this.getDataArray();
+            var dataArray2 = dataSet.getDataArray();
+
+            if (dataArray1.length != dataArray2.length) {
+                return false;
+            }
+
+            for (var i = 0 ; i < dataArray1.length ; i++) {
+                var data1 = dataArray1[i];
+                var data2 = dataSet.getData(data1.getId().toString());
+
+                if (!data1.equals(data2)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     }
 }

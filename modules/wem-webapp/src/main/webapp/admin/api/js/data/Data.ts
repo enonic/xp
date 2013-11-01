@@ -48,6 +48,10 @@ module api_data{
                 throw new Error("Unsupported data: " + this);
             }
         }
+
+        equals(data:Data):boolean {
+            return this.name == data.getName() && this.arrayIndex == data.getArrayIndex();
+        }
     }
 
 }

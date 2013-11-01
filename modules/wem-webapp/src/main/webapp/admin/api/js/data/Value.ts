@@ -22,5 +22,9 @@ module api_data{
         setValue(value:string) {
             this.value = value;
         }
+
+        equals(value:Value):boolean {
+            return this.value == value.value && this.type.equals(value.getType());
+        }
     }
 }
