@@ -405,7 +405,8 @@ public class ContentResource
                 selector( params.getContentId() ).
                 modifier( AccountKey.anonymous() ).
                 attachments( attachments ).
-                editor( ContentEditors.composite( ContentEditors.setContentData( contentData ),
+                editor( ContentEditors.composite( ContentEditors.setForm( params.getForm().getForm() ),
+                                                  ContentEditors.setContentData( contentData ),
                                                   ContentEditors.setContentDisplayName( params.getDisplayName() ) ) );
 
             final UpdateContentResult updateContentResult = client.execute( updateContent );
