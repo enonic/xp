@@ -120,7 +120,8 @@ module app_wizard {
 //                        console.log("starting...", path);
 //                    }
 //                }
-                this.contentForm.getInputViewByPath(api_data.DataPath.fromString("basic.vendor"));
+                var inputView = this.contentForm.getInputViewByPath(api_data.DataPath.fromString("basic.vendor"));
+                console.log("got inputview", inputView);
             });
 
             /*if (contentType.getContentDisplayNameScript()) {

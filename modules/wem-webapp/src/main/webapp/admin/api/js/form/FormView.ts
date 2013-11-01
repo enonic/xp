@@ -28,8 +28,8 @@ module api_form {
                     console.log("name matched!");
                     // If formItemView is InputView, end of path is reached
                     if (formItemView instanceof api_form_input.InputView) {
-                        console.log("matched formitemView")
                         inputView = <api_form_input.InputView>formItemView;
+                        console.log("set inputview", inputView);
                     } else {
                         var formItemSetView = <api_form_formitemset.FormItemSetView>formItemView;
                         console.log("calling on formItemSetView");
