@@ -56,7 +56,6 @@ module LiveEdit.ui.contextmenu {
         }
 
         private show(component:LiveEdit.component.Component, pageXYPosition:any = null):void {
-            console.log(arguments);
             this.selectedComponent = component;
 
             this.updateTitleBar(component);
