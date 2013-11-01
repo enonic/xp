@@ -35,7 +35,7 @@ public class ModuleXmlSerializerTest
     {
 
         String xml = loadTestXml( "serialized-module.xml" );
-        Module.Builder module = Module.newModule();
+        Module.Builder module = Module.newModule().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
         moduleSerializer.toModule( xml, module );
         assertEquals( createModule().toString(), module.build().toString() );
     }
@@ -52,7 +52,7 @@ public class ModuleXmlSerializerTest
     public void testXmlModuleDeserializationWithEmptyDeps()
     {
         String xml = loadTestXml( "serialized-module-empty-deps.xml" );
-        Module.Builder moduleBuilder = Module.newModule();
+        Module.Builder moduleBuilder = Module.newModule().moduleKey( ModuleKey.from( "mymodule-1.0.0" ) );
         moduleSerializer.toModule( xml, moduleBuilder );
         Module module = moduleBuilder.build();
         assertEquals( module.getModuleDependencies().getSize(), 0 );
