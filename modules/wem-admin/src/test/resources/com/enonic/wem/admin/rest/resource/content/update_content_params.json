@@ -2,6 +2,9 @@
     "contentId": "content-id",
     "contentName": "content-name",
     "qualifiedContentTypeName": "my-type",
+    "form": {
+        "formItems": []
+    },
     "contentData": [],
     "displayName": "Content One"
 }
