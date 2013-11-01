@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity;
 
 
+import javax.inject.Inject;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.entity.UpdateNode;
@@ -9,12 +10,22 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.entity.dao.UpdateNodeArgs.newUpdateItemArgs;
 
 public class UpdateNodeHandler
     extends CommandHandler<UpdateNode>
 {
+
+    private IndexService indexService;
+
+    @Inject
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
+    }
+
     @Override
     public void handle()
         throws Exception
@@ -43,7 +54,8 @@ public class UpdateNodeHandler
 
         final Node persistedNode = itemDao.updateNode( updateNodeArgs );
         session.save();
-        // TODO: update index for item or in dao?
+
+        indexService.indexNode( persistedNode );
 
         command.setResult( new UpdateNodeResult( persistedNode ) );
     }

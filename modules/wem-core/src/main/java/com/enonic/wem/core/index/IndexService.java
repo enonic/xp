@@ -155,12 +155,7 @@ public class IndexService
         elasticsearchIndexService.indexDocuments( indexDocuments );
     }
 
-    public void deleteNode( final Node node )
-    {
-        elasticsearchIndexService.delete( new DeleteDocument( Index.NODB, IndexType.NODE, node.id().toString() ) );
-    }
-
-    public void deleteNode( final EntityId entityId )
+    public void deleteEntity( final EntityId entityId )
     {
         elasticsearchIndexService.delete( new DeleteDocument( Index.NODB, IndexType.NODE, entityId.toString() ) );
     }
