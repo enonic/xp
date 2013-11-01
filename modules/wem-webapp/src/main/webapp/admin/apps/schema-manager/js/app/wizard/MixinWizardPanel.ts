@@ -70,7 +70,7 @@ module app_wizard {
 
                    api_notify.showFeedback( 'Mixin was created!' );
 
-                   new api_schema_mixin.MixinCreatedEvent( response.getResult().name ).fire();
+                   new api_schema.SchemaCreatedEvent( "Mixin", response.getResult().name ).fire();
 
                    if ( successCallback )
                    {
@@ -92,7 +92,7 @@ module app_wizard {
 
                    api_notify.showFeedback( 'Mixin was updated!' );
 
-                   new api_schema_mixin.MixinUpdatedEvent( response.getResult().name ).fire();
+                   new api_schema.SchemaUpdatedEvent( "Mixin", response.getResult().name ).fire();
 
                    if ( successCallback )
                    {

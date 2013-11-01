@@ -5,5 +5,3 @@
 ///<reference path="GetMixinConfigResult.ts"/>
 ///<reference path="GetMixinConfigByQualifiedNameRequest.ts"/>
 ///<reference path="GetMixinByQualifiedNameRequest.ts"/>
-///<reference path="MixinCreatedEvent.ts"/>
-///<reference path="MixinUpdatedEvent.ts"/>

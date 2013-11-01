@@ -1,12 +1,6 @@
 module api_schema_relationshiptype_json {
 
-    export interface RelationshipTypeJson extends api_item.ItemJson{
-
-        iconUrl:string;
-
-        name:string;
-
-        displayName:string;
+    export interface RelationshipTypeJson extends api_schema.SchemaJson {
 
         fromSemantic:string;
 

@@ -10,8 +10,8 @@ module app_delete {
             this.setDeleteAction(new SchemaDeleteDialogAction());
 
             this.getDeleteAction().addExecutionListener(() => {
-                var deleteRequest = new api_schema.DeleteSchemaRequest();
 
+                var deleteRequest = new api_schema.DeleteSchemaRequest();
                 for (var i = 0; i < this.schemaToDelete.length; i++) {
                     deleteRequest.addQualifiedName(this.schemaToDelete[i].data.qualifiedName);
                 }
@@ -22,15 +22,16 @@ module app_delete {
                 deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {
                     var json = jsonResponse.getJson();
 
-                    var names = [];
+                    var names:string[] = [];
                     for ( var i = 0; i < json.successes.length; i++ ) {
-                        names.push(json.successes[i].qualifiedName);
+                        names.push(json.successes[i].name);
                     }
 
                     this.close();
-                    //components.gridPanel.refresh();
 
-                    api_notify.showFeedback('Schema [' + names.join(', ') + '] deleted!')
+                    api_notify.showFeedback('Schema [' + names.join(', ') + '] deleted!');
+
+                    new api_schema.SchemaDeletedEvent(type, names).fire();
                 });
             });
         }

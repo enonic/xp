@@ -48,11 +48,11 @@ module app_wizard {
             super.setPersistedItem(contentType);
 
             this.contentTypeWizardHeader.setName(contentType.getName());
-            this.formIcon.setSrc(contentType.getIconUrl());
+            this.formIcon.setSrc(contentType.getIcon());
 
             this.persistedContentType = contentType;
 
-            new api_schema_content.GetContentTypeConfigByQualifiedNameRequest(contentType.getQualifiedName()).send().
+            new api_schema_content.GetContentTypeConfigByQualifiedNameRequest(contentType.getSchemaName()).send().
                 done((response:api_rest.JsonResponse<api_schema_content.GetContentTypeConfigResult>) => {
                 this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
             });

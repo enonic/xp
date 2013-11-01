@@ -32,6 +32,23 @@ module app_browse {
                 browseItemPanel: browseItemPanel,
                 filterPanel: filterPanel});
 
+            api_schema.SchemaDeletedEvent.on((event) => {
+                var names:string[] = event.getSchemaNames();
+                for (var i = 0; i < names.length; i++) {
+                    treeGridPanel.remove(names[i]);
+                }
+            });
+
+            api_schema.SchemaCreatedEvent.on((event) => {
+                console.log('On content created', event.getSchemaName());
+                this.setRefreshNeeded(true);
+            });
+
+            api_schema.SchemaUpdatedEvent.on((event) => {
+                console.log('On content updated', event.getSchemaName());
+                this.setRefreshNeeded(true);
+            });
+
             treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
