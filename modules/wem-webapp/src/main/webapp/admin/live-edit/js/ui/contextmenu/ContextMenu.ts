@@ -56,6 +56,7 @@ module LiveEdit.ui.contextmenu {
         }
 
         private show(component:LiveEdit.component.Component, pageXYPosition:any = null):void {
+            console.log(arguments);
             this.selectedComponent = component;
 
             this.updateTitleBar(component);
@@ -139,7 +140,7 @@ module LiveEdit.ui.contextmenu {
             } else {
                 // component element - center
                 pageXPosition = componentElementDimensions.left + (componentElementDimensions.width/2) - this.getEl().width() / 2;
-                pageYPosition = componentElementDimensions.top + 10;
+                pageYPosition = componentElementDimensions.top + componentElementDimensions.height + 10;
             }
 
             return {
