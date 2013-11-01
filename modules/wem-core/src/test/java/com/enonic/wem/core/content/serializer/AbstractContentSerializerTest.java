@@ -343,7 +343,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void given_formItem_inside_layout_when_parse_then_formItem_path_is_affected_by_name_of_layout()
     {
-        final FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
+        final FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).addFormItem(
             newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final ContentType contentType = newContentType().

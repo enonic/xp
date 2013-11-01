@@ -138,12 +138,15 @@ module app_wizard {
 
         persistNewItem(successCallback?:(contentId:string, contentPath:string) => void) {
 
+            var contentData = this.contentForm.getContentData();
+
             var createRequest = new api_content.CreateContentRequest().
                 setContentName(this.contentWizardHeader.getName()).
                 setParentContentPath(this.parentContent.getPath().toString()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setContentData(this.contentForm.getContentData());
+                setForm(this.contentForm.getForm()).
+                setContentData(contentData);
 
                 if(this.iconUploadId) {
                     createRequest.setAttachments([
@@ -153,6 +156,9 @@ module app_wizard {
                         }
                     ])
                 }
+
+                //var attachmentCollector = new AttachmentCollector();
+                //attachmentCollector.collect(contentData);
 
                 createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
 
@@ -173,6 +179,7 @@ module app_wizard {
                 setContentName(this.contentWizardHeader.getName()).
                 setContentType(this.contentType.getQualifiedName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
+                setForm(this.contentForm.getForm()).
                 setContentData(this.contentForm.getContentData());
 
             if(this.iconUploadId) {
@@ -195,6 +202,18 @@ module app_wizard {
             });
         }
     }
+
+    /*class AttachmentCollector extends api_data.PropertyVisitor {
+
+
+        collect( contentData:api_content.ContentData ) {
+            super.traverse( contentData.getDataArray() );
+        }
+
+        visit( property:api_data.Property ) {
+            //
+        }
+    }*/
 
     class LiveFormPanel extends api_ui.Panel {
 

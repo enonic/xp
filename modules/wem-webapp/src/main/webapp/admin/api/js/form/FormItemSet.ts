@@ -71,18 +71,17 @@ module api_form{
             return this.occurrences;
         }
 
-        public toFormItemSetJson():api_form_json.FormItemSetJson {
+        public toFormItemSetJson():api_form_json.FormItemTypeWrapperJson {
 
-            return <api_form_json.FormItemSetJson>{
+            return <api_form_json.FormItemTypeWrapperJson>{FormItemSet: <api_form_json.FormItemSetJson>{
                 name: this.getName(),
-                formItemType: "FormItemSet",
                 customText : this.getCustomText(),
                 helpText : this.getHelpText(),
                 immutable : this.isImmutable(),
                 items : FormItem.formItemsToJson(this.getFormItems()),
                 label : this.getLabel(),
                 occurrences : this.getOccurrences().toJson(),
-            };
+            }};
         }
     }
 }

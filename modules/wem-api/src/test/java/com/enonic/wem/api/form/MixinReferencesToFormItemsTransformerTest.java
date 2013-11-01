@@ -111,9 +111,8 @@ public class MixinReferencesToFormItemsTransformerTest
     {
         // setup
         Mixin mixin = Mixin.newMixin().name( "address" ).addFormItem( newFormItemSet().name( "address" ).addFormItem(
-            FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).add(
-                newInput().name( "myFieldInLayout" ).label( "MyFieldInLayout" ).inputType(
-                    InputTypes.TEXT_LINE ).build() ).build() ).addFormItem(
+            FieldSet.newFieldSet().label( "My Field Set" ).name( "fieldSet" ).addFormItem(
+                newInput().name( "myFieldInLayout" ).label( "MyFieldInLayout" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).addFormItem(
             newInput().name( "label" ).label( "Label" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInput().name( "street" ).label( "Street" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInput().name( "postalNo" ).label( "Postal No" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(

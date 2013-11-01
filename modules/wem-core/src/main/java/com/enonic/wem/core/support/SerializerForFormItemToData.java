@@ -325,7 +325,7 @@ public class SerializerForFormItemToData
         final DataSet itemsDataSet = fieldSetAsDataSet.getDataSet( "items" );
         for ( final Data data : itemsDataSet )
         {
-            builder.add( deserializeFormItem( data ) );
+            builder.addFormItem( deserializeFormItem( data ) );
         }
 
         return builder.build();

@@ -67,7 +67,7 @@ public abstract class AbstractContentTypeSerializerTest
         Mixin inputMixin = newMixin().name( "my_shared_input" ).addFormItem(
             Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
-        Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
+        Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).addFormItem(
             newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         set.add( layout );
         set.add( newMixinReference().name( "myCommonInput" ).mixin( inputMixin ).build() );
@@ -241,7 +241,7 @@ public abstract class AbstractContentTypeSerializerTest
     {
         // setup
         FieldSet.Builder fieldSetBuilder = newFieldSet().label( "Label" ).name( "myFieldSet" );
-        fieldSetBuilder.add( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() );
+        fieldSetBuilder.addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = fieldSetBuilder.build();
 
         ContentType.Builder contentTypeBuilder = newContentType().name( "test" );

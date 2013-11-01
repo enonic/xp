@@ -8,26 +8,29 @@
     "displayName": "My ContentType",
     "editable": true,
     "final": false,
-    "form": [
-        {
-            "customText": null,
-            "formItemType": "Input",
-            "helpText": null,
-            "immutable": false,
-            "indexed": false,
-            "inputType": {
-                "config": null,
-                "name": "TextLine"
-            },
-            "label": "My text line",
-            "name": "myTextLine",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 1
-            },
-            "validationRegexp": null
-        }
-    ],
+    "form": {
+        "formItems": [
+            {
+                "Input": {
+                    "name": "myTextLine",
+                    "label": "My text line",
+                    "customText": null,
+                    "helpText": null,
+                    "validationRegexp": null,
+                    "immutable": false,
+                    "indexed": false,
+                    "inputType": {
+                        "name": "TextLine"
+                    },
+                    "occurrences": {
+                        "minimum": 1,
+                        "maximum": 1
+                    },
+                    "config": { }
+                }
+            }
+        ]
+    },
     "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:my_cty",
     "modifiedTime": null,
     "modifier": null,

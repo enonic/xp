@@ -122,7 +122,7 @@ public class ContentTypeResourceTest
         FieldSet myFieldSet = newFieldSet().
             name( "myFieldSet" ).
             label( "My field set" ).
-            add( newInput().
+            addFormItem( newInput().
                 name( "myTextLine" ).
                 inputType( TEXT_LINE ).
                 label( "My text line" ).

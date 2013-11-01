@@ -22,7 +22,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         contentType.form().addFormItem( layout );
@@ -38,7 +38,7 @@ public class ContentTypeTest
         FieldSet layout = FieldSet.newFieldSet().
             label( "Personalia" ).
             name( "personalia" ).
-            add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
         FormItemSet myFormItemSet = newFormItemSet().name( "mySet" ).addFormItem( layout ).build();

@@ -310,7 +310,7 @@ public final class Input
 
         public Builder validationRegexp( String value )
         {
-            validationRegexp = new ValidationRegex( value );
+            validationRegexp = value != null ? new ValidationRegex( value ) : null;
             return this;
         }
 

@@ -6,7 +6,7 @@ module api_form{
             super(name);
         }
 
-        public toLayoutJson():api_form_json.LayoutJson {
+        public toLayoutJson():api_form_json.FormItemTypeWrapperJson {
 
             if (this instanceof FieldSet) {
                 return (<FieldSet>this).toFieldSetJson();

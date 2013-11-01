@@ -97,6 +97,11 @@ public final class Form
         return formItems.iterator();
     }
 
+    public int size()
+    {
+        return formItems.size();
+    }
+
     public static class Builder
     {
         private List<FormItem> formItems;

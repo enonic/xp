@@ -10,6 +10,8 @@ module api_content {
 
         private qualifiedContentTypeName:string;
 
+        private form:api_form.Form;
+
         private contentData:ContentData;
 
         private displayName:string;
@@ -44,6 +46,11 @@ module api_content {
             return this;
         }
 
+        setForm(form:api_form.Form):CreateContentRequest {
+            this.form = form;
+            return this;
+        }
+
         setContentData(contentData:api_content.ContentData):CreateContentRequest {
             this.contentData = contentData;
             return this;
@@ -67,6 +74,7 @@ module api_content {
                 contentName: this.contentName,
                 parentContentPath: this.parentContentPath,
                 qualifiedContentTypeName: this.qualifiedContentTypeName,
+                form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,
                 attachments: this.attachments

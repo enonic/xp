@@ -29,14 +29,13 @@ module api_form{
             return this.formItems;
         }
 
-        public toFieldSetJson():api_form_json.FieldSetJson {
+        public toFieldSetJson():api_form_json.FormItemTypeWrapperJson {
 
-            return <api_form_json.FieldSetJson>{
+            return <api_form_json.FormItemTypeWrapperJson>{ Layout: <api_form_json.LayoutTypeWrapperJson>{ FieldSet: <api_form_json.FieldSetJson>{
                 name: this.getName(),
-                formItemType: "Layout",
                 items : FormItem.formItemsToJson(this.getFormItems()),
                 label : this.getLabel()
-            };
+            }}};
         }
     }
 }

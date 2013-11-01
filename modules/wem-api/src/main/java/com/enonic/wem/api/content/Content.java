@@ -274,7 +274,7 @@ public final class Content
 
         public Builder form( final Form form )
         {
-            this.contentData = contentData;
+            this.form = form;
             return this;
         }
 

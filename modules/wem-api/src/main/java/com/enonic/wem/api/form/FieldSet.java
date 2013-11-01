@@ -117,11 +117,21 @@ public class FieldSet
             return this;
         }
 
-        public Builder add( FormItem formItem )
+        public Builder addFormItem( FormItem formItem )
         {
             this.formItems.add( formItem );
             return this;
         }
+
+        public Builder addFormItems( Iterable<FormItem> iterable )
+        {
+            for ( FormItem formItem : iterable )
+            {
+                formItems.add( formItem );
+            }
+            return this;
+        }
+
 
         public FieldSet build()
         {

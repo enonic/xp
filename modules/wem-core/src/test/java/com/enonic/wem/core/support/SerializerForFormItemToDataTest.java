@@ -228,7 +228,7 @@ public class SerializerForFormItemToDataTest
         FieldSet.Builder fieldSetBuilder = FieldSet.newFieldSet().name( name ).label( name );
         for ( FormItem formItem : formItems )
         {
-            fieldSetBuilder.add( formItem );
+            fieldSetBuilder.addFormItem( formItem );
         }
 
         return fieldSetBuilder.build();

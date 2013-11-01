@@ -28,6 +28,10 @@ module app_wizard {
             this.appendChild(this.formView)
         }
 
+        getForm():api_form.Form {
+            return this.form;
+        }
+
         getContentData() {
             return this.formView.rebuildContentData();
         }

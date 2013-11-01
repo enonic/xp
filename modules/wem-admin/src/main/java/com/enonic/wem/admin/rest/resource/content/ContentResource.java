@@ -375,6 +375,7 @@ public class ContentResource
                 parentContentPath( params.getParentContentPath() ).
                 name( params.getContentName() ).
                 contentType( params.getQualifiedContentTypeName() ).
+                form( params.getForm().getForm() ).
                 contentData( contentData ).
                 displayName( params.getDisplayName() ).
                 owner( AccountKey.anonymous() ).

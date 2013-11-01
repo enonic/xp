@@ -41,10 +41,6 @@ import com.enonic.wem.core.support.serializer.XmlParsingException;
 public class RelationshipTypeResource
     extends AbstractResource
 {
-    public static final String FORMAT_XML = "XML";
-
-    public static final String FORMAT_JSON = "JSON";
-
     private UploadService uploadService;
 
     @GET

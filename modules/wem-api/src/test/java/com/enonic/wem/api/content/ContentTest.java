@@ -415,11 +415,11 @@ public class ContentTest
     {
         // setup
         contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
-        FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).add(
+        FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).addFormItem(
+            newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
-        FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
-            newInput().name( "tattoo" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
+        FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).addFormItem(
+            newInput().name( "tattoo" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).addFormItem(
             newInput().name( "scar" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
         personalia.addFormItem( tatoos );
         contentType.form().addFormItem( personalia );

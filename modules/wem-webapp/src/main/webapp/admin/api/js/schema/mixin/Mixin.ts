@@ -14,16 +14,16 @@ module api_schema_mixin {
 
         private icon:string;
 
-        constructor(json:api_schema_mixin_json.MixinJson) {
-            super(json);
-            this.name = json.name;
-            this.displayName = json.displayName;
+        constructor(mixinJson:api_schema_mixin_json.MixinJson) {
+            super(mixinJson);
+            this.name = mixinJson.name;
+            this.displayName = mixinJson.displayName;
             this.qualifiedName = this.name;
             this.formItems = [];
-            json.items.forEach((item:api_form_json.FormItemJson) => {
-                this.formItems.push(new api_form[item.formItemType](item));
+            mixinJson.items.forEach((formItemJson:api_form_json.FormItemJson) => {
+                this.formItems.push(api_form.FormItemFactory.createFormItem(formItemJson));
             });
-            this.icon = json.iconUrl;
+            this.icon = mixinJson.iconUrl;
             this.schemaKey = "mixin:" + this.qualifiedName;
         }
 
