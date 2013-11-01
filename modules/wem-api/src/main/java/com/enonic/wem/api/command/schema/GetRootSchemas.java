@@ -1,10 +1,10 @@
-package com.enonic.wem.api.command.content;
+package com.enonic.wem.api.command.schema;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.schema.Schemas;
 
-public class GetRootContent
-    extends Command<Contents>
+public final class GetRootSchemas
+    extends Command<Schemas>
 {
 
     @Override
@@ -15,7 +15,7 @@ public class GetRootContent
             return true;
         }
 
-        if ( !( o instanceof GetRootContent ) )
+        if ( !( o instanceof GetRootSchemas ) )
         {
             return false;
         }

@@ -27,6 +27,16 @@ public final class ContentTypeCommands
         return new GetContentTypeTree();
     }
 
+    public GetRootContentTypes getRoots()
+    {
+        return new GetRootContentTypes();
+    }
+
+    public GetChildContentTypes getChildren()
+    {
+        return new GetChildContentTypes();
+    }
+
     public ValidateContentType validate()
     {
         return new ValidateContentType();

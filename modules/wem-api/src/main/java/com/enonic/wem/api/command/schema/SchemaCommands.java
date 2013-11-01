@@ -11,4 +11,14 @@ public final class SchemaCommands
     {
         return new GetSchemaTree();
     }
+
+    public GetRootSchemas getRoots()
+    {
+        return new GetRootSchemas();
+    }
+
+    public GetChildSchemas getChildren()
+    {
+        return new GetChildSchemas();
+    }
 }
