@@ -3,14 +3,13 @@ package com.enonic.wem.core.rendering;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.io.ByteStreams;
-
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.command.content.template.GetTemplate;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateId;
+import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 
 import static com.enonic.wem.api.content.page.Page.newPage;
@@ -32,11 +31,18 @@ public class RendererTest
         final PageTemplateId pageTemplateId = new PageTemplateId( "my-page-tpl" );
         final PageTemplate template = newPageTemplate().
             id( pageTemplateId ).
+            descriptor( ModuleResourceKey.from( "module-1.0.0:templates/template.xml" ) ).
             build();
         when( client.execute( isA( GetTemplate.class ) ) ).thenReturn( template );
 
-        final Resource pageDescriptorResource = newResource().name( "page-descriptor" ).build();
-        final Resource controllerResource = newResource().name( "controller.js" ) .byteSource( ByteStreams.asByteSource( "test();".getBytes() ) ).build();
+        final Resource pageDescriptorResource = newResource().
+            name( "page-descriptor" ).
+            stringValue( "<page-component/>" ).
+            build();
+        final Resource controllerResource = newResource().
+            name( "controller.js" ).
+            stringValue( "test();" ).
+            build();
         when( client.execute( isA( GetModuleResource.class ) ) ).thenReturn( pageDescriptorResource ).thenReturn( controllerResource );
 
         // exercise

@@ -11,7 +11,7 @@ import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument;
 
@@ -33,7 +33,7 @@ public class ContentIndexDocumentsFactory
 
     private static IndexDocument createContentIndexDocument( final Content content )
     {
-        IndexDocument indexDocument = new IndexDocument( content.getId().toString(), IndexType.CONTENT, IndexConstants.WEM_INDEX );
+        IndexDocument indexDocument = new IndexDocument( content.getId().toString(), IndexType.CONTENT, Index.WEM );
         indexDocument.setRefreshOnStore( true );
 
         addContentMetaData( content, indexDocument );

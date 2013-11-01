@@ -46,7 +46,6 @@ public final class ModuleXmlSerializer
         moduleEl.addContent( new Element( "display-name" ).setText( module.getDisplayName() ) );
         moduleEl.addContent( new Element( "info" ).setText( module.getInfo() ) );
         moduleEl.addContent( new Element( "url" ).setText( module.getUrl() ) );
-        moduleEl.addContent( new Element( "key" ).setText( module.getModuleKey().toString() ) );
 
         Element vendor = new Element( "vendor" );
         vendor.addContent( new Element( "name" ).setText( module.getVendorName() ) );
@@ -96,10 +95,11 @@ public final class ModuleXmlSerializer
     {
         final String displayName = moduleEl.getChildText( "display-name" );
         moduleBuilder.
-            displayName( displayName ).info( moduleEl.getChildText( "info" ) ).moduleKey(
-            ModuleKey.from( moduleEl.getChildText( "key" ) ) ).
-            url( moduleEl.getChildText( "url" ) ).vendorName( moduleEl.getChild( "vendor" ).
-            getChildText( "name" ) ).vendorUrl( moduleEl.getChild( "vendor" ).getChildText( "url" ) );
+            displayName( displayName ).
+            info( moduleEl.getChildText( "info" ) ).
+            url( moduleEl.getChildText( "url" ) ).
+            vendorName( moduleEl.getChild( "vendor" ).getChildText( "name" ) ).
+            vendorUrl( moduleEl.getChild( "vendor" ).getChildText( "url" ) );
 
         final Element dependenciesEl = moduleEl.getChild( "dependencies" );
         if ( dependenciesEl != null )

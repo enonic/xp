@@ -2,7 +2,7 @@ package com.enonic.wem.core.index.account;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.index.DeleteDocument;
-import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 
 public class AccountDeleteDocumentFactory
@@ -14,7 +14,7 @@ public class AccountDeleteDocumentFactory
 
     public static DeleteDocument create( final AccountKey accountKey )
     {
-        return new DeleteDocument( IndexConstants.WEM_INDEX, IndexType.ACCOUNT, accountKey.toString() );
+        return new DeleteDocument( Index.WEM, IndexType.ACCOUNT, accountKey.toString() );
     }
 
 }

@@ -4,6 +4,7 @@ package com.enonic.wem.core.rendering;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
@@ -34,7 +35,7 @@ public final class RenderingResult
     {
         try
         {
-            return this.result.asCharSource( Charset.forName( "UFT-8" ) ).read();
+            return this.result.asCharSource( Charsets.UTF_8 ).read();
         }
         catch ( IOException e )
         {

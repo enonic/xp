@@ -13,7 +13,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument2;
@@ -117,13 +117,13 @@ public class NodeIndexDocumentFactoryTest
         final IndexDocument2 indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
-        assertEquals( IndexConstants.NODB_INDEX, indexDocument.getIndex() );
+        assertEquals( Index.NODB, indexDocument.getIndex() );
         assertEquals( IndexType.NODE, indexDocument.getIndexType() );
 
         final AbstractIndexDocumentItem createdTimeItem =
             indexDocument.getItemWithName( NodeIndexDocumentFactory.CREATED_TIME_PROPERTY_NAME, IndexValueType.DATETIME );
 
-        assertEquals( node.getCreatedTime(), createdTimeItem.getValue() );
+        assertEquals( node.getCreatedTime().toDate(), createdTimeItem.getValue() );
 
         final AbstractIndexDocumentItem creator =
             indexDocument.getItemWithName( NodeIndexDocumentFactory.CREATOR_PROPERTY_NAME, IndexValueType.STRING );

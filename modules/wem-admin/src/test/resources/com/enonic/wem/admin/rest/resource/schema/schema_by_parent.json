@@ -1,0 +1,17 @@
+[
+    {
+        "createdTime": "2013-08-23T12:55:09.162Z",
+        "deletable": true,
+        "displayName": null,
+        "editable": true,
+        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:contenttype",
+        "key": "ContentType:contenttype",
+        "modifiedTime": "2013-08-23T12:55:09.162Z",
+        "module": null,
+        "name": "contenttype",
+        "qualifyName": "contenttype",
+        "type": "ContentType"
+    }
+]
+
+

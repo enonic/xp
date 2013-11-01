@@ -1,23 +1,25 @@
 package com.enonic.wem.core.index.elastic;
 
+import com.enonic.wem.core.index.Index;
+
 public class IndexMapping
 {
-    private final String indexName;
+    private final Index index;
 
     private final String indexType;
 
     private final String source;
 
-    public IndexMapping( final String indexName, final String indexType, final String source )
+    public IndexMapping( final Index index, final String indexType, final String source )
     {
-        this.indexName = indexName;
+        this.index = index;
         this.indexType = indexType;
         this.source = source;
     }
 
-    public String getIndexName()
+    public Index getIndex()
     {
-        return indexName;
+        return index;
     }
 
     public String getIndexType()

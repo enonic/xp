@@ -1,6 +1,6 @@
 package com.enonic.wem.core.index.document;
 
-class IndexDocumentOrderbyItem
+public class IndexDocumentOrderbyItem
     extends AbstractIndexDocumentItem<String>
 {
     final String value;

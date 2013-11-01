@@ -1,9 +1,11 @@
 package com.enonic.wem.core.index.document;
 
+import java.util.Date;
+
 import org.joda.time.DateTime;
 
 public class IndexDocumentDateItem
-    extends AbstractIndexDocumentItem<DateTime>
+    extends AbstractIndexDocumentItem<Date>
 {
     private final DateTime dateTime;
 
@@ -20,8 +22,8 @@ public class IndexDocumentDateItem
     }
 
     @Override
-    public DateTime getValue()
+    public Date getValue()
     {
-        return dateTime;
+        return dateTime.toDate();
     }
 }

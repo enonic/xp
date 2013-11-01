@@ -5,7 +5,14 @@ import java.util.Set;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
+import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexException;
+import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
+import com.enonic.wem.core.index.document.IndexDocument2;
 
 public class XContentBuilderFactory
 {
@@ -13,18 +20,46 @@ public class XContentBuilderFactory
     {
     }
 
+    public static XContentBuilder create( final IndexDocument2 indexDocument )
+    {
+        try
+        {
+            final XContentBuilder builder = startBuilder();
+            addDocumentAnalyzer( builder, indexDocument );
+            addFields( builder, indexDocument );
+            endBuilder( builder );
+            return builder;
+        }
+        catch ( Exception e )
+        {
+            throw new IndexException( "Failed to build xContent for indexSource", e );
+        }
+    }
+
+    @Deprecated
     public static XContentBuilder create( final IndexSource indexSource )
     {
         try
         {
-            final XContentBuilder result = startBuilder();
-            addFields( result, indexSource );
-            endBuilder( result );
-            return result;
+            final XContentBuilder builder = startBuilder();
+            addFields( builder, indexSource );
+            endBuilder( builder );
+            return builder;
         }
         catch ( Exception e )
         {
             throw new IndexException( "Failed to build xContent for indexSource" );
+        }
+    }
+
+    private static void addDocumentAnalyzer( final XContentBuilder builder, final IndexDocument2 indexDocument )
+        throws Exception
+    {
+        final String analyzer = indexDocument.getAnalyzer();
+
+        if ( !Strings.isNullOrEmpty( analyzer ) )
+        {
+            addField( builder, IndexConstants.ANALYZER_VALUE_FIELD, analyzer );
         }
     }
 
@@ -44,14 +79,23 @@ public class XContentBuilderFactory
         contentBuilder.endObject();
     }
 
-    private static void addFields( final XContentBuilder result, final IndexSource indexSource )
+    private static void addFields( final XContentBuilder result, final IndexDocument2 indexDocument2 )
         throws Exception
     {
-        final Set<IndexSourceEntry> indexSourceEntries = indexSource.getIndexSourceEntries();
+        final Multimap<String, Object> fieldValueMap = ArrayListMultimap.create();
 
-        for ( IndexSourceEntry indexSourceEntry : indexSourceEntries )
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = indexDocument2.getIndexDocumentItems();
+
+        for ( AbstractIndexDocumentItem item : indexDocumentItems )
         {
-            addField( result, indexSourceEntry.getKey(), indexSourceEntry.getValue() );
+            final String fieldName = IndexFieldNameResolver.resolve( item );
+
+            fieldValueMap.put( fieldName, item.getValue() );
+        }
+
+        for ( String field : fieldValueMap.keySet() )
+        {
+            addField( result, field, fieldValueMap.get( field ) );
         }
     }
 
@@ -68,5 +112,17 @@ public class XContentBuilderFactory
         }
 
         result.field( name, value );
+    }
+
+
+    private static void addFields( final XContentBuilder result, final IndexSource indexSource )
+        throws Exception
+    {
+        final Set<IndexSourceItem> indexSourceEntries = indexSource.indexSourceItems();
+
+        for ( IndexSourceItem indexSourceItem : indexSourceEntries )
+        {
+            addField( result, indexSourceItem.getKey(), indexSourceItem.getValue() );
+        }
     }
 }

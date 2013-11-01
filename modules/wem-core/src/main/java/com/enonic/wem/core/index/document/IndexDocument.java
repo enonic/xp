@@ -4,8 +4,10 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 
+@Deprecated
 public class IndexDocument
 {
     /**
@@ -19,13 +21,13 @@ public class IndexDocument
 
     private final IndexType indexType;
 
-    private final String index;
+    private final Index index;
 
     private final Set<IndexDocumentEntry> indexDocumentEntries = Sets.newHashSet();
 
     private boolean refreshOnStore = false;
 
-    public IndexDocument( final String id, final IndexType indexType, final String index )
+    public IndexDocument( final String id, final IndexType indexType, final Index index )
     {
         this.id = id;
         this.indexType = indexType;
@@ -47,7 +49,7 @@ public class IndexDocument
         return indexType;
     }
 
-    public String getIndex()
+    public Index getIndex()
     {
         return index;
     }

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.index.document;
 
-class IndexDocumentTokenizedItem
+public class IndexDocumentTokenizedItem
     extends AbstractIndexDocumentItem<String>
 {
     private final String value;

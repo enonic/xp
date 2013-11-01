@@ -3,9 +3,8 @@ package com.enonic.wem.core.index.document;
 import com.enonic.wem.api.data.Value;
 
 public class IndexDocumentGeoPointItem
-    extends AbstractIndexDocumentItem<Value.GeoPoint>
+    extends AbstractIndexDocumentItem<String>
 {
-    // TODO: Evaluate how to handle values here - do the ES-convertion here or in the deep.
     private final Value.GeoPoint value;
 
     public IndexDocumentGeoPointItem( final String fieldBaseName, final Value.GeoPoint value )
@@ -21,8 +20,8 @@ public class IndexDocumentGeoPointItem
     }
 
     @Override
-    public Value.GeoPoint getValue()
+    public String getValue()
     {
-        return value;
+        return value.asString();
     }
 }

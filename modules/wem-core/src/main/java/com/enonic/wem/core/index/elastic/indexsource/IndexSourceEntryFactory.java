@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.index.document.IndexDocumentEntry;
 
+@Deprecated
 final class IndexSourceEntryFactory
 {
     public static final String ORDERBY_FIELD_POSTFIX = "orderby";
@@ -22,9 +23,9 @@ final class IndexSourceEntryFactory
 
     public static final String DEFAULT_EMPTY_STRING_VALUE = "";
 
-    protected static Set<IndexSourceEntry> create( IndexDocumentEntry indexDocumentEntry )
+    protected static Set<IndexSourceItem> create( IndexDocumentEntry indexDocumentEntry )
     {
-        Set<IndexSourceEntry> indexSourceEntries = Sets.newHashSet();
+        Set<IndexSourceItem> indexSourceEntries = Sets.newHashSet();
 
         if ( indexDocumentEntry.doIncludeOrderBy() )
         {
@@ -51,38 +52,38 @@ final class IndexSourceEntryFactory
         return indexSourceEntries;
     }
 
-    private static void appendNumericField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendNumericField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceItem> indexSourceEntries )
     {
         final String baseFieldName = indexDocumentEntry.getKey();
         final Double doubleValue = ( (Number) indexDocumentEntry.getValue() ).doubleValue();
 
-        indexSourceEntries.add( new IndexSourceEntry( generateNumericFieldName( baseFieldName ), doubleValue ) );
+        indexSourceEntries.add( new IndexSourceItem( generateNumericFieldName( baseFieldName ), doubleValue ) );
     }
 
-    private static void appendDateField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendDateField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceItem> indexSourceEntries )
     {
         final String baseFieldName = indexDocumentEntry.getKey();
         final Date dateValue = ( (Date) indexDocumentEntry.getValue() );
 
-        indexSourceEntries.add( new IndexSourceEntry( generateDateFieldName( baseFieldName ), dateValue ) );
+        indexSourceEntries.add( new IndexSourceItem( generateDateFieldName( baseFieldName ), dateValue ) );
     }
 
-    private static void appendDateTimeField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendDateTimeField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceItem> indexSourceEntries )
     {
         final String baseFieldName = indexDocumentEntry.getKey();
         final Date dateValue = ( (DateTime) indexDocumentEntry.getValue() ).toDate();
 
-        indexSourceEntries.add( new IndexSourceEntry( generateDateFieldName( baseFieldName ), dateValue ) );
+        indexSourceEntries.add( new IndexSourceItem( generateDateFieldName( baseFieldName ), dateValue ) );
     }
 
-    private static void appendOtherField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendOtherField( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceItem> indexSourceEntries )
     {
         String baseFieldName = indexDocumentEntry.getKey();
 
-        indexSourceEntries.add( new IndexSourceEntry( generateStringTypeFieldName( baseFieldName ), indexDocumentEntry.getValue() ) );
+        indexSourceEntries.add( new IndexSourceItem( generateStringTypeFieldName( baseFieldName ), indexDocumentEntry.getValue() ) );
     }
 
-    private static void appendOrderBy( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceEntry> indexSourceEntries )
+    private static void appendOrderBy( final IndexDocumentEntry indexDocumentEntry, final Set<IndexSourceItem> indexSourceEntries )
     {
         final String orderByValue = OrderByValueResolver.getOrderbyValue( indexDocumentEntry.getValue() );
 
@@ -93,7 +94,7 @@ final class IndexSourceEntryFactory
 
         final String orderByFieldName = generateOrderbyFieldName( indexDocumentEntry.getKey() );
 
-        indexSourceEntries.add( new IndexSourceEntry( orderByFieldName, orderByValue ) );
+        indexSourceEntries.add( new IndexSourceItem( orderByFieldName, orderByValue ) );
     }
 
     private static String generateOrderbyFieldName( final String originalFieldName )

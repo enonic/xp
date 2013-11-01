@@ -1,5 +1,6 @@
 package com.enonic.wem.core.index.elastic.indexsource;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.elasticsearch.common.collect.Tuple;
@@ -9,40 +10,94 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
+import com.enonic.wem.api.data.Value;
+import com.enonic.wem.core.index.Index;
+import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocumentDateItem;
+import com.enonic.wem.core.index.document.IndexDocumentGeoPointItem;
+import com.enonic.wem.core.index.document.IndexDocumentNumberItem;
+import com.enonic.wem.core.index.document.IndexDocumentStringItem;
+
 import static org.junit.Assert.*;
 
 public class XContentBuilderFactoryTest
 {
 
     @Test
-    public void testCreateXContentBuilder()
+    public void create_given_indexdocument_analyzer()
         throws Exception
     {
-        IndexSource indexSource = new IndexSource();
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test1_string", "value1" ) );
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test2_double", 2.0 ) );
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test3_long", 3L ) );
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test4_date", new DateTime( 2013, 1, 1, 1, 1, 1 ) ) );
-        indexSource.addIndexSourceEntry( new IndexSourceEntry( "test5_array", new String[]{"one", "two", "three"} ) );
+        IndexDocument2 indexDocument = IndexDocument2.newIndexDocument().
+            index( Index.NODB ).
+            indexType( IndexType.NODE ).
+            analyzer( "myAnalyzer" ).
+            build();
 
-        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexSource );
+        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
 
-        final Tuple<XContentType, Map<String, Object>> xContentTypeMapTuple = XContentHelper.convertToMap( xContentBuilder.bytes(), true );
-        final Map<String, Object> objectValueMap = xContentTypeMapTuple.v2();
+        final Map<String, Object> objectMap = getObjectMap( xContentBuilder );
 
-        checkObjectValue( "test1_string", objectValueMap );
-        checkObjectValue( "test2_double", objectValueMap );
-        checkObjectValue( "test3_long", objectValueMap );
-        checkObjectValue( "test4_date", objectValueMap );
-        checkObjectValue( "test5_array", objectValueMap );
+        final Object objectValue = objectMap.get( IndexConstants.ANALYZER_VALUE_FIELD );
 
+        assertNotNull( objectValue );
+        assertTrue( objectValue instanceof String );
+        assertEquals( "myAnalyzer", objectValue );
     }
 
-    private void checkObjectValue( final String key1, final Map<String, Object> objectValueMap )
+    @Test
+    public void create_given_indexdocument_arrayvalues()
+        throws Exception
+    {
+        IndexDocument2 indexDocument = IndexDocument2.newIndexDocument().
+            index( Index.NODB ).
+            indexType( IndexType.NODE ).
+            addEntry( new IndexDocumentStringItem( "myField", "myValue1" ) ).
+            addEntry( new IndexDocumentStringItem( "myField", "myValue2" ) ).
+            addEntry( new IndexDocumentNumberItem( "myNumericField", 1.0 ) ).
+            addEntry( new IndexDocumentNumberItem( "myNumericField", 2.0 ) ).
+            addEntry( new IndexDocumentDateItem( "myDateField", DateTime.now() ) ).
+            addEntry( new IndexDocumentDateItem( "myDateField", DateTime.now() ) ).
+            addEntry( new IndexDocumentGeoPointItem( "myGeoPoint", new Value.GeoPoint( "80,80" ) ) ).
+            addEntry( new IndexDocumentGeoPointItem( "myGeoPoint", new Value.GeoPoint( "81,81" ) ) ).
+            build();
+
+        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
+
+        final Map<String, Object> objectMap = getObjectMap( xContentBuilder );
+
+        final Collection<Object> objectValue = getObjectValue( "myfield", objectMap );
+        assertEquals( 2, objectValue.size() );
+
+        final Collection<Object> numericObjectValue = getObjectValue( "mynumericfield._number", objectMap );
+        assertEquals( 2, numericObjectValue.size() );
+
+        final Collection<Object> dateObjectValue = getObjectValue( "mydatefield._datetime", objectMap );
+        assertEquals( 2, dateObjectValue.size() );
+
+        final Collection<Object> geoPointObjectValue = getObjectValue( "mygeopoint._geopoint", objectMap );
+        assertEquals( 2, geoPointObjectValue.size() );
+    }
+
+
+    private Map<String, Object> getObjectMap( final XContentBuilder xContentBuilder )
+    {
+        final Tuple<XContentType, Map<String, Object>> xContentTypeMapTuple = XContentHelper.convertToMap( xContentBuilder.bytes(), true );
+        return xContentTypeMapTuple.v2();
+    }
+
+
+    private Collection<Object> getObjectValue( final String key1, final Map<String, Object> objectValueMap )
     {
         assertTrue( objectValueMap.containsKey( key1 ) );
+
         final Object objectValue = objectValueMap.get( key1 );
+
         assertNotNull( objectValue );
+        assertTrue( objectValue instanceof Collection );
+
+        return (Collection<Object>) objectValue;
     }
 }
 
