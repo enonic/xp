@@ -17,6 +17,9 @@ module api_form{
             else if (formItemJson.Layout) {
                 return FormItemFactory.createLayout(<api_form_json.LayoutJson>formItemJson.Layout);
             }
+            else if (formItemJson.FieldSet) {
+                return FormItemFactory.createFieldSetLayout(<api_form_json.FieldSetJson>formItemJson.FieldSet);
+            }
 
             console.log( "Unknown FormItem type: ", formItemJson );
             throw new Error("Unknown FormItem");

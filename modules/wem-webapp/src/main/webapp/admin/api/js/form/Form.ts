@@ -9,9 +9,9 @@ module api_form{
         constructor(formJson:api_form_json.FormJson) {
 
             //TODO: this breaks "edit", cause formJson is empty. Commented out.
-            /*formJson.formItems.forEach((formItemJson:api_form_json.FormItemJson) => {
+            formJson.formItems.forEach((formItemJson:api_form_json.FormItemJson) => {
                 this.addFormItem(FormItemFactory.createFormItem(formItemJson));
-            });*/
+            });
         }
 
         addFormItem(formItem:FormItem) {
