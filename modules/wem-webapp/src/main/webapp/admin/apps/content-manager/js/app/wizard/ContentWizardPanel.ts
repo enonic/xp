@@ -71,7 +71,7 @@ module app_wizard {
             this.contentWizardHeader.setAutogenerateName(true);
 
             console.log("ContentWizardPanel this.contentType: ", this.contentType);
-            this.contentForm = new ContentForm(this.contentType.getForm());
+            this.contentForm = new ContentForm();
 
             this.schemaPanel = new api_ui.Panel("schemaPanel");
             var h1El = new api_dom.H1El();
@@ -113,7 +113,7 @@ module app_wizard {
 
         renderNew() {
             super.renderNew();
-            this.contentForm.renderNew();
+            this.contentForm.renderNew(this.contentType.getForm());
             this.renderingNew = true;
         }
 
@@ -133,7 +133,7 @@ module app_wizard {
 
             var contentData:api_content.ContentData = content.getContentData();
 
-            this.contentForm.renderExisting(contentData);
+            this.contentForm.renderExisting(contentData, content.getForm());
         }
 
         persistNewItem(successCallback?:(contentId:string, contentPath:string) => void) {

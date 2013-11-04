@@ -6,25 +6,25 @@ module app_wizard {
 
         private formView:api_form.FormView;
 
-        constructor(form:api_form.Form) {
+        constructor() {
             super("ContentForm");
+        }
 
+        renderNew(form:api_form.Form) {
+            this.removeChildren();
             this.form = form;
+            this.layout(form, null);
         }
 
-        renderNew() {
+        renderExisting(contentData:api_content.ContentData, form:api_form.Form) {
             this.removeChildren();
-            this.layout(null);
+            this.form = form;
+            this.layout(form, contentData);
         }
 
-        renderExisting(contentData:api_content.ContentData) {
-            this.removeChildren();
-            this.layout(contentData);
-        }
+        private layout(form:api_form.Form, contentData?:api_content.ContentData) {
 
-        private layout(contentData?:api_content.ContentData) {
-
-            this.formView = new api_form.FormView(this.form, contentData);
+            this.formView = new api_form.FormView(form, contentData);
             this.appendChild(this.formView)
         }
 

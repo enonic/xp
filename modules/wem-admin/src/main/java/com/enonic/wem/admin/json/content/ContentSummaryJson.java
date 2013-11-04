@@ -24,7 +24,7 @@ public class ContentSummaryJson
         super( content.getId() );
         this.content = content;
         this.iconUrl = ContentImageUriResolver.resolve( content );
-        this.editable = ( !this.content.isEmbedded() || !this.content.isTemporary() );
+        this.editable = ( !this.content.isEmbedded() || !this.content.isTemporary() ) && !this.isRoot();
         this.deletable = !this.content.hasChildren() && ( !this.content.isEmbedded() || !this.content.isTemporary() );
     }
 
