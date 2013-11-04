@@ -22,11 +22,6 @@ public final class ContentTypeCommands
         return new DeleteContentType();
     }
 
-    public GetContentTypeTree getTree()
-    {
-        return new GetContentTypeTree();
-    }
-
     public GetRootContentTypes getRoots()
     {
         return new GetRootContentTypes();

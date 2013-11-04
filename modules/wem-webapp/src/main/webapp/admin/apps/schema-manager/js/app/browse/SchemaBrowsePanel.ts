@@ -73,34 +73,4 @@ module app_browse {
         }
     }
 
-
-    export function createLoadContentParams(filterPanelValues:any) {
-        var params:any = {types: [], modules: []};
-        var paramTypes = params.types;
-        var paramModules = params.modules;
-        var typeFilter = filterPanelValues.Type;
-        var moduleFilter = filterPanelValues.Module;
-        if (typeFilter) {
-            if (typeFilter.some(function (item) {
-                return item == 'Relationship Type'
-            })) {
-                paramTypes.push('RELATIONSHIP_TYPE');
-            }
-            if (typeFilter.some(function (item) {
-                return item == 'Content Type'
-            })) {
-                paramTypes.push('CONTENT_TYPE');
-            }
-            if (typeFilter.some(function (item) {
-                return item == 'Mixin'
-            })) {
-                paramTypes.push('MIXIN');
-            }
-        }
-        moduleFilter.forEach(function (moduleName) {
-            paramModules.push(moduleName);
-        });
-        params.search = filterPanelValues.query;
-        return params;
-    }
 }

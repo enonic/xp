@@ -10,7 +10,6 @@ import com.enonic.wem.core.schema.content.CreateContentTypeHandler;
 import com.enonic.wem.core.schema.content.DeleteContentTypeHandler;
 import com.enonic.wem.core.schema.content.DemoImagesInitializer;
 import com.enonic.wem.core.schema.content.GetChildContentTypesHandler;
-import com.enonic.wem.core.schema.content.GetContentTypeTreeHandler;
 import com.enonic.wem.core.schema.content.GetContentTypesHandler;
 import com.enonic.wem.core.schema.content.GetRootContentTypesHandler;
 import com.enonic.wem.core.schema.content.UpdateContentTypeHandler;
@@ -50,14 +49,12 @@ public final class SchemaModule
         final CommandBinder commands = CommandBinder.from( binder() );
 
         commands.add( GetSchemasHandler.class );
-        commands.add( GetSchemaTreeHandler.class );
         commands.add( GetRootSchemasHandler.class );
         commands.add( GetChildSchemasHandler.class );
 
         commands.add( CreateContentTypeHandler.class );
         commands.add( DeleteContentTypeHandler.class );
         commands.add( GetContentTypesHandler.class );
-        commands.add( GetContentTypeTreeHandler.class );
         commands.add( GetRootContentTypesHandler.class );
         commands.add( GetChildContentTypesHandler.class );
         commands.add( UpdateContentTypeHandler.class );

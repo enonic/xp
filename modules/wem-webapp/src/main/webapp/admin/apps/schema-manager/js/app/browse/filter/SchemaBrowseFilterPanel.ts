@@ -15,21 +15,45 @@ module app_browse_filter {
 
             this.addListener({
                 onSearch: (values:{[s:string] : string[]; })=> {
-                    var params = app_browse.createLoadContentParams(values);
-                    api_remote_schema.RemoteSchemaService.schema_list(params, (response:api_remote_schema.ListResult) => {
-                        if (this.hasFilterSet()) {
-                            new SchemaBrowseSearchEvent(params).fire();
-                        } else {
-                            new SchemaBrowseResetEvent().fire();
-                        }
-                        //TODO: update filter facets when they are implemented
-                    });
+                    var params = this.createLoadContentParams(values);
+                    //TODO: run find schemas request, and fire the search event with returned schemas to update grid panel
+                    new SchemaBrowseSearchEvent().fire();
 
                 },
                 onReset: ()=> {
                     //TODO: reset filter facets when they are implemented
                     new SchemaBrowseResetEvent().fire();
                 }});
+        }
+
+        createLoadContentParams(filterPanelValues:any) {
+            var params:any = {types: [], modules: []};
+            var paramTypes = params.types;
+            var paramModules = params.modules;
+            var typeFilter = filterPanelValues.Type;
+            var moduleFilter = filterPanelValues.Module;
+            if (typeFilter) {
+                if (typeFilter.some(function (item) {
+                    return item == 'Relationship Type'
+                })) {
+                    paramTypes.push('RELATIONSHIP_TYPE');
+                }
+                if (typeFilter.some(function (item) {
+                    return item == 'Content Type'
+                })) {
+                    paramTypes.push('CONTENT_TYPE');
+                }
+                if (typeFilter.some(function (item) {
+                    return item == 'Mixin'
+                })) {
+                    paramTypes.push('MIXIN');
+                }
+            }
+            moduleFilter.forEach(function (moduleName) {
+                paramModules.push(moduleName);
+            });
+            params.search = filterPanelValues.query;
+            return params;
         }
     }
 }

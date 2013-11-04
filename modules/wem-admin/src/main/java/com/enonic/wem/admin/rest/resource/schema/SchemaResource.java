@@ -18,18 +18,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.admin.json.schema.SchemaTreeJson;
 import com.enonic.wem.admin.rest.resource.schema.exception.InvalidSchemaTypeException;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetChildSchemas;
-import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
 import com.enonic.wem.api.schema.SchemaName;
 import com.enonic.wem.api.schema.Schemas;
-import com.enonic.wem.api.support.tree.Tree;
 
 import static com.enonic.wem.api.command.Commands.schema;
 
@@ -38,31 +35,6 @@ import static com.enonic.wem.api.command.Commands.schema;
 public class SchemaResource
 {
     private Client client;
-
-
-    @GET
-    @Path("tree")
-    public SchemaTreeJson tree( @QueryParam("types") List<String> types )
-    {
-        final Set<SchemaKind> typesToInclude;
-        try
-        {
-            typesToInclude = getTypesToInclude( types );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            throw new InvalidSchemaTypeException( "Invalid parameter 'types': " + types );
-        }
-        final GetSchemaTree command = schema().getTree();
-        if ( !typesToInclude.isEmpty() )
-        {
-            command.includeKind( typesToInclude );
-        }
-
-        final Tree<Schema> schemaTree = client.execute( command );
-
-        return new SchemaTreeJson( schemaTree );
-    }
 
     @GET
     @Path("list")

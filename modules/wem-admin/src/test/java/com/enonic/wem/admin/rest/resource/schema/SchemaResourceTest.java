@@ -11,7 +11,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.GetChildSchemas;
 import com.enonic.wem.api.command.schema.GetRootSchemas;
-import com.enonic.wem.api.command.schema.GetSchemaTree;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -179,45 +178,6 @@ public class SchemaResourceTest
 
         String json = resource().path( "schema/list" ).queryParam( "parentName", "parent-content-type" ).get( String.class );
         assertEquals( "[]", json );
-    }
-
-    @Test
-    public void getSchemaTree()
-        throws Exception
-    {
-        Tree<Schema> schemaTree = createSchemaTree();
-        Mockito.when( client.execute( Mockito.isA( GetSchemaTree.class ) ) ).thenReturn( schemaTree );
-
-        String json = resource().path( "schema/tree" ).get( String.class );
-
-        assertJson( "schema_tree.json", json );
-    }
-
-    @Test
-    public void getSchemaTreeWithTypesParam()
-        throws Exception
-    {
-        Tree<Schema> schemaTree = createSchemaTree();
-        Mockito.when( client.execute( Mockito.isA( GetSchemaTree.class ) ) ).thenReturn( schemaTree );
-
-        String json = resource().path( "schema/tree" ).queryParam( "types", "content_type" ).
-            queryParam( "types", "mixin" ).queryParam( "types", "relationship_type" ).get( String.class );
-
-        assertJson( "schema_tree.json", json );
-    }
-
-    @Test
-    public void getSchemaTreeWithWrongTypesParam()
-    {
-        try
-        {
-            resource().path( "schema/tree" ).queryParam( "types", "wrong_type" ).get( String.class );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            assertEquals( 406, e.getResponse().getStatus() );
-            assertEquals( e.getResponse().getEntity( String.class ), "Invalid parameter 'types': [wrong_type]" );
-        }
     }
 
     @Override

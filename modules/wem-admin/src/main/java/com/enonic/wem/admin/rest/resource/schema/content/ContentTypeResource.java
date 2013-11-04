@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.sun.jersey.api.NotFoundException;
 
-import com.enonic.wem.admin.json.schema.ContentTypeTreeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
@@ -41,7 +40,6 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
-import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 
@@ -252,14 +250,6 @@ public class ContentTypeResource
         {
             throw new WebApplicationException( e );
         }
-    }
-
-    @GET
-    @Path("tree")
-    public ContentTypeTreeJson getTree()
-    {
-        final Tree<ContentType> contentTypeTree = client.execute( contentType().getTree() );
-        return new ContentTypeTreeJson( contentTypeTree );
     }
 
     @POST

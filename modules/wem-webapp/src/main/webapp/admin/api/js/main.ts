@@ -29,7 +29,6 @@
 ///<reference path='remote/contenttype/_module.ts' />
 ///<reference path='remote/mixin/_module.ts' />
 ///<reference path='remote/relationshiptype/_module.ts' />
-///<reference path='remote/schema/_module.ts' />
 ///<reference path='remote/space/_module.ts' />
 ///<reference path='remote/userstore/_module.ts' />
 ///<reference path='remote/util/_module.ts' />
