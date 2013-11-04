@@ -19,6 +19,8 @@ module LiveEdit.component {
 
         elementDimensions:ElementDimensions;
 
+        selectedAsParent:boolean = false;
+
         constructor(element:JQuery) {
 
             if (element.length == 0) {
@@ -83,6 +85,14 @@ module LiveEdit.component {
 
         isSelected():boolean {
             return this.getElement().attr('data-live-edit-selected') == 'true';
+        }
+
+        setSelectedAsParent(value:boolean) {
+            this.selectedAsParent = value;
+        }
+
+        isSelectedAsParent():boolean {
+            return this.selectedAsParent;
         }
 
         private resolveComponentTypeEnum():LiveEdit.component.Type {
