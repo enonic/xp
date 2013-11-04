@@ -94,11 +94,6 @@ public class SchemaResourceTest
 
         json = resource().path( "schema/find" ).queryParam( "search", "mixin" ).get( String.class );
         assertJson( "schema_by_query.json", json );
-
-        json = resource().path( "schema/find" ).queryParam( "search", "mixin" ).queryParam( "modules", "module" ).get( String.class );
-        assertJson( "schema_by_query_and_modules.json", json );
-
-
     }
 
     @Test
@@ -115,17 +110,6 @@ public class SchemaResourceTest
             assertEquals( e.getResponse().getStatus(), 406 );
             assertEquals( e.getResponse().getEntity( String.class ), "Invalid parameter 'types': [SomeType, AnotherType]" );
         }
-    }
-
-    @Test
-    public void searchSchemaByModules()
-        throws Exception
-    {
-        Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( createSchemaList() );
-
-        String json = resource().path( "schema/find" ).queryParam( "search", "" ).queryParam( "modules", "module" ).get( String.class );
-
-        assertJson( "schema_by_modules.json", json );
     }
 
     @Test

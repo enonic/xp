@@ -1,6 +1,6 @@
 module api_app_browse{
 
-    export interface BrowsePanelParams {
+    export interface BrowsePanelParams<M> {
 
         browseToolbar:api_ui_toolbar.Toolbar;
 
@@ -8,12 +8,12 @@ module api_app_browse{
 
         treeGridPanel2?:api_app_browse_grid2.GridPanel2;
 
-        browseItemPanel:BrowseItemPanel;
+        browseItemPanel:BrowseItemPanel<M>;
 
         filterPanel:api_app_browse_filter.BrowseFilterPanel;
     }
 
-    export class BrowsePanel extends api_ui.Panel implements api_ui.ActionContainer {
+    export class BrowsePanel<M> extends api_ui.Panel implements api_ui.ActionContainer {
 
         private browseToolbar:api_ui_toolbar.Toolbar;
 
@@ -23,7 +23,7 @@ module api_app_browse{
 
         private treeSwapperDeckPanel:api_ui.DeckPanel;
 
-        private browseItemPanel:BrowseItemPanel;
+        private browseItemPanel:BrowseItemPanel<M>;
 
         private gridAndDetailSplitPanel:api_ui.SplitPanel;
 
@@ -37,7 +37,7 @@ module api_app_browse{
 
         private refreshNeeded:boolean = false;
 
-        constructor(params:BrowsePanelParams) {
+        constructor(params:BrowsePanelParams<M>) {
             super("BrowsePanel");
 
             this.browseToolbar = params.browseToolbar;
@@ -82,12 +82,12 @@ module api_app_browse{
                 onSelectionChanged: null,
                 onSelect: (event:api_app_browse_grid.TreeGridSelectEvent) => {
 
-                    var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems([event.selectedModel]);
+                    var browseItems:api_app_browse.BrowseItem<M>[] = this.extModelsToBrowseItems([event.selectedModel]);
                     this.browseItemPanel.addItem(browseItems[0]);
                 },
                 onDeselect: (event:api_app_browse_grid.TreeGridDeselectEvent) => {
 
-                    var browseItems:api_app_browse.BrowseItem[] = this.extModelsToBrowseItems([event.deselectedModel]);
+                    var browseItems:api_app_browse.BrowseItem<M>[] = this.extModelsToBrowseItems([event.deselectedModel]);
                     this.browseItemPanel.removeItem(browseItems[0]);
                 },
                 onItemDoubleClicked: null
@@ -98,7 +98,7 @@ module api_app_browse{
             return this.browseToolbar.getActions();
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]):BrowseItem[] {
+        extModelsToBrowseItems(models:Ext_data_Model[]):BrowseItem<M>[] {
             throw Error("To be implemented by inheritor");
         }
 

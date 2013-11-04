@@ -2,16 +2,16 @@ module api_schema {
 
     export class SchemaDeletedEvent extends api_event.Event {
 
-        private schemaType:string;
+        private schemaType:api_schema.SchemaKind;
         private schemaNames:string[];
 
-        constructor(schemaType:string, schemaNames:string[]) {
+        constructor(schemaType:api_schema.SchemaKind, schemaNames:string[]) {
             super("SchemaDeletedEvent");
             this.schemaType = schemaType;
             this.schemaNames = schemaNames;
         }
 
-        public getSchemaType():string {
+        public getSchemaType():api_schema.SchemaKind {
             return this.schemaType;
         }
 

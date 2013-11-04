@@ -1,9 +1,11 @@
 {
+    "schemaKind": "Mixin",
     "createdTime": "2013-01-01T12:00:00.000Z",
     "creator": null,
     "deletable": true,
     "displayName": null,
     "editable": true,
+    "hasChildren": false,
     "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:input_text_1",
     "items": [
         {
@@ -26,6 +28,7 @@
             }
         }
     ],
+    "key": "Mixin:input_text_1",
     "modifiedTime": null,
     "modifier": null,
     "name": "input_text_1"

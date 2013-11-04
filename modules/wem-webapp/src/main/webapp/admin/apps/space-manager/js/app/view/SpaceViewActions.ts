@@ -2,7 +2,7 @@ module app_view {
 
     export class EditSpaceAction extends api_ui.Action {
 
-        constructor(panel:api_app_view.ItemViewPanel) {
+        constructor(panel:api_app_view.ItemViewPanel<api_model.SpaceExtModel>) {
             super("Edit");
             this.addExecutionListener(() => {
                 new app_browse.EditSpaceEvent([panel.getItem().getModel()]).fire();
@@ -13,7 +13,7 @@ module app_view {
 
     export class DeleteSpaceAction extends api_ui.Action {
 
-        constructor(panel:api_app_view.ItemViewPanel) {
+        constructor(panel:api_app_view.ItemViewPanel<api_model.SpaceExtModel>) {
             super("Delete", "mod+del");
             this.addExecutionListener(() => {
                 new app_browse.SpaceDeletePromptEvent([panel.getItem().getModel()]).fire();

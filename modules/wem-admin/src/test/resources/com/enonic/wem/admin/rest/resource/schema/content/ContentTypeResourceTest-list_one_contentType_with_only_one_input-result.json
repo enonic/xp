@@ -1,6 +1,7 @@
 {
     "contentTypes": [
         {
+            "schemaKind": "ContentType",
             "abstract": false,
             "allowChildContent": true,
             "contentDisplayNameScript": null,
@@ -10,11 +11,12 @@
             "displayName": null,
             "editable": true,
             "final": false,
+            "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:my_cty",
+            "key": "ContentType:my_cty",
             "modifiedTime": null,
             "modifier": null,
             "name": "my_cty",
-            "qualifiedName": "my_cty",
             "superType": "unstructured"
         }
     ],

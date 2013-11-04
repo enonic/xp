@@ -2,9 +2,9 @@ module app_new {
 
     export class NewSchemaEvent extends api_event.Event {
 
-        private schemaType:string;
+        private schemaType:api_schema.SchemaKind;
 
-        constructor(schemaType?:string) {
+        constructor(schemaType?:api_schema.SchemaKind) {
             super('newSchema');
 
             this.schemaType = schemaType;
@@ -14,7 +14,7 @@ module app_new {
             api_event.onEvent('newSchema', handler);
         }
 
-        getSchemaType():string {
+        getSchemaType():api_schema.SchemaKind {
             return this.schemaType;
         }
     }

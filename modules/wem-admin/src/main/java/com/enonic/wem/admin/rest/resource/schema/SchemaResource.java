@@ -54,7 +54,7 @@ public class SchemaResource
         final List<SchemaJson> schemaJsonResult = new ArrayList<>();
         for ( Schema schema : schemas )
         {
-            schemaJsonResult.add( new SchemaJson( schema ) );
+            schemaJsonResult.add( SchemaJson.from( schema ) );
         }
         return schemaJsonResult;
     }
@@ -89,7 +89,7 @@ public class SchemaResource
         final List<SchemaJson> schemaJsonResult = new ArrayList<>();
         for ( Schema schema : schemas )
         {
-            schemaJsonResult.add( new SchemaJson( schema ) );
+            schemaJsonResult.add( SchemaJson.from( schema ) );
         }
         return schemaJsonResult;
     }

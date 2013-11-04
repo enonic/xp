@@ -1,11 +1,11 @@
 module app_view {
 
-    export class SpaceItemViewPanel extends api_app_view.ItemViewPanel {
+    export class SpaceItemViewPanel extends api_app_view.ItemViewPanel<api_model.SpaceExtModel> {
 
         private editAction:api_ui.Action;
         private deleteAction:api_ui.Action;
         private closeAction:api_ui.Action;
-        private statisticsPanel:api_app_view.ItemStatisticsPanel;
+        private statisticsPanel:api_app_view.ItemStatisticsPanel<api_model.SpaceExtModel>;
 
         constructor() {
             this.editAction = new EditSpaceAction(this);
@@ -27,7 +27,7 @@ module app_view {
 
         }
 
-        setItem(item:api_app_view.ViewItem) {
+        setItem(item:api_app_view.ViewItem<api_model.SpaceExtModel>) {
             super.setItem(item);
             this.statisticsPanel.setItem(item);
         }

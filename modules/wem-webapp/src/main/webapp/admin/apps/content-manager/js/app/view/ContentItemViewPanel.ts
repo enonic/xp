@@ -5,9 +5,9 @@ module app_view {
         showDetailsAction:api_ui.Action;
     }
 
-    export class ContentItemViewPanel extends api_app_view.ItemViewPanel {
+    export class ContentItemViewPanel extends api_app_view.ItemViewPanel<api_content.ContentSummary> {
 
-        private statisticsPanel:api_app_view.ItemStatisticsPanel;
+        private statisticsPanel:api_app_view.ItemStatisticsPanel<api_content.ContentSummary>;
 
         private statisticsPanelIndex:number;
 
@@ -63,7 +63,7 @@ module app_view {
             });
         }
 
-        setItem(item:api_app_view.ViewItem) {
+        setItem(item:api_app_view.ViewItem<api_content.ContentSummary>) {
             super.setItem(item);
             this.statisticsPanel.setItem(item);
             this.previewPanel.setItem(item);

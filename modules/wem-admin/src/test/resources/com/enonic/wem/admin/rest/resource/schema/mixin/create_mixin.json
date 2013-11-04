@@ -1,11 +1,14 @@
 {
+    "schemaKind": "Mixin",
     "createdTime": null,
     "creator": null,
     "deletable": true,
     "displayName": null,
     "editable": true,
+    "hasChildren": false,
     "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:my_set",
     "items": [ ],
+    "key": "Mixin:my_set",
     "modifiedTime": null,
     "modifier": null,
     "name": "my_set"

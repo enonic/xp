@@ -1,8 +1,8 @@
 module api_app_view {
 
-    export class ViewItem {
+    export class ViewItem<M> {
 
-        private model:any;
+        private model:M;
 
         private displayName:string;
 
@@ -10,26 +10,26 @@ module api_app_view {
 
         private iconUrl;
 
-        constructor(model:any) {
+        constructor(model:M) {
             this.model = model;
         }
 
-        setDisplayName(value:string):ViewItem {
+        setDisplayName(value:string):ViewItem<M> {
             this.displayName = value;
             return this;
         }
 
-        setPath(value:string):ViewItem {
+        setPath(value:string):ViewItem<M> {
             this.path = value;
             return this;
         }
 
-        setIconUrl(value:string):ViewItem {
+        setIconUrl(value:string):ViewItem<M> {
             this.iconUrl = value;
             return this;
         }
 
-        getModel():any {
+        getModel():M {
             return this.model;
         }
 

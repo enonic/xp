@@ -12,7 +12,7 @@ module api_schema_mixin {
             mixinJson.items.forEach((formItemJson:api_form_json.FormItemJson) => {
                 this.formItems.push(api_form.FormItemFactory.createFormItem(formItemJson));
             });
-            this.schemaKey = "mixin:" + this.getSchemaName();
+            this.schemaKey = "mixin:" + this.getName();
         }
 
         getFormItems():api_form.FormItem[] {

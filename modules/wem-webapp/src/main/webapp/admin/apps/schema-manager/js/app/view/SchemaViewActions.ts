@@ -2,7 +2,7 @@ module app_view {
 
     export class EditSchemaAction extends api_ui.Action {
 
-        constructor(panel:api_app_view.ItemViewPanel) {
+        constructor(panel:api_app_view.ItemViewPanel<api_schema.Schema>) {
             super("Edit");
 
             this.addExecutionListener(() => {
@@ -13,7 +13,7 @@ module app_view {
 
     export class DeleteSchemaAction extends api_ui.Action {
 
-        constructor(panel:api_app_view.ItemViewPanel) {
+        constructor(panel:api_app_view.ItemViewPanel<api_schema.Schema>) {
             super("Delete");
 
             this.addExecutionListener(() => {

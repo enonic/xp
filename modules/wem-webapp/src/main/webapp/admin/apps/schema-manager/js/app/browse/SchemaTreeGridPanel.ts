@@ -1,13 +1,13 @@
 module app_browse {
 
-    export interface SpaceTreeGridPanelParams {
+    export interface SchemaTreeGridPanelParams {
 
         contextMenu:api_ui_menu.ContextMenu;
     }
 
     export class SchemaTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
 
-        constructor(params:SpaceTreeGridPanelParams) {
+        constructor(params:SchemaTreeGridPanelParams) {
 
             super({
                 columns: this.createColumns(),

@@ -5,7 +5,7 @@ module app_view {
         deleteAction: api_ui.Action;
     }
 
-    export class SpaceItemStatisticsPanel extends api_app_view.ItemStatisticsPanel {
+    export class SpaceItemStatisticsPanel extends api_app_view.ItemStatisticsPanel<api_model.SpaceExtModel> {
 
         constructor(params:SpaceItemStatisticsPanelParams) {
             super({

@@ -106,7 +106,7 @@ module app_wizard {
             if(this.persistedContent) {
                 app.Router.setHash("edit/" + this.persistedContent.getId());
             } else {
-                app.Router.setHash("new/" + this.contentType.getSchemaName());
+                app.Router.setHash("new/" + this.contentType.getName());
             }
             super.showCallback();
         }
@@ -143,7 +143,7 @@ module app_wizard {
             var createRequest = new api_content.CreateContentRequest().
                 setContentName(this.contentWizardHeader.getName()).
                 setParentContentPath(this.parentContent.getPath().toString()).
-                setContentType(this.contentType.getSchemaName()).
+                setContentType(this.contentType.getName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentForm.getForm()).
                 setContentData(contentData);
@@ -177,7 +177,7 @@ module app_wizard {
 
             var updateRequest = new api_content.UpdateContentRequest(this.persistedContent.getId()).
                 setContentName(this.contentWizardHeader.getName()).
-                setContentType(this.contentType.getSchemaName()).
+                setContentType(this.contentType.getName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentForm.getForm()).
                 setContentData(this.contentForm.getContentData());

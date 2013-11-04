@@ -1,12 +1,12 @@
 module api_app_view {
 
-    export class ItemViewPanel extends api_ui.Panel implements api_ui.Closeable, api_event.Observable {
+    export class ItemViewPanel<M> extends api_ui.Panel implements api_ui.Closeable, api_event.Observable {
 
         private toolbar:api_ui_toolbar.Toolbar;
 
         private panel:api_ui.Panel;
 
-        private browseItem:ViewItem;
+        private browseItem:ViewItem<M>;
 
         private listeners:ItemViewPanelListener[] = [];
 
@@ -24,11 +24,11 @@ module api_app_view {
             this.panel.afterRender();
         }
 
-        setItem(item:ViewItem) {
+        setItem(item:ViewItem<M>) {
             this.browseItem = item;
         }
 
-        getItem():ViewItem {
+        getItem():ViewItem<M> {
             return this.browseItem;
         }
 
@@ -47,18 +47,18 @@ module api_app_view {
             this.notifyClosedListeners();
         }
 
-        addListener(listener:ItemViewPanelListener) {
+        addListener(listener:ItemViewPanelListener<M>) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:ItemViewPanelListener) {
+        removeListener(listener:ItemViewPanelListener<M>) {
             this.listeners = this.listeners.filter((elem) => {
                 return elem != listener;
             });
         }
 
         private notifyClosedListeners() {
-            this.listeners.forEach((listener:ItemViewPanelListener) => {
+            this.listeners.forEach((listener:ItemViewPanelListener<M>) => {
                 if (listener.onClosed) {
                     listener.onClosed(this);
                 }

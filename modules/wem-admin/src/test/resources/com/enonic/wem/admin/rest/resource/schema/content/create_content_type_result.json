@@ -1,4 +1,5 @@
 {
+    "schemaKind": "ContentTypeJson",
     "abstract": false,
     "allowChildContent": true,
     "contentDisplayNameScript": "",
@@ -31,12 +32,11 @@
             }
         ]
     },
+    "hasChildren": false,
     "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:htmlarea",
+    "key": "ContentType:htmlarea",
     "modifiedTime": null,
     "modifier": null,
     "name": "htmlarea",
-    "qualifiedName": "htmlarea",
     "superType": "structured"
 }
-
-

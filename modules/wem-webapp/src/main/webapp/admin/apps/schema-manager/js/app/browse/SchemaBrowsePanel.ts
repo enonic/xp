@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class SchemaBrowsePanel extends api_app_browse.BrowsePanel {
+    export class SchemaBrowsePanel extends api_app_browse.BrowsePanel<api_schema.Schema> {
 
         private browseActions:app_browse.SchemaBrowseActions;
 
@@ -35,7 +35,6 @@ module app_browse {
 
             api_schema.SchemaDeletedEvent.on((event) => {
                 var names:string[] = event.getSchemaNames();
-                console.log('On schemas deleted', event.getSchemaType(), names);
                 for (var i = 0; i < names.length; i++) {
                     treeGridPanel.remove(names[i]);
                 }
@@ -58,15 +57,19 @@ module app_browse {
             });
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]) {
+        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem<api_schema.Schema>[] {
 
-            var browseItems:api_app_browse.BrowseItem[] = [];
+            var browseItems:api_app_browse.BrowseItem<api_schema.Schema>[] = [];
 
             models.forEach((model:Ext_data_Model, index:number) => {
-                var item = new api_app_browse.BrowseItem(model).
+
+                var schema:api_schema.Schema = api_schema.Schema.fromExtModel(model);
+
+                var item = new api_app_browse.BrowseItem<api_schema.Schema>(schema).
                     setDisplayName(model.data['displayName']).
                     setPath(model.data['name']).
                     setIconUrl(model.data['iconUrl']);
+
                 browseItems.push(item);
             });
             return browseItems;

@@ -5,7 +5,7 @@ module app_view {
         deleteAction: api_ui.Action;
     }
 
-    export class SchemaItemStatisticsPanel extends api_app_view.ItemStatisticsPanel {
+    export class SchemaItemStatisticsPanel extends api_app_view.ItemStatisticsPanel<api_schema.Schema> {
 
         constructor(params:SchemaItemStatisticsPanelParams) {
             super({

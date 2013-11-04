@@ -5,13 +5,13 @@ module api_app_browse {
         actionMenuActions:api_ui.Action[];
     }
 
-    export class BrowseItemPanel extends api_ui.DeckPanel {
+    export class BrowseItemPanel<M> extends api_ui.DeckPanel {
 
         private actionMenu:api_ui_menu.ActionMenu;
 
-        private itemStatisticsPanel:api_app_view.ItemStatisticsPanel;
+        private itemStatisticsPanel:api_app_view.ItemStatisticsPanel<M>;
 
-        private itemsSelectionPanel:ItemsSelectionPanel;
+        private itemsSelectionPanel:ItemsSelectionPanel<M>;
 
         constructor(params:BrowseItemPanelParams) {
             super("BrowseItemPanel");
@@ -28,17 +28,17 @@ module api_app_browse {
 
         }
 
-        addItem(item:BrowseItem) {
+        addItem(item:BrowseItem<M>) {
             this.itemsSelectionPanel.addItem(item);
             this.updateDisplayedPanel();
         }
 
-        removeItem(item:BrowseItem) {
+        removeItem(item:BrowseItem<M>) {
             this.itemsSelectionPanel.removeItem(item);
             this.updateDisplayedPanel();
         }
 
-        getItems():BrowseItem[] {
+        getItems():BrowseItem<M>[] {
             return this.itemsSelectionPanel.getItems();
         }
 
@@ -52,12 +52,12 @@ module api_app_browse {
             }
         }
 
-        addListener(listener:BrowseItemPanelListener) {
+        addListener(listener:BrowseItemPanelListener<M>) {
             super.addListener(listener);
             this.itemsSelectionPanel.addListener(listener);
         }
 
-        removeListener(listener:BrowseItemPanelListener) {
+        removeListener(listener:BrowseItemPanelListener<M>) {
             super.removeListener(listener);
             this.itemsSelectionPanel.removeListener(listener);
         }

@@ -1,8 +1,8 @@
 module api_app_browse {
 
-    export interface ItemsSelectionPanelListener extends api_event.Listener {
+    export interface ItemsSelectionPanelListener<M> extends api_event.Listener {
 
-        onDeselected(item:BrowseItem);
+        onDeselected(item:BrowseItem<M>);
 
     }
 

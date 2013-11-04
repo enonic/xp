@@ -1,32 +1,59 @@
 [
     {
+        "schemaKind": "ContentType",
+        "abstract": false,
+        "allowChildContent": true,
+        "contentDisplayNameScript": null,
         "createdTime": "2013-08-23T12:55:09.162Z",
+        "creator": null,
         "deletable": true,
         "displayName": null,
         "editable": true,
-        "hasChildren" : false,
+        "final": false,
+        "hasChildren": false,
         "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:contenttype",
         "key": "ContentType:contenttype",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
-        "module": null,
+        "modifier": null,
         "name": "contenttype",
-        "qualifiedName": "contenttype",
-        "type": "ContentType"
+        "superType": "unstructured"
     },
     {
+        "schemaKind": "Mixin",
         "createdTime": "2013-08-23T12:55:09.162Z",
+        "creator": null,
         "deletable": true,
         "displayName": "mixin",
         "editable": true,
-        "hasChildren" : false,
+        "hasChildren": false,
         "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:mixin",
+        "items": [
+            {
+                "Input": {
+                    "name": "mixin",
+                    "label": null,
+                    "customText": null,
+                    "helpText": null,
+                    "validationRegexp": null,
+                    "immutable": false,
+                    "indexed": false,
+                    "inputType": {
+                        "name": "TextArea"
+                    },
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "config": {
+                        "rows": 10,
+                        "columns": 10
+                    }
+                }
+            }
+        ],
         "key": "Mixin:mixin",
         "modifiedTime": "2013-08-23T12:55:09.162Z",
-        "module": null,
-        "name": "mixin",
-        "qualifiedName": "mixin",
-        "type": "Mixin"
+        "modifier": null,
+        "name": "mixin"
     }
 ]
-
-

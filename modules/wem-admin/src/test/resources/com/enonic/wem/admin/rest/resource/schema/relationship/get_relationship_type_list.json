@@ -1,6 +1,7 @@
 {
     "relationshipTypes": [
         {
+            "schemaKind": "RelationshipType",
             "allowedFromTypes": [ ],
             "allowedToTypes": [ ],
             "createdTime": null,
@@ -8,12 +9,15 @@
             "displayName": null,
             "editable": true,
             "fromSemantic": null,
+            "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type_1",
+            "key": "RelationshipType:the_relationship_type_1",
             "modifiedTime": null,
             "name": "the_relationship_type_1",
             "toSemantic": null
         },
         {
+            "schemaKind": "RelationshipType",
             "allowedFromTypes": [ ],
             "allowedToTypes": [ ],
             "createdTime": null,
@@ -21,7 +25,9 @@
             "displayName": null,
             "editable": true,
             "fromSemantic": null,
+            "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/schema/image/RelationshipType:the_relationship_type_2",
+            "key": "RelationshipType:the_relationship_type_2",
             "modifiedTime": null,
             "name": "the_relationship_type_2",
             "toSemantic": null

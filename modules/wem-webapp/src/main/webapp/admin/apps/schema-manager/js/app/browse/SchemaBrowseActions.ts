@@ -8,8 +8,8 @@ module app_browse {
 
         extModelsToSchemas(models:Ext_data_Model[]) {
             var schemas:api_schema.Schema[] = [];
-            models.forEach((model:Ext_data_Model, index:number) => {
-                schemas.push(new api_schema.Schema(<api_schema.SchemaJson>models[index].data));
+            models.forEach((model:Ext_data_Model) => {
+                schemas.push(api_schema.Schema.fromExtModel(model));
             });
             return schemas;
         }

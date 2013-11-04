@@ -13,10 +13,10 @@ module app_delete {
 
                 var deleteRequest = new api_schema.DeleteSchemaRequest();
                 for (var i = 0; i < this.schemaToDelete.length; i++) {
-                    deleteRequest.addQualifiedName(this.schemaToDelete[i].getSchemaName());
+                    deleteRequest.addQualifiedName(this.schemaToDelete[i].getName());
                 }
 
-                var type = this.schemaToDelete.length > 0 ? this.schemaToDelete[0].getSchemaType() : undefined;
+                var type:api_schema.SchemaKind = this.schemaToDelete.length > 0 ? this.schemaToDelete[0].getSchemaType() : null;
                 deleteRequest.setType(type);
 
                 deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {

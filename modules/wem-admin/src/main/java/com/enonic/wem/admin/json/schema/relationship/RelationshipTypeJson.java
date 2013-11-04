@@ -3,14 +3,13 @@ package com.enonic.wem.admin.json.schema.relationship;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
+import com.enonic.wem.admin.json.schema.SchemaJson;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
 public class RelationshipTypeJson
+    extends SchemaJson
     implements ItemJson
 {
     private final RelationshipType relationshipType;
@@ -19,14 +18,13 @@ public class RelationshipTypeJson
 
     private final List<String> allowedToTypes;
 
-    private final String iconUrl;
-
     private final boolean editable;
 
     private final boolean deletable;
 
     public RelationshipTypeJson( final RelationshipType type )
     {
+        super( type );
         this.relationshipType = type;
         this.editable = true;
         this.deletable = true;
@@ -42,23 +40,6 @@ public class RelationshipTypeJson
         {
             this.allowedToTypes.add( allowedToType.toString() );
         }
-
-        this.iconUrl = SchemaImageUriResolver.resolve( relationshipType.getSchemaKey() );
-    }
-
-    public String getIconUrl()
-    {
-        return iconUrl;
-    }
-
-    public String getName()
-    {
-        return relationshipType.getName();
-    }
-
-    public String getDisplayName()
-    {
-        return relationshipType.getDisplayName();
     }
 
     public String getFromSemantic()
@@ -79,16 +60,6 @@ public class RelationshipTypeJson
     public List<String> getAllowedToTypes()
     {
         return allowedToTypes;
-    }
-
-    public DateTime getCreatedTime()
-    {
-        return relationshipType.getCreatedTime();
-    }
-
-    public DateTime getModifiedTime()
-    {
-        return relationshipType.getModifiedTime();
     }
 
     @Override

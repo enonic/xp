@@ -1,4 +1,5 @@
 {
+    "schemaKind": "ContentTypeJson",
     "abstract": false,
     "allowChildContent": true,
     "contentDisplayNameScript": null,
@@ -117,10 +118,11 @@
             }
         ]
     },
+    "hasChildren": false,
     "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:my_cty",
+    "key": "ContentType:my_cty",
     "modifiedTime": null,
     "modifier": null,
     "name": "my_cty",
-    "qualifiedName": "my_cty",
     "superType": "unstructured"
 }

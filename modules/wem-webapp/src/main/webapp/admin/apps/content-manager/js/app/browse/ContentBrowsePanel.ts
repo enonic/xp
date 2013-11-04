@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class ContentBrowsePanel extends api_app_browse.BrowsePanel {
+    export class ContentBrowsePanel extends api_app_browse.BrowsePanel<api_content.ContentSummary> {
 
         private browseActions:app_browse.ContentBrowseActions;
 
@@ -101,11 +101,12 @@ module app_browse {
             return summaries;
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem[] {
+        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem<api_content.ContentSummary>[] {
 
-            var browseItems:api_app_browse.BrowseItem[] = [];
+            var browseItems:api_app_browse.BrowseItem<api_content.ContentSummary>[] = [];
             models.forEach((model:Ext_data_Model) => {
-                var item = new api_app_browse.BrowseItem(model).
+                var content = new api_content.ContentSummary(<api_content_json.ContentSummaryJson>model.data);
+                var item = new api_app_browse.BrowseItem<api_content.ContentSummary>(content).
                     setDisplayName(model.data['displayName']).
                     setPath(model.data['path']).
                     setIconUrl(model.data['iconUrl']);
