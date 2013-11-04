@@ -14,7 +14,7 @@ module app_new {
             api_event.onEvent('newSchema', handler);
         }
 
-        getSchemaType():api_schema.SchemaKind {
+        getSchemaKind():api_schema.SchemaKind {
             return this.schemaType;
         }
     }

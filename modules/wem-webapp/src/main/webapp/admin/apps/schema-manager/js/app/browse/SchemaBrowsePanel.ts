@@ -41,12 +41,12 @@ module app_browse {
             });
 
             api_schema.SchemaCreatedEvent.on((event) => {
-                console.log('On schema created', event.getSchemaType(), event.getSchemaName());
+                console.log('On schema created', event.getSchemaKind(), event.getSchemaName());
                 this.setRefreshNeeded(true);
             });
 
             api_schema.SchemaUpdatedEvent.on((event) => {
-                console.log('On schema updated', event.getSchemaType(), event.getSchemaName());
+                console.log('On schema updated', event.getSchemaKind(), event.getSchemaName());
                 this.setRefreshNeeded(true);
             });
 

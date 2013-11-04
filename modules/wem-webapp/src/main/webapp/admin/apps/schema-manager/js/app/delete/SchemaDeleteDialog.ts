@@ -16,7 +16,7 @@ module app_delete {
                     deleteRequest.addQualifiedName(this.schemaToDelete[i].getName());
                 }
 
-                var type:api_schema.SchemaKind = this.schemaToDelete.length > 0 ? this.schemaToDelete[0].getSchemaType() : null;
+                var type:api_schema.SchemaKind = this.schemaToDelete.length > 0 ? this.schemaToDelete[0].getSchemaKind() : null;
                 deleteRequest.setType(type);
 
                 deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {

@@ -92,7 +92,7 @@ module app_wizard {
 
                    api_notify.showFeedback( 'Mixin was updated!' );
 
-                   new api_schema.SchemaUpdatedEvent( "Mixin", response.getResult().name ).fire();
+                   new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.MIXIN, response.getResult().name ).fire();
 
                    if ( successCallback )
                    {

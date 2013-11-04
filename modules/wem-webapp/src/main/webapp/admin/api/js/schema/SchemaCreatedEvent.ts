@@ -11,7 +11,7 @@ module api_schema {
             this.schemaName = schemaName;
         }
 
-        public getSchemaType():string {
+        public getSchemaKind():string {
             return this.schemaType;
         }
 

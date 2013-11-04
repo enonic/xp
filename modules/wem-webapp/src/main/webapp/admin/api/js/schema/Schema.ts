@@ -91,7 +91,7 @@ module api_schema {
             return this.icon;
         }
 
-        getSchemaType():SchemaKind {
+        getSchemaKind():SchemaKind {
             return this.kind;
         }
 

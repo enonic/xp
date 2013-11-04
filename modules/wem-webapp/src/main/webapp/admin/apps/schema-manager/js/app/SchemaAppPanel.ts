@@ -42,7 +42,7 @@ module app {
 
             app_new.NewSchemaEvent.on((event) => {
 
-                var schemaType:api_schema.SchemaKind = event.getSchemaType();
+                var schemaType:api_schema.SchemaKind = event.getSchemaKind();
                 var tabId = this.generateTabId(schemaType);
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
@@ -77,7 +77,7 @@ module app {
 
                 event.getSchemas().forEach((schema:api_schema.Schema) => {
 
-                    var tabId = this.generateTabId(schema.getSchemaType(), schema.getName(), true);
+                    var tabId = this.generateTabId(schema.getSchemaKind(), schema.getName(), true);
                     var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
@@ -86,7 +86,7 @@ module app {
                     } else {
                         var schemaWizardPanel;
 
-                        if( schema.getSchemaType() == api_schema.SchemaKind.CONTENT_TYPE ) {
+                        if( schema.getSchemaKind() == api_schema.SchemaKind.CONTENT_TYPE ) {
                             new api_schema_content.GetContentTypeByQualifiedNameRequest(schema.getName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
                                                 var contentType = new api_schema_content.ContentType(jsonResponse.getResult());
@@ -99,7 +99,7 @@ module app {
                                                 this.addWizardPanel(tabMenuItem, schemaWizardPanel);
                                             });
                         }
-                        else if( schema.getSchemaType() == api_schema.SchemaKind.RELATIONSHIP_TYPE ) {
+                        else if( schema.getSchemaKind() == api_schema.SchemaKind.RELATIONSHIP_TYPE ) {
                             new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(schema.getName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
                                                 var relationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.getResult());
@@ -112,7 +112,7 @@ module app {
                                                 this.addWizardPanel(tabMenuItem, schemaWizardPanel);
                                             });
                         }
-                        else if( schema.getSchemaType() == api_schema.SchemaKind.MIXIN ) {
+                        else if( schema.getSchemaKind() == api_schema.SchemaKind.MIXIN ) {
                             new api_schema_mixin.GetMixinByQualifiedNameRequest(schema.getName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_mixin_json.MixinJson>)=> {
                                                 var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.getResult());
@@ -125,7 +125,7 @@ module app {
                                             });
                         }
                         else {
-                            throw new Error("Unknown Schema kind: " + schema.getSchemaType() )
+                            throw new Error("Unknown Schema kind: " + schema.getSchemaKind() )
                         }
                     }
                 });
@@ -134,7 +134,7 @@ module app {
             app_browse.OpenSchemaEvent.on((event) => {
                 event.getSchemas().forEach((schema:api_schema.Schema) => {
 
-                        var tabId = this.generateTabId(schema.getSchemaType(), schema.getName(), false);
+                        var tabId = this.generateTabId(schema.getSchemaKind(), schema.getName(), false);
                         var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                         if (tabMenuItem != null) {
