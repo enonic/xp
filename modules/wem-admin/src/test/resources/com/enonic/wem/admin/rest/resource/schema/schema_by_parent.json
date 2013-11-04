@@ -1,6 +1,6 @@
 [
     {
-        "schemaKind": "ContentType",
+        "schemaKind": "ContentTypeSummary",
         "abstract": false,
         "allowChildContent": true,
         "contentDisplayNameScript": null,

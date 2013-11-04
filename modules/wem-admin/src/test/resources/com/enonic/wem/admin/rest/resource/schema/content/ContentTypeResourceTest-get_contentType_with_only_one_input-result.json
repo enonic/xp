@@ -1,5 +1,5 @@
 {
-    "schemaKind": "ContentTypeJson",
+    "schemaKind": "ContentType",
     "abstract": false,
     "allowChildContent": true,
     "contentDisplayNameScript": null,

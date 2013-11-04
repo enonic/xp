@@ -66,22 +66,6 @@ public class SchemaResourceTest
         return Schemas.from( contentType, mixin, relationshipType );
     }
 
-    private Tree<Schema> createSchemaTree()
-    {
-        Tree<Schema> tree = new Tree<>();
-        ContentType rootContentType = createContentType( "rootcontenttype" );
-        ContentType childContentType = createContentType( "childcontenttype" );
-        tree.createNode( rootContentType ).addChild( childContentType );
-        Mixin rootMixin = createMixin( "rootmixin" );
-        Mixin childMixin = createMixin( "childmixin" );
-        tree.createNode( rootMixin ).addChild( childMixin );
-        RelationshipType rootRelationshipType = createRelationshipType( "rootrelationshiptype" );
-        RelationshipType childRelationshipType = createRelationshipType( "childrelationshiptype" );
-        tree.createNode( rootRelationshipType ).addChild( childRelationshipType );
-        return tree;
-    }
-
-
     @Test
     public void searchSchemaByQuery()
         throws Exception
