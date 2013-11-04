@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.joda.time.DateTime;
@@ -9,12 +10,17 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.acme.DummyCustomInputType;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.schema.content.CreateContentType;
+import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.command.schema.content.UpdateContentType;
+import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -30,6 +36,8 @@ import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.MixinReference.newMixinReference;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
+import static org.junit.Assert.*;
+
 
 public class ContentTypeResourceTest
     extends AbstractResourceTest
@@ -84,8 +92,8 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( client.execute(
-            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
+        Mockito.when(
+            client.execute( Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
             ContentTypes.from( contentType ) );
 
         // execute
@@ -157,8 +165,8 @@ public class ContentTypeResourceTest
             addFormItem( myMixinReference ).
             build();
 
-        Mockito.when( client.execute(
-            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
+        Mockito.when(
+            client.execute( Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
             ContentTypes.from( contentType ) );
 
         // execute
@@ -189,8 +197,8 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( client.execute(
-            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
+        Mockito.when(
+            client.execute( Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
             ContentTypes.from( contentType ) );
 
         // execute
@@ -230,6 +238,94 @@ public class ContentTypeResourceTest
 
         // verify
         assertJson( "ContentTypeResourceTest-list_one_contentType_with_only_one_input-result.json", jsonString );
+    }
+
+    @Test
+    public void test_create_new_content_type()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        String jsonString = resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
+                                                                               MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "create_content_type_result.json", jsonString );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_create_existing_content_type()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn(
+            ContentTypes.from( ContentType.newContentType().name( "htmlarea" ).build() ) );
+        resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
+                                                           MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+    }
+
+    @Test
+    public void test_create_content_type_with_broken_xml_config()
+        throws Exception
+    {
+        try
+        {
+            resource().path( "schema/content/create" ).entity( readFromFile( "broken_xml_content_type.json" ),
+                                                               MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( 500, e.getResponse().getStatus() );
+        }
+    }
+
+    @Test(expected = SystemException.class)
+    public void test_fail_to_create_new_content_type()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        Mockito.when( client.execute( Mockito.any( CreateContentType.class ) ) ).thenThrow(
+            new SystemException( "Content type creation failed" ) );
+        resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
+                                                           MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+    }
+
+    @Test
+    public void test_update_content_type()
+        throws Exception
+    {
+
+        String jsonString = resource().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
+                                                                               MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "update_content_type_result.json", jsonString );
+    }
+
+    @Test
+    public void test_update_content_type_with_broken_xml_config()
+        throws Exception
+    {
+        try
+        {
+            resource().path( "schema/content/update" ).entity( readFromFile( "broken_xml_content_type.json" ),
+                                                               MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( 500, e.getResponse().getStatus() );
+        }
+    }
+
+    @Test
+    public void test_fail_to_update_content_type()
+        throws Exception
+    {
+        Mockito.when( client.execute( Mockito.any( UpdateContentType.class ) ) ).thenThrow(
+            new SystemException( "Content type update failed" ) );
+        try
+        {
+            resource().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
+                                                               MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        }
+        catch ( UniformInterfaceException e )
+        {
+            assertEquals( 500, e.getResponse().getStatus() );
+        }
     }
 
 }

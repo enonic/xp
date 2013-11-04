@@ -21,6 +21,7 @@ import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.schema.content.json.ContentTypeCreateOrUpdateParams;
 import com.enonic.wem.admin.rest.resource.schema.content.json.ValidateContentTypeJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -137,12 +138,12 @@ public class ContentTypeResource
 
     @POST
     @Path("create")
-    public void create( @FormParam("contentType") final String contentTypeXml, @FormParam("iconReference") final String iconReference )
+    public ContentTypeJson create( ContentTypeCreateOrUpdateParams params )
     {
         ContentType contentType;
         try
         {
-            contentType = contentTypeXmlSerializer.toContentType( contentTypeXml );
+            contentType = contentTypeXmlSerializer.toContentType( params.getContentType() );
         }
         catch ( XmlParsingException e )
         {
@@ -158,7 +159,7 @@ public class ContentTypeResource
         final Icon icon;
         try
         {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
         }
         catch ( JsonRpcException | IOException e )
         {
@@ -171,6 +172,8 @@ public class ContentTypeResource
         }
 
         createContentType( contentType );
+
+        return new ContentTypeJson( contentType );
     }
 
     private void createContentType( final ContentType contentType )
@@ -196,12 +199,12 @@ public class ContentTypeResource
 
     @POST
     @Path("update")
-    public void update( @FormParam("contentType") final String contentTypeXml, @FormParam("iconReference") final String iconReference )
+    public ContentTypeJson update( ContentTypeCreateOrUpdateParams params )
     {
         ContentType contentType;
         try
         {
-            contentType = new ContentTypeXmlSerializer().toContentType( contentTypeXml );
+            contentType = new ContentTypeXmlSerializer().toContentType( params.getContentType() );
         }
         catch ( XmlParsingException e )
         {
@@ -211,7 +214,7 @@ public class ContentTypeResource
         final Icon icon;
         try
         {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
         }
         catch ( JsonRpcException | IOException e )
         {
@@ -224,6 +227,8 @@ public class ContentTypeResource
         }
 
         updateContentType( contentType );
+
+        return new ContentTypeJson( contentType );
     }
 
     private void updateContentType( final ContentType contentType )
