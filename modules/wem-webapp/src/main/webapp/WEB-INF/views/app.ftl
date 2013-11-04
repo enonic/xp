@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="${baseUrl}/admin/resources/lib/ux/toggleslide/css/style.css"/>
     <link rel="stylesheet/less" type="text/css" href="${baseUrl}/admin/resources/less/styles.less">
     <link rel="stylesheet" type="text/css" href="${baseUrl}/admin/resources/lib/slickgrid/slick.grid.css"/>
+    <link rel="stylesheet" type="text/css" href="${baseUrl}/admin/resources/lib/codemirror/codemirror.css">
 
     <!-- Libraries -->
     <script type="text/javascript" src="${baseUrl}/admin/resources/lib/ext/ext-all-debug.js"></script>
@@ -20,6 +21,8 @@
     <script type="text/javascript" src="${baseUrl}/admin/resources/lib/jquery-ui-1.10.3.custom.min.js"></script>
     <script type="text/javascript" src="${baseUrl}/admin/resources/lib/jquery.ui.live-draggable.js"></script>
     <script type="text/javascript" charset="UTF-8" src="${baseUrl}/admin/live-edit/lib/jquery.simulate.js"></script>
+    <script type="text/javascript" src="${baseUrl}/admin/resources/lib/codemirror/codemirror.js"></script>
+    <script type="text/javascript" src="${baseUrl}/admin/resources/lib/codemirror/addon/loadmode.js"></script>
 
     <!-- App launcher only! -->
     <script type="text/javascript" src="${baseUrl}/admin/resources/lib/signals.js"></script>
