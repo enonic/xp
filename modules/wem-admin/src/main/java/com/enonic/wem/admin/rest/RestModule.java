@@ -27,7 +27,6 @@ import com.enonic.wem.admin.rpc.content.ValidateContentDataRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.CreateRelationshipRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.GetRelationshipRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.UpdateRelationshipPropertiesRpcHandler;
-import com.enonic.wem.admin.rpc.schema.ListSchemasRpcHandler;
 import com.enonic.wem.admin.rpc.schema.content.CreateOrUpdateContentTypeRpcHandler;
 import com.enonic.wem.admin.rpc.schema.content.DeleteContentTypeRpcHandler;
 import com.enonic.wem.admin.rpc.schema.content.GetContentTypeRpcHandler;
@@ -104,8 +103,6 @@ public final class RestModule
         handlers.add( CreateRelationshipRpcHandler.class );
         handlers.add( GetRelationshipRpcHandler.class );
         handlers.add( UpdateRelationshipPropertiesRpcHandler.class );
-
-        handlers.add( ListSchemasRpcHandler.class );
 
         handlers.add( CreateOrUpdateContentTypeRpcHandler.class );
         handlers.add( DeleteContentTypeRpcHandler.class );
