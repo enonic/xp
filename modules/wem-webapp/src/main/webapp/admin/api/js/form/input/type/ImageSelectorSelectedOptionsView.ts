@@ -2,11 +2,19 @@ module api_form_input_type {
 
     export class ImageSelectorSelectedOptionsView extends api_ui_combobox.ComboBoxSelectedOptionsView<api_content.ContentSummary> {
 
+        private clearer:api_dom.DivEl;
+
         private selectedItems:api_ui_combobox.OptionData<api_content.ContentSummary>[] = [];
 
         private editedItem:api_ui_combobox.OptionData<api_content.ContentSummary>;
 
         private dialog:api_dom.DivEl;
+
+        constructor() {
+            super();
+            this.clearer = new api_dom.DivEl(null, "clearer");
+            this.appendChild(this.clearer);
+        }
 
         addItem(optionData:api_ui_combobox.OptionData<api_content.ContentSummary>) {
             if (this.dialog) {
@@ -30,7 +38,7 @@ module api_form_input_type {
                 this.showImageSelectorDialog(optionData);
             });
 
-            this.appendChild(option);
+            option.insertBeforeEl(this.clearer);
         }
 
         showImageSelectorDialog(optionData:api_ui_combobox.OptionData<api_content.ContentSummary>) {
