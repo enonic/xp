@@ -9,14 +9,14 @@ module app_launcher {
         private static ICONS_PATH = api_util.getAdminUri('resources/images/icons/metro/40x40/');
 
         private static applications:Application[] = [
-            new Application('Content Manager', api_util.getAdminUri('apps/content-manager/index.html'),
+            new Application('Content Manager', api_util.getUri('admin?app=content-manager'),
                 Applications.ICONS_PATH + 'database.png',
                 Applications.DESCR1),
             new Application('Relationships', '', Applications.ICONS_PATH + 'share.png', Applications.DESCR2),
-            new Application('Space Admin', api_util.getAdminUri('apps/space-manager/index.html'),
+            new Application('Space Admin', api_util.getUri('admin?app=space-manager'),
                 Applications.ICONS_PATH + 'earth.png',
                 Applications.DESCR3),
-            new Application('Schema Manager', api_util.getAdminUri('apps/schema-manager/index.html'),
+            new Application('Schema Manager', api_util.getUri('admin?app=schema-manager'),
                 Applications.ICONS_PATH + 'signup.png',
                 Applications.DESCR4),
 

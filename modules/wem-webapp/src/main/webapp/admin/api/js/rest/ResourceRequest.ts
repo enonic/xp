@@ -7,7 +7,7 @@ module api_rest {
         private method:string = "GET";
 
         constructor() {
-            this.restPath = Path.fromString( api_util.getUri("admin/rest") );
+            this.restPath = Path.fromString( "admin/rest" );
         }
 
         setMethod(value:string) {
