@@ -11,6 +11,7 @@ import com.enonic.wem.core.home.HomeModule;
 import com.enonic.wem.core.index.IndexModule;
 import com.enonic.wem.core.initializer.InitializerModule;
 import com.enonic.wem.core.jcr.JcrModule;
+import com.enonic.wem.core.module.ModuleModule;
 import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
@@ -41,6 +42,7 @@ public final class CoreModule
         install( new SpaceModule() );
         install( new UserStoreModule() );
         install( new ResourceModule() );
+        install( new ModuleModule() );
 
         // Add this to enable hazelcast
         // install( new HazelcastModule() );

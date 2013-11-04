@@ -8,11 +8,13 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.zip.ZipFile;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
@@ -36,6 +38,11 @@ public class ModuleImporter
         final String moduleDirName = StringUtils.substringBeforeLast( zipFile.getFileName().toString(), ".zip" );
         final ModuleKey moduleKey = ModuleKey.from( moduleDirName );
         final Module.Builder moduleBuilder = newModule().moduleKey( moduleKey );
+
+        if ( !isValidZipFile( zipFile ) )
+        {
+            throw new SystemException( "Invalid zip file [{0}]", zipFile.getFileName() );
+        }
 
         try (FileSystem zipFs = FileSystems.newFileSystem( zipFile, null ))
         {
@@ -105,5 +112,17 @@ public class ModuleImporter
     {
         final String xml = new String( Files.readAllBytes( xmlFile ), Charset.forName( "UTF-8" ) );
         xmlSerializer.toModule( xml, moduleBuilder );
+    }
+
+    private boolean isValidZipFile( final Path zipFilePath )
+    {
+        try (ZipFile zipfile = new ZipFile( zipFilePath.toFile() ))
+        {
+            return true;
+        }
+        catch ( IOException e )
+        {
+            return false;
+        }
     }
 }

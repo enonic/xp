@@ -12,5 +12,9 @@ public final class ModuleModule
     {
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( CreateModuleHandler.class );
+        commands.add( GetModuleHandler.class );
+        commands.add( GetModuleResourceHandler.class );
+        commands.add( DeleteModuleHandler.class );
+        commands.add( UpdateModuleHandler.class );
     }
 }

@@ -1,5 +1,6 @@
 package com.enonic.wem.core.module;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import javax.inject.Inject;
@@ -50,6 +51,7 @@ public class CreateModuleHandler
         final Module module = moduleBuilder.build();
 
         final Path moduleDirPath = systemConfig.getModuleDir().toPath();
+        Files.createDirectories( moduleDirPath );
 
         moduleExporter.exportModuleToDirectory( module, moduleDirPath );
         command.setResult( module );
