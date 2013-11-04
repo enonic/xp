@@ -1,5 +1,17 @@
 module api_ui {
 
+    export interface ImageUploaderConfig {
+
+        multiSelection?: boolean;
+
+        buttonsVisible?: boolean;
+
+        imageVisible?: boolean;
+
+        maximumOccurrences?: number;
+
+    }
+
     export class ImageUploader extends api_dom.FormInputEl implements api_event.Observable {
 
         private name:string;
@@ -14,21 +26,30 @@ module api_ui {
         private image:api_dom.ImgEl;
         private resetBtn:api_ui.Button;
 
-        private buttonsVisible:boolean = true;
+        private multiSelection:boolean;
+        private buttonsVisible:boolean;
+        private imageVisible:boolean;
+        private maximumOccurrences:number;
 
         private listeners:ImageUploaderListener[] =[];
 
-        constructor(name:string, uploadUrl:string) {
+        constructor(name:string, uploadUrl:string, config?:ImageUploaderConfig) {
             super("div", "ImageUploader", "image-uploader");
             this.name = name;
             this.uploadUrl = uploadUrl;
+            if (config) {
+                this.multiSelection = (config.multiSelection == undefined) ? false : config.multiSelection;
+                this.buttonsVisible = (config.buttonsVisible == undefined) ? true : config.buttonsVisible;
+                this.imageVisible = (config.imageVisible == undefined) ? true : config.imageVisible;
+                this.maximumOccurrences = (config.maximumOccurrences == undefined) ? 0 : config.maximumOccurrences;
+            }
 
             this.input = api_ui.TextInput.middle();
             this.input.setPlaceholder("Paste URL to image here");
             this.appendChild(this.input);
 
             this.dropzone = new api_dom.DivEl("DropZone", "dropzone");
-            this.dropzone.getEl().setInnerHtml("Drop files here or click to select");
+            this.refreshDropzoneLabel();
             this.appendChild(this.dropzone);
 
             this.progress = new api_ui.ProgressBar();
@@ -39,6 +60,7 @@ module api_ui {
             this.appendChild(this.image);
 
             this.cancelBtn = new api_ui.Button("Cancel");
+            this.cancelBtn.setVisible(this.buttonsVisible);
             this.cancelBtn.setClickListener(() => {
                 this.stop();
                 this.reset();
@@ -46,6 +68,7 @@ module api_ui {
             this.appendChild(this.cancelBtn);
 
             this.resetBtn = new api_ui.Button("Reset");
+            this.resetBtn.setVisible(this.buttonsVisible);
             this.resetBtn.setClickListener(() => {
                 this.reset();
             });
@@ -75,6 +98,11 @@ module api_ui {
             this.image.getEl().setSrc(src);
         }
 
+        setMaximumOccurrences(value:number) {
+            this.maximumOccurrences = value;
+            this.refreshDropzoneLabel();
+        }
+
         stop() {
             if (this.uploader) {
                 this.uploader.stop();
@@ -88,10 +116,14 @@ module api_ui {
             this.setValue(undefined);
         }
 
-        setButtonsVisible(visible: boolean) {
-            this.buttonsVisible = visible;
-            this.cancelBtn.setVisible(visible);
-            this.resetBtn.setVisible(visible);
+        private refreshDropzoneLabel() {
+            var label;
+            if (!this.multiSelection || this.maximumOccurrences == 1) {
+                label = "Drop file here or click to select";
+            } else {
+                label = "Drop files here or click to select";
+            }
+            this.dropzone.getEl().setInnerHtml(label);
         }
 
         private setDropzoneVisible(visible:boolean) {
@@ -117,7 +149,7 @@ module api_ui {
 
             var uploader = new plupload.Uploader({
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
-                multi_selection: false,
+                multi_selection: this.multiSelection,
                 browse_button: elId,
                 url: this.uploadUrl,
                 multipart: true,
@@ -129,15 +161,19 @@ module api_ui {
                 ]
             });
 
-            uploader.bind('Init', function (up, params) {
+            uploader.bind('Init', (up, params) => {
                 console.log('uploader init', up, params);
             });
 
-            uploader.bind('FilesAdded', function (up, files) {
+            uploader.bind('FilesAdded', (up, files) => {
                 console.log('uploader files added', up, files);
+
+                if (this.maximumOccurrences > 0 && files.length > this.maximumOccurrences) {
+                    files.splice(this.maximumOccurrences);
+                }
             });
 
-            uploader.bind('QueueChanged', function (up) {
+            uploader.bind('QueueChanged', (up) => {
                 console.log('uploader queue changed', up);
 
                 up.start();
@@ -160,13 +196,15 @@ module api_ui {
                 console.log('uploader file uploaded', up, file, response);
 
                 if (response && response.status === 200) {
-
                     var responseObj:any = Ext.decode(response.response);
-                    var file = (responseObj.items && responseObj.items.length > 0) ? responseObj.items[0] : file ;
 
-                    this.setValue(file.id);
+                    if (responseObj.items && responseObj.items.length > 0) {
+                        file = responseObj.items[0];
 
-                    this.notifyFileUploaded(file.id, file.name, file.mimeType);
+                        this.setValue(file.id);
+
+                        this.notifyFileUploaded(file.id, file.name, file.mimeType);
+                    }
                 }
 
             });
@@ -174,8 +212,16 @@ module api_ui {
             uploader.bind('UploadComplete', (up, files) => {
                 console.log('uploader upload complete', up, files);
 
-                this.setProgressVisible(false);
-                this.setImageVisible(true);
+                if (this.imageVisible) {
+                    this.setProgressVisible(false);
+                    this.setImageVisible(true);
+                }
+
+                this.notifyUploadComplete();
+
+                if (this.uploader.files.length > 0) {
+                    this.uploader.splice();
+                }
             });
 
             uploader.init();
@@ -200,5 +246,23 @@ module api_ui {
                 }
             });
         }
+
+        private notifyUploadComplete() {
+            this.listeners.forEach((listener:ImageUploaderListener) => {
+                if (listener.onUploadComplete) {
+                    listener.onUploadComplete();
+                }
+            });
+        }
+    }
+
+    export interface ImageFile {
+
+        id: string;
+
+        name: string;
+
+        mimeType: string;
+
     }
 }

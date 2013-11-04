@@ -4,5 +4,7 @@ module api_ui {
 
         onFileUploaded:(id:string, name:string, mimeType:string) => void;
 
+        onUploadComplete:() => void;
+
     }
 }
