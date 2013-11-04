@@ -16,7 +16,7 @@ public final class CreateMixinHandler
     public void handle()
         throws Exception
     {
-        final CreateNode createNodeCommand = MIXIN_TO_ITEM_TRANSLATOR.toCreateItemCommand( command );
+        final CreateNode createNodeCommand = MIXIN_TO_ITEM_TRANSLATOR.toCreateNodeCommand( command );
         final CreateNodeResult createNodeResult = context.getClient().execute( createNodeCommand );
 
         final Mixin persistedMixin = MIXIN_TO_ITEM_TRANSLATOR.fromNode( createNodeResult.getPersistedNode() );

@@ -29,7 +29,7 @@ class MixinNodeTranslator
 {
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
-    CreateNode toCreateItemCommand( final CreateMixin createMixin )
+    CreateNode toCreateNodeCommand( final CreateMixin createMixin )
     {
         final NodePath parentItemPath = NodePath.newPath( "/mixins" ).build();
 
@@ -40,7 +40,7 @@ class MixinNodeTranslator
             data( toRootDataSet( createMixin ) );
     }
 
-    UpdateNode toUpdateItemCommand( final SchemaId id, final NodeEditor editor )
+    UpdateNode toUpdateNodeCommand( final SchemaId id, final NodeEditor editor )
     {
         return Commands.node().update().
             item( EntityId.from( id ) ).
@@ -62,7 +62,7 @@ class MixinNodeTranslator
         return rootDataSet;
     }
 
-    NodeEditor toItemEditor( final Mixin mixin )
+    NodeEditor toNodeEditor( final Mixin mixin )
     {
         final RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( "displayName", new Value.String( mixin.getDisplayName() ) );
