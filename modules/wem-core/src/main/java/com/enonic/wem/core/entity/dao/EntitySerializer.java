@@ -1,4 +1,4 @@
-package com.enonic.wem.core.hazelcast.serializer;
+package com.enonic.wem.core.entity.dao;
 
 import java.io.IOException;
 

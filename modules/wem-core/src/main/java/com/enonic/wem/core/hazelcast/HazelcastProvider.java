@@ -12,8 +12,8 @@ import com.hazelcast.core.HazelcastInstance;
 
 import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.core.hazelcast.serializer.EntityIdSerializer;
-import com.enonic.wem.core.hazelcast.serializer.EntitySerializer;
+import com.enonic.wem.core.entity.dao.EntityIdSerializer;
+import com.enonic.wem.core.entity.dao.EntitySerializer;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
 import com.enonic.wem.core.lifecycle.RunLevel;
 
