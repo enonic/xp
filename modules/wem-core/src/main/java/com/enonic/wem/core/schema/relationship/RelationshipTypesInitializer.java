@@ -5,9 +5,9 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
@@ -20,11 +20,9 @@ public class RelationshipTypesInitializer
     private static final RelationshipType DEFAULT =
         createRelationshipType( RelationshipTypeName.DEFAULT, "Default", "relates to", "related of" );
 
-    private static final RelationshipType PARENT =
-        createRelationshipType( RelationshipTypeName.PARENT, "Parent", "parent of", "child of" );
+    private static final RelationshipType PARENT = createRelationshipType( RelationshipTypeName.PARENT, "Parent", "parent of", "child of" );
 
-    private static final RelationshipType LINK =
-        createRelationshipType( RelationshipTypeName.LINK, "Link", "links to", "linked by" );
+    private static final RelationshipType LINK = createRelationshipType( RelationshipTypeName.LINK, "Link", "links to", "linked by" );
 
     private static final RelationshipType LIKE = createRelationshipType( RelationshipTypeName.LIKE, "Like", "likes", "liked by" );
 
@@ -32,7 +30,10 @@ public class RelationshipTypesInitializer
         createRelationshipType( RelationshipTypeName.from( "citation" ), "Citation", "citation in", "cited by",
                                 ContentTypeNames.from( "article" ) );
 
-    private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION};
+    private static final RelationshipType IMAGE =
+        createRelationshipType( RelationshipTypeName.from( "image" ), "Image", "relates to image", "related of image" );
+
+    private static final RelationshipType[] SYSTEM_TYPES = {DEFAULT, PARENT, LINK, LIKE, CITATION, IMAGE};
 
     protected RelationshipTypesInitializer()
     {

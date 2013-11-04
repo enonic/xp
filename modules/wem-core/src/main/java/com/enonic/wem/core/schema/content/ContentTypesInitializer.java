@@ -41,37 +41,29 @@ public class ContentTypesInitializer
     static final ContentType MEDIA = createSystemType( ContentTypeName.media() ).
         setFinal( false ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_TEXT =
-        createSystemType( ContentTypeName.textMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_TEXT = createSystemType( ContentTypeName.textMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_DATA =
-        createSystemType( ContentTypeName.dataMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_DATA = createSystemType( ContentTypeName.dataMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_AUDIO =
-        createSystemType( ContentTypeName.audioMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_AUDIO = createSystemType( ContentTypeName.audioMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_VIDEO =
-        createSystemType( ContentTypeName.videoMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_VIDEO = createSystemType( ContentTypeName.videoMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_IMAGE =
-        createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( createMediaImageForm() ).build();
+    static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( createMediaImageForm() ).build();
 
-    static final ContentType MEDIA_VECTOR =
-        createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_ARCHIVE =
-        createSystemType( ContentTypeName.archiveMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_ARCHIVE = createSystemType( ContentTypeName.archiveMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_DOCUMENT =
-        createSystemType( ContentTypeName.documentMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_DOCUMENT = createSystemType( ContentTypeName.documentMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_SPREADSHEET =
         createSystemType( ContentTypeName.spreadsheetMedia() ).superType( ContentTypeName.media() ).
@@ -81,13 +73,11 @@ public class ContentTypesInitializer
         createSystemType( ContentTypeName.presentationMedia() ).superType( ContentTypeName.media() ).
             setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_CODE =
-        createSystemType( ContentTypeName.codeMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_CODE = createSystemType( ContentTypeName.codeMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
-    static final ContentType MEDIA_EXECUTABLE =
-        createSystemType( ContentTypeName.executableMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
+    static final ContentType MEDIA_EXECUTABLE = createSystemType( ContentTypeName.executableMedia() ).superType( ContentTypeName.media() ).
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     private static final ContentType[] SYSTEM_TYPES =
         {UNSTRUCTURED, STRUCTURED, SPACE, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
@@ -100,7 +90,8 @@ public class ContentTypesInitializer
             "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin-address.json",
             "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
             "demo-contenttype-trampoline.json", "demo-contenttype-formItemset-min-occurrences.json",
-            "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json", "demo-contenttype-all-input-types.json"};
+            "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json", "demo-contenttype-all-input-types.json",
+            "demo-contenttype-imageselector.json"};
 
     private final ContentTypeJsonSerializer contentTypeJsonSerializer = new ContentTypeJsonSerializer();
 

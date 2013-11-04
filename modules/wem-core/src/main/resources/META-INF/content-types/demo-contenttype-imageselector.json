@@ -1,0 +1,93 @@
+{
+    "name": "imageselector",
+    "displayName": "Image selector",
+    "superType": "structured",
+    "isAbstract": false,
+    "isFinal": true,
+    "form": [
+        {
+            "Input": {
+                "name": "imageselector_min0_max1",
+                "label": "Image selector, min 0, max 1",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ImageSelector",
+                    "config": {
+                        "relationshipType": "image"
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "imageselector_min1_max1",
+                "label": "Image selector, min 1, max 1",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 1,
+                    "maximum": 1
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ImageSelector",
+                    "config": {
+                        "relationshipType": "image"
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "imageselector_min0_max0",
+                "label": "Image selector, min 0, max 0",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 0,
+                    "maximum": 0
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ImageSelector",
+                    "config": {
+                        "relationshipType": "image"
+                    }
+                }
+            }
+        },
+        {
+            "Input": {
+                "name": "imageselector_min2_max4",
+                "label": "Image selector, min 2, max 4",
+                "immutable": false,
+                "occurrences": {
+                    "minimum": 2,
+                    "maximum": 4
+                },
+                "indexed": true,
+                "customText": null,
+                "validationRegexp": null,
+                "helpText": null,
+                "type": {
+                    "name": "ImageSelector",
+                    "config": {
+                        "relationshipType": "image"
+                    }
+                }
+            }
+        }
+    ]
+}
