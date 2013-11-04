@@ -1,8 +1,8 @@
 package com.enonic.wem.query.builder;
 
 import com.enonic.wem.query.Constraint;
-import com.enonic.wem.query.OrderBy;
-import com.enonic.wem.query.Query;
+import com.enonic.wem.query.expr.OrderBy;
+import com.enonic.wem.query.expr.Query;
 
 public final class QueryBuilder
 {

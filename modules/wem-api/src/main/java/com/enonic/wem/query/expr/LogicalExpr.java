@@ -1,4 +1,6 @@
-package com.enonic.wem.query;
+package com.enonic.wem.query.expr;
+
+import com.enonic.wem.query.Constraint;
 
 public final class LogicalExpr
     implements Constraint
@@ -15,7 +17,7 @@ public final class LogicalExpr
 
     private final Operator operator;
 
-    private LogicalExpr( final Constraint left, final Operator operator, final Constraint right )
+    public LogicalExpr( final Constraint left, final Operator operator, final Constraint right )
     {
         this.left = left;
         this.right = right;
@@ -52,4 +54,5 @@ public final class LogicalExpr
     {
         return new LogicalExpr( left, Operator.OR, right );
     }
+
 }

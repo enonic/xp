@@ -1,4 +1,4 @@
-package com.enonic.wem.query.function;
+package com.enonic.wem.query.order;
 
 import com.enonic.wem.query.DynamicOrder;
 
@@ -11,4 +11,5 @@ public final class ScoreOrder
     {
         super( direction, NAME );
     }
+
 }
