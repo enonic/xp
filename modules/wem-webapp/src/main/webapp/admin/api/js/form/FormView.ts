@@ -17,12 +17,9 @@ module api_form {
         }
 
         getInputViewByPath(path:api_data.DataPath, formItemViews:FormItemView[] = this.formItemViews):api_form_input.InputView {
-            //var inputView:api_form_input.InputView = null;
-            console.log("input path->", path);
             // Loop through all formItemViews
-
-            for (var i = 0; i<this.formItemViews.length; i++) {
-                var currentFormItemView = this.formItemViews[i];
+            for (var i = 0; i<formItemViews.length; i++) {
+                var currentFormItemView = formItemViews[i];
                 console.log(currentFormItemView);
                 // If name matches first path elements name
                 console.log("first path element", path.getElement(0).toString());
@@ -30,7 +27,6 @@ module api_form {
                     console.log("name matched!");
                     // If formItemView is InputView, end of path is reached
                     if (currentFormItemView instanceof api_form_input.InputView) {
-                        console.log("returning ", currentFormItemView);
                         return <api_form_input.InputView>currentFormItemView;
                     } else {
                         var formItemSetView = <api_form_formitemset.FormItemSetView>currentFormItemView;

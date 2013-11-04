@@ -117,44 +117,16 @@ module app_wizard {
 //                    while ((result = result = regex.exec(script)) != null) {
 //                        var path = api_data.DataPath.fromString(result[1]);
 //                        this.contentForm.getInputViewByPath(path);
-//                        console.log("starting...", path);
 //                    }
 //                }
-                var inputView = this.contentForm.getInputViewByPath(api_data.DataPath.fromString("basic.vendor"));
+                var inputView:api_form_input.InputView = this.contentForm.getInputViewByPath(api_data.DataPath.fromString("basic.vendor"));
                 console.log("got inputview", inputView);
+                this.updateDisplayName(inputView.getValue(0).asString());
             });
-
-            /*if (contentType.getContentDisplayNameScript()) {
-             var script = contentType.getContentDisplayNameScript();
-             var regex = ContentWizardPanel.DISPLAY_NAME_REGEX;
-             var result;
-             while ((result = result = regex.exec(script)) != null) {
-             this.bindDisplayNameChangeListener(result[1]);
-             }
-             }*/
         }
 
-        private updateDisplayName() {
-            console.log(this.displayNameChangeInputs);
-            console.log("THIS", this.getId());
-            var inputs = [];
-            this.displayNameChangeInputs.forEach((inputName) => {
-                inputs.push(jQuery(this.getHTMLElement()).find('input[name="' + inputName + '"]'));
-            });
-            var script = this.contentType.getContentDisplayNameScript();
-            var regex = ContentWizardPanel.DISPLAY_NAME_REGEX;
-            var result;
-            var displayName = this.contentType.getContentDisplayNameScript();
-
-            var i = 0;
-            while ((result = result = regex.exec(script)) != null) {
-                if (inputs[i]) {
-                    displayName = displayName.replace(result[0], "'" + inputs[i].val() + "'");
-                }
-                i++;
-            }
-            console.log("Display name is", displayName);
-            this.contentWizardHeader.setDisplayName(eval(displayName));
+        private updateDisplayName(name:string) {
+            this.contentWizardHeader.setDisplayName(name);
         }
 
         showCallback() {
@@ -255,13 +227,6 @@ module app_wizard {
             });
         }
 
-        private bindDisplayNameChangeListener(inputName:string) {
-            console.log("adding to displayname change", inputName);
-            this.displayNameChangeInputs.push(inputName);
-            jQuery(this.getHTMLElement()).on("keyup", "input[name='" + inputName + "']", () => {
-                this.updateDisplayName();
-            });
-        }
     }
 
     class LiveFormPanel extends api_ui.Panel {

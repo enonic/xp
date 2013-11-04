@@ -32,7 +32,7 @@ module app_wizard {
             return this.formView.rebuildContentData();
         }
 
-        getInputViewByPath(path:api_data.DataPath) {
+        getInputViewByPath(path:api_data.DataPath):api_form_input.InputView {
             return this.formView.getInputViewByPath(path);
         }
     }
