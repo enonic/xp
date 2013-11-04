@@ -1,0 +1,4 @@
+{
+    "contentType": "<?xml version='1.0' encoding='UTF-8'?><type><name>htmlarea</name><display-name>HTML Area</display-name><content-display-name-script /><super-type>structured</super-type><is-abstract>false</is-abstract><is-final>true</is-final><is-built-in>false</is-built-in><allow-child-content>true</allow-child-content><form>  <input type='HtmlArea' name='htmlarea_text'>      <label>HTML Area</label>      <immutable>false</immutable>      <indexed>false</indexed>      <custom-text />      <help-text>HTML Area</help-text>      <occurrences minimum='0' maximum='1' />    </input>  </form></type>",
+    "iconReference": null
+}

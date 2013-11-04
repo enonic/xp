@@ -4,4 +4,6 @@
 ///<reference path='GetContentTypeByQualifiedNameRequest.ts' />
 ///<reference path='GetContentTypeConfigResult.ts' />
 ///<reference path='GetContentTypeConfigByQualifiedNameRequest.ts' />
+///<reference path='CreateContentTypeRequest.ts' />
+///<reference path='UpdateContentTypeRequest.ts' />
 
