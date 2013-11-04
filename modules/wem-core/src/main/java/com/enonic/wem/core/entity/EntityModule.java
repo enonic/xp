@@ -1,8 +1,11 @@
 package com.enonic.wem.core.entity;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 
 import com.enonic.wem.core.command.CommandBinder;
+import com.enonic.wem.core.entity.dao.EntityDao;
+import com.enonic.wem.core.entity.dao.EntityHazelcastDao;
 
 public final class EntityModule
     extends AbstractModule
@@ -10,6 +13,8 @@ public final class EntityModule
     @Override
     protected void configure()
     {
+        bind( EntityDao.class ).to( EntityHazelcastDao.class ).in( Scopes.SINGLETON );
+
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( CreateNodeHandler.class );
         commands.add( UpdateNodeHandler.class );
