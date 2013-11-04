@@ -101,6 +101,10 @@ module api_data{
         isAbsolute():boolean {
             return this.absolute;
         }
+
+        getLastElement():DataPathElement {
+            return this.elements[this.elements.length-1];
+        }
     }
 
     export class DataPathElement {

@@ -6,7 +6,7 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("resources/images/default_content.png");
 
-        private static DISPLAY_NAME_REGEX:RegExp = /\$\('(\w+)'\)/g;
+        private static DISPLAY_NAME_REGEX:RegExp = /\$\('([a-z\.]*)'\)/g;
 
         private persistedContent:api_content.Content;
 
@@ -109,19 +109,19 @@ module app_wizard {
             this.displayNameChangeInputs = [];
 
             this.getEl().addEventListener("keyup", (e) => {
-
-//                if (contentType.getContentDisplayNameScript()) {
-//                    var script = contentType.getContentDisplayNameScript();
-//                    var regex = ContentWizardPanel.DISPLAY_NAME_REGEX;
-//                    var result;
-//                    while ((result = result = regex.exec(script)) != null) {
-//                        var path = api_data.DataPath.fromString(result[1]);
-//                        this.contentForm.getInputViewByPath(path);
-//                    }
-//                }
-                var inputView:api_form_input.InputView = this.contentForm.getInputViewByPath(api_data.DataPath.fromString("basic.vendor"));
-                console.log("got inputview", inputView);
-                this.updateDisplayName(inputView.getValue(0).asString());
+                var displayName = contentType.getContentDisplayNameScript();
+                if (contentType.getContentDisplayNameScript()) {
+                    var script = contentType.getContentDisplayNameScript();
+                    var regex = ContentWizardPanel.DISPLAY_NAME_REGEX;
+                    var result;
+                    while ((result = result = regex.exec(script)) != null) {
+                        console.log(result);
+                        var path = api_data.DataPath.fromString(result[1]);
+                        var inputView:api_form_input.InputView = this.contentForm.getInputViewByPath(path);
+                        displayName = displayName.replace(result[0], "'" + inputView.getValue(path.getLastElement().getIndex()).asString() + "'");
+                    }
+                    this.updateDisplayName(eval(displayName));
+                }
             });
         }
 
