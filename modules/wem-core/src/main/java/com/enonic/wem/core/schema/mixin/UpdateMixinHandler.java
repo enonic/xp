@@ -28,8 +28,8 @@ public final class UpdateMixinHandler
             final Mixin modifiedMixin = command.getEditor().edit( mixin );
             if ( modifiedMixin != null )
             {
-                final NodeEditor nodeEditor = MIXIN_TO_ITEM_TRANSLATOR.toItemEditor( modifiedMixin );
-                UpdateNode updateNode = MIXIN_TO_ITEM_TRANSLATOR.toUpdateItemCommand( mixin.getId(), nodeEditor );
+                final NodeEditor nodeEditor = MIXIN_TO_ITEM_TRANSLATOR.toNodeEditor( modifiedMixin );
+                UpdateNode updateNode = MIXIN_TO_ITEM_TRANSLATOR.toUpdateNodeCommand( mixin.getId(), nodeEditor );
                 context.getClient().execute( updateNode );
                 command.setResult( UpdateMixinResult.SUCCESS );
             }
