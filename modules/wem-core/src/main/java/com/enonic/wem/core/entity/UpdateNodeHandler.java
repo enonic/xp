@@ -8,6 +8,7 @@ import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.command.entity.UpdateNodeResult;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.entity.dao.EntityDao;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
 import com.enonic.wem.core.index.IndexService;
@@ -25,6 +26,8 @@ public class UpdateNodeHandler
     {
         this.indexService = indexService;
     }
+
+    private EntityDao entityDao;
 
     @Override
     public void handle()
@@ -57,6 +60,18 @@ public class UpdateNodeHandler
 
         indexService.indexNode( persistedNode );
 
+        final EntityDao.UpdateEntityArgs updateEntityArgs = new EntityDao.UpdateEntityArgs.Builder().
+            entityToUpdate( persisted.id() ).
+            data( edited.data() ).
+            build();
+        entityDao.update( updateEntityArgs );
+
         command.setResult( new UpdateNodeResult( persistedNode ) );
+    }
+
+    @Inject
+    public void setEntityDao( final EntityDao entityDao )
+    {
+        this.entityDao = entityDao;
     }
 }

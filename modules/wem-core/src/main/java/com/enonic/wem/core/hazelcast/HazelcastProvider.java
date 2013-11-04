@@ -5,9 +5,15 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.hazelcast.config.Config;
+import com.hazelcast.config.SerializationConfig;
+import com.hazelcast.config.SerializerConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
+import com.enonic.wem.api.entity.Entity;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.core.hazelcast.serializer.EntityIdSerializer;
+import com.enonic.wem.core.hazelcast.serializer.EntitySerializer;
 import com.enonic.wem.core.lifecycle.LifecycleBean;
 import com.enonic.wem.core.lifecycle.RunLevel;
 
@@ -22,6 +28,20 @@ public final class HazelcastProvider
     public HazelcastProvider( final Config config )
     {
         super( RunLevel.L1 );
+
+        final SerializationConfig serializationConfig = config.getSerializationConfig();
+
+        final SerializerConfig entityIdSC = new SerializerConfig().
+            setImplementation( new EntityIdSerializer() ).
+            setTypeClass( EntityId.class );
+
+        final SerializerConfig entitySC = new SerializerConfig().
+            setImplementation( new EntitySerializer() ).
+            setTypeClass( Entity.class );
+
+        serializationConfig.addSerializerConfig( entityIdSC );
+        serializationConfig.addSerializerConfig( entitySC );
+
         this.instance = Hazelcast.newHazelcastInstance( config );
     }
 
