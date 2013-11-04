@@ -145,6 +145,9 @@ module api_app_wizard {
             this.actions.enableActionsForExisting(item);
         }
 
+        getPersistedItem():T {
+            return this.persistedItem;
+        }
 
         isItemPersisted():boolean {
             return this.persistedItem != null;
