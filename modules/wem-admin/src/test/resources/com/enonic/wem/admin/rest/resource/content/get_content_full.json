@@ -37,6 +37,7 @@
     "deletable": true,
     "displayName": "My Content",
     "editable": true,
+    "form": null,
     "hasChildren": false,
     "iconUrl": "http://localhost/admin/rest/content/image/aaa",
     "id": "aaa",
