@@ -1,4 +1,4 @@
-module api_schema{
+module api_schema {
 
     export class Schema extends api_item.BaseItem {
 
@@ -10,12 +10,15 @@ module api_schema{
 
         private icon:string;
 
+        private type:string;
+
         constructor(json:api_schema.SchemaJson) {
             super(json);
             this.name = json.name;
             this.qualifiedName = json.qualifiedName;
             this.displayName = json.displayName;
             this.icon = json.iconUrl;
+            this.type = json.type;
         }
 
         getName():string {
@@ -32,6 +35,10 @@ module api_schema{
 
         getIcon():string {
             return this.icon;
+        }
+
+        getSchemaType():string {
+            return this.type;
         }
 
     }

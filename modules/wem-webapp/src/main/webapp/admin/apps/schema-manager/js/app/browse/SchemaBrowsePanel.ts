@@ -30,22 +30,24 @@ module app_browse {
                 browseToolbar: this.toolbar,
                 treeGridPanel: treeGridPanel,
                 browseItemPanel: browseItemPanel,
-                filterPanel: filterPanel});
+                filterPanel: filterPanel
+            });
 
             api_schema.SchemaDeletedEvent.on((event) => {
                 var names:string[] = event.getSchemaNames();
+                console.log('On schemas deleted', event.getSchemaType(), names);
                 for (var i = 0; i < names.length; i++) {
                     treeGridPanel.remove(names[i]);
                 }
             });
 
             api_schema.SchemaCreatedEvent.on((event) => {
-                console.log('On content created', event.getSchemaName());
+                console.log('On schema created', event.getSchemaType(), event.getSchemaName());
                 this.setRefreshNeeded(true);
             });
 
             api_schema.SchemaUpdatedEvent.on((event) => {
-                console.log('On content updated', event.getSchemaName());
+                console.log('On schema updated', event.getSchemaType(), event.getSchemaName());
                 this.setRefreshNeeded(true);
             });
 
@@ -56,14 +58,15 @@ module app_browse {
             });
         }
 
-        extModelsToBrowseItems(models:api_model.SchemaExtModel[]) {
+        extModelsToBrowseItems(models:Ext_data_Model[]) {
 
             var browseItems:api_app_browse.BrowseItem[] = [];
-            models.forEach((model:api_model.SchemaExtModel, index:number) => {
-                var item = new api_app_browse.BrowseItem(models[index]).
-                    setDisplayName(model.data.displayName).
-                    setPath(model.data.name).
-                    setIconUrl(model.data.iconUrl);
+
+            models.forEach((model:Ext_data_Model, index:number) => {
+                var item = new api_app_browse.BrowseItem(model).
+                    setDisplayName(model.data['displayName']).
+                    setPath(model.data['name']).
+                    setIconUrl(model.data['iconUrl']);
                 browseItems.push(item);
             });
             return browseItems;

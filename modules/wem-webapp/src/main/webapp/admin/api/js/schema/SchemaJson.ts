@@ -10,6 +10,8 @@ module api_schema {
 
         iconUrl: string;
 
+        type:string;
+
     }
 
 }

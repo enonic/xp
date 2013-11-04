@@ -79,9 +79,9 @@ module app {
 
             app_browse.EditSchemaEvent.on((event) => {
 
-                event.getModels().forEach((schemaModel:api_model.SchemaExtModel) => {
+                event.getSchemas().forEach((schema:api_schema.Schema) => {
 
-                    var tabId = this.generateTabId(schemaModel.data.type, schemaModel.data.name, true);
+                    var tabId = this.generateTabId(schema.getSchemaType(), schema.getSchemaName(), true);
                     var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
@@ -90,9 +90,9 @@ module app {
                     } else {
                         var schemaWizardPanel;
 
-                        switch (schemaModel.data.type) {
+                        switch (schema.getSchemaType()) {
                         case SchemaAppPanel.CONTENT_TYPE:
-                            new api_schema_content.GetContentTypeByQualifiedNameRequest(schemaModel.data.qualifiedName).
+                            new api_schema_content.GetContentTypeByQualifiedNameRequest(schema.getSchemaName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
                                     var contentType = new api_schema_content.ContentType(jsonResponse.getResult());
 
@@ -105,7 +105,7 @@ module app {
                                 });
                             break;
                         case SchemaAppPanel.RELATIONSHIP_TYPE:
-                            new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(schemaModel.data.qualifiedName).
+                            new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(schema.getSchemaName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
                                     var relationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.getResult());
 
@@ -118,7 +118,7 @@ module app {
                                 });
                             break;
                         case SchemaAppPanel.MIXIN:
-                            new api_schema_mixin.GetMixinByQualifiedNameRequest(schemaModel.data.qualifiedName).
+                            new api_schema_mixin.GetMixinByQualifiedNameRequest(schema.getSchemaName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_mixin_json.MixinJson>)=> {
                                     var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.getResult());
                                     tabMenuItem = new api_app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
@@ -136,21 +136,21 @@ module app {
             });
 
             app_browse.OpenSchemaEvent.on((event) => {
-                event.getModels().forEach((schemaModel:api_model.SchemaExtModel) => {
+                event.getSchemas().forEach((schema:api_schema.Schema) => {
 
-                        var tabId = this.generateTabId(schemaModel.data.type, schemaModel.data.name, false);
+                        var tabId = this.generateTabId(schema.getSchemaType(), schema.getSchemaName(), false);
                         var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                         if (tabMenuItem != null) {
                             this.selectPanel(tabMenuItem);
 
                         } else {
-                            tabMenuItem = new api_app.AppBarTabMenuItem(schemaModel.data.displayName, tabId);
+                            tabMenuItem = new api_app.AppBarTabMenuItem(schema.getSchemaName(), tabId);
                             var schemaItemViewPanel = new app_view.SchemaItemViewPanel();
-                            var spaceItem = new api_app_view.ViewItem(schemaModel)
-                                .setDisplayName(schemaModel.data.displayName)
-                                .setPath(schemaModel.data.name)
-                                .setIconUrl(schemaModel.data.iconUrl);
+                            var spaceItem = new api_app_view.ViewItem(schema)
+                                .setDisplayName(schema.getDisplayName())
+                                .setPath(schema.getSchemaName())
+                                .setIconUrl(schema.getIcon());
 
                             schemaItemViewPanel.setItem(spaceItem);
 
@@ -164,7 +164,7 @@ module app {
                 if (!components.schemaDeleteDialog) {
                     components.schemaDeleteDialog = new app_delete.SchemaDeleteDialog();
                 }
-                components.schemaDeleteDialog.setSchemaToDelete(event.getModels()).open();
+                components.schemaDeleteDialog.setSchemaToDelete(event.getSchemas()).open();
             });
 
             app_browse.ReindexSchemaEvent.on(() => {

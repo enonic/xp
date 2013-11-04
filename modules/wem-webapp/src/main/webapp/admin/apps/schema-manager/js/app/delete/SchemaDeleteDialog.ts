@@ -2,7 +2,7 @@ module app_delete {
 
     export class SchemaDeleteDialog extends api_app_delete.DeleteDialog {
 
-        private schemaToDelete:api_model.SchemaExtModel[];
+        private schemaToDelete:api_schema.Schema[];
 
         constructor() {
             super("Schema");
@@ -13,17 +13,17 @@ module app_delete {
 
                 var deleteRequest = new api_schema.DeleteSchemaRequest();
                 for (var i = 0; i < this.schemaToDelete.length; i++) {
-                    deleteRequest.addQualifiedName(this.schemaToDelete[i].data.qualifiedName);
+                    deleteRequest.addQualifiedName(this.schemaToDelete[i].getSchemaName());
                 }
 
-                var type = this.schemaToDelete.length > 0 ? this.schemaToDelete[0].data.type : undefined;
+                var type = this.schemaToDelete.length > 0 ? this.schemaToDelete[0].getSchemaType() : undefined;
                 deleteRequest.setType(type);
 
                 deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {
                     var json = jsonResponse.getJson();
 
                     var names:string[] = [];
-                    for ( var i = 0; i < json.successes.length; i++ ) {
+                    for (var i = 0; i < json.successes.length; i++) {
                         names.push(json.successes[i].name);
                     }
 
@@ -36,15 +36,12 @@ module app_delete {
             });
         }
 
-        setSchemaToDelete(schemaModels:api_model.SchemaExtModel[]):SchemaDeleteDialog {
-            this.schemaToDelete = schemaModels;
+        setSchemaToDelete(schemas:api_schema.Schema[]):SchemaDeleteDialog {
+            this.schemaToDelete = schemas;
 
             var deleteItems:api_app_delete.DeleteItem[] = [];
-            for (var i in schemaModels) {
-                var schemaModel = schemaModels[i];
-
-                var deleteItem = new api_app_delete.DeleteItem(schemaModel.data.iconUrl, schemaModel.data.displayName);
-                deleteItems.push(deleteItem);
+            for (var i = 0; i < schemas.length; i++) {
+                deleteItems.push(new api_app_delete.DeleteItem(schemas[i].getIcon(), schemas[i].getDisplayName()));
             }
             this.setDeleteItems(deleteItems);
             return this;
