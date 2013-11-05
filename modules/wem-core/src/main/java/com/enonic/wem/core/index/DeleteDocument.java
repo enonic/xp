@@ -2,22 +2,22 @@ package com.enonic.wem.core.index;
 
 public class DeleteDocument
 {
-    private final String indexName;
+    private final Index index;
 
     private final IndexType indexType;
 
     private final String id;
 
-    public DeleteDocument( final String indexName, final IndexType indexType, final String id )
+    public DeleteDocument( final Index index, final IndexType indexType, final String id )
     {
-        this.indexName = indexName;
+        this.index = index;
         this.indexType = indexType;
         this.id = id;
     }
 
-    public String getIndexName()
+    public Index getIndex()
     {
-        return indexName;
+        return index;
     }
 
     public IndexType getIndexType()

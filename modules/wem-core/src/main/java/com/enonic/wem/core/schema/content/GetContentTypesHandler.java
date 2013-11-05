@@ -7,20 +7,16 @@ import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
-import com.enonic.wem.core.schema.mixin.InternalMixinFetcher;
-import com.enonic.wem.core.schema.mixin.dao.MixinDao;
 
 
 public final class GetContentTypesHandler
     extends CommandHandler<GetContentTypes>
 {
     private ContentTypeDao contentTypeDao;
-
-    private MixinDao mixinDao;
 
     @Override
     public void handle()
@@ -34,7 +30,7 @@ public final class GetContentTypesHandler
         }
         else
         {
-            final QualifiedContentTypeNames qualifiedNames = command.getQualifiedNames();
+            final ContentTypeNames qualifiedNames = command.getQualifiedNames();
             contentTypes = getContentTypes( session, qualifiedNames );
         }
 
@@ -53,15 +49,14 @@ public final class GetContentTypesHandler
         return contentTypeDao.selectAll( session );
     }
 
-    private ContentTypes getContentTypes( final Session session, final QualifiedContentTypeNames contentTypeNames )
+    private ContentTypes getContentTypes( final Session session, final ContentTypeNames contentTypeNames )
     {
         return contentTypeDao.select( contentTypeNames, session );
     }
 
     private ContentTypes transformMixinReferences( final ContentTypes contentTypes, final Session session )
     {
-        final InternalMixinFetcher internalMixinFetcher = new InternalMixinFetcher( mixinDao, session );
-        final MixinReferencesToFormItemsTransformer transformer = new MixinReferencesToFormItemsTransformer( internalMixinFetcher );
+        final MixinReferencesToFormItemsTransformer transformer = new MixinReferencesToFormItemsTransformer( context.getClient() );
         ContentTypes.Builder transformedContentTypes = ContentTypes.newContentTypes();
         for ( final ContentType contentType : contentTypes )
         {
@@ -76,11 +71,5 @@ public final class GetContentTypesHandler
     public void setContentTypeDao( final ContentTypeDao contentTypeDao )
     {
         this.contentTypeDao = contentTypeDao;
-    }
-
-    @Inject
-    public void setMixinDao( final MixinDao mixinDao )
-    {
-        this.mixinDao = mixinDao;
     }
 }

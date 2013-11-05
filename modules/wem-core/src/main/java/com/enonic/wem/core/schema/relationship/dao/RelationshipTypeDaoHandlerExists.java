@@ -7,13 +7,13 @@ import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 
 final class RelationshipTypeDaoHandlerExists
-    extends AbstractRelationshipTypeDaoHandler<QualifiedRelationshipTypeNames>
+    extends AbstractRelationshipTypeDaoHandler<RelationshipTypeNames>
 {
-    private QualifiedRelationshipTypeNames qualifiedNames;
+    private RelationshipTypeNames qualifiedNames;
 
     RelationshipTypeDaoHandlerExists( final Session session )
     {
@@ -21,7 +21,7 @@ final class RelationshipTypeDaoHandlerExists
     }
 
 
-    RelationshipTypeDaoHandlerExists selectors( final QualifiedRelationshipTypeNames qNames )
+    RelationshipTypeDaoHandlerExists selectors( final RelationshipTypeNames qNames )
     {
         this.qualifiedNames = qNames;
         return this;
@@ -33,11 +33,11 @@ final class RelationshipTypeDaoHandlerExists
         setResult( handle( qualifiedNames ) );
     }
 
-    private QualifiedRelationshipTypeNames handle( final QualifiedRelationshipTypeNames qualifiedNames )
+    private RelationshipTypeNames handle( final RelationshipTypeNames qualifiedNames )
         throws RepositoryException
     {
-        final List<QualifiedRelationshipTypeName> existing = Lists.newArrayList();
-        for ( QualifiedRelationshipTypeName qName : qualifiedNames )
+        final List<RelationshipTypeName> existing = Lists.newArrayList();
+        for ( RelationshipTypeName qName : qualifiedNames )
         {
             if ( nodeExists( qName ) )
             {
@@ -45,6 +45,6 @@ final class RelationshipTypeDaoHandlerExists
             }
 
         }
-        return QualifiedRelationshipTypeNames.from( existing );
+        return RelationshipTypeNames.from( existing );
     }
 }

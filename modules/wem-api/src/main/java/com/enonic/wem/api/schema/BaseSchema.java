@@ -6,31 +6,28 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.Name;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.content.QualifiedName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
-public abstract class BaseSchema<T extends QualifiedName>
+public abstract class BaseSchema<T extends SchemaName>
     implements Schema
 {
-    private final SchemaId id;
+    final SchemaId id;
 
-    private final Name name;
+    final SchemaName name;
 
-    private final String displayName;
+    final String displayName;
 
-    private final DateTime createdTime;
+    final DateTime createdTime;
 
-    private final DateTime modifiedTime;
+    final DateTime modifiedTime;
 
-    private final UserKey creator;
+    final UserKey creator;
 
-    private final UserKey modifier;
+    final UserKey modifier;
 
-    private final Icon icon;
+    final Icon icon;
 
-    protected BaseSchema( Builder builder )
+    protected BaseSchema( final Builder builder )
     {
         this.id = builder.id;
         this.name = builder.name;
@@ -88,7 +85,7 @@ public abstract class BaseSchema<T extends QualifiedName>
     {
         private SchemaId id;
 
-        private Name name;
+        private SchemaName name;
 
         private String displayName;
 
@@ -130,15 +127,9 @@ public abstract class BaseSchema<T extends QualifiedName>
             return getThis();
         }
 
-        public T name( final String name )
+        public T name( final SchemaName value )
         {
-            this.name = name != null ? Name.from( name ) : null;
-            return getThis();
-        }
-
-        public T qualifiedName( final QualifiedContentTypeName qualifiedContentTypeName )
-        {
-            this.name = Name.from( qualifiedContentTypeName.getContentTypeName() );
+            this.name = value;
             return getThis();
         }
 

@@ -307,6 +307,38 @@ public abstract class JavaTypeConverter<T>
         }
     }
 
+    public static final class EntityId
+        extends JavaTypeConverter<com.enonic.wem.api.entity.EntityId>
+    {
+        public static final EntityId GET = new EntityId();
+
+        private EntityId()
+        {
+            super( com.enonic.wem.api.entity.EntityId.class );
+        }
+
+        public com.enonic.wem.api.entity.EntityId convertFrom( final Object value )
+        {
+            if ( value instanceof com.enonic.wem.api.entity.EntityId )
+            {
+                return (com.enonic.wem.api.entity.EntityId) value;
+            }
+            else if ( value instanceof java.lang.String )
+            {
+                return com.enonic.wem.api.entity.EntityId.from( (java.lang.String) value );
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public com.enonic.wem.api.entity.EntityId convertFromString( final java.lang.String value )
+        {
+            return com.enonic.wem.api.entity.EntityId.from( value );
+        }
+    }
+
     public static final class BinaryId
         extends JavaTypeConverter<com.enonic.wem.api.content.binary.BinaryId>
     {

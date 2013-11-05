@@ -8,6 +8,8 @@ public interface SystemConfig
 
     public File getDataDir();
 
+    public File getBlobStoreDir();
+
     public File getConfigDir();
 
     public File getModuleDir();

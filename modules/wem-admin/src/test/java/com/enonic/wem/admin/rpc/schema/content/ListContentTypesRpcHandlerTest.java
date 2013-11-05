@@ -10,8 +10,8 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_AREA;
@@ -52,7 +52,7 @@ public class ListContentTypesRpcHandlerTest
 
         final ContentType contentType1 = newContentType().
             name( "my_type" ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            superType( ContentTypeName.unstructured() ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
@@ -63,7 +63,7 @@ public class ListContentTypesRpcHandlerTest
                 "Help text line 1" ).required( true ).build();
         final ContentType contentType2 = newContentType().
             name( "the_content_type" ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            superType( ContentTypeName.unstructured() ).
             addFormItem( inputTextCty2 ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2 );

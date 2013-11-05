@@ -5,11 +5,9 @@ import javax.inject.Inject;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.command.schema.mixin.GetMixins;
+import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
 import com.enonic.wem.api.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.core.support.BaseInitializer;
 
@@ -43,9 +41,10 @@ public class MixinsInitializer
 
     private void storeMixin( final Mixin mixin )
     {
-        final GetMixins getMixins = Commands.mixin().get().names( QualifiedMixinNames.from( mixin.getQualifiedName() ) );
-        final Mixins existingMixins = client.execute( getMixins );
-        if ( existingMixins.isEmpty() )
+        final GetMixin getMixin = Commands.mixin().get().byName( mixin.getQualifiedName() );
+
+        final Mixin existingMixin = client.execute( getMixin );
+        if ( existingMixin == null )
         {
             final CreateMixin createMixin = Commands.mixin().create();
             createMixin.name( mixin.getName() );
@@ -57,7 +56,7 @@ public class MixinsInitializer
         else
         {
             final UpdateMixin updateMixin = Commands.mixin().update();
-            updateMixin.qualifiedName( mixin.getQualifiedName() );
+            updateMixin.name( mixin.getQualifiedName() );
             updateMixin.editor( SetMixinEditor.newSetMixinEditor().
                 displayName( mixin.getDisplayName() ).
                 formItems( mixin.getFormItems() ).

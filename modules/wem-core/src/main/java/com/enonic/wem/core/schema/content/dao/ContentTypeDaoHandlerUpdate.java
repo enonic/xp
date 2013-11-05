@@ -7,7 +7,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 
 final class ContentTypeDaoHandlerUpdate
@@ -21,7 +21,7 @@ final class ContentTypeDaoHandlerUpdate
     void update( final ContentType contentType )
         throws RepositoryException
     {
-        final QualifiedContentTypeName contentTypeName = contentType.getQualifiedName();
+        final ContentTypeName contentTypeName = contentType.getQualifiedName();
         final Node contentTypeNode = getContentTypeNode( contentTypeName );
         if ( contentTypeNode == null )
         {

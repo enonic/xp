@@ -4,21 +4,21 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public final class DeleteMixin
     extends Command<DeleteMixinResult>
 {
-    private QualifiedMixinName qualifiedMixinName;
+    private MixinName mixinName;
 
-    public QualifiedMixinName getName()
+    public MixinName getName()
     {
-        return this.qualifiedMixinName;
+        return this.mixinName;
     }
 
-    public DeleteMixin name( final QualifiedMixinName qualifiedMixinName )
+    public DeleteMixin name( final MixinName mixinName )
     {
-        this.qualifiedMixinName = qualifiedMixinName;
+        this.mixinName = mixinName;
         return this;
     }
 
@@ -36,18 +36,18 @@ public final class DeleteMixin
         }
 
         final DeleteMixin that = (DeleteMixin) o;
-        return Objects.equal( this.qualifiedMixinName, that.qualifiedMixinName );
+        return Objects.equal( this.mixinName, that.mixinName );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedMixinName );
+        return Objects.hashCode( this.mixinName );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedMixinName, "qualifiedMixinName cannot be null" );
+        Preconditions.checkNotNull( this.mixinName, "mixinName cannot be null" );
     }
 }

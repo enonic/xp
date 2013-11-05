@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.enonic.wem.api.Icon;
 
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -49,10 +49,10 @@ public class ContentTypeJcrMapperTest
         mapper.toJcr( ContentType.newContentType().
             name( "my_content_type" ).
             displayName( "My module" ).
-            superType( QualifiedContentTypeName.structured() ).
+            superType( ContentTypeName.structured() ).
             setAbstract( false ).
             setFinal( true ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            superType( ContentTypeName.unstructured() ).
             createdTime( CREATED_TIME ).
             modifiedTime( MODIFIED_TIME ).
             icon( Icon.from( new byte[]{123}, "image/gif" ) ).
@@ -79,7 +79,7 @@ public class ContentTypeJcrMapperTest
         mapper.toJcr( ContentType.newContentType().
             name( "my_content_type" ).
             displayName( "My module" ).
-            superType( QualifiedContentTypeName.structured() ).
+            superType( ContentTypeName.structured() ).
             setAbstract( false ).
             setFinal( true ).
             createdTime( CREATED_TIME ).
@@ -96,7 +96,7 @@ public class ContentTypeJcrMapperTest
         assertEquals( MODIFIED_TIME, contentType.getModifiedTime() );
         assertEquals( "my_content_type", contentType.getName() );
         assertEquals( "My module", contentType.getDisplayName() );
-        assertEquals( QualifiedContentTypeName.structured(), contentType.getSuperType() );
+        assertEquals( ContentTypeName.structured(), contentType.getSuperType() );
         assertEquals( false, contentType.isAbstract() );
         assertEquals( true, contentType.isFinal() );
         assertEquals( Icon.from( new byte[]{123}, "image/gif" ), contentType.getIcon() );

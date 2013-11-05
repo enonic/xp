@@ -2,6 +2,7 @@ package com.enonic.wem.api.entity;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.data.DataPath;
@@ -9,10 +10,9 @@ import com.enonic.wem.api.data.Property;
 
 public class EntityIndexConfig
 {
-
     private final String analyzer;
 
-    private final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs;
+    private final ImmutableMap<DataPath, PropertyIndexConfig> propertyIndexConfigs;
 
     public static Builder newEntityIndexConfig()
     {
@@ -21,9 +21,8 @@ public class EntityIndexConfig
 
     private EntityIndexConfig( final Builder builder )
     {
-
         this.analyzer = builder.analyzer;
-        this.propertyIndexConfigs = builder.propertyIndexConfigs;
+        this.propertyIndexConfigs = ImmutableMap.copyOf( builder.propertyIndexConfigs );
     }
 
     public String getAnalyzer()
@@ -34,6 +33,11 @@ public class EntityIndexConfig
     public PropertyIndexConfig getPropertyIndexConfig( final DataPath dataPath )
     {
         return propertyIndexConfigs.get( dataPath );
+    }
+
+    public Map<DataPath, PropertyIndexConfig> getPropertyIndexConfigs()
+    {
+        return propertyIndexConfigs;
     }
 
     public static class Builder

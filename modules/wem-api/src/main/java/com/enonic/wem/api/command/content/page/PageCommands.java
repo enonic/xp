@@ -7,4 +7,19 @@ public final class PageCommands
     {
         return new CreatePage();
     }
+
+    public UpdatePage update()
+    {
+        return new UpdatePage();
+    }
+
+    public DeletePage delete()
+    {
+        return new DeletePage();
+    }
+
+    public GetPage get()
+    {
+        return new GetPage();
+    }
 }

@@ -1,4 +1,5 @@
 {
+    "schemaKind": "ContentType",
     "abstract": false,
     "allowChildContent": true,
     "contentDisplayNameScript": null,
@@ -8,111 +9,120 @@
     "displayName": null,
     "editable": true,
     "final": false,
-    "form": [
-        {
-            "customText": null,
-            "formItemType": "Input",
-            "helpText": null,
-            "immutable": false,
-            "indexed": false,
-            "inputType": {
-                "config": null,
-                "name": "TextLine"
-            },
-            "label": "My text line",
-            "name": "myTextLine",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 1
-            },
-            "validationRegexp": null
-        },
-        {
-            "customText": null,
-            "formItemType": "Input",
-            "helpText": null,
-            "immutable": false,
-            "indexed": false,
-            "inputType": {
-                "config": null,
-                "name": "custom:DummyCustomInputType"
-            },
-            "label": "My custom input",
-            "name": "myCustomInput",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 0
-            },
-            "validationRegexp": null
-        },
-        {
-            "formItemType": "Layout",
-            "items": [
-                {
+    "form": {
+        "formItems": [
+            {
+                "Input": {
+                    "name": "myTextLine",
+                    "label": "My text line",
                     "customText": null,
-                    "formItemType": "Input",
                     "helpText": null,
+                    "validationRegexp": null,
                     "immutable": false,
                     "indexed": false,
                     "inputType": {
-                        "config": null,
                         "name": "TextLine"
                     },
-                    "label": "My text line",
-                    "name": "myTextLine",
                     "occurrences": {
-                        "maximum": 1,
-                        "minimum": 0
+                        "minimum": 1,
+                        "maximum": 1
                     },
-                    "validationRegexp": null
+                    "config": { }
                 }
-            ],
-            "label": "My field set",
-            "layoutType": "FieldSet",
-            "name": "myFieldSet"
-        },
-        {
-            "customText": null,
-            "formItemType": "FormItemSet",
-            "helpText": null,
-            "immutable": false,
-            "items": [
-                {
+            },
+            {
+                "Input": {
+                    "name": "myCustomInput",
+                    "label": "My custom input",
                     "customText": null,
-                    "formItemType": "Input",
                     "helpText": null,
+                    "validationRegexp": null,
                     "immutable": false,
                     "indexed": false,
                     "inputType": {
-                        "config": null,
-                        "name": "TextLine"
+                        "name": "custom:DummyCustomInputType"
                     },
-                    "label": "My text line",
-                    "name": "myTextLine",
                     "occurrences": {
-                        "maximum": 1,
-                        "minimum": 0
+                        "minimum": 0,
+                        "maximum": 1
                     },
-                    "validationRegexp": null
+                    "config": { }
                 }
-            ],
-            "label": "My form item set",
-            "name": "myFormItemSet",
-            "occurrences": {
-                "maximum": 1,
-                "minimum": 0
+            },
+            {
+                "FieldSet": {
+                    "name": "myFieldSet",
+                    "label": "My field set",
+                    "items": [
+                        {
+                            "Input": {
+                                "name": "myTextLine",
+                                "label": "My text line",
+                                "customText": null,
+                                "helpText": null,
+                                "validationRegexp": null,
+                                "immutable": false,
+                                "indexed": false,
+                                "inputType": {
+                                    "name": "TextLine"
+                                },
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "config": { }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "FormItemSet": {
+                    "name": "myFormItemSet",
+                    "label": "My form item set",
+                    "customText": null,
+                    "helpText": null,
+                    "immutable": false,
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "items": [
+                        {
+                            "Input": {
+                                "name": "myTextLine",
+                                "label": "My text line",
+                                "customText": null,
+                                "helpText": null,
+                                "validationRegexp": null,
+                                "immutable": false,
+                                "indexed": false,
+                                "inputType": {
+                                    "name": "TextLine"
+                                },
+                                "occurrences": {
+                                    "minimum": 0,
+                                    "maximum": 1
+                                },
+                                "config": { }
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "MixinReference": {
+                    "name": "myMixinReference",
+                    "reference": "mymixin"
+                }
             }
-        },
-        {
-            "formItemType": "MixinReference",
-            "name": "myMixinReference",
-            "reference": "mymixin"
-        }
-    ],
+        ]
+    },
+    "hasChildren": false,
     "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:my_cty",
+    "key": "ContentType:my_cty",
     "modifiedTime": null,
     "modifier": null,
     "name": "my_cty",
-    "qualifiedName": "my_cty",
     "superType": "unstructured"
 }

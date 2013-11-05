@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 public class ValidateContentData
@@ -13,7 +13,7 @@ public class ValidateContentData
 {
     private ContentData contentData;
 
-    private QualifiedContentTypeName contentType;
+    private ContentTypeName contentType;
 
     public ContentData getContentData()
     {
@@ -26,12 +26,12 @@ public class ValidateContentData
         return this;
     }
 
-    public QualifiedContentTypeName getContentType()
+    public ContentTypeName getContentType()
     {
         return contentType;
     }
 
-    public ValidateContentData contentType( final QualifiedContentTypeName contentType )
+    public ValidateContentData contentType( final ContentTypeName contentType )
     {
         this.contentType = contentType;
         return this;

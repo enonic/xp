@@ -3,7 +3,7 @@
     "success": true,
     "successes": [
         {
-            "qualifiedName": "my:existing_mixin"
+            "name": "existing_mixin"
         }
     ]
 }

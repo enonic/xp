@@ -1,6 +1,6 @@
 module app {
 
-    export class ContentAppPanel extends api_app.BrowseAndWizardBasedAppPanel {
+    export class ContentAppPanel extends api_app.BrowseAndWizardBasedAppPanel<api_content.ContentSummary> {
 
         constructor(appBar:api_app.AppBar) {
 

@@ -11,7 +11,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.relationship.CreateRelationship;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.RelationshipKey;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 
 public final class CreateRelationshipRpcHandler
@@ -26,7 +26,7 @@ public final class CreateRelationshipRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final QualifiedRelationshipTypeName type = QualifiedRelationshipTypeName.from( context.param( "type" ).required().asString() );
+        final RelationshipTypeName type = RelationshipTypeName.from( context.param( "type" ).required().asString() );
         final ContentId fromContent = ContentId.from( context.param( "fromContent" ).required().asString() );
         final ContentId toContent = ContentId.from( context.param( "toContent" ).required().asString() );
 

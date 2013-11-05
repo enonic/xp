@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -28,6 +29,7 @@ public class JsonTestHelper
         this.prettyPrint = true;
         objectMapper = new ObjectMapper();
         objectMapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
+        objectMapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
         objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     }
 
@@ -40,6 +42,7 @@ public class JsonTestHelper
     {
         this.resourceTestHelper = new ResourceTestHelper( testInstance );
         objectMapper = new ObjectMapper();
+        objectMapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
         this.prettyPrint = prettyPrint;
         if ( prettyPrint )
         {

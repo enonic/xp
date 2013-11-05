@@ -1,0 +1,69 @@
+package com.enonic.wem.core.rendering;
+
+
+import java.io.IOException;
+
+import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.template.GetTemplate;
+import com.enonic.wem.api.command.module.GetModuleResource;
+import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateId;
+import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.core.content.page.PageDescriptorXmlSerializer;
+
+public final class PageComponentType
+    implements ComponentType<Page>
+{
+    private final PageDescriptorXmlSerializer pageDescriptorXmlSerializer;
+
+    private final ControllerFactory controllerFactory;
+
+    private final Client client;
+
+    public PageComponentType( final Client client )
+    {
+        this.client = client;
+        this.controllerFactory = new ControllerFactory( client );
+        this.pageDescriptorXmlSerializer = new PageDescriptorXmlSerializer();
+    }
+
+    @Override
+    public RenderingResult execute( final Page page, final Context context )
+    {
+        final PageTemplate template = getPageTemplate( page.getTemplateId(), client );
+        final PageDescriptor descriptor = getPageDescriptor( template.getDescriptor(), client );
+
+        final ModuleResourceKey controllerResource = descriptor.getControllerResource();
+        final RootDataSet pageConfig = page.getConfig();
+
+        final Controller controller = controllerFactory.create( controllerResource, pageConfig );
+
+        return controller.execute( context );
+    }
+
+    private PageTemplate getPageTemplate( final PageTemplateId templateId, final Client client )
+    {
+        final GetTemplate command = Commands.template().get().templateId( templateId );
+        return (PageTemplate) client.execute( command );
+    }
+
+    private PageDescriptor getPageDescriptor( final ModuleResourceKey key, final Client client )
+    {
+        final GetModuleResource command = Commands.module().getResource().resourceKey( key );
+        final Resource descriptorResource = client.execute( command );
+        try
+        {
+            final String resourceAsString = descriptorResource.readAsString();
+            return pageDescriptorXmlSerializer.toPageDescriptor( resourceAsString );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Unable to retrieve page descriptor: " + key.toString(), e );
+        }
+    }
+}

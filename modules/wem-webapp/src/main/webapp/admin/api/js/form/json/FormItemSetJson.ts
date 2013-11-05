@@ -8,7 +8,7 @@ module api_form_json{
 
         immutable:boolean;
 
-        items:FormItemJson[];
+        items:FormItemTypeWrapperJson[];
 
         label:string;
 

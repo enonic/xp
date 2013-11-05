@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
@@ -36,11 +36,11 @@ public class RelationshipTypeJsonSerializer
         objectNode.put( "toSemantic", relationshipType.getToSemantic() );
         final ArrayNode allowedFromTypes = objectNode.putArray( "allowedFromTypes" );
         final ArrayNode allowedToTypes = objectNode.putArray( "allowedToTypes" );
-        for ( QualifiedContentTypeName allowedFromType : relationshipType.getAllowedFromTypes() )
+        for ( ContentTypeName allowedFromType : relationshipType.getAllowedFromTypes() )
         {
             allowedFromTypes.add( allowedFromType.toString() );
         }
-        for ( QualifiedContentTypeName allowedToType : relationshipType.getAllowedToTypes() )
+        for ( ContentTypeName allowedToType : relationshipType.getAllowedToTypes() )
         {
             allowedToTypes.add( allowedToType.toString() );
         }
@@ -65,13 +65,13 @@ public class RelationshipTypeJsonSerializer
         final JsonNode allowedFromTypes = relationshipTypeNode.get( "allowedFromTypes" );
         for ( JsonNode allowedFromType : allowedFromTypes )
         {
-            relationshipTypeBuilder.addAllowedFromType( QualifiedContentTypeName.from( allowedFromType.textValue() ) );
+            relationshipTypeBuilder.addAllowedFromType( ContentTypeName.from( allowedFromType.textValue() ) );
         }
 
         final JsonNode allowedToTypes = relationshipTypeNode.get( "allowedToTypes" );
         for ( JsonNode allowedToType : allowedToTypes )
         {
-            relationshipTypeBuilder.addAllowedToType( QualifiedContentTypeName.from( allowedToType.textValue() ) );
+            relationshipTypeBuilder.addAllowedToType( ContentTypeName.from( allowedToType.textValue() ) );
         }
 
         return relationshipTypeBuilder.build();

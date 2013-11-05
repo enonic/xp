@@ -1,29 +1,22 @@
 package com.enonic.wem.api.content;
 
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.data.DataSet.newDataSet;
-import static com.enonic.wem.api.data.Property.Xml.newXml;
-import static com.enonic.wem.api.data.Property.newProperty;
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -79,8 +72,8 @@ public class ContentTest
     @Test
     public void array()
     {
-        Property first = newProperty().name( "array" ).type( ValueTypes.STRING ).value( "First" ).build();
-        Property second = newProperty().name( "array" ).type( ValueTypes.STRING ).value( "Second" ).build();
+        Property first = new Property.String( "array", "First" );
+        Property second = new Property.String( "array", "Second" );
 
         ContentData contentData = new ContentData();
         contentData.add( first );
@@ -180,10 +173,10 @@ public class ContentTest
     public void add_array_of_set_within_set()
     {
         DataSet address1 = newDataSet().name( "address" ).build();
-        address1.add( newProperty().name( "street" ).type( ValueTypes.STRING ).value( "Kirkegata 1-3" ).build() );
+        address1.add( new Property.String( "street", "Kirkegata 1-3" ) );
 
         DataSet address2 = newDataSet().name( "address" ).build();
-        address2.add( newProperty().name( "street" ).type( ValueTypes.STRING ).value( "Sonsteli" ).build() );
+        address2.add( new Property.String( "street", "Sonsteli" ) );
 
         DataSet company = newDataSet().name( "company" ).build();
         company.add( address1 );
@@ -422,11 +415,11 @@ public class ContentTest
     {
         // setup
         contentType.form().addFormItem( newInput().name( "name" ).inputType( InputTypes.TEXT_LINE ).build() );
-        FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).add(
-            newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).add(
+        FieldSet personalia = newFieldSet().label( "Personalia" ).name( "personalia" ).addFormItem(
+            newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() ).addFormItem(
             newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
-        FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).add(
-            newInput().name( "tattoo" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).add(
+        FieldSet tatoos = newFieldSet().label( "Characteristics" ).name( "characteristics" ).addFormItem(
+            newInput().name( "tattoo" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).addFormItem(
             newInput().name( "scar" ).inputType( InputTypes.TEXT_LINE ).multiple( true ).build() ).build();
         personalia.addFormItem( tatoos );
         contentType.form().addFormItem( personalia );
@@ -469,83 +462,5 @@ public class ContentTest
             assertTrue( e instanceof IllegalArgumentException );
             assertEquals( "Array [myData] expects Property of type [String]. Property [myData] was of type: DateMidnight", e.getMessage() );
         }
-    }
-
-    @Test
-    public void toItem()
-    {
-        // setup
-        ContentData contentData = new ContentData();
-        contentData.add( new Property.Long( "myNumber", 1 ) );
-        contentData.add( new Property.String( "myText", "text" ) );
-        contentData.setProperty( "mySet.myOtherNumber", new Value.Long( 2 ) );
-
-        Content content = Content.newContent().
-            id( ContentId.from( "ABC-123" ) ).
-            name( "myContent" ).
-            displayName( "My Content" ).
-            creator( UserKey.from( "mystore:someuser" ) ).
-            createdTime( DateTime.parse( "2012-12-12T12:00:00" ) ).
-            modifiedTime( DateTime.parse( "2012-12-12T13:00:00" ) ).
-            modifier( UserKey.from( "mystore:someotheruser" ) ).
-            owner( UserKey.from( "mystore:someuser" ) ).
-            type( QualifiedContentTypeName.from( "mymodule:mycty" ) ).
-            contentData( contentData ).build();
-
-        // exercise
-        Node node = content.toNode( NodePath.ROOT );
-
-        // verify
-        assertEquals( "ABC-123", node.id().toString() );
-        assertEquals( "myContent", node.name() );
-        assertEquals( "My Content", node.property( "displayName" ).getString() );
-        assertEquals( "user:mystore:someuser", node.getCreator().toString() );
-        assertEquals( "user:mystore:someotheruser", node.getModifier().toString() );
-        assertEquals( "user:mystore:someuser", node.property( "owner" ).getString() );
-        assertEquals( content.getCreatedTime(), node.getCreatedTime() );
-        assertEquals( content.getModifiedTime(), node.getModifiedTime() );
-        assertEquals( "mymodule:mycty", node.property( "type" ).getString() );
-        assertEquals( "1", node.property( "data.myNumber" ).getString() );
-        assertEquals( "text", node.property( "data.myText" ).getString() );
-        assertEquals( "2", node.property( "data.mySet.myOtherNumber" ).getString() );
-    }
-
-    @Test
-    public void new_way()
-    {
-        ContentData contentData = new ContentData();
-        contentData.add( newProperty().type( ValueTypes.STRING ).name( "myData" ).value( "1" ).build() );
-        contentData.add( Property.String.newString().name( "myData" ).value( "1" ).build() );
-        contentData.add( newXml().name( "myXml" ).value( "<root/>" ).build() );
-
-        assertEquals( "1", contentData.getProperty( "myData" ).getValue().asString() );
-        assertEquals( "1", contentData.getProperty( "myData" ).getString() );
-    }
-
-    @Test
-    public void new_way2()
-    {
-        ContentData contentData = new ContentData();
-
-        contentData.add( new Property.String( "myData", "1" ) );
-        contentData.add( new Property.String( "myArray", "1" ) );
-        contentData.add( new Property.String( "myArray", "2" ) );
-        //contentData.add( new Xml( "myXml", "<root></root>" ) );
-
-        Content content = newContent().name( "myContent" ).contentData( contentData ).build();
-
-        assertEquals( "1", contentData.getProperty( "myArray" ).getObject() );
-        assertEquals( "1", contentData.getProperty( "myArray", 0 ).getObject() );
-        assertEquals( "2", contentData.getProperty( "myArray[1]" ).getObject() );
-        assertEquals( true, contentData.getProperty( "myArray[1]" ).isArray() );
-        assertEquals( true, contentData.getProperty( "myArray" ).isArray() );
-        assertEquals( false, contentData.getProperty( "myData" ).isArray() );
-        assertEquals( 0, contentData.getProperty( "myData" ).getArrayIndex() );
-        assertEquals( 0, contentData.getProperty( "myArray" ).getArrayIndex() );
-        assertEquals( 1, contentData.getProperty( "myArray[1]" ).getArrayIndex() );
-        assertEquals( 2, contentData.nameCount( "myArray" ) );
-        assertEquals( 1, contentData.nameCount( "myData" ) );
-
-        Property myArray = content.getContentData().getProperty( "myArray" );
     }
 }

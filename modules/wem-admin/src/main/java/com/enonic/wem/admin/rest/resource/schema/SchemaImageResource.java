@@ -16,14 +16,13 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.command.Commands.mixin;
@@ -56,13 +55,13 @@ public final class SchemaImageResource
         BufferedImage schemaImage = null;
         if ( schemaKey.isContentType() )
         {
-            final Icon contentTypeIcon = findRootContentTypeIcon( QualifiedContentTypeName.from( schemaKey.getLocalName() ) );
+            final Icon contentTypeIcon = findRootContentTypeIcon( ContentTypeName.from( schemaKey.getLocalName() ) );
             schemaImage = helper.getIconImage( contentTypeIcon, size );
             mimeType = contentTypeIcon == null ? mimeType : contentTypeIcon.getMimeType();
         }
         else if ( schemaKey.isRelationshipType() )
         {
-            final Icon relationshipTypeIcon = findRelationshipTypeIcon( QualifiedRelationshipTypeName.from( schemaKey.getLocalName() ) );
+            final Icon relationshipTypeIcon = findRelationshipTypeIcon( RelationshipTypeName.from( schemaKey.getLocalName() ) );
             if ( relationshipTypeIcon == null )
             {
                 schemaImage = helper.getDefaultRelationshipTypeImage( size );
@@ -75,7 +74,7 @@ public final class SchemaImageResource
         }
         else if ( schemaKey.isMixin() )
         {
-            final Icon mixinIcon = findMixinIcon( QualifiedMixinName.from( schemaKey.getLocalName() ) );
+            final Icon mixinIcon = findMixinIcon( MixinName.from( schemaKey.getLocalName() ) );
             if ( mixinIcon == null )
             {
                 schemaImage = helper.getDefaultMixinImage( size );
@@ -94,7 +93,7 @@ public final class SchemaImageResource
         return Response.ok( schemaImage, mimeType ).build();
     }
 
-    private Icon findRootContentTypeIcon( final QualifiedContentTypeName contentTypeName )
+    private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )
     {
         ContentType contentType = getContentType( contentTypeName );
         while ( contentType != null && contentType.getIcon() == null )
@@ -104,26 +103,25 @@ public final class SchemaImageResource
         return contentType == null ? null : contentType.getIcon();
     }
 
-    private ContentType getContentType( final QualifiedContentTypeName contentTypeName )
+    private ContentType getContentType( final ContentTypeName contentTypeName )
     {
         if ( contentTypeName == null )
         {
             return null;
         }
-        final QualifiedContentTypeNames qualifiedNames = QualifiedContentTypeNames.from( contentTypeName );
+        final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentTypeName );
         return client.execute( contentType().get().qualifiedNames( qualifiedNames ) ).first();
     }
 
-    private Icon findMixinIcon( final QualifiedMixinName mixinName )
+    private Icon findMixinIcon( final MixinName mixinName )
     {
-        final QualifiedMixinNames mixinNames = QualifiedMixinNames.from( mixinName );
-        Mixin mixin = client.execute( mixin().get().names( mixinNames ) ).first();
+        final Mixin mixin = client.execute( mixin().get().byName( mixinName ) );
         return mixin == null ? null : mixin.getIcon();
     }
 
-    private Icon findRelationshipTypeIcon( final QualifiedRelationshipTypeName relationshipTypeName )
+    private Icon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )
     {
-        final QualifiedRelationshipTypeNames relationshipTypeNames = QualifiedRelationshipTypeNames.from( relationshipTypeName );
+        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( relationshipTypeName );
         RelationshipType relationshipType = client.execute( relationshipType().get().qualifiedNames( relationshipTypeNames ) ).first();
         return relationshipType == null ? null : relationshipType.getIcon();
 

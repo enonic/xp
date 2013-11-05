@@ -5,8 +5,10 @@ import java.io.IOException;
 
 import javax.annotation.concurrent.Immutable;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 
 @Immutable
 public final class Resource
@@ -45,6 +47,12 @@ public final class Resource
     public ByteSource getByteSource()
     {
         return byteSource;
+    }
+
+    public String readAsString()
+        throws IOException
+    {
+        return this.byteSource.asCharSource( Charsets.UTF_8 ).read();
     }
 
     @Override
@@ -108,6 +116,12 @@ public final class Resource
         public Builder byteSource( final ByteSource byteSource )
         {
             this.byteSource = byteSource;
+            return this;
+        }
+
+        public Builder stringValue( final String value )
+        {
+            this.byteSource = ByteStreams.asByteSource( value.getBytes( Charsets.UTF_8 ) );
             return this;
         }
 

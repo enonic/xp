@@ -6,10 +6,10 @@ import java.util.Map;
 public class MockContentTypeFetcher
     implements ContentTypeFetcher
 {
-    private Map<QualifiedContentTypeName, ContentType> map = new HashMap<QualifiedContentTypeName, ContentType>();
+    private Map<ContentTypeName, ContentType> map = new HashMap<ContentTypeName, ContentType>();
 
     @Override
-    public ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
+    public ContentType getContentType( final ContentTypeName qualifiedContentTypeName )
     {
         return map.get( qualifiedContentTypeName );
     }

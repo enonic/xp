@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.core.support.serializer.JsonParsingException;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
@@ -92,7 +92,7 @@ public class ContentTypeJsonSerializer
     protected ContentType parse( final JsonNode contentTypeNode )
     {
         final String superTypeValue = JsonSerializerUtil.getStringValue( "superType", contentTypeNode );
-        final QualifiedContentTypeName superType = superTypeValue != null ? QualifiedContentTypeName.from( superTypeValue ) : null;
+        final ContentTypeName superType = superTypeValue != null ? ContentTypeName.from( superTypeValue ) : null;
 
         final ContentType.Builder builder = newContentType();
         builder.name( JsonSerializerUtil.getStringValue( "name", contentTypeNode ) );

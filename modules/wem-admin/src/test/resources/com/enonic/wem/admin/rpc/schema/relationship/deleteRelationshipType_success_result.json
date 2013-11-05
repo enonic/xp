@@ -2,7 +2,7 @@
     "success": true,
     "successes": [
         {
-            "qualifiedRelationshipTypeName": "company:partner"
+            "qualifiedRelationshipTypeName": "partner"
         }
     ],
     "failures": [ ]

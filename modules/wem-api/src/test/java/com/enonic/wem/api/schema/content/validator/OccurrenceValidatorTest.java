@@ -148,7 +148,7 @@ public class OccurrenceValidatorTest
     public void given_required_field_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
 
-        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem(
             newInput().name( "myField" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).build() );
         Content content = newContent().build();
 
@@ -161,8 +161,8 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_input_with_no_data_within_layout_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).add(
-            newFieldSet().label( "My Layout" ).name( "myLayout" ).add(
+        contentType.form().addFormItem( newFieldSet().label( "My outer layout" ).name( "myOuterlayout" ).addFormItem(
+            newFieldSet().label( "My Layout" ).name( "myLayout" ).addFormItem(
                 newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).build() ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();
 
@@ -177,7 +177,7 @@ public class OccurrenceValidatorTest
     {
         Input myInput = newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
         FormItemSet mySet = newFormItemSet().name( "mySet" ).addFormItem( myInput ).build();
-        FieldSet myLayout = newFieldSet().label( "My layout" ).name( "myLayout" ).add( mySet ).build();
+        FieldSet myLayout = newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem( mySet ).build();
         contentType.form().addFormItem( myLayout );
         Content content = newContent().build();
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "" ) );
@@ -207,7 +207,7 @@ public class OccurrenceValidatorTest
     public void given_required_field_with_empty_string_within_layout_within_a_set_when_validate_then_MissingRequiredValueValidationError()
     {
         Input myRequiredInput = newInput().name( "myRequiredInput" ).inputType( InputTypes.TEXT_LINE ).required( true ).build();
-        FieldSet myLayout = newFieldSet().label( "My layout" ).name( "myLayout" ).add( myRequiredInput ).build();
+        FieldSet myLayout = newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem( myRequiredInput ).build();
         FormItemSet myRequiredSet = newFormItemSet().name( "mySet" ).required( false ).addFormItem( myLayout ).build();
 
         contentType.form().addFormItem( myRequiredSet );
@@ -252,7 +252,7 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_set_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
-        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+        contentType.form().addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem(
             newFormItemSet().name( "mySet" ).required( true ).addFormItem(
                 newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build() );
         Content content = newContent().type( contentType.getQualifiedName() ).build();

@@ -12,7 +12,7 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.space.SpaceNames;
 
 
@@ -37,7 +37,7 @@ public class FindContentRpcHandler
         final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( fulltext );
         contentIndexQuery.setIncludeFacets( includeFacets );
-        contentIndexQuery.setContentTypeNames( QualifiedContentTypeNames.from( contentTypes ) );
+        contentIndexQuery.setContentTypeNames( ContentTypeNames.from( contentTypes ) );
         contentIndexQuery.setSpaceNames( SpaceNames.from( spaces ) );
 
         if ( size != null )

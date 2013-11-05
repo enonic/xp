@@ -16,16 +16,15 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
 import static com.enonic.wem.api.form.Input.newInput;
@@ -64,7 +63,7 @@ public class RelationshipServiceImplTest
 
         // setup: content type
         InputTypeConfig inputTypeConfig =
-            RelationshipConfig.newRelationshipConfig().relationshipType( QualifiedRelationshipTypeName.DEFAULT ).build();
+            RelationshipConfig.newRelationshipConfig().relationshipType( RelationshipTypeName.DEFAULT ).build();
 
         Form form = Form.newForm().
             addFormItem( newInput().name( "myRelated1" ).inputType( InputTypes.RELATIONSHIP ).inputTypeConfig( inputTypeConfig ).build() ).
@@ -77,22 +76,20 @@ public class RelationshipServiceImplTest
 
         // setup: content before editing
         ContentData dataBefore = new ContentData();
-        dataBefore.add(
-            Property.newProperty().name( "myRelated1" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
-        dataBefore.add(
-            Property.newProperty().name( "myRelated2" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
+        dataBefore.add( new Property.ContentId( "myRelated1", ContentId.from( "111" ) ) );
+        dataBefore.add( new Property.ContentId( "myRelated2", ContentId.from( "222" ) ) );
 
         // setup: content after editing
         ContentData dataAfter = new ContentData();
-        dataAfter.add( Property.newProperty().name( "myRelated1" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "111" ) ).build() );
-        dataAfter.add( Property.newProperty().name( "myRelated2" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "222" ) ).build() );
-        dataAfter.add( Property.newProperty().name( "myRelated3" ).type( ValueTypes.CONTENT_ID ).value( ContentId.from( "333" ) ).build() );
+        dataAfter.add( new Property.ContentId( "myRelated1", ContentId.from( "111" ) ) );
+        dataAfter.add( new Property.ContentId( "myRelated2", ContentId.from( "222" ) ) );
+        dataAfter.add( new Property.ContentId( "myRelated3", ContentId.from( "333" ) ) );
 
         // exercise
         SyncRelationshipsCommand command = new SyncRelationshipsCommand();
         command.client( client );
         command.jcrSession( jcrSession );
-        command.contentType( QualifiedContentTypeName.from( "my_relations" ) );
+        command.contentType( ContentTypeName.from( "my_relations" ) );
         command.contentToUpdate( ContentId.from( "1" ) );
         command.contentBeforeEditing( dataBefore );
         command.contentAfterEditing( dataAfter );
@@ -102,7 +99,7 @@ public class RelationshipServiceImplTest
         Relationship createdRelationship = Relationship.newRelationship().
             creator( AccountKey.anonymous() ).
             createdTime( NOW ).
-            type( QualifiedRelationshipTypeName.DEFAULT ).
+            type( RelationshipTypeName.DEFAULT ).
             fromContent( ContentId.from( "1" ) ).
             toContent( ContentId.from( "333" ) ).
             managed( DataPath.from( "myRelated3" ) ).

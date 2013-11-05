@@ -9,19 +9,19 @@ import com.enonic.wem.core.schema.content.ContentTypesInitializer;
 import com.enonic.wem.core.schema.content.CreateContentTypeHandler;
 import com.enonic.wem.core.schema.content.DeleteContentTypeHandler;
 import com.enonic.wem.core.schema.content.DemoImagesInitializer;
-import com.enonic.wem.core.schema.content.GetContentTypeTreeHandler;
+import com.enonic.wem.core.schema.content.GetChildContentTypesHandler;
 import com.enonic.wem.core.schema.content.GetContentTypesHandler;
+import com.enonic.wem.core.schema.content.GetRootContentTypesHandler;
 import com.enonic.wem.core.schema.content.UpdateContentTypeHandler;
 import com.enonic.wem.core.schema.content.ValidateContentTypeHandler;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDaoImpl;
 import com.enonic.wem.core.schema.mixin.CreateMixinHandler;
 import com.enonic.wem.core.schema.mixin.DeleteMixinHandler;
+import com.enonic.wem.core.schema.mixin.GetMixinHandler;
 import com.enonic.wem.core.schema.mixin.GetMixinsHandler;
 import com.enonic.wem.core.schema.mixin.MixinsInitializer;
 import com.enonic.wem.core.schema.mixin.UpdateMixinHandler;
-import com.enonic.wem.core.schema.mixin.dao.MixinDao;
-import com.enonic.wem.core.schema.mixin.dao.MixinDaoImpl;
 import com.enonic.wem.core.schema.relationship.CreateRelationshipTypeHandler;
 import com.enonic.wem.core.schema.relationship.DeleteRelationshipTypeHandler;
 import com.enonic.wem.core.schema.relationship.GetRelationshipTypesHandler;
@@ -38,7 +38,6 @@ public final class SchemaModule
     protected void configure()
     {
         bind( ContentTypeDao.class ).to( ContentTypeDaoImpl.class ).in( Scopes.SINGLETON );
-        bind( MixinDao.class ).to( MixinDaoImpl.class ).in( Scopes.SINGLETON );
         bind( RelationshipTypeDao.class ).to( RelationshipTypeDaoImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
@@ -50,17 +49,20 @@ public final class SchemaModule
         final CommandBinder commands = CommandBinder.from( binder() );
 
         commands.add( GetSchemasHandler.class );
-        commands.add( GetSchemaTreeHandler.class );
+        commands.add( GetRootSchemasHandler.class );
+        commands.add( GetChildSchemasHandler.class );
 
         commands.add( CreateContentTypeHandler.class );
         commands.add( DeleteContentTypeHandler.class );
         commands.add( GetContentTypesHandler.class );
-        commands.add( GetContentTypeTreeHandler.class );
+        commands.add( GetRootContentTypesHandler.class );
+        commands.add( GetChildContentTypesHandler.class );
         commands.add( UpdateContentTypeHandler.class );
         commands.add( ValidateContentTypeHandler.class );
 
         commands.add( CreateMixinHandler.class );
         commands.add( DeleteMixinHandler.class );
+        commands.add( GetMixinHandler.class );
         commands.add( GetMixinsHandler.class );
         commands.add( UpdateMixinHandler.class );
 

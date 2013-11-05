@@ -1,6 +1,6 @@
 module app {
 
-    export class SpaceAppPanel extends api_app.BrowseAndWizardBasedAppPanel {
+    export class SpaceAppPanel extends api_app.BrowseAndWizardBasedAppPanel<api_model.SpaceExtModel> {
 
 
         constructor(appBar:api_app.AppBar) {

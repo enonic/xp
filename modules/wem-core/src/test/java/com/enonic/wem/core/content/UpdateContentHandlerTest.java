@@ -21,9 +21,8 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditors;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -72,12 +71,12 @@ public class UpdateContentHandlerTest
 
         Mockito.when( super.client.execute( isA( ValidateContentData.class ) ) ).thenReturn( DataValidationErrors.empty() );
 
-        final QualifiedContentTypeName myContentTypeName = QualifiedContentTypeName.from( "my_content_type" );
+        final ContentTypeName myContentTypeName = ContentTypeName.from( "my_content_type" );
         final ContentType myContentType = newContentType().
-            qualifiedName( myContentTypeName ).
-            superType( QualifiedContentTypeName.structured() ).
+            name( myContentTypeName ).
+            superType( ContentTypeName.structured() ).
             build();
-        Mockito.when( contentTypeDao.select( isA( QualifiedContentTypeName.class ), eq( session ) ) ).thenReturn( myContentType );
+        Mockito.when( contentTypeDao.select( isA( ContentTypeName.class ), eq( session ) ) ).thenReturn( myContentType );
     }
 
     @Test
@@ -88,12 +87,12 @@ public class UpdateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         ContentData existingContentData = new ContentData();
-        existingContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "aaa" ).build() );
+        existingContentData.add( new Property.String( "myData", "aaa" ) );
 
         Mockito.when( contentDao.select( eq( ContentPath.from( "myContent" ) ), Mockito.any( Session.class ) ) ).thenReturn( null );
 
         ContentData unchangedContentData = new ContentData();
-        unchangedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "aaa" ).build() );
+        unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
@@ -118,14 +117,14 @@ public class UpdateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         ContentData existingContentData = new ContentData();
-        existingContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "aaa" ).build() );
+        existingContentData.add( new Property.String( "myData", "aaa" ) );
 
         Content existingContent = createContent( existingContentData );
 
         Mockito.when( contentDao.select( eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
 
         ContentData unchangedContentData = new ContentData();
-        unchangedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "aaa" ).build() );
+        unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
@@ -148,14 +147,14 @@ public class UpdateContentHandlerTest
         DateTimeUtils.setCurrentMillisFixed( UPDATED_TIME.getMillis() );
 
         ContentData existingContentData = new ContentData();
-        existingContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "aaa" ).build() );
+        existingContentData.add( new Property.String( "myData", "aaa" ) );
 
         Content existingContent = createContent( existingContentData );
 
         Mockito.when( contentDao.select( eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
 
         ContentData changedContentData = new ContentData();
-        changedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "bbb" ).build() );
+        changedContentData.add( new Property.String( "myData", "bbb" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).

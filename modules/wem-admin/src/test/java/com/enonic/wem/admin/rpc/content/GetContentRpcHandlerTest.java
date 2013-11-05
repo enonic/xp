@@ -19,7 +19,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class GetContentRpcHandlerTest
     extends AbstractRpcHandlerTest
@@ -83,7 +83,7 @@ public class GetContentRpcHandlerTest
             displayName( "My Content" ).
             modifiedTime( DateTime.now() ).
             modifier( UserKey.superUser() ).
-            type( QualifiedContentTypeName.from( "my_type" ) ).
+            type( ContentTypeName.from( "my_type" ) ).
             contentData( contentData ).
             build();
     }

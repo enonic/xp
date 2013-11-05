@@ -18,10 +18,9 @@ import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MockMixinFetcher;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
 import com.enonic.wem.core.form.inputtype.InputTypeExtensions;
 import com.enonic.wem.core.form.inputtype.InputTypeResolver;
@@ -68,7 +67,7 @@ public abstract class AbstractContentTypeSerializerTest
         Mixin inputMixin = newMixin().name( "my_shared_input" ).addFormItem(
             Input.newInput().name( "my_shared_input" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         FormItemSet set = newFormItemSet().name( "mySet" ).build();
-        Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).add(
+        Layout layout = FieldSet.newFieldSet().label( "My field set" ).name( "myFieldSet" ).addFormItem(
             newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
         set.add( layout );
         set.add( newMixinReference().name( "myCommonInput" ).mixin( inputMixin ).build() );
@@ -77,7 +76,7 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( set );
         contentTypeBuilder.displayName( "All the Base Types" );
         contentTypeBuilder.contentDisplayNameScript( "$('firstName') + ' ' + $('lastName')" );
-        contentTypeBuilder.superType( QualifiedContentTypeName.from( "content" ) );
+        contentTypeBuilder.superType( ContentTypeName.from( "content" ) );
         contentTypeBuilder.setAbstract( false );
         contentTypeBuilder.setFinal( true );
 
@@ -199,9 +198,6 @@ public abstract class AbstractContentTypeSerializerTest
         contentTypeBuilder.addFormItem( MixinReference.newMixinReference( mixin ).name( "home" ).build() );
         contentTypeBuilder.addFormItem( MixinReference.newMixinReference( mixin ).name( "cabin" ).build() );
 
-        MockMixinFetcher mixinFetcher = new MockMixinFetcher();
-        mixinFetcher.add( mixin );
-
         String serialized = toString( contentTypeBuilder.build() );
 
         // exercise
@@ -245,7 +241,7 @@ public abstract class AbstractContentTypeSerializerTest
     {
         // setup
         FieldSet.Builder fieldSetBuilder = newFieldSet().label( "Label" ).name( "myFieldSet" );
-        fieldSetBuilder.add( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() );
+        fieldSetBuilder.addFormItem( newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() );
         FieldSet layout = fieldSetBuilder.build();
 
         ContentType.Builder contentTypeBuilder = newContentType().name( "test" );
@@ -321,17 +317,17 @@ public abstract class AbstractContentTypeSerializerTest
             build();
 
         RelationshipConfig relationshipConfig = newRelationshipConfig().
-            relationshipType( QualifiedRelationshipTypeName.LIKE ).
+            relationshipType( RelationshipTypeName.LIKE ).
             build();
 
         ImageSelectorConfig imageSelectorConfig = newImageSelectorConfig().
-            relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
+            relationshipType( RelationshipTypeName.DEFAULT ).
             build();
 
         ContentType.Builder contentTypeBuilder = newContentType().
             name( "all_input_types" ).
             displayName( "All the Input Types" ).
-            superType( QualifiedContentTypeName.structured() ).
+            superType( ContentTypeName.structured() ).
             setAbstract( false ).
             setFinal( true );
 

@@ -1,14 +1,14 @@
 module app_browse {
 
     export class BaseSchemaModelEvent extends api_event.Event {
-        private model:api_model.SchemaExtModel[];
+        private model:api_schema.Schema[];
 
-        constructor(name:string, model:api_model.SchemaExtModel[]) {
+        constructor(name:string, model:api_schema.Schema[]) {
             this.model = model;
             super(name);
         }
 
-        getModels():api_model.SchemaExtModel[] {
+        getSchemas():api_schema.Schema[] {
             return this.model;
         }
     }
@@ -26,7 +26,7 @@ module app_browse {
 
     export class EditSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaExtModel[]) {
+        constructor(model:api_schema.Schema[]) {
             super('editSchema', model);
         }
 
@@ -37,7 +37,7 @@ module app_browse {
 
     export class OpenSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaExtModel[]) {
+        constructor(model:api_schema.Schema[]) {
             super('openSchema', model);
         }
 
@@ -48,7 +48,7 @@ module app_browse {
 
     export class DeleteSchemaPromptEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaExtModel[]) {
+        constructor(model:api_schema.Schema[]) {
             super('deleteSchema', model);
         }
 
@@ -59,7 +59,7 @@ module app_browse {
 
     export class ReindexSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaExtModel[]) {
+        constructor(model:api_schema.Schema[]) {
             super('reindexSchema', model);
         }
 
@@ -70,7 +70,7 @@ module app_browse {
 
     export class ExportSchemaEvent extends BaseSchemaModelEvent {
 
-        constructor(model:api_model.SchemaExtModel[]) {
+        constructor(model:api_schema.Schema[]) {
             super('exportSchema', model);
         }
 

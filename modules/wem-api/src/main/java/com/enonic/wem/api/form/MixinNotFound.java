@@ -1,16 +1,16 @@
 package com.enonic.wem.api.form;
 
 
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public class MixinNotFound
     extends RuntimeException
 {
-    private final QualifiedMixinName qualifiedMixinName;
+    private final MixinName mixinName;
 
-    public MixinNotFound( final QualifiedMixinName qualifiedMixinName )
+    public MixinNotFound( final MixinName mixinName )
     {
-        super( "Mixin not found: " + qualifiedMixinName );
-        this.qualifiedMixinName = qualifiedMixinName;
+        super( "Mixin not found: " + mixinName );
+        this.mixinName = mixinName;
     }
 }

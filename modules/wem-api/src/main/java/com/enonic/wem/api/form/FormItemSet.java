@@ -294,6 +294,15 @@ public class FormItemSet
             return this;
         }
 
+        public Builder addFormItems( Iterable<FormItem> iterable )
+        {
+            for ( FormItem formItem : iterable )
+            {
+                formItems.add( formItem );
+            }
+            return this;
+        }
+
         public Builder clearFormItems()
         {
             formItems.clear();

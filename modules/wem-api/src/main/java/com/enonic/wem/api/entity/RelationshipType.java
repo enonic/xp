@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.Name;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
@@ -28,9 +29,9 @@ public final class RelationshipType
 
     private final String toSemantic;
 
-    //private final QualifiedContentTypeNames allowedFromTypes;
+    //private final ContentTypeNames allowedFromTypes;
 
-    //private final QualifiedContentTypeNames allowedToTypes;
+    //private final ContentTypeNames allowedToTypes;
 
     private final Icon icon;
 

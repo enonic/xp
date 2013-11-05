@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.Icon;
-import com.enonic.wem.api.content.QualifiedName;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 public abstract class BaseInitializer
@@ -48,9 +47,9 @@ public abstract class BaseInitializer
         }
     }
 
-    protected Icon loadIcon( final QualifiedName qualifiedName )
+    protected Icon loadIcon( final String name )
     {
-        final String filePath = metaInfFolderBasePath + FILE_SEPARATOR + qualifiedName.toString().toLowerCase() + ".png";
+        final String filePath = metaInfFolderBasePath + FILE_SEPARATOR + name.toLowerCase() + ".png";
         try
         {
             final byte[] iconData = IOUtils.toByteArray( this.getClass().getResourceAsStream( filePath ) );

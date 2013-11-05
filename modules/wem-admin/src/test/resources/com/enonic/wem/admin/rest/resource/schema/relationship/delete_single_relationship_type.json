@@ -3,7 +3,7 @@
     "success": true,
     "successes": [
         {
-            "qualifiedName": "company:partner"
+            "name": "partner"
         }
     ]
 }

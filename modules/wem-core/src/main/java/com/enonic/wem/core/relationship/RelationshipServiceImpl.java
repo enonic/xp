@@ -7,7 +7,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
 
@@ -20,7 +20,7 @@ public class RelationshipServiceImpl
     public void syncRelationships( final SyncRelationshipsCommand command )
     {
         final ContentType contentType = command.getClient().execute(
-            Commands.contentType().get().qualifiedNames( QualifiedContentTypeNames.from( command.getContentType() ) ) ).first();
+            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( command.getContentType() ) ) ).first();
 
         final SyncRelationships syncRelationships =
             new SyncRelationships( contentType.form(), command.getContentToUpdate(), command.getContentBeforeEditing(),

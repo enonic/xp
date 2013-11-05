@@ -6,7 +6,6 @@ import org.junit.Test;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.type.ValueTypes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -20,10 +19,10 @@ public class SetContentDataEditorTest
     {
         // setup
         ContentData originalContentData = new ContentData();
-        originalContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "abc" ).build() );
+        originalContentData.add( new Property.String( "myData", "abc" ) );
 
         ContentData unchangedContentData = new ContentData();
-        unchangedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "abc" ).build() );
+        unchangedContentData.add( new Property.String( "myData", "abc" ) );
 
         SetContentDataEditor editor = new SetContentDataEditor( unchangedContentData );
         Content toBeEdited = Content.newContent().name( "myContent" ).contentData( originalContentData ).build();
@@ -41,10 +40,10 @@ public class SetContentDataEditorTest
     {
         // setup
         ContentData originalContentData = new ContentData();
-        originalContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "abc" ).build() );
+        originalContentData.add( new Property.String( "myData", "abc" ) );
 
         ContentData changedContentData = new ContentData();
-        changedContentData.add( Property.newProperty().name( "myData" ).type( ValueTypes.STRING ).value( "123" ).build() );
+        changedContentData.add( new Property.String( "myData", "123" ) );
 
         SetContentDataEditor editor = new SetContentDataEditor( changedContentData );
         Content toBeEdited = Content.newContent().name( "myContent" ).contentData( originalContentData ).build();

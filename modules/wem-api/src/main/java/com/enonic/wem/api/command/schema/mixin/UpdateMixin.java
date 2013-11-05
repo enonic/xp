@@ -4,20 +4,20 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
 
 public final class UpdateMixin
     extends Command<UpdateMixinResult>
 {
-    private QualifiedMixinName qualifiedName;
+    private MixinName name;
 
     private MixinEditor editor;
 
 
-    public UpdateMixin qualifiedName( final QualifiedMixinName qualifiedName )
+    public UpdateMixin name( final MixinName value )
     {
-        this.qualifiedName = qualifiedName;
+        this.name = value;
         return this;
     }
 
@@ -27,9 +27,9 @@ public final class UpdateMixin
         return this;
     }
 
-    public QualifiedMixinName getQualifiedName()
+    public MixinName getName()
     {
-        return qualifiedName;
+        return name;
     }
 
     public MixinEditor getEditor()
@@ -51,19 +51,19 @@ public final class UpdateMixin
         }
 
         final UpdateMixin that = (UpdateMixin) o;
-        return Objects.equal( this.qualifiedName, that.qualifiedName ) && Objects.equal( this.editor, that.editor );
+        return Objects.equal( this.name, that.name ) && Objects.equal( this.editor, that.editor );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedName, this.editor );
+        return Objects.hashCode( this.name, this.editor );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedName, "qualifiedName cannot be null" );
+        Preconditions.checkNotNull( this.name, "name cannot be null" );
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 }

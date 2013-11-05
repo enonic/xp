@@ -1,13 +1,10 @@
 module api_schema {
 
-    export class DeleteSchemaRequest extends api_rest.ResourceRequest<any> {
-
-        public static CONTENT_TYPE = "ContentType";
-        public static RELATIONSHIP_TYPE = "RelationshipType";
-        public static MIXIN = "Mixin";
+    export class DeleteSchemaRequest extends SchemaResourceRequest {
 
         private qualifiedNames:string[] = [];
-        private type:string = DeleteSchemaRequest.CONTENT_TYPE;
+
+        private schemaKind:api_schema.SchemaKind;
 
         constructor(qualifiedNames?:string[]) {
             super();
@@ -27,8 +24,8 @@ module api_schema {
             return this;
         }
 
-        setType(type:string):DeleteSchemaRequest {
-            this.type = type;
+        setType(value:api_schema.SchemaKind):DeleteSchemaRequest {
+            this.schemaKind = value;
             return this;
         }
 
@@ -39,19 +36,23 @@ module api_schema {
         }
 
         getRequestPath():api_rest.Path {
-            var schemaType = undefined;
-            switch ( this.type ) {
-                case DeleteSchemaRequest.CONTENT_TYPE:
-                    schemaType = "schema/content";
-                    break;
-                case DeleteSchemaRequest.RELATIONSHIP_TYPE:
-                    schemaType = "schema/relationship";
-                    break;
-                case DeleteSchemaRequest.MIXIN:
-                    schemaType = "schema/mixin";
-                    break;
+
+            var pathElement:string = null;
+
+            if( this.schemaKind == api_schema.SchemaKind.CONTENT_TYPE ) {
+                pathElement = "content";
             }
-            return api_rest.Path.fromParent(super.getRestPath(), schemaType, "delete");
+            else if( this.schemaKind == api_schema.SchemaKind.RELATIONSHIP_TYPE ) {
+                pathElement = "relationship";
+            }
+            else if( this.schemaKind == api_schema.SchemaKind.MIXIN ) {
+                pathElement = "mixin";
+            }
+            else {
+                throw new Error("Unknown Schema kind: " + this.schemaKind.toString() )
+            }
+
+            return api_rest.Path.fromParent(super.getResourcePath(), pathElement, "delete");
         }
     }
 }

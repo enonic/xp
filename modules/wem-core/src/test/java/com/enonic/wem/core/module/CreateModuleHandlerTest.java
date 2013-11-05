@@ -19,7 +19,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -82,7 +82,7 @@ public class CreateModuleHandlerTest
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
             maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
             moduleDependencies( ModuleKeys.from( "modulefoo-1.0.0", "modulebar-1.2.3" ) ).
-            contentTypeDependencies( QualifiedContentTypeNames.from( "article" ) ).
+            contentTypeDependencies( ContentTypeNames.from( "article" ) ).
             config( config );
 
         // exercise
@@ -102,7 +102,7 @@ public class CreateModuleHandlerTest
         assertEquals( "5.0.0", moduleCreated.getMinSystemVersion().toString() );
         assertEquals( "6.0.0", moduleCreated.getMaxSystemVersion().toString() );
         assertEquals( "[modulefoo-1.0.0, modulebar-1.2.3]", moduleCreated.getModuleDependencies().toString() );
-        assertEquals( QualifiedContentTypeNames.from( "article" ), moduleCreated.getContentTypeDependencies() );
+        assertEquals( ContentTypeNames.from( "article" ), moduleCreated.getContentTypeDependencies() );
 
         final Path expectedModuleDir = systemConfig.getModuleDir().toPath().resolve( "modulename-1.0.0" );
         assertTrue( "Module directory not found: " + expectedModuleDir, Files.isDirectory( expectedModuleDir ) );
@@ -141,7 +141,7 @@ public class CreateModuleHandlerTest
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
             maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
             moduleDependencies( ModuleKeys.from( "modulefoo-1.0.0", "modulebar-1.2.3" ) ).
-            contentTypeDependencies( QualifiedContentTypeNames.from( "article" ) ).
+            contentTypeDependencies( ContentTypeNames.from( "article" ) ).
             config( config ).
             moduleDirectoryEntry( moduleDirectoryEntry );
 
@@ -162,7 +162,7 @@ public class CreateModuleHandlerTest
         assertEquals( "5.0.0", moduleCreated.getMinSystemVersion().toString() );
         assertEquals( "6.0.0", moduleCreated.getMaxSystemVersion().toString() );
         assertEquals( "[modulefoo-1.0.0, modulebar-1.2.3]", moduleCreated.getModuleDependencies().toString() );
-        assertEquals( QualifiedContentTypeNames.from( "article" ), moduleCreated.getContentTypeDependencies() );
+        assertEquals( ContentTypeNames.from( "article" ), moduleCreated.getContentTypeDependencies() );
 
         final Path expectedModuleDir = systemConfig.getModuleDir().toPath().resolve( "modulename-1.0.0" );
         assertTrue( "Module directory not found: " + expectedModuleDir, Files.isDirectory( expectedModuleDir ) );

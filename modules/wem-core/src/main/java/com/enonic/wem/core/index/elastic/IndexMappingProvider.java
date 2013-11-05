@@ -8,6 +8,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
 
 
@@ -16,19 +17,20 @@ public class IndexMappingProvider
     private final static String PREFIX = "META-INF/index/mapping/";
 
     private final static String[] MAPPING_FILES = { //
+        PREFIX + "nodb-node-mapping.json", //
         PREFIX + "wem-account-mapping.json", //
         PREFIX + "wem-binaries-mapping.json", //
         PREFIX + "wem-content-mapping.json" //
     };
 
-    public List<IndexMapping> getMappingsForIndex( final String indexName )
+    public List<IndexMapping> getMappingsForIndex( final Index index )
     {
         final List<IndexMapping> indexMappings = Lists.newArrayList();
         for ( final String mappingFile : MAPPING_FILES )
         {
             try
             {
-                final IndexMapping indexMapping = createIndexMapping( indexName, mappingFile );
+                final IndexMapping indexMapping = createIndexMapping( index, mappingFile );
                 if ( indexMapping != null )
                 {
                     indexMappings.add( indexMapping );
@@ -42,7 +44,7 @@ public class IndexMappingProvider
         return indexMappings;
     }
 
-    private IndexMapping createIndexMapping( final String indexName, final String mappingFile )
+    private IndexMapping createIndexMapping( final Index index, final String mappingFile )
         throws IOException
     {
         final String filename = mappingFile.substring( PREFIX.length() );
@@ -54,7 +56,7 @@ public class IndexMappingProvider
         }
 
         final String resourceIndexName = parts[0];
-        if ( !indexName.equals( resourceIndexName ) )
+        if ( !index.getName().equals( resourceIndexName ) )
         {
             return null;
         }
@@ -63,6 +65,6 @@ public class IndexMappingProvider
         final URL url = Resources.getResource( mappingFile );
         final String mapping = Resources.toString( url, Charsets.UTF_8 );
 
-        return new IndexMapping( resourceIndexName, indexType, mapping );
+        return new IndexMapping( index, indexType, mapping );
     }
 }

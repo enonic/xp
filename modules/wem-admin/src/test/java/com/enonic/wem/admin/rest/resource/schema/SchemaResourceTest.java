@@ -9,7 +9,8 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.GetSchemaTree;
+import com.enonic.wem.api.command.schema.GetChildSchemas;
+import com.enonic.wem.api.command.schema.GetRootSchemas;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -65,22 +66,6 @@ public class SchemaResourceTest
         return Schemas.from( contentType, mixin, relationshipType );
     }
 
-    private Tree<Schema> createSchemaTree()
-    {
-        Tree<Schema> tree = new Tree<>();
-        ContentType rootContentType = createContentType( "rootcontenttype" );
-        ContentType childContentType = createContentType( "childcontenttype" );
-        tree.createNode( rootContentType ).addChild( childContentType );
-        Mixin rootMixin = createMixin( "rootmixin" );
-        Mixin childMixin = createMixin( "childmixin" );
-        tree.createNode( rootMixin ).addChild( childMixin );
-        RelationshipType rootRelationshipType = createRelationshipType( "rootrelationshiptype" );
-        RelationshipType childRelationshipType = createRelationshipType( "childrelationshiptype" );
-        tree.createNode( rootRelationshipType ).addChild( childRelationshipType );
-        return tree;
-    }
-
-
     @Test
     public void searchSchemaByQuery()
         throws Exception
@@ -88,16 +73,11 @@ public class SchemaResourceTest
         Schemas schemas = createSchemaList();
         Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
 
-        String json = resource().path( "schema/list" ).queryParam( "search", "" ).get( String.class );
+        String json = resource().path( "schema/find" ).queryParam( "search", "" ).get( String.class );
         assertJson( "schema_by_empty_query.json", json );
 
-        json = resource().path( "schema/list" ).queryParam( "search", "mixin" ).get( String.class );
+        json = resource().path( "schema/find" ).queryParam( "search", "mixin" ).get( String.class );
         assertJson( "schema_by_query.json", json );
-
-        json = resource().path( "schema/list" ).queryParam( "search", "mixin" ).queryParam( "modules", "module" ).get( String.class );
-        assertJson( "schema_by_query_and_modules.json", json );
-
-
     }
 
     @Test
@@ -105,7 +85,7 @@ public class SchemaResourceTest
     {
         try
         {
-            resource().path( "schema/list" ).queryParam( "search", "" ).queryParam( "types", "SomeType" ).queryParam( "types",
+            resource().path( "schema/find" ).queryParam( "search", "" ).queryParam( "types", "SomeType" ).queryParam( "types",
                                                                                                                       "AnotherType" ).get(
                 String.class );
         }
@@ -114,17 +94,6 @@ public class SchemaResourceTest
             assertEquals( e.getResponse().getStatus(), 406 );
             assertEquals( e.getResponse().getEntity( String.class ), "Invalid parameter 'types': [SomeType, AnotherType]" );
         }
-    }
-
-    @Test
-    public void searchSchemaByModules()
-        throws Exception
-    {
-        Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( createSchemaList() );
-
-        String json = resource().path( "schema/list" ).queryParam( "search", "" ).queryParam( "modules", "module" ).get( String.class );
-
-        assertJson( "schema_by_modules.json", json );
     }
 
     @Test
@@ -138,7 +107,7 @@ public class SchemaResourceTest
         Schemas schemas = Schemas.from( contentType, mixin );
         Mockito.when( client.execute( Mockito.isA( SchemaTypes.class ) ) ).thenReturn( schemas );
 
-        String json = resource().path( "schema/list" ).queryParam( "search", "" ).queryParam( "types", "mixin" ).queryParam( "types",
+        String json = resource().path( "schema/find" ).queryParam( "search", "" ).queryParam( "types", "mixin" ).queryParam( "types",
                                                                                                                              "content_type" ).get(
             String.class );
 
@@ -146,42 +115,37 @@ public class SchemaResourceTest
     }
 
     @Test
-    public void getSchemaTree()
+    public void listRootSchemas()
         throws Exception
     {
-        Tree<Schema> schemaTree = createSchemaTree();
-        Mockito.when( client.execute( Mockito.isA( GetSchemaTree.class ) ) ).thenReturn( schemaTree );
+        Schemas schemas = createSchemaList();
+        Mockito.when( client.execute( Mockito.isA( GetRootSchemas.class ) ) ).thenReturn( schemas );
 
-        String json = resource().path( "schema/tree" ).get( String.class );
+        String json = resource().path( "schema/list" ).get( String.class );
 
-        assertJson( "schema_tree.json", json );
+        assertJson( "schema_by_empty_query.json", json );
     }
 
     @Test
-    public void getSchemaTreeWithTypesParam()
+    public void listChildSchemas()
         throws Exception
     {
-        Tree<Schema> schemaTree = createSchemaTree();
-        Mockito.when( client.execute( Mockito.isA( GetSchemaTree.class ) ) ).thenReturn( schemaTree );
+        Schemas schemas = Schemas.from( createContentType( "contenttype" ) );
+        Mockito.when( client.execute( Mockito.isA( GetChildSchemas.class ) ) ).thenReturn( schemas );
 
-        String json = resource().path( "schema/tree" ).queryParam( "types", "content_type" ).
-            queryParam( "types", "mixin" ).queryParam( "types", "relationship_type" ).get( String.class );
+        String json = resource().path( "schema/list" ).queryParam( "parentName", "parent-content-type" ).get( String.class );
 
-        assertJson( "schema_tree.json", json );
+        assertJson( "schema_by_parent.json", json );
     }
 
     @Test
-    public void getSchemaTreeWithWrongTypesParam()
+    public void listEmptyChildSchemas()
+        throws Exception
     {
-        try
-        {
-            resource().path( "schema/tree" ).queryParam( "types", "wrong_type" ).get( String.class );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            assertEquals( e.getResponse().getStatus(), 406 );
-            assertEquals( e.getResponse().getEntity( String.class ), "Invalid parameter 'types': [wrong_type]" );
-        }
+        Mockito.when( client.execute( Mockito.isA( GetChildSchemas.class ) ) ).thenReturn( Schemas.empty() );
+
+        String json = resource().path( "schema/list" ).queryParam( "parentName", "parent-content-type" ).get( String.class );
+        assertEquals( "[]", json );
     }
 
     @Override

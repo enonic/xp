@@ -12,9 +12,9 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 
 
 public final class GetContentTypeRpcHandler
@@ -34,8 +34,8 @@ public final class GetContentTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final QualifiedContentTypeNames qualifiedNames =
-            QualifiedContentTypeNames.from( context.param( "qualifiedNames" ).required().notBlank().asStringArray() );
+        final ContentTypeNames qualifiedNames =
+            ContentTypeNames.from( context.param( "qualifiedNames" ).required().notBlank().asStringArray() );
         final GetContentTypes getContentTypes = Commands.contentType().get().qualifiedNames( qualifiedNames );
         getContentTypes.mixinReferencesToFormItems( context.param( "mixinReferencesToFormItems" ).asBoolean( false ) );
         final ContentTypes contentTypes = client.execute( getContentTypes );
@@ -54,20 +54,20 @@ public final class GetContentTypeRpcHandler
         }
         else
         {
-            final ImmutableSet<QualifiedContentTypeName> found = contentTypes.getNames();
+            final ImmutableSet<ContentTypeName> found = contentTypes.getNames();
 
             final String[] notFound = FluentIterable.
                 from( qualifiedNames ).
-                filter( new Predicate<QualifiedContentTypeName>()
+                filter( new Predicate<ContentTypeName>()
                 {
-                    public boolean apply( final QualifiedContentTypeName requested )
+                    public boolean apply( final ContentTypeName requested )
                     {
                         return !found.contains( requested );
                     }
                 } ).
-                transform( new Function<QualifiedContentTypeName, String>()
+                transform( new Function<ContentTypeName, String>()
                 {
-                    public String apply( final QualifiedContentTypeName space )
+                    public String apply( final ContentTypeName space )
                     {
                         return space.toString();
                     }

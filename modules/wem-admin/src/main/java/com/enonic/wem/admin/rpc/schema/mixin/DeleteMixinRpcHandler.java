@@ -6,8 +6,8 @@ import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
+import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinNames;
 
 
 public class DeleteMixinRpcHandler
@@ -22,28 +22,25 @@ public class DeleteMixinRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final QualifiedMixinNames qualifiedMixinNames =
-            QualifiedMixinNames.from( context.param( "qualifiedMixinNames" ).required().asStringArray() );
+        final MixinNames mixinNames = MixinNames.from( context.param( "mixinNames" ).required().asStringArray() );
 
         final MixinDeletionResult deletionResult = new MixinDeletionResult();
-        for ( QualifiedMixinName qualifiedMixinName : qualifiedMixinNames )
+        for ( MixinName mixinName : mixinNames )
         {
-            final DeleteMixin deleteMixin = Commands.mixin().delete().name( qualifiedMixinName );
+            final DeleteMixin deleteMixin = Commands.mixin().delete().name( mixinName );
             final DeleteMixinResult result = client.execute( deleteMixin );
             switch ( result )
             {
                 case SUCCESS:
-                    deletionResult.success( qualifiedMixinName );
+                    deletionResult.success( mixinName );
                     break;
 
                 case NOT_FOUND:
-                    deletionResult.failure( qualifiedMixinName,
-                                            String.format( "Mixin [%s] was not found", qualifiedMixinName.toString() ) );
+                    deletionResult.failure( mixinName, String.format( "Mixin [%s] was not found", mixinName.toString() ) );
                     break;
 
                 case UNABLE_TO_DELETE:
-                    deletionResult.failure( qualifiedMixinName,
-                                            String.format( "Unable to delete Mixin [%s]", qualifiedMixinName.toString() ) );
+                    deletionResult.failure( mixinName, String.format( "Unable to delete Mixin [%s]", mixinName.toString() ) );
                     break;
             }
         }

@@ -24,7 +24,7 @@ import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.MockContentTypeFetcher;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -75,7 +75,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void set()
     {
-        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet.myOtherInput", new Value.String( "2" ) );
 
@@ -99,7 +99,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_values()
     {
-        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "myArray[1]", new Value.String( "2" ) );
 
@@ -123,7 +123,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_set()
     {
-        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet.myArray[1]", new Value.String( "2" ) );
 
@@ -162,7 +162,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_set()
     {
-        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet[0].myInput", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet[0].myOtherInput", new Value.String( "a" ) );
         content.getContentData().setProperty( "mySet[1].myInput", new Value.String( "2" ) );
@@ -195,7 +195,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void insertion_order_of_entries_within_a_DataSet_is_preserved()
     {
-        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "a" ) );
         content.getContentData().setProperty( "mySet.myArray[1]", new Value.String( "2" ) );
@@ -220,7 +220,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_array()
     {
-        Content content = newContent().type( QualifiedContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet[0].myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet[0].myArray[1]", new Value.String( "2" ) );
         content.getContentData().setProperty( "mySet[1].myArray[0]", new Value.String( "3" ) );
@@ -343,7 +343,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void given_formItem_inside_layout_when_parse_then_formItem_path_is_affected_by_name_of_layout()
     {
-        final FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).add(
+        final FieldSet layout = newFieldSet().label( "Label" ).name( "fieldSet" ).addFormItem(
             newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).build() ).build();
 
         final ContentType contentType = newContentType().
@@ -392,7 +392,7 @@ public abstract class AbstractContentSerializerTest
     {
         final DateTime time = DateTime.now();
         final Content content = newContent().
-            type( QualifiedContentTypeName.from( "my_type" ) ).
+            type( ContentTypeName.from( "my_type" ) ).
             createdTime( time ).
             modifiedTime( time ).
             owner( AccountKey.superUser() ).

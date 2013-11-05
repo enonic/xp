@@ -1,8 +1,9 @@
 module app {
     export class Router {
         static setHash(path:string) {
-            window.parent["setHash"](getAppName() + "/" + path);
+            if (window.parent["setHash"]) {
+                window.parent["setHash"](getAppName() + "/" + path);
+            }
         }
-
     }
 }

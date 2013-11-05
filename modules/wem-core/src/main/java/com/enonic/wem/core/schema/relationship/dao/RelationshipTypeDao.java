@@ -2,8 +2,8 @@ package com.enonic.wem.core.schema.relationship.dao;
 
 import javax.jcr.Session;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.jcr.JcrConstants;
@@ -18,13 +18,13 @@ public interface RelationshipTypeDao
 
     public void update( final RelationshipType relationshipType, final Session session );
 
-    public void delete( final QualifiedRelationshipTypeName qualifiedName, final Session session );
+    public void delete( final RelationshipTypeName qualifiedName, final Session session );
 
-    public QualifiedRelationshipTypeNames exists( final QualifiedRelationshipTypeNames qNames, final Session session );
+    public RelationshipTypeNames exists( final RelationshipTypeNames qNames, final Session session );
 
     public RelationshipTypes selectAll( Session session );
 
-    public RelationshipTypes select( QualifiedRelationshipTypeNames qualifiedNames, final Session session );
+    public RelationshipTypes select( RelationshipTypeNames qualifiedNames, final Session session );
 
-    public RelationshipType select( QualifiedRelationshipTypeName qualifiedNames, final Session session );
+    public RelationshipType select( RelationshipTypeName qualifiedNames, final Session session );
 }

@@ -1,6 +1,6 @@
 package com.enonic.wem.api.form.inputtype;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public class ImageSelectorConfig
     extends RelationshipConfig
@@ -24,7 +24,7 @@ public class ImageSelectorConfig
             // protection
         }
 
-        public Builder relationshipType( final QualifiedRelationshipTypeName value )
+        public Builder relationshipType( final RelationshipTypeName value )
         {
             super.relationshipType( value );
             return this;

@@ -19,8 +19,8 @@ import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
@@ -90,7 +90,7 @@ public class ModuleExporterTest
             addFormItem( Input.newInput().name( "some-name" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
 
-        final QualifiedContentTypeNames requiredCtypes = QualifiedContentTypeNames.from( "ctype1", "ctype2", "ctype3" );
+        final ContentTypeNames requiredCtypes = ContentTypeNames.from( "ctype1", "ctype2", "ctype3" );
         final ModuleKeys requiredModules = ModuleKeys.from( ModuleKey.from( "modA-1.0.0" ), ModuleKey.from( "modB-1.0.0" ) );
 
         final Module module = Module.newModule().
@@ -103,7 +103,7 @@ public class ModuleExporterTest
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
             maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
             addModuleDependency( ModuleKey.from( "modulefoo-1.0.0" ) ).
-            addContentTypeDependency( QualifiedContentTypeName.from( "article" ) ).
+            addContentTypeDependency( ContentTypeName.from( "article" ) ).
             addModuleDependencies( requiredModules ).
             addContentTypeDependencies( requiredCtypes ).
             config( config ).

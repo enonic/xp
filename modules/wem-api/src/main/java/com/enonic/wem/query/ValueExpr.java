@@ -121,10 +121,10 @@ public abstract class ValueExpr<T>
         }
     }
 
-    public final static class GeoCoordinateValue
+    public final static class GeoPointValue
         extends ValueExpr<String>
     {
-        private GeoCoordinateValue( final String value )
+        private GeoPointValue( final String value )
         {
             super( value );
         }
@@ -144,7 +144,7 @@ public abstract class ValueExpr<T>
         @Override
         public String toString()
         {
-            return "geoCoordinate(\"" + getValueAsString() + "\")";
+            return "geoPoint(\"" + getValueAsString() + "\")";
         }
     }
 
@@ -166,6 +166,6 @@ public abstract class ValueExpr<T>
 
     public static ValueExpr<String> geoCoordinate( final String value )
     {
-        return new GeoCoordinateValue( value );
+        return new GeoPointValue( value );
     }
 }

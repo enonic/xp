@@ -1,15 +1,10 @@
 package com.enonic.wem.api.entity;
 
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
@@ -25,34 +20,41 @@ public final class Node
 
     private final NodePath path;
 
-    private final DateTime modifiedTime;
-
     private final UserKey modifier;
+
+    private final UserKey creator;
 
     // TODO: Remove
     private final Icon icon;
 
-    private final EntityIndexConfig entityIndexConfig;
-
     private Node( final Builder builder )
     {
         super( builder );
-        Preconditions.checkNotNull( builder.parent, "parent must be specified" );
-        Preconditions.checkNotNull( builder.parent, "name must be specified" );
+
+        this.creator = builder.creator;
 
         this.name = builder.name;
         this.parent = builder.parent;
-        this.path = new NodePath( this.parent, this.name );
 
-        this.modifiedTime = builder.modifiedTime;
+        this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
+
         this.modifier = builder.modifier;
         this.icon = builder.icon;
-        this.entityIndexConfig = builder.entityIndexConfig;
     }
 
-    public EntityId id()
+    public void validateForIndexing()
     {
-        return id;
+        Preconditions.checkNotNull( this.id, "Id must be set" );
+        Preconditions.checkNotNull( this.entityIndexConfig, "EntityIndexConfig must be set" );
+    }
+
+    public void validateForPersistence()
+    {
+        Preconditions.checkNotNull( this.createdTime, "createdTime must be set" );
+        Preconditions.checkNotNull( this.id, "Id must be set" );
+        Preconditions.checkNotNull( this.name, "Name must be set" );
+        Preconditions.checkNotNull( this.creator, "creator must be set" );
+        Preconditions.checkNotNull( this.parent, "parent must be set" );
     }
 
     public String name()
@@ -70,11 +72,6 @@ public final class Node
         return path;
     }
 
-    public DateTime getCreatedTime()
-    {
-        return createdTime;
-    }
-
     public UserKey creator()
     {
         return creator;
@@ -83,11 +80,6 @@ public final class Node
     public UserKey getCreator()
     {
         return creator;
-    }
-
-    public DateTime getModifiedTime()
-    {
-        return modifiedTime;
     }
 
     public UserKey modifier()
@@ -105,37 +97,21 @@ public final class Node
         return icon;
     }
 
-    public RootDataSet rootDataSet()
-    {
-        return this.rootDataSet;
-    }
-
-    public Property property( final String path )
-    {
-        return rootDataSet.getProperty( path );
-    }
-
-    public EntityIndexConfig getEntityIndexConfig()
-    {
-        return entityIndexConfig;
-    }
-
-    public DataSet dataSet( final String path )
-    {
-        return rootDataSet.getDataSet( path );
-    }
 
     @Override
     public void checkIllegalEdit( final Node to )
         throws IllegalEditException
     {
+        // TODO: Unfortunately Java does not like us to also let super class implement checkIllegalEdit(Entity)
+        // TODO: Therefor it's here... :(
         IllegalEdit.check( "id", this.id(), to.id(), Node.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Node.class );
+        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Node.class );
+
         IllegalEdit.check( "name", this.name(), to.name(), Node.class );
         IllegalEdit.check( "parent", this.parent(), to.parent(), Node.class );
         IllegalEdit.check( "path", this.path(), to.path(), Node.class );
-        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Node.class );
         IllegalEdit.check( "creator", this.creator(), to.creator(), Node.class );
-        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Node.class );
         IllegalEdit.check( "modifier", this.modifier(), to.modifier(), Node.class );
     }
 
@@ -166,15 +142,11 @@ public final class Node
 
         private NodePath parent;
 
-        private DateTime modifiedTime;
-
         private UserKey modifier;
 
+        private UserKey creator;
+
         private Icon icon;
-
-        private RootDataSet dataSet = new RootDataSet();
-
-        private EntityIndexConfig entityIndexConfig;
 
         public Builder()
         {
@@ -187,16 +159,13 @@ public final class Node
 
         public Builder( final Node node )
         {
+            super( node );
             this.id = node.id;
             this.name = node.name;
             this.parent = node.parent;
-            this.createdTime = node.createdTime;
             this.creator = node.creator;
-            this.modifiedTime = node.modifiedTime;
             this.modifier = node.modifier;
             this.icon = node.icon;
-            this.dataSet = node.rootDataSet;
-            this.entityIndexConfig = node.entityIndexConfig;
         }
 
         public Builder( final EntityId id, final String name )
@@ -223,21 +192,15 @@ public final class Node
             return this;
         }
 
-        public Builder modifiedTime( final DateTime value )
+        public Builder creator( final UserKey value )
         {
-            this.modifiedTime = value;
+            this.creator = value;
             return this;
         }
 
         public Builder modifier( final UserKey value )
         {
             this.modifier = value;
-            return this;
-        }
-
-        public Builder itemIndexConfig( final EntityIndexConfig entityIndexConfig )
-        {
-            this.entityIndexConfig = entityIndexConfig;
             return this;
         }
 

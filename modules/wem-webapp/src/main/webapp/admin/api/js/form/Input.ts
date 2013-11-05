@@ -31,7 +31,7 @@ module api_form{
             this.customText = json.customText;
             this.validationRegex = json.validationRegexp;
             this.helpText = json.helpText;
-            this.inputTypeConfig = json.inputType.config;
+            this.inputTypeConfig = json.config;
         }
 
         getInputType():InputTypeName {
@@ -70,11 +70,10 @@ module api_form{
             return this.inputTypeConfig;
         }
 
-        public toInputJson():api_form_json.InputJson {
+        public toInputJson():api_form_json.FormItemTypeWrapperJson {
 
-            return <api_form_json.InputJson>{
+            return <api_form_json.FormItemTypeWrapperJson>{Input: <api_form_json.InputJson>{
                 name: this.getName(),
-                formItemType: "Input",
                 customText : this.getCustomText(),
                 helpText : this.getHelpText(),
                 immutable : this.isImmutable(),
@@ -82,8 +81,9 @@ module api_form{
                 label : this.getLabel(),
                 occurrences : this.getOccurrences().toJson(),
                 validationRegexp : this.getValidationRegex(),
-                inputType : this.getInputType().toJson()
-            };
+                inputType : this.getInputType().toJson(),
+                config : this.getInputTypeConfig()
+            }};
         }
     }
 }

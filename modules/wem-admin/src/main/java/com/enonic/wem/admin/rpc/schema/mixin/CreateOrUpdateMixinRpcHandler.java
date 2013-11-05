@@ -10,12 +10,11 @@ import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
-import com.enonic.wem.api.command.schema.mixin.GetMixins;
+import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinNames;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.editor.SetMixinEditor;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 import com.enonic.wem.core.support.serializer.ParsingException;
@@ -82,7 +81,7 @@ public class CreateOrUpdateMixinRpcHandler
             icon( icon ).
             build();
         final UpdateMixin updateCommand = mixin().update().
-            qualifiedName( mixin.getQualifiedName() ).
+            name( mixin.getQualifiedName() ).
             editor( editor );
         try
         {
@@ -112,10 +111,10 @@ public class CreateOrUpdateMixinRpcHandler
         }
     }
 
-    private boolean mixinExists( final QualifiedMixinName qualifiedName )
+    private boolean mixinExists( final MixinName qualifiedName )
     {
-        final GetMixins getMixins = mixin().get().names( QualifiedMixinNames.from( qualifiedName ) );
-        return !client.execute( getMixins ).isEmpty();
+        final GetMixin getMixin = mixin().get().byName( qualifiedName );
+        return client.execute( getMixin ) != null;
     }
 
     @Inject

@@ -6,7 +6,7 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 
@@ -26,8 +26,8 @@ public final class GetRelationshipTypeRpcHandler
     public void handle( final JsonRpcContext context )
         throws Exception
     {
-        final QualifiedRelationshipTypeNames qualifiedNames =
-            QualifiedRelationshipTypeNames.from( context.param( "qualifiedName" ).required().asString() );
+        final RelationshipTypeNames qualifiedNames =
+            RelationshipTypeNames.from( context.param( "qualifiedName" ).required().asString() );
         final String format = context.param( "format" ).required().asString();
 
         final GetRelationshipTypes getRelationshipTypes = Commands.relationshipType().get();

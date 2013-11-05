@@ -6,9 +6,9 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 
 public final class ContentTypeDaoImpl
@@ -42,15 +42,15 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public void delete( final QualifiedContentTypeName qualifiedContentTypeName, final Session session )
+    public void delete( final ContentTypeName contentTypeName, final Session session )
     {
         try
         {
-            new ContentTypeDaoHandlerDelete( session ).handle( qualifiedContentTypeName );
+            new ContentTypeDaoHandlerDelete( session ).handle( contentTypeName );
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to delete content type [{0}]", qualifiedContentTypeName );
+            throw new SystemException( e, "Unable to delete content type [{0}]", contentTypeName );
         }
     }
 
@@ -68,29 +68,29 @@ public final class ContentTypeDaoImpl
     }
 
     @Override
-    public ContentTypes select( final QualifiedContentTypeNames qualifiedContentTypeNames, final Session session )
+    public ContentTypes select( final ContentTypeNames contentTypeNames, final Session session )
     {
         try
         {
-            return new ContentTypeDaoHandlerSelect( session ).select( qualifiedContentTypeNames );
+            return new ContentTypeDaoHandlerSelect( session ).select( contentTypeNames );
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to retrieve content types [{0}]", qualifiedContentTypeNames );
+            throw new SystemException( e, "Unable to retrieve content types [{0}]", contentTypeNames );
         }
     }
 
     @Override
-    public ContentType select( final QualifiedContentTypeName qualifiedContentTypeName, final Session session )
+    public ContentType select( final ContentTypeName contentTypeName, final Session session )
     {
         try
         {
-            final QualifiedContentTypeNames qualifiedContentTypeNames = QualifiedContentTypeNames.from( qualifiedContentTypeName );
-            return new ContentTypeDaoHandlerSelect( session ).select( qualifiedContentTypeNames ).first();
+            final ContentTypeNames contentTypeNames = ContentTypeNames.from( contentTypeName );
+            return new ContentTypeDaoHandlerSelect( session ).select( contentTypeNames ).first();
         }
         catch ( RepositoryException e )
         {
-            throw new SystemException( e, "Unable to retrieve content type [{0}]", qualifiedContentTypeName );
+            throw new SystemException( e, "Unable to retrieve content type [{0}]", contentTypeName );
         }
     }
 }

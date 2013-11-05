@@ -10,7 +10,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
 import com.enonic.wem.api.exception.ContentTypeNotFoundException;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -50,14 +50,14 @@ public class DeleteContentTypeHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedContentTypeName names = QualifiedContentTypeName.from( "my:my_content_type" );
+        final ContentTypeName names = ContentTypeName.from( "my_content_type" );
         final DeleteContentType command = Commands.contentType().delete().name( names );
 
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        Mockito.verify( contentTypeDao, only() ).delete( isA( QualifiedContentTypeName.class ), any( Session.class ) );
+        Mockito.verify( contentTypeDao, only() ).delete( isA( ContentTypeName.class ), any( Session.class ) );
 
         DeleteContentTypeResult result = command.getResult();
         assertEquals( DeleteContentTypeResult.SUCCESS, result );
@@ -68,7 +68,7 @@ public class DeleteContentTypeHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedContentTypeName inUsedName = QualifiedContentTypeName.from( "my:in_use_content_type" );
+        final ContentTypeName inUsedName = ContentTypeName.from( "in_use_content_type" );
 
         Mockito.doReturn( 1 ).when( contentDao ).countContentTypeUsage( eq( inUsedName ), any( Session.class ) );
 
@@ -78,7 +78,7 @@ public class DeleteContentTypeHandlerTest
         this.handler.handle();
 
         // verify
-        Mockito.verify( contentTypeDao, never() ).delete( isA( QualifiedContentTypeName.class ), any( Session.class ) );
+        Mockito.verify( contentTypeDao, never() ).delete( isA( ContentTypeName.class ), any( Session.class ) );
 
         DeleteContentTypeResult result = command.getResult();
         assertEquals( DeleteContentTypeResult.UNABLE_TO_DELETE, result );
@@ -89,7 +89,7 @@ public class DeleteContentTypeHandlerTest
         throws Exception
     {
         // exercise
-        final QualifiedContentTypeName notFoundName = QualifiedContentTypeName.from( "my:not_found_content_type" );
+        final ContentTypeName notFoundName = ContentTypeName.from( "not_found_content_type" );
 
         Mockito.doThrow( new ContentTypeNotFoundException( notFoundName ) ).when( contentTypeDao ).delete( eq( notFoundName ),
                                                                                                            any( Session.class ) );
@@ -99,7 +99,7 @@ public class DeleteContentTypeHandlerTest
         this.handler.handle();
 
         // verify
-        Mockito.verify( contentTypeDao, only() ).delete( isA( QualifiedContentTypeName.class ), any( Session.class ) );
+        Mockito.verify( contentTypeDao, only() ).delete( isA( ContentTypeName.class ), any( Session.class ) );
 
         DeleteContentTypeResult result = command.getResult();
         assertEquals( DeleteContentTypeResult.NOT_FOUND, result );

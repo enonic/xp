@@ -6,7 +6,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class SyncRelationshipsCommand
 {
@@ -14,7 +14,7 @@ public class SyncRelationshipsCommand
 
     private Session jcrSession;
 
-    private QualifiedContentTypeName contentType;
+    private ContentTypeName contentType;
 
     private ContentId contentToUpdate;
 
@@ -34,7 +34,7 @@ public class SyncRelationshipsCommand
         return this;
     }
 
-    public SyncRelationshipsCommand contentType( final QualifiedContentTypeName value )
+    public SyncRelationshipsCommand contentType( final ContentTypeName value )
     {
         this.contentType = value;
         return this;
@@ -68,7 +68,7 @@ public class SyncRelationshipsCommand
         return jcrSession;
     }
 
-    public QualifiedContentTypeName getContentType()
+    public ContentTypeName getContentType()
     {
         return contentType;
     }

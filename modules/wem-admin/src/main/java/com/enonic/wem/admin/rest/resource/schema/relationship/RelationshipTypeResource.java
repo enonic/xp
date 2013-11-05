@@ -28,9 +28,9 @@ import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResu
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.exception.BaseException;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.api.schema.relationship.editor.SetRelationshipTypeEditor;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
@@ -41,21 +41,17 @@ import com.enonic.wem.core.support.serializer.XmlParsingException;
 public class RelationshipTypeResource
     extends AbstractResource
 {
-    public static final String FORMAT_XML = "XML";
-
-    public static final String FORMAT_JSON = "JSON";
-
     private UploadService uploadService;
 
     @GET
     public RelationshipTypeJson get( @QueryParam("qualifiedName") final String name )
     {
-        final QualifiedRelationshipTypeName qualifiedRelationshipTypeName = QualifiedRelationshipTypeName.from( name );
-        final RelationshipType relationshipType = fetchRelationshipType( qualifiedRelationshipTypeName );
+        final RelationshipTypeName relationshipTypeName = RelationshipTypeName.from( name );
+        final RelationshipType relationshipType = fetchRelationshipType( relationshipTypeName );
 
         if ( relationshipType == null )
         {
-            String message = String.format( "RelationshipType [%s] was not found.", qualifiedRelationshipTypeName );
+            String message = String.format( "RelationshipType [%s] was not found.", relationshipTypeName );
             throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
                 entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
@@ -67,12 +63,12 @@ public class RelationshipTypeResource
     @Path("config")
     public RelationshipTypeConfigJson getConfig( @QueryParam("qualifiedName") final String name )
     {
-        final QualifiedRelationshipTypeName qualifiedRelationshipTypeName = QualifiedRelationshipTypeName.from( name );
-        final RelationshipType relationshipType = fetchRelationshipType( qualifiedRelationshipTypeName );
+        final RelationshipTypeName relationshipTypeName = RelationshipTypeName.from( name );
+        final RelationshipType relationshipType = fetchRelationshipType( relationshipTypeName );
 
         if ( relationshipType == null )
         {
-            String message = String.format( "RelationshipType [%s] was not found.", qualifiedRelationshipTypeName );
+            String message = String.format( "RelationshipType [%s] was not found.", relationshipTypeName );
             throw new WebApplicationException( Response.status( Response.Status.NOT_FOUND ).
                 entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
         }
@@ -81,10 +77,9 @@ public class RelationshipTypeResource
 
     }
 
-    public RelationshipType fetchRelationshipType( final QualifiedRelationshipTypeName name )
+    public RelationshipType fetchRelationshipType( final RelationshipTypeName name )
     {
-        final GetRelationshipTypes command =
-            Commands.relationshipType().get().qualifiedNames( QualifiedRelationshipTypeNames.from( name ) );
+        final GetRelationshipTypes command = Commands.relationshipType().get().qualifiedNames( RelationshipTypeNames.from( name ) );
         final RelationshipTypes relationshipTypes = client.execute( command );
         return relationshipTypes.isEmpty() ? null : relationshipTypes.first();
     }
@@ -103,11 +98,11 @@ public class RelationshipTypeResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SchemaDeleteJson delete( SchemaDeleteParams param )
     {
-        final QualifiedRelationshipTypeNames qualifiedNames =
-            QualifiedRelationshipTypeNames.from( param.getQualifiedNames().toArray( new String[param.getQualifiedNames().size()] ) );
+        final RelationshipTypeNames qualifiedNames =
+            RelationshipTypeNames.from( param.getQualifiedNames().toArray( new String[param.getQualifiedNames().size()] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
-        for ( QualifiedRelationshipTypeName relationshipTypeName : qualifiedNames )
+        for ( RelationshipTypeName relationshipTypeName : qualifiedNames )
         {
             final DeleteRelationshipType deleteCommand = Commands.relationshipType().delete().qualifiedName( relationshipTypeName );
             final DeleteRelationshipTypeResult result = client.execute( deleteCommand );

@@ -8,7 +8,7 @@ import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public class DeleteRelationshipTypeRpcHandlerTest
     extends AbstractRpcHandlerTest
@@ -29,7 +29,7 @@ public class DeleteRelationshipTypeRpcHandlerTest
     public void deleteSingleRelationshipType()
         throws Exception
     {
-        final QualifiedRelationshipTypeName existingName = QualifiedRelationshipTypeName.from( "company:partner" );
+        final RelationshipTypeName existingName = RelationshipTypeName.from( "partner" );
 
         RelationshipTypeDeletionResult relationshipTypeDeletionResult = new RelationshipTypeDeletionResult();
         relationshipTypeDeletionResult.success( existingName );
@@ -45,7 +45,7 @@ public class DeleteRelationshipTypeRpcHandlerTest
     public void deleteMultipleRelationshipTypes()
         throws Exception
     {
-        final QualifiedRelationshipTypeName existingName = QualifiedRelationshipTypeName.from( "company:partner" );
+        final RelationshipTypeName existingName = RelationshipTypeName.from( "partner" );
 
         RelationshipTypeDeletionResult relationshipTypeDeletionResult = new RelationshipTypeDeletionResult();
         relationshipTypeDeletionResult.success( existingName );

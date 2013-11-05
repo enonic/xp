@@ -9,7 +9,7 @@ import org.jdom.JDOMException;
 
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
 
@@ -79,7 +79,7 @@ public class ContentTypeXmlSerializer
         final String displayName = contentTypeEl.getChildText( "display-name" );
         final String displayNameScript = contentTypeEl.getChildText( "content-display-name-script" );
         final String superTypeString = StringUtils.trimToNull( contentTypeEl.getChildText( "super-type" ) );
-        final QualifiedContentTypeName superType = superTypeString != null ? QualifiedContentTypeName.from( superTypeString ) : null;
+        final ContentTypeName superType = superTypeString != null ? ContentTypeName.from( superTypeString ) : null;
         final boolean isAbstract = Boolean.parseBoolean( contentTypeEl.getChildText( "is-abstract" ) );
         final boolean isFinal = Boolean.parseBoolean( contentTypeEl.getChildText( "is-final" ) );
         final boolean builtIn = Boolean.parseBoolean( contentTypeEl.getChildText( "is-built-in" ) );

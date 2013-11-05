@@ -11,5 +11,9 @@ module api_data{
         toString() {
             return this.name;
         }
+
+        equals(valueType:ValueType):boolean {
+            return this.name == valueType.name;
+        }
     }
 }

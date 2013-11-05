@@ -59,15 +59,22 @@ module LiveEdit.ui {
 
             });
 
-            $(document).on('mouseenter', '[data-live-edit-type]', (event) => {
+            $(document).on('mouseover', '[data-live-edit-type]', (event) => {
                 var component:LiveEdit.component.Component = new LiveEdit.component.Component($(event.target).closest('[data-live-edit-type]'));
 
                 this.setText(component);
 
-                this.getEl().hide(null).fadeIn(300);
+                this.getEl().hide(null).show();
             });
 
-            $(document).on('mouseout', () => this.hide());
+            $('[data-live-edit-type]').mouseleave(() => {
+                this.getEl().hide(null);
+            });
+
+            /*$(document).on('mouseleave', () => {
+                console.log("mouseout", arguments);
+                this.hide()
+            });*/
         }
 
         private getPositionFromEvent(event:JQueryEventObject) {

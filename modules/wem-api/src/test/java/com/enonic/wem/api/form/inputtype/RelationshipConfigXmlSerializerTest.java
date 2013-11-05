@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.enonic.wem.api.XmlTestHelper;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static junit.framework.Assert.assertEquals;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
@@ -32,7 +32,7 @@ public class RelationshipConfigXmlSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.LIKE );
         RelationshipConfig config = builder.build();
 
         // exercise
@@ -49,7 +49,7 @@ public class RelationshipConfigXmlSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.LIKE );
         RelationshipConfig expected = builder.build();
 
         // exercise
@@ -66,7 +66,7 @@ public class RelationshipConfigXmlSerializerTest
     {
         // setup
         RelationshipConfig.Builder builder = RelationshipConfig.newRelationshipConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.LIKE );
         RelationshipConfig expected = builder.build();
 
         StringBuilder xml = new StringBuilder();

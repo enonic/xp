@@ -18,17 +18,18 @@ module app_browse_grid {
                     }
                 ],
                 autoLoad: false,
+                autoSync: false,
 
                 proxy: {
-                    type: 'direct',
-                    directFn: api_remote_schema.RemoteSchemaService.schema_list,
-                    simpleSortMode: true,
+                    type: 'rest',
+                    url: api_util.getUri('admin/rest/content/list'),
                     reader: {
                         type: 'json',
-                        root: 'schemas',
-                        totalProperty: 'total'
+                        root: '',
+                        totalProperty: undefined
                     }
                 }
+
             });
         }
 

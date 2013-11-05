@@ -5,8 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class UpdateContentParams
 {
@@ -14,9 +15,11 @@ public class UpdateContentParams
 
     private String contentName;
 
-    private QualifiedContentTypeName qualifiedContentTypeName;
+    private ContentTypeName qualifiedContentTypeName;
 
     private JsonNode contentData;
+
+    private FormJson form;
 
     private String displayName;
 
@@ -42,19 +45,29 @@ public class UpdateContentParams
         this.contentName = contentName;
     }
 
-    public QualifiedContentTypeName getQualifiedContentTypeName()
+    public ContentTypeName getQualifiedContentTypeName()
     {
         return qualifiedContentTypeName;
     }
 
     public void setQualifiedContentTypeName( final String qualifiedContentTypeName )
     {
-        this.qualifiedContentTypeName = QualifiedContentTypeName.from( qualifiedContentTypeName );
+        this.qualifiedContentTypeName = ContentTypeName.from( qualifiedContentTypeName );
     }
 
     public JsonNode getContentData()
     {
         return contentData;
+    }
+
+    public FormJson getForm()
+    {
+        return form;
+    }
+
+    public void setForm( final FormJson form )
+    {
+        this.form = form;
     }
 
     public void setContentData( final JsonNode contentData )

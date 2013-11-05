@@ -7,8 +7,13 @@ public final class SchemaCommands
         return new SchemaTypes();
     }
 
-    public GetSchemaTree getTree()
+    public GetRootSchemas getRoots()
     {
-        return new GetSchemaTree();
+        return new GetRootSchemas();
+    }
+
+    public GetChildSchemas getChildren()
+    {
+        return new GetChildSchemas();
     }
 }

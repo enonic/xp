@@ -4,20 +4,18 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.form.FormItemJson;
 import com.enonic.wem.admin.json.form.FormItemJsonFactory;
-import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
+import com.enonic.wem.admin.json.schema.SchemaJson;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
 
 public class MixinJson
+    extends SchemaJson
     implements ItemJson
 {
     private final Mixin mixin;
-
-    private final String iconUrl;
 
     private final boolean editable;
 
@@ -25,20 +23,11 @@ public class MixinJson
 
     public MixinJson( final Mixin mixin )
     {
+        super( mixin );
         this.mixin = mixin;
-        this.iconUrl = SchemaImageUriResolver.resolve( mixin.getSchemaKey() );
+
         this.editable = true;
         this.deletable = true;
-    }
-
-    public String getName()
-    {
-        return mixin.getName();
-    }
-
-    public String getDisplayName()
-    {
-        return mixin.getDisplayName();
     }
 
     public List<FormItemJson> getItems()
@@ -51,9 +40,14 @@ public class MixinJson
         return builder.build();
     }
 
-    public String getIconUrl()
+    public String getCreator()
     {
-        return this.iconUrl;
+        return mixin.getCreator() != null ? mixin.getCreator().toString() : null;
+    }
+
+    public String getModifier()
+    {
+        return mixin.getModifier() != null ? mixin.getModifier().toString() : null;
     }
 
     @Override
@@ -66,25 +60,5 @@ public class MixinJson
     public boolean getEditable()
     {
         return editable;
-    }
-
-    public String getCreatedTime()
-    {
-        return DateTimeFormatter.format( mixin.getCreatedTime() );
-    }
-
-    public String getCreator()
-    {
-        return mixin.getCreator() != null ? mixin.getCreator().toString() : null;
-    }
-
-    public String getModifiedTime()
-    {
-        return mixin.getModifiedTime() != null ? DateTimeFormatter.format( mixin.getModifiedTime() ) : null;
-    }
-
-    public String getModifier()
-    {
-        return mixin.getModifier() != null ? mixin.getModifier().toString() : null;
     }
 }

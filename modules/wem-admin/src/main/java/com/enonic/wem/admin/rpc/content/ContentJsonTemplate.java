@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 final class ContentJsonTemplate
@@ -38,7 +38,7 @@ final class ContentJsonTemplate
         }
     }
 
-    private static boolean contentTypeAllowsChildContent( QualifiedContentTypeName contentTypeName )
+    private static boolean contentTypeAllowsChildContent( ContentTypeName contentTypeName )
     {
         // quick hack to avoid refactoring ContentJsonTemplate and related classes before 18/04
         // TODO retrieve content type and check value of allow-child-content flag

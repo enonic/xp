@@ -16,7 +16,7 @@ public final class RelationshipTypes
     extends AbstractImmutableEntityList<RelationshipType>
     implements Iterable<RelationshipType>
 {
-    private final ImmutableMap<QualifiedRelationshipTypeName, RelationshipType> map;
+    private final ImmutableMap<RelationshipTypeName, RelationshipType> map;
 
     private RelationshipTypes( final ImmutableList<RelationshipType> list )
     {
@@ -24,13 +24,13 @@ public final class RelationshipTypes
         this.map = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public Set<QualifiedRelationshipTypeName> getNames()
+    public Set<RelationshipTypeName> getNames()
     {
-        final Collection<QualifiedRelationshipTypeName> names = Collections2.transform( this.list, new ToNameFunction() );
+        final Collection<RelationshipTypeName> names = Collections2.transform( this.list, new ToNameFunction() );
         return ImmutableSet.copyOf( names );
     }
 
-    public RelationshipType get( final QualifiedRelationshipTypeName relationshipTypeName )
+    public RelationshipType get( final RelationshipTypeName relationshipTypeName )
     {
         return map.get( relationshipTypeName );
     }
@@ -57,10 +57,10 @@ public final class RelationshipTypes
     }
 
     private final static class ToNameFunction
-        implements Function<RelationshipType, QualifiedRelationshipTypeName>
+        implements Function<RelationshipType, RelationshipTypeName>
     {
         @Override
-        public QualifiedRelationshipTypeName apply( final RelationshipType value )
+        public RelationshipTypeName apply( final RelationshipType value )
         {
             return value.getQualifiedName();
         }

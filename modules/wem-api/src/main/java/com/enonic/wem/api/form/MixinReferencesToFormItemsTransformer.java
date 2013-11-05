@@ -5,17 +5,18 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.schema.mixin.Mixin;
-import com.enonic.wem.api.schema.mixin.MixinFetcher;
 
 public class MixinReferencesToFormItemsTransformer
 {
-    private final MixinFetcher mixinFetcher;
+    private final Client client;
 
-    public MixinReferencesToFormItemsTransformer( final MixinFetcher mixinFetcher )
+    public MixinReferencesToFormItemsTransformer( final Client client )
     {
-        Preconditions.checkNotNull( mixinFetcher, "mixinFetcher cannot be null" );
-        this.mixinFetcher = mixinFetcher;
+        Preconditions.checkNotNull( client, "client cannot be null" );
+        this.client = client;
     }
 
     public Form transformForm( final Form form )
@@ -51,7 +52,7 @@ public class MixinReferencesToFormItemsTransformer
             if ( formItem instanceof MixinReference )
             {
                 final MixinReference mixinReference = (MixinReference) formItem;
-                final Mixin mixin = mixinFetcher.getMixin( mixinReference.getQualifiedMixinName() );
+                final Mixin mixin = client.execute( Commands.mixin().get().byName( mixinReference.getMixinName() ) );
                 if ( mixin != null )
                 {
                     FormItems mixinFormItems = mixin.getFormItems();
@@ -72,7 +73,7 @@ public class MixinReferencesToFormItemsTransformer
                 }
                 else
                 {
-                    throw new MixinNotFound( mixinReference.getQualifiedMixinName() );
+                    throw new MixinNotFound( mixinReference.getMixinName() );
                 }
             }
             else

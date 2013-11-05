@@ -7,7 +7,7 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static org.mockito.Matchers.eq;
@@ -31,7 +31,7 @@ public class DeleteContentTypeRpcHandlerTest
     public void deleteSingleContentType()
         throws Exception
     {
-        final QualifiedContentTypeName existingName = QualifiedContentTypeName.from( "my:existing_content_type" );
+        final ContentTypeName existingName = ContentTypeName.from( "existing_content_type" );
 
         ContentTypeDeletionResult contentDeletionResult = new ContentTypeDeletionResult();
         contentDeletionResult.success( existingName );
@@ -45,9 +45,9 @@ public class DeleteContentTypeRpcHandlerTest
     public void deleteVariousContentTypes()
         throws Exception
     {
-        final QualifiedContentTypeName existingName = QualifiedContentTypeName.from( "my:existing_content_type" );
-        final QualifiedContentTypeName notFoundName = QualifiedContentTypeName.from( "my:not_found_content_type" );
-        final QualifiedContentTypeName beingUsedName = QualifiedContentTypeName.from( "my:being_used_content_type" );
+        final ContentTypeName existingName = ContentTypeName.from( "existing_content_type" );
+        final ContentTypeName notFoundName = ContentTypeName.from( "not_found_content_type" );
+        final ContentTypeName beingUsedName = ContentTypeName.from( "being_used_content_type" );
 
         Mockito.when( client.execute( eq( contentType().delete().name( existingName ) ) ) ).thenReturn( DeleteContentTypeResult.SUCCESS );
         Mockito.when( client.execute( eq( contentType().delete().name( notFoundName ) ) ) ).thenReturn( DeleteContentTypeResult.NOT_FOUND );

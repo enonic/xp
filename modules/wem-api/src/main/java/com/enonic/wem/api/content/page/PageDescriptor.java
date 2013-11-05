@@ -26,6 +26,7 @@ public final class PageDescriptor
         return displayName;
     }
 
+    @Override
     public ModuleResourceKey getControllerResource()
     {
         return controllerResource;

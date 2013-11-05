@@ -11,9 +11,9 @@ import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.NonUserAccount;
 import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.profile.UserProfile;
-import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument;
 
 public class AccountIndexDocumentFactory
 {
@@ -32,7 +32,7 @@ public class AccountIndexDocumentFactory
 
     private static IndexDocument createAccountIndexDocument( final Account account )
     {
-        IndexDocument indexDocument = new IndexDocument( account.getKey().toString(), IndexType.ACCOUNT, IndexConstants.WEM_INDEX );
+        IndexDocument indexDocument = new IndexDocument( account.getKey().toString(), IndexType.ACCOUNT, Index.WEM );
 
         switch ( account.getKey().getType() )
         {

@@ -1,6 +1,6 @@
 module api_schema_content_json{
 
-    export interface ContentTypeSummaryJson extends api_item.ItemJson {
+    export interface ContentTypeSummaryJson extends api_schema.SchemaJson {
 
         abstract:boolean;
 
@@ -8,15 +8,7 @@ module api_schema_content_json{
 
         contentDisplayNameScript: string;
 
-        displayName:string;
-
         final: boolean;
-
-        iconUrl: string;
-
-        name:string;
-
-        qualifiedName:string;
 
         superType:string;
 

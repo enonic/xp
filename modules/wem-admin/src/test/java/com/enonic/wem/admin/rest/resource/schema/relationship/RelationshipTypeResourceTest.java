@@ -27,8 +27,8 @@ import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
@@ -79,8 +79,8 @@ public class RelationshipTypeResourceTest
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
+        final RelationshipTypeNames names =
+            RelationshipTypeNames.from( RelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         String response =
@@ -99,8 +99,8 @@ public class RelationshipTypeResourceTest
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
+        final RelationshipTypeNames names =
+            RelationshipTypeNames.from( RelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         String response =
@@ -150,7 +150,7 @@ public class RelationshipTypeResourceTest
     public void deleteSingleRelationshipType()
         throws Exception
     {
-        QualifiedRelationshipTypeName.from( "company:partner" );
+        RelationshipTypeName.from( "partner" );
 
         Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).thenReturn(
             DeleteRelationshipTypeResult.SUCCESS );
@@ -168,7 +168,7 @@ public class RelationshipTypeResourceTest
     public void deleteMultipleRelationshipTypes()
         throws Exception
     {
-        QualifiedRelationshipTypeName.from( "company:partner" );
+        RelationshipTypeName.from( "partner" );
 
         Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).
             thenReturn( DeleteRelationshipTypeResult.SUCCESS ).
@@ -188,7 +188,7 @@ public class RelationshipTypeResourceTest
         throws Exception
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
-        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( QualifiedRelationshipTypeName.from( "love" ) );
+        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( RelationshipTypeName.from( "love" ) );
 
         Mockito.when( this.uploadService.getItem( "reference" ) ).thenReturn( null );
 
@@ -203,7 +203,7 @@ public class RelationshipTypeResourceTest
     public void testUpdate()
         throws Exception
     {
-        QualifiedRelationshipTypeNames qualifiedNames = QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "love" ) );
+        RelationshipTypeNames qualifiedNames = RelationshipTypeNames.from( RelationshipTypeName.from( "love" ) );
 
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.from( qualifiedNames ) );
@@ -224,7 +224,7 @@ public class RelationshipTypeResourceTest
     {
         final String iconReference = "edc1af66-ecb4-4f8a-8df4-0738418f84fc";
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
-        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( QualifiedRelationshipTypeName.from( "love" ) );
+        Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn( RelationshipTypeName.from( "love" ) );
         uploadFile( iconReference, "icon.png", IMAGE_DATA, "image/png" );
 
         resource().path( "schema/relationship/create" ).entity( readFromFile( "create_relationship_type_with_icon_params.json" ),

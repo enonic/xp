@@ -4,7 +4,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 abstract class AbstractContentTypeDaoHandler
@@ -18,7 +18,7 @@ abstract class AbstractContentTypeDaoHandler
         this.session = session;
     }
 
-    protected final Node getContentTypeNode( final QualifiedContentTypeName contentTypeName )
+    protected final Node getContentTypeNode( final ContentTypeName contentTypeName )
         throws RepositoryException
     {
         final String path = getNodePath( contentTypeName );
@@ -26,12 +26,12 @@ abstract class AbstractContentTypeDaoHandler
         return JcrHelper.getNodeOrNull( rootNode, path );
     }
 
-    protected final String getNodePath( final QualifiedContentTypeName contentTypeName )
+    protected final String getNodePath( final ContentTypeName contentTypeName )
     {
-        return ContentTypeDao.CONTENT_TYPES_PATH + contentTypeName.getName();
+        return ContentTypeDao.CONTENT_TYPES_PATH + contentTypeName.toString();
     }
 
-    protected final boolean contentTypeExists( final QualifiedContentTypeName contentTypeName )
+    protected final boolean contentTypeExists( final ContentTypeName contentTypeName )
         throws RepositoryException
     {
         final String contentTypePath = getNodePath( contentTypeName );

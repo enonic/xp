@@ -3,6 +3,7 @@ package com.enonic.wem.api.content;
 import org.junit.Test;
 
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static com.enonic.wem.api.content.ContentPath.newPath;
 import static org.junit.Assert.*;

@@ -1,23 +1,14 @@
 package com.enonic.wem.api.schema.mixin;
 
-
-import java.util.List;
-
-import com.enonic.wem.api.data.Data;
-import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodeTranslatable;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
-import com.enonic.wem.api.support.SerializerForFormItemToData;
 
 public class Mixin
-    extends BaseSchema<QualifiedMixinName>
-    implements Schema, NodeTranslatable
+    extends BaseSchema<MixinName>
+    implements Schema
 {
     private final FormItems formItems;
 
@@ -34,39 +25,20 @@ public class Mixin
     }
 
     @Override
-    public QualifiedMixinName getQualifiedName()
+    public MixinName getQualifiedName()
     {
-        return QualifiedMixinName.from( getName() );
+        return MixinName.from( getName() );
+    }
+
+    @Override
+    public boolean hasChildren()
+    {
+        return false;
     }
 
     public FormItems getFormItems()
     {
         return formItems;
-    }
-
-    @Override
-    public Node toNode( final NodePath parent )
-    {
-        final Node.Builder builder = Node.newNode();
-
-        builder.name( this.getName() );
-        builder.createdTime( this.getCreatedTime() );
-        builder.modifiedTime( this.getModifiedTime() );
-        builder.creator( this.getCreator() );
-        builder.modifier( this.getModifier() );
-        builder.property( "displayName", this.getDisplayName() );
-
-        final DataSet formAsData = new DataSet( "formItems" );
-        final List<Data> dataList = new SerializerForFormItemToData().serializeFormItems( this.formItems );
-        for ( final Data data : dataList )
-        {
-            formAsData.add( data );
-        }
-        builder.addDataSet( formAsData );
-
-        builder.icon( this.getIcon() );
-
-        return builder.build();
     }
 
     public static Builder newMixin()
@@ -93,6 +65,18 @@ public class Mixin
         {
             super( mixin );
             this.formItems = mixin.formItems;
+        }
+
+        public Builder name( final MixinName value )
+        {
+            super.name( value );
+            return this;
+        }
+
+        public Builder name( final String value )
+        {
+            super.name( MixinName.from( value ) );
+            return this;
         }
 
         public Builder formItems( FormItems value )

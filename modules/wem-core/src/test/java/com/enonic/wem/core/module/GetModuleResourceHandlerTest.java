@@ -24,7 +24,7 @@ import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -147,7 +147,7 @@ public class GetModuleResourceHandlerTest
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
             maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
             moduleDependencies( ModuleKeys.from( "modulefoo-1.0.0", "modulebar-1.2.3" ) ).
-            contentTypeDependencies( QualifiedContentTypeNames.from( "article" ) ).
+            contentTypeDependencies( ContentTypeNames.from( "article" ) ).
             moduleDirectoryEntry( moduleDirectoryEntry ).
             config( config );
 

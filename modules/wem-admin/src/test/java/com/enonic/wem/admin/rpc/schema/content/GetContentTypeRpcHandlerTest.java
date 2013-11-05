@@ -13,9 +13,9 @@ import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_AREA;
@@ -55,14 +55,14 @@ public class GetContentTypeRpcHandlerTest
 
         final ContentType contentType = newContentType().
             name( "my_type" ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            superType( ContentTypeName.unstructured() ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( QualifiedContentTypeName.from( "my_type" ) );
+        final ContentTypeNames names = ContentTypeNames.from( ContentTypeName.from( "my_type" ) );
         Mockito.when( client.execute( Commands.contentType().get().qualifiedNames( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentTypeJson_param.json", "getContentTypeJson_result.json" );
@@ -83,14 +83,14 @@ public class GetContentTypeRpcHandlerTest
 
         final ContentType contentType = newContentType().
             name( "my_type" ).
-            superType( QualifiedContentTypeName.unstructured() ).
+            superType( ContentTypeName.unstructured() ).
             addFormItem( inputText1 ).
             addFormItem( inputText2 ).
             addFormItem( textArea1 ).
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        final QualifiedContentTypeNames names = QualifiedContentTypeNames.from( QualifiedContentTypeName.from( "my_type" ) );
+        final ContentTypeNames names = ContentTypeNames.from( ContentTypeName.from( "my_type" ) );
         Mockito.when( client.execute( Commands.contentType().get().qualifiedNames( names ) ) ).thenReturn( contentTypes );
 
         testSuccess( "getContentTypeXml_param.json", "getContentTypeXml_result.json" );

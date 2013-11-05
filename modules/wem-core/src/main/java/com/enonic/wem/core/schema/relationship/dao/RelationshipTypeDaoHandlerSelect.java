@@ -9,8 +9,8 @@ import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.jcr.JcrHelper;
@@ -18,14 +18,14 @@ import com.enonic.wem.core.jcr.JcrHelper;
 final class RelationshipTypeDaoHandlerSelect
     extends AbstractRelationshipTypeDaoHandler<RelationshipTypes>
 {
-    private QualifiedRelationshipTypeNames qualifiedNames;
+    private RelationshipTypeNames qualifiedNames;
 
     RelationshipTypeDaoHandlerSelect( final Session session )
     {
         super( session );
     }
 
-    public RelationshipTypeDaoHandlerSelect selectors( final QualifiedRelationshipTypeNames qualifiedNames )
+    public RelationshipTypeDaoHandlerSelect selectors( final RelationshipTypeNames qualifiedNames )
     {
         this.qualifiedNames = qualifiedNames;
         return this;
@@ -61,11 +61,11 @@ final class RelationshipTypeDaoHandlerSelect
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    private RelationshipTypes select( final QualifiedRelationshipTypeNames qualifiedNames )
+    private RelationshipTypes select( final RelationshipTypeNames qualifiedNames )
         throws RepositoryException
     {
         final List<RelationshipType> relationshipTypeList = Lists.newArrayList();
-        for ( QualifiedRelationshipTypeName relationshipTypeName : qualifiedNames )
+        for ( RelationshipTypeName relationshipTypeName : qualifiedNames )
         {
             final RelationshipType relationshipType = getRelationshipType( relationshipTypeName );
             if ( relationshipType != null )
@@ -76,7 +76,7 @@ final class RelationshipTypeDaoHandlerSelect
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    private RelationshipType getRelationshipType( final QualifiedRelationshipTypeName qualifiedName )
+    private RelationshipType getRelationshipType( final RelationshipTypeName qualifiedName )
         throws RepositoryException
     {
         final Node relationshipTypeNode = getRelationshipTypeNode( qualifiedName );

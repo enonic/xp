@@ -8,14 +8,14 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 /**
  * The natural key of a Relationship.
  */
 public final class RelationshipKey
 {
-    private final QualifiedRelationshipTypeName type;
+    private final RelationshipTypeName type;
 
     private final ContentId fromContent;
 
@@ -23,7 +23,7 @@ public final class RelationshipKey
 
     private final DataPath managingData;
 
-    private RelationshipKey( final QualifiedRelationshipTypeName type, final ContentId fromContent, final ContentId toContent,
+    private RelationshipKey( final RelationshipTypeName type, final ContentId fromContent, final ContentId toContent,
                              final DataPath managingData )
     {
         this.type = type;
@@ -40,7 +40,7 @@ public final class RelationshipKey
         this.managingData = builder.managingData;
     }
 
-    public QualifiedRelationshipTypeName getType()
+    public RelationshipTypeName getType()
     {
         return type;
     }
@@ -97,12 +97,12 @@ public final class RelationshipKey
         return Objects.hash( type, fromContent, toContent, managingData );
     }
 
-    public static RelationshipKey from( final QualifiedRelationshipTypeName type, final ContentId fromContent, final ContentId toContent )
+    public static RelationshipKey from( final RelationshipTypeName type, final ContentId fromContent, final ContentId toContent )
     {
         return new RelationshipKey( type, fromContent, toContent, null );
     }
 
-    public static RelationshipKey from( final QualifiedRelationshipTypeName type, final ContentId fromContent, final DataPath managingData,
+    public static RelationshipKey from( final RelationshipTypeName type, final ContentId fromContent, final DataPath managingData,
                                         final ContentId toContent )
     {
         return new RelationshipKey( type, fromContent, toContent, managingData );
@@ -111,7 +111,7 @@ public final class RelationshipKey
     public static RelationshipKey from( final ObjectNode objectNode )
     {
         Preconditions.checkArgument( objectNode.has( "type" ), "missing required field: type" );
-        final QualifiedRelationshipTypeName type = QualifiedRelationshipTypeName.from( objectNode.get( "type" ).asText() );
+        final RelationshipTypeName type = RelationshipTypeName.from( objectNode.get( "type" ).asText() );
 
         Preconditions.checkArgument( objectNode.has( "fromContent" ), "missing required field: fromContent" );
         final ContentId fromContent = new ContentId( objectNode.get( "fromContent" ).asText() );
@@ -129,7 +129,7 @@ public final class RelationshipKey
 
     public static class Builder
     {
-        private QualifiedRelationshipTypeName type;
+        private RelationshipTypeName type;
 
         private ContentId fromContent;
 
@@ -137,7 +137,7 @@ public final class RelationshipKey
 
         private DataPath managingData;
 
-        public Builder type( QualifiedRelationshipTypeName relationshipType )
+        public Builder type( RelationshipTypeName relationshipType )
         {
             this.type = relationshipType;
             return this;

@@ -1,7 +1,7 @@
 module app_new {
 
     export interface SchemaTypeListItem {
-        type: string;
+        type: api_schema.SchemaKind;
         displayName: string;
         iconUrl: string;
     }

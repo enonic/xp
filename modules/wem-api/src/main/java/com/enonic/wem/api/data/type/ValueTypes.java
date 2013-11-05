@@ -27,9 +27,11 @@ public final class ValueTypes
 
     public static final Double DOUBLE = new Double( 9 );
 
-    public static final GeographicCoordinate GEOGRAPHIC_COORDINATE = new GeographicCoordinate( 10 );
+    public static final GeoPoint GEO_POINT = new GeoPoint( 10 );
 
     public static final AttachmentName ATTACHMENT_NAME = new AttachmentName( 11 );
+
+    public static final EntityId ENTITY_ID = new EntityId( 12 );
 
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
 
@@ -46,8 +48,9 @@ public final class ValueTypes
         register( CONTENT_ID );
         register( LONG );
         register( DOUBLE );
-        register( GEOGRAPHIC_COORDINATE );
+        register( GEO_POINT );
         register( ATTACHMENT_NAME );
+        register( ENTITY_ID );
     }
 
     private static void register( ValueType valueType )

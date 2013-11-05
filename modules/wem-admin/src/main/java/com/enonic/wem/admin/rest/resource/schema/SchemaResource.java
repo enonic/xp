@@ -12,19 +12,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.admin.json.schema.SchemaTreeJson;
 import com.enonic.wem.admin.rest.resource.schema.exception.InvalidSchemaTypeException;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.schema.GetSchemaTree;
+import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.schema.GetChildSchemas;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKind;
+import com.enonic.wem.api.schema.SchemaName;
 import com.enonic.wem.api.schema.Schemas;
-import com.enonic.wem.api.support.tree.Tree;
 
 import static com.enonic.wem.api.command.Commands.schema;
 
@@ -34,34 +36,32 @@ public class SchemaResource
 {
     private Client client;
 
-
     @GET
-    @Path("tree")
-    public SchemaTreeJson tree( @QueryParam("types") List<String> types )
+    @Path("list")
+    public List<SchemaJson> list( @QueryParam("parentName") final String parentName )
     {
-        final Set<SchemaKind> typesToInclude;
-        try
+        Schemas schemas;
+        if ( StringUtils.isEmpty( parentName ) )
         {
-            typesToInclude = getTypesToInclude( types );
+            schemas = client.execute( Commands.schema().getRoots() );
         }
-        catch ( IllegalArgumentException e )
+        else
         {
-            throw new InvalidSchemaTypeException( "Invalid parameter 'types': " + types );
-        }
-        final GetSchemaTree command = schema().getTree();
-        if ( !typesToInclude.isEmpty() )
-        {
-            command.includeKind( typesToInclude );
+            final GetChildSchemas getSchemas = Commands.schema().getChildren().parentName( SchemaName.from( parentName ) );
+            schemas = client.execute( getSchemas );
         }
 
-        final Tree<Schema> schemaTree = client.execute( command );
-
-        return new SchemaTreeJson( schemaTree );
+        final List<SchemaJson> schemaJsonResult = new ArrayList<>();
+        for ( Schema schema : schemas )
+        {
+            schemaJsonResult.add( SchemaJson.from( schema ) );
+        }
+        return schemaJsonResult;
     }
 
     @GET
-    @Path("list")
-    public List<SchemaJson> list( @QueryParam("search") String searchFilter, @QueryParam("modules") Set<String> moduleNamesFilter,
+    @Path("find")
+    public List<SchemaJson> find( @QueryParam("search") String searchFilter, @QueryParam("modules") Set<String> moduleNamesFilter,
                                   @QueryParam("types") List<String> types )
     {
         final Set<SchemaKind> typesToInclude;
@@ -89,7 +89,7 @@ public class SchemaResource
         final List<SchemaJson> schemaJsonResult = new ArrayList<>();
         for ( Schema schema : schemas )
         {
-            schemaJsonResult.add( new SchemaJson( schema ) );
+            schemaJsonResult.add( SchemaJson.from( schema ) );
         }
         return schemaJsonResult;
     }

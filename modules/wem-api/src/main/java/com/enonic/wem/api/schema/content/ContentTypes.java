@@ -14,7 +14,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntityList;
 public final class ContentTypes
     extends AbstractImmutableEntityList<ContentType>
 {
-    private final ImmutableMap<QualifiedContentTypeName, ContentType> map;
+    private final ImmutableMap<ContentTypeName, ContentType> map;
 
     private ContentTypes( final ImmutableList<ContentType> list )
     {
@@ -22,13 +22,13 @@ public final class ContentTypes
         this.map = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public ImmutableSet<QualifiedContentTypeName> getNames()
+    public ImmutableSet<ContentTypeName> getNames()
     {
-        final Collection<QualifiedContentTypeName> names = Collections2.transform( this.list, new ToNameFunction() );
+        final Collection<ContentTypeName> names = Collections2.transform( this.list, new ToNameFunction() );
         return ImmutableSet.copyOf( names );
     }
 
-    public ContentType getContentType( final QualifiedContentTypeName contentTypeName )
+    public ContentType getContentType( final ContentTypeName contentTypeName )
     {
         return map.get( contentTypeName );
     }
@@ -55,10 +55,10 @@ public final class ContentTypes
     }
 
     private final static class ToNameFunction
-        implements Function<ContentType, QualifiedContentTypeName>
+        implements Function<ContentType, ContentTypeName>
     {
         @Override
-        public QualifiedContentTypeName apply( final ContentType value )
+        public ContentTypeName apply( final ContentType value )
         {
             return value.getQualifiedName();
         }

@@ -2,7 +2,7 @@ module api_form_json{
 
     export class FieldSetJson extends LayoutJson {
 
-        items:FormItemJson[];
+        items:LayoutTypeWrapperJson[];
 
         label:string;
     }

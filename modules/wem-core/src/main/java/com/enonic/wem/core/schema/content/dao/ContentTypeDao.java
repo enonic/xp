@@ -3,9 +3,9 @@ package com.enonic.wem.core.schema.content.dao;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 public interface ContentTypeDao
@@ -18,11 +18,11 @@ public interface ContentTypeDao
 
     void update( ContentType contentType, Session session );
 
-    void delete( QualifiedContentTypeName qualifiedContentTypeName, Session session );
+    void delete( ContentTypeName contentTypeName, Session session );
 
     ContentTypes selectAll( Session session );
 
-    ContentTypes select( QualifiedContentTypeNames qualifiedContentTypeNames, Session session );
+    ContentTypes select( ContentTypeNames contentTypeNames, Session session );
 
-    ContentType select( QualifiedContentTypeName qualifiedContentTypeName, Session session );
+    ContentType select( ContentTypeName contentTypeName, Session session );
 }

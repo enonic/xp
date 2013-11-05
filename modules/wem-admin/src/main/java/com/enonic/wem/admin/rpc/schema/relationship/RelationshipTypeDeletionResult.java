@@ -5,25 +5,25 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 final class RelationshipTypeDeletionResult
 {
-    private List<QualifiedRelationshipTypeName> successes = Lists.newArrayList();
+    private List<RelationshipTypeName> successes = Lists.newArrayList();
 
     private List<Failure> failures = Lists.newArrayList();
 
-    public void success( final QualifiedRelationshipTypeName qualifiedName )
+    public void success( final RelationshipTypeName qualifiedName )
     {
         successes.add( qualifiedName );
     }
 
-    public void failure( final QualifiedRelationshipTypeName qualifiedName, final String reason )
+    public void failure( final RelationshipTypeName qualifiedName, final String reason )
     {
         failures.add( new Failure( qualifiedName, reason ) );
     }
 
-    public Iterable<QualifiedRelationshipTypeName> successes()
+    public Iterable<RelationshipTypeName> successes()
     {
         return successes;
     }
@@ -40,11 +40,11 @@ final class RelationshipTypeDeletionResult
 
     public class Failure
     {
-        public final QualifiedRelationshipTypeName relationshipTypeName;
+        public final RelationshipTypeName relationshipTypeName;
 
         public final String reason;
 
-        public Failure( final QualifiedRelationshipTypeName qualifiedName, final String reason )
+        public Failure( final RelationshipTypeName qualifiedName, final String reason )
         {
             this.relationshipTypeName = qualifiedName;
             this.reason = reason;

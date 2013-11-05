@@ -1,13 +1,13 @@
 module app_browse {
 
-    export interface SpaceTreeGridPanelParams {
+    export interface SchemaTreeGridPanelParams {
 
         contextMenu:api_ui_menu.ContextMenu;
     }
 
     export class SchemaTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
 
-        constructor(params:SpaceTreeGridPanelParams) {
+        constructor(params:SchemaTreeGridPanelParams) {
 
             super({
                 columns: this.createColumns(),
@@ -20,22 +20,17 @@ module app_browse {
             this.setItemId("SchemaTreeGridPanel");
 
             this.setActiveList(api_app_browse_grid.TreeGridPanel.TREE);
-            this.setKeyField("key");
+            this.setKeyField("name");
 
             app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
-                if (event.getFilterParams()) {
-                    // show  ids
-                    this.setRemoteSearchParams(event.getFilterParams());
-                    this.refresh();
-                } else {
-                    // show none
-                    this.removeAll();
-                    this.updateResultCount(0);
-                }
+                // TODO: use schemas from event when filter is implemented
+                // this.loadData(event.getJsonModels())
+
+                this.refresh();
             });
 
             app_browse_filter.SchemaBrowseResetEvent.on((event) => {
-                this.setRemoteSearchParams({});
+                this.removeAll();
                 this.refresh();
             });
 

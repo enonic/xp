@@ -4,22 +4,22 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 public final class GetRelationshipTypes
     extends Command<RelationshipTypes>
 {
-    private QualifiedRelationshipTypeNames qualifiedNames;
+    private RelationshipTypeNames qualifiedNames;
 
     private boolean all = false;
 
-    public QualifiedRelationshipTypeNames getQualifiedNames()
+    public RelationshipTypeNames getQualifiedNames()
     {
         return this.qualifiedNames;
     }
 
-    public GetRelationshipTypes qualifiedNames( final QualifiedRelationshipTypeNames qualifiedNames )
+    public GetRelationshipTypes qualifiedNames( final RelationshipTypeNames qualifiedNames )
     {
         this.qualifiedNames = qualifiedNames;
         return this;

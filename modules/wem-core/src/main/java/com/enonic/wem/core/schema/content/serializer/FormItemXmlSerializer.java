@@ -11,7 +11,7 @@ import com.enonic.wem.api.form.Layout;
 import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.core.form.inputtype.InputTypeResolver;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 
@@ -139,7 +139,7 @@ public class FormItemXmlSerializer
         final Element referenceEl = new Element( classNameToXmlElementName( MixinReference.class.getSimpleName() ) );
         referenceEl.setAttribute( NAME, String.valueOf( mixinReference.getName() ) );
         referenceEl.addContent( new Element( NAME ).setText( mixinReference.getName() ) );
-        referenceEl.addContent( new Element( REFERENCE ).setText( mixinReference.getQualifiedMixinName().toString() ) );
+        referenceEl.addContent( new Element( REFERENCE ).setText( mixinReference.getMixinName().toString() ) );
         return referenceEl;
     }
 
@@ -239,7 +239,7 @@ public class FormItemXmlSerializer
         final Element itemsEl = formItemEl.getChild( "items" );
         for ( FormItem formItem : formItemsSerializer.parse( itemsEl ) )
         {
-            builder.add( formItem );
+            builder.addFormItem( formItem );
         }
 
         return builder.build();
@@ -249,7 +249,7 @@ public class FormItemXmlSerializer
     {
         final MixinReference.Builder builder = MixinReference.newMixinReference();
         builder.name( formItemEl.getAttributeValue( NAME ) );
-        builder.mixin( QualifiedMixinName.from( formItemEl.getChildText( REFERENCE ) ) );
+        builder.mixin( MixinName.from( formItemEl.getChildText( REFERENCE ) ) );
         return builder.build();
     }
 

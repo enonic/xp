@@ -12,7 +12,7 @@ module api_form{
             return this.name;
         }
 
-        public toFormItemJson():api_form_json.FormItemJson {
+        public toFormItemJson():api_form_json.FormItemTypeWrapperJson {
 
             if (this instanceof Input) {
                 return (<Input>this).toInputJson();
@@ -28,9 +28,9 @@ module api_form{
             }
         }
 
-        public static formItemsToJson(formItems:FormItem[]):api_form_json.FormItemJson[] {
+        public static formItemsToJson(formItems:FormItem[]):api_form_json.FormItemTypeWrapperJson[] {
 
-            var formItemArray:api_form_json.FormItemJson[] = [];
+            var formItemArray:api_form_json.FormItemTypeWrapperJson[] = [];
             formItems.forEach((formItem:FormItem) => {
                 formItemArray.push(formItem.toFormItemJson());
             });

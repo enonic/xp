@@ -3,7 +3,6 @@
   <display-name>module display name</display-name>
   <info>module-info</info>
   <url>http://enonic.net</url>
-  <key>mymodule-1.0.0</key>
   <vendor>
     <name>Enonic</name>
     <url>https://www.enonic.com</url>

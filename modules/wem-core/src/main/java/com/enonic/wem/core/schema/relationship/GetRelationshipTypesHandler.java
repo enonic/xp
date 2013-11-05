@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
@@ -27,7 +27,7 @@ public final class GetRelationshipTypesHandler
         }
         else
         {
-            final QualifiedRelationshipTypeNames selectors = command.getQualifiedNames();
+            final RelationshipTypeNames selectors = command.getQualifiedNames();
             relationshipTypes = relationshipTypeDao.select( selectors, session );
         }
         command.setResult( relationshipTypes );

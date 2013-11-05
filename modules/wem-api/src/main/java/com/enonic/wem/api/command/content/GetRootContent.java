@@ -15,7 +15,7 @@ public class GetRootContent
             return true;
         }
 
-        if ( !( o instanceof GetContents ) )
+        if ( !( o instanceof GetRootContent ) )
         {
             return false;
         }

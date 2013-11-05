@@ -32,18 +32,19 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.core.index.DeleteDocument;
-import com.enonic.wem.core.index.IndexConstants;
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.content.ContentSearchHit;
 import com.enonic.wem.core.index.content.ContentSearchResults;
+import com.enonic.wem.core.index.document.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
 import com.enonic.wem.core.index.elastic.result.FacetFactory;
 import com.enonic.wem.core.index.elastic.searchsource.SearchSourceFactory;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
 
 
 public class ElasticsearchIndexServiceImpl
@@ -61,9 +62,9 @@ public class ElasticsearchIndexServiceImpl
     private IndexSettingsBuilder indexSettingsBuilder;
 
     @Override
-    public IndexStatus getIndexStatus( final String indexName, final boolean waitForStatusYellow )
+    public IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow )
     {
-        final ClusterHealthResponse clusterHealth = getClusterHealth( indexName, waitForStatusYellow );
+        final ClusterHealthResponse clusterHealth = getClusterHealth( index, waitForStatusYellow );
 
         LOG.info( "Cluster in state: " + clusterHealth.getStatus().toString() );
 
@@ -71,9 +72,10 @@ public class ElasticsearchIndexServiceImpl
     }
 
     @Override
-    public boolean indexExists( String indexName )
+    public boolean indexExists( Index index )
     {
-        final IndicesExistsResponse exists = this.client.admin().indices().exists( new IndicesExistsRequest( indexName ) ).actionGet();
+        final IndicesExistsResponse exists =
+            this.client.admin().indices().exists( new IndicesExistsRequest( index.getName() ) ).actionGet();
         return exists.isExists();
     }
 
@@ -84,25 +86,48 @@ public class ElasticsearchIndexServiceImpl
         {
             final String id = indexDocument.getId();
             final IndexType indexType = indexDocument.getIndexType();
-            final String indexName = indexDocument.getIndex();
+            final Index index = indexDocument.getIndex();
 
             final IndexSource indexSource = IndexSourceFactory.create( indexDocument );
 
             final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexSource );
 
-            final IndexRequest req =
-                Requests.indexRequest().id( id ).index( indexName ).type( indexType.getIndexTypeName() ).source( xContentBuilder ).refresh(
-                    indexDocument.doRefreshOnStore() );
+            final IndexRequest req = Requests.indexRequest().id( id ).index( index.getName() ).type( indexType.getIndexTypeName() ).source(
+                xContentBuilder ).refresh( indexDocument.doRefreshOnStore() );
 
             this.client.index( req ).actionGet();
         }
     }
 
     @Override
+    public void indexDocuments( Collection<IndexDocument2> indexDocuments )
+    {
+        for ( IndexDocument2 indexDocument : indexDocuments )
+        {
+            final String id = indexDocument.getId();
+            final IndexType indexType = indexDocument.getIndexType();
+            final Index index = indexDocument.getIndex();
+
+            final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
+
+            final IndexRequest req = Requests.indexRequest().
+                id( id ).
+                index( index.getName() ).
+                type( indexType.getIndexTypeName() ).
+                source( xContentBuilder ).
+                refresh( indexDocument.doRefreshOnStore() );
+
+            this.client.index( req ).actionGet();
+        }
+    }
+
+
+    @Override
     public void delete( final DeleteDocument deleteDocument )
     {
         DeleteRequest deleteRequest =
-            new DeleteRequest( deleteDocument.getIndexName(), deleteDocument.getIndexType().getIndexTypeName(), deleteDocument.getId() );
+            new DeleteRequest( deleteDocument.getIndex().getName(), deleteDocument.getIndexType().getIndexTypeName(),
+                               deleteDocument.getId() );
 
         try
         {
@@ -110,17 +135,17 @@ public class ElasticsearchIndexServiceImpl
         }
         catch ( ElasticSearchException e )
         {
-            throw new IndexException( "Failed to delete from index " + deleteDocument.getIndexName() + " of type " +
+            throw new IndexException( "Failed to delete from index " + deleteDocument.getIndex() + " of type " +
                                           deleteDocument.getIndexType().getIndexTypeName() + " with id " + deleteDocument.getId(), e );
         }
     }
 
     @Override
-    public void createIndex( String indexName )
+    public void createIndex( Index index )
     {
-        LOG.debug( "creating index: " + indexName );
+        LOG.debug( "creating index: " + index.getName() );
 
-        CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
+        CreateIndexRequest createIndexRequest = new CreateIndexRequest( index.getName() );
         createIndexRequest.settings( indexSettingsBuilder.buildIndexSettings() );
 
         try
@@ -129,24 +154,24 @@ public class ElasticsearchIndexServiceImpl
         }
         catch ( ElasticSearchException e )
         {
-            throw new IndexException( "Failed to create index:" + indexName, e );
+            throw new IndexException( "Failed to create index:" + index, e );
         }
 
-        LOG.info( "Created index: " + indexName );
+        LOG.info( "Created index: " + index );
     }
 
     @Override
     public void putMapping( final IndexMapping indexMapping )
     {
-        final String indexName = indexMapping.getIndexName();
+        final Index index = indexMapping.getIndex();
         final String indexType = indexMapping.getIndexType();
         final String source = indexMapping.getSource();
 
-        Preconditions.checkNotNull( indexName );
+        Preconditions.checkNotNull( index );
         Preconditions.checkNotNull( indexType );
         Preconditions.checkNotNull( source );
 
-        PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).type( indexType ).source( source );
+        PutMappingRequest mappingRequest = new PutMappingRequest( index.getName() ).type( indexType ).source( source );
 
         try
         {
@@ -154,10 +179,10 @@ public class ElasticsearchIndexServiceImpl
         }
         catch ( ElasticSearchException e )
         {
-            throw new IndexException( "Failed to apply mapping to index: " + indexName, e );
+            throw new IndexException( "Failed to apply mapping to index: " + index, e );
         }
 
-        LOG.info( "Mapping for index " + indexName + ", index-type: " + indexType + " deleted" );
+        LOG.info( "Mapping for index " + index + ", index-type: " + indexType + " deleted" );
     }
 
     @Override
@@ -166,7 +191,7 @@ public class ElasticsearchIndexServiceImpl
         final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
 
         final SearchRequest searchRequest = Requests.
-            searchRequest( IndexConstants.WEM_INDEX ).
+            searchRequest( Index.WEM.getName() ).
             types( IndexType.CONTENT.getIndexTypeName() ).
             source( searchSourceBuilder );
 
@@ -196,9 +221,9 @@ public class ElasticsearchIndexServiceImpl
     }
 
 
-    private ClusterHealthResponse getClusterHealth( String indexName, boolean waitForYellow )
+    private ClusterHealthResponse getClusterHealth( Index index, boolean waitForYellow )
     {
-        ClusterHealthRequest request = new ClusterHealthRequest( indexName );
+        ClusterHealthRequest request = new ClusterHealthRequest( index.getName() );
 
         if ( waitForYellow )
         {
@@ -237,9 +262,9 @@ public class ElasticsearchIndexServiceImpl
         this.indexSettingsBuilder = indexSettingsBuilder;
     }
 
-    public void deleteIndex( final String indexName )
+    public void deleteIndex( final Index index )
     {
-        final DeleteIndexRequest req = new DeleteIndexRequest( indexName );
+        final DeleteIndexRequest req = new DeleteIndexRequest( index.getName() );
 
         try
         {
@@ -247,7 +272,7 @@ public class ElasticsearchIndexServiceImpl
         }
         catch ( ElasticSearchException e )
         {
-            throw new IndexException( "Failed to delete index:" + indexName, e );
+            throw new IndexException( "Failed to delete index:" + index.getName(), e );
         }
     }
 }

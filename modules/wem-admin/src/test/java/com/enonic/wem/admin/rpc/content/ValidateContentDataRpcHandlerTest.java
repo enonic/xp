@@ -46,7 +46,7 @@ public class ValidateContentDataRpcHandlerTest
         // setup
         final ContentType contentType = newContentType().
             name( "my_type" ).
-            addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).add(
+            addFormItem( newFieldSet().label( "My layout" ).name( "myLayout" ).addFormItem(
                 newFormItemSet().name( "mySet" ).required( true ).addFormItem(
                     newInput().name( "myInput" ).inputType( InputTypes.TEXT_LINE ).build() ).build() ).build() ).
             build();

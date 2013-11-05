@@ -4,18 +4,18 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 
 public final class UpdateRelationshipType
     extends Command<Boolean>
 {
-    private QualifiedRelationshipTypeName qualifiedName;
+    private RelationshipTypeName qualifiedName;
 
     private RelationshipTypeEditor editor;
 
 
-    public UpdateRelationshipType selector( final QualifiedRelationshipTypeName qualifiedName )
+    public UpdateRelationshipType selector( final RelationshipTypeName qualifiedName )
     {
         this.qualifiedName = qualifiedName;
         return this;
@@ -27,7 +27,7 @@ public final class UpdateRelationshipType
         return this;
     }
 
-    public QualifiedRelationshipTypeName getQualifiedName()
+    public RelationshipTypeName getQualifiedName()
     {
         return qualifiedName;
     }

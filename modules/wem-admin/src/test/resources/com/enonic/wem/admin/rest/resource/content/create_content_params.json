@@ -4,5 +4,8 @@
     "parentContentPath": "parent-path:/",
     "qualifiedContentTypeName": "my-type",
     "contentData": [],
+    "form": {
+        "formItems": []
+    },
     "displayName": "Content One"
 }

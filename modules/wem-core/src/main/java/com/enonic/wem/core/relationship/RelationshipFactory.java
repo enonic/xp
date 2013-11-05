@@ -7,7 +7,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.relationship.Relationship;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.relationship.Relationship.newRelationship;
 
@@ -32,7 +32,7 @@ class RelationshipFactory
         this.fromContent = builder.fromContent;
     }
 
-    Relationship create( final Property toContent, final QualifiedRelationshipTypeName type )
+    Relationship create( final Property toContent, final RelationshipTypeName type )
     {
         final Relationship.Builder builder = newRelationship();
         builder.creator( creator );

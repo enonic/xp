@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest.resource.relationship.json;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.RelationshipKey;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public class RelationshipKeyParam
 {
@@ -52,7 +52,7 @@ public class RelationshipKeyParam
 
     public RelationshipKey from()
     {
-        final QualifiedRelationshipTypeName type = QualifiedRelationshipTypeName.from( this.type );
+        final RelationshipTypeName type = RelationshipTypeName.from( this.type );
         final ContentId fromContent = new ContentId( this.fromContent );
         final ContentId toContent = new ContentId( this.toContent );
 

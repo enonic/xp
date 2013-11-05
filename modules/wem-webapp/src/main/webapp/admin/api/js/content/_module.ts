@@ -14,4 +14,6 @@
 ///<reference path='FindContentResult.ts' />
 ///<reference path='FindContentRequest.ts' />
 ///<reference path='DeleteContentRequest.ts' />
-///<reference path='ContentEvents.ts' />
+///<reference path='ContentCreatedEvent.ts' />
+///<reference path='ContentUpdatedEvent.ts' />
+///<reference path='ContentDeletedEvent.ts' />

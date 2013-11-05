@@ -1,66 +1,74 @@
 {
     "mixins": [
         {
+            "schemaKind": "Mixin",
             "createdTime": "2013-01-01T12:00:00.000Z",
             "creator": null,
             "deletable": true,
             "displayName": null,
             "editable": true,
+            "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:input_text_1",
             "items": [
                 {
-                    "customText": null,
-                    "formItemType": "Input",
-                    "helpText": "Help text line 1",
-                    "immutable": false,
-                    "indexed": false,
-                    "inputType": {
-                        "config": null,
-                        "name": "TextLine"
-                    },
-                    "label": "Line Text 1",
-                    "name": "input_text_1",
-                    "occurrences": {
-                        "maximum": 1,
-                        "minimum": 1
-                    },
-                    "validationRegexp": null
+                    "Input": {
+                        "name": "input_text_1",
+                        "label": "Line Text 1",
+                        "customText": null,
+                        "helpText": "Help text line 1",
+                        "validationRegexp": null,
+                        "immutable": false,
+                        "indexed": false,
+                        "inputType": {
+                            "name": "TextLine"
+                        },
+                        "occurrences": {
+                            "minimum": 1,
+                            "maximum": 1
+                        },
+                        "config": { }
+                    }
                 }
             ],
+            "key": "Mixin:input_text_1",
             "modifiedTime": null,
             "modifier": null,
             "name": "input_text_1"
         },
         {
+            "schemaKind": "Mixin",
             "createdTime": "2013-01-01T12:00:00.000Z",
             "creator": null,
             "deletable": true,
             "displayName": null,
             "editable": true,
+            "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:text_area_1",
             "items": [
                 {
-                    "customText": null,
-                    "formItemType": "Input",
-                    "helpText": "Help text area",
-                    "immutable": false,
-                    "indexed": false,
-                    "inputType": {
-                        "config": {
-                            "columns": 10,
-                            "rows": 10
+                    "Input": {
+                        "name": "text_area_1",
+                        "label": "Text Area",
+                        "customText": null,
+                        "helpText": "Help text area",
+                        "validationRegexp": null,
+                        "immutable": false,
+                        "indexed": false,
+                        "inputType": {
+                            "name": "TextArea"
                         },
-                        "name": "TextArea"
-                    },
-                    "label": "Text Area",
-                    "name": "text_area_1",
-                    "occurrences": {
-                        "maximum": 1,
-                        "minimum": 1
-                    },
-                    "validationRegexp": null
+                        "occurrences": {
+                            "minimum": 1,
+                            "maximum": 1
+                        },
+                        "config": {
+                            "rows": 10,
+                            "columns": 10
+                        }
+                    }
                 }
             ],
+            "key": "Mixin:text_area_1",
             "modifiedTime": null,
             "modifier": null,
             "name": "text_area_1"

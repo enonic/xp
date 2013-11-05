@@ -1,12 +1,6 @@
 module api_schema_content{
 
-    export class ContentTypeSummary extends api_item.BaseItem {
-
-        private name:string;
-
-        private qualifiedName:string;
-
-        private displayName:string;
+    export class ContentTypeSummary extends api_schema.Schema {
 
         private allowChildContent:boolean;
 
@@ -18,8 +12,6 @@ module api_schema_content{
 
         private contentDisplayNameScript:string;
 
-        private iconUrl:string;
-
         private modifier:string;
 
         private owner:string;
@@ -27,29 +19,13 @@ module api_schema_content{
 
         constructor(json:api_schema_content_json.ContentTypeSummaryJson) {
             super(json);
-            this.name = json.name;
-            this.qualifiedName = json.qualifiedName;
-            this.displayName = json.displayName;
             this.allowChildContent = json.allowChildContent;
             this.final = json.final;
             this.abstract = json.abstract;
             this.superType = json.superType;
             this.contentDisplayNameScript = json.contentDisplayNameScript;
-            this.iconUrl = json.iconUrl;
             this.owner = json.owner;
             this.modifier = json.modifier;
-        }
-
-        getName():string {
-            return this.name;
-        }
-
-        getQualifiedName():string {
-            return this.qualifiedName;
-        }
-
-        getDisplayName():string {
-            return this.displayName;
         }
 
         isFinal():boolean {
@@ -78,10 +54,6 @@ module api_schema_content{
 
         getModifier():string {
             return this.modifier;
-        }
-
-        getIconUrl():string {
-            return this.iconUrl;
         }
 
     }

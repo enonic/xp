@@ -54,6 +54,7 @@ module api_app_wizard {
             this.backPanel = new api_ui.DeckPanel("WizardBackPanel");
             this.backPanel.addClass("wizard-back-panel");
             this.formPanel = new api_ui.Panel("FormPanel");
+            this.formPanel.addClass("form-panel");
 
             this.backPanel.addPanel(this.formPanel);
             this.backPanel.showPanel(0);
@@ -144,6 +145,9 @@ module api_app_wizard {
             this.actions.enableActionsForExisting(item);
         }
 
+        getPersistedItem():T {
+            return this.persistedItem;
+        }
 
         isItemPersisted():boolean {
             return this.persistedItem != null;

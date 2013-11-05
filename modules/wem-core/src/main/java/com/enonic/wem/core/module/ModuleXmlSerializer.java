@@ -12,7 +12,7 @@ import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.schema.content.serializer.FormItemsXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
@@ -46,7 +46,6 @@ public final class ModuleXmlSerializer
         moduleEl.addContent( new Element( "display-name" ).setText( module.getDisplayName() ) );
         moduleEl.addContent( new Element( "info" ).setText( module.getInfo() ) );
         moduleEl.addContent( new Element( "url" ).setText( module.getUrl() ) );
-        moduleEl.addContent( new Element( "key" ).setText( module.getModuleKey().toString() ) );
 
         Element vendor = new Element( "vendor" );
         vendor.addContent( new Element( "name" ).setText( module.getVendorName() ) );
@@ -62,7 +61,7 @@ public final class ModuleXmlSerializer
             dependencies.addContent( new Element( "module" ).setText( moduleKey.toString() ) );
         }
 
-        for ( QualifiedContentTypeName qualifiedName : module.getContentTypeDependencies() )
+        for ( ContentTypeName qualifiedName : module.getContentTypeDependencies() )
         {
             dependencies.addContent( new Element( "content-type" ).setText( qualifiedName.toString() ) );
         }
@@ -96,10 +95,11 @@ public final class ModuleXmlSerializer
     {
         final String displayName = moduleEl.getChildText( "display-name" );
         moduleBuilder.
-            displayName( displayName ).info( moduleEl.getChildText( "info" ) ).moduleKey(
-            ModuleKey.from( moduleEl.getChildText( "key" ) ) ).
-            url( moduleEl.getChildText( "url" ) ).vendorName( moduleEl.getChild( "vendor" ).
-            getChildText( "name" ) ).vendorUrl( moduleEl.getChild( "vendor" ).getChildText( "url" ) );
+            displayName( displayName ).
+            info( moduleEl.getChildText( "info" ) ).
+            url( moduleEl.getChildText( "url" ) ).
+            vendorName( moduleEl.getChild( "vendor" ).getChildText( "name" ) ).
+            vendorUrl( moduleEl.getChild( "vendor" ).getChildText( "url" ) );
 
         final Element dependenciesEl = moduleEl.getChild( "dependencies" );
         if ( dependenciesEl != null )
@@ -114,7 +114,7 @@ public final class ModuleXmlSerializer
                         moduleBuilder.addModuleDependency( ModuleKey.from( child.getText() ) );
                         break;
                     case "content-type":
-                        moduleBuilder.addContentTypeDependency( QualifiedContentTypeName.from( child.getText() ) );
+                        moduleBuilder.addContentTypeDependency( ContentTypeName.from( child.getText() ) );
                         break;
                 }
             }

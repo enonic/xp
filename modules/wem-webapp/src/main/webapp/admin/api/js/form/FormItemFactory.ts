@@ -2,26 +2,27 @@ module api_form{
 
     export class FormItemFactory {
 
-        static createForm(formItems:api_form_json.FormItemJson[]):Form {
-
-            var form = new Form();
-            formItems.forEach((formItemJson:api_form_json.FormItemJson) => {
-                form.addFormItem(FormItemFactory.createFormItem(formItemJson));
-            });
-
-            return form;
+        static createForm(formJson:api_form_json.FormJson):Form {
+            return new Form(formJson);
         }
 
-        static createFormItem(formItemJson:api_form_json.FormItemJson):FormItem {
-            if (formItemJson.formItemType == "Input") {
-                return FormItemFactory.createInput(<api_form_json.InputJson>formItemJson);
+        static createFormItem(formItemJson:api_form_json.FormItemTypeWrapperJson):FormItem {
+
+            if (formItemJson.Input) {
+                return FormItemFactory.createInput(<api_form_json.InputJson>formItemJson.Input);
             }
-            else if (formItemJson.formItemType == "FormItemSet") {
-                return FormItemFactory.createFormItemSet(<api_form_json.FormItemSetJson>formItemJson);
+            else if (formItemJson.FormItemSet ) {
+                return FormItemFactory.createFormItemSet(<api_form_json.FormItemSetJson>formItemJson.FormItemSet);
             }
-            else if (formItemJson.formItemType == "Layout") {
-                return FormItemFactory.createLayout(<api_form_json.LayoutJson>formItemJson);
+            else if (formItemJson.Layout) {
+                return FormItemFactory.createLayout(<api_form_json.LayoutJson>formItemJson.Layout);
             }
+            else if (formItemJson.FieldSet) {
+                return FormItemFactory.createFieldSetLayout(<api_form_json.FieldSetJson>formItemJson.FieldSet);
+            }
+
+            console.log( "Unknown FormItem type: ", formItemJson );
+            throw new Error("Unknown FormItem");
         }
 
         static createInput(inputJson:api_form_json.InputJson):Input {
@@ -33,10 +34,13 @@ module api_form{
             return new FormItemSet(formItemSetJson);
         }
 
-        static createLayout(layoutJson:api_form_json.LayoutJson):Layout {
-            if( layoutJson.layoutType == "FieldSet" ) {
-                return FormItemFactory.createFieldSetLayout(<api_form_json.FieldSetJson>layoutJson);
+        static createLayout(layoutJson:api_form_json.LayoutTypeWrapperJson):Layout {
+            if( layoutJson.FieldSet ) {
+                return FormItemFactory.createFieldSetLayout(<api_form_json.FieldSetJson>layoutJson.FieldSet);
             }
+
+            console.log( "Unknown Layout type: ", layoutJson );
+            throw new Error("Unknown Layout" );
         }
 
         static createFieldSetLayout(fieldSetJson:api_form_json.FieldSetJson):FieldSet {

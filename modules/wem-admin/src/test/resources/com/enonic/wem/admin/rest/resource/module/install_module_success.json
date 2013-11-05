@@ -1,0 +1,16 @@
+{
+    "created" : true,
+    "failure" : null,
+    "module" : {
+        "deletable" : true,
+        "displayName" : "module display name",
+        "editable" : true,
+        "info" : "module-info",
+        "key" : "testmodule-1.0.0",
+        "name" : "testmodule",
+        "url" : "http://enonic.net",
+        "vendorName" : "Enonic",
+        "vendorUrl" : "https://www.enonic.com",
+        "version" : "1.0.0"
+    }
+}

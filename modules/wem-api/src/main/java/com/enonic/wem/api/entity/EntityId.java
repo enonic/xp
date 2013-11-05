@@ -1,7 +1,10 @@
 package com.enonic.wem.api.entity;
 
 
+import java.util.Objects;
 import java.util.UUID;
+
+import com.google.common.base.Preconditions;
 
 public class EntityId
 {
@@ -12,14 +15,10 @@ public class EntityId
         this.value = UUID.randomUUID().toString();
     }
 
-    public EntityId( final String value )
+    private EntityId( final String string )
     {
-        this.value = value;
-    }
-
-    public EntityId( final Object value )
-    {
-        this.value = value.toString();
+        Preconditions.checkNotNull( string, "string cannot be null" );
+        this.value = string;
     }
 
     @Override
@@ -34,19 +33,29 @@ public class EntityId
             return false;
         }
 
-        final EntityId entityId = (EntityId) o;
-
-        return value.equals( entityId.value );
+        final EntityId other = (EntityId) o;
+        return Objects.equals( value, other.value );
     }
 
     @Override
     public int hashCode()
     {
-        return value.hashCode();
+        return Objects.hash( value );
     }
 
     public String toString()
     {
         return value;
+    }
+
+    public static EntityId from( String string )
+    {
+        return new EntityId( string );
+    }
+
+    public static EntityId from( Object object )
+    {
+        Preconditions.checkNotNull( object, "object cannot be null" );
+        return new EntityId( object.toString() );
     }
 }

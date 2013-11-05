@@ -18,6 +18,11 @@ public class FormItems
 
     private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<>();
 
+    public FormItems()
+    {
+        this.containerFormItem = null;
+    }
+
     public FormItems( final FormItem containerFormItem )
     {
         this.containerFormItem = containerFormItem;
@@ -89,11 +94,6 @@ public class FormItems
         }
     }
 
-    /*private HierarchicalFormItem doGetHierarchicalFormItem( final String name )
-    {
-        return typeCast( doGetFormItem( name ), HierarchicalFormItem.class );
-    }*/
-
     FormItem doGetFormItem( final String name )
     {
         Preconditions.checkArgument( FormItemPath.hasNotPathElementDivider( name ), "name cannot be a path: %s", name );
@@ -129,6 +129,11 @@ public class FormItems
     public Iterator<FormItem> iterator()
     {
         return formItemByName.values().iterator();
+    }
+
+    public int size()
+    {
+        return formItemByName.size();
     }
 
     @Override

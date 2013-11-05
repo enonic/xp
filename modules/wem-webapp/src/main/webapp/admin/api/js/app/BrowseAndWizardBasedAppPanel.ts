@@ -1,19 +1,19 @@
 module api_app {
 
-    export interface BrowseBasedAppPanelConfig {
+    export interface BrowseBasedAppPanelConfig<M> {
 
         appBar:api_app.AppBar;
 
-        browsePanel:api_app_browse.BrowsePanel;
+        browsePanel:api_app_browse.BrowsePanel<M>;
     }
 
-    export class BrowseAndWizardBasedAppPanel extends api_app.AppPanel {
+    export class BrowseAndWizardBasedAppPanel<M> extends api_app.AppPanel {
 
-        private browsePanel:api_app_browse.BrowsePanel;
+        private browsePanel:api_app_browse.BrowsePanel<M>;
 
         private appBarTabMenu:api_app.AppBarTabMenu;
 
-        constructor(config:BrowseBasedAppPanelConfig) {
+        constructor(config:BrowseBasedAppPanelConfig<M>) {
             super(config.appBar.getTabMenu(), config.browsePanel);
 
             this.browsePanel = config.browsePanel;
@@ -41,7 +41,7 @@ module api_app {
             return this.appBarTabMenu;
         }
 
-        addViewPanel(tabMenuItem:AppBarTabMenuItem, viewPanel:api_app_view.ItemViewPanel) {
+        addViewPanel(tabMenuItem:AppBarTabMenuItem, viewPanel:api_app_view.ItemViewPanel<M>) {
             super.addNavigablePanelToFront(tabMenuItem, viewPanel);
 
             tabMenuItem.addListener({

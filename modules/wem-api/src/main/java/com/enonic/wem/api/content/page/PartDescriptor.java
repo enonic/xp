@@ -7,11 +7,11 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 public class PartDescriptor
     implements ComponentDescriptor
 {
-    private String displayName;
+    private final String displayName;
 
     private final ModuleResourceKey controllerResource;
 
-    private Form config;
+    private final Form config;
 
     private PartDescriptor( final Builder builder )
     {
@@ -26,6 +26,7 @@ public class PartDescriptor
         return displayName;
     }
 
+    @Override
     public ModuleResourceKey getControllerResource()
     {
         return controllerResource;

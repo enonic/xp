@@ -4,21 +4,20 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Relationship Type";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = api_util.getRestUri('schema/image/RelationshipType:_');
+        private static DEFAULT_SCHEMA_ICON_URL :string = api_util.getRestUri('schema/image/RelationshipType:_');
 
-        private formIcon:api_app_wizard.FormIcon;
+        private formIcon :api_app_wizard.FormIcon;
 
-        private relationShipTypeWizardHeader:api_app_wizard.WizardHeaderWithName;
+        private relationShipTypeWizardHeader :api_app_wizard.WizardHeaderWithName;
 
-        private persistedRelationshipType:api_schema_relationshiptype.RelationshipType;
+        private persistedRelationshipType :api_schema_relationshiptype.RelationshipType;
 
-        private relationshipTypeForm:RelationshipTypeForm;
+        private relationshipTypeForm :RelationshipTypeForm;
 
         constructor() {
-
             this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
-            new api_app_wizard.FormIcon(RelationshipTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon",
+            new api_app_wizard.FormIcon(RelationshipTypeWizardPanel.DEFAULT_SCHEMA_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
             var actions = new RelationshipTypeWizardActions(this);
@@ -42,7 +41,7 @@ module app_wizard {
             this.addStep(new api_app_wizard.WizardStep("Relationship Type"), this.relationshipTypeForm);
         }
 
-        setPersistedItem(relationshipType:api_schema_relationshiptype.RelationshipType) {
+        setPersistedItem(relationshipType:api_schema_relationshiptype.RelationshipType){
             super.setPersistedItem(relationshipType);
 
             this.relationShipTypeWizardHeader.setName(relationshipType.getName());
@@ -51,47 +50,39 @@ module app_wizard {
             this.persistedRelationshipType = relationshipType;
 
             new api_schema_relationshiptype.GetRelationshipTypeConfigByQualifiedNameRequest(relationshipType.getName()).send().
-                done((response:api_rest.JsonResponse<api_schema_relationshiptype.GetRelationshipTypeConfigResult>) => {
-                this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
+                done((response:api_rest.JsonResponse <api_schema_relationshiptype.GetRelationshipTypeConfigResult>) => {
+                    this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
             });
-
         }
 
-        persistNewItem(successCallback?:() => void) {
+        persistNewItem(successCallback ? : () => void) {
             var formData = this.relationshipTypeForm.getFormData();
-            var createParams:api_remote_relationshiptype.CreateOrUpdateParams = {
-                name: this.relationShipTypeWizardHeader.getName(),
-                relationshipType: formData.xml,
-                iconReference: this.getIconUrl()
-            };
-
-            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_createOrUpdate(createParams, () => {
+            var request = new api_schema_relationshiptype.CreateRelationshipTypeRequest(formData.xml, this.getIconUrl());
+            request.send().done(()=> {
                 new app_wizard.RelationshipTypeCreatedEvent().fire();
                 api_notify.showFeedback('Relationship type was created!');
 
+                new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.RELATIONSHIP_TYPE, "TODO: get name" ).fire();
+
                 if (successCallback) {
                     successCallback.call(this);
                 }
             });
         }
 
-        updatePersistedItem(successCallback?:() => void) {
+        updatePersistedItem(successCallback ? : () => void) {
             var formData = this.relationshipTypeForm.getFormData();
-            var updateParams:api_remote_relationshiptype.CreateOrUpdateParams = {
-                name: this.relationShipTypeWizardHeader.getName(),
-                relationshipType: formData.xml,
-                iconReference: this.getIconUrl()
-            };
-
-            api_remote_relationshiptype.RemoteRelationshipTypeService.relationshipType_createOrUpdate(updateParams, () => {
+            var request = new api_schema_relationshiptype.UpdateRelationshipTypeRequest(formData.xml, this.getIconUrl());
+            request.send().done(()=> {
                 new app_wizard.RelationshipTypeUpdatedEvent().fire();
                 api_notify.showFeedback('Relationship type was saved!');
 
+                new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.RELATIONSHIP_TYPE, "TODO: get name" ).fire();
+
                 if (successCallback) {
                     successCallback.call(this);
                 }
             });
         }
-
     }
 }

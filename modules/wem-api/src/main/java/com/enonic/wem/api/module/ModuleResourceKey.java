@@ -3,8 +3,12 @@ package com.enonic.wem.api.module;
 
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+
 public class ModuleResourceKey
 {
+    private static final String SEPARATOR = ":";
+
     private final ModuleKey moduleKey;
 
     private final ResourcePath path;
@@ -15,7 +19,7 @@ public class ModuleResourceKey
     {
         this.moduleKey = moduleKey;
         this.path = path;
-        this.refString = moduleKey.toString() + ":" + path.toString();
+        this.refString = moduleKey.toString() + SEPARATOR + path.toString();
     }
 
     public ModuleKey getModuleKey()
@@ -53,5 +57,12 @@ public class ModuleResourceKey
     public String toString()
     {
         return refString;
+    }
+
+    public static ModuleResourceKey from( final String moduleResourceKey )
+    {
+        final String moduleKey = StringUtils.substringBefore( moduleResourceKey, SEPARATOR );
+        final String resourcePath = StringUtils.substringAfter( moduleResourceKey, SEPARATOR );
+        return new ModuleResourceKey( ModuleKey.from( moduleKey ), ResourcePath.from( resourcePath ) );
     }
 }

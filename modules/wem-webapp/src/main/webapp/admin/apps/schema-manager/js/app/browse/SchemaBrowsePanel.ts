@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class SchemaBrowsePanel extends api_app_browse.BrowsePanel {
+    export class SchemaBrowsePanel extends api_app_browse.BrowsePanel<api_schema.Schema> {
 
         private browseActions:app_browse.SchemaBrowseActions;
 
@@ -30,7 +30,25 @@ module app_browse {
                 browseToolbar: this.toolbar,
                 treeGridPanel: treeGridPanel,
                 browseItemPanel: browseItemPanel,
-                filterPanel: filterPanel});
+                filterPanel: filterPanel
+            });
+
+            api_schema.SchemaDeletedEvent.on((event) => {
+                var names:string[] = event.getSchemaNames();
+                for (var i = 0; i < names.length; i++) {
+                    treeGridPanel.remove(names[i]);
+                }
+            });
+
+            api_schema.SchemaCreatedEvent.on((event) => {
+                console.log('On schema created', event.getSchemaKind(), event.getSchemaName());
+                this.setRefreshNeeded(true);
+            });
+
+            api_schema.SchemaUpdatedEvent.on((event) => {
+                console.log('On schema updated', event.getSchemaKind(), event.getSchemaName());
+                this.setRefreshNeeded(true);
+            });
 
             treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
@@ -39,48 +57,23 @@ module app_browse {
             });
         }
 
-        extModelsToBrowseItems(models:api_model.SchemaExtModel[]) {
+        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem<api_schema.Schema>[] {
 
-            var browseItems:api_app_browse.BrowseItem[] = [];
-            models.forEach((model:api_model.SchemaExtModel, index:number) => {
-                var item = new api_app_browse.BrowseItem(models[index]).
-                    setDisplayName(model.data.displayName).
-                    setPath(model.data.name).
-                    setIconUrl(model.data.iconUrl);
+            var browseItems:api_app_browse.BrowseItem<api_schema.Schema>[] = [];
+
+            models.forEach((model:Ext_data_Model, index:number) => {
+
+                var schema:api_schema.Schema = api_schema.Schema.fromExtModel(model);
+
+                var item = new api_app_browse.BrowseItem<api_schema.Schema>(schema).
+                    setDisplayName(model.data['displayName']).
+                    setPath(model.data['name']).
+                    setIconUrl(model.data['iconUrl']);
+
                 browseItems.push(item);
             });
             return browseItems;
         }
     }
 
-
-    export function createLoadContentParams(filterPanelValues:any) {
-        var params:any = {types: [], modules: []};
-        var paramTypes = params.types;
-        var paramModules = params.modules;
-        var typeFilter = filterPanelValues.Type;
-        var moduleFilter = filterPanelValues.Module;
-        if (typeFilter) {
-            if (typeFilter.some(function (item) {
-                return item == 'Relationship Type'
-            })) {
-                paramTypes.push('RELATIONSHIP_TYPE');
-            }
-            if (typeFilter.some(function (item) {
-                return item == 'Content Type'
-            })) {
-                paramTypes.push('CONTENT_TYPE');
-            }
-            if (typeFilter.some(function (item) {
-                return item == 'Mixin'
-            })) {
-                paramTypes.push('MIXIN');
-            }
-        }
-        moduleFilter.forEach(function (moduleName) {
-            paramModules.push(moduleName);
-        });
-        params.search = filterPanelValues.query;
-        return params;
-    }
 }

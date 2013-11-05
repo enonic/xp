@@ -104,7 +104,9 @@ module api_form_input_type {
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
-                }
+                },
+                onSelectedOptionRemoved: null,
+                onOptionSelected: null
             });
 
             return comboBox;

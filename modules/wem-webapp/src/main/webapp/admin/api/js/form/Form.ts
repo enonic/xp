@@ -6,8 +6,12 @@ module api_form{
 
         private formItemByName:{[name:string] : FormItem; } = {};
 
-        constructor() {
+        constructor(formJson:api_form_json.FormJson) {
 
+            //TODO: this breaks "edit", cause formJson is empty. Commented out.
+            formJson.formItems.forEach((formItemJson:api_form_json.FormItemJson) => {
+                this.addFormItem(FormItemFactory.createFormItem(formItemJson));
+            });
         }
 
         addFormItem(formItem:FormItem) {
@@ -30,9 +34,11 @@ module api_form{
             return <Input>this.formItemByName[name];
         }
 
-        toJson():api_form_json.FormItemJson[] {
+        toJson():api_form_json.FormJson {
 
-            return FormItem.formItemsToJson(this.getFormItems());
+            return <api_form_json.FormJson>{
+                formItems: FormItem.formItemsToJson(this.getFormItems())
+            }
         }
     }
 }

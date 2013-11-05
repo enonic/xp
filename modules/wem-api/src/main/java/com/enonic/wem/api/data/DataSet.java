@@ -57,6 +57,14 @@ public class DataSet
         doAdd( data );
     }
 
+    public final void addAll( final Iterable<Data> datas )
+    {
+        for ( final Data data : datas )
+        {
+            doAdd( data );
+        }
+    }
+
     /**
      * Adds the given Value at given path. If the dataPath contains DataSet, then it will be created if not already existing.
      *
@@ -278,6 +286,16 @@ public class DataSet
         DataPath.Element.checkName( dataName );
         DataArray array = arrayByDataName.get( dataName );
         return array.asList();
+    }
+
+    public boolean hasData( final String dataId )
+    {
+        return this.dataById.containsKey( DataId.from( dataId ) );
+    }
+
+    public boolean hasData( final DataId dataId )
+    {
+        return this.dataById.containsKey( dataId );
     }
 
     public final Property getProperty( final String path )

@@ -10,16 +10,21 @@ module app_browse_grid {
 
                 model: 'Admin.model.schemaManager.SchemaModel',
 
-                folderSort: true,
+                remoteSort: false,
+                folderSort: false,
+                autoLoad: false,
+                clearOnLoad: true,
+                autoSync: false,
+                defaultRootId: undefined,
+                nodeParam: 'parentName',
 
                 proxy: {
-                    type: 'direct',
-                    directFn: api_remote_schema.RemoteSchemaService.schema_tree,
-                    simpleSortMode: true,
+                    type: 'rest',
+                    url: api_util.getUri('admin/rest/schema/list'),
                     reader: {
                         type: 'json',
-                        root: 'schemas',
-                        totalProperty: 'total'
+                        root: '',
+                        totalProperty: undefined
                     }
                 }
 

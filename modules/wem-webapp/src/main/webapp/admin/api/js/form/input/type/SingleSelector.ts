@@ -54,7 +54,9 @@ module api_form_input_type {
                 onInputValueChanged: function (oldValue, newValue, grid) {
                     grid.getDataView().setFilterArgs({searchString: newValue});
                     grid.getDataView().refresh();
-                }
+                },
+                onSelectedOptionRemoved: null,
+                onOptionSelected: null
             });
 
             if (this.config) {

@@ -15,12 +15,12 @@ import javax.ws.rs.core.MediaType;
 
 import com.sun.jersey.api.NotFoundException;
 
-import com.enonic.wem.admin.json.schema.ContentTypeTreeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.schema.content.json.ContentTypeCreateOrUpdateParams;
 import com.enonic.wem.admin.rest.resource.schema.content.json.ValidateContentTypeJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
@@ -35,12 +35,11 @@ import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
-import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 
@@ -61,9 +60,9 @@ public class ContentTypeResource
     public ContentTypeJson get( @QueryParam("qualifiedName") final String qualifiedNameAsString,
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
-        final QualifiedContentTypeName qualifiedName = QualifiedContentTypeName.from( qualifiedNameAsString );
+        final ContentTypeName qualifiedName = ContentTypeName.from( qualifiedNameAsString );
         final GetContentTypes getContentTypes = Commands.contentType().get().
-            qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) ).
+            qualifiedNames( ContentTypeNames.from( qualifiedName ) ).
             mixinReferencesToFormItems( mixinReferencesToFormItems );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
@@ -78,9 +77,9 @@ public class ContentTypeResource
     @Path("config")
     public ContentTypeConfigJson getConfig( @QueryParam("qualifiedName") final String qualifiedNameAsString )
     {
-        final QualifiedContentTypeName qualifiedName = QualifiedContentTypeName.from( qualifiedNameAsString );
+        final ContentTypeName qualifiedName = ContentTypeName.from( qualifiedNameAsString );
         final GetContentTypes getContentTypes = Commands.contentType().get().
-            qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) ).
+            qualifiedNames( ContentTypeNames.from( qualifiedName ) ).
             mixinReferencesToFormItems( false );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
@@ -106,11 +105,10 @@ public class ContentTypeResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
-        final QualifiedContentTypeNames qualifiedContentTypeNames =
-            QualifiedContentTypeNames.from( params.getQualifiedNames().toArray( new String[0] ) );
+        final ContentTypeNames contentTypeNames = ContentTypeNames.from( params.getQualifiedNames().toArray( new String[0] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
-        for ( QualifiedContentTypeName contentTypeName : qualifiedContentTypeNames )
+        for ( ContentTypeName contentTypeName : contentTypeNames )
         {
             final DeleteContentType deleteContentType = Commands.contentType().delete().name( contentTypeName );
             final DeleteContentTypeResult result = client.execute( deleteContentType );
@@ -138,12 +136,12 @@ public class ContentTypeResource
 
     @POST
     @Path("create")
-    public void create( @FormParam("contentType") final String contentTypeXml, @FormParam("iconReference") final String iconReference )
+    public ContentTypeJson create( ContentTypeCreateOrUpdateParams params )
     {
         ContentType contentType;
         try
         {
-            contentType = contentTypeXmlSerializer.toContentType( contentTypeXml );
+            contentType = contentTypeXmlSerializer.toContentType( params.getContentType() );
         }
         catch ( XmlParsingException e )
         {
@@ -159,7 +157,7 @@ public class ContentTypeResource
         final Icon icon;
         try
         {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
         }
         catch ( JsonRpcException | IOException e )
         {
@@ -172,6 +170,8 @@ public class ContentTypeResource
         }
 
         createContentType( contentType );
+
+        return new ContentTypeJson( contentType );
     }
 
     private void createContentType( final ContentType contentType )
@@ -197,12 +197,12 @@ public class ContentTypeResource
 
     @POST
     @Path("update")
-    public void update( @FormParam("contentType") final String contentTypeXml, @FormParam("iconReference") final String iconReference )
+    public ContentTypeJson update( ContentTypeCreateOrUpdateParams params )
     {
         ContentType contentType;
         try
         {
-            contentType = new ContentTypeXmlSerializer().toContentType( contentTypeXml );
+            contentType = new ContentTypeXmlSerializer().toContentType( params.getContentType() );
         }
         catch ( XmlParsingException e )
         {
@@ -212,7 +212,7 @@ public class ContentTypeResource
         final Icon icon;
         try
         {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
+            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
         }
         catch ( JsonRpcException | IOException e )
         {
@@ -225,6 +225,8 @@ public class ContentTypeResource
         }
 
         updateContentType( contentType );
+
+        return new ContentTypeJson( contentType );
     }
 
     private void updateContentType( final ContentType contentType )
@@ -250,14 +252,6 @@ public class ContentTypeResource
         }
     }
 
-    @GET
-    @Path("tree")
-    public ContentTypeTreeJson getTree()
-    {
-        final Tree<ContentType> contentTypeTree = client.execute( contentType().getTree() );
-        return new ContentTypeTreeJson( contentTypeTree );
-    }
-
     @POST
     @Path("validate")
     public ValidateContentTypeJson validate( @FormParam("contentType") final String contentTypeXml )
@@ -277,9 +271,9 @@ public class ContentTypeResource
         return new ValidateContentTypeJson( validationResult, contentType );
     }
 
-    private boolean contentTypeExists( final QualifiedContentTypeName qualifiedName )
+    private boolean contentTypeExists( final ContentTypeName qualifiedName )
     {
-        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( QualifiedContentTypeNames.from( qualifiedName ) );
+        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( ContentTypeNames.from( qualifiedName ) );
         return !client.execute( getContentTypes ).isEmpty();
     }
 

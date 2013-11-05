@@ -58,7 +58,10 @@ public final class ModuleExporter
         final ModuleFileEntry parentEntry = module.getModuleDirectoryEntry();
         final String directoryName = module.getModuleKey().toString();
         final Path rootPath = exportLocation.resolve( directoryName );
-        Files.createDirectory( rootPath );
+        if ( !Files.isDirectory( rootPath ) )
+        {
+            Files.createDirectory( rootPath );
+        }
         exportFiles( parentEntry, rootPath );
         writeModuleXml( module, rootPath.resolve( Module.MODULE_XML ) );
 
@@ -71,17 +74,20 @@ public final class ModuleExporter
         for ( ModuleFileEntry fileEntry : parentEntry )
         {
             final Path path = parentDirectory.resolve( fileEntry.getName() );
-            if ( fileEntry.isFile() )
+            if ( !Files.exists( path ) )
             {
-                try (InputStream is = fileEntry.getResource().getByteSource().openStream())
+                if ( fileEntry.isFile() )
                 {
-                    Files.copy( is, path );
+                    try (InputStream is = fileEntry.getResource().getByteSource().openStream())
+                    {
+                        Files.copy( is, path );
+                    }
                 }
-            }
-            else
-            {
-                Files.createDirectory( path );
-                exportFiles( fileEntry, path );
+                else
+                {
+                    Files.createDirectory( path );
+                    exportFiles( fileEntry, path );
+                }
             }
         }
     }

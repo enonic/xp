@@ -2,13 +2,13 @@
     "success": false,
     "successes": [
         {
-            "qualifiedRelationshipTypeName": "company:partner"
+            "qualifiedRelationshipTypeName": "partner"
         }
     ],
     "failures": [
         {
-            "qualifiedRelationshipTypeName": "company:client",
-            "reason": "Relationship Type [company:client] was not found"
+            "qualifiedRelationshipTypeName": "client",
+            "reason": "Relationship Type [client] was not found"
         }
     ]
 }

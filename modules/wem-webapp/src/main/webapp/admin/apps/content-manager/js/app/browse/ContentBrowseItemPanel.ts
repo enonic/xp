@@ -5,7 +5,7 @@ module app_browse {
         actionMenuActions:api_ui.Action[];
     }
 
-    export class ContentBrowseItemPanel extends api_app_browse.BrowseItemPanel {
+    export class ContentBrowseItemPanel extends api_app_browse.BrowseItemPanel<api_content.ContentSummary> {
 
         private previewPanel;
 
@@ -51,7 +51,7 @@ module app_browse {
             this.appendChild(this.frame);
         }
 
-        public setItem(item:api_app_browse.BrowseItem) {
+        public setItem(item:api_app_browse.BrowseItem<api_content.ContentSummary>) {
             //TODO: use real item path here
             this.frame.setSrc("../../../dev/live-edit-page/bootstrap.jsp?edit=false");
         }

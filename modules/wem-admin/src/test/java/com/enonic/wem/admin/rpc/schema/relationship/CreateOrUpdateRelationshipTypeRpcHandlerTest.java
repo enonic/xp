@@ -20,8 +20,8 @@ import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
@@ -58,7 +58,7 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
-            QualifiedRelationshipTypeName.from( "love" ) );
+            RelationshipTypeName.from( "love" ) );
 
         ObjectNode resultJson = objectNode();
         resultJson.put( "success", true );
@@ -74,8 +74,8 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
         throws Exception
     {
 
-        QualifiedRelationshipTypeNames qualifiedNames =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "love" ) );
+        RelationshipTypeNames qualifiedNames =
+            RelationshipTypeNames.from( RelationshipTypeName.from( "love" ) );
 
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.from( qualifiedNames ) );
@@ -96,7 +96,7 @@ public class CreateOrUpdateRelationshipTypeRpcHandlerTest
     {
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn( RelationshipTypesExistsResult.empty() );
         Mockito.when( client.execute( isA( CreateRelationshipType.class ) ) ).thenReturn(
-             QualifiedRelationshipTypeName.from( "love" ) );
+             RelationshipTypeName.from( "love" ) );
         uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
 
         final ObjectNode resultJson = objectNode();

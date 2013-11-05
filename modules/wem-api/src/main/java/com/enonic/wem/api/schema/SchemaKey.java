@@ -8,9 +8,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public final class SchemaKey
 {
@@ -52,24 +52,48 @@ public final class SchemaKey
         return localName;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final SchemaKey schemaKey = (SchemaKey) o;
+
+        return refString.equals( schemaKey.refString );
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return refString.hashCode();
+    }
+
     public String toString()
     {
         return refString;
     }
 
-    public static SchemaKey from( final QualifiedContentTypeName contentTypeName )
+    public static SchemaKey from( final ContentTypeName contentTypeName )
     {
-        return new SchemaKey( SchemaKind.CONTENT_TYPE, contentTypeName.getName() );
+        return new SchemaKey( SchemaKind.CONTENT_TYPE, contentTypeName.toString() );
     }
 
-    public static SchemaKey from( final QualifiedMixinName mixinName )
+    public static SchemaKey from( final MixinName mixinName )
     {
-        return new SchemaKey( SchemaKind.MIXIN, mixinName.getName() );
+        return new SchemaKey( SchemaKind.MIXIN, mixinName.toString() );
     }
 
-    public static SchemaKey from( final QualifiedRelationshipTypeName relationshipTypeName )
+    public static SchemaKey from( final RelationshipTypeName relationshipTypeName )
     {
-        return new SchemaKey( SchemaKind.RELATIONSHIP_TYPE, relationshipTypeName.getName() );
+        return new SchemaKey( SchemaKind.RELATIONSHIP_TYPE, relationshipTypeName.toString() );
     }
 
     public static SchemaKey from( final String value )

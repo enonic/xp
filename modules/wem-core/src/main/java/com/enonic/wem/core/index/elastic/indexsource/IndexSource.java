@@ -1,40 +1,69 @@
 package com.enonic.wem.core.index.elastic.indexsource;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+@Deprecated
 public class IndexSource
 {
-    private final Set<IndexSourceEntry> indexSourceEntries = Sets.newHashSet();
+    private final ImmutableSet<IndexSourceItem> indexSourceItems;
 
-    public void addIndexSourceEntry( final IndexSourceEntry indexSourceEntry )
+    private IndexSource( final Builder builder )
     {
-        indexSourceEntries.add( indexSourceEntry );
+        this.indexSourceItems = ImmutableSet.copyOf( builder.indexSourceItems );
     }
 
-    public void addIndexSourceEntries( final Collection<IndexSourceEntry> indexSourceEntries )
+    public Set<IndexSourceItem> indexSourceItems()
     {
-        this.indexSourceEntries.addAll( indexSourceEntries );
+        return indexSourceItems;
     }
 
-    public Set<IndexSourceEntry> getIndexSourceEntries()
+    public static Builder newIndexSource()
     {
-        return indexSourceEntries;
+        return new Builder();
     }
 
-    public IndexSourceEntry getIndexSourceEntryWithName( final String name )
+    public List<IndexSourceItem> getIndexSourceEntryWithName( final String name )
     {
-        for ( IndexSourceEntry indexSourceEntry : indexSourceEntries )
+        List<IndexSourceItem> foundItems = Lists.newArrayList();
+
+        for ( IndexSourceItem indexSourceItem : indexSourceItems )
         {
-            if ( indexSourceEntry.getKey().equals( name ) )
+            if ( indexSourceItem.getKey().equals( name ) )
             {
-                return indexSourceEntry;
+                foundItems.add( indexSourceItem );
             }
         }
 
-        return null;
+        return foundItems;
+    }
+
+    public static class Builder
+    {
+        private final Set<IndexSourceItem> indexSourceItems = Sets.newHashSet();
+
+        public Builder addItem( final IndexSourceItem item )
+        {
+            this.indexSourceItems.add( item );
+            return this;
+        }
+
+
+        public Builder addItems( final Collection<IndexSourceItem> items )
+        {
+            this.indexSourceItems.addAll( items );
+            return this;
+        }
+
+        public IndexSource build()
+        {
+            return new IndexSource( this );
+        }
     }
 
 }

@@ -9,8 +9,8 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
@@ -48,15 +48,15 @@ public class CreateRelationshipTypeHandlerTest
         command.displayName( "Like" );
         command.fromSemantic( "likes" );
         command.toSemantic( "liked by" );
-        command.allowedFromTypes( QualifiedContentTypeNames.from( "person" ) );
-        command.allowedToTypes( QualifiedContentTypeNames.from( "person" ) );
+        command.allowedFromTypes( ContentTypeNames.from( "person" ) );
+        command.allowedToTypes( ContentTypeNames.from( "person" ) );
 
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
         verify( relationshipTypeDao, atLeastOnce() ).create( Mockito.isA( RelationshipType.class ), Mockito.any( Session.class ) );
-        final QualifiedRelationshipTypeName relationshipTypeName = command.getResult();
+        final RelationshipTypeName relationshipTypeName = command.getResult();
         assertNotNull( relationshipTypeName );
         assertEquals( "like", relationshipTypeName.toString() );
     }

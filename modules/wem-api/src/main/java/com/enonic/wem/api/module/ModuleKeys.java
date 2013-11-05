@@ -37,6 +37,11 @@ public final class ModuleKeys
         return new ModuleKeys( parseModuleKeys( moduleKeys ) );
     }
 
+    public static ModuleKeys empty()
+    {
+        return new ModuleKeys( ImmutableList.<ModuleKey>of() );
+    }
+
     private static ImmutableList<ModuleKey> parseModuleKeys( final String... moduleKeys )
     {
         final Collection<String> list = Lists.newArrayList( moduleKeys );

@@ -5,7 +5,7 @@ module app_browse {
         actionMenuActions:api_ui.Action[];
     }
 
-    export class SpaceBrowseItemPanel extends api_app_browse.BrowseItemPanel {
+    export class SpaceBrowseItemPanel extends api_app_browse.BrowseItemPanel<api_model.SpaceExtModel> {
 
         constructor(params:SpaceBrowseItemPanelParams) {
             super(<api_app_browse.BrowseItemPanelParams>{

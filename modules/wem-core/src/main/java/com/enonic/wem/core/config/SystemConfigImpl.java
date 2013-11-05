@@ -25,6 +25,12 @@ final class SystemConfigImpl
     }
 
     @Override
+    public File getBlobStoreDir()
+    {
+        return new File( getHomeDir(), "blob-store" );
+    }
+
+    @Override
     public File getConfigDir()
     {
         return new File( getHomeDir(), "config" );

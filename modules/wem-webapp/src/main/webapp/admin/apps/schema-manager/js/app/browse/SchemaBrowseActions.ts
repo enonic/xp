@@ -1,5 +1,20 @@
 module app_browse {
 
+    export class BaseSchemaBrowseAction extends api_ui.Action {
+
+        constructor(label:string, shortcut?:string) {
+            super(label, shortcut);
+        }
+
+        extModelsToSchemas(models:Ext_data_Model[]) {
+            var schemas:api_schema.Schema[] = [];
+            models.forEach((model:Ext_data_Model) => {
+                schemas.push(api_schema.Schema.fromExtModel(model));
+            });
+            return schemas;
+        }
+    }
+
     export class NewSchemaAction extends api_ui.Action {
 
         constructor() {
@@ -10,55 +25,55 @@ module app_browse {
         }
     }
 
-    export class EditSchemaAction extends api_ui.Action {
+    export class EditSchemaAction extends BaseSchemaBrowseAction {
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new EditSchemaEvent(treeGridPanel.getSelection()).fire();
+                new EditSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
             });
         }
     }
 
-    export class OpenSchemaAction extends api_ui.Action {
+    export class OpenSchemaAction extends BaseSchemaBrowseAction {
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new OpenSchemaEvent((treeGridPanel.getSelection())).fire();
+                new OpenSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
             });
         }
     }
 
-    export class DeleteSchemaAction extends api_ui.Action {
+    export class DeleteSchemaAction extends BaseSchemaBrowseAction {
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new DeleteSchemaPromptEvent((treeGridPanel.getSelection())).fire();
+                new DeleteSchemaPromptEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
             });
         }
     }
 
-    export class ReindexSchemaAction extends api_ui.Action {
+    export class ReindexSchemaAction extends BaseSchemaBrowseAction {
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Re-index");
             this.addExecutionListener(() => {
-                new ReindexSchemaEvent((treeGridPanel.getSelection())).fire();
+                new ReindexSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
             });
         }
     }
 
-    export class ExportSchemaAction extends api_ui.Action {
+    export class ExportSchemaAction extends BaseSchemaBrowseAction {
 
         constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
             super("Export");
             this.addExecutionListener(() => {
-                new ExportSchemaEvent((treeGridPanel.getSelection())).fire();
+                new ExportSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
             });
         }
     }
@@ -104,9 +119,9 @@ module app_browse {
             return this.allActions;
         }
 
-        updateActionsEnabledState(models:api_model.SchemaExtModel[]) {
+        updateActionsEnabledState(schemas:api_schema.Schema[]) {
 
-            if (models.length <= 0) {
+            if (schemas.length <= 0) {
                 this.NEW_SCHEMA.setEnabled(true);
                 this.EDIT_SCHEMA.setEnabled(false);
                 this.OPEN_SCHEMA.setEnabled(false);

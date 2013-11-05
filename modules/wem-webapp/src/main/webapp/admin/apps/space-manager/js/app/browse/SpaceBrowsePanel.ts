@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class SpaceBrowsePanel extends api_app_browse.BrowsePanel {
+    export class SpaceBrowsePanel extends api_app_browse.BrowsePanel<api_model.SpaceExtModel> {
 
         private browseActions:app_browse.SpaceBrowseActions;
 
@@ -50,7 +50,7 @@ module app_browse {
 
         extModelsToBrowseItems(models:api_model.SpaceExtModel[]) {
 
-            var browseItems:api_app_browse.BrowseItem[] = [];
+            var browseItems:api_app_browse.BrowseItem<api_model.SpaceExtModel>[] = [];
             models.forEach((model:api_model.SpaceExtModel, index:number) => {
                 var item = new api_app_browse.BrowseItem(models[index]).
                     setDisplayName(model.data.displayName).

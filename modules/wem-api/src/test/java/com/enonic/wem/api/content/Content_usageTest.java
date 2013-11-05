@@ -4,6 +4,7 @@ package com.enonic.wem.api.content;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -12,22 +13,14 @@ import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.data.type.ValueType;
-import com.enonic.wem.api.data.type.ValueTypes;
 
 import static com.enonic.wem.api.data.DataSet.newDataSet;
-import static com.enonic.wem.api.data.Property.Date.newDate;
-import static com.enonic.wem.api.data.Property.Double.newDouble;
-import static com.enonic.wem.api.data.Property.HtmlPart.newHtmlPart;
-import static com.enonic.wem.api.data.Property.String.newText;
-import static com.enonic.wem.api.data.Property.newProperty;
 import static com.enonic.wem.api.data.type.ValueTypes.DATE_MIDNIGHT;
 import static com.enonic.wem.api.data.type.ValueTypes.DOUBLE;
 import static com.enonic.wem.api.data.type.ValueTypes.HTML_PART;
 import static com.enonic.wem.api.data.type.ValueTypes.LONG;
 import static com.enonic.wem.api.data.type.ValueTypes.STRING;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
@@ -93,11 +86,11 @@ public class Content_usageTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.add( newProperty( "myText" ).type( STRING ).value( "abc" ).build() );
-        dataSet.add( newProperty( "myNum" ).type( LONG ).value( 123L ).build() );
-        dataSet.add( newProperty( "myDec" ).type( DOUBLE ).value( 123.123 ).build() );
-        dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ).build() );
-        dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
+        dataSet.add( new Property.String( "myText", "abc" ) );
+        dataSet.add( new Property.Long( "myNum", 123L ) );
+        dataSet.add( new Property.Double( "myDec", 123.123 ) );
+        dataSet.add( new Property.Date( "myDate", new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
         assertEquals( STRING, dataSet.getProperty( "myText" ).getValueType() );
@@ -106,11 +99,11 @@ public class Content_usageTest
         assertEquals( DOUBLE, dataSet.getProperty( "myDec" ).getValueType() );
         assertEquals( HTML_PART, dataSet.getProperty( "myHtml" ).getValueType() );
 
-        assertFalse( dataSet.getProperty( "myText" ) instanceof Property.String );
-        assertFalse( dataSet.getProperty( "myNum" ) instanceof Property.Long );
-        assertFalse( dataSet.getProperty( "myDec" ) instanceof Property.Double );
-        assertFalse( dataSet.getProperty( "myDate" ) instanceof Property.Date );
-        assertFalse( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
+        assertTrue( dataSet.getProperty( "myText" ) instanceof Property.String );
+        assertTrue( dataSet.getProperty( "myNum" ) instanceof Property.Long );
+        assertTrue( dataSet.getProperty( "myDec" ) instanceof Property.Double );
+        assertTrue( dataSet.getProperty( "myDate" ) instanceof Property.Date );
+        assertTrue( dataSet.getProperty( "myHtml" ) instanceof Property.HtmlPart );
     }
 
     @Test
@@ -119,11 +112,11 @@ public class Content_usageTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.add( newText( "myText" ).value( "abc" ) );
-        dataSet.add( Property.Long.newLong( "myNum" ).value( 123L ) );
-        dataSet.add( newDouble( "myDec" ).value( 123.123 ) );
-        dataSet.add( newDate( "myDate" ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
-        dataSet.add( newHtmlPart( "myHtml" ).value( "<p>abc</p>" ) );
+        dataSet.add( new Property.String( "myText", "abc" ) );
+        dataSet.add( new Property.Long( "myNum", 123L ) );
+        dataSet.add( new Property.Double( "myDec", 123.123 ) );
+        dataSet.add( new Property.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
         assertEquals( STRING, dataSet.getProperty( "myText" ).getValueType() );
@@ -148,7 +141,7 @@ public class Content_usageTest
         dataSet.add( new Property.String( "myText", "abc" ) );
         dataSet.add( new Property.Long( "myNum", 123L ) );
         dataSet.add( new Property.Double( "myDec", 123.123 ) );
-        dataSet.add( new Property.Date( "myDate", new org.joda.time.DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( new Property.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
         dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // verify
@@ -227,11 +220,11 @@ public class Content_usageTest
     public void data_getValue()
     {
         DataSet dataSet = new ContentData();
-        dataSet.add( newProperty( "myText" ).type( STRING ).value( "abc" ).build() );
-        dataSet.add( newProperty( "myNum" ).type( LONG ).value( 123L ).build() );
-        dataSet.add( newProperty( "myDec" ).type( DOUBLE ).value( 123.123 ).build() );
-        dataSet.add( newProperty( "myDate" ).type( DATE_MIDNIGHT ).value( new org.joda.time.DateMidnight( 2013, 1, 13 ) ).build() );
-        dataSet.add( newProperty( "myHtml" ).type( HTML_PART ).value( "<p>abc</p>" ).build() );
+        dataSet.add( new Property.String( "myText", "abc" ) );
+        dataSet.add( new Property.Long( "myNum", 123L ) );
+        dataSet.add( new Property.Double( "myDec", 123.123 ) );
+        dataSet.add( new Property.Date( "myDate", new DateMidnight( 2013, 1, 13 ) ) );
+        dataSet.add( new Property.HtmlPart( "myHtml", "<p>abc</p>" ) );
 
         // exercise & verify
         assertEquals( "abc", dataSet.getProperty( "myText" ).getString() );
@@ -247,9 +240,9 @@ public class Content_usageTest
         DataSet dataSet = new ContentData();
 
         // exercise
-        dataSet.add( newProperty( "myText" ).type( STRING ).value( "a" ).build() );
-        dataSet.add( newProperty( "myText" ).type( STRING ).value( "b" ).build() );
-        dataSet.add( newProperty( "myText" ).type( STRING ).value( "c" ).build() );
+        dataSet.add( new Property.String( "myText", "a" ) );
+        dataSet.add( new Property.String( "myText", "b" ) );
+        dataSet.add( new Property.String( "myText", "c" ) );
 
         // verify
         assertEquals( "a", dataSet.getProperty( "myText" ).getString( 0 ) );
@@ -267,15 +260,14 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         ContentData contentData = new ContentData();
-        contentData.add(
-            newProperty( "invoiceDate" ).type( ValueTypes.DATE_MIDNIGHT ).value( invoice.invoiceDate.toDateMidnight() ).build() );
-        contentData.add( newProperty( "recipient" ).type( ValueTypes.STRING ).value( invoice.recipient ).build() );
+        contentData.add( new Property.Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
+        contentData.add( new Property.String( "recipient", invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.add( newProperty( "text" ).type( ValueTypes.STRING ).value( line.text ).build() );
-            invoiceLine.add( newProperty( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
+            invoiceLine.add( new Property.String( "text", line.text ) );
+            invoiceLine.add( new Property( "money", resolveValue( line.money ) ) );
 
             contentData.add( invoiceLine );
         }
@@ -300,15 +292,15 @@ public class Content_usageTest
         invoice.lines.add( new InvoiceLine( "1x1m Oak veneer, 10mm", 120.00 ) );
 
         ContentData contentData = new ContentData();
-        contentData.add( newDate( "invoiceDate" ).value( invoice.invoiceDate.toDateMidnight() ) );
-        contentData.add( newText( "recipient" ).value( invoice.recipient ) );
+        contentData.add( new Property.Date( "invoiceDate", invoice.invoiceDate.toDateMidnight() ) );
+        contentData.add( new Property.String( "recipient", invoice.recipient ) );
 
         for ( InvoiceLine line : invoice.lines )
         {
             DataSet invoiceLine = DataSet.newDataSet().name( "invoiceLine" ).build();
-            invoiceLine.add( Property.String.newString().name( "text" ).value( line.text ).build() );
+            invoiceLine.add( new Property.String( "text", line.text ) );
 
-            invoiceLine.add( newProperty( "money" ).type( resolveType( line.money ) ).value( line.money ).build() );
+            invoiceLine.add( new Property( "money", resolveValue( line.money ) ) );
             invoiceLine.add( myNewProperty( "money", line.money ) );
 
             contentData.add( invoiceLine );
@@ -389,11 +381,11 @@ public class Content_usageTest
 
     }
 
-    private ValueType resolveType( final Object value )
+    private Value resolveValue( final Object value )
     {
         if ( value instanceof Double )
         {
-            return ValueTypes.DOUBLE;
+            return new Value.Double( (Double) value );
         }
         else
         {
@@ -405,7 +397,7 @@ public class Content_usageTest
     {
         if ( value instanceof Double )
         {
-            return Property.Double.newDouble().name( name ).value( (Double) value ).build();
+            return new Property.Double( name, (Double) value );
         }
         else
         {

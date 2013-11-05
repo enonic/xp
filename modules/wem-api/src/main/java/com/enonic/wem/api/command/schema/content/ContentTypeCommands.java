@@ -22,9 +22,14 @@ public final class ContentTypeCommands
         return new DeleteContentType();
     }
 
-    public GetContentTypeTree getTree()
+    public GetRootContentTypes getRoots()
     {
-        return new GetContentTypeTree();
+        return new GetRootContentTypes();
+    }
+
+    public GetChildContentTypes getChildren()
+    {
+        return new GetChildContentTypes();
     }
 
     public ValidateContentType validate()

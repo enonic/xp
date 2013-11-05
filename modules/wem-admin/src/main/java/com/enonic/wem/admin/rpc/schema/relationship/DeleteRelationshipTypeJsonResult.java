@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 final class DeleteRelationshipTypeJsonResult
     extends JsonResult
@@ -36,10 +36,10 @@ final class DeleteRelationshipTypeJsonResult
         return array;
     }
 
-    private ArrayNode serializeSuccesses( Iterable<QualifiedRelationshipTypeName> successes )
+    private ArrayNode serializeSuccesses( Iterable<RelationshipTypeName> successes )
     {
         final ArrayNode array = arrayNode();
-        for ( QualifiedRelationshipTypeName success : successes )
+        for ( RelationshipTypeName success : successes )
         {
             final ObjectNode objectNode = array.addObject();
             objectNode.put( "qualifiedRelationshipTypeName", success.toString() );

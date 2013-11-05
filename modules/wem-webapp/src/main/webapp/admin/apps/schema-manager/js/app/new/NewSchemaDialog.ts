@@ -6,17 +6,17 @@ module app_new {
 
         private schemaTypeListItems:SchemaTypeListItem[] = [
             {
-                type: 'ContentType',
+                type: api_schema.SchemaKind.CONTENT_TYPE,
                 displayName: 'Content Type',
                 iconUrl: api_util.getRestUri('schema/image/ContentType:structured')
             },
             {
-                type: 'RelationshipType',
+                type: api_schema.SchemaKind.RELATIONSHIP_TYPE,
                 displayName: 'Relationship Type',
                 iconUrl: api_util.getRestUri('schema/image/RelationshipType:_') // default icon for RelationshipType
             },
             {
-                type: 'Mixin',
+                type: api_schema.SchemaKind.MIXIN,
                 displayName: 'Mixin',
                 iconUrl: api_util.getRestUri('schema/image/Mixin:_') // default icon for Mixin
             }

@@ -1,17 +1,17 @@
 module api_app_browse {
 
-    export class ItemsSelectionPanel extends api_ui.Panel implements api_event.Observable {
+    export class ItemsSelectionPanel<M> extends api_ui.Panel implements api_event.Observable {
 
-        private listeners:ItemsSelectionPanelListener[] = [];
-        private items:BrowseItem[] = [];
-        private selectionItems:SelectionItem[] = [];
+        private listeners:ItemsSelectionPanelListener<M>[] = [];
+        private items:BrowseItem<M>[] = [];
+        private selectionItems:SelectionItem<M>[] = [];
 
         constructor() {
             super("ItemsSelectionPanel");
             this.getEl().setInnerHtml("Nothing selected");
         }
 
-        addItem(item:BrowseItem) {
+        addItem(item:BrowseItem<M>) {
             if (this.indexOf(item) >= 0) {
                 return;
             }
@@ -30,7 +30,7 @@ module api_app_browse {
             this.items.push(item);
         }
 
-        removeItem(item:BrowseItem) {
+        removeItem(item:BrowseItem<M>) {
             var index = this.indexOf(item);
             if (index < 0) {
                 return;
@@ -47,11 +47,11 @@ module api_app_browse {
             this.notifyDeselected(item);
         }
 
-        getItems():BrowseItem[] {
+        getItems():BrowseItem<M>[] {
             return this.items;
         }
 
-        private indexOf(item:BrowseItem):number {
+        private indexOf(item:BrowseItem<M>):number {
             for (var i = 0 ; i < this.items.length ; i++) {
                 if (item.getPath() == this.items[i].getPath()) {
                     return i;
@@ -60,18 +60,18 @@ module api_app_browse {
             return -1;
         }
 
-        addListener(listener:ItemsSelectionPanelListener) {
+        addListener(listener:ItemsSelectionPanelListener<M>) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:ItemsSelectionPanelListener) {
+        removeListener(listener:ItemsSelectionPanelListener<M>) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyDeselected(item:BrowseItem) {
-            this.listeners.forEach((listener:ItemsSelectionPanelListener) => {
+        private notifyDeselected(item:BrowseItem<M>) {
+            this.listeners.forEach((listener:ItemsSelectionPanelListener<M>) => {
                 if (listener.onDeselected) {
                     listener.onDeselected(item);
                 }
@@ -80,11 +80,11 @@ module api_app_browse {
 
     }
 
-    export class SelectionItem extends api_dom.DivEl {
+    export class SelectionItem<M> extends api_dom.DivEl {
 
-        private browseItem:api_app_browse.BrowseItem;
+        private browseItem:api_app_browse.BrowseItem<M>;
 
-        constructor(browseItem:BrowseItem, removeCallback?:() => void) {
+        constructor(browseItem:BrowseItem<M>, removeCallback?:() => void) {
             super("SelectionItem", "browse-selection-item");
             this.browseItem = browseItem;
             this.setIcon(this.browseItem.getIconUrl(), 32);
@@ -120,7 +120,7 @@ module api_app_browse {
             return titleEl;
         }
 
-        getBrowseItem():BrowseItem {
+        getBrowseItem():BrowseItem<M> {
             return this.browseItem;
         }
     }

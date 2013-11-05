@@ -4,21 +4,19 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Content Type";
 
-        private static DEFAULT_CHEMA_ICON_URL:string = api_util.getRestUri('schema/image/ContentType:structured');
+        private static  DEFAULT_CHEMA_ICON_URL:string = api_util.getRestUri('schema/image/ContentType:structured');
 
-        private formIcon:api_app_wizard.FormIcon;
+        private formIcon :api_app_wizard.FormIcon;
 
-        private contentTypeWizardHeader:api_app_wizard.WizardHeaderWithName;
+        private contentTypeWizardHeader :api_app_wizard.WizardHeaderWithName;
 
-        private persistedContentType:api_schema_content.ContentType;
+        private persistedContentType :api_schema_content.ContentType;
 
-        private contentTypeForm:app_wizard.ContentTypeForm;
+        private contentTypeForm :app_wizard.ContentTypeForm;
 
         constructor() {
-
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
-            this.formIcon =
-            new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon",
+            this.formIcon = new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
             var actions = new ContentTypeWizardActions(this);
@@ -48,61 +46,47 @@ module app_wizard {
             super.setPersistedItem(contentType);
 
             this.contentTypeWizardHeader.setName(contentType.getName());
-            this.formIcon.setSrc(contentType.getIconUrl());
+            this.formIcon.setSrc(contentType.getIcon());
 
             this.persistedContentType = contentType;
 
-            new api_schema_content.GetContentTypeConfigByQualifiedNameRequest(contentType.getQualifiedName()).send().
-                done((response:api_rest.JsonResponse<api_schema_content.GetContentTypeConfigResult>) => {
+            new api_schema_content.GetContentTypeConfigByQualifiedNameRequest(contentType.getName()).send().
+                done((response:api_rest.JsonResponse <api_schema_content.GetContentTypeConfigResult>) => {
                 this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
             });
-
         }
 
-        persistNewItem(successCallback?:() => void) {
+        persistNewItem(successCallback ? : () => void) {
             var formData = this.contentTypeForm.getFormData();
-            var createParams:api_remote_contenttype.CreateOrUpdateParams = {
-                name: this.contentTypeWizardHeader.getName(),
-                contentType: formData.xml,
-                iconReference: this.getIconUrl()
-            };
+            var createContentTypeRequest = new api_schema_content.CreateContentTypeRequest(this.contentTypeWizardHeader.getName(), formData.xml,
+                this.getIconUrl());
+            createContentTypeRequest.send().done((response:api_rest.JsonResponse) => {
+                new app_wizard.ContentTypeCreatedEvent().fire();
+                api_notify.showFeedback('Content type was created!');
 
-            api_remote_contenttype.RemoteContentTypeService.contentType_createOrUpdate(createParams,
-                (result:api_remote_contenttype.CreateOrUpdateResult) => {
-                    if (result.created) {
-                        new app_wizard.ContentTypeCreatedEvent().fire();
-                        api_notify.showFeedback('Content type was created!');
+                new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.CONTENT_TYPE, "TODO: get name" ).fire();
 
-                        if (successCallback) {
-                            successCallback.call(this);
-                        }
-                    } else {
-                        api_notify.newError(result.failure).send();
-                    }
-                });
+                if (successCallback) {
+                    successCallback.call(this);
+                }
+            });
         }
 
-        updatePersistedItem(successCallback?:() => void) {
+        updatePersistedItem(successCallback ? : () => void) {
             var formData = this.contentTypeForm.getFormData();
-            var updateParams:api_remote_contenttype.CreateOrUpdateParams = {
-                name: this.contentTypeWizardHeader.getName(),
-                contentType: formData.xml,
-                iconReference: this.getIconUrl()
-            };
+            var updateContentTypeRequest = new api_schema_content.UpdateContentTypeRequest(this.contentTypeWizardHeader.getName(), formData.xml,
+                this.getIconUrl());
 
-            api_remote_contenttype.RemoteContentTypeService.contentType_createOrUpdate(updateParams,
-                (result:api_remote_contenttype.CreateOrUpdateResult) => {
-                    if (result.updated) {
-                        new app_wizard.ContentTypeUpdatedEvent().fire();
-                        api_notify.showFeedback('Content type was saved!');
+            updateContentTypeRequest.send().done((response:api_rest.JsonResponse) => {
+                new app_wizard.ContentTypeUpdatedEvent().fire();
+                api_notify.showFeedback('Content type was saved!');
 
-                        if (successCallback) {
-                            successCallback.call(this);
-                        }
-                    } else {
-                        api_notify.newError(result.failure).send();
-                    }
-                });
+                new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.CONTENT_TYPE, "TODO: get name" ).fire();
+
+                if (successCallback) {
+                    successCallback.call(this);
+                }
+            });
         }
     }
 }

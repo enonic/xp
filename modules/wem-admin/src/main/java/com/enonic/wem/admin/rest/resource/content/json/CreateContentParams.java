@@ -5,8 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class CreateContentParams
 {
@@ -16,14 +17,15 @@ public class CreateContentParams
 
     private ContentPath parentContentPath;
 
-    private QualifiedContentTypeName qualifiedContentTypeName;
+    private ContentTypeName qualifiedContentTypeName;
 
     private ArrayNode contentData;
+
+    private FormJson form;
 
     private String displayName;
 
     private List<AttachmentParams> attachments;
-
 
     public Boolean getTemporary()
     {
@@ -45,6 +47,16 @@ public class CreateContentParams
         this.contentName = contentName;
     }
 
+    public FormJson getForm()
+    {
+        return form;
+    }
+
+    public void setForm( final FormJson form )
+    {
+        this.form = form;
+    }
+
     public ContentPath getParentContentPath()
     {
         return parentContentPath;
@@ -52,17 +64,17 @@ public class CreateContentParams
 
     public void setParentContentPath( final String parentContentPath )
     {
-        this.parentContentPath = ContentPath.from( parentContentPath );
+        this.parentContentPath = parentContentPath != null ? ContentPath.from( parentContentPath ) : null;
     }
 
-    public QualifiedContentTypeName getQualifiedContentTypeName()
+    public ContentTypeName getQualifiedContentTypeName()
     {
         return qualifiedContentTypeName;
     }
 
     public void setQualifiedContentTypeName( final String qualifiedContentTypeName )
     {
-        this.qualifiedContentTypeName = QualifiedContentTypeName.from( qualifiedContentTypeName );
+        this.qualifiedContentTypeName = qualifiedContentTypeName != null ? ContentTypeName.from( qualifiedContentTypeName ) : null;
     }
 
     public ArrayNode getContentData()

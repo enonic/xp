@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
 import com.enonic.wem.api.exception.ContentTypeNotFoundException;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -22,8 +22,8 @@ public final class DeleteContentTypeHandler
     public void handle()
         throws Exception
     {
-        final QualifiedContentTypeName qualifiedContentTypeName = command.getName();
-        if ( contentDao.countContentTypeUsage( qualifiedContentTypeName, context.getJcrSession() ) > 0 )
+        final ContentTypeName contentTypeName = command.getName();
+        if ( contentDao.countContentTypeUsage( contentTypeName, context.getJcrSession() ) > 0 )
         {
             command.setResult( DeleteContentTypeResult.UNABLE_TO_DELETE );
         }
@@ -31,7 +31,7 @@ public final class DeleteContentTypeHandler
         {
             try
             {
-                contentTypeDao.delete( qualifiedContentTypeName, context.getJcrSession() );
+                contentTypeDao.delete( contentTypeName, context.getJcrSession() );
                 context.getJcrSession().save();
                 command.setResult( DeleteContentTypeResult.SUCCESS );
             }

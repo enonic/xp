@@ -4,7 +4,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.AbstractDaoHandler;
 
@@ -21,7 +21,7 @@ abstract class AbstractRelationshipTypeDaoHandler<T>
         this.session = session;
     }
 
-    protected boolean nodeExists( final QualifiedRelationshipTypeName qualifiedName )
+    protected boolean nodeExists( final RelationshipTypeName qualifiedName )
         throws RepositoryException
     {
         final Node node = this.getRelationshipTypeNode( qualifiedName );
@@ -33,7 +33,7 @@ abstract class AbstractRelationshipTypeDaoHandler<T>
         return true;
     }
 
-    protected final Node getRelationshipTypeNode( final QualifiedRelationshipTypeName qualifiedName )
+    protected final Node getRelationshipTypeNode( final RelationshipTypeName qualifiedName )
         throws RepositoryException
     {
         final String path = getNodePath( qualifiedName );
@@ -41,12 +41,12 @@ abstract class AbstractRelationshipTypeDaoHandler<T>
         return JcrHelper.getNodeOrNull( rootNode, path );
     }
 
-    protected final String getNodePath( final QualifiedRelationshipTypeName qualifiedName )
+    protected final String getNodePath( final RelationshipTypeName qualifiedName )
     {
-        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + qualifiedName.getName();
+        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + qualifiedName.toString();
     }
 
-    protected final boolean relationshipTypeExists( final QualifiedRelationshipTypeName qualifiedName )
+    protected final boolean relationshipTypeExists( final RelationshipTypeName qualifiedName )
         throws RepositoryException
     {
         final String relationshipTypePath = getNodePath( qualifiedName );

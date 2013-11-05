@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 
 public enum SchemaKind
 {
-
     CONTENT_TYPE( "ContentType" ),
     MIXIN( "Mixin" ),
     RELATIONSHIP_TYPE( "RelationshipType" );

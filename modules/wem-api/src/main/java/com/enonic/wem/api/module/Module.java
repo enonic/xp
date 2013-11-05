@@ -12,8 +12,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 @Immutable
 public final class Module
@@ -42,7 +42,7 @@ public final class Module
 
     private final ModuleKeys moduleDependencies;
 
-    private final QualifiedContentTypeNames contentTypeDependencies;
+    private final ContentTypeNames contentTypeDependencies;
 
     private Module( final Module.Builder builder )
     {
@@ -58,7 +58,7 @@ public final class Module
         this.minSystemVersion = builder.minSystemVersion;
         this.maxSystemVersion = builder.maxSystemVersion;
         this.moduleDependencies = ModuleKeys.from( builder.moduleDependencies );
-        this.contentTypeDependencies = QualifiedContentTypeNames.from( builder.contentTypeDependencies );
+        this.contentTypeDependencies = ContentTypeNames.from( builder.contentTypeDependencies );
         this.config = builder.config == null ? null : builder.config.copy();
         this.moduleDirectoryEntry = builder.moduleDirectoryEntry.build();
     }
@@ -123,7 +123,7 @@ public final class Module
         return moduleDependencies;
     }
 
-    public QualifiedContentTypeNames getContentTypeDependencies()
+    public ContentTypeNames getContentTypeDependencies()
     {
         return contentTypeDependencies;
     }
@@ -183,7 +183,7 @@ public final class Module
 
         private List<ModuleKey> moduleDependencies = Lists.newArrayList();
 
-        private Set<QualifiedContentTypeName> contentTypeDependencies = Sets.newHashSet();
+        private Set<ContentTypeName> contentTypeDependencies = Sets.newHashSet();
 
         private Form config;
 
@@ -270,13 +270,13 @@ public final class Module
             return this;
         }
 
-        public Builder addContentTypeDependency( final QualifiedContentTypeName contentTypeDependency )
+        public Builder addContentTypeDependency( final ContentTypeName contentTypeDependency )
         {
             this.contentTypeDependencies.add( contentTypeDependency );
             return this;
         }
 
-        public Builder addContentTypeDependencies( final Iterable<QualifiedContentTypeName> contentTypeDependencies )
+        public Builder addContentTypeDependencies( final Iterable<ContentTypeName> contentTypeDependencies )
         {
             Iterables.addAll( this.contentTypeDependencies, contentTypeDependencies );
             return this;

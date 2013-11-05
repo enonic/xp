@@ -4,14 +4,14 @@ package com.enonic.wem.core.content;
 import java.util.LinkedHashMap;
 
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class MockContentTypeDao
 {
     private static final MockContentTypeDao INSTANCE = new MockContentTypeDao();
 
-    private LinkedHashMap<QualifiedContentTypeName, ContentType> contentTypeByQualifiedName =
-        new LinkedHashMap<QualifiedContentTypeName, ContentType>();
+    private LinkedHashMap<ContentTypeName, ContentType> contentTypeByQualifiedName =
+        new LinkedHashMap<ContentTypeName, ContentType>();
 
     private MockContentTypeDao()
     {
@@ -22,7 +22,7 @@ public class MockContentTypeDao
         contentTypeByQualifiedName.put( contentType.getQualifiedName(), contentType );
     }
 
-    public ContentType getContentType( final QualifiedContentTypeName qualifiedContentTypeName )
+    public ContentType getContentType( final ContentTypeName qualifiedContentTypeName )
     {
         return contentTypeByQualifiedName.get( qualifiedContentTypeName );
     }

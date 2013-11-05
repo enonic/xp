@@ -22,7 +22,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.RelationshipConfig;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -39,7 +39,7 @@ public class ContentDataParserTest
     public void parse_simple_types()
         throws IOException
     {
-        RelationshipConfig relationshipConfig = newRelationshipConfig().relationshipType( QualifiedRelationshipTypeName.LIKE ).build();
+        RelationshipConfig relationshipConfig = newRelationshipConfig().relationshipType( RelationshipTypeName.LIKE ).build();
 
         FormItemSet mySet = newFormItemSet().name( "mySet" ).build();
         mySet.add( newInput().name( "myTextLine" ).inputType( InputTypes.TEXT_LINE ).build() );
@@ -95,7 +95,7 @@ public class ContentDataParserTest
         final ContentType contentType = newContentType().
             name( "my_content_type" ).
             addFormItem( newInput().name( "myImage" ).inputType( InputTypes.IMAGE_SELECTOR ).inputTypeConfig( newImageSelectorConfig().
-                relationshipType( QualifiedRelationshipTypeName.DEFAULT ).
+                relationshipType( RelationshipTypeName.DEFAULT ).
                 build() ).build() ).
             build();
 
@@ -206,7 +206,7 @@ public class ContentDataParserTest
         // verify
 
         assertEquals( "40.446195,-79.948862", parsedContentData.getProperty( "myGeoLocation" ).getString() );
-        assertEquals( ValueTypes.GEOGRAPHIC_COORDINATE, parsedContentData.getProperty( "myGeoLocation" ).getValueType() );
+        assertEquals( ValueTypes.GEO_POINT, parsedContentData.getProperty( "myGeoLocation" ).getValueType() );
     }
 
     @Test

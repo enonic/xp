@@ -15,7 +15,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntityList;
 public final class Mixins
     extends AbstractImmutableEntityList<Mixin>
 {
-    private final ImmutableMap<QualifiedMixinName, Mixin> map;
+    private final ImmutableMap<MixinName, Mixin> map;
 
     private Mixins( final ImmutableList<Mixin> list )
     {
@@ -23,15 +23,15 @@ public final class Mixins
         this.map = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public Set<QualifiedMixinName> getQualifiedMixinNames()
+    public Set<MixinName> getNames()
     {
-        final Collection<QualifiedMixinName> names = Collections2.transform( this.list, new ToNameFunction() );
+        final Collection<MixinName> names = Collections2.transform( this.list, new ToNameFunction() );
         return ImmutableSet.copyOf( names );
     }
 
-    public Mixin getMixin( final QualifiedMixinName qualifiedMixinName )
+    public Mixin getMixin( final MixinName mixinName )
     {
-        return map.get( qualifiedMixinName );
+        return map.get( mixinName );
     }
 
     public static Mixins empty()
@@ -56,12 +56,33 @@ public final class Mixins
     }
 
     private final static class ToNameFunction
-        implements Function<Mixin, QualifiedMixinName>
+        implements Function<Mixin, MixinName>
     {
         @Override
-        public QualifiedMixinName apply( final Mixin value )
+        public MixinName apply( final Mixin value )
         {
             return value.getQualifiedName();
+        }
+    }
+
+    public static Builder newMixins()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<Mixin> builder = ImmutableList.builder();
+
+        public Builder add( Mixin node )
+        {
+            builder.add( node );
+            return this;
+        }
+
+        public Mixins build()
+        {
+            return new Mixins( builder.build() );
         }
     }
 }

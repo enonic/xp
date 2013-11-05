@@ -10,23 +10,19 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.entity.NodeTranslatable;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 public final class Content
-    implements IllegalEditAware<Content>, NodeTranslatable, ChangeTraceable
+    implements IllegalEditAware<Content>, ChangeTraceable
 {
     private final String displayName;
 
-    private final QualifiedContentTypeName type;
+    private final ContentTypeName type;
 
     private final ContentPath path;
 
@@ -85,7 +81,7 @@ public final class Content
         return path.isPathToEmbeddedContent();
     }
 
-    public QualifiedContentTypeName getType()
+    public ContentTypeName getType()
     {
         return type;
     }
@@ -157,22 +153,6 @@ public final class Content
         return !childrenIds.isEmpty();
     }
 
-    public Node toNode( final NodePath parent )
-    {
-        final Node.Builder builder = Node.newNode( new EntityId( this.id.toString() ), this.getName() );
-        builder.parent( parent );
-        builder.createdTime( this.createdTime );
-        builder.modifiedTime( this.modifiedTime );
-        builder.creator( this.creator );
-        builder.modifier( this.modifier );
-        builder.property( "displayName", this.displayName );
-        builder.property( "owner", this.owner != null ? this.owner.toString() : null );
-        builder.property( "type", this.type != null ? this.type.toString() : null );
-        builder.addDataSet( this.contentData != null ? this.contentData.toDataSet( "data" ) : null );
-
-        return builder.build();
-    }
-
     @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
@@ -220,7 +200,7 @@ public final class Content
 
         private ContentId contentId;
 
-        private QualifiedContentTypeName type;
+        private ContentTypeName type;
 
         private Form form;
 
@@ -286,7 +266,7 @@ public final class Content
             return this;
         }
 
-        public Builder type( final QualifiedContentTypeName type )
+        public Builder type( final ContentTypeName type )
         {
             this.type = type;
             return this;
@@ -294,7 +274,7 @@ public final class Content
 
         public Builder form( final Form form )
         {
-            this.contentData = contentData;
+            this.form = form;
             return this;
         }
 
@@ -370,7 +350,7 @@ public final class Content
 
             if ( type == null )
             {
-                type = QualifiedContentTypeName.unstructured();
+                type = ContentTypeName.unstructured();
             }
             if ( versionId == null )
             {

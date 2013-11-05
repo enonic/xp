@@ -15,7 +15,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
 import static org.junit.Assert.*;
@@ -37,7 +37,7 @@ public class RelationshipJsonSerializerTest
         Relationship relationship = Relationship.newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( QualifiedRelationshipTypeName.PARENT ).
+            type( RelationshipTypeName.PARENT ).
             createdTime( NOW ).
             creator( AccountKey.superUser() ).
             build();
@@ -51,7 +51,7 @@ public class RelationshipJsonSerializerTest
         ObjectNode expectedJson = JsonNodeFactory.instance.objectNode();
         expectedJson.put( "fromContent", "111" );
         expectedJson.put( "toContent", "222" );
-        expectedJson.put( "type", QualifiedRelationshipTypeName.PARENT.toString() );
+        expectedJson.put( "type", RelationshipTypeName.PARENT.toString() );
         expectedJson.putNull( "managingData" );
         expectedJson.putNull( "properties" );
         expectedJson.put( "creator", "user:system:admin" );
@@ -66,7 +66,7 @@ public class RelationshipJsonSerializerTest
         Relationship relationship = Relationship.newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( QualifiedRelationshipTypeName.PARENT ).
+            type( RelationshipTypeName.PARENT ).
             managed( DataPath.from( "mySet.myData" ) ).
             createdTime( NOW ).
             creator( AccountKey.superUser() ).
@@ -81,7 +81,7 @@ public class RelationshipJsonSerializerTest
         ObjectNode expectedJson = JsonNodeFactory.instance.objectNode();
         expectedJson.put( "fromContent", "111" );
         expectedJson.put( "toContent", "222" );
-        expectedJson.put( "type", QualifiedRelationshipTypeName.PARENT.toString() );
+        expectedJson.put( "type", RelationshipTypeName.PARENT.toString() );
         expectedJson.put( "managingData", "mySet.myData" );
         expectedJson.putNull( "properties" );
         expectedJson.put( "creator", "user:system:admin" );
@@ -96,7 +96,7 @@ public class RelationshipJsonSerializerTest
         Relationship relationship = Relationship.newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( QualifiedRelationshipTypeName.PARENT ).
+            type( RelationshipTypeName.PARENT ).
             property( "stars", "4" ).
             property( "stripes", "3" ).
             createdTime( NOW ).
@@ -115,7 +115,7 @@ public class RelationshipJsonSerializerTest
         ObjectNode expectedJson = JsonNodeFactory.instance.objectNode();
         expectedJson.put( "fromContent", "111" );
         expectedJson.put( "toContent", "222" );
-        expectedJson.put( "type", QualifiedRelationshipTypeName.PARENT.toString() );
+        expectedJson.put( "type", RelationshipTypeName.PARENT.toString() );
         expectedJson.putNull( "managingData" );
         ObjectNode propertiesNode = expectedJson.putObject( "properties" );
         propertiesNode.put( "stars", "4" );
@@ -134,7 +134,7 @@ public class RelationshipJsonSerializerTest
         Relationship toSerialize = Relationship.newRelationship().
             fromContent( ContentId.from( "111" ) ).
             toContent( ContentId.from( "222" ) ).
-            type( QualifiedRelationshipTypeName.PARENT ).
+            type( RelationshipTypeName.PARENT ).
             managed( DataPath.from( "mySet.myData" ) ).
             property( "stars", "4" ).
             property( "stripes", "3" ).
@@ -155,7 +155,7 @@ public class RelationshipJsonSerializerTest
 
         assertEquals( ContentId.from( "111" ), parsedRelationship.getFromContent() );
         assertEquals( ContentId.from( "222" ), parsedRelationship.getToContent() );
-        assertEquals( QualifiedRelationshipTypeName.PARENT, parsedRelationship.getType() );
+        assertEquals( RelationshipTypeName.PARENT, parsedRelationship.getType() );
         assertEquals( true, parsedRelationship.isManaged() );
         assertEquals( DataPath.from( "mySet.myData" ), parsedRelationship.getManagingData() );
         assertEquals( "4", parsedRelationship.getProperty( "stars" ) );

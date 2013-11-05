@@ -1,0 +1,21 @@
+[
+    {
+        "schemaKind": "ContentTypeSummary",
+        "abstract": false,
+        "allowChildContent": true,
+        "contentDisplayNameScript": null,
+        "createdTime": "2013-08-23T12:55:09.162Z",
+        "creator": null,
+        "deletable": true,
+        "displayName": null,
+        "editable": true,
+        "final": false,
+        "hasChildren": false,
+        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:contenttype",
+        "key": "ContentType:contenttype",
+        "modifiedTime": "2013-08-23T12:55:09.162Z",
+        "modifier": null,
+        "name": "contenttype",
+        "superType": "unstructured"
+    }
+]

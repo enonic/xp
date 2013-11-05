@@ -24,6 +24,8 @@ module api_form_input_type {
 
         private contentRequestsAllowed:boolean;
 
+        private uploadDialog:ImageSelectorUploadDialog;
+
         constructor(config:ImageSelectorConfig) {
             super("ImageSelector", "image-selector");
 
@@ -50,6 +52,13 @@ module api_form_input_type {
                     this.loadOptions("");
                 })
             ;
+
+            this.uploadDialog = new api_form_input_type.ImageSelectorUploadDialog();
+            this.uploadDialog.addListener({
+                onImageUploaded: (id:string, name:string, mimeType:string) => {
+                    this.createTemporaryImageContent(id, name, mimeType);
+                }
+            });
         }
 
         layout(input:api_form.Input, properties:api_data.Property[]) {
@@ -75,6 +84,19 @@ module api_form_input_type {
 
             this.uploadButton = new api_ui.Button("");
             this.uploadButton.addClass("upload-button");
+            this.uploadButton.setClickListener((event:any) => {
+                var inputMaximum = input.getOccurrences().getMaximum();
+                var countSelected = this.comboBox.countSelected();
+                var rest = -1;
+                if (inputMaximum == 0) {
+                    rest = 0;
+                } else {
+                    rest = inputMaximum - countSelected;
+                    rest = (rest == 0) ? -1 : rest;
+                }
+                this.uploadDialog.setMaximumOccurrences(rest);
+                this.uploadDialog.open();
+            });
             this.appendChild(this.uploadButton);
 
             this.appendChild(this.selectedOptionsView);
@@ -132,6 +154,16 @@ module api_form_input_type {
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
+                },
+                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                    if (!comboBox.maximumOccurrencesReached()) {
+                        this.uploadButton.setEnabled(true);
+                    }
+                },
+                onOptionSelected: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                    if (this.comboBox.maximumOccurrencesReached()) {
+                        this.uploadButton.setEnabled(false);
+                    }
                 }
             });
 
@@ -179,6 +211,46 @@ module api_form_input_type {
             contentSummary.appendChild(path);
 
             return img.toString() + contentSummary.toString();
+        }
+
+        private createTemporaryImageContent(id:string, name:string, mimeType:string) {
+            var contentData = new api_content.ContentData();
+            contentData.addData(api_data.Property.fromStrings("image", name, "String"));
+            contentData.addData(api_data.Property.fromStrings("mimeType", mimeType, "String"));
+            new api_content.CreateContentRequest()
+                .setTemporary(true)
+                .setContentName(name)
+                .setContentType("image")
+                .setDisplayName(name)
+                .setContentData(contentData)
+                .setAttachments([{
+                    uploadId: id,
+                    attachmentName: name
+                }])
+                .send()
+                .done((createResponse:api_rest.JsonResponse<any>) => {
+                    var responseObj = createResponse.getJson();
+
+                    if (responseObj.created) {
+                        this.loadTemporaryImageContent(responseObj.contentId);
+                    } else if (responseObj.failure) {
+                        api_notify.showError(responseObj.failure);
+                    }
+                })
+            ;
+        }
+
+        private loadTemporaryImageContent(contentId:string) {
+            new api_content.GetContentByIdRequest(contentId).send()
+                .done((getResponse:api_rest.JsonResponse<any>) => {
+                    var responseObj = getResponse.getJson();
+                    var contentSummary = new api_content.ContentSummary(responseObj);
+                    this.comboBox.selectOption({
+                        value: contentSummary.getId(),
+                        displayValue: contentSummary
+                    });
+                })
+            ;
         }
 
     }

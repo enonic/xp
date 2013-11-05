@@ -8,14 +8,17 @@ import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.BaseSchema;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.SchemaKey;
+import com.enonic.wem.api.support.illegaledit.IllegalEdit;
+import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
+import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
 import static com.enonic.wem.api.form.Form.newForm;
 
 public final class ContentType
-    extends BaseSchema<QualifiedContentTypeName>
-    implements Schema
+    extends BaseSchema<ContentTypeName>
+    implements Schema, IllegalEditAware<ContentType>
 {
-    private final QualifiedContentTypeName superType;
+    private final ContentTypeName superType;
 
     private final boolean isAbstract;
 
@@ -29,18 +32,21 @@ public final class ContentType
 
     private final String contentDisplayNameScript;
 
+    private final boolean hasInheritors;
+
     private ContentType( final Builder builder )
     {
         super( builder );
 
         if ( builder.superType == null && !builder.isBuiltIn )
         {
-            superType = QualifiedContentTypeName.unstructured();
+            superType = ContentTypeName.unstructured();
         }
         else
         {
             this.superType = builder.superType;
         }
+        this.hasInheritors = builder.inheritors;
         this.isAbstract = builder.isAbstract;
         this.isFinal = builder.isFinal;
         this.allowChildContent = builder.allowChildContent;
@@ -56,12 +62,28 @@ public final class ContentType
     }
 
     @Override
-    public QualifiedContentTypeName getQualifiedName()
+    public ContentTypeName getQualifiedName()
     {
-        return QualifiedContentTypeName.from( getName() );
+        return ContentTypeName.from( getName() );
     }
 
-    public QualifiedContentTypeName getSuperType()
+    @Override
+    public boolean hasChildren()
+    {
+        return hasInheritors();
+    }
+
+    public boolean hasInheritors()
+    {
+        return this.hasInheritors;
+    }
+
+    public boolean inherit( final ContentTypeName contentType )
+    {
+        return this.superType != null && this.superType.equals( contentType );
+    }
+
+    public ContentTypeName getSuperType()
     {
         return superType;
     }
@@ -94,6 +116,19 @@ public final class ContentType
     public String getContentDisplayNameScript()
     {
         return contentDisplayNameScript;
+    }
+
+    @Override
+    public void checkIllegalEdit( final ContentType to )
+        throws IllegalEditException
+    {
+        IllegalEdit.check( "id", this.getId(), to.getId(), ContentType.class );
+        IllegalEdit.check( "schemaKey", this.getSchemaKey(), to.getSchemaKey(), ContentType.class );
+        IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), ContentType.class );
+        IllegalEdit.check( "creator", this.getCreator(), to.getCreator(), ContentType.class );
+        IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), ContentType.class );
+        IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), ContentType.class );
+        IllegalEdit.check( "inheritors", this.hasInheritors(), to.hasInheritors(), ContentType.class );
     }
 
     @Override
@@ -136,9 +171,11 @@ public final class ContentType
 
         private Form.Builder formBuilder = newForm();
 
-        private QualifiedContentTypeName superType;
+        private ContentTypeName superType;
 
         private String contentDisplayNameScript;
+
+        private boolean inheritors;
 
         private Builder()
         {
@@ -155,13 +192,25 @@ public final class ContentType
             this.isFinal = source.isFinal();
             this.allowChildContent = source.allowChildContent();
             this.isBuiltIn = source.isBuiltIn();
-
+            this.inheritors = source.hasInheritors();
             this.superType = source.getSuperType();
             if ( source.form() != null )
             {
                 this.formBuilder = newForm( source.form() );
             }
-            this.contentDisplayNameScript = source.contentDisplayNameScript;
+            this.contentDisplayNameScript = source.getContentDisplayNameScript();
+        }
+
+        public Builder name( final ContentTypeName value )
+        {
+            super.name( value );
+            return this;
+        }
+
+        public Builder name( final String value )
+        {
+            super.name( ContentTypeName.from( value ) );
+            return this;
         }
 
         public Builder setAbstract( final boolean value )
@@ -200,7 +249,7 @@ public final class ContentType
             return this;
         }
 
-        public Builder superType( final QualifiedContentTypeName superType )
+        public Builder superType( final ContentTypeName superType )
         {
             this.superType = superType;
             return this;
@@ -215,6 +264,12 @@ public final class ContentType
         public Builder form( final Form form )
         {
             this.formBuilder = newForm( form );
+            return this;
+        }
+
+        public Builder inheritors( final boolean value )
+        {
+            this.inheritors = value;
             return this;
         }
 

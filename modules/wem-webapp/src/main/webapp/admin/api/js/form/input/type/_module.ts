@@ -15,4 +15,5 @@
 ///<reference path='RelationshipSelectedOptionsView.ts' />
 ///<reference path='ImageSelector.ts' />
 ///<reference path='ImageSelectorSelectedOptionsView.ts' />
+///<reference path='ImageSelectorUploadDialog.ts' />
 ///<reference path='Image.ts' />

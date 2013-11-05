@@ -8,7 +8,7 @@ import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
-import com.enonic.wem.api.schema.mixin.QualifiedMixinName;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public class DeleteMixinRpcHandlerTest
     extends AbstractRpcHandlerTest
@@ -38,9 +38,9 @@ public class DeleteMixinRpcHandlerTest
     public void deleteMultipleMixins()
         throws Exception
     {
-        final QualifiedMixinName existingName = QualifiedMixinName.from( "my:existing_mixin" );
-        final QualifiedMixinName notFoundName = QualifiedMixinName.from( "my:not_found_mixin" );
-        final QualifiedMixinName beingUsedName = QualifiedMixinName.from( "my:being_used_mixin" );
+        final MixinName existingName = MixinName.from( "existing_mixin" );
+        final MixinName notFoundName = MixinName.from( "not_found_mixin" );
+        final MixinName beingUsedName = MixinName.from( "being_used_mixin" );
 
         MixinDeletionResult mixinDeletionResult = new MixinDeletionResult();
         mixinDeletionResult.success( existingName );

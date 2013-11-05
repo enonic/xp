@@ -15,8 +15,9 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.indexdocument.IndexDocument;
+import com.enonic.wem.core.index.document.IndexDocument;
 
 public class ElasticsearchIndexServiceImplTest
 {
@@ -34,7 +35,7 @@ public class ElasticsearchIndexServiceImplTest
 
         Mockito.when( client.index( Mockito.isA( IndexRequest.class ) ) ).thenReturn( indexResponse );
 
-        IndexDocument indexDocument = new IndexDocument( "1", IndexType.CONTENT, "WEM" );
+        IndexDocument indexDocument = new IndexDocument( "1", IndexType.CONTENT, Index.WEM );
 
         elasticsearchIndexService.index( Lists.newArrayList( indexDocument ) );
 
@@ -52,8 +53,8 @@ public class ElasticsearchIndexServiceImplTest
 
         Mockito.when( client.index( Mockito.isA( IndexRequest.class ) ) ).thenReturn( indexResponse );
 
-        IndexDocument indexDocument1 = new IndexDocument( "1", IndexType.CONTENT, "WEM" );
-        IndexDocument indexDocument2 = new IndexDocument( "2", IndexType.ACCOUNT, "WEM" );
+        IndexDocument indexDocument1 = new IndexDocument( "1", IndexType.CONTENT, Index.WEM );
+        IndexDocument indexDocument2 = new IndexDocument( "2", IndexType.ACCOUNT, Index.WEM );
 
         elasticsearchIndexService.index( Lists.newArrayList( indexDocument1, indexDocument2 ) );
 

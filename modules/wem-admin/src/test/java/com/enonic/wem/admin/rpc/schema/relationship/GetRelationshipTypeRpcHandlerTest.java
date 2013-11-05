@@ -11,8 +11,8 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
@@ -44,8 +44,8 @@ public class GetRelationshipTypeRpcHandlerTest
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
+        final RelationshipTypeNames names =
+            RelationshipTypeNames.from( RelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeJson_param.json", "getRelationshipTypeJson_result.json" );
@@ -60,8 +60,8 @@ public class GetRelationshipTypeRpcHandlerTest
             build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
-        final QualifiedRelationshipTypeNames names =
-            QualifiedRelationshipTypeNames.from( QualifiedRelationshipTypeName.from( "the_relationship_type" ) );
+        final RelationshipTypeNames names =
+            RelationshipTypeNames.from( RelationshipTypeName.from( "the_relationship_type" ) );
         Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
 
         testSuccess( "getRelationshipTypeXml_param.json", "getRelationshipTypeXml_result.json" );

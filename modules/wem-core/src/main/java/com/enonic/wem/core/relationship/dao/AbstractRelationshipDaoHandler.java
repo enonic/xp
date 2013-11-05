@@ -59,7 +59,7 @@ abstract class AbstractRelationshipDaoHandler<T>
             return null;
         }
 
-        final Node relationshipTypeNameNode = JcrHelper.getNodeOrNull( relationshipsNode, relationshipKey.getType().getName() );
+        final Node relationshipTypeNameNode = JcrHelper.getNodeOrNull( relationshipsNode, relationshipKey.getType().toString() );
         if ( relationshipTypeNameNode == null )
         {
             return null;

@@ -8,6 +8,8 @@ module api_content {
 
         private qualifiedContentTypeName:string;
 
+        private form:api_form.Form;
+
         private contentData:ContentData;
 
         private displayName:string;
@@ -38,6 +40,11 @@ module api_content {
             return this;
         }
 
+        setForm(form:api_form.Form):UpdateContentRequest {
+            this.form = form;
+            return this;
+        }
+
         setContentData(contentData:api_content.ContentData):UpdateContentRequest {
             this.contentData = contentData;
             return this;
@@ -59,6 +66,7 @@ module api_content {
                 contentId: this.id,
                 contentName: this.contentName,
                 qualifiedContentTypeName: this.qualifiedContentTypeName,
+                form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,
                 attachments: this.attachments

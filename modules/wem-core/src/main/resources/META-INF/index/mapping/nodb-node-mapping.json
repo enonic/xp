@@ -1,0 +1,101 @@
+{
+    "node": {
+        "_analyzer": {
+            "path": "_document_analyzer"
+        },
+        "_all": {
+            "enabled": true
+        },
+        "_source": {
+            "enabled": true
+        },
+        "date_detection": false,
+        "numeric_detection": false,
+        "properties": {
+
+        },
+        "dynamic_templates": [
+            {
+                "template_fulltext": {
+                    "match": "*._analyzed",
+                    "mapping": {
+                        "type": "string",
+                        "store": "no",
+                        "index": "analyzed",
+                        "analyzer": "english",
+                        "include_in_all": false
+                    }
+                }
+            },
+            {
+                "template_tokenized": {
+                    "match": "*._tokenized",
+                    "mapping": {
+                        "type": "string",
+                        "store": "no",
+                        "index": "analyzed",
+                        "analyzer": "fulltext_index",
+                        "include_in_all": false
+                    }
+                }
+            },
+            {
+                "template_userdata_date": {
+                    "match": "*._datetime",
+                    "mapping": {
+                        "type": "date",
+                        "store": "no",
+                        "index": "not_analyzed",
+                        "include_in_all": false
+                    }
+                }
+            },
+            {
+                "template_userdata_number": {
+                    "match": "*._number",
+                    "mapping": {
+                        "type": "double",
+                        "store": "no",
+                        "index": "not_analyzed",
+                        "include_in_all": false
+                    }
+                }
+            },
+            {
+                "template_userdata_orderby": {
+                    "match": "*._orderby",
+                    "mapping": {
+                        "type": "string",
+                        "store": "no",
+                        "index": "analyzed",
+                        "analyzer": "keywordlowercase",
+                        "include_in_all": false
+                    }
+                }
+            },
+            {
+                "template_userdata_geopoint": {
+                    "match": "*._geopoint",
+                    "mapping": {
+                        "type": "geo_point",
+                        "store": "no",
+                        "index": "not_analyzed",
+                        "include_in_all": false
+                    }
+                }
+            },
+            {
+                "template_metadata_strings": {
+                    "match": "*",
+                    "mapping": {
+                        "type": "string",
+                        "store": "no",
+                        "index": "analyzed",
+                        "analyzer": "keywordlowercase",
+                        "include_in_all": false
+                    }
+                }
+            }
+        ]
+    }
+}

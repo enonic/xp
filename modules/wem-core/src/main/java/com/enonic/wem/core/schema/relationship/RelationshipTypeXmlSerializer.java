@@ -8,7 +8,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
@@ -48,14 +48,14 @@ public class RelationshipTypeXmlSerializer
         typeEl.addContent( new Element( "to-semantic" ).setText( type.getToSemantic() ) );
 
         final Element allowedFromTypes = new Element( "allowed-from-types" );
-        for ( QualifiedContentTypeName allowedFromType : type.getAllowedFromTypes() )
+        for ( ContentTypeName allowedFromType : type.getAllowedFromTypes() )
         {
             allowedFromTypes.addContent( new Element( "content-type" ).setText( allowedFromType.toString() ) );
         }
         typeEl.addContent( allowedFromTypes );
 
         final Element allowedToTypes = new Element( "allowed-to-types" );
-        for ( QualifiedContentTypeName allowedToType : type.getAllowedToTypes() )
+        for ( ContentTypeName allowedToType : type.getAllowedToTypes() )
         {
             allowedToTypes.addContent( new Element( "content-type" ).setText( allowedToType.toString() ) );
         }
@@ -94,13 +94,13 @@ public class RelationshipTypeXmlSerializer
         final Element allowedFromTypesEl = relationshipTypeEl.getChild( "allowed-from-types" );
         for ( final Element contentTypeEl : getChildren( allowedFromTypesEl, "content-type" ) )
         {
-            relationshipTypeBuilder.addAllowedFromType( QualifiedContentTypeName.from( contentTypeEl.getText() ) );
+            relationshipTypeBuilder.addAllowedFromType( ContentTypeName.from( contentTypeEl.getText() ) );
         }
 
         final Element allowedToTypesEl = relationshipTypeEl.getChild( "allowed-to-types" );
         for ( final Element contentTypeEl : getChildren( allowedToTypesEl, "content-type" ) )
         {
-            relationshipTypeBuilder.addAllowedToType( QualifiedContentTypeName.from( contentTypeEl.getText() ) );
+            relationshipTypeBuilder.addAllowedToType( ContentTypeName.from( contentTypeEl.getText() ) );
         }
 
         return relationshipTypeBuilder.build();

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 final class DeleteContentTypeJsonResult
     extends JsonResult
@@ -36,10 +36,10 @@ final class DeleteContentTypeJsonResult
         return array;
     }
 
-    private ArrayNode serializeSuccesses( Iterable<QualifiedContentTypeName> successes )
+    private ArrayNode serializeSuccesses( Iterable<ContentTypeName> successes )
     {
         final ArrayNode array = arrayNode();
-        for ( QualifiedContentTypeName success : successes )
+        for ( ContentTypeName success : successes )
         {
             final ObjectNode objectNode = array.addObject();
             objectNode.put( "qualifiedContentTypeName", success.toString() );

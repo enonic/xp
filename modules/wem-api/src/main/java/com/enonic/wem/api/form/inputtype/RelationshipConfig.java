@@ -4,12 +4,12 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.form.InvalidValueException;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public class RelationshipConfig
     implements InputTypeConfig
 {
-    private final QualifiedRelationshipTypeName relationshipType;
+    private final RelationshipTypeName relationshipType;
 
     RelationshipConfig( final Builder builder )
     {
@@ -17,7 +17,7 @@ public class RelationshipConfig
         this.relationshipType = builder.relationshipType;
     }
 
-    public QualifiedRelationshipTypeName getRelationshipType()
+    public RelationshipTypeName getRelationshipType()
     {
         return relationshipType;
     }
@@ -36,14 +36,14 @@ public class RelationshipConfig
 
     public static class Builder
     {
-        private QualifiedRelationshipTypeName relationshipType;
+        private RelationshipTypeName relationshipType;
 
         Builder()
         {
             // protection
         }
 
-        public Builder relationshipType( final QualifiedRelationshipTypeName value )
+        public Builder relationshipType( final RelationshipTypeName value )
         {
             relationshipType = value;
             return this;

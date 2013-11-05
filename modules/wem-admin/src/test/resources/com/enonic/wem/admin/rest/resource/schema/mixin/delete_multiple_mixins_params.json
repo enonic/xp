@@ -1,7 +1,7 @@
 {
     "qualifiedNames": [
-        "my:existing_mixin",
-        "my:being_used_mixin",
-        "my:not_existing_mixin"
+        "existing_mixin",
+        "being_used_mixin",
+        "not_existing_mixin"
     ]
 }

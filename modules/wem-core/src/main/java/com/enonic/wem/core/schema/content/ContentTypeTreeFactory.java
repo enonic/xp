@@ -8,8 +8,8 @@ import javax.jcr.Session;
 import com.google.common.collect.ArrayListMultimap;
 
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.QualifiedContentTypeName;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
@@ -34,7 +34,7 @@ public final class ContentTypeTreeFactory
 
     private Tree<ContentType> buildTree( final ContentTypes contentTypes )
     {
-        final ArrayListMultimap<QualifiedContentTypeName, ContentType> inheritingTypesBySuperType = ArrayListMultimap.create();
+        final ArrayListMultimap<ContentTypeName, ContentType> inheritingTypesBySuperType = ArrayListMultimap.create();
 
         final Tree<ContentType> tree = new Tree<ContentType>();
 
@@ -59,7 +59,7 @@ public final class ContentTypeTreeFactory
     }
 
     private void addChildren( final TreeNode<ContentType> parentNode,
-                              final ArrayListMultimap<QualifiedContentTypeName, ContentType> inheritingTypesBySuperType )
+                              final ArrayListMultimap<ContentTypeName, ContentType> inheritingTypesBySuperType )
     {
         // Find all content types inheriting the type in parentNode
         final List<ContentType> inheritingContentTypes = inheritingTypesBySuperType.get( parentNode.getObject().getQualifiedName() );

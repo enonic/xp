@@ -74,7 +74,7 @@ class LayoutJsonSerializer
 
         for ( FormItem formItem : formItemsJsonSerializer.parse( formItemNode.get( ITEMS ) ) )
         {
-            builder.add( formItem );
+            builder.addFormItem( formItem );
         }
 
         return builder.build();

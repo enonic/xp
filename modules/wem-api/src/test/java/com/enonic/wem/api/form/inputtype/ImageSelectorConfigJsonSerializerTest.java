@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.JsonTestHelper;
-import com.enonic.wem.api.schema.relationship.QualifiedRelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 import static com.enonic.wem.api.JsonTestHelper.assertJsonEquals;
 import static junit.framework.Assert.assertEquals;
@@ -32,7 +32,7 @@ public class ImageSelectorConfigJsonSerializerTest
     {
         // setup
         ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.LIKE );
         ImageSelectorConfig config = builder.build();
 
         // exercise
@@ -60,7 +60,7 @@ public class ImageSelectorConfigJsonSerializerTest
     {
         // setup
         ImageSelectorConfig.Builder builder = ImageSelectorConfig.newImageSelectorConfig();
-        builder.relationshipType( QualifiedRelationshipTypeName.LIKE );
+        builder.relationshipType( RelationshipTypeName.LIKE );
         ImageSelectorConfig expected = builder.build();
 
         // exercise

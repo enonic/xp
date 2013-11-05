@@ -1,24 +1,28 @@
 module app_launcher {
 
     export class Application {
+        private id:string;
         private name:string;
         private description:string;
         private iconUrl:string;
-        private appUrl:string;
         private openTabs:number;
         private appFrame:api_dom.IFrameEl;
         private loaded:boolean;
 
-        constructor(name:string, appUrl:string, iconUrl:string, description?:string, appFrame:api_dom.IFrameEl = null) {
+        constructor(id: string, name:string, iconUrl:string, description?:string, appFrame:api_dom.IFrameEl = null) {
+            this.id = id;
             this.name = name;
             this.iconUrl = iconUrl;
-            this.appUrl = appUrl;
             this.description = description;
             this.openTabs = 0;
         }
 
         isLoaded():boolean {
             return this.loaded;
+        }
+
+        getId():string {
+            return this.id;
         }
 
         getName():string {
@@ -34,7 +38,7 @@ module app_launcher {
         }
 
         getAppUrl():string {
-            return this.appUrl;
+            return api_util.getUri('admin?app=' + this.id);
         }
 
         getOpenTabs():number {
@@ -45,8 +49,8 @@ module app_launcher {
             if (!this.appFrame) {
                 this.appFrame = new api_dom.IFrameEl();
                 this.appFrame.getEl().setHeight('100%').setWidth('100%').getHTMLElement().style.border = '0';
-                this.appFrame.setSrc(this.appUrl);
-                this.appFrame.getEl().setAttribute('data-wem-app', this.name);
+                this.appFrame.setSrc(this.getAppUrl());
+                this.appFrame.getEl().setAttribute('data-wem-app', this.id);
             }
             return this.appFrame;
         }
