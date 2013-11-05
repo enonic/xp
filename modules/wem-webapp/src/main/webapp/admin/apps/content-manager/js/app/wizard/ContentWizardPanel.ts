@@ -176,27 +176,27 @@ module app_wizard {
                 setForm(this.contentForm.getForm()).
                 setContentData(contentData);
 
-                if(this.iconUploadId) {
-                    createRequest.setAttachments([
-                        {
-                            uploadId: this.iconUploadId,
-                            attachmentName: '_thumb.png'
-                        }
-                    ])
-                }
-
-                createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
-
-                    api_notify.showFeedback('Content was created!');
-                    console.log('content create response', createResponse);
-
-                    var json = createResponse.getJson();
-                    new api_content.ContentCreatedEvent(api_content.ContentPath.fromString(json.contentPath)).fire();
-
-                    if (successCallback) {
-                        successCallback.call(this, json.contentId, json.contentPath);
+            if (this.iconUploadId) {
+                createRequest.setAttachments([
+                    {
+                        uploadId: this.iconUploadId,
+                        attachmentName: '_thumb.png'
                     }
-                });
+                ])
+            }
+
+            createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
+
+                api_notify.showFeedback('Content was created!');
+                console.log('content create response', createResponse);
+
+                var json = createResponse.getJson();
+                new api_content.ContentCreatedEvent(api_content.ContentPath.fromString(json.contentPath)).fire();
+
+                if (successCallback) {
+                    successCallback.call(this, json.contentId, json.contentPath);
+                }
+            });
         }
 
         updatePersistedItem(successCallback?:() => void) {
@@ -208,7 +208,7 @@ module app_wizard {
                 setForm(this.contentForm.getForm()).
                 setContentData(this.contentForm.getContentData());
 
-            if(this.iconUploadId) {
+            if (this.iconUploadId) {
                 updateRequest.setAttachments([
                     {
                         uploadId: this.iconUploadId,
@@ -233,14 +233,14 @@ module app_wizard {
     /*class AttachmentCollector extends api_data.PropertyVisitor {
 
 
-        collect( contentData:api_content.ContentData ) {
-            super.traverse( contentData.getDataArray() );
-        }
+     collect( contentData:api_content.ContentData ) {
+     super.traverse( contentData.getDataArray() );
+     }
 
-        visit( property:api_data.Property ) {
-            //
-        }
-    }*/
+     visit( property:api_data.Property ) {
+     //
+     }
+     }*/
 
     class LiveFormPanel extends api_ui.Panel {
 
