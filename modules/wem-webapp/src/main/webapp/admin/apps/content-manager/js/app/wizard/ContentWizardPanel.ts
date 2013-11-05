@@ -6,7 +6,7 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("resources/images/default_content.png");
 
-        private static DISPLAY_NAME_REGEX:RegExp = /\$\('([a-z\.]*)'\)/g;
+        private static DISPLAY_NAME_REGEX:RegExp = /\$\('([a-zA-Z\.]*)'\)/g;
 
         private persistedContent:api_content.Content;
 
@@ -106,11 +106,9 @@ module app_wizard {
             });
 
 
-            this.displayNameChangeInputs = [];
-
-            this.getEl().addEventListener("keyup", (e) => {
-                var displayName = contentType.getContentDisplayNameScript();
-                if (contentType.getContentDisplayNameScript()) {
+            if (contentType.getContentDisplayNameScript()) {
+                this.getEl().addEventListener("keyup", (e) => {
+                    var displayName = contentType.getContentDisplayNameScript();
                     var script = contentType.getContentDisplayNameScript();
                     var regex = ContentWizardPanel.DISPLAY_NAME_REGEX;
                     var result;
@@ -118,11 +116,16 @@ module app_wizard {
                         console.log(result);
                         var path = api_data.DataPath.fromString(result[1]);
                         var inputView:api_form_input.InputView = this.contentForm.getInputViewByPath(path);
-                        displayName = displayName.replace(result[0], "'" + inputView.getValue(path.getLastElement().getIndex()).asString() + "'");
+                        console.log("inputView", inputView);
+                        var inputValue = inputView ? inputView.getValue(path.getLastElement().getIndex()).asString() : '';
+                        // Strips single quotes to avoid breaking
+                        inputValue = inputValue.replace(/'/g, "\\'");
+                        displayName = displayName.replace(result[0], "'" + inputValue + "'");
                     }
+                    console.log(displayName);
                     this.updateDisplayName(eval(displayName));
-                }
-            });
+                });
+            }
         }
 
         private updateDisplayName(name:string) {

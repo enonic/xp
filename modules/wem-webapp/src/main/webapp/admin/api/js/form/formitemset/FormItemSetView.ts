@@ -70,21 +70,10 @@ module api_form_formitemset {
             var occurrenceViews = this.formItemSetOccurrences.getFormItemSetOccurrenceViews();
             var formItemViews:api_form.FormItemView[] = [];
             occurrenceViews.forEach((occurrenceView:api_form_formitemset.FormItemSetOccurrenceView) => {
-                formItemViews.concat(occurrenceView.getFormItemViews());
+                formItemViews = formItemViews.concat(occurrenceView.getFormItemViews());
             });
-            //return formItemViews;
-            return null;
+            return formItemViews;
         }
-
-//        getInputViewByPath(path:api_data.DataPath) {
-//            var occurrenceViews = this.formItemSetOccurrences.getFormItemSetOccurrenceViews();
-//            console.log("path", path);
-//            occurrenceViews.forEach((occurrenceView:api_form_formitemset.FormItemSetOccurrenceView) => {
-//                 occurrenceView.getFormItemViews().forEach((formItemView:api_form.FormItemView) => {
-//                     console.log(formItemView.getFormItem().getName());
-//                 });
-//            });
-//        }
 
         refresh() {
 

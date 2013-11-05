@@ -19,73 +19,44 @@ module api_form {
         getInputViewByPath(path:api_data.DataPath, formItemViews:FormItemView[] = this.formItemViews):api_form_input.InputView {
             // Loop through all formItemViews
             for (var i = 0; i<formItemViews.length; i++) {
-                var currentFormItemView = formItemViews[i];
-                console.log(currentFormItemView);
+                var currentFormItemView:FormItemView = formItemViews[i];
                 // If name matches first path elements name
-                console.log("first path element", path.getElement(0).toString());
+                console.log("CURRENT ITEM -> ", currentFormItemView.getFormItem().getName(), currentFormItemView ,"path->", path.getElement(0).getName());
                 if (currentFormItemView.getFormItem().getName() == path.getElement(0).getName()) {
-                    console.log("name matched!");
                     // If formItemView is InputView, end of path is reached
                     if (currentFormItemView instanceof api_form_input.InputView) {
-                        return <api_form_input.InputView>currentFormItemView;
+                        if (path.getElements().length == 1) {
+                            return <api_form_input.InputView>currentFormItemView;
+                        } else {
+                            //return null;
+                            //TODO: maybe throw error
+                            throw new Error('InputView must be last element of path: ' + path.toString());
+                        }
                     } else {
-                        var formItemSetView = <api_form_formitemset.FormItemSetView>currentFormItemView;
-                        console.log("calling on formItemSetView", formItemSetView.getFormItemViews());
-                        return this.getInputViewByPath(path.newWithOutFirstElement(), formItemSetView.getFormItemViews());
+                        if( path.getElements().length == 1 ) {
+                            //return null;
+                            //TODO: maybe throw error
+                            throw new Error('Expected InputView to be last element of path. Got FormItemSetView: ' + path.toString());
+                        }
+
+                        if( currentFormItemView instanceof api_form_formitemset.FormItemSetView )
+                        {
+                            var formItemSetView = <api_form_formitemset.FormItemSetView>currentFormItemView;
+                            return this.getInputViewByPath(path.newWithOutFirstElement(), formItemSetView.getFormItemViews());
+                        }
+                        else if( currentFormItemView instanceof api_form_layout.FieldSetView )
+                        {
+                            var fieldSetView = <api_form_layout.FieldSetView>currentFormItemView;
+                            return this.getInputViewByPath(path.newWithOutFirstElement(), fieldSetView.getFormItemViews());
+                        }
+                        else {
+                            throw new Error( "Unexpected FormItemView: " + currentFormItemView.getFormItem().toFormItemJson() );
+                        }
                     }
                 }
             }
 
             return null;
-//            formItemViews.forEach((formItemView:FormItemView) => {
-//                console.log("inputView = ", inputView);
-//                console.log(formItemView.getFormItem().getName());
-//                // If name matches first path elements name
-//                console.log("first path element", path.getElement(0));
-//                if (formItemView.getFormItem().getName() == path.getElement(0).getName()) {
-//                    console.log("name matched!");
-//                    // If formItemView is InputView, end of path is reached
-//                    if (formItemView instanceof api_form_input.InputView) {
-//                        inputView = <api_form_input.InputView>formItemView;
-//                        console.log("set inputview", inputView);
-//                    } else {
-//                        var formItemSetView = <api_form_formitemset.FormItemSetView>formItemView;
-//                        console.log("calling on formItemSetView");
-//                        //console.log(path.newWithOutFirstElement(), formItemSetView.getFormItemViews());
-//                        this.getInputViewByPath(path.newWithOutFirstElement(), formItemSetView.getFormItemViews());
-//                    }
-//
-//                }
-//            });
-//            console.log("returning", inputView);
-//            return inputView;
-
-
-//            var returnItem:api_form_input.InputView = null;
-//            if (path.getElements().length == 1) {
-//                this.formItemViews.forEach((formItem:FormItemView, index) => {
-//                    console.log("form item views" + formItem.getFormItem().getName());
-//                    if (formItem instanceof api_form_input.InputView) {
-//                        if (formItem.getFormItem().getName() == path.getElement(0)) {
-//                            returnItem = <api_form_input.InputView>formItem;
-//                        }
-//                    }
-//                });
-//            } else if (path.getElements().length > 1) {
-//                this.formItemViews.forEach((formItem:FormItemView) => {
-//                        if (formItem.getFormItem().getName() == path.getElement(0)) {
-//                            if (formItem instanceof api_form_input.InputView) {
-//                                throw new Error("Expected FormItemSetView")
-//                            } else if (formItem instanceof api_form_formitemset.FormItemSetView) {
-//                                var formItemSetView = <api_form_formitemset.FormItemSetView>formItem;
-//                                formItemSetView.getInputViewByPath(path.newWithOutFirstElement());
-//                            }
-//                        }
-//                    }
-//                );
-//            }
-
-            //return returnItem;
         }
 
         private
