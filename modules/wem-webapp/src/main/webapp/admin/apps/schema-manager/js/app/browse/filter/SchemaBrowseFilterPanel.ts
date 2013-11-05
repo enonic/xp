@@ -16,7 +16,7 @@ module app_browse_filter {
             this.addListener({
                 onSearch: (values:{[s:string] : string[]; })=> {
                     var params = this.createLoadContentParams(values);
-                    //TODO: run find schemas request, and fire the search event with returned schemas to update grid panel
+                    //TODO: run find schemas request to get facets, and pass returned schemas to event
                     new SchemaBrowseSearchEvent().fire();
 
                 },
@@ -49,9 +49,11 @@ module app_browse_filter {
                     paramTypes.push('MIXIN');
                 }
             }
-            moduleFilter.forEach(function (moduleName) {
-                paramModules.push(moduleName);
-            });
+            if (moduleFilter) {
+                moduleFilter.forEach(function (moduleName) {
+                    paramModules.push(moduleName);
+                });
+            }
             params.search = filterPanelValues.query;
             return params;
         }

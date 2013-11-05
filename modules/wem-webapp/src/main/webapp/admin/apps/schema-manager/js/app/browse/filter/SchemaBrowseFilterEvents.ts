@@ -2,19 +2,19 @@ module app_browse_filter {
 
     export class SchemaBrowseSearchEvent extends api_event.Event {
 
-        filterParams;
+        private model:api_schema.SchemaJson[];
 
-        constructor(filterParams?) {
+        constructor(model?:api_schema.SchemaJson[]) {
             super('schemaBrowseSearch');
-            this.filterParams = filterParams;
+            this.model = model;
+        }
+
+        getJsonModels():api_schema.SchemaJson[] {
+            return this.model;
         }
 
         static on(handler:(event:SchemaBrowseSearchEvent)=>void) {
             api_event.onEvent('schemaBrowseSearch', handler);
-        }
-
-        getFilterParams() {
-            return this.filterParams;
         }
     }
 

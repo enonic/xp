@@ -2,17 +2,17 @@ module api_schema {
 
     export class SchemaCreatedEvent extends api_event.Event {
 
-        private schemaType:string;
+        private schemaKind:api_schema.SchemaKind;
         private schemaName:string;
 
-        constructor( schemaType:string, schemaName:string ) {
+        constructor( schemaKind:api_schema.SchemaKind, schemaName:string ) {
             super( 'SchemaCreatedEvent' );
-            this.schemaType = schemaType;
+            this.schemaKind = schemaKind;
             this.schemaName = schemaName;
         }
 
-        public getSchemaKind():string {
-            return this.schemaType;
+        public getSchemaKind():SchemaKind {
+            return this.schemaKind;
         }
 
         public getSchemaName():string{

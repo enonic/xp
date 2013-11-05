@@ -23,19 +23,14 @@ module app_browse {
             this.setKeyField("name");
 
             app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
-                if (event.getFilterParams()) {
-                    // show  ids
-                    this.setRemoteSearchParams(event.getFilterParams());
-                    this.refresh();
-                } else {
-                    // show none
-                    this.removeAll();
-                    this.updateResultCount(0);
-                }
+                // TODO: use schemas from event when filter is implemented
+                // this.loadData(event.getJsonModels())
+
+                this.refresh();
             });
 
             app_browse_filter.SchemaBrowseResetEvent.on((event) => {
-                this.setRemoteSearchParams({});
+                this.removeAll();
                 this.refresh();
             });
 
