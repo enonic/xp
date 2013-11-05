@@ -25,6 +25,7 @@ public class LayoutDescriptor
         return displayName;
     }
 
+    @Override
     public ModuleResourceKey getControllerResource()
     {
         return controllerResource;

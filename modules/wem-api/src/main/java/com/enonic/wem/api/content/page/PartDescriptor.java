@@ -26,6 +26,7 @@ public class PartDescriptor
         return displayName;
     }
 
+    @Override
     public ModuleResourceKey getControllerResource()
     {
         return controllerResource;
