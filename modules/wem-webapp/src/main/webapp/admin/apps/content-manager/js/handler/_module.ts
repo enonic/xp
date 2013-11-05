@@ -1,1 +1,0 @@
-///<reference path='DeleteContentHandler.ts' />

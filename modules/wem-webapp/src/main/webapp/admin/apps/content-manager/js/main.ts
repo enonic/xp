@@ -18,8 +18,6 @@
 
 ///<reference path='app/wizard/_module.ts' />
 
-///<reference path='handler/_module.ts' />
-
 ///<reference path='store/_module.ts' />
 
 ///<reference path='lib/_module.ts' />
