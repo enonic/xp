@@ -40,7 +40,6 @@ import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_AREA;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_LINE;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -199,18 +198,9 @@ public class MixinResourceTest
 
         Mockito.when( client.execute( isA( GetMixin.class ) ) ).thenReturn( mixin );
 
-        try
-        {
-            resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
-                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
-            Assert.assertFalse( "Exception should've been thrown already", true );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            Assert.assertEquals( 409, e.getResponse().getStatus() );
-            Assert.assertEquals( "Mixin [my_set] already exists.", e.getResponse().getEntity( String.class ) );
-            verify( client, never() ).execute( isA( CreateMixin.class ) );
-        }
+        String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_params.json" ),
+                                                                         MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson( "create_mixin_already_exists.json", result );
     }
 
     @Test
@@ -257,18 +247,9 @@ public class MixinResourceTest
         throws Exception
     {
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
-        try
-        {
-            resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
-                                                             MediaType.APPLICATION_JSON_TYPE ).post( String.class );
-            Assert.assertFalse( "Exception should've been thrown already", true );
-        }
-        catch ( UniformInterfaceException e )
-        {
-            Assert.assertEquals( 404, e.getResponse().getStatus() );
-            Assert.assertEquals( "Mixin [my_set] not found.", e.getResponse().getEntity( String.class ) );
-            verify( client, never() ).execute( isA( UpdateMixin.class ) );
-        }
+        String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
+                                                                         MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        assertJson("update_mixin_not_found.json", result);
     }
 
     @Test

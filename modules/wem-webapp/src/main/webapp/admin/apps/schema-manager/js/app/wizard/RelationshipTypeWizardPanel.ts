@@ -58,14 +58,21 @@ module app_wizard {
         persistNewItem(successCallback ? : () => void) {
             var formData = this.relationshipTypeForm.getFormData();
             var request = new api_schema_relationshiptype.CreateRelationshipTypeRequest(formData.xml, this.getIconUrl());
-            request.send().done(()=> {
-                new app_wizard.RelationshipTypeCreatedEvent().fire();
-                api_notify.showFeedback('Relationship type was created!');
+            request.send().done((response:api_rest.JsonResponse<any>)=> {
+                var jsonResponse = response.getJson();
+                if (jsonResponse.error) {
+                    api_notify.showError(jsonResponse.error.msg);
+                } else {
+                    var relationshipType:api_schema_relationshiptype.RelationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.result);
+                    this.setPersistedItem(relationshipType);
+                    new app_wizard.RelationshipTypeCreatedEvent().fire();
+                    api_notify.showFeedback('Relationship type was created!');
 
-                new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.RELATIONSHIP_TYPE, "TODO: get name" ).fire();
+                    new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.RELATIONSHIP_TYPE, relationshipType.getName() ).fire();
 
-                if (successCallback) {
-                    successCallback.call(this);
+                    if (successCallback) {
+                        successCallback.call(this);
+                    }
                 }
             });
         }
@@ -73,14 +80,20 @@ module app_wizard {
         updatePersistedItem(successCallback ? : () => void) {
             var formData = this.relationshipTypeForm.getFormData();
             var request = new api_schema_relationshiptype.UpdateRelationshipTypeRequest(formData.xml, this.getIconUrl());
-            request.send().done(()=> {
-                new app_wizard.RelationshipTypeUpdatedEvent().fire();
-                api_notify.showFeedback('Relationship type was saved!');
+            request.send().done((response:api_rest.JsonResponse<any>)=> {
+                var jsonResponse = response.getJson();
+                if (jsonResponse.error) {
+                    api_notify.showError(jsonResponse.error.msg);
+                } else {
+                    var relationshipType:api_schema_relationshiptype.RelationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.result);
+                    new app_wizard.RelationshipTypeUpdatedEvent().fire();
+                    api_notify.showFeedback('Relationship type was saved!');
 
-                new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.RELATIONSHIP_TYPE, "TODO: get name" ).fire();
+                    new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.RELATIONSHIP_TYPE, relationshipType.getName() ).fire();
 
-                if (successCallback) {
-                    successCallback.call(this);
+                    if (successCallback) {
+                        successCallback.call(this);
+                    }
                 }
             });
         }

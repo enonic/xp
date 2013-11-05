@@ -1,7 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
-import java.io.IOException;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -18,10 +16,10 @@ import com.sun.jersey.api.NotFoundException;
 import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
-import com.enonic.wem.admin.jsonrpc.JsonRpcException;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.content.json.ContentTypeCreateOrUpdateParams;
 import com.enonic.wem.admin.rest.resource.schema.content.json.ValidateContentTypeJson;
+import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
@@ -136,42 +134,34 @@ public class ContentTypeResource
 
     @POST
     @Path("create")
-    public ContentTypeJson create( ContentTypeCreateOrUpdateParams params )
+    public CreateOrUpdateSchemaJsonResult create( ContentTypeCreateOrUpdateParams params )
     {
-        ContentType contentType;
         try
         {
-            contentType = contentTypeXmlSerializer.toContentType( params.getContentType() );
+            ContentType contentType = contentTypeXmlSerializer.toContentType( params.getContentType() );
+
+            if ( contentTypeExists( contentType.getQualifiedName() ) )
+            {
+                return CreateOrUpdateSchemaJsonResult.error(
+                    "ContentType already exists [" + contentType.getQualifiedName().toString() + "] TODO: make form reload" );
+            }
+
+            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
+            if ( icon != null )
+            {
+                contentType = newContentType( contentType ).icon( icon ).build();
+            }
+
+            createContentType( contentType );
+
+            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( contentType ) );
         }
-        catch ( XmlParsingException e )
+        catch ( Exception e )
         {
-            throw new WebApplicationException( e );
+            return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
 
-        if ( contentTypeExists( contentType.getQualifiedName() ) )
-        {
-            throw new IllegalArgumentException(
-                "ContentType already exists [" + contentType.getQualifiedName().toString() + "] TODO: make form reload" );
-        }
 
-        final Icon icon;
-        try
-        {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
-        }
-        catch ( JsonRpcException | IOException e )
-        {
-            throw new WebApplicationException( e );
-        }
-
-        if ( icon != null )
-        {
-            contentType = newContentType( contentType ).icon( icon ).build();
-        }
-
-        createContentType( contentType );
-
-        return new ContentTypeJson( contentType );
     }
 
     private void createContentType( final ContentType contentType )
@@ -197,36 +187,28 @@ public class ContentTypeResource
 
     @POST
     @Path("update")
-    public ContentTypeJson update( ContentTypeCreateOrUpdateParams params )
+    public CreateOrUpdateSchemaJsonResult update( ContentTypeCreateOrUpdateParams params )
     {
-        ContentType contentType;
         try
         {
-            contentType = new ContentTypeXmlSerializer().toContentType( params.getContentType() );
+            ContentType contentType = new ContentTypeXmlSerializer().toContentType( params.getContentType() );
+
+            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
+            if ( icon != null )
+            {
+                contentType = newContentType( contentType ).icon( icon ).build();
+            }
+
+            updateContentType( contentType );
+
+            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( contentType ) );
         }
-        catch ( XmlParsingException e )
+        catch ( Exception e )
         {
-            throw new WebApplicationException( e );
+            return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
 
-        final Icon icon;
-        try
-        {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
-        }
-        catch ( JsonRpcException | IOException e )
-        {
-            throw new WebApplicationException( e );
-        }
 
-        if ( icon != null )
-        {
-            contentType = newContentType( contentType ).icon( icon ).build();
-        }
-
-        updateContentType( contentType );
-
-        return new ContentTypeJson( contentType );
     }
 
     private void updateContentType( final ContentType contentType )

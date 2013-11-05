@@ -15,6 +15,7 @@ import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeConfigJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.admin.rest.resource.schema.relationship.json.RelationshipTypeCreateOrUpdateParam;
@@ -34,7 +35,6 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.api.schema.relationship.editor.SetRelationshipTypeEditor;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 @Path("schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
@@ -127,29 +127,23 @@ public class RelationshipTypeResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void create( RelationshipTypeCreateOrUpdateParam param )
+    public CreateOrUpdateSchemaJsonResult create( RelationshipTypeCreateOrUpdateParam param )
     {
-        final RelationshipType relationshipType;
         try
         {
-            relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getRelationshipType() );
-        }
-        catch ( XmlParsingException e )
-        {
-            throw new WebApplicationException( e );
-        }
+            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getRelationshipType() );
 
-        final Icon icon;
-        try
-        {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
+            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
+            createRelationshipType( relationshipType, icon );
+
+            return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( relationshipType ) );
         }
         catch ( Exception e )
         {
-            throw new WebApplicationException( e );
+            return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
 
-        createRelationshipType( relationshipType, icon );
+
     }
 
     private void createRelationshipType( final RelationshipType relationshipType, final Icon icon )
@@ -177,29 +171,23 @@ public class RelationshipTypeResource
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void update( RelationshipTypeCreateOrUpdateParam param )
+    public CreateOrUpdateSchemaJsonResult update( RelationshipTypeCreateOrUpdateParam param )
     {
-        final RelationshipType relationshipType;
         try
         {
-            relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getRelationshipType() );
-        }
-        catch ( XmlParsingException e )
-        {
-            throw new WebApplicationException( e );
-        }
+            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getRelationshipType() );
 
-        final Icon icon;
-        try
-        {
-            icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
+            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
+            updateRelationshipType( relationshipType, icon );
+
+            return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( relationshipType ) );
         }
         catch ( Exception e )
         {
-            throw new WebApplicationException( e );
+            return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
 
-        updateRelationshipType( relationshipType, icon );
+
     }
 
     private void updateRelationshipType( final RelationshipType relationshipType, final Icon icon )
