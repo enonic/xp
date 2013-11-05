@@ -33,16 +33,14 @@ module api_ui {
 
         private listeners:ImageUploaderListener[] =[];
 
-        constructor(name:string, uploadUrl:string, config?:ImageUploaderConfig) {
+        constructor(name:string, uploadUrl:string, config:ImageUploaderConfig = {}) {
             super("div", "ImageUploader", "image-uploader");
             this.name = name;
             this.uploadUrl = uploadUrl;
-            if (config) {
-                this.multiSelection = (config.multiSelection == undefined) ? false : config.multiSelection;
-                this.buttonsVisible = (config.buttonsVisible == undefined) ? true : config.buttonsVisible;
-                this.imageVisible = (config.imageVisible == undefined) ? true : config.imageVisible;
-                this.maximumOccurrences = (config.maximumOccurrences == undefined) ? 0 : config.maximumOccurrences;
-            }
+            this.multiSelection = (config.multiSelection == undefined) ? false : config.multiSelection;
+            this.buttonsVisible = (config.buttonsVisible == undefined) ? true : config.buttonsVisible;
+            this.imageVisible = (config.imageVisible == undefined) ? true : config.imageVisible;
+            this.maximumOccurrences = (config.maximumOccurrences == undefined) ? 0 : config.maximumOccurrences;
 
             this.input = api_ui.TextInput.middle();
             this.input.setPlaceholder("Paste URL to image here");
