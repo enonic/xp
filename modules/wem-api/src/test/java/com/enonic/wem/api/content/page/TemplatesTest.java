@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -58,6 +59,24 @@ public class TemplatesTest
             displayName( "Layout template" ).
             config( pageTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-layout.xml" ) ).
+            build();
+
+        assertEquals( "1fad493a-6a72-41a3-bac4-88aba3d83bcc", partTemplate.getId().toString() );
+    }
+
+    @Test
+    public void siteTemplate()
+    {
+        SiteTemplate partTemplate = SiteTemplate.newSiteTemplate().
+            id( new SiteTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            displayName( "Enonic Intranet" ).
+            description( "A social intranet for the Enterprise" ).
+            vendorName( "Enonic" ).
+            vendorUrl( "https://www.enonic.com" ).
+            modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
+                                      "com.enonic.resolvers-1.0.0" ) ).
+            supportedContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).
+            rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
             build();
 
         assertEquals( "1fad493a-6a72-41a3-bac4-88aba3d83bcc", partTemplate.getId().toString() );
