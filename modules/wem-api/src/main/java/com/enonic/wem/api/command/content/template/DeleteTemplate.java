@@ -4,7 +4,7 @@ package com.enonic.wem.api.command.content.template;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.TemplateId;
 
-public class DeleteTemplate
+public final class DeleteTemplate
     extends Command<Boolean>
 {
     private TemplateId templateId;

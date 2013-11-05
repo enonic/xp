@@ -14,7 +14,7 @@ import com.enonic.wem.api.content.page.Part;
 
 public final class Renderer
 {
-    private final ConcurrentMap<Class<? extends Component>, ComponentType> componentRegister;
+    private final ConcurrentMap<Class<? extends Component>, ComponentExecutor> componentRegister;
 
     private final Client client;
 
@@ -30,19 +30,19 @@ public final class Renderer
 
     public RenderingResult renderComponent( final Component component )
     {
-        final ComponentType componentType = resolveComponentType( component );
+        final ComponentExecutor componentType = resolveComponentType( component );
         final Context context = new Context();
         final RenderingResult result = componentType.execute( component, context );
 
         return result;
     }
 
-    private ComponentType resolveComponentType( final Component component )
+    private ComponentExecutor resolveComponentType( final Component component )
     {
         return this.componentRegister.get( component.getClass() );
     }
 
-    public void registerComponentType( final Class<? extends Component> component, final ComponentType componentType )
+    public void registerComponentType( final Class<? extends Component> component, final ComponentExecutor componentType )
     {
         this.componentRegister.put( component, componentType );
     }

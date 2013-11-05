@@ -19,9 +19,9 @@ public final class TemplateCommands
         return new CreateLayoutTemplate();
     }
 
-    public UpdateTemplate update()
+    public UpdatePageTemplate updatePageTemplate()
     {
-        return new UpdateTemplate();
+        return new UpdatePageTemplate();
     }
 
     public DeleteTemplate delete()
@@ -32,5 +32,10 @@ public final class TemplateCommands
     public GetTemplate get()
     {
         return new GetTemplate();
+    }
+
+    public GetTemplates list()
+    {
+        return new GetTemplates();
     }
 }

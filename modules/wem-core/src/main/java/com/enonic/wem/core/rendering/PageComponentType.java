@@ -16,8 +16,10 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.content.page.PageDescriptorXmlSerializer;
 
+import static com.enonic.wem.core.rendering.RenderingResult.newRenderingResult;
+
 public final class PageComponentType
-    implements ComponentType<Page>
+    implements ComponentExecutor<Page>
 {
     private final PageDescriptorXmlSerializer pageDescriptorXmlSerializer;
 
@@ -41,9 +43,11 @@ public final class PageComponentType
         final ModuleResourceKey controllerResource = descriptor.getControllerResource();
         final RootDataSet pageConfig = page.getConfig();
 
-        final Controller controller = controllerFactory.create( controllerResource, pageConfig );
+        final Controller controller = controllerFactory.create( controllerResource, pageConfig, context );
 
-        return controller.execute( context );
+        final ControllerResult controllerResult = controller.execute();
+
+        return newRenderingResult().success( controllerResult.isSuccess() ).build();
     }
 
     private PageTemplate getPageTemplate( final PageTemplateId templateId, final Client client )

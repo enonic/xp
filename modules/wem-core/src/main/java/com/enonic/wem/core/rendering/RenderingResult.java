@@ -63,6 +63,12 @@ public final class RenderingResult
         {
         }
 
+        public Builder success( final boolean isSuccess )
+        {
+            this.success = isSuccess;
+            return this;
+        }
+
         public Builder success()
         {
             this.success = true;

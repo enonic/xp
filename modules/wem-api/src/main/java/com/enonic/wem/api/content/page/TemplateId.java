@@ -6,7 +6,7 @@ import com.enonic.wem.api.support.AbstractId;
 public abstract class TemplateId
     extends AbstractId
 {
-    public TemplateId( final String id )
+    protected TemplateId( final String id )
     {
         super( id );
     }

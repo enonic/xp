@@ -20,11 +20,11 @@ public final class ControllerFactory
         this.client = client;
     }
 
-    public Controller create( final ModuleResourceKey javascriptResourceKey, final RootDataSet config )
+    public Controller create( final ModuleResourceKey javascriptResourceKey, final RootDataSet config, final Context context )
     {
         final Resource javascriptResource = retrieveJavascriptResource( javascriptResourceKey );
         final String javascriptSource = getJavascriptSource( javascriptResource );
-        final Controller controller = new Controller( javascriptSource, config );
+        final Controller controller = new Controller( javascriptSource, config, context );
         return controller;
     }
 

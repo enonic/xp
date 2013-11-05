@@ -2,13 +2,13 @@ package com.enonic.wem.api.command.content.template;
 
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.page.LayoutTemplate;
 import com.enonic.wem.api.content.page.LayoutTemplateId;
-import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-public class CreateLayoutTemplate
-    extends Command<PageTemplate>
+public final class CreateLayoutTemplate
+    extends Command<LayoutTemplate>
 {
     private LayoutTemplateId id;
 

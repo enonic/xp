@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.command.content.template.GetTemplate;
+import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateId;

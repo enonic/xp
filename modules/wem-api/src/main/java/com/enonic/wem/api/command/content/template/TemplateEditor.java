@@ -2,12 +2,12 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.content.page.Template;
 
-public interface TemplateEditor
+public interface TemplateEditor<T extends Template>
 {
     /**
      * @param template to be edited
      * @return updated template, null if it has not been modified.
      */
-    public Template edit( Template template )
+    public T edit( T template )
         throws Exception;
 }

@@ -8,7 +8,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
-public class CreatePageTemplate
+public final class CreatePageTemplate
     extends Command<PageTemplate>
 {
     private PageTemplateId id;

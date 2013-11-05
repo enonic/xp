@@ -2,13 +2,13 @@ package com.enonic.wem.api.command.content.template;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PartTemplate;
 import com.enonic.wem.api.content.page.PartTemplateId;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-public class CreatePartTemplate
-    extends Command<PageTemplate>
+public final class CreatePartTemplate
+    extends Command<PartTemplate>
 {
     private PartTemplateId id;
 
