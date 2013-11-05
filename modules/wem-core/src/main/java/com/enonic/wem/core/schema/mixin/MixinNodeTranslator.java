@@ -65,7 +65,7 @@ class MixinNodeTranslator
     NodeEditor toItemEditor( final Mixin mixin )
     {
         final RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "displayName", new Value.String( mixin.getName() ) );
+        rootDataSet.setProperty( "displayName", new Value.String( mixin.getDisplayName() ) );
         final DataSet formItemsAsDataSet = new DataSet( "formItems" );
         final List<Data> dataList = SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( mixin.getFormItems() );
         for ( final Data data : dataList )
