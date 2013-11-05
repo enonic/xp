@@ -15,9 +15,9 @@ import com.enonic.wem.admin.json.schema.mixin.MixinConfigJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateParams;
 import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinUpdateParams;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
@@ -100,7 +100,7 @@ public class MixinResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public MixinJson create( MixinCreateParams params )
+    public CreateOrUpdateSchemaJsonResult create( MixinCreateParams params )
     {
         final Mixin mixin = parseXml( params.getConfig() );
         final Icon icon = fetchIcon( params.getIconReference() );
@@ -108,8 +108,7 @@ public class MixinResource
         if ( fetchMixin( params.getName() ) != null )
         {
             String message = String.format( "Mixin [%s] already exists.", mixin.getQualifiedName() );
-            throw new WebApplicationException(
-                Response.status( Response.Status.CONFLICT ).entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
+            return CreateOrUpdateSchemaJsonResult.error( message );
         }
 
         final CreateMixin createCommand = mixin().create().
@@ -120,18 +119,18 @@ public class MixinResource
 
         try
         {
-            return new MixinJson( client.execute( createCommand ) );
+            return CreateOrUpdateSchemaJsonResult.result( new MixinJson( client.execute( createCommand ) ) );
         }
         catch ( BaseException e )
         {
-            throw new WebApplicationException( e );
+            return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
     }
 
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public MixinCreateOrUpdateJson update( MixinUpdateParams params )
+    public CreateOrUpdateSchemaJsonResult update( MixinUpdateParams params )
     {
         final Mixin mixin = parseXml( params.getConfig() );
         final Icon icon = fetchIcon( params.getIconReference() );
@@ -139,8 +138,7 @@ public class MixinResource
         if ( fetchMixin( mixin.getQualifiedName() ) == null )
         {
             String message = String.format( "Mixin [%s] not found.", mixin.getQualifiedName() );
-            throw new WebApplicationException(
-                Response.status( Response.Status.NOT_FOUND ).entity( message ).type( MediaType.TEXT_PLAIN_TYPE ).build() );
+            return CreateOrUpdateSchemaJsonResult.error( message );
         }
 
         final SetMixinEditor editor = newSetMixinEditor().
@@ -156,11 +154,11 @@ public class MixinResource
         try
         {
             client.execute( updateCommand );
-            return MixinCreateOrUpdateJson.updated();
+            return CreateOrUpdateSchemaJsonResult.result( new MixinJson( mixin ) );
         }
         catch ( BaseException e )
         {
-            throw new WebApplicationException( e );
+            return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
     }
 

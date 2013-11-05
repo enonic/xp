@@ -66,16 +66,22 @@ module app_wizard {
                 setConfig( formData.xml ).
                 setIconReference( this.getIconUrl() );
 
-            createRequest.send().done( ( response:api_rest.JsonResponse<api_schema_mixin_json.MixinJson> ) => {
+            createRequest.send().done( ( response:api_rest.JsonResponse<any> ) => {
+                var jsonResponse = response.getJson();
+                if (jsonResponse.error) {
+                    api_notify.showError(jsonResponse.error.msg);
+                } else {
+                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.result);
+                    this.setPersistedItem(mixin);
+                    api_notify.showFeedback( 'Mixin was created!' );
 
-                   api_notify.showFeedback( 'Mixin was created!' );
+                    new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.MIXIN, mixin.getName() ).fire();
 
-                   new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.MIXIN, response.getResult().name ).fire();
-
-                   if ( successCallback )
-                   {
-                       successCallback.call( this );
-                   }
+                    if ( successCallback )
+                    {
+                        successCallback.call( this );
+                    }
+                }
                } );
         }
 
@@ -88,16 +94,21 @@ module app_wizard {
                 setConfig( formData.xml ).
                 setIconReference( this.getIconUrl() );
 
-            updateRequest.send().done( ( response:api_rest.JsonResponse<api_schema_mixin_json.MixinJson> ) => {
+            updateRequest.send().done( ( response:api_rest.JsonResponse<any> ) => {
+                var jsonResponse = response.getJson();
+                if (jsonResponse.error) {
+                    api_notify.showError(jsonResponse.error.msg);
+                } else {
+                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.result);
+                    api_notify.showFeedback( 'Mixin was updated!' );
 
-                   api_notify.showFeedback( 'Mixin was updated!' );
+                    new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.MIXIN, mixin.getName() ).fire();
 
-                   new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.MIXIN, response.getResult().name ).fire();
-
-                   if ( successCallback )
-                   {
-                       successCallback.call( this );
-                   }
+                    if ( successCallback )
+                    {
+                        successCallback.call( this );
+                    }
+                }
                } );
         }
     }

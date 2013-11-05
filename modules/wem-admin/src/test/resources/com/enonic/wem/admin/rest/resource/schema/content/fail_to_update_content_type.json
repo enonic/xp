@@ -1,0 +1,6 @@
+{
+  "error" : {
+    "msg" : "com.enonic.wem.api.exception.SystemException: Content type update failed"
+  },
+  "result" : null
+}

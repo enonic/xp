@@ -4,7 +4,7 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Content Type";
 
-        private static  DEFAULT_CHEMA_ICON_URL:string = api_util.getRestUri('schema/image/ContentType:structured');
+        private static  DEFAULT_SCHEMA_ICON_URL:string = api_util.getRestUri('schema/image/ContentType:structured');
 
         private formIcon :api_app_wizard.FormIcon;
 
@@ -16,7 +16,7 @@ module app_wizard {
 
         constructor() {
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
-            this.formIcon = new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_CHEMA_ICON_URL, "Click to upload icon",
+            this.formIcon = new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_SCHEMA_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
             var actions = new ContentTypeWizardActions(this);
@@ -60,15 +60,23 @@ module app_wizard {
             var formData = this.contentTypeForm.getFormData();
             var createContentTypeRequest = new api_schema_content.CreateContentTypeRequest(this.contentTypeWizardHeader.getName(), formData.xml,
                 this.getIconUrl());
-            createContentTypeRequest.send().done((response:api_rest.JsonResponse) => {
-                new app_wizard.ContentTypeCreatedEvent().fire();
-                api_notify.showFeedback('Content type was created!');
+            createContentTypeRequest.send().done((response:api_rest.JsonResponse<any>) => {
+                var jsonResponse = response.getJson();
+                if (jsonResponse.error) {
+                    api_notify.showError(jsonResponse.error.msg);
+                } else {
+                    var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(jsonResponse.result);
+                    this.setPersistedItem(contentType);
+                    new app_wizard.ContentTypeCreatedEvent().fire();
+                    api_notify.showFeedback('Content type was created!');
 
-                new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.CONTENT_TYPE, "TODO: get name" ).fire();
+                    new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.CONTENT_TYPE, contentType.getName() ).fire();
 
-                if (successCallback) {
-                    successCallback.call(this);
+                    if (successCallback) {
+                        successCallback.call(this);
+                    }
                 }
+
             });
         }
 
@@ -77,14 +85,20 @@ module app_wizard {
             var updateContentTypeRequest = new api_schema_content.UpdateContentTypeRequest(this.contentTypeWizardHeader.getName(), formData.xml,
                 this.getIconUrl());
 
-            updateContentTypeRequest.send().done((response:api_rest.JsonResponse) => {
-                new app_wizard.ContentTypeUpdatedEvent().fire();
-                api_notify.showFeedback('Content type was saved!');
+            updateContentTypeRequest.send().done((response:api_rest.JsonResponse<any>) => {
+                var jsonResponse = response.getJson();
+                if (jsonResponse.error) {
+                    api_notify.showError(jsonResponse.error.msg);
+                } else {
+                    var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(jsonResponse.result);
+                    new app_wizard.ContentTypeUpdatedEvent().fire();
+                    api_notify.showFeedback('Content type was saved!');
 
-                new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.CONTENT_TYPE, "TODO: get name" ).fire();
+                    new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.CONTENT_TYPE, contentType.getName() ).fire();
 
-                if (successCallback) {
-                    successCallback.call(this);
+                    if (successCallback) {
+                        successCallback.call(this);
+                    }
                 }
             });
         }

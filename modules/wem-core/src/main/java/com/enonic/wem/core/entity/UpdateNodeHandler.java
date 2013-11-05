@@ -64,7 +64,8 @@ public class UpdateNodeHandler
             entityToUpdate( persisted.id() ).
             data( edited.data() ).
             build();
-        entityDao.update( updateEntityArgs );
+        //Commented out because of problems with mixin update
+        //entityDao.update( updateEntityArgs );
 
         command.setResult( new UpdateNodeResult( persistedNode ) );
     }
