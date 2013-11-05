@@ -68,6 +68,7 @@ public class DemoImagesInitializer
         final Attachment attachment = newAttachment().name( fileName ).binary( binary ).mimeType( "image/jpeg" ).build();
         final CreateContent createContent = Commands.content().create().
             contentType( ContentTypeName.imageMedia() ).
+            form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
             displayName( displayName ).
             name( fileName ).
             parentContentPath( parent ).

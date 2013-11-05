@@ -21,6 +21,8 @@ import static com.enonic.wem.api.schema.content.editor.SetContentTypeEditor.newS
 public class ContentTypesInitializer
     extends BaseInitializer
 {
+    public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
+
     static final ContentType SPACE = createSystemType( ContentTypeName.space() ).
         setFinal( true ).setAbstract( false ).build();
 
@@ -54,7 +56,7 @@ public class ContentTypesInitializer
         setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( createMediaImageForm() ).build();
+        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_IMAGE_FORM ).build();
 
     static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
         setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
@@ -98,20 +100,6 @@ public class ContentTypesInitializer
     protected ContentTypesInitializer()
     {
         super( 10, "content-types" );
-    }
-
-    private static Form createMediaImageForm()
-    {
-        return Form.newForm().
-            addFormItem( Input.newInput().name( "image" ).
-                inputType( InputTypes.IMAGE ).label( "Media" ).build() ).
-            addFormItem( Input.newInput().name( "mimeType" ).
-                inputType( InputTypes.TEXT_LINE ).
-                label( "Mime type" ).
-                occurrences( 1, 1 ).
-                build() ).
-
-            build();
     }
 
     @Override
@@ -184,5 +172,19 @@ public class ContentTypesInitializer
             name( contentTypeName ).
             displayName( displayName ).
             builtIn( true );
+    }
+
+    private static Form createMediaImageForm()
+    {
+        return Form.newForm().
+            addFormItem( Input.newInput().name( "image" ).
+                inputType( InputTypes.IMAGE ).label( "Media" ).build() ).
+            addFormItem( Input.newInput().name( "mimeType" ).
+                inputType( InputTypes.TEXT_LINE ).
+                label( "Mime type" ).
+                occurrences( 1, 1 ).
+                build() ).
+
+            build();
     }
 }
