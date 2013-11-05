@@ -25,11 +25,17 @@ module api_remote_contenttype {
         iconUrl:string;
     }
 
+    export interface MixinReference {
+        name: string;
+        reference: string;
+        type: string;
+    }
+
     export interface FormItem {
         FormItemSet?: FormItemSet;
         Layout?: Layout;
         Input?: Input;
-        MixinReference?: api_remote_mixin.MixinReference;
+        MixinReference?: MixinReference;
     }
 
     export interface FormItemSet {
