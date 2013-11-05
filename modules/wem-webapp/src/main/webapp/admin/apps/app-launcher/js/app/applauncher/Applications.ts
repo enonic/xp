@@ -35,10 +35,10 @@ module app_launcher {
             return Applications.applications;
         }
 
-        static getAppByName(name:string):Application {
+        static getAppById(id:string):Application {
             var app:Application = null;
             Applications.getAllApps().forEach((currentApp:Application) => {
-               if (currentApp.getName() == name) {
+               if (currentApp.getId() == id) {
                    app = currentApp;
                }
             });

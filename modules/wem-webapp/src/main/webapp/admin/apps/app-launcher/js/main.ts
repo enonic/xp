@@ -89,7 +89,7 @@ window.onload = () => {
 
 
 function appLoaded(appName:string) {
-    var app = app_launcher.Applications.getAppByName(appName);
+    var app = app_launcher.Applications.getAppById(appName);
     app.setLoaded(true);
 }
 
