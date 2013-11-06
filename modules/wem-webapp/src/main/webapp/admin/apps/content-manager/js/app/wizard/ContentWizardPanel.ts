@@ -241,7 +241,7 @@ module app_wizard {
 
         private stringsEqual(str1:string, str2:string):boolean {
             // strings are equal if both of them are empty or not specified or they are identical
-            return (!!str1 && !!str2) || (str1 == str2);
+            return (!str1 && !str2) || (str1 == str2);
         }
     }
 
