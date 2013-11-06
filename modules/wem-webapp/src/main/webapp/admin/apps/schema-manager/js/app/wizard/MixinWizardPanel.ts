@@ -66,12 +66,12 @@ module app_wizard {
                 setConfig( formData.xml ).
                 setIconReference( this.getIconUrl() );
 
-            createRequest.send().done( ( response:api_rest.JsonResponse<any> ) => {
+            createRequest.send().done( ( response:api_rest.JsonResponse<api_schema_mixin_json.MixinJson> ) => {
                 var jsonResponse = response.getJson();
                 if (jsonResponse.error) {
                     api_notify.showError(jsonResponse.error.msg);
                 } else {
-                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.result);
+                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.getResult());
                     this.setPersistedItem(mixin);
                     api_notify.showFeedback( 'Mixin was created!' );
 
