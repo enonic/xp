@@ -40,7 +40,7 @@ module app_launcher {
 
         private setupAppsRouting() {
             this.applications.forEach((application:Application, idx:number) => {
-                var appRoutPattern = application.getName() + '/:p1:/:p2:/:p3:'; // optional parameters in URL: action, id
+                var appRoutPattern = application.getId() + '/:p1:/:p2:/:p3:'; // optional parameters in URL: action, id
                 crossroads.addRoute(appRoutPattern, (p1:string, p2:string, p3:string) => {
                     this.appLauncher.loadApplication(application);
 
