@@ -11,7 +11,7 @@ import com.enonic.wem.admin.rest.resource.content.page.json.CreatePageParamsJson
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.core.data.serializer.RootDataSetJsonSerializer;
+import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
 
 @Path("content/page")
 @Produces(MediaType.APPLICATION_JSON)

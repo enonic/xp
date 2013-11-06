@@ -12,8 +12,8 @@ import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeName;
 import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.form.inputtype.InputTypeResolver;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;

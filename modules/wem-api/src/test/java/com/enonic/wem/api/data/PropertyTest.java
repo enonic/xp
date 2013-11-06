@@ -100,4 +100,14 @@ public class PropertyTest
     {
         assertEquals( "90,123", new Property.GeographicCoordinate( "myGeo", "90,123" ).getString() );
     }
+
+    @Test
+    public void data()
+    {
+        RootDataSet data = new RootDataSet();
+        data.setProperty( "myProperty", new Value.String( "A" ) );
+
+        Property property = new Property.Data( "myData", data );
+        assertTrue( data.valueEquals( property.getData() ) );
+    }
 }

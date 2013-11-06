@@ -10,7 +10,7 @@ import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.account.profile.Address;
 import com.enonic.wem.api.account.profile.Addresses;
 import com.enonic.wem.api.account.profile.UserProfile;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 class GetAccountJsonResult
     extends AbstractAccountJsonResult

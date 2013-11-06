@@ -10,7 +10,7 @@ import org.jdom.JDOMException;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;

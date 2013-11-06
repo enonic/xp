@@ -1,8 +1,12 @@
-package com.enonic.wem.core.data.serializer;
+package com.enonic.wem.api.data.serializer;
 
 
+import java.io.IOException;
 import java.util.Iterator;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -11,7 +15,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonParsingException;
+import com.enonic.wem.api.support.serializer.JsonSerializingException;
 
 public class RootDataSetJsonSerializer
     extends AbstractJsonSerializer<RootDataSet>
@@ -29,6 +35,18 @@ public class RootDataSetJsonSerializer
     {
         super( objectMapper );
         dataSerializer = new DataJsonSerializer( objectMapper );
+    }
+
+    public String serializeToString( final RootDataSet rootDataSet )
+    {
+        try
+        {
+            return objectMapper().writeValueAsString( serialize( rootDataSet ) );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new JsonSerializingException( "Failed to serialize RootDataSet to String", e );
+        }
     }
 
     @Override
@@ -72,4 +90,19 @@ public class RootDataSetJsonSerializer
             dataSet.add( data );
         }
     }
+
+    public RootDataSet parse( final String jsonString )
+    {
+        try
+        {
+            final JsonFactory factory = objectMapper().getFactory();
+            final JsonParser parser = factory.createParser( jsonString );
+            return parse( (JsonNode) parser.readValueAsTree() );
+        }
+        catch ( IOException e )
+        {
+            throw new JsonParsingException( "Failed to parse jsonString", e );
+        }
+    }
+
 }

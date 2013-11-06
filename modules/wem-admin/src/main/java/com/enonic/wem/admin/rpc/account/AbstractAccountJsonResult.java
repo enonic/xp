@@ -6,7 +6,7 @@ import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.resource.account.AccountImageUriResolver;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 abstract class AbstractAccountJsonResult
     extends JsonResult

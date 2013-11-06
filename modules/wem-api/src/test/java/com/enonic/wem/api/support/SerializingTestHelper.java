@@ -1,11 +1,8 @@
-package com.enonic.wem.core;
+package com.enonic.wem.api.support;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.enonic.wem.api.JsonTestHelper;
-import com.enonic.wem.api.XmlTestHelper;
 
 public class SerializingTestHelper
 {

@@ -8,12 +8,12 @@ import java.util.List;
 import org.junit.Test;
 
 import com.enonic.wem.admin.json.form.FormJson;
-import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.support.JsonTestHelper;
 
 import static junit.framework.Assert.assertEquals;
 

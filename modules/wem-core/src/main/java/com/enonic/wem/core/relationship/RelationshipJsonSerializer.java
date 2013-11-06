@@ -12,9 +12,9 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonParsingException;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonParsingException;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 public class RelationshipJsonSerializer
     extends AbstractJsonSerializer<Relationship>

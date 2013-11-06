@@ -1,4 +1,4 @@
-package com.enonic.wem.core.data.serializer;
+package com.enonic.wem.api.data.serializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,13 +8,13 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueType;
 import com.enonic.wem.api.data.type.ValueTypes;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
-import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_NAME;
-import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_PATH;
-import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_TYPE;
-import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_VALUE;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_NAME;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_PATH;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_TYPE;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_VALUE;
 
 
 public class PropertyJsonSerializer

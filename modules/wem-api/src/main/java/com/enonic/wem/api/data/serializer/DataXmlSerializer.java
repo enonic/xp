@@ -1,4 +1,4 @@
-package com.enonic.wem.core.data.serializer;
+package com.enonic.wem.api.data.serializer;
 
 import java.util.Iterator;
 

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.mixin;
 
-import com.enonic.wem.api.XmlTestHelper;
+import com.enonic.wem.api.support.XmlTestHelper;
 
 import static org.junit.Assert.*;
 

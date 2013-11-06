@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content;
+package com.enonic.wem.api.support.serializer;
 
 
 import com.fasterxml.jackson.core.JsonFactory;

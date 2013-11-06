@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.Layout;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonParsingException;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonParsingException;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
 

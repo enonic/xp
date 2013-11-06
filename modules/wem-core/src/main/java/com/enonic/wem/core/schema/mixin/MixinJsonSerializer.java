@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonParsingException;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonParsingException;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class MixinJsonSerializer
     extends AbstractJsonSerializer<Mixin>

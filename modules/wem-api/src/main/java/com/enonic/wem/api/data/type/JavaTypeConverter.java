@@ -4,6 +4,8 @@ package com.enonic.wem.api.data.type;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
+import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
+
 public abstract class JavaTypeConverter<T>
 {
     Class type;
@@ -84,6 +86,14 @@ public abstract class JavaTypeConverter<T>
             else if ( value instanceof org.joda.time.DateMidnight )
             {
                 return DateMidnight.FORMATTER.print( (org.joda.time.DateMidnight) value );
+            }
+            else if ( value instanceof com.enonic.wem.api.entity.EntityId )
+            {
+                return value.toString();
+            }
+            else if ( value instanceof com.enonic.wem.api.data.RootDataSet )
+            {
+                return Data.DATA_SERIALIZER.serializeToString( (com.enonic.wem.api.data.RootDataSet) value );
             }
             else
             {
@@ -368,6 +378,41 @@ public abstract class JavaTypeConverter<T>
         public com.enonic.wem.api.content.binary.BinaryId convertFromString( final java.lang.String value )
         {
             return com.enonic.wem.api.content.binary.BinaryId.from( value );
+        }
+    }
+
+    public static final class Data
+        extends JavaTypeConverter<com.enonic.wem.api.data.RootDataSet>
+    {
+        private final static RootDataSetJsonSerializer DATA_SERIALIZER = new RootDataSetJsonSerializer();
+
+        public static final Data GET = new Data();
+
+        private Data()
+        {
+            super( com.enonic.wem.api.data.RootDataSet.class );
+        }
+
+        public com.enonic.wem.api.data.RootDataSet convertFrom( Object value )
+        {
+            if ( value instanceof com.enonic.wem.api.data.RootDataSet )
+            {
+                return (com.enonic.wem.api.data.RootDataSet) value;
+            }
+            else if ( value instanceof java.lang.String )
+            {
+                return DATA_SERIALIZER.parse( (java.lang.String) value );
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        @Override
+        public com.enonic.wem.api.data.RootDataSet convertFromString( final java.lang.String value )
+        {
+            return DATA_SERIALIZER.parse( value );
         }
     }
 }

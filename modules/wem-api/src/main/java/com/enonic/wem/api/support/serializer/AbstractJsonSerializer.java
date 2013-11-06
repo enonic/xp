@@ -1,4 +1,4 @@
-package com.enonic.wem.core.support.serializer;
+package com.enonic.wem.api.support.serializer;
 
 
 import java.io.IOException;
@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.wem.core.content.JsonFactoryHolder;
 
 public abstract class AbstractJsonSerializer<T>
 {

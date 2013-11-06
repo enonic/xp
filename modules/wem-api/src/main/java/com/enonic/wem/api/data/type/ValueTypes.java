@@ -9,6 +9,8 @@ import com.google.common.base.Preconditions;
 
 public final class ValueTypes
 {
+    public static final Data DATA = new Data( 0 );
+
     public static final String STRING = new String( 1 );
 
     public static final BinaryId BINARY_ID = new BinaryId( 2 );
@@ -39,6 +41,7 @@ public final class ValueTypes
 
     static
     {
+        register( DATA );
         register( STRING );
         register( BINARY_ID );
         register( HTML_PART );

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
 import com.enonic.wem.api.data.type.InconvertibleValueException;
 import com.enonic.wem.api.data.type.JavaTypeConverter;
 import com.enonic.wem.api.data.type.ValueOfUnexpectedClassException;
@@ -131,6 +132,17 @@ public abstract class Value<T>
     }
 
     /**
+     * Attempts to return value as com.enonic.wem.api.data.RootDataSet using casting.
+     *
+     * @throws ClassCastException if value is not of type com.enonic.wem.api.data.RootDataSet.
+     */
+    public com.enonic.wem.api.data.RootDataSet getData()
+        throws ClassCastException
+    {
+        return (com.enonic.wem.api.data.RootDataSet) object;
+    }
+
+    /**
      * Attempts to return value as com.enonic.wem.api.entity.EntityId using casting.
      *
      * @throws ClassCastException if value is not of type com.enonic.wem.api.entity.EntityId.
@@ -144,8 +156,7 @@ public abstract class Value<T>
     /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
      *
-     * @throws com.enonic.wem.api.data.type.InconvertibleValueException
-     *          if value is not convertible to String.
+     * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
      */
     public java.lang.String asString()
         throws InconvertibleValueException
@@ -464,6 +475,22 @@ public abstract class Value<T>
         public BinaryId( final java.lang.String value )
         {
             super( ValueTypes.BINARY_ID, com.enonic.wem.api.content.binary.BinaryId.from( value ) );
+        }
+    }
+
+    public static final class Data
+        extends Value<com.enonic.wem.api.data.RootDataSet>
+    {
+        private final static RootDataSetJsonSerializer DATA_SERIALIZER = new RootDataSetJsonSerializer();
+
+        public Data( final com.enonic.wem.api.data.RootDataSet value )
+        {
+            super( ValueTypes.DATA, value );
+        }
+
+        public Data( final java.lang.String value )
+        {
+            super( ValueTypes.DATA, DATA_SERIALIZER.parse( value ) );
         }
     }
 }

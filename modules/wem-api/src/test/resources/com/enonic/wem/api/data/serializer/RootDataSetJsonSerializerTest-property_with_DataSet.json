@@ -1,0 +1,8 @@
+[
+    {
+        "name": "myData",
+        "path": "myData",
+        "type": "Data",
+        "value": "[{\"name\":\"a\",\"path\":\"a\",\"type\":\"String\",\"value\":\"1\"},{\"name\":\"set\",\"path\":\"set\",\"type\":\"DataSet\",\"value\":[{\"name\":\"b\",\"path\":\"set.b\",\"type\":\"String\",\"value\":\"2\"}]}]"
+    }
+]

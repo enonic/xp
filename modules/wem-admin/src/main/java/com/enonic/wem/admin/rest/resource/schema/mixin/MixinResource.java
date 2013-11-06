@@ -34,8 +34,8 @@ import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.editor.SetMixinEditor;
+import com.enonic.wem.api.support.serializer.ParsingException;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
-import com.enonic.wem.core.support.serializer.ParsingException;
 
 import static com.enonic.wem.api.command.Commands.mixin;
 import static com.enonic.wem.api.schema.mixin.editor.SetMixinEditor.newSetMixinEditor;

@@ -1,6 +1,6 @@
 package com.enonic.wem.core.schema.mixin;
 
-import com.enonic.wem.api.JsonTestHelper;
+import com.enonic.wem.api.support.JsonTestHelper;
 
 import static org.junit.Assert.*;
 

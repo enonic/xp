@@ -9,6 +9,8 @@ import org.junit.Before;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import com.enonic.wem.api.support.SerializingTestHelper;
+
 public abstract class AbstractJcrTest
 {
     protected Session session;

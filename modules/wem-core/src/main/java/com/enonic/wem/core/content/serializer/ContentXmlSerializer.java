@@ -10,8 +10,8 @@ import org.jdom.JDOMException;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.serializer.DataXmlSerializer;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.data.serializer.DataXmlSerializer;
 import com.enonic.wem.core.support.util.JdomHelper;
 
 public class ContentXmlSerializer

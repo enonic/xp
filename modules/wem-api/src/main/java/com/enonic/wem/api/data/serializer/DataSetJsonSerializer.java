@@ -1,4 +1,4 @@
-package com.enonic.wem.core.data.serializer;
+package com.enonic.wem.api.data.serializer;
 
 
 import java.util.Iterator;
@@ -11,13 +11,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
-import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_NAME;
-import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_PATH;
-import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_TYPE;
-import static com.enonic.wem.core.data.serializer.DataJsonSerializer.DATA_VALUE;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_NAME;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_PATH;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_TYPE;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_VALUE;
 
 public class DataSetJsonSerializer
     extends AbstractJsonSerializer<DataSet>

@@ -8,10 +8,10 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.support.JsonTestHelper;
 
-import static com.enonic.wem.api.JsonTestHelper.assertJsonEquals;
+import static com.enonic.wem.api.support.JsonTestHelper.assertJsonEquals;
 import static junit.framework.Assert.assertEquals;
 
 public class ImageSelectorConfigJsonSerializerTest

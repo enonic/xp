@@ -19,8 +19,8 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.InvalidContentTypeException;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;

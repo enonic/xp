@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
-import com.enonic.wem.core.support.serializer.ParsingException;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.ParsingException;
 
 public class RelationshipTypeJsonSerializer
     extends AbstractJsonSerializer<RelationshipType>

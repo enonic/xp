@@ -1,4 +1,4 @@
-package com.enonic.wem.api;
+package com.enonic.wem.api.support;
 
 
 import java.io.IOException;

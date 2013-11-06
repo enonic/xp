@@ -1,14 +1,15 @@
-package com.enonic.wem.core.data.serializer;
+package com.enonic.wem.api.data.serializer;
 
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.core.SerializingTestHelper;
+import com.enonic.wem.api.support.SerializingTestHelper;
 
-import static org.junit.Assert.*;
+import static junit.framework.Assert.assertEquals;
 
 public class RootDataSetJsonSerializerTest
 {
@@ -25,7 +26,8 @@ public class RootDataSetJsonSerializerTest
 
     private void assertSerializedResult( final String fileNameForExpected, final String actualSerialization )
     {
-        assertEquals( "Serialization not as expected", testHelper.loadJsonAsString( fileNameForExpected + ".json" ), actualSerialization );
+        Assert.assertEquals( "Serialization not as expected", testHelper.loadJsonAsString( fileNameForExpected + ".json" ),
+                             actualSerialization );
     }
 
     @Test
@@ -71,5 +73,24 @@ public class RootDataSetJsonSerializerTest
         rootDataSet.add( dataSet2 );
         String serialized = serializer.toString( rootDataSet );
         assertSerializedResult( "dataSet_array", serialized );
+    }
+
+    @Test
+    public void property_with_DataSet()
+    {
+        RootDataSet value = new RootDataSet();
+        value.setProperty( "a", new Value.String( "1" ) );
+        value.setProperty( "set.b", new Value.String( "2" ) );
+
+        RootDataSet rootDataSet = new RootDataSet();
+        rootDataSet.addProperty( "myData", new Value.Data( value ) );
+
+        String serialized = serializer.toString( rootDataSet );
+        assertSerializedResult( "property_with_DataSet", serializer.toString( rootDataSet ) );
+
+        RootDataSet parsedRootDataSet = serializer.parse( serialized );
+        RootDataSet parsedData = parsedRootDataSet.getProperty( "myData" ).getData();
+        assertEquals( "1", parsedData.getProperty( "a" ).getString() );
+        assertEquals( "2", parsedData.getProperty( "set.b" ).getString() );
     }
 }

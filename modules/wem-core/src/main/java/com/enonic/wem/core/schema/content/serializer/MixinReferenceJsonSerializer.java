@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.schema.mixin.MixinName;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 class MixinReferenceJsonSerializer
     extends AbstractJsonSerializer<MixinReference>

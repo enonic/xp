@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.core.data.serializer.RootDataSetJsonSerializer;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
 
 public class ContentDataJsonSerializer
     extends AbstractJsonSerializer<ContentData>

@@ -6,7 +6,7 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.page.LayoutDescriptor;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
 
 public final class LayoutDescriptorXmlSerializer

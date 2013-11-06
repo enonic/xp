@@ -8,10 +8,10 @@ import org.jdom.JDOMException;
 
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.support.serializer.ParsingException;
+import com.enonic.wem.api.support.serializer.SerializingException;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.schema.content.serializer.FormItemsXmlSerializer;
-import com.enonic.wem.core.support.serializer.ParsingException;
-import com.enonic.wem.core.support.serializer.SerializingException;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
 
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;

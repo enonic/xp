@@ -20,7 +20,7 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.SingleSelectorConfig;
-import com.enonic.wem.core.content.JsonFactoryHolder;
+import com.enonic.wem.api.support.serializer.JsonFactoryHolder;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;

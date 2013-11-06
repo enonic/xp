@@ -12,8 +12,8 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.AbstractSerializerTest;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 import static org.junit.Assert.*;
 

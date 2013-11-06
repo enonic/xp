@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.serializer;
 
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.core.support.serializer.SerializingException;
+import com.enonic.wem.api.support.serializer.SerializingException;
 
 public interface ContentSerializer
 {

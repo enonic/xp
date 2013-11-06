@@ -1,4 +1,4 @@
-package com.enonic.wem.core.data.serializer;
+package com.enonic.wem.api.data.serializer;
 
 
 import org.junit.Before;
@@ -6,10 +6,10 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.support.JsonTestHelper;
 
 import static junit.framework.Assert.assertEquals;
 

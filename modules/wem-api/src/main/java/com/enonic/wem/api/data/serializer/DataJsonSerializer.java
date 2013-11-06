@@ -1,4 +1,4 @@
-package com.enonic.wem.core.data.serializer;
+package com.enonic.wem.api.data.serializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Property;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
 
 public final class DataJsonSerializer
     extends AbstractJsonSerializer<Data>

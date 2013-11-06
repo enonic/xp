@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.enonic.wem.api.XmlTestHelper;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.support.XmlTestHelper;
 
 import static com.enonic.wem.api.form.inputtype.ImageSelectorConfig.newImageSelectorConfig;
 import static junit.framework.Assert.assertEquals;

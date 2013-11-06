@@ -189,8 +189,28 @@ public class Property
         return getArray().getValue( arrayIndex ).asBinaryId();
     }
 
+    /**
+     * Returns the value of the Property at the given array index.
+     *
+     * @see com.enonic.wem.api.data.Value#getData()
+     */
+    public com.enonic.wem.api.data.RootDataSet getData( final int arrayIndex )
+        throws ClassCastException
+    {
+        return getArray().getValue( arrayIndex ).getData();
+    }
+
+    /**
+     * @see com.enonic.wem.api.data.Value#getData()
+     */
+    public com.enonic.wem.api.data.RootDataSet getData()
+        throws ClassCastException
+    {
+        return value.getData();
+    }
+
     @Override
-    public Data copy()
+    public com.enonic.wem.api.data.Data copy()
     {
         return null;
     }
@@ -212,7 +232,7 @@ public class Property
         return Objects.equal( getName(), property.getName() ) && Objects.equal( value, property.value );
     }
 
-    public boolean valueEquals( final Data data )
+    public boolean valueEquals( final com.enonic.wem.api.data.Data data )
     {
         final Property other = data.toProperty();
         return other.getValue().equals( this.getValue() );
@@ -502,6 +522,30 @@ public class Property
         public Xml copy()
         {
             return new Xml( this );
+        }
+    }
+
+    public static final class Data
+        extends Property
+    {
+        public Data( final java.lang.String name, final com.enonic.wem.api.data.RootDataSet value )
+        {
+            super( name, new Value.Data( value ) );
+        }
+
+        public Data( final java.lang.String name, final Value value )
+        {
+            super( name, value );
+        }
+
+        Data( final Data source )
+        {
+            super( source );
+        }
+
+        public Data copy()
+        {
+            return new Data( this );
         }
     }
 }

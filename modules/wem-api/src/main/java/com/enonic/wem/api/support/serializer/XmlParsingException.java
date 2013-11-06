@@ -1,4 +1,4 @@
-package com.enonic.wem.core.support.serializer;
+package com.enonic.wem.api.support.serializer;
 
 
 public class XmlParsingException

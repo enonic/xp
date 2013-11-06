@@ -12,8 +12,8 @@ import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.Layout;
 import com.enonic.wem.api.form.MixinReference;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonParsingException;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonParsingException;
 
 public class FormItemJsonSerializer
     extends AbstractJsonSerializer<FormItem>

@@ -8,10 +8,11 @@ import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.junit.Test;
 
-import com.enonic.wem.api.JsonTestHelper;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.serializer.DataJsonSerializer;
+import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItem;
@@ -20,8 +21,7 @@ import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.core.data.serializer.DataJsonSerializer;
-import com.enonic.wem.core.data.serializer.RootDataSetJsonSerializer;
+import com.enonic.wem.api.support.JsonTestHelper;
 import com.enonic.wem.core.schema.content.serializer.FormItemsJsonSerializer;
 
 import static junit.framework.Assert.assertEquals;

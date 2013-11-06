@@ -6,8 +6,8 @@ import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 import static com.enonic.wem.api.command.Commands.contentType;
 

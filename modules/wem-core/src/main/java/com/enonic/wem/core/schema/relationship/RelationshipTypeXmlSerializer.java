@@ -10,7 +10,7 @@ import org.jdom.JDOMException;
 
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.support.util.JdomHelper;
 
 public class RelationshipTypeXmlSerializer

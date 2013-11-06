@@ -7,7 +7,7 @@ import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
 import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 final class ContentJsonTemplate
 {

@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeName;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 import com.enonic.wem.core.form.inputtype.InputTypeResolver;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
 
 public class InputTypeJsonSerializer
     extends AbstractJsonSerializer<InputType>

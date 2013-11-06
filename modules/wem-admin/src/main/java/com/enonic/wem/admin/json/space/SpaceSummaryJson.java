@@ -3,7 +3,7 @@ package com.enonic.wem.admin.json.space;
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.rest.resource.space.SpaceImageUriResolver;
 import com.enonic.wem.api.space.Space;
-import com.enonic.wem.core.support.serializer.JsonSerializerUtil;
+import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 public class SpaceSummaryJson
     implements ItemJson

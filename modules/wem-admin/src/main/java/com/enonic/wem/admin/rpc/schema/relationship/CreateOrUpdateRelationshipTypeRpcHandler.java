@@ -16,12 +16,12 @@ import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.exception.BaseException;
+import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.editor.SetRelationshipTypeEditor;
+import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
-import com.enonic.wem.core.support.serializer.XmlParsingException;
 
 import static com.enonic.wem.api.command.Commands.relationshipType;
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;

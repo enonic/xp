@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.form.inputtype.AbstractInputTypeConfigJsonSerializer;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
-import com.enonic.wem.core.support.serializer.JsonParsingException;
+import com.enonic.wem.api.support.serializer.JsonParsingException;
 
 public class InputTypeConfigJsonSerializer
 {

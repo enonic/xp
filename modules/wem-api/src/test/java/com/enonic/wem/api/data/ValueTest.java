@@ -91,17 +91,44 @@ public class ValueTest
     @Test
     public void convert_numeric_string_double()
     {
-        final Double doubleValue = new Value.String( "123" ).asDouble();
+        Double doubleValue = new Value.String( "123" ).asDouble();
         assertEquals( 123.0, doubleValue );
     }
 
     @Test
     public void convert_numeric_string_with_point_double()
     {
-        final Double doubleValue = new Value.String( "123.5" ).asDouble();
+        Double doubleValue = new Value.String( "123.5" ).asDouble();
         assertEquals( 123.5, doubleValue );
     }
 
+    @Test
+    public void data()
+    {
+        RootDataSet data = new RootDataSet();
+        data.setProperty( "myProperty", new Value.String( "A" ) );
+
+        Value value = new Value.Data( data );
+        assertTrue( data.valueEquals( value.getData() ) );
+    }
+
+    @Test
+    public void data_given_value_as_string()
+    {
+        String dataAsString = "[\n" +
+            "    {\n" +
+            "        \"name\": \"myProp\",\n" +
+            "        \"type\": \"String\",\n" +
+            "        \"value\": \"a\"\n" +
+            "    }\n" +
+            "]";
+
+        Value value = new Value.Data( dataAsString );
+
+        RootDataSet expectedData = new RootDataSet();
+        expectedData.setProperty( "myProp", new Value.String( "a" ) );
+        assertTrue( expectedData.valueEquals( value.getData() ) );
+    }
 
 }
 

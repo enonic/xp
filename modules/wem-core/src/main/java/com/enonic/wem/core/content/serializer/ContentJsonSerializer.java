@@ -16,13 +16,13 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.content.JsonFactoryHolder;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.JsonFactoryHolder;
 
-import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.getDateTimeValue;
-import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.getStringValue;
-import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.getUserKeyValue;
-import static com.enonic.wem.core.support.serializer.JsonSerializerUtil.setDateTimeValue;
+import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.getDateTimeValue;
+import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.getStringValue;
+import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.getUserKeyValue;
+import static com.enonic.wem.api.support.serializer.JsonSerializerUtil.setDateTimeValue;
 
 public class ContentJsonSerializer
     extends AbstractJsonSerializer<Content>

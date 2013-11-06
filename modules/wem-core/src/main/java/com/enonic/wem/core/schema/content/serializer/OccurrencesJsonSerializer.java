@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.api.form.Occurrences;
-import com.enonic.wem.core.support.serializer.AbstractJsonSerializer;
+import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
 
 import static com.enonic.wem.api.form.Occurrences.newOccurrences;
 
