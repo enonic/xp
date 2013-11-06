@@ -6,19 +6,19 @@ module api_form{
             return new Form(formJson);
         }
 
-        static createFormItem(formItemJson:api_form_json.FormItemTypeWrapperJson):FormItem {
+        static createFormItem(formItemTypeWrapperJson:api_form_json.FormItemTypeWrapperJson):FormItem {
 
-            if (formItemJson.Input) {
-                return FormItemFactory.createInput(<api_form_json.InputJson>formItemJson.Input);
+            if (formItemTypeWrapperJson.Input) {
+                return FormItemFactory.createInput(<api_form_json.InputJson>formItemTypeWrapperJson.Input);
             }
-            else if (formItemJson.FormItemSet ) {
-                return FormItemFactory.createFormItemSet(<api_form_json.FormItemSetJson>formItemJson.FormItemSet);
+            else if (formItemTypeWrapperJson.FormItemSet ) {
+                return FormItemFactory.createFormItemSet(<api_form_json.FormItemSetJson>formItemTypeWrapperJson.FormItemSet);
             }
-            else if (formItemJson.FieldSet) {
-                return FormItemFactory.createFieldSetLayout(<api_form_json.FieldSetJson>formItemJson.FieldSet);
+            else if (formItemTypeWrapperJson.FieldSet) {
+                return FormItemFactory.createFieldSetLayout(<api_form_json.FieldSetJson>formItemTypeWrapperJson.FieldSet);
             }
 
-            console.log( "Unknown FormItem type: ", formItemJson );
+            console.log( "Unknown FormItem type: ", formItemTypeWrapperJson );
             throw new Error("Unknown FormItem");
         }
 
@@ -27,7 +27,6 @@ module api_form{
         }
 
         static createFormItemSet(formItemSetJson:api_form_json.FormItemSetJson):FormItemSet {
-
             return new FormItemSet(formItemSetJson);
         }
 
