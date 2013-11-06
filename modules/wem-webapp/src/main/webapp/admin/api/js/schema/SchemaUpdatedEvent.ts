@@ -2,21 +2,15 @@ module api_schema {
 
     export class SchemaUpdatedEvent extends api_event.Event {
 
-        private schemaKind:api_schema.SchemaKind;
-        private schemaName:string;
+        private schema:api_schema.Schema;
 
-        constructor( schemaKind:api_schema.SchemaKind, schemaName:string ) {
+        constructor( schema:api_schema.Schema ) {
             super( 'SchemaUpdatedEvent' );
-            this.schemaKind = schemaKind;
-            this.schemaName = schemaName;
+            this.schema = schema;
         }
 
-        public getSchemaKind():api_schema.SchemaKind {
-            return this.schemaKind;
-        }
-
-        public getSchemaName():string{
-            return this.schemaName;
+        public getSchema():api_schema.Schema {
+            return this.schema;
         }
 
         static on( handler:( event:SchemaUpdatedEvent ) => void ) {

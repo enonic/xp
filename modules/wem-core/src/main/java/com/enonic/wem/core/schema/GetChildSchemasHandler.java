@@ -17,7 +17,7 @@ public class GetChildSchemasHandler
         throws Exception
     {
         // Get child contentTypes
-        final ContentTypeName contentTypeName = ContentTypeName.from( command.getParentName().toString() );
+        final ContentTypeName contentTypeName = ContentTypeName.from( command.getParentKey().getLocalName() );
         ContentTypes contentTypes = context.getClient().execute( Commands.contentType().getChildren().parentName( contentTypeName ) );
 
         // RelationshipTypes are not nested so there cannot be child ones

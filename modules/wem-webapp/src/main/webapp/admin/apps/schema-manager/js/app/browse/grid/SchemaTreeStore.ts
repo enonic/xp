@@ -16,7 +16,7 @@ module app_browse_grid {
                 clearOnLoad: true,
                 autoSync: false,
                 defaultRootId: undefined,
-                nodeParam: 'parentName',
+                nodeParam: 'parentKey',
 
                 proxy: {
                     type: 'rest',

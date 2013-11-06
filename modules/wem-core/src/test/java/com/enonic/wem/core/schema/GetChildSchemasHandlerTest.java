@@ -59,7 +59,7 @@ public class GetChildSchemasHandlerTest
         Mockito.when( client.execute( Mockito.isA( GetChildContentTypes.class ) ) ).thenReturn( contentTypes );
 
         // exercise
-        final GetChildSchemas command = Commands.schema().getChildren().parentName( unstructuredContentType.getQualifiedName() );
+        final GetChildSchemas command = Commands.schema().getChildren().parentKey( unstructuredContentType.getSchemaKey() );
         this.handler.setCommand( command );
         this.handler.handle();
 

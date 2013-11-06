@@ -68,7 +68,7 @@ module app_wizard {
                     new app_wizard.RelationshipTypeCreatedEvent().fire();
                     api_notify.showFeedback('Relationship type was created!');
 
-                    new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.RELATIONSHIP_TYPE, relationshipType.getName() ).fire();
+                    new api_schema.SchemaCreatedEvent( relationshipType ).fire();
 
                     if (successCallback) {
                         successCallback.call(this);
@@ -89,7 +89,7 @@ module app_wizard {
                     new app_wizard.RelationshipTypeUpdatedEvent().fire();
                     api_notify.showFeedback('Relationship type was saved!');
 
-                    new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.RELATIONSHIP_TYPE, relationshipType.getName() ).fire();
+                    new api_schema.SchemaUpdatedEvent( relationshipType ).fire();
 
                     if (successCallback) {
                         successCallback.call(this);

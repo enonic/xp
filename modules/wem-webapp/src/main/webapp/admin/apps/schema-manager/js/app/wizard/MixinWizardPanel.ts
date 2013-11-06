@@ -75,7 +75,7 @@ module app_wizard {
                     this.setPersistedItem(mixin);
                     api_notify.showFeedback( 'Mixin was created!' );
 
-                    new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.MIXIN, mixin.getName() ).fire();
+                    new api_schema.SchemaCreatedEvent( mixin ).fire();
 
                     if ( successCallback )
                     {
@@ -102,7 +102,7 @@ module app_wizard {
                     var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.result);
                     api_notify.showFeedback( 'Mixin was updated!' );
 
-                    new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.MIXIN, mixin.getName() ).fire();
+                    new api_schema.SchemaUpdatedEvent( mixin ).fire();
 
                     if ( successCallback )
                     {

@@ -17,5 +17,5 @@ Ext.define('Admin.model.schemaManager.SchemaModel', {
         }
     ],
 
-    idProperty: 'name'
+    idProperty: 'key'
 });

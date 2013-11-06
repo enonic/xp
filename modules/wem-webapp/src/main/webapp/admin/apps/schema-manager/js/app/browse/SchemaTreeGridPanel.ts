@@ -20,7 +20,7 @@ module app_browse {
             this.setItemId("SchemaTreeGridPanel");
 
             this.setActiveList(api_app_browse_grid.TreeGridPanel.TREE);
-            this.setKeyField("name");
+            this.setKeyField("key");
 
             app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
                 // TODO: use schemas from event when filter is implemented

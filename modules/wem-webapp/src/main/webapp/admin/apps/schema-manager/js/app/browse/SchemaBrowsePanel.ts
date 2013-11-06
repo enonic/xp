@@ -34,19 +34,22 @@ module app_browse {
             });
 
             api_schema.SchemaDeletedEvent.on((event) => {
-                var names:string[] = event.getSchemaNames();
-                for (var i = 0; i < names.length; i++) {
-                    treeGridPanel.remove(names[i]);
+                var schemas:api_schema.Schema[] = event.getSchemas();
+                console.log('On schema deleted', event.getSchemas());
+                for (var i = 0; i < schemas.length; i++) {
+                    var schema:api_schema.Schema = schemas[i];
+                    // make up schema key
+                    treeGridPanel.remove(schema.getSchemaKind().toString() + ":" + schema.getName());
                 }
             });
 
             api_schema.SchemaCreatedEvent.on((event) => {
-                console.log('On schema created', event.getSchemaKind(), event.getSchemaName());
+                console.log('On schema created', event.getSchema());
                 this.setRefreshNeeded(true);
             });
 
             api_schema.SchemaUpdatedEvent.on((event) => {
-                console.log('On schema updated', event.getSchemaKind(), event.getSchemaName());
+                console.log('On schema updated', event.getSchema());
                 this.setRefreshNeeded(true);
             });
 

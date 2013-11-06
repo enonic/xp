@@ -24,8 +24,8 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetChildSchemas;
 import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.schema.Schema;
+import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.SchemaKind;
-import com.enonic.wem.api.schema.SchemaName;
 import com.enonic.wem.api.schema.Schemas;
 
 import static com.enonic.wem.api.command.Commands.schema;
@@ -38,7 +38,7 @@ public class SchemaResource
 
     @GET
     @Path("list")
-    public List<SchemaJson> list( @QueryParam("parentName") final String parentName )
+    public List<SchemaJson> list( @QueryParam("parentKey") final String parentName )
     {
         Schemas schemas;
         if ( StringUtils.isEmpty( parentName ) )
@@ -47,7 +47,7 @@ public class SchemaResource
         }
         else
         {
-            final GetChildSchemas getSchemas = Commands.schema().getChildren().parentName( SchemaName.from( parentName ) );
+            final GetChildSchemas getSchemas = Commands.schema().getChildren().parentKey( SchemaKey.from( parentName ) );
             schemas = client.execute( getSchemas );
         }
 

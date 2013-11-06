@@ -21,17 +21,25 @@ module app_delete {
 
                 deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {
                     var json = jsonResponse.getJson();
-
+                    var deletedSchemas:api_schema.Schema[] = [];
                     var names:string[] = [];
+
                     for (var i = 0; i < json.successes.length; i++) {
-                        names.push(json.successes[i].name);
+                        var name = json.successes[i].name;
+                        names.push(name);
+
+                        this.schemaToDelete.forEach((schema:api_schema.Schema) => {
+                            if(schema.getName() == name) {
+                                deletedSchemas.push(schema);
+                            }
+                        })
                     }
 
                     this.close();
 
                     api_notify.showFeedback('Schema [' + names.join(', ') + '] deleted!');
 
-                    new api_schema.SchemaDeletedEvent(type, names).fire();
+                    new api_schema.SchemaDeletedEvent(deletedSchemas).fire();
                 });
             });
         }

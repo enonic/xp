@@ -70,7 +70,7 @@ module app_wizard {
                     new app_wizard.ContentTypeCreatedEvent().fire();
                     api_notify.showFeedback('Content type was created!');
 
-                    new api_schema.SchemaCreatedEvent( api_schema.SchemaKind.CONTENT_TYPE, contentType.getName() ).fire();
+                    new api_schema.SchemaCreatedEvent( contentType ).fire();
 
                     if (successCallback) {
                         successCallback.call(this);
@@ -94,7 +94,7 @@ module app_wizard {
                     new app_wizard.ContentTypeUpdatedEvent().fire();
                     api_notify.showFeedback('Content type was saved!');
 
-                    new api_schema.SchemaUpdatedEvent( api_schema.SchemaKind.CONTENT_TYPE, contentType.getName() ).fire();
+                    new api_schema.SchemaUpdatedEvent( contentType ).fire();
 
                     if (successCallback) {
                         successCallback.call(this);

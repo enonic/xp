@@ -4,22 +4,22 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.schema.SchemaName;
+import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.Schemas;
 
 public final class GetChildSchemas
     extends Command<Schemas>
 {
-    private SchemaName parentName;
+    private SchemaKey parentKey;
 
-    public SchemaName getParentName()
+    public SchemaKey getParentKey()
     {
-        return this.parentName;
+        return this.parentKey;
     }
 
-    public GetChildSchemas parentName( final SchemaName parentName )
+    public GetChildSchemas parentKey( final SchemaKey parentName )
     {
-        this.parentName = parentName;
+        this.parentKey = parentName;
         return this;
     }
 
@@ -37,18 +37,18 @@ public final class GetChildSchemas
         }
 
         final GetChildSchemas that = (GetChildSchemas) o;
-        return Objects.equal( this.parentName, that.parentName );
+        return Objects.equal( this.parentKey, that.parentKey );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.parentName );
+        return Objects.hashCode( this.parentKey );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.parentName, "Parent name cannot be null" );
+        Preconditions.checkNotNull( this.parentKey, "Parent key cannot be null" );
     }
 }

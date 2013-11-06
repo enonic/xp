@@ -37,7 +37,7 @@ module api_schema {
         }
 
         toString():string {
-            return name;
+            return this.name;
         }
     }
 

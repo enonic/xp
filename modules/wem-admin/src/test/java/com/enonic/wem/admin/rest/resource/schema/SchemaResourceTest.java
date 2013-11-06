@@ -15,12 +15,10 @@ import com.enonic.wem.api.command.schema.SchemaTypes;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
-import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.Schemas;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
-import com.enonic.wem.api.support.tree.Tree;
 
 import static org.junit.Assert.*;
 
@@ -133,7 +131,7 @@ public class SchemaResourceTest
         Schemas schemas = Schemas.from( createContentType( "contenttype" ) );
         Mockito.when( client.execute( Mockito.isA( GetChildSchemas.class ) ) ).thenReturn( schemas );
 
-        String json = resource().path( "schema/list" ).queryParam( "parentName", "parent-content-type" ).get( String.class );
+        String json = resource().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get( String.class );
 
         assertJson( "schema_by_parent.json", json );
     }
@@ -144,7 +142,7 @@ public class SchemaResourceTest
     {
         Mockito.when( client.execute( Mockito.isA( GetChildSchemas.class ) ) ).thenReturn( Schemas.empty() );
 
-        String json = resource().path( "schema/list" ).queryParam( "parentName", "parent-content-type" ).get( String.class );
+        String json = resource().path( "schema/list" ).queryParam( "parentKey", "ContentType:parent" ).get( String.class );
         assertEquals( "[]", json );
     }
 
