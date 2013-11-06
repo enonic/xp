@@ -43,6 +43,8 @@ module api_schema {
 
     export class Schema extends api_item.BaseItem {
 
+        private key:string;
+
         private name:string;
 
         private displayName:string;
@@ -73,10 +75,15 @@ module api_schema {
 
         constructor(json:api_schema.SchemaJson) {
             super(json);
+            this.key = json.key;
             this.name = json.name;
             this.displayName = json.displayName;
             this.icon = json.iconUrl;
             this.kind = SchemaKind.fromString(json.schemaKind );
+        }
+
+        getKey():string {
+            return this.key;
         }
 
         getName():string {

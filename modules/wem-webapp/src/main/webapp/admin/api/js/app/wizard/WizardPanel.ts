@@ -2,6 +2,8 @@ module api_app_wizard {
 
     export interface WizardPanelParams {
 
+        tabId:api_app.AppBarTabId;
+
         formIcon:FormIcon;
 
         toolbar:api_ui_toolbar.Toolbar;
@@ -14,6 +16,8 @@ module api_app_wizard {
     }
 
     export class WizardPanel<T> extends api_ui.Panel implements api_ui.Closeable, api_event.Observable, api_ui.ActionContainer {
+
+        private tabId:api_app.AppBarTabId;
 
         private persistedItem:T;
 
@@ -46,6 +50,7 @@ module api_app_wizard {
         constructor(params:WizardPanelParams) {
             super("WizardPanel");
 
+            this.tabId = params.tabId;
             this.header = params.header;
             this.toolbar = params.toolbar;
             this.actions = params.actions;
@@ -88,6 +93,10 @@ module api_app_wizard {
                 e.stopPropagation();
                 this.focusElement = jQuery(e.target);
             });
+        }
+
+        getTabId():api_app.AppBarTabId {
+            return this.tabId;
         }
 
         showCallback() {

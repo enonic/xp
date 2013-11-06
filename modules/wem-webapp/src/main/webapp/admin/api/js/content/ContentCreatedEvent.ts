@@ -2,15 +2,15 @@ module api_content {
 
     export class ContentCreatedEvent extends api_event.Event {
 
-        private path:api_content.ContentPath;
+        private content:api_content.Content;
 
-        constructor( path:api_content.ContentPath ) {
+        constructor(content:api_content.Content ) {
             super( 'ContentCreatedEvent' );
-            this.path = path;
+            this.content = content;
         }
 
-        public getPath():api_content.ContentPath {
-            return this.path;
+        public getContent():api_content.Content {
+            return this.content;
         }
 
         static on( handler:( event:api_content.ContentCreatedEvent ) => void ) {

@@ -48,7 +48,7 @@ module app {
 
         private handleNew(contentType:api_remote_contenttype.ContentType, parentContent:api_content.Content) {
 
-            var tabId = this.generateTabId();
+            var tabId = api_app.AppBarTabId.forNew(contentType.qualifiedName);
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
             if (tabMenuItem != null) {
@@ -63,8 +63,8 @@ module app {
 
                         var newContentType = new api_schema_content.ContentType(contentTypeResponse.getJson());
 
-                        tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentWizardPanel.NEW_WIZARD_HEADER, tabId);
-                        var wizardPanel = new app_wizard.ContentWizardPanel(newContentType, parentContent);
+                        tabMenuItem = new api_app.AppBarTabMenuItem("New " + contentType.displayName, tabId);
+                        var wizardPanel = new app_wizard.ContentWizardPanel(tabId, newContentType, parentContent);
                         wizardPanel.renderNew();
                         this.addWizardPanel(tabMenuItem, wizardPanel);
                         wizardPanel.reRender();
@@ -77,7 +77,7 @@ module app {
 
             contents.forEach((contentModel:api_content.ContentSummary) => {
 
-                var tabId = this.generateTabId(contentModel.getPath().toString(), false);
+                var tabId = api_app.AppBarTabId.forView(contentModel.getId());
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
@@ -106,7 +106,7 @@ module app {
 
             contents.forEach((contentModel:api_content.ContentSummary) => {
 
-                var tabId = this.generateTabId(contentModel.getPath().toString(), true);
+                var tabId = api_app.AppBarTabId.forEdit(contentModel.getId());
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
@@ -130,14 +130,14 @@ module app {
                                     done((parentContentResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
                                         var parentContent:api_content.Content = new api_content.Content(parentContentResponse.getResult());
 
-                                        var contentWizardPanel = new app_wizard.ContentWizardPanel(contentType, parentContent);
+                                        var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent);
 
                                         contentWizardPanel.setPersistedItem(contentToEdit);
                                         this.addWizardPanel(tabMenuItem, contentWizardPanel);
                                     });
                             }
                             else {
-                                var contentWizardPanel = new app_wizard.ContentWizardPanel(contentType, null);
+                                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, null);
                                 contentWizardPanel.setPersistedItem(contentToEdit);
                                 this.addWizardPanel(tabMenuItem, contentWizardPanel);
                             }
@@ -145,10 +145,6 @@ module app {
 
                 }
             });
-        }
-
-        private generateTabId(contentName?:string, isEdit:boolean = false) {
-            return contentName ? ( isEdit ? 'edit-' : 'view-') + contentName : 'new-content';
         }
     }
 

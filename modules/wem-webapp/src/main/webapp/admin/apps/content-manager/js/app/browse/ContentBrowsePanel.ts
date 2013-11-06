@@ -60,12 +60,10 @@ module app_browse {
             });
 
             api_content.ContentCreatedEvent.on((event) => {
-                console.log('On content created', event.getPath());
                 this.setRefreshNeeded(true);
             });
 
             api_content.ContentUpdatedEvent.on((event) => {
-                console.log('On content updated', event.getModel());
                 this.setRefreshNeeded(true);
             });
 

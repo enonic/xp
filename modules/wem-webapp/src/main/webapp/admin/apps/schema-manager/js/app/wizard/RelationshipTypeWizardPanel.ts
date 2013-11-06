@@ -14,7 +14,7 @@ module app_wizard {
 
         private relationshipTypeForm :RelationshipTypeForm;
 
-        constructor() {
+        constructor(tabId:api_app.AppBarTabId) {
             this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
             new api_app_wizard.FormIcon(RelationshipTypeWizardPanel.DEFAULT_SCHEMA_ICON_URL, "Click to upload icon",
@@ -30,6 +30,7 @@ module app_wizard {
             });
 
             super({
+                tabId: tabId,
                 formIcon: this.formIcon,
                 toolbar: toolbar,
                 actions: actions,
@@ -65,6 +66,7 @@ module app_wizard {
                 } else {
                     var relationshipType:api_schema_relationshiptype.RelationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.result);
                     this.setPersistedItem(relationshipType);
+                    this.getTabId().changeToEditMode(relationshipType.getKey());
                     new app_wizard.RelationshipTypeCreatedEvent().fire();
                     api_notify.showFeedback('Relationship type was created!');
 

@@ -44,12 +44,12 @@ module api_app{
             }
         }
 
-        getNavigationItemById(itemId:string):AppBarTabMenuItem {
+        getNavigationItemById(tabId:AppBarTabId):AppBarTabMenuItem {
             var items:api_ui_tab.TabMenuItem[] = this.getNavigationItems();
             var item;
             for (var i = 0; i < items.length; i++) {
                 item = <AppBarTabMenuItem>items[i];
-                if (item.getItemId() == itemId) {
+                if (item.getTabId().equals(tabId)) {
                     return item;
                 }
             }

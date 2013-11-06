@@ -14,7 +14,7 @@ module app_wizard {
 
         private contentTypeForm :app_wizard.ContentTypeForm;
 
-        constructor() {
+        constructor(tabId:api_app.AppBarTabId) {
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_SCHEMA_ICON_URL, "Click to upload icon",
                 api_util.getRestUri("upload"));
@@ -29,6 +29,7 @@ module app_wizard {
             });
 
             super({
+                tabId: tabId,
                 formIcon: this.formIcon,
                 toolbar: toolbar,
                 actions: actions,
@@ -67,6 +68,7 @@ module app_wizard {
                 } else {
                     var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(jsonResponse.result);
                     this.setPersistedItem(contentType);
+                    this.getTabId().changeToEditMode(contentType.getKey());
                     new app_wizard.ContentTypeCreatedEvent().fire();
                     api_notify.showFeedback('Content type was created!');
 

@@ -14,7 +14,7 @@ module app_wizard {
 
         private mixinForm:MixinForm;
 
-        constructor() {
+        constructor(tabId:api_app.AppBarTabId) {
 
             this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
@@ -31,6 +31,7 @@ module app_wizard {
             });
 
             super({
+                tabId: tabId,
                 formIcon: this.formIcon,
                 toolbar: toolbar,
                 actions: actions,
@@ -73,6 +74,7 @@ module app_wizard {
                 } else {
                     var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.getResult());
                     this.setPersistedItem(mixin);
+                    this.getTabId().changeToEditMode(mixin.getKey());
                     api_notify.showFeedback( 'Mixin was created!' );
 
                     new api_schema.SchemaCreatedEvent( mixin ).fire();

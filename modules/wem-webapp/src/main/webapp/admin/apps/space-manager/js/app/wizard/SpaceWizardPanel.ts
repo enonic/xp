@@ -20,7 +20,7 @@ module app_wizard {
 
         private persistedSpace:api_remote_space.Space;
 
-        constructor() {
+        constructor(tabId:api_app.AppBarTabId) {
 
             this.spaceWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
             this.formIcon =
@@ -37,6 +37,7 @@ module app_wizard {
             });
 
             super({
+                tabId: tabId,
                 formIcon: this.formIcon,
                 toolbar: toolbar,
                 actions: actions,

@@ -1,3 +1,4 @@
+///<reference path='AppBarTabId' />
 ///<reference path='AppBar.ts' />
 ///<reference path='UserInfoPopup.ts' />
 ///<reference path='AppBarActions.ts' />

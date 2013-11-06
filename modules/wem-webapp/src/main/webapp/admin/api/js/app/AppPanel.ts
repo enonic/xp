@@ -8,7 +8,7 @@ module api_app{
             super(tabNavigator);
 
             this.homePanel = homePanel;
-            var homePanelMenuItem = new AppBarTabMenuItem("home", "home");
+            var homePanelMenuItem = new AppBarTabMenuItem("home", new AppBarTabId("hidden","____home"));
             homePanelMenuItem.setVisibleInMenu(false);
             homePanelMenuItem.setRemovable(false);
             this.addNavigablePanelToFront(homePanelMenuItem, this.homePanel);

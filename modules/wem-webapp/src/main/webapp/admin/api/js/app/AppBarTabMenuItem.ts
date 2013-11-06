@@ -2,13 +2,14 @@ module api_app{
 
     export class AppBarTabMenuItem extends api_ui_tab.TabMenuItem {
 
-        private itemId: string;
+        private tabId:AppBarTabId;
+
         private editing:boolean;
 
-        constructor(label:string, itemId:string, editing?:boolean) {
+        constructor(label:string, tabId:AppBarTabId, editing?:boolean) {
             super(label, {removable:true});
             this.editing = editing;
-            this.itemId = itemId;
+            this.tabId = tabId;
 
             if (editing) {
                 var iconEl = new api_dom.ImgEl();
@@ -20,10 +21,8 @@ module api_app{
             return this.editing;
         }
 
-        getItemId() {
-            return this.itemId;
+        getTabId():AppBarTabId {
+            return this.tabId;
         }
-
     }
-
 }

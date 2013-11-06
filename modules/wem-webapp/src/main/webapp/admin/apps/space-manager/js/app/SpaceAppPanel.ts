@@ -37,7 +37,7 @@ module app {
 
             app_browse.NewSpaceEvent.on((event) => {
 
-                var tabId = this.generateTabId();
+                var tabId = api_app.AppBarTabId.forNew();
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
@@ -45,7 +45,7 @@ module app {
 
                 } else {
                     tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.SpaceWizardPanel.NEW_WIZARD_HEADER, tabId);
-                    var spaceWizardPanel = new app_wizard.SpaceWizardPanel();
+                    var spaceWizardPanel = new app_wizard.SpaceWizardPanel(tabId);
                     spaceWizardPanel.renderNew();
                     this.addWizardPanel(tabMenuItem, spaceWizardPanel);
                     spaceWizardPanel.reRender();
@@ -56,7 +56,7 @@ module app {
 
                 event.getModels().forEach((spaceModel:api_model.SpaceExtModel) => {
 
-                    var tabId = this.generateTabId(spaceModel.data.name, false);
+                    var tabId = api_app.AppBarTabId.forView(spaceModel.data.name);;
                     var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
@@ -81,7 +81,7 @@ module app {
 
                 event.getModels().forEach((spaceModel:api_model.SpaceExtModel) => {
 
-                    var tabId = this.generateTabId(spaceModel.data.name, true);
+                    var tabId = api_app.AppBarTabId.forEdit(spaceModel.data.name);
                     var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
@@ -95,7 +95,7 @@ module app {
                             var space = result.spaces[0];
 
                             tabMenuItem = new api_app.AppBarTabMenuItem(space.displayName, tabId, true);
-                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel();
+                            var spaceWizardPanel = new app_wizard.SpaceWizardPanel(tabId);
                             spaceWizardPanel.setPersistedItem(space);
 
                             this.addWizardPanel(tabMenuItem, spaceWizardPanel);
@@ -107,10 +107,6 @@ module app {
             app_browse.CloseSpaceEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
-        }
-
-        private generateTabId(spaceName?:string, isEdit:boolean = false) {
-            return spaceName ? ( isEdit ? 'edit-' : 'view-') + spaceName : 'new-space';
         }
     }
 
