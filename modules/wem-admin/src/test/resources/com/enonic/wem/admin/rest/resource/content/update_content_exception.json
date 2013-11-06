@@ -1,4 +1,7 @@
 {
-    "failure" : "Failed to update content [content-id]: Exception occured.",
-    "updated" : false
+  "error" : {
+    "message" : "Failed to update content [content-id]: Exception occured."
+  },
+  "result" : null
 }
+

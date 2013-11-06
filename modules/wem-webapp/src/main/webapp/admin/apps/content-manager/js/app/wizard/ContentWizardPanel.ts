@@ -187,14 +187,18 @@ module app_wizard {
 
             createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
 
-                api_notify.showFeedback('Content was created!');
-                console.log('content create response', createResponse);
-
                 var json = createResponse.getJson();
-                new api_content.ContentCreatedEvent(api_content.ContentPath.fromString(json.contentPath)).fire();
+                if (json.error) {
+                    api_notify.showError(json.error.message);
+                } else {
+                    api_notify.showFeedback('Content was created!');
+                    var content:api_content.Content = new api_content.Content(json.result);
+                    new api_content.ContentCreatedEvent(content.getPath()).fire();
+                    this.setPersistedItem(content);
 
-                if (successCallback) {
-                    successCallback.call(this, json.contentId, json.contentPath);
+                    if (successCallback) {
+                        successCallback.call(this, json.contentId, json.contentPath);
+                    }
                 }
             });
         }
@@ -218,10 +222,17 @@ module app_wizard {
             }
 
             updateRequest.send().done((updateResponse:api_rest.JsonResponse<any>) => {
-                api_notify.showFeedback('Content was updated!');
-                console.log('content update response', updateResponse);
-
-                new api_content.ContentUpdatedEvent(this.persistedContent).fire();
+                var json = updateResponse.getJson();
+                if (json.error) {
+                    api_notify.showError(json.error.message);
+                } else {
+                    api_notify.showFeedback('Content was updated!');
+                    var content:api_content.Content = new api_content.Content(json.result);
+                    new api_content.ContentUpdatedEvent(content).fire();
+                    if (successCallback) {
+                        successCallback.call(this, json.contentId, json.contentPath);
+                    }
+                }
 
                 if (successCallback) {
                     successCallback.call(this);
