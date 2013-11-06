@@ -47,61 +47,11 @@ module api_form_formitemset {
             this.formItemSetOccurrencesContainer = new api_dom.DivEl(null, "form-item-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);
 
-            if (this.constructedWithData) {
-                this.doLayoutWithData(this.formItemSetOccurrencesContainer);
-            }
-            else {
-                this.doLayoutWithoutData(this.formItemSetOccurrencesContainer);
-            }
-        }
 
-        private doLayoutWithoutData(parentEl:api_dom.DivEl) {
-            this.formItemSet.getFormItems().forEach((formItem:api_form.FormItem) => {
-
-                if (formItem instanceof api_form.FormItemSet) {
-                    var formItemSet:api_form.FormItemSet = <api_form.FormItemSet>formItem;
-
-                    console.log("FormItemSetOccurrenceView.doLayout() laying out FormItemSet: ", formItemSet);
-                    var formItemSetView = new FormItemSetView(formItemSet);
-                    parentEl.appendChild(formItemSetView);
-                    this.formItemViews.push(formItemSetView);
-                }
-                else if (formItem instanceof api_form.Input) {
-                    var input:api_form.Input = <api_form.Input>formItem;
-
-                    console.log("FormItemSetOccurrenceView.doLayout()  laying out Input: ", input);
-                    var inputContainerView = new api_form_input.InputView(input);
-                    parentEl.appendChild(inputContainerView);
-                    this.formItemViews.push(inputContainerView);
-                }
-            });
-        }
-
-        private doLayoutWithData(parentEl:api_dom.DivEl) {
-
-            this.formItemSet.getFormItems().forEach((formItem:api_form.FormItem) => {
-
-                if (formItem instanceof api_form.FormItemSet) {
-                    var formItemSet:api_form.FormItemSet = <api_form.FormItemSet>formItem;
-
-                    console.log("FormItemSetOccurrenceView.doLayout() laying out FormItemSet: ", formItemSet);
-                    var dataSets:api_data.DataSet[] = this.dataSet.getDataSetsByName(formItemSet.getName());
-
-                    var formItemSetView = new FormItemSetView(formItemSet, dataSets);
-                    parentEl.appendChild(formItemSetView);
-                    this.formItemViews.push(formItemSetView);
-                }
-                else if (formItem instanceof api_form.Input) {
-                    var input:api_form.Input = <api_form.Input>formItem;
-
-                    console.log("FormItemSetOccurrenceView.doLayout() laying out Input: ", input);
-                    var properties:api_data.Property[] = this.dataSet.getPropertiesByName(input.getName());
-
-                    var inputContainerView = new api_form_input.InputView(input, properties);
-                    parentEl.appendChild(inputContainerView);
-                    this.formItemViews.push(inputContainerView);
-                }
-            });
+            this.formItemViews =  new api_form.FormItemLayer().
+                setFormItems(this.formItemSet.getFormItems()).
+                setParentElement(this.formItemSetOccurrencesContainer).
+                layout(this.dataSet);
         }
 
         getFormItemViews():api_form.FormItemView[] {

@@ -6,8 +6,6 @@ module api_form_json{
 
         FormItemSet?:FormItemSetJson;
 
-        Layout?:LayoutJson;
-
         FieldSet?:FieldSetJson;
     }
 }

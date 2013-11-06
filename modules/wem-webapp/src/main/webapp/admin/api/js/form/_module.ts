@@ -14,5 +14,6 @@
 ///<reference path='FormItemOccurrences.ts' />
 ///<reference path='FormItemOccurrence.ts' />
 ///<reference path='FormItemView.ts' />
+///<reference path='FormItemLayer.ts' />
 ///<reference path='FormView.ts' />
 

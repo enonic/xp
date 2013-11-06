@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.enonic.wem.api.form.Layout;
 
 @SuppressWarnings("UnusedDeclaration")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
-@JsonSubTypes({@JsonSubTypes.Type(value = FieldSetJson.class, name = "FieldSet")})
 public abstract class LayoutJson<T extends Layout>
     extends FormItemJson<T>
 {

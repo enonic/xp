@@ -31,11 +31,11 @@ module api_form{
 
         public toFieldSetJson():api_form_json.FormItemTypeWrapperJson {
 
-            return <api_form_json.FormItemTypeWrapperJson>{ Layout: <api_form_json.LayoutTypeWrapperJson>{ FieldSet: <api_form_json.FieldSetJson>{
+            return <api_form_json.FormItemTypeWrapperJson>{ FieldSet: <api_form_json.FieldSetJson>{
                 name: this.getName(),
                 items : FormItem.formItemsToJson(this.getFormItems()),
                 label : this.getLabel()
-            }}};
+            }};
         }
     }
 }

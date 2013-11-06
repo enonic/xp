@@ -14,9 +14,6 @@ module api_form{
             else if (formItemJson.FormItemSet ) {
                 return FormItemFactory.createFormItemSet(<api_form_json.FormItemSetJson>formItemJson.FormItemSet);
             }
-            else if (formItemJson.Layout) {
-                return FormItemFactory.createLayout(<api_form_json.LayoutJson>formItemJson.Layout);
-            }
             else if (formItemJson.FieldSet) {
                 return FormItemFactory.createFieldSetLayout(<api_form_json.FieldSetJson>formItemJson.FieldSet);
             }
@@ -32,15 +29,6 @@ module api_form{
         static createFormItemSet(formItemSetJson:api_form_json.FormItemSetJson):FormItemSet {
 
             return new FormItemSet(formItemSetJson);
-        }
-
-        static createLayout(layoutJson:api_form_json.LayoutTypeWrapperJson):Layout {
-            if( layoutJson.FieldSet ) {
-                return FormItemFactory.createFieldSetLayout(<api_form_json.FieldSetJson>layoutJson.FieldSet);
-            }
-
-            console.log( "Unknown Layout type: ", layoutJson );
-            throw new Error("Unknown Layout" );
         }
 
         static createFieldSetLayout(fieldSetJson:api_form_json.FieldSetJson):FieldSet {

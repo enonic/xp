@@ -6,22 +6,26 @@ module api_form_layout {
 
         private formItemViews:api_form.FormItemView[] = [];
 
-        constructor(fieldSet:api_form.FieldSet) {
+         constructor(fieldSet:api_form.FieldSet, dataSet?:api_data.DataSet) {
             super(fieldSet, "FieldSetView", "field-set-view");
 
             this.fieldSet = fieldSet;
-            this.doLayout();
+            this.doLayout(dataSet);
         }
 
         getData():api_data.Data[] {
-            return null;
+            var dataArray:api_data.Data[] = [];
+            this.formItemViews.forEach( (formItemView:api_form.FormItemView) => {
+                dataArray = dataArray.concat(formItemView.getData());
+            } );
+            return dataArray;
         }
 
         getFormItemViews():api_form.FormItemView[] {
             return this.formItemViews;
         }
 
-        private doLayout() {
+        private doLayout(dataSet:api_data.DataSet) {
 
             var label = new FieldSetLabel(this.fieldSet);
             this.appendChild(label);
@@ -29,23 +33,10 @@ module api_form_layout {
             var wrappingDiv = new api_dom.DivEl(null, "field-set-container");
             this.appendChild(wrappingDiv);
 
-            this.fieldSet.getFormItems().forEach((formItem:api_form.FormItem) => {
-                if (formItem instanceof api_form.FormItemSet) {
-                    var formItemSet:api_form.FormItemSet = <api_form.FormItemSet>formItem;
-                    console.log("FieldSetView.doLayout() laying out FormItemSet: ", formItemSet);
-                    var formItemSetView = new api_form_formitemset.FormItemSetView(formItemSet);
-                    wrappingDiv.appendChild(formItemSetView);
-                    this.formItemViews.push(formItemSetView);
-                }
-                else if (formItem instanceof api_form.Input) {
-                    var input:api_form.Input = <api_form.Input>formItem;
-                    console.log("FieldSetView.doLayout()  laying out Input: ", input);
-                    var inputContainerView = new api_form_input.InputView(input);
-                    wrappingDiv.appendChild(inputContainerView);
-                    this.formItemViews.push(inputContainerView);
-                }
-            });
-
+            this.formItemViews =  new api_form.FormItemLayer().
+                setFormItems(this.fieldSet.getFormItems()).
+                setParentElement(wrappingDiv).
+                layout(dataSet);
         }
     }
 }
