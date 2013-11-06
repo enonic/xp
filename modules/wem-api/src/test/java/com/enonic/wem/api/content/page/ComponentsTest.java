@@ -27,12 +27,12 @@ public class ComponentsTest
     @Test
     public void part()
     {
-        RootDataSet pageConfig = new RootDataSet();
-        pageConfig.addProperty( "width", new Value.Long( 150 ) );
+        RootDataSet partConfig = new RootDataSet();
+        partConfig.addProperty( "width", new Value.Long( 150 ) );
 
         Part part = Part.newPart().
             partTemplateId( new PartTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
-            config( pageConfig ).
+            config( partConfig ).
             build();
 
         assertEquals( "1fad493a-6a72-41a3-bac4-88aba3d83bcc", part.getTemplateId().toString() );
@@ -41,12 +41,12 @@ public class ComponentsTest
     @Test
     public void layout()
     {
-        RootDataSet pageConfig = new RootDataSet();
-        pageConfig.addProperty( "columns", new Value.Long( 2 ) );
+        RootDataSet layoutConfig = new RootDataSet();
+        layoutConfig.addProperty( "columns", new Value.Long( 2 ) );
 
         Layout layout = Layout.newLayout().
             layoutTemplateId( new LayoutTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
-            config( pageConfig ).
+            config( layoutConfig ).
             build();
 
         assertEquals( "1fad493a-6a72-41a3-bac4-88aba3d83bcc", layout.getTemplateId().toString() );

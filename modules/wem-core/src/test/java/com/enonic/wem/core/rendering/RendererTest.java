@@ -50,7 +50,7 @@ public class RendererTest
         final Page page = newPage().
             pageTemplateId( pageTemplateId ).
             build();
-        final RenderingResult result = renderer.renderComponent( page );
+        final RenderingResult result = renderer.render( page );
 
         // verify
         assertNotNull( result );

@@ -1,10 +1,10 @@
 package com.enonic.wem.core.rendering;
 
 
-import com.enonic.wem.api.content.image.Image;
+import com.enonic.wem.api.content.page.Image;
 
-public class ImageComponentType
-    implements ComponentExecutor<Image>
+public class ImageRenderer
+    implements ComponentRenderer<Image>
 {
     @Override
     public RenderingResult execute( final Image image, final Context context )

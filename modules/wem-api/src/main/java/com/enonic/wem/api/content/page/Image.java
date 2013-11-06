@@ -4,15 +4,15 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
-public final class Part
-    extends Component<PartTemplateId>
+public class Image
+    extends Component<ImageTemplateId>
     implements RegionPlaceableComponent
 {
     private final RootDataSet config;
 
-    public Part( final Builder builder )
+    public Image( final Builder builder )
     {
-        super( builder.partTemplateId );
+        super( builder.imageTemplateId );
         this.config = builder.config;
     }
 
@@ -21,7 +21,7 @@ public final class Part
         return config;
     }
 
-    public static Builder newPart()
+    public static Builder newImage()
     {
         return new Builder();
     }
@@ -30,7 +30,7 @@ public final class Part
     {
         private RootDataSet config;
 
-        private PartTemplateId partTemplateId;
+        private ImageTemplateId imageTemplateId;
 
         private Builder()
         {
@@ -43,15 +43,16 @@ public final class Part
             return this;
         }
 
-        public Builder partTemplateId( final PartTemplateId partTemplateId )
+        public Builder imageTemplateId( final ImageTemplateId imageTemplateId )
         {
-            this.partTemplateId = partTemplateId;
+            this.imageTemplateId = imageTemplateId;
             return this;
         }
 
-        public Part build()
+        public Image build()
         {
-            return new Part( this );
+            return new Image( this );
         }
     }
+
 }

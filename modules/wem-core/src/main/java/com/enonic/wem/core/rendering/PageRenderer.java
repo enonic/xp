@@ -18,8 +18,8 @@ import com.enonic.wem.core.content.page.PageDescriptorXmlSerializer;
 
 import static com.enonic.wem.core.rendering.RenderingResult.newRenderingResult;
 
-public final class PageComponentType
-    implements ComponentExecutor<Page>
+public final class PageRenderer
+    implements ComponentRenderer<Page>
 {
     private final PageDescriptorXmlSerializer pageDescriptorXmlSerializer;
 
@@ -27,7 +27,7 @@ public final class PageComponentType
 
     private final Client client;
 
-    public PageComponentType( final Client client )
+    public PageRenderer( final Client client )
     {
         this.client = client;
         this.controllerFactory = new ControllerFactory( client );

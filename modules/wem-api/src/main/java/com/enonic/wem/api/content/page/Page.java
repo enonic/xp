@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class Page
-    extends PageComponent<PageTemplateId>
+    extends Component<PageTemplateId>
 {
     private final RootDataSet config;
 

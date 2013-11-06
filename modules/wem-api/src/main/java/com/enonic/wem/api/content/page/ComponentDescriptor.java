@@ -6,6 +6,8 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 
 public interface ComponentDescriptor
 {
+    ComponentDescriptorName getName();
+
     String getDisplayName();
 
     Form getConfig();

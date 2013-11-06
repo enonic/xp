@@ -35,13 +35,13 @@ public class TemplatesTest
     @Test
     public void partTemplate()
     {
-        RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
+        RootDataSet partTemplateConfig = new RootDataSet();
+        partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         PartTemplate partTemplate = PartTemplate.newPartTemplate().
             id( new PartTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             displayName( "News part template" ).
-            config( pageTemplateConfig ).
+            config( partTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ) ).
             build();
 
@@ -51,13 +51,13 @@ public class TemplatesTest
     @Test
     public void layoutTemplate()
     {
-        RootDataSet pageTemplateConfig = new RootDataSet();
-        pageTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
+        RootDataSet layoutTemplateConfig = new RootDataSet();
+        layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
         LayoutTemplate partTemplate = LayoutTemplate.newLayoutTemplate().
             id( new LayoutTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             displayName( "Layout template" ).
-            config( pageTemplateConfig ).
+            config( layoutTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-layout.xml" ) ).
             build();
 

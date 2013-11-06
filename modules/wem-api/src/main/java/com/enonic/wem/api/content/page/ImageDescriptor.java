@@ -1,14 +1,15 @@
 package com.enonic.wem.api.content.page;
 
-public class LayoutDescriptor
+
+public final class ImageDescriptor
     extends BaseDescriptor
 {
-    private LayoutDescriptor( final Builder builder )
+    private ImageDescriptor( final Builder builder )
     {
         super( builder.name, builder.displayName, builder.controllerResource, builder.config );
     }
 
-    public static LayoutDescriptor.Builder newLayoutDescriptor()
+    public static ImageDescriptor.Builder newImageDescriptor()
     {
         return new Builder();
     }
@@ -20,9 +21,9 @@ public class LayoutDescriptor
         {
         }
 
-        public LayoutDescriptor build()
+        public ImageDescriptor build()
         {
-            return new LayoutDescriptor( this );
+            return new ImageDescriptor( this );
         }
     }
 }
