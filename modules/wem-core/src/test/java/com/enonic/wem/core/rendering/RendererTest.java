@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.content.template.GetTemplate;
+import com.enonic.wem.api.command.content.template.GetPageTemplate;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -33,7 +33,7 @@ public class RendererTest
             id( pageTemplateId ).
             descriptor( ModuleResourceKey.from( "module-1.0.0:templates/template.xml" ) ).
             build();
-        when( client.execute( isA( GetTemplate.class ) ) ).thenReturn( template );
+        when( client.execute( isA( GetPageTemplate.class ) ) ).thenReturn( template );
 
         final Resource pageDescriptorResource = newResource().
             name( "page-descriptor" ).

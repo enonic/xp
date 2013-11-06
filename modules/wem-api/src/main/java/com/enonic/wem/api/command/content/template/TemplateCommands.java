@@ -24,14 +24,34 @@ public final class TemplateCommands
         return new UpdatePageTemplate();
     }
 
+    public UpdatePartTemplate updatePartTemplate()
+    {
+        return new UpdatePartTemplate();
+    }
+
+    public UpdateLayoutTemplate updateLayoutTemplate()
+    {
+        return new UpdateLayoutTemplate();
+    }
+
     public DeleteTemplate delete()
     {
         return new DeleteTemplate();
     }
 
-    public GetTemplate get()
+    public GetPageTemplate getPageTemplate()
     {
-        return new GetTemplate();
+        return new GetPageTemplate();
+    }
+
+    public GetPartTemplate getPartTemplate()
+    {
+        return new GetPartTemplate();
+    }
+
+    public GetLayoutTemplate getLayoutTemplate()
+    {
+        return new GetLayoutTemplate();
     }
 
     public GetTemplates list()

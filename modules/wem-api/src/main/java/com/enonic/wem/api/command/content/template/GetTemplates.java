@@ -1,20 +1,18 @@
 package com.enonic.wem.api.command.content.template;
 
 
-import java.util.List;
-
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.TemplateId;
+import com.enonic.wem.api.content.page.TemplateIds;
+import com.enonic.wem.api.content.page.Templates;
 
 public final class GetTemplates
-    extends Command<List<Template>>
+    extends Command<Templates>
 {
     private boolean getAllTemplates = false;
 
-    private List<TemplateId> templateIds;
+    private TemplateIds templateIds;
 
-    public GetTemplates modules( final List<TemplateId> templateIds )
+    public GetTemplates templates( final TemplateIds templateIds )
     {
         this.templateIds = templateIds;
         return this;
@@ -31,7 +29,7 @@ public final class GetTemplates
         return getAllTemplates;
     }
 
-    public List<TemplateId> getTemplates()
+    public TemplateIds getTemplates()
     {
         return templateIds;
     }

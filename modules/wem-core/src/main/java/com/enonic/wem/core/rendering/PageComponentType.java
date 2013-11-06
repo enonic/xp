@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.template.GetTemplate;
+import com.enonic.wem.api.command.content.template.GetPageTemplate;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
@@ -52,8 +52,8 @@ public final class PageComponentType
 
     private PageTemplate getPageTemplate( final PageTemplateId templateId, final Client client )
     {
-        final GetTemplate command = Commands.template().get().templateId( templateId );
-        return (PageTemplate) client.execute( command );
+        final GetPageTemplate command = Commands.template().getPageTemplate().templateId( templateId );
+        return client.execute( command );
     }
 
     private PageDescriptor getPageDescriptor( final ModuleResourceKey key, final Client client )
