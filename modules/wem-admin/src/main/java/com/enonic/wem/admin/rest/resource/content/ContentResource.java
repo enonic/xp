@@ -35,14 +35,13 @@ import com.enonic.wem.admin.rest.resource.content.json.AbstractFacetedContentLis
 import com.enonic.wem.admin.rest.resource.content.json.AttachmentParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
-import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentParams;
+import com.enonic.wem.admin.rest.resource.content.json.CreateOrUpdateContentJsonResult;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentIdListJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentListJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentSummaryListJson;
-import com.enonic.wem.admin.rest.resource.content.json.UpdateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.ValidateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ValidateContentParams;
@@ -364,7 +363,7 @@ public class ContentResource
 
     @POST
     @Path("create")
-    public CreateContentJson create( final CreateContentParams params )
+    public CreateOrUpdateContentJsonResult create( final CreateContentParams params )
     {
         try
         {
@@ -384,17 +383,19 @@ public class ContentResource
 
             final CreateContentResult createContentResult = client.execute( createContent );
 
-            return new CreateContentJson( createContentResult );
+            final Content content = doGetContent( createContentResult.getContentId() );
+
+            return CreateOrUpdateContentJsonResult.result( new ContentJson( content ) );
         }
         catch ( CreateContentException | FileNotFoundException e )
         {
-            return new CreateContentJson( e );
+            return CreateOrUpdateContentJsonResult.error( e.getMessage() );
         }
     }
 
     @POST
     @Path("update")
-    public UpdateContentJson update( final UpdateContentParams params )
+    public CreateOrUpdateContentJsonResult update( final UpdateContentParams params )
     {
         try
         {
@@ -418,11 +419,20 @@ public class ContentResource
                 client.execute( Commands.content().rename().contentId( params.getContentId() ).newName( params.getContentName() ) );
             }
 
-            return new UpdateContentJson( updateContentResult );
+            if ( updateContentResult == UpdateContentResult.SUCCESS || updateContentResult == null)
+            {
+                final Content content = doGetContent( params.getContentId() );
+                return CreateOrUpdateContentJsonResult.result( new ContentJson( content ) );
+            }
+            else
+            {
+                return CreateOrUpdateContentJsonResult.error( updateContentResult.getMessage() );
+            }
+
         }
         catch ( UpdateContentException | ContentNotFoundException | RenameContentException | FileNotFoundException e )
         {
-            return new UpdateContentJson( e );
+            return CreateOrUpdateContentJsonResult.error( e.getMessage() );
         }
     }
 

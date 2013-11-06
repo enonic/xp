@@ -611,7 +611,8 @@ public class ContentResourceTest
         ContentPath parentPath = ContentPath.from( "parent-path" );
         ContentPath contentPath = ContentPath.from( parentPath, "content-path" );
         CreateContentResult result = new CreateContentResult( contentId, contentPath );
-
+        Content content = createContent( "content-id", "content-path", "content-type" );
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( content ) );
         Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenReturn( result );
 
         String jsonString = resource().path( "content/create" ).
@@ -670,7 +671,8 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( null );
-
+        Content content = createContent( "content-id", "content-path", "content-type" );
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( content ) );
         String jsonString = resource().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
@@ -688,7 +690,8 @@ public class ContentResourceTest
             ContentTypes.from( createContentType( "my-type" ) ) );
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( UpdateContentResult.SUCCESS );
-
+        Content content = createContent( "content-id", "content-path", "content-type" );
+        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( content ) );
         String jsonString = resource().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
