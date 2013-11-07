@@ -39,6 +39,7 @@ final class HazelcastConfigurator
         final SerializerConfig serializerConfig = new SerializerConfig();
         serializerConfig.setTypeClass( type );
         serializerConfig.setImplementation( serializer );
+        this.config.getSerializationConfig().addSerializerConfig( serializerConfig );
     }
 
     @Override
