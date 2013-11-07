@@ -12,9 +12,29 @@
 
     export class DeleteRelationshipTypeAction extends api_ui.Action {
 
-        constructor() {
-            super("Delete");
+        constructor(wizardPanel:api_app_wizard.WizardPanel<api_schema_relationshiptype.RelationshipType>) {
+            super("Delete", "mod+del");
             this.addExecutionListener(() => {
+                api_ui_dialog.ConfirmationDialog.get()
+                    .setQuestion("Are you sure you want to delete this content type?")
+                    .setNoCallback(null)
+                    .setYesCallback(() => {
+                        wizardPanel.close();
+                        new api_schema_relationshiptype.DeleteRelationshipTypeRequest()
+                            .addQualifiedName(wizardPanel.getPersistedItem().getName())
+                            .send()
+                            .done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+                                var json = jsonResponse.getResult();
+
+                                if (json.successes && json.successes.length > 0) {
+                                    var name = json.successes[0].name;
+                                    var deletedRelationshipType = wizardPanel.getPersistedItem();
+
+                                    api_notify.showFeedback('Content [' + name + '] deleted!');
+                                    new api_schema.SchemaDeletedEvent([deletedRelationshipType]).fire();
+                                }
+                            });
+                    }).open();
             });
         }
     }
@@ -32,8 +52,8 @@
 
         constructor(wizardPanel:api_app_wizard.WizardPanel<api_schema_relationshiptype.RelationshipType>) {
             this.save = new api_app_wizard.SaveAction(wizardPanel);
-            this.duplicate = new DuplicateContentTypeAction();
-            this.delete = new DeleteContentTypeAction();
+            this.duplicate = new DuplicateRelationshipTypeAction();
+            this.delete = new DeleteRelationshipTypeAction(wizardPanel);
             this.close = new api_app_wizard.CloseAction(wizardPanel);
         }
 
