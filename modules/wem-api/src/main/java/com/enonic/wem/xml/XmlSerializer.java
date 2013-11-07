@@ -1,8 +1,8 @@
 package com.enonic.wem.xml;
 
-public interface XmlSerializer<I, O>
+public interface XmlSerializer<X extends XmlObject>
 {
-    public String toXml( I value );
+    public String serialize( X value );
 
-    public void fromXml( O value, String text );
+    public X parse( String text );
 }

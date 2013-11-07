@@ -8,12 +8,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-public abstract class JaxbXmlSerializer<X, I, O>
-    implements XmlSerializer<I, O>
+final class XmlSerializerImpl<X extends XmlObject>
+    implements XmlSerializer<X>
 {
     private final JAXBContext context;
 
-    public JaxbXmlSerializer( final Class<X> clz )
+    public XmlSerializerImpl( final Class<X> clz )
     {
         try
         {
@@ -25,25 +25,19 @@ public abstract class JaxbXmlSerializer<X, I, O>
         }
     }
 
-    public abstract X toJaxbObject( I value );
-
-    public abstract void fromJaxbObject( O value, final X xml );
-
     @Override
-    public final String toXml( final I value )
+    public String serialize( final X value )
     {
-        final X xml = toJaxbObject( value );
-        return marshall( xml );
+        return marshall( value );
     }
 
     @Override
-    public final void fromXml( final O value, final String text )
+    public X parse( final String text )
     {
-        final X xml = unmarshall( text );
-        fromJaxbObject( value, xml );
+        return unmarshall( text );
     }
 
-    protected final String marshall( final X object )
+    private String marshall( final X object )
     {
         try
         {
@@ -58,7 +52,7 @@ public abstract class JaxbXmlSerializer<X, I, O>
         }
     }
 
-    protected final X unmarshall( final String text )
+    private X unmarshall( final String text )
     {
         try
         {
