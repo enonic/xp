@@ -3,9 +3,11 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-public abstract class Template<ID extends TemplateId>
+public abstract class Template<ID extends TemplateId, NAME extends TemplateName>
 {
     private final ID id;
+
+    private final NAME name;
 
     private final String displayName;
 
@@ -13,12 +15,19 @@ public abstract class Template<ID extends TemplateId>
 
     private final RootDataSet config;
 
-    protected Template( final ID id, final String displayName, final ModuleResourceKey descriptor, final RootDataSet config )
+    protected Template( final NAME name, final ID id, final String displayName, final ModuleResourceKey descriptor,
+                        final RootDataSet config )
     {
+        this.name = name;
         this.id = id;
         this.displayName = displayName;
         this.descriptor = descriptor;
         this.config = config;
+    }
+
+    public NAME getName()
+    {
+        return name;
     }
 
     public ModuleResourceKey getDescriptor()
@@ -41,8 +50,10 @@ public abstract class Template<ID extends TemplateId>
         return config;
     }
 
-    protected abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, ID extends TemplateId>
+    protected abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, ID extends TemplateId, NAME extends TemplateName>
     {
+        protected NAME name;
+
         protected ID id;
 
         protected String displayName;
@@ -51,9 +62,15 @@ public abstract class Template<ID extends TemplateId>
 
         protected RootDataSet config;
 
-        public T id( final ID value )
+        public T name( final NAME name )
         {
-            this.id = value;
+            this.name = name;
+            return (T) this;
+        }
+
+        public T id( final ID id )
+        {
+            this.id = id;
             return (T) this;
         }
 

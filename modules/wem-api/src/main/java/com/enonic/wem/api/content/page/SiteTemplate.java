@@ -9,6 +9,7 @@ public final class SiteTemplate
 {
     private final SiteTemplateId id;
 
+    // TODO version number
     private final String displayName;
 
     private final String description;

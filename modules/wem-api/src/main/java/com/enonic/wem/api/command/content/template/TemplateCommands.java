@@ -19,6 +19,16 @@ public final class TemplateCommands
         return new CreateLayoutTemplate();
     }
 
+    public CreateImageTemplate createImageTemplate()
+    {
+        return new CreateImageTemplate();
+    }
+
+//    public CreatePageTemplate createSiteTemplate()
+//    {
+//        return new CreatePageTemplate();
+//    }
+
     public UpdatePageTemplate updatePageTemplate()
     {
         return new UpdatePageTemplate();
@@ -32,6 +42,11 @@ public final class TemplateCommands
     public UpdateLayoutTemplate updateLayoutTemplate()
     {
         return new UpdateLayoutTemplate();
+    }
+
+    public UpdateImageTemplate updateImageTemplate()
+    {
+        return new UpdateImageTemplate();
     }
 
     public DeleteTemplate delete()
@@ -52,6 +67,11 @@ public final class TemplateCommands
     public GetLayoutTemplate getLayoutTemplate()
     {
         return new GetLayoutTemplate();
+    }
+
+    public GetImageTemplate getImageTemplate()
+    {
+        return new GetImageTemplate();
     }
 
     public GetTemplates list()

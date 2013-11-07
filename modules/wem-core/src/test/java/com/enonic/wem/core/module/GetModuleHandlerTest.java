@@ -55,7 +55,7 @@ public class GetModuleHandlerTest
 
         Module fooModule = createModule();
 
-        Mockito.when( systemConfig.getModuleDir() ).thenReturn( modulesDir );
+        Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Mockito.when( moduleImporter.importModuleFromDirectory( fooModuleDir.toPath() ) ).thenReturn( fooModule );
 
         GetModule getModuleCommand = Commands.module().get().module( fooModule.getModuleKey() );
@@ -78,7 +78,7 @@ public class GetModuleHandlerTest
 
         Module fooModule = createModule();
 
-        Mockito.when( systemConfig.getModuleDir() ).thenReturn( modulesDir );
+        Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 
         GetModule getModuleCommand = Commands.module().get().module( fooModule.getModuleKey() );
         handler.setCommand( getModuleCommand );

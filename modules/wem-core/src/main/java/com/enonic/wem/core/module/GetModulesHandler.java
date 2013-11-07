@@ -26,7 +26,7 @@ public class GetModulesHandler
     public void handle()
         throws Exception
     {
-        final File modulesDir = systemConfig.getModuleDir();
+        final File modulesDir = systemConfig.getModulesDir();
         final ModuleKeys moduleKeys = command.getModules();
 
         List<Module> modules = new ArrayList<>();

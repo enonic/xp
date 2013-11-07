@@ -4,7 +4,7 @@ public final class ComponentDescriptorName
 {
     private final String name;
 
-    private ComponentDescriptorName( final String name )
+    public ComponentDescriptorName( final String name )
     {
         this.name = name;
     }
@@ -25,10 +25,5 @@ public final class ComponentDescriptorName
     public String toString()
     {
         return name;
-    }
-
-    public static ComponentDescriptorName from( final String name )
-    {
-        return new ComponentDescriptorName( name );
     }
 }

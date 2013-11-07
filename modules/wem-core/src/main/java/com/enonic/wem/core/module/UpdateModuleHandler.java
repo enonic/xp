@@ -24,7 +24,7 @@ public class UpdateModuleHandler
     public void handle()
         throws Exception
     {
-        final File modulesDir = systemConfig.getModuleDir();
+        final File modulesDir = systemConfig.getModulesDir();
         final File moduleDir = new File( modulesDir, command.getModuleKey().toString() );
         if ( !moduleDir.exists() )
         {

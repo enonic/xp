@@ -2,11 +2,11 @@ package com.enonic.wem.api.content.page;
 
 
 public class LayoutTemplate
-    extends Template<LayoutTemplateId>
+    extends Template<LayoutTemplateId, LayoutTemplateName>
 {
     private LayoutTemplate( final Builder builder )
     {
-        super( builder.id, builder.displayName, builder.descriptor, builder.config );
+        super( builder.name, builder.id, builder.displayName, builder.descriptor, builder.config );
     }
 
     public static LayoutTemplate.Builder newLayoutTemplate()
@@ -15,7 +15,7 @@ public class LayoutTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, LayoutTemplateId>
+        extends BaseTemplateBuilder<Builder, LayoutTemplateId, LayoutTemplateName>
     {
         private Builder()
         {

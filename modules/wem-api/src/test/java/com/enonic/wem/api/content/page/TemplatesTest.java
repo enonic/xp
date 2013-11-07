@@ -22,6 +22,7 @@ public class TemplatesTest
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             id( new PageTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            name( new PageTemplateName( "main-page" ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
@@ -40,6 +41,7 @@ public class TemplatesTest
 
         PartTemplate partTemplate = PartTemplate.newPartTemplate().
             id( new PartTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            name( new PartTemplateName( "news-part" ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ) ).
@@ -56,6 +58,7 @@ public class TemplatesTest
 
         LayoutTemplate partTemplate = LayoutTemplate.newLayoutTemplate().
             id( new LayoutTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            name( new LayoutTemplateName( "my-layout" ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-layout.xml" ) ).

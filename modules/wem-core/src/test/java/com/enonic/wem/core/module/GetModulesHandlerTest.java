@@ -49,7 +49,7 @@ public class GetModulesHandlerTest
     {
         File modulesDir = new File( tempDir.toFile(), "modules" );
         modulesDir.mkdir();
-        Mockito.when( systemConfig.getModuleDir() ).thenReturn( modulesDir );
+        Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 
         GetModules command = Commands.module().list().modules( ModuleKeys.from( new ArrayList<ModuleKey>() ) );
         handler.setCommand( command );
@@ -64,7 +64,7 @@ public class GetModulesHandlerTest
     {
         File modulesDir = new File( tempDir.toFile(), "modules" );
         modulesDir.mkdir();
-        Mockito.when( systemConfig.getModuleDir() ).thenReturn( modulesDir );
+        Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 
         GetModules command = Commands.module().list().modules( ModuleKeys.from( "amodule-1.0.0", "bmodule-1.0.0", "cmodule-1.0.0" ) );
         handler.setCommand( command );
@@ -83,7 +83,7 @@ public class GetModulesHandlerTest
         File bModuleDir = new File( modulesDir, "bmodule-1.0.0" );
         aModuleDir.mkdir();
         bModuleDir.mkdir();
-        Mockito.when( systemConfig.getModuleDir() ).thenReturn( modulesDir );
+        Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Module aModule = createModule( "amodule-1.0.0" );
         Module bModule = createModule( "bmodule-1.0.0" );
         Mockito.when( moduleImporter.importModuleFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
@@ -106,7 +106,7 @@ public class GetModulesHandlerTest
         File bModuleDir = new File( modulesDir, "bmodule-1.0.0" );
         aModuleDir.mkdir();
         bModuleDir.mkdir();
-        Mockito.when( systemConfig.getModuleDir() ).thenReturn( modulesDir );
+        Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Module aModule = createModule( "amodule-1.0.0" );
         Module bModule = createModule( "bmodule-1.0.0" );
         Mockito.when( moduleImporter.importModuleFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );

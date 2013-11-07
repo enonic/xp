@@ -23,7 +23,7 @@ public class GetModuleHandler
     public void handle()
         throws Exception
     {
-        final File modulesDir = systemConfig.getModuleDir();
+        final File modulesDir = systemConfig.getModulesDir();
         final ModuleKey moduleKey = command.getModuleKey();
         final File moduleDir = new File( modulesDir, moduleKey.toString() );
         if ( moduleDir.exists() )

@@ -44,7 +44,7 @@ public class UpdateModuleHandlerTest
 
         systemConfig = Mockito.mock( SystemConfig.class );
 
-        when( systemConfig.getModuleDir() ).thenReturn( Files.createTempDirectory( "module" ).toFile() );
+        when( systemConfig.getModulesDir() ).thenReturn( Files.createTempDirectory( "module" ).toFile() );
 
         handler = new UpdateModuleHandler();
         handler.setContext( this.context );
@@ -58,7 +58,7 @@ public class UpdateModuleHandlerTest
     {
         try
         {
-            FileUtils.deleteDirectory( systemConfig.getModuleDir() );
+            FileUtils.deleteDirectory( systemConfig.getModulesDir() );
         }
         catch ( IOException e )
         {
@@ -91,7 +91,7 @@ public class UpdateModuleHandlerTest
         // setup
         ModuleKey moduleKey = ModuleKey.from( "foomodule-1.0.0" );
         Module module = createModule( moduleKey );
-        Path moduleDir = new ModuleExporter().exportModuleToDirectory( module, systemConfig.getModuleDir().toPath() );
+        Path moduleDir = new ModuleExporter().exportModuleToDirectory( module, systemConfig.getModulesDir().toPath() );
 
         final UpdateModule command = Commands.module().update().
             module( moduleKey ).
@@ -146,7 +146,7 @@ public class UpdateModuleHandlerTest
         // setup
         ModuleKey moduleKey = ModuleKey.from( "foomodule-1.0.0" );
         Module module = createModule( moduleKey );
-        Path moduleDir = new ModuleExporter().exportModuleToDirectory( module, systemConfig.getModuleDir().toPath() );
+        Path moduleDir = new ModuleExporter().exportModuleToDirectory( module, systemConfig.getModulesDir().toPath() );
 
         final UpdateModule command = Commands.module().update().
             module( moduleKey ).

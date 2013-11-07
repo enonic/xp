@@ -29,7 +29,7 @@ public class GetModuleResourceHandler
         final ModuleResourceKey moduleResourceKey = command.getResourceKey();
         final ModuleKey moduleKey = moduleResourceKey.getModuleKey();
 
-        final Path moduleDirPath = systemConfig.getModuleDir().toPath();
+        final Path moduleDirPath = systemConfig.getModulesDir().toPath();
         final Path modulePath = moduleDirPath.resolve( moduleKey.toString() );
         if ( !Files.isDirectory( modulePath ) )
         {

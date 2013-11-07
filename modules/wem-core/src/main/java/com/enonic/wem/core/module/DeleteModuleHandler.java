@@ -21,7 +21,7 @@ public class DeleteModuleHandler
     public void handle()
         throws Exception
     {
-        final File modulesDir = systemConfig.getModuleDir();
+        final File modulesDir = systemConfig.getModulesDir();
         final File moduleDir = new File( modulesDir, command.getModule().toString() );
         boolean deleted = false;
         if ( moduleDir.exists() )

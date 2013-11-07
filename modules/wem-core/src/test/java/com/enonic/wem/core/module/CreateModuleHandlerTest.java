@@ -42,7 +42,7 @@ public class CreateModuleHandlerTest
         super.initialize();
 
         systemConfig = Mockito.mock( SystemConfig.class );
-        when( systemConfig.getModuleDir() ).thenReturn( java.nio.file.Files.createTempDirectory( "module" ).toFile() );
+        when( systemConfig.getModulesDir() ).thenReturn( java.nio.file.Files.createTempDirectory( "module" ).toFile() );
         handler = new CreateModuleHandler();
         handler.setContext( this.context );
         handler.setSystemConfig( systemConfig );
@@ -54,7 +54,7 @@ public class CreateModuleHandlerTest
     {
         try
         {
-            FileUtils.deleteDirectory( systemConfig.getModuleDir() );
+            FileUtils.deleteDirectory( systemConfig.getModulesDir() );
         }
         catch ( IOException e )
         {
@@ -104,7 +104,7 @@ public class CreateModuleHandlerTest
         assertEquals( "[modulefoo-1.0.0, modulebar-1.2.3]", moduleCreated.getModuleDependencies().toString() );
         assertEquals( ContentTypeNames.from( "article" ), moduleCreated.getContentTypeDependencies() );
 
-        final Path expectedModuleDir = systemConfig.getModuleDir().toPath().resolve( "modulename-1.0.0" );
+        final Path expectedModuleDir = systemConfig.getModulesDir().toPath().resolve( "modulename-1.0.0" );
         assertTrue( "Module directory not found: " + expectedModuleDir, Files.isDirectory( expectedModuleDir ) );
         final Path moduleXmlPath = expectedModuleDir.resolve( Module.MODULE_XML );
         assertTrue( "Module xml not found: " + moduleXmlPath, Files.isRegularFile( moduleXmlPath ) );
@@ -164,7 +164,7 @@ public class CreateModuleHandlerTest
         assertEquals( "[modulefoo-1.0.0, modulebar-1.2.3]", moduleCreated.getModuleDependencies().toString() );
         assertEquals( ContentTypeNames.from( "article" ), moduleCreated.getContentTypeDependencies() );
 
-        final Path expectedModuleDir = systemConfig.getModuleDir().toPath().resolve( "modulename-1.0.0" );
+        final Path expectedModuleDir = systemConfig.getModulesDir().toPath().resolve( "modulename-1.0.0" );
         assertTrue( "Module directory not found: " + expectedModuleDir, Files.isDirectory( expectedModuleDir ) );
         final Path moduleXmlPath = expectedModuleDir.resolve( Module.MODULE_XML );
         assertTrue( "Module xml not found: " + moduleXmlPath, Files.isRegularFile( moduleXmlPath ) );

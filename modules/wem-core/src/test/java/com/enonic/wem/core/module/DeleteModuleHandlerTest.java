@@ -47,7 +47,7 @@ public class DeleteModuleHandlerTest
 
         assertTrue( moduleDir.exists() );
 
-        Mockito.when( systemConfig.getModuleDir() ).thenReturn( modulesDir );
+        Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 
         DeleteModule command = Commands.module().delete().module( ModuleKey.from( "foomodule-1.0.0" ) );
         handler.setCommand( command );
@@ -67,7 +67,7 @@ public class DeleteModuleHandlerTest
         final File moduleDir = new File( modulesDir, "foomodule-1.2.0" );
         moduleDir.mkdir();
 
-        Mockito.when( systemConfig.getModuleDir() ).thenReturn( modulesDir );
+        Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 
         DeleteModule command = Commands.module().delete().module( ModuleKey.from( "foomodule-1.0.0" ) );
         handler.setCommand( command );

@@ -24,7 +24,7 @@ public final class ControllerFactory
     {
         final Resource javascriptResource = retrieveJavascriptResource( javascriptResourceKey );
         final String javascriptSource = getJavascriptSource( javascriptResource );
-        final Controller controller = new Controller( javascriptSource, config, context );
+        final Controller controller = new JavascriptController( javascriptSource, config, context );
         return controller;
     }
 

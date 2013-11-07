@@ -12,7 +12,9 @@ public interface SystemConfig
 
     public File getConfigDir();
 
-    public File getModuleDir();
+    public File getModulesDir();
+
+    public File getTemplatesDir();
 
     public boolean isMigrateEnabled();
 
