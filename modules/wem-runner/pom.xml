@@ -16,7 +16,7 @@
   <name>Enonic WEM Runner</name>
 
   <properties>
-    <tomcat.version>7.0.42</tomcat.version>
+    <tomcat.version>8.0.0-RC5</tomcat.version>
   </properties>
 
   <dependencies>

@@ -3,8 +3,9 @@ package com.enonic.wem.runner;
 import java.io.File;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.naming.resources.VirtualDirContext;
+import org.apache.catalina.webresources.StandardRoot;
 
 public final class Runner
 {
@@ -62,13 +63,17 @@ public final class Runner
         this.tomcat.setHostname( "localhost" );
         this.tomcat.setBaseDir( new File( "./modules/wem-runner/target/tomcat" ).getAbsolutePath() );
 
-        final VirtualDirContext resources = new VirtualDirContext();
-        resources.setDocBase( docBase );
-        resources.setExtraResourcePaths( "/=" + generatedDir );
-
         final Context context = this.tomcat.addWebapp( "/", docBase );
-        context.setResources( resources );
         context.setJarScanner( new NopJarScanner() );
+        context.setDocBase( docBase );
+
+        final StandardRoot standardRoot = new StandardRoot( context );
+        context.setResources( standardRoot );
+
+        if ( new File( generatedDir ).isDirectory() )
+        {
+            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", generatedDir, null, null );
+        }
     }
 
     private void doStart()
