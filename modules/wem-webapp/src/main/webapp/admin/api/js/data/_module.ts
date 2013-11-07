@@ -7,3 +7,4 @@
 ///<reference path='Value.ts' />
 ///<reference path='Property.ts' />
 ///<reference path='DataFactory.ts' />
+///<reference path='RootDataSet.ts' />

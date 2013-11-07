@@ -61,9 +61,13 @@
 ///<reference path='form/layout/_module.ts' />
 
 
+///<reference path='module/_module.ts' />
+
 ///<reference path='node/_module.ts' />
 ///<reference path='item/_module.ts' />
 
+///<reference path='content/site/json/_module.ts' />
+///<reference path='content/site/_module.ts' />
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/_module.ts' />
 
