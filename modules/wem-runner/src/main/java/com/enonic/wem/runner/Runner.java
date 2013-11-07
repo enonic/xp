@@ -7,7 +7,7 @@ import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.StandardRoot;
 
-public final class Runner
+final class Runner
 {
     private final Tomcat tomcat;
 
