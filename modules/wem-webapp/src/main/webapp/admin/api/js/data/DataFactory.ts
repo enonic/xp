@@ -2,17 +2,17 @@ module api_data {
 
     export class DataFactory {
 
-        public static createRootDataSet(dataArray:api_data_json.DataJson[]):api_content.ContentData {
+        public static createRootDataSet(dataArray:api_data_json.DataTypeWrapperJson[]):api_content.ContentData {
 
             var rootDataSet = new api_data.RootDataSet();
 
             if (dataArray != null) {
-                dataArray.forEach((dataJson:api_data_json.DataJson) => {
-                    if (dataJson.type == "DataSet") {
-                        rootDataSet.addData(api_data.DataFactory.createDataSet(<api_data_json.DataSetJson>dataJson));
+                dataArray.forEach((dataJson:api_data_json.DataTypeWrapperJson) => {
+                    if (dataJson.DataSet) {
+                        rootDataSet.addData(api_data.DataFactory.createDataSet(dataJson.DataSet));
                     }
                     else {
-                        rootDataSet.addData(api_data.DataFactory.createProperty(<api_data_json.PropertyJson>dataJson));
+                        rootDataSet.addData(api_data.DataFactory.createProperty(dataJson.Property));
                     }
                 });
             }
@@ -22,13 +22,13 @@ module api_data {
         public static createDataSet(dataSetJson:api_data_json.DataSetJson):DataSet {
 
             var dataSet = new DataSet(dataSetJson.name);
-            dataSetJson.value.forEach((dataJson:api_data_json.DataJson) => {
+            dataSetJson.value.forEach((dataJson:api_data_json.DataTypeWrapperJson) => {
 
-                if (dataJson.type == "DataSet") {
-                    dataSet.addData(DataFactory.createDataSet(<api_data_json.DataSetJson>dataJson));
+                if (dataJson.DataSet) {
+                    dataSet.addData(api_data.DataFactory.createDataSet(dataJson.DataSet));
                 }
                 else {
-                    dataSet.addData(DataFactory.createProperty(<api_data_json.PropertyJson>dataJson));
+                    dataSet.addData(api_data.DataFactory.createProperty(dataJson.Property));
                 }
             });
             return dataSet;

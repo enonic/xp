@@ -17,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
@@ -30,6 +29,7 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.json.content.ContentListJson;
 import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
+import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractFacetedContentListJson;
 import com.enonic.wem.admin.rest.resource.content.json.AttachmentParams;
@@ -367,7 +367,7 @@ public class ContentResource
     {
         try
         {
-            ContentData contentData = parseContentData( params.getQualifiedContentTypeName(), params.getContentData() );
+            ContentData contentData = parseContentData( params.getContentData() );
             final List<Attachment> attachments = parseAttachments( params.getAttachments() );
 
             final CreateContent createContent = Commands.content().create().
@@ -399,7 +399,7 @@ public class ContentResource
     {
         try
         {
-            final ContentData contentData = parseContentData( params.getQualifiedContentTypeName(), params.getContentData() );
+            final ContentData contentData = parseContentData( params.getContentData() );
             final List<Attachment> attachments = parseAttachments( params.getAttachments() );
 
             final UpdateContent updateContent = Commands.content().update().
@@ -419,7 +419,7 @@ public class ContentResource
                 client.execute( Commands.content().rename().contentId( params.getContentId() ).newName( params.getContentName() ) );
             }
 
-            if ( updateContentResult == UpdateContentResult.SUCCESS || updateContentResult == null)
+            if ( updateContentResult == UpdateContentResult.SUCCESS || updateContentResult == null )
             {
                 final Content content = doGetContent( params.getContentId() );
                 return CreateOrUpdateContentJsonResult.result( new ContentJson( content ) );
@@ -437,9 +437,14 @@ public class ContentResource
     }
 
 
-    private ContentData parseContentData( ContentTypeName qualifiedContentTypeName, JsonNode contentData )
+    private ContentData parseContentData( final List<DataJson> dataJsonList )
     {
-        return contentDataJsonSerializer.parse( contentData );
+        final ContentData contentData = new ContentData();
+        for ( DataJson dataJson : dataJsonList )
+        {
+            contentData.add( dataJson.getData() );
+        }
+        return contentData;
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentParams> attachmentParamsList )

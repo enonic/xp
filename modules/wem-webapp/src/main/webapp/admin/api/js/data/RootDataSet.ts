@@ -6,9 +6,9 @@ module api_data{
             super("");
         }
 
-        toJson():api_data_json.DataJson[] {
+        toJson():api_data_json.DataTypeWrapperJson[] {
 
-            var dataArray:api_data_json.DataJson[] = [];
+            var dataArray:api_data_json.DataTypeWrapperJson[] = [];
 
             this.getDataArray().forEach((data:api_data.Data) => {
                 dataArray.push(data.toDataJson());

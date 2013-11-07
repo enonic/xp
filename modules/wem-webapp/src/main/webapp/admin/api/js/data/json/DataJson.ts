@@ -4,8 +4,6 @@ module api_data_json{
 
         name:string;
 
-        path:string;
-
         type:string;
     }
 }

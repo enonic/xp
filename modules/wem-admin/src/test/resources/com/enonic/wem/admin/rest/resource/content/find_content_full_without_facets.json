@@ -5,29 +5,33 @@
             "creator": "user:system:admin",
             "data": [
                 {
-                    "name": "myProperty",
-                    "path": "myProperty",
-                    "type": "DateTime",
-                    "value": "2013-08-23T12:55:09"
+                    "Property": {
+                        "name": "myProperty",
+                        "type": "DateTime",
+                        "value": "2013-08-23T12:55:09"
+                    }
                 },
                 {
-                    "name": "mySet",
-                    "path": "mySet",
-                    "type": "DataSet",
-                    "value": [
-                        {
-                            "name": "setProperty1",
-                            "path": "mySet.setProperty1",
-                            "type": "Long",
-                            "value": "1"
-                        },
-                        {
-                            "name": "setProperty2",
-                            "path": "mySet.setProperty2",
-                            "type": "Long",
-                            "value": "2"
-                        }
-                    ]
+                    "DataSet": {
+                        "name": "mySet",
+                        "type": "DataSet",
+                        "value": [
+                            {
+                                "Property": {
+                                    "name": "setProperty1",
+                                    "type": "Long",
+                                    "value": "1"
+                                }
+                            },
+                            {
+                                "Property": {
+                                    "name": "setProperty2",
+                                    "type": "Long",
+                                    "value": "2"
+                                }
+                            }
+                        ]
+                    }
                 }
             ],
             "deletable": true,
@@ -50,35 +54,40 @@
             "creator": "user:system:admin",
             "data": [
                 {
-                    "name": "myArray",
-                    "path": "myArray[0]",
-                    "type": "String",
-                    "value": "arrayValue1"
+                    "Property": {
+                        "name": "myArray",
+                        "type": "String",
+                        "value": "arrayValue1"
+                    }
                 },
                 {
-                    "name": "myArray",
-                    "path": "myArray[1]",
-                    "type": "String",
-                    "value": "arrayValue2"
+                    "Property": {
+                        "name": "myArray",
+                        "type": "String",
+                        "value": "arrayValue2"
+                    }
                 },
                 {
-                    "name": "mySetWithArray",
-                    "path": "mySetWithArray",
-                    "type": "DataSet",
-                    "value": [
-                        {
-                            "name": "myArray",
-                            "path": "mySetWithArray.myArray[0]",
-                            "type": "Double",
-                            "value": "3.14159"
-                        },
-                        {
-                            "name": "myArray",
-                            "path": "mySetWithArray.myArray[1]",
-                            "type": "Double",
-                            "value": "1.333"
-                        }
-                    ]
+                    "DataSet": {
+                        "name": "mySetWithArray",
+                        "type": "DataSet",
+                        "value": [
+                            {
+                                "Property": {
+                                    "name": "myArray",
+                                    "type": "Double",
+                                    "value": "3.14159"
+                                }
+                            },
+                            {
+                                "Property": {
+                                    "name": "myArray",
+                                    "type": "Double",
+                                    "value": "1.333"
+                                }
+                            }
+                        ]
+                    }
                 }
             ],
             "deletable": true,

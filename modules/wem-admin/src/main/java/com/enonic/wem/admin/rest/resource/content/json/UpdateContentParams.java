@@ -3,8 +3,7 @@ package com.enonic.wem.admin.rest.resource.content.json;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
+import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -17,7 +16,7 @@ public class UpdateContentParams
 
     private ContentTypeName qualifiedContentTypeName;
 
-    private JsonNode contentData;
+    private List<DataJson> contentData;
 
     private FormJson form;
 
@@ -55,7 +54,12 @@ public class UpdateContentParams
         this.qualifiedContentTypeName = ContentTypeName.from( qualifiedContentTypeName );
     }
 
-    public JsonNode getContentData()
+    public void setContentData( final List<DataJson> contentData )
+    {
+        this.contentData = contentData;
+    }
+
+    public List<DataJson> getContentData()
     {
         return contentData;
     }
@@ -68,11 +72,6 @@ public class UpdateContentParams
     public void setForm( final FormJson form )
     {
         this.form = form;
-    }
-
-    public void setContentData( final JsonNode contentData )
-    {
-        this.contentData = contentData;
     }
 
     public String getDisplayName()

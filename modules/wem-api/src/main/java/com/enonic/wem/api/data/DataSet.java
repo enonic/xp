@@ -579,6 +579,16 @@ public class DataSet
             return this;
         }
 
+        public Builder data( final Iterable<Data> datas )
+        {
+            for ( Data data : datas )
+            {
+                dataList.add( data );
+            }
+            return this;
+        }
+
+
         public DataSet build()
         {
             return new DataSet( this );

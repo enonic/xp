@@ -81,19 +81,13 @@ module api_data{
             return matches;
         }
 
-        toDataSetJson():api_data_json.DataSetJson {
+        toDataSetJson():api_data_json.DataTypeWrapperJson {
 
-            var dataArray:api_data_json.DataJson[] = [];
-
-            this.getDataArray().forEach((data:Data) => {
-                dataArray.push(data.toDataJson());
-            });
-
-            return <api_data_json.DataSetJson>{
+            return <api_data_json.DataTypeWrapperJson>{ DataSet: <api_data_json.DataSetJson>{
                 name: this.getName(),
                 type: "DataSet",
-                value: dataArray
-            };
+                value: Data.datasToJson(this.getDataArray())
+            }};
         }
 
         equals(dataSet:DataSet):boolean {

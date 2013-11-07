@@ -7,7 +7,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.enonic.wem.admin.json.data.DataJson;
+import com.enonic.wem.admin.json.data.PropertyJson;
 import com.enonic.wem.admin.json.form.FormJson;
+import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
@@ -55,10 +58,13 @@ public class CreateContentParamsTest
             build();
         formItems.add( formItemSet );
 
+        List<DataJson> contentData = new ArrayList<>();
+        contentData.add( new PropertyJson( new Property.String( "A", "B" ) ) );
+
         CreateContentParams params = new CreateContentParams();
         params.setContentName( "test" );
         params.setDisplayName( "Test" );
-        params.setContentData( jsonTestHelper.objectMapper().createArrayNode() );
+        params.setContentData( contentData );
         params.setForm( new FormJson( Form.newForm().addFormItems( formItems ).build() ) );
 
         String expectedSerialization = jsonTestHelper.objectToString( params );

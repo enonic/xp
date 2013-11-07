@@ -30,13 +30,13 @@ module api_data{
             return this.value.getType();
         }
 
-        toPropertyJson():api_data_json.PropertyJson {
+        toPropertyJson():api_data_json.DataTypeWrapperJson {
 
-            return <api_data_json.PropertyJson>{
+            return <api_data_json.DataTypeWrapperJson>{ Property:{
                 name: this.getName(),
                 type: this.getType().toString(),
                 value: this.getString()
-            };
+            }};
         }
 
         equals(property:Property):boolean {
