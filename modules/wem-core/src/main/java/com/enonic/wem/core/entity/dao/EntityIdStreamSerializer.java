@@ -9,7 +9,7 @@ import com.hazelcast.nio.serialization.StreamSerializer;
 import com.enonic.wem.api.entity.EntityId;
 
 public final class EntityIdStreamSerializer
-implements StreamSerializer<EntityId>
+    implements StreamSerializer<EntityId>
 {
     @Override
     public int getTypeId()

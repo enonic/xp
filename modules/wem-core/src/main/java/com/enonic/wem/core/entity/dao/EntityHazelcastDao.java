@@ -5,19 +5,25 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
 import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFound;
-import com.enonic.wem.core.hazelcast.HazelcastProvider;
 
 public class EntityHazelcastDao
     implements EntityDao
 {
     public static final String ENTITY_MAP_NAME = "Entity";
 
-    private HazelcastProvider hazelCastProvider;
+    private final IMap<EntityId, Entity> entityMap;
+
+    @Inject
+    public EntityHazelcastDao( final HazelcastInstance hazelcastInstance )
+    {
+        this.entityMap = hazelcastInstance.getMap( ENTITY_MAP_NAME );
+    }
 
     @Override
     public Entity create( final CreateEntityArgs args )
@@ -30,7 +36,6 @@ public class EntityHazelcastDao
 
         final Entity persistedEntity = entityBuilder.build();
 
-        final IMap<EntityId, Entity> entityMap = hazelCastProvider.get().getMap( ENTITY_MAP_NAME );
         final Entity previous = entityMap.putIfAbsent( persistedEntity.id(), persistedEntity );
         if ( previous != null )
         {
@@ -44,7 +49,6 @@ public class EntityHazelcastDao
     @Override
     public void update( final UpdateEntityArgs args )
     {
-        final IMap<EntityId, Entity> entityMap = hazelCastProvider.get().getMap( ENTITY_MAP_NAME );
         final Entity persisted = entityMap.get( args.entityToUpdate );
         if ( persisted == null )
         {
@@ -63,7 +67,6 @@ public class EntityHazelcastDao
     @Override
     public Entity getById( final EntityId id )
     {
-        final IMap<EntityId, Entity> entityMap = hazelCastProvider.get().getMap( ENTITY_MAP_NAME );
         final Entity entity = entityMap.get( id );
         if ( entity == null )
         {
@@ -75,13 +78,6 @@ public class EntityHazelcastDao
     @Override
     public void deleteById( final EntityId id )
     {
-        final IMap<EntityId, Entity> entityMap = hazelCastProvider.get().getMap( ENTITY_MAP_NAME );
         entityMap.delete( id );
-    }
-
-    @Inject
-    public void setHazelCastProvider( final HazelcastProvider hazelCastProvider )
-    {
-        this.hazelCastProvider = hazelCastProvider;
     }
 }

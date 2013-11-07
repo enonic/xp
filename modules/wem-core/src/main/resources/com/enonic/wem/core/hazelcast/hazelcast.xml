@@ -3,16 +3,6 @@
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-
-  <serialization>
-
-    <serializers>
-      <serializer type-class="com.enonic.wem.api.entity.EntityId">com.enonic.wem.core.entity.dao.EntityIdStreamSerializer</serializer>
-      <serializer type-class="com.enonic.wem.api.entity.Entity">com.enonic.wem.core.entity.dao.EntityStreamSerializer</serializer>
-    </serializers>
-
-  </serialization>
-
   <network>
     <port auto-increment="true" port-count="100">5701</port>
     <outbound-ports>

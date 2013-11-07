@@ -12,6 +12,8 @@ import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.SerializationConfig;
 import com.hazelcast.config.SerializerConfig;
 import com.hazelcast.config.TcpIpConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -19,7 +21,6 @@ import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.NoEntityWithIdFound;
-import com.enonic.wem.core.hazelcast.HazelcastProvider;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -28,15 +29,13 @@ import static junit.framework.Assert.assertNull;
 
 public class EntityHazelcastDaoTest
 {
-    private HazelcastProvider hazelcastProvider;
+    private HazelcastInstance hazelcastInstance;
 
     private EntityHazelcastDao dao;
 
     @Before
     public void before()
     {
-        dao = new EntityHazelcastDao();
-
         Config config = new Config();
         SerializationConfig serializationConfig = config.getSerializationConfig();
 
@@ -58,14 +57,15 @@ public class EntityHazelcastDaoTest
         networkJoinConfig.setMulticastConfig( new MulticastConfig().setEnabled( false ) );
         networkConfig.setJoin( networkJoinConfig );
         config.getServicesConfig().setEnableDefaults( true );
-        hazelcastProvider = new HazelcastProvider( config );
-        dao.setHazelCastProvider( hazelcastProvider );
+
+        hazelcastInstance = Hazelcast.newHazelcastInstance( config );
+        dao = new EntityHazelcastDao( hazelcastInstance );
     }
 
     @After
     public void after()
     {
-        hazelcastProvider.get().shutdown();
+        hazelcastInstance.shutdown();
     }
 
     @Test
