@@ -32,12 +32,12 @@ module app_wizard {
             return this.form;
         }
 
-        getContentData() {
-            return this.formView.rebuildContentData();
+        getFormView():api_form.FormView {
+            return this.formView;
         }
 
-        getInputViewByPath(path:api_data.DataPath):api_form_input.InputView {
-            return this.formView.getInputViewByPath(path);
+        getContentData() {
+            return this.formView.rebuildContentData();
         }
     }
 }
