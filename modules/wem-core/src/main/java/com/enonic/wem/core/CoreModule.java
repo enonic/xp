@@ -8,6 +8,7 @@ import com.enonic.wem.core.client.ClientModule;
 import com.enonic.wem.core.config.ConfigModule;
 import com.enonic.wem.core.content.ContentModule;
 import com.enonic.wem.core.entity.EntityModule;
+import com.enonic.wem.core.event.EventModule;
 import com.enonic.wem.core.hazelcast.HazelcastModule;
 import com.enonic.wem.core.home.HomeModule;
 import com.enonic.wem.core.index.IndexModule;
@@ -29,6 +30,7 @@ public final class CoreModule
     protected void configure()
     {
         install( new ServletModule() );
+        install( new EventModule() );
 
         install( new HomeModule() );
         install( new ConfigModule() );
