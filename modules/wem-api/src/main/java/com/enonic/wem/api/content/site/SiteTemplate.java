@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.site;
 
 
 import com.enonic.wem.api.module.ModuleKeys;
@@ -14,9 +14,7 @@ public final class SiteTemplate
 
     private final String description;
 
-    private final String vendorName;
-
-    private final String vendorUrl;
+    private final Vendor vendor;
 
     private final ModuleKeys modules;
 
@@ -29,8 +27,7 @@ public final class SiteTemplate
         this.id = builder.id;
         this.displayName = builder.displayName;
         this.description = builder.description;
-        this.vendorName = builder.vendorName;
-        this.vendorUrl = builder.vendorUrl;
+        this.vendor = builder.vendor;
         this.modules = builder.modules;
         this.supportedContentTypes = builder.supportedContentTypes;
         this.rootContentType = builder.rootContentType;
@@ -51,14 +48,9 @@ public final class SiteTemplate
         return description;
     }
 
-    public String getVendorName()
+    public Vendor getVendor()
     {
-        return vendorName;
-    }
-
-    public String getVendorUrl()
-    {
-        return vendorUrl;
+        return vendor;
     }
 
     public ModuleKeys getModules()
@@ -89,9 +81,7 @@ public final class SiteTemplate
 
         private String description;
 
-        private String vendorName;
-
-        private String vendorUrl;
+        private Vendor vendor;
 
         private ModuleKeys modules = ModuleKeys.empty();
 
@@ -121,15 +111,9 @@ public final class SiteTemplate
             return this;
         }
 
-        public Builder vendorName( final String vendorName )
+        public Builder vendor( final Vendor vendor )
         {
-            this.vendorName = vendorName;
-            return this;
-        }
-
-        public Builder vendorUrl( final String vendorUrl )
-        {
-            this.vendorUrl = vendorUrl;
+            this.vendor = vendor;
             return this;
         }
 

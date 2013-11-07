@@ -2,6 +2,8 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateId;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -9,6 +11,7 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
+import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static org.junit.Assert.*;
 
 public class TemplatesTest
@@ -74,8 +77,7 @@ public class TemplatesTest
             id( new SiteTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
             displayName( "Enonic Intranet" ).
             description( "A social intranet for the Enterprise" ).
-            vendorName( "Enonic" ).
-            vendorUrl( "https://www.enonic.com" ).
+            vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                       "com.enonic.resolvers-1.0.0" ) ).
             supportedContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).

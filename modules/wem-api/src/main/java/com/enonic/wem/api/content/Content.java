@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -46,6 +47,8 @@ public final class Content
 
     private final ImmutableList<ContentId> childrenIds;
 
+    private final Site site;
+
     private final Page page;
 
     private Content( final Builder builder )
@@ -63,6 +66,7 @@ public final class Content
         this.owner = builder.owner;
         this.versionId = builder.versionId;
         this.childrenIds = builder.childrenIdsBuilder.build();
+        this.site = builder.site;
         this.page = builder.page;
     }
 
@@ -153,6 +157,16 @@ public final class Content
         return !childrenIds.isEmpty();
     }
 
+    public Site getSite()
+    {
+        return site;
+    }
+
+    public Page getPage()
+    {
+        return page;
+    }
+
     @Override
     public void checkIllegalEdit( final Content to )
         throws IllegalEditException
@@ -165,6 +179,8 @@ public final class Content
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
         IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
         IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
+        IllegalEdit.check( "site", this.getSite(), to.getSite(), Content.class );
+        IllegalEdit.check( "page", this.getPage(), to.getPage(), Content.class );
     }
 
     @Override
@@ -222,6 +238,8 @@ public final class Content
 
         private ImmutableList.Builder<ContentId> childrenIdsBuilder;
 
+        private Site site;
+
         private Page page;
 
         public Builder()
@@ -247,6 +265,7 @@ public final class Content
             this.versionId = content.versionId;
             this.childrenIdsBuilder = ImmutableList.builder();
             this.childrenIdsBuilder.addAll( content.childrenIds );
+            this.site = content.site;
             this.page = content.page;
         }
 
@@ -341,6 +360,12 @@ public final class Content
         public Builder page( final Page page )
         {
             this.page = page;
+            return this;
+        }
+
+        public Builder site( final Site site )
+        {
+            this.site = site;
             return this;
         }
 
