@@ -3,7 +3,6 @@
 ///<reference path="SchemaDeleteJson.ts"/>
 
 ///<reference path="SchemaResourceRequest.ts"/>
-///<reference path="DeleteSchemaRequest.ts"/>
 
 ///<reference path="SchemaCreatedEvent.ts"/>
 ///<reference path="SchemaUpdatedEvent.ts"/>

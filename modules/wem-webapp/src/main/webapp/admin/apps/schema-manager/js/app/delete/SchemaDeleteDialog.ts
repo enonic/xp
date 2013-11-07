@@ -11,36 +11,54 @@ module app_delete {
 
             this.getDeleteAction().addExecutionListener(() => {
 
-                var deleteRequest = new api_schema.DeleteSchemaRequest();
-                for (var i = 0; i < this.schemaToDelete.length; i++) {
-                    deleteRequest.addQualifiedName(this.schemaToDelete[i].getName());
-                }
+                var CONTENT_TYPE = api_schema.SchemaKind.CONTENT_TYPE.toString(),
+                    RELATIONSHIP_TYPE = api_schema.SchemaKind.RELATIONSHIP_TYPE.toString(),
+                    MIXIN = api_schema.SchemaKind.MIXIN.toString();
 
-                var type:api_schema.SchemaKind = this.schemaToDelete.length > 0 ? this.schemaToDelete[0].getSchemaKind() : null;
-                deleteRequest.setType(type);
+                var qualifiedNames = {};
+                qualifiedNames[CONTENT_TYPE] = [];
+                qualifiedNames[RELATIONSHIP_TYPE] = [];
+                qualifiedNames[MIXIN] = [];
 
-                deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {
-                    var json = jsonResponse.getJson();
-                    var deletedSchemas:api_schema.Schema[] = [];
-                    var names:string[] = [];
-
-                    for (var i = 0; i < json.successes.length; i++) {
-                        var name = json.successes[i].name;
-                        names.push(name);
-
-                        this.schemaToDelete.forEach((schema:api_schema.Schema) => {
-                            if(schema.getName() == name) {
-                                deletedSchemas.push(schema);
-                            }
-                        })
-                    }
-
-                    this.close();
-
-                    api_notify.showFeedback('Schema [' + names.join(', ') + '] deleted!');
-
-                    new api_schema.SchemaDeletedEvent(deletedSchemas).fire();
+                this.schemaToDelete.forEach((schema:api_schema.Schema) => {
+                    qualifiedNames[schema.getSchemaKind().toString()].push(schema.getName());
                 });
+
+                var deleteContentTypeRequest = qualifiedNames[CONTENT_TYPE].length == 0 ? null :
+                    new api_schema_content.DeleteContentTypeRequest(qualifiedNames[CONTENT_TYPE]).send();
+                var deleteRelationshipTypeRequest = qualifiedNames[RELATIONSHIP_TYPE].length == 0 ? null :
+                    new api_schema_relationshiptype.DeleteRelationshipTypeRequest(qualifiedNames[RELATIONSHIP_TYPE]).send();
+                var deleteMixinRequest = qualifiedNames[MIXIN] ? null :
+                    new api_schema_mixin.DeleteMixinRequest(qualifiedNames[MIXIN]).send();
+
+                jQuery.when(deleteContentTypeRequest, deleteRelationshipTypeRequest, deleteMixinRequest)
+                    .done((contentTypeResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>,
+                            relationshipTypeResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>,
+                            mixinResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+                        var successes = [].concat(contentTypeResponse ? contentTypeResponse.getResult().successes : []);
+                        successes = successes.concat(relationshipTypeResponse ? relationshipTypeResponse.getResult().successes : []);
+                        successes = successes.concat(mixinResponse ? mixinResponse.getResult().successes : []);
+
+                        var deletedSchemas:api_schema.Schema[] = [];
+                        var names:string[] = [];
+
+                        for (var i = 0; i < successes.length; i++) {
+                            var name = successes[i].name;
+                            names.push(name);
+
+                            this.schemaToDelete.forEach((schema:api_schema.Schema) => {
+                                if(schema.getName() == name) {
+                                    deletedSchemas.push(schema);
+                                }
+                            })
+                        }
+
+                        this.close();
+
+                        api_notify.showFeedback('Schema [' + names.join(', ') + '] deleted!');
+
+                        new api_schema.SchemaDeletedEvent(deletedSchemas).fire();
+                    });
             });
         }
 
