@@ -1,9 +1,9 @@
 package com.enonic.wem.xml;
 
-public final class XmlEception
+public final class XmlException
     extends RuntimeException
 {
-    public XmlEception( final Throwable cause )
+    public XmlException( final Throwable cause )
     {
         super( cause );
     }
