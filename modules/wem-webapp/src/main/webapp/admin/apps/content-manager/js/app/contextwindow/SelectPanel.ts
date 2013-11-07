@@ -7,8 +7,8 @@ module app_contextwindow {
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
 
-        constructor(contextWindow:ContextWindow) {
-            super("SelectPanel");
+        constructor(contextWindow:ContextWindow, idPrefix:string = "SelectPanel") {
+            super(idPrefix);
             this.addClass("select-panel");
             this.contextWindow = contextWindow;
 

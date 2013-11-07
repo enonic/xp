@@ -20,9 +20,17 @@ module api_form{
 
         private inputTypeConfig:any;
 
-        constructor(json:api_form_json.InputJson) {
+        constructor(name:string) {
+            super(name);
+        }
 
-            super(json.name);
+        static fromJson(json:api_form_json.InputJson):Input {
+            var input = new Input(json.name);
+            input.setFromJson(json);
+            return input;
+        }
+
+        private setFromJson(json:api_form_json.InputJson) {
             this.inputType = InputTypeName.parseInputTypeName(json.inputType.name);
             this.label = json.label;
             this.immutable = json.immutable;
@@ -68,6 +76,14 @@ module api_form{
 
         getInputTypeConfig():any {
             return this.inputTypeConfig;
+        }
+
+        setInputType(inputTypeName:InputTypeName) {
+            this.inputType = inputTypeName;
+        }
+
+        setOccurences(minimum:number, maximum:number) {
+            this.occurrences = new Occurrences({"maximum": maximum, "minimum": minimum})
         }
 
         public toInputJson():api_form_json.FormItemTypeWrapperJson {

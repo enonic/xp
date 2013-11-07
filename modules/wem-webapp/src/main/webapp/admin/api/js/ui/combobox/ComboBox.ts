@@ -245,12 +245,13 @@ module api_ui_combobox {
             this.dropdownData.subscribeOnRowCountChanged((e, args) => {
                 this.updateDropdownStyles();
             });
-
-            this.selectedOptionsView.addListener({
-                onSelectedOptionRemoved: (item:OptionData<T>) => {
-                    this.removeSelectedItem(item);
-                }
-            });
+            if (this.selectedOptionsView) {
+                this.selectedOptionsView.addListener({
+                    onSelectedOptionRemoved: (item:OptionData<T>) => {
+                        this.removeSelectedItem(item);
+                    }
+                });
+            }
         }
 
         private selectRow(index:number) {

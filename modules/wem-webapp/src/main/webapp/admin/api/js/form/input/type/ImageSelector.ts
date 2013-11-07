@@ -36,6 +36,7 @@ module api_form_input_type {
                 },
                 onLoaded: (contentSummaries:api_content.ContentSummary[]) => {
                     var options = this.createOptions(contentSummaries);
+                    console.log("options", options);
                     this.comboBox.setOptions(options);
                 }
             });

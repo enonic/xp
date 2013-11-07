@@ -23,7 +23,7 @@ module api_form{
         }
 
         static createInput(inputJson:api_form_json.InputJson):Input {
-            return new Input(inputJson);
+            return Input.fromJson(inputJson);
         }
 
         static createFormItemSet(formItemSetJson:api_form_json.FormItemSetJson):FormItemSet {
