@@ -47,13 +47,16 @@
 </head>
 <body>
 
+<!-- Configuration -->
+<script type="text/javascript">
+    var CONFIG = {
+        baseUri: '${baseUrl}'
+    };
+</script>
+
 <!-- API -->
 <script type="text/javascript" src="${baseUrl}/admin/api/js/api.js"></script>
 
-<!-- Configuration -->
-<script type="text/javascript">
-    api_util.baseUri = '${baseUrl}';
-</script>
 
 <script type="text/javascript" src="${baseUrl}/admin/resources/js/less.js"></script>
 

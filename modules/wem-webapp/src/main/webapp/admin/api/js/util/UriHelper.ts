@@ -1,10 +1,4 @@
 module api_util {
-
-    /**
-     * Base URI for administration console. Set from the initializing html page.
-     */
-    export var baseUri:string = '../../..';
-
     /**
      * Creates an URI from supplied path.
      *
@@ -12,7 +6,7 @@ module api_util {
      * @returns {string} the URI (base + path).
      */
     export function getUri(path:string):string {
-        return this.baseUri + '/' + path;
+        return window['CONFIG']['baseUri'] + '/' + path;
     }
 
     /**
