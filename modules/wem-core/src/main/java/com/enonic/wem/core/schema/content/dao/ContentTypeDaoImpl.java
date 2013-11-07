@@ -1,20 +1,9 @@
 package com.enonic.wem.core.schema.content.dao;
 
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import com.enonic.wem.api.exception.SystemException;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-
-
-public final class ContentTypeDaoImpl
-    implements ContentTypeDao
-{
-
+final class ContentTypeDaoImpl
+ {
+      /*
     @Override
     public void create( final ContentType contentType, final Session session )
     {
@@ -93,4 +82,5 @@ public final class ContentTypeDaoImpl
             throw new SystemException( e, "Unable to retrieve content type [{0}]", contentTypeName );
         }
     }
+    */
 }

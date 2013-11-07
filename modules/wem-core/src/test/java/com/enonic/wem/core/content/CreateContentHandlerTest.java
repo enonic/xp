@@ -15,6 +15,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -28,7 +29,6 @@ import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
@@ -42,8 +42,6 @@ public class CreateContentHandlerTest
     private CreateContentHandler handler;
 
     private ContentDao contentDao;
-
-    private ContentTypeDao contentTypeDao;
 
     private RelationshipService relationshipService;
 
@@ -59,14 +57,12 @@ public class CreateContentHandlerTest
         super.initialize();
 
         contentDao = Mockito.mock( ContentDao.class );
-        contentTypeDao = Mockito.mock( ContentTypeDao.class );
         relationshipService = Mockito.mock( RelationshipService.class );
         indexService = Mockito.mock( IndexService.class );
 
         handler = new CreateContentHandler();
         handler.setContext( this.context );
         handler.setContentDao( contentDao );
-        handler.setContentTypeDao( contentTypeDao );
         handler.setRelationshipService( relationshipService );
         handler.setIndexService( indexService );
 
@@ -77,7 +73,8 @@ public class CreateContentHandlerTest
             name( myContentTypeName ).
             superType( ContentTypeName.structured() ).
             build();
-        Mockito.when( contentTypeDao.select( myContentTypeName, session ) ).thenReturn( myContentType );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( myContentType );
 
         DateTimeUtils.setCurrentMillisFixed( CREATED_TIME.getMillis() );
     }
@@ -107,6 +104,9 @@ public class CreateContentHandlerTest
         contentData.setProperty( "mySet.myRelatedContent", new Value.ContentId( ContentId.from( "124" ) ) );
         command.contentData( contentData );
 
+        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn(
+            ContentType.newContentType().name( "my_content_type" ).build() );
+
         // exercise
         this.handler.setCommand( command );
         this.handler.handle();
@@ -135,6 +135,9 @@ public class CreateContentHandlerTest
         command.parentContentPath( ContentPath.from( rootPath ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
         command.contentType( ContentTypeName.from( "my_content_type" ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn(
+            ContentType.newContentType().name( "my_content_type" ).build() );
 
         // exercise
         this.handler.setCommand( command );

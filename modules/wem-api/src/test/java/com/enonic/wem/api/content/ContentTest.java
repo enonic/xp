@@ -238,7 +238,7 @@ public class ContentTest
         contentType.form().addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
         content.getContentData().setProperty( "myTags", new Value.String( "A line of text" ) );
 
         assertEquals( "A line of text", content.getContentData().getProperty( "myTags" ).getObject() );
@@ -249,7 +249,7 @@ public class ContentTest
     {
         contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).required( true ).build() );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
         content.getContentData().setProperty( "myPhone", new Value.String( "98327891" ) );
 
         assertEquals( "98327891", content.getContentData().getProperty( "myPhone" ).getObject() );
@@ -265,7 +265,7 @@ public class ContentTest
         formItemSet.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "name", new Value.String( "Ola Nordmann" ) );
         contentData.setProperty( "personalia.eyeColour", new Value.String( "Blue" ) );
@@ -288,7 +288,7 @@ public class ContentTest
         formItemSet.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "name", new Value.String( "Norske" ) );
         contentData.setProperty( "personalia[0].name", new Value.String( "Ola Nordmann" ) );
@@ -373,7 +373,7 @@ public class ContentTest
         child.add( features );
         contentType.form().addFormItem( child );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "child[0].name", new Value.String( "Joachim" ) );
         contentData.setProperty( "child[0].age", new Value.String( "9" ) );
@@ -424,7 +424,7 @@ public class ContentTest
         personalia.addFormItem( tatoos );
         contentType.form().addFormItem( personalia );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
 
         // exercise
         ContentData contentData = content.getContentData();

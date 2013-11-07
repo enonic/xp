@@ -71,7 +71,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
             return;
         }
 
-        if ( !exists( relationshipType.getQualifiedName() ) )
+        if ( !exists( relationshipType.getContentTypeName() ) )
         {
             createRelationshipType( context, relationshipType, icon );
         }
@@ -84,7 +84,7 @@ public final class CreateOrUpdateRelationshipTypeRpcHandler
     private void updateRelationshipType( final JsonRpcContext context, final RelationshipType relationshipType, final Icon icon )
     {
         final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-        updateCommand.selector( relationshipType.getQualifiedName() );
+        updateCommand.selector( relationshipType.getContentTypeName() );
         updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
             displayName( relationshipType.getDisplayName() ).
             fromSemantic( relationshipType.getFromSemantic() ).

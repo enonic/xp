@@ -96,18 +96,16 @@ public abstract class FormItem
         return name;
     }
 
-    static FormItem from( final FormItem formItem, final MixinReference mixinReference )
+    static FormItem from( final FormItem formItem )
     {
         final FormItem newFormItem;
         if ( formItem instanceof FormItemSet )
         {
-            newFormItem = newFormItemSet( (FormItemSet) formItem ).
-                name( mixinReference.getName() ).build();
+            newFormItem = newFormItemSet( (FormItemSet) formItem ).build();
         }
         else if ( formItem instanceof Input )
         {
-            newFormItem = newInput( (Input) formItem ).
-                name( mixinReference.getName() ).build();
+            newFormItem = newInput( (Input) formItem ).build();
         }
         else
         {

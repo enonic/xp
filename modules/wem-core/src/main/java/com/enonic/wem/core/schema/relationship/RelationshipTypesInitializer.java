@@ -47,7 +47,7 @@ public class RelationshipTypesInitializer
         for ( RelationshipType relationshipType : SYSTEM_TYPES )
         {
             relationshipType = RelationshipType.newRelationshipType( relationshipType ).
-                icon( loadIcon( relationshipType.getQualifiedName().toString() ) ).
+                icon( loadIcon( relationshipType.getContentTypeName().toString() ) ).
                 build();
             createOrUpdate( relationshipType );
         }
@@ -55,7 +55,7 @@ public class RelationshipTypesInitializer
 
     private void createOrUpdate( final RelationshipType relationshipType )
     {
-        final RelationshipTypeNames qualifiedNames = RelationshipTypeNames.from( relationshipType.getQualifiedName() );
+        final RelationshipTypeNames qualifiedNames = RelationshipTypeNames.from( relationshipType.getContentTypeName() );
         final boolean notExists = client.execute( Commands.relationshipType().exists().qualifiedNames( qualifiedNames ) ).isEmpty();
         if ( notExists )
         {
@@ -74,7 +74,7 @@ public class RelationshipTypesInitializer
         else
         {
             final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-            updateCommand.selector( relationshipType.getQualifiedName() );
+            updateCommand.selector( relationshipType.getContentTypeName() );
             updateCommand.editor( newSetRelationshipTypeEditor().
                 displayName( relationshipType.getDisplayName() ).
                 fromSemantic( relationshipType.getFromSemantic() ).

@@ -23,7 +23,6 @@ import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.MockContentTypeFetcher;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.AbstractSerializerTest;
 
@@ -37,8 +36,6 @@ import static org.junit.Assert.*;
 public abstract class AbstractContentSerializerTest
     extends AbstractSerializerTest
 {
-
-    protected MockContentTypeFetcher contentTypeFetcher = new MockContentTypeFetcher();
 
     private ContentSerializer serializer;
 
@@ -292,9 +289,9 @@ public abstract class AbstractContentSerializerTest
             addFormItem( newInput().name( "myText" ).inputType( InputTypes.TEXT_LINE ).required( true ).build() ).
             addFormItem( formItemSet ).
             build();
-        contentTypeFetcher.add( contentType );
+        //contentTypeFetcher.add( contentType );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
         content.getContentData().setProperty( "myText", new Value.String( "A value" ) );
         content.getContentData().setProperty( "formItemSet.myText", new Value.String( "A another value" ) );
 
@@ -321,9 +318,9 @@ public abstract class AbstractContentSerializerTest
             name( "my_content_type" ).
             addFormItem( formItemSet ).
             build();
-        contentTypeFetcher.add( contentType );
+        //contentTypeFetcher.add( contentType );
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
         content.getContentData().setProperty( "formItemSet[0].myText", new Value.String( "Value 1" ) );
         content.getContentData().setProperty( "formItemSet[1].myText", new Value.String( "Value 2" ) );
 
@@ -352,7 +349,7 @@ public abstract class AbstractContentSerializerTest
             addFormItem( layout ).
             build();
 
-        Content content = newContent().type( contentType.getQualifiedName() ).build();
+        Content content = newContent().type( contentType.getContentTypeName() ).build();
         content.getContentData().setProperty( "myText", new Value.String( "A value" ) );
 
         String serialized = toString( content );

@@ -41,7 +41,7 @@ public class MixinsInitializer
 
     private void storeMixin( final Mixin mixin )
     {
-        final GetMixin getMixin = Commands.mixin().get().byName( mixin.getQualifiedName() );
+        final GetMixin getMixin = Commands.mixin().get().byName( mixin.getContentTypeName() );
 
         final Mixin existingMixin = client.execute( getMixin );
         if ( existingMixin == null )
@@ -56,7 +56,7 @@ public class MixinsInitializer
         else
         {
             final UpdateMixin updateMixin = Commands.mixin().update();
-            updateMixin.name( mixin.getQualifiedName() );
+            updateMixin.name( mixin.getContentTypeName() );
             updateMixin.editor( SetMixinEditor.newSetMixinEditor().
                 displayName( mixin.getDisplayName() ).
                 formItems( mixin.getFormItems() ).

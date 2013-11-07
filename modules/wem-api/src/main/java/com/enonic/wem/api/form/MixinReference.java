@@ -64,7 +64,8 @@ public class MixinReference
 
         public Builder( final Mixin mixin )
         {
-            this.mixinName = mixin.getQualifiedName();
+            this.name = mixin.getContentTypeName().toString();
+            this.mixinName = mixin.getContentTypeName();
         }
 
         public Builder name( String value )
@@ -75,7 +76,7 @@ public class MixinReference
 
         public Builder mixin( final Mixin mixin )
         {
-            this.mixinName = mixin.getQualifiedName();
+            this.mixinName = mixin.getContentTypeName();
             return this;
         }
 
@@ -96,4 +97,6 @@ public class MixinReference
             return new MixinReference( this );
         }
     }
+
+
 }

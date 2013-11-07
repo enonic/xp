@@ -1,68 +1,80 @@
 package com.enonic.wem.core.schema.content;
 
-import javax.jcr.Session;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.GetNodesByParent;
+import com.enonic.wem.api.command.entity.GetNodesByPaths;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
-import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
 
 public class GetContentTypesHandlerTest
     extends AbstractCommandHandlerTest
 {
     private GetContentTypesHandler handler;
 
-    private ContentTypeDao contentTypeDao;
-
     @Before
     public void setUp()
         throws Exception
     {
+        super.client = Mockito.mock( Client.class );
         super.initialize();
-
-        contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new GetContentTypesHandler();
         handler.setContext( this.context );
-        handler.setContentTypeDao( contentTypeDao );
     }
 
     @Test
-    public void select()
+    public void handle()
         throws Exception
     {
-        // setup
-        final ContentType contentType = newContentType().
-            name( "my_content_type" ).
-            displayName( "My content type" ).
-            setAbstract( false ).
+        final Nodes nodes = Nodes.newNodes().
+            add( Node.newNode().
+                name( "content_type_1" ).
+                id( EntityId.from( "1" ) ).
+                property( "displayName", "DisplayName" ).
+                build() ).
+            add( Node.newNode().
+                name( "content_type_2" ).
+                id( EntityId.from( "2" ) ).
+                property( "displayName", "DisplayName2" ).
+                build() ).
             build();
-        final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeDao.select( isA( ContentTypeNames.class ), any( Session.class ) ) ).thenReturn( contentTypes );
 
-        // exercise
-        final ContentTypeNames names = ContentTypeNames.from( "my_content_type" );
-        final GetContentTypes command = Commands.contentType().get().qualifiedNames( names );
+        Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn( nodes );
+        Mockito.when( client.execute( Mockito.isA( GetNodesByPaths.class ) ) ).thenReturn( nodes );
 
+        // Exercise:
+        GetContentTypes command =
+            Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( "content_type_1", "content_type_2" ) );
+        command.validate();
         this.handler.setCommand( command );
         this.handler.handle();
 
-        // verify
-        verify( contentTypeDao, atLeastOnce() ).select( Mockito.isA( ContentTypeNames.class ), Mockito.any( Session.class ) );
-        assertEquals( 1, command.getResult().getSize() );
+        // Verify
+        final ContentTypes result = command.getResult();
+        assertEquals( 2, result.getSize() );
+        verifyContentType( "content_type_1", "DisplayName", result );
+        verifyContentType( "content_type_2", "DisplayName2", result );
+    }
+
+    private void verifyContentType( final String contentTypeName, final String displayName, final ContentTypes result )
+    {
+        final ContentType contentType = result.getContentType( ContentTypeName.from( contentTypeName ) );
+        assertNotNull( contentType );
+        assertEquals( contentTypeName, contentType.getName() );
+        assertEquals( displayName, contentType.getDisplayName() );
     }
 
 }

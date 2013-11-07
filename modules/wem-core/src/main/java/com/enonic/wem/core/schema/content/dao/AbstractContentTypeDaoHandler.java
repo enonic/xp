@@ -28,7 +28,7 @@ abstract class AbstractContentTypeDaoHandler
 
     protected final String getNodePath( final ContentTypeName contentTypeName )
     {
-        return ContentTypeDao.CONTENT_TYPES_PATH + contentTypeName.toString();
+        return "/content-types" + contentTypeName.toString();
     }
 
     protected final boolean contentTypeExists( final ContentTypeName contentTypeName )

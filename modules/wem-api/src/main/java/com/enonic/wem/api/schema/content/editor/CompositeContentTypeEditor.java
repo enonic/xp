@@ -13,11 +13,11 @@ final class CompositeContentTypeEditor
     }
 
     @Override
-    public ContentType edit( final ContentType content )
+    public ContentType edit( final ContentType contentType )
         throws Exception
     {
         boolean modified = false;
-        ContentType contentEdited = content;
+        ContentType contentEdited = contentType;
         for ( final ContentTypeEditor editor : this.editors )
         {
             final ContentType updatedContent = editor.edit( contentEdited );

@@ -51,7 +51,7 @@ public class ContentInitializer
 
     private ContentType getContentType( ContentTypeName name )
     {
-        return this.client.execute( Commands.contentType().get().qualifiedNames( ContentTypeNames.from( name ) ) ).first();
+        return this.client.execute( Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( name ) ) ).first();
     }
 
 }

@@ -52,7 +52,7 @@ public class ContentTypeJsonSerializer
         objectNode.put( "name", contentType.getName() );
         if ( includeQualifiedName )
         {
-            objectNode.put( "qualifiedName", contentType.getQualifiedName().toString() );
+            objectNode.put( "qualifiedName", contentType.getContentTypeName().toString() );
         }
         objectNode.put( "displayName", contentType.getDisplayName() );
         objectNode.put( "contentDisplayNameScript", contentType.getContentDisplayNameScript() );

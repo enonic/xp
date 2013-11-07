@@ -2,20 +2,18 @@ package com.enonic.wem.core.schema.content;
 
 import javax.inject.Inject;
 
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
 import com.enonic.wem.api.exception.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 
 public final class DeleteContentTypeHandler
     extends CommandHandler<DeleteContentType>
 {
-    private ContentTypeDao contentTypeDao;
-
     private ContentDao contentDao;
 
     @Override
@@ -31,7 +29,8 @@ public final class DeleteContentTypeHandler
         {
             try
             {
-                contentTypeDao.delete( contentTypeName, context.getJcrSession() );
+                context.getClient().execute( Commands.contentType().delete().name( contentTypeName ) );
+
                 context.getJcrSession().save();
                 command.setResult( DeleteContentTypeResult.SUCCESS );
             }
@@ -40,12 +39,6 @@ public final class DeleteContentTypeHandler
                 command.setResult( DeleteContentTypeResult.NOT_FOUND );
             }
         }
-    }
-
-    @Inject
-    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
-    {
-        this.contentTypeDao = contentTypeDao;
     }
 
     @Inject

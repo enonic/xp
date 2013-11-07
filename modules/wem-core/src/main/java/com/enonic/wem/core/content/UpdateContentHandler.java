@@ -43,7 +43,6 @@ import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
@@ -57,8 +56,6 @@ public class UpdateContentHandler
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
     private ContentDao contentDao;
-
-    private ContentTypeDao contentTypeDao;
 
     private RelationshipService relationshipService;
 
@@ -176,7 +173,9 @@ public class UpdateContentHandler
                                     final ContentId contentId )
         throws Exception
     {
-        final ContentType contentType = contentTypeDao.select( content.getType(), session );
+        final ContentType contentType =
+            context.getClient().execute( Commands.contentType().get().byName().contentTypeName( content.getType() ) );
+
         if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
         {
             Attachment mediaAttachment = command.getAttachment( content.getName() );
@@ -279,12 +278,6 @@ public class UpdateContentHandler
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
-    }
-
-    @Inject
-    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
-    {
-        this.contentTypeDao = contentTypeDao;
     }
 
     @Inject

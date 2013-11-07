@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.admin.rpc.AbstractRpcHandlerTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -67,7 +67,7 @@ public class ListContentTypesRpcHandlerTest
             addFormItem( inputTextCty2 ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2 );
-        Mockito.when( client.execute( Commands.contentType().get().all() ) ).thenReturn( contentTypes );
+        Mockito.when( client.execute( Mockito.isA( GetAllContentTypes.class ) ) ).thenReturn( contentTypes );
 
         testSuccess( "listContentTypes_result.json" );
     }

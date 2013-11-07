@@ -36,6 +36,7 @@ public final class CreateContentType
         return name;
     }
 
+
     public CreateContentType name( final String name )
     {
         this.name = name;
@@ -129,6 +130,7 @@ public final class CreateContentType
         this.icon = icon;
         return this;
     }
+
 
     public String getContentDisplayNameScript()
     {

@@ -58,11 +58,11 @@ public final class ContentType
     @Override
     public SchemaKey getSchemaKey()
     {
-        return SchemaKey.from( getQualifiedName() );
+        return SchemaKey.from( getContentTypeName() );
     }
 
     @Override
-    public ContentTypeName getQualifiedName()
+    public ContentTypeName getContentTypeName()
     {
         return ContentTypeName.from( getName() );
     }

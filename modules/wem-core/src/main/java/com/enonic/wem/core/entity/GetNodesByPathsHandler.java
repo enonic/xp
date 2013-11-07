@@ -4,6 +4,7 @@ package com.enonic.wem.core.entity;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.entity.GetNodesByPaths;
+import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.command.CommandHandler;
@@ -23,7 +24,14 @@ public class GetNodesByPathsHandler
         final Nodes.Builder nodes = newNodes();
         for ( final NodePath path : command.getPaths() )
         {
-            nodes.add( nodeDao.getNodeByPath( path ) );
+            try
+            {
+                nodes.add( nodeDao.getNodeByPath( path ) );
+            }
+            catch ( NoNodeAtPathFound noNodeAtPathFound )
+            {
+                // Not found
+            }
         }
         command.setResult( nodes.build() );
     }

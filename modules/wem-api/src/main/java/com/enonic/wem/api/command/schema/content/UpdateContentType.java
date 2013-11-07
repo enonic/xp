@@ -14,8 +14,7 @@ public final class UpdateContentType
 
     private ContentTypeEditor editor;
 
-
-    public UpdateContentType qualifiedName( final ContentTypeName qualifiedName )
+    public UpdateContentType contentTypeName( final ContentTypeName qualifiedName )
     {
         this.qualifiedName = qualifiedName;
         return this;
@@ -27,7 +26,7 @@ public final class UpdateContentType
         return this;
     }
 
-    public ContentTypeName getQualifiedName()
+    public ContentTypeName getContentTypeName()
     {
         return qualifiedName;
     }

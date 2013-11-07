@@ -77,7 +77,7 @@ public class CreateOrUpdateContentTypeRpcHandler
             contentType = newContentType( contentType ).icon( icon ).build();
         }
 
-        if ( !contentTypeExists( contentType.getQualifiedName() ) )
+        if ( !contentTypeExists( contentType.getContentTypeName() ) )
         {
             createContentType( context, contentType );
         }
@@ -98,7 +98,7 @@ public class CreateOrUpdateContentTypeRpcHandler
             contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
             form( contentType.form() ).
             build();
-        final UpdateContentType updateCommand = contentType().update().qualifiedName( contentType.getQualifiedName() ).editor( editor );
+        final UpdateContentType updateCommand = contentType().update().contentTypeName( contentType.getContentTypeName() ).editor( editor );
 
         try
         {
@@ -143,7 +143,7 @@ public class CreateOrUpdateContentTypeRpcHandler
 
     private boolean contentTypeExists( final ContentTypeName qualifiedName )
     {
-        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( ContentTypeNames.from( qualifiedName ) );
+        final GetContentTypes getContentTypes = contentType().get(). byNames().contentTypeNames( ContentTypeNames.from( qualifiedName ) );
         return !client.execute( getContentTypes ).isEmpty();
     }
 

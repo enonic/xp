@@ -2,9 +2,9 @@ package com.enonic.wem.api.command.schema.content;
 
 public final class ContentTypeCommands
 {
-    public GetContentTypes get()
+    public ContentTypeGetCommands get()
     {
-        return new GetContentTypes();
+        return new ContentTypeGetCommands();
     }
 
     public CreateContentType create()
@@ -20,16 +20,6 @@ public final class ContentTypeCommands
     public DeleteContentType delete()
     {
         return new DeleteContentType();
-    }
-
-    public GetRootContentTypes getRoots()
-    {
-        return new GetRootContentTypes();
-    }
-
-    public GetChildContentTypes getChildren()
-    {
-        return new GetChildContentTypes();
     }
 
     public ValidateContentType validate()

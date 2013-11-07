@@ -20,6 +20,7 @@ import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
 
 public class NodeIndexDocumentFactory
 {
+
     protected static final String CREATED_TIME_PROPERTY_NAME = "createdTime";
 
     protected static final String CREATOR_PROPERTY_NAME = "creator";
@@ -31,6 +32,8 @@ public class NodeIndexDocumentFactory
     protected static final String PARENT_PROPERTY_NAME = "path";
 
     protected static final String PATH_PROPERTY_NAME = "path";
+
+    public static final String DATA_PROPERTY_PREFIX = "data";
 
     private static final PropertyIndexConfig metadataPropertyIndexConfig = PropertyIndexConfig.newPropertyIndexConfig().
         enabled( true ).
@@ -129,7 +132,7 @@ public class NodeIndexDocumentFactory
                         propertyIndexConfig = defaultPropertyIndexConfig;
                     }
 
-                    builder.addEntries( IndexDocumentItemFactory.create( property, propertyIndexConfig ) );
+                    builder.addEntries( IndexDocumentItemFactory.create( DATA_PROPERTY_PREFIX, property, propertyIndexConfig ) );
                 }
             }
         };

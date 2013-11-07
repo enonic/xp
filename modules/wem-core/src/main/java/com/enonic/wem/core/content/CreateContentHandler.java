@@ -41,7 +41,6 @@ import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
@@ -57,8 +56,6 @@ public class CreateContentHandler
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
     private ContentDao contentDao;
-
-    private ContentTypeDao contentTypeDao;
 
     private RelationshipService relationshipService;
 
@@ -148,7 +145,8 @@ public class CreateContentHandler
                                     final ContentId contentId )
         throws Exception
     {
-        final ContentType contentType = contentTypeDao.select( content.getType(), session );
+        final ContentType contentType = getContentType( content );
+
         if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
         {
             Attachment mediaAttachment = command.getAttachment( content.getName() );
@@ -163,16 +161,21 @@ public class CreateContentHandler
         }
     }
 
+    private ContentType getContentType( final Content content )
+    {
+        return context.getClient().execute( Commands.contentType().get().byName().contentTypeName( content.getType() ) );
+    }
+
     private void checkParentContentAllowsChildren( final ContentPath parentContentPath, final Session session )
     {
         final Content content = contentDao.select( parentContentPath, session );
         if ( content != null )
         {
-            final ContentType contentType = contentTypeDao.select( content.getType(), session );
+            final ContentType contentType = getContentType( content );
             if ( !contentType.allowChildContent() )
             {
                 throw new SystemException( "Content [{0}] of type [{1}] does not allow children", parentContentPath,
-                                           contentType.getQualifiedName() );
+                                           contentType.getContentTypeName() );
             }
         }
     }
@@ -280,12 +283,6 @@ public class CreateContentHandler
     public void setContentDao( final ContentDao contentDao )
     {
         this.contentDao = contentDao;
-    }
-
-    @Inject
-    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
-    {
-        this.contentTypeDao = contentTypeDao;
     }
 
     @Inject

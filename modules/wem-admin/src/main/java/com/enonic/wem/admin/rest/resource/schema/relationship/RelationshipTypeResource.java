@@ -193,7 +193,7 @@ public class RelationshipTypeResource
     private void updateRelationshipType( final RelationshipType relationshipType, final Icon icon )
     {
         final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-        updateCommand.selector( relationshipType.getQualifiedName() );
+        updateCommand.selector( relationshipType.getContentTypeName() );
         updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
             displayName( relationshipType.getDisplayName() ).
             fromSemantic( relationshipType.getFromSemantic() ).

@@ -63,7 +63,7 @@ public class CreateOrUpdateMixinRpcHandler
             return;
         }
 
-        if ( !mixinExists( mixin.getQualifiedName() ) )
+        if ( !mixinExists( mixin.getContentTypeName() ) )
         {
             createMixin( context, mixin, icon );
         }
@@ -81,7 +81,7 @@ public class CreateOrUpdateMixinRpcHandler
             icon( icon ).
             build();
         final UpdateMixin updateCommand = mixin().update().
-            name( mixin.getQualifiedName() ).
+            name( mixin.getContentTypeName() ).
             editor( editor );
         try
         {

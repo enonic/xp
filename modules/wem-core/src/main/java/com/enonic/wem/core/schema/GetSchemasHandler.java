@@ -17,13 +17,11 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 
 public final class GetSchemasHandler
     extends CommandHandler<SchemaTypes>
 {
-    private ContentTypeDao contentTypeDao;
 
     @Override
     public void handle()
@@ -34,7 +32,8 @@ public final class GetSchemasHandler
         final List<Schema> schemaList = Lists.newArrayList();
         if ( command.isIncludeType( SchemaKind.CONTENT_TYPE ) )
         {
-            final ContentTypes contentTypes = contentTypeDao.selectAll( session );
+            final ContentTypes contentTypes = context.getClient().execute( Commands.contentType().get().all() );
+
             Iterables.addAll( schemaList, contentTypes );
         }
 
@@ -55,9 +54,4 @@ public final class GetSchemasHandler
         command.setResult( schemas );
     }
 
-    @Inject
-    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
-    {
-        this.contentTypeDao = contentTypeDao;
-    }
 }

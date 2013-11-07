@@ -11,9 +11,20 @@ import com.enonic.wem.api.entity.PropertyIndexConfig;
 public class IndexDocumentItemFactory
 {
 
+    public static final String PREFIX_SEPARATOR = ".";
+
     public static Set<AbstractIndexDocumentItem> create( final String propertyName, final Value propertyValue,
                                                          PropertyIndexConfig propertyIndexConfig )
     {
+        return doCreate( propertyIndexConfig, propertyName, propertyValue );
+    }
+
+    public static Set<AbstractIndexDocumentItem> create( final String propertyPrefix, final Property property,
+                                                         final PropertyIndexConfig propertyIndexConfig )
+    {
+        final String propertyName = propertyPrefix + PREFIX_SEPARATOR + property.getName();
+        final Value propertyValue = property.getValue();
+
         return doCreate( propertyIndexConfig, propertyName, propertyValue );
     }
 
