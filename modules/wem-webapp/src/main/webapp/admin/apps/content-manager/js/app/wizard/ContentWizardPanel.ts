@@ -141,6 +141,7 @@ module app_wizard {
             // setup displayName and name to be generated automatically
             // if corresponding values are empty
             this.contentWizardHeader.setAutogenerateName(!content.getName());
+
             this.formIcon.setSrc(content.getIconUrl());
             var contentData:api_content.ContentData = content.getContentData();
 
