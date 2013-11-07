@@ -1,5 +1,6 @@
 ///<reference path="Schema.ts"/>
 ///<reference path="SchemaJson.ts"/>
+///<reference path="SchemaDeleteJson.ts"/>
 
 ///<reference path="SchemaResourceRequest.ts"/>
 ///<reference path="DeleteSchemaRequest.ts"/>

@@ -6,4 +6,5 @@
 ///<reference path='GetContentTypeConfigByQualifiedNameRequest.ts' />
 ///<reference path='CreateContentTypeRequest.ts' />
 ///<reference path='UpdateContentTypeRequest.ts' />
+///<reference path='DeleteContentTypeRequest.ts' />
 

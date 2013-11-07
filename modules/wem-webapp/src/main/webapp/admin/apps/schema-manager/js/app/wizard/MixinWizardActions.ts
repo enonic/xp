@@ -12,9 +12,29 @@
 
     export class DeleteMixinAction extends api_ui.Action {
 
-        constructor() {
-            super("Delete");
+        constructor(wizardPanel:api_app_wizard.WizardPanel<api_schema_mixin.Mixin>) {
+            super("Delete", "mod+del");
             this.addExecutionListener(() => {
+                api_ui_dialog.ConfirmationDialog.get()
+                    .setQuestion("Are you sure you want to delete this mixin?")
+                    .setNoCallback(null)
+                    .setYesCallback(() => {
+                        wizardPanel.close();
+                        new api_schema_mixin.DeleteMixinRequest()
+                            .addQualifiedName(wizardPanel.getPersistedItem().getName())
+                            .send()
+                            .done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+                                var json = jsonResponse.getResult();
+
+                                if (json.successes && json.successes.length > 0) {
+                                    var name = json.successes[0].name;
+                                    var deletedMixin = wizardPanel.getPersistedItem();
+
+                                    api_notify.showFeedback('Content [' + name + '] deleted!');
+                                    new api_schema.SchemaDeletedEvent([deletedMixin]).fire();
+                                }
+                            });
+                    }).open();
             });
         }
     }
@@ -32,8 +52,8 @@
 
         constructor(wizardPanel:api_app_wizard.WizardPanel<api_schema_mixin.Mixin>) {
             this.save = new api_app_wizard.SaveAction(wizardPanel);
-            this.duplicate = new DuplicateContentTypeAction();
-            this.delete = new DeleteContentTypeAction();
+            this.duplicate = new DuplicateMixinAction();
+            this.delete = new DeleteMixinAction(wizardPanel);
             this.close = new api_app_wizard.CloseAction(wizardPanel);
         }
 

@@ -5,3 +5,4 @@
 ///<reference path="GetRelationshipTypeConfigByQualifiedNameRequest.ts" />
 ///<reference path="CreateRelationshipTypeRequest.ts" />
 ///<reference path="UpdateRelationshipTypeRequest.ts" />
+///<reference path="DeleteRelationshipTypeRequest.ts" />
