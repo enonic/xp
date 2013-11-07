@@ -107,7 +107,7 @@ public class MixinResource
 
         if ( fetchMixin( params.getName() ) != null )
         {
-            String message = String.format( "Mixin [%s] already exists.", mixin.getQualifiedName() );
+            String message = String.format( "Mixin [%s] already exists.",mixin.getContentTypeName() );
             return CreateOrUpdateSchemaJsonResult.error( message );
         }
 
@@ -135,9 +135,9 @@ public class MixinResource
         final Mixin mixin = parseXml( params.getConfig() );
         final Icon icon = fetchIcon( params.getIconReference() );
 
-        if ( fetchMixin( mixin.getQualifiedName() ) == null )
+        if ( fetchMixin( mixin.getContentTypeName() ) == null )
         {
-            String message = String.format( "Mixin [%s] not found.", mixin.getQualifiedName() );
+            String message = String.format( "Mixin [%s] not found.", mixin.getContentTypeName() );
             return CreateOrUpdateSchemaJsonResult.error( message );
         }
 

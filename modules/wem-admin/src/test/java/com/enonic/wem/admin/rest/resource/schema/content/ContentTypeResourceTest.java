@@ -15,8 +15,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.exception.SystemException;
@@ -26,7 +26,6 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
 import static com.enonic.wem.api.form.FieldSet.newFieldSet;
@@ -90,9 +89,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when(
-            client.execute( Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
-            ContentTypes.from( contentType ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
@@ -163,9 +160,7 @@ public class ContentTypeResourceTest
             addFormItem( myMixinReference ).
             build();
 
-        Mockito.when(
-            client.execute( Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
-            ContentTypes.from( contentType ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
@@ -195,9 +190,7 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when(
-            client.execute( Commands.contentType().get().qualifiedNames( ContentTypeNames.from( MY_CTY_QUALIFIED_NAME ) ) ) ).thenReturn(
-            ContentTypes.from( contentType ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
@@ -225,14 +218,17 @@ public class ContentTypeResourceTest
                 build() ).
             build();
 
-        Mockito.when( client.execute( Commands.contentType().get().all() ) ).thenReturn( ContentTypes.from( contentType ) );
+        Mockito.when( client.execute( Mockito.isA( GetAllContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
         MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
         qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
-        String jsonString =
-            resource().path( "schema/content/list" ).queryParams( qualifiedNames ).queryParam( "format", "JSON" ).queryParam(
-                "mixinReferencesToFormItems", "false" ).get( String.class );
+        String jsonString = resource().
+            path( "schema/content/list" ).
+            queryParams( qualifiedNames ).
+            queryParam( "format", "JSON" ).
+            queryParam( "mixinReferencesToFormItems", "false" ).
+            get( String.class );
 
         // verify
         assertJson( "ContentTypeResourceTest-list_one_contentType_with_only_one_input-result.json", jsonString );
@@ -243,6 +239,7 @@ public class ContentTypeResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+
         String jsonString = resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
                                                                                MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "create_content_type_result.json", jsonString );

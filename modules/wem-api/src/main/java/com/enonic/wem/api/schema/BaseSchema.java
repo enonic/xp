@@ -49,7 +49,7 @@ public abstract class BaseSchema<T extends SchemaName>
         return name != null ? name.toString() : null;
     }
 
-    public abstract T getQualifiedName();
+    public abstract T getContentTypeName();
 
     public String getDisplayName()
     {

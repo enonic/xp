@@ -1,22 +1,14 @@
 package com.enonic.wem.api.schema.content.validator;
 
-import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class ContentTypeValidationError
 {
-    private final ContentType contentType;
-
     private final String validationMessage;
 
-    public ContentTypeValidationError( final String validationMessage, final ContentType contentType )
+    public ContentTypeValidationError( final String validationMessage, final ContentTypeName contentTypeName )
     {
-        this.contentType = contentType;
-        this.validationMessage = buildMessage( contentType, validationMessage );
-    }
-
-    public ContentType getContentType()
-    {
-        return contentType;
+        this.validationMessage = buildMessage( contentTypeName, validationMessage );
     }
 
     public String getErrorMessage()
@@ -24,10 +16,10 @@ public final class ContentTypeValidationError
         return validationMessage;
     }
 
-    private static String buildMessage( final ContentType contentType, final String message )
+    private static String buildMessage( final ContentTypeName contentTypeName, final String message )
     {
         final StringBuilder s = new StringBuilder();
-        s.append( "Invalid content type: [" ).append( contentType.getQualifiedName() ).append( "]: " ).append( message );
+        s.append( "Invalid content type: [" ).append( contentTypeName ).append( "]: " ).append( message );
         return s.toString();
     }
 }

@@ -15,6 +15,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -28,7 +29,6 @@ import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
@@ -46,8 +46,6 @@ public class UpdateContentHandlerTest
 
     private ContentDao contentDao;
 
-    private ContentTypeDao contentTypeDao;
-
     private RelationshipService relationshipService;
 
     @Before
@@ -58,14 +56,12 @@ public class UpdateContentHandlerTest
         super.initialize();
 
         contentDao = Mockito.mock( ContentDao.class );
-        contentTypeDao = Mockito.mock( ContentTypeDao.class );
         relationshipService = Mockito.mock( RelationshipService.class );
         IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new UpdateContentHandler();
         handler.setContext( this.context );
         handler.setContentDao( contentDao );
-        handler.setContentTypeDao( contentTypeDao );
         handler.setRelationshipService( relationshipService );
         handler.setIndexService( indexService );
 
@@ -76,7 +72,9 @@ public class UpdateContentHandlerTest
             name( myContentTypeName ).
             superType( ContentTypeName.structured() ).
             build();
-        Mockito.when( contentTypeDao.select( isA( ContentTypeName.class ), eq( session ) ) ).thenReturn( myContentType );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( myContentType );
+
     }
 
     @Test

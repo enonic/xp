@@ -10,20 +10,18 @@ import com.enonic.wem.api.schema.content.ContentTypes;
 public final class GetContentTypes
     extends Command<ContentTypes>
 {
-    private ContentTypeNames qualifiedNames;
-
-    private boolean getAllContentTypes = false;
+    private ContentTypeNames contentTypeNames;
 
     private boolean mixinReferencesToFormItems = false;
 
-    public ContentTypeNames getQualifiedNames()
+    public ContentTypeNames getContentTypeNames()
     {
-        return this.qualifiedNames;
+        return this.contentTypeNames;
     }
 
-    public GetContentTypes qualifiedNames( final ContentTypeNames qualifiedNames )
+    public GetContentTypes contentTypeNames( final ContentTypeNames contentTypeNames )
     {
-        this.qualifiedNames = qualifiedNames;
+        this.contentTypeNames = contentTypeNames;
         return this;
     }
 
@@ -35,17 +33,6 @@ public final class GetContentTypes
     public GetContentTypes mixinReferencesToFormItems( final boolean value )
     {
         mixinReferencesToFormItems = value;
-        return this;
-    }
-
-    public boolean isGetAll()
-    {
-        return getAllContentTypes;
-    }
-
-    public GetContentTypes all()
-    {
-        getAllContentTypes = true;
         return this;
     }
 
@@ -63,26 +50,18 @@ public final class GetContentTypes
         }
 
         final GetContentTypes that = (GetContentTypes) o;
-        return Objects.equal( this.qualifiedNames, that.qualifiedNames ) && ( this.getAllContentTypes == that.getAllContentTypes );
+        return Objects.equal( this.contentTypeNames, that.contentTypeNames );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedNames, this.getAllContentTypes );
+        return Objects.hashCode( this.contentTypeNames );
     }
 
     @Override
     public void validate()
     {
-        if ( getAllContentTypes )
-        {
-            Preconditions.checkArgument( this.qualifiedNames == null, "Cannot specify both get all and get content type names" );
-        }
-        else
-        {
-            Preconditions.checkNotNull( this.qualifiedNames, "qualifiedNames cannot be null" );
-        }
+        Preconditions.checkNotNull( this.contentTypeNames, "contentTypeNames cannot be null" );
     }
-
 }

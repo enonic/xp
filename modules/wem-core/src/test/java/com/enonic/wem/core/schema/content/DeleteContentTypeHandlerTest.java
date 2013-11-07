@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
@@ -13,21 +14,15 @@ import com.enonic.wem.api.exception.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
 
 public class DeleteContentTypeHandlerTest
     extends AbstractCommandHandlerTest
 {
     private DeleteContentTypeHandler handler;
-
-    private ContentTypeDao contentTypeDao;
 
     private ContentDao contentDao;
 
@@ -35,12 +30,10 @@ public class DeleteContentTypeHandlerTest
     public void setUp()
         throws Exception
     {
+        super.client = Mockito.mock( Client.class );
         super.initialize();
-
-        contentTypeDao = Mockito.mock( ContentTypeDao.class );
         contentDao = Mockito.mock( ContentDao.class );
         handler = new DeleteContentTypeHandler();
-        handler.setContentTypeDao( contentTypeDao );
         handler.setContentDao( contentDao );
         handler.setContext( this.context );
     }
@@ -57,7 +50,9 @@ public class DeleteContentTypeHandlerTest
         this.handler.handle();
 
         // verify
-        Mockito.verify( contentTypeDao, only() ).delete( isA( ContentTypeName.class ), any( Session.class ) );
+        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( DeleteContentType.class ) );
+
+        //    Mockito.verify( contentTypeDao, only() ).delete( isA( ContentTypeName.class ), any( Session.class ) );
 
         DeleteContentTypeResult result = command.getResult();
         assertEquals( DeleteContentTypeResult.SUCCESS, result );
@@ -77,9 +72,6 @@ public class DeleteContentTypeHandlerTest
         this.handler.setCommand( command );
         this.handler.handle();
 
-        // verify
-        Mockito.verify( contentTypeDao, never() ).delete( isA( ContentTypeName.class ), any( Session.class ) );
-
         DeleteContentTypeResult result = command.getResult();
         assertEquals( DeleteContentTypeResult.UNABLE_TO_DELETE, result );
     }
@@ -91,15 +83,13 @@ public class DeleteContentTypeHandlerTest
         // exercise
         final ContentTypeName notFoundName = ContentTypeName.from( "not_found_content_type" );
 
-        Mockito.doThrow( new ContentTypeNotFoundException( notFoundName ) ).when( contentTypeDao ).delete( eq( notFoundName ),
-                                                                                                           any( Session.class ) );
+        Mockito.doThrow( new ContentTypeNotFoundException( notFoundName ) ).
+            when( client).execute( Mockito.isA( DeleteContentType.class ) ) ;
+
         final DeleteContentType command = Commands.contentType().delete().name( notFoundName );
 
         this.handler.setCommand( command );
         this.handler.handle();
-
-        // verify
-        Mockito.verify( contentTypeDao, only() ).delete( isA( ContentTypeName.class ), any( Session.class ) );
 
         DeleteContentTypeResult result = command.getResult();
         assertEquals( DeleteContentTypeResult.NOT_FOUND, result );

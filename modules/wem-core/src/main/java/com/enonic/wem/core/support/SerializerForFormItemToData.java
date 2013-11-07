@@ -19,6 +19,7 @@ import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.Layout;
+import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.Occurrences;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypeConfig;
@@ -50,11 +51,15 @@ public class SerializerForFormItemToData
         {
             return serializeInput( (Input) formItem ).copy();
         }
-        if ( formItem instanceof FormItemSet )
+        else if ( formItem instanceof MixinReference )
+        {
+            return serializeMixinReference( (MixinReference) formItem ).copy();
+        }
+        else if ( formItem instanceof FormItemSet )
         {
             return serializeFormItemSet( (FormItemSet) formItem ).copy();
         }
-        if ( formItem instanceof Layout )
+        else if ( formItem instanceof Layout )
         {
             return serializeLayout( (Layout) formItem );
 
@@ -97,6 +102,33 @@ public class SerializerForFormItemToData
             configXml = new XMLOutputter().outputString( configEl );
         }
         return configXml;
+    }
+
+    private DataSet serializeMixinReference( final MixinReference mixinReference )
+    {
+        DataSet.Builder builder = newDataSet().name( "MixinReference" );
+
+        builder.set( "name", mixinReference.getName(), ValueTypes.STRING );
+        setNotNullData( builder, "mixinName", mixinReference.getMixinName().toString(), ValueTypes.STRING );
+
+        return builder.build();
+    }
+
+    MixinReference deserializeMixinReference( final DataSet dataSet )
+    {
+        final MixinReference.Builder builder = MixinReference.newMixinReference();
+
+        if ( dataSet.hasData( "name" ) )
+        {
+            builder.name( dataSet.getProperty( "name" ).getString() );
+        }
+
+        if ( dataSet.hasData( "mixinName" ) )
+        {
+            builder.mixin( dataSet.getProperty( "mixinName" ).getString() );
+        }
+
+        return builder.build();
     }
 
 
@@ -192,6 +224,10 @@ public class SerializerForFormItemToData
             else if ( "Layout".equals( formItemType ) )
             {
                 return deserializeLayout( formItemAsDataSet );
+            }
+            else if ( "MixinReference".equals( formItemType ) )
+            {
+                return deserializeMixinReference( formItemAsDataSet );
             }
         }
         return null;

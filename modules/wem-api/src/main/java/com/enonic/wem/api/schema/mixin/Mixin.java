@@ -21,11 +21,11 @@ public class Mixin
     @Override
     public SchemaKey getSchemaKey()
     {
-        return SchemaKey.from( getQualifiedName() );
+        return SchemaKey.from( getContentTypeName() );
     }
 
     @Override
-    public MixinName getQualifiedName()
+    public MixinName getContentTypeName()
     {
         return MixinName.from( getName() );
     }

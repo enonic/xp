@@ -119,7 +119,7 @@ public class SchemaResource
 
     private boolean matchesSearchFilter( final Schema schema, final String searchString )
     {
-        final String schemaName = schema.getQualifiedName().toString().toLowerCase();
+        final String schemaName = schema.getContentTypeName().toString().toLowerCase();
         final String displayName = Strings.nullToEmpty( schema.getDisplayName() ).toLowerCase();
         final String searchText = searchString.toLowerCase();
         return searchText.isEmpty() || schemaName.contains( searchText ) || displayName.contains( searchText );

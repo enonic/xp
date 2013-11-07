@@ -1,75 +1,100 @@
 package com.enonic.wem.core.schema.content;
 
-import javax.inject.Inject;
-import javax.jcr.Session;
+import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.NodePaths;
+import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
+import com.enonic.wem.core.schema.content.dao.ContentTypeInheritorResolver;
 
 
 public final class GetContentTypesHandler
-    extends CommandHandler<GetContentTypes>
+    extends AbstractGetContentTypeHandler<GetContentTypes>
 {
-    private ContentTypeDao contentTypeDao;
-
     @Override
     public void handle()
         throws Exception
     {
-        final Session session = context.getJcrSession();
-        final ContentTypes contentTypes;
-        if ( command.isGetAll() )
-        {
-            contentTypes = getAllContentTypes( session );
-        }
-        else
-        {
-            final ContentTypeNames qualifiedNames = command.getQualifiedNames();
-            contentTypes = getContentTypes( session, qualifiedNames );
-        }
+        final List<ContentType> contentTypeList = getContentTypeList();
 
         if ( !command.isMixinReferencesToFormItems() )
         {
-            command.setResult( contentTypes );
+            command.setResult( ContentTypes.from( contentTypeList ) );
         }
         else
         {
-            command.setResult( transformMixinReferences( contentTypes, session ) );
+            command.setResult( transformMixinReferences( ContentTypes.from( contentTypeList ) ) );
         }
     }
 
-    private ContentTypes getAllContentTypes( final Session session )
+    private List<ContentType> getContentTypeList()
     {
-        return contentTypeDao.selectAll( session );
-    }
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( getAllContentTypes() );
 
-    private ContentTypes getContentTypes( final Session session, final ContentTypeNames contentTypeNames )
-    {
-        return contentTypeDao.select( contentTypeNames, session );
-    }
+        final ContentTypeNames contentTypeNames = command.getContentTypeNames();
 
-    private ContentTypes transformMixinReferences( final ContentTypes contentTypes, final Session session )
-    {
-        final MixinReferencesToFormItemsTransformer transformer = new MixinReferencesToFormItemsTransformer( context.getClient() );
-        ContentTypes.Builder transformedContentTypes = ContentTypes.newContentTypes();
-        for ( final ContentType contentType : contentTypes )
+        final List<ContentType> contentTypeList = Lists.newArrayList();
+
+        final Set<NodePath> nodePaths = createNodePaths( contentTypeNames );
+
+        final Nodes nodes = context.getClient().execute( Commands.node().get().byPaths( NodePaths.from( nodePaths ) ) );
+
+        for ( final Node node : nodes )
         {
-            final Form transformedForm = transformer.transformForm( contentType.form() );
-            final ContentType transformedCty = ContentType.newContentType( contentType ).form( transformedForm ).build();
-            transformedContentTypes.add( transformedCty );
+            contentTypeList.add( toContentType( node, contentTypeInheritorResolver ) );
         }
-        return transformedContentTypes.build();
+
+        return contentTypeList;
     }
 
-    @Inject
-    public void setContentTypeDao( final ContentTypeDao contentTypeDao )
+    private Set<NodePath> createNodePaths( final ContentTypeNames contentTypeNames )
     {
-        this.contentTypeDao = contentTypeDao;
+        final Set<NodePath> nodePaths = Sets.newHashSet();
+
+        for ( ContentTypeName contentTypeName : contentTypeNames.getSet() )
+        {
+            nodePaths.add( NodePath.newPath( "/content-types/" + contentTypeName ).build() );
+        }
+        return nodePaths;
     }
+
+    private ContentType toContentType( final Node node, final ContentTypeInheritorResolver contentTypeInheritorResolver )
+    {
+        ContentType contentType = CONTENT_TYPE_NODE_TRANSLATOR.fromNode( node );
+
+        if ( contentTypeInheritorResolver != null )
+        {
+            contentType = ContentType.newContentType( contentType ).
+                inheritors( contentTypeInheritorResolver.resolveInheritors( contentType ).isNotEmpty() ).
+                build();
+        }
+
+        return contentType;
+
+        // TODO: Fix icon
+
+        /*
+        final Icon icon = iconJcrMapper.toIcon( node );
+        return newContentType( contentType ).
+            id( new SchemaId( node.getIdentifier() ) ).
+            icon( icon ).
+            createdTime( JcrHelper.getPropertyDateTime( node, "createdTime" ) ).
+            modifiedTime( JcrHelper.getPropertyDateTime( node, "modifiedTime" ) ).
+            build();
+
+        */
+    }
+
+
 }

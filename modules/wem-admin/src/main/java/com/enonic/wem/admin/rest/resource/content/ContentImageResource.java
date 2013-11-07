@@ -130,7 +130,7 @@ public class ContentImageResource
             return null;
         }
         final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentTypeName );
-        return client.execute( contentType().get().qualifiedNames( qualifiedNames ) ).first();
+        return client.execute( contentType().get(). byNames().contentTypeNames( qualifiedNames ) ).first();
     }
 
     private Content findContent( final ContentId contentId )

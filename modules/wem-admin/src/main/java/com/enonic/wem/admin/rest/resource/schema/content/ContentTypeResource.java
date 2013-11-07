@@ -60,7 +60,7 @@ public class ContentTypeResource
     {
         final ContentTypeName qualifiedName = ContentTypeName.from( qualifiedNameAsString );
         final GetContentTypes getContentTypes = Commands.contentType().get().
-            qualifiedNames( ContentTypeNames.from( qualifiedName ) ).
+            byNames().contentTypeNames( ContentTypeNames.from( qualifiedName ) ).
             mixinReferencesToFormItems( mixinReferencesToFormItems );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
@@ -76,8 +76,9 @@ public class ContentTypeResource
     public ContentTypeConfigJson getConfig( @QueryParam("qualifiedName") final String qualifiedNameAsString )
     {
         final ContentTypeName qualifiedName = ContentTypeName.from( qualifiedNameAsString );
-        final GetContentTypes getContentTypes = Commands.contentType().get().
-            qualifiedNames( ContentTypeNames.from( qualifiedName ) ).
+        final GetContentTypes getContentTypes = Commands.contentType().
+            get().
+            byNames().contentTypeNames( ContentTypeNames.from( qualifiedName ) ).
             mixinReferencesToFormItems( false );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
@@ -140,10 +141,10 @@ public class ContentTypeResource
         {
             ContentType contentType = contentTypeXmlSerializer.toContentType( params.getContentType() );
 
-            if ( contentTypeExists( contentType.getQualifiedName() ) )
+            if ( contentTypeExists( contentType.getContentTypeName() ) )
             {
-                return CreateOrUpdateSchemaJsonResult.error(
-                    "ContentType already exists [" + contentType.getQualifiedName().toString() + "] TODO: make form reload" );
+                throw new IllegalArgumentException(
+                    "ContentType already exists [" + contentType.getContentTypeName().toString() + "] TODO: make form reload" );
             }
 
             final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
@@ -222,7 +223,7 @@ public class ContentTypeResource
             contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
             form( contentType.form() ).
             build();
-        final UpdateContentType updateCommand = contentType().update().qualifiedName( contentType.getQualifiedName() ).editor( editor );
+        final UpdateContentType updateCommand = contentType().update().contentTypeName( contentType.getContentTypeName() ).editor( editor );
 
         try
         {
@@ -255,7 +256,7 @@ public class ContentTypeResource
 
     private boolean contentTypeExists( final ContentTypeName qualifiedName )
     {
-        final GetContentTypes getContentTypes = contentType().get().qualifiedNames( ContentTypeNames.from( qualifiedName ) );
+        final GetContentTypes getContentTypes = contentType().get().byNames().contentTypeNames( ContentTypeNames.from( qualifiedName ) );
         return !client.execute( getContentTypes ).isEmpty();
     }
 

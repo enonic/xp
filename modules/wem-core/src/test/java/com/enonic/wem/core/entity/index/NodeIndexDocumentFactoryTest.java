@@ -143,12 +143,8 @@ public class NodeIndexDocumentFactoryTest
     {
         RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( "a", new Value.String( "myValue" ) );
-        rootDataSet.setProperty( "a/b", new Value.Double( 2.0 ) );
-        rootDataSet.setProperty( "a/b/c", new Value.DateMidnight( DateMidnight.now() ) );
-
-        final String myAnalyzerName = "myAnalyzer";
-
-        DateTime modifiedDateTime = new DateTime( 2013, 01, 02, 03, 04, 05 );
+        rootDataSet.setProperty( "ab", new Value.Double( 2.0 ) );
+        rootDataSet.setProperty( "abc", new Value.DateMidnight( DateMidnight.now() ) );
 
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).
@@ -159,9 +155,9 @@ public class NodeIndexDocumentFactoryTest
 
         final IndexDocument2 indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
-        assertNotNull( indexDocument.getItemWithName( "a", IndexValueType.STRING ) );
-        assertNotNull( indexDocument.getItemWithName( "a/b", IndexValueType.STRING ) );
-        assertNotNull( indexDocument.getItemWithName( "a/b/c", IndexValueType.STRING ) );
+        assertNotNull( indexDocument.getItemWithName( "data.a", IndexValueType.STRING ) );
+        assertNotNull( indexDocument.getItemWithName( "data.ab", IndexValueType.STRING ) );
+        assertNotNull( indexDocument.getItemWithName( "data.abc", IndexValueType.STRING ) );
     }
 
     private IndexDocument2 getIndexDocumentOfType( final Collection<IndexDocument2> indexDocuments, final IndexType indexType )

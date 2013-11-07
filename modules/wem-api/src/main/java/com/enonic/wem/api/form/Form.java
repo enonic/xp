@@ -16,10 +16,17 @@ public final class Form
 
     private Form( final Builder builder )
     {
-        this.formItems = new FormItems( null );
-        for ( final FormItem formItem : builder.formItems )
+        if ( builder.formItems != null )
         {
-            this.formItems.add( formItem );
+            this.formItems = builder.formItems;
+        }
+        else
+        {
+            this.formItems = new FormItems( null );
+            for ( final FormItem formItem : builder.formItemsList )
+            {
+                this.formItems.add( formItem );
+            }
         }
     }
 
@@ -68,6 +75,11 @@ public final class Form
         return formItems.getMixinReference( formItemPath );
     }
 
+    public FormItems getFormItems()
+    {
+        return formItems;
+    }
+
     @Override
     public String toString()
     {
@@ -104,27 +116,29 @@ public final class Form
 
     public static class Builder
     {
-        private List<FormItem> formItems;
+        private FormItems formItems;
+
+        private List<FormItem> formItemsList;
 
         private Builder()
         {
-            this.formItems = new ArrayList<>();
+            this.formItemsList = new ArrayList<>();
         }
 
         private Builder( final Form source )
         {
             Preconditions.checkNotNull( source, "Given form cannot be null" );
 
-            this.formItems = new ArrayList<>();
+            this.formItemsList = new ArrayList<>();
             for ( FormItem formItem : source.formItems )
             {
-                formItems.add( formItem.copy() );
+                formItemsList.add( formItem.copy() );
             }
         }
 
         public Builder addFormItem( final FormItem formItem )
         {
-            this.formItems.add( formItem );
+            this.formItemsList.add( formItem );
             return this;
         }
 
@@ -134,6 +148,12 @@ public final class Form
             {
                 addFormItem( formItem );
             }
+            return this;
+        }
+
+        public Builder addFormItems( final FormItems formItems )
+        {
+            this.formItems = formItems;
             return this;
         }
 

@@ -31,19 +31,6 @@ public class MixinReferencesToFormItemsTransformer
         return transformedForm.build();
     }
 
-    public FormItemSet transformFormItemSet( final FormItemSet formItemSet )
-    {
-        final FormItemSet.Builder transformed = FormItemSet.newFormItemSet( formItemSet );
-        transformed.clearFormItems();
-        final List<FormItem> transformedFormItems = transform( formItemSet );
-
-        for ( final FormItem formItem : transformedFormItems )
-        {
-            transformed.addFormItem( formItem );
-        }
-        return transformed.build();
-    }
-
     private List<FormItem> transform( final Iterable<FormItem> iterable )
     {
         final List<FormItem> formItems = new ArrayList<>();
@@ -55,20 +42,9 @@ public class MixinReferencesToFormItemsTransformer
                 final Mixin mixin = client.execute( Commands.mixin().get().byName( mixinReference.getMixinName() ) );
                 if ( mixin != null )
                 {
-                    FormItems mixinFormItems = mixin.getFormItems();
-                    for ( FormItem mixinFormItem : mixinFormItems )
+                    for ( FormItem mixinFormItem : mixin.getFormItems() )
                     {
-                        FormItem createdFormItem = FormItem.from( mixinFormItem, mixinReference );
-                        if ( createdFormItem instanceof FormItemSet )
-                        {
-                            final FormItemSet formItemSet = (FormItemSet) createdFormItem;
-                            final FormItemSet transformedFormItemSet = transformFormItemSet( formItemSet );
-                            formItems.add( transformedFormItemSet );
-                        }
-                        else
-                        {
-                            formItems.add( createdFormItem );
-                        }
+                        formItems.add( mixinFormItem.copy() );
                     }
                 }
                 else
@@ -76,10 +52,15 @@ public class MixinReferencesToFormItemsTransformer
                     throw new MixinNotFound( mixinReference.getMixinName() );
                 }
             }
+            else if ( formItem instanceof FormItemSet )
+            {
+                final FormItemSet.Builder forItemSetBuilder = FormItemSet.newFormItemSet().name( formItem.getName() );
+                forItemSetBuilder.addFormItems( transform( (FormItemSet) formItem ) );
+                formItems.add( forItemSetBuilder.build() );
+            }
             else
             {
-                formItem.setParent( null );
-                formItems.add( formItem );
+                formItems.add( formItem.copy() );
             }
         }
         return formItems;

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Data;
@@ -19,6 +20,7 @@ import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.form.Input;
+import com.enonic.wem.api.form.MixinReference;
 import com.enonic.wem.api.form.inputtype.InputType;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.support.JsonTestHelper;
@@ -144,6 +146,20 @@ public class SerializerForFormItemToDataTest
         expectedData.add( createFormItemSetData( "form-item-set" ) );
 
         assertDataList( expectedData, generatedData );
+    }
+
+    @Test
+    public void serializeFormItems_given_MixinReference()
+    {
+        final MixinReference mixinReference =
+            MixinReference.newMixinReference().name( "mymixinreference" ).mixin( "mymixinreferencedto" ).build();
+
+        final Data dataSet = serializer.serializeFormItem( mixinReference );
+
+        final MixinReference deserializedMixinReference = serializer.deserializeMixinReference( (DataSet) dataSet );
+
+        Assert.assertEquals( mixinReference.getName(), deserializedMixinReference.getName() );
+        Assert.assertEquals( mixinReference.getMixinName(), deserializedMixinReference.getMixinName() );
     }
 
     private Input createInput( String name, InputType inputType )

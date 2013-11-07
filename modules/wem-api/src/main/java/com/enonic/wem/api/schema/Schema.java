@@ -13,7 +13,7 @@ public interface Schema
 
     String getName();
 
-    Name getQualifiedName();
+    Name getContentTypeName();
 
     String getDisplayName();
 

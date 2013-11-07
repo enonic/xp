@@ -21,7 +21,7 @@ final class ContentTypeDaoHandlerUpdate
     void update( final ContentType contentType )
         throws RepositoryException
     {
-        final ContentTypeName contentTypeName = contentType.getQualifiedName();
+        final ContentTypeName contentTypeName = contentType.getContentTypeName();
         final Node contentTypeNode = getContentTypeNode( contentTypeName );
         if ( contentTypeNode == null )
         {

@@ -9,13 +9,13 @@ import com.enonic.wem.core.schema.content.ContentTypesInitializer;
 import com.enonic.wem.core.schema.content.CreateContentTypeHandler;
 import com.enonic.wem.core.schema.content.DeleteContentTypeHandler;
 import com.enonic.wem.core.schema.content.DemoImagesInitializer;
+import com.enonic.wem.core.schema.content.GetAllContentTypesHandler;
 import com.enonic.wem.core.schema.content.GetChildContentTypesHandler;
+import com.enonic.wem.core.schema.content.GetContentTypeHandler;
 import com.enonic.wem.core.schema.content.GetContentTypesHandler;
 import com.enonic.wem.core.schema.content.GetRootContentTypesHandler;
 import com.enonic.wem.core.schema.content.UpdateContentTypeHandler;
 import com.enonic.wem.core.schema.content.ValidateContentTypeHandler;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDaoImpl;
 import com.enonic.wem.core.schema.mixin.CreateMixinHandler;
 import com.enonic.wem.core.schema.mixin.DeleteMixinHandler;
 import com.enonic.wem.core.schema.mixin.GetMixinHandler;
@@ -37,7 +37,6 @@ public final class SchemaModule
     @Override
     protected void configure()
     {
-        bind( ContentTypeDao.class ).to( ContentTypeDaoImpl.class ).in( Scopes.SINGLETON );
         bind( RelationshipTypeDao.class ).to( RelationshipTypeDaoImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
@@ -55,6 +54,8 @@ public final class SchemaModule
         commands.add( CreateContentTypeHandler.class );
         commands.add( DeleteContentTypeHandler.class );
         commands.add( GetContentTypesHandler.class );
+        commands.add( GetContentTypeHandler.class );
+        commands.add( GetAllContentTypesHandler.class );
         commands.add( GetRootContentTypesHandler.class );
         commands.add( GetChildContentTypesHandler.class );
         commands.add( UpdateContentTypeHandler.class );

@@ -20,7 +20,7 @@ public class RelationshipServiceImpl
     public void syncRelationships( final SyncRelationshipsCommand command )
     {
         final ContentType contentType = command.getClient().execute(
-            Commands.contentType().get().qualifiedNames( ContentTypeNames.from( command.getContentType() ) ) ).first();
+            Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( command.getContentType() ) ) ).first();
 
         final SyncRelationships syncRelationships =
             new SyncRelationships( contentType.form(), command.getContentToUpdate(), command.getContentBeforeEditing(),

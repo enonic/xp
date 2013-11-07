@@ -115,7 +115,7 @@ public class ContentTypesInitializer
         for ( ContentType contentType : SYSTEM_TYPES )
         {
             contentType = newContentType( contentType ).
-                icon( loadIcon( contentType.getQualifiedName().toString() ) ).
+                icon( loadIcon( contentType.getContentTypeName().toString() ) ).
                 build();
             createOrUpdate( contentType );
         }
@@ -132,8 +132,8 @@ public class ContentTypesInitializer
 
     private void createOrUpdate( final ContentType contentType )
     {
-        final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentType.getQualifiedName() );
-        final boolean contentTypeExists = !client.execute( contentType().get().qualifiedNames( qualifiedNames ) ).isEmpty();
+        final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentType.getContentTypeName() );
+        final boolean contentTypeExists = !client.execute( contentType().get().byNames().contentTypeNames( qualifiedNames ) ).isEmpty();
         if ( !contentTypeExists )
         {
             final CreateContentType createCommand = contentType().create().
@@ -160,7 +160,7 @@ public class ContentTypesInitializer
                 contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
                 form( contentType.form() ).
                 build();
-            client.execute( contentType().update().qualifiedName( contentType.getQualifiedName() ).editor( editor ) );
+            client.execute( contentType().update().contentTypeName( contentType.getContentTypeName() ).editor( editor ) );
         }
     }
 

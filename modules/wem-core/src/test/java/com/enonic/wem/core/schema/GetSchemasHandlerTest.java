@@ -1,7 +1,5 @@
 package com.enonic.wem.core.schema;
 
-import javax.jcr.Session;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -9,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.SchemaTypes;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.form.FormItemSet;
@@ -21,7 +20,6 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.schema.content.dao.ContentTypeDao;
 
 import static com.enonic.wem.api.form.FormItemSet.newFormItemSet;
 import static com.enonic.wem.api.form.Input.newInput;
@@ -29,16 +27,11 @@ import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 public class GetSchemasHandlerTest
     extends AbstractCommandHandlerTest
 {
     private GetSchemasHandler handler;
-
-    private ContentTypeDao contentTypeDao;
 
     @Before
     public void setUp()
@@ -47,10 +40,8 @@ public class GetSchemasHandlerTest
         super.client = Mockito.mock( Client.class );
         super.initialize();
 
-        contentTypeDao = Mockito.mock( ContentTypeDao.class );
         handler = new GetSchemasHandler();
         handler.setContext( this.context );
-        handler.setContentTypeDao( contentTypeDao );
     }
 
     @Test
@@ -64,7 +55,8 @@ public class GetSchemasHandlerTest
             setAbstract( false ).
             build();
         final ContentTypes contentTypes = ContentTypes.from( contentType );
-        Mockito.when( contentTypeDao.selectAll( any( Session.class ) ) ).thenReturn( contentTypes );
+
+        Mockito.when( client.execute( Mockito.isA( GetAllContentTypes.class ) ) ).thenReturn( contentTypes );
 
         final FormItemSet formItemSet = newFormItemSet().name( "address" ).addFormItem(
             newInput().inputType( InputTypes.TEXT_LINE ).name( "street" ).build() ).addFormItem(
@@ -92,7 +84,7 @@ public class GetSchemasHandlerTest
         this.handler.handle();
 
         // verify
-        verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
+        //  verify( contentTypeDao, times( 1 ) ).selectAll( Mockito.any( Session.class ) );
         assertEquals( 3, command.getResult().getSize() );
     }
 

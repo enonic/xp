@@ -60,7 +60,7 @@ final class ContentTypeDaoHandlerSelect
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node contentTypesNode = JcrHelper.getNodeOrNull( rootNode, ContentTypeDao.CONTENT_TYPES_PATH );
+        final Node contentTypesNode = JcrHelper.getNodeOrNull( rootNode, "/content-types/");
 
         final List<ContentType> contentTypeList = Lists.newArrayList();
 

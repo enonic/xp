@@ -40,11 +40,11 @@ public final class RelationshipType
     @Override
     public SchemaKey getSchemaKey()
     {
-        return SchemaKey.from( getQualifiedName() );
+        return SchemaKey.from( getContentTypeName() );
     }
 
     @Override
-    public RelationshipTypeName getQualifiedName()
+    public RelationshipTypeName getContentTypeName()
     {
         return RelationshipTypeName.from( getName() );
     }
@@ -90,7 +90,7 @@ public final class RelationshipType
         final RelationshipType that = (RelationshipType) o;
         return Objects.equal( this.getName(), that.getName() ) &&
             Objects.equal( this.getDisplayName(), that.getDisplayName() ) &&
-            Objects.equal( this.getQualifiedName(), that.getQualifiedName() ) &&
+            Objects.equal( this.getContentTypeName(), that.getContentTypeName() ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic ) &&
             Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
@@ -100,7 +100,7 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( getName(), getDisplayName(), getQualifiedName(), fromSemantic, toSemantic, allowedFromTypes,
+        return Objects.hashCode( getName(), getDisplayName(), getContentTypeName(), fromSemantic, toSemantic, allowedFromTypes,
                                  allowedToTypes );
     }
 

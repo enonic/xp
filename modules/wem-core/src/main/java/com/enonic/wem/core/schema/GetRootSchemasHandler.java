@@ -22,7 +22,7 @@ public class GetRootSchemasHandler
         ImmutableList.Builder<Schema> schemas = ImmutableList.builder();
 
         // ContentTypes are nested so query just the root ones
-        final ContentTypes contentTypes = context.getClient().execute( Commands.contentType().getRoots() );
+        final ContentTypes contentTypes = context.getClient().execute( Commands.contentType().get().getRoots() );
         if ( contentTypes.isNotEmpty() )
         {
             schemas.addAll( contentTypes.getList() );

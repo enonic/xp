@@ -21,7 +21,7 @@ final class ContentTypeDaoHandlerCreate
     void create( final ContentType contentType )
         throws RepositoryException
     {
-        final ContentTypeName contentTypeName = contentType.getQualifiedName();
+        final ContentTypeName contentTypeName = contentType.getContentTypeName();
         if ( contentTypeExists( contentTypeName ) )
         {
             throw new SystemException( "Content type already exists: {0}", contentTypeName.toString() );
@@ -35,7 +35,7 @@ final class ContentTypeDaoHandlerCreate
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node contentTypesNode = rootNode.getNode( ContentTypeDao.CONTENT_TYPES_PATH );
+        final Node contentTypesNode = rootNode.getNode( "/content-types/" );
         return JcrHelper.getOrAddNode( contentTypesNode, contentTypeName.toString() );
     }
 
