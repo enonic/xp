@@ -146,7 +146,7 @@ module api_data{
             if (str.indexOf("[") == -1) {
                 return new DataPathElement(str, 0);
             }
-            var name = str.substring(str.indexOf("["));
+            var name = str.substring(0, str.indexOf("["));
             var index = parseInt(str.substring(str.indexOf("[") + 1, str.indexOf("]")));
             return new DataPathElement(name, index);
         }
