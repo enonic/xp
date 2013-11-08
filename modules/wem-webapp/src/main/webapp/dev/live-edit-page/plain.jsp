@@ -20,7 +20,7 @@
   <div class="row-fluid" data-live-edit-type="layout" data-live-edit-key="10016" data-live-edit-name="2 Column Layout">
     <div class="span6" data-live-edit-type="region" data-live-edit-name="Left Column">
       <!-- // -->
-      <%@ include file="../../admin2/live-edit/data/mock-component-10011.html" %>
+      <%@ include file="../../admin/live-edit/data/mock-component-10011.html" %>
 
     </div>
 
