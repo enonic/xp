@@ -20,7 +20,7 @@ import com.enonic.wem.core.schema.content.dao.ContentTypeInheritorResolver;
 
 
 public final class GetContentTypesHandler
-    extends AbstractGetContentTypeHandler<GetContentTypes>
+    extends AbstractContentTypeHandler<GetContentTypes>
 {
     @Override
     public void handle()
@@ -73,27 +73,9 @@ public final class GetContentTypesHandler
     {
         ContentType contentType = CONTENT_TYPE_NODE_TRANSLATOR.fromNode( node );
 
-        if ( contentTypeInheritorResolver != null )
-        {
-            contentType = ContentType.newContentType( contentType ).
-                inheritors( contentTypeInheritorResolver.resolveInheritors( contentType ).isNotEmpty() ).
-                build();
-        }
+        contentType = appendInheritors( contentTypeInheritorResolver, contentType );
 
         return contentType;
-
-        // TODO: Fix icon
-
-        /*
-        final Icon icon = iconJcrMapper.toIcon( node );
-        return newContentType( contentType ).
-            id( new SchemaId( node.getIdentifier() ) ).
-            icon( icon ).
-            createdTime( JcrHelper.getPropertyDateTime( node, "createdTime" ) ).
-            modifiedTime( JcrHelper.getPropertyDateTime( node, "modifiedTime" ) ).
-            build();
-
-        */
     }
 
 

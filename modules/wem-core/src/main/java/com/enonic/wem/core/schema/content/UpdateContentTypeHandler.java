@@ -43,8 +43,6 @@ public final class UpdateContentTypeHandler
             UpdateNode updateNode = CONTENTTYPE_NO_NODE_TRANSLATOR.toUpdateNodeCommand( persistedContentType.getId(), nodeEditor );
             context.getClient().execute( updateNode );
             command.setResult( UpdateContentTypeResult.SUCCESS );
-
-            context.getClient().execute( Commands.contentType().update().contentTypeName( editedContentType.getContentTypeName() ) );
         }
 
         command.setResult( UpdateContentTypeResult.SUCCESS );
@@ -54,7 +52,7 @@ public final class UpdateContentTypeHandler
     {
         final ContentTypeSuperTypeValidator validator =
             ContentTypeSuperTypeValidator.newContentTypeSuperTypeValidator().client( context.getClient() ).build();
-        validator.validate( contentType.getContentTypeName(), contentType.getContentTypeName() );
+        validator.validate( contentType.getContentTypeName(), contentType.getSuperType() );
         final ContentTypeValidationResult validationResult = validator.getResult();
 
         if ( !validationResult.hasErrors() )

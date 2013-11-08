@@ -41,6 +41,11 @@ class NodeJcrMapper
         JcrHelper.setPropertyDateTime( nodeNode, MODIFIED_TIME, node.getModifiedTime() );
         JcrHelper.setPropertyUserKey( nodeNode, MODIFIER, node.getModifier() );
 
+        if ( node.icon() != null )
+        {
+            iconJcrMapper.toJcr( node.icon(), nodeNode );
+        }
+
         final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( node.data() );
         nodeNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
     }
@@ -72,6 +77,8 @@ class NodeJcrMapper
             builder.createdTime( getPropertyDateTime( nodeNode, CREATED_TIME ) );
             builder.modifier( JcrHelper.getPropertyUserKey( nodeNode, MODIFIER ) );
             builder.modifiedTime( getPropertyDateTime( nodeNode, MODIFIED_TIME ) );
+
+            builder.icon( iconJcrMapper.toIcon( nodeNode ) );
 
             final String dataSetAsString = nodeNode.getProperty( ROOT_DATA_SET ).getString();
             final DataSet dataSet = (DataSet) rootDataSetJsonSerializer.toObject( dataSetAsString );

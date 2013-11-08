@@ -3,16 +3,17 @@ package com.enonic.wem.core.schema.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.DeleteNodeByPath;
+import com.enonic.wem.api.command.entity.DeleteNodeResult;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
-import com.enonic.wem.api.exception.ContentTypeNotFoundException;
+import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
 
 public final class DeleteContentTypeHandler
-    extends CommandHandler<DeleteContentType>
+    extends AbstractContentTypeHandler<DeleteContentType>
 {
     private ContentDao contentDao;
 
@@ -27,16 +28,21 @@ public final class DeleteContentTypeHandler
         }
         else
         {
-            try
-            {
-                context.getClient().execute( Commands.contentType().delete().name( contentTypeName ) );
+            final DeleteNodeByPath deleteNodeByPathCommand =
+                Commands.node().delete().byPath( new NodePath( "/content-types/" + command.getName().toString() ) );
 
-                context.getJcrSession().save();
-                command.setResult( DeleteContentTypeResult.SUCCESS );
-            }
-            catch ( ContentTypeNotFoundException e )
+            final DeleteNodeResult result = context.getClient().execute( deleteNodeByPathCommand );
+
+            switch ( result )
             {
-                command.setResult( DeleteContentTypeResult.NOT_FOUND );
+                case SUCCESS:
+                    command.setResult( DeleteContentTypeResult.SUCCESS );
+                    break;
+                case NOT_FOUND:
+                    command.setResult( DeleteContentTypeResult.NOT_FOUND );
+                    break;
+                default:
+                    command.setResult( DeleteContentTypeResult.UNABLE_TO_DELETE );
             }
         }
     }

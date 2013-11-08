@@ -29,10 +29,14 @@ public final class UpdateMixinHandler
             if ( modifiedMixin != null )
             {
                 final NodeEditor nodeEditor = MIXIN_TO_ITEM_TRANSLATOR.toNodeEditor( modifiedMixin );
+
                 UpdateNode updateNode = MIXIN_TO_ITEM_TRANSLATOR.toUpdateNodeCommand( mixin.getId(), nodeEditor );
+
                 context.getClient().execute( updateNode );
                 command.setResult( UpdateMixinResult.SUCCESS );
+
             }
+
             command.setResult( UpdateMixinResult.SUCCESS );
         }
     }

@@ -198,6 +198,7 @@ public final class ContentType
             {
                 this.formBuilder = newForm( source.form() );
             }
+            this.icon( source.getIcon() );
             this.contentDisplayNameScript = source.getContentDisplayNameScript();
         }
 

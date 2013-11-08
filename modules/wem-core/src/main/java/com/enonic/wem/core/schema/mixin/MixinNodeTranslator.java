@@ -40,12 +40,6 @@ class MixinNodeTranslator
             data( toRootDataSet( createMixin ) );
     }
 
-    UpdateNode toUpdateNodeCommand( final SchemaId id, final NodeEditor editor )
-    {
-        return Commands.node().update().
-            item( EntityId.from( id ) ).
-            editor( editor );
-    }
 
     RootDataSet toRootDataSet( final CreateMixin createMixin )
     {
@@ -60,6 +54,13 @@ class MixinNodeTranslator
         rootDataSet.add( formItems );
 
         return rootDataSet;
+    }
+
+    UpdateNode toUpdateNodeCommand( final SchemaId id, final NodeEditor editor )
+    {
+        return Commands.node().update().
+            item( EntityId.from( id ) ).
+            editor( editor );
     }
 
     NodeEditor toNodeEditor( final Mixin mixin )
@@ -77,7 +78,8 @@ class MixinNodeTranslator
         return newSetItemEditor().
             name( mixin.getName() ).
             icon( mixin.getIcon() ).
-            data( rootDataSet ).build();
+            data( rootDataSet ).
+            build();
     }
 
     Mixins fromNodes( final Nodes nodes )
