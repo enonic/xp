@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.site;
 
 
+import com.enonic.wem.Version;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -9,7 +10,10 @@ public final class SiteTemplate
 {
     private final SiteTemplateId id;
 
-    // TODO version number
+    private final SiteTemplateName name;
+
+    private final Version version;
+
     private final String displayName;
 
     private final String description;
@@ -24,7 +28,9 @@ public final class SiteTemplate
 
     private SiteTemplate( final Builder builder )
     {
+        this.name = builder.name;
         this.id = builder.id;
+        this.version = builder.version;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.vendor = builder.vendor;
@@ -36,6 +42,16 @@ public final class SiteTemplate
     public SiteTemplateId getId()
     {
         return id;
+    }
+
+    public SiteTemplateName getName()
+    {
+        return name;
+    }
+
+    public Version getVersion()
+    {
+        return version;
     }
 
     public String getDisplayName()
@@ -75,7 +91,11 @@ public final class SiteTemplate
 
     public static class Builder
     {
+        private Version version;
+
         private SiteTemplateId id;
+
+        private SiteTemplateName name;
 
         private String displayName;
 
@@ -96,6 +116,18 @@ public final class SiteTemplate
         public Builder id( final SiteTemplateId id )
         {
             this.id = id;
+            return this;
+        }
+
+        public Builder name( final SiteTemplateName name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder version( final Version version )
+        {
+            this.version = version;
             return this;
         }
 
