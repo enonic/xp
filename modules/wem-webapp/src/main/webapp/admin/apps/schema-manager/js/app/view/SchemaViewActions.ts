@@ -24,23 +24,20 @@ module app_view {
 
                         var schema = panel.getItem().getModel();
 
-                        var responsePromise;
+                        var request;
                         if (schema.getSchemaKind() == api_schema.SchemaKind.CONTENT_TYPE) {
-                            responsePromise = new api_schema_content.DeleteContentTypeRequest()
-                                .addQualifiedName(schema.getName()).send();
+                            request = new api_schema_content.DeleteContentTypeRequest([schema.getName()]);
                         } else if (schema.getSchemaKind() == api_schema.SchemaKind.RELATIONSHIP_TYPE) {
-                            responsePromise = new api_schema_relationshiptype.DeleteRelationshipTypeRequest()
-                                .addQualifiedName(schema.getName()).send();
+                            request = new api_schema_relationshiptype.DeleteRelationshipTypeRequest([schema.getName()]);
                         } else if (schema.getSchemaKind() == api_schema.SchemaKind.MIXIN) {
-                            responsePromise = new api_schema_mixin.DeleteMixinRequest()
-                                .addQualifiedName(schema.getName()).send();
+                            request = new api_schema_mixin.DeleteMixinRequest([schema.getName()]);
                         }
 
-                        if (responsePromise) {
-                            responsePromise.done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+                        if (request) {
+                            request.send().done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();
 
-                                if (json.successes && json.successes.length > 0) {
+                                if (json.successes.length > 0) {
                                     api_notify.showFeedback('Content [' + json.successes[0].name + '] deleted!');
                                     new api_schema.SchemaDeletedEvent([schema]).fire();
                                 }
