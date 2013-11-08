@@ -8,9 +8,10 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.DeleteNodeByPath;
+import com.enonic.wem.api.command.entity.DeleteNodeResult;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
-import com.enonic.wem.api.exception.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -46,13 +47,13 @@ public class DeleteContentTypeHandlerTest
         final ContentTypeName names = ContentTypeName.from( "my_content_type" );
         final DeleteContentType command = Commands.contentType().delete().name( names );
 
+        Mockito.when( client.execute( Mockito.isA( DeleteNodeByPath.class ) ) ).thenReturn( DeleteNodeResult.SUCCESS );
+
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( DeleteContentType.class ) );
-
-        //    Mockito.verify( contentTypeDao, only() ).delete( isA( ContentTypeName.class ), any( Session.class ) );
+        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( DeleteNodeByPath.class ) );
 
         DeleteContentTypeResult result = command.getResult();
         assertEquals( DeleteContentTypeResult.SUCCESS, result );
@@ -83,8 +84,7 @@ public class DeleteContentTypeHandlerTest
         // exercise
         final ContentTypeName notFoundName = ContentTypeName.from( "not_found_content_type" );
 
-        Mockito.doThrow( new ContentTypeNotFoundException( notFoundName ) ).
-            when( client).execute( Mockito.isA( DeleteContentType.class ) ) ;
+        Mockito.when( client.execute( Mockito.isA( DeleteNodeByPath.class ) ) ).thenReturn( DeleteNodeResult.NOT_FOUND );
 
         final DeleteContentType command = Commands.contentType().delete().name( notFoundName );
 

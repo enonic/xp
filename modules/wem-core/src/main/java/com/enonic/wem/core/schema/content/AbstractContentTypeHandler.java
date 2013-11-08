@@ -9,8 +9,9 @@ import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.schema.content.dao.ContentTypeInheritorResolver;
 
-public abstract class AbstractGetContentTypeHandler<T extends Command>
+public abstract class AbstractContentTypeHandler<T extends Command>
     extends CommandHandler<T>
 {
     final static ContentTypeNodeTranslator CONTENT_TYPE_NODE_TRANSLATOR = new ContentTypeNodeTranslator();
@@ -49,4 +50,11 @@ public abstract class AbstractGetContentTypeHandler<T extends Command>
     }
 
 
+    protected ContentType appendInheritors( final ContentTypeInheritorResolver contentTypeInheritorResolver, ContentType contentType )
+    {
+        contentType = ContentType.newContentType( contentType ).
+            inheritors( contentTypeInheritorResolver.resolveInheritors( contentType ).isNotEmpty() ).
+            build();
+        return contentType;
+    }
 }

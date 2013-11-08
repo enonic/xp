@@ -4,7 +4,7 @@ import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
 public class GetAllContentTypesHandler
-    extends AbstractGetContentTypeHandler<GetAllContentTypes>
+    extends AbstractContentTypeHandler<GetAllContentTypes>
 {
 
     @Override

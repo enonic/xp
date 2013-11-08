@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
 import com.enonic.wem.api.entity.EntityId;
@@ -16,7 +15,6 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
 
-import static com.enonic.wem.core.jcr.JcrHelper.getPropertyBinary;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 
 class NodeJcrMapper
@@ -28,10 +26,6 @@ class NodeJcrMapper
     private static final String MODIFIED_TIME = "modifiedTime";
 
     private static final String MODIFIER = "modifier";
-
-    private static final String ICON = "icon";
-
-    private static final String ICON_MIME_TYPE = "iconMimeType";
 
     private static final String ROOT_DATA_SET = "rootDataSet";
 
@@ -46,11 +40,10 @@ class NodeJcrMapper
         JcrHelper.setPropertyUserKey( nodeNode, CREATOR, node.getCreator() );
         JcrHelper.setPropertyDateTime( nodeNode, MODIFIED_TIME, node.getModifiedTime() );
         JcrHelper.setPropertyUserKey( nodeNode, MODIFIER, node.getModifier() );
-        if( node.icon() != null ){
-            JcrHelper.setPropertyBinary( nodeNode, ICON, node.icon().toByteArray() );
-            if( node.icon().getMimeType() != null ){
-                nodeNode.setProperty( ICON_MIME_TYPE, node.icon().getMimeType() );
-            }
+
+        if ( node.icon() != null )
+        {
+            iconJcrMapper.toJcr( node.icon(), nodeNode );
         }
 
         final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( node.data() );
@@ -85,12 +78,7 @@ class NodeJcrMapper
             builder.modifier( JcrHelper.getPropertyUserKey( nodeNode, MODIFIER ) );
             builder.modifiedTime( getPropertyDateTime( nodeNode, MODIFIED_TIME ) );
 
-            final byte[] iconBinary = getPropertyBinary( nodeNode, ICON );
-            if( iconBinary != null ){
-                final String mimeType = nodeNode.getProperty( ICON_MIME_TYPE ).getString();
-                final Icon icon = Icon.from( iconBinary, mimeType );
-                builder.icon( icon );
-            }
+            builder.icon( iconJcrMapper.toIcon( nodeNode ) );
 
             final String dataSetAsString = nodeNode.getProperty( ROOT_DATA_SET ).getString();
             final DataSet dataSet = rootDataSetJsonSerializer.toObject( dataSetAsString );

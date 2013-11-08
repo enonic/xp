@@ -8,7 +8,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class GetContentTypeHandler
-    extends AbstractGetContentTypeHandler<GetContentType>
+    extends AbstractContentTypeHandler<GetContentType>
 {
     @Override
     public void handle()

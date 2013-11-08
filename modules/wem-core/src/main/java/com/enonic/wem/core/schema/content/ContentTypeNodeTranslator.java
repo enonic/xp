@@ -85,6 +85,7 @@ public class ContentTypeNodeTranslator
         return rootDataSet;
     }
 
+
     UpdateNode toUpdateNodeCommand( final SchemaId id, final NodeEditor editor )
     {
         return Commands.node().update().
@@ -115,7 +116,8 @@ public class ContentTypeNodeTranslator
         return newSetItemEditor().
             name( contentType.getName() ).
             icon( contentType.getIcon() ).
-            data( rootDataSet ).build();
+            data( rootDataSet ).
+            build();
     }
 
     private void addPropertyIfNotNull( final RootDataSet rootDataSet, final String propertyName, final Object value )

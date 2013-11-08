@@ -5,22 +5,30 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.command.schema.content.GetRootContentTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.core.schema.content.dao.ContentTypeInheritorResolver;
 
 
 public class GetRootContentTypesHandler
-    extends AbstractGetContentTypeHandler<GetRootContentTypes>
+    extends AbstractContentTypeHandler<GetRootContentTypes>
 {
+
     @Override
     public void handle()
         throws Exception
     {
+        final ContentTypes allContentTypes = getAllContentTypes();
+
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( allContentTypes );
+
         ImmutableList.Builder<ContentType> rootContentTypes = ImmutableList.builder();
 
-        final ContentTypes contentTypes = getAllContentTypes();
+        final ContentTypes contentTypes = allContentTypes;
         for ( ContentType contentType : contentTypes )
         {
             if ( contentType.getSuperType() == null )
             {
+                contentType = appendInheritors( contentTypeInheritorResolver, contentType );
+
                 rootContentTypes.add( contentType );
             }
         }
