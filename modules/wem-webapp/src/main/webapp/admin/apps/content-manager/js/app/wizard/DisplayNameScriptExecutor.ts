@@ -2,8 +2,6 @@ module app_wizard {
 
     export class DisplayNameScriptExecutor {
 
-        private static DISPLAY_NAME_REGEX:RegExp = /\$\('([a-zA-Z\.]*)'\)/g;
-
         private formView:api_form.FormView;
 
         private script:string;
@@ -19,32 +17,27 @@ module app_wizard {
         }
 
         execute():string {
+            return this.safeEval(this.script, this.formView);
+        }
 
-            var scriptToEvaluate = this.script;
-            var result;
-            while ((result = result = DisplayNameScriptExecutor.DISPLAY_NAME_REGEX.exec(this.script)) != null) {
-                //console.log("handling result[1]: " + result[1]);
-                //console.log("handling result[0]: " + result[0]);
-
-                var path = api_data.DataPath.fromString(result[1]);
-
-                var value:api_data.Value = this.formView.getValueAtPath(path);
-                if( value == null ) {
-                    scriptToEvaluate = scriptToEvaluate.replace(result[0], "");
-                }
-                else {
-                    var stringValue = value.asString();
-                    // Strips single quotes to avoid breaking
-                    stringValue = stringValue.replace(/'/g, "\\'");
-                    console.log( path.toString() + ": " + stringValue);
-
-                    scriptToEvaluate = scriptToEvaluate.replace(result[0], "'" + stringValue + "'");
-                }
+        private safeEval( script:string, formView:api_form.FormView):string {
+            function $ ( path ) {
+                var value = formView.getValueAtPath(api_data.DataPath.fromString(path));
+                return value != null ? value.asString() : '';
             }
 
-            console.log("to be evaluated: " + scriptToEvaluate);
+            var result = '';
 
-            return eval(scriptToEvaluate);
+            try {
+                // hide eval, Function, document, window and other things from the script.
+                result = eval( 'var eval; var Function; var document; var location; var Ext; ' +
+                                   'var window; var parent; var self; var top; ' +
+                                   script ) ;
+            } catch (e) {
+                console.error('cannot evaluate [' + script + '] function.');
+            }
+
+            return result;
         }
     }
 }
