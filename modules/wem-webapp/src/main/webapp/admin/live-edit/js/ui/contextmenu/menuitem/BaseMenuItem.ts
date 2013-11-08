@@ -13,7 +13,7 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class BaseMenuItem extends LiveEdit.ui.Base {
 
-        menu;
+        menu:ContextMenu;
 
         constructor(config:ContextMenuItemConfig, menu:LiveEdit.ui.contextmenu.ContextMenu) {
             super();

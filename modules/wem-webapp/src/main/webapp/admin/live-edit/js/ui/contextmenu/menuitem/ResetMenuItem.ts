@@ -5,8 +5,6 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class ResetMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        menu = null;
-
         constructor(menu) {
             super({
                 text: 'Reset to Default',

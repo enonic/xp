@@ -5,8 +5,6 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class OpenContentMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        menu = null;
-
         constructor(menu) {
             super({
                 text: 'Open in new tab',

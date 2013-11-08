@@ -5,8 +5,6 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class ParentMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        menu = null;
-
         constructor(menu) {
             super({
                 text: 'Select Parent',

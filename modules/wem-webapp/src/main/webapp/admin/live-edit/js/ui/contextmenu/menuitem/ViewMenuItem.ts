@@ -5,8 +5,6 @@ module LiveEdit.ui.contextmenu.menuitem {
 
     export class ViewMenuItem extends LiveEdit.ui.contextmenu.menuitem.BaseMenuItem {
 
-        menu = null;
-
         constructor(menu) {
             super({
                 text: 'View',
