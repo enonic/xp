@@ -65,31 +65,37 @@ public abstract class Template<ID extends TemplateId, NAME extends TemplateName>
         public T name( final NAME name )
         {
             this.name = name;
-            return (T) this;
+            return typecastToTemplateBuilder( this );
         }
 
         public T id( final ID id )
         {
             this.id = id;
-            return (T) this;
+            return typecastToTemplateBuilder( this );
         }
 
         public T displayName( final String displayName )
         {
             this.displayName = displayName;
-            return (T) this;
+            return typecastToTemplateBuilder( this );
         }
 
         public T descriptor( final ModuleResourceKey descriptor )
         {
             this.descriptor = descriptor;
-            return (T) this;
+            return typecastToTemplateBuilder( this );
         }
 
         public T config( final RootDataSet config )
         {
             this.config = config;
-            return (T) this;
+            return typecastToTemplateBuilder( this );
+        }
+
+        @SuppressWarnings("unchecked")
+        private T typecastToTemplateBuilder( final BaseTemplateBuilder object )
+        {
+            return (T) object;
         }
     }
 }

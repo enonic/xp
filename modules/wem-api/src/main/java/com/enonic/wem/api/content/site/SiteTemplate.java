@@ -1,18 +1,26 @@
 package com.enonic.wem.api.content.site;
 
 
-import com.enonic.wem.Version;
+import java.util.Iterator;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+
+import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.TemplateName;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
+import static com.google.common.collect.Maps.uniqueIndex;
+
 public final class SiteTemplate
+    implements Iterable<Template>
 {
-    private final SiteTemplateId id;
+    private static final ResourcePath DEFAULT_TEMPLATES_PATH = ResourcePath.from( "components/" );
 
-    private final SiteTemplateName name;
-
-    private final Version version;
+    private final SiteTemplateKey siteTemplateKey;
 
     private final String displayName;
 
@@ -26,32 +34,36 @@ public final class SiteTemplate
 
     private final ContentTypeName rootContentType;
 
+    private final ImmutableMap<ResourcePath, Template> templatesByPath;
+
+    private final ImmutableMap<TemplateName, Template> templatesByName;
+
     private SiteTemplate( final Builder builder )
     {
-        this.name = builder.name;
-        this.id = builder.id;
-        this.version = builder.version;
+        this.siteTemplateKey = builder.siteTemplateKey;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.vendor = builder.vendor;
         this.modules = builder.modules;
         this.supportedContentTypes = builder.supportedContentTypes;
         this.rootContentType = builder.rootContentType;
+        this.templatesByPath = builder.templates.build();
+        this.templatesByName = uniqueIndex( this.templatesByPath.values(), new ToNameFunction() );
     }
 
-    public SiteTemplateId getId()
+    public SiteTemplateKey getKey()
     {
-        return id;
+        return siteTemplateKey;
     }
 
     public SiteTemplateName getName()
     {
-        return name;
+        return siteTemplateKey.getName();
     }
 
-    public Version getVersion()
+    public SiteTemplateVersion getVersion()
     {
-        return version;
+        return siteTemplateKey.getVersion();
     }
 
     public String getDisplayName()
@@ -84,6 +96,27 @@ public final class SiteTemplate
         return rootContentType;
     }
 
+    public Template getTemplate( final TemplateName templateName )
+    {
+        return this.templatesByName.get( templateName );
+    }
+
+    public Template getTemplate( final ResourcePath path )
+    {
+        return this.templatesByPath.get( path );
+    }
+
+    @Override
+    public Iterator<Template> iterator()
+    {
+        return templatesByName.values().iterator();
+    }
+
+    public Iterator<ResourcePath> resourcePathIterator()
+    {
+        return templatesByPath.keySet().iterator();
+    }
+
     public static Builder newSiteTemplate()
     {
         return new Builder();
@@ -91,11 +124,7 @@ public final class SiteTemplate
 
     public static class Builder
     {
-        private Version version;
-
-        private SiteTemplateId id;
-
-        private SiteTemplateName name;
+        private SiteTemplateKey siteTemplateKey;
 
         private String displayName;
 
@@ -109,25 +138,28 @@ public final class SiteTemplate
 
         private ContentTypeName rootContentType;
 
+        private ImmutableMap.Builder<ResourcePath, Template> templates;
+
         private Builder()
         {
+            templates = ImmutableMap.builder();
         }
 
-        public Builder id( final SiteTemplateId id )
+        public Builder addTemplate( final ResourcePath path, final Template template )
         {
-            this.id = id;
+            final ResourcePath normalizedPath = path.toRelativePath().resolve( template.getName().toString() );
+            templates.put( normalizedPath, template );
             return this;
         }
 
-        public Builder name( final SiteTemplateName name )
+        public Builder addTemplate( final Template template )
         {
-            this.name = name;
-            return this;
+            return addTemplate( DEFAULT_TEMPLATES_PATH, template );
         }
 
-        public Builder version( final Version version )
+        public Builder key( final SiteTemplateKey siteTemplateKey )
         {
-            this.version = version;
+            this.siteTemplateKey = siteTemplateKey;
             return this;
         }
 
@@ -170,6 +202,16 @@ public final class SiteTemplate
         public SiteTemplate build()
         {
             return new SiteTemplate( this );
+        }
+    }
+
+    private final static class ToNameFunction
+        implements Function<Template, TemplateName>
+    {
+        @Override
+        public TemplateName apply( final Template value )
+        {
+            return value.getName();
         }
     }
 }

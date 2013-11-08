@@ -2,7 +2,7 @@ package com.enonic.wem.api.module;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class ModuleKey
 {
@@ -16,8 +16,8 @@ public final class ModuleKey
 
     private ModuleKey( final ModuleName name, final ModuleVersion version )
     {
-        Preconditions.checkNotNull( name );
-        Preconditions.checkNotNull( version );
+        checkNotNull( name );
+        checkNotNull( version );
         this.name = name;
         this.version = version;
         this.refString = name.toString() + SEPARATOR + version.toString();
@@ -67,8 +67,8 @@ public final class ModuleKey
 
     public static ModuleKey from( final String moduleKey )
     {
-        final String name = StringUtils.substringBefore( moduleKey, SEPARATOR );
-        final String version = StringUtils.substringAfter( moduleKey, SEPARATOR );
+        final String name = StringUtils.substringBeforeLast( moduleKey, SEPARATOR );
+        final String version = StringUtils.substringAfterLast( moduleKey, SEPARATOR );
         return new ModuleKey( ModuleName.from( name ), ModuleVersion.from( version ) );
     }
 }
