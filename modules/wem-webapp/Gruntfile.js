@@ -90,18 +90,6 @@ module.exports = function (grunt) {
             }
         },
 
-        /*
-         less: {
-         live_edit: {
-         options: {
-         compress: true
-         },
-         files: {
-         "src/main/webapp/admin2/live-edit/css/live-edit.css": "src/main/webapp/admin/live-edit/css/less/live-edit.less"
-         }
-         }
-         },*/
-
         watch: {
             files: ['src/main/webapp/admin/**/*.ts', 'src/test/webapp/admin/**/*.ts'],
             tasks: ['ts']
