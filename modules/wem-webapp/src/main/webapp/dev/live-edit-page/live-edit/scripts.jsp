@@ -12,7 +12,7 @@
 
 <!-- It is important that this is loaded right after all jQuery dependencies -->
 <script type="text/javascript" charset="UTF-8" src="../../admin/live-edit/lib/jquery.noconflict.js"></script>
-<script type="text/javascript" charset="UTF-8" src="../../admin/live-edit/js/all.js"></script>
+<script type="text/javascript" charset="UTF-8" src="../../admin/live-edit/js/_all.js"></script>
 
 <%
   }
