@@ -72,7 +72,7 @@ final class Runner
 
         if ( new File( generatedDir ).isDirectory() )
         {
-            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", generatedDir, null, null );
+            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", generatedDir, null, "/" );
         }
     }
 
