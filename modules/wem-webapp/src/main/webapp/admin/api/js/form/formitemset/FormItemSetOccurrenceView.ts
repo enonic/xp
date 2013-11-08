@@ -128,12 +128,26 @@ module api_form_formitemset {
 
         public getFormItemView(name:string):api_form.FormItemView {
 
+            // TODO: Performance could be improved if the views where accessible by name from a map
+
             for(var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
                 if(name == curr.getFormItem().getName()) {
                     return curr;
                 }
             }
+
+            // FormItemView not found - look inside FieldSet-s
+            for(var i = 0; i < this.formItemViews.length; i++) {
+                var curr = this.formItemViews[i];
+                if(curr instanceof api_form_layout.FieldSetView) {
+                    var view = (<api_form_layout.FieldSetView>curr).getFormItemView( name );
+                    if( view != null ) {
+                        return view;
+                    }
+                }
+            }
+
             return null;
         }
 

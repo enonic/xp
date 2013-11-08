@@ -21,8 +21,29 @@ module api_form_layout {
             return dataArray;
         }
 
-        getFormItemViews():api_form.FormItemView[] {
-            return this.formItemViews;
+        public getFormItemView(name:string):api_form.FormItemView {
+
+            // TODO: Performance could be improved if the views where accessible by name from a map
+
+            for(var i = 0; i < this.formItemViews.length; i++) {
+                var curr = this.formItemViews[i];
+                if(name == curr.getFormItem().getName()) {
+                    return curr;
+                }
+            }
+
+            // FormItemView not found - look inside FieldSet-s
+            for(var i = 0; i < this.formItemViews.length; i++) {
+                var curr = this.formItemViews[i];
+                if(curr instanceof FieldSetView) {
+                    var view = (<FieldSetView>curr).getFormItemView( name );
+                    if( view != null ) {
+                        return view;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private doLayout(dataSet:api_data.DataSet) {
