@@ -14,12 +14,17 @@ final class SubscribeMatcher
     {
         for ( final Method method : typeLiteral.getRawType().getMethods() )
         {
-            if ( method.getAnnotation( Subscribe.class ) != null )
+            if ( isSubscribeMethod( method ) )
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private boolean isSubscribeMethod( final Method method )
+    {
+        return method.getAnnotation( Subscribe.class ) != null;
     }
 }
