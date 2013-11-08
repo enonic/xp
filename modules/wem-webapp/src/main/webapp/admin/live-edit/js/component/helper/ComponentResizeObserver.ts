@@ -25,7 +25,6 @@ module LiveEdit.component.helper {
                 }
             }, false);
 
-            console.log('ComponentResizeListener: observe()');
         }
 
         private disconnect():void {
@@ -34,7 +33,6 @@ module LiveEdit.component.helper {
             }
             this.component = null;
 
-            console.log('ComponentResizeListener: disconnect()');
         }
 
         private registerGlobalListeners():void {
