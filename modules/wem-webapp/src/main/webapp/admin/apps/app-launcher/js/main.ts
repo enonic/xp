@@ -1,13 +1,3 @@
-///<reference path='../../../api/js/lib/ExtJs.d.ts' />
-///<reference path='../../../api/js/lib/Mousetrap.d.ts' />
-///<reference path='../../../api/js/api.d.ts' />
-///<reference path='../../../api/js/lib/crossroads.d.ts' />
-///<reference path='../../../api/js/lib/hasher.d.ts' />
-
-///<reference path='app/applauncher/_module.ts' />
-///<reference path='app/home/_module.ts' />
-///<reference path='app/login/_module.ts' />
-
 
 declare var Ext;
 declare var Admin;

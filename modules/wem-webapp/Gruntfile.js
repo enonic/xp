@@ -3,49 +3,76 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-ts');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
     grunt.initConfig({
 
+        less: {
+            common: {
+                files: {
+                    'src/main/webapp/admin/resources/less/_all.css': 'src/main/webapp/admin/resources/less/main.less'
+                }
+            }
+        },
+
+        concat: {
+            common: {
+                src: [
+                    'src/main/webapp/admin/resources/lib/ext/ext-all.js',
+                    'src/main/webapp/admin/resources/lib/plupload/js/plupload.full.js',
+                    'src/main/webapp/admin/resources/lib/jquery-2.0.2.js',
+                    'src/main/webapp/admin/resources/lib/jquery-ui-1.10.3.custom.min.js',
+                    'src/main/webapp/admin/resources/lib/jquery.ui.live-draggable.js',
+                    'src/main/webapp/admin/resources/lib/jquery.simulate.js',
+                    'src/main/webapp/admin/resources/lib/codemirror/codemirror.js',
+                    'src/main/webapp/admin/resources/lib/codemirror/addon/loadmode.js',
+                    'src/main/webapp/admin/resources/lib/signals.js',
+                    'src/main/webapp/admin/resources/lib/hasher.js',
+                    'src/main/webapp/admin/resources/lib/crossroads.js',
+                    'src/main/webapp/admin/resources/lib/slickgrid/lib/jquery.event.drag-2.2.js',
+                    'src/main/webapp/admin/resources/lib/slickgrid/lib/jquery.event.drop-2.2.js',
+                    'src/main/webapp/admin/resources/lib/slickgrid/slick.core.js',
+                    'src/main/webapp/admin/resources/lib/slickgrid/slick.grid.js',
+                    'src/main/webapp/admin/resources/lib/slickgrid/slick.dataview.js',
+                    'src/main/webapp/admin/resources/lib/slickgrid/slick.remotemodel.js',
+                    'src/main/webapp/admin/resources/lib/slickgrid/slick.rowselectionmodel.js',
+                    'src/main/webapp/admin/resources/lib/slickgrid/slick.checkboxselectcolumn.js',
+                    'src/main/webapp/admin/resources/lib/mousetrap.min.js'
+                ],
+                dest: 'src/main/webapp/admin/resources/lib/_all.js'
+            }
+        },
+
         ts: {
             api: {
-                src: ['src/main/webapp/admin/api/js/main.ts'],
-                out: 'src/main/webapp/admin/api/js/api.js',
-                options: {
-                    // target: 'es5',
-                    sourcemap: true,
-                    declaration: true
-                }
+                src: ['src/main/webapp/admin/api/js/_module.ts'],
+                out: 'src/main/webapp/admin/api/js/_all.js'
             },
             space_manager: {
-                src: ['src/main/webapp/admin/apps/space-manager/js/main.ts'],
-                out: 'src/main/webapp/admin/apps/space-manager/js/all.js',
+                src: ['src/main/webapp/admin/apps/space-manager/js/_module.ts'],
+                out: 'src/main/webapp/admin/apps/space-manager/js/_all.js',
                 options: {
-                    // target: 'es5',
                     sourcemap: true
                 }
             },
             content_manager: {
-                src: ['src/main/webapp/admin/apps/content-manager/js/main.ts'],
-                out: 'src/main/webapp/admin/apps/content-manager/js/all.js',
+                src: ['src/main/webapp/admin/apps/content-manager/js/_module.ts'],
+                out: 'src/main/webapp/admin/apps/content-manager/js/_all.js',
                 options: {
-                    // target: 'es5',
                     sourcemap: true
                 }
             },
             schema_manager: {
-                src: ['src/main/webapp/admin/apps/schema-manager/js/main.ts'],
-                out: 'src/main/webapp/admin/apps/schema-manager/js/all.js',
+                src: ['src/main/webapp/admin/apps/schema-manager/js/_module.ts'],
+                out: 'src/main/webapp/admin/apps/schema-manager/js/_all.js',
                 options: {
-                    // target: 'es5',
                     sourcemap: true
                 }
             },
             app_launcher: {
-                src: ['src/main/webapp/admin/apps/app-launcher/js/main.ts'],
-                out: 'src/main/webapp/admin/apps/app-launcher/js/all.js',
+                src: ['src/main/webapp/admin/apps/app-launcher/js/_module.ts'],
+                out: 'src/main/webapp/admin/apps/app-launcher/js/_all.js',
                 options: {
-                    // target: 'es5',
                     sourcemap: true
                 }
             },
@@ -53,22 +80,22 @@ module.exports = function (grunt) {
                 src: ['src/main/webapp/admin/live-edit/js/Main.ts'],
                 out: 'src/main/webapp/admin/live-edit/js/all.js',
                 options: {
-                    // target: 'es5',
                     sourcemap: true
                 }
             }
         },
 
-        less: {
-            live_edit: {
-                options: {
-                    compress: true
-                },
-                files: {
-                    "src/main/webapp/admin2/live-edit/css/live-edit.css": "src/main/webapp/admin/live-edit/css/less/live-edit.less"
-                }
-            }
-        },
+        /*
+         less: {
+         live_edit: {
+         options: {
+         compress: true
+         },
+         files: {
+         "src/main/webapp/admin2/live-edit/css/live-edit.css": "src/main/webapp/admin/live-edit/css/less/live-edit.less"
+         }
+         }
+         },*/
 
         watch: {
             files: ['src/main/webapp/admin/**/*.ts', 'src/test/webapp/admin/**/*.ts'],
@@ -81,7 +108,7 @@ module.exports = function (grunt) {
      * Alias tasks
      */
     grunt.registerTask('default', 'watch');
-    grunt.registerTask('all', ['ts']);
+    grunt.registerTask('all', ['less', 'concat', 'ts']);
     grunt.registerTask('cm', [
         'ts:api',
         'ts:content_manager'

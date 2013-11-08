@@ -115,6 +115,7 @@ module.exports = function (grunt) {
                         'src/main/common/lib/jquery-2.0.2.js',
                         'src/main/common/lib/jquery-ui-1.10.3.custom.min.js',
                         'src/main/common/lib/jquery.ui.live-draggable.js',
+                        'src/main/common/lib/jquery.simulate.js',
                         'src/main/common/lib/codemirror/codemirror.js',
                         'src/main/common/lib/codemirror/addon/loadmode.js',
                         'src/main/common/lib/signals.js',
@@ -127,7 +128,7 @@ module.exports = function (grunt) {
                         'src/main/common/lib/slickgrid/slick.dataview.js',
                         'src/main/common/lib/slickgrid/slick.remotemodel.js',
                         'src/main/common/lib/slickgrid/slick.rowselectionmodel.js',
-                        'src/main/common/lib/slickgrid/slick.checkboxselectcolumn.js'
+                        'src/main/common/lib/slickgrid/slick.checkboxselectcolumn.js',
                     ],
                     dest: 'target/main/common/lib/all.js'
                 }
