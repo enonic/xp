@@ -23,47 +23,74 @@ module api_form {
                 layout(this.contentData);
         }
 
-
-        getInputViewByPath(path:api_data.DataPath, formItemViews:FormItemView[] = this.formItemViews):api_form_input.InputView {
-            // Loop through all formItemViews
-            for (var i = 0; i<formItemViews.length; i++) {
-                var currentFormItemView:FormItemView = formItemViews[i];
-                // If name matches first path elements name
-                console.log("CURRENT ITEM -> ", currentFormItemView.getFormItem().getName(), currentFormItemView ,"path->", path.getElement(0).getName());
-                if (currentFormItemView.getFormItem().getName() == path.getElement(0).getName()) {
-                    // If formItemView is InputView, end of path is reached
-                    if (currentFormItemView instanceof api_form_input.InputView) {
-                        if (path.getElements().length == 1) {
-                            return <api_form_input.InputView>currentFormItemView;
-                        } else {
-                            //return null;
-                            //TODO: maybe throw error
-                            throw new Error('InputView must be last element of path: ' + path.toString());
-                        }
-                    } else {
-                        if( path.getElements().length == 1 ) {
-                            //return null;
-                            //TODO: maybe throw error
-                            throw new Error('Expected InputView to be last element of path. Got FormItemSetView: ' + path.toString());
-                        }
-
-                        if( currentFormItemView instanceof api_form_formitemset.FormItemSetView )
-                        {
-                            var formItemSetView = <api_form_formitemset.FormItemSetView>currentFormItemView;
-                            return this.getInputViewByPath(path.newWithOutFirstElement(), formItemSetView.getFormItemViews());
-                        }
-                        else if( currentFormItemView instanceof api_form_layout.FieldSetView )
-                        {
-                            var fieldSetView = <api_form_layout.FieldSetView>currentFormItemView;
-                            return this.getInputViewByPath(path.newWithOutFirstElement(), fieldSetView.getFormItemViews());
-                        }
-                        else {
-                            throw new Error( "Unexpected FormItemView: " + currentFormItemView.getFormItem().toFormItemJson() );
-                        }
-                    }
-                }
+        public getValueAtPath(path:api_data.DataPath):api_data.Value {
+            if( path == null ) {
+                throw new Error("To get a value, a path is required");
+            }
+            if( path.elementCount() == 0 ) {
+                throw new Error("Cannot get value from empty path: " + path.toString());
             }
 
+            if( path.elementCount() == 1 ){
+                return this.getValue(path.getFirstElement().toDataId());
+            }
+            else {
+                return this.forwardGetValueAtPath(path);
+            }
+        }
+
+        public getValue(dataId:api_data.DataId):api_data.Value{
+
+            var inputView = this.getInputView( dataId.getName() );
+            if( inputView == null ) {
+                return null;
+            }
+            return inputView.getValue(dataId.getArrayIndex());
+        }
+
+        private forwardGetValueAtPath(path:api_data.DataPath):api_data.Value{
+
+            var dataId:api_data.DataId = path.getFirstElement().toDataId();
+            var formItemSetView = this.getFormItemSetView( dataId.getName() );
+            if( formItemSetView == null ) {
+                return null;
+            }
+            var formItemSetOccurrenceView = formItemSetView.getFormItemSetOccurrenceView(dataId.getArrayIndex());
+            return formItemSetOccurrenceView.getValueAtPath(path.newWithoutFirstElement());
+        }
+
+        public getInputView(name:string):api_form_input.InputView {
+
+            var formItemView = this.getFormItemView(name);
+            if( formItemView == null ) {
+                return null;
+            }
+            if( !(formItemView instanceof api_form_input.InputView) ) {
+                throw new Error( "Found a FormItemView with name [" + name + "], but it was not an InputView" );
+            }
+            return <api_form_input.InputView>formItemView;
+        }
+
+        public getFormItemSetView(name:string):api_form_formitemset.FormItemSetView {
+
+            var formItemView = this.getFormItemView(name);
+            if( formItemView == null ) {
+                return null;
+            }
+            if( !(formItemView instanceof api_form_formitemset.FormItemSetView) ) {
+                throw new Error( "Found a FormItemView with name [" + name + "], but it was not an FormItemSetView" );
+            }
+            return <api_form_formitemset.FormItemSetView>formItemView;
+        }
+
+        public getFormItemView(name:string):FormItemView {
+
+            for(var i = 0; i < this.formItemViews.length; i++) {
+                var curr = this.formItemViews[i];
+                if(name == curr.getFormItem().getName()) {
+                    return curr;
+                }
+            }
             return null;
         }
 

@@ -20,26 +20,31 @@ module app_wizard {
 
         execute():string {
 
-            var displayName = this.script;
+            var scriptToEvaluate = this.script;
             var result;
             while ((result = result = DisplayNameScriptExecutor.DISPLAY_NAME_REGEX.exec(this.script)) != null) {
-                console.log("handling: " + result);
+                //console.log("handling result[1]: " + result[1]);
+                //console.log("handling result[0]: " + result[0]);
 
                 var path = api_data.DataPath.fromString(result[1]);
 
-                var inputView:api_form_input.InputView = this.formView.getInputViewByPath(path);
+                var value:api_data.Value = this.formView.getValueAtPath(path);
+                if( value == null ) {
+                    scriptToEvaluate = scriptToEvaluate.replace(result[0], "");
+                }
+                else {
+                    var stringValue = value.asString();
+                    // Strips single quotes to avoid breaking
+                    stringValue = stringValue.replace(/'/g, "\\'");
+                    console.log( path.toString() + ": " + stringValue);
 
-                console.log("inputView", inputView);
-
-                var inputValue = inputView ? inputView.getValue(path.getLastElement().getIndex()).asString() : '';
-                // Strips single quotes to avoid breaking
-                inputValue = inputValue.replace(/'/g, "\\'");
-                displayName = displayName.replace(result[0], "'" + inputValue + "'");
+                    scriptToEvaluate = scriptToEvaluate.replace(result[0], "'" + stringValue + "'");
+                }
             }
-            console.log("displayName: " + displayName);
 
-            var evaluated = eval(displayName);
-            return evaluated;
+            console.log("to be evaluated: " + scriptToEvaluate);
+
+            return eval(scriptToEvaluate);
         }
     }
 }

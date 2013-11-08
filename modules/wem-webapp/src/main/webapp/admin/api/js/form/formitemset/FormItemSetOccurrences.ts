@@ -68,8 +68,8 @@ module api_form_formitemset {
             return newOccurrenceView;
         }
 
-        getFormItemSetOccurrenceViews():FormItemSetOccurrenceView[] {
-            return this.formItemSetOccurrenceViews;
+        getFormItemSetOccurrenceView(index:number):FormItemSetOccurrenceView {
+            return this.formItemSetOccurrenceViews[index];
         }
 
         getDataSets():api_data.DataSet[] {

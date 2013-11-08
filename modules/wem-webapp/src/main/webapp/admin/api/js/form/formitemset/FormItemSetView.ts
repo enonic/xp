@@ -66,18 +66,13 @@ module api_form_formitemset {
             this.refresh();
         }
 
-        getFormItemViews():api_form.FormItemView[] {
-            var occurrenceViews = this.formItemSetOccurrences.getFormItemSetOccurrenceViews();
-            var formItemViews:api_form.FormItemView[] = [];
-            occurrenceViews.forEach((occurrenceView:api_form_formitemset.FormItemSetOccurrenceView) => {
-                formItemViews = formItemViews.concat(occurrenceView.getFormItemViews());
-            });
-            return formItemViews;
-        }
-
         refresh() {
 
             this.addButton.setVisible(!this.formItemSetOccurrences.maximumOccurrencesReached());
+        }
+
+        public getFormItemSetOccurrenceView(index:number):FormItemSetOccurrenceView {
+            return this.formItemSetOccurrences.getFormItemSetOccurrenceView(index);
         }
 
         getData():api_data.Data[] {

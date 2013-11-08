@@ -61,11 +61,15 @@ module api_data{
             this.refString = (this.absolute ? this.elementDivider : "") + this.elements.join(this.elementDivider);
         }
 
-        newWithOutFirstElement():DataPath {
+        newWithoutFirstElement():DataPath {
             //console.log("splicing array", this.getElements().splice(0, 1));
             var arr = this.elements;
             arr.shift();
             return new DataPath(arr);
+        }
+
+        elementCount():number {
+            return this.getElements().length;
         }
 
         getElements():DataPathElement[] {
@@ -74,6 +78,14 @@ module api_data{
 
         getElement(index:number):DataPathElement {
             return this.elements[index];
+        }
+
+        getFirstElement():DataPathElement {
+            return this.elements[0];
+        }
+
+        getLastElement():DataPathElement {
+            return this.elements[this.elements.length-1];
         }
 
         hasParent():boolean {
@@ -101,14 +113,12 @@ module api_data{
         isAbsolute():boolean {
             return this.absolute;
         }
-
-        getLastElement():DataPathElement {
-            return this.elements[this.elements.length-1];
-        }
     }
 
     export class DataPathElement {
+
         private name:string;
+
         private index:number;
 
         constructor(name:string, index:number) {
@@ -122,6 +132,10 @@ module api_data{
 
         getIndex():number {
             return this.index;
+        }
+
+        toDataId():api_data.DataId {
+            return new api_data.DataId( this.name, this.index );
         }
 
         toString():string {
