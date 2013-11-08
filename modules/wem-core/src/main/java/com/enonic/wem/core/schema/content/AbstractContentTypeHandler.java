@@ -9,7 +9,6 @@ import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.schema.content.dao.ContentTypeInheritorResolver;
 
 public abstract class AbstractContentTypeHandler<T extends Command>
     extends CommandHandler<T>

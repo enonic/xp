@@ -1,4 +1,4 @@
-package com.enonic.wem.core.schema.content.dao;
+package com.enonic.wem.core.schema.content;
 
 
 import com.enonic.wem.api.schema.content.ContentType;

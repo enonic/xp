@@ -16,7 +16,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.core.schema.content.dao.ContentTypeInheritorResolver;
 
 
 public final class GetContentTypesHandler

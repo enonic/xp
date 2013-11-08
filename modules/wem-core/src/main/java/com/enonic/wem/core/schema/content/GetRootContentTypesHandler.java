@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.wem.api.command.schema.content.GetRootContentTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.core.schema.content.dao.ContentTypeInheritorResolver;
 
 
 public class GetRootContentTypesHandler
