@@ -12,15 +12,15 @@ module api_ui_combobox {
 
         private emptyDropdown:api_dom.DivEl;
 
-        private selectedOptionsView:ComboBoxSelectedOptionsView<T>;
-
         private optionFormatter:(row:number, cell:number, value:T, columnDef:any, dataContext:OptionData<T>) => string;
 
         private maximumOccurrences:number;
 
         private filter:(item:T, args:any) => boolean;
 
-        private selectedData:OptionData<T>[] = [];
+        private selectedOptions:OptionData<T>[] = [];
+
+        private selectedOptionsView:ComboBoxSelectedOptionsView<T>;
 
         private maxHeight:number = 200;
 
@@ -35,7 +35,7 @@ module api_ui_combobox {
         private listeners:ComboBoxListener<T>[] = [];
 
         constructor(name:string, config:ComboBoxConfig<T>) {
-            super("div", null, "combobox");
+            super("div", "ComboBox", "combobox");
             this.getEl().setAttribute("name", name);
 
             this.optionFormatter = config.optionFormatter;
@@ -92,11 +92,11 @@ module api_ui_combobox {
         }
 
         countSelected():number {
-            return this.selectedData.length;
+            return this.selectedOptions.length;
         }
 
         getSelectedData():OptionData<T>[] {
-            return this.selectedData;
+            return this.selectedOptions;
         }
 
         isDropdownShown():boolean {
@@ -159,7 +159,7 @@ module api_ui_combobox {
 
         getValue():string {
             var values = [];
-            this.selectedData.forEach((item:OptionData<T>) => {
+            this.selectedOptions.forEach((item:OptionData<T>) => {
                 values.push(item.value);
             });
             return values.join(';');
@@ -265,7 +265,7 @@ module api_ui_combobox {
                 return;
             }
 
-            this.selectedData.push(item);
+            this.selectedOptions.push(item);
             this.selectedOptionsView.addItem(item);
 
             this.updateDropdownStyles();
@@ -311,7 +311,7 @@ module api_ui_combobox {
             if (this.maximumOccurrences == 0) {
                 return false;
             }
-            return this.selectedData.length >= this.maximumOccurrences;
+            return this.selectedOptions.length >= this.maximumOccurrences;
         }
 
         private canSelect(item:OptionData<T>):boolean {
@@ -319,8 +319,8 @@ module api_ui_combobox {
                 return false;
             }
 
-            for (var i = 0; i < this.selectedData.length; i++) {
-                if (this.selectedData[i].value == item.value) {
+            for (var i = 0; i < this.selectedOptions.length; i++) {
+                if (this.selectedOptions[i].value == item.value) {
                     return false;
                 }
             }
@@ -330,7 +330,7 @@ module api_ui_combobox {
 
         private updateDropdownStyles() {
             var stylesHash = {};
-            this.selectedData.forEach((item:OptionData<T>) => {
+            this.selectedOptions.forEach((item:OptionData<T>) => {
                 var row = this.dropdownData.getRowById(item.value);
                 stylesHash[row] = {option: "selected"};
             });
@@ -371,11 +371,11 @@ module api_ui_combobox {
         }
 
         private removeSelectedItem(item:OptionData<T>) {
-            var itemIndex = this.selectedData.indexOf(item);
+            var itemIndex = this.selectedOptions.indexOf(item);
             if (itemIndex < 0) {
                 return;
             }
-            this.selectedData.splice(itemIndex, 1);
+            this.selectedOptions.splice(itemIndex, 1);
 
             this.updateDropdownStyles();
 

@@ -8,6 +8,8 @@ module api_form_input_type {
 
         getValues(): api_data.Value[];
 
+        getAttachments(): api_content.Attachment[];
+
         validate(validationRecorder:api_form.ValidationRecorder);
 
         /*

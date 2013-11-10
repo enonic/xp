@@ -46,6 +46,10 @@ module api_form_input_type {
             return this.inputOccurrences.getValues();
         }
 
+        getAttachments():api_content.Attachment[] {
+            return [];
+        }
+
         validate(validationRecorder:api_form.ValidationRecorder) {
 
             this.getValues().forEach((value:api_data.Value, index:number) => {

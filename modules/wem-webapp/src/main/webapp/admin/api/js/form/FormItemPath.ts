@@ -1,39 +1,41 @@
-module api_data{
+module api_form{
 
-    export class DataPath {
+    export class FormItemPath {
 
         private static DEFAULT_ELEMENT_DIVIDER:string = ".";
+
+        public static ROOT:FormItemPath = new FormItemPath([], FormItemPath.DEFAULT_ELEMENT_DIVIDER, true );
 
         private elementDivider:string;
 
         private absolute:boolean;
 
-        private elements:DataPathElement[];
+        private elements:FormItemPathElement[];
 
         private refString:string;
 
         static fromString(s:string, elementDivider?:string) {
             if (elementDivider == null) {
-                elementDivider = DataPath.DEFAULT_ELEMENT_DIVIDER;
+                elementDivider = FormItemPath.DEFAULT_ELEMENT_DIVIDER;
             }
             var absolute:boolean = s.charAt(0) == elementDivider;
             var elements:string[] = s.split(elementDivider);
-            elements = DataPath.removeEmptyElements(elements);
-            var dataPathElements:DataPathElement[] = [];
+            elements = FormItemPath.removeEmptyElements(elements);
+            var pathElements:FormItemPathElement[] = [];
             elements.forEach((s:string) => {
-                dataPathElements.push(DataPathElement.fromString(s));
+                pathElements.push(FormItemPathElement.fromString(s));
             });
-            return new DataPath(dataPathElements, elementDivider, absolute);
+            return new FormItemPath(pathElements, elementDivider, absolute);
         }
 
-        static fromParent(parent:DataPath, ...childElements:DataPathElement[]) {
+        static fromParent(parent:FormItemPath, ...childElements:FormItemPathElement[]) {
 
-            var elements:DataPathElement[] = parent.elements.slice(0);
-            childElements.forEach((element:DataPathElement) => {
+            var elements:FormItemPathElement[] = parent.elements.slice(0);
+            childElements.forEach((element:FormItemPathElement) => {
                 elements.push(element);
             });
 
-            return new DataPath(elements, parent.elementDivider, parent.isAbsolute());
+            return new FormItemPath(elements, parent.elementDivider, parent.isAbsolute());
         }
 
         private static removeEmptyElements(elements:string[]):string[] {
@@ -46,10 +48,10 @@ module api_data{
             return filteredElements;
         }
 
-        constructor(elements:DataPathElement[], elementDivider?:string, absolute?:boolean) {
-            this.elementDivider = elementDivider != null ? elementDivider : DataPath.DEFAULT_ELEMENT_DIVIDER;
+        constructor(elements:FormItemPathElement[], elementDivider?:string, absolute?:boolean) {
+            this.elementDivider = elementDivider != null ? elementDivider : FormItemPath.DEFAULT_ELEMENT_DIVIDER;
             this.absolute = absolute == undefined ? true : absolute;
-            elements.forEach((element:DataPathElement, index:number) => {
+            elements.forEach((element:FormItemPathElement, index:number) => {
                 if (element == null) {
                     throw new Error("Path element was null at index: " + index);
                 }
@@ -61,29 +63,29 @@ module api_data{
             this.refString = (this.absolute ? this.elementDivider : "") + this.elements.join(this.elementDivider);
         }
 
-        newWithoutFirstElement():DataPath {
+        newWithoutFirstElement():FormItemPath {
             var arr = this.elements;
             arr.shift();
-            return new DataPath(arr);
+            return new FormItemPath(arr);
         }
 
         elementCount():number {
             return this.getElements().length;
         }
 
-        getElements():DataPathElement[] {
+        getElements():FormItemPathElement[] {
             return this.elements;
         }
 
-        getElement(index:number):DataPathElement {
+        getElement(index:number):FormItemPathElement {
             return this.elements[index];
         }
 
-        getFirstElement():DataPathElement {
+        getFirstElement():FormItemPathElement {
             return this.elements[0];
         }
 
-        getLastElement():DataPathElement {
+        getLastElement():FormItemPathElement {
             return this.elements[this.elements.length-1];
         }
 
@@ -91,18 +93,18 @@ module api_data{
             return this.elements.length > 0;
         }
 
-        getParentPath():DataPath {
+        getParentPath():FormItemPath {
 
             if (this.elements.length < 1) {
                 return null;
             }
-            var parentElemements:DataPathElement[] = [];
-            this.elements.forEach((element:DataPathElement, index:number)=> {
+            var parentElemements:FormItemPathElement[] = [];
+            this.elements.forEach((element:FormItemPathElement, index:number)=> {
                 if (index < this.elements.length - 1) {
                     parentElemements.push(element);
                 }
             });
-            return new DataPath(parentElemements);
+            return new FormItemPath(parentElemements);
         }
 
         toString() {
@@ -114,40 +116,24 @@ module api_data{
         }
     }
 
-    export class DataPathElement {
+    export class FormItemPathElement {
 
         private name:string;
 
-        private index:number;
-
-        constructor(name:string, index:number) {
+        constructor(name:string) {
             this.name = name;
-            this.index = index;
         }
 
         getName():string {
             return this.name
         }
 
-        getIndex():number {
-            return this.index;
-        }
-
-        toDataId():api_data.DataId {
-            return new api_data.DataId( this.name, this.index );
-        }
-
         toString():string {
-            return this.name + "[" + this.index + "]";
+            return this.name;
         }
 
         static fromString(str:string) {
-            if (str.indexOf("[") == -1) {
-                return new DataPathElement(str, 0);
-            }
-            var name = str.substring(0, str.indexOf("["));
-            var index = parseInt(str.substring(str.indexOf("[") + 1, str.indexOf("]")));
-            return new DataPathElement(name, index);
+            return new FormItemPathElement(str);
         }
     }
 

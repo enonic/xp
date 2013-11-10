@@ -3,15 +3,9 @@ declare var plupload;
 module api_form_input_type {
 
 
-    export interface ImageConfig {
-        rows:number;
-        columns:number;
-    }
-
-
     export class Image extends BaseInputTypeView {
 
-        constructor(config?:ImageConfig) {
+        constructor() {
             super("Image");
             this.addClass("image");
         }

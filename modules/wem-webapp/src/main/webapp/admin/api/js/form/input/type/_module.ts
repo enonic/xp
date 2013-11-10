@@ -1,5 +1,6 @@
 ///<reference path='InputOccurrence.ts' />
 ///<reference path='InputOccurrences.ts' />
+///<reference path='InputTypeViewConfig.ts' />
 ///<reference path='InputTypeView.ts' />
 ///<reference path='InputOccurrenceView.ts' />
 ///<reference path='BaseInputTypeView.ts' />
@@ -13,7 +14,9 @@
 ///<reference path='ContentSummaryLoader.ts' />
 ///<reference path='Relationship.ts' />
 ///<reference path='RelationshipSelectedOptionsView.ts' />
-///<reference path='ImageSelector.ts' />
+///<reference path='ImageSelectorSelectedOption.ts' />
+///<reference path='ImageSelectorSelectedOptionView.ts' />
 ///<reference path='ImageSelectorSelectedOptionsView.ts' />
+///<reference path='ImageSelector.ts' />
 ///<reference path='ImageSelectorUploadDialog.ts' />
 ///<reference path='Image.ts' />

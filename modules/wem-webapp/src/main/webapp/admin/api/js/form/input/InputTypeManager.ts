@@ -33,11 +33,11 @@ module api_form_input {
             }
         }
 
-        static createView(inputTypeName:string, inputTypeConfig?:any):api_form_input_type.InputTypeView {
+        static createView(inputTypeName:string, config?:api_form_input_type.InputTypeViewConfig<any>):api_form_input_type.InputTypeView {
 
             if (InputTypeManager.isRegistered(inputTypeName)) {
                 var inputType = Object.create(InputTypeManager.inputTypes[inputTypeName].prototype);
-                inputType.constructor.call(inputType, inputTypeConfig);
+                inputType.constructor.call(inputType, config);
                 return inputType;
             }
             else {

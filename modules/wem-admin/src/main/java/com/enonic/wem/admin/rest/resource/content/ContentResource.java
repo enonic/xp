@@ -470,6 +470,8 @@ public class ContentResource
 
         final Binary binary = Binary.from( new FileInputStream( uploadItem.getFile() ) );
 
+        uploadService.removeItem( attachmentParams.getUploadId() );
+
         return Attachment.newAttachment().
             name( attachmentParams.getAttachmentName() ).
             mimeType( uploadItem.getMimeType() ).

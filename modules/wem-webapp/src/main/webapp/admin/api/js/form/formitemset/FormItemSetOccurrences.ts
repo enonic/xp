@@ -81,6 +81,16 @@ module api_form_formitemset {
             return dataSets;
         }
 
+        getAttachments(): api_content.Attachment[] {
+            var attachments:api_content.Attachment[] = [];
+            this.getOccurrenceViews().forEach((occurrenceView:FormItemSetOccurrenceView) => {
+                occurrenceView.getAttachments().forEach( (attachment:api_content.Attachment) => {
+                    attachments.push( attachment );
+                } );
+            });
+            return attachments;
+        }
+
         toggleOccurences(show:boolean) {
             var views = <FormItemSetOccurrenceView[]>this.getOccurrenceViews();
             this.occurrencesCollapsed = !show;

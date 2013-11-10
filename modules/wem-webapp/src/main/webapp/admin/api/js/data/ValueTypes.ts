@@ -9,7 +9,9 @@ module api_data{
 
         static DATE_TIME = new ValueType("DateTime");
 
-        static ALL:ValueType[] = [ ValueTypes.STRING, ValueTypes.DATE_TIME ];
+        static ATTACHMENT_NAME = new ValueType("AttachmentName");
+
+        static ALL:ValueType[] = [ ValueTypes.STRING, ValueTypes.DATE_TIME, ValueTypes.ATTACHMENT_NAME ];
 
         static fromName(name:string):ValueType {
             var match = null;

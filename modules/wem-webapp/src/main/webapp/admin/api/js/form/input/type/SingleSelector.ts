@@ -16,10 +16,10 @@ module api_form_input_type {
 
         private config:SingleSelectorConfig;
 
-        constructor(config?:SingleSelectorConfig) {
+        constructor(config:InputTypeViewConfig<SingleSelectorConfig>) {
             super("SingleSelector");
             this.addClass("single-selector");
-            this.config = config;
+            this.config = config.inputConfig;
         }
 
         createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {

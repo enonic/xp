@@ -10,10 +10,10 @@ module api_form_input_type {
         private rows:number;
         private columns:number;
 
-        constructor(config?:TextAreaConfig) {
+        constructor(config:InputTypeViewConfig<TextAreaConfig>) {
             super("TextArea");
-            this.rows = config.rows;
-            this.columns = config.columns;
+            this.rows = config.inputConfig.rows;
+            this.columns = config.inputConfig.columns;
         }
 
         createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {

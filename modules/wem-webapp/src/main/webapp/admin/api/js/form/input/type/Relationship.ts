@@ -9,6 +9,8 @@ module api_form_input_type {
 
     export class Relationship extends api_dom.DivEl implements InputTypeView {
 
+        private config:InputTypeViewConfig<RelationshipConfig>;
+
         private input:api_form.Input;
 
         private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
@@ -19,9 +21,9 @@ module api_form_input_type {
 
         private contentRequestsAllowed:boolean;
 
-        constructor(config?:RelationshipConfig) {
+        constructor(config?:InputTypeViewConfig<RelationshipConfig>) {
             super("Relationship", "relationship");
-
+            this.config = config;
             this.contentSummaryLoader = new ContentSummaryLoader();
             this.contentSummaryLoader.addListener({
                 onLoading: () => {
@@ -36,7 +38,7 @@ module api_form_input_type {
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;
 
-            new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(config.relationshipType.name || "default").send()
+            new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(config.inputConfig.relationshipType.name || "default").send()
                 .done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
                     var relationshipType = jsonResponse.getResult();
                     this.updateInputIcon(relationshipType.iconUrl);
@@ -120,6 +122,10 @@ module api_form_input_type {
                 values.push(value);
             });
             return values;
+        }
+
+        getAttachments():api_content.Attachment[] {
+            return [];
         }
 
         validate(validationRecorder:api_form.ValidationRecorder) {

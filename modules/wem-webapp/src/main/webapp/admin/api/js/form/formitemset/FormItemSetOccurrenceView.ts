@@ -162,6 +162,16 @@ module api_form_formitemset {
             return dataSet;
         }
 
+        getAttachments(): api_content.Attachment[] {
+            var attachments:api_content.Attachment[] = [];
+            this.formItemViews.forEach((formItemView:api_form.FormItemView) => {
+                formItemView.getAttachments().forEach( (attachment:api_content.Attachment) => {
+                    attachments.push( attachment );
+                } );
+            });
+            return attachments;
+        }
+
         toggleContainer(show:boolean) {
             if (show) {
                 this.formItemSetOccurrencesContainer.show();

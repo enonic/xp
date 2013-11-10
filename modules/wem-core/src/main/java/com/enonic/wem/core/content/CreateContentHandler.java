@@ -103,7 +103,11 @@ public class CreateContentHandler
             final ContentId contentId = contentDao.create( content, session );
             session.save();
             addAttachments( client, contentId, command.getAttachments() );
-            addMediaThumbnail( client, session, command, content, contentId );
+            final Attachment thumbnailAttachment = resolveThumbnailAttachment( content );
+            if ( thumbnailAttachment != null )
+            {
+                client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( thumbnailAttachment ) );
+            }
 
             try
             {
@@ -141,8 +145,7 @@ public class CreateContentHandler
         }
     }
 
-    private void addMediaThumbnail( final Client client, final Session session, final CreateContent command, final Content content,
-                                    final ContentId contentId )
+    private Attachment resolveThumbnailAttachment( final Content content )
         throws Exception
     {
         final ContentType contentType = getContentType( content );
@@ -150,15 +153,19 @@ public class CreateContentHandler
         if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
         {
             Attachment mediaAttachment = command.getAttachment( content.getName() );
-            if ( ( mediaAttachment == null ) && ( !command.getAttachments().isEmpty() ) )
+            if ( mediaAttachment == null )
             {
-                mediaAttachment = command.getAttachments().iterator().next();
+                if ( !command.getAttachments().isEmpty() )
+                {
+                    mediaAttachment = command.getAttachments().iterator().next();
+                }
             }
             if ( mediaAttachment != null )
             {
-                addThumbnail( client, contentId, mediaAttachment );
+                return createThumbnailAttachment( mediaAttachment );
             }
         }
+        return null;
     }
 
     private ContentType getContentType( final Content content )
@@ -257,16 +264,15 @@ public class CreateContentHandler
         }
     }
 
-    private void addThumbnail( final Client client, final ContentId contentId, final Attachment attachment )
+    private Attachment createThumbnailAttachment( final Attachment origin )
         throws Exception
     {
-        final Binary thumbnailBinary = createImageThumbnail( attachment.getBinary(), THUMBNAIL_SIZE );
-        final Attachment thumbnailAttachment = newAttachment( attachment ).
+        final Binary thumbnailBinary = createImageThumbnail( origin.getBinary(), THUMBNAIL_SIZE );
+        return newAttachment( origin ).
             binary( thumbnailBinary ).
             name( CreateContent.THUMBNAIL_NAME ).
             mimeType( THUMBNAIL_MIME_TYPE ).
             build();
-        client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( thumbnailAttachment ) );
     }
 
     public Binary createImageThumbnail( final Binary binary, final int size )

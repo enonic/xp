@@ -160,16 +160,13 @@ module app_wizard {
                 setForm(this.contentForm.getForm()).
                 setContentData(contentData);
 
-            if (this.iconUploadId) {
-                createRequest.setAttachments([
-                    {
-                        uploadId: this.iconUploadId,
-                        attachmentName: '_thumb.png'
-                    }
-                ])
-            }
+                if(this.iconUploadId) {
+                    createRequest.addAttachment( new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName(null, '_thumb.png' )));
+                }
+                var attachments:api_content.Attachment[] = this.contentForm.getFormView().getAttachments();
+                createRequest.addAttachments( attachments );
 
-            createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
+                createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
 
                 var json = createResponse.getJson();
                 if (json.error) {
@@ -197,7 +194,7 @@ module app_wizard {
                 setForm(this.contentForm.getForm()).
                 setContentData(this.contentForm.getContentData());
 
-            if (this.iconUploadId) {
+            if(this.iconUploadId) {
                 updateRequest.setAttachments([
                     {
                         uploadId: this.iconUploadId,

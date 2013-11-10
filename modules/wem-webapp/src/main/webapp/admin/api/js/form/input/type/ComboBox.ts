@@ -102,6 +102,10 @@ module api_form_input_type {
             return values;
         }
 
+        getAttachments():api_content.Attachment[] {
+            return [];
+        }
+
         validate(validationRecorder:api_form.ValidationRecorder) {
 
             // TODO:

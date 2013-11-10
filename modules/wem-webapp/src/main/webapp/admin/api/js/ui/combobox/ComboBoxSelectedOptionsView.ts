@@ -5,7 +5,7 @@ module api_ui_combobox {
         private listeners:ComboBoxSelectedOptionsViewListener<T>[] = [];
 
         constructor() {
-            super(null, "selected-options");
+            super("ComboBoxSelectedOptionsView", "selected-options");
         }
 
         addItem(item:OptionData<T>) {
@@ -46,7 +46,5 @@ module api_ui_combobox {
                 }
             });
         }
-
     }
-
 }

@@ -112,6 +112,14 @@ module api_form {
             return this.contentData;
         }
 
+        getAttachments(): api_content.Attachment[] {
+            var attachments:api_content.Attachment[] = [];
+            this.formItemViews.forEach( (formItemView:FormItemView) => {
+                attachments = attachments.concat( formItemView.getAttachments() );
+            });
+            return attachments;
+        }
+
         rebuildContentData():api_content.ContentData {
             var contentData:api_content.ContentData = new api_content.ContentData();
             this.formItemViews.forEach((formItemView:FormItemView) => {

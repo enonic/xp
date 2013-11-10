@@ -84,6 +84,10 @@ module api_form_formitemset {
             return this.formItemSetOccurrences.getDataSets();
         }
 
+        getAttachments(): api_content.Attachment[] {
+            return this.formItemSetOccurrences.getAttachments();
+        }
+
         hasValidOccurrences():boolean {
 
             return this.getData().length >= this.formItemSet.getOccurrences().getMaximum();

@@ -31,7 +31,12 @@ module api_form_input {
 
             if (InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
-                this.inputTypeView = InputTypeManager.createView(inputType.getName(), inputTypeConfig);
+                var inputTypeViewConfig = <api_form_input_type.InputTypeViewConfig> {
+                    dataPath: api_data.DataPath.fromString( this.input.getPath().toString() ),
+                    inputConfig: inputTypeConfig
+                };
+
+                this.inputTypeView = InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
             }
             else {
                 console.log("Input type [" + inputType.getName() + "] need to be registered first.");
@@ -90,6 +95,10 @@ module api_form_input {
                 properties[index] = new api_data.Property(this.input.getName(), value);
             });
             return properties;
+        }
+
+        getAttachments(): api_content.Attachment[] {
+            return this.inputTypeView.getAttachments();
         }
 
         validate(validationRecorder:api_form.ValidationRecorder) {

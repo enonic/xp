@@ -18,6 +18,13 @@ module api_form {
             throw new Error("Method needs to be implemented in inheritor");
         }
 
+        /*
+         *  Override if inheriting FormItemView can provide attachments.
+         */
+        getAttachments(): api_content.Attachment[] {
+            return [];
+        }
+
         validate(validationRecorder:ValidationRecorder) {
 
             // Default method to avoid having to implement method in Layout-s.

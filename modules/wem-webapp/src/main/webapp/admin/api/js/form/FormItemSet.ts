@@ -35,6 +35,7 @@ module api_form{
             if (this.formItemByName[name]) {
                 throw new Error("FormItem already added: " + name);
             }
+            formItem.setParent(this);
             this.formItemByName[formItem.getName()] = formItem;
             this.formItems.push(formItem);
         }

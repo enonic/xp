@@ -1,12 +1,12 @@
 module api_form_input_type {
 
-    export class ImageSelectorSelectedOptionsView extends api_ui_combobox.ComboBoxSelectedOptionsView<api_content.ContentSummary> {
+    export class ImageSelectorSelectedOptionsView extends api_ui_combobox.ComboBoxSelectedOptionsView<ImageSelectorSelectedOption> {
 
         private clearer:api_dom.DivEl;
 
-        private selectedItems:api_ui_combobox.OptionData<api_content.ContentSummary>[] = [];
+        private selectedItems:api_ui_combobox.OptionData<ImageSelectorSelectedOption>[] = [];
 
-        private editedItem:api_ui_combobox.OptionData<api_content.ContentSummary>;
+        private editedItem:api_ui_combobox.OptionData<ImageSelectorSelectedOption>;
 
         private dialog:api_dom.DivEl;
 
@@ -16,7 +16,8 @@ module api_form_input_type {
             this.appendChild(this.clearer);
         }
 
-        addItem(optionData:api_ui_combobox.OptionData<api_content.ContentSummary>) {
+        addItem(optionData:api_ui_combobox.OptionData<ImageSelectorSelectedOption>) {
+
             if (this.dialog) {
                 this.dialog.remove();
                 if (this.editedItem) {
@@ -24,26 +25,19 @@ module api_form_input_type {
                 }
             }
 
-            this.selectedItems.push(optionData);
-            var item = optionData.displayValue;
+            this.selectedItems.push( optionData );
 
-            var option = new api_dom.DivEl(null, "selected-option");
-            option.getEl().setBackgroundImage("url("+item.getIconUrl()+"?size=140&thumbnail=false)");
-
-            var label = new api_dom.DivEl(null, "label");
-            label.getEl().setInnerHtml(item.getName());
-            option.appendChild(label);
-
-            option.getEl().addEventListener("click", () => {
+            var imageSelectorOption:ImageSelectorSelectedOption = optionData.displayValue;
+            var optionView = new ImageSelectorSelectedOptionView(imageSelectorOption);
+            optionView.getEl().addEventListener("click", () => {
                 this.showImageSelectorDialog(optionData);
             });
-
-            option.insertBeforeEl(this.clearer);
+            optionView.insertBeforeEl(this.clearer);
         }
 
-        showImageSelectorDialog(optionData:api_ui_combobox.OptionData<api_content.ContentSummary>) {
-            var item = optionData.displayValue;
-
+        showImageSelectorDialog(optionData:api_ui_combobox.OptionData<ImageSelectorSelectedOption>) {
+            var imageSelectorOption:ImageSelectorSelectedOption = optionData.displayValue;
+            var content = imageSelectorOption.getContent();
             if (this.dialog) {
                 this.dialog.remove();
             }
@@ -62,11 +56,11 @@ module api_form_input_type {
             this.dialog = new api_dom.PEl().addClass("dialog");
 
             var name = new api_dom.H1El();
-            name.getEl().setInnerHtml(item.getName());
+            name.getEl().setInnerHtml(content.getName());
             this.dialog.appendChild(name);
 
             var path = new api_dom.PEl();
-            path.getEl().setInnerHtml(item.getPath().toString());
+            path.getEl().setInnerHtml(content.getPath().toString());
             this.dialog.appendChild(path);
 
             var buttonsBar = new api_dom.DivEl().addClass("buttons-bar");
