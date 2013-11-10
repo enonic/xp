@@ -6,7 +6,7 @@ module api_form_input {
 
         private properties:api_data.Property[];
 
-        private inputTypeView:api_form_input_type.InputTypeView;
+        private inputTypeView:api_form_inputtype.InputTypeView;
 
         private bottomButtonRow:api_dom.DivEl;
 
@@ -31,7 +31,7 @@ module api_form_input {
 
             if (InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
-                var inputTypeViewConfig = <api_form_input_type.InputTypeViewConfig> {
+                var inputTypeViewConfig = <api_form_inputtype.InputTypeViewConfig> {
                     dataPath: api_data.DataPath.fromString( this.input.getPath().toString() ),
                     inputConfig: inputTypeConfig
                 };
@@ -44,8 +44,8 @@ module api_form_input {
             }
 
             this.inputTypeView.layout(this.input, this.properties);
-            if (this.inputTypeView instanceof api_form_input_type.BaseInputTypeView) {
-                this.appendChild(<api_form_input_type.BaseInputTypeView>this.inputTypeView);
+            if (this.inputTypeView instanceof api_form_inputtype_support.BaseInputTypeView) {
+                this.appendChild(<api_form_inputtype_support.BaseInputTypeView>this.inputTypeView);
             }
             else {
                 this.appendChild(api_dom.Element.fromHtmlElement(this.inputTypeView.getHTMLElement()))

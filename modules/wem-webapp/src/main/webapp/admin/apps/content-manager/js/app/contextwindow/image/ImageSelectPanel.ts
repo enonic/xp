@@ -19,7 +19,7 @@ module app_contextwindow_image {
 
             var comboBox = new api_ui_combobox.ComboBox("imagePicker", comboBoxConfig);
 
-            var contentSummaryLoader = new api_form_input_type.ContentSummaryLoader();
+            var contentSummaryLoader = new api_form_inputtype_content.ContentSummaryLoader();
             contentSummaryLoader.addListener({
                 onLoading: () => {
                     comboBox.setLabel("Searching...");
