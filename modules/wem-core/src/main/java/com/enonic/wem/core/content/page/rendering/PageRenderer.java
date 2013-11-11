@@ -17,9 +17,6 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.content.page.PageDescriptorXmlSerializer;
 import com.enonic.wem.core.rendering.BaseRenderer;
 import com.enonic.wem.core.rendering.Context;
-import com.enonic.wem.core.rendering.Controller;
-import com.enonic.wem.core.rendering.ControllerFactory;
-import com.enonic.wem.core.rendering.ControllerResult;
 import com.enonic.wem.core.rendering.Renderer;
 import com.enonic.wem.core.rendering.RenderingResult;
 

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.rendering;
+package com.enonic.wem.core.content.page.rendering;
 
 
 public final class ControllerResult

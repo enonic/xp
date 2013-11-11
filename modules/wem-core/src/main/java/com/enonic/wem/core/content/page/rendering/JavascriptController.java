@@ -1,7 +1,8 @@
-package com.enonic.wem.core.rendering;
+package com.enonic.wem.core.content.page.rendering;
 
 
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.core.rendering.Context;
 
 public final class JavascriptController
     implements Controller
@@ -12,7 +13,7 @@ public final class JavascriptController
 
     private final Context context;
 
-    public JavascriptController( final String javascriptSource, final RootDataSet config, final Context context )
+    JavascriptController( final String javascriptSource, final RootDataSet config, final Context context )
     {
         this.javascriptSource = javascriptSource;
         this.config = config;

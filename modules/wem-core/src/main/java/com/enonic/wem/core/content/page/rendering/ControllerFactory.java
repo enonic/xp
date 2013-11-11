@@ -1,4 +1,4 @@
-package com.enonic.wem.core.rendering;
+package com.enonic.wem.core.content.page.rendering;
 
 
 import java.io.IOException;
@@ -10,8 +10,9 @@ import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.core.rendering.Context;
 
-public final class ControllerFactory
+final class ControllerFactory
 {
     private final Client client;
 
@@ -20,12 +21,11 @@ public final class ControllerFactory
         this.client = client;
     }
 
-    public Controller create( final ModuleResourceKey javascriptResourceKey, final RootDataSet config, final Context context )
+    Controller create( final ModuleResourceKey javascriptResourceKey, final RootDataSet config, final Context context )
     {
         final Resource javascriptResource = retrieveJavascriptResource( javascriptResourceKey );
         final String javascriptSource = getJavascriptSource( javascriptResource );
-        final Controller controller = new JavascriptController( javascriptSource, config, context );
-        return controller;
+        return new JavascriptController( javascriptSource, config, context );
     }
 
     private Resource retrieveJavascriptResource( final ModuleResourceKey javascriptResourceKey )
