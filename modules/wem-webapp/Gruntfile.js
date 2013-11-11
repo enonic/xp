@@ -10,12 +10,12 @@ module.exports = function (grunt) {
         less: {
             common: {
                 files: {
-                    'target/generated-sources/webapp/admin/resources/less/_all.css': 'src/main/webapp/admin/resources/less/main.less'
+                    'src/main/webapp/admin/resources/less/_all.css': 'src/main/webapp/admin/resources/less/main.less'
                 }
             },
             live_edit: {
                 files: {
-                    "target/generated-sources/webapp/admin/live-edit/css/_all.css": "src/main/webapp/admin/live-edit/css/less/live-edit.less"
+                    "src/main/webapp/admin/live-edit/css/less/_all.css": "src/main/webapp/admin/live-edit/css/less/live-edit.less"
                 }
             }
         },
@@ -44,46 +44,46 @@ module.exports = function (grunt) {
                     'src/main/webapp/admin/resources/lib/slickgrid/slick.checkboxselectcolumn.js',
                     'src/main/webapp/admin/resources/lib/mousetrap.min.js'
                 ],
-                dest: 'target/generated-sources/webapp/admin/resources/lib/_all.js'
+                dest: 'src/main/webapp/admin/resources/lib/_all.js'
             }
         },
 
         ts: {
             api: {
                 src: ['src/main/webapp/admin/api/js/_module.ts'],
-                out: 'target/generated-sources/webapp/admin/api/js/_all.js'
+                out: 'src/main/webapp/admin/api/js/_all.js'
             },
             space_manager: {
                 src: ['src/main/webapp/admin/apps/space-manager/js/_module.ts'],
-                out: 'target/generated-sources/webapp/admin/apps/space-manager/js/_all.js',
+                out: 'src/main/webapp/admin/apps/space-manager/js/_all.js',
                 options: {
                     sourcemap: true
                 }
             },
             content_manager: {
                 src: ['src/main/webapp/admin/apps/content-manager/js/_module.ts'],
-                out: 'target/generated-sources/webapp/admin/apps/content-manager/js/_all.js',
+                out: 'src/main/webapp/admin/apps/content-manager/js/_all.js',
                 options: {
                     sourcemap: true
                 }
             },
             schema_manager: {
                 src: ['src/main/webapp/admin/apps/schema-manager/js/_module.ts'],
-                out: 'target/generated-sources/webapp/admin/apps/schema-manager/js/_all.js',
+                out: 'src/main/webapp/admin/apps/schema-manager/js/_all.js',
                 options: {
                     sourcemap: true
                 }
             },
             app_launcher: {
                 src: ['src/main/webapp/admin/apps/app-launcher/js/_module.ts'],
-                out: 'target/generated-sources/webapp/admin/apps/app-launcher/js/_all.js',
+                out: 'src/main/webapp/admin/apps/app-launcher/js/_all.js',
                 options: {
                     sourcemap: true
                 }
             },
             live_edit: {
                 src: ['src/main/webapp/admin/live-edit/js/_module.ts'],
-                out: 'target/generated-sources/webapp/admin/live-edit/js/_all.js',
+                out: 'src/main/webapp/admin/live-edit/js/_all.js',
                 options: {
                     sourcemap: true
                 }
