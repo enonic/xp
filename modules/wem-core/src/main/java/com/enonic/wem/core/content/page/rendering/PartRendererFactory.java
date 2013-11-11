@@ -11,7 +11,7 @@ import com.enonic.wem.core.rendering.RendererFactory;
 public class PartRendererFactory
     implements RendererFactory
 {
-    static
+    static void register()
     {
         RenderablesRegister.get().register( Part.class, new PartRendererFactory() );
     }

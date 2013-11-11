@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.core.content.page.rendering.PageRendererRegistrar;
 
 import static com.enonic.wem.api.content.page.Page.newPage;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
@@ -21,6 +22,11 @@ import static org.mockito.Mockito.when;
 
 public class CoreRendererTest
 {
+    public CoreRendererTest()
+    {
+        PageRendererRegistrar.register();
+    }
+
     @Test
     public void testRenderComponent()
         throws Exception

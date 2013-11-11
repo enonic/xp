@@ -11,7 +11,7 @@ import com.enonic.wem.core.rendering.RendererFactory;
 public class LayoutRendererFactory
     implements RendererFactory
 {
-    static
+    static void register()
     {
         RenderablesRegister.get().register( Layout.class, new LayoutRendererFactory() );
     }
