@@ -5,7 +5,7 @@
     <title>Enonic WEM Admin</title>
 
     <!-- Styles -->
-    <link rel="stylesheet" type="text/css" href="${baseUrl}/admin/resources/less/_all.css">
+    <link rel="stylesheet" type="text/css" href="${baseUrl}/admin/resources/styles/_all.css">
 
     <!-- Libraries -->
     <script type="text/javascript" src="${baseUrl}/admin/resources/lib/_all.js"></script>
