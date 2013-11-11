@@ -1,106 +1,58 @@
 module.exports = function (grunt) {
 
-    grunt.loadNpmTasks('grunt-ts');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-directives');
-    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadTasks('grunt');
 
     grunt.initConfig({
 
-        less: {
+        module: {
             common: {
-                files: {
-                    'src/main/webapp/admin/common/styles/_all.css': 'src/main/webapp/admin/common/styles/_module.less'
+                dir: 'src/main/webapp/admin/common',
+                ts: {
+                    sourcemap: true,
+                    declaration: true
                 }
-            },
-            live_edit: {
-                files: {
-                    "src/main/webapp/admin/live-edit/styles/_all.css": "src/main/webapp/admin/live-edit/styles/_module.less"
-                }
-            }
-        },
-
-        directives: {
-            common: {
-                src: 'src/main/webapp/admin/common/lib/_module.js',
-                dest: 'src/main/webapp/admin/common/lib/_all.js'
-            }
-        },
-
-        ts: {
-            api: {
-                src: ['src/main/webapp/admin/common/js/_module.ts'],
-                out: 'src/main/webapp/admin/common/js/_all.js'
             },
             space_manager: {
-                src: ['src/main/webapp/admin/apps/space-manager/js/_module.ts'],
-                out: 'src/main/webapp/admin/apps/space-manager/js/_all.js',
-                options: {
+                dir: 'src/main/webapp/admin/apps/space-manager',
+                ts: {
                     sourcemap: true
                 }
             },
             content_manager: {
-                src: ['src/main/webapp/admin/apps/content-manager/js/_module.ts'],
-                out: 'src/main/webapp/admin/apps/content-manager/js/_all.js',
-                options: {
+                dir: 'src/main/webapp/admin/apps/content-manager',
+                ts: {
                     sourcemap: true
                 }
             },
             schema_manager: {
-                src: ['src/main/webapp/admin/apps/schema-manager/js/_module.ts'],
-                out: 'src/main/webapp/admin/apps/schema-manager/js/_all.js',
-                options: {
+                dir: 'src/main/webapp/admin/apps/schema-manager',
+                ts: {
                     sourcemap: true
                 }
             },
             app_launcher: {
-                src: ['src/main/webapp/admin/apps/app-launcher/js/_module.ts'],
-                out: 'src/main/webapp/admin/apps/app-launcher/js/_all.js',
-                options: {
+                dir: 'src/main/webapp/admin/apps/app-launcher',
+                ts: {
                     sourcemap: true
                 }
             },
             live_edit: {
-                src: ['src/main/webapp/admin/live-edit/js/_module.ts'],
-                out: 'src/main/webapp/admin/live-edit/js/_all.js',
-                options: {
+                dir: 'src/main/webapp/admin/live-edit',
+                ts: {
                     sourcemap: true
                 }
             }
-        },
-
-        watch: {
-            files: ['src/main/webapp/admin/**/*.ts', 'src/test/webapp/admin/**/*.ts'],
-            tasks: ['ts']
         }
-
     });
 
     /**
      * Alias tasks
      */
-    grunt.registerTask('default', 'watch');
-    grunt.registerTask('all', ['less', 'directives', 'ts']);
-    grunt.registerTask('cm', [
-        'ts:api',
-        'ts:content_manager'
-    ]);
-    grunt.registerTask('sp', [
-        'ts:api',
-        'ts:space_manager'
-    ]);
-    grunt.registerTask('sc', [
-        'ts:api',
-        'ts:schema_manager'
-    ]);
-    grunt.registerTask('al', [
-        'ts:api',
-        'ts:app_launcher'
-    ]);
-    grunt.registerTask('live_edit_build_all', [
-        'ts:live_edit',
-        'less:live_edit'
-    ]);
+    grunt.registerTask('default', 'all');
+    grunt.registerTask('all', ['module']);
+    grunt.registerTask('cm', ['module:content_manager']);
+    grunt.registerTask('sp', ['module:space_manager']);
+    grunt.registerTask('sc', ['module:schema_manager']);
+    grunt.registerTask('al', ['module:app_launcher']);
+    grunt.registerTask('le', ['module:live_edit']);
 };
