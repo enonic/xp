@@ -21,7 +21,7 @@ module app_wizard {
 
             var actions = new ContentTypeWizardActions(this);
 
-            var toolbar = new ContentTypeWizardToolbar({
+            var mainToolbar = new ContentTypeWizardToolbar({
                 saveAction: actions.getSaveAction(),
                 duplicateAction: actions.getDuplicateAction(),
                 deleteAction: actions.getDeleteAction(),
@@ -31,7 +31,7 @@ module app_wizard {
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
-                toolbar: toolbar,
+                mainToolbar: mainToolbar,
                 actions: actions,
                 header: this.contentTypeWizardHeader
             });

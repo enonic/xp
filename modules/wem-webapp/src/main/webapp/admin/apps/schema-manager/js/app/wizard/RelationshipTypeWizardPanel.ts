@@ -22,7 +22,7 @@ module app_wizard {
 
             var actions = new RelationshipTypeWizardActions(this);
 
-            var toolbar = new RelationshipTypeWizardToolbar({
+            var mainToolbar = new RelationshipTypeWizardToolbar({
                 saveAction: actions.getSaveAction(),
                 duplicateAction: actions.getDuplicateAction(),
                 deleteAction: actions.getDeleteAction(),
@@ -32,7 +32,7 @@ module app_wizard {
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
-                toolbar: toolbar,
+                mainToolbar: mainToolbar,
                 actions: actions,
                 header: this.relationShipTypeWizardHeader
             });

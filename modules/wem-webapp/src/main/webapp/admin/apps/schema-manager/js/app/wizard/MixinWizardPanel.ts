@@ -23,7 +23,7 @@ module app_wizard {
 
             var actions = new MixinWizardActions(this);
 
-            var toolbar = new MixinWizardToolbar({
+            var mainToolbar = new MixinWizardToolbar({
                  saveAction: actions.getSaveAction(),
                  duplicateAction: actions.getDuplicateAction(),
                  deleteAction: actions.getDeleteAction(),
@@ -33,7 +33,7 @@ module app_wizard {
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
-                toolbar: toolbar,
+                mainToolbar: mainToolbar,
                 actions: actions,
                 header: this.mixinWizardHeader
             });
