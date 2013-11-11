@@ -13,13 +13,13 @@ module api_form_inputtype_content_image {
 
         private input:api_form.Input;
 
-        private comboBox:api_ui_combobox.ComboBox<ImageSelectorSelectedOption>;
+        private comboBox:api_ui_combobox.ComboBox<SelectedOption>;
 
         private libraryButton:api_ui.Button;
 
         private uploadButton:api_ui.Button;
 
-        private selectedOptionsView:ImageSelectorSelectedOptionsView;
+        private selectedOptionsView:SelectedOptionsView;
 
         private contentSummaryLoader:api_form_inputtype_content.ContentSummaryLoader;
 
@@ -62,8 +62,8 @@ module api_form_inputtype_content_image {
 
                     var dataPath = api_data.DataPath.fromString(this.config.dataPath.toString() + "[" + this.comboBox.countSelected() + "]");
                     var attachmentName = new api_content.AttachmentName(dataPath, fileName);
-                    var imageSelectorOption = ImageSelectorSelectedOption.fromUpload(id, attachmentName);
-                    this.comboBox.selectOption(<api_ui_combobox.OptionData<ImageSelectorSelectedOption>>{
+                    var imageSelectorOption = SelectedOption.fromUpload(id, attachmentName);
+                    this.comboBox.selectOption(<api_ui_combobox.OptionData<SelectedOption>>{
                         value: id,
                         displayValue: imageSelectorOption
                     });
@@ -75,7 +75,7 @@ module api_form_inputtype_content_image {
 
             this.input = input;
 
-            this.selectedOptionsView = new ImageSelectorSelectedOptionsView();
+            this.selectedOptionsView = new SelectedOptionsView();
             this.comboBox = this.createComboBox(input);
 
             if (properties != null) {
@@ -114,7 +114,7 @@ module api_form_inputtype_content_image {
 
         getValues(): api_data.Value[] {
             var values:api_data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData<ImageSelectorSelectedOption>) => {
+            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData<SelectedOption>) => {
 
                 // Value is a string either containing: contentId=xx
                 // Value is a string either containing: attachmentName=xx
@@ -162,16 +162,16 @@ module api_form_inputtype_content_image {
             throw new Error("ImageSelector manages occurrences self");
         }
 
-        private createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<ImageSelectorSelectedOption> {
+        private createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<SelectedOption> {
 
-            var comboBoxConfig = <api_ui_combobox.ComboBoxConfig<ImageSelectorSelectedOption>> {
+            var comboBoxConfig = <api_ui_combobox.ComboBoxConfig<SelectedOption>> {
                 rowHeight: 50,
                 optionFormatter:  this.optionFormatter,
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
 
-            var comboBox = new api_ui_combobox.ComboBox<ImageSelectorSelectedOption>(input.getName(), comboBoxConfig);
+            var comboBox = new api_ui_combobox.ComboBox<SelectedOption>(input.getName(), comboBoxConfig);
 
             this.loadOptions("");
 
@@ -179,12 +179,12 @@ module api_form_inputtype_content_image {
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
                 },
-                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<ImageSelectorSelectedOption>) => {
+                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<SelectedOption>) => {
                     if (!comboBox.maximumOccurrencesReached()) {
                         this.uploadButton.setEnabled(true);
                     }
                 },
-                onOptionSelected: (item:api_ui_combobox.OptionData<ImageSelectorSelectedOption>) => {
+                onOptionSelected: (item:api_ui_combobox.OptionData<SelectedOption>) => {
                     if (this.comboBox.maximumOccurrencesReached()) {
                         this.uploadButton.setEnabled(false);
                     }
@@ -202,10 +202,10 @@ module api_form_inputtype_content_image {
             this.contentSummaryLoader.search(searchString);
         }
 
-        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<ImageSelectorSelectedOption>[] {
-            var options:api_ui_combobox.OptionData<ImageSelectorSelectedOption>[] = [];
+        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<SelectedOption>[] {
+            var options:api_ui_combobox.OptionData<SelectedOption>[] = [];
             contents.forEach((content:api_content.ContentSummary) => {
-                var imageSelectorSelectedOption:ImageSelectorSelectedOption = ImageSelectorSelectedOption.fromContent(content);
+                var imageSelectorSelectedOption:SelectedOption = SelectedOption.fromContent(content);
 
                 options.push({
                     value: content.getId(),
@@ -215,7 +215,7 @@ module api_form_inputtype_content_image {
             return options;
         }
 
-        private optionFormatter(row:number, cell:number, option:ImageSelectorSelectedOption, columnDef:any, dataContext:api_ui_combobox.OptionData<ImageSelectorSelectedOption>):string {
+        private optionFormatter(row:number, cell:number, option:SelectedOption, columnDef:any, dataContext:api_ui_combobox.OptionData<SelectedOption>):string {
 
             if( option.hasContent() ) {
                 var content = option.getContent();

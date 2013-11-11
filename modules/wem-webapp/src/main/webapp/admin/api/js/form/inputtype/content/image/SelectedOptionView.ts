@@ -1,11 +1,11 @@
 module api_form_inputtype_content_image {
 
-    export class ImageSelectorSelectedOptionView extends api_dom.DivEl{
+    export class SelectedOptionView extends api_dom.DivEl{
 
-        private option:ImageSelectorSelectedOption;
+        private option:SelectedOption;
 
-        constructor(option:ImageSelectorSelectedOption) {
-            super( "ImageSelectorOptionView", "selected-option" );
+        constructor(option:SelectedOption) {
+            super( "SelectedOptionView", "selected-option" );
 
             this.option = option;
 

@@ -1,6 +1,6 @@
 module api_form_inputtype_content_image {
 
-    export class ImageSelectorSelectedOption {
+    export class SelectedOption {
 
         private content:api_content.ContentSummary;
 
@@ -8,12 +8,12 @@ module api_form_inputtype_content_image {
 
         private attachmentName:api_content.AttachmentName;
 
-        static fromContent(content:api_content.ContentSummary):ImageSelectorSelectedOption {
-            return new ImageSelectorSelectedOption( content, null, null );
+        static fromContent(content:api_content.ContentSummary):SelectedOption {
+            return new SelectedOption( content, null, null );
         }
 
-        static fromUpload(uploadId:string, attachmentName:api_content.AttachmentName):ImageSelectorSelectedOption {
-            return new ImageSelectorSelectedOption( null, uploadId, attachmentName );
+        static fromUpload(uploadId:string, attachmentName:api_content.AttachmentName):SelectedOption {
+            return new SelectedOption( null, uploadId, attachmentName );
         }
 
         constructor(content:api_content.ContentSummary, uploadId:string, attachmentName:api_content.AttachmentName ){

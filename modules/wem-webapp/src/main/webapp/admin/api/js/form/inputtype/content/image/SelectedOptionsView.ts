@@ -1,12 +1,12 @@
 module api_form_inputtype_content_image {
 
-    export class ImageSelectorSelectedOptionsView extends api_ui_combobox.ComboBoxSelectedOptionsView<ImageSelectorSelectedOption> {
+    export class SelectedOptionsView extends api_ui_combobox.ComboBoxSelectedOptionsView<SelectedOption> {
 
         private clearer:api_dom.DivEl;
 
-        private selectedItems:api_ui_combobox.OptionData<ImageSelectorSelectedOption>[] = [];
+        private selectedItems:api_ui_combobox.OptionData<SelectedOption>[] = [];
 
-        private editedItem:api_ui_combobox.OptionData<ImageSelectorSelectedOption>;
+        private editedItem:api_ui_combobox.OptionData<SelectedOption>;
 
         private dialog:api_dom.DivEl;
 
@@ -16,7 +16,7 @@ module api_form_inputtype_content_image {
             this.appendChild(this.clearer);
         }
 
-        addItem(optionData:api_ui_combobox.OptionData<ImageSelectorSelectedOption>) {
+        addItem(optionData:api_ui_combobox.OptionData<SelectedOption>) {
 
             if (this.dialog) {
                 this.dialog.remove();
@@ -27,16 +27,16 @@ module api_form_inputtype_content_image {
 
             this.selectedItems.push( optionData );
 
-            var imageSelectorOption:ImageSelectorSelectedOption = optionData.displayValue;
-            var optionView = new ImageSelectorSelectedOptionView(imageSelectorOption);
+            var imageSelectorOption:SelectedOption = optionData.displayValue;
+            var optionView = new SelectedOptionView(imageSelectorOption);
             optionView.getEl().addEventListener("click", () => {
                 this.showImageSelectorDialog(optionData);
             });
             optionView.insertBeforeEl(this.clearer);
         }
 
-        showImageSelectorDialog(optionData:api_ui_combobox.OptionData<ImageSelectorSelectedOption>) {
-            var imageSelectorOption:ImageSelectorSelectedOption = optionData.displayValue;
+        showImageSelectorDialog(optionData:api_ui_combobox.OptionData<SelectedOption>) {
+            var imageSelectorOption:SelectedOption = optionData.displayValue;
             var content = imageSelectorOption.getContent();
             if (this.dialog) {
                 this.dialog.remove();
