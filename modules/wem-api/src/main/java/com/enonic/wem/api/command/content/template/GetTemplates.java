@@ -24,7 +24,7 @@ public final class GetTemplates
         return this;
     }
 
-    boolean isGetAll()
+    public boolean isGetAll()
     {
         return getAllTemplates;
     }

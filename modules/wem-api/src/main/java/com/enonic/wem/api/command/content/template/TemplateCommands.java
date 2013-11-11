@@ -49,19 +49,19 @@ public final class TemplateCommands
         return new UpdateImageTemplate();
     }
 
-    public DeleteTemplate delete()
+    public DeleteTemplate deleteTemplate()
     {
         return new DeleteTemplate();
     }
 
-    public GetSiteTemplates listSiteTemplates()
+    public DeleteSiteTemplate deleteSiteTemplate()
     {
-        return new GetSiteTemplates();
+        return new DeleteSiteTemplate();
     }
 
-    public GetSiteTemplate getSiteTemplate()
+    public GetSiteTemplates getSiteTemplates()
     {
-        return new GetSiteTemplate();
+        return new GetSiteTemplates();
     }
 
     public GetPageTemplate getPageTemplate()
