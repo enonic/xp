@@ -10,12 +10,12 @@ module.exports = function (grunt) {
         less: {
             common: {
                 files: {
-                    'src/main/webapp/admin/resources/styles/_all.css': 'src/main/webapp/admin/resources/styles/main.less'
+                    'src/main/webapp/admin/resources/styles/_all.css': 'src/main/webapp/admin/resources/styles/_module.less'
                 }
             },
             live_edit: {
                 files: {
-                    "src/main/webapp/admin/live-edit/css/less/_all.css": "src/main/webapp/admin/live-edit/css/less/live-edit.less"
+                    "src/main/webapp/admin/live-edit/styles/_all.css": "src/main/webapp/admin/live-edit/styles/_module.less"
                 }
             }
         },
