@@ -50,19 +50,23 @@ module app_wizard {
 
             var actions = new ContentWizardActions(this);
 
-            var toolbar = new ContentWizardToolbar({
+            var mainToolbar = new ContentWizardToolbar({
                 saveAction: actions.getSaveAction(),
                 duplicateAction: actions.getDuplicateAction(),
                 deleteAction: actions.getDeleteAction(),
                 closeAction: actions.getCloseAction()
             });
 
+            var stepToolbar = new api_ui_toolbar.Toolbar();
+            stepToolbar.addAction(actions.getPublishAction());
+
             var livePanel = new LiveFormPanel();
 
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
-                toolbar: toolbar,
+                mainToolbar: mainToolbar,
+                stepToolbar: stepToolbar,
                 header: this.contentWizardHeader,
                 actions: actions,
                 livePanel: livePanel
