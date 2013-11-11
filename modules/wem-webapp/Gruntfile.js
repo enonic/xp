@@ -4,6 +4,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-directives');
 
     grunt.initConfig({
 
@@ -20,30 +21,9 @@ module.exports = function (grunt) {
             }
         },
 
-        concat: {
+        directives: {
             common: {
-                src: [
-                    'src/main/webapp/admin/resources/lib/ext/ext-all.js',
-                    'src/main/webapp/admin/resources/lib/plupload/js/plupload.full.js',
-                    'src/main/webapp/admin/resources/lib/jquery-2.0.2.js',
-                    'src/main/webapp/admin/resources/lib/jquery-ui-1.10.3.custom.min.js',
-                    'src/main/webapp/admin/resources/lib/jquery.ui.live-draggable.js',
-                    'src/main/webapp/admin/resources/lib/jquery.simulate.js',
-                    'src/main/webapp/admin/resources/lib/codemirror/codemirror.js',
-                    'src/main/webapp/admin/resources/lib/codemirror/addon/loadmode.js',
-                    'src/main/webapp/admin/resources/lib/signals.js',
-                    'src/main/webapp/admin/resources/lib/hasher.js',
-                    'src/main/webapp/admin/resources/lib/crossroads.js',
-                    'src/main/webapp/admin/resources/lib/slickgrid/lib/jquery.event.drag-2.2.js',
-                    'src/main/webapp/admin/resources/lib/slickgrid/lib/jquery.event.drop-2.2.js',
-                    'src/main/webapp/admin/resources/lib/slickgrid/slick.core.js',
-                    'src/main/webapp/admin/resources/lib/slickgrid/slick.grid.js',
-                    'src/main/webapp/admin/resources/lib/slickgrid/slick.dataview.js',
-                    'src/main/webapp/admin/resources/lib/slickgrid/slick.remotemodel.js',
-                    'src/main/webapp/admin/resources/lib/slickgrid/slick.rowselectionmodel.js',
-                    'src/main/webapp/admin/resources/lib/slickgrid/slick.checkboxselectcolumn.js',
-                    'src/main/webapp/admin/resources/lib/mousetrap.min.js'
-                ],
+                src: 'src/main/webapp/admin/resources/lib/_module.js',
                 dest: 'src/main/webapp/admin/resources/lib/_all.js'
             }
         },
@@ -101,7 +81,7 @@ module.exports = function (grunt) {
      * Alias tasks
      */
     grunt.registerTask('default', 'watch');
-    grunt.registerTask('all', ['less', 'concat', 'ts']);
+    grunt.registerTask('all', ['less', 'directives', 'ts']);
     grunt.registerTask('cm', [
         'ts:api',
         'ts:content_manager'
