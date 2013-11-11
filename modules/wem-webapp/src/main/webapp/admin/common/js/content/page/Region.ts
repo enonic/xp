@@ -1,4 +1,4 @@
-module api_page{
+module api_content_page{
 
     export class Region {
 
@@ -6,11 +6,11 @@ module api_page{
 
         private components:Component[];
 
-        constructor(regionJson:api_page_json.RegionJson) {
+        constructor(regionJson:api_content_page_json.RegionJson) {
 
             this.name = regionJson.name;
 
-            regionJson.components.forEach((componentJsonJson:api_page_json.ComponentJson) => {
+            regionJson.components.forEach((componentJsonJson:api_content_page_json.ComponentJson) => {
                 var component = ComponentFactory.createComponent(componentJsonJson);
                 this.components.push(component);
             });
