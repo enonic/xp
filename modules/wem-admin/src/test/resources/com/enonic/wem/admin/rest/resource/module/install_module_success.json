@@ -1,7 +1,6 @@
 {
-    "created" : true,
-    "failure" : null,
-    "module" : {
+    "error" : null,
+    "result" : {
         "deletable" : true,
         "displayName" : "module display name",
         "editable" : true,

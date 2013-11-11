@@ -17,7 +17,7 @@ import com.sun.jersey.multipart.FormDataParam;
 
 import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.module.json.CreateModuleResultJson;
+import com.enonic.wem.admin.rest.resource.module.json.InstallModuleResultJson;
 import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.core.module.ModuleImporter;
@@ -31,8 +31,8 @@ public class ModuleResource
     @POST
     @javax.ws.rs.Path("install")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public CreateModuleResultJson install( @FormDataParam("file") InputStream uploadedInputStream,
-                                           @FormDataParam("file") FormDataContentDisposition fileDetail )
+    public InstallModuleResultJson install( @FormDataParam("file") InputStream uploadedInputStream,
+                                            @FormDataParam("file") FormDataContentDisposition fileDetail )
         throws IOException
     {
         final String fileName = fileDetail.getFileName();
@@ -50,13 +50,13 @@ public class ModuleResource
             }
             catch ( Exception e )
             {
-                return new CreateModuleResultJson( e );
+                return InstallModuleResultJson.error( e.getMessage() );
             }
 
             final CreateModule createModuleCommand = CreateModule.fromModule( importedModule );
             final Module createdModule = client.execute( createModuleCommand );
 
-            return new CreateModuleResultJson( new ModuleSummaryJson( createdModule ) );
+            return InstallModuleResultJson.result( new ModuleSummaryJson( createdModule ) );
         }
         finally
         {

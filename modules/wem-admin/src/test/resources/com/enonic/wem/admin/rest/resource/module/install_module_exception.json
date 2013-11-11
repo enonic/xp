@@ -1,5 +1,6 @@
 {
-    "created" : false,
-    "failure" : "Invalid zip file [testmodule-1.0.0.zip]",
-    "module" : null
+    "error": {
+        "message": "Invalid zip file [testmodule-1.0.0.zip]"
+    },
+    "result": null
 }

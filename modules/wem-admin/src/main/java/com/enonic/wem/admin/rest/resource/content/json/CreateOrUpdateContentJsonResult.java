@@ -1,6 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
 import com.enonic.wem.admin.json.content.ContentJson;
+import com.enonic.wem.admin.rest.resource.ErrorJson;
 
 public class CreateOrUpdateContentJsonResult
 {
@@ -41,17 +42,3 @@ public class CreateOrUpdateContentJsonResult
     }
 }
 
-class ErrorJson {
-
-    private String message;
-
-    ErrorJson( final String message )
-    {
-        this.message = message;
-    }
-
-    public String getMessage()
-    {
-        return message;
-    }
-}
