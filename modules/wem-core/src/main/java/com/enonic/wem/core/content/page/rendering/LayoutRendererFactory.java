@@ -1,0 +1,29 @@
+package com.enonic.wem.core.content.page.rendering;
+
+import com.enonic.wem.api.Client;
+import com.enonic.wem.api.content.page.Layout;
+import com.enonic.wem.core.rendering.Context;
+import com.enonic.wem.core.rendering.RenderablesRegister;
+import com.enonic.wem.core.rendering.Renderer;
+import com.enonic.wem.core.rendering.RendererFactory;
+
+@SuppressWarnings("UnusedDeclaration")
+public class LayoutRendererFactory
+    implements RendererFactory
+{
+    static
+    {
+        RenderablesRegister.get().register( Layout.class, new LayoutRendererFactory() );
+    }
+
+    private LayoutRendererFactory()
+    {
+        // prevention
+    }
+
+    @Override
+    public Renderer create( final Client client, final Context context )
+    {
+        return new LayoutRenderer( client, context );
+    }
+}

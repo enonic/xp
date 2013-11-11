@@ -1,4 +1,4 @@
-package com.enonic.wem.core.rendering;
+package com.enonic.wem.core.content.page.rendering;
 
 
 import java.io.IOException;
@@ -15,27 +15,33 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.content.page.PageDescriptorXmlSerializer;
+import com.enonic.wem.core.rendering.BaseRenderer;
+import com.enonic.wem.core.rendering.Context;
+import com.enonic.wem.core.rendering.Controller;
+import com.enonic.wem.core.rendering.ControllerFactory;
+import com.enonic.wem.core.rendering.ControllerResult;
+import com.enonic.wem.core.rendering.Renderer;
+import com.enonic.wem.core.rendering.RenderingResult;
 
 import static com.enonic.wem.core.rendering.RenderingResult.newRenderingResult;
 
 public final class PageRenderer
-    implements ComponentRenderer<Page>
+    extends BaseRenderer
+    implements Renderer<Page>
 {
     private final PageDescriptorXmlSerializer pageDescriptorXmlSerializer;
 
     private final ControllerFactory controllerFactory;
 
-    private final Client client;
-
-    public PageRenderer( final Client client )
+    public PageRenderer( final Client client, final Context context )
     {
-        this.client = client;
+        super( client, context );
         this.controllerFactory = new ControllerFactory( client );
         this.pageDescriptorXmlSerializer = new PageDescriptorXmlSerializer();
     }
 
     @Override
-    public RenderingResult execute( final Page page, final Context context )
+    public RenderingResult execute( final Page page )
     {
         final PageTemplate template = getPageTemplate( page.getTemplateName(), client );
         final PageDescriptor descriptor = getPageDescriptor( template.getDescriptor(), client );

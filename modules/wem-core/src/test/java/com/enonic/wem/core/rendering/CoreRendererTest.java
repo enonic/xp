@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
-public class RendererTest
+public class CoreRendererTest
 {
     @Test
     public void testRenderComponent()
@@ -46,11 +46,11 @@ public class RendererTest
         when( client.execute( isA( GetModuleResource.class ) ) ).thenReturn( pageDescriptorResource ).thenReturn( controllerResource );
 
         // exercise
-        final Renderer renderer = new Renderer( client );
+        final CoreRenderer coreRenderer = new CoreRenderer( client );
         final Page page = newPage().
             pageTemplateName( pageTemplateName ).
             build();
-        final RenderingResult result = renderer.render( page );
+        final RenderingResult result = coreRenderer.render( page );
 
         // verify
         assertNotNull( result );
