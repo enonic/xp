@@ -1,12 +1,12 @@
 {
-    "name": "my-typescript",
-    "version": "1.0.0",
-    "devDependencies": {
-        "grunt": "~0.4.1",
-        "grunt-cli": "0.x.x",
-        "grunt-contrib-watch": "~0.3.1",
-        "grunt-ts": "1.4.0",
-        "grunt-contrib-less": "~0.8.1",
-        "grunt-directives": "~0.1.2"
-    }
+  "name": "my-typescript",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-cli": "0.x.x",
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-ts": "1.4.0",
+    "grunt-contrib-less": "~0.8.1",
+    "grunt-directives": "~0.1.2"
+  }
 }

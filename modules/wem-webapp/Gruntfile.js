@@ -5,13 +5,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-directives');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
     grunt.initConfig({
 
         less: {
             common: {
                 files: {
-                    'src/main/webapp/admin/resources/styles/_all.css': 'src/main/webapp/admin/resources/styles/_module.less'
+                    'src/main/webapp/admin/common/styles/_all.css': 'src/main/webapp/admin/common/styles/_module.less'
                 }
             },
             live_edit: {
@@ -23,8 +24,8 @@ module.exports = function (grunt) {
 
         directives: {
             common: {
-                src: 'src/main/webapp/admin/resources/lib/_module.js',
-                dest: 'src/main/webapp/admin/resources/lib/_all.js'
+                src: 'src/main/webapp/admin/common/lib/_module.js',
+                dest: 'src/main/webapp/admin/common/lib/_all.js'
             }
         },
 

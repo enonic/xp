@@ -32,7 +32,7 @@ Ext.define('Admin.plugin.fileupload.PhotoUploadButton', {
         var height = this.height;
         var title = this.title;
         var progressBarHeight = this.progressBarHeight;
-        var photoUrl = this.photoUrl || 'resources/images/x-user-photo.png';
+        var photoUrl = this.photoUrl || 'common/images/x-user-photo.png';
         this.update({
             id: buttonElementId,
             width: width,

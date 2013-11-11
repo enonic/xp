@@ -7,7 +7,7 @@ module api_ui {
         constructor(name:string, mode:string) {
             super(name);
             this.mode = mode;
-            CodeMirror.modeURL = api_util.getUri('admin/resources/lib/codemirror/mode/%N.js');
+            CodeMirror.modeURL = api_util.getUri('admin/common/lib/codemirror/mode/%N.js');
         }
 
         afterRender() {
