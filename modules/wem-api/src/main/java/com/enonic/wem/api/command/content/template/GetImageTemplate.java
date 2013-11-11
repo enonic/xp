@@ -20,7 +20,7 @@ public class GetImageTemplate
         return this;
     }
 
-    public ImageTemplateName getId()
+    public ImageTemplateName getName()
     {
         return name;
     }

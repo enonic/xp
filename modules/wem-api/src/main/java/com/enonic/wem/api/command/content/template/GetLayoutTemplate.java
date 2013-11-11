@@ -20,7 +20,7 @@ public class GetLayoutTemplate
         return this;
     }
 
-    public LayoutTemplateName getId()
+    public LayoutTemplateName getName()
     {
         return name;
     }

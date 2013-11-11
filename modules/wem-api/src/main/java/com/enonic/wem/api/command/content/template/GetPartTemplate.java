@@ -20,7 +20,7 @@ public class GetPartTemplate
         return this;
     }
 
-    public PartTemplateName getId()
+    public PartTemplateName getName()
     {
         return name;
     }

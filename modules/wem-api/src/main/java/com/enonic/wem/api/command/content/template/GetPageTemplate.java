@@ -20,7 +20,7 @@ public class GetPageTemplate
         return this;
     }
 
-    public PageTemplateName getId()
+    public PageTemplateName getName()
     {
         return name;
     }

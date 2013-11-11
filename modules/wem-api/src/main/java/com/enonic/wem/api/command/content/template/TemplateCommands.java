@@ -24,10 +24,10 @@ public final class TemplateCommands
         return new CreateImageTemplate();
     }
 
-//    public CreatePageTemplate createSiteTemplate()
-//    {
-//        return new CreatePageTemplate();
-//    }
+    public CreateSiteTemplate createSiteTemplate()
+    {
+        return new CreateSiteTemplate();
+    }
 
     public UpdatePageTemplate updatePageTemplate()
     {
@@ -54,6 +54,16 @@ public final class TemplateCommands
         return new DeleteTemplate();
     }
 
+    public GetSiteTemplates listSiteTemplates()
+    {
+        return new GetSiteTemplates();
+    }
+
+    public GetSiteTemplate getSiteTemplate()
+    {
+        return new GetSiteTemplate();
+    }
+
     public GetPageTemplate getPageTemplate()
     {
         return new GetPageTemplate();
@@ -74,7 +84,7 @@ public final class TemplateCommands
         return new GetImageTemplate();
     }
 
-    public GetTemplates list()
+    public GetTemplates listTemplates()
     {
         return new GetTemplates();
     }
