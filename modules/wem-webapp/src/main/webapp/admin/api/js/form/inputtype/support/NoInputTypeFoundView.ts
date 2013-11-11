@@ -1,4 +1,4 @@
-module api_form_inputtype {
+module api_form_input {
 
     export class NoInputTypeFoundView extends api_form_inputtype_support.BaseInputTypeView {
 
