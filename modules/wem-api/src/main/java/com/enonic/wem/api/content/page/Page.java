@@ -4,13 +4,13 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class Page
-    extends Component<PageTemplateId>
+    extends Component<PageTemplateName>
 {
     private final RootDataSet config;
 
     private Page( final Builder builder )
     {
-        super( builder.pageTemplateId );
+        super( builder.pageTemplateName );
         this.config = builder.config;
     }
 
@@ -28,7 +28,7 @@ public final class Page
     {
         private RootDataSet config;
 
-        private PageTemplateId pageTemplateId;
+        private PageTemplateName pageTemplateName;
 
         private Builder()
         {
@@ -41,9 +41,9 @@ public final class Page
             return this;
         }
 
-        public Builder pageTemplateId( final PageTemplateId pageTemplateId )
+        public Builder pageTemplateName( final PageTemplateName pageTemplateName )
         {
-            this.pageTemplateId = pageTemplateId;
+            this.pageTemplateName = pageTemplateName;
             return this;
         }
 

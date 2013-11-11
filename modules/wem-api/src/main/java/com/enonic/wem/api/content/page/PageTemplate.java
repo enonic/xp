@@ -4,13 +4,13 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class PageTemplate
-    extends Template<PageTemplateId, PageTemplateName>
+    extends Template<PageTemplateName>
 {
     private final ContentTypeNames canRender;
 
     private PageTemplate( final Builder builder )
     {
-        super( builder.name, builder.id, builder.displayName, builder.descriptor, builder.config );
+        super( builder.name, builder.displayName, builder.descriptor, builder.config );
         this.canRender = builder.canRender;
     }
 
@@ -25,7 +25,7 @@ public final class PageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, PageTemplateId, PageTemplateName>
+        extends BaseTemplateBuilder<Builder, PageTemplateName>
     {
         private ContentTypeNames canRender;
 

@@ -4,14 +4,14 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class Layout
-    extends Component<LayoutTemplateId>
+    extends Component<LayoutTemplateName>
     implements RegionPlaceableComponent
 {
     private final RootDataSet config;
 
     public Layout( final Builder builder )
     {
-        super( builder.layoutTemplateId );
+        super( builder.layoutTemplateName );
         this.config = builder.config;
     }
 
@@ -29,7 +29,7 @@ public final class Layout
     {
         private RootDataSet config;
 
-        private LayoutTemplateId layoutTemplateId;
+        private LayoutTemplateName layoutTemplateName;
 
         private Builder()
         {
@@ -42,9 +42,9 @@ public final class Layout
             return this;
         }
 
-        public Builder layoutTemplateId( final LayoutTemplateId layoutTemplateId )
+        public Builder layoutTemplateName( final LayoutTemplateName layoutTemplateName )
         {
-            this.layoutTemplateId = layoutTemplateId;
+            this.layoutTemplateName = layoutTemplateName;
             return this;
         }
 

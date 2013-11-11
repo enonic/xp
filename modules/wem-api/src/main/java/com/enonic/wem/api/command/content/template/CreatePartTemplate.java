@@ -3,14 +3,14 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PartTemplate;
-import com.enonic.wem.api.content.page.PartTemplateId;
+import com.enonic.wem.api.content.page.PartTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class CreatePartTemplate
     extends Command<PartTemplate>
 {
-    private PartTemplateId id;
+    private PartTemplateName name;
 
     private String displayName;
 
@@ -18,9 +18,9 @@ public final class CreatePartTemplate
 
     private RootDataSet config;
 
-    public CreatePartTemplate templateId( final PartTemplateId id )
+    public CreatePartTemplate templateName( final PartTemplateName name )
     {
-        this.id = id;
+        this.name = name;
         return this;
     }
 

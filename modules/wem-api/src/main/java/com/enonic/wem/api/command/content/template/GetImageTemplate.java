@@ -3,26 +3,26 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ImageTemplate;
-import com.enonic.wem.api.content.page.ImageTemplateId;
+import com.enonic.wem.api.content.page.ImageTemplateName;
 
 public class GetImageTemplate
     extends Command<ImageTemplate>
 {
-    private ImageTemplateId id;
+    private ImageTemplateName name;
 
     public GetImageTemplate()
     {
     }
 
-    public GetImageTemplate templateId( final ImageTemplateId id )
+    public GetImageTemplate templateName( final ImageTemplateName name )
     {
-        this.id = id;
+        this.name = name;
         return this;
     }
 
-    public ImageTemplateId getId()
+    public ImageTemplateName getId()
     {
-        return id;
+        return name;
     }
 
     @Override

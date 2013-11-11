@@ -8,7 +8,7 @@ import com.enonic.wem.api.command.content.template.GetPageTemplate;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateId;
+import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 
@@ -28,9 +28,9 @@ public class RendererTest
         // setup
         final Client client = Mockito.mock( Client.class );
 
-        final PageTemplateId pageTemplateId = new PageTemplateId( "my-page-tpl" );
+        final PageTemplateName pageTemplateName = new PageTemplateName( "my-page-tpl" );
         final PageTemplate template = newPageTemplate().
-            id( pageTemplateId ).
+            name( pageTemplateName ).
             descriptor( ModuleResourceKey.from( "module-1.0.0:templates/template.xml" ) ).
             build();
         when( client.execute( isA( GetPageTemplate.class ) ) ).thenReturn( template );
@@ -48,7 +48,7 @@ public class RendererTest
         // exercise
         final Renderer renderer = new Renderer( client );
         final Page page = newPage().
-            pageTemplateId( pageTemplateId ).
+            pageTemplateName( pageTemplateName ).
             build();
         final RenderingResult result = renderer.render( page );
 

@@ -4,13 +4,13 @@ package com.enonic.wem.admin.rest.resource.content.page.json;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.PageTemplateId;
+import com.enonic.wem.api.content.page.PageTemplateName;
 
 public class CreatePageParamsJson
 {
     private ContentId contentId;
 
-    private PageTemplateId pageTemplateId;
+    private PageTemplateName pageTemplateName;
 
     private ArrayNode config;
 
@@ -28,14 +28,14 @@ public class CreatePageParamsJson
         return contentId;
     }
 
-    public void setPageTemplateId( final String value )
+    public void setPageTemplateName( final String value )
     {
-        this.pageTemplateId = new PageTemplateId( value );
+        this.pageTemplateName = new PageTemplateName( value );
     }
 
-    public PageTemplateId getPageTemplateId()
+    public PageTemplateName getPageTemplateName()
     {
-        return pageTemplateId;
+        return pageTemplateName;
     }
 
     public void setConfig( final ArrayNode value )

@@ -10,7 +10,7 @@ import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateId;
+import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
@@ -37,7 +37,7 @@ public final class PageRenderer
     @Override
     public RenderingResult execute( final Page page, final Context context )
     {
-        final PageTemplate template = getPageTemplate( page.getTemplateId(), client );
+        final PageTemplate template = getPageTemplate( page.getTemplateName(), client );
         final PageDescriptor descriptor = getPageDescriptor( template.getDescriptor(), client );
 
         final ModuleResourceKey controllerResource = descriptor.getControllerResource();
@@ -50,9 +50,9 @@ public final class PageRenderer
         return newRenderingResult().success( controllerResult.isSuccess() ).build();
     }
 
-    private PageTemplate getPageTemplate( final PageTemplateId templateId, final Client client )
+    private PageTemplate getPageTemplate( final PageTemplateName templateName, final Client client )
     {
-        final GetPageTemplate command = Commands.template().getPageTemplate().templateId( templateId );
+        final GetPageTemplate command = Commands.template().getPageTemplate().templateName( templateName );
         return client.execute( command );
     }
 

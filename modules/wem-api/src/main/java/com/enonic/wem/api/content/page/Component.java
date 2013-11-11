@@ -1,18 +1,18 @@
 package com.enonic.wem.api.content.page;
 
 
-public abstract class Component<ID extends TemplateId>
+public abstract class Component<NAME extends TemplateName>
     implements Renderable
 {
-    private final ID templateId;
+    private final NAME templateName;
 
-    protected Component( final ID templateId )
+    protected Component( final NAME templateName )
     {
-        this.templateId = templateId;
+        this.templateName = templateName;
     }
 
-    public ID getTemplateId()
+    public NAME getTemplateName()
     {
-        return templateId;
+        return templateName;
     }
 }

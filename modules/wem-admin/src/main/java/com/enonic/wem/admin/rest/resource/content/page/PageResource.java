@@ -30,7 +30,7 @@ public class PageResource
 
         final CreatePage createPage = Commands.page().create().
             content( params.getContentId() ).
-            pageTemplate( params.getPageTemplateId() ).
+            pageTemplate( params.getPageTemplateName() ).
             config( configAsRootDataSet );
 
         client.execute( createPage );

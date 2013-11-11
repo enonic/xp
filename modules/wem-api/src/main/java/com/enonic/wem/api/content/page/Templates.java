@@ -13,22 +13,22 @@ import com.enonic.wem.api.support.AbstractImmutableEntityList;
 public class Templates
     extends AbstractImmutableEntityList<Template>
 {
-    private final ImmutableMap<TemplateId, Template> map;
+    private final ImmutableMap<TemplateName, Template> map;
 
     private Templates( final ImmutableList<Template> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, new ToIdFunction() );
+        this.map = Maps.uniqueIndex( list, new ToNameFunction() );
     }
 
-    public ImmutableSet<TemplateId> getIds()
+    public ImmutableSet<TemplateName> getNames()
     {
         return map.keySet();
     }
 
-    public Template getTemplate( final TemplateId templateId )
+    public Template getTemplate( final TemplateName templateName )
     {
-        return map.get( templateId );
+        return map.get( templateName );
     }
 
     @Override
@@ -58,13 +58,13 @@ public class Templates
         return new Templates( ImmutableList.copyOf( templates ) );
     }
 
-    private final static class ToIdFunction
-        implements Function<Template, TemplateId>
+    private final static class ToNameFunction
+        implements Function<Template, TemplateName>
     {
         @Override
-        public TemplateId apply( final Template value )
+        public TemplateName apply( final Template value )
         {
-            return value.getId();
+            return value.getName();
         }
     }
 }

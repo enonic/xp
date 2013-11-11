@@ -3,14 +3,14 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ImageTemplate;
-import com.enonic.wem.api.content.page.ImageTemplateId;
+import com.enonic.wem.api.content.page.ImageTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class CreateImageTemplate
     extends Command<ImageTemplate>
 {
-    private ImageTemplateId id;
+    private ImageTemplateName name;
 
     private String displayName;
 
@@ -18,9 +18,9 @@ public final class CreateImageTemplate
 
     private RootDataSet config;
 
-    public CreateImageTemplate templateId( final ImageTemplateId id )
+    public CreateImageTemplate templateName( final ImageTemplateName name )
     {
-        this.id = id;
+        this.name = name;
         return this;
     }
 

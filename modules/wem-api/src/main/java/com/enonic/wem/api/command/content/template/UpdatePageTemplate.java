@@ -3,18 +3,18 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateId;
+import com.enonic.wem.api.content.page.PageTemplateName;
 
 public final class UpdatePageTemplate
     extends Command<Boolean>
 {
-    private PageTemplateId templateId;
+    private PageTemplateName templateName;
 
     private TemplateEditor<PageTemplate> editor;
 
-    public UpdatePageTemplate templateId( final PageTemplateId templateId )
+    public UpdatePageTemplate templateName( final PageTemplateName templateName )
     {
-        this.templateId = templateId;
+        this.templateName = templateName;
         return this;
     }
 

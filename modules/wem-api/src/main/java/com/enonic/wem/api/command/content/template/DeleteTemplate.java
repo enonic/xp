@@ -2,16 +2,16 @@ package com.enonic.wem.api.command.content.template;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.TemplateId;
+import com.enonic.wem.api.content.page.TemplateName;
 
 public final class DeleteTemplate
     extends Command<Boolean>
 {
-    private TemplateId templateId;
+    private TemplateName templateName;
 
-    public DeleteTemplate template( TemplateId templateId )
+    public DeleteTemplate template( TemplateName templateName )
     {
-        this.templateId = templateId;
+        this.templateName = templateName;
         return this;
     }
 

@@ -2,7 +2,7 @@ package com.enonic.wem.api.command.content.template;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.TemplateIds;
+import com.enonic.wem.api.content.page.TemplateNames;
 import com.enonic.wem.api.content.page.Templates;
 
 public final class GetTemplates
@@ -10,11 +10,11 @@ public final class GetTemplates
 {
     private boolean getAllTemplates = false;
 
-    private TemplateIds templateIds;
+    private TemplateNames templateNames;
 
-    public GetTemplates templates( final TemplateIds templateIds )
+    public GetTemplates templates( final TemplateNames templateNames )
     {
-        this.templateIds = templateIds;
+        this.templateNames = templateNames;
         return this;
     }
 
@@ -29,9 +29,9 @@ public final class GetTemplates
         return getAllTemplates;
     }
 
-    public TemplateIds getTemplates()
+    public TemplateNames getTemplates()
     {
-        return templateIds;
+        return templateNames;
     }
 
     @Override

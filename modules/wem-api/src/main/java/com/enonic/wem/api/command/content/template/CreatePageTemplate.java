@@ -3,7 +3,7 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateId;
+import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -11,7 +11,7 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 public final class CreatePageTemplate
     extends Command<PageTemplate>
 {
-    private PageTemplateId id;
+    private PageTemplateName name;
 
     private String displayName;
 
@@ -21,9 +21,9 @@ public final class CreatePageTemplate
 
     private ContentTypeNames canRender;
 
-    public CreatePageTemplate templateId( final PageTemplateId id )
+    public CreatePageTemplate templateName( final PageTemplateName name )
     {
-        this.id = id;
+        this.name = name;
         return this;
     }
 

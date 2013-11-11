@@ -3,26 +3,26 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateId;
+import com.enonic.wem.api.content.page.PageTemplateName;
 
 public class GetPageTemplate
     extends Command<PageTemplate>
 {
-    private PageTemplateId id;
+    private PageTemplateName name;
 
     public GetPageTemplate()
     {
     }
 
-    public GetPageTemplate templateId( final PageTemplateId id )
+    public GetPageTemplate templateName( final PageTemplateName name )
     {
-        this.id = id;
+        this.name = name;
         return this;
     }
 
-    public PageTemplateId getId()
+    public PageTemplateName getId()
     {
-        return id;
+        return name;
     }
 
     @Override

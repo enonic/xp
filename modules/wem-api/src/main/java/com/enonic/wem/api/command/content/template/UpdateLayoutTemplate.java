@@ -3,18 +3,18 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.LayoutTemplate;
-import com.enonic.wem.api.content.page.LayoutTemplateId;
+import com.enonic.wem.api.content.page.LayoutTemplateName;
 
 public final class UpdateLayoutTemplate
     extends Command<Boolean>
 {
-    private LayoutTemplateId templateId;
+    private LayoutTemplateName templateName;
 
     private TemplateEditor<LayoutTemplate> editor;
 
-    public UpdateLayoutTemplate templateId( final LayoutTemplateId templateId )
+    public UpdateLayoutTemplate templateName( final LayoutTemplateName templateName )
     {
-        this.templateId = templateId;
+        this.templateName = templateName;
         return this;
     }
 

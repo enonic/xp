@@ -3,18 +3,18 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ImageTemplate;
-import com.enonic.wem.api.content.page.ImageTemplateId;
+import com.enonic.wem.api.content.page.ImageTemplateName;
 
 public final class UpdateImageTemplate
     extends Command<Boolean>
 {
-    private ImageTemplateId templateId;
+    private ImageTemplateName templateName;
 
     private TemplateEditor<ImageTemplate> editor;
 
-    public UpdateImageTemplate templateId( final ImageTemplateId templateId )
+    public UpdateImageTemplate templateName( final ImageTemplateName templateName )
     {
-        this.templateId = templateId;
+        this.templateName = templateName;
         return this;
     }
 

@@ -3,26 +3,26 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.LayoutTemplate;
-import com.enonic.wem.api.content.page.LayoutTemplateId;
+import com.enonic.wem.api.content.page.LayoutTemplateName;
 
 public class GetLayoutTemplate
     extends Command<LayoutTemplate>
 {
-    private LayoutTemplateId id;
+    private LayoutTemplateName name;
 
     public GetLayoutTemplate()
     {
     }
 
-    public GetLayoutTemplate templateId( final LayoutTemplateId id )
+    public GetLayoutTemplate templateName( final LayoutTemplateName name )
     {
-        this.id = id;
+        this.name = name;
         return this;
     }
 
-    public LayoutTemplateId getId()
+    public LayoutTemplateName getId()
     {
-        return id;
+        return name;
     }
 
     @Override

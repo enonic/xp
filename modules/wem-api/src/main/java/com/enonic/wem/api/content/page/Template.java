@@ -3,10 +3,8 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-public abstract class Template<ID extends TemplateId, NAME extends TemplateName>
+public abstract class Template<NAME extends TemplateName>
 {
-    private final ID id;
-
     private final NAME name;
 
     private final String displayName;
@@ -15,11 +13,9 @@ public abstract class Template<ID extends TemplateId, NAME extends TemplateName>
 
     private final RootDataSet config;
 
-    protected Template( final NAME name, final ID id, final String displayName, final ModuleResourceKey descriptor,
-                        final RootDataSet config )
+    protected Template( final NAME name, final String displayName, final ModuleResourceKey descriptor, final RootDataSet config )
     {
         this.name = name;
-        this.id = id;
         this.displayName = displayName;
         this.descriptor = descriptor;
         this.config = config;
@@ -35,11 +31,6 @@ public abstract class Template<ID extends TemplateId, NAME extends TemplateName>
         return descriptor;
     }
 
-    public ID getId()
-    {
-        return id;
-    }
-
     public String getDisplayName()
     {
         return displayName;
@@ -50,11 +41,9 @@ public abstract class Template<ID extends TemplateId, NAME extends TemplateName>
         return config;
     }
 
-    protected abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, ID extends TemplateId, NAME extends TemplateName>
+    protected abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, NAME extends TemplateName>
     {
         protected NAME name;
-
-        protected ID id;
 
         protected String displayName;
 
@@ -65,12 +54,6 @@ public abstract class Template<ID extends TemplateId, NAME extends TemplateName>
         public T name( final NAME name )
         {
             this.name = name;
-            return typecastToTemplateBuilder( this );
-        }
-
-        public T id( final ID id )
-        {
-            this.id = id;
             return typecastToTemplateBuilder( this );
         }
 

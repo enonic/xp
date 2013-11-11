@@ -3,26 +3,26 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PartTemplate;
-import com.enonic.wem.api.content.page.PartTemplateId;
+import com.enonic.wem.api.content.page.PartTemplateName;
 
 public class GetPartTemplate
     extends Command<PartTemplate>
 {
-    private PartTemplateId id;
+    private PartTemplateName name;
 
     public GetPartTemplate()
     {
     }
 
-    public GetPartTemplate templateId( final PartTemplateId id )
+    public GetPartTemplate templateName( final PartTemplateName name )
     {
-        this.id = id;
+        this.name = name;
         return this;
     }
 
-    public PartTemplateId getId()
+    public PartTemplateName getId()
     {
-        return id;
+        return name;
     }
 
     @Override

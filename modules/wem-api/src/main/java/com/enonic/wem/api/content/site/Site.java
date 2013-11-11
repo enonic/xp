@@ -4,19 +4,19 @@ import com.google.common.collect.ImmutableList;
 
 public class Site
 {
-    private final SiteTemplateId templateId;
+    private final SiteTemplateName templateName;
 
     private final ImmutableList<ModuleConfig> moduleConfigs;
 
     public Site( final Builder builder )
     {
-        this.templateId = builder.templateId;
+        this.templateName = builder.templateName;
         this.moduleConfigs = builder.moduleConfigs.build();
     }
 
-    public SiteTemplateId getTemplateId()
+    public SiteTemplateName getTemplateName()
     {
-        return templateId;
+        return templateName;
     }
 
     public ImmutableList<ModuleConfig> getModuleConfigs()
@@ -32,13 +32,13 @@ public class Site
     public static class Builder
     {
 
-        private SiteTemplateId templateId;
+        private SiteTemplateName templateName;
 
         private ImmutableList.Builder<ModuleConfig> moduleConfigs = new ImmutableList.Builder<>();
 
-        public Builder template( SiteTemplateId value )
+        public Builder template( SiteTemplateName value )
         {
-            this.templateId = value;
+            this.templateName = value;
             return this;
         }
 

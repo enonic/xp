@@ -17,11 +17,11 @@ public class ComponentsTest
         pageConfig.addProperty( "pause", new Value.Long( 200 ) );
 
         Page page = Page.newPage().
-            pageTemplateId( new PageTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            pageTemplateName( new PageTemplateName( "pageTemplateName" ) ).
             config( pageConfig ).
             build();
 
-        assertEquals( "1fad493a-6a72-41a3-bac4-88aba3d83bcc", page.getTemplateId().toString() );
+        assertEquals( "pageTemplateName", page.getTemplateName().toString() );
     }
 
     @Test
@@ -31,11 +31,11 @@ public class ComponentsTest
         partConfig.addProperty( "width", new Value.Long( 150 ) );
 
         Part part = Part.newPart().
-            partTemplateId( new PartTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            partTemplateName( new PartTemplateName( "partTemplateName" ) ).
             config( partConfig ).
             build();
 
-        assertEquals( "1fad493a-6a72-41a3-bac4-88aba3d83bcc", part.getTemplateId().toString() );
+        assertEquals( "partTemplateName", part.getTemplateName().toString() );
     }
 
     @Test
@@ -45,10 +45,10 @@ public class ComponentsTest
         layoutConfig.addProperty( "columns", new Value.Long( 2 ) );
 
         Layout layout = Layout.newLayout().
-            layoutTemplateId( new LayoutTemplateId( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" ) ).
+            layoutTemplateName( new LayoutTemplateName( "layoutTemplateName" ) ).
             config( layoutConfig ).
             build();
 
-        assertEquals( "1fad493a-6a72-41a3-bac4-88aba3d83bcc", layout.getTemplateId().toString() );
+        assertEquals( "layoutTemplateName", layout.getTemplateName().toString() );
     }
 }

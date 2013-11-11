@@ -3,14 +3,14 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.LayoutTemplate;
-import com.enonic.wem.api.content.page.LayoutTemplateId;
+import com.enonic.wem.api.content.page.LayoutTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class CreateLayoutTemplate
     extends Command<LayoutTemplate>
 {
-    private LayoutTemplateId id;
+    private LayoutTemplateName name;
 
     private String displayName;
 
@@ -18,9 +18,9 @@ public final class CreateLayoutTemplate
 
     private RootDataSet config;
 
-    public CreateLayoutTemplate templateId( final LayoutTemplateId id )
+    public CreateLayoutTemplate templateName( final LayoutTemplateName name )
     {
-        this.id = id;
+        this.name = name;
         return this;
     }
 

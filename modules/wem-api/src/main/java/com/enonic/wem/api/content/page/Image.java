@@ -5,14 +5,14 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class Image
-    extends Component<ImageTemplateId>
+    extends Component<ImageTemplateName>
     implements RegionPlaceableComponent
 {
     private final RootDataSet config;
 
     public Image( final Builder builder )
     {
-        super( builder.imageTemplateId );
+        super( builder.imageTemplateName );
         this.config = builder.config;
     }
 
@@ -30,7 +30,7 @@ public class Image
     {
         private RootDataSet config;
 
-        private ImageTemplateId imageTemplateId;
+        private ImageTemplateName imageTemplateName;
 
         private Builder()
         {
@@ -43,9 +43,9 @@ public class Image
             return this;
         }
 
-        public Builder imageTemplateId( final ImageTemplateId imageTemplateId )
+        public Builder imageTemplateName( final ImageTemplateName imageTemplateName )
         {
-            this.imageTemplateId = imageTemplateId;
+            this.imageTemplateName = imageTemplateName;
             return this;
         }
 

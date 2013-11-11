@@ -2,11 +2,11 @@ package com.enonic.wem.api.content.page;
 
 
 public final class ImageTemplate
-    extends Template<ImageTemplateId, ImageTemplateName>
+    extends Template<ImageTemplateName>
 {
     private ImageTemplate( final Builder builder )
     {
-        super( builder.name, builder.id, builder.displayName, builder.descriptor, builder.config );
+        super( builder.name, builder.displayName, builder.descriptor, builder.config );
     }
 
     public static Builder newImageTemplate()
@@ -15,7 +15,7 @@ public final class ImageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, ImageTemplateId, ImageTemplateName>
+        extends BaseTemplateBuilder<Builder, ImageTemplateName>
     {
         private Builder()
         {

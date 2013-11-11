@@ -3,18 +3,18 @@ package com.enonic.wem.api.command.content.template;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PartTemplate;
-import com.enonic.wem.api.content.page.PartTemplateId;
+import com.enonic.wem.api.content.page.PartTemplateName;
 
 public final class UpdatePartTemplate
     extends Command<Boolean>
 {
-    private PartTemplateId templateId;
+    private PartTemplateName templateName;
 
     private TemplateEditor<PartTemplate> editor;
 
-    public UpdatePartTemplate templateId( final PartTemplateId templateId )
+    public UpdatePartTemplate templateName( final PartTemplateName templateName )
     {
-        this.templateId = templateId;
+        this.templateName = templateName;
         return this;
     }
 
