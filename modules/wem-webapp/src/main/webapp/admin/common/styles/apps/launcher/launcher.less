@@ -1,0 +1,268 @@
+html, body {
+  height: 100%
+}
+
+.home-main-container {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #141414;
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  a {
+    color: @admin-white;
+    text-decoration: none;
+  }
+
+  h3,
+  .installation-info {
+    font-size: 24px;
+    color: @admin-white;
+  }
+
+  &.show-home {
+    animation: animation-show-home 100ms ease both;
+    animation-play-state: running;
+
+    -webkit-animation: animation-show-home 100ms ease both;
+    -webkit-animation-play-state: running;
+  }
+
+  &.hide-home {
+    animation: animation-hide-home 100ms ease both;
+    animation-play-state: running;
+
+    -webkit-animation: animation-hide-home 100ms ease both;
+    -webkit-animation-play-state: running;
+  }
+
+  /** Branding */
+
+  .branding {
+    position: absolute;
+    top: 30px;
+    left: 35px;
+    background: transparent url(../images/wem-enonic-logo.png) 0 0 no-repeat;
+    height: 24px;
+  }
+
+  .installation-info {
+    margin-top: -6px;
+    padding: 0 0 0 181px;
+  }
+
+  .version-info {
+    color: #d2d6d6;
+  }
+
+  /** Center */
+
+  .center-panel {
+    @center-width: 775px;
+    width: @center-width;
+    position: absolute;
+    left: 50%;
+    margin-left: -(@center-width / 2);
+    background-color: transparent;
+    top: 0;
+    bottom: 0;
+
+    /** Left column */
+    .left-column {
+      position: absolute;
+      width: 480px;
+      background: transparent;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      color: @admin-white !important;
+    }
+
+    /** Right column */
+    .right-column {
+      position: absolute;
+      width: 295px;
+      background: rgba(0, 0, 0, 0.2);
+      top: 0;
+      right: 0;
+      bottom: 0;
+      color: @admin-white !important;
+    }
+  }
+
+  .login-licensed-to {
+    text-align: center;
+    padding-top: 35px;
+  }
+
+  .links-container {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: 30px;
+  }
+
+  /** Common */
+
+  .login-form,
+  .app-selector,
+  .app-info {
+    position: absolute;
+    top: 24%;
+  }
+
+  .login-form,
+  .app-info {
+    padding: 0 45px;
+  }
+
+  /** App selector */
+
+  .app-selector {
+    color: @admin-white;
+
+    opacity: 0;
+    transition: all 300ms ease-out;
+    -webkit-transition: all 300ms ease-out;
+
+    transform: scale(.25);
+    -webkit-transform: scale(.25);
+
+    &.fade-in-and-scale-up {
+      opacity: 1 !important;
+
+      transform: scale(1) !important;
+      -webkit-transform: scale(1) !important;
+    }
+
+    .search-input-container {
+      margin-bottom: 10px;
+      width: 470px;
+
+      input {
+        vertical-align: top;
+        height: 26px;
+        padding: 4px 9px;
+        border: 1px solid;
+        border-color: #aaaaaa;
+        width: 100%;
+      }
+    }
+
+  }
+
+  .app-info {
+    .app-info-name {
+      color: #ebebeb;
+    }
+
+    .app-info-description {
+      color: #ebebeb;
+    }
+  }
+
+  .app-tiles-placeholder {
+    width: 480px;
+    .noSelect();
+
+    .app-tile {
+      cursor: pointer;
+      position: relative;
+      background-color: #1c59af;
+      float: left;
+      width: 110px;
+      height: 100px;
+      margin: 0 10px 10px 0;
+
+      a {
+        > .img-container {
+          position: absolute;
+          width: 100%;
+          margin-top: 16px;
+          text-align: center;
+        }
+
+        > .img-container > img {
+          width: 40px;
+          height: 40px;
+        }
+
+        > .name-container {
+          position: absolute;
+          bottom: 10px;
+          width: 100%;
+          text-align: center;
+        }
+
+        > .tab-count-container {
+          background-color: #DC143C;
+          color: @admin-white;
+          font-size: 13px;
+          padding: 2px 8px;
+          position: absolute;
+          right: -5px;
+          text-align: center;
+          top: -5px;
+          .border-radius(50%);
+        }
+      }
+      &.app-tile-over {
+        background-color: #012056;
+      }
+
+    }
+  }
+
+  .form-item {
+    font-family: @admin-font-family;
+    font-size: 12px;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+    border: 1px solid @admin-light-gray-bg;
+    vertical-align: top;
+
+    padding: 4px 9px;
+    background: none @admin-white !important;
+    width: 200px;
+  }
+
+  .login-button {
+    font-family: @admin-font-family;
+    padding: 5px 20px 5px 20px;
+    background-color: @admin-blue-button;
+
+    font-size: 12px;
+    border-width: 1px 1px 1px 1px;
+    border-style: solid;
+    border-color: @admin-blue-button;
+    color: white;
+
+    display: inline-block;
+    float: right;
+    margin-right: 9px;
+    margin-top: 1px;
+
+    &:hover {
+      cursor: pointer;
+      border-color: #5a94ee;
+      background-color: #5a94ee;
+    }
+
+    &.disabled {
+      cursor: default;
+      border-color: #88b2f3;
+      background-color: #5a94ee;
+    }
+  }
+
+}
+

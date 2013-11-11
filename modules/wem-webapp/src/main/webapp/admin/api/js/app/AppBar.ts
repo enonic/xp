@@ -107,7 +107,7 @@ module api_app {
         constructor() {
             super('UserButton', 'user-button');
 
-            var photoUrl = api_util.getAdminUri('resources/images/tsi-profil.jpg');
+            var photoUrl = api_util.getAdminUri('common/images/tsi-profil.jpg');
             this.setIcon(photoUrl);
         }
 

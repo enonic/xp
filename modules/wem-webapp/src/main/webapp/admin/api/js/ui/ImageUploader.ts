@@ -92,7 +92,7 @@ module api_ui {
 
         setValue(value:string) {
             this.value = value;
-            var src = api_util.getAdminUri(value ? 'rest/upload/' + value : 'resources/images/x-user-photo.png');
+            var src = api_util.getAdminUri(value ? 'rest/upload/' + value : 'common/images/x-user-photo.png');
             this.image.getEl().setSrc(src);
         }
 

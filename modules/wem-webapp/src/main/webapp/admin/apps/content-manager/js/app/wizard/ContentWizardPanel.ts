@@ -2,7 +2,7 @@ module app_wizard {
 
     export class ContentWizardPanel extends api_app_wizard.WizardPanel<api_content.Content> {
 
-        private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("resources/images/default_content.png");
+        private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("common/images/default_content.png");
 
         private static DISPLAY_NAME_REGEX:RegExp = /\$\('([a-zA-Z\.]*)'\)/g;
 
