@@ -6,7 +6,9 @@ module api_app_wizard {
 
         formIcon:FormIcon;
 
-        toolbar:api_ui_toolbar.Toolbar;
+        mainToolbar:api_ui_toolbar.Toolbar;
+
+        stepToolbar?:api_ui_toolbar.Toolbar;
 
         header:WizardHeader;
 
@@ -21,7 +23,9 @@ module api_app_wizard {
 
         private persistedItem:T;
 
-        private toolbar:api_ui_toolbar.Toolbar;
+        private mainToolbar:api_ui_toolbar.Toolbar;
+
+        private stepToolbar:api_ui_toolbar.Toolbar;
 
         private actions:WizardActions<T>;
 
@@ -52,7 +56,8 @@ module api_app_wizard {
 
             this.tabId = params.tabId;
             this.header = params.header;
-            this.toolbar = params.toolbar;
+            this.mainToolbar = params.mainToolbar;
+            this.stepToolbar = params.stepToolbar;
             this.actions = params.actions;
 
             this.getEl().addClass("wizard-panel");
@@ -64,7 +69,7 @@ module api_app_wizard {
             this.backPanel.addPanel(this.formPanel);
             this.backPanel.showPanel(0);
 
-            this.appendChild(this.toolbar);
+            this.appendChild(this.mainToolbar);
             this.appendChild(this.backPanel);
 
             var aboveStepPanels = new api_dom.DivEl();
@@ -74,8 +79,13 @@ module api_app_wizard {
 
             aboveStepPanels.appendChild(this.header);
 
+            var stepNavigatorAndToolbar = new api_dom.DivEl("WizardStepNavigatorAndToolbar", "wizard-step-navigator-and-toolbar");
             this.stepNavigator = new WizardStepNavigator();
-            aboveStepPanels.appendChild(this.stepNavigator);
+            if (this.stepToolbar) {
+                stepNavigatorAndToolbar.appendChild(this.stepToolbar);
+            }
+            stepNavigatorAndToolbar.appendChild(this.stepNavigator);
+            aboveStepPanels.appendChild(stepNavigatorAndToolbar);
 
             this.stepPanels = new WizardStepDeckPanel(this.stepNavigator);
             this.formPanel.appendChild(this.stepPanels);
@@ -134,7 +144,7 @@ module api_app_wizard {
         }
 
         getActions():api_ui.Action[] {
-            return this.toolbar.getActions();
+            return this.mainToolbar.getActions();
         }
 
         private notifyClosed() {

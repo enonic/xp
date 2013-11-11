@@ -39,6 +39,16 @@ module app_wizard {
         }
     }
 
+    export class PublishAction extends api_ui.Action {
+
+        constructor() {
+            super("Publish");
+            this.addExecutionListener(() => {
+                console.log("Publish action");
+            });
+        }
+    }
+
     export class ShowLiveFormAction extends api_ui.Action {
 
         constructor() {
@@ -73,12 +83,14 @@ module app_wizard {
 
         private duplicate:api_ui.Action;
 
+        private publish:api_ui.Action;
 
         constructor(wizardPanel:api_app_wizard.WizardPanel<api_content.Content>) {
             this.save = new api_app_wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateContentAction();
             this.delete = new DeleteContentAction(wizardPanel);
             this.close = new api_app_wizard.CloseAction(wizardPanel);
+            this.publish = new PublishAction();
         }
 
         enableActionsForNew() {
@@ -107,6 +119,10 @@ module app_wizard {
 
         getCloseAction() {
             return this.close;
+        }
+
+        getPublishAction():api_ui.Action {
+            return this.publish;
         }
 
     }
