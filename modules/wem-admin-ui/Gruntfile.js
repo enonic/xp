@@ -4,10 +4,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-ts');
-    grunt.loadNpmTasks('grunt-directives');
+    grunt.loadTasks('grunt');
 
     grunt.initConfig({
 
@@ -100,67 +97,23 @@ module.exports = function (grunt) {
                 }
             },
 
+
+
+
+
             module: {
                 common: {
-                    dir: 'src/main/common'
-                },
-                space_manager: {
-                    dir: 'src/main/common'
+                    dir: 'src/main/common',
+                    ts: {
+                        sourcemap: true,
+                        declaration: true
+                    }
                 }
             }
+
+
         }
     );
-
-    grunt.registerMultiTask('module', 'Build an admin module', function () {
-
-        var dir = this.data.dir;
-        var target = this.target;
-        var config = {};
-
-        var styleFile = dir + '/styles/_module.less';
-        if (grunt.file.exists(styleFile)) {
-            config = {
-                files: {
-                }
-            };
-
-            config.files[dir + '/styles/_all.css'] = styleFile;
-            grunt.config.set('less.' + target, config);
-
-            grunt.log.writeln('Adding less:' + target + ' task');
-            grunt.task.run('less');
-        }
-
-        var libFile = dir + '/lib/_module.js';
-        if (grunt.file.exists(libFile)) {
-            config = {
-                src: libFile,
-                dest: dir + '/lib/_all.js'
-            };
-
-            grunt.config.set('directives.' + target, config);
-
-            grunt.log.writeln('Adding directives:' + target + ' task');
-            grunt.task.run('directives');
-        }
-
-        var tsFile = dir + '/ts/_module.ts';
-        if (grunt.file.exists(tsFile)) {
-            config = {
-                src: tsFile,
-                out: dir + '/ts/_all.js',
-                options: {
-                    sourcemap: true,
-                    declaration: true
-                }
-            };
-
-            grunt.config.set('ts.' + target, config);
-
-            grunt.log.writeln('Adding ts:' + target + ' task');
-            grunt.task.run('ts');
-        }
-    });
 
     grunt.registerTask('all', ['clean', 'less', 'concat', 'ts']);
 };
