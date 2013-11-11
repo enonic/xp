@@ -31,8 +31,8 @@ module.exports = function (grunt) {
 
         ts: {
             api: {
-                src: ['src/main/webapp/admin/api/js/_module.ts'],
-                out: 'src/main/webapp/admin/api/js/_all.js'
+                src: ['src/main/webapp/admin/common/js/_module.ts'],
+                out: 'src/main/webapp/admin/common/js/_all.js'
             },
             space_manager: {
                 src: ['src/main/webapp/admin/apps/space-manager/js/_module.ts'],

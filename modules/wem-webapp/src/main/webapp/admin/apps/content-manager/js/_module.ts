@@ -1,5 +1,5 @@
 
-///<reference path='../../../api/js/_module.ts' />
+///<reference path='../../../common/js/_module.ts' />
 
 ///<reference path='model/_module.ts' />
 
