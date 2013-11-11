@@ -50,9 +50,12 @@ public final class UpdateContentTypeHandler
 
     private void validate( final ContentType contentType )
     {
-        final ContentTypeSuperTypeValidator validator =
-            ContentTypeSuperTypeValidator.newContentTypeSuperTypeValidator().client( context.getClient() ).build();
+        final ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.newContentTypeSuperTypeValidator().
+            client( context.getClient() ).
+            build();
+
         validator.validate( contentType.getContentTypeName(), contentType.getSuperType() );
+
         final ContentTypeValidationResult validationResult = validator.getResult();
 
         if ( !validationResult.hasErrors() )

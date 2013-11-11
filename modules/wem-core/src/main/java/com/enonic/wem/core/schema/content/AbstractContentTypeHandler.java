@@ -2,6 +2,7 @@ package com.enonic.wem.core.schema.content;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.Form;
@@ -13,7 +14,7 @@ import com.enonic.wem.core.command.CommandHandler;
 public abstract class AbstractContentTypeHandler<T extends Command>
     extends CommandHandler<T>
 {
-    final static ContentTypeNodeTranslator CONTENT_TYPE_NODE_TRANSLATOR = new ContentTypeNodeTranslator();
+    private final static ContentTypeNodeTranslator CONTENT_TYPE_NODE_TRANSLATOR = new ContentTypeNodeTranslator();
 
     ContentTypes getAllContentTypes()
     {
@@ -49,11 +50,33 @@ public abstract class AbstractContentTypeHandler<T extends Command>
     }
 
 
-    protected ContentType appendInheritors( final ContentTypeInheritorResolver contentTypeInheritorResolver, ContentType contentType )
+    ContentTypes populateInheritors( final ContentTypes contentTypes )
+    {
+        final ContentTypes.Builder builder = ContentTypes.newContentTypes();
+
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( this.context.getClient() );
+
+        for ( final ContentType contentType : contentTypes )
+        {
+            builder.add( populateInheritors( contentTypeInheritorResolver, contentType ) );
+        }
+        return builder.build();
+    }
+
+    ContentType populateInheritors( final ContentTypeInheritorResolver contentTypeInheritorResolver, ContentType contentType )
     {
         contentType = ContentType.newContentType( contentType ).
             inheritors( contentTypeInheritorResolver.resolveInheritors( contentType ).isNotEmpty() ).
             build();
+        return contentType;
+    }
+
+    ContentType nodeToContentType( final Node node, final ContentTypeInheritorResolver contentTypeInheritorResolver )
+    {
+        ContentType contentType = CONTENT_TYPE_NODE_TRANSLATOR.fromNode( node );
+
+        contentType = populateInheritors( contentTypeInheritorResolver, contentType );
+
         return contentType;
     }
 }

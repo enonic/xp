@@ -1,9 +1,7 @@
 package com.enonic.wem.core.schema.content;
 
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.Commands;
@@ -25,36 +23,25 @@ public final class GetContentTypesHandler
     public void handle()
         throws Exception
     {
-        final List<ContentType> contentTypeList = getContentTypeList();
+        final ContentTypes contentTypes = getContentTypes( command.getContentTypeNames() );
 
         if ( !command.isMixinReferencesToFormItems() )
         {
-            command.setResult( ContentTypes.from( contentTypeList ) );
+            command.setResult( contentTypes );
         }
         else
         {
-            command.setResult( transformMixinReferences( ContentTypes.from( contentTypeList ) ) );
+            command.setResult( transformMixinReferences( contentTypes ) );
         }
     }
 
-    private List<ContentType> getContentTypeList()
+    private ContentTypes getContentTypes( final ContentTypeNames contentTypeNames )
     {
-        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( getAllContentTypes() );
-
-        final ContentTypeNames contentTypeNames = command.getContentTypeNames();
-
-        final List<ContentType> contentTypeList = Lists.newArrayList();
-
         final Set<NodePath> nodePaths = createNodePaths( contentTypeNames );
 
         final Nodes nodes = context.getClient().execute( Commands.node().get().byPaths( NodePaths.from( nodePaths ) ) );
 
-        for ( final Node node : nodes )
-        {
-            contentTypeList.add( toContentType( node, contentTypeInheritorResolver ) );
-        }
-
-        return contentTypeList;
+        return nodesToContentTypes( nodes );
     }
 
     private Set<NodePath> createNodePaths( final ContentTypeNames contentTypeNames )
@@ -68,13 +55,19 @@ public final class GetContentTypesHandler
         return nodePaths;
     }
 
-    private ContentType toContentType( final Node node, final ContentTypeInheritorResolver contentTypeInheritorResolver )
+    private ContentTypes nodesToContentTypes( final Nodes nodes )
     {
-        ContentType contentType = CONTENT_TYPE_NODE_TRANSLATOR.fromNode( node );
+        final ContentTypes.Builder builder = ContentTypes.newContentTypes();
 
-        contentType = appendInheritors( contentTypeInheritorResolver, contentType );
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( this.context.getClient() );
 
-        return contentType;
+        for ( final Node node : nodes )
+        {
+            final ContentType contentType = nodeToContentType( node, contentTypeInheritorResolver );
+            builder.add( contentType );
+        }
+
+        return builder.build();
     }
 
 

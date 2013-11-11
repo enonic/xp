@@ -13,13 +13,15 @@ public class GetAllContentTypesHandler
     {
         final ContentTypes allContentTypes = getAllContentTypes();
 
+        final ContentTypes contentTypes = populateInheritors( allContentTypes );
+
         if ( !command.isMixinReferencesToFormItems() )
         {
-            command.setResult( allContentTypes );
+            command.setResult( contentTypes );
         }
         else
         {
-            command.setResult( transformMixinReferences( allContentTypes ) );
+            command.setResult( transformMixinReferences( contentTypes ) );
         }
     }
 }

@@ -9,14 +9,16 @@ import com.enonic.wem.core.command.CommandHandler;
 public class ValidateContentTypeHandler
     extends CommandHandler<ValidateContentType>
 {
-
     @Override
     public void handle()
         throws Exception
     {
         ContentType contentType = command.getContentType();
-        ContentTypeSuperTypeValidator validator =
-            ContentTypeSuperTypeValidator.newContentTypeSuperTypeValidator().client( context.getClient() ).build();
+
+        ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.newContentTypeSuperTypeValidator().
+            client( context.getClient() ).
+            build();
+
         validator.validate( contentType.getContentTypeName(), contentType.getSuperType() );
         command.setResult( validator.getResult() );
     }

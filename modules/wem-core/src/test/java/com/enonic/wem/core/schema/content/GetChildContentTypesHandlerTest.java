@@ -6,14 +6,15 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
+import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.command.schema.content.GetChildContentTypes;
-import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
-import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
 
 public class GetChildContentTypesHandlerTest
@@ -36,38 +37,43 @@ public class GetChildContentTypesHandlerTest
         throws Exception
     {
         // setup
-        final ContentType contentType1 = newContentType().
-            name( ContentTypeName.unstructured() ).
-            builtIn( true ).
-            displayName( "Unstructured root content type" ).
+
+        final Node node1 = Node.newNode().
+            id( EntityId.from( "1" ) ).
+            name( ContentTypeName.unstructured().toString() ).
+            property( "displayName", "Unstructured root content type" ).
+            property( "builtIn", "true" ).
             build();
-        final ContentType contentType2 = newContentType().
+        final Node node2 = Node.newNode().
+            id( EntityId.from( "2" ) ).
             name( "my_type" ).
-            displayName( "My content type" ).
-            superType( contentType1.getContentTypeName() ).
+            property( "displayName", "My content type" ).
+            property( "superType", node1.name() ).
             build();
-        final ContentType contentType3 = newContentType().
+        final Node node3 = Node.newNode().
+            id( EntityId.from( "3" ) ).
             name( "sub_type_1" ).
-            displayName( "My sub-content-1 type" ).
-            superType( contentType2.getContentTypeName() ).
+            property( "displayName", "My sub-content-1 type" ).
+            property( "superType", node2.name() ).
             build();
-        final ContentType contentType4 = newContentType().
+        final Node node4 = Node.newNode().
+            id( EntityId.from( "4" ) ).
             name( "sub_type_2" ).
-            displayName( "My sub-content-2 type" ).
-            superType( contentType2.getContentTypeName() ).
+            property( "displayName", "My sub-content-2 type" ).
+            property( "superType", node2.name() ).
             build();
-        final ContentType contentType5 = newContentType().
-            name( ContentTypeName.folder() ).
-            builtIn( true ).
-            displayName( "Folder root content type" ).
+        final Node node5 = Node.newNode().
+            id( EntityId.from( "5" ) ).
+            name( ContentTypeName.folder().toString() ).
+            property( "displayName", "Folder root content type" ).
+            property( "builtIn", "true" ).
             build();
 
-        final ContentTypes contentTypes = ContentTypes.from( contentType1, contentType2, contentType3, contentType4, contentType5 );
-
-        Mockito.when( client.execute( Mockito.isA( GetAllContentTypes.class ) ) ).thenReturn( contentTypes );
+        Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn(
+            Nodes.from( node1, node2, node3, node4, node5 ) );
 
         // exercise
-        GetChildContentTypes command = Commands.contentType().get().children().parentName( contentType5.getContentTypeName() );
+        GetChildContentTypes command = Commands.contentType().get().children().parentName( ContentTypeName.from( node5.name() ) );
         this.handler.setCommand( command );
         this.handler.handle();
 
@@ -76,7 +82,7 @@ public class GetChildContentTypesHandlerTest
         assertEquals( 0, types.getSize() );
 
         // exercise
-        command = Commands.contentType().get().children().parentName( contentType1.getContentTypeName() );
+        command = Commands.contentType().get().children().parentName( ContentTypeName.from( node1.name() ) );
         this.handler.setCommand( command );
         this.handler.handle();
 
@@ -86,7 +92,7 @@ public class GetChildContentTypesHandlerTest
         assertEquals( "my_type", types.get( 0 ).getContentTypeName().toString() );
 
         // exercise
-        command = Commands.contentType().get().children().parentName( contentType2.getContentTypeName() );
+        command = Commands.contentType().get().children().parentName( ContentTypeName.from( node2.name() ) );
         this.handler.setCommand( command );
         this.handler.handle();
 

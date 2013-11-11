@@ -77,8 +77,6 @@ public class GetAllContentTypesHandlerTest
         this.handler.handle();
 
         // Verify:
-        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( GetNodesByParent.class ) );
-
         final ContentTypes result = command.getResult();
         assertEquals( 2, result.getSize() );
 
@@ -112,9 +110,6 @@ public class GetAllContentTypesHandlerTest
         GetAllContentTypes command = Commands.contentType().get().all().mixinReferencesToFormItems( true );
         this.handler.setCommand( command );
         this.handler.handle();
-
-        // Verify:
-        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( GetNodesByParent.class ) );
 
         // One invocation for each contentType with mixin-reference
         Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( GetMixin.class ) );
