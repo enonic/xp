@@ -6,39 +6,39 @@ module.exports = function (grunt) {
 
         module: {
             common: {
-                dir: 'src/main/webapp/admin/common',
-                ts: {
+                module: 'admin/common',
+                options: {
                     sourcemap: true,
                     declaration: true
                 }
             },
             space_manager: {
-                dir: 'src/main/webapp/admin/apps/space-manager',
-                ts: {
+                module: 'admin/apps/space-manager',
+                options: {
                     sourcemap: true
                 }
             },
             content_manager: {
-                dir: 'src/main/webapp/admin/apps/content-manager',
-                ts: {
+                module: 'admin/apps/content-manager',
+                options: {
                     sourcemap: true
                 }
             },
             schema_manager: {
-                dir: 'src/main/webapp/admin/apps/schema-manager',
-                ts: {
+                module: 'admin/apps/schema-manager',
+                options: {
                     sourcemap: true
                 }
             },
             app_launcher: {
-                dir: 'src/main/webapp/admin/apps/app-launcher',
-                ts: {
+                module: 'admin/apps/app-launcher',
+                options: {
                     sourcemap: true
                 }
             },
             live_edit: {
-                dir: 'src/main/webapp/admin/live-edit',
-                ts: {
+                module: 'admin/live-edit',
+                options: {
                     sourcemap: true
                 }
             }

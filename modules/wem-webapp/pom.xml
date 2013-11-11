@@ -87,17 +87,17 @@
           </execution>
         </executions>
       </plugin>
-      <!--plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <webResources>
             <resource>
-              <directory>target/generated-sources/webapp</directory>
+              <directory>target/main/webapp</directory>
             </resource>
           </webResources>
         </configuration>
-      </plugin-->
+      </plugin>
     </plugins>
   </build>
 

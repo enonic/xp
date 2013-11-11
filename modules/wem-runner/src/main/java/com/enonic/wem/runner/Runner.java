@@ -57,7 +57,7 @@ final class Runner
         throws Exception
     {
         final String docBase = new File( "./modules/wem-webapp/src/main/webapp" ).getAbsolutePath();
-        final String generatedDir = new File( "./modules/wem-webapp/target/generated-sources/webapp" ).getAbsolutePath();
+        final String generatedDir = new File( "./modules/wem-webapp/target/main/webapp" ).getAbsolutePath();
 
         this.tomcat.setPort( 8080 );
         this.tomcat.setHostname( "localhost" );

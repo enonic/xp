@@ -1,9 +1,15 @@
 'use strict';
 
-function compileLess(grunt, target, data) {
+var sourceDir = "src/main/webapp";
+var targetDir = "target/main/webapp";
 
-    var inputFile = data.dir + '/styles/_module.less';
-    if (!grunt.file.exists(inputFile)) {
+function compileLess(grunt, args) {
+
+    var baseDir = sourceDir + '/' + args.module + '/styles';
+    var sourceFile = baseDir + '/_module.less';
+    var targetFile = baseDir + '/_all.css';
+
+    if (!grunt.file.exists(sourceFile)) {
         return;
     }
 
@@ -12,61 +18,89 @@ function compileLess(grunt, target, data) {
         }
     };
 
-    config.files[data.dir + '/styles/_all.css'] = inputFile;
-    grunt.config.set('less.' + target, config);
+    config.files[targetFile] = sourceFile;
+    grunt.config.set('less.' + args.target, config);
 
-    grunt.log.writeln('Adding less:' + target + ' task');
-    grunt.task.run('less:' + target);
+    grunt.log.writeln('Adding less:' + args.target + ' task');
+    grunt.task.run('less:' + args.target);
 
 }
 
-function concatLibJs(grunt, target, data) {
+function concatLibJs(grunt, args) {
 
-    var inputFile = data.dir + '/lib/_module.js';
-    if (!grunt.file.exists(inputFile)) {
+    var baseDir = sourceDir + '/' + args.module + '/lib';
+    var sourceFile = baseDir + '/_module.js';
+    var targetFile = baseDir + '/_all.js';
+
+    if (!grunt.file.exists(sourceFile)) {
         return;
     }
 
     var config = {
-        src: inputFile,
-        dest: data.dir + '/lib/_all.js'
+        src: sourceFile,
+        dest: targetFile
     };
 
-    grunt.config.set('directives.' + target, config);
+    grunt.config.set('directives.' + args.target, config);
 
-    grunt.log.writeln('Adding directives:' + target + ' task');
-    grunt.task.run('directives:' + target);
+    grunt.log.writeln('Adding directives:' + args.target + ' task');
+    grunt.task.run('directives:' + args.target);
 
 }
 
-function compileTs(grunt, target, data) {
+function compileTs(grunt, args) {
 
-    var inputFile = data.dir + '/js/_module.ts';
-    if (!grunt.file.exists(inputFile)) {
+    var baseDir = sourceDir + '/' + args.module + '/js';
+    var sourceFile = baseDir + '/_module.ts';
+    var targetFile = baseDir + '/_all.js';
+
+    if (!grunt.file.exists(sourceFile)) {
         return;
     }
 
     var config = {
-        src: inputFile,
-        out: data.dir + '/ts/_all.js',
+        src: sourceFile,
+        out: targetFile,
+        options: {
+            sourcemap: args.options.sourcemap,
+            declaration: args.options.declaration
+        }
     };
 
-    if (data['ts']) {
-        config.options = data.ts;
-    }
-
-    grunt.config.set('ts.' + target, config);
-
-    grunt.log.writeln('Adding ts:' + target + ' task');
-    grunt.task.run('ts:' + target);
+    grunt.config.set('ts.' + args.target, config);
+    grunt.log.writeln('Adding ts:' + args.target + ' task');
+    grunt.task.run('ts:' + args.target);
 
 }
 
-function executeTask(grunt, target, data) {
+function renameFiles(grunt, args) {
 
-    compileLess(grunt, target, data);
-    concatLibJs(grunt, target, data);
-    compileTs(grunt, target, data);
+    var config = {
+        files: [
+            {
+                expand: true,
+                cwd: (sourceDir + '/' + args.module),
+                src: '*/_all.*',
+                dest: (targetDir + '/' + args.module + '/')
+            }
+        ],
+        options: {
+            ignore: true
+        }
+    };
+
+    grunt.config.set('rename.' + args.target, config);
+    grunt.log.writeln('Adding rename:' + args.target + ' task');
+    grunt.task.run('rename:' + args.target);
+
+}
+
+function executeTask(grunt, args) {
+
+    compileLess(grunt, args);
+    concatLibJs(grunt, args);
+    compileTs(grunt, args);
+    renameFiles(grunt, args);
 
 }
 
@@ -74,10 +108,23 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-directives');
+    grunt.loadNpmTasks('grunt-rename');
     grunt.loadNpmTasks('grunt-ts');
 
     grunt.registerMultiTask('module', 'Build an admin module', function () {
-        executeTask(grunt, this.target, this.data);
+
+        var options = this.options({
+            sourcemap: false,
+            declaration: false
+        });
+
+        var args = {
+            target: this.target,
+            module: this.data.module,
+            options: options
+        };
+
+        executeTask(grunt, args);
     });
 
 };
