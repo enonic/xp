@@ -53,7 +53,7 @@ module app_browse {
 
         public setItem(item:api_app_browse.BrowseItem<api_content.ContentSummary>) {
             //TODO: use real item path here
-            this.frame.setSrc("../../../dev/live-edit-page/bootstrap.jsp?edit=false");
+            this.frame.setSrc(api_util.getUri("dev/live-edit-page/bootstrap.jsp?edit=false"));
         }
 
     }

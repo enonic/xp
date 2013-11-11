@@ -242,7 +242,7 @@ module app_wizard {
 
         private frame:api_dom.IFrameEl;
 
-        constructor(url:string = "../../../dev/live-edit-page/bootstrap.jsp?edit=true") {
+        constructor(url:string = api_util.getUri("dev/live-edit-page/bootstrap.jsp?edit=true")) {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
 
