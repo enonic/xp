@@ -25,7 +25,7 @@ module api_form_inputtype_content_image {
 
         private contentRequestsAllowed:boolean;
 
-        private uploadDialog:ImageSelectorUploadDialog;
+        private uploadDialog:UploadDialog;
 
         constructor(config:api_form_inputtype.InputTypeViewConfig<ImageSelectorConfig>) {
             super("ImageSelector", "image-selector");
@@ -55,7 +55,7 @@ module api_form_inputtype_content_image {
                     this.loadOptions("");
                 });
 
-            this.uploadDialog = new ImageSelectorUploadDialog();
+            this.uploadDialog = new UploadDialog();
             this.uploadDialog.addListener({
                 onImageUploaded: (id:string, fileName:string, mimeType:string) => {
                     //this.createTemporaryImageContent(id, fileName, mimeType);

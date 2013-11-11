@@ -1,17 +1,17 @@
 module api_form_inputtype_content_image {
 
-    export class ImageSelectorUploadDialog extends api_ui_dialog.ModalDialog implements api_event.Observable {
+    export class UploadDialog extends api_ui_dialog.ModalDialog implements api_event.Observable {
 
         private uploader:api_ui.ImageUploader;
 
-        private listeners:ImageSelectorUploadDialogListener[] = [];
+        private listeners:UploadDialogListener[] = [];
 
         constructor() {
             super({
                 title: "Image uploader",
                 width: 800,
                 height: 520,
-                idPrefix: "ImageSelectorUploadDialog"
+                idPrefix: "UploadDialog"
             });
 
             this.getEl().addClass("image-selector-upload-dialog");
@@ -36,8 +36,8 @@ module api_form_inputtype_content_image {
             });
             this.appendChildToContentPanel(this.uploader);
 
-            this.setCancelAction(new CancelImageSelectorUploadDialog());
-            this.getCancelAction().addExecutionListener((action:CancelImageSelectorUploadDialog) => {
+            this.setCancelAction(new UploadDialogCancelAction());
+            this.getCancelAction().addExecutionListener((action:UploadDialogCancelAction) => {
                 this.uploader.stop();
                 this.uploader.reset();
                 this.close();
@@ -56,37 +56,21 @@ module api_form_inputtype_content_image {
             super.open();
         }
 
-        addListener(listener:ImageSelectorUploadDialogListener) {
+        addListener(listener:UploadDialogListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:ImageSelectorUploadDialogListener) {
+        removeListener(listener:UploadDialogListener) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
         private notifyImageUploaded(id:string, name:string, mimeType:string) {
-            this.listeners.forEach((listener:ImageSelectorUploadDialogListener) => {
-                if (listener.onImageUploaded) {
-                    listener.onImageUploaded(id, name, mimeType);
-                }
+            this.listeners.forEach((listener:UploadDialogListener) => {
+                listener.onImageUploaded(id, name, mimeType);
             });
         }
 
     }
-
-    export interface ImageSelectorUploadDialogListener extends api_event.Listener {
-
-        onImageUploaded: (id:string, name:string, mimeType:string) => void;
-
-    }
-
-    class CancelImageSelectorUploadDialog extends api_ui.Action {
-
-        constructor() {
-            super("Cancel", "esc");
-        }
-    }
-
 }
