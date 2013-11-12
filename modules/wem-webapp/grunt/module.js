@@ -100,7 +100,7 @@ function executeTask(grunt, args) {
     compileLess(grunt, args);
     concatLibJs(grunt, args);
     compileTs(grunt, args);
-    renameFiles(grunt, args);
+    // renameFiles(grunt, args);
 
 }
 
