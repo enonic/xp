@@ -36,38 +36,22 @@ module app_wizard {
                 closeAction: actions.getCloseAction()
             });
 
-            super({
-                tabId: tabId,
-                formIcon: this.formIcon,
-                mainToolbar: mainToolbar,
-                actions: actions,
-                header: this.spaceWizardHeader
-            });
-
             this.spaceWizardHeader.initNames(SpaceWizardPanel.NEW_WIZARD_HEADER, null);
             this.spaceWizardHeader.setAutogenerateName(true);
 
             this.spaceForm = new SpaceForm();
 
-            this.schemaPanel = new api_ui.Panel("schemaPanel");
-            var h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("TODO: schema");
-            this.schemaPanel.appendChild(h1El);
+            var steps:api_app_wizard.WizardStep[] = [];
+            steps.push(new api_app_wizard.WizardStep("Space", this.spaceForm));
 
-            this.modulesPanel = new api_ui.Panel("modulesPanel");
-            h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("TODO: modules");
-            this.modulesPanel.appendChild(h1El);
-
-            this.templatesPanel = new api_ui.Panel("templatesPanel");
-            h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("TODO: templates");
-            this.templatesPanel.appendChild(h1El);
-
-            this.addStep(new api_app_wizard.WizardStep("Space"), this.spaceForm);
-            this.addStep(new api_app_wizard.WizardStep("Schemas"), this.schemaPanel);
-            this.addStep(new api_app_wizard.WizardStep("Modules"), this.modulesPanel);
-            this.addStep(new api_app_wizard.WizardStep("Templates"), this.templatesPanel);
+            super({
+                tabId: tabId,
+                formIcon: this.formIcon,
+                mainToolbar: mainToolbar,
+                actions: actions,
+                header: this.spaceWizardHeader,
+                steps: steps
+            });
         }
 
         setPersistedItem(space:api_remote_space.Space) {

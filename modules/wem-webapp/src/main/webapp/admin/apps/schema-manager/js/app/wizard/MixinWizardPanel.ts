@@ -30,18 +30,21 @@ module app_wizard {
                  closeAction: actions.getCloseAction()
             });
 
+            this.mixinWizardHeader.setName(MixinWizardPanel.NEW_WIZARD_HEADER);
+
+            this.mixinForm = new MixinForm();
+
+            var steps:api_app_wizard.WizardStep[] = [];
+            steps.push(new api_app_wizard.WizardStep("Mixin", this.mixinForm));
+
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 actions: actions,
-                header: this.mixinWizardHeader
+                header: this.mixinWizardHeader,
+                steps: steps
             });
-
-            this.mixinWizardHeader.setName(MixinWizardPanel.NEW_WIZARD_HEADER);
-
-            this.mixinForm = new MixinForm();
-            this.addStep(new api_app_wizard.WizardStep("Mixin"), this.mixinForm);
         }
 
         setPersistedItem(mixin:api_schema_mixin.Mixin) {

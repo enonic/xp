@@ -28,19 +28,21 @@ module app_wizard {
                 closeAction: actions.getCloseAction()
             });
 
+            this.contentTypeWizardHeader.setName(ContentTypeWizardPanel.NEW_WIZARD_HEADER);
+
+            this.contentTypeForm = new ContentTypeForm();
+
+            var steps:api_app_wizard.WizardStep[] = [];
+            steps.push(new api_app_wizard.WizardStep("Content Type", this.contentTypeForm));
+
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 actions: actions,
-                header: this.contentTypeWizardHeader
+                header: this.contentTypeWizardHeader,
+                steps: steps
             });
-
-            this.contentTypeWizardHeader.setName(ContentTypeWizardPanel.NEW_WIZARD_HEADER);
-
-            this.contentTypeForm = new ContentTypeForm();
-
-            this.addStep(new api_app_wizard.WizardStep("Content Type"), this.contentTypeForm);
         }
 
         setPersistedItem(contentType:api_schema_content.ContentType) {

@@ -29,17 +29,20 @@ module app_wizard {
                 closeAction: actions.getCloseAction()
             });
 
+            this.relationShipTypeWizardHeader.setName(RelationshipTypeWizardPanel.NEW_WIZARD_HEADER);
+            this.relationshipTypeForm = new RelationshipTypeForm();
+
+            var steps:api_app_wizard.WizardStep[] = [];
+            steps.push(new api_app_wizard.WizardStep("Relationship Type", this.relationshipTypeForm));
+
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 actions: actions,
-                header: this.relationShipTypeWizardHeader
+                header: this.relationShipTypeWizardHeader,
+                steps: steps
             });
-
-            this.relationShipTypeWizardHeader.setName(RelationshipTypeWizardPanel.NEW_WIZARD_HEADER);
-            this.relationshipTypeForm = new RelationshipTypeForm();
-            this.addStep(new api_app_wizard.WizardStep("Relationship Type"), this.relationshipTypeForm);
         }
 
         setPersistedItem(relationshipType:api_schema_relationshiptype.RelationshipType){

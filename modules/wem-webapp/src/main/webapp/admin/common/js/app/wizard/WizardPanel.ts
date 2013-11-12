@@ -15,6 +15,8 @@ module api_app_wizard {
         actions:WizardActions<any>;
 
         livePanel?:api_ui.Panel;
+
+        steps:api_app_wizard.WizardStep[];
     }
 
     export class WizardPanel<T> extends api_ui.Panel implements api_ui.Closeable, api_event.Observable, api_ui.ActionContainer {
@@ -103,6 +105,8 @@ module api_app_wizard {
                 e.stopPropagation();
                 this.focusElement = jQuery(e.target);
             });
+
+            this.setSteps(params.steps);
         }
 
         getTabId():api_app.AppBarTabId {
@@ -176,13 +180,15 @@ module api_app_wizard {
             return null; // TODO:
         }
 
-        addStep(step:api_ui.PanelNavigationItem, panel:api_ui.Panel) {
-            this.stepPanels.addNavigablePanelToBack(step, panel);
+        private setSteps(steps:api_app_wizard.WizardStep[]) {
 
-            // Ensure first step is shown
-            if( this.stepPanels.getSize() == 1 ) {
-                this.stepPanels.showPanel( 0 );
-            }
+            steps.forEach( (step:api_app_wizard.WizardStep, index:number) => {
+                this.stepPanels.addNavigablePanelToBack(step.getTabBarItem(), step.getPanel());
+                // Ensure first step is shown
+                if( index == 0 ) {
+                    this.stepPanels.showPanel( 0 );
+                }
+            } );
         }
 
         showFirstStep() {

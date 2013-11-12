@@ -4,8 +4,6 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("common/images/default_content.png");
 
-        private static DISPLAY_NAME_REGEX:RegExp = /\$\('([a-zA-Z\.]*)'\)/g;
-
         private persistedContent:api_content.Content;
 
         private parentContent:api_content.Content;
@@ -19,12 +17,6 @@ module app_wizard {
         private contentWizardHeader:api_app_wizard.WizardHeaderWithDisplayNameAndName;
 
         private contentForm:ContentForm;
-
-        private schemaPanel:api_ui.Panel;
-
-        private modulesPanel:api_ui.Panel;
-
-        private templatesPanel:api_ui.Panel;
 
         private iconUploadId:string;
 
@@ -62,6 +54,14 @@ module app_wizard {
 
             var livePanel = new LiveFormPanel();
 
+            this.contentWizardHeader.initNames("New " + this.contentType.getDisplayName(), null);
+            this.contentWizardHeader.setAutogenerateName(true);
+
+            this.contentForm = new ContentForm();
+
+            var steps:api_app_wizard.WizardStep[] = [];
+            steps.push(new api_app_wizard.WizardStep(contentType.getDisplayName(), this.contentForm));
+
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
@@ -69,34 +69,9 @@ module app_wizard {
                 stepToolbar: stepToolbar,
                 header: this.contentWizardHeader,
                 actions: actions,
-                livePanel: livePanel
+                livePanel: livePanel,
+                steps: steps
             });
-
-            this.contentWizardHeader.initNames("New " + this.contentType.getDisplayName(), null);
-            this.contentWizardHeader.setAutogenerateName(true);
-
-            console.log("ContentWizardPanel this.contentType: ", this.contentType);
-            this.contentForm = new ContentForm();
-
-            this.schemaPanel = new api_ui.Panel("schemaPanel");
-            var h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("TODO: schema");
-            this.schemaPanel.appendChild(h1El);
-
-            this.modulesPanel = new api_ui.Panel("modulesPanel");
-            h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("TODO: modules");
-            this.modulesPanel.appendChild(h1El);
-
-            this.templatesPanel = new api_ui.Panel("templatesPanel");
-            h1El = new api_dom.H1El();
-            h1El.getEl().setInnerHtml("TODO: templates");
-            this.templatesPanel.appendChild(h1El);
-
-            this.addStep(new api_app_wizard.WizardStep(contentType.getDisplayName()), this.contentForm);
-            this.addStep(new api_app_wizard.WizardStep("Schemas"), this.schemaPanel);
-            this.addStep(new api_app_wizard.WizardStep("Modules"), this.modulesPanel);
-            this.addStep(new api_app_wizard.WizardStep("Templates"), this.templatesPanel);
 
             ShowContentLiveEvent.on((event) => {
                 this.toggleFormPanel(false);
