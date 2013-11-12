@@ -34,6 +34,10 @@ module api_app_browse_grid {
                 ]
             }, treeConfig));
 
+            window.addEventListener('resize', () => {
+                this.extTreePanel.doComponentLayout();
+            });
+
             this.extTreePanel.addDocked({
                 xtype: 'toolbar',
                 itemId: 'selectionToolbar',
