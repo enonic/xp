@@ -1,6 +1,15 @@
 .context-window {
   color: @admin-medium-gray-font;
 
+  input.search {
+    margin: 15px;
+    padding: 5px 3px;
+    width: calc(100% - 20px);
+    border: none;
+    background-color: @admin-dark-gray-font;
+    color: @admin-medium-gray-font;
+  }
+
   .tab-menu {
     cursor: move;
   }
@@ -100,16 +109,14 @@
 
   .select-panel {
     .combobox {
-
-      .grid {
-        top:50px !important;
-        left:14px !important;
-      }
+      .imagePicker();
 
       input {
         height: 37px;
         padding: 4px 4px 4px 4px;
         border: 1px solid @admin-medium-gray-border;
+        background-color: transparent;
+        margin-bottom:0;
       }
 
       .slick-cell {
@@ -150,5 +157,35 @@
         }
       }
     }
+    .selected-options {
+      .imagePicker();
+      .container {
+        border: 1px solid @admin-light-gray-bg;
+        overflow: hidden;
+        height: 37px;
+
+        img {
+          float: left;
+          margin-right:5px;
+        }
+
+        .label {
+          float: left;
+        }
+
+        .remove {
+          color: #fff;
+          display: block;
+          float: right;
+          font-size: 20px;
+          cursor: pointer;
+          padding-right: 10px;
+        }
+      }
+    }
   }
+}
+
+.imagePicker() {
+  margin: 15px;
 }

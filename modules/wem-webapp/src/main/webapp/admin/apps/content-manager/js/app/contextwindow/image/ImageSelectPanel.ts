@@ -1,14 +1,77 @@
 module app_contextwindow_image {
     export class ImageSelectPanel extends api_ui.Panel {
 
+        private contextWindow:app_contextwindow.ContextWindow;
+
+        private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
+
         private selectedOptionsView:ImageSelectPanelSelectedOptionsView;
 
+        private templateForm:api_ui.Panel;
+
+        private selectedItem:api_ui_combobox.OptionData<api_content.ContentSummary>;
+
+        private liveEditItems:{[key: number]: api_ui_combobox.OptionData<api_content.ContentSummary>};
+
+        private liveEditIndex:number = 1;
 
         constructor(contextWindow:app_contextwindow.ContextWindow) {
             super("ImageSelectPanel");
             this.addClass("select-panel");
+            this.contextWindow = contextWindow;
+
+            this.liveEditItems = {};
 
             this.selectedOptionsView = new ImageSelectPanelSelectedOptionsView();
+            this.selectedOptionsView.addListener({
+                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                    this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.restoreEmptyComponent();
+                }
+            });
+            this.comboBox = this.createComboBox();
+
+            this.templateForm = new api_ui.Panel();
+            this.templateForm.getEl().setInnerHtml("Template goes here");
+            this.templateForm.hide();
+
+            this.appendChild(this.comboBox);
+            this.appendChild(this.selectedOptionsView);
+            this.appendChild(this.templateForm);
+
+            app_contextwindow.ComponentSelectEvent.on((event) => {
+                if (!event.getComponent().isEmpty()) {
+                    this.onImageSelected();
+                    if (event.getComponent().getItemId()) {
+                        var itemId = event.getComponent().getItemId();
+                        this.selectedItem = this.liveEditItems[itemId];
+                        this.comboBox.selectOption(this.selectedItem);
+                    }
+                }
+                console.log("itemId:",event.getComponent().getItemId());
+
+            });
+
+            app_contextwindow.ComponentDeselectEvent.on((event) => {
+                this.comboBox.removeSelectedItem(this.selectedItem);
+            });
+
+            app_contextwindow.ComponentRemovedEvent.on((event) => {
+                this.selectedOptionsView.removeItem(this.selectedItem);
+                this.onImageRemoved();
+            });
+        }
+
+        private onImageSelected() {
+            this.comboBox.hide();
+            this.templateForm.show();
+        }
+
+        private onImageRemoved() {
+            this.comboBox.show();
+            this.templateForm.hide();
+        }
+
+        private createComboBox():api_ui_combobox.ComboBox<api_content.ContentSummary> {
 
             var comboBoxConfig = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>> {
                 rowHeight: 50,
@@ -19,6 +82,23 @@ module app_contextwindow_image {
 
             var comboBox = new api_ui_combobox.ComboBox("imagePicker", comboBoxConfig);
 
+            comboBox.addListener({
+                onInputValueChanged: (oldValue, newValue, grid) => {
+                    contentSummaryLoader.search(newValue);
+                },
+                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                    this.selectedItem = null;
+                    this.onImageRemoved();
+                },
+                onOptionSelected: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                    this.selectedItem = item;
+                    this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex);
+                    this.liveEditItems[this.liveEditIndex] = item;
+                    this.onImageSelected();
+                    this.liveEditIndex++;
+                }
+            });
+
             var contentSummaryLoader = new api_form_inputtype_content.ContentSummaryLoader();
             contentSummaryLoader.addListener({
                 onLoading: () => {
@@ -26,22 +106,13 @@ module app_contextwindow_image {
                 },
                 onLoaded: (contentSummaries:api_content.ContentSummary[]) => {
                     var options = this.createOptions(contentSummaries);
-                    console.log("options", options);
                     comboBox.setOptions(options);
                 }
             });
 
-            comboBox.getEl().addEventListener("keyup", (e) => {
-                console.log(e);
-                contentSummaryLoader.search("");
-            });
+            contentSummaryLoader.search("");
 
-
-            this.appendChild(comboBox);
-            this.appendChild(this.selectedOptionsView);
-
-            //this.getHTMLElement().appendChild(this.imageSelector.getHTMLElement());
-
+            return comboBox;
         }
 
         private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {

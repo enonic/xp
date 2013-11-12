@@ -3,6 +3,8 @@ module app_contextwindow_image {
 
         private selectedItem:api_ui_combobox.OptionData<api_content.ContentSummary>;
 
+        private container:api_dom.DivEl;
+
         constructor() {
             super();
         }
@@ -11,20 +13,21 @@ module app_contextwindow_image {
             this.selectedItem = imageData;
             var item = imageData.displayValue;
 
-            var container = new api_dom.DivEl();
+            this.container = new api_dom.DivEl();
+            this.container.addClass("container");
 
             var image = new api_dom.ImgEl();
             image.getEl().setSrc(item.getIconUrl());
-            image.getEl().setHeight("32px");
-            image.getEl().setWidth("32px");
+            image.getEl().setHeight("35px");
+            image.getEl().setWidth("35px");
 
             var label = new api_dom.DivEl(null, "label");
             label.getEl().setInnerHtml(item.getName());
 
             var removeButton = new api_dom.AEl(null, "remove");
-            removeButton.setText("Remove");
+            removeButton.setText("&times;");
             removeButton.getEl().addEventListener('click', (event:Event) => {
-                container.remove();
+                this.container.remove();
                 this.notifySelectedOptionRemoved(imageData);
 
                 event.stopPropagation();
@@ -32,12 +35,20 @@ module app_contextwindow_image {
                 return false;
             });
 
-            container.appendChild(image);
-            container.appendChild(label);
-            container.appendChild(removeButton);
+            this.container.appendChild(image);
+            this.container.appendChild(label);
+            this.container.appendChild(removeButton);
 
 
-            this.appendChild(container);
+            this.appendChild(this.container);
+        }
+
+
+
+        removeItem(item:api_ui_combobox.OptionData<api_content.ContentSummary>) {
+            this.container.remove();
+            //this.notifySelectedOptionRemoved(item);
+            this.selectedItem = null;
         }
     }
 }

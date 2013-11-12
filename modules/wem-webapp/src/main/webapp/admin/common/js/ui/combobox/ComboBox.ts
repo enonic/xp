@@ -370,7 +370,7 @@ module api_ui_combobox {
             }
         }
 
-        private removeSelectedItem(item:OptionData<T>) {
+        removeSelectedItem(item:OptionData<T>) {
             var itemIndex = this.selectedOptions.indexOf(item);
             if (itemIndex < 0) {
                 return;

@@ -16,6 +16,7 @@ module app_contextwindow {
             this.grid = new ComponentGrid(this.dataView);
 
             this.searchBox = new api_ui.TextInput();
+            this.searchBox.addClass("search");
             this.searchBox.setPlaceholder("Search");
             this.searchBox.getEl().addEventListener("keyup", (e) => {
                 this.grid.updateFilter(this.searchBox.getValue());

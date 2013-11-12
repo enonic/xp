@@ -11,5 +11,6 @@ module app_contextwindow {
         };
         isEmpty:() => boolean;
         isSelected:() => boolean;
+        getItemId():number;
     }
 }

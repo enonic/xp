@@ -8,11 +8,25 @@ module LiveEdit.component.dragdropsort {
         public static createEmptyComponentHtml(component:LiveEdit.component.Component):string {
 
             return '<div class="live-edit-empty-component" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getName() + '">' +
-                   '    <div class="' + component.getComponentType().getIconCls() + ' live-edit-empty-component-icon"></div>' +
-                   '</div>';
+                '    <div class="' + component.getComponentType().getIconCls() + ' live-edit-empty-component-icon"></div>' +
+                '</div>';
         }
 
-        public static loadComponent(componentKey:string):void {
+        public static restoreEmptyComponent() {
+            var currentComponent = LiveEdit.component.Selection.getSelectedComponent();
+            if (currentComponent) {
+                var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(currentComponent));
+                var emptyComponent = new LiveEdit.component.Component(emptyElement);
+
+                currentComponent.getElement().replaceWith(emptyComponent.getElement());
+
+                //$(window).trigger('sortableUpdate.liveEdit');
+
+                LiveEdit.component.Selection.select(emptyComponent);
+            }
+        }
+
+        public static loadComponent(componentKey:string, itemid:number):void {
             var selectedComponent = LiveEdit.component.Selection.getSelectedComponent();
 
             if (!selectedComponent.isEmpty()) {
@@ -25,21 +39,23 @@ module LiveEdit.component.dragdropsort {
                 url: componentUrl,
                 cache: false,
                 beforeSend: () => {
-                    LiveEdit.component.dragdropsort.EmptyComponent.appendLoadingSpinner(selectedComponent)
+                    LiveEdit.component.dragdropsort.EmptyComponent.appendLoadingSpinner(selectedComponent);
                 },
                 success: (responseHtml:string) => {
-                    LiveEdit.component.dragdropsort.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml))
+                    var newComponent = LiveEdit.component.dragdropsort.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml));
+                    newComponent.element.attr("data-itemid", itemid);
+
                 }
             });
         }
 
-        private static replaceEmptyComponent(selectedComponent:LiveEdit.component.Component, responseHtml:JQuery):void {
+        private static replaceEmptyComponent(selectedComponent:LiveEdit.component.Component, responseHtml:JQuery):LiveEdit.component.Component {
 
             var emptyComponentEl:JQuery = selectedComponent.getElement();
 
             emptyComponentEl.replaceWith(responseHtml);
-
-            LiveEdit.component.Selection.select(new LiveEdit.component.Component(responseHtml));
+            var component = new LiveEdit.component.Component(responseHtml)
+            LiveEdit.component.Selection.select(component);
 
             $(window).trigger('sortableUpdate.liveEdit');
 
@@ -49,6 +65,7 @@ module LiveEdit.component.dragdropsort {
             if (selectedComponent.getComponentType().getType() == LiveEdit.component.Type.LAYOUT) {
                 LiveEdit.component.dragdropsort.DragDropSort.createJQueryUiSortable();
             }
+            return component;
 
         }
 

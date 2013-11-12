@@ -38,6 +38,10 @@ module LiveEdit.component {
             this.setComponentType(new LiveEdit.component.ComponentType( this.resolveComponentTypeEnum() ));
         }
 
+        getItemId():number {
+            return parseInt(this.element.data("itemid"));
+        }
+
         getElement():JQuery {
             return this.element;
         }
