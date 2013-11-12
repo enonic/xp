@@ -2,7 +2,7 @@
 ///<reference path='ComponentDescriptor.ts' />
 ///<reference path='TemplateName.ts' />
 ///<reference path='Template.ts' />
-///<reference path='Component.ts' />
+///<reference path='PageComponent.ts' />
 
 ///<reference path='ImageTemplateName.ts' />
 ///<reference path='Image.ts' />

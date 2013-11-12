@@ -1,7 +1,7 @@
 package com.enonic.wem.api.rendering;
 
 
-public interface Stream
+public interface Component
     extends Renderable
 {
 

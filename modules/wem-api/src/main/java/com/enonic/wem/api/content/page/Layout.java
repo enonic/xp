@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class Layout
-    extends Component<LayoutTemplateName>
+    extends PageComponent<LayoutTemplateName>
     implements RegionPlaceableComponent
 {
     private final RootDataSet config;

@@ -1,6 +1,6 @@
 module api_content_page{
 
-    export class Component<TEMPLATE_NAME extends TemplateName> {
+    export class PageComponent<TEMPLATE_NAME extends TemplateName> {
 
         private template:Template<TEMPLATE_NAME>;
 

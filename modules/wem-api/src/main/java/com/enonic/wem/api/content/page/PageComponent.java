@@ -1,14 +1,14 @@
 package com.enonic.wem.api.content.page;
 
 
-import com.enonic.wem.api.rendering.Renderable;
+import com.enonic.wem.api.rendering.Component;
 
-public abstract class Component<NAME extends TemplateName>
-    implements Renderable
+public abstract class PageComponent<NAME extends TemplateName>
+    implements Component
 {
     private final NAME templateName;
 
-    protected Component( final NAME templateName )
+    protected PageComponent( final NAME templateName )
     {
         this.templateName = templateName;
     }

@@ -5,7 +5,7 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class Part
-    extends Component<PartTemplateName>
+    extends PageComponent<PartTemplateName>
     implements RegionPlaceableComponent
 {
     private final RootDataSet config;
