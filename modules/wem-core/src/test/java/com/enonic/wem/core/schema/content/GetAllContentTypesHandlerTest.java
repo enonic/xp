@@ -12,7 +12,6 @@ import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.Nodes;
@@ -90,8 +89,12 @@ public class GetAllContentTypesHandlerTest
         throws Exception
     {
         final Mixin mixin = newMixin().name( "my_mixin" ).
-            addFormItem( newInput().name( "inputToBeMixedIn" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().
+                name( "inputToBeMixedIn" ).
+                inputType( InputTypes.TEXT_LINE ).
+                build() ).
             build();
+
         final Form form = newForm().addFormItem( newMixinReference( mixin ).name( "myMixin" ).build() ).build();
         final RootDataSet rootDataSetWithForm = createRootDataSetWithForm( form );
 
@@ -117,19 +120,22 @@ public class GetAllContentTypesHandlerTest
         assertEquals( 1, result.getSize() );
         assertNotNull( result.get( 0 ).form().getInput( "inputToBeMixedIn" ) );
         assertNull( result.get( 0 ).form().getFormItem( "myMixin" ) );
-
     }
 
     private RootDataSet createRootDataSetWithForm( final Form form )
     {
         final RootDataSet rootDataSet = new RootDataSet();
-        final DataSet formItems = new DataSet( "form/formItems" );
+
+        final DataSet formAsDataSet = new DataSet( "form" );
+        final DataSet formItems = new DataSet( "formItems" );
+        formAsDataSet.add( formItems );
+
         for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( form.getFormItems() ) )
         {
             formItems.add( data );
         }
-        rootDataSet.add( formItems );
-        rootDataSet.setProperty( "displayName", new Value.String( "DisplayName" ) );
+        rootDataSet.add( formAsDataSet );
+
         return rootDataSet;
     }
 

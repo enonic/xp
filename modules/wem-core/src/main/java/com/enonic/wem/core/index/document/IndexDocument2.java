@@ -69,19 +69,6 @@ public class IndexDocument2
         return analyzer;
     }
 
-    public AbstractIndexDocumentItem getItemWithName( final String name, final IndexValueType baseType )
-    {
-        for ( AbstractIndexDocumentItem item : this.getIndexDocumentItems() )
-        {
-            if ( item.getFieldBaseName().equals( name ) && item.getIndexBaseType().equals( baseType ) )
-            {
-                return item;
-            }
-        }
-
-        return null;
-    }
-
     public static class Builder
     {
         private EntityId id;
@@ -92,10 +79,11 @@ public class IndexDocument2
 
         private String analyzer;
 
-        private Set<AbstractIndexDocumentItem> indexDocumentEntries = Sets.newHashSet();
+        private Set<AbstractIndexDocumentItem> indexDocumentEntries;
 
         public Builder()
         {
+            indexDocumentEntries = Sets.newHashSet();
         }
 
         public Builder id( final EntityId id )

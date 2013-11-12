@@ -1,17 +1,25 @@
 package com.enonic.wem.core.index.document;
 
+import com.enonic.wem.api.data.Property;
+
 public abstract class AbstractIndexDocumentItem<T>
 {
-    protected String fieldBaseName;
 
-    protected AbstractIndexDocumentItem( final String fieldBaseName )
+    protected IndexDocumentItemPath indexDocumentItemPath;
+
+    protected AbstractIndexDocumentItem( final IndexDocumentItemPath path )
     {
-        this.fieldBaseName = fieldBaseName;
+        this.indexDocumentItemPath = path;
     }
 
-    public String getFieldBaseName()
+    protected AbstractIndexDocumentItem( final Property property )
     {
-        return fieldBaseName;
+        this.indexDocumentItemPath = IndexDocumentItemPath.from( property );
+    }
+
+    public String getPath()
+    {
+        return indexDocumentItemPath.toString();
     }
 
     public abstract IndexValueType getIndexBaseType();

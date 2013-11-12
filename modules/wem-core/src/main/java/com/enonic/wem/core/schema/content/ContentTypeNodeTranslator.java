@@ -8,7 +8,6 @@ import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
-import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
@@ -46,7 +45,11 @@ public class ContentTypeNodeTranslator
 
     public static final String FINAL_PROPERTY = "final";
 
-    public static final String FORM_FORM_ITEMS_PROPERTY = "form/formItems";
+    public static final String FORM_PATH = "form";
+
+    public static final String FORMITEMS_DATA_PATH = "formItems";
+
+    public static final String FORMITEMS_FULL_PATH = "form.formItems";
 
     public CreateNode toCreateNodeCommand( final CreateContentType command )
     {
@@ -61,10 +64,10 @@ public class ContentTypeNodeTranslator
             name( command.getName() ).
             parent( parentItemPath ).
             icon( command.getIcon() ).
-            data( toRootDataSet( command ) );
+            data( propertiesToRootDataSet( command ) );
     }
 
-    public RootDataSet toRootDataSet( final CreateContentType command )
+    public RootDataSet propertiesToRootDataSet( final CreateContentType command )
     {
         final RootDataSet rootDataSet = new RootDataSet();
         addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PROPERTY, command.getDisplayName() );
@@ -75,12 +78,15 @@ public class ContentTypeNodeTranslator
         addPropertyIfNotNull( rootDataSet, ABSTRACT_PROPERTY, Boolean.toString( command.isAbstract() ) );
         addPropertyIfNotNull( rootDataSet, FINAL_PROPERTY, Boolean.toString( command.isFinal() ) );
 
-        final DataSet formItems = new DataSet( FORM_FORM_ITEMS_PROPERTY );
+        final DataSet form = new DataSet( FORM_PATH );
+        final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
+        form.add( formItems );
+
         for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( command.getForm().getFormItems() ) )
         {
             formItems.add( data );
         }
-        rootDataSet.add( formItems );
+        rootDataSet.add( form );
 
         return rootDataSet;
     }
@@ -104,14 +110,16 @@ public class ContentTypeNodeTranslator
         addPropertyIfNotNull( rootDataSet, ABSTRACT_PROPERTY, Boolean.toString( contentType.isAbstract() ) );
         addPropertyIfNotNull( rootDataSet, FINAL_PROPERTY, Boolean.toString( contentType.isFinal() ) );
 
-        final DataSet formItemsAsDataSet = new DataSet( FORM_FORM_ITEMS_PROPERTY );
+        final DataSet form = new DataSet( FORM_PATH );
+        final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
+        form.add( formItems );
         final List<Data> dataList = SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( contentType.form().getFormItems() );
 
         for ( final Data data : dataList )
         {
-            formItemsAsDataSet.add( data );
+            formItems.add( data );
         }
-        rootDataSet.add( formItemsAsDataSet );
+        rootDataSet.add( form );
 
         return newSetItemEditor().
             name( contentType.getName() ).
@@ -144,7 +152,7 @@ public class ContentTypeNodeTranslator
 
     ContentType fromNode( final Node node )
     {
-        final DataSet formItemsAsDataSet = node.dataSet( FORM_FORM_ITEMS_PROPERTY );
+        final DataSet formItemsAsDataSet = node.dataSet( FORMITEMS_FULL_PATH );
         final FormItems formItems = SERIALIZER_FOR_FORM_ITEM_TO_DATA.deserializeFormItems( formItemsAsDataSet );
 
         final ContentType.Builder builder = newContentType().
@@ -195,18 +203,4 @@ public class ContentTypeNodeTranslator
 
         return builder.build();
     }
-
-    private String getStringOrNull( final Node node, final String propertyName )
-    {
-        final Property property = node.property( propertyName );
-
-        if ( property == null )
-        {
-            return null;
-        }
-
-        return property.getString();
-    }
-
-
 }

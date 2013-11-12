@@ -5,9 +5,9 @@ public class IndexDocumentOrderbyItem
 {
     final String value;
 
-    public IndexDocumentOrderbyItem( final String fieldBaseName, final String value )
+    public IndexDocumentOrderbyItem( final IndexDocumentItemPath path, final String value )
     {
-        super( fieldBaseName );
+        super( path );
         this.value = value;
     }
 

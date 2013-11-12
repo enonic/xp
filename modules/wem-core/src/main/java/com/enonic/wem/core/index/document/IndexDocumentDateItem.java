@@ -9,9 +9,9 @@ public class IndexDocumentDateItem
 {
     private final DateTime dateTime;
 
-    public IndexDocumentDateItem( final String fieldName, final DateTime dateTime )
+    public IndexDocumentDateItem( final IndexDocumentItemPath path, final DateTime dateTime )
     {
-        super( fieldName );
+        super( path );
         this.dateTime = dateTime;
     }
 

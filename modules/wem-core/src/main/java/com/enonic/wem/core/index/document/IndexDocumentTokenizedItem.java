@@ -5,9 +5,9 @@ public class IndexDocumentTokenizedItem
 {
     private final String value;
 
-    public IndexDocumentTokenizedItem( final String fieldBaseName, final String value )
+    public IndexDocumentTokenizedItem( final IndexDocumentItemPath path, final String value )
     {
-        super( fieldBaseName );
+        super( path );
         this.value = value;
     }
 

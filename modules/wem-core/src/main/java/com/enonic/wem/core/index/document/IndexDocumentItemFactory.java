@@ -11,33 +11,21 @@ import com.enonic.wem.api.entity.PropertyIndexConfig;
 public class IndexDocumentItemFactory
 {
 
-    public static final String PREFIX_SEPARATOR = ".";
-
-    public static Set<AbstractIndexDocumentItem> create( final String propertyName, final Value propertyValue,
-                                                         PropertyIndexConfig propertyIndexConfig )
-    {
-        return doCreate( propertyIndexConfig, propertyName, propertyValue );
-    }
-
-    public static Set<AbstractIndexDocumentItem> create( final String propertyPrefix, final Property property,
+    public static Set<AbstractIndexDocumentItem> create( final IndexDocumentItemPath path, final Value value,
                                                          final PropertyIndexConfig propertyIndexConfig )
     {
-        final String propertyName = propertyPrefix + PREFIX_SEPARATOR + property.getName();
-        final Value propertyValue = property.getValue();
-
-        return doCreate( propertyIndexConfig, propertyName, propertyValue );
+        return doCreate( propertyIndexConfig, path, value );
     }
-
 
     public static Set<AbstractIndexDocumentItem> create( final Property property, final PropertyIndexConfig propertyIndexConfig )
     {
-        final String propertyName = property.getName();
+        final IndexDocumentItemPath path = IndexDocumentItemPath.from( property );
         final Value propertyValue = property.getValue();
 
-        return doCreate( propertyIndexConfig, propertyName, propertyValue );
+        return doCreate( propertyIndexConfig, path, propertyValue );
     }
 
-    private static Set<AbstractIndexDocumentItem> doCreate( final PropertyIndexConfig propertyIndexConfig, final String propertyName,
+    private static Set<AbstractIndexDocumentItem> doCreate( final PropertyIndexConfig propertyIndexConfig, final IndexDocumentItemPath path,
                                                             final Value propertyValue )
     {
         final Set<AbstractIndexDocumentItem> indexDocumentItems = Sets.newHashSet();
@@ -47,67 +35,67 @@ public class IndexDocumentItemFactory
             return indexDocumentItems;
         }
 
-        addIndexBaseTypeEntries( propertyName, indexDocumentItems, propertyValue );
+        addIndexBaseTypeEntries( path, indexDocumentItems, propertyValue );
 
         if ( propertyIndexConfig.isFulltextEnabled() )
         {
-            indexDocumentItems.add( new IndexDocumentAnalyzedItem( propertyName, propertyValue.asString() ) );
+            indexDocumentItems.add( new IndexDocumentAnalyzedItem( path, propertyValue.asString() ) );
         }
 
         if ( propertyIndexConfig.isTokenizeEnabled() )
         {
-            indexDocumentItems.add( new IndexDocumentTokenizedItem( propertyName, propertyValue.asString() ) );
+            indexDocumentItems.add( new IndexDocumentTokenizedItem( path, propertyValue.asString() ) );
         }
 
-        indexDocumentItems.add( createOrderbyItemType( propertyName, propertyValue ) );
+        indexDocumentItems.add( createOrderbyItemType( path, propertyValue ) );
 
         return indexDocumentItems;
     }
 
-    private static IndexDocumentOrderbyItem createOrderbyItemType( final String propertyName, final Value propertyValue )
+    private static IndexDocumentOrderbyItem createOrderbyItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
-        return new IndexDocumentOrderbyItem( propertyName, OrderbyValueResolver.getOrderbyValue( propertyValue ) );
+        return new IndexDocumentOrderbyItem( path, OrderbyValueResolver.getOrderbyValue( propertyValue ) );
     }
 
-    private static void addIndexBaseTypeEntries( final String propertyName, final Set<AbstractIndexDocumentItem> indexDocumentItems,
+    private static void addIndexBaseTypeEntries( final IndexDocumentItemPath path, final Set<AbstractIndexDocumentItem> indexDocumentItems,
                                                  final Value propertyValue )
     {
         if ( propertyValue.isDateType() )
         {
-            indexDocumentItems.add( createDateItemType( propertyName, propertyValue ) );
+            indexDocumentItems.add( createDateItemType( path, propertyValue ) );
         }
 
         if ( propertyValue.isNumericType() )
         {
-            indexDocumentItems.add( createNumericItemType( propertyName, propertyValue ) );
+            indexDocumentItems.add( createNumericItemType( path, propertyValue ) );
         }
 
         if ( propertyValue.isGeographicCoordinate() )
         {
-            indexDocumentItems.add( createGeoPointItemType( propertyName, propertyValue ) );
+            indexDocumentItems.add( createGeoPointItemType( path, propertyValue ) );
         }
 
-        indexDocumentItems.add( createStringItemType( propertyName, propertyValue ) );
+        indexDocumentItems.add( createStringItemType( path, propertyValue ) );
     }
 
-    private static IndexDocumentGeoPointItem createGeoPointItemType( final String propertyName, final Value propertyValue )
+    private static IndexDocumentGeoPointItem createGeoPointItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
-        return new IndexDocumentGeoPointItem( propertyName, (Value.GeoPoint) propertyValue );
+        return new IndexDocumentGeoPointItem( path, (Value.GeoPoint) propertyValue );
     }
 
-    private static IndexDocumentStringItem createStringItemType( final String propertyName, final Value propertyValue )
+    private static IndexDocumentStringItem createStringItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
-        return new IndexDocumentStringItem( propertyName, propertyValue.asString() );
+        return new IndexDocumentStringItem( path, propertyValue.asString() );
     }
 
-    private static IndexDocumentNumberItem createNumericItemType( final String propertyName, final Value propertyValue )
+    private static IndexDocumentNumberItem createNumericItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
-        return new IndexDocumentNumberItem( propertyName, propertyValue.asDouble() );
+        return new IndexDocumentNumberItem( path, propertyValue.asDouble() );
     }
 
-    private static IndexDocumentDateItem createDateItemType( final String propertyName, final Value propertyValue )
+    private static IndexDocumentDateItem createDateItemType( final IndexDocumentItemPath path, final Value propertyValue )
     {
-        return new IndexDocumentDateItem( propertyName, propertyValue.asDateTime() );
+        return new IndexDocumentDateItem( path, propertyValue.asDateTime() );
     }
 
     private static void addIfNotNull( final AbstractIndexDocumentItem item, final Set<AbstractIndexDocumentItem> indexDocumentItems )

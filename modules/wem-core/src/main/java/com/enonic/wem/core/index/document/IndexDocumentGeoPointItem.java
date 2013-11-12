@@ -7,9 +7,9 @@ public class IndexDocumentGeoPointItem
 {
     private final Value.GeoPoint value;
 
-    public IndexDocumentGeoPointItem( final String fieldBaseName, final Value.GeoPoint value )
+    public IndexDocumentGeoPointItem( final IndexDocumentItemPath path, final Value.GeoPoint value )
     {
-        super( fieldBaseName );
+        super( path );
         this.value = value;
     }
 

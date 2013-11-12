@@ -5,9 +5,9 @@ public class IndexDocumentStringItem
 {
     private final String value;
 
-    public IndexDocumentStringItem( final String fieldBaseName, final String value )
+    public IndexDocumentStringItem( final IndexDocumentItemPath path, final String value )
     {
-        super( fieldBaseName );
+        super( path );
         this.value = value;
     }
 

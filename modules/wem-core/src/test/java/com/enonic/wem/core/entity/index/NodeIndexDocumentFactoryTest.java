@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
@@ -17,6 +18,7 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocumentItemPath;
 import com.enonic.wem.core.index.document.IndexValueType;
 
 import static org.junit.Assert.*;
@@ -121,20 +123,19 @@ public class NodeIndexDocumentFactoryTest
         assertEquals( IndexType.NODE, indexDocument.getIndexType() );
 
         final AbstractIndexDocumentItem createdTimeItem =
-            indexDocument.getItemWithName( NodeIndexDocumentFactory.CREATED_TIME_PROPERTY_NAME, IndexValueType.DATETIME );
+            getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATED_TIME_PROPERTY, IndexValueType.DATETIME );
 
         assertEquals( node.getCreatedTime().toDate(), createdTimeItem.getValue() );
 
         final AbstractIndexDocumentItem creator =
-            indexDocument.getItemWithName( NodeIndexDocumentFactory.CREATOR_PROPERTY_NAME, IndexValueType.STRING );
+            getItemWithName( indexDocument, NodeIndexDocumentFactory.CREATOR_PROPERTY_PATH, IndexValueType.STRING );
 
         assertEquals( "test:creator", creator.getValue() );
 
         final AbstractIndexDocumentItem modifier =
-            indexDocument.getItemWithName( NodeIndexDocumentFactory.MODIFIER_PROPERTY_NAME, IndexValueType.STRING );
+            getItemWithName( indexDocument, NodeIndexDocumentFactory.MODIFIER_PROPERTY_PATH, IndexValueType.STRING );
 
         assertEquals( "test:modifier", modifier.getValue() );
-
     }
 
     @Test
@@ -142,9 +143,8 @@ public class NodeIndexDocumentFactoryTest
         throws Exception
     {
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "a", new Value.String( "myValue" ) );
-        rootDataSet.setProperty( "ab", new Value.Double( 2.0 ) );
-        rootDataSet.setProperty( "abc", new Value.DateMidnight( DateMidnight.now() ) );
+        rootDataSet.addProperty( DataPath.from( "a.b.c" ), new Value.Double( 2.0 ) );
+        rootDataSet.setProperty( DataPath.from( "a.b.d" ), new Value.DateMidnight( DateMidnight.now() ) );
 
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).
@@ -155,14 +155,12 @@ public class NodeIndexDocumentFactoryTest
 
         final IndexDocument2 indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
-        assertNotNull( indexDocument.getItemWithName( "data.a", IndexValueType.STRING ) );
-        assertNotNull( indexDocument.getItemWithName( "data.ab", IndexValueType.STRING ) );
-        assertNotNull( indexDocument.getItemWithName( "data.abc", IndexValueType.STRING ) );
+        assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_c" ), IndexValueType.NUMBER ) );
+        assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_d" ), IndexValueType.DATETIME ) );
     }
 
     private IndexDocument2 getIndexDocumentOfType( final Collection<IndexDocument2> indexDocuments, final IndexType indexType )
     {
-
         for ( IndexDocument2 indexDocument : indexDocuments )
         {
             if ( indexType.equals( indexDocument.getIndexType() ) )
@@ -170,7 +168,21 @@ public class NodeIndexDocumentFactoryTest
                 return indexDocument;
             }
         }
+        return null;
+    }
+
+    public AbstractIndexDocumentItem getItemWithName( final IndexDocument2 indexDocument, final IndexDocumentItemPath path,
+                                                      final IndexValueType baseType )
+    {
+        for ( AbstractIndexDocumentItem item : indexDocument.getIndexDocumentItems() )
+        {
+            if ( item.getPath().equals( path.toString() ) && item.getIndexBaseType().equals( baseType ) )
+            {
+                return item;
+            }
+        }
 
         return null;
     }
+
 }

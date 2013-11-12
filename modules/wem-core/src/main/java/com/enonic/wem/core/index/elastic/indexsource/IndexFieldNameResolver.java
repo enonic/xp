@@ -13,12 +13,12 @@ public class IndexFieldNameResolver
     {
         Preconditions.checkNotNull( item, "item could not be null" );
 
-        if ( Strings.isNullOrEmpty( item.getFieldBaseName() ) )
+        if ( Strings.isNullOrEmpty( item.getPath() ) )
         {
-            throw new IllegalArgumentException( "item fieldname can not be null or empty" );
+            throw new IllegalArgumentException( "item path cannot be null or empty" );
         }
 
-        return washFieldBasename( item.getFieldBaseName() + ( Strings.isNullOrEmpty( item.getIndexBaseType().getPostfix() )
+        return washFieldBasename( item.getPath() + ( Strings.isNullOrEmpty( item.getIndexBaseType().getPostfix() )
             ? ""
             : SEPARATOR + item.getIndexBaseType().getPostfix() ) );
 

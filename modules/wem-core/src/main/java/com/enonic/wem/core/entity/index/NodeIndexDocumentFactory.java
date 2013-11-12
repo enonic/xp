@@ -16,22 +16,23 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
+import com.enonic.wem.core.index.document.IndexDocumentItemPath;
 
 
 public class NodeIndexDocumentFactory
 {
 
-    protected static final String CREATED_TIME_PROPERTY_NAME = "createdTime";
+    protected static final IndexDocumentItemPath CREATED_TIME_PROPERTY = IndexDocumentItemPath.from( "createdTime" );
 
-    protected static final String CREATOR_PROPERTY_NAME = "creator";
+    protected static final IndexDocumentItemPath CREATOR_PROPERTY_PATH = IndexDocumentItemPath.from( "creator" );
 
-    protected static final String MODIFIED_TIME_PROPERTY_NAME = "modifiedTime";
+    protected static final IndexDocumentItemPath MODIFIED_TIME_PROPERTY_PATH = IndexDocumentItemPath.from( "modifiedTime" );
 
-    protected static final String MODIFIER_PROPERTY_NAME = "modifier";
+    protected static final IndexDocumentItemPath MODIFIER_PROPERTY_PATH = IndexDocumentItemPath.from( "modifier" );
 
-    protected static final String PARENT_PROPERTY_NAME = "path";
+    protected static final IndexDocumentItemPath PARENT_PROPERTY_PATH = IndexDocumentItemPath.from( "path" );
 
-    protected static final String PATH_PROPERTY_NAME = "path";
+    protected static final IndexDocumentItemPath PATH_PROPERTY_PATH = IndexDocumentItemPath.from( "path" );
 
     public static final String DATA_PROPERTY_PREFIX = "data";
 
@@ -78,39 +79,39 @@ public class NodeIndexDocumentFactory
     {
         if ( node.getCreatedTime() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY_NAME, new Value.DateTime( node.getCreatedTime() ),
+            builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY, new Value.DateTime( node.getCreatedTime() ),
                                                                  metadataPropertyIndexConfig ) );
         }
 
         if ( node.path() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_NAME, new Value.String( node.path().toString() ),
+            builder.addEntries( IndexDocumentItemFactory.create( PATH_PROPERTY_PATH, new Value.String( node.path().toString() ),
                                                                  metadataPropertyIndexConfig ) );
         }
 
         if ( node.parent() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( PARENT_PROPERTY_NAME, new Value.String( node.parent().toString() ),
+            builder.addEntries( IndexDocumentItemFactory.create( PARENT_PROPERTY_PATH, new Value.String( node.parent().toString() ),
                                                                  metadataPropertyIndexConfig ) );
         }
 
         if ( node.getCreator() != null )
         {
             builder.addEntries(
-                IndexDocumentItemFactory.create( CREATOR_PROPERTY_NAME, new Value.String( node.getCreator().getQualifiedName() ),
+                IndexDocumentItemFactory.create( CREATOR_PROPERTY_PATH, new Value.String( node.getCreator().getQualifiedName() ),
                                                  metadataPropertyIndexConfig ) );
         }
 
         if ( node.getModifiedTime() != null )
         {
-            builder.addEntries( IndexDocumentItemFactory.create( MODIFIED_TIME_PROPERTY_NAME, new Value.DateTime( node.getModifiedTime() ),
+            builder.addEntries( IndexDocumentItemFactory.create( MODIFIED_TIME_PROPERTY_PATH, new Value.DateTime( node.getModifiedTime() ),
                                                                  metadataPropertyIndexConfig ) );
         }
 
         if ( node.getModifier() != null )
         {
             builder.addEntries(
-                IndexDocumentItemFactory.create( MODIFIER_PROPERTY_NAME, new Value.String( node.getModifier().getQualifiedName() ),
+                IndexDocumentItemFactory.create( MODIFIER_PROPERTY_PATH, new Value.String( node.getModifier().getQualifiedName() ),
                                                  metadataPropertyIndexConfig ) );
         }
 
@@ -132,7 +133,7 @@ public class NodeIndexDocumentFactory
                         propertyIndexConfig = defaultPropertyIndexConfig;
                     }
 
-                    builder.addEntries( IndexDocumentItemFactory.create( DATA_PROPERTY_PREFIX, property, propertyIndexConfig ) );
+                    builder.addEntries( IndexDocumentItemFactory.create( property, propertyIndexConfig ) );
                 }
             }
         };
