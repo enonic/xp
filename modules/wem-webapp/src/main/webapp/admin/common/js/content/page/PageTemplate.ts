@@ -8,6 +8,10 @@ module api_content_page{
             super(builder);
             this.canRender = builder.canRender;
         }
+
+        getCanRender():api_schema_content.ContentTypeName[] {
+            return this.canRender;
+        }
     }
 
     export class PageTemplateBuilder extends TemplateBuilder<PageTemplateName> {
