@@ -1,12 +1,16 @@
 module api_content_page{
 
-    export class Part extends Component{
+    export class Part extends Component<PartTemplateName>{
 
-        private name:string;
+        constructor(builder:PartBuilder) {
+            super(builder);
+        }
+    }
 
-        constructor(partJson:api_content_page_json.PartJson) {
-            super();
-            this.name = partJson.name;
+    export class PartBuilder extends ComponentBuilder<PartTemplateName>{
+
+        public build():Page {
+            return new Page(this);
         }
     }
 }

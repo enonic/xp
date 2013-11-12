@@ -1,12 +1,16 @@
 module api_content_page{
 
-    export class Image extends Component {
+    export class Image extends Component<ImageTemplateName> {
 
-        private url:string;
+        constructor(builder:ImageBuilder) {
+            super(builder);
+        }
+    }
 
-        constructor(imageJson:api_content_page_json.ImageJson) {
-            super();
-            this.url = imageJson.url;
+    export class ImageBuilder extends ComponentBuilder<ImageTemplateName>{
+
+        public build():Image {
+            return new Page(this);
         }
     }
 }

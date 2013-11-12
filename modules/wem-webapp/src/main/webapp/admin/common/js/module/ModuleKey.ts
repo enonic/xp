@@ -8,10 +8,12 @@ module api_module{
 
         private version:string;
 
+        private refString:string
+
         public static fromString(str:string):ModuleKey{
             var sepIndex:number = str.indexOf(ModuleKey.SEPARATOR)
             if( sepIndex == -1 ) {
-                throw new Error("ModuleKey must contain separator '-':" + str);
+                throw new Error("ModuleKey must contain separator '" + ModuleKey.SEPARATOR + "':" + str);
             }
 
             var name = str.substring(0, sepIndex);
@@ -23,6 +25,7 @@ module api_module{
         constructor(moduleName:string, moduleVersion:string) {
             this.name = moduleName;
             this.version = moduleVersion;
+            this.refString = this.name + ModuleKey.SEPARATOR + this.version;
         }
 
         getName():string {
@@ -34,7 +37,7 @@ module api_module{
         }
 
         toString():string {
-            return this.name + ModuleKey.SEPARATOR + this.version;
+            return this.refString;
         }
 
     }

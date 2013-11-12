@@ -1,19 +1,16 @@
 module api_content_page{
 
-    export class Layout extends Component {
+    export class Layout extends Component<LayoutTemplateName> {
 
-        private regions:Region[];
-
-        constructor(layoutJson:api_content_page_json.LayoutJson) {
-            super();
-
-            layoutJson.regions.forEach((regionJson:api_content_page_json.RegionJson) => {
-                this.regions.push(new Region(regionJson));
-            });
+        constructor(builder:LayoutBuilder) {
+            super(builder);
         }
+    }
 
-        getRegions(): Region[] {
-            return this.regions;
+    export class LayoutBuilder extends ComponentBuilder<LayoutTemplateName>{
+
+        public build():Page {
+            return new Page(this);
         }
     }
 }
