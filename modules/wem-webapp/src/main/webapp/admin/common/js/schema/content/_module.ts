@@ -1,3 +1,4 @@
+///<reference path='ContentTypeName.ts' />
 ///<reference path='ContentTypeSummary.ts' />
 ///<reference path='ContentType.ts' />
 ///<reference path='ContentTypeResourceRequest.ts' />
