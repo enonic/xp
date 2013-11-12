@@ -3,7 +3,6 @@ module app_contextwindow {
         private detailPanel:DetailPanel;
         private selectPanel:SelectPanel;
         private imageSelectPanel:app_contextwindow_image.ImageSelectPanel;
-        private imageInspectPanel:app_contextwindow_image.ImageInspectPanel;
 
         constructor(contextWindow:ContextWindow) {
             super();
@@ -11,13 +10,11 @@ module app_contextwindow {
             this.detailPanel = new DetailPanel(contextWindow);
             this.selectPanel = new SelectPanel(contextWindow);
             this.imageSelectPanel = new app_contextwindow_image.ImageSelectPanel(contextWindow);
-            this.imageInspectPanel = new app_contextwindow_image.ImageInspectPanel(contextWindow);
 
 
             this.addPanel(this.detailPanel);
             this.addPanel(this.selectPanel);
             this.addPanel(this.imageSelectPanel);
-            this.addPanel(this.imageInspectPanel);
 
             ComponentSelectEvent.on((event) => {
                 switch (event.getComponent().componentType.typeName) {
