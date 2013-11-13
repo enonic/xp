@@ -24,7 +24,9 @@ public final class SiteTemplate
 
     private final String displayName;
 
-    private final String description;
+    private final String info;
+
+    private final String url;
 
     private final Vendor vendor;
 
@@ -42,7 +44,8 @@ public final class SiteTemplate
     {
         this.siteTemplateKey = builder.siteTemplateKey;
         this.displayName = builder.displayName;
-        this.description = builder.description;
+        this.info = builder.info;
+        this.url = builder.url;
         this.vendor = builder.vendor;
         this.modules = builder.modules;
         this.supportedContentTypes = builder.supportedContentTypes;
@@ -71,9 +74,14 @@ public final class SiteTemplate
         return displayName;
     }
 
-    public String getDescription()
+    public String getInfo()
     {
-        return description;
+        return info;
+    }
+
+    public String getUrl()
+    {
+        return url;
     }
 
     public Vendor getVendor()
@@ -128,7 +136,9 @@ public final class SiteTemplate
 
         private String displayName;
 
-        private String description;
+        private String info;
+
+        private String url;
 
         private Vendor vendor;
 
@@ -169,9 +179,15 @@ public final class SiteTemplate
             return this;
         }
 
-        public Builder description( final String description )
+        public Builder info( final String info )
         {
-            this.description = description;
+            this.info = info;
+            return this;
+        }
+
+        public Builder url( final String url )
+        {
+            this.url = url;
             return this;
         }
 
