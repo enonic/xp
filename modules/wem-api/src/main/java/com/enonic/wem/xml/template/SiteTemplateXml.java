@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.collect.Iterables;
 
+import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKey;
@@ -21,23 +22,23 @@ public final class SiteTemplateXml
     extends AbstractTemplateXml<SiteTemplate, SiteTemplate.Builder>
 {
     @XmlElement(name = "info", required = false)
-    protected String info;
+    private String info;
 
     @XmlElement(name = "url", required = false)
-    protected String url;
+    private String url;
 
     @XmlElement(name = "vendor", required = false)
-    protected VendorXml vendor;
+    private VendorXml vendor = new VendorXml();
 
     @XmlElement(name = "module", required = false)
     @XmlElementWrapper(name = "modules")
-    private List<String> modules;
+    private List<String> modules = new ArrayList<>();
 
     @XmlElement(name = "content-filter", required = false)
-    protected ContentFilterXml contentFilter;
+    private ContentFilterXml contentFilter = new ContentFilterXml();
 
     @XmlElement(name = "site-content", required = true)
-    protected String siteContent;
+    private String siteContent;
 
     @Override
     public void from( final SiteTemplate template )
@@ -45,17 +46,22 @@ public final class SiteTemplateXml
         this.displayName = template.getDisplayName();
         this.info = template.getInfo();
         this.url = template.getUrl();
+
         final Vendor vendor = template.getVendor();
         if ( vendor != null )
         {
-            this.vendor = new VendorXml();
-            this.vendor.name = vendor.getName();
-            this.vendor.url = vendor.getUrl();
+            this.vendor.from( vendor );
         }
-        this.modules = new ArrayList<>();
+
         for ( ModuleKey moduleKey : template.getModules() )
         {
             this.modules.add( moduleKey.toString() );
+        }
+
+        final ContentTypeFilter filter = template.getContentTypeFilter();
+        if ( filter != null )
+        {
+            this.contentFilter.from( filter );
         }
 
         this.siteContent = template.getRootContentType().getContentTypeName();
@@ -69,12 +75,16 @@ public final class SiteTemplateXml
             info( this.info ).
             url( this.url ).
             rootContentType( ContentTypeName.from( this.siteContent ) );
-        if ( this.vendor != null )
-        {
-            builder.vendor( Vendor.newVendor().name( this.vendor.name ).url( this.vendor.url ).build() );
-        }
+
+        final Vendor.Builder vendorBuilder = Vendor.newVendor();
+        this.vendor.to( vendorBuilder );
+        builder.vendor( vendorBuilder.build() );
+
         builder.modules( ModuleKeys.from( Iterables.toArray( this.modules, String.class ) ) );
 
+        final ContentTypeFilter.Builder filter = ContentTypeFilter.newContentFilter();
+        this.contentFilter.to( filter );
+        builder.contentTypeFilter( filter.build() );
     }
 
 }

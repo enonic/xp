@@ -2,6 +2,7 @@ package com.enonic.wem.xml.template;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -10,6 +11,7 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
+import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static junit.framework.Assert.assertEquals;
 
@@ -20,6 +22,9 @@ public class SiteTemplateXmlTest
     public void testFrom()
         throws Exception
     {
+        final ContentTypeFilter contentTypeFilter =
+            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.tweet", "system.folder" ) ).build();
+
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
@@ -28,7 +33,7 @@ public class SiteTemplateXmlTest
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                       "com.enonic.resolvers-1.0.0" ) ).
-            supportedContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).
+            contentTypeFilter( contentTypeFilter ).
             rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
             build();
 
@@ -58,5 +63,9 @@ public class SiteTemplateXmlTest
         assertEquals( ContentTypeName.from( "com.enonic.intranet" ), siteTemplate.getRootContentType() );
         assertEquals( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                        "com.enonic.resolvers-1.0.0" ), siteTemplate.getModules() );
+
+        final ContentTypeFilter contentTypeFilter =
+            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.tweet", "system.folder" ) ).build();
+        assertEquals( contentTypeFilter, siteTemplate.getContentTypeFilter() );
     }
 }
