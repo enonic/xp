@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rpc.content;
+package com.enonic.wem.admin.rest.resource.content;
 
 
 import java.util.Iterator;
@@ -19,10 +19,6 @@ public final class ContentDataParser
     public ContentDataParser( final ContentType contentType )
     {
         this.contentType = contentType;
-    }
-
-    public ContentDataParser()
-    {
     }
 
     public ContentData parse( final JsonNode data )

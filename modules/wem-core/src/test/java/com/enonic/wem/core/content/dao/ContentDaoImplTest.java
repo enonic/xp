@@ -17,7 +17,6 @@ import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
-import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.core.AbstractJcrTest;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -446,30 +445,6 @@ public class ContentDaoImplTest
         assertTrue( childContent.isNotEmpty() );
         assertEquals( ContentPath.from( "myspace:myParentContent/myChildContent2" ), childContent.getList().get( 0 ).getPath() );
         assertEquals( ContentPath.from( "myspace:myParentContent/myChildContent1" ), childContent.getList().get( 1 ).getPath() );
-    }
-
-    @Test
-    public void getContentTree_given_persisted_tree_of_nine_content_then_a_tree_of_size_9_is_returned()
-        throws Exception
-    {
-        // setup
-        contentDao.create( createContent( "myspace:/" ), session );
-        contentDao.create( createContent( "myspace:branch-A" ), session );
-        contentDao.create( createContent( "myspace:branch-A/branch-A-A" ), session );
-        contentDao.create( createContent( "myspace:branch-B" ), session );
-        contentDao.create( createContent( "myspace:branch-B/branch-B-A" ), session );
-        contentDao.create( createContent( "myspace:branch-B/branch-B-A/branch-B-A-A" ), session );
-        contentDao.create( createContent( "myspace:branch-B/branch-B-A/branch-B-A-B" ), session );
-        contentDao.create( createContent( "myspace:branch-B/branch-B-A/branch-B-A-C" ), session );
-        contentDao.create( createContent( "myspace:branch-B/branch-B-B" ), session );
-        contentDao.create( createContent( "myspace:branch-B/branch-B-B/branch-B-B-A" ), session );
-        commit();
-
-        // exercise
-        Tree<Content> tree = contentDao.getContentTree( session );
-
-        // verify
-        assertEquals( 10, tree.deepSize() );
     }
 
     @Test

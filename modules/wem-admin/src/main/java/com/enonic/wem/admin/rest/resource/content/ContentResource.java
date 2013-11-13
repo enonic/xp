@@ -47,7 +47,6 @@ import com.enonic.wem.admin.rest.resource.content.json.ValidateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ValidateContentParams;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
-import com.enonic.wem.admin.rpc.content.ContentDataParser;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
@@ -331,7 +330,8 @@ public class ContentResource
     {
         final ContentTypeName qualifiedContentTypeName = ContentTypeName.from( params.getQualifiedContentTypeName() );
 
-        GetContentTypes getContentType = Commands.contentType().get(). byNames().contentTypeNames( ContentTypeNames.from( qualifiedContentTypeName ) );
+        GetContentTypes getContentType =
+            Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( qualifiedContentTypeName ) );
         final ContentType contentType = client.execute( getContentType ).first();
 
         final ContentData contentData = new ContentDataParser( contentType ).parse( params.getContentData() );

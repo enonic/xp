@@ -193,21 +193,6 @@ public class ContentDaoImpl
         }
     }
 
-
-    @Override
-    public Tree<Content> getContentTree( final Session session, final ContentSelectors<ContentId> contentSelectors )
-    {
-        try
-        {
-            return new ContentDaoHandlerGetContentTree( session ).handle( contentSelectors );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-
     @Override
     public Tree<Content> getContentTree( final Session session )
     {
