@@ -156,7 +156,8 @@ public abstract class Value<T>
     /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
      *
-     * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
+     * @throws com.enonic.wem.api.data.type.InconvertibleValueException
+     *          if value is not convertible to String.
      */
     public java.lang.String asString()
         throws InconvertibleValueException
@@ -292,7 +293,7 @@ public abstract class Value<T>
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof Value ) )
         {
             return false;
         }
