@@ -1,6 +1,7 @@
 package com.enonic.wem.xml;
 
 import com.enonic.wem.xml.template.PageTemplateXml;
+import com.enonic.wem.xml.template.SiteTemplateXml;
 
 public final class XmlSerializers
 {
@@ -12,5 +13,10 @@ public final class XmlSerializers
     public static XmlSerializer<PageTemplateXml> pageTemplate()
     {
         return create( PageTemplateXml.class );
+    }
+
+    public static XmlSerializer<SiteTemplateXml> siteTemplate()
+    {
+        return create( SiteTemplateXml.class );
     }
 }

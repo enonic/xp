@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<site-template>
+  <display-name>Enonic Intranet</display-name>
+  <info>A social intranet for the Enterprise</info>
+  <url>http://www.enonic.com/intranet</url>
+  <vendor>
+    <name>Enonic</name>
+    <url>https://www.enonic.com</url>
+  </vendor>
+  <modules>
+    <module>com.enonic.intranet-1.0.0</module>
+    <module>com.company.sampleModule-1.1.0</module>
+    <module>com.company.theme.someTheme-1.4.1</module>
+    <module>com.enonic.resolvers-1.0.0</module>
+  </modules>
+  <site-content>com.enonic.intranet</site-content>
+</site-template>

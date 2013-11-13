@@ -14,14 +14,12 @@ function compileLess(grunt, args) {
     }
 
     var config = {
-        files: {
-        }
+        src: sourceFile,
+        dest: targetFile
     };
 
-    config.files[targetFile] = sourceFile;
-    grunt.config.set('less.' + args.target, config);
-
     grunt.log.writeln('Adding less:' + args.target + ' task');
+    grunt.config.set('less.' + args.target, config);
     grunt.task.run('less:' + args.target);
 
 }
@@ -41,9 +39,8 @@ function concatLibJs(grunt, args) {
         dest: targetFile
     };
 
-    grunt.config.set('directives.' + args.target, config);
-
     grunt.log.writeln('Adding directives:' + args.target + ' task');
+    grunt.config.set('directives.' + args.target, config);
     grunt.task.run('directives:' + args.target);
 
 }
@@ -67,8 +64,8 @@ function compileTs(grunt, args) {
         }
     };
 
-    grunt.config.set('ts.' + args.target, config);
     grunt.log.writeln('Adding ts:' + args.target + ' task');
+    grunt.config.set('ts.' + args.target, config);
     grunt.task.run('ts:' + args.target);
 
 }
@@ -76,17 +73,10 @@ function compileTs(grunt, args) {
 function renameFiles(grunt, args) {
 
     var config = {
-        files: [
-            {
-                expand: true,
-                cwd: (sourceDir + '/' + args.module),
-                src: '*/_all.*',
-                dest: (targetDir + '/' + args.module + '/')
-            }
-        ],
-        options: {
-            ignore: true
-        }
+        expand: true,
+        cwd: (sourceDir + '/' + args.module),
+        src: '**/_all.*',
+        dest: (targetDir + '/' + args.module + '/')
     };
 
     grunt.config.set('rename.' + args.target, config);
@@ -100,7 +90,40 @@ function executeTask(grunt, args) {
     compileLess(grunt, args);
     concatLibJs(grunt, args);
     compileTs(grunt, args);
-    // renameFiles(grunt, args);
+    renameFiles(grunt, args);
+
+}
+
+function renameFile(grunt, src, dest) {
+
+    var fs = require('fs');
+    var path = require('path');
+
+    var dirName = path.dirname(dest);
+    grunt.file.mkdir(dirName);
+
+    fs.renameSync(src, dest, function (err) {
+        if (err) {
+            grunt.log.error('Failed to rename file');
+            grunt.verbose.error();
+        }
+    });
+
+    grunt.log.ok('Renamed ' + src + ' -> ' + dest);
+
+}
+
+function renameFilesTask(grunt, files) {
+
+    files.forEach(function (filePair) {
+
+        filePair.src.forEach(function (src) {
+
+            renameFile(grunt, src, filePair.dest);
+
+        });
+
+    });
 
 }
 
@@ -108,7 +131,6 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-directives');
-    grunt.loadNpmTasks('grunt-rename');
     grunt.loadNpmTasks('grunt-ts');
 
     grunt.registerMultiTask('module', 'Build an admin module', function () {
@@ -125,6 +147,13 @@ module.exports = function (grunt) {
         };
 
         executeTask(grunt, args);
+
+    });
+
+    grunt.registerMultiTask('rename', 'Rename files', function () {
+
+        renameFilesTask(grunt, this.files);
+
     });
 
 };

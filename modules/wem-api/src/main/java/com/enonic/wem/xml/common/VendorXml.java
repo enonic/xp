@@ -5,8 +5,8 @@ import javax.xml.bind.annotation.XmlElement;
 public final class VendorXml
 {
     @XmlElement(name = "name")
-    private String name;
+    public String name;
 
     @XmlElement(name = "url")
-    private String url;
+    public String url;
 }
