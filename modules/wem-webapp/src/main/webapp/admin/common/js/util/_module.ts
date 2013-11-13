@@ -1,4 +1,4 @@
-///<reference path='Preconditions.ts'/>
+///<reference path='Assert.ts'/>
 ///<reference path='BasePath.ts' />
 ///<reference path='ImageLoader.ts' />
 ///<reference path='UriHelper.ts' />

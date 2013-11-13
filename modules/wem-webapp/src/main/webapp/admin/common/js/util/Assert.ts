@@ -1,10 +1,7 @@
 module api_util {
 
     export function assert(expression:boolean, message?:string) {
-        if (!expression) {
-            var realMessage = "Assert failed" + (message != null ? (': ' + message) : '');
-            throw new Error(realMessage);
-        }
+        console.assert(expression, message);
     }
 
     export function assertNotNull(value:Object, message?:string) {
