@@ -73,9 +73,9 @@ public class CreateContentTypeHandlerTest
         this.handler.handle();
 
         // verify
-        ContentTypeName contentTypeName = command.getResult();
-        assertNotNull( contentTypeName );
-        assertEquals( "my_content_type", contentTypeName.toString() );
+        ContentType createdContentType = command.getResult();
+        assertNotNull( createdContentType );
+        assertEquals( "my_content_type", createdContentType.getContentTypeName().toString() );
     }
 
     @Test(expected = InvalidContentTypeException.class)

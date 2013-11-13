@@ -6,10 +6,11 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class CreateContentType
-    extends Command<ContentTypeName>
+    extends Command<ContentType>
 {
     private String name;
 

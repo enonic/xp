@@ -19,7 +19,6 @@ import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 
-import static com.enonic.wem.api.support.PossibleChange.CheckMethod.INSTANCE;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Content
@@ -305,42 +304,42 @@ public final class Content
 
         public EditBuilder type( final ContentTypeName type )
         {
-            changes.recordChange( newPossibleChange().from( this.original.getType() ).to( type ).build() );
+            changes.recordChange( newPossibleChange( "type" ).from( this.original.getType() ).to( type ).build() );
             this.type = type;
             return this;
         }
 
         public EditBuilder form( final Form form )
         {
-            changes.recordChange( newPossibleChange().from( this.original.getForm() ).to( form ).checkMethod( INSTANCE ).build() );
+            changes.recordChange( newPossibleChange( "form" ).from( this.original.getForm() ).to( form ).build() );
             this.form = form;
             return this;
         }
 
         public EditBuilder contentData( final ContentData contentData )
         {
-            changes.recordChange( newPossibleChange().from( this.original.getContentData() ).to( contentData ).build() );
+            changes.recordChange( newPossibleChange( "contentData" ).from( this.original.getContentData() ).to( contentData ).build() );
             this.contentData = contentData;
             return this;
         }
 
         public EditBuilder displayName( final String displayName )
         {
-            changes.recordChange( newPossibleChange().from( this.original.getDisplayName() ).to( displayName ).build() );
+            changes.recordChange( newPossibleChange( "displayName" ).from( this.original.getDisplayName() ).to( displayName ).build() );
             this.displayName = displayName;
             return this;
         }
 
         public EditBuilder site( final Site site )
         {
-            changes.recordChange( newPossibleChange().from( this.original.getSite() ).to( site ).build() );
+            changes.recordChange( newPossibleChange( "site" ).from( this.original.getSite() ).to( site ).build() );
             this.site = site;
             return this;
         }
 
         public EditBuilder page( final Page page )
         {
-            changes.recordChange( newPossibleChange().from( this.original.getPage() ).to( page ).build() );
+            changes.recordChange( newPossibleChange( "page" ).from( this.original.getPage() ).to( page ).build() );
             this.page = page;
             return this;
         }

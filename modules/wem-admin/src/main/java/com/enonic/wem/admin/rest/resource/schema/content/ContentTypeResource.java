@@ -29,6 +29,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
+import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.exception.BaseException;
@@ -164,22 +165,18 @@ public class ContentTypeResource
                 contentDisplayNameScript( contentType.getContentDisplayNameScript() );
             try
             {
-                client.execute( createCommand );
+                final ContentType created = client.execute( createCommand );
+                return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( created ) );
             }
             catch ( BaseException e )
             {
                 throw new WebApplicationException( e );
             }
-
-            contentType = client.execute( contentType().get().byName().contentTypeName( createCommand.getResult() ) );
-            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( contentType ) );
         }
         catch ( Exception e )
         {
             return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
-
-
     }
 
     @POST
@@ -196,7 +193,27 @@ public class ContentTypeResource
                 contentType = newContentType( contentType ).icon( icon ).build();
             }
 
-            updateContentType( contentType );
+            final ContentTypeEditor editor = newSetContentTypeEditor().
+                displayName( contentType.getDisplayName() ).
+                icon( contentType.getIcon() ).
+                superType( contentType.getSuperType() ).
+                setAbstract( contentType.isAbstract() ).
+                setFinal( contentType.isFinal() ).
+                contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
+                form( contentType.form() ).
+                build();
+
+            final UpdateContentType updateCommand =
+                contentType().update().contentTypeName( contentType.getContentTypeName() ).editor( editor );
+
+            try
+            {
+                client.execute( updateCommand );
+            }
+            catch ( BaseException e )
+            {
+                throw new WebApplicationException( e );
+            }
 
             return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( contentType ) );
         }
@@ -204,32 +221,8 @@ public class ContentTypeResource
         {
             return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
-
-
     }
 
-    private void updateContentType( final ContentType contentType )
-    {
-        final ContentTypeEditor editor = newSetContentTypeEditor().
-            displayName( contentType.getDisplayName() ).
-            icon( contentType.getIcon() ).
-            superType( contentType.getSuperType() ).
-            setAbstract( contentType.isAbstract() ).
-            setFinal( contentType.isFinal() ).
-            contentDisplayNameScript( contentType.getContentDisplayNameScript() ).
-            form( contentType.form() ).
-            build();
-        final UpdateContentType updateCommand = contentType().update().contentTypeName( contentType.getContentTypeName() ).editor( editor );
-
-        try
-        {
-            client.execute( updateCommand );
-        }
-        catch ( BaseException e )
-        {
-            throw new WebApplicationException( e );
-        }
-    }
 
     @POST
     @Path("validate")
@@ -252,8 +245,9 @@ public class ContentTypeResource
 
     private boolean contentTypeExists( final ContentTypeName qualifiedName )
     {
-        final GetContentTypes getContentTypes = contentType().get().byNames().contentTypeNames( ContentTypeNames.from( qualifiedName ) );
-        return !client.execute( getContentTypes ).isEmpty();
+        final GetContentType getContentTypes = contentType().get().byName().contentTypeName( qualifiedName );
+        client.execute( getContentTypes );
+        return getContentTypes.getResult() != null;
     }
 
 

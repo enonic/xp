@@ -77,13 +77,12 @@ class MixinNodeTranslator
         return new NodeEditor()
         {
             @Override
-            public Node edit( final Node toBeEdited )
+            public Node.EditBuilder edit( final Node toBeEdited )
             {
-                return Node.newNode( toBeEdited ).
+                return Node.editNode( toBeEdited ).
                     name( mixin.getName() ).
                     icon( mixin.getIcon() ).
-                    rootDataSet( rootDataSet ).
-                    build();
+                    rootDataSet( rootDataSet );
             }
         };
     }

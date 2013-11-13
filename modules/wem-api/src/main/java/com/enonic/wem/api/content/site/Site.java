@@ -77,13 +77,13 @@ public class Site
 
         List<ModuleConfig> moduleConfigs = new ArrayList<>();
 
-        public BaseBuilder( final Site source )
+        BaseBuilder( final Site source )
         {
             this.templateName = source.getTemplateName();
             this.moduleConfigs.addAll( source.getModuleConfigs() );
         }
 
-        public BaseBuilder()
+        BaseBuilder()
         {
 
         }
@@ -104,7 +104,7 @@ public class Site
 
         public EditBuilder template( SiteTemplateName value )
         {
-            changes.recordChange( newPossibleChange().from( this.original.getTemplateName() ).to( value ).build() );
+            changes.recordChange( newPossibleChange( "templateName" ).from( this.original.getTemplateName() ).to( value ).build() );
             this.templateName = value;
             return this;
         }
@@ -113,7 +113,8 @@ public class Site
         {
             final ImmutableList.Builder<ModuleConfig> newConfigsBuilder = new ImmutableList.Builder<>();
             newConfigsBuilder.addAll( configs );
-            changes.recordChange( newPossibleChange().from( original.getModuleConfigs() ).to( Lists.newArrayList( configs ) ).build() );
+            changes.recordChange(
+                newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs() ).to( Lists.newArrayList( configs ) ).build() );
             moduleConfigs = Lists.newArrayList( configs );
             return this;
         }

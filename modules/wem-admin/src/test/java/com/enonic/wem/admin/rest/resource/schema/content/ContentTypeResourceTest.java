@@ -17,6 +17,7 @@ import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
+import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.exception.SystemException;
@@ -238,7 +239,12 @@ public class ContentTypeResourceTest
     public void test_create_new_content_type()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        Mockito.when( client.execute( Mockito.any( GetContentType.class ) ) ).thenReturn( null );
+        ContentType createdContentType = ContentType.newContentType().
+            name( "htmlarea" ).
+            superType( ContentTypeName.structured() ).
+            build();
+        Mockito.when( client.execute( Mockito.any( CreateContentType.class ) ) ).thenReturn( createdContentType );
 
         String jsonString = resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
                                                                                MediaType.APPLICATION_JSON_TYPE ).post( String.class );

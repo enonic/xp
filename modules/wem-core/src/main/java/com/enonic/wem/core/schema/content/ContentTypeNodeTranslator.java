@@ -123,13 +123,12 @@ public class ContentTypeNodeTranslator
         return new NodeEditor()
         {
             @Override
-            public Node edit( final Node toBeEdited )
+            public Node.EditBuilder edit( final Node toBeEdited )
             {
-                return Node.newNode( toBeEdited ).
+                return Node.editNode( toBeEdited ).
                     name( contentType.getName() ).
                     icon( contentType.getIcon() ).
-                    rootDataSet( rootDataSet ).
-                    build();
+                    rootDataSet( rootDataSet );
             }
         };
     }

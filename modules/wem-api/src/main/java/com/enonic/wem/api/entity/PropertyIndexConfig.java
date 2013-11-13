@@ -1,6 +1,8 @@
 package com.enonic.wem.api.entity;
 
 
+import java.util.Objects;
+
 public final class PropertyIndexConfig
 {
     private final boolean enabled;
@@ -36,6 +38,30 @@ public final class PropertyIndexConfig
     public boolean isTokenizeEnabled()
     {
         return tokenizedEnabled;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final PropertyIndexConfig that = (PropertyIndexConfig) o;
+        return Objects.equals( this.enabled, that.enabled ) &&
+            Objects.equals( this.fulltextEnabled, that.fulltextEnabled ) &&
+            Objects.equals( this.tokenizedEnabled, that.tokenizedEnabled );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( this.enabled, this.fulltextEnabled, this.tokenizedEnabled );
     }
 
     public static class Builder

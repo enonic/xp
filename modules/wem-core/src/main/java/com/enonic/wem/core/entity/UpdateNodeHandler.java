@@ -39,13 +39,14 @@ public class UpdateNodeHandler
 
         final Node persisted = itemDao.getNodeById( command.getNode() );
 
-        Node edited = command.getEditor().edit( persisted );
-        if ( edited == null )
+        final Node.EditBuilder editBuilder = command.getEditor().edit( persisted );
+        if ( !editBuilder.isChanges() )
         {
             // TODO: set status NO CHANGE?
             return;
         }
 
+        final Node edited = editBuilder.build();
         persisted.checkIllegalEdit( edited );
 
         final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().

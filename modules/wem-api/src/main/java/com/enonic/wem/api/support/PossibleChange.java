@@ -3,6 +3,8 @@ package com.enonic.wem.api.support;
 
 public class PossibleChange<T>
 {
+    public final String property;
+
     public final T from;
 
     public final T to;
@@ -11,6 +13,7 @@ public class PossibleChange<T>
 
     private PossibleChange( final Builder<T> builder )
     {
+        this.property = builder.property;
         this.from = builder.from;
         this.to = builder.to;
 
@@ -26,13 +29,9 @@ public class PossibleChange<T>
         {
             this.isChange = true;
         }
-        else if ( builder.checkMethod == CheckMethod.EQUALS )
-        {
-            this.isChange = !from.equals( to );
-        }
         else
         {
-            this.isChange = from != to;
+            this.isChange = !from.equals( to );
         }
     }
 
@@ -40,22 +39,27 @@ public class PossibleChange<T>
     {
         if ( isChange )
         {
-            builder.recordChange( new Change<T>( this.from, this.to ) );
+            builder.recordChange( new Change<T>( this.property, this.from, this.to ) );
         }
     }
 
-    public static <T> Builder<T> newPossibleChange()
+    public static <T> Builder<T> newPossibleChange( final String property )
     {
-        return new Builder<>();
+        return new Builder<>( property );
     }
 
     public static class Builder<T>
     {
-        private CheckMethod checkMethod = CheckMethod.EQUALS;
+        private String property;
 
         private T from;
 
         private T to;
+
+        public Builder( final String property )
+        {
+            this.property = property;
+        }
 
         public Builder<T> from( T from )
         {
@@ -69,20 +73,9 @@ public class PossibleChange<T>
             return this;
         }
 
-        public Builder<T> checkMethod( CheckMethod value )
-        {
-            this.checkMethod = value;
-            return this;
-        }
-
         public PossibleChange<T> build()
         {
             return new PossibleChange<>( this );
         }
-    }
-
-    public static enum CheckMethod
-    {
-        EQUALS, INSTANCE
     }
 }
