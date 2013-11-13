@@ -3,3 +3,4 @@
 ///<reference path='UriHelper.ts' />
 ///<reference path='Animation.ts'/>
 ///<reference path='CookieHelper.ts'/>
+///<reference path='ClassHelper.ts'/>
