@@ -81,7 +81,7 @@ public class UpdateContentHandler
             final List<Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent );
 
             //TODO: the result is null if nothing was edited, but should be SUCCESS ?
-            Content edited = command.getEditor().edit( persistedContent );
+            Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
 
             //TODO: Attachments have no editor and thus need to be checked separately, but probably should have one ?
             if ( !command.getAttachments().isEmpty() )
@@ -90,8 +90,9 @@ public class UpdateContentHandler
                 addMediaThumbnail( client, session, command, persistedContent, contentId );
             }
 
-            if ( edited != null )
+            if ( editBuilder.isChanges() )
             {
+                Content edited = editBuilder.build();
                 persistedContent.checkIllegalEdit( edited );
 
                 validateContentData( context, edited );

@@ -23,7 +23,6 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.support.SerializerForFormItemToData;
 
-import static com.enonic.wem.api.entity.SetNodeEditor.newSetItemEditor;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
 public class ContentTypeNodeTranslator
@@ -121,11 +120,18 @@ public class ContentTypeNodeTranslator
         }
         rootDataSet.add( form );
 
-        return newSetItemEditor().
-            name( contentType.getName() ).
-            icon( contentType.getIcon() ).
-            data( rootDataSet ).
-            build();
+        return new NodeEditor()
+        {
+            @Override
+            public Node edit( final Node toBeEdited )
+            {
+                return Node.newNode( toBeEdited ).
+                    name( contentType.getName() ).
+                    icon( contentType.getIcon() ).
+                    rootDataSet( rootDataSet ).
+                    build();
+            }
+        };
     }
 
     private void addPropertyIfNotNull( final RootDataSet rootDataSet, final String propertyName, final Object value )

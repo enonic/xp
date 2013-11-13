@@ -15,7 +15,7 @@ public class CreateSiteParams
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
-    private CreateSiteParams( @JsonProperty("content") String content, @JsonProperty("siteTemplate") String siteTemplate )
+    CreateSiteParams( @JsonProperty("content") String content, @JsonProperty("siteTemplate") String siteTemplate )
     {
         this.createSite = new CreateSite().
             content( ContentId.from( content ) ).
@@ -23,7 +23,7 @@ public class CreateSiteParams
     }
 
     @JsonIgnore
-    public CreateSite getCreateSite()
+    CreateSite getCreateSite()
     {
         return this.createSite;
     }

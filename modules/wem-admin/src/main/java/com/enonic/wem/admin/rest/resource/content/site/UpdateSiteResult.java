@@ -1,16 +1,17 @@
 package com.enonic.wem.admin.rest.resource.content.site;
 
+
 import com.enonic.wem.admin.json.site.SiteJson;
 import com.enonic.wem.admin.rest.resource.ErrorJson;
 import com.enonic.wem.api.content.site.Site;
 
-public class CreateSiteResult
+public class UpdateSiteResult
 {
     private final ErrorJson error;
 
     private final SiteJson site;
 
-    private CreateSiteResult( final ErrorJson error, final SiteJson site )
+    private UpdateSiteResult( final ErrorJson error, final SiteJson site )
     {
         this.error = error;
         this.site = site;
@@ -26,13 +27,13 @@ public class CreateSiteResult
         return site;
     }
 
-    public static CreateSiteResult success( Site site )
+    public static UpdateSiteResult success( Site site )
     {
-        return new CreateSiteResult( null, new SiteJson( site ) );
+        return new UpdateSiteResult( null, new SiteJson( site ) );
     }
 
-    public static CreateSiteResult error( String message )
+    public static UpdateSiteResult error( String message )
     {
-        return new CreateSiteResult( new ErrorJson( message ), null );
+        return new UpdateSiteResult( new ErrorJson( message ), null );
     }
 }

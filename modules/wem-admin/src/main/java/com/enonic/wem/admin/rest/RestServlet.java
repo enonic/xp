@@ -12,6 +12,7 @@ import com.enonic.wem.admin.rest.resource.auth.AuthResource;
 import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
 import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.content.ContentResource;
+import com.enonic.wem.admin.rest.resource.content.site.SiteResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.module.ModuleResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
@@ -58,6 +59,7 @@ public final class RestServlet
         addClass( RelationshipTypeResource.class );
 
         addClass( ContentResource.class );
+        addClass( SiteResource.class );
 
         addClass( SchemaResource.class );
         addClass( SchemaImageResource.class );
