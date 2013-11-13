@@ -81,6 +81,28 @@ public final class Form
     }
 
     @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Form that = (Form) o;
+        return Objects.equal( this.formItems, that.formItems );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode( this.formItems );
+    }
+
+    @Override
     public String toString()
     {
         final Objects.ToStringHelper s = Objects.toStringHelper( this );

@@ -4,12 +4,13 @@ package com.enonic.wem.api.form;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
  * Mutable.
  */
-public class FormItems
+public final class FormItems
     implements Iterable<FormItem>
 {
     private final FormItem containerFormItem;
@@ -134,6 +135,28 @@ public class FormItems
     public int size()
     {
         return formItemByName.size();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final FormItems that = (FormItems) o;
+        return Objects.equal( this.formItemByName, that.formItemByName );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode( this.formItemByName );
     }
 
     @Override

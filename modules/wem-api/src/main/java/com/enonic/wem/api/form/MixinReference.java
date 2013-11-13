@@ -1,6 +1,8 @@
 package com.enonic.wem.api.form;
 
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -22,6 +24,28 @@ public class MixinReference
     public MixinName getMixinName()
     {
         return mixinName;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final MixinReference that = (MixinReference) o;
+        return super.equals( o ) && Objects.equals( this.mixinName, that.mixinName );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), this.mixinName );
     }
 
     public static Builder newMixinReference()

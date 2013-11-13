@@ -1,7 +1,9 @@
 package com.enonic.wem.api.form.inputtype;
 
 
-public class InputTypeName
+import java.util.Objects;
+
+public final class InputTypeName
 {
     private final String ref;
 
@@ -41,6 +43,29 @@ public class InputTypeName
     public boolean isCustom()
     {
         return this.custom;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof InputTypeName ) )
+        {
+            return false;
+        }
+
+        final InputTypeName other = (InputTypeName) o;
+
+        return Objects.equals( ref, other.ref ) && Objects.equals( ref, other.ref );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( ref );
     }
 
     public String toString()

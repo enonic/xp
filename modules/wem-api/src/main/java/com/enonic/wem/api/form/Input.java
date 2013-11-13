@@ -1,6 +1,8 @@
 package com.enonic.wem.api.form;
 
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.Property;
@@ -170,6 +172,38 @@ public final class Input
     public Input copy()
     {
         return newInput( this ).build();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Input that = (Input) o;
+        return super.equals( o ) &&
+            Objects.equals( this.type, that.type ) &&
+            Objects.equals( this.label, that.label ) &&
+            Objects.equals( this.immutable, that.immutable ) &&
+            Objects.equals( this.occurrences, that.occurrences ) &&
+            Objects.equals( this.indexed, that.indexed ) &&
+            Objects.equals( this.customText, that.customText ) &&
+            Objects.equals( this.helpText, that.helpText ) &&
+            Objects.equals( this.validationRegexp, that.validationRegexp ) &&
+            Objects.equals( this.inputTypeConfig, that.inputTypeConfig );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), this.type, this.label, this.immutable, this.occurrences, this.indexed, this.customText,
+                             this.helpText, this.validationRegexp, this.inputTypeConfig );
     }
 
     public static Builder newInput()

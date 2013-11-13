@@ -4,6 +4,7 @@ package com.enonic.wem.api.form;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import static com.enonic.wem.api.form.Occurrences.newOccurrences;
 
@@ -88,6 +89,35 @@ public class FormItemSet
     public Iterator<FormItem> iterator()
     {
         return formItems.iterator();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final FormItemSet that = (FormItemSet) o;
+        return super.equals( o ) &&
+            Objects.equals( this.label, that.label ) &&
+            Objects.equals( this.immutable, that.immutable ) &&
+            Objects.equals( this.customText, that.customText ) &&
+            Objects.equals( this.helpText, that.helpText ) &&
+            Objects.equals( this.occurrences, that.occurrences ) &&
+            Objects.equals( this.formItems, that.formItems );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), this.label, this.immutable, this.customText, this.helpText, this.occurrences,
+                             this.formItems );
     }
 
     @Override
