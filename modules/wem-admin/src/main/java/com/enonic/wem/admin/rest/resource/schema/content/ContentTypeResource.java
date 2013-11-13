@@ -29,7 +29,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
-import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.exception.BaseException;
@@ -245,9 +244,8 @@ public class ContentTypeResource
 
     private boolean contentTypeExists( final ContentTypeName qualifiedName )
     {
-        final GetContentType getContentTypes = contentType().get().byName().contentTypeName( qualifiedName );
-        client.execute( getContentTypes );
-        return getContentTypes.getResult() != null;
+        final ContentType existing = client.execute( contentType().get().byName().contentTypeName( qualifiedName ) );
+        return existing != null;
     }
 
 
