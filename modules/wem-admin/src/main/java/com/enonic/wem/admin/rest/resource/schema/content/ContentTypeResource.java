@@ -153,8 +153,25 @@ public class ContentTypeResource
                 contentType = newContentType( contentType ).icon( icon ).build();
             }
 
-            createContentType( contentType );
+            final CreateContentType createCommand = contentType().create().
+                name( params.getName() ).
+                displayName( contentType.getDisplayName() ).
+                superType( contentType.getSuperType() ).
+                setAbstract( contentType.isAbstract() ).
+                setFinal( contentType.isFinal() ).
+                form( contentType.form() ).
+                icon( contentType.getIcon() ).
+                contentDisplayNameScript( contentType.getContentDisplayNameScript() );
+            try
+            {
+                client.execute( createCommand );
+            }
+            catch ( BaseException e )
+            {
+                throw new WebApplicationException( e );
+            }
 
+            contentType = client.execute( contentType().get().byName().contentTypeName( createCommand.getResult() ) );
             return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( contentType ) );
         }
         catch ( Exception e )
@@ -163,27 +180,6 @@ public class ContentTypeResource
         }
 
 
-    }
-
-    private void createContentType( final ContentType contentType )
-    {
-        final CreateContentType createCommand = contentType().create().
-            name( contentType.getName() ).
-            displayName( contentType.getDisplayName() ).
-            superType( contentType.getSuperType() ).
-            setAbstract( contentType.isAbstract() ).
-            setFinal( contentType.isFinal() ).
-            form( contentType.form() ).
-            icon( contentType.getIcon() ).
-            contentDisplayNameScript( contentType.getContentDisplayNameScript() );
-        try
-        {
-            client.execute( createCommand );
-        }
-        catch ( BaseException e )
-        {
-            throw new WebApplicationException( e );
-        }
     }
 
     @POST
