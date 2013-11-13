@@ -26,7 +26,7 @@ module app_launcher {
             new Application('analytics', 'Analytics', Applications.ICONS_PATH + 'stats.png', Applications.DESCR1),
 
             new Application('accounts', 'Accounts', Applications.ICONS_PATH + 'users.png', Applications.DESCR2),
-            new Application('modules', 'Modules', Applications.ICONS_PATH + 'puzzle.png', Applications.DESCR1),
+            new Application('module-manager', 'Modules', Applications.ICONS_PATH + 'puzzle.png', Applications.DESCR1),
             new Application('templates', 'Templates', Applications.ICONS_PATH + 'insert-template.png', Applications.DESCR4),
             new Application('diagnostics', 'Diagnostics', Applications.ICONS_PATH + 'aid.png', Applications.DESCR3)
         ];
