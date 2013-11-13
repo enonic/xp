@@ -4,15 +4,23 @@ module api_content {
 
         private id:string;
 
+        private expand:string;
+
         constructor(id:string) {
             super();
             super.setMethod("GET");
             this.id = id;
         }
 
+        public setExpand(expand:string):GetContentByIdRequest {
+            this.expand = expand;
+            return this;
+        }
+
         getParams():Object {
             return {
-                id: this.id
+                id: this.id,
+                expand: this.expand
             };
         }
 
