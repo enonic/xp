@@ -17,7 +17,6 @@ final class SetFormEditor
 
     @Override
     public Content edit( final Content toBeEdited )
-        throws Exception
     {
         if ( toBeEdited.getForm().equals( form ) )
         {

@@ -17,7 +17,6 @@ final class SetContentDataEditor
 
     @Override
     public Content edit( final Content toBeEdited )
-        throws Exception
     {
         if ( toBeEdited.getContentData().equals( contentData ) )
         {

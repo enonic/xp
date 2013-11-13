@@ -21,7 +21,6 @@ final class RemoveRelationshipPropertiesEditor
 
     @Override
     public Relationship edit( final Relationship relationship )
-        throws Exception
     {
         final Map<String, String> properties = Maps.newLinkedHashMap();
 

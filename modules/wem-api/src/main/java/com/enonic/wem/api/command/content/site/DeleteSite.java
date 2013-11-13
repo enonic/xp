@@ -1,15 +1,14 @@
-package com.enonic.wem.api.command.content.page;
-
+package com.enonic.wem.api.command.content.site;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
 
-public class DeletePage
+public class DeleteSite
     extends Command<Boolean>
 {
     private ContentId content;
 
-    public DeletePage content( ContentId value )
+    public DeleteSite content( final ContentId value )
     {
         this.content = value;
         return this;
@@ -18,6 +17,7 @@ public class DeletePage
     @Override
     public void validate()
     {
+
     }
 
     public ContentId getContent()

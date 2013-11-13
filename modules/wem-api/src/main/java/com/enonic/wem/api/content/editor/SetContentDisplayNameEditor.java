@@ -17,7 +17,6 @@ final class SetContentDisplayNameEditor
 
     @Override
     public Content edit( final Content toBeEdited )
-        throws Exception
     {
         if ( toBeEdited.getDisplayName().equals( displayName ) )
         {

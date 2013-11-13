@@ -17,9 +17,4 @@ public final class PageCommands
     {
         return new DeletePage();
     }
-
-    public GetPage get()
-    {
-        return new GetPage();
-    }
 }

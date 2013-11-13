@@ -66,7 +66,6 @@ public class UpdateSpaceHandlerTest
         {
             @Override
             public Space edit( final Space space )
-                throws Exception
             {
                 return newSpace( space ).
                     displayName( space.getDisplayName().toUpperCase() ).
@@ -101,7 +100,6 @@ public class UpdateSpaceHandlerTest
         {
             @Override
             public Space edit( final Space space )
-                throws Exception
             {
                 return newSpace( space ).
                     displayName( space.getDisplayName().toUpperCase() ).

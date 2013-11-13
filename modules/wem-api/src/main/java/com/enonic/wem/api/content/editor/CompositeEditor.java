@@ -14,7 +14,6 @@ final class CompositeEditor
 
     @Override
     public Content edit( final Content toBeEdited )
-        throws Exception
     {
         boolean modified = false;
         Content contentToBeEdited = toBeEdited;

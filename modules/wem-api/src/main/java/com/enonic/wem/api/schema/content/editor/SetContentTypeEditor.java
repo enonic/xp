@@ -116,7 +116,6 @@ public final class SetContentTypeEditor
 
     @Override
     public ContentType edit( final ContentType contentType )
-        throws Exception
     {
         final boolean modified = ( this.icon != null ) && !icon.equals( contentType.getIcon() ) ||
             ( this.displayName != null && !displayName.equals( contentType.getDisplayName() ) ) ||

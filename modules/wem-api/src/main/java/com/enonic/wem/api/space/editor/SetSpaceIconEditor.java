@@ -15,7 +15,6 @@ final class SetSpaceIconEditor
 
     @Override
     public Space edit( final Space space )
-        throws Exception
     {
         final Space updated = Space.newSpace( space ).
             icon( this.icon ).

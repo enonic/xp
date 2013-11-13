@@ -1,6 +1,9 @@
 package com.enonic.wem.api.entity;
 
+import com.enonic.wem.api.support.Editor;
+
 public interface NodeEditor
+    extends Editor<Node>
 {
     /**
      * @param toBeEdited to be edited
