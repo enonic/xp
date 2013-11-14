@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page-template>
+  <display-name>Main page template</display-name>
+  <descriptor>mainmodule-1.0.0:/components/landing-page.xml</descriptor>
+  <config>
+    <pause type="Long">10000</pause>
+  </config>
+</page-template>

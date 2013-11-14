@@ -3,10 +3,10 @@ package com.enonic.wem.xml.common;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.enonic.wem.api.content.site.Vendor;
-import com.enonic.wem.xml.template.AbstractTemplateXml;
+import com.enonic.wem.xml.XmlObject;
 
 public final class VendorXml
-    extends AbstractTemplateXml<Vendor, Vendor.Builder>
+    implements XmlObject<Vendor, Vendor.Builder>
 {
     @XmlElement(name = "name")
     private String name;

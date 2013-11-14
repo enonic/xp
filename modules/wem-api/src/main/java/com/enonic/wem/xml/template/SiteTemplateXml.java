@@ -15,12 +15,16 @@ import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.xml.XmlObject;
 import com.enonic.wem.xml.common.VendorXml;
 
 @XmlRootElement(name = "site-template")
 public final class SiteTemplateXml
-    extends AbstractTemplateXml<SiteTemplate, SiteTemplate.Builder>
+    implements XmlObject<SiteTemplate, SiteTemplate.Builder>
 {
+    @XmlElement(name = "display-name", required = false)
+    private String displayName;
+
     @XmlElement(name = "info", required = false)
     private String info;
 

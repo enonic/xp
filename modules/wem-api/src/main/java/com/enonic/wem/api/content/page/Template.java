@@ -41,7 +41,7 @@ public abstract class Template<NAME extends TemplateName>
         return config;
     }
 
-    protected abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, NAME extends TemplateName>
+    public abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, NAME extends TemplateName>
     {
         protected NAME name;
 

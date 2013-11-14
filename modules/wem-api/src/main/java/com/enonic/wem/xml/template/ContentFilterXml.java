@@ -8,9 +8,10 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.xml.XmlObject;
 
 public final class ContentFilterXml
-    extends AbstractTemplateXml<ContentTypeFilter, ContentTypeFilter.Builder>
+    implements XmlObject<ContentTypeFilter, ContentTypeFilter.Builder>
 {
     @XmlElement(name = "deny")
     private List<String> deny = Lists.newArrayList();
