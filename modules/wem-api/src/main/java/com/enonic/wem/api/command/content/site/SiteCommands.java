@@ -16,4 +16,9 @@ public class SiteCommands
     {
         return new DeleteSite();
     }
+
+    public SiteTemplateCommands template()
+    {
+        return new SiteTemplateCommands();
+    }
 }
