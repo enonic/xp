@@ -1,5 +1,0 @@
-{
-    "name" : "love",
-    "relationshipType": "<relationship-type><name>mytype</name><xml-format-not-validated-in-this-test/><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>"
-}
-

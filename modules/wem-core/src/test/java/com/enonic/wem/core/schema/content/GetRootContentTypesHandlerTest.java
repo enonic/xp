@@ -56,7 +56,7 @@ public class GetRootContentTypesHandlerTest
         Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn( nodes );
 
         // exercise
-        final GetRootContentTypes command = Commands.contentType().get().getRoots();
+        final GetRootContentTypes command = Commands.contentType().get().roots();
         this.handler.setCommand( command );
         this.handler.handle();
 

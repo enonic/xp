@@ -1,31 +1,27 @@
 module api_schema_content {
 
-    export class GetContentTypeByQualifiedNameRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeJson> {
-
-        private name:ContentTypeName;
+    export class GetAllContentTypesRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeSummaryListJson> {
 
         private mixinReferencesToFormItems:boolean = true;
 
-        constructor(qualifiedName:ContentTypeName) {
+        constructor() {
             super();
             super.setMethod("GET");
-            this.name = qualifiedName;
         }
 
-        setMixinReferencesToFormItems(value:boolean):GetContentTypeByQualifiedNameRequest {
+        setMixinReferencesToFormItems(value:boolean):GetAllContentTypesRequest {
             this.mixinReferencesToFormItems = value;
             return this;
         }
 
         getParams():Object {
             return {
-                qualifiedName: this.name.toString(),
                 mixinReferencesToFormItems: this.mixinReferencesToFormItems
             };
         }
 
         getRequestPath():api_rest.Path {
-            return super.getResourcePath();
+            return api_rest.Path.fromParent(super.getResourcePath(), "all");
         }
     }
 }

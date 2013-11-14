@@ -17,17 +17,6 @@ import com.enonic.wem.admin.rpc.account.VerifyUniqueEmailRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.CreateRelationshipRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.GetRelationshipRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.UpdateRelationshipPropertiesRpcHandler;
-import com.enonic.wem.admin.rpc.schema.content.GetContentTypeRpcHandler;
-import com.enonic.wem.admin.rpc.schema.content.ListContentTypesRpcHandler;
-import com.enonic.wem.admin.rpc.schema.content.ValidateContentTypeRpcHandler;
-import com.enonic.wem.admin.rpc.schema.mixin.CreateOrUpdateMixinRpcHandler;
-import com.enonic.wem.admin.rpc.schema.mixin.DeleteMixinRpcHandler;
-import com.enonic.wem.admin.rpc.schema.mixin.GetMixinRpcHandler;
-import com.enonic.wem.admin.rpc.schema.mixin.ListMixinsRpcHandler;
-import com.enonic.wem.admin.rpc.schema.relationship.CreateOrUpdateRelationshipTypeRpcHandler;
-import com.enonic.wem.admin.rpc.schema.relationship.DeleteRelationshipTypeRpcHandler;
-import com.enonic.wem.admin.rpc.schema.relationship.GetRelationshipTypeRpcHandler;
-import com.enonic.wem.admin.rpc.schema.relationship.ListRelationshipTypeRpcHandler;
 import com.enonic.wem.admin.rpc.space.CreateOrUpdateSpaceRpcHandler;
 import com.enonic.wem.admin.rpc.space.DeleteSpaceRpcHandler;
 import com.enonic.wem.admin.rpc.space.GetSpaceRpcHandler;
@@ -80,19 +69,5 @@ public final class RestModule
         handlers.add( CreateRelationshipRpcHandler.class );
         handlers.add( GetRelationshipRpcHandler.class );
         handlers.add( UpdateRelationshipPropertiesRpcHandler.class );
-
-        handlers.add( GetContentTypeRpcHandler.class );
-        handlers.add( ListContentTypesRpcHandler.class );
-        handlers.add( ValidateContentTypeRpcHandler.class );
-
-        handlers.add( CreateOrUpdateMixinRpcHandler.class );
-        handlers.add( DeleteMixinRpcHandler.class );
-        handlers.add( GetMixinRpcHandler.class );
-        handlers.add( ListMixinsRpcHandler.class );
-
-        handlers.add( CreateOrUpdateRelationshipTypeRpcHandler.class );
-        handlers.add( DeleteRelationshipTypeRpcHandler.class );
-        handlers.add( GetRelationshipTypeRpcHandler.class );
-        handlers.add( ListRelationshipTypeRpcHandler.class );
     }
 }

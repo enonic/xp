@@ -2,11 +2,11 @@ module api_facet {
 
     export class FacetFactory {
 
-        public static createFacets(array:api_remote_content.ContentFacet[]):Facet[] {
+        public static createFacets(array:FacetJson[]):Facet[] {
 
             var facets:Facet[] = [];
 
-            array.forEach((remoteFacet:api_remote_content.ContentFacet) => {
+            array.forEach((remoteFacet:FacetJson) => {
 
                 if (remoteFacet._type == "terms") {
                     var facetEntries:TermsFacetEntry[] = [];

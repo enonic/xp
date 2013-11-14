@@ -46,9 +46,9 @@ module app {
                 });
         }
 
-        private handleNew(contentType:api_remote_contenttype.ContentType, parentContent:api_content.Content) {
+        private handleNew(contentType:api_schema_content.ContentTypeSummary, parentContent:api_content.Content) {
 
-            var tabId = api_app.AppBarTabId.forNew(contentType.qualifiedName);
+            var tabId = api_app.AppBarTabId.forNew(contentType.getName());
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
             if (tabMenuItem != null) {
@@ -56,14 +56,14 @@ module app {
 
             } else {
 
-                var contentTypeRequest = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentType.qualifiedName).send();
+                var contentTypeRequest = new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName(contentType.getName())).send();
                 jQuery.
                     when(contentTypeRequest).
                     then((contentTypeResponse:api_rest.JsonResponse) => {
 
                         var newContentType = new api_schema_content.ContentType(contentTypeResponse.getJson());
 
-                        tabMenuItem = new api_app.AppBarTabMenuItem("New " + contentType.displayName, tabId);
+                        tabMenuItem = new api_app.AppBarTabMenuItem("New " + contentType.getDisplayName(), tabId);
                         var wizardPanel = new app_wizard.ContentWizardPanel(tabId, newContentType, parentContent);
                         wizardPanel.renderNew();
                         this.addWizardPanel(tabMenuItem, wizardPanel);
@@ -104,9 +104,9 @@ module app {
 
         private handleEdit(contents:api_content.ContentSummary[]) {
 
-            contents.forEach((contentModel:api_content.ContentSummary) => {
+            contents.forEach((content:api_content.ContentSummary) => {
 
-                var tabId = api_app.AppBarTabId.forEdit(contentModel.getId());
+                var tabId = api_app.AppBarTabId.forEdit(content.getId());
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
@@ -115,8 +115,8 @@ module app {
                 } else {
 
 
-                    var getContentByIdPromise = new api_content.GetContentByIdRequest(contentModel.getId()).send();
-                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(contentModel.getType()).send();
+                    var getContentByIdPromise = new api_content.GetContentByIdRequest(content.getId()).send();
+                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName(content.getType())).send();
                     jQuery.
                         when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
                         then((contentResponse:api_rest.JsonResponse<api_content_json.ContentJson>, contentTypeResponse:api_rest.JsonResponse) => {

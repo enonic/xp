@@ -29,6 +29,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
+import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.exception.BaseException;
@@ -92,10 +93,12 @@ public class ContentTypeResource
     }
 
     @GET
-    @Path("list")
-    public ContentTypeSummaryListJson list()
+    @Path("all")
+    public ContentTypeSummaryListJson all(@QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems)
     {
-        final ContentTypes contentTypes = client.execute( Commands.contentType().get().all() );
+        final GetAllContentTypes getAll = Commands.contentType().get().all();
+        getAll.mixinReferencesToFormItems( mixinReferencesToFormItems );
+        final ContentTypes contentTypes = client.execute( getAll );
         return new ContentTypeSummaryListJson( contentTypes );
     }
 

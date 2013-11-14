@@ -21,12 +21,12 @@ module app_new {
             return RecentContentTypes.INSTANCE;
         }
 
-        public addRecentContentType(contentType:api_remote_contenttype.ContentType) {
+        public addRecentContentType(contentType:api_schema_content.ContentTypeSummary) {
 
             var cookie:string = api_util.CookieHelper.getCookie(this.cookieKey);
             var qualifiedContentTypeNames = cookie ? cookie.split(this.valueSeparator) : [];
 
-            var qualifiedContentTypeName = contentType.qualifiedName;
+            var qualifiedContentTypeName = contentType.getName();
             if (qualifiedContentTypeNames.length === 0 || qualifiedContentTypeNames[0] !== qualifiedContentTypeName) {
                 qualifiedContentTypeNames.unshift(qualifiedContentTypeName);
             }
@@ -40,43 +40,42 @@ module app_new {
             api_util.CookieHelper.setCookie(this.cookieKey, qualifiedContentTypeNames.join(this.valueSeparator));
         }
 
-        public getRecentContentTypes():string[] {
+        public getRecentContentTypes():api_schema_content.ContentTypeName[] {
 
-            var qualifiedNames:string[] = [];
+            var names:api_schema_content.ContentTypeName[] = [];
 
             var cookies:string = <string> Ext.util.Cookies.get(this.cookieKey);
             if (cookies) {
                 var recentArray = cookies.split(this.valueSeparator);
                 for (var i = 0; i < recentArray.length; i++) {
-                    var qualifiedName = recentArray[i];
-                    qualifiedNames.push(qualifiedName);
+                    var name = recentArray[i];
+                    names.push(new api_schema_content.ContentTypeName(name));
                 }
             }
-            return qualifiedNames;
+            return names;
         }
 
         /**
          * Recommends the most frequent content types
-         * @returns {Array} Array of qualified content type names
          */
-        public getRecommendedContentTypes():string[] {
+        public getRecommendedContentTypes():api_schema_content.ContentTypeName[] {
 
-            var qualifiedNames:string[] = this.getRecentContentTypes();
+            var recentNames:api_schema_content.ContentTypeName[] = this.getRecentContentTypes();
 
-            var recommendations = [];
-            if (qualifiedNames && qualifiedNames.length > 0) {
-                var qualifiedName, count, maxCount = 0, maxNode;
+            var recommendations:api_schema_content.ContentTypeName[] = [];
+            if (recentNames && recentNames.length > 0) {
+                var name, count, maxCount = 0, maxNode;
                 var namesMap = {};
-                for (var i = 0; i < qualifiedNames.length; i++) {
-                    qualifiedName = qualifiedNames[i];
-                    count = namesMap[qualifiedName] || 0;
-                    namesMap[qualifiedName] = ++count;
+                for (var i = 0; i < recentNames.length; i++) {
+                    name = recentNames[i];
+                    count = namesMap[name] || 0;
+                    namesMap[name] = ++count;
                     if (count > maxCount) {
                         maxCount = count;
-                        maxNode = qualifiedName;
+                        maxNode = name;
                     }
                 }
-                recommendations.push(maxNode);
+                recommendations.push(new api_schema_content.ContentTypeName(maxNode));
             }
 
             return recommendations;

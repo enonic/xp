@@ -1,8 +1,0 @@
-{
-    "contentData": {
-        "myTextLine1": "value1",
-        "myTextLine2": "value2",
-        "myFormItemSet.myTextLine1": "value3"
-    },
-    "contentTypeName": "my_content_type"
-}

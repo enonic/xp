@@ -2,7 +2,7 @@ module api_content{
 
     export interface FindContentResult<T>{
 
-        facets:api_remote_content.ContentFacet[];
+        facets:api_facet.FacetJson[];
 
         contents:T[];
 

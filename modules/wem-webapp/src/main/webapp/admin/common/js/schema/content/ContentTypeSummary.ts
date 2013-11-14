@@ -56,5 +56,14 @@ module api_schema_content{
             return this.modifier;
         }
 
+        static fromJsonArray(jsonArray:api_schema_content_json.ContentTypeSummaryJson[]):ContentTypeSummary[] {
+            var array:ContentTypeSummary[] = [];
+
+            jsonArray.forEach( (summaryJson:api_schema_content_json.ContentTypeSummaryJson) => {
+                array.push(new ContentTypeSummary(summaryJson));
+            } );
+            return array;
+        }
+
     }
 }

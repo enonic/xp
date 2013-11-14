@@ -29,9 +29,11 @@ module app_new {
 
         refresh() {
 
-            api_remote_contenttype.RemoteContentTypeService.contentType_list({}, (result) => {
-                this.contentTypesList.setContentTypes(result.contentTypes);
-            });
+            var request = new api_schema_content.GetAllContentTypesRequest();
+            request.send().done( (response:api_rest.JsonResponse<api_schema_content_json.ContentTypeSummaryListJson>) => {
+                var contentTypes:api_schema_content.ContentTypeSummary[] = api_schema_content.ContentTypeSummary.fromJsonArray(response.getResult().contentTypes);
+                this.contentTypesList.setContentTypes(contentTypes);
+            } );
         }
     }
 

@@ -22,14 +22,14 @@ module app_new {
 
             this.recommendedList = new RecommendedContentTypesList("block recommended");
             this.recommendedList.addListener({
-                onSelected: (selectedContentType:api_remote_contenttype.ContentType) => {
+                onSelected: (selectedContentType:api_schema_content.ContentTypeSummary) => {
                     this.closeAndIssueNewContentEvent(selectedContentType);
                 }
             });
 
             this.recentList = new RecentContentTypesList("block recent");
             this.recentList.addListener({
-                onSelected: (selectedContentType:api_remote_contenttype.ContentType) => {
+                onSelected: (selectedContentType:api_schema_content.ContentTypeSummary) => {
                     this.closeAndIssueNewContentEvent(selectedContentType);
                 }
             });
@@ -41,7 +41,7 @@ module app_new {
 
             this.allList = new AllContentTypesList("column column-right block all");
             this.allList.addListener({
-                onSelected: (selectedContentType:api_remote_contenttype.ContentType) => {
+                onSelected: (selectedContentType:api_schema_content.ContentTypeSummary) => {
                     this.closeAndIssueNewContentEvent(selectedContentType);
                 }
             });
@@ -56,7 +56,7 @@ module app_new {
             api_dom.Body.get().appendChild(this);
         }
 
-        private closeAndIssueNewContentEvent(contentType:api_remote_contenttype.ContentType) {
+        private closeAndIssueNewContentEvent(contentType:api_schema_content.ContentTypeSummary) {
             this.close();
             new NewContentEvent(contentType, this.parentContent).fire();
         }

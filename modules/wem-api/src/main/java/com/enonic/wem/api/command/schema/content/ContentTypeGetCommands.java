@@ -2,11 +2,6 @@ package com.enonic.wem.api.command.schema.content;
 
 public class ContentTypeGetCommands
 {
-    public GetAllContentTypes all()
-    {
-        return new GetAllContentTypes();
-    }
-
     public GetContentType byName()
     {
         return new GetContentType();
@@ -17,7 +12,12 @@ public class ContentTypeGetCommands
         return new GetContentTypes();
     }
 
-    public GetRootContentTypes getRoots()
+    public GetAllContentTypes all()
+    {
+        return new GetAllContentTypes();
+    }
+
+    public GetRootContentTypes roots()
     {
         return new GetRootContentTypes();
     }

@@ -8,12 +8,6 @@ module api_rest {
 
         private params:Object;
 
-        private async:boolean = false;
-
-        private successCallback:(response:JsonResponse) => void = null;
-
-        private errorCallback:(requestError:RequestError) => void = null;
-
         private jsonResponse:JsonResponse<T>;
 
         setPath(value:Path):JsonRequest<T> {
@@ -31,72 +25,84 @@ module api_rest {
             return this;
         }
 
-        setAsync(successCallback:(response:JsonResponse<T>) => void, errorCallback?:(requestError:RequestError) => void):JsonRequest<T> {
-            this.async = true;
-            this.successCallback = successCallback;
-            this.errorCallback = errorCallback;
-            return this;
-        }
-
-        private prepareGETRequest():XMLHttpRequest {
-            var request = new XMLHttpRequest();
-            var paramString = this.serializeParams(this.params);
-            request.open(this.method, this.path.toString() + "?" + paramString, this.async);
+        private prepareGETRequest(request:XMLHttpRequest) {
+            var paramString = JsonRequest.serializeParams(this.params);
+            request.open(this.method, this.path.toString() + "?" + paramString, true);
             request.setRequestHeader("Accept", "application/json");
             return request;
         }
 
-        private preparePOSTRequest():XMLHttpRequest {
-            var request = new XMLHttpRequest();
+        private preparePOSTRequest(request:XMLHttpRequest) {
             var paramString = JSON.stringify(this.params);
-            request.open(this.method, this.path.toString(), this.async);
+            request.open(this.method, this.path.toString(), true);
             request.setRequestHeader("Accept", "application/json");
             request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             request.send(paramString);
             return request;
         }
 
-        send() {
+        send():JQueryPromise<Response> {
 
-            var request:XMLHttpRequest;
+            var deferred:JQueryDeferred<Response> = jQuery.Deferred<Response>();
+            var request:XMLHttpRequest = new XMLHttpRequest();
+            request.onreadystatechange = () => {
+
+                if (request.readyState == 4) {
+                    if (request.status >= 200 && request.status < 300) {
+                        deferred.resolve(new JsonResponse(request.response));
+                    }
+                    else {
+                        var message:string = "HTTP Status " + request.status + " - " + request.statusText;
+                        api_notify.showError(message);
+
+                        deferred.fail(new RequestError(request.statusText, request.responseText));
+                    }
+                }
+            };
+
             if ("POST" == this.method.toUpperCase()) {
-                request = this.preparePOSTRequest();
+                request = this.preparePOSTRequest(request);
             }
             else {
-                var request = this.prepareGETRequest();
+                var request = this.prepareGETRequest(request);
                 request.send();
             }
 
-            if (this.async) {
-                request.onreadystatechange = () => {
+            return deferred.promise();
+        }
 
-                    if (request.readyState == 4) {
-                        if (request.status >= 200 && request.status < 300) {
-                            if (this.successCallback) {
-                                this.successCallback(new JsonResponse(request.response));
-                            }
-                        }
-                        else {
-                            var message:string = "HTTP Status " + request.status + " - " + request.statusText;
-                            api_notify.showError(message);
+        deferredSend():JQueryDeferred<Response> {
 
-                            if (this.errorCallback) {
-                                this.errorCallback(new RequestError(request.statusText, request.responseText));
-                            }
-                        }
+            var deferred:JQueryDeferred<Response> = jQuery.Deferred<Response>();
+
+            var request:XMLHttpRequest = new XMLHttpRequest();
+            request.onreadystatechange = () => {
+
+                if (request.readyState == 4) {
+                    if (request.status >= 200 && request.status < 300) {
+                        deferred.resolve(new JsonResponse(request.response));
                     }
-                };
+                    else {
+                        var message:string = "HTTP Status " + request.status + " - " + request.statusText;
+                        api_notify.showError(message);
+
+                        deferred.fail(new RequestError(request.statusText, request.responseText));
+                    }
+                }
+            };
+
+            if ("POST" == this.method.toUpperCase()) {
+                request = this.preparePOSTRequest(request);
             }
             else {
-                this.jsonResponse = JSON.parse(request.response);
+                var request = this.prepareGETRequest(request);
+                request.send();
             }
+
+            return deferred;
         }
 
-        getJsonResponse():JsonResponse<T> {
-            return this.jsonResponse;
-        }
-
-        private serializeParams(params:Object):string {
+        private static serializeParams(params:Object):string {
             var str = "";
             for (var key in params) {
                 if (params.hasOwnProperty(key)) {

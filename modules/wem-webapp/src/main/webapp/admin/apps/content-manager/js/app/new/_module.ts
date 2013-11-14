@@ -5,5 +5,6 @@
 ///<reference path='ContentTypesListListener.ts' />
 ///<reference path='ContentTypesList.ts' />
 ///<reference path='ContentTypeListItem.ts' />
+///<reference path='BaseContentTypesListView.ts' />
 ///<reference path='RecentContentTypesList.ts' />
 ///<reference path='RecommendedContentTypesList.ts' />

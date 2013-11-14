@@ -1,3 +1,4 @@
+///<reference path='FacetJson.ts' />
 ///<reference path='Facet.ts' />
 ///<reference path='FacetEntry.ts' />
 ///<reference path='TermsFacetEntry.ts' />

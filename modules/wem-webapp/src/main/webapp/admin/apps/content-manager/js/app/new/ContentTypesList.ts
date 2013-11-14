@@ -4,7 +4,7 @@ module app_new {
 
         private ul:api_dom.UlEl;
 
-        private contentTypes:api_remote_contenttype.ContentType[];
+        private contentTypes:api_schema_content.ContentTypeSummary[];
 
         private listeners:ContentTypesListListener[] = [];
 
@@ -25,13 +25,13 @@ module app_new {
             });
         }
 
-        private notifySelected(contentType:api_remote_contenttype.ContentType) {
+        private notifySelected(contentType:api_schema_content.ContentTypeSummary) {
             this.listeners.forEach((listener:ContentTypesListListener) => {
                 listener.onSelected(contentType);
             });
         }
 
-        setContentTypes(contentTypes:api_remote_contenttype.ContentType[]) {
+        setContentTypes(contentTypes:api_schema_content.ContentTypeSummary[]) {
             this.contentTypes = contentTypes;
             this.layoutList(contentTypes);
         }
@@ -40,7 +40,7 @@ module app_new {
             if (!value || value.length == 0) {
                 this.clearFilter();
             }
-            var filteredContentTypes:api_remote_contenttype.ContentType[] = [];
+            var filteredContentTypes:api_schema_content.ContentTypeSummary[] = [];
             var regexp = new RegExp(value, 'i');
 
             for (var i = 0; i < this.contentTypes.length; i++) {
@@ -57,7 +57,7 @@ module app_new {
             return this;
         }
 
-        private layoutList(contentTypes:api_remote_contenttype.ContentType[]) {
+        private layoutList(contentTypes:api_schema_content.ContentTypeSummary[]) {
             this.ul.removeChildren();
 
             for (var i = 0; i < contentTypes.length; i++) {
@@ -67,9 +67,9 @@ module app_new {
             }
         }
 
-        private createListItem(contentType:api_remote_contenttype.ContentType):ContentTypeListItemEl {
+        private createListItem(contentType:api_schema_content.ContentTypeSummary):ContentTypeListItemEl {
 
-            var listItem = new ContentTypeListItem(contentType.name, contentType.displayName, contentType.iconUrl);
+            var listItem = new ContentTypeListItem(contentType.getName(), contentType.getDisplayName(), contentType.getIcon());
             var listItemEl = new ContentTypeListItemEl(listItem);
 
             listItemEl.getEl().addEventListener("click", () => {

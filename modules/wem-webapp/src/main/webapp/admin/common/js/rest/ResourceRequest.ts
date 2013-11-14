@@ -28,25 +28,21 @@ module api_rest {
 
         send():JQueryPromise<Response>{
 
-            var deferred = jQuery.Deferred<Response>();
-
             var jsonRequest = new JsonRequest<T>().
             setMethod(this.method).
             setParams(this.getParams()).
             setPath(this.getRequestPath());
-
-            jsonRequest.setAsync((jsonResponse:JsonResponse<T>) => {
-                deferred.resolve(jsonResponse);
-            }, (requestError:RequestError) => {
-                deferred.fail(requestError);
-            });
-            jsonRequest.send();
-            return deferred.promise();
+            return jsonRequest.send();
         }
 
-        /*send2():ResponsePromise {
+        deferredSend():JQueryDeferred<Response>{
 
-        }*/
+            var jsonRequest = new JsonRequest<T>().
+                setMethod(this.method).
+                setParams(this.getParams()).
+                setPath(this.getRequestPath());
+            return jsonRequest.deferredSend();
+        }
 
     }
 }

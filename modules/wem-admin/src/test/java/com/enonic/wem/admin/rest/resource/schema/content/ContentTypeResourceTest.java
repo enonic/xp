@@ -226,7 +226,7 @@ public class ContentTypeResourceTest
         MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
         qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
         String jsonString = resource().
-            path( "schema/content/list" ).
+            path( "schema/content/all" ).
             queryParams( qualifiedNames ).
             queryParam( "format", "JSON" ).
             queryParam( "mixinReferencesToFormItems", "false" ).
