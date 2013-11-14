@@ -20,6 +20,7 @@ import com.enonic.wem.core.rendering.Context;
 import com.enonic.wem.core.rendering.Renderer;
 import com.enonic.wem.core.rendering.RenderingResult;
 
+import static com.enonic.wem.api.command.Commands.page;
 import static com.enonic.wem.core.rendering.RenderingResult.newRenderingResult;
 
 public final class PageRenderer
@@ -55,7 +56,7 @@ public final class PageRenderer
 
     private PageTemplate getPageTemplate( final PageTemplateName templateName, final Client client )
     {
-        final GetPageTemplate command = Commands.template().getPageTemplate().templateName( templateName );
+        final GetPageTemplate command = page().template().get().pageTemplate().byName( templateName );
         return client.execute( command );
     }
 
