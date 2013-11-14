@@ -17,4 +17,9 @@ public final class PageCommands
     {
         return new DeletePage();
     }
+
+    public TemplateCommands template()
+    {
+        return new TemplateCommands();
+    }
 }

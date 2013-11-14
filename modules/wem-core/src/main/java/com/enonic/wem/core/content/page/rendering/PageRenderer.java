@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.template.GetPageTemplate;
+import com.enonic.wem.api.command.content.page.GetPageTemplate;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;

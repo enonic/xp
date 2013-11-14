@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.template;
+package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
@@ -9,7 +9,7 @@ public final class DeleteTemplate
 {
     private TemplateName templateName;
 
-    public DeleteTemplate template( TemplateName templateName )
+    public DeleteTemplate byName( TemplateName templateName )
     {
         this.templateName = templateName;
         return this;

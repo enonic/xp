@@ -6,7 +6,6 @@ import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.binary.BinaryCommands;
 import com.enonic.wem.api.command.content.page.PageCommands;
 import com.enonic.wem.api.command.content.site.SiteCommands;
-import com.enonic.wem.api.command.content.template.TemplateCommands;
 import com.enonic.wem.api.command.entity.NodeCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
 import com.enonic.wem.api.command.relationship.RelationshipCommands;
@@ -33,8 +32,6 @@ public final class Commands
     private static final SiteCommands SITE_COMMANDS = new SiteCommands();
 
     private static final PageCommands PAGE_COMMANDS = new PageCommands();
-
-    private static final TemplateCommands TEMPLATE_COMMANDS = new TemplateCommands();
 
     private static final RelationshipCommands RELATIONSHIP_COMMANDS = new RelationshipCommands();
 
@@ -81,11 +78,6 @@ public final class Commands
     public static PageCommands page()
     {
         return PAGE_COMMANDS;
-    }
-
-    public static TemplateCommands template()
-    {
-        return TEMPLATE_COMMANDS;
     }
 
     public static RelationshipCommands relationship()

@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.template;
+package com.enonic.wem.api.command.content.page;
 
 
 public final class TemplateCommands
@@ -49,28 +49,8 @@ public final class TemplateCommands
         return new DeleteTemplate();
     }
 
-    public GetPageTemplate getPageTemplate()
+    public GetTemplateCommands get()
     {
-        return new GetPageTemplate();
-    }
-
-    public GetPartTemplate getPartTemplate()
-    {
-        return new GetPartTemplate();
-    }
-
-    public GetLayoutTemplate getLayoutTemplate()
-    {
-        return new GetLayoutTemplate();
-    }
-
-    public GetImageTemplate getImageTemplate()
-    {
-        return new GetImageTemplate();
-    }
-
-    public GetTemplates listTemplates()
-    {
-        return new GetTemplates();
+        return new GetTemplateCommands();
     }
 }

@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.template;
+package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
@@ -14,7 +14,7 @@ public class GetPageTemplate
     {
     }
 
-    public GetPageTemplate templateName( final PageTemplateName name )
+    public GetPageTemplate byName( final PageTemplateName name )
     {
         this.name = name;
         return this;

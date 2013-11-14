@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.template;
+package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
@@ -12,7 +12,7 @@ public final class UpdatePartTemplate
 
     private TemplateEditor<PartTemplate> editor;
 
-    public UpdatePartTemplate templateName( final PartTemplateName templateName )
+    public UpdatePartTemplate withName( final PartTemplateName templateName )
     {
         this.templateName = templateName;
         return this;

@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.template;
+package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
@@ -14,7 +14,7 @@ public class GetPartTemplate
     {
     }
 
-    public GetPartTemplate templateName( final PartTemplateName name )
+    public GetPartTemplate byName( final PartTemplateName name )
     {
         this.name = name;
         return this;

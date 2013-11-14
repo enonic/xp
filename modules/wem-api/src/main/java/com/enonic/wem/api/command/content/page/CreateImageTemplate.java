@@ -1,16 +1,16 @@
-package com.enonic.wem.api.command.content.template;
+package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.LayoutTemplate;
-import com.enonic.wem.api.content.page.LayoutTemplateName;
+import com.enonic.wem.api.content.page.ImageTemplate;
+import com.enonic.wem.api.content.page.ImageTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-public final class CreateLayoutTemplate
-    extends Command<LayoutTemplate>
+public final class CreateImageTemplate
+    extends Command<ImageTemplate>
 {
-    private LayoutTemplateName name;
+    private ImageTemplateName name;
 
     private String displayName;
 
@@ -18,25 +18,25 @@ public final class CreateLayoutTemplate
 
     private RootDataSet config;
 
-    public CreateLayoutTemplate templateName( final LayoutTemplateName name )
+    public CreateImageTemplate templateName( final ImageTemplateName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateLayoutTemplate displayName( final String displayName )
+    public CreateImageTemplate displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateLayoutTemplate descriptor( final ModuleResourceKey descriptor )
+    public CreateImageTemplate descriptor( final ModuleResourceKey descriptor )
     {
         this.descriptor = descriptor;
         return this;
     }
 
-    public CreateLayoutTemplate config( final RootDataSet config )
+    public CreateImageTemplate config( final RootDataSet config )
     {
         this.config = config;
         return this;

@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.template;
+package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
@@ -14,7 +14,7 @@ public class GetImageTemplate
     {
     }
 
-    public GetImageTemplate templateName( final ImageTemplateName name )
+    public GetImageTemplate byName( final ImageTemplateName name )
     {
         this.name = name;
         return this;

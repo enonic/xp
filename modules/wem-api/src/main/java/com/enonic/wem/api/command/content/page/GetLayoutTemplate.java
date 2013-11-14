@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.template;
+package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
@@ -14,7 +14,7 @@ public class GetLayoutTemplate
     {
     }
 
-    public GetLayoutTemplate templateName( final LayoutTemplateName name )
+    public GetLayoutTemplate byName( final LayoutTemplateName name )
     {
         this.name = name;
         return this;
