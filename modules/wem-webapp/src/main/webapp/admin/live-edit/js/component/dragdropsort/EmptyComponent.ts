@@ -26,7 +26,7 @@ module LiveEdit.component.dragdropsort {
             }
         }
 
-        public static loadComponent(componentKey:string, itemid:number):void {
+        public static loadComponent(componentKey:string, itemid:number, imageUrl?:string):void {
             var selectedComponent = LiveEdit.component.Selection.getSelectedComponent();
 
             if (!selectedComponent.isEmpty()) {
@@ -44,6 +44,13 @@ module LiveEdit.component.dragdropsort {
                 success: (responseHtml:string) => {
                     var newComponent = LiveEdit.component.dragdropsort.EmptyComponent.replaceEmptyComponent(selectedComponent, $(responseHtml));
                     newComponent.element.attr("data-itemid", itemid);
+
+                    //TODO: HACKY!!
+                    if (imageUrl) {
+                        console.log(imageUrl);
+                        newComponent.element.find("img").attr("src", imageUrl);
+                    }
+
 
                 }
             });
