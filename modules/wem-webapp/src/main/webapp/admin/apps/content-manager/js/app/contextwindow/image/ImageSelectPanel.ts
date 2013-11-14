@@ -68,7 +68,7 @@ module app_contextwindow_image {
         }
 
         private itemSelected() {
-            //this.comboBox.hide();
+            this.comboBox.hide();
             this.templateForm.show();
         }
 
