@@ -61,8 +61,6 @@ public interface ContentDao
 
     Contents findChildContent( ContentPath parentPath, Session session );
 
-    Tree<Content> getContentTree( final Session session, final ContentSelectors<ContentId> contentSelectors );
-
     Tree<Content> getContentTree( Session session );
 
     int countContentTypeUsage( ContentTypeName qualifiedContentTypeName, Session session );

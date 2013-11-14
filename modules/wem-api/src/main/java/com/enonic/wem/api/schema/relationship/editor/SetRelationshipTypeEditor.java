@@ -95,7 +95,6 @@ public final class SetRelationshipTypeEditor
 
     @Override
     public RelationshipType edit( final RelationshipType relationshipType )
-        throws Exception
     {
         final RelationshipType.Builder builder = newRelationshipType( relationshipType );
         if ( this.icon != null )

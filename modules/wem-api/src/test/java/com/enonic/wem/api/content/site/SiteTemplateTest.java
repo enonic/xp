@@ -18,6 +18,7 @@ import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
+import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static org.junit.Assert.*;
 
@@ -27,6 +28,8 @@ public class SiteTemplateTest
     @Test
     public void siteTemplate()
     {
+        final ContentTypeFilter contentTypeFilter =
+            newContentFilter().defaultDeny().allowContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).build();
         SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
@@ -34,7 +37,7 @@ public class SiteTemplateTest
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                       "com.enonic.resolvers-1.0.0" ) ).
-            supportedContentTypes( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ) ).
+            contentTypeFilter( contentTypeFilter ).
             rootContentType( ContentTypeName.from( "com.enonic.intranet" ) ).
             build();
 
@@ -45,7 +48,7 @@ public class SiteTemplateTest
         assertEquals( "A social intranet for the Enterprise", siteTemplate.getInfo() );
         assertEquals( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                        "com.enonic.resolvers-1.0.0" ), siteTemplate.getModules() );
-        assertEquals( ContentTypeNames.from( "com.enonic.intranet", "system.folder" ), siteTemplate.getSupportedContentTypes() );
+        assertEquals( contentTypeFilter, siteTemplate.getContentTypeFilter() );
         assertEquals( ContentTypeName.from( "com.enonic.intranet" ), siteTemplate.getRootContentType() );
         assertEquals( "Enonic", siteTemplate.getVendor().getName() );
         assertEquals( "https://www.enonic.com", siteTemplate.getVendor().getUrl() );

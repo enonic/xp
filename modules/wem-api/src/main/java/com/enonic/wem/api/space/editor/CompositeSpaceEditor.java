@@ -14,7 +14,6 @@ final class CompositeSpaceEditor
 
     @Override
     public Space edit( final Space space )
-        throws Exception
     {
         boolean modified = false;
         Space spaceEdited = space;

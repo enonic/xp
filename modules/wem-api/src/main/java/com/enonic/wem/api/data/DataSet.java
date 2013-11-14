@@ -466,7 +466,13 @@ public class DataSet
 
         final DataSet other = (DataSet) o;
 
-        return Objects.equals( getName(), other.getName() ) && Objects.equals( dataById, other.dataById );
+        return super.equals( o ) && Objects.equals( dataById, other.dataById );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), dataById );
     }
 
     public boolean valueEquals( final Data data )
@@ -491,12 +497,6 @@ public class DataSet
             }
         }
         return true;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( getName(), dataById );
     }
 
     @Override

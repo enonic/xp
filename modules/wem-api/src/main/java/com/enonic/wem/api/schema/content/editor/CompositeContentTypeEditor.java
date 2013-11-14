@@ -14,7 +14,6 @@ final class CompositeContentTypeEditor
 
     @Override
     public ContentType edit( final ContentType contentType )
-        throws Exception
     {
         boolean modified = false;
         ContentType contentEdited = contentType;

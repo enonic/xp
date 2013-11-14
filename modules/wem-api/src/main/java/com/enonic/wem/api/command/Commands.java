@@ -5,6 +5,7 @@ import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
 import com.enonic.wem.api.command.content.binary.BinaryCommands;
 import com.enonic.wem.api.command.content.page.PageCommands;
+import com.enonic.wem.api.command.content.site.SiteCommands;
 import com.enonic.wem.api.command.content.template.TemplateCommands;
 import com.enonic.wem.api.command.entity.NodeCommands;
 import com.enonic.wem.api.command.module.ModuleCommands;
@@ -28,6 +29,8 @@ public final class Commands
     private static final UserStoreCommands USER_STORE_COMMANDS = new UserStoreCommands();
 
     private static final ContentCommands CONTENT_COMMANDS = new ContentCommands();
+
+    private static final SiteCommands SITE_COMMANDS = new SiteCommands();
 
     private static final PageCommands PAGE_COMMANDS = new PageCommands();
 

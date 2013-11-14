@@ -1,6 +1,7 @@
 package com.enonic.wem.api.data;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.data.type.InconvertibleValueException;
@@ -215,23 +216,6 @@ public class Property
         return null;
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final Property property = (Property) o;
-
-        return Objects.equal( getName(), property.getName() ) && Objects.equal( value, property.value );
-    }
-
     public boolean valueEquals( final com.enonic.wem.api.data.Data data )
     {
         final Property other = data.toProperty();
@@ -239,15 +223,32 @@ public class Property
     }
 
     @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Property property = (Property) o;
+
+        return super.equals( o ) && Objects.equals( value, property.value );
+    }
+
+    @Override
     public int hashCode()
     {
-        return Objects.hashCode( getName(), value );
+        return Objects.hash( super.hashCode(), value );
     }
 
     @Override
     public java.lang.String toString()
     {
-        final Objects.ToStringHelper s = Objects.toStringHelper( this );
+        final com.google.common.base.Objects.ToStringHelper s = com.google.common.base.Objects.toStringHelper( this );
         s.add( "name", getName() );
         s.add( "type", getValueType() );
         s.add( "value", value.getObject() );

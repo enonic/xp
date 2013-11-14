@@ -6,9 +6,12 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.support.ChangeTraceable;
+import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
+
+import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Node
     extends Entity
@@ -27,7 +30,7 @@ public final class Node
     // TODO: Remove
     private final Icon icon;
 
-    private Node( final Builder builder )
+    private Node( final BaseBuilder builder )
     {
         super( builder );
 
@@ -135,10 +138,103 @@ public final class Node
         return new Builder( node );
     }
 
+    public static EditBuilder editNode( final Node original )
+    {
+        return new EditBuilder( original );
+    }
+
+
+    public static class BaseBuilder
+        extends Entity.BaseBuilder
+    {
+        String name;
+
+        NodePath parent;
+
+        UserKey modifier;
+
+        UserKey creator;
+
+        Icon icon;
+
+        BaseBuilder()
+        {
+        }
+
+        BaseBuilder( final EntityId id )
+        {
+            super( id );
+        }
+
+        BaseBuilder( final Node node )
+        {
+            super( node );
+
+            this.name = node.name;
+            this.parent = node.parent;
+            this.creator = node.creator;
+            this.modifier = node.modifier;
+            this.icon = node.icon;
+        }
+
+        BaseBuilder( final EntityId id, final String name )
+        {
+            this.id = id;
+            this.name = name;
+        }
+    }
+
+    public static class EditBuilder
+        extends Entity.EditBuilder<EditBuilder>
+    {
+        private final Node original;
+
+        private final Changes.Builder changes = new Changes.Builder();
+
+        private String name;
+
+        private Icon icon;
+
+        public EditBuilder( final Node original )
+        {
+            super( original );
+            this.name = original.name;
+            this.icon = original.icon;
+            this.original = original;
+        }
+
+        public EditBuilder name( final String value )
+        {
+            changes.recordChange( newPossibleChange( "name" ).from( this.original.name ).to( value ).build() );
+            this.name = value;
+            return this;
+        }
+
+        public EditBuilder icon( final Icon value )
+        {
+            changes.recordChange( newPossibleChange( "icon" ).from( this.original.icon ).to( value ).build() );
+            this.icon = value;
+            return this;
+        }
+
+        public Node build()
+        {
+            Node.BaseBuilder baseBuilder = new BaseBuilder( this.original );
+            baseBuilder.data = this.data;
+            baseBuilder.entityIndexConfig = this.entityIndexConfig;
+
+            baseBuilder.name = this.name;
+            baseBuilder.icon = this.icon;
+            return new Node( baseBuilder );
+        }
+    }
+
     public static class Builder
         extends Entity.Builder<Builder>
     {
         private String name;
+
+        private Icon icon;
 
         private NodePath parent;
 
@@ -146,26 +242,20 @@ public final class Node
 
         private UserKey creator;
 
-        private Icon icon;
 
         public Builder()
         {
+            super();
         }
 
         public Builder( final EntityId id )
         {
-            this.id = id;
+            super( id );
         }
 
         public Builder( final Node node )
         {
             super( node );
-            this.id = node.id;
-            this.name = node.name;
-            this.parent = node.parent;
-            this.creator = node.creator;
-            this.modifier = node.modifier;
-            this.icon = node.icon;
         }
 
         public Builder( final EntityId id, final String name )
@@ -212,7 +302,19 @@ public final class Node
 
         public Node build()
         {
-            return new Node( this );
+            BaseBuilder baseBuilder = new BaseBuilder();
+            baseBuilder.id = this.id;
+            baseBuilder.createdTime = this.createdTime;
+            baseBuilder.modifiedTime = this.modifiedTime;
+            baseBuilder.data = this.data;
+            baseBuilder.entityIndexConfig = this.entityIndexConfig;
+
+            baseBuilder.name = this.name;
+            baseBuilder.parent = this.parent;
+            baseBuilder.creator = this.creator;
+            baseBuilder.modifier = this.modifier;
+            baseBuilder.icon = this.icon;
+            return new Node( baseBuilder );
         }
     }
 }

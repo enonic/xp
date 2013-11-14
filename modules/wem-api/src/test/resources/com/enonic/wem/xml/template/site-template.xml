@@ -13,5 +13,10 @@
     <module>com.company.theme.someTheme-1.4.1</module>
     <module>com.enonic.resolvers-1.0.0</module>
   </modules>
+  <content-filter>
+    <deny>*</deny>
+    <allow>com.enonic.tweet</allow>
+    <allow>system.folder</allow>
+  </content-filter>
   <site-content>com.enonic.intranet</site-content>
 </site-template>

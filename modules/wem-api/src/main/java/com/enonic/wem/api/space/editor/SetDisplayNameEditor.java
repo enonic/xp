@@ -19,7 +19,6 @@ final class SetDisplayNameEditor
 
     @Override
     public Space edit( final Space space )
-        throws Exception
     {
         if ( displayName.equals( space.getDisplayName() ) )
         {

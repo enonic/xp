@@ -1,6 +1,8 @@
 package com.enonic.wem.api.data;
 
 
+import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
@@ -167,5 +169,27 @@ public abstract class Data
     public abstract Data copy();
 
     public abstract boolean valueEquals( Data data );
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof Data ) )
+        {
+            return false;
+        }
+
+        final Data that = (Data) o;
+        return Objects.equals( name, that.name ) && Objects.equals( arrayIndex, that.arrayIndex );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( name, arrayIndex );
+    }
 }
 

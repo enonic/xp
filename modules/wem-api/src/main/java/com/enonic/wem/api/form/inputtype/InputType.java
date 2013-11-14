@@ -1,7 +1,7 @@
 package com.enonic.wem.api.form.inputtype;
 
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.Value;
@@ -62,14 +62,6 @@ public abstract class InputType
 
     public abstract void checkBreaksRequiredContract( final Property property );
 
-    public abstract Value newValue( final String value );
-
-    @Override
-    public String toString()
-    {
-        return this.inputTypeName.toString();
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -84,14 +76,24 @@ public abstract class InputType
 
         final InputType that = (InputType) o;
 
-        return Objects.equal( this.getClass(), that.getClass() );
+        return Objects.equals( this.inputTypeName, that.inputTypeName ) &&
+            Objects.equals( this.configClass, that.configClass ) &&
+            Objects.equals( this.builtIn, that.builtIn );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.getClass() );
+        return Objects.hash( this.inputTypeName, this.configClass, this.builtIn );
     }
+
+    @Override
+    public String toString()
+    {
+        return this.inputTypeName.toString();
+    }
+
+    public abstract Value newValue( final String value );
 
     private String resolveName()
     {

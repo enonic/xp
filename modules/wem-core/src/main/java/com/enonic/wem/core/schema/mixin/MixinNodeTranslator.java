@@ -22,7 +22,6 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.support.SerializerForFormItemToData;
 
-import static com.enonic.wem.api.entity.SetNodeEditor.newSetItemEditor;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
 
 class MixinNodeTranslator
@@ -75,11 +74,17 @@ class MixinNodeTranslator
         }
         rootDataSet.add( formItemsAsDataSet );
 
-        return newSetItemEditor().
-            name( mixin.getName() ).
-            icon( mixin.getIcon() ).
-            data( rootDataSet ).
-            build();
+        return new NodeEditor()
+        {
+            @Override
+            public Node.EditBuilder edit( final Node toBeEdited )
+            {
+                return Node.editNode( toBeEdited ).
+                    name( mixin.getName() ).
+                    icon( mixin.getIcon() ).
+                    rootDataSet( rootDataSet );
+            }
+        };
     }
 
     Mixins fromNodes( final Nodes nodes )

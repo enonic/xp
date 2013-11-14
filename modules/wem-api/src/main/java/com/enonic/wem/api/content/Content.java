@@ -14,9 +14,12 @@ import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.ChangeTraceable;
+import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
+
+import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Content
     implements IllegalEditAware<Content>, ChangeTraceable
@@ -51,8 +54,19 @@ public final class Content
 
     private final Page page;
 
-    private Content( final Builder builder )
+    private Content( final BaseBuilder builder )
     {
+        Preconditions.checkNotNull( builder.path, "path is mandatory for a content" );
+
+        if ( builder.type == null )
+        {
+            builder.type = ContentTypeName.unstructured();
+        }
+        if ( builder.versionId == null )
+        {
+            builder.versionId = ContentVersionId.initial();
+        }
+
         this.displayName = builder.displayName;
         this.type = builder.type;
         this.path = builder.path;
@@ -210,46 +224,51 @@ public final class Content
         return new Builder( content );
     }
 
-    public static class Builder
+    public static EditBuilder editContent( final Content content )
     {
-        private ContentPath path;
+        return new EditBuilder( content );
+    }
 
-        private ContentId contentId;
+    static abstract class BaseBuilder
+    {
+        ContentPath path;
 
-        private ContentTypeName type;
+        ContentId contentId;
 
-        private Form form;
+        ContentTypeName type;
 
-        private ContentData contentData;
+        Form form;
 
-        private String displayName;
+        ContentData contentData;
 
-        private UserKey owner;
+        String displayName;
 
-        private DateTime createdTime;
+        UserKey owner;
 
-        private DateTime modifiedTime;
+        DateTime createdTime;
 
-        private UserKey creator;
+        DateTime modifiedTime;
 
-        private UserKey modifier;
+        UserKey creator;
 
-        private ContentVersionId versionId;
+        UserKey modifier;
 
-        private ImmutableList.Builder<ContentId> childrenIdsBuilder;
+        ContentVersionId versionId;
 
-        private Site site;
+        ImmutableList.Builder<ContentId> childrenIdsBuilder;
 
-        private Page page;
+        Site site;
 
-        public Builder()
+        Page page;
+
+        BaseBuilder()
         {
             this.path = ContentPath.ROOT;
             this.contentData = new ContentData();
             this.childrenIdsBuilder = ImmutableList.builder();
         }
 
-        public Builder( final Content content )
+        BaseBuilder( final Content content )
         {
             this.contentId = content.id;
             this.path = content.path;
@@ -267,6 +286,91 @@ public final class Content
             this.childrenIdsBuilder.addAll( content.childrenIds );
             this.site = content.site;
             this.page = content.page;
+        }
+    }
+
+    public static class EditBuilder
+        extends BaseBuilder
+    {
+        private final Content original;
+
+        private final Changes.Builder changes = new Changes.Builder();
+
+        public EditBuilder( final Content original )
+        {
+            super( original );
+            this.original = original;
+        }
+
+        public EditBuilder type( final ContentTypeName type )
+        {
+            changes.recordChange( newPossibleChange( "type" ).from( this.original.getType() ).to( type ).build() );
+            this.type = type;
+            return this;
+        }
+
+        public EditBuilder form( final Form form )
+        {
+            changes.recordChange( newPossibleChange( "form" ).from( this.original.getForm() ).to( form ).build() );
+            this.form = form;
+            return this;
+        }
+
+        public EditBuilder contentData( final ContentData contentData )
+        {
+            changes.recordChange( newPossibleChange( "contentData" ).from( this.original.getContentData() ).to( contentData ).build() );
+            this.contentData = contentData;
+            return this;
+        }
+
+        public EditBuilder displayName( final String displayName )
+        {
+            changes.recordChange( newPossibleChange( "displayName" ).from( this.original.getDisplayName() ).to( displayName ).build() );
+            this.displayName = displayName;
+            return this;
+        }
+
+        public EditBuilder site( final Site site )
+        {
+            changes.recordChange( newPossibleChange( "site" ).from( this.original.getSite() ).to( site ).build() );
+            this.site = site;
+            return this;
+        }
+
+        public EditBuilder page( final Page page )
+        {
+            changes.recordChange( newPossibleChange( "page" ).from( this.original.getPage() ).to( page ).build() );
+            this.page = page;
+            return this;
+        }
+
+        public boolean isChanges()
+        {
+            return this.changes.isChanges();
+        }
+
+        public Changes getChanges()
+        {
+            return this.changes.build();
+        }
+
+        public Content build()
+        {
+            return new Content( this );
+        }
+    }
+
+    public static class Builder
+        extends BaseBuilder
+    {
+        public Builder()
+        {
+            super();
+        }
+
+        public Builder( final Content content )
+        {
+            super( content );
         }
 
         public Builder path( final ContentPath path )
@@ -371,16 +475,6 @@ public final class Content
 
         public Content build()
         {
-            Preconditions.checkNotNull( path, "path is mandatory for a content" );
-
-            if ( type == null )
-            {
-                type = ContentTypeName.unstructured();
-            }
-            if ( versionId == null )
-            {
-                versionId = ContentVersionId.initial();
-            }
             return new Content( this );
         }
     }

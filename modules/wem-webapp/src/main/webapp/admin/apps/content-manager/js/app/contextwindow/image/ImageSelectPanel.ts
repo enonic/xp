@@ -40,33 +40,38 @@ module app_contextwindow_image {
 
             app_contextwindow.ComponentSelectEvent.on((event) => {
                 if (!event.getComponent().isEmpty()) {
-                    this.onImageSelected();
+                    this.itemSelected();
                     if (event.getComponent().getItemId()) {
+                        console.log("itemId:",event.getComponent().getItemId());
+
+                        this.comboBox.removeSelectedItem(this.selectedItem);
                         var itemId = event.getComponent().getItemId();
                         this.selectedItem = this.liveEditItems[itemId];
                         this.comboBox.selectOption(this.selectedItem);
                     }
+                } else {
+                    this.comboBox.removeSelectedItem(this.selectedItem);
                 }
-                console.log("itemId:",event.getComponent().getItemId());
+
 
             });
 
             app_contextwindow.ComponentDeselectEvent.on((event) => {
-                this.comboBox.removeSelectedItem(this.selectedItem);
+                this.itemRemoved();
             });
 
             app_contextwindow.ComponentRemovedEvent.on((event) => {
-                this.selectedOptionsView.removeItem(this.selectedItem);
-                this.onImageRemoved();
+                this.comboBox.removeSelectedItem(this.selectedItem);
+                this.itemRemoved();
             });
         }
 
-        private onImageSelected() {
-            this.comboBox.hide();
+        private itemSelected() {
+            //this.comboBox.hide();
             this.templateForm.show();
         }
 
-        private onImageRemoved() {
+        private itemRemoved() {
             this.comboBox.show();
             this.templateForm.hide();
         }
@@ -88,13 +93,12 @@ module app_contextwindow_image {
                 },
                 onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
                     this.selectedItem = null;
-                    this.onImageRemoved();
                 },
                 onOptionSelected: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
                     this.selectedItem = item;
                     this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex);
                     this.liveEditItems[this.liveEditIndex] = item;
-                    this.onImageSelected();
+                    this.itemSelected();
                     this.liveEditIndex++;
                 }
             });

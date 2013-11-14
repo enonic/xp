@@ -1,6 +1,8 @@
 package com.enonic.wem.api.form;
 
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 public final class Occurrences
@@ -58,26 +60,14 @@ public final class Occurrences
             return false;
         }
 
-        final Occurrences occurrences = (Occurrences) o;
-
-        if ( maximum != occurrences.maximum )
-        {
-            return false;
-        }
-        if ( minimum != occurrences.minimum )
-        {
-            return false;
-        }
-
-        return true;
+        final Occurrences that = (Occurrences) o;
+        return Objects.equals( this.maximum, that.maximum ) && Objects.equals( this.minimum, that.minimum );
     }
 
     @Override
     public int hashCode()
     {
-        int result = minimum;
-        result = 31 * result + maximum;
-        return result;
+        return Objects.hash( this.maximum, this.minimum );
     }
 
     @Override

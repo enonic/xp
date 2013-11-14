@@ -1,6 +1,8 @@
 package com.enonic.wem.api.form;
 
 
+import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
@@ -88,6 +90,28 @@ public abstract class FormItem
             throw new IllegalArgumentException( "This FormItem [" + getName() + "] is not a Layout: " + this.getClass().getSimpleName() );
         }
         return (Layout) this;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof FormItem ) )
+        {
+            return false;
+        }
+
+        final FormItem that = (FormItem) o;
+        return Objects.equals( name, that.name );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( name );
     }
 
     @Override

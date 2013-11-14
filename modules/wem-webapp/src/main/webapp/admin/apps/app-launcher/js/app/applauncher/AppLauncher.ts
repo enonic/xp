@@ -14,6 +14,7 @@ module app_launcher {
 
 
             this.adminApplicationFrames = new api_dom.DivEl();
+            this.adminApplicationFrames.getEl().setAttribute("style", "overflow-y: hidden;");
             this.adminApplicationFrames.getEl().setHeight('100%').setWidth('100%');
 
             var appManager = new api_app.AppManager();

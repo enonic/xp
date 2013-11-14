@@ -11,10 +11,9 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
-
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
@@ -74,7 +73,6 @@ public class UpdateRelationshipTypeHandlerTest
             {
                 @Override
                 public RelationshipType edit( RelationshipType relationshipType )
-                    throws Exception
                 {
                     return RelationshipType.newRelationshipType( relationshipType ).
                         fromSemantic( relationshipType.getFromSemantic() + "-updated" ).

@@ -20,7 +20,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.editor.ContentEditors;
+import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -30,6 +30,8 @@ import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 
+import static com.enonic.wem.api.content.Content.editContent;
+import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
@@ -89,13 +91,20 @@ public class UpdateContentHandlerTest
 
         Mockito.when( contentDao.select( eq( ContentPath.from( "myContent" ) ), Mockito.any( Session.class ) ) ).thenReturn( null );
 
-        ContentData unchangedContentData = new ContentData();
+        final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
             selector( ContentPath.from( "myContent" ) ).
-            editor( ContentEditors.setContentData( unchangedContentData ) );
+            editor( new ContentEditor()
+            {
+                @Override
+                public Content.EditBuilder edit( final Content toBeEdited )
+                {
+                    return editContent( toBeEdited ).contentData( unchangedContentData );
+                }
+            } );
 
         // exercise
         this.handler.setCommand( command );
@@ -121,13 +130,20 @@ public class UpdateContentHandlerTest
 
         Mockito.when( contentDao.select( eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
 
-        ContentData unchangedContentData = new ContentData();
+        final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
             selector( existingContent.getPath() ).
-            editor( ContentEditors.setContentData( unchangedContentData ) );
+            editor( new ContentEditor()
+            {
+                @Override
+                public Content.EditBuilder edit( final Content toBeEdited )
+                {
+                    return editContent( toBeEdited ).contentData( unchangedContentData );
+                }
+            } );
 
         // exercise
         this.handler.setCommand( command );
@@ -151,30 +167,38 @@ public class UpdateContentHandlerTest
 
         Mockito.when( contentDao.select( eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
 
-        ContentData changedContentData = new ContentData();
+        final ContentData changedContentData = new ContentData();
         changedContentData.add( new Property.String( "myData", "bbb" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
             selector( existingContent.getPath() ).
-            editor( ContentEditors.setContentData( changedContentData ) );
+            editor( new ContentEditor()
+            {
+                @Override
+                public Content.EditBuilder edit( final Content toBeEdited )
+                {
+                    return editContent( toBeEdited ).contentData( changedContentData );
+                }
+            } );
 
         // exercise
         this.handler.setCommand( command );
         handler.handle();
 
         // verify
-        Content storedContent = Content.newContent( createContent( existingContentData ) ).
+        Content storedContent = newContent( createContent( existingContentData ) ).
             modifiedTime( UPDATED_TIME ).
             modifier( AccountKey.superUser() ).
             contentData( changedContentData ).
             build();
+
         Mockito.verify( contentDao, Mockito.times( 1 ) ).update( Mockito.refEq( storedContent ), eq( true ), Mockito.any( Session.class ) );
     }
 
     private Content createContent( final ContentData contentData )
     {
-        return Content.newContent().
+        return newContent().
             id( ContentId.from( "1" ) ).
             name( "myContent" ).
             createdTime( CREATED_TIME ).

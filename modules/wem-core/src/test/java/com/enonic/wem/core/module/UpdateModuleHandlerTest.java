@@ -99,7 +99,6 @@ public class UpdateModuleHandlerTest
             {
                 @Override
                 public Module edit( final Module module )
-                    throws Exception
                 {
                     return Module.newModule( module ).displayName( module.getDisplayName() + " (edited)" ).build();
                 }
@@ -154,7 +153,6 @@ public class UpdateModuleHandlerTest
             {
                 @Override
                 public Module edit( final Module module )
-                    throws Exception
                 {
                     return module;
                 }

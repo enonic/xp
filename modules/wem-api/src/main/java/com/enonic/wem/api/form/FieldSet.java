@@ -3,6 +3,7 @@ package com.enonic.wem.api.form;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -69,6 +70,29 @@ public class FieldSet
     public Iterable<FormItem> formItemIterable()
     {
         return formItems;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final FieldSet that = (FieldSet) o;
+        return super.equals( o ) && Objects.equals( this.label, that.label ) &&
+            Objects.equals( this.formItems, that.formItems );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), this.label, this.formItems );
     }
 
     public static Builder newFieldSet()

@@ -3,17 +3,18 @@ package com.enonic.wem.api.command.content.page;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.page.PageEditor;
 
 public class UpdatePage
     extends Command<Boolean>
 {
-    private ContentId contentId;
+    private ContentId content;
 
     private PageEditor editor;
 
-    public UpdatePage contentId( final ContentId contentId )
+    public UpdatePage content( final ContentId contentId )
     {
-        this.contentId = contentId;
+        this.content = contentId;
         return this;
     }
 
@@ -26,5 +27,15 @@ public class UpdatePage
     @Override
     public void validate()
     {
+    }
+
+    public ContentId getContent()
+    {
+        return content;
+    }
+
+    public PageEditor getEditor()
+    {
+        return editor;
     }
 }

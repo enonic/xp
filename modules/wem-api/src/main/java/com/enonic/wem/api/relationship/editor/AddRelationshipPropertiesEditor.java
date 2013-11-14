@@ -18,7 +18,6 @@ final class AddRelationshipPropertiesEditor
 
     @Override
     public Relationship edit( final Relationship relationship )
-        throws Exception
     {
         final Relationship.Builder builder = newRelationship( relationship );
         for ( Map.Entry<String, String> property : source.entrySet() )

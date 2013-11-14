@@ -47,8 +47,8 @@ module LiveEdit.component.mouseevent {
                 // Needed so the browser's context menu is not shown on contextmenu
                 event.preventDefault();
 
-                var component = new LiveEdit.component.Component($(event.currentTarget)),
-                    deselectComponent:boolean = component.isSelected() || LiveEdit.component.Selection.pageHasSelectedElement();
+                var component = new LiveEdit.component.Component($(event.currentTarget));
+                var deselectComponent:boolean = component.isSelected() || LiveEdit.component.Selection.pageHasSelectedElement();
 
                 // Toggle select/deselect
                 if (deselectComponent) {

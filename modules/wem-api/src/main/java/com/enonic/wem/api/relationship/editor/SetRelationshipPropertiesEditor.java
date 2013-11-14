@@ -20,7 +20,6 @@ final class SetRelationshipPropertiesEditor
 
     @Override
     public Relationship edit( final Relationship relationship )
-        throws Exception
     {
         final Relationship.Builder builder = newRelationship( relationship );
         builder.properties( source );

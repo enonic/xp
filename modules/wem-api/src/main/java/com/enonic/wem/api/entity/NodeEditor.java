@@ -2,9 +2,5 @@ package com.enonic.wem.api.entity;
 
 public interface NodeEditor
 {
-    /**
-     * @param toBeEdited to be edited
-     * @return updated item, null if it has no change was necessary.
-     */
-    public Node edit( Node toBeEdited );
+    public Node.EditBuilder edit( Node toBeEdited );
 }

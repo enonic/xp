@@ -14,16 +14,6 @@ import com.enonic.wem.admin.rpc.account.GetAccountGraphRpcHandler;
 import com.enonic.wem.admin.rpc.account.GetAccountRpcHandler;
 import com.enonic.wem.admin.rpc.account.SuggestUserNameRpcHandler;
 import com.enonic.wem.admin.rpc.account.VerifyUniqueEmailRpcHandler;
-import com.enonic.wem.admin.rpc.content.CreateAttachmentRpcHandler;
-import com.enonic.wem.admin.rpc.content.CreateBinaryRpcHandler;
-import com.enonic.wem.admin.rpc.content.CreateOrUpdateContentRpcHandler;
-import com.enonic.wem.admin.rpc.content.DeleteContentRpcHandler;
-import com.enonic.wem.admin.rpc.content.FindContentRpcHandler;
-import com.enonic.wem.admin.rpc.content.GenerateContentNameRpcHandler;
-import com.enonic.wem.admin.rpc.content.GetContentRpcHandler;
-import com.enonic.wem.admin.rpc.content.GetContentTreeRpcHandler;
-import com.enonic.wem.admin.rpc.content.ListContentRpcHandler;
-import com.enonic.wem.admin.rpc.content.ValidateContentDataRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.CreateRelationshipRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.GetRelationshipRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.UpdateRelationshipPropertiesRpcHandler;
@@ -86,17 +76,6 @@ public final class RestModule
         handlers.add( DeleteSpaceRpcHandler.class );
         handlers.add( GetSpaceRpcHandler.class );
         handlers.add( ListSpacesRpcHandler.class );
-
-        handlers.add( CreateBinaryRpcHandler.class );
-        handlers.add( CreateAttachmentRpcHandler.class );
-        handlers.add( CreateOrUpdateContentRpcHandler.class );
-        handlers.add( DeleteContentRpcHandler.class );
-        handlers.add( FindContentRpcHandler.class );
-        handlers.add( GenerateContentNameRpcHandler.class );
-        handlers.add( GetContentRpcHandler.class );
-        handlers.add( GetContentTreeRpcHandler.class );
-        handlers.add( ListContentRpcHandler.class );
-        handlers.add( ValidateContentDataRpcHandler.class );
 
         handlers.add( CreateRelationshipRpcHandler.class );
         handlers.add( GetRelationshipRpcHandler.class );

@@ -14,7 +14,6 @@ final class CompositeRelationshipEditor
 
     @Override
     public Relationship edit( final Relationship relationship )
-        throws Exception
     {
         boolean modified = false;
         Relationship edited = relationship;

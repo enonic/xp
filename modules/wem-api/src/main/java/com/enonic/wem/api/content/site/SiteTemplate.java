@@ -11,7 +11,6 @@ import com.enonic.wem.api.content.page.TemplateName;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 import static com.google.common.collect.Maps.uniqueIndex;
 
@@ -32,7 +31,7 @@ public final class SiteTemplate
 
     private final ModuleKeys modules;
 
-    private final ContentTypeNames supportedContentTypes;
+    private final ContentTypeFilter contentTypeFilter;
 
     private final ContentTypeName rootContentType;
 
@@ -48,7 +47,7 @@ public final class SiteTemplate
         this.url = builder.url;
         this.vendor = builder.vendor;
         this.modules = builder.modules;
-        this.supportedContentTypes = builder.supportedContentTypes;
+        this.contentTypeFilter = builder.contentTypeFilter;
         this.rootContentType = builder.rootContentType;
         this.templatesByPath = builder.templates.build();
         this.templatesByName = uniqueIndex( this.templatesByPath.values(), new ToNameFunction() );
@@ -94,9 +93,9 @@ public final class SiteTemplate
         return modules;
     }
 
-    public ContentTypeNames getSupportedContentTypes()
+    public ContentTypeFilter getContentTypeFilter()
     {
-        return supportedContentTypes;
+        return contentTypeFilter;
     }
 
     public ContentTypeName getRootContentType()
@@ -144,7 +143,7 @@ public final class SiteTemplate
 
         private ModuleKeys modules = ModuleKeys.empty();
 
-        private ContentTypeNames supportedContentTypes = ContentTypeNames.empty();
+        private ContentTypeFilter contentTypeFilter;
 
         private ContentTypeName rootContentType;
 
@@ -203,9 +202,9 @@ public final class SiteTemplate
             return this;
         }
 
-        public Builder supportedContentTypes( final ContentTypeNames supportedContentTypes )
+        public Builder contentTypeFilter( final ContentTypeFilter contentTypeFilter )
         {
-            this.supportedContentTypes = supportedContentTypes;
+            this.contentTypeFilter = contentTypeFilter;
             return this;
         }
 

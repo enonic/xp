@@ -28,7 +28,7 @@ public final class CreateContentTypeHandler
         final CreateNodeResult createNodeResult = context.getClient().execute( createNodeCommand );
 
         final ContentType createdContentType = CONTENT_TYPE_NODE_TRANSLATOR.fromNode( createNodeResult.getPersistedNode() );
-        command.setResult( createdContentType.getContentTypeName() );
+        command.setResult( createdContentType );
     }
 
     private void validate( final ContentTypeName contentTypeName, final ContentTypeName contentTypeSuperTypeName )

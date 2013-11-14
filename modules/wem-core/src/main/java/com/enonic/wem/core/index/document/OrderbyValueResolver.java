@@ -13,6 +13,7 @@ class OrderbyValueResolver
 
     public static String getOrderbyValue( Value value )
     {
+
         if ( value == null )
         {
             return null;

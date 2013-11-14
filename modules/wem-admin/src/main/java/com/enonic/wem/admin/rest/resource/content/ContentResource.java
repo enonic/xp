@@ -47,7 +47,6 @@ import com.enonic.wem.admin.rest.resource.content.json.ValidateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ValidateContentParams;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
-import com.enonic.wem.admin.rpc.content.ContentDataParser;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
@@ -76,7 +75,7 @@ import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
-import com.enonic.wem.api.content.editor.ContentEditors;
+import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
@@ -85,8 +84,10 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.space.SpaceNames;
-import com.enonic.wem.core.content.serializer.ContentDataJsonSerializer;
 
+import static com.enonic.wem.api.content.Content.editContent;
+
+@SuppressWarnings("UnusedDeclaration")
 @Path("content")
 @Produces(MediaType.APPLICATION_JSON)
 public class ContentResource
@@ -99,8 +100,6 @@ public class ContentResource
     private final String EXPAND_SUMMARY = "summary";
 
     private final String EXPAND_NONE = "none";
-
-    private ContentDataJsonSerializer contentDataJsonSerializer = new ContentDataJsonSerializer();
 
     @GET
     public ContentIdJson getById( @QueryParam("id") final String idParam, @QueryParam("version") final Long versionParam,
@@ -331,7 +330,8 @@ public class ContentResource
     {
         final ContentTypeName qualifiedContentTypeName = ContentTypeName.from( params.getQualifiedContentTypeName() );
 
-        GetContentTypes getContentType = Commands.contentType().get(). byNames().contentTypeNames( ContentTypeNames.from( qualifiedContentTypeName ) );
+        GetContentTypes getContentType =
+            Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( qualifiedContentTypeName ) );
         final ContentType contentType = client.execute( getContentType ).first();
 
         final ContentData contentData = new ContentDataParser( contentType ).parse( params.getContentData() );
@@ -406,9 +406,17 @@ public class ContentResource
                 selector( params.getContentId() ).
                 modifier( AccountKey.anonymous() ).
                 attachments( attachments ).
-                editor( ContentEditors.composite( ContentEditors.setForm( params.getForm().getForm() ),
-                                                  ContentEditors.setContentData( contentData ),
-                                                  ContentEditors.setContentDisplayName( params.getDisplayName() ) ) );
+                editor( new ContentEditor()
+                {
+                    @Override
+                    public Content.EditBuilder edit( final Content toBeEdited )
+                    {
+                        return editContent( toBeEdited ).
+                            form( params.getForm().getForm() ).
+                            contentData( contentData ).
+                            displayName( params.getDisplayName() );
+                    }
+                } );
 
             final UpdateContentResult updateContentResult = client.execute( updateContent );
 

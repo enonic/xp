@@ -1,6 +1,7 @@
 package com.enonic.wem.api.entity;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -38,6 +39,28 @@ public class EntityIndexConfig
     public Map<DataPath, PropertyIndexConfig> getPropertyIndexConfigs()
     {
         return propertyIndexConfigs;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final EntityIndexConfig that = (EntityIndexConfig) o;
+        return Objects.equals( this.analyzer, that.analyzer ) && Objects.equals( this.propertyIndexConfigs, that.propertyIndexConfigs );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( this.analyzer, this.propertyIndexConfigs );
     }
 
     public static class Builder

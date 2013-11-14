@@ -10,6 +10,11 @@ public abstract class BaseException
         super( message );
     }
 
+    public BaseException( final Throwable t, final String message )
+    {
+        super( message, t );
+    }
+
     public BaseException( final String message, final Object... args )
     {
         this( null, message, args );

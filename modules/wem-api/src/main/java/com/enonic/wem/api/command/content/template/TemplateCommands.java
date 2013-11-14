@@ -24,11 +24,6 @@ public final class TemplateCommands
         return new CreateImageTemplate();
     }
 
-    public CreateSiteTemplate createSiteTemplate()
-    {
-        return new CreateSiteTemplate();
-    }
-
     public UpdatePageTemplate updatePageTemplate()
     {
         return new UpdatePageTemplate();
@@ -52,16 +47,6 @@ public final class TemplateCommands
     public DeleteTemplate deleteTemplate()
     {
         return new DeleteTemplate();
-    }
-
-    public DeleteSiteTemplate deleteSiteTemplate()
-    {
-        return new DeleteSiteTemplate();
-    }
-
-    public GetSiteTemplates getSiteTemplates()
-    {
-        return new GetSiteTemplates();
     }
 
     public GetPageTemplate getPageTemplate()

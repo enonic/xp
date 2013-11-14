@@ -1,6 +1,7 @@
 package com.enonic.wem.api.form;
 
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,28 @@ public class ValidationRegex
         {
             throw new BreaksRegexValidationException( property, pattern.toString() );
         }
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final ValidationRegex that = (ValidationRegex) o;
+        return Objects.equals( this.string, that.string );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( this.string );
     }
 
     @Override

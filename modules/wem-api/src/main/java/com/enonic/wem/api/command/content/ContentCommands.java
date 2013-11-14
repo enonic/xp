@@ -33,19 +33,9 @@ public final class ContentCommands
         return new GetChildContent();
     }
 
-    public GetContentTree getTree()
-    {
-        return new GetContentTree();
-    }
-
     public ValidateContentData validate()
     {
         return new ValidateContentData();
-    }
-
-    public GetContentVersionHistory getVersionHistory()
-    {
-        return new GetContentVersionHistory();
     }
 
     public GetContentVersion getVersion()

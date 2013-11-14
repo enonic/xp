@@ -67,7 +67,6 @@ public final class SetMixinEditor
 
     @Override
     public Mixin edit( final Mixin mixin )
-        throws Exception
     {
         final Mixin.Builder builder = Mixin.newMixin( mixin );
 
