@@ -39,6 +39,8 @@ module api_app_browse_grid {
             }));
 
             this.extGridPanel.on("selectionchange", this.notifySelectionChanged, this, {buffer: 10});
+            this.extGridPanel.on("select", this.notifySelect, this);
+            this.extGridPanel.on("deselect", this.notifyDeselect, this);
             this.extGridPanel.on("itemdblclick", this.notifyItemDoubleClicked, this);
             this.extGridPanel.on("itemcontextmenu", this.handleItemContextMenuEvent, this);
         }
