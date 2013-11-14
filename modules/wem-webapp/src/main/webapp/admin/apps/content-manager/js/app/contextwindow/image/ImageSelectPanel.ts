@@ -26,6 +26,7 @@ module app_contextwindow_image {
             this.selectedOptionsView.addListener({
                 onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
                     this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.restoreEmptyComponent();
+                    this.itemRemoved();
                 }
             });
             this.comboBox = this.createComboBox();
@@ -44,13 +45,13 @@ module app_contextwindow_image {
                     if (event.getComponent().getItemId()) {
                         console.log("itemId:",event.getComponent().getItemId());
 
-                        this.comboBox.removeSelectedItem(this.selectedItem);
+                        this.comboBox.removeSelectedItem(this.selectedItem, true);
                         var itemId = event.getComponent().getItemId();
                         this.selectedItem = this.liveEditItems[itemId];
-                        this.comboBox.selectOption(this.selectedItem);
+                        this.comboBox.selectOption(this.selectedItem, true);
                     }
                 } else {
-                    this.comboBox.removeSelectedItem(this.selectedItem);
+                    this.comboBox.removeSelectedItem(this.selectedItem, true);
                 }
 
 
@@ -93,8 +94,10 @@ module app_contextwindow_image {
                 },
                 onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
                     this.selectedItem = null;
+                    console.log("On selected option removed");
                 },
                 onOptionSelected: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                    console.log("On option selected");
                     this.selectedItem = item;
                     this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex);
                     this.liveEditItems[this.liveEditIndex] = item;

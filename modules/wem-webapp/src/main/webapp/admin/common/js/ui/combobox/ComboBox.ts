@@ -260,7 +260,7 @@ module api_ui_combobox {
             this.selectOption(item);
         }
 
-        selectOption(item:OptionData<T>) {
+        selectOption(item:OptionData<T>, silent:boolean = false) {
             if (!this.canSelect(item)) {
                 return;
             }
@@ -276,8 +276,9 @@ module api_ui_combobox {
                 this.input.getEl().setDisabled(true);
                 this.moveFocuseToNextInput();
             }
-
-            this.notifyOptionSelected(item);
+            if (!silent) {
+                this.notifyOptionSelected(item);
+            }
         }
 
         private moveFocuseToNextInput() {
@@ -370,13 +371,13 @@ module api_ui_combobox {
             }
         }
 
-        removeSelectedItem(item:OptionData<T>) {
+        removeSelectedItem(item:OptionData<T>, silent:boolean = false) {
             var itemIndex = this.selectedOptions.indexOf(item);
             if (itemIndex < 0) {
                 return;
             }
             this.selectedOptions.splice(itemIndex, 1);
-            this.selectedOptionsView.removeItem(item);
+            this.selectedOptionsView.removeItem(item, silent);
 
             this.updateDropdownStyles();
 
@@ -384,7 +385,9 @@ module api_ui_combobox {
             this.input.getEl().setDisabled(false);
             this.input.getHTMLElement().focus();
 
-            this.notifySelectedOptionRemoved(item);
+            if (!silent) {
+                this.notifySelectedOptionRemoved(item);
+            }
         }
 
         private adjustDropdownSize() {

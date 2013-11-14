@@ -36,13 +36,15 @@ module api_ui_combobox {
         }
 
 
-        removeItem(item:OptionData<T>) {
+        removeItem(item:OptionData<T>, silent:boolean = false) {
             this.selectedOptionsList.forEach((optionView:ComboBoxSelectedOption) => {
                 if (optionView.getItem() == item) {
                     optionView.getOptionEl().remove();
                 }
             });
-            this.notifySelectedOptionRemoved(item);
+            if (!silent) {
+                this.notifySelectedOptionRemoved(item);
+            }
         }
 
         addListener(listener:ComboBoxSelectedOptionsViewListener<T>) {
