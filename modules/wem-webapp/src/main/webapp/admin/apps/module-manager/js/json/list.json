@@ -1,0 +1,26 @@
+{
+    "modules": [
+        {
+            "moduleKey": "testmodule-1.0.0",
+            "version": "1.0.0",
+            "displayName": "Test Module",
+            "url": "http://test-module.com",
+            "info": "",
+            "vendorName": "Test Vendor",
+            "vendorUrl": "http;//testVendor.com",
+            "maxSystemVersion": "1.0.0",
+            "minSystemVersion": "1.0.0"
+        },
+        {
+            "moduleKey": "gruntmodule-2.0.0",
+            "version": "2.0.0",
+            "displayName": "Grunt Module",
+            "url": "http://grunt-module.com",
+            "info": "",
+            "vendorName": "Grunt Vendor",
+            "vendorUrl": "http://testVendor.com",
+            "maxSystemVersion": "2.0.0",
+            "minSystemVersion": "1.0.0"
+        }
+    ]
+}
