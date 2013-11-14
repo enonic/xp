@@ -115,7 +115,8 @@ public class ContentTypeNodeTranslatorTest
         final ContentType contentType = translator.fromNode( node );
 
         assertEquals( new SchemaId( "1" ), contentType.getId() );
-        assertEquals( ContentTypesInitializer.UNSTRUCTURED, contentType.getSuperType() );
+        assertEquals( ContentTypesInitializer.UNSTRUCTURED.getContentTypeName().toString(),
+                      contentType.getSuperType().getContentTypeName() );
     }
 
 
