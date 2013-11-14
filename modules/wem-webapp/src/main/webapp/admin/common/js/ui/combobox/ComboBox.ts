@@ -376,6 +376,7 @@ module api_ui_combobox {
                 return;
             }
             this.selectedOptions.splice(itemIndex, 1);
+            this.selectedOptionsView.removeItem(item);
 
             this.updateDropdownStyles();
 

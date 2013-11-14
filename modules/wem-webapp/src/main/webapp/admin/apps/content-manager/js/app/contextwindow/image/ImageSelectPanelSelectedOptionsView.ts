@@ -1,54 +1,45 @@
 module app_contextwindow_image {
     export class ImageSelectPanelSelectedOptionsView extends api_ui_combobox.ComboBoxSelectedOptionsView<api_content.ContentSummary> {
 
-        private selectedItem:api_ui_combobox.OptionData<api_content.ContentSummary>;
-
-        private container:api_dom.DivEl;
-
         constructor() {
             super();
         }
 
-        addItem(imageData:api_ui_combobox.OptionData<api_content.ContentSummary>) {
-            this.selectedItem = imageData;
-            var item = imageData.displayValue;
+        addItem(item:api_ui_combobox.OptionData<api_content.ContentSummary>) {
+            var content = item.displayValue;
 
-            this.container = new api_dom.DivEl();
-            this.container.addClass("container");
+            var container = new api_dom.DivEl();
+            container.addClass("container");
 
             var image = new api_dom.ImgEl();
-            image.getEl().setSrc(item.getIconUrl());
+            image.getEl().setSrc(content.getIconUrl());
             image.getEl().setHeight("35px");
             image.getEl().setWidth("35px");
 
             var label = new api_dom.DivEl(null, "label");
-            label.getEl().setInnerHtml(item.getName());
+            label.getEl().setInnerHtml(content.getName());
 
             var removeButton = new api_dom.AEl(null, "remove");
             removeButton.setText("&times;");
             removeButton.getEl().addEventListener('click', (event:Event) => {
-                this.container.remove();
-                this.notifySelectedOptionRemoved(imageData);
+                this.removeItem(item);
+                this.notifySelectedOptionRemoved(item);
 
                 event.stopPropagation();
                 event.preventDefault();
                 return false;
             });
 
-            this.container.appendChild(image);
-            this.container.appendChild(label);
-            this.container.appendChild(removeButton);
+            container.appendChild(image);
+            container.appendChild(label);
+            container.appendChild(removeButton);
 
 
-            this.appendChild(this.container);
+            this.addOption(container, item);
+            this.appendChild(container);
         }
 
 
 
-        removeItem(item:api_ui_combobox.OptionData<api_content.ContentSummary>) {
-            this.container.remove();
-            //this.notifySelectedOptionRemoved(item);
-            this.selectedItem = null;
-        }
     }
 }
