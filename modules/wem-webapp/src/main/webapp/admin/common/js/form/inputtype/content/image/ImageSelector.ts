@@ -79,11 +79,19 @@ module api_form_inputtype_content_image {
             this.comboBox = this.createComboBox(input);
 
             if (properties != null) {
-                var valueArray:string[] = [];
                 properties.forEach((property:api_data.Property) => {
-                    valueArray.push(property.getString());
+                    new api_content.GetContentByIdRequest(property.getString())
+                        .setExpand(api_content.ContentResourceRequest.EXPAND_SUMMARY)
+                        .send()
+                        .done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentSummaryJson>) => {
+                            var contentSummary = new api_content.ContentSummary(jsonResponse.getResult());
+                            var imageSelectorOption = SelectedOption.fromContent(contentSummary);
+                            this.comboBox.selectOption(<api_ui_combobox.OptionData<SelectedOption>>{
+                                value: contentSummary.getId(),
+                                displayValue: imageSelectorOption
+                            });
+                        });
                 });
-                this.comboBox.setValues(valueArray);
             }
 
             this.appendChild(this.comboBox);
@@ -126,9 +134,6 @@ module api_form_inputtype_content_image {
         }
 
         getAttachments():api_content.Attachment[] {
-            attachments.pop();
-
-
             var attachments:api_content.Attachment[] = [];
 
             return attachments;

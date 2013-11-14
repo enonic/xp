@@ -81,11 +81,18 @@ module api_form_inputtype_content_relationship {
             this.comboBox = this.createComboBox(input);
 
             if (properties != null) {
-                var valueArray:string[] = [];
                 properties.forEach((property:api_data.Property) => {
-                    valueArray.push(property.getString());
+                    new api_content.GetContentByIdRequest(property.getString())
+                        .setExpand(api_content.ContentResourceRequest.EXPAND_SUMMARY)
+                        .send()
+                        .done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentSummaryJson>) => {
+                            var contentSummary = new api_content.ContentSummary(jsonResponse.getResult());
+                            this.comboBox.selectOption({
+                                value: contentSummary.getId(),
+                                displayValue: contentSummary
+                            });
+                        });
                 });
-                this.comboBox.setValues(valueArray);
             }
 
             this.appendChild(this.comboBox);
