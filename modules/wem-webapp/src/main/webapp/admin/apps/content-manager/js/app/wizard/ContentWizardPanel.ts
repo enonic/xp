@@ -22,7 +22,7 @@ module app_wizard {
 
         private displayNameScriptExecutor:DisplayNameScriptExecutor;
 
-        constructor(tabId:api_app.AppBarTabId,contentType:api_schema_content.ContentType, parentContent:api_content.Content) {
+        constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content) {
 
             this.parentContent = parentContent;
             this.contentType = contentType;
@@ -83,11 +83,11 @@ module app_wizard {
 
             this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
             if (contentType.getContentDisplayNameScript()) {
-                this.displayNameScriptExecutor.setScript( contentType.getContentDisplayNameScript() );
+                this.displayNameScriptExecutor.setScript(contentType.getContentDisplayNameScript());
 
                 this.getEl().addEventListener("keyup", (e) => {
 
-                    this.displayNameScriptExecutor.setFormView( this.contentForm.getFormView() );
+                    this.displayNameScriptExecutor.setFormView(this.contentForm.getFormView());
 
                     var displayName = this.displayNameScriptExecutor.execute();
 
@@ -97,7 +97,7 @@ module app_wizard {
         }
 
         showCallback() {
-            if(this.persistedContent) {
+            if (this.persistedContent) {
                 app.Router.setHash("edit/" + this.persistedContent.getId());
             } else {
                 app.Router.setHash("new/" + this.contentType.getName());
@@ -139,13 +139,13 @@ module app_wizard {
                 setForm(this.contentForm.getForm()).
                 setContentData(contentData);
 
-                if(this.iconUploadId) {
-                    createRequest.addAttachment( new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName(null, '_thumb.png' )));
-                }
-                var attachments:api_content.Attachment[] = this.contentForm.getFormView().getAttachments();
-                createRequest.addAttachments( attachments );
+            if (this.iconUploadId) {
+                createRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName(null, '_thumb.png')));
+            }
+            var attachments:api_content.Attachment[] = this.contentForm.getFormView().getAttachments();
+            createRequest.addAttachments(attachments);
 
-                createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
+            createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
 
                 var json = createResponse.getJson();
                 if (json.error) {
@@ -173,7 +173,7 @@ module app_wizard {
                 setForm(this.contentForm.getForm()).
                 setContentData(this.contentForm.getContentData());
 
-            if(this.iconUploadId) {
+            if (this.iconUploadId) {
                 updateRequest.setAttachments([
                     {
                         uploadId: this.iconUploadId,
@@ -217,29 +217,5 @@ module app_wizard {
         }
     }
 
-    class LiveFormPanel extends api_ui.Panel {
 
-        private frame:api_dom.IFrameEl;
-
-        constructor(url:string = api_util.getUri("dev/live-edit-page/bootstrap.jsp?edit=true")) {
-            super("LiveFormPanel");
-            this.addClass("live-form-panel");
-
-            this.frame = new api_dom.IFrameEl();
-            this.frame.addClass("live-edit-frame");
-            this.frame.setSrc(url);
-            this.appendChild(this.frame);
-
-            // Wait for iframe to be loaded before adding context window!
-            var intervalId = setInterval(() => {
-                if (this.frame.isLoaded()) {
-                    var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame});
-                    this.appendChild(contextWindow);
-                    clearInterval(intervalId);
-                }
-            }, 200);
-
-        }
-
-    }
 }

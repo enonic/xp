@@ -4,3 +4,4 @@
 ///<reference path='ContentWizardToolbar.ts' />
 ///<reference path='DisplayNameScriptExecutor.ts' />
 ///<reference path='ContentWizardPanel.ts' />
+///<reference path='LiveFormPanel.ts' />
