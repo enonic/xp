@@ -49,6 +49,7 @@ module LiveEdit.component.dragdropsort {
                     if (imageUrl) {
                         console.log(imageUrl);
                         newComponent.element.find("img").attr("src", imageUrl);
+                        newComponent.element.find("img").css("width", "100%");
                     }
 
 
