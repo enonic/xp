@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0"
          metadata-complete="true">
 
-  <listener>
-    <listener-class>com.enonic.wem.boot.BootContextListener</listener-class>
-  </listener>
+    <listener>
+        <listener-class>com.enonic.wem.boot.BootContextListener</listener-class>
+    </listener>
 
-  <mime-mapping>
-    <extension>json</extension>
-    <mime-type>application/json</mime-type>
-  </mime-mapping>
+    <mime-mapping>
+        <extension>json</extension>
+        <mime-type>application/json</mime-type>
+    </mime-mapping>
+
+    <jsp-config>
+        <jsp-property-group>
+            <description>Property group for common configuration for all the JSP's</description>
+            <url-pattern>*.jsp</url-pattern>
+            <url-pattern>*.html</url-pattern>
+            <el-ignored>false</el-ignored>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+    </jsp-config>
+
 
 </web-app>
