@@ -15,7 +15,7 @@
 
     <jsp-config>
         <jsp-property-group>
-            <description>Property group for common configuration for all the JSP's</description>
+            <description>This is to fix encoding for live-edit mock pages</description>
             <url-pattern>*.jsp</url-pattern>
             <url-pattern>*.html</url-pattern>
             <el-ignored>false</el-ignored>
