@@ -46,18 +46,6 @@ public final class ResourceServlet
             return findResource( path + "index.html" );
         }
 
-        final InputStream in = getServletContext().getResourceAsStream( path );
-        if ( in != null )
-        {
-            return in;
-        }
-
-        return findResourceFromClassPath( path );
-    }
-
-    private InputStream findResourceFromClassPath( final String path )
-    {
-        final String fullPath = "/web" + path;
-        return getClass().getResourceAsStream( fullPath );
+        return getServletContext().getResourceAsStream( path );
     }
 }
