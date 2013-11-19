@@ -17,7 +17,8 @@ public class SiteJson
     {
         this.site = site;
         this.moduleConfigJsonList = new ArrayList<>();
-        for ( ModuleConfig moduleConfig : this.site.getModuleConfigs() )
+
+        for ( final ModuleConfig moduleConfig : this.site.getModuleConfigs().toModuleConfigList() )
         {
             this.moduleConfigJsonList.add( new ModuleConfigJson( moduleConfig ) );
         }
