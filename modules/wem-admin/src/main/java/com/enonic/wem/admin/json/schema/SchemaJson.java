@@ -18,7 +18,7 @@ import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "schemaKind")
-@JsonSubTypes({@JsonSubTypes.Type(value = ContentTypeSummaryJson.class, name = "ContentTypeSummary"),
+@JsonSubTypes({@JsonSubTypes.Type(value = ContentTypeSummaryJson.class, name = "ContentType"),
                   @JsonSubTypes.Type(value = ContentTypeJson.class, name = "ContentType"),
                   @JsonSubTypes.Type(value = RelationshipTypeJson.class, name = "RelationshipType"),
                   @JsonSubTypes.Type(value = MixinJson.class, name = "Mixin")})

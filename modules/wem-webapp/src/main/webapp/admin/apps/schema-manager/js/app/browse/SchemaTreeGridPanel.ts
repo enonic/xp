@@ -98,9 +98,9 @@ module app_browse {
                                '<p>{3}</p>' +
                                '</div>';
 
-            var content = record.data;
+            var schema = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format( nameTemplate, activeListType, content.iconUrl, value, content.name, content.type);
+            return Ext.String.format( nameTemplate, activeListType, schema.iconUrl, value, schema.name, schema.schemaKind);
         }
 
         private prettyDateRenderer(value) {

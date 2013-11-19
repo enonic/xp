@@ -2,7 +2,7 @@ Ext.define('Admin.model.schemaManager.SchemaModel', {
     extend: 'Ext.data.Model',
 
     fields: <any[]> [
-        'key', 'name', 'type', 'qualifiedName', 'displayName', 'module', 'iconUrl',
+        'key', 'name', 'schemaKind', 'qualifiedName', 'displayName', 'module', 'iconUrl',
         { name: 'createdTime', type: 'date', defaultValue: new Date() },
         { name: 'modifiedTime', type: 'date', defaultValue: new Date() },
         { name: 'editable', type: 'boolean' },

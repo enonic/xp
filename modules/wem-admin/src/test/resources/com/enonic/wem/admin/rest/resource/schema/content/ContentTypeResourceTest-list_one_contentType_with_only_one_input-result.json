@@ -1,7 +1,7 @@
 {
     "contentTypes": [
         {
-            "schemaKind": "ContentTypeSummary",
+            "schemaKind": "ContentType",
             "abstract": false,
             "allowChildContent": true,
             "contentDisplayNameScript": null,
