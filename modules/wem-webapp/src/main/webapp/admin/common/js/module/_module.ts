@@ -2,3 +2,5 @@
 ///<reference path='ModuleKey.ts' />
 ///<reference path='ModuleResourceKey.ts' />
 ///<reference path='Module.ts' />
+///<reference path='ModuleResourceRequest.ts' />
+///<reference path='InstallModuleRequest.ts' />

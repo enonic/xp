@@ -13,7 +13,7 @@ module app_browse {
         constructor() {
             super("Import");
             this.addExecutionListener(() => {
-                //TODO: add callback
+                new ImportModuleEvent().fire();
             });
         }
     }
