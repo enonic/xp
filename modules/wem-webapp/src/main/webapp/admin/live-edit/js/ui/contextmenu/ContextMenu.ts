@@ -65,7 +65,7 @@ module LiveEdit.ui.contextmenu {
             var position = this.resolvePagePosition(component, pageXYPosition);
             this.moveToXY(position.x, position.y);
 
-            this.getEl().show(null);
+            this.getEl().show();
 
             this.hidden = false;
         }
@@ -87,7 +87,8 @@ module LiveEdit.ui.contextmenu {
         private moveToXY(x, y):void {
             this.getEl().css({
                 left: x,
-                top: y
+                top: y,
+                position: "absolute"
             });
         }
 
@@ -172,7 +173,7 @@ module LiveEdit.ui.contextmenu {
                     x = dimensions.left + dimensions.width / 2 - this.getEl().width() / 2,
                     y = this.getEl().offset().top;
 
-                this.moveToXY(x, y);
+                //this.moveToXY(x, y);
             }
         }
 

@@ -15,10 +15,8 @@ module app_contextwindow_image {
             contentSummaryLoader.setAllowedContentTypes(["image"]);
             contentSummaryLoader.addListener({
                 onLoading: () => {
-
                 },
                 onLoaded: (contentSummaries:api_content.ContentSummary[]) => {
-                    console.log(contentSummaries);
                     this.dataView.setItems(contentSummaries);
                 }
             });
