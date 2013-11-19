@@ -37,7 +37,7 @@ public final class ToolsResource
         throws Exception
     {
         this.startupInitializer.initialize( true );
-        this.indexService.reIndex( Index.WEM );
+        this.indexService.reIndex( Index.WEM, Index.NODB );
         return "Done.";
     }
 
@@ -47,7 +47,7 @@ public final class ToolsResource
     public String reIndexData( @QueryParam("redirect") final String redirect )
         throws Exception
     {
-        this.indexService.reIndex( Index.WEM );
+        this.indexService.reIndex( Index.WEM, Index.NODB );
         return "Done.";
     }
 }

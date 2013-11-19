@@ -78,7 +78,6 @@ public class ReindexService
 
         for ( AccountKey accountKey : accountKeys )
         {
-
             final Account account;
 
             if ( accountKey.isUser() )
@@ -99,7 +98,6 @@ public class ReindexService
             indexService.indexAccount( account );
         }
     }
-
 
     @Inject
     public void setAccountDao( final AccountDao accountDao )

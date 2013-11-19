@@ -12,6 +12,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
@@ -28,22 +29,27 @@ class MixinNodeTranslator
 {
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
+    public static final String DISPLAY_NAME_PROPERTY = "displayName";
+
     CreateNode toCreateNodeCommand( final CreateMixin createMixin )
     {
         final NodePath parentItemPath = NodePath.newPath( "/mixins" ).build();
+
+        final RootDataSet rootDataSet = toRootDataSet( createMixin );
+        final EntityIndexConfig indexConfig = MixinEntityIndexConfigFactory.create( rootDataSet );
 
         return Commands.node().create().
             name( createMixin.getName() ).
             parent( parentItemPath ).
             icon( createMixin.getIcon() ).
-            data( toRootDataSet( createMixin ) );
+            data( rootDataSet ).
+            entityIndexConfig( indexConfig );
     }
-
 
     RootDataSet toRootDataSet( final CreateMixin createMixin )
     {
         final RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "displayName", new Value.String( createMixin.getDisplayName() ) );
+        rootDataSet.setProperty( DISPLAY_NAME_PROPERTY, new Value.String( createMixin.getDisplayName() ) );
 
         final DataSet formItems = new DataSet( "formItems" );
         for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( createMixin.getFormItems() ) )

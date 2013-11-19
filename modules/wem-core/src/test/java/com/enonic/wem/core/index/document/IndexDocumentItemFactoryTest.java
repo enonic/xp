@@ -21,7 +21,7 @@ public class IndexDocumentItemFactoryTest
         Property property = new Property.Double( "myDoubleField", 123.0 );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
 
@@ -36,7 +36,7 @@ public class IndexDocumentItemFactoryTest
         Property property = new Property.Long( "myDoubleField", 123L );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
 
@@ -51,7 +51,7 @@ public class IndexDocumentItemFactoryTest
         Property property = new Property.Date( "myDateField", DateTime.now().toDateMidnight() );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
 
@@ -67,7 +67,7 @@ public class IndexDocumentItemFactoryTest
         Property property = new Property( "myGeoPoint", new Value.GeoPoint( "41.12,-71.34" ) );
 
         PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).autocompleteEnabled( false ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).fulltextEnabled( false ).tokenizedEnabled( false ).build();
 
         final Set<AbstractIndexDocumentItem> indexDocumentItems = IndexDocumentItemFactory.create( property, propertyIndexConfig );
 

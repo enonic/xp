@@ -30,9 +30,10 @@ public class GetNodesByPathsHandler
             }
             catch ( NoNodeAtPathFound noNodeAtPathFound )
             {
-                // Not found
+                // Node not found, just continue for now
             }
         }
+
         command.setResult( nodes.build() );
     }
 }

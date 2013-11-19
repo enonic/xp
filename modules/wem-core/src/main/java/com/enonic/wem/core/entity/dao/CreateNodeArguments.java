@@ -4,6 +4,7 @@ package com.enonic.wem.core.entity.dao;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.NodePath;
 
 public class CreateNodeArguments
@@ -18,6 +19,8 @@ public class CreateNodeArguments
 
     private final RootDataSet rootDataSet;
 
+    private final EntityIndexConfig entityIndexConfig;
+
     CreateNodeArguments( Builder builder )
     {
         this.creator = builder.creator;
@@ -25,31 +28,37 @@ public class CreateNodeArguments
         this.name = builder.name;
         this.icon = builder.icon;
         this.rootDataSet = builder.rootDataSet;
+        this.entityIndexConfig = builder.entityIndexConfig;
     }
 
     UserKey creator()
     {
-        return creator;
+        return this.creator;
     }
 
     NodePath parent()
     {
-        return parent;
+        return this.parent;
     }
 
     String name()
     {
-        return name;
+        return this.name;
     }
 
     Icon icon()
     {
-        return icon;
+        return this.icon;
     }
 
     RootDataSet rootDataSet()
     {
-        return rootDataSet;
+        return this.rootDataSet;
+    }
+
+    EntityIndexConfig entityIndexConfig()
+    {
+        return this.entityIndexConfig;
     }
 
     public static Builder newCreateNodeArgs()
@@ -68,6 +77,8 @@ public class CreateNodeArguments
         private Icon icon;
 
         private RootDataSet rootDataSet;
+
+        private EntityIndexConfig entityIndexConfig;
 
         public Builder creator( UserKey value )
         {
@@ -96,6 +107,12 @@ public class CreateNodeArguments
         public Builder rootDataSet( RootDataSet value )
         {
             this.rootDataSet = value;
+            return this;
+        }
+
+        public Builder entityIndexConfig( final EntityIndexConfig value )
+        {
+            this.entityIndexConfig = value;
             return this;
         }
 

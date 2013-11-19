@@ -307,13 +307,13 @@ public final class Node
             baseBuilder.createdTime = this.createdTime;
             baseBuilder.modifiedTime = this.modifiedTime;
             baseBuilder.data = this.data;
-            baseBuilder.entityIndexConfig = this.entityIndexConfig;
 
             baseBuilder.name = this.name;
             baseBuilder.parent = this.parent;
             baseBuilder.creator = this.creator;
             baseBuilder.modifier = this.modifier;
             baseBuilder.icon = this.icon;
+            baseBuilder.entityIndexConfig = this.entityIndexConfig;
             return new Node( baseBuilder );
         }
     }

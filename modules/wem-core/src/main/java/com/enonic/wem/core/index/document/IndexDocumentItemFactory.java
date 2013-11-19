@@ -37,12 +37,12 @@ public class IndexDocumentItemFactory
 
         addIndexBaseTypeEntries( path, indexDocumentItems, propertyValue );
 
-        if ( propertyIndexConfig.isFulltextEnabled() )
+        if ( propertyIndexConfig.fulltextEnabled() )
         {
             indexDocumentItems.add( new IndexDocumentAnalyzedItem( path, propertyValue.asString() ) );
         }
 
-        if ( propertyIndexConfig.isTokenizeEnabled() )
+        if ( propertyIndexConfig.tokenizeEnabled() )
         {
             indexDocumentItems.add( new IndexDocumentTokenizedItem( path, propertyValue.asString() ) );
         }

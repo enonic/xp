@@ -35,6 +35,11 @@ public class GetContentTypeHandler
         final Node contentTypeNode = context.getClient().execute(
             Commands.node().get().byPath( NodePath.newPath( "/content-types/" + contentTypeName.toString() ).build() ) );
 
+        if ( contentTypeNode == null )
+        {
+            return null;
+        }
+
         final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( this.context.getClient() );
         return nodeToContentType( contentTypeNode, contentTypeInheritorResolver );
     }

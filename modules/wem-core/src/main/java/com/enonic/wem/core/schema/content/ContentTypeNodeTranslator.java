@@ -11,6 +11,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
@@ -27,7 +28,6 @@ import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
 public class ContentTypeNodeTranslator
 {
-
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
     public static final String DISPLAY_NAME_PROPERTY = "displayName";
@@ -59,11 +59,16 @@ public class ContentTypeNodeTranslator
 
     private CreateNode createNode( final CreateContentType command, final NodePath parentItemPath )
     {
+        final EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig();
+        final RootDataSet rootDataSet = propertiesToRootDataSet( command );
+        final EntityIndexConfig entityIndexConfig = ContentTypeEntityIndexConfigFactory.create( rootDataSet );
+
         return Commands.node().create().
             name( command.getName() ).
             parent( parentItemPath ).
             icon( command.getIcon() ).
-            data( propertiesToRootDataSet( command ) );
+            data( rootDataSet ).
+            entityIndexConfig( entityIndexConfig );
     }
 
     public RootDataSet propertiesToRootDataSet( final CreateContentType command )

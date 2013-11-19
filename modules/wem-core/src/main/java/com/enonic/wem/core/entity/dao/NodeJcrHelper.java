@@ -68,11 +68,11 @@ class NodeJcrHelper
         }
     }
 
-    Node persistNewItem( final Node node, final javax.jcr.Node parentNodeNode )
+    Node persisteNewNode( final Node node, final javax.jcr.Node parentJcrNode )
     {
         try
         {
-            final javax.jcr.Node newNodeJcrNode = parentNodeNode.addNode( node.name(), JcrConstants.ITEM_NODETYPE );
+            final javax.jcr.Node newNodeJcrNode = parentJcrNode.addNode( node.name(), JcrConstants.ITEM_NODETYPE );
             updateItemNode( newNodeJcrNode, node );
             return NodeJcrMapper.toNode( newNodeJcrNode ).build();
         }
@@ -80,7 +80,7 @@ class NodeJcrHelper
         {
             try
             {
-                final javax.jcr.Node existingNodeNode = parentNodeNode.getNode( node.name() );
+                final javax.jcr.Node existingNodeNode = parentJcrNode.getNode( node.name() );
                 final Node existingNode = NodeJcrMapper.toNode( existingNodeNode ).build();
                 throw new NodeAlreadyExist( existingNode.path() );
             }
@@ -95,7 +95,7 @@ class NodeJcrHelper
         }
     }
 
-    javax.jcr.Node getItemNodeByPath( final NodePath path )
+    javax.jcr.Node getNodeByPath( final NodePath path )
         throws NoNodeAtPathFound
     {
         try
@@ -112,12 +112,12 @@ class NodeJcrHelper
         }
     }
 
-    Node updateItemNode( final javax.jcr.Node nodeNode, final Node node )
+    Node updateItemNode( final javax.jcr.Node jcrNode, final Node node )
     {
         try
         {
-            NodeJcrMapper.toJcr( node, nodeNode );
-            return NodeJcrMapper.toNode( nodeNode ).build();
+            NodeJcrMapper.toJcr( node, jcrNode );
+            return NodeJcrMapper.toNode( jcrNode ).build();
         }
         catch ( RepositoryException e )
         {
@@ -176,7 +176,7 @@ class NodeJcrHelper
     Node getItemByPath( final NodePath path )
         throws NoNodeAtPathFound
     {
-        final javax.jcr.Node nodeNode = getItemNodeByPath( path );
+        final javax.jcr.Node nodeNode = getNodeByPath( path );
         return NodeJcrMapper.toNode( nodeNode ).build();
     }
 
@@ -184,7 +184,9 @@ class NodeJcrHelper
         throws NoNodeAtPathFound
     {
         Nodes.Builder childNodes = Nodes.newNodes();
-        final javax.jcr.Node parentNode = getItemNodeByPath( parent );
+
+        final javax.jcr.Node parentNode = getNodeByPath( parent );
+
         try
         {
             final NodeIterator childIterator = parentNode.getNodes();

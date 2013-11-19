@@ -200,18 +200,19 @@ public class IndexService
         this.reindexService = reindexService;
     }
 
-    public void reIndex( final Index index )
+    public void reIndex( final Index... indices )
         throws Exception
     {
-        if ( !indexExists( index ) )
+        for ( final Index index : indices )
         {
-            return;
+            if ( indexExists( index ) )
+            {
+                deleteIndex( index );
+                elasticsearchIndexService.getIndexStatus( index, true );
+                createIndex( index );
+                elasticsearchIndexService.getIndexStatus( index, true );
+            }
         }
-
-        deleteIndex( index );
-        elasticsearchIndexService.getIndexStatus( index, true );
-        createIndex( index );
-        elasticsearchIndexService.getIndexStatus( index, true );
 
         this.reindexService.reindexContent();
         this.reindexService.reindexAccounts();

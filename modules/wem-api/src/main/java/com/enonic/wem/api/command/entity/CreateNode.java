@@ -3,6 +3,7 @@ package com.enonic.wem.api.command.entity;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.NodePath;
 
 
@@ -16,6 +17,8 @@ public class CreateNode
     private Icon icon;
 
     private RootDataSet data;
+
+    private EntityIndexConfig entityIndexConfig;
 
     public CreateNode parent( final NodePath value )
     {
@@ -47,6 +50,12 @@ public class CreateNode
         return this;
     }
 
+    public CreateNode entityIndexConfig( final EntityIndexConfig entityIndexConfig )
+    {
+        this.entityIndexConfig = entityIndexConfig;
+        return this;
+    }
+
     public String getName()
     {
         return name;
@@ -65,6 +74,11 @@ public class CreateNode
     public RootDataSet getData()
     {
         return data;
+    }
+
+    public EntityIndexConfig getEntityIndexConfig()
+    {
+        return entityIndexConfig;
     }
 
     @Override

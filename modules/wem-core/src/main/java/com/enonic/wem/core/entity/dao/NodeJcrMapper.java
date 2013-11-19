@@ -14,6 +14,7 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
+import com.enonic.wem.core.support.dao.IndexConfigJcrMapper;
 
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 
@@ -31,23 +32,30 @@ class NodeJcrMapper
 
     private static RootDataSetJsonSerializer rootDataSetJsonSerializer = new RootDataSetJsonSerializer();
 
+    private static final IndexConfigJcrMapper indexConfigJcrMapper = new IndexConfigJcrMapper();
+
     private static IconJcrMapper iconJcrMapper = new IconJcrMapper();
 
-    static void toJcr( final Node node, final javax.jcr.Node nodeNode )
+    static void toJcr( final Node node, final javax.jcr.Node jcrNode )
         throws RepositoryException
     {
-        JcrHelper.setPropertyDateTime( nodeNode, CREATED_TIME, node.getCreatedTime() );
-        JcrHelper.setPropertyUserKey( nodeNode, CREATOR, node.getCreator() );
-        JcrHelper.setPropertyDateTime( nodeNode, MODIFIED_TIME, node.getModifiedTime() );
-        JcrHelper.setPropertyUserKey( nodeNode, MODIFIER, node.getModifier() );
+        JcrHelper.setPropertyDateTime( jcrNode, CREATED_TIME, node.getCreatedTime() );
+        JcrHelper.setPropertyUserKey( jcrNode, CREATOR, node.getCreator() );
+        JcrHelper.setPropertyDateTime( jcrNode, MODIFIED_TIME, node.getModifiedTime() );
+        JcrHelper.setPropertyUserKey( jcrNode, MODIFIER, node.getModifier() );
 
         if ( node.icon() != null )
         {
-            iconJcrMapper.toJcr( node.icon(), nodeNode );
+            iconJcrMapper.toJcr( node.icon(), jcrNode );
         }
 
         final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( node.data() );
-        nodeNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
+        jcrNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
+
+        if ( node.getEntityIndexConfig() != null )
+        {
+            indexConfigJcrMapper.toJcr( node.getEntityIndexConfig(), jcrNode );
+        }
     }
 
     static void updateNodeJcrNode( final UpdateNodeArgs updateNodeArgs, final javax.jcr.Node nodeNode )
@@ -63,24 +71,24 @@ class NodeJcrMapper
         nodeNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
     }
 
-    static Node.Builder toNode( final javax.jcr.Node nodeNode )
+    static Node.Builder toNode( final javax.jcr.Node jcrNode )
     {
         try
         {
-            NodePath nodePath = resolveNodePath( nodeNode );
+            NodePath nodePath = resolveNodePath( jcrNode );
             NodePath parentNodePath = nodePath.getParentPath();
 
-            final EntityId entityId = EntityId.from( nodeNode.getIdentifier() );
-            final Node.Builder builder = Node.newNode( entityId, nodeNode.getName() );
+            final EntityId entityId = EntityId.from( jcrNode.getIdentifier() );
+            final Node.Builder builder = Node.newNode( entityId, jcrNode.getName() );
             builder.parent( parentNodePath );
-            builder.creator( JcrHelper.getPropertyUserKey( nodeNode, CREATOR ) );
-            builder.createdTime( getPropertyDateTime( nodeNode, CREATED_TIME ) );
-            builder.modifier( JcrHelper.getPropertyUserKey( nodeNode, MODIFIER ) );
-            builder.modifiedTime( getPropertyDateTime( nodeNode, MODIFIED_TIME ) );
+            builder.creator( JcrHelper.getPropertyUserKey( jcrNode, CREATOR ) );
+            builder.createdTime( getPropertyDateTime( jcrNode, CREATED_TIME ) );
+            builder.modifier( JcrHelper.getPropertyUserKey( jcrNode, MODIFIER ) );
+            builder.modifiedTime( getPropertyDateTime( jcrNode, MODIFIED_TIME ) );
+            builder.icon( iconJcrMapper.toIcon( jcrNode ) );
+            builder.entityIndexConfig( indexConfigJcrMapper.toEntityIndexConfig( jcrNode ) );
 
-            builder.icon( iconJcrMapper.toIcon( nodeNode ) );
-
-            final String dataSetAsString = nodeNode.getProperty( ROOT_DATA_SET ).getString();
+            final String dataSetAsString = jcrNode.getProperty( ROOT_DATA_SET ).getString();
             final DataSet dataSet = rootDataSetJsonSerializer.toObject( dataSetAsString );
             builder.rootDataSet( dataSet.toRootDataSet() );
             return builder;

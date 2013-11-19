@@ -20,6 +20,21 @@ public class NodeBuilderTest
         assertNotNull( myNode.data() );
     }
 
+
+    @Test
+    public void build_given_index_config()
+    {
+        final Node myNode = Node.newNode().
+            entityIndexConfig( EntityIndexConfig.newEntityIndexConfig().
+                analyzer( "myAnalyzer" ).
+                build() ).
+            build();
+
+        assertNotNull( myNode.getEntityIndexConfig() );
+        assertEquals( "myAnalyzer", myNode.getEntityIndexConfig().getAnalyzer() );
+
+    }
+
     @Test
     public void build_property_given_String()
         throws Exception

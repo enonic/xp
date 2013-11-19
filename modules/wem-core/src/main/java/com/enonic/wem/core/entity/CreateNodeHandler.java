@@ -27,7 +27,7 @@ public class CreateNodeHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
-        final NodeJcrDao itemDao = new NodeJcrDao( session );
+        final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
 
         final CreateNodeArguments createNodeArguments = CreateNodeArguments.newCreateNodeArgs().
             creator( UserKey.superUser() ).
@@ -35,17 +35,18 @@ public class CreateNodeHandler
             name( command.getName() ).
             icon( command.getIcon() ).
             rootDataSet( command.getData() ).
+            entityIndexConfig( command.getEntityIndexConfig() ).
             build();
 
-        final Node persistedNode = itemDao.createNode( createNodeArguments );
+        final Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
         session.save();
 
         command.setResult( new CreateNodeResult( persistedNode ) );
 
-        final EntityDao.CreateEntityArgs createEntityArgs = new EntityDao.CreateEntityArgs.Builder().
-            data( command.getData() ).
-            build();
-        entityDao.create( createEntityArgs );
+        // final EntityDao.CreateEntityArgs createEntityArgs = new EntityDao.CreateEntityArgs.Builder().
+        //     data( command.getData() ).
+        //     build();
+        //entityDao.create( createEntityArgs );
 
         indexService.indexNode( persistedNode );
     }

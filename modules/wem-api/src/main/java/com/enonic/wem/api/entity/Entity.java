@@ -113,8 +113,6 @@ public class Entity
         {
             this.id = id;
         }
-
-
     }
 
     public static class EditBuilder<B extends EditBuilder>
@@ -230,7 +228,6 @@ public class Entity
             this.createdTime = entity.createdTime;
             this.modifiedTime = entity.modifiedTime;
             this.data = entity.data;
-            this.entityIndexConfig = entity.entityIndexConfig;
         }
 
         public Builder( final EntityId id )

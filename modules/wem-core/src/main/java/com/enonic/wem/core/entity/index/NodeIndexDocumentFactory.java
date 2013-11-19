@@ -38,13 +38,13 @@ public class NodeIndexDocumentFactory
 
     private static final PropertyIndexConfig metadataPropertyIndexConfig = PropertyIndexConfig.newPropertyIndexConfig().
         enabled( true ).
-        autocompleteEnabled( false ).
+        tokenizedEnabled( false ).
         fulltextEnabled( false ).
         build();
 
     private static final PropertyIndexConfig defaultPropertyIndexConfig = PropertyIndexConfig.newPropertyIndexConfig().
         enabled( true ).
-        autocompleteEnabled( true ).
+        tokenizedEnabled( true ).
         fulltextEnabled( true ).
         build();
 

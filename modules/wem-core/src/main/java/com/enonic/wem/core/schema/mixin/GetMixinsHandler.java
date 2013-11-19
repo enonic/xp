@@ -6,7 +6,6 @@ import java.util.List;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.entity.GetNodeByPath;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
@@ -63,18 +62,17 @@ public final class GetMixinsHandler
 
     private Mixin getMixin( final MixinName qualifiedName )
     {
-        try
-        {
-            final NodePath nodePath = new NodePath( "/mixins/" + qualifiedName.toString() );
-            final GetNodeByPath getNodeByPathCommand = Commands.node().get().byPath( nodePath );
+        final NodePath nodePath = new NodePath( "/mixins/" + qualifiedName.toString() );
+        final GetNodeByPath getNodeByPathCommand = Commands.node().get().byPath( nodePath );
 
-            context.getClient().execute( getNodeByPathCommand );
-            final Node node = getNodeByPathCommand.getResult();
+        final Node node = context.getClient().execute( getNodeByPathCommand );
+
+        if ( node != null )
+        {
             return MIXIN_NODE_TRANSLATOR.fromNode( node );
         }
-        catch ( NoNodeAtPathFound e )
+        else
         {
-            // TODO: swallow for now...
             return null;
         }
     }

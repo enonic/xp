@@ -30,7 +30,7 @@ public class NodeJcrDao
 
         // TODO: A temporary hack to ensure that paths to root containers of different types of items already exists
         ensurePath( new NodePath( "mixins" ) );
-        ensurePath( new NodePath( "content-types"));
+        ensurePath( new NodePath( "content-types" ) );
     }
 
     private void ensurePath( final NodePath path )
@@ -45,7 +45,7 @@ public class NodeJcrDao
         Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
                                      "Path to parent Item must be absolute: " + createNodeArguments.parent() );
 
-        final javax.jcr.Node parentNodeNode = jcrHelper.getItemNodeByPath( createNodeArguments.parent() );
+        final javax.jcr.Node parentNodeNode = jcrHelper.getNodeByPath( createNodeArguments.parent() );
 
         final Node newNode = Node.newNode().
             createdTime( DateTime.now() ).
@@ -54,9 +54,10 @@ public class NodeJcrDao
             name( createNodeArguments.name() ).
             icon( createNodeArguments.icon() ).
             rootDataSet( createNodeArguments.rootDataSet() ).
+            entityIndexConfig( createNodeArguments.entityIndexConfig() ).
             build();
 
-        return jcrHelper.persistNewItem( newNode, parentNodeNode );
+        return jcrHelper.persisteNewNode( newNode, parentNodeNode );
     }
 
     @Override
@@ -88,7 +89,7 @@ public class NodeJcrDao
         Preconditions.checkNotNull( path, "node to delete must be specified" );
         try
         {
-            jcrHelper.getItemNodeByPath( path ).remove();
+            jcrHelper.getNodeByPath( path ).remove();
         }
         catch ( RepositoryException e )
         {

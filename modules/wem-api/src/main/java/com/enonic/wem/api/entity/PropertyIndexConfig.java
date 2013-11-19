@@ -7,9 +7,9 @@ public final class PropertyIndexConfig
 {
     private final boolean enabled;
 
-    private boolean fulltextEnabled;
+    private final boolean fulltextEnabled;
 
-    private boolean tokenizedEnabled;
+    private final boolean tokenizedEnabled;
 
     private PropertyIndexConfig( final Builder builder )
     {
@@ -17,7 +17,6 @@ public final class PropertyIndexConfig
         this.fulltextEnabled = builder.fulltextEnabled;
         this.tokenizedEnabled = builder.tokenizedEnabled;
     }
-
 
     public boolean enabled()
     {
@@ -29,13 +28,12 @@ public final class PropertyIndexConfig
         return new Builder();
     }
 
-
-    public boolean isFulltextEnabled()
+    public boolean fulltextEnabled()
     {
         return fulltextEnabled;
     }
 
-    public boolean isTokenizeEnabled()
+    public boolean tokenizeEnabled()
     {
         return tokenizedEnabled;
     }
@@ -89,9 +87,9 @@ public final class PropertyIndexConfig
             return this;
         }
 
-        public Builder autocompleteEnabled( final boolean autocompleteEnabled )
+        public Builder tokenizedEnabled( final boolean tokenizedEnabled )
         {
-            this.tokenizedEnabled = autocompleteEnabled;
+            this.tokenizedEnabled = tokenizedEnabled;
             return this;
         }
     }

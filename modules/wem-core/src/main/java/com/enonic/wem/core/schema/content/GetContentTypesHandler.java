@@ -25,7 +25,11 @@ public final class GetContentTypesHandler
     {
         final ContentTypes contentTypes = getContentTypes( command.getContentTypeNames() );
 
-        if ( !command.isMixinReferencesToFormItems() )
+        if ( contentTypes == null )
+        {
+            command.setResult( ContentTypes.empty() );
+        }
+        else if ( !command.isMixinReferencesToFormItems() )
         {
             command.setResult( contentTypes );
         }
@@ -40,6 +44,11 @@ public final class GetContentTypesHandler
         final Set<NodePath> nodePaths = createNodePaths( contentTypeNames );
 
         final Nodes nodes = context.getClient().execute( Commands.node().get().byPaths( NodePaths.from( nodePaths ) ) );
+
+        if ( nodes == null )
+        {
+            return null;
+        }
 
         return nodesToContentTypes( nodes );
     }

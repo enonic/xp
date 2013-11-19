@@ -25,7 +25,7 @@ public class EntityIndexConfigTest
         throws Exception
     {
         final PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).autocompleteEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).tokenizedEnabled( true ).fulltextEnabled( true ).build();
 
         final Property myProperty = new Property( "test", new Value.String( "testValue" ) );
 
@@ -44,7 +44,7 @@ public class EntityIndexConfigTest
         throws Exception
     {
         final PropertyIndexConfig propertyIndexConfig =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).autocompleteEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).tokenizedEnabled( true ).fulltextEnabled( true ).build();
 
         final EntityIndexConfig indexConfig =
             EntityIndexConfig.newEntityIndexConfig().addPropertyIndexConfig( "test/path", propertyIndexConfig ).build();
@@ -61,16 +61,16 @@ public class EntityIndexConfigTest
         throws Exception
     {
         final PropertyIndexConfig propertyIndexConfig1 =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).autocompleteEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).tokenizedEnabled( true ).fulltextEnabled( true ).build();
 
         final PropertyIndexConfig propertyIndexConfig2 =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).autocompleteEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).tokenizedEnabled( true ).fulltextEnabled( true ).build();
 
         final PropertyIndexConfig propertyIndexConfig3 =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).autocompleteEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).tokenizedEnabled( true ).fulltextEnabled( true ).build();
 
         final PropertyIndexConfig propertyIndexConfig4 =
-            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).autocompleteEnabled( true ).fulltextEnabled( true ).build();
+            PropertyIndexConfig.newPropertyIndexConfig().enabled( true ).tokenizedEnabled( true ).fulltextEnabled( true ).build();
 
         final EntityIndexConfig indexConfig = EntityIndexConfig.newEntityIndexConfig().
             addPropertyIndexConfig( "test", propertyIndexConfig1 ).
