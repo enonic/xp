@@ -7,6 +7,7 @@ import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.editor.ContentEditor;
 
 public final class DeleteContent
     extends Command<DeleteContentResult>
@@ -14,6 +15,8 @@ public final class DeleteContent
     private ContentSelector selector;
 
     private AccountKey deleter;
+
+    private ContentEditor editor;
 
     public ContentSelector getSelector()
     {
@@ -35,6 +38,17 @@ public final class DeleteContent
     {
         this.deleter = deleter;
         return this;
+    }
+
+    public DeleteContent editor( final ContentEditor editor )
+    {
+        this.editor = editor;
+        return this;
+    }
+
+    public ContentEditor getEditor()
+    {
+        return this.editor;
     }
 
     @Override
