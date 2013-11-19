@@ -352,9 +352,18 @@ public class ContentResource
 
         for ( final ContentPath contentToDelete : contentsToDelete )
         {
-            final DeleteContent deleteContent = Commands.content().delete();
-            deleteContent.deleter( AccountKey.anonymous() );
-            deleteContent.selector( contentToDelete );
+            final DeleteContent deleteContent = Commands.content().delete().
+                selector( contentToDelete ).
+                deleter( AccountKey.anonymous() ).
+                editor( new ContentEditor()
+                {
+                    @Override
+                    public Content.EditBuilder edit( final Content toBeEdited )
+                    {
+                        return editContent( toBeEdited ).site( null );
+                    }
+                } );
+
             jsonResult.addResult( contentToDelete, client.execute( deleteContent ) );
         }
 
