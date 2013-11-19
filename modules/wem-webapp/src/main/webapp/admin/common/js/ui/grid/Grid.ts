@@ -19,6 +19,12 @@ module api_ui_grid {
 
     }
 
+    export interface GridOnClickData {
+        row:number;
+        cell:number;
+        grid:any;
+    }
+
     export class Grid<T extends Slick.SlickData> extends api_dom.DivEl {
 
         private defaultHeight = 400;
@@ -111,10 +117,10 @@ module api_ui_grid {
             this.slickGrid.invalidateRows(rows);
         }
 
-        setOnClick(callback:(cell) => void) {
+        setOnClick(callback:(event, data:GridOnClickData) => void) {
             this.slickGrid.onClick.subscribe((event, data) => {
-                var el = this.slickGrid.getCellNode(data.row, data.cell);
-                callback(el);
+                event.stopPropagation();
+                callback(event, data);
             });
         }
 

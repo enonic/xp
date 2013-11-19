@@ -7,17 +7,23 @@ module app_contextwindow_image {
 
         private selectedOptionsView:ImageSelectPanelSelectedOptionsView;
 
-        private templateForm:api_ui.Panel;
+        private templatePanel:api_ui.Panel;
+
+        private recentPanel:RecentPanel;
+
+        private deck:api_ui.DeckPanel;
 
         private selectedItem:api_ui_combobox.OptionData<api_content.ContentSummary>;
 
-        private liveEditItems:{[key: number]: api_ui_combobox.OptionData<api_content.ContentSummary>};
+        private liveEditItems:{[key: number]: api_ui_combobox.OptionData<api_content.ContentSummary>
+        };
 
         private liveEditIndex:number = 1;
 
         constructor(contextWindow:app_contextwindow.ContextWindow) {
             super("ImageSelectPanel");
             this.addClass("select-panel");
+            var comboBoxWrapper = new api_dom.DivEl();
             this.contextWindow = contextWindow;
 
             this.liveEditItems = {};
@@ -29,21 +35,33 @@ module app_contextwindow_image {
                     this.itemRemoved();
                 }
             });
+            this.selectedOptionsView.hide();
             this.comboBox = this.createComboBox();
 
-            this.templateForm = new api_ui.Panel();
-            this.templateForm.getEl().setInnerHtml("Template goes here");
-            this.templateForm.hide();
 
-            this.appendChild(this.comboBox);
-            this.appendChild(this.selectedOptionsView);
-            this.appendChild(this.templateForm);
+            this.deck = new api_ui.DeckPanel();
+
+            this.recentPanel = new RecentPanel();
+
+            this.templatePanel = new api_ui.Panel();
+            this.templatePanel.getEl().setInnerHtml("Template goes here");
+
+            this.deck.addPanel(this.recentPanel);
+            this.deck.addPanel(this.templatePanel);
+
+            this.deck.showPanel(0);
+
+
+            comboBoxWrapper.appendChild(this.comboBox);
+            comboBoxWrapper.appendChild(this.selectedOptionsView);
+            this.appendChild(comboBoxWrapper);
+            this.appendChild(this.deck);
 
             app_contextwindow.ComponentSelectEvent.on((event) => {
                 if (!event.getComponent().isEmpty()) {
                     this.itemSelected();
                     if (event.getComponent().getItemId()) {
-                        console.log("itemId:",event.getComponent().getItemId());
+                        console.log("itemId:", event.getComponent().getItemId());
 
                         this.comboBox.removeSelectedItem(this.selectedItem, true);
                         var itemId = event.getComponent().getItemId();
@@ -65,16 +83,32 @@ module app_contextwindow_image {
                 this.comboBox.removeSelectedItem(this.selectedItem);
                 this.itemRemoved();
             });
+
+            this.addGridListeners();
+        }
+
+        private addGridListeners() {
+            this.recentPanel.getGrid().setOnClick((event, data:api_ui_grid.GridOnClickData) => {
+                var option = <api_ui_combobox.OptionData<api_content.ContentSummary>> {
+                    //TODO: what is value used for??
+                    value: "test",
+                    displayValue: this.recentPanel.getDataView().getItem(data.row)
+                };
+
+                this.comboBox.selectOption(option);
+            });
         }
 
         private itemSelected() {
+            this.selectedOptionsView.show();
             this.comboBox.hide();
-            this.templateForm.show();
+            this.deck.showPanel(1);
         }
 
         private itemRemoved() {
+            this.selectedOptionsView.hide();
             this.comboBox.show();
-            this.templateForm.hide();
+            this.deck.showPanel(0);
         }
 
         private createComboBox():api_ui_combobox.ComboBox<api_content.ContentSummary> {
@@ -99,6 +133,7 @@ module app_contextwindow_image {
                 onOptionSelected: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
                     console.log("On option selected");
                     this.selectedItem = item;
+                    //TODO: Mocked live use of image
                     this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, item.displayValue.getIconUrl());
                     this.liveEditItems[this.liveEditIndex] = item;
                     this.itemSelected();
@@ -107,6 +142,7 @@ module app_contextwindow_image {
             });
 
             var contentSummaryLoader = new api_form_inputtype_content.ContentSummaryLoader();
+            contentSummaryLoader.setAllowedContentTypes(["image"]);
             contentSummaryLoader.addListener({
                 onLoading: () => {
                     comboBox.setLabel("Searching...");
