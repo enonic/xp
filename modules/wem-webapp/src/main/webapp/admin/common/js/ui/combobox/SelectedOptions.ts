@@ -20,8 +20,8 @@ module api_ui_combobox {
             return options;
         }
 
-        getOptionViews():ComboBoxSelectedOptionView<T>[] {
-            var options:ComboBoxSelectedOptionView<T>[] = [];
+        getOptionViews():SelectedOptionView<T>[] {
+            var options:SelectedOptionView<T>[] = [];
             this.list.forEach( (selectedOption:SelectedOption<T>) => {
                 options.push(selectedOption.getOptionView());
             } );
@@ -32,7 +32,7 @@ module api_ui_combobox {
             this.list.push(selectedOption);
         }
 
-        getByView(view:ComboBoxSelectedOptionView<T>) {
+        getByView(view:SelectedOptionView<T>) {
 
             for(var i = 0; i < this.list.length; i++) {
                 if( this.list[i].getOptionView() == view ) {

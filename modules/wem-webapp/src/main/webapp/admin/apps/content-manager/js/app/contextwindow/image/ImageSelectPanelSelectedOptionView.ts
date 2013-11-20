@@ -1,6 +1,6 @@
 module app_contextwindow_image {
 
-    export class ImageSelectPanelSelectedOptionView extends api_ui_combobox.ComboBoxSelectedOptionView<api_content.ContentSummary> {
+    export class ImageSelectPanelSelectedOptionView extends api_ui_combobox.SelectedOptionView<api_content.ContentSummary> {
 
         private content:api_content.ContentSummary;
 

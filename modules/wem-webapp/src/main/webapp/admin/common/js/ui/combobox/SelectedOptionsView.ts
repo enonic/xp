@@ -1,6 +1,6 @@
 module api_ui_combobox {
 
-    export class ComboBoxSelectedOptionsView<T> extends api_dom.DivEl {
+    export class SelectedOptionsView<T> extends api_dom.DivEl {
 
         private selectedOptions:SelectedOptions<T>;
 
@@ -12,12 +12,12 @@ module api_ui_combobox {
             this.selectedOptions = value;
         }
 
-        getSelectedOptionViews(): ComboBoxSelectedOptionView<T>[] {
+        getSelectedOptionViews(): SelectedOptionView<T>[] {
             return this.selectedOptions.getOptionViews();
         }
 
         createSelectedOption(option:Option<T>, index:number):SelectedOption<T> {
-            return new SelectedOption<T>(new ComboBoxSelectedOptionView(option), option, index);
+            return new SelectedOption<T>(new SelectedOptionView(option), option, index);
         }
 
         addOptionView(selectedOption:SelectedOption<T>) {

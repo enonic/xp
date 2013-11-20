@@ -3,9 +3,9 @@
 ///<reference path='Option.ts' />
 ///<reference path='ComboBoxConfig.ts' />
 ///<reference path='ComboBoxListener.ts' />
-///<reference path='ComboBoxSelectedOptionView.ts' />
-///<reference path='ComboBoxSelectedOptionsView.ts' />
+///<reference path='SelectedOptionView.ts' />
+///<reference path='SelectedOptionsView.ts' />
 ///<reference path='SelectedOption.ts' />
 ///<reference path='SelectedOptions.ts' />
 ///<reference path='SelectedOptionsCtrl.ts' />
-///<reference path='ComboBoxSelectedOptionsViewListener.ts' />
+///<reference path='SelectedOptionsViewListener.ts' />

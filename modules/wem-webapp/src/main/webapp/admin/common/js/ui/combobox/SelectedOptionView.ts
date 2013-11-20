@@ -1,10 +1,10 @@
 module api_ui_combobox {
 
-    export class ComboBoxSelectedOptionView<T> extends api_dom.DivEl{
+    export class SelectedOptionView<T> extends api_dom.DivEl{
 
         private option:Option<T>;
 
-        private selectedOptionToBeRemovedListeners:{(toBeRemoved:ComboBoxSelectedOptionView<T>): void;}[] = [];
+        private selectedOptionToBeRemovedListeners:{(toBeRemoved:SelectedOptionView<T>): void;}[] = [];
 
         constructor(option:Option<T>) {
             super("ComboBoxSelectedOptionView", "selected-option");
@@ -39,11 +39,11 @@ module api_ui_combobox {
             });
         }
 
-        addSelectedOptionToBeRemovedListener(listener:{(toBeRemoved:ComboBoxSelectedOptionView<T>): void;}) {
+        addSelectedOptionToBeRemovedListener(listener:{(toBeRemoved:SelectedOptionView<T>): void;}) {
             this.selectedOptionToBeRemovedListeners.push(listener);
         }
 
-        removeSelectedOptionToBeRemovedListener(listener:{(toBeRemoved:ComboBoxSelectedOptionView<T>): void;}) {
+        removeSelectedOptionToBeRemovedListener(listener:{(toBeRemoved:SelectedOptionView<T>): void;}) {
             this.selectedOptionToBeRemovedListeners = this.selectedOptionToBeRemovedListeners.filter(function (curr) {
                 return curr != listener;
             });

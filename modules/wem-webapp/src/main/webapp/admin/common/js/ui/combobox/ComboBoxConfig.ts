@@ -8,7 +8,7 @@ module api_ui_combobox {
 
         optionFormatter?: (row:number, cell:number, value:T, columnDef:any, dataContext:Slick.SlickData) => string;
 
-        selectedOptionsView: ComboBoxSelectedOptionsView<T>;
+        selectedOptionsView: SelectedOptionsView<T>;
 
         maximumOccurrences?: number;
 

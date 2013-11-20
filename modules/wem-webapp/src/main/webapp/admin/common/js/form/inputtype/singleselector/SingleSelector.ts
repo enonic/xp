@@ -43,7 +43,7 @@ module api_form_inputtype_singleselector {
         private createComboBoxElement(name:string, property:api_data.Property):api_dom.Element {
             var inputEl = new api_dom.DivEl();
 
-            var selectedOptionsView = new api_ui_combobox.ComboBoxSelectedOptionsView<string>();
+            var selectedOptionsView = new api_ui_combobox.SelectedOptionsView<string>();
             var comboBox = new api_ui_combobox.ComboBox<string>(name, {
                 rowHeight: 24,
                 filter: this.comboboxFilter,

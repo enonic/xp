@@ -1,6 +1,6 @@
 module api_form_inputtype_content_relationship {
 
-    export class RelationshipSelectedOptionView extends api_ui_combobox.ComboBoxSelectedOptionView<api_content.ContentSummary> {
+    export class RelationshipSelectedOptionView extends api_ui_combobox.SelectedOptionView<api_content.ContentSummary> {
 
         private content:api_content.ContentSummary;
 

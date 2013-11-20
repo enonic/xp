@@ -12,7 +12,7 @@ module api_form_inputtype_combobox {
 
         private comboBox:api_ui_combobox.ComboBox<string>;
 
-        private selectedOptionsView:api_ui_combobox.ComboBoxSelectedOptionsView<string>;
+        private selectedOptionsView:api_ui_combobox.SelectedOptionsView<string>;
 
         constructor(config:api_form_inputtype.InputTypeViewConfig<ComboBoxConfig>) {
             super("ComboBox", "combo-box");
@@ -47,7 +47,7 @@ module api_form_inputtype_combobox {
 
             this.input = input;
 
-            this.selectedOptionsView = new api_ui_combobox.ComboBoxSelectedOptionsView<string>();
+            this.selectedOptionsView = new api_ui_combobox.SelectedOptionsView<string>();
             this.comboBox = this.createComboBox(input);
 
             this.config.options.forEach((option:ComboBoxOption) => {

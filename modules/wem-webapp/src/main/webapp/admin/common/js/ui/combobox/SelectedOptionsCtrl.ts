@@ -2,7 +2,7 @@ module api_ui_combobox {
 
     export class SelectedOptionsCtrl<T>{
 
-        private selectedOptionsView:ComboBoxSelectedOptionsView<T>;
+        private selectedOptionsView:SelectedOptionsView<T>;
 
         private maximumOccurrences:number;
 
@@ -10,7 +10,7 @@ module api_ui_combobox {
 
         private selectedOptionRemovedListeners:{(removed:SelectedOption<T>): void;}[] = [];
 
-        constructor(selectedOptionsView:ComboBoxSelectedOptionsView<T>, maximumOccurrences:number) {
+        constructor(selectedOptionsView:SelectedOptionsView<T>, maximumOccurrences:number) {
             this.selectedOptionsView = selectedOptionsView;
             this.selectedOptionsView.setSelectedOptions(this.selectedOptions);
             this.maximumOccurrences = maximumOccurrences;
@@ -41,7 +41,7 @@ module api_ui_combobox {
             var selectedOption:SelectedOption<T> = this.selectedOptionsView.createSelectedOption(option, this.selectedOptions.count());
             var selectedOptionView = selectedOption.getOptionView();
 
-            selectedOptionView.addSelectedOptionToBeRemovedListener((toBeRemoved:ComboBoxSelectedOptionView<T>) => {
+            selectedOptionView.addSelectedOptionToBeRemovedListener((toBeRemoved:SelectedOptionView<T>) => {
                 var selectedOption = this.selectedOptions.getByView(toBeRemoved);
                 this.removeSelectedOption(selectedOption);
             });

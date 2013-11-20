@@ -1,6 +1,6 @@
 module api_form_inputtype_content_image {
 
-    export class SelectedOptionsView extends api_ui_combobox.ComboBoxSelectedOptionsView<SelectedOption> {
+    export class SelectedOptionsView extends api_ui_combobox.SelectedOptionsView<SelectedOption> {
 
         private numberOfOptionsPerRow:number = 3;
 
@@ -8,7 +8,7 @@ module api_form_inputtype_content_image {
 
         private clearer:api_dom.DivEl;
 
-        private editedSelectedOptionView:api_ui_combobox.ComboBoxSelectedOptionView<SelectedOption>;
+        private editedSelectedOptionView:api_ui_combobox.SelectedOptionView<SelectedOption>;
 
         private dialog:ImageSelectorDialog;
 

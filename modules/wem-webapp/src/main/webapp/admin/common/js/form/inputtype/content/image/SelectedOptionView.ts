@@ -1,6 +1,6 @@
 module api_form_inputtype_content_image {
 
-    export class SelectedOptionView extends api_ui_combobox.ComboBoxSelectedOptionView<SelectedOption> {
+    export class SelectedOptionView extends api_ui_combobox.SelectedOptionView<SelectedOption> {
 
         private selectedOption:SelectedOption;
 
