@@ -13,11 +13,11 @@ module app_browse_grid {
 
                 proxy: {
                     type: 'ajax',
-                    //TODO: add real url
-                    url: api_util.getAdminUri('apps/module-manager/js/json/list.json'),
+                    url: api_util.getAdminUri('rest/module/list'),
                     reader: {
                         type: 'json',
-                        root: 'modules'
+                        root: 'result.modules',
+                        totalProperty: 'result.total'
                     }
                 }
 

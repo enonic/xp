@@ -1,33 +1,30 @@
 package com.enonic.wem.admin.rest.resource.module;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.io.FileUtils;
-
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
-
+import com.enonic.wem.admin.json.module.ListModuleJson;
 import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.module.json.InstallModuleResultJson;
+import com.enonic.wem.admin.rest.resource.module.json.ListModuleResultJson;
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.command.module.GetModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.module.ModuleExporter;
 import com.enonic.wem.core.module.ModuleImporter;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+import org.apache.commons.io.FileUtils;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static com.enonic.wem.api.command.Commands.module;
 
@@ -37,6 +34,13 @@ public class ModuleResource
     extends AbstractResource
 {
     private static final String ZIP_MIME_TYPE = "application/zip";
+
+    @GET
+    @javax.ws.rs.Path("list")
+    public ListModuleResultJson list() {
+        Modules modules = client.execute(Commands.module().list());
+        return ListModuleResultJson.result(new ListModuleJson(modules));
+    }
 
     @POST
     @javax.ws.rs.Path("install")

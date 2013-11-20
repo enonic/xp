@@ -1,6 +1,7 @@
 package com.enonic.wem.core.module;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,7 @@ import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
 
 public class GetModulesHandler
-    extends CommandHandler<GetModules>
-{
+        extends CommandHandler<GetModules> {
 
     private SystemConfig systemConfig;
 
@@ -24,34 +24,51 @@ public class GetModulesHandler
 
     @Override
     public void handle()
-        throws Exception
-    {
-        final File modulesDir = systemConfig.getModulesDir();
+            throws Exception {
         final ModuleKeys moduleKeys = command.getModules();
 
-        List<Module> modules = new ArrayList<>();
-        for ( ModuleKey moduleKey : moduleKeys )
-        {
-            final File moduleDir = new File( modulesDir, moduleKey.toString() );
-            if ( moduleDir.exists() && moduleDir.isDirectory() )
-            {
-                Module module = moduleImporter.importModuleFromDirectory( moduleDir.toPath() );
-                modules.add( module );
-            }
+        List<Module> modules;
+
+        if (moduleKeys != null) {
+            modules = getModulesByKeys(moduleKeys);
+        } else {
+            modules = getAllModules();
         }
 
-        command.setResult( Modules.from( modules ) );
+
+        command.setResult(Modules.from(modules));
+    }
+
+    private List<Module> getModulesByKeys(ModuleKeys moduleKeys) throws IOException {
+        List<Module> modules = new ArrayList<>();
+        for (ModuleKey moduleKey : moduleKeys) {
+            final File moduleDir = new File(systemConfig.getModulesDir(), moduleKey.toString());
+            if (moduleDir.exists() && moduleDir.isDirectory()) {
+                Module module = moduleImporter.importModuleFromDirectory(moduleDir.toPath());
+                modules.add(module);
+            }
+        }
+        return modules;
+    }
+
+    private List<Module> getAllModules() throws IOException {
+        List<Module> modules = new ArrayList<>();
+        for (File moduleDir: systemConfig.getModulesDir().listFiles()) {
+            if (moduleDir.isDirectory()) {
+                Module module = moduleImporter.importModuleFromDirectory(moduleDir.toPath());
+                modules.add(module);
+            }
+        }
+        return modules;
     }
 
     @Inject
-    public void setSystemConfig( final SystemConfig systemConfig )
-    {
+    public void setSystemConfig(final SystemConfig systemConfig) {
         this.systemConfig = systemConfig;
     }
 
     @Inject
-    public void setModuleImporter( final ModuleImporter moduleImporter )
-    {
+    public void setModuleImporter(final ModuleImporter moduleImporter) {
         this.moduleImporter = moduleImporter;
     }
 }

@@ -2,9 +2,8 @@ Ext.define('Admin.model.moduleManager.ModuleModel', {
     extend: 'Ext.data.Model',
 
     fields: <any[]> [
-        'moduleKey', 'version', 'displayName', 'url', 'info', 'vendorName', 'vendorUrl',
-        'maxSystemVersion', 'minSystemVersion'
+        'key', 'version', 'displayName', 'name', 'url', 'info', 'vendorName', 'vendorUrl', 'deletable', 'editable'
     ],
 
-    idProperty: 'moduleKey'
+    idProperty: 'key'
 });

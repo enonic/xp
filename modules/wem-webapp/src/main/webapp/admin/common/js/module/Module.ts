@@ -18,7 +18,7 @@ module api_module {
 
         constructor(json:any){
             super(json);
-            this.moduleKey = ModuleKey.fromString(json.moduleKey);
+            this.moduleKey = ModuleKey.fromString(json.key);
             this.displayName = json.displayName;
             this.vendorName = json.vendorName;
             this.vendorUrl = json.vendorUrl;
