@@ -25,7 +25,7 @@ public final class ModuleExporter
     private final ModuleXmlSerializer xmlSerializer = new ModuleXmlSerializer();
 
     public Path exportModuleToZip( final Module module, final Path targetDirectory )
-        throws IOException, URISyntaxException
+        throws IOException
     {
         final Path zipLocation = targetDirectory.resolve( module.getModuleKey().toString() + ".zip" );
         if ( Files.exists( zipLocation ) )
@@ -34,7 +34,15 @@ public final class ModuleExporter
         }
 
         final URI fileUri = zipLocation.toUri();
-        final URI zipUri = new URI( "jar:" + fileUri.getScheme(), fileUri.getPath(), null );
+        final URI zipUri;
+        try
+        {
+            zipUri = new URI( "jar:" + fileUri.getScheme(), fileUri.getPath(), null );
+        }
+        catch ( URISyntaxException e )
+        {
+            throw new RuntimeException( e );
+        }
 
         final ModuleFileEntry parentEntry = module.getModuleDirectoryEntry();
         try (FileSystem zipFs = FileSystems.newFileSystem( zipUri, ZIP_FS_ENV ))
