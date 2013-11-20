@@ -114,7 +114,6 @@ module api_form_inputtype_content_relationship {
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
                 },
-                onSelectedOptionRemoved: null,
                 onOptionSelected: null
             });
 

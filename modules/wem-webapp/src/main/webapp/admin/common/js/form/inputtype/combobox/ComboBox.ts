@@ -14,9 +14,9 @@ module api_form_inputtype_combobox {
 
         private selectedOptionsView:api_ui_combobox.ComboBoxSelectedOptionsView<string>;
 
-        constructor(config?:ComboBoxConfig) {
+        constructor(config:api_form_inputtype.InputTypeViewConfig<ComboBoxConfig>) {
             super("ComboBox", "combo-box");
-            this.config = config;
+            this.config = config.inputConfig;
         }
 
         getHTMLElement():HTMLElement {
@@ -80,7 +80,6 @@ module api_form_inputtype_combobox {
                     grid.getDataView().setFilterArgs({searchString: newValue});
                     grid.getDataView().refresh();
                 },
-                onSelectedOptionRemoved: null,
                 onOptionSelected: null
             });
 

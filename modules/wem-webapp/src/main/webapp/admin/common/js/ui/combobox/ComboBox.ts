@@ -4,7 +4,7 @@ module api_ui_combobox {
 
         private icon:api_dom.ImgEl;
 
-        private input:api_ui.TextInput;
+        private input:ComboBoxInput;
 
         private dropdownData:api_ui_grid.DataView<OptionData<T>>;
 
@@ -14,13 +14,11 @@ module api_ui_combobox {
 
         private optionFormatter:(row:number, cell:number, value:T, columnDef:any, dataContext:OptionData<T>) => string;
 
-        private maximumOccurrences:number;
-
         private filter:(item:T, args:any) => boolean;
 
-        private selectedOptions:OptionData<T>[] = [];
+        private multipleSelections:boolean = false;
 
-        private selectedOptionsView:ComboBoxSelectedOptionsView<T>;
+        private selectedOptionsCtrl:SelectedOptionsCtrl<T>;
 
         private maxHeight:number = 200;
 
@@ -39,8 +37,11 @@ module api_ui_combobox {
             this.getEl().setAttribute("name", name);
 
             this.optionFormatter = config.optionFormatter;
-            this.selectedOptionsView = config.selectedOptionsView;
-            this.maximumOccurrences = config.maximumOccurrences != undefined ? config.maximumOccurrences : 0;
+            if( config.selectedOptionsView != null ) {
+                this.selectedOptionsCtrl = new SelectedOptionsCtrl(config.selectedOptionsView,
+                                                                   config.maximumOccurrences != null ? config.maximumOccurrences : 0);
+                this.multipleSelections = true;
+            }
             this.filter = config.filter;
             this.rowHeight = config.rowHeight || 24;
 
@@ -49,8 +50,7 @@ module api_ui_combobox {
                 this.appendChild(this.icon);
             }
 
-            this.input = new api_ui.TextInput();
-            this.input.setPlaceholder("Type to search...");
+            this.input = new ComboBoxInput();
             this.appendChild(this.input);
 
             this.emptyDropdown = new api_dom.DivEl(null, "empty-options");
@@ -92,11 +92,21 @@ module api_ui_combobox {
         }
 
         countSelected():number {
-            return this.selectedOptions.length;
+            if( this.multipleSelections ) {
+                return this.selectedOptionsCtrl.count();
+            }
+            else {
+                throw new Error("Not supported yet");
+            }
         }
 
         getSelectedData():OptionData<T>[] {
-            return this.selectedOptions;
+            if( this.multipleSelections ) {
+                return this.selectedOptionsCtrl.getOptions();;
+            }
+            else {
+                throw new Error("Not supported yet");
+            }
         }
 
         isDropdownShown():boolean {
@@ -158,11 +168,16 @@ module api_ui_combobox {
         }
 
         getValue():string {
-            var values = [];
-            this.selectedOptions.forEach((item:OptionData<T>) => {
-                values.push(item.value);
-            });
-            return values.join(';');
+            if( this.multipleSelections ) {
+                var values = [];
+                this.selectedOptionsCtrl.getOptions().forEach((item:OptionData<T>) => {
+                    values.push(item.value);
+                });
+                return values.join(';');
+            }
+            else {
+                throw new Error("Not supported yet");
+            }
         }
 
         setInputIconUrl(iconUrl:string) {
@@ -245,13 +260,18 @@ module api_ui_combobox {
             this.dropdownData.subscribeOnRowCountChanged((e, args) => {
                 this.updateDropdownStyles();
             });
-            if (this.selectedOptionsView) {
-                this.selectedOptionsView.addListener({
-                    onSelectedOptionRemoved: (item:OptionData<T>) => {
-                        this.removeSelectedItem(item);
-                    }
-                });
+
+            if (this.multipleSelections) {
+                this.selectedOptionsCtrl.addSelectedOptionRemovedListener(
+                    (removedOption:SelectedOption<T>) => {
+                        this.handleSelectedOptionRemoved(removedOption);
+                    });
             }
+        }
+
+        private handleSelectedOptionRemoved(removedSelectedOption:SelectedOption<T>) {
+            this.updateDropdownStyles();
+            this.input.openForTypingAndFocus();
         }
 
         private selectRow(index:number) {
@@ -260,24 +280,22 @@ module api_ui_combobox {
             this.selectOption(item);
         }
 
-        selectOption(item:OptionData<T>, silent:boolean = false) {
-            if (!this.canSelect(item)) {
+        selectOption(option:OptionData<T>, silent:boolean = false) {
+
+            var added = this.selectedOptionsCtrl.addOption(option);
+            if(!added) {
                 return;
             }
-
-            this.selectedOptions.push(item);
-            this.selectedOptionsView.addItem(item);
 
             this.updateDropdownStyles();
             this.hideDropdown();
 
             if (this.maximumOccurrencesReached()) {
-                this.input.setPlaceholder("Maximum reached");
-                this.input.getEl().setDisabled(true);
+                this.input.setMaximumReached();
                 this.moveFocuseToNextInput();
             }
             if (!silent) {
-                this.notifyOptionSelected(item);
+                this.notifyOptionSelected(option);
             }
         }
 
@@ -308,31 +326,16 @@ module api_ui_combobox {
             }
         }
 
-        maximumOccurrencesReached() {
-            if (this.maximumOccurrences == 0) {
-                return false;
-            }
-            return this.selectedOptions.length >= this.maximumOccurrences;
-        }
+        maximumOccurrencesReached():boolean {
+            api_util.assert(this.multipleSelections, "No point of calling maximumOccurrencesReached when no multiple selections are enabled");
 
-        private canSelect(item:OptionData<T>):boolean {
-            if (this.maximumOccurrencesReached()) {
-                return false;
-            }
-
-            for (var i = 0; i < this.selectedOptions.length; i++) {
-                if (this.selectedOptions[i].value == item.value) {
-                    return false;
-                }
-            }
-
-            return true;
+            return this.selectedOptionsCtrl.maximumOccurrencesReached();
         }
 
         private updateDropdownStyles() {
             var stylesHash = {};
-            this.selectedOptions.forEach((item:OptionData<T>) => {
-                var row = this.dropdownData.getRowById(item.value);
+            this.selectedOptionsCtrl.getOptions().forEach((option:OptionData<T>) => {
+                var row = this.dropdownData.getRowById(option.value);
                 stylesHash[row] = {option: "selected"};
             });
             this.dropdown.setCellCssStyles("selected", stylesHash);
@@ -371,23 +374,14 @@ module api_ui_combobox {
             }
         }
 
-        removeSelectedItem(item:OptionData<T>, silent:boolean = false) {
-            var itemIndex = this.selectedOptions.indexOf(item);
-            if (itemIndex < 0) {
-                return;
-            }
-            this.selectedOptions.splice(itemIndex, 1);
-            this.selectedOptionsView.removeItem(item, silent);
+        removeSelectedItem(optionToRemove:OptionData<T>, silent:boolean = false) {
+            api_util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+
+            this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
 
             this.updateDropdownStyles();
 
-            this.input.setPlaceholder("Type to search...");
-            this.input.getEl().setDisabled(false);
-            this.input.getHTMLElement().focus();
-
-            if (!silent) {
-                this.notifySelectedOptionRemoved(item);
-            }
+            this.input.openForTypingAndFocus();
         }
 
         private adjustDropdownSize() {
@@ -441,12 +435,12 @@ module api_ui_combobox {
             });
         }
 
-        private notifySelectedOptionRemoved(item:OptionData<T>) {
-            this.listeners.forEach((listener:ComboBoxListener<T>) => {
-                if (listener.onSelectedOptionRemoved) {
-                    listener.onSelectedOptionRemoved(item);
-                }
-            });
+        addSelectedOptionRemovedListener(listener:{(removed:SelectedOption<T>): void;}) {
+            this.selectedOptionsCtrl.addSelectedOptionRemovedListener(listener);
+        }
+
+        removeSelectedOptionRemovedListener(listener:{(removed:SelectedOption<T>): void;}) {
+            this.selectedOptionsCtrl.removeSelectedOptionRemovedListener(listener);
         }
     }
 

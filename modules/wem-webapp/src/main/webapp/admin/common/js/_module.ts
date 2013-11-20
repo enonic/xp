@@ -61,6 +61,7 @@
 ///<reference path='form/inputtype/content/relationship/_module.ts' />
 ///<reference path='form/inputtype/content/image/_module.ts' />
 ///<reference path='form/inputtype/combobox/_module.ts' />
+///<reference path='form/inputtype/singleselector/_module.ts' />
 ///<reference path='form/inputtype/text/_module.ts' />
 ///<reference path='form/formitemset/_module.ts' />
 ///<reference path='form/layout/_module.ts' />

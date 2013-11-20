@@ -75,7 +75,6 @@ module api_form_inputtype_content_image {
 
             this.input = input;
 
-            this.selectedOptionsView = new SelectedOptionsView();
             this.comboBox = this.createComboBox(input);
 
             if (properties != null) {
@@ -169,6 +168,8 @@ module api_form_inputtype_content_image {
 
         private createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<SelectedOption> {
 
+            this.selectedOptionsView = new SelectedOptionsView();
+
             var comboBoxConfig = <api_ui_combobox.ComboBoxConfig<SelectedOption>> {
                 rowHeight: 50,
                 optionFormatter:  this.optionFormatter,
@@ -180,14 +181,15 @@ module api_form_inputtype_content_image {
 
             this.loadOptions("");
 
+            comboBox.addSelectedOptionRemovedListener(()=>{
+                if (!comboBox.maximumOccurrencesReached()) {
+                    this.uploadButton.setEnabled(true);
+                }
+            });
+
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
-                },
-                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<SelectedOption>) => {
-                    if (!comboBox.maximumOccurrencesReached()) {
-                        this.uploadButton.setEnabled(true);
-                    }
                 },
                 onOptionSelected: (item:api_ui_combobox.OptionData<SelectedOption>) => {
                     if (this.comboBox.maximumOccurrencesReached()) {

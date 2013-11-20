@@ -1,68 +1,31 @@
 module api_ui_combobox {
 
-    export class ComboBoxSelectedOptionsView<T> extends api_dom.DivEl implements api_event.Observable {
+    export class ComboBoxSelectedOptionsView<T> extends api_dom.DivEl {
 
-        private listeners:ComboBoxSelectedOptionsViewListener<T>[] = [];
-
-        private selectedOptionsList:ComboBoxSelectedOption<T>[] = [];
+        private selectedOptions:SelectedOptions<T>;
 
         constructor() {
             super("ComboBoxSelectedOptionsView", "selected-options");
         }
 
-        addItem(item:OptionData<T>) {
-            var optionEl = new api_dom.DivEl(null, 'selected-option');
-            var removeButton = new api_dom.AEl(null, "remove");
-            var optionValue = new api_dom.DivEl(null, 'option-value');
-
-            optionEl.appendChild(removeButton);
-            optionEl.appendChild(optionValue);
-            optionValue.getEl().setInnerHtml(item.displayValue.toString());
-
-
-            this.appendChild(optionEl);
-
-            removeButton.getEl().addEventListener('click', (event:Event) => {
-                this.removeItem(item);
-
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            });
+        setSelectedOptions(value:SelectedOptions<T>) {
+            this.selectedOptions = value;
         }
 
-        addOption(element:api_dom.Element, item:OptionData<T>) {
-            this.selectedOptionsList.push(new ComboBoxSelectedOption<T>(element, item));
+        getSelectedOptionViews(): ComboBoxSelectedOptionView<T>[] {
+            return this.selectedOptions.getOptionViews();
         }
 
-
-        removeItem(item:OptionData<T>, silent:boolean = false) {
-            this.selectedOptionsList.forEach((optionView:ComboBoxSelectedOption) => {
-                if (optionView.getItem() == item) {
-                    optionView.getOptionEl().remove();
-                }
-            });
-            if (!silent) {
-                this.notifySelectedOptionRemoved(item);
-            }
+        createSelectedOption(option:OptionData<T>, index:number):SelectedOption<T> {
+            return new SelectedOption<T>(new ComboBoxSelectedOptionView(option), option, index);
         }
 
-        addListener(listener:ComboBoxSelectedOptionsViewListener<T>) {
-            this.listeners.push(listener);
+        addOptionView(selectedOption:SelectedOption<T>) {
+            this.appendChild(selectedOption.getOptionView());
         }
 
-        removeListener(listener:ComboBoxSelectedOptionsViewListener<T>) {
-            this.listeners = this.listeners.filter(function (curr) {
-                return curr != listener;
-            });
-        }
-
-        notifySelectedOptionRemoved(item:OptionData<T>) {
-            this.listeners.forEach((listener:ComboBoxSelectedOptionsViewListener<T>) => {
-                if (listener.onSelectedOptionRemoved) {
-                    listener.onSelectedOptionRemoved(item);
-                }
-            });
+        removeOptionView(selectedOption:SelectedOption<T>) {
+            selectedOption.getOptionView().remove();
         }
     }
 }

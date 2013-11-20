@@ -1,14 +1,14 @@
 module api_form_inputtype_singleselector {
 
     export interface SingleSelectorConfig {
-        type: string;
+        selectorType: string;
         options: {
             label: string;
             value: string;
         }[]
     }
 
-    export class SingleSelector extends BaseInputTypeView {
+    export class SingleSelector extends api_form_inputtype_support.BaseInputTypeView {
 
         public static TYPE_DROPDOWN = "DROPDOWN";
         public static TYPE_RADIO = "RADIO";
@@ -16,7 +16,7 @@ module api_form_inputtype_singleselector {
 
         private config:SingleSelectorConfig;
 
-        constructor(config:InputTypeViewConfig<SingleSelectorConfig>) {
+        constructor(config:api_form_inputtype.InputTypeViewConfig<SingleSelectorConfig>) {
             super("SingleSelector");
             this.addClass("single-selector");
             this.config = config.inputConfig;
@@ -24,7 +24,7 @@ module api_form_inputtype_singleselector {
 
         createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
 
-            var type = this.config && this.config.type && this.config.type.toUpperCase();
+            var type = this.config && this.config.selectorType && this.config.selectorType.toUpperCase();
             var name = this.getInput().getName() + "-" + index;
             if (SingleSelector.TYPE_RADIO == type) {
                 return this.createRadioElement(name, property);
@@ -55,7 +55,6 @@ module api_form_inputtype_singleselector {
                     grid.getDataView().setFilterArgs({searchString: newValue});
                     grid.getDataView().refresh();
                 },
-                onSelectedOptionRemoved: null,
                 onOptionSelected: null
             });
 

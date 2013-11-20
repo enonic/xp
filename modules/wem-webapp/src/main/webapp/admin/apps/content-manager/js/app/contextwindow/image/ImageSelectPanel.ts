@@ -13,7 +13,7 @@ module app_contextwindow_image {
 
         private deck:api_ui.DeckPanel;
 
-        private selectedItem:api_ui_combobox.OptionData<api_content.ContentSummary>;
+        private selectedOption:api_ui_combobox.OptionData<api_content.ContentSummary>;
 
         private liveEditItems:{[key: number]: api_ui_combobox.OptionData<api_content.ContentSummary>
         };
@@ -29,14 +29,12 @@ module app_contextwindow_image {
             this.liveEditItems = {};
 
             this.selectedOptionsView = new ImageSelectPanelSelectedOptionsView();
-            this.selectedOptionsView.addListener({
-                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
-                    this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.restoreEmptyComponent();
-                    this.itemRemoved();
-                }
-            });
             this.selectedOptionsView.hide();
             this.comboBox = this.createComboBox();
+            this.comboBox.addSelectedOptionRemovedListener( () => {
+                this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.restoreEmptyComponent();
+                this.itemRemoved();
+            });
 
 
             this.deck = new api_ui.DeckPanel();
@@ -63,13 +61,13 @@ module app_contextwindow_image {
                     if (event.getComponent().getItemId()) {
                         console.log("itemId:", event.getComponent().getItemId());
 
-                        this.comboBox.removeSelectedItem(this.selectedItem, true);
+                        this.comboBox.removeSelectedItem(this.selectedOption, true);
                         var itemId = event.getComponent().getItemId();
-                        this.selectedItem = this.liveEditItems[itemId];
-                        this.comboBox.selectOption(this.selectedItem, true);
+                        this.selectedOption = this.liveEditItems[itemId];
+                        this.comboBox.selectOption(this.selectedOption, true);
                     }
-                } else {
-                    this.comboBox.removeSelectedItem(this.selectedItem, true);
+                } else if( this.selectedOption != null ){
+                    this.comboBox.removeSelectedItem(this.selectedOption, true);
                 }
 
 
@@ -80,7 +78,7 @@ module app_contextwindow_image {
             });
 
             app_contextwindow.ComponentRemovedEvent.on((event) => {
-                this.comboBox.removeSelectedItem(this.selectedItem);
+                this.comboBox.removeSelectedItem(this.selectedOption);
                 this.itemRemoved();
             });
 
@@ -122,18 +120,18 @@ module app_contextwindow_image {
 
             var comboBox = new api_ui_combobox.ComboBox("imagePicker", comboBoxConfig);
 
+            comboBox.addSelectedOptionRemovedListener(()=>{
+                this.selectedOption = null;
+                console.log("On selected option removed");
+            });
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     contentSummaryLoader.search(newValue);
                 },
-                onSelectedOptionRemoved: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
-                    this.selectedItem = null;
-                    console.log("On selected option removed");
-                },
                 onOptionSelected: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
                     console.log("On option selected");
-                    this.selectedItem = item;
                     //TODO: Mocked live use of image
+                    this.selectedOption = item;
                     this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, item.displayValue.getIconUrl());
                     this.liveEditItems[this.liveEditIndex] = item;
                     this.itemSelected();

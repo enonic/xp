@@ -6,7 +6,6 @@ module api_ui_combobox {
 
         onOptionSelected: (item:OptionData<T>) => void;
 
-        onSelectedOptionRemoved: (item:OptionData<T>) => void;
 
     }
 

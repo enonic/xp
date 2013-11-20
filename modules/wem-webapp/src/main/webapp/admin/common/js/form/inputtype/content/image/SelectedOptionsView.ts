@@ -2,92 +2,105 @@ module api_form_inputtype_content_image {
 
     export class SelectedOptionsView extends api_ui_combobox.ComboBoxSelectedOptionsView<SelectedOption> {
 
+        private numberOfOptionsPerRow:number = 3;
+
+        private optionCount:number = 0;
+
         private clearer:api_dom.DivEl;
 
-        private selectedItems:api_ui_combobox.OptionData<SelectedOption>[] = [];
+        private editedSelectedOptionView:api_ui_combobox.ComboBoxSelectedOptionView<SelectedOption>;
 
-        private editedItem:api_ui_combobox.OptionData<SelectedOption>;
-
-        private dialog:api_dom.DivEl;
+        private dialog:ImageSelectorDialog;
 
         constructor() {
             super();
+
+            this.dialog = new ImageSelectorDialog();
+            this.dialog.hide();
+            this.appendChild(this.dialog);
+            this.dialog.addSelectedOptionRemovedListener(() => {
+                this.editedSelectedOptionView.notifySelectedOptionToBeRemoved();
+            });
+
             this.clearer = new api_dom.DivEl(null, "clearer");
             this.appendChild(this.clearer);
         }
 
-        addItem(optionData:api_ui_combobox.OptionData<SelectedOption>) {
+        createSelectedOption(option:api_ui_combobox.OptionData<SelectedOption>, index:number):api_ui_combobox.SelectedOption<SelectedOption> {
 
-            if (this.dialog) {
-                this.dialog.remove();
-                if (this.editedItem) {
-                    this.getChildren()[this.selectedItems.indexOf(this.editedItem)].removeClass("editing");
-                }
-            }
-
-            this.selectedItems.push( optionData );
-
-            var imageSelectorOption:SelectedOption = optionData.displayValue;
-            var optionView = new SelectedOptionView(imageSelectorOption);
-            optionView.getEl().addEventListener("click", () => {
-                this.showImageSelectorDialog(optionData);
-            });
-            optionView.insertBeforeEl(this.clearer);
+            return new api_ui_combobox.SelectedOption<SelectedOption>(new SelectedOptionView(option), option, index);
         }
 
-        showImageSelectorDialog(optionData:api_ui_combobox.OptionData<SelectedOption>) {
-            var imageSelectorOption:SelectedOption = optionData.displayValue;
-            var content = imageSelectorOption.getContent();
-            if (this.dialog) {
-                this.dialog.remove();
-            }
-            if (this.editedItem == optionData) {
-                this.getChildren()[this.selectedItems.indexOf(optionData)].removeClass("editing");
-                this.editedItem = null;
-                return;
-            } else {
-                if (this.editedItem) {
-                    this.getChildren()[this.selectedItems.indexOf(this.editedItem)].removeClass("editing");
-                }
-                this.getChildren()[this.selectedItems.indexOf(optionData)].addClass("editing");
-                this.editedItem = optionData;
-            }
+        addOptionView(selectedOption:api_ui_combobox.SelectedOption<SelectedOption>) {
 
-            this.dialog = new api_dom.PEl().addClass("dialog");
+            this.dialog.hide();
+            var optionView:SelectedOptionView = <SelectedOptionView>selectedOption.getOptionView();
 
-            var name = new api_dom.H1El();
-            name.getEl().setInnerHtml(content.getName());
-            this.dialog.appendChild(name);
-
-            var path = new api_dom.PEl();
-            path.getEl().setInnerHtml(content.getPath().toString());
-            this.dialog.appendChild(path);
-
-            var buttonsBar = new api_dom.DivEl().addClass("buttons-bar");
-
-            var editButton = new api_ui.Button("Edit").addClass("edit");
-            buttonsBar.appendChild(editButton);
-
-            var removeButton = new api_ui.Button("Remove").addClass("remove");
-            removeButton.getEl().addEventListener("click", (event) => {
-                this.dialog.remove();
-                this.editedItem = null;
-                var itemIndex = this.selectedItems.indexOf(optionData);
-                this.selectedItems.splice(itemIndex, 1);
-                this.getChildren()[itemIndex].remove();
-                this.notifySelectedOptionRemoved(optionData);
+            optionView.addClickEventListener(() => {
+                this.editedSelectedOptionView = optionView;
+                this.showImageSelectorDialog(selectedOption.getOption(), selectedOption.getIndex());
             });
-            buttonsBar.appendChild(removeButton);
 
-            this.dialog.appendChild(buttonsBar);
+            optionView.insertBeforeEl(this.clearer);
+            this.optionCount++;
+            optionView.setLastInRow(this.isLastInRow(selectedOption.getIndex()));
+            this.refreshStyles();
+        }
 
-            var itemIndex = this.selectedItems.indexOf(optionData);
-            var insertIndex = Math.min(itemIndex - (itemIndex % 3) + 3, this.selectedItems.length) - 1;
+        removeOptionView(selectedOption:api_ui_combobox.SelectedOption<SelectedOption>) {
+            super.removeOptionView(selectedOption);
 
-            this.dialog.insertAfterEl(this.getChildren()[insertIndex]);
+            this.optionCount--;
+
+            this.refreshStyles();
+        }
+
+        showImageSelectorDialog(selectedOption:api_ui_combobox.OptionData<SelectedOption>, selectedOptionIndex:number) {
+
+            var imageSelectorOption:SelectedOption = selectedOption.displayValue;
+            var content = imageSelectorOption.getContent();
+
+            this.dialog.setContent(content);
+            this.dialog.show();
+
+            var selectedOptionViews = this.getSelectedOptionViews();
+
+            for (var i = 0 ; i < selectedOptionViews.length ; i++) {
+                var view = <SelectedOptionView>selectedOptionViews[i];
+                var passedSelectedOption = i >= selectedOptionIndex;
+                if( view.isLastInRow() && passedSelectedOption ) {
+                    this.dialog.insertAfterEl( view );
+                    break;
+                }
+            }
+
+            for (var i = 0 ; i < selectedOptionViews.length ; i++) {
+                selectedOptionViews[i].removeClass("editing");
+            }
+            selectedOptionViews[selectedOptionIndex].addClass("editing");
+        }
+
+        private isLastInRow(index:number):boolean {
+
+            if ((index + 1) == this.optionCount) {
+                // last option
+                return true;
+            }
+            else if ((index + 1) % this.numberOfOptionsPerRow == 0) {
+                // option at end of row
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        private refreshStyles() {
+            this.getSelectedOptionViews().forEach((view:SelectedOptionView, index:number)=>{
+                view.setLastInRow(this.isLastInRow(index));
+            });
         }
 
     }
-
 
 }
