@@ -123,7 +123,7 @@ module api_form_inputtype_content_relationship {
         getValues():api_data.Value[] {
 
             var values:api_data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.Option<api_content.ContentSummary>) => {
                 var value = new api_data.Value(option.value, api_data.ValueTypes.STRING);
                 values.push(value);
             });
@@ -156,7 +156,7 @@ module api_form_inputtype_content_relationship {
             this.contentSummaryLoader.search(searchString);
         }
 
-        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {
+        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.Option<api_content.ContentSummary>[] {
             var options = [];
             contents.forEach((content:api_content.ContentSummary) => {
                 options.push({
@@ -167,7 +167,7 @@ module api_form_inputtype_content_relationship {
             return options;
         }
 
-        private optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.OptionData<api_content.ContentSummary>):string {
+        private optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.Option<api_content.ContentSummary>):string {
             var img = new api_dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());

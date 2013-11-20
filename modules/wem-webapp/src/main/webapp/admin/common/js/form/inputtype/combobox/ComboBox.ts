@@ -89,7 +89,7 @@ module api_form_inputtype_combobox {
         getValues():api_data.Value[] {
 
             var values:api_data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData<string>)  => {
+            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.Option<string>)  => {
                 var value = new api_data.Value(option.value, api_data.ValueTypes.STRING);
                 values.push(value);
             });
@@ -110,7 +110,7 @@ module api_form_inputtype_combobox {
             return false;
         }
 
-        private comboboxFilter(item:api_ui_combobox.OptionData<string>, args) {
+        private comboboxFilter(item:api_ui_combobox.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }

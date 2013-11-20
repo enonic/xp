@@ -2,17 +2,17 @@ module api_ui_combobox {
 
     export class ComboBoxSelectedOptionView<T> extends api_dom.DivEl{
 
-        private option:OptionData<T>;
+        private option:Option<T>;
 
         private selectedOptionToBeRemovedListeners:{(toBeRemoved:ComboBoxSelectedOptionView<T>): void;}[] = [];
 
-        constructor(option:OptionData<T>) {
+        constructor(option:Option<T>) {
             super("ComboBoxSelectedOptionView", "selected-option");
             this.option = option;
             this.layout();
         }
 
-        getOption():OptionData<T> {
+        getOption():Option<T> {
             return this.option;
         }
 

@@ -4,7 +4,7 @@ module api_form_inputtype_content_relationship {
 
         private content:api_content.ContentSummary;
 
-        constructor(option:api_ui_combobox.OptionData<api_content.ContentSummary>) {
+        constructor(option:api_ui_combobox.Option<api_content.ContentSummary>) {
             this.content = option.displayValue;
             super(option);
         }

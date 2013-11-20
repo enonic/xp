@@ -63,7 +63,7 @@ module api_form_inputtype_content_image {
                     var dataPath = api_data.DataPath.fromString(this.config.dataPath.toString() + "[" + this.comboBox.countSelected() + "]");
                     var attachmentName = new api_content.AttachmentName(dataPath, fileName);
                     var imageSelectorOption = SelectedOption.fromUpload(id, attachmentName);
-                    this.comboBox.selectOption(<api_ui_combobox.OptionData<SelectedOption>>{
+                    this.comboBox.selectOption(<api_ui_combobox.Option<SelectedOption>>{
                         value: id,
                         displayValue: imageSelectorOption
                     });
@@ -85,7 +85,7 @@ module api_form_inputtype_content_image {
                         .done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentSummaryJson>) => {
                             var contentSummary = new api_content.ContentSummary(jsonResponse.getResult());
                             var imageSelectorOption = SelectedOption.fromContent(contentSummary);
-                            this.comboBox.selectOption(<api_ui_combobox.OptionData<SelectedOption>>{
+                            this.comboBox.selectOption(<api_ui_combobox.Option<SelectedOption>>{
                                 value: contentSummary.getId(),
                                 displayValue: imageSelectorOption
                             });
@@ -121,7 +121,7 @@ module api_form_inputtype_content_image {
 
         getValues(): api_data.Value[] {
             var values:api_data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.OptionData<SelectedOption>) => {
+            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.Option<SelectedOption>) => {
 
                 // Value is a string either containing: contentId=xx
                 // Value is a string either containing: attachmentName=xx
@@ -191,7 +191,7 @@ module api_form_inputtype_content_image {
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
                 },
-                onOptionSelected: (item:api_ui_combobox.OptionData<SelectedOption>) => {
+                onOptionSelected: (item:api_ui_combobox.Option<SelectedOption>) => {
                     if (this.comboBox.maximumOccurrencesReached()) {
                         this.uploadButton.setEnabled(false);
                     }
@@ -209,8 +209,8 @@ module api_form_inputtype_content_image {
             this.contentSummaryLoader.search(searchString);
         }
 
-        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<SelectedOption>[] {
-            var options:api_ui_combobox.OptionData<SelectedOption>[] = [];
+        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.Option<SelectedOption>[] {
+            var options:api_ui_combobox.Option<SelectedOption>[] = [];
             contents.forEach((content:api_content.ContentSummary) => {
                 var imageSelectorSelectedOption:SelectedOption = SelectedOption.fromContent(content);
 
@@ -222,7 +222,7 @@ module api_form_inputtype_content_image {
             return options;
         }
 
-        private optionFormatter(row:number, cell:number, option:SelectedOption, columnDef:any, dataContext:api_ui_combobox.OptionData<SelectedOption>):string {
+        private optionFormatter(row:number, cell:number, option:SelectedOption, columnDef:any, dataContext:api_ui_combobox.Option<SelectedOption>):string {
 
             if( option.hasContent() ) {
                 var content = option.getContent();

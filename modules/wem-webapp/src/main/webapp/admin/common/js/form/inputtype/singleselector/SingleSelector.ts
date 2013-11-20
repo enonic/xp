@@ -123,7 +123,7 @@ module api_form_inputtype_singleselector {
             return false;
         }
 
-        private comboboxFilter(item:api_ui_combobox.OptionData<string>, args) {
+        private comboboxFilter(item:api_ui_combobox.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }

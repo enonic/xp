@@ -13,9 +13,9 @@ module app_contextwindow_image {
 
         private deck:api_ui.DeckPanel;
 
-        private selectedOption:api_ui_combobox.OptionData<api_content.ContentSummary>;
+        private selectedOption:api_ui_combobox.Option<api_content.ContentSummary>;
 
-        private liveEditItems:{[key: number]: api_ui_combobox.OptionData<api_content.ContentSummary>
+        private liveEditItems:{[key: number]: api_ui_combobox.Option<api_content.ContentSummary>
         };
 
         private liveEditIndex:number = 1;
@@ -87,7 +87,7 @@ module app_contextwindow_image {
 
         private addGridListeners() {
             this.recentPanel.getGrid().setOnClick((event, data:api_ui_grid.GridOnClickData) => {
-                var option = <api_ui_combobox.OptionData<api_content.ContentSummary>> {
+                var option = <api_ui_combobox.Option<api_content.ContentSummary>> {
                     //TODO: what is value used for??
                     value: "test",
                     displayValue: this.recentPanel.getDataView().getItem(data.row)
@@ -128,7 +128,7 @@ module app_contextwindow_image {
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     contentSummaryLoader.search(newValue);
                 },
-                onOptionSelected: (item:api_ui_combobox.OptionData<api_content.ContentSummary>) => {
+                onOptionSelected: (item:api_ui_combobox.Option<api_content.ContentSummary>) => {
                     console.log("On option selected");
                     //TODO: Mocked live use of image
                     this.selectedOption = item;
@@ -156,7 +156,7 @@ module app_contextwindow_image {
             return comboBox;
         }
 
-        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.OptionData<api_content.ContentSummary>[] {
+        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.Option<api_content.ContentSummary>[] {
             var options = [];
             contents.forEach((content:api_content.ContentSummary) => {
                 options.push({
@@ -167,7 +167,7 @@ module app_contextwindow_image {
             return options;
         }
 
-        private optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.OptionData<api_content.ContentSummary>):string {
+        private optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.Option<api_content.ContentSummary>):string {
             var img = new api_dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());

@@ -6,7 +6,7 @@ module api_form_inputtype_content_image {
 
         private lastInRow:boolean;
 
-        constructor(option:api_ui_combobox.OptionData<SelectedOption>) {
+        constructor(option:api_ui_combobox.Option<SelectedOption>) {
             this.selectedOption = option.displayValue;
             super(option);
         }

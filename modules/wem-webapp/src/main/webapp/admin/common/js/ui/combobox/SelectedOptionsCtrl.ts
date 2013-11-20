@@ -27,11 +27,11 @@ module api_ui_combobox {
             return this.count() >= this.maximumOccurrences;
         }
 
-        getOptions():OptionData<T>[] {
+        getOptions():Option<T>[] {
             return this.selectedOptions.getOptions();
         }
 
-        addOption(option:OptionData<T>):boolean {
+        addOption(option:Option<T>):boolean {
 
             console.log( "SelectedOptionsCtrl.addOption", option );
             if (!this.canAdd(option)) {
@@ -51,14 +51,14 @@ module api_ui_combobox {
             return true;
         }
 
-        private canAdd(option:OptionData<T>):boolean {
+        private canAdd(option:Option<T>):boolean {
             if (this.maximumOccurrencesReached()) {
                 return false;
             }
             return this.selectedOptions.getByOption(option) == null;
         }
 
-        removeOption(optionToRemove:OptionData<T>, silent:boolean = false) {
+        removeOption(optionToRemove:Option<T>, silent:boolean = false) {
             api_util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             var selectedOption = this.selectedOptions.getByOption( optionToRemove );

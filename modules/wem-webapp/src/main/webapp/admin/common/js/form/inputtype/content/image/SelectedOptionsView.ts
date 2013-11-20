@@ -26,7 +26,7 @@ module api_form_inputtype_content_image {
             this.appendChild(this.clearer);
         }
 
-        createSelectedOption(option:api_ui_combobox.OptionData<SelectedOption>, index:number):api_ui_combobox.SelectedOption<SelectedOption> {
+        createSelectedOption(option:api_ui_combobox.Option<SelectedOption>, index:number):api_ui_combobox.SelectedOption<SelectedOption> {
 
             return new api_ui_combobox.SelectedOption<SelectedOption>(new SelectedOptionView(option), option, index);
         }
@@ -55,7 +55,7 @@ module api_form_inputtype_content_image {
             this.refreshStyles();
         }
 
-        showImageSelectorDialog(selectedOption:api_ui_combobox.OptionData<SelectedOption>, selectedOptionIndex:number) {
+        showImageSelectorDialog(selectedOption:api_ui_combobox.Option<SelectedOption>, selectedOptionIndex:number) {
 
             var imageSelectorOption:SelectedOption = selectedOption.displayValue;
             var content = imageSelectorOption.getContent();

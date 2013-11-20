@@ -4,11 +4,11 @@ module api_ui_combobox {
 
         private optionView:ComboBoxSelectedOptionView<T>;
 
-        private item:OptionData<T>;
+        private item:Option<T>;
 
         private index:number;
 
-        constructor(optionView:ComboBoxSelectedOptionView<T>, option:OptionData<T>, index:number) {
+        constructor(optionView:ComboBoxSelectedOptionView<T>, option:Option<T>, index:number) {
             api_util.assertNotNull(optionView, "optionView cannot be null");
             api_util.assertNotNull(option, "option cannot be null");
 
@@ -17,7 +17,7 @@ module api_ui_combobox {
             this.index = index;
         }
 
-        getOption():OptionData<T> {
+        getOption():Option<T> {
             return this.item;
         }
 

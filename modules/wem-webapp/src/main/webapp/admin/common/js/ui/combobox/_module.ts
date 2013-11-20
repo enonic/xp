@@ -1,6 +1,6 @@
 ///<reference path='ComboBoxInput.ts' />
 ///<reference path='ComboBox.ts' />
-///<reference path='OptionData.ts' />
+///<reference path='Option.ts' />
 ///<reference path='ComboBoxConfig.ts' />
 ///<reference path='ComboBoxListener.ts' />
 ///<reference path='ComboBoxSelectedOptionView.ts' />

@@ -16,7 +16,7 @@ module api_ui_combobox {
             return this.selectedOptions.getOptionViews();
         }
 
-        createSelectedOption(option:OptionData<T>, index:number):SelectedOption<T> {
+        createSelectedOption(option:Option<T>, index:number):SelectedOption<T> {
             return new SelectedOption<T>(new ComboBoxSelectedOptionView(option), option, index);
         }
 
