@@ -44,11 +44,11 @@ module api_module {
             });
 
             this.uploader.bind('Init', (up, params) => {
-                console.log('uploader init', up, params);
+                // console.log('uploader init', up, params);
             });
 
             this.uploader.bind('FilesAdded', (up, files) => {
-                console.log('uploader files added', up, files);
+                // console.log('uploader files added', up, files);
             });
 
             this.uploader.bind('QueueChanged', (up) => {
@@ -71,13 +71,17 @@ module api_module {
                 if (response && response.status === 200) {
                     this.deferred.resolve(new api_rest.JsonResponse(response.response));
                 } else {
-                    this.deferred.fail(new api_rest.RequestError(response.statusText, response.responseText));
+                    this.deferred.reject(new api_rest.RequestError(response.statusText, response.responseText));
                 }
 
             });
 
             this.uploader.bind('UploadComplete', (up, files) => {
                 console.log('uploader upload complete', up, files);
+            });
+
+            this.uploader.bind('Error', (up, files) => {
+                this.deferred.reject(new api_rest.RequestError(files.code, files.message));
             });
 
             this.uploader.init();

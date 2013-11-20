@@ -24,7 +24,9 @@ module app {
             app_browse.ImportModuleEvent.on(() => {
                 new api_module.InstallModuleRequest().send().done((resp:api_rest.JsonResponse)=> {
                     api_notify.showFeedback('Module \'' + resp.getJson().result.displayName + '\' was installed');
-                });
+                } ).fail((resp:api_rest.JsonResponse)=> {
+                    api_notify.showError('Invalid Module file');
+                } );
             });
 
 
