@@ -1,9 +1,4 @@
 // Globals
-
-
-declare var Ext;
-declare var Admin;
-declare var CONFIG;
 ///<reference path='../../common/js/_module.ts' />
 
 

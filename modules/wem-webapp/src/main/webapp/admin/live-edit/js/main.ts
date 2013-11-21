@@ -1,3 +1,6 @@
+declare var Ext;
+declare var Admin;
+declare var CONFIG;
 
 declare var $liveEdit;
 
