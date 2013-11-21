@@ -12,5 +12,6 @@ public class SiteModule
     {
         final CommandBinder commands = CommandBinder.from( binder() );
         commands.add( DeleteSiteHandler.class );
+        commands.add( UpdateSiteHandler.class );
     }
 }
