@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.enonic.wem.admin.json.site.ModuleConfigs;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
 
@@ -31,7 +32,7 @@ public class SiteTest
 
         Site.EditBuilder editBuilder = Site.editSite( original ).
             template( new SiteTemplateName( "unchanged" ) ).
-            moduleConfigs( newConfigs );
+            moduleConfigs( new ModuleConfigs( newConfigs ) );
 
         // exercise & verify
         assertFalse( editBuilder.isChanges() );
@@ -52,7 +53,7 @@ public class SiteTest
 
         Site.EditBuilder editBuilder = Site.editSite( original ).
             template( new SiteTemplateName( "unchanged" ) ).
-            moduleConfigs( newConfigs );
+            moduleConfigs( new ModuleConfigs( newConfigs ) );
 
         // exercise & verify
         assertFalse( editBuilder.isChanges() );
@@ -73,7 +74,7 @@ public class SiteTest
 
         Site.EditBuilder editBuilder = Site.editSite( original ).
             template( new SiteTemplateName( "unchanged" ) ).
-            moduleConfigs( newConfigs );
+            moduleConfigs( new ModuleConfigs( newConfigs ) );
 
         // exercise & verify
         assertTrue( editBuilder.isChanges() );
@@ -94,7 +95,7 @@ public class SiteTest
 
         Site.EditBuilder editBuilder = Site.editSite( original ).
             template( new SiteTemplateName( "changed" ) ).
-            moduleConfigs( newConfigs );
+            moduleConfigs( new ModuleConfigs( newConfigs ) );
 
         // exercise & verify
         assertTrue( editBuilder.isChanges() );

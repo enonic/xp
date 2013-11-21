@@ -52,14 +52,16 @@ public class ModuleConfigJson
         return moduleConfig;
     }
 
-    public static List<ModuleConfig> toModuleConfigList( final Collection<ModuleConfigJson> moduleConfigs )
+    public static ModuleConfigs toModuleConfigs( final Collection<ModuleConfigJson> moduleConfigs )
     {
         final List<ModuleConfig> list = new ArrayList<>();
-        for ( ModuleConfigJson moduleConfigJson : moduleConfigs )
+
+        for ( final ModuleConfigJson moduleConfigJson : moduleConfigs )
         {
             list.add( moduleConfigJson.getModuleConfig() );
         }
-        return list;
+
+        return new ModuleConfigs( list );
     }
 
 

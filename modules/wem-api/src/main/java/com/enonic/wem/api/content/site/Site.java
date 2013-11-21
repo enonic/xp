@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
+import com.enonic.wem.admin.json.site.ModuleConfigs;
 import com.enonic.wem.api.support.Changes;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
@@ -15,12 +13,12 @@ public class Site
 {
     private final SiteTemplateName templateName;
 
-    private final ImmutableList<ModuleConfig> moduleConfigs;
+    private final ModuleConfigs moduleConfigs;
 
     private Site( final BaseBuilder builder )
     {
         this.templateName = builder.templateName;
-        this.moduleConfigs = new ImmutableList.Builder<ModuleConfig>().addAll( builder.moduleConfigs ).build();
+        this.moduleConfigs = new ModuleConfigs( builder.moduleConfigs );
     }
 
     public SiteTemplateName getTemplateName()
@@ -28,7 +26,7 @@ public class Site
         return templateName;
     }
 
-    public ImmutableList<ModuleConfig> getModuleConfigs()
+    public ModuleConfigs getModuleConfigs()
     {
         return moduleConfigs;
     }
@@ -80,7 +78,7 @@ public class Site
         BaseBuilder( final Site source )
         {
             this.templateName = source.getTemplateName();
-            this.moduleConfigs.addAll( source.getModuleConfigs() );
+            this.moduleConfigs = source.getModuleConfigs().toModuleConfigList();
         }
 
         BaseBuilder()
@@ -109,13 +107,11 @@ public class Site
             return this;
         }
 
-        public EditBuilder moduleConfigs( Iterable<ModuleConfig> configs )
+        public EditBuilder moduleConfigs( ModuleConfigs configs )
         {
-            final ImmutableList.Builder<ModuleConfig> newConfigsBuilder = new ImmutableList.Builder<>();
-            newConfigsBuilder.addAll( configs );
-            changes.recordChange(
-                newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs() ).to( Lists.newArrayList( configs ) ).build() );
-            moduleConfigs = Lists.newArrayList( configs );
+            changes.recordChange( newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs().toModuleConfigList() ).to(
+                configs.toModuleConfigList() ).build() );
+            moduleConfigs = configs.toModuleConfigList();
             return this;
         }
 
@@ -162,9 +158,9 @@ public class Site
             return this;
         }
 
-        public Builder moduleConfigs( Iterable<ModuleConfig> configs )
+        public Builder moduleConfigs( ModuleConfigs configs )
         {
-            moduleConfigs = Lists.newArrayList( configs );
+            moduleConfigs = configs.toModuleConfigList();
             return this;
         }
 
