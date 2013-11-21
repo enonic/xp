@@ -7,6 +7,14 @@ module LiveEdit.component.dragdropsort {
 
         public static createEmptyComponentHtml(component:LiveEdit.component.Component):string {
 
+            var uploaderConfig = {
+                multiSelection: true,
+                buttonsVisible: false,
+                imageVisible: false
+            };
+            var imageUploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
+            console.log("imageuploader", imageUploader);
+
             return '<div class="live-edit-empty-component" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getName() + '">' +
                 '    <div class="' + component.getComponentType().getIconCls() + ' live-edit-empty-component-icon"></div>' +
                 '</div>';

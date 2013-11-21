@@ -14,6 +14,9 @@
 <script type="text/javascript" charset="UTF-8" src="../../admin/live-edit/lib/jquery.noconflict.js"></script>
 <script type="text/javascript" charset="UTF-8" src="../../admin/live-edit/js/_all.js"></script>
 
+<script type="text/javascript" src="../../admin/apps/content-manager/js/_all.js"></script>
+
+
 <%
   }
 %>

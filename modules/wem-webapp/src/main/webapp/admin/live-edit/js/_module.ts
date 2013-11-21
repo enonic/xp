@@ -1,7 +1,11 @@
 // Globals
 
-///<reference path='jquery.d.ts' />
-///<reference path='jqueryui.d.ts' />
+
+declare var Ext;
+declare var Admin;
+declare var CONFIG;
+///<reference path='../../common/js/_module.ts' />
+
 
 ///<reference path='shared/DomHelper.ts' />
 ///<reference path='shared/PlaceholderCreator.ts' />
