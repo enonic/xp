@@ -1,5 +1,23 @@
 package com.enonic.wem.admin.rest.resource.module;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.io.FileUtils;
+
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+
 import com.enonic.wem.admin.json.module.ListModuleJson;
 import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
@@ -14,17 +32,6 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.module.ModuleExporter;
 import com.enonic.wem.core.module.ModuleImporter;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
-import org.apache.commons.io.FileUtils;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static com.enonic.wem.api.command.Commands.module;
 
@@ -37,9 +44,10 @@ public class ModuleResource
 
     @GET
     @javax.ws.rs.Path("list")
-    public ListModuleResultJson list() {
-        Modules modules = client.execute(Commands.module().list());
-        return ListModuleResultJson.result(new ListModuleJson(modules));
+    public ListModuleResultJson list()
+    {
+        Modules modules = client.execute( Commands.module().list() );
+        return ListModuleResultJson.result( new ListModuleJson( modules ) );
     }
 
     @POST
@@ -111,7 +119,8 @@ public class ModuleResource
             final Path moduleFilePath = moduleExporter.exportModuleToZip( module, tempDirectory );
             final byte[] zipContents = Files.readAllBytes( moduleFilePath );
 
-            return Response.ok( zipContents, ZIP_MIME_TYPE ).build();
+            final String fileName = moduleFilePath.getFileName().toString();
+            return Response.ok( zipContents, ZIP_MIME_TYPE ).header( "Content-Disposition", "attachment; filename=" + fileName ).build();
         }
         finally
         {

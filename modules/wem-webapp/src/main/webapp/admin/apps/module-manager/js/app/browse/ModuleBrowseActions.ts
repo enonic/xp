@@ -24,7 +24,7 @@ module app_browse {
             super("Export");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                //TODO: add callback
+                new ExportModuleEvent().fire();
             });
         }
     }
@@ -75,16 +75,10 @@ module app_browse {
         }
 
         updateActionsEnabledState(modules:any[]) {
-
-            if (modules.length <= 0) {
-                this.IMPORT_MODULE.setEnabled(true);
-                this.DELETE_MODULE.setEnabled(false);
-                this.EXPORT_MODULE.setEnabled(false);
-            } else {
-                this.IMPORT_MODULE.setEnabled(true);
-                this.DELETE_MODULE.setEnabled(true);
-                this.EXPORT_MODULE.setEnabled(true);
-            }
+            var modulesSelected = modules.length;
+            this.IMPORT_MODULE.setEnabled( true );
+            this.DELETE_MODULE.setEnabled( modulesSelected > 0 );
+            this.EXPORT_MODULE.setEnabled( modulesSelected === 1 );
         }
 
     }

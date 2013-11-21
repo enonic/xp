@@ -24,5 +24,13 @@ module app_browse {
         }
     }
 
+    export class ExportModuleEvent extends BaseModuleModelEvent {
+        constructor() {
+            super('exportModule', null);
+        }
 
+        static on(handler:(event:ExportModuleEvent) => void) {
+            api_event.onEvent('exportModule', handler);
+        }
+    }
 }

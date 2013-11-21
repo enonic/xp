@@ -34,6 +34,15 @@ module app {
                 } );
             });
 
+            app_browse.ExportModuleEvent.on(() => {
+                var selection = components.gridPanel.getSelection()[0];
+                var moduleSelected = api_module.Module.fromExtModel(selection);
+                var moduleKey: api_module.ModuleKey = moduleSelected.getModuleKey();
+                var exportModule = new api_module.ExportModuleRequest(moduleKey);
+                var moduleExportUrl = exportModule.getRequestPath().toString() + '?moduleKey=' + moduleKey.toString();
+                console.log('Download module file from: ' + moduleExportUrl);
+                window.location.href = moduleExportUrl;
+            });
 
         }
 

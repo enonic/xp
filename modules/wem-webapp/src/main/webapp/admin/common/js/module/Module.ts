@@ -29,8 +29,8 @@ module api_module {
             return this.displayName;
         }
 
-        getModuleKey():string {
-            return this.moduleKey.toString();
+        getModuleKey():ModuleKey {
+            return this.moduleKey;
         }
 
         getVersion():string {
