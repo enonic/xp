@@ -11,9 +11,6 @@ module app_contextwindow_image {
 
         layout() {
 
-            var container = new api_dom.DivEl();
-            container.addClass("container");
-
             var image = new api_dom.ImgEl();
             image.getEl().setSrc(this.content.getIconUrl());
             image.getEl().setHeight("35px");
@@ -32,11 +29,10 @@ module app_contextwindow_image {
                 return false;
             });
 
-            container.appendChild(image);
-            container.appendChild(label);
-            container.appendChild(removeButton);
+            this.appendChild(image);
+            this.appendChild(label);
+            this.appendChild(removeButton);
 
-            this.appendChild(container);
         }
     }
 }

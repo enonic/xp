@@ -31,7 +31,7 @@ module app_contextwindow_image {
             this.selectedOptionsView = new ImageSelectPanelSelectedOptionsView();
             this.selectedOptionsView.hide();
             this.comboBox = this.createComboBox();
-            this.comboBox.addSelectedOptionRemovedListener( () => {
+            this.comboBox.addSelectedOptionRemovedListener(() => {
                 this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.restoreEmptyComponent();
                 this.itemRemoved();
             });
@@ -60,13 +60,14 @@ module app_contextwindow_image {
                     this.itemSelected();
                     if (event.getComponent().getItemId()) {
                         console.log("itemId:", event.getComponent().getItemId());
-
-                        this.comboBox.removeSelectedItem(this.selectedOption, true);
+                        if (this.selectedOption != null) {
+                            this.comboBox.removeSelectedItem(this.selectedOption, true);
+                        }
                         var itemId = event.getComponent().getItemId();
                         this.selectedOption = this.liveEditItems[itemId];
                         this.comboBox.selectOption(this.selectedOption, true);
                     }
-                } else if( this.selectedOption != null ){
+                } else if (this.selectedOption != null) {
                     this.comboBox.removeSelectedItem(this.selectedOption, true);
                 }
 
@@ -78,8 +79,10 @@ module app_contextwindow_image {
             });
 
             app_contextwindow.ComponentRemovedEvent.on((event) => {
-                this.comboBox.removeSelectedItem(this.selectedOption);
-                this.itemRemoved();
+                if (this.selectedOption != null) {
+                    this.comboBox.removeSelectedItem(this.selectedOption);
+                    this.itemRemoved();
+                }
             });
 
             this.addGridListeners();
@@ -120,7 +123,7 @@ module app_contextwindow_image {
 
             var comboBox = new api_ui_combobox.ComboBox("imagePicker", comboBoxConfig);
 
-            comboBox.addSelectedOptionRemovedListener(()=>{
+            comboBox.addSelectedOptionRemovedListener(()=> {
                 this.selectedOption = null;
                 console.log("On selected option removed");
             });

@@ -58,6 +58,7 @@ module api_ui_combobox {
             return this.selectedOptions.getByOption(option) == null;
         }
 
+        //TODO: Theese block contextwindows stuff. Probably because the OptionData.value is faked
         removeOption(optionToRemove:Option<T>, silent:boolean = false) {
             api_util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 

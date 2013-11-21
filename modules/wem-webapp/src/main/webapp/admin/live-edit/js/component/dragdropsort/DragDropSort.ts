@@ -178,7 +178,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
             var bogusComponent = new LiveEdit.component.Component($(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR));
 
-            var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(bogusComponent));
+            var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(bogusComponent).getHTMLElement());
             var emptyComponent = new LiveEdit.component.Component(emptyElement);
 
             bogusComponent.getElement().replaceWith(emptyComponent.getElement());
