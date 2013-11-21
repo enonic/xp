@@ -75,6 +75,11 @@ public final class Commands
         return CONTENT_COMMANDS;
     }
 
+    public static SiteCommands site()
+    {
+        return SITE_COMMANDS;
+    }
+
     public static PageCommands page()
     {
         return PAGE_COMMANDS;

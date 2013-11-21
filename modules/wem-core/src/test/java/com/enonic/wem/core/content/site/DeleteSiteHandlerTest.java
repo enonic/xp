@@ -10,7 +10,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.site.DeleteSite;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
@@ -36,13 +35,10 @@ public class DeleteSiteHandlerTest
     public void delete_site()
         throws Exception
     {
-        DeleteSite command = new DeleteSite().content( ContentId.from( "1" ) );
-
         final Site.Builder siteBuilder = new Site.Builder();
         final Site site = siteBuilder.build();
 
-        final Content.Builder contentBuilder = Content.newContent();
-        contentBuilder.site( site );
+        final Content.Builder contentBuilder = Content.newContent().site( site );
         final Content toBeEdited = contentBuilder.build();
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenAnswer( new Answer<UpdateContent>() {
@@ -57,8 +53,12 @@ public class DeleteSiteHandlerTest
             }
         } );
 
+        final DeleteSite command = new DeleteSite().content( toBeEdited.getId() );
+
         // exercise
         this.handler.setCommand( command );
         handler.handle();
+
+        Mockito.verify( client, Mockito.times( 1 ) ).execute( Mockito.isA( UpdateContent.class ) );
     }
 }

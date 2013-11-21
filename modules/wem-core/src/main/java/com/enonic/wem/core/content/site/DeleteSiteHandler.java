@@ -16,16 +16,18 @@ public class DeleteSiteHandler
     public void handle()
         throws Exception
     {
-        UpdateContent updateContent = Commands.content().update();
-        updateContent.selector( command.getContent() );
-        updateContent.editor( new ContentEditor()
-        {
-            @Override
-            public Content.EditBuilder edit( final Content toBeEdited )
+        UpdateContent updateContent = Commands.content()
+            .update()
+            .selector( command.getContent() )
+            .editor( new ContentEditor()
             {
-                return editContent( toBeEdited ).site( null );
-            }
-        } );
+                @Override
+                public Content.EditBuilder edit( final Content toBeEdited )
+                {
+                    return editContent( toBeEdited ).site( null );
+                }
+            } );
+
         context.getClient().execute( updateContent );
     }
 }
