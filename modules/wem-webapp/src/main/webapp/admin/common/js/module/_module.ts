@@ -5,3 +5,4 @@
 ///<reference path='ModuleResourceRequest.ts' />
 ///<reference path='InstallModuleRequest.ts' />
 ///<reference path='ExportModuleRequest.ts' />
+///<reference path='DeleteModuleRequest.ts' />

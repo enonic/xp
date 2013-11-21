@@ -23,8 +23,11 @@ import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.module.json.InstallModuleResultJson;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleResultJson;
+import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
+import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteResultJson;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.CreateModule;
+import com.enonic.wem.api.command.module.DeleteModule;
 import com.enonic.wem.api.command.module.GetModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
@@ -48,6 +51,19 @@ public class ModuleResource
     {
         Modules modules = client.execute( Commands.module().list() );
         return ListModuleResultJson.result( new ListModuleJson( modules ) );
+    }
+
+
+    @POST
+    @javax.ws.rs.Path("delete")
+    public ModuleDeleteResultJson delete(ModuleDeleteParams params) {
+        DeleteModule command = Commands.module().delete().module(params.getModuleKey());
+        boolean deleted = client.execute(command);
+        if (deleted) {
+            return ModuleDeleteResultJson.result(params.getModuleKey());
+        } else {
+            return ModuleDeleteResultJson.error("Module: '" + params.getModuleKey().toString() + "' as not found");
+        }
     }
 
     @POST

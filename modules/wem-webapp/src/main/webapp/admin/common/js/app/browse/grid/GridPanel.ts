@@ -28,6 +28,7 @@ module api_app_browse_grid {
                 ]
             }, gridConfig));
 
+            var sortable = gridConfig && gridConfig['sortableColumns'] == false ? false : true;
             this.extGridPanel.addDocked(new Ext.toolbar.Toolbar({
                 itemId: 'selectionToolbar',
                 cls: 'admin-white-toolbar',
@@ -35,7 +36,7 @@ module api_app_browse_grid {
                 store: gridStore,
                 gridPanel: this.extGridPanel,
                 resultCountHidden: true,
-                plugins: ['gridToolbarPlugin']
+                plugins: [new Admin.plugin.GridToolbarPlugin({disableSorting: !sortable})]
             }));
 
             this.extGridPanel.on("selectionchange", this.notifySelectionChanged, this, {buffer: 10});

@@ -35,7 +35,8 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
         me.toolbar.insert(1, me.selectAllButton);
         me.toolbar.insert(2, Ext.create('Ext.toolbar.TextItem', {text: ' | '}));
         me.toolbar.insert(3, me.clearSelectionButton);
-        if (!(me.toolbar.store instanceof Ext.data.TreeStore)) {
+        console.log("param : ", this.disableSorting);
+        if (!(me.toolbar.store instanceof Ext.data.TreeStore) && !this.disableSorting) {
             me.toolbar.insert(4, me.tbFill);
             me.toolbar.insert(5, me.orderByButton);
             me.toolbar.insert(6, me.orderByDirectionButton);

@@ -50,6 +50,7 @@ module app_browse {
 
         private createGridConfig() {
             return {
+               sortableColumns: false,
                selModel: Ext.create('Ext.selection.CheckboxModel', {headerWidth: 36})
             }
         }
