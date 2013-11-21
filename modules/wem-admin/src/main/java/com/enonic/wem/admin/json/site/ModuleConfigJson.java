@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.data.RootDataSetJson;
 import com.enonic.wem.api.content.site.ModuleConfig;
+import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.module.ModuleKey;
 
 public class ModuleConfigJson

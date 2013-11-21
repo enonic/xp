@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.enonic.wem.admin.json.site.ModuleConfigs;
 import com.enonic.wem.api.support.Changes;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;

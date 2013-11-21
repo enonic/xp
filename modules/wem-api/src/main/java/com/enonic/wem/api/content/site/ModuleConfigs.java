@@ -1,8 +1,6 @@
-package com.enonic.wem.admin.json.site;
+package com.enonic.wem.api.content.site;
 
 import java.util.List;
-
-import com.enonic.wem.api.content.site.ModuleConfig;
 
 public class ModuleConfigs
 {

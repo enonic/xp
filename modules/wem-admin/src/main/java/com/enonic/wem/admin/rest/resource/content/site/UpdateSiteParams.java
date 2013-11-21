@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.site.ModuleConfigJson;
-import com.enonic.wem.admin.json.site.ModuleConfigs;
 import com.enonic.wem.api.command.content.site.UpdateSite;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.site.Site;

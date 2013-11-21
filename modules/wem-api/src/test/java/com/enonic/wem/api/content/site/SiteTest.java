@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.enonic.wem.admin.json.site.ModuleConfigs;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleKey;
 
