@@ -11,6 +11,12 @@ window.onload = () => {
 
     appPanel.init();
 
+    var moduleDeleteDialog:app_delete.ModuleDeleteDialog = new app_delete.ModuleDeleteDialog();
+    app_browse.DeleteModulePromptEvent.on((event:app_browse.DeleteModulePromptEvent) => {
+        moduleDeleteDialog.setModuleToDelete(event.getModule());
+        moduleDeleteDialog.open();
+    });
+
     if (window.parent["appLoaded"]) {
         window.parent["appLoaded"](getAppName());
     }

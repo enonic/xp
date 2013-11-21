@@ -35,7 +35,8 @@ module app_browse {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                //TODO: add callback
+                var moduleModel:api_module.Module = api_module.Module.fromExtModel(components.gridPanel.getSelection()[0]);
+                new DeleteModulePromptEvent(moduleModel).fire();
             });
         }
     }

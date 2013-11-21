@@ -33,4 +33,20 @@ module app_browse {
             api_event.onEvent('exportModule', handler);
         }
     }
+
+    export class DeleteModulePromptEvent extends BaseModuleModelEvent {
+
+        constructor(moduleModel:api_module.Module) {
+            super('deleteModulePrompt', [moduleModel]);
+        }
+
+        getModule():api_module.Module {
+            return this.getModules()[0];
+        }
+
+        static on(handler:(event:DeleteModulePromptEvent) => void) {
+            api_event.onEvent('deleteModulePrompt', handler);
+        }
+    }
+
 }
