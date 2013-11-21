@@ -1,0 +1,29 @@
+.content-type-list {
+
+  .content-type-list-item {
+    position: relative;
+
+    .overlay {
+      position: absolute;
+      top: 5px;
+      left: 35px;
+      color: white;
+      line-height: 12px;
+      padding: 3px;
+    }
+
+    &.site {
+
+      .overlay {
+        color: black;
+        background-color: orangered;
+
+        &:before {
+          content: "S";
+        }
+      }
+    }
+
+  }
+
+}

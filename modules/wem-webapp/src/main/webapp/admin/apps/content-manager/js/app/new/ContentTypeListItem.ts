@@ -8,10 +8,13 @@ module app_new {
 
         private iconUrl:string;
 
-        constructor(name:string, displayName:string, iconUrl:string) {
+        private siteRoot:boolean;
+
+        constructor(name:string, displayName:string, iconUrl:string, root?:boolean) {
             this.name = name;
             this.displayName = displayName;
             this.iconUrl = iconUrl;
+            this.siteRoot = root || false;
         }
 
         getName() {
@@ -24,6 +27,10 @@ module app_new {
 
         getIconUrl() {
             return this.iconUrl;
+        }
+
+        isSiteRoot() {
+            return this.siteRoot;
         }
     }
 }

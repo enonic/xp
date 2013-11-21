@@ -1,12 +1,12 @@
-module api_content_site{
+module api_content_site_template {
 
-    export class SiteTemplate {
+    export class SiteTemplateSummary {
 
         private name:string;
 
         private displayName:string;
 
-        private vendor:Vendor;
+        private vendor:api_content_site.Vendor;
 
         private modules:api_module.ModuleKey[];
 
@@ -14,10 +14,10 @@ module api_content_site{
 
         private rootContentType:string;
 
-        constructor( json:api_content_site_json.SiteTemplateJson ) {
+        constructor( json:api_content_site_template_json.SiteTemplateSummaryJson ) {
             this.name = json.name;
             this.displayName = json.name;
-            this.vendor = new Vendor( json.vendor );
+            this.vendor = new api_content_site.Vendor( json.vendor );
             json.modules.forEach( (moduleKey:string) => {
                 this.modules.push( api_module.ModuleKey.fromString( moduleKey ) );
             } );
@@ -33,7 +33,7 @@ module api_content_site{
             return this.displayName;
         }
 
-        getVendor():Vendor {
+        getVendor():api_content_site.Vendor {
             return this.vendor;
         }
 
@@ -47,6 +47,15 @@ module api_content_site{
 
         getRootContentType():string {
             return this.rootContentType;
+        }
+
+        static fromJsonArray(jsonArray:api_content_site_template_json.SiteTemplateSummaryJson[]):SiteTemplateSummary[] {
+            var array:SiteTemplateSummary[] = [];
+
+            jsonArray.forEach( (json:api_content_site_template_json.SiteTemplateSummaryJson) => {
+                array.push(new SiteTemplateSummary(json));
+            } );
+            return array;
         }
     }
 }

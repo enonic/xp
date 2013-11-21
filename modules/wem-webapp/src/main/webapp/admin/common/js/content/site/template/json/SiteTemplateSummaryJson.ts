@@ -1,12 +1,12 @@
-module api_content_site_json{
+module api_content_site_template_json{
 
-    export class SiteTemplateJson {
+    export class SiteTemplateSummaryJson {
 
         name:string;
 
         displayName:string;
 
-        vendor:VendorJson;
+        vendor:api_content_site_json.VendorJson;
 
         modules:string[];
 

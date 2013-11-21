@@ -1,15 +1,15 @@
 module app_new {
 
-    export class RecommendedContentTypesList extends BaseContentTypesListView implements api_event.Observable {
+    export class RecommendedContentTypesList extends ContentTypesList implements api_event.Observable {
 
         constructor(className?:string) {
             super("RecommendedContentTypesList", "Recommended", className);
         }
 
-        refresh() {
-            var recommendedArray:api_schema_content.ContentTypeName[] = RecentContentTypes.get().getRecommendedContentTypes();
+        setContentTypes(contentTypes:ContentTypes, siteRootContentTypes:SiteRootContentTypes) {
 
-            this.refreshContentTypes(recommendedArray);
+            var filtered = contentTypes.filter(RecentContentTypes.get().getRecommendedContentTypes());
+            super.setContentTypes(filtered, siteRootContentTypes);
         }
     }
 }

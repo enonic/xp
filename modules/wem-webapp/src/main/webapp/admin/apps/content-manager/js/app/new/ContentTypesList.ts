@@ -4,15 +4,26 @@ module app_new {
 
         private ul:api_dom.UlEl;
 
-        private contentTypes:api_schema_content.ContentTypeSummary[];
+        private contentTypes:ContentTypes;
+
+        private siteRootContentTypes:SiteRootContentTypes;
 
         private listeners:ContentTypesListListener[] = [];
 
-        constructor() {
-            super("ContentTypeList", "content-type-list");
+        constructor(idPrefix:string, title:string, className?:string) {
+            super(idPrefix, className);
+
+            this.createHeader(title);
 
             this.ul = new api_dom.UlEl();
+            this.ul.setClass('content-type-list');
             this.appendChild(this.ul);
+        }
+
+        createHeader(title:string) {
+            var h4 = new api_dom.H4El();
+            h4.getEl().setInnerHtml(title);
+            this.appendChild(h4);
         }
 
         addListener(listener:ContentTypesListListener) {
@@ -31,9 +42,10 @@ module app_new {
             });
         }
 
-        setContentTypes(contentTypes:api_schema_content.ContentTypeSummary[]) {
+        setContentTypes(contentTypes:ContentTypes, siteRootContentTypes:SiteRootContentTypes) {
             this.contentTypes = contentTypes;
-            this.layoutList(contentTypes);
+            this.siteRootContentTypes = siteRootContentTypes;
+            this.layoutList(this.contentTypes.get());
         }
 
         filter(property:string, value:string) {
@@ -43,8 +55,9 @@ module app_new {
             var filteredContentTypes:api_schema_content.ContentTypeSummary[] = [];
             var regexp = new RegExp(value, 'i');
 
-            for (var i = 0; i < this.contentTypes.length; i++) {
-                var contentType = this.contentTypes[i];
+            var contentTypes = this.contentTypes.get();
+            for (var i = 0; i < contentTypes.length; i++) {
+                var contentType = contentTypes[i];
                 if (regexp.test(contentType[property])) {
                     filteredContentTypes.push(contentType);
                 }
@@ -53,7 +66,7 @@ module app_new {
         }
 
         clearFilter():ContentTypesList {
-            this.layoutList(this.contentTypes);
+            this.layoutList(this.contentTypes.get());
             return this;
         }
 
@@ -67,34 +80,17 @@ module app_new {
             }
         }
 
-        private createListItem(contentType:api_schema_content.ContentTypeSummary):ContentTypeListItemEl {
+        private createListItem(contentType:api_schema_content.ContentTypeSummary):ContentTypeListItemView {
 
-            var listItem = new ContentTypeListItem(contentType.getName(), contentType.getDisplayName(), contentType.getIcon());
-            var listItemEl = new ContentTypeListItemEl(listItem);
+            var isSiteRoot = this.siteRootContentTypes.isSiteRoot(contentType.getName());
+            var listItem = new ContentTypeListItem(contentType.getName(), contentType.getDisplayName(), contentType.getIcon(), isSiteRoot);
+            var listItemView = new ContentTypeListItemView(listItem);
 
-            listItemEl.getEl().addEventListener("click", () => {
+            listItemView.getEl().addEventListener("click", () => {
                 this.notifySelected(contentType);
             });
-            return listItemEl;
+            return listItemView;
         }
     }
 
-    export class ContentTypeListItemEl extends api_dom.LiEl {
-
-        constructor(item:ContentTypeListItem) {
-            super("ContentTypeListItem", "content-type-list-item");
-
-            var img = new api_dom.ImgEl(item.getIconUrl());
-
-            var h6 = new api_dom.H6El();
-            h6.getEl().setInnerHtml(item.getDisplayName());
-
-            var p = new api_dom.PEl();
-            p.getEl().setInnerHtml(item.getName());
-
-            this.appendChild(img);
-            this.appendChild(h6);
-            this.appendChild(p);
-        }
-    }
 }

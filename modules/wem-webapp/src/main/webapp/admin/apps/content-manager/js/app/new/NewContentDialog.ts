@@ -8,7 +8,7 @@ module app_new {
 
         private recommendedList:RecommendedContentTypesList;
 
-        private allList:AllContentTypesList;
+        private allList:app_new.AllContentTypesList;
 
         constructor() {
             super({
@@ -39,7 +39,7 @@ module app_new {
             leftColumn.appendChild(this.recentList);
             this.appendChildToContentPanel(leftColumn);
 
-            this.allList = new AllContentTypesList("column column-right block all");
+            this.allList = new app_new.AllContentTypesList("column column-right block all");
             this.allList.addListener({
                 onSelected: (selectedContentType:api_schema_content.ContentTypeSummary) => {
                     this.closeAndIssueNewContentEvent(selectedContentType);
@@ -66,10 +66,17 @@ module app_new {
         }
 
         show() {
-            this.recentList.refresh();
-            this.recommendedList.refresh();
-            this.allList.refresh();
+
             super.show();
+
+            SiteRootContentTypes.load((siteRootContentTypes:SiteRootContentTypes)=>{
+                ContentTypes.load((contentTypes:ContentTypes)=>{
+
+                    this.recentList.setContentTypes(contentTypes, siteRootContentTypes);
+                    this.recommendedList.setContentTypes(contentTypes, siteRootContentTypes);
+                    this.allList.setContentTypes(contentTypes, siteRootContentTypes);
+                });
+            });
         }
     }
 

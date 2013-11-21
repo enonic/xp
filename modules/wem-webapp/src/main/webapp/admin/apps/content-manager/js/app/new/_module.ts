@@ -1,10 +1,12 @@
+///<reference path='ContentTypes.ts' />
 ///<reference path='NewContentEvent.ts' />
 ///<reference path='NewContentDialog.ts' />
 ///<reference path='RecentContentTypes.ts' />
-///<reference path='AllContentTypesList.ts' />
-///<reference path='ContentTypesListListener.ts' />
-///<reference path='ContentTypesList.ts' />
+///<reference path='SiteRootContentTypes.ts' />
 ///<reference path='ContentTypeListItem.ts' />
-///<reference path='BaseContentTypesListView.ts' />
+///<reference path='ContentTypeListItemView.ts' />
+///<reference path='ContentTypesList.ts' />
+///<reference path='ContentTypesListListener.ts' />
 ///<reference path='RecentContentTypesList.ts' />
 ///<reference path='RecommendedContentTypesList.ts' />
+///<reference path='AllContentTypesList.ts' />
