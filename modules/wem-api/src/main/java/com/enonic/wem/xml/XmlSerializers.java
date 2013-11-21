@@ -1,5 +1,7 @@
 package com.enonic.wem.xml;
 
+import com.enonic.wem.xml.template.ImageTemplateXml;
+import com.enonic.wem.xml.template.LayoutTemplateXml;
 import com.enonic.wem.xml.template.PageTemplateXml;
 import com.enonic.wem.xml.template.PartTemplateXml;
 import com.enonic.wem.xml.template.SiteTemplateXml;
@@ -24,6 +26,16 @@ public final class XmlSerializers
     public static XmlSerializer<PartTemplateXml> partTemplate()
     {
         return create( PartTemplateXml.class );
+    }
+
+    public static XmlSerializer<LayoutTemplateXml> layoutTemplate()
+    {
+        return create( LayoutTemplateXml.class );
+    }
+
+    public static XmlSerializer<ImageTemplateXml> imageTemplate()
+    {
+        return create( ImageTemplateXml.class );
     }
 
 }

@@ -3,28 +3,30 @@ package com.enonic.wem.xml.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAnyElement;
-
-import com.google.common.collect.Lists;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.xml.XmlObject;
 
+@XmlRootElement(name = "dataSet")
 public class DataSetXml
-    implements XmlObject<DataSet, DataSet.Builder>
+    implements XmlObject<DataSet, DataSet>, DataXml
 {
+
+    @XmlAttribute(name = "name", required = true)
+    private String name;
+
+    @XmlElements({@XmlElement(name = "dataSet", type = DataSetXml.class), @XmlElement(name = "property", type = PropertyXml.class)})
     private List<DataXml> dataItems = new ArrayList<>();
 
-    @XmlAnyElement
-    List<DataXml> getItems()
+    @Override
+    public String getName()
     {
-        return dataItems;
-    }
-
-    void setItems( List<DataXml> items )
-    {
-        this.dataItems = items;
+        return this.name;
     }
 
     @Override
@@ -32,20 +34,38 @@ public class DataSetXml
     {
         for ( Data data : dataSet )
         {
-            DataXml dataXml = new DataXml();
-            dataXml.from( data );
-            this.dataItems.add( dataXml );
+            if ( data.isProperty() )
+            {
+                final PropertyXml propertyXml = new PropertyXml();
+                propertyXml.from( data.toProperty() );
+                this.dataItems.add( propertyXml );
+            }
+            else if ( data.isDataSet() )
+            {
+                final DataSetXml dataSetXml = new DataSetXml();
+                dataSetXml.name = data.getName();
+                dataSetXml.from( data.toDataSet() );
+                this.dataItems.add( dataSetXml );
+            }
         }
     }
 
     @Override
-    public void to( final DataSet.Builder output )
+    public void to( final DataSet output )
     {
-        final List<Data> datas = Lists.newArrayList();
         for ( DataXml dataXml : this.dataItems )
         {
-            dataXml.to( output );
+            if ( dataXml instanceof PropertyXml )
+            {
+                ( (PropertyXml) dataXml ).to( output );
+            }
+            else if ( dataXml instanceof DataSetXml )
+            {
+                final DataSet dataSet = new DataSet( dataXml.getName() );
+                final DataSetXml dataSetXml = (DataSetXml) dataXml;
+                dataSetXml.to( dataSet );
+                output.add( dataSet );
+            }
         }
-        output.data( datas );
     }
 }

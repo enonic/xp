@@ -1,8 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <page-template>
   <display-name>Main page template</display-name>
   <descriptor>mainmodule-1.0.0:/components/landing-page.xml</descriptor>
   <config>
-    <pause type="Long">10000</pause>
+    <property name="pause" type="Long">10000</property>
+    <dataSet name="thing">
+      <property name="first" type="String">one</property>
+      <property name="second" type="String">two</property>
+    </dataSet>
   </config>
+  <can-render>
+    <content-type>com.enonic.sometype</content-type>
+    <content-type>some.other.type</content-type>
+  </can-render>
 </page-template>

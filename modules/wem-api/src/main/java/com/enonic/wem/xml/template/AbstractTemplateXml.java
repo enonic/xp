@@ -3,7 +3,6 @@ package com.enonic.wem.xml.template;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.XmlObject;
@@ -13,7 +12,7 @@ public abstract class AbstractTemplateXml<I, O>
     implements XmlObject<I, O>
 {
     @XmlElement(name = "display-name", required = false)
-    protected String displayName;
+    private String displayName;
 
     @XmlElement(name = "descriptor", required = false)
     private String descriptor;
@@ -37,9 +36,9 @@ public abstract class AbstractTemplateXml<I, O>
     {
         builder.displayName( this.displayName );
         builder.descriptor( ModuleResourceKey.from( this.descriptor ) );
-        final DataSet.Builder dataSetBuilder = RootDataSet.newDataSet();
-        this.config.to( dataSetBuilder );
-        builder.config( dataSetBuilder.build().toRootDataSet() );
+        final RootDataSet dataSet = new RootDataSet();
+        this.config.to( dataSet );
+        builder.config( dataSet );
     }
 
 }
