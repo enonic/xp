@@ -31,7 +31,7 @@ public class SiteTest
 
         Site.EditBuilder editBuilder = Site.editSite( original ).
             template( new SiteTemplateName( "unchanged" ) ).
-            moduleConfigs( new ModuleConfigs( newConfigs ) );
+            moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
         // exercise & verify
         assertFalse( editBuilder.isChanges() );
@@ -52,7 +52,7 @@ public class SiteTest
 
         Site.EditBuilder editBuilder = Site.editSite( original ).
             template( new SiteTemplateName( "unchanged" ) ).
-            moduleConfigs( new ModuleConfigs( newConfigs ) );
+            moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
         // exercise & verify
         assertFalse( editBuilder.isChanges() );
@@ -73,7 +73,7 @@ public class SiteTest
 
         Site.EditBuilder editBuilder = Site.editSite( original ).
             template( new SiteTemplateName( "unchanged" ) ).
-            moduleConfigs( new ModuleConfigs( newConfigs ) );
+            moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
         // exercise & verify
         assertTrue( editBuilder.isChanges() );
@@ -94,7 +94,7 @@ public class SiteTest
 
         Site.EditBuilder editBuilder = Site.editSite( original ).
             template( new SiteTemplateName( "changed" ) ).
-            moduleConfigs( new ModuleConfigs( newConfigs ) );
+            moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
         // exercise & verify
         assertTrue( editBuilder.isChanges() );

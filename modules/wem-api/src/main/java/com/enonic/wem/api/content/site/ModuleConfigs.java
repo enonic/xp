@@ -1,18 +1,58 @@
 package com.enonic.wem.api.content.site;
 
-import java.util.List;
+import java.util.Collection;
+
+import com.google.common.collect.ImmutableList;
+
+import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public class ModuleConfigs
+    extends AbstractImmutableEntityList<ModuleConfig>
 {
-    private final List<ModuleConfig> moduleConfigList;
-
-    public ModuleConfigs( final List<ModuleConfig> moduleConfigList )
+    private ModuleConfigs( final ImmutableList<ModuleConfig> list )
     {
-        this.moduleConfigList = moduleConfigList;
+        super( list );
     }
 
-    public List<ModuleConfig> toModuleConfigList()
+    public static ModuleConfigs empty()
     {
-        return moduleConfigList;
+        final ImmutableList<ModuleConfig> list = ImmutableList.of();
+        return new ModuleConfigs( list );
+    }
+
+    public static ModuleConfigs from( final ModuleConfig... moduleConfigs )
+    {
+        return new ModuleConfigs( ImmutableList.copyOf( moduleConfigs ) );
+    }
+
+    public static ModuleConfigs from( final Iterable<? extends ModuleConfig> moduleConfigs )
+    {
+        return new ModuleConfigs( ImmutableList.copyOf( moduleConfigs ) );
+    }
+
+    public static ModuleConfigs from( final Collection<? extends ModuleConfig> moduleConfigs )
+    {
+        return new ModuleConfigs( ImmutableList.copyOf( moduleConfigs ) );
+    }
+
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<ModuleConfig> builder = ImmutableList.builder();
+
+        public Builder add( ModuleConfig moduleConfig )
+        {
+            builder.add( moduleConfig );
+            return this;
+        }
+
+        public ModuleConfigs build()
+        {
+            return new ModuleConfigs( builder.build() );
+        }
     }
 }

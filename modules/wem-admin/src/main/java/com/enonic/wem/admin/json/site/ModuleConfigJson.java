@@ -62,7 +62,7 @@ public class ModuleConfigJson
             list.add( moduleConfigJson.getModuleConfig() );
         }
 
-        return new ModuleConfigs( list );
+        return ModuleConfigs.from( list );
     }
 
 

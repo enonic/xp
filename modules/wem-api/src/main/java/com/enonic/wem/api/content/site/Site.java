@@ -17,7 +17,7 @@ public class Site
     private Site( final BaseBuilder builder )
     {
         this.templateName = builder.templateName;
-        this.moduleConfigs = new ModuleConfigs( builder.moduleConfigs );
+        this.moduleConfigs = ModuleConfigs.from( builder.moduleConfigs );
     }
 
     public SiteTemplateName getTemplateName()
@@ -77,7 +77,7 @@ public class Site
         BaseBuilder( final Site source )
         {
             this.templateName = source.getTemplateName();
-            this.moduleConfigs = source.getModuleConfigs().toModuleConfigList();
+            this.moduleConfigs = source.getModuleConfigs().getList();
         }
 
         BaseBuilder()
@@ -108,9 +108,9 @@ public class Site
 
         public EditBuilder moduleConfigs( ModuleConfigs configs )
         {
-            changes.recordChange( newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs().toModuleConfigList() ).to(
-                configs.toModuleConfigList() ).build() );
-            moduleConfigs = configs.toModuleConfigList();
+            changes.recordChange( newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs().getList() ).to(
+                configs.getList() ).build() );
+            moduleConfigs = configs.getList();
             return this;
         }
 
@@ -159,7 +159,7 @@ public class Site
 
         public Builder moduleConfigs( ModuleConfigs configs )
         {
-            moduleConfigs = configs.toModuleConfigList();
+            moduleConfigs = configs.getList();
             return this;
         }
 
