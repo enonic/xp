@@ -11,15 +11,15 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 @Immutable
 public final class Module
+    implements Identity<ModuleKey>
 {
-    public static final String MODULE_XML = "module.xml";
-
     private final ModuleKey moduleKey;
 
     private final String displayName;
@@ -61,6 +61,11 @@ public final class Module
         this.contentTypeDependencies = ContentTypeNames.from( builder.contentTypeDependencies );
         this.config = builder.config == null ? null : builder.config.copy();
         this.moduleDirectoryEntry = builder.moduleDirectoryEntry.build();
+    }
+
+    public ModuleKey getKey()
+    {
+        return getModuleKey();
     }
 
     public ModuleKey getModuleKey()

@@ -23,6 +23,7 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.google.common.io.ByteStreams.asByteSource;
@@ -91,7 +92,7 @@ public class UpdateModuleHandlerTest
         // setup
         ModuleKey moduleKey = ModuleKey.from( "foomodule-1.0.0" );
         Module module = createModule( moduleKey );
-        Path moduleDir = new ModuleExporter().exportModuleToDirectory( module, systemConfig.getModulesDir().toPath() );
+        Path moduleDir = new ModuleExporter().exportToDirectory( module, systemConfig.getModulesDir().toPath() );
 
         final UpdateModule command = Commands.module().update().
             module( moduleKey ).
@@ -145,7 +146,7 @@ public class UpdateModuleHandlerTest
         // setup
         ModuleKey moduleKey = ModuleKey.from( "foomodule-1.0.0" );
         Module module = createModule( moduleKey );
-        Path moduleDir = new ModuleExporter().exportModuleToDirectory( module, systemConfig.getModulesDir().toPath() );
+        Path moduleDir = new ModuleExporter().exportToDirectory( module, systemConfig.getModulesDir().toPath() );
 
         final UpdateModule command = Commands.module().update().
             module( moduleKey ).

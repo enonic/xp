@@ -12,6 +12,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class CreateModuleHandler
     extends CommandHandler<CreateModule>
@@ -53,7 +54,7 @@ public class CreateModuleHandler
         final Path moduleDirPath = systemConfig.getModulesDir().toPath();
         Files.createDirectories( moduleDirPath );
 
-        moduleExporter.exportModuleToDirectory( module, moduleDirPath );
+        moduleExporter.exportToDirectory( module, moduleDirPath );
         command.setResult( module );
     }
 

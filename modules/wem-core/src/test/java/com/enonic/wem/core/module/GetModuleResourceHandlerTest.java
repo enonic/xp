@@ -27,6 +27,7 @@ import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.google.common.io.ByteStreams.asByteSource;

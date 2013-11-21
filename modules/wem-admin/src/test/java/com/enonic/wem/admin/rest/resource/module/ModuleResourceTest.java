@@ -34,7 +34,7 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.core.module.ModuleExporter;
+import com.enonic.wem.core.exporters.ModuleExporter;
 import com.enonic.wem.core.module.ModuleImporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
@@ -91,7 +91,7 @@ public class ModuleResourceTest
         Mockito.when( client.execute( Mockito.isA( CreateModule.class ) ) ).thenReturn( module );
 
         final ModuleExporter moduleExporter = new ModuleExporter();
-        final Path exportedModuleFile = moduleExporter.exportModuleToZip( module, tempDir );
+        final Path exportedModuleFile = moduleExporter.exportToZip( module, tempDir );
 
         final WebResource webResource = resource().path( "module/install" );
         final FormDataMultiPart mp = new FormDataMultiPart();

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.TemplateName;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -15,7 +16,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import static com.google.common.collect.Maps.uniqueIndex;
 
 public final class SiteTemplate
-    implements Iterable<Template>
+    implements Iterable<Template>, Identity<SiteTemplateKey>
 {
     private static final ResourcePath DEFAULT_TEMPLATES_PATH = ResourcePath.from( "components/" );
 

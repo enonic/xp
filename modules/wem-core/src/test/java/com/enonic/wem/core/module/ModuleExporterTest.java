@@ -21,6 +21,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
@@ -57,7 +58,7 @@ public class ModuleExporterTest
     {
         final Module module = createModule();
 
-        final Path exportedModuleZip = new ModuleExporter().exportModuleToZip( module, tempDir );
+        final Path exportedModuleZip = new ModuleExporter().exportToZip( module, tempDir );
         System.out.println( "Module exported to " + exportedModuleZip );
 
         assertNotNull( exportedModuleZip );
@@ -70,7 +71,7 @@ public class ModuleExporterTest
     {
         final Module module = createModule();
 
-        final Path exportedModuleDir = new ModuleExporter().exportModuleToDirectory( module, tempDir );
+        final Path exportedModuleDir = new ModuleExporter().exportToDirectory( module, tempDir );
         System.out.println( "Module exported to " + exportedModuleDir );
 
         assertNotNull( exportedModuleDir );
