@@ -40,35 +40,6 @@ public final class CompareExpr
         {
             return this.multiple;
         }
-
-        public Operator negate()
-        {
-            switch ( this )
-            {
-                case EQ:
-                    return NEQ;
-                case NEQ:
-                    return EQ;
-                case GT:
-                    return LTE;
-                case GTE:
-                    return LT;
-                case LT:
-                    return GTE;
-                case LTE:
-                    return GT;
-                case LIKE:
-                    return NOT_LIKE;
-                case NOT_LIKE:
-                    return LIKE;
-                case IN:
-                    return NOT_IN;
-                case NOT_IN:
-                    return IN;
-            }
-
-            return this;
-        }
     }
 
     private final FieldExpr field;
@@ -119,7 +90,7 @@ public final class CompareExpr
 
         if ( this.operator.allowMultipleValues() )
         {
-            str.append( "(" ).append( Joiner.on( "," ).join( this.values ) ).append( ")" );
+            str.append( "(" ).append( Joiner.on( ", " ).join( this.values ) ).append( ")" );
         }
         else
         {
@@ -164,9 +135,19 @@ public final class CompareExpr
         return create( field, Operator.LIKE, value );
     }
 
+    public static CompareExpr notLike( final FieldExpr field, final ValueExpr value )
+    {
+        return create( field, Operator.NOT_LIKE, value );
+    }
+
     public static CompareExpr in( final FieldExpr field, final List<ValueExpr> values )
     {
         return create( field, Operator.IN, values );
+    }
+
+    public static CompareExpr notIn( final FieldExpr field, final List<ValueExpr> values )
+    {
+        return create( field, Operator.NOT_IN, values );
     }
 
     public static CompareExpr create( final FieldExpr field, final Operator operator, final ValueExpr value )

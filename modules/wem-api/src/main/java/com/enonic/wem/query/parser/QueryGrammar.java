@@ -122,8 +122,8 @@ final class QueryGrammar
         final Parser<CompareExpr> lte = parseCompare( "<=", CompareExpr.Operator.LTE );
         final Parser<CompareExpr> gt = parseCompare( ">", CompareExpr.Operator.GT );
         final Parser<CompareExpr> gte = parseCompare( ">=", CompareExpr.Operator.GTE );
-        final Parser<CompareExpr> like = parseCompareWithNot( "LIKE", CompareExpr.Operator.LIKE );
-        final Parser<CompareExpr> in = parseCompareWithNot( "IN", CompareExpr.Operator.IN );
+        final Parser<CompareExpr> like = parseCompareWithNot( "LIKE", CompareExpr.Operator.LIKE, CompareExpr.Operator.NOT_LIKE );
+        final Parser<CompareExpr> in = parseCompareWithNot( "IN", CompareExpr.Operator.IN, CompareExpr.Operator.NOT_IN );
 
         return Parsers.or( eq, neq, lt, lte, gt, gte, like, in );
     }
@@ -133,10 +133,11 @@ final class QueryGrammar
         return Parsers.sequence( parseField(), term( op ).retn( opCode ), parseValue( true ), QueryMapper.compareValueExpr() );
     }
 
-    private Parser<CompareExpr> parseCompareWithNot( final String op, final CompareExpr.Operator opCode )
+    private Parser<CompareExpr> parseCompareWithNot( final String op, final CompareExpr.Operator opCode,
+                                                     final CompareExpr.Operator notOpCode )
     {
         final Parser<CompareExpr.Operator> opParser = term( op ).retn( opCode );
-        final Parser<CompareExpr.Operator> negOpParser = term( "NOT" ).followedBy( term( op ) ).retn( opCode.negate() );
+        final Parser<CompareExpr.Operator> negOpParser = term( "NOT" ).followedBy( term( op ) ).retn( notOpCode );
         final Parser<CompareExpr.Operator> combined = Parsers.or( opParser, negOpParser );
 
         if ( opCode.allowMultipleValues() )

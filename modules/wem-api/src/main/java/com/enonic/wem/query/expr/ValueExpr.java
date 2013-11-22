@@ -43,7 +43,7 @@ public final class ValueExpr
 
     private String typecastFunction( final String name, final String argument )
     {
-        return name + "(\"" + argument + "\")";
+        return name + "(" + quoteString( argument ) + ")";
     }
 
     private String quoteString( final String value )
