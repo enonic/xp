@@ -3,7 +3,7 @@ package com.enonic.wem.query.parser;
 import org.codehaus.jparsec.error.ParserException;
 
 import com.enonic.wem.query.QueryException;
-import com.enonic.wem.query.ast.QueryExpr;
+import com.enonic.wem.query.expr.QueryExpr;
 
 public final class QueryParser
 {

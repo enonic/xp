@@ -2,8 +2,8 @@ package com.enonic.wem.query.parser;
 
 import java.util.List;
 
-import com.enonic.wem.query.ast.FunctionExpr;
-import com.enonic.wem.query.ast.ValueExpr;
+import com.enonic.wem.query.expr.FunctionExpr;
+import com.enonic.wem.query.expr.ValueExpr;
 
 final class StaticFunctions
 {

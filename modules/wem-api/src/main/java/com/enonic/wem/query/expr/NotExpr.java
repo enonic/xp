@@ -1,4 +1,4 @@
-package com.enonic.wem.query.ast;
+package com.enonic.wem.query.expr;
 
 public final class NotExpr
     implements ConstraintExpr

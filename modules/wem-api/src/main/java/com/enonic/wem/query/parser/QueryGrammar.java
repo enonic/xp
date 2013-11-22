@@ -13,16 +13,16 @@ import org.codehaus.jparsec.functors.Unary;
 import org.codehaus.jparsec.misc.Mapper;
 import org.codehaus.jparsec.pattern.Patterns;
 
-import com.enonic.wem.query.ast.CompareExpr;
-import com.enonic.wem.query.ast.ConstraintExpr;
-import com.enonic.wem.query.ast.DynamicConstraintExpr;
-import com.enonic.wem.query.ast.DynamicOrderExpr;
-import com.enonic.wem.query.ast.FieldExpr;
-import com.enonic.wem.query.ast.FieldOrderExpr;
-import com.enonic.wem.query.ast.FunctionExpr;
-import com.enonic.wem.query.ast.OrderExpr;
-import com.enonic.wem.query.ast.QueryExpr;
-import com.enonic.wem.query.ast.ValueExpr;
+import com.enonic.wem.query.expr.CompareExpr;
+import com.enonic.wem.query.expr.ConstraintExpr;
+import com.enonic.wem.query.expr.DynamicConstraintExpr;
+import com.enonic.wem.query.expr.DynamicOrderExpr;
+import com.enonic.wem.query.expr.FieldExpr;
+import com.enonic.wem.query.expr.FieldOrderExpr;
+import com.enonic.wem.query.expr.FunctionExpr;
+import com.enonic.wem.query.expr.OrderExpr;
+import com.enonic.wem.query.expr.QueryExpr;
+import com.enonic.wem.query.expr.ValueExpr;
 
 final class QueryGrammar
 {

@@ -1,4 +1,4 @@
-package com.enonic.wem.query.ast;
+package com.enonic.wem.query.expr;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.ValueType;

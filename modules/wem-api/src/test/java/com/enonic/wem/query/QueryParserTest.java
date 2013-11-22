@@ -2,7 +2,7 @@ package com.enonic.wem.query;
 
 import org.junit.Test;
 
-import com.enonic.wem.query.ast.QueryExpr;
+import com.enonic.wem.query.expr.QueryExpr;
 import com.enonic.wem.query.parser.QueryParser;
 
 import static org.junit.Assert.*;

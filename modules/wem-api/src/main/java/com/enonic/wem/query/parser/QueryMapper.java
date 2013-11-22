@@ -9,18 +9,18 @@ import org.codehaus.jparsec.functors.Map2;
 import org.codehaus.jparsec.functors.Map3;
 import org.codehaus.jparsec.functors.Unary;
 
-import com.enonic.wem.query.ast.CompareExpr;
-import com.enonic.wem.query.ast.ConstraintExpr;
-import com.enonic.wem.query.ast.DynamicConstraintExpr;
-import com.enonic.wem.query.ast.DynamicOrderExpr;
-import com.enonic.wem.query.ast.FieldExpr;
-import com.enonic.wem.query.ast.FieldOrderExpr;
-import com.enonic.wem.query.ast.FunctionExpr;
-import com.enonic.wem.query.ast.LogicalExpr;
-import com.enonic.wem.query.ast.NotExpr;
-import com.enonic.wem.query.ast.OrderExpr;
-import com.enonic.wem.query.ast.QueryExpr;
-import com.enonic.wem.query.ast.ValueExpr;
+import com.enonic.wem.query.expr.CompareExpr;
+import com.enonic.wem.query.expr.ConstraintExpr;
+import com.enonic.wem.query.expr.DynamicConstraintExpr;
+import com.enonic.wem.query.expr.DynamicOrderExpr;
+import com.enonic.wem.query.expr.FieldExpr;
+import com.enonic.wem.query.expr.FieldOrderExpr;
+import com.enonic.wem.query.expr.FunctionExpr;
+import com.enonic.wem.query.expr.LogicalExpr;
+import com.enonic.wem.query.expr.NotExpr;
+import com.enonic.wem.query.expr.OrderExpr;
+import com.enonic.wem.query.expr.QueryExpr;
+import com.enonic.wem.query.expr.ValueExpr;
 
 final class QueryMapper
 {
