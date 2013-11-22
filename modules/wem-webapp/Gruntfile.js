@@ -36,6 +36,12 @@ module.exports = function (grunt) {
                     sourcemap: true
                 }
             },
+            template_manager: {
+                module: 'admin/apps/template-manager',
+                options: {
+                    sourcemap: true
+                }
+            },
             app_launcher: {
                 module: 'admin/apps/app-launcher',
                 options: {
@@ -60,6 +66,7 @@ module.exports = function (grunt) {
     grunt.registerTask('sp', ['module:space_manager']);
     grunt.registerTask('sc', ['module:schema_manager']);
     grunt.registerTask('md', ['module:module_manager']);
+    grunt.registerTask('tm', ['module:template_manager']);
     grunt.registerTask('al', ['module:app_launcher']);
     grunt.registerTask('le', ['module:live_edit']);
 };

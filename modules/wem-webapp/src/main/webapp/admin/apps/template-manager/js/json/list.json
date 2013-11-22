@@ -1,0 +1,14 @@
+{
+    "templates": [
+        {
+            "displayName": "Test Module",
+            "path": "path",
+            "iconUrl": "asdf"
+        },
+        {
+            "displayName": "Test Module",
+            "path": "path",
+            "iconUrl": "asdf"
+        }
+    ]
+}
