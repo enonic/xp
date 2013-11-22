@@ -23,7 +23,9 @@ public class IndexDocument2
 
     private boolean refreshOnStore = false;
 
-    private String analyzer;
+    private final String analyzer;
+
+    private final String collection;
 
     private IndexDocument2( final Builder builder )
     {
@@ -32,6 +34,7 @@ public class IndexDocument2
         this.index = builder.index;
         this.indexDocumentItems = ImmutableSet.copyOf( builder.indexDocumentEntries );
         this.analyzer = builder.analyzer;
+        this.collection = builder.collection;
     }
 
     public static Builder newIndexDocument()
@@ -69,6 +72,11 @@ public class IndexDocument2
         return analyzer;
     }
 
+    public String getCollection()
+    {
+        return collection;
+    }
+
     public static class Builder
     {
         private EntityId id;
@@ -78,6 +86,8 @@ public class IndexDocument2
         private Index index;
 
         private String analyzer;
+
+        private String collection;
 
         private Set<AbstractIndexDocumentItem> indexDocumentEntries;
 
@@ -120,6 +130,12 @@ public class IndexDocument2
         public Builder addEntries( final Set<AbstractIndexDocumentItem> entries )
         {
             this.indexDocumentEntries.addAll( entries );
+            return this;
+        }
+
+        public Builder collection( final String collection )
+        {
+            this.collection = collection;
             return this;
         }
 

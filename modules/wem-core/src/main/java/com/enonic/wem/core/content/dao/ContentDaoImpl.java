@@ -3,6 +3,7 @@ package com.enonic.wem.core.content.dao;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -20,6 +21,7 @@ import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.support.tree.Tree;
+import com.enonic.wem.core.index.IndexService;
 
 
 /**
@@ -30,12 +32,14 @@ public class ContentDaoImpl
     implements ContentDao
 {
 
+    private IndexService indexService;
+
     @Override
     public ContentId create( final Content content, final Session session )
     {
         try
         {
-            return new ContentDaoHandlerCreate( session ).handle( content );
+            return new ContentDaoHandlerCreate( session, indexService ).handle( content );
         }
         catch ( RepositoryException e )
         {
@@ -269,5 +273,11 @@ public class ContentDaoImpl
         {
             throw new RuntimeException( e );
         }
+    }
+
+    @Inject
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

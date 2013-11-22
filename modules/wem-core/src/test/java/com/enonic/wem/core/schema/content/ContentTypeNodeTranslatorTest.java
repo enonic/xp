@@ -32,8 +32,22 @@ import static org.junit.Assert.*;
 
 public class ContentTypeNodeTranslatorTest
 {
-
     private ContentTypeNodeTranslator translator = new ContentTypeNodeTranslator();
+
+    @Test
+    public void testName()
+        throws Exception
+    {
+        final String myDisplayNameValue = "My display name";
+        CreateContentType command = Commands.contentType().create().
+            name( "myName" ).
+            displayName( myDisplayNameValue ).
+            form( Form.newForm().build() );
+
+        final CreateNode createNode = translator.toCreateNodeCommand( command );
+
+        final String displayNamePropertyName = "displayName";
+    }
 
     @Test
     public void toCreateNode_given_displayName()

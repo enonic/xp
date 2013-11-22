@@ -67,6 +67,7 @@ public class IndexService
 
             if ( doReindexOnEmptyIndex )
             {
+                reindexService.reindexContent();
                 // TODO: Reindex stuff here
             }
         }
@@ -205,10 +206,8 @@ public class IndexService
     {
         for ( final Index index : indices )
         {
-            if ( indexExists( index ) )
+            if ( !indexExists( index ) )
             {
-                deleteIndex( index );
-                elasticsearchIndexService.getIndexStatus( index, true );
                 createIndex( index );
                 elasticsearchIndexService.getIndexStatus( index, true );
             }

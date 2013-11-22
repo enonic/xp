@@ -37,7 +37,7 @@ public final class ToolsResource
         throws Exception
     {
         this.startupInitializer.initialize( true );
-        this.indexService.reIndex( Index.WEM, Index.NODB );
+        //this.indexService.reIndex( Index.WEM, Index.NODB );
         return "Done.";
     }
 

@@ -59,7 +59,6 @@ public class ContentTypeNodeTranslator
 
     private CreateNode createNode( final CreateContentType command, final NodePath parentItemPath )
     {
-        final EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig();
         final RootDataSet rootDataSet = propertiesToRootDataSet( command );
         final EntityIndexConfig entityIndexConfig = ContentTypeEntityIndexConfigFactory.create( rootDataSet );
 

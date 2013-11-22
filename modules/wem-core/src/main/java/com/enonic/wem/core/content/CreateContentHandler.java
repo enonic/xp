@@ -63,6 +63,8 @@ public class CreateContentHandler
 
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
 
+    private ContentNodeTranslator contentNodeTranslator = new ContentNodeTranslator();
+
     @Override
     public void handle()
         throws Exception
@@ -75,9 +77,11 @@ public class CreateContentHandler
             final String displayName = command.getDisplayName();
             final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
             final String name = command.getName();
+
             final ContentPath contentPath = name == null
                 ? resolvePathForNewContent( parentContentPath, displayName, session )
                 : ContentPath.from( parentContentPath, name );
+
             if ( !command.isTemporary() )
             {
                 checkParentContentAllowsChildren( parentContentPath, session );
@@ -101,6 +105,7 @@ public class CreateContentHandler
             validateContentData( client, content );
 
             final ContentId contentId = contentDao.create( content, session );
+
             session.save();
             addAttachments( client, contentId, command.getAttachments() );
             final Attachment thumbnailAttachment = resolveThumbnailAttachment( content );

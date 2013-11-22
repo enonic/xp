@@ -31,6 +31,8 @@ public class NodeJcrDao
         // TODO: A temporary hack to ensure that paths to root containers of different types of items already exists
         ensurePath( new NodePath( "mixins" ) );
         ensurePath( new NodePath( "content-types" ) );
+        ensurePath( new NodePath( "content" ) );
+        ensurePath( new NodePath( "_temporary" ) );
     }
 
     private void ensurePath( final NodePath path )

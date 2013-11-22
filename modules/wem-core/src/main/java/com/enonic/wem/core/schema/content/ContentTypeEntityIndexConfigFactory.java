@@ -14,9 +14,13 @@ public class ContentTypeEntityIndexConfigFactory
         enabled( false ).
         build();
 
+    public static final String CONTENT_TYPE_COLLECTION_NAME = "content-type";
+
     public static EntityIndexConfig create( final RootDataSet rootDataSet )
     {
         final EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig();
+
+        builder.collection( CONTENT_TYPE_COLLECTION_NAME );
 
         PropertyVisitor visitor = new PropertyVisitor()
         {

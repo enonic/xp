@@ -14,9 +14,13 @@ public class MixinEntityIndexConfigFactory
         enabled( false ).
         build();
 
+    public static final String MIXIN_COLLECTION_NAME = "mixin";
+
     public static EntityIndexConfig create( final RootDataSet rootDataSet )
     {
         final EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig();
+
+        builder.collection( MIXIN_COLLECTION_NAME );
 
         PropertyVisitor visitor = new PropertyVisitor()
         {

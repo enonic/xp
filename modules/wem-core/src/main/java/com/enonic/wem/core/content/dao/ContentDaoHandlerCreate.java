@@ -7,12 +7,17 @@ import javax.jcr.Session;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
+import com.enonic.wem.core.content.ContentNodeTranslator;
+import com.enonic.wem.core.entity.dao.CreateNodeArguments;
+import com.enonic.wem.core.entity.dao.NodeJcrDao;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -28,9 +33,15 @@ import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 final class ContentDaoHandlerCreate
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerCreate( final Session session )
+    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
+
+    private IndexService indexService;
+
+
+    ContentDaoHandlerCreate( final Session session, final IndexService indexService )
     {
         super( session );
+        this.indexService = indexService;
     }
 
     ContentId handle( final Content content )
@@ -107,7 +118,36 @@ final class ContentDaoHandlerCreate
         final String nodeName = content.getName() == null ? SPACE_CONTENT_ROOT_NODE : content.getName();
         final Node newContentNode = parentNode.addNode( nodeName, JcrConstants.CONTENT_NODETYPE );
         contentJcrMapper.toJcr( content, newContentNode );
+
+        storeAsNode( content );
+
         return newContentNode;
+    }
+
+    private void storeAsNode( final Content content )
+    {
+        final com.enonic.wem.api.entity.Node node = CONTENT_NODE_TRANSLATOR.toNode( content );
+
+        if ( node.name() == null || node.path() == null )
+        {
+            // Space, skip that shit
+            return;
+        }
+
+        final CreateNodeArguments createNodeArguments = CreateNodeArguments.newCreateNodeArgs().
+            creator( UserKey.superUser() ).
+            name( node.name() ).
+            icon( node.icon() ).
+            rootDataSet( node.data() ).
+            parent( node.parent() ).
+            entityIndexConfig( node.getEntityIndexConfig() ).
+            build();
+
+        final NodeJcrDao nodeJcrDao = new NodeJcrDao( this.session );
+
+        final com.enonic.wem.api.entity.Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
+
+        indexService.indexNode( persistedNode );
     }
 
     private Node createContentVersionHistory( final Content content, final Node contentNode )
@@ -117,4 +157,5 @@ final class ContentDaoHandlerCreate
         contentVersionNode.setProperty( CONTENT_NEXT_VERSION_PROPERTY, content.getVersionId().id() + 1 );
         return contentVersionNode;
     }
+
 }

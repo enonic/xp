@@ -67,7 +67,8 @@ public class NodeIndexDocumentFactory
             id( node.id() ).
             index( Index.NODB ).
             indexType( IndexType.NODE ).
-            analyzer( entityIndexConfig.getAnalyzer() );
+            analyzer( entityIndexConfig.getAnalyzer() ).
+            collection( entityIndexConfig.getCollection() );
 
         addNodeMetaData( node, builder );
         addNodeProperties( node, builder );

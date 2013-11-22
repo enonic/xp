@@ -6,6 +6,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
@@ -17,6 +18,7 @@ import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentDaoImpl;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -30,12 +32,17 @@ public class AttachmentDaoImplTest
 
     private ContentDao contentDao;
 
+    private IndexService indexService;
+
     public void setupDao()
         throws Exception
     {
         attachmentDao = new AttachmentDaoImpl();
         contentDao = new ContentDaoImpl();
         session.getNode( "/wem/spaces" ).addNode( "myspace" );
+
+        indexService = Mockito.mock( IndexService.class );
+        ( (ContentDaoImpl) contentDao ).setIndexService( indexService );
     }
 
     @Test

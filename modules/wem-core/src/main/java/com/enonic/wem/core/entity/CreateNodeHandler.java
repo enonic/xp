@@ -19,7 +19,6 @@ public class CreateNodeHandler
 {
     private IndexService indexService;
 
-
     private EntityDao entityDao;
 
     @Override

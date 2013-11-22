@@ -12,6 +12,10 @@ public class IndexConstants
 
     public final static String ANALYZER_VALUE_FIELD = "_document_analyzer";
 
+    public final static String COLLECTION_FIELD = "_collection";
+
+    public final static String DEFAULT_COLLECTION = "default";
+
     public final static String ALL_USERDATA_STRING_FIELD = ALL_USERDATA_BASE;
 
     public final static String ALL_USERDATA_NUMBER_FIELD = ALL_USERDATA_BASE + FIELD_TYPE_SPERATATOR + NUMBER_FIELD_POSTFIX;

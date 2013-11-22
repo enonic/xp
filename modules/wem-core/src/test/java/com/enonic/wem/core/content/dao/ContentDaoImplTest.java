@@ -1,9 +1,9 @@
 package com.enonic.wem.core.content.dao;
 
-
 import javax.jcr.Node;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
@@ -18,6 +18,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.core.AbstractJcrTest;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static org.junit.Assert.*;
@@ -27,11 +28,16 @@ public class ContentDaoImplTest
 {
     private ContentDao contentDao;
 
+    private IndexService indexService;
+
     public void setupDao()
         throws Exception
     {
         session.getNode( "/wem/spaces" ).addNode( "myspace" );
         contentDao = new ContentDaoImpl();
+        indexService = Mockito.mock( IndexService.class );
+
+        ( (ContentDaoImpl) contentDao ).setIndexService( indexService );
     }
 
     @Test

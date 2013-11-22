@@ -15,21 +15,25 @@ public class EntityIndexConfigJson
 {
     private final String analyzer;
 
+    private final String collection;
+
     private final Map<String, PropertyIndexConfigJson> propertyIndexConfigs;
 
     public EntityIndexConfigJson( final EntityIndexConfig entityIndexConfig )
     {
         this.analyzer = entityIndexConfig.getAnalyzer();
         this.propertyIndexConfigs = translateMap( entityIndexConfig.getPropertyIndexConfigs() );
+        this.collection = entityIndexConfig.getCollection();
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
-    public EntityIndexConfigJson( @JsonProperty("analyzer") final String analyzer,
+    public EntityIndexConfigJson( @JsonProperty("analyzer") final String analyzer, @JsonProperty("collection") final String collection,
                                   @JsonProperty("propertyIndexConfigs") final Map<String, PropertyIndexConfigJson> propertyIndexConfigs )
     {
         this.analyzer = analyzer;
         this.propertyIndexConfigs = propertyIndexConfigs;
+        this.collection = collection;
     }
 
     private Map<String, PropertyIndexConfigJson> translateMap( final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs )
@@ -46,7 +50,9 @@ public class EntityIndexConfigJson
 
     public EntityIndexConfig toEntityIndexConfig()
     {
-        final EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig().analyzer( this.analyzer );
+        final EntityIndexConfig.Builder builder = EntityIndexConfig.newEntityIndexConfig().
+            analyzer( this.analyzer ).
+            collection( this.collection );
 
         for ( final String path : this.propertyIndexConfigs.keySet() )
         {
@@ -66,6 +72,12 @@ public class EntityIndexConfigJson
     public String getAnalyzer()
     {
         return analyzer;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getCollection()
+    {
+        return collection;
     }
 
     @SuppressWarnings("UnusedDeclaration")

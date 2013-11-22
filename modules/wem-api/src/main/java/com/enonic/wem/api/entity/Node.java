@@ -67,7 +67,7 @@ public final class Node
 
     public NodePath parent()
     {
-        return path;
+        return parent;
     }
 
     public NodePath path()
@@ -256,6 +256,7 @@ public final class Node
         public Builder( final Node node )
         {
             super( node );
+
         }
 
         public Builder( final EntityId id, final String name )

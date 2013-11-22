@@ -9,6 +9,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
@@ -22,6 +23,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentDaoImpl;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.relationship.RelationshipKey.newRelationshipKey;
@@ -37,6 +39,8 @@ public class RelationshipDaoImplTest
 
     private ContentDao contentDao;
 
+    private IndexService indexService;
+
     private RelationshipDao relationshipDao;
 
     public void setupDao()
@@ -45,6 +49,10 @@ public class RelationshipDaoImplTest
         session.getNode( "/wem/spaces" ).addNode( "myspace" );
         contentDao = new ContentDaoImpl();
         relationshipDao = new RelationshipDaoImpl();
+
+        indexService = Mockito.mock( IndexService.class );
+        ( (ContentDaoImpl) contentDao ).setIndexService( indexService );
+
     }
 
     @Test

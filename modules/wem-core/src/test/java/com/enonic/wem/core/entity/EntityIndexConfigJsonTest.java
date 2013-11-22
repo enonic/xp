@@ -56,6 +56,7 @@ public class EntityIndexConfigJsonTest
     {
         EntityIndexConfig entityIndexConfig = EntityIndexConfig.newEntityIndexConfig().
             analyzer( "myAnalyzer" ).
+            collection( "myCollection" ).
             addPropertyIndexConfig( "test", PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).
                 fulltextEnabled( true ).

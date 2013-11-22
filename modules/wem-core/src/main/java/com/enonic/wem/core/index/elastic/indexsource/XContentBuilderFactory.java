@@ -26,6 +26,7 @@ public class XContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
             addDocumentAnalyzer( builder, indexDocument );
+            addCollection( builder, indexDocument );
             addFields( builder, indexDocument );
             endBuilder( builder );
             return builder;
@@ -34,6 +35,15 @@ public class XContentBuilderFactory
         {
             throw new IndexException( "Failed to build xContent for indexSource", e );
         }
+    }
+
+    private static void addCollection( final XContentBuilder builder, final IndexDocument2 indexDocument )
+        throws Exception
+    {
+        final String collection = indexDocument.getCollection();
+
+        addField( builder, IndexConstants.COLLECTION_FIELD,
+                  Strings.isNullOrEmpty( collection ) ? IndexConstants.DEFAULT_COLLECTION : collection );
     }
 
     @Deprecated

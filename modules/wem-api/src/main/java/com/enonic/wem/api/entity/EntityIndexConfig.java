@@ -15,6 +15,8 @@ public class EntityIndexConfig
 
     private final ImmutableMap<DataPath, PropertyIndexConfig> propertyIndexConfigs;
 
+    private final String collection;
+
     public static Builder newEntityIndexConfig()
     {
         return new Builder();
@@ -24,6 +26,12 @@ public class EntityIndexConfig
     {
         this.analyzer = builder.analyzer;
         this.propertyIndexConfigs = ImmutableMap.copyOf( builder.propertyIndexConfigs );
+        this.collection = builder.collection;
+    }
+
+    public String getCollection()
+    {
+        return collection;
     }
 
     public String getAnalyzer()
@@ -67,6 +75,8 @@ public class EntityIndexConfig
     {
         private String analyzer;
 
+        private String collection;
+
         private final Map<DataPath, PropertyIndexConfig> propertyIndexConfigs = Maps.newHashMap();
 
         public Builder analyzer( final String analyzer )
@@ -84,6 +94,12 @@ public class EntityIndexConfig
         public Builder addPropertyIndexConfig( final String path, final PropertyIndexConfig propertyIndexConfig )
         {
             propertyIndexConfigs.put( DataPath.from( path ), propertyIndexConfig );
+            return this;
+        }
+
+        public Builder collection( final String collection )
+        {
+            this.collection = collection;
             return this;
         }
 
