@@ -1,8 +1,6 @@
-package com.enonic.wem.query;
+package com.enonic.wem.query.ast;
 
-import com.google.common.base.Preconditions;
-
-public abstract class OrderSpec
+public abstract class OrderExpr
     implements Expression
 {
     public enum Direction
@@ -13,9 +11,8 @@ public abstract class OrderSpec
 
     private final Direction direction;
 
-    public OrderSpec( final Direction direction )
+    public OrderExpr( final Direction direction )
     {
-        Preconditions.checkNotNull( direction, "Direction cannot be null" );
         this.direction = direction;
     }
 

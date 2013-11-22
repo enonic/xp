@@ -3,8 +3,8 @@ package com.enonic.wem.query;
 public final class QueryException
     extends RuntimeException
 {
-    public QueryException( final String message, final Object... args )
+    public QueryException( final String message )
     {
-        super( String.format( message, args ) );
+        super( message );
     }
 }

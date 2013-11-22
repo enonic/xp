@@ -1,30 +1,32 @@
-/*
- * Copyright 2000-2013 Enonic AS
- * http://www.enonic.com/license
- */
-
 package com.enonic.wem.query.parser;
 
+import org.codehaus.jparsec.error.ParserException;
+
 import com.enonic.wem.query.QueryException;
-import com.enonic.wem.query.expr.Query;
+import com.enonic.wem.query.ast.QueryExpr;
 
 public final class QueryParser
 {
-    private final QueryGrammar queryGrammar;
+    private final QueryGrammar grammar;
 
     public QueryParser()
     {
-        queryGrammar = new QueryGrammar();
+        this.grammar = new QueryGrammar();
     }
 
-    private Query doParse( final String query )
-        throws QueryException
+    private QueryExpr doParse( final String query )
     {
-        return queryGrammar.definition().parse( query );
+        try
+        {
+            return this.grammar.grammar().parse( query );
+        }
+        catch ( final ParserException e )
+        {
+            throw new QueryException( e.getMessage() );
+        }
     }
 
-    public static Query parse( final String query )
-        throws QueryException
+    public static QueryExpr parse( final String query )
     {
         return new QueryParser().doParse( query );
     }

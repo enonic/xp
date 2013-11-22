@@ -1,5 +1,7 @@
 package com.enonic.wem.query.parser;
 
+import java.util.List;
+
 import org.codehaus.jparsec.OperatorTable;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
@@ -11,46 +13,31 @@ import org.codehaus.jparsec.functors.Unary;
 import org.codehaus.jparsec.misc.Mapper;
 import org.codehaus.jparsec.pattern.Patterns;
 
-import com.enonic.wem.query.Expression;
-import com.enonic.wem.query.OrderSpec;
-import com.enonic.wem.query.expr.ArrayExpr;
-import com.enonic.wem.query.expr.CompareExpr;
-import com.enonic.wem.query.expr.FieldExpr;
-import com.enonic.wem.query.expr.FunctionExpr;
-import com.enonic.wem.query.expr.LogicalExpr;
-import com.enonic.wem.query.expr.OrderBy;
-import com.enonic.wem.query.expr.Query;
-import com.enonic.wem.query.expr.ScoreFieldExpr;
-import com.enonic.wem.query.expr.ValueExpr;
+import com.enonic.wem.query.ast.CompareExpr;
+import com.enonic.wem.query.ast.ConstraintExpr;
+import com.enonic.wem.query.ast.DynamicConstraintExpr;
+import com.enonic.wem.query.ast.DynamicOrderExpr;
+import com.enonic.wem.query.ast.FieldExpr;
+import com.enonic.wem.query.ast.FieldOrderExpr;
+import com.enonic.wem.query.ast.FunctionExpr;
+import com.enonic.wem.query.ast.OrderExpr;
+import com.enonic.wem.query.ast.QueryExpr;
+import com.enonic.wem.query.ast.ValueExpr;
 
-public class QueryGrammar
+final class QueryGrammar
 {
-    private final static String[] OPERATORS = {"=", "!=", ">", ">=", "<", "<=", "(", ")", ",", "[", "]"};
+    private final static String[] OPERATORS = {"=", "!=", ">", ">=", "<", "<=", ",", "(", ")"};
 
-    private final static String[] KEYWORDS =
-        {"LIKE", "NOT", "IN", "CONTAINS", "STARTS", "ENDS", "WITH", "OR", "AND", "ORDER", "BY", "ASC", "DESC", "FT", "SCORE",
-            "GEODISTANCEORDER", "RELATIONEXISTS", "FULLTEXT", "DATE", "GEOLOCATION"};
+    private final static String[] KEYWORDS = {"AND", "OR", "NOT", "LIKE", "IN", "ASC", "DESC", "ORDER", "BY", "GEOPOINT", "DATETIME"};
 
-    public static final ScoreFieldExpr SCORE_FIELD_EXPR = new ScoreFieldExpr();
-
-    private final Terminals terms;
+    private final Terminals terminals;
 
     private final Parser<Tokens.Fragment> identifierToken;
 
     public QueryGrammar()
     {
         this.identifierToken = identifierToken();
-        this.terms = Terminals.caseInsensitive( this.identifierToken.source(), OPERATORS, KEYWORDS );
-    }
-
-    public Parser<Query> definition()
-    {
-        return queryExpr().from( tokenizer(), ignored() );
-    }
-
-    private Parser<Tokens.Fragment> fragmentToken( final String pattern, final String tag )
-    {
-        return Scanners.pattern( Patterns.regex( pattern ), tag ).source().map( QueryMapper.stringToFragment( tag ) );
+        this.terminals = Terminals.caseInsensitive( this.identifierToken.source(), OPERATORS, KEYWORDS );
     }
 
     private Parser<Tokens.Fragment> identifierToken()
@@ -58,20 +45,15 @@ public class QueryGrammar
         return fragmentToken( "[a-zA-Z\\*@]+[a-zA-Z0-9\\-_/\\.\\*@]*", Tokens.Tag.IDENTIFIER.name() );
     }
 
-    private Parser<Tokens.Fragment> decimalToken()
+    private Parser<Tokens.Fragment> fragmentToken( final String pattern, final String tag )
     {
-        return fragmentToken( "([-+])?[0-9]+(\\.[0-9]+)?", Tokens.Tag.DECIMAL.name() );
+        return Scanners.pattern( Patterns.regex( pattern ), tag ).source().map( QueryMapper.fragment( tag ) );
     }
 
     private Parser<?> tokenizer()
     {
-        return Parsers.or( this.terms.tokenizer(), this.identifierToken, decimalToken(), Terminals.StringLiteral.DOUBLE_QUOTE_TOKENIZER,
-                           Terminals.StringLiteral.SINGLE_QUOTE_TOKENIZER );
-    }
-
-    private Parser<Void> ignored()
-    {
-        return Scanners.SQL_DELIMITER;
+        return Parsers.or( this.terminals.tokenizer(), this.identifierToken, Terminals.StringLiteral.DOUBLE_QUOTE_TOKENIZER,
+                           Terminals.StringLiteral.SINGLE_QUOTE_TOKENIZER, decimalToken() );
     }
 
     private Parser<String> identifier()
@@ -79,296 +61,175 @@ public class QueryGrammar
         return Terminals.fragment( Tokens.Tag.IDENTIFIER );
     }
 
-    private Parser<FieldExpr> fieldExpr()
+    private Parser<Tokens.Fragment> decimalToken()
     {
-        return identifier().map( QueryMapper.stringToFieldExpr() );
+        return fragmentToken( "([-+])?[0-9]+(\\.[0-9]+)?", Tokens.Tag.DECIMAL.name() );
     }
 
-    private Parser<ValueExpr> numberExpr()
+    private Parser<ValueExpr> stringLiteral()
     {
-        return Terminals.fragment( Tokens.Tag.DECIMAL.name() ).map( QueryMapper.stringToNumberExpr() );
+        return Terminals.StringLiteral.PARSER.map( QueryMapper.stringValueExpr() );
     }
 
-    private Parser<ValueExpr> stringExpr()
+    private Parser<ValueExpr> numberLiteral()
     {
-        return Terminals.StringLiteral.PARSER.map( QueryMapper.stringToStringExpr() );
+        return Terminals.fragment( Tokens.Tag.DECIMAL.name() ).map( QueryMapper.numberValueExpr() );
     }
 
-    private Parser<ValueExpr> advancedValueExpr()
+    private Parser<ValueExpr> parseValue( final boolean allowValueFunctions )
     {
-        return Parsers.or( numberExpr(), stringExpr(), arrayExpr(), fieldExpr(), staticFunction() );
-    }
+        final Parser<ValueExpr> simple = Parsers.or( stringLiteral(), numberLiteral() );
 
-    private Parser<ValueExpr> staticFunction()
-    {
-        return Parsers.or( geoLocationFunction(), dateFunction() );
-    }
-
-    private Parser<ValueExpr> geoLocationFunction()
-    {
-        return Parsers.sequence( term( "GEOLOCATION" ).followedBy( term( "(" ) ), stringExpr().followedBy( term( ")" ) ) ).
-            map( QueryMapper.geoLocationMapper() );    }
-
-    private Parser<ValueExpr> dateFunction()
-    {
-        return Parsers.sequence( term( "DATE" ).followedBy( term( "(" ) ), stringExpr().followedBy( term( ")" ) ) ).
-            map( QueryMapper.dateMapper() );
-    }
-
-    private Parser<ValueExpr> valueExpr()
-    {
-        return Parsers.or( numberExpr(), stringExpr() );
-    }
-
-    private Parser<ArrayExpr> arrayExpr()
-    {
-        return valueExpr().sepBy( term( "," ) ).map( QueryMapper.valuesToArrayExpr( "[]" ) ).between( term( "[" ), term( "]" ) );
-    }
-
-    private Parser<ArrayExpr> paramExpr()
-    {
-        return advancedValueExpr().sepBy( term( "," ) ).map( QueryMapper.valuesToArrayExpr( "()" ) ).between( term( "(" ), term( ")" ) );
-    }
-
-    private Parser<FunctionExpr> functionExpr()
-    {
-        return Parsers.sequence( identifier(), paramExpr(), QueryMapper.functionExprMapper() );
-    }
-
-    private Parser<Expression> computedExpr( final boolean skip )
-    {
-        if ( skip )
+        if ( !allowValueFunctions )
         {
-            return Parsers.or( valueExpr(), functionExpr() );
+            return simple;
         }
-        else
-        {
-            return Parsers.or( dynamicConstraint(), valueExpr(), functionExpr() );
-        }
+
+        return Parsers.or( simple, parseValueFunction() );
     }
 
-    private Parser<Expression> dynamicConstraint()
+    private Parser<ValueExpr> parseValueFunction()
     {
-        return Parsers.or( relationExists(), fulltext(), dateFunction(), geoLocationFunction() );
+        final Parser<FunctionExpr> function = parseFunction( false );
+        return function.map( QueryMapper.executeValueFunction() );
     }
 
-    private Parser<CompareExpr> relationExists()
+    private Parser<List<ValueExpr>> parseValues( final boolean allowValueFunctions )
     {
-        return Parsers.sequence( term( "RELATIONEXISTS" ).followedBy( term( "(" ) ), relationExistsParams().followedBy( term( ")" ) ) ).
-            map( QueryMapper.relationExistsMapper() );
+        return parseValue( allowValueFunctions ).sepBy( term( "," ) ).between( term( "(" ), term( ")" ) );
     }
 
-    private Parser<Expression> relationExistsParams()
+    private Parser<String> parseName()
     {
-        return Parsers.sequence( fieldExpr().followedBy( term( "," ) ), relationalExpr( true ), QueryMapper.relationExistsParams() );
-    }
-
-    private Parser<CompareExpr> fulltext()
-    {
-        return Parsers.sequence( term( "FULLTEXT" ).followedBy( term( "(" ) ), stringExpr().followedBy( term( ")" ) ) ).
-            map( QueryMapper.fulltextMapper() );
-    }
-
-    private Parser<CompareExpr> compareExpr( final String opStr, final Integer opNum, final Parser<? extends Expression> right,
-                                             final boolean skip )
-    {
-        return Parsers.sequence( left( skip ), term( opStr ).retn( opNum ), right, QueryMapper.compareExprMapper() );
-    }
-
-    private Parser<Expression> left( final boolean skip )
-    {
-        if ( skip )
-        {
-            return Parsers.or( functionExpr(), fieldExpr() );
-        }
-        else
-        {
-            return Parsers.or( dynamicConstraint(), functionExpr(), fieldExpr() );
-        }
-    }
-
-    private Parser<CompareExpr> relationalEqExpr( final boolean skip )
-    {
-        return compareExpr( "=", CompareExpr.EQ, computedExpr( skip ), skip );
-    }
-
-    private Parser<CompareExpr> relationalNeqExpr( final boolean skip )
-    {
-        return compareExpr( "!=", CompareExpr.NEQ, computedExpr( skip ), skip );
-    }
-
-    private Parser<CompareExpr> relationalGtExpr( final boolean skip )
-    {
-        return compareExpr( ">", CompareExpr.GT, computedExpr( skip ), skip );
-    }
-
-    private Parser<CompareExpr> relationalGteExpr( final boolean skip )
-    {
-        return compareExpr( ">=", CompareExpr.GTE, computedExpr( skip ), skip );
-    }
-
-    private Parser<CompareExpr> relationalLtExpr( final boolean skip )
-    {
-        return compareExpr( "<", CompareExpr.LT, computedExpr( skip ), skip );
-    }
-
-    private Parser<CompareExpr> relationalLteExpr( final boolean skip )
-    {
-        return compareExpr( "<=", CompareExpr.LTE, computedExpr( skip ), skip );
-    }
-
-    private Parser<CompareExpr> compareWithNotExpr( final Parser<?> opStr, final Integer opNum, final Integer notOpNum,
-                                                    final Parser<? extends Expression> right )
-    {
-        final Parser<Integer> op = Parsers.or( phrase( "NOT" ).followedBy( opStr ).retn( notOpNum ), opStr.retn( opNum ) );
-        return Parsers.sequence( fieldExpr(), op, right, QueryMapper.compareExprMapper() );
-    }
-
-    private Parser<CompareExpr> compareLikeExpr( final Parser<?> op, final Parser<ValueExpr> right )
-    {
-        return compareWithNotExpr( op, CompareExpr.LIKE, CompareExpr.NOT_LIKE, right );
-    }
-
-    private Parser<CompareExpr> compareLikeExpr()
-    {
-        return compareLikeExpr( term( "LIKE" ), stringExpr() );
-    }
-
-    private Parser<CompareExpr> compareLikePrefixSuffixExpr( final Parser<?> op, final String prefix, final String suffix )
-    {
-        return compareLikeExpr( op, stringExpr().map( QueryMapper.prefixSuffixMapper( prefix, suffix ) ) );
-    }
-
-    private Parser<CompareExpr> compareInExpr()
-    {
-        return compareWithNotExpr( term( "IN" ), CompareExpr.IN, CompareExpr.NOT_IN, paramExpr() );
-    }
-
-    private Parser<CompareExpr> compareContainsExpr()
-    {
-        return compareLikePrefixSuffixExpr( term( "CONTAINS" ), "", "" );
-    }
-
-    private Parser<CompareExpr> compareStartsWithExpr()
-    {
-        return compareLikePrefixSuffixExpr( term( "STARTS" ).followedBy( term( "WITH" ).optional() ), null, "%" );
-    }
-
-    private Parser<CompareExpr> compareEndsWithExpr()
-    {
-        return compareLikePrefixSuffixExpr( term( "ENDS" ).followedBy( term( "WITH" ).optional() ), "%", null );
-    }
-
-    private Parser<CompareExpr> compareFulltextExpr()
-    {
-        final Parser<Integer> op = term( "FT" ).retn( CompareExpr.FT );
-        return Parsers.sequence( fieldExpr(), op, stringExpr(), QueryMapper.compareExprMapper() );
-    }
-
-    private Parser<CompareExpr> relationalExpr( final boolean skip )
-    {
-        if ( skip )
-        {
-            return Parsers.or( relationalEqExpr( skip ), relationalNeqExpr( skip ), relationalLtExpr( skip ), relationalLteExpr( skip ),
-                               relationalGtExpr( skip ), relationalGteExpr( skip ) );
-        }
-        else
-        {
-            return Parsers.or( relationalEqExpr( skip ), relationalNeqExpr( skip ), relationalLtExpr( skip ), relationalLteExpr( skip ),
-                               relationalGtExpr( skip ), relationalGteExpr( skip ), relationExists(), fulltext() );
-        }
-    }
-
-    private Parser<CompareExpr> matchExpr()
-    {
-        return Parsers.or( compareLikeExpr(), compareFulltextExpr(), compareInExpr(), compareContainsExpr(), compareStartsWithExpr(),
-                           compareEndsWithExpr(), functionExpr() );
-    }
-
-    private Parser<CompareExpr> compareExpr()
-    {
-        return Parsers.or( relationalExpr( false ), matchExpr() );
-    }
-
-    private Parser<Expression> logicalExpr()
-    {
-        final Parser.Reference<Expression> ref = Parser.newReference();
-        final Parser<Expression> parser =
-            new OperatorTable<Expression>().prefix( notExpr(), 30 ).infixl( logicalExpr( "AND", LogicalExpr.Operator.AND ), 20 ).infixl(
-                logicalExpr( "OR", LogicalExpr.Operator.OR ), 10 ).build( paren( ref.lazy() ).or( compareExpr() ) ).label( "logicalExpr" );
-        ref.set( parser );
-        return parser;
-    }
-
-    private <T> Parser<T> paren( final Parser<T> parser )
-    {
-        return parser.between( term( "(" ), term( ")" ) );
-    }
-
-    private Parser<Unary<Expression>> notExpr()
-    {
-        return term( "NOT" ).next( Parsers.constant( QueryMapper.notExprMapper() ) );
-    }
-
-    private Parser<Binary<Expression>> logicalExpr( final String opStr, final LogicalExpr.Operator opNum )
-    {
-        return term( opStr ).next( Parsers.constant( QueryMapper.logicalExprMapper( opNum ) ) );
-    }
-
-    private Parser<OrderBy> orderByExpr()
-    {
-        return Parsers.sequence( term( "ORDER" ), term( "BY" ).optional(), orderFieldExpr().sepBy( term( "," ) ) ).map(
-            QueryMapper.orderByExprMapper() );
-    }
-
-    private Parser<OrderSpec> orderFieldExpr()
-    {
-        final Parser<OrderSpec.Direction> optional =
-            Parsers.or( term( "ASC" ).retn( OrderSpec.Direction.ASC ), term( "DESC" ).retn( OrderSpec.Direction.DESC ) ).optional(
-                OrderSpec.Direction.ASC );
-
-        return Parsers.sequence( orderSpec(), optional, QueryMapper.orderFieldExprMapper() );
-    }
-
-    private Parser<FieldExpr> orderSpec()
-    {
-        return Parsers.or( fieldExpr(), dynamicOrder() );
-    }
-
-    private Parser<FieldExpr> dynamicOrder()
-    {
-        return Parsers.or( score(), geoDistanceOrder() );
-    }
-
-    private Parser<FieldExpr> geoDistanceOrder()
-    {
-        return Parsers.sequence( term( "GEODISTANCEORDER" ), geoDistanceOrderParams().between( term( "(" ), term( ")" ) ) );
-    }
-
-    private Parser<FieldExpr> geoDistanceOrderParams()
-    {
-        return Parsers.sequence( fieldExpr().followedBy( term( "," ) ), stringExpr().followedBy( term( "," ) ), stringExpr(),
-                                 QueryMapper.geoDistanceOrderParamsMapper() );
-    }
-
-    private Parser<ScoreFieldExpr> score()
-    {
-        return Parsers.sequence( term( "score" ).followedBy( term( "(" ) ).followedBy( term( ")" ) ) ).retn( SCORE_FIELD_EXPR );
-    }
-
-    private Parser<Query> queryExpr()
-    {
-        return Parsers.sequence( logicalExpr().optional(), orderByExpr().optional(), QueryMapper.queryExprMapper() );
+        return identifier().or( this.terminals.token( KEYWORDS ).source() );
     }
 
     private Parser<?> term( final String term )
     {
-        return Mapper._( this.terms.token( term ) );
+        return Mapper._( this.terminals.token( term ) );
     }
 
-    private Parser<?> phrase( final String phrase )
+    private Parser<FieldExpr> parseField()
     {
-        return Mapper._( this.terms.phrase( phrase.split( "\\s" ) ) );
+        return parseName().map( QueryMapper.fieldExpr() );
     }
 
+    private Parser<CompareExpr> parseCompare()
+    {
+        final Parser<CompareExpr> eq = parseCompare( "=", CompareExpr.Operator.EQ );
+        final Parser<CompareExpr> neq = parseCompare( "!=", CompareExpr.Operator.NEQ );
+        final Parser<CompareExpr> lt = parseCompare( "<", CompareExpr.Operator.LT );
+        final Parser<CompareExpr> lte = parseCompare( "<=", CompareExpr.Operator.LTE );
+        final Parser<CompareExpr> gt = parseCompare( ">", CompareExpr.Operator.GT );
+        final Parser<CompareExpr> gte = parseCompare( ">=", CompareExpr.Operator.GTE );
+        final Parser<CompareExpr> like = parseCompareWithNot( "LIKE", CompareExpr.Operator.LIKE );
+        final Parser<CompareExpr> in = parseCompareWithNot( "IN", CompareExpr.Operator.IN );
+
+        return Parsers.or( eq, neq, lt, lte, gt, gte, like, in );
+    }
+
+    private Parser<CompareExpr> parseCompare( final String op, final CompareExpr.Operator opCode )
+    {
+        return Parsers.sequence( parseField(), term( op ).retn( opCode ), parseValue( true ), QueryMapper.compareValueExpr() );
+    }
+
+    private Parser<CompareExpr> parseCompareWithNot( final String op, final CompareExpr.Operator opCode )
+    {
+        final Parser<CompareExpr.Operator> opParser = term( op ).retn( opCode );
+        final Parser<CompareExpr.Operator> negOpParser = term( "NOT" ).followedBy( term( op ) ).retn( opCode.negate() );
+        final Parser<CompareExpr.Operator> combined = Parsers.or( opParser, negOpParser );
+
+        if ( opCode.allowMultipleValues() )
+        {
+            return Parsers.sequence( parseField(), combined, parseValues( true ), QueryMapper.compareValuesExpr() );
+        }
+
+        return Parsers.sequence( parseField(), combined, parseValue( true ), QueryMapper.compareValueExpr() );
+    }
+
+    private Parser<Unary<ConstraintExpr>> parseNot()
+    {
+        return term( "NOT" ).next( Parsers.constant( QueryMapper.notExpr() ) );
+    }
+
+    private Parser<Binary<ConstraintExpr>> parseAnd()
+    {
+        return term( "AND" ).next( Parsers.constant( QueryMapper.andExpr() ) );
+    }
+
+    private Parser<Binary<ConstraintExpr>> parseOr()
+    {
+        return term( "OR" ).next( Parsers.constant( QueryMapper.orExpr() ) );
+    }
+
+    private Parser<ConstraintExpr> parseConstraint()
+    {
+        final Parser.Reference<ConstraintExpr> ref = Parser.newReference();
+
+        final OperatorTable<ConstraintExpr> table = new OperatorTable<>();
+        table.prefix( parseNot(), 30 );
+        table.infixl( parseAnd(), 20 );
+        table.infixl( parseOr(), 10 );
+
+        final Parser<ConstraintExpr> inner = Parsers.or( parseCompare(), parseDynamicConstraint() );
+        final Parser<ConstraintExpr> unit = ref.lazy().between( term( "(" ), term( ")" ) ).or( inner );
+        final Parser<ConstraintExpr> parser = table.build( unit );
+
+        ref.set( parser );
+        return parser;
+    }
+
+    private Parser<FunctionExpr> parseFunction( final boolean allowValueFunctions )
+    {
+        return Parsers.sequence( parseName(), parseValues( allowValueFunctions ), QueryMapper.functionExpr() );
+    }
+
+    private Parser<DynamicConstraintExpr> parseDynamicConstraint()
+    {
+        return parseFunction( true ).map( QueryMapper.dynamicConstraintExpr() );
+    }
+
+    private Parser<FieldOrderExpr> parseFieldOrder()
+    {
+        return Parsers.sequence( parseField(), parseOrderDirection(), QueryMapper.fieldOrderExpr() );
+    }
+
+    private Parser<DynamicOrderExpr> parseDynamicOrder()
+    {
+        return Parsers.sequence( parseFunction( true ), parseOrderDirection(), QueryMapper.dynamicOrderExpr() );
+    }
+
+    private Parser<OrderExpr> parseOrderElement()
+    {
+        return Parsers.or( parseDynamicOrder(), parseFieldOrder() );
+    }
+
+    private Parser<List<OrderExpr>> parseOrderList()
+    {
+        return parseOrderElement().sepBy( term( "," ) );
+    }
+
+    private Parser<List<OrderExpr>> parseOrderBy()
+    {
+        return Parsers.sequence( term( "ORDER" ), term( "BY" ), parseOrderList() );
+    }
+
+    private Parser<OrderExpr.Direction> parseOrderDirection()
+    {
+        final Parser<OrderExpr.Direction> asc = term( "ASC" ).retn( OrderExpr.Direction.ASC );
+        final Parser<OrderExpr.Direction> desc = term( "DESC" ).retn( OrderExpr.Direction.DESC );
+        return Parsers.or( asc, desc ).optional( OrderExpr.Direction.ASC );
+    }
+
+    private Parser<QueryExpr> parseQuery()
+    {
+        final Parser<ConstraintExpr> constraint = parseConstraint().optional();
+        final Parser<List<OrderExpr>> orderList = parseOrderBy().optional();
+        return Parsers.sequence( constraint, orderList, QueryMapper.queryExpr() );
+    }
+
+    public Parser<QueryExpr> grammar()
+    {
+        return parseQuery().from( tokenizer(), Scanners.SQL_DELIMITER );
+    }
 }
