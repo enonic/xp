@@ -33,7 +33,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.core.module.ModuleExporter;
+import com.enonic.wem.core.exporters.ModuleExporter;
 import com.enonic.wem.core.module.ModuleImporter;
 
 import static com.enonic.wem.api.command.Commands.module;
@@ -132,7 +132,7 @@ public class ModuleResource
         try
         {
             final ModuleExporter moduleExporter = new ModuleExporter();
-            final Path moduleFilePath = moduleExporter.exportModuleToZip( module, tempDirectory );
+            final Path moduleFilePath = moduleExporter.exportToZip( module, tempDirectory );
             final byte[] zipContents = Files.readAllBytes( moduleFilePath );
 
             final String fileName = moduleFilePath.getFileName().toString();
