@@ -28,7 +28,7 @@ final class QueryGrammar
 {
     private final static String[] OPERATORS = {"=", "!=", ">", ">=", "<", "<=", ",", "(", ")"};
 
-    private final static String[] KEYWORDS = {"AND", "OR", "NOT", "LIKE", "IN", "ASC", "DESC", "ORDER", "BY", "GEOPOINT", "DATETIME"};
+    private final static String[] KEYWORDS = {"AND", "OR", "NOT", "LIKE", "IN", "ASC", "DESC", "ORDER", "BY"};
 
     private final Terminals terminals;
 

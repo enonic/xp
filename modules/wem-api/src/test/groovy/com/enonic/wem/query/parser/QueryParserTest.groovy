@@ -26,6 +26,16 @@ class QueryParserTest extends Specification
         "a <= 3" | "a <= 3.0"
     }
 
+    def "test invalid query (#query)"( )
+    {
+        when:
+        QueryParser.parse( "a - 3" )
+
+        then:
+        thrown( QueryException )
+    }
+
+
     @Unroll
     def "test LIKE compare (#query)"( )
     {
@@ -223,6 +233,6 @@ class QueryParserTest extends Specification
         QueryParser.parse( "a = badFunc()" )
 
         then:
-        thrown(QueryException)
+        thrown( QueryException )
     }
 }
