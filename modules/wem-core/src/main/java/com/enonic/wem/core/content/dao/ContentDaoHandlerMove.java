@@ -8,13 +8,14 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.core.index.IndexService;
 
 class ContentDaoHandlerMove
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerMove( final Session session )
+    ContentDaoHandlerMove( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     void handle( ContentId content, ContentPath newPath )

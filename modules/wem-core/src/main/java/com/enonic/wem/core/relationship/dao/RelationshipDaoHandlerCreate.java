@@ -7,6 +7,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipId;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -16,9 +17,9 @@ final class RelationshipDaoHandlerCreate
 {
     private Relationship relationship;
 
-    RelationshipDaoHandlerCreate( final Session session )
+    RelationshipDaoHandlerCreate( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     RelationshipDaoHandlerCreate relationship( Relationship relationship )

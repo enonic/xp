@@ -6,6 +6,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
+import com.enonic.wem.core.index.IndexService;
 
 
 final class RelationshipDaoHandlerUpdate
@@ -13,9 +14,9 @@ final class RelationshipDaoHandlerUpdate
 {
     private Relationship relationship;
 
-    RelationshipDaoHandlerUpdate( final Session session )
+    RelationshipDaoHandlerUpdate( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     RelationshipDaoHandlerUpdate relationship( Relationship relationship )

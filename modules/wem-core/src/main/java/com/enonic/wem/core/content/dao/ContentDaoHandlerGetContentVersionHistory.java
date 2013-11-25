@@ -15,6 +15,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
@@ -24,9 +25,9 @@ import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 final class ContentDaoHandlerGetContentVersionHistory
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerGetContentVersionHistory( final Session session )
+    ContentDaoHandlerGetContentVersionHistory( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     List<ContentVersion> handle( final ContentPath contentPath )

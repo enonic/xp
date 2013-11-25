@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_ATTACHMENTS_NODE;
 import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
@@ -19,9 +20,9 @@ import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 final class AttachmentDaoHandlerCreate
     extends AbstractAttachmentDaoHandler
 {
-    AttachmentDaoHandlerCreate( final Session session )
+    AttachmentDaoHandlerCreate( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     void handle( final ContentPath contentPath, final Attachment attachment )

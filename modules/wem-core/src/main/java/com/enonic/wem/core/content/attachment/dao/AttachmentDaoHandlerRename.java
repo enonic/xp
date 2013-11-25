@@ -8,6 +8,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_ATTACHMENTS_NODE;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
@@ -19,9 +20,9 @@ final class AttachmentDaoHandlerRename
     extends AbstractAttachmentDaoHandler
 {
 
-    AttachmentDaoHandlerRename( final Session session )
+    AttachmentDaoHandlerRename( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     boolean handle( final ContentId contentId, String oldName, final String newName )

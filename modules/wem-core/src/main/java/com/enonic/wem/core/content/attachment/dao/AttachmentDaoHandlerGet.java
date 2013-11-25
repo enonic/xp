@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_ATTACHMENTS_NODE;
 
@@ -18,9 +19,9 @@ import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_ATTACHMENTS_NOD
 final class AttachmentDaoHandlerGet
     extends AbstractAttachmentDaoHandler
 {
-    AttachmentDaoHandlerGet( final Session session )
+    AttachmentDaoHandlerGet( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     Attachment handle( final ContentPath contentPath, final String attachmentName )

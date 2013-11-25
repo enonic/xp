@@ -160,7 +160,7 @@ public class ContentNodeTranslator
         }
     }
 
-    Content fromNode( final Node node )
+    public Content fromNode( final Node node )
     {
         final DataSet formItemsAsDataSet = node.dataSet( FORMITEMS_FULL_PATH );
         final FormItems formItems = SERIALIZER_FOR_FORM_ITEM_TO_DATA.deserializeFormItems( formItemsAsDataSet );

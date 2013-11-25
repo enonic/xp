@@ -16,13 +16,14 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
+import com.enonic.wem.core.index.IndexService;
 
 final class ContentDaoHandlerGetContentTree
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerGetContentTree( final Session session )
+    ContentDaoHandlerGetContentTree( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     Tree<Content> handle()

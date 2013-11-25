@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content.attachment.dao;
 
 
+import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -8,10 +9,13 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.core.index.IndexService;
 
 public class AttachmentDaoImpl
     implements AttachmentDao
 {
+
+    private IndexService indexService;
 
     @Override
     public void createAttachment( final ContentSelector contentSelector, final Attachment attachment, final Session session )
@@ -21,12 +25,12 @@ public class AttachmentDaoImpl
             if ( contentSelector instanceof ContentPath )
             {
                 final ContentPath contentPath = (ContentPath) contentSelector;
-                new AttachmentDaoHandlerCreate( session ).handle( contentPath, attachment );
+                new AttachmentDaoHandlerCreate( session, this.indexService ).handle( contentPath, attachment );
             }
             else if ( contentSelector instanceof ContentId )
             {
                 final ContentId contentId = (ContentId) contentSelector;
-                new AttachmentDaoHandlerCreate( session ).handle( contentId, attachment );
+                new AttachmentDaoHandlerCreate( session, this.indexService ).handle( contentId, attachment );
             }
             else
             {
@@ -47,12 +51,12 @@ public class AttachmentDaoImpl
             if ( contentSelector instanceof ContentPath )
             {
                 final ContentPath contentPath = (ContentPath) contentSelector;
-                return new AttachmentDaoHandlerGet( session ).handle( contentPath, attachmentName );
+                return new AttachmentDaoHandlerGet( session, this.indexService ).handle( contentPath, attachmentName );
             }
             else if ( contentSelector instanceof ContentId )
             {
                 final ContentId contentId = (ContentId) contentSelector;
-                return new AttachmentDaoHandlerGet( session ).handle( contentId, attachmentName );
+                return new AttachmentDaoHandlerGet( session, this.indexService ).handle( contentId, attachmentName );
             }
             else
             {
@@ -73,12 +77,12 @@ public class AttachmentDaoImpl
             if ( contentSelector instanceof ContentPath )
             {
                 final ContentPath contentPath = (ContentPath) contentSelector;
-                return new AttachmentDaoHandlerDelete( session ).handle( contentPath, attachmentName );
+                return new AttachmentDaoHandlerDelete( session, this.indexService ).handle( contentPath, attachmentName );
             }
             else if ( contentSelector instanceof ContentId )
             {
                 final ContentId contentId = (ContentId) contentSelector;
-                return new AttachmentDaoHandlerDelete( session ).handle( contentId, attachmentName );
+                return new AttachmentDaoHandlerDelete( session, this.indexService ).handle( contentId, attachmentName );
             }
             else
             {
@@ -96,11 +100,17 @@ public class AttachmentDaoImpl
     {
         try
         {
-            return new AttachmentDaoHandlerRename( session ).handle( contentId, oldContentName, newContentName );
+            return new AttachmentDaoHandlerRename( session, this.indexService ).handle( contentId, oldContentName, newContentName );
         }
         catch ( RepositoryException e )
         {
             throw new RuntimeException( e );
         }
+    }
+
+    @Inject
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 }

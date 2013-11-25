@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
+import com.enonic.wem.core.index.IndexService;
 
 final class ContentDaoHandlerDelete
     extends AbstractContentDaoHandler
@@ -19,9 +20,9 @@ final class ContentDaoHandlerDelete
 
     private boolean force = false;
 
-    ContentDaoHandlerDelete( final Session session )
+    ContentDaoHandlerDelete( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     ContentDaoHandlerDelete force( final boolean force )
@@ -76,10 +77,10 @@ final class ContentDaoHandlerDelete
     {
         if ( contentNode.hasNodes() )
         {
-            final NodeIterator nodeIte = contentNode.getNodes();
-            while ( nodeIte.hasNext() )
+            final NodeIterator nodeIterator = contentNode.getNodes();
+            while ( nodeIterator.hasNext() )
             {
-                final Node child = nodeIte.nextNode();
+                final Node child = nodeIterator.nextNode();
                 if ( !isNonContentNode( child ) )
                 {
                     final Content content = nodeToContent( child );

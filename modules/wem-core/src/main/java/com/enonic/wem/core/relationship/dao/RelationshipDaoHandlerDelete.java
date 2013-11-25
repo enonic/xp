@@ -7,6 +7,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.RelationshipNotFoundException;
+import com.enonic.wem.core.index.IndexService;
 
 
 final class RelationshipDaoHandlerDelete
@@ -16,9 +17,9 @@ final class RelationshipDaoHandlerDelete
 
     private RelationshipKey relationshipKey;
 
-    RelationshipDaoHandlerDelete( final Session session )
+    RelationshipDaoHandlerDelete( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     RelationshipDaoHandlerDelete relationshipKey( final RelationshipKey relationship )

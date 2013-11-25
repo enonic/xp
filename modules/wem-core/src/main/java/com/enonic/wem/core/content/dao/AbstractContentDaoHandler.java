@@ -15,6 +15,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.space.SpaceName;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 import static com.enonic.wem.api.content.Content.newContent;
@@ -31,9 +32,12 @@ public abstract class AbstractContentDaoHandler
 
     protected final ContentJcrMapper contentJcrMapper = new ContentJcrMapper();
 
-    protected AbstractContentDaoHandler( final Session session )
+    final IndexService indexService;
+
+    protected AbstractContentDaoHandler( final Session session, final IndexService indexService )
     {
         this.session = session;
+        this.indexService = indexService;
     }
 
     protected final List<ContentAndNode> doContentNodesToContentAndNodes( final Iterator<Node> nodeIterator )

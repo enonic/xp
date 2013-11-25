@@ -7,13 +7,14 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.core.index.IndexService;
 
 class ContentDaoHandlerRename
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerRename( final Session session )
+    ContentDaoHandlerRename( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     boolean handle( ContentId content, String newName )

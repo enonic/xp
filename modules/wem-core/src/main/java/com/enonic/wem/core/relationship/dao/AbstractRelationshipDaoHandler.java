@@ -13,6 +13,7 @@ import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.RelationshipKey;
 import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.core.content.dao.AbstractContentDaoHandler;
+import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.AbstractDaoHandler;
 
@@ -26,10 +27,10 @@ abstract class AbstractRelationshipDaoHandler<T>
 
     protected ContentDaoHandler contentDaoHandler;
 
-    AbstractRelationshipDaoHandler( final Session session )
+    AbstractRelationshipDaoHandler( final Session session, final IndexService indexService )
     {
         this.session = session;
-        contentDaoHandler = new ContentDaoHandler( session );
+        contentDaoHandler = new ContentDaoHandler( session, indexService );
     }
 
     protected final Node getRelationshipNode( final RelationshipId relationshipId )
@@ -162,9 +163,9 @@ abstract class AbstractRelationshipDaoHandler<T>
     private class ContentDaoHandler
         extends AbstractContentDaoHandler
     {
-        ContentDaoHandler( final Session session )
+        ContentDaoHandler( final Session session, final IndexService indexService )
         {
-            super( session );
+            super( session, indexService );
         }
 
         private Node getContentNode( ContentId contentId )

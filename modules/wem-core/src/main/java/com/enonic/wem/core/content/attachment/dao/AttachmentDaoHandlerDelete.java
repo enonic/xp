@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_ATTACHMENTS_NODE;
 
@@ -17,9 +18,9 @@ import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_ATTACHMENTS_NOD
 final class AttachmentDaoHandlerDelete
     extends AbstractAttachmentDaoHandler
 {
-    AttachmentDaoHandlerDelete( final Session session )
+    AttachmentDaoHandlerDelete( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     boolean handle( final ContentPath contentPath, final String attachmentName )

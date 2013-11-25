@@ -35,16 +35,22 @@ final class ContentDaoHandlerCreate
 {
     private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
 
-    private IndexService indexService;
-
-
     ContentDaoHandlerCreate( final Session session, final IndexService indexService )
     {
-        super( session );
-        this.indexService = indexService;
+        super( session, indexService );
     }
 
     ContentId handle( final Content content )
+        throws RepositoryException
+    {
+        final ContentId storedContentId = storeAsContentInJct( content );
+
+        storeContentAsNode( content );
+
+        return storedContentId;
+    }
+
+    private ContentId storeAsContentInJct( final Content content )
         throws RepositoryException
     {
         if ( content.getId() != null )
@@ -56,6 +62,7 @@ final class ContentDaoHandlerCreate
 
         final Node root = session.getRootNode();
         final String spaceNodePath = SPACES_PATH + path.getSpace().name();
+
         if ( !root.hasNode( spaceNodePath ) )
         {
             throw new SpaceNotFoundException( path.getSpace() );
@@ -63,6 +70,7 @@ final class ContentDaoHandlerCreate
 
         final Node newContentNode;
         final String spaceRootPath = getSpaceRootPath( path.getSpace() );
+
         if ( path.isRoot() )
         {
             if ( root.hasNode( spaceRootPath ) )
@@ -119,12 +127,10 @@ final class ContentDaoHandlerCreate
         final Node newContentNode = parentNode.addNode( nodeName, JcrConstants.CONTENT_NODETYPE );
         contentJcrMapper.toJcr( content, newContentNode );
 
-        storeAsNode( content );
-
         return newContentNode;
     }
 
-    private void storeAsNode( final Content content )
+    private void storeContentAsNode( final Content content )
     {
         final com.enonic.wem.api.entity.Node node = CONTENT_NODE_TRANSLATOR.toNode( content );
 

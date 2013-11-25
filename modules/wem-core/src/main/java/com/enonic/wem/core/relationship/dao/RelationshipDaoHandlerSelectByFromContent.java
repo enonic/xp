@@ -5,6 +5,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.relationship.Relationships;
+import com.enonic.wem.core.index.IndexService;
 
 
 final class RelationshipDaoHandlerSelectByFromContent
@@ -13,9 +14,9 @@ final class RelationshipDaoHandlerSelectByFromContent
     private ContentId fromContent;
 
 
-    RelationshipDaoHandlerSelectByFromContent( final Session session )
+    RelationshipDaoHandlerSelectByFromContent( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
 
     }
 

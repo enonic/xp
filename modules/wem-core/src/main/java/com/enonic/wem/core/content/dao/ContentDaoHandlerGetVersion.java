@@ -9,6 +9,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
@@ -16,9 +17,9 @@ import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 final class ContentDaoHandlerGetVersion
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerGetVersion( final Session session )
+    ContentDaoHandlerGetVersion( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     Content handle( final ContentId contentId, final ContentVersionId versionId )

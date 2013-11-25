@@ -6,6 +6,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipKey;
+import com.enonic.wem.core.index.IndexService;
 
 
 final class RelationshipDaoHandlerSelectByKey
@@ -14,9 +15,9 @@ final class RelationshipDaoHandlerSelectByKey
     private RelationshipKey relationshipKey;
 
 
-    RelationshipDaoHandlerSelectByKey( final Session session )
+    RelationshipDaoHandlerSelectByKey( final Session session, IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
 
     }
 

@@ -9,13 +9,14 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.core.index.IndexService;
 
-final class ContentDaoHandlerFindChild
+final class ContentDaoHandlerGetChild
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerFindChild( final Session session )
+    ContentDaoHandlerGetChild( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     Contents handle( final ContentPath parentPath )

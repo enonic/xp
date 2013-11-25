@@ -4,6 +4,7 @@ package com.enonic.wem.core.content.dao;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -28,10 +29,10 @@ import com.enonic.wem.core.index.IndexService;
  * TODO: Figure out how to handle the thrown RepositoryException from JCR.
  */
 
+@Singleton
 public class ContentDaoImpl
     implements ContentDao
 {
-
     private IndexService indexService;
 
     @Override
@@ -52,7 +53,7 @@ public class ContentDaoImpl
     {
         try
         {
-            new ContentDaoHandlerUpdate( session ).handle( content, createNewVersion );
+            new ContentDaoHandlerUpdate( session, this.indexService ).handle( content, createNewVersion );
         }
         catch ( RepositoryException e )
         {
@@ -74,12 +75,12 @@ public class ContentDaoImpl
                     throw new UnableToDeleteContentException( contentPath, "Root content of a space." );
                 }
 
-                new ContentDaoHandlerDelete( session ).deleteContentByPath( contentPath );
+                new ContentDaoHandlerDelete( session, this.indexService ).deleteContentByPath( contentPath );
             }
             else if ( contentSelector instanceof ContentId )
             {
                 final ContentId contentId = (ContentId) contentSelector;
-                new ContentDaoHandlerDelete( session ).deleteContentById( contentId );
+                new ContentDaoHandlerDelete( session, this.indexService ).deleteContentById( contentId );
             }
             else
             {
@@ -98,7 +99,8 @@ public class ContentDaoImpl
     {
         try
         {
-            new ContentDaoHandlerDelete( session ).force( true ).ignoreContentNotFound( true ).deleteContentById( contentId );
+            new ContentDaoHandlerDelete( session, this.indexService ).force( true ).ignoreContentNotFound( true ).deleteContentById(
+                contentId );
         }
         catch ( RepositoryException e )
         {
@@ -111,7 +113,7 @@ public class ContentDaoImpl
     {
         try
         {
-            return new ContentDaoHandlerRename( session ).handle( contentId, newName );
+            return new ContentDaoHandlerRename( session, this.indexService ).handle( contentId, newName );
         }
         catch ( RepositoryException e )
         {
@@ -124,7 +126,7 @@ public class ContentDaoImpl
     {
         try
         {
-            new ContentDaoHandlerMove( session ).handle( contentId, newPath );
+            new ContentDaoHandlerMove( session, this.indexService ).handle( contentId, newPath );
         }
         catch ( RepositoryException e )
         {
@@ -140,12 +142,12 @@ public class ContentDaoImpl
             if ( contentSelector instanceof ContentPath )
             {
                 final ContentPath contentPath = (ContentPath) contentSelector;
-                return new ContentDaoHandlerFind( session ).findContentByPath( contentPath );
+                return new ContentDaoHandlerGet( session, this.indexService ).findContentByPath( contentPath );
             }
             else if ( contentSelector instanceof ContentId )
             {
                 final ContentId contentId = (ContentId) contentSelector;
-                return new ContentDaoHandlerFind( session ).findContentById( contentId );
+                return new ContentDaoHandlerGet( session, this.indexService ).findContentById( contentId );
             }
             else
             {
@@ -166,12 +168,12 @@ public class ContentDaoImpl
             if ( contentSelectors instanceof ContentPaths )
             {
                 final ContentPaths contentPaths = (ContentPaths) contentSelectors;
-                return new ContentDaoHandlerFind( session ).findContentsByPath( contentPaths );
+                return new ContentDaoHandlerGet( session, this.indexService ).findContentsByPath( contentPaths );
             }
             else if ( contentSelectors instanceof ContentIds )
             {
                 final ContentIds contentIds = (ContentIds) contentSelectors;
-                return new ContentDaoHandlerFind( session ).findContentsById( contentIds );
+                return new ContentDaoHandlerGet( session, this.indexService ).findContentsById( contentIds );
             }
             else
             {
@@ -189,7 +191,7 @@ public class ContentDaoImpl
     {
         try
         {
-            return new ContentDaoHandlerFindChild( session ).handle( parentPath );
+            return new ContentDaoHandlerGetChild( session, this.indexService ).handle( parentPath );
         }
         catch ( RepositoryException e )
         {
@@ -202,7 +204,7 @@ public class ContentDaoImpl
     {
         try
         {
-            return new ContentDaoHandlerGetContentTree( session ).handle();
+            return new ContentDaoHandlerGetContentTree( session, this.indexService ).handle();
         }
         catch ( RepositoryException e )
         {
@@ -215,7 +217,7 @@ public class ContentDaoImpl
     {
         try
         {
-            return new ContentDaoHandlerCountContentTypeUsage( session ).handle( qualifiedContentTypeName );
+            return new ContentDaoHandlerCountContentTypeUsage( session, indexService ).handle( qualifiedContentTypeName );
         }
         catch ( RepositoryException e )
         {
@@ -231,12 +233,12 @@ public class ContentDaoImpl
             if ( contentSelector instanceof ContentPath )
             {
                 final ContentPath contentPath = (ContentPath) contentSelector;
-                return new ContentDaoHandlerGetContentVersionHistory( session ).handle( contentPath );
+                return new ContentDaoHandlerGetContentVersionHistory( session, this.indexService ).handle( contentPath );
             }
             else if ( contentSelector instanceof ContentId )
             {
                 final ContentId contentId = (ContentId) contentSelector;
-                return new ContentDaoHandlerGetContentVersionHistory( session ).handle( contentId );
+                return new ContentDaoHandlerGetContentVersionHistory( session, this.indexService ).handle( contentId );
             }
             else
             {
@@ -257,12 +259,12 @@ public class ContentDaoImpl
             if ( contentSelector instanceof ContentPath )
             {
                 final ContentPath contentPath = (ContentPath) contentSelector;
-                return new ContentDaoHandlerGetVersion( session ).handle( contentPath, versionId );
+                return new ContentDaoHandlerGetVersion( session, this.indexService ).handle( contentPath, versionId );
             }
             else if ( contentSelector instanceof ContentId )
             {
                 final ContentId contentId = (ContentId) contentSelector;
-                return new ContentDaoHandlerGetVersion( session ).handle( contentId, versionId );
+                return new ContentDaoHandlerGetVersion( session, this.indexService ).handle( contentId, versionId );
             }
             else
             {

@@ -213,7 +213,7 @@ public class Property
     @Override
     public com.enonic.wem.api.data.Data copy()
     {
-        return null;
+        return new Property( this );
     }
 
     public boolean valueEquals( final com.enonic.wem.api.data.Data data )

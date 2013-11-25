@@ -5,6 +5,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.RelationshipIds;
+import com.enonic.wem.core.index.IndexService;
 
 
 final class RelationshipDaoHandlerExists
@@ -12,9 +13,9 @@ final class RelationshipDaoHandlerExists
 {
     private RelationshipIds relationshipIds;
 
-    RelationshipDaoHandlerExists( final Session session )
+    RelationshipDaoHandlerExists( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     RelationshipDaoHandlerExists relationshipIds( RelationshipIds ids )

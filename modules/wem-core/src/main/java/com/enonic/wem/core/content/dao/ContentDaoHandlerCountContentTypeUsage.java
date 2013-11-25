@@ -7,13 +7,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.core.index.IndexService;
 
 final class ContentDaoHandlerCountContentTypeUsage
     extends AbstractContentDaoHandler
 {
-    ContentDaoHandlerCountContentTypeUsage( final Session session )
+    ContentDaoHandlerCountContentTypeUsage( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     int handle( ContentTypeName qualifiedContentTypeName )

@@ -8,6 +8,7 @@ import com.enonic.wem.api.relationship.Relationship;
 import com.enonic.wem.api.relationship.RelationshipId;
 import com.enonic.wem.api.relationship.RelationshipIds;
 import com.enonic.wem.api.relationship.Relationships;
+import com.enonic.wem.core.index.IndexService;
 
 
 final class RelationshipDaoHandlerSelectByIds
@@ -15,9 +16,9 @@ final class RelationshipDaoHandlerSelectByIds
 {
     private RelationshipIds relationshipIds;
 
-    RelationshipDaoHandlerSelectByIds( final Session session )
+    RelationshipDaoHandlerSelectByIds( final Session session, final IndexService indexService )
     {
-        super( session );
+        super( session, indexService );
     }
 
     RelationshipDaoHandlerSelectByIds relationshipIds( RelationshipIds relationshipIds )
