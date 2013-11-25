@@ -9,6 +9,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class UpdateModuleHandler
     extends CommandHandler<UpdateModule>
@@ -36,7 +37,7 @@ public class UpdateModuleHandler
         boolean edited = editedModule != null && !editedModule.equals( module );
         if ( edited )
         {
-            moduleExporter.exportModuleToDirectory( editedModule, modulesDir.toPath() );
+            moduleExporter.exportToDirectory( editedModule, modulesDir.toPath() );
         }
 
         command.setResult( edited );

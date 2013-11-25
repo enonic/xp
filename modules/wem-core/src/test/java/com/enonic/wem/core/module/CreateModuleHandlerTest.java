@@ -22,6 +22,7 @@ import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.google.common.io.ByteStreams.asByteSource;
@@ -106,7 +107,7 @@ public class CreateModuleHandlerTest
 
         final Path expectedModuleDir = systemConfig.getModulesDir().toPath().resolve( "modulename-1.0.0" );
         assertTrue( "Module directory not found: " + expectedModuleDir, Files.isDirectory( expectedModuleDir ) );
-        final Path moduleXmlPath = expectedModuleDir.resolve( Module.MODULE_XML );
+        final Path moduleXmlPath = expectedModuleDir.resolve( ModuleImporter.MODULE_XML );
         assertTrue( "Module xml not found: " + moduleXmlPath, Files.isRegularFile( moduleXmlPath ) );
     }
 
@@ -166,7 +167,7 @@ public class CreateModuleHandlerTest
 
         final Path expectedModuleDir = systemConfig.getModulesDir().toPath().resolve( "modulename-1.0.0" );
         assertTrue( "Module directory not found: " + expectedModuleDir, Files.isDirectory( expectedModuleDir ) );
-        final Path moduleXmlPath = expectedModuleDir.resolve( Module.MODULE_XML );
+        final Path moduleXmlPath = expectedModuleDir.resolve( ModuleImporter.MODULE_XML );
         assertTrue( "Module xml not found: " + moduleXmlPath, Files.isRegularFile( moduleXmlPath ) );
 
         assertDirectoryExists( expectedModuleDir.resolve( "public" ) );

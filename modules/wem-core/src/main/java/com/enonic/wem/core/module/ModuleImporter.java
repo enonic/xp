@@ -18,11 +18,14 @@ import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.core.exporters.ModuleExporter;
+import com.enonic.wem.core.exporters.XMLFilename;
 
 import static com.enonic.wem.api.module.Module.newModule;
 
 public class ModuleImporter
 {
+    public final static String MODULE_XML = ModuleExporter.class.getAnnotation( XMLFilename.class ).value();
 
     private final ModuleXmlSerializer xmlSerializer = new ModuleXmlSerializer();
 
@@ -48,7 +51,7 @@ public class ModuleImporter
         {
             final Path moduleRootPath = zipFs.getPath( "/" );
 
-            final Path xmlFile = moduleRootPath.resolve( Module.MODULE_XML );
+            final Path xmlFile = moduleRootPath.resolve( MODULE_XML );
             Preconditions.checkArgument( Files.isRegularFile( xmlFile ), "Module descriptor file not found: " + xmlFile );
 
             readModuleXml( moduleBuilder, xmlFile );
@@ -66,7 +69,7 @@ public class ModuleImporter
             throw new NoSuchFileException( moduleDirectoryPath.toString() );
         }
         Preconditions.checkArgument( Files.isDirectory( moduleDirectoryPath ), "Module file is not a directory: " + moduleDirectoryPath );
-        final Path xmlFile = moduleDirectoryPath.resolve( Module.MODULE_XML );
+        final Path xmlFile = moduleDirectoryPath.resolve( MODULE_XML );
         Preconditions.checkArgument( Files.isRegularFile( xmlFile ), "Module descriptor file not found: " + xmlFile );
 
         final String moduleDirName = moduleDirectoryPath.getFileName().toString();
@@ -88,7 +91,7 @@ public class ModuleImporter
         {
             for ( Path path : ds )
             {
-                if ( rootLevel && Module.MODULE_XML.equals( path.getFileName().toString() ) )
+                if ( rootLevel && MODULE_XML.equals( path.getFileName().toString() ) )
                 {
                     continue;
                 }
