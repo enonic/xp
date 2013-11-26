@@ -12,9 +12,8 @@ module LiveEdit.component.dragdropsort {
                 buttonsVisible: false,
                 imageVisible: false
             };
-            var imageUploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
-            console.log("imageuploader", imageUploader);
 
+            console.log("creating empty component", component);
 
             var emptyComponent = new api_dom.DivEl();
             emptyComponent.addClass("live-edit-empty-component");
@@ -22,10 +21,17 @@ module LiveEdit.component.dragdropsort {
             emptyComponent.getEl().setData('live-edit-empty-component', "true");
             emptyComponent.getEl().setData('live-edit-type', component.getComponentType().getName());
 
-            var emptyComponentIcon = new api_dom.DivEl();
-            emptyComponentIcon.addClass(component.getComponentType().getIconCls() + ' live-edit-empty-component-icon');
+            if (component.componentType.getName() == "image") {
+                var imageUploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
+                console.log("imageuploader", imageUploader);
+                emptyComponent.appendChild(imageUploader);
 
-            emptyComponent.appendChild(emptyComponentIcon);
+            } else {
+                var emptyComponentIcon = new api_dom.DivEl();
+                emptyComponentIcon.addClass(component.getComponentType().getIconCls() + ' live-edit-empty-component-icon');
+
+                emptyComponent.appendChild(emptyComponentIcon);
+            }
 
 
 //            return '<div class="live-edit-empty-component" data-live-edit-empty-component="true" data-live-edit-type="' + component.getComponentType().getName() + '">' +
@@ -37,7 +43,7 @@ module LiveEdit.component.dragdropsort {
         public static restoreEmptyComponent() {
             var currentComponent = LiveEdit.component.Selection.getSelectedComponent();
             if (currentComponent) {
-                var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(currentComponent));
+                var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(currentComponent).getHTMLElement());
                 var emptyComponent = new LiveEdit.component.Component(emptyElement);
 
                 currentComponent.getElement().replaceWith(emptyComponent.getElement());
