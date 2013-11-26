@@ -13,6 +13,7 @@ import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
 import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.content.ContentResource;
 import com.enonic.wem.admin.rest.resource.content.site.SiteResource;
+import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
 import com.enonic.wem.admin.rest.resource.module.ModuleResource;
 import com.enonic.wem.admin.rest.resource.relationship.RelationshipResource;
@@ -71,6 +72,8 @@ public final class RestServlet
         addClass( CountryResource.class );
         addClass( TimeZoneResource.class );
         addClass( LocaleResource.class );
+
+        addClass( SiteTemplateResource.class );
 
         addSingleton( JsonRpcController.class );
     }
