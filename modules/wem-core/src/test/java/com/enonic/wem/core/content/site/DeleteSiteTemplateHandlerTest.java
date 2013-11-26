@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
+import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.core.config.SystemConfig;
 
@@ -46,16 +47,17 @@ public class DeleteSiteTemplateHandlerTest
 
         Mockito.when( systemConfig.getTemplatesDir() ).thenReturn( templatesDir );
 
-        DeleteSiteTemplate command = Commands.site().template().delete( SiteTemplateKey.from( "Intranet-1.0.0" ) );
+        SiteTemplateKey key = SiteTemplateKey.from( "Intranet-1.0.0" );
+        DeleteSiteTemplate command = Commands.site().template().delete( key );
         handler.setCommand( command );
         handler.handle();
 
-        assertTrue( command.getResult() );
+        assertEquals( key, command.getResult() );
         assertTrue( templatesDir.exists() );
         assertFalse( templateDir.exists() );
     }
 
-    @Test
+    @Test(expected = NoSiteTemplateExistsException.class)
     public void delete_site_template_not_exist()
         throws Exception
     {
@@ -72,7 +74,6 @@ public class DeleteSiteTemplateHandlerTest
         handler.setCommand( command );
         handler.handle();
 
-        assertFalse( command.getResult() );
         assertTrue( templatesDir.exists() );
         assertTrue( templateDir.exists() );
     }

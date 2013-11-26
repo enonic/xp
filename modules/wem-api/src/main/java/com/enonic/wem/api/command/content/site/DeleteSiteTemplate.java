@@ -7,7 +7,7 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 
 public final class DeleteSiteTemplate
-    extends Command<Boolean>
+    extends Command<SiteTemplateKey>
 {
     private SiteTemplateKey key;
 
