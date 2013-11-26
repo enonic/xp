@@ -15,5 +15,13 @@ module api_content_site{
                 });
             }
         }
+
+        getTemplateName():string {
+            return this.templateName;
+        }
+
+        getModuleConfigs():ModuleConfig[] {
+            return this.moduleConfigs;
+        }
     }
 }

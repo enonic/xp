@@ -2,31 +2,29 @@ module app_new {
 
     export class ContentTypeListItem {
 
-        private name:string;
-
-        private displayName:string;
-
-        private iconUrl:string;
-
         private siteRoot:boolean;
 
-        constructor(name:string, displayName:string, iconUrl:string, root?:boolean) {
-            this.name = name;
-            this.displayName = displayName;
-            this.iconUrl = iconUrl;
+        private contentType:api_schema_content.ContentTypeSummary;
+
+        constructor(contentType:api_schema_content.ContentTypeSummary, root?:boolean) {
+            this.contentType = contentType;
             this.siteRoot = root || false;
         }
 
         getName() {
-            return this.name;
+            return this.contentType.getName();
         }
 
         getDisplayName() {
-            return this.displayName;
+            return this.contentType.getDisplayName();
         }
 
         getIconUrl() {
-            return this.iconUrl;
+            return this.contentType.getIcon();
+        }
+
+        getContentType():api_schema_content.ContentTypeSummary {
+            return this.contentType;
         }
 
         isSiteRoot() {

@@ -4,11 +4,7 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("common/images/default_content.png");
 
-        private persistedContent:api_content.Content;
-
         private parentContent:api_content.Content;
-
-        private renderingNew:boolean;
 
         private contentType:api_schema_content.ContentType;
 
@@ -57,11 +53,6 @@ module app_wizard {
             this.contentWizardHeader.initNames("New " + this.contentType.getDisplayName(), null);
             this.contentWizardHeader.setAutogenerateName(true);
 
-            this.contentForm = new ContentForm();
-
-            var steps:api_app_wizard.WizardStep[] = [];
-            steps.push(new api_app_wizard.WizardStep(contentType.getDisplayName(), this.contentForm));
-
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
@@ -70,7 +61,7 @@ module app_wizard {
                 header: this.contentWizardHeader,
                 actions: actions,
                 livePanel: livePanel,
-                steps: steps
+                steps: this.createSteps()
             });
 
             ShowContentLiveEvent.on((event) => {
@@ -96,9 +87,16 @@ module app_wizard {
             }
         }
 
+        createSteps():api_app_wizard.WizardStep[] {
+            var steps:api_app_wizard.WizardStep[] = [];
+            this.contentForm = new ContentForm();
+            steps.push(new api_app_wizard.WizardStep(this.contentType.getDisplayName(), this.contentForm));
+            return steps;
+        }
+
         showCallback() {
-            if (this.persistedContent) {
-                app.Router.setHash("edit/" + this.persistedContent.getId());
+            if (this.getPersistedItem()) {
+                app.Router.setHash("edit/" + this.getPersistedItem().getId());
             } else {
                 app.Router.setHash("new/" + this.contentType.getName());
             }
@@ -107,14 +105,12 @@ module app_wizard {
 
         renderNew() {
             super.renderNew();
+
             this.contentForm.renderNew(this.contentType.getForm());
-            this.renderingNew = true;
         }
 
         setPersistedItem(content:api_content.Content) {
             super.setPersistedItem(content);
-            this.persistedContent = content;
-            this.renderingNew = false;
 
             this.contentWizardHeader.initNames(content.getDisplayName(), content.getName());
             // setup displayName and name to be generated automatically
@@ -166,7 +162,7 @@ module app_wizard {
 
         updatePersistedItem(successCallback?:() => void) {
 
-            var updateRequest = new api_content.UpdateContentRequest(this.persistedContent.getId()).
+            var updateRequest = new api_content.UpdateContentRequest(this.getPersistedItem().getId()).
                 setContentName(this.contentWizardHeader.getName()).
                 setContentType(this.contentType.getName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
@@ -174,12 +170,7 @@ module app_wizard {
                 setContentData(this.contentForm.getContentData());
 
             if (this.iconUploadId) {
-                updateRequest.setAttachments([
-                    {
-                        uploadId: this.iconUploadId,
-                        attachmentName: '_thumb.png'
-                    }
-                ])
+                updateRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName(null, '_thumb.png')));
             }
 
             updateRequest.send().done((updateResponse:api_rest.JsonResponse<any>) => {
@@ -202,13 +193,22 @@ module app_wizard {
         }
 
         hasUnsavedChanges():boolean {
-            if (this.persistedContent == undefined) {
+            var persistedContent:api_content.Content = this.getPersistedItem();
+            if (persistedContent == undefined) {
                 return true;
             } else {
-                return !this.stringsEqual(this.persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
-                    || !this.stringsEqual(this.persistedContent.getName(), this.contentWizardHeader.getName())
-                    || !this.persistedContent.getContentData().equals(this.contentForm.getContentData());
+                return !this.stringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
+                    || !this.stringsEqual(persistedContent.getName(), this.contentWizardHeader.getName())
+                    || !persistedContent.getContentData().equals(this.contentForm.getContentData());
             }
+        }
+
+        getParentContent():api_content.Content {
+            return this.parentContent;
+        }
+
+        getContentType():api_schema_content.ContentType {
+            return this.contentType;
         }
 
         private stringsEqual(str1:string, str2:string):boolean {

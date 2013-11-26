@@ -40,6 +40,8 @@ module api_app_wizard {
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged:boolean = true;
 
+        private renderingNew:boolean;
+
         private previous:WizardStepNavigationArrow;
 
         private next:WizardStepNavigationArrow;
@@ -160,10 +162,18 @@ module api_app_wizard {
         }
 
         renderNew() {
+            this.renderingNew = true;
+
             this.actions.enableActionsForNew();
         }
 
+        isRenderingNew():boolean {
+            return this.renderingNew;
+        }
+
         setPersistedItem(item:T) {
+            this.renderingNew = false;
+
             this.persistedItem = item;
             this.actions.enableActionsForExisting(item);
         }
@@ -189,10 +199,6 @@ module api_app_wizard {
                     this.stepPanels.showPanel( 0 );
                 }
             } );
-        }
-
-        showFirstStep() {
-            this.stepPanels.showPanel(0);
         }
 
         close(checkCanClose:boolean = false) {

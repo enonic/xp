@@ -14,10 +14,7 @@ module api_content {
 
         private displayName:string;
 
-        private attachments:{
-            uploadId: string;
-            attachmentName: string;
-        }[];
+        private attachments:api_content.Attachment[] = [];
 
         constructor(id:string) {
             super();
@@ -56,8 +53,13 @@ module api_content {
         }
 
 
-        setAttachments(attachments:{uploadId: string;attachmentName: string;}[]):UpdateContentRequest {
-            this.attachments = attachments;
+        addAttachment(attachment:api_content.Attachment):UpdateContentRequest {
+            this.attachments.push( attachment );
+            return this;
+        }
+
+        addAttachments(attachments:api_content.Attachment[]):UpdateContentRequest {
+            this.attachments = this.attachments.concat(attachments);
             return this;
         }
 

@@ -36,9 +36,9 @@ module app_new {
             });
         }
 
-        private notifySelected(contentType:api_schema_content.ContentTypeSummary) {
+        private notifySelected(contentTypeListItem:ContentTypeListItem) {
             this.listeners.forEach((listener:ContentTypesListListener) => {
-                listener.onSelected(contentType);
+                listener.onSelected(contentTypeListItem);
             });
         }
 
@@ -83,11 +83,11 @@ module app_new {
         private createListItem(contentType:api_schema_content.ContentTypeSummary):ContentTypeListItemView {
 
             var isSiteRoot = this.siteRootContentTypes.isSiteRoot(contentType.getName());
-            var listItem = new ContentTypeListItem(contentType.getName(), contentType.getDisplayName(), contentType.getIcon(), isSiteRoot);
+            var listItem = new ContentTypeListItem(contentType, isSiteRoot);
             var listItemView = new ContentTypeListItemView(listItem);
 
             listItemView.getEl().addEventListener("click", () => {
-                this.notifySelected(contentType);
+                this.notifySelected(listItem);
             });
             return listItemView;
         }

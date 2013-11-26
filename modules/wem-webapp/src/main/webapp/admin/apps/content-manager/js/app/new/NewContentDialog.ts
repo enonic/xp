@@ -8,7 +8,7 @@ module app_new {
 
         private recommendedList:RecommendedContentTypesList;
 
-        private allList:app_new.AllContentTypesList;
+        private allList:AllContentTypesList;
 
         constructor() {
             super({
@@ -22,15 +22,15 @@ module app_new {
 
             this.recommendedList = new RecommendedContentTypesList("block recommended");
             this.recommendedList.addListener({
-                onSelected: (selectedContentType:api_schema_content.ContentTypeSummary) => {
-                    this.closeAndIssueNewContentEvent(selectedContentType);
+                onSelected: (contentTypeListItem:ContentTypeListItem) => {
+                    this.closeAndIssueNewContentEvent(contentTypeListItem);
                 }
             });
 
             this.recentList = new RecentContentTypesList("block recent");
             this.recentList.addListener({
-                onSelected: (selectedContentType:api_schema_content.ContentTypeSummary) => {
-                    this.closeAndIssueNewContentEvent(selectedContentType);
+                onSelected: (contentTypeListItem:ContentTypeListItem) => {
+                    this.closeAndIssueNewContentEvent(contentTypeListItem);
                 }
             });
 
@@ -41,8 +41,8 @@ module app_new {
 
             this.allList = new app_new.AllContentTypesList("column column-right block all");
             this.allList.addListener({
-                onSelected: (selectedContentType:api_schema_content.ContentTypeSummary) => {
-                    this.closeAndIssueNewContentEvent(selectedContentType);
+                onSelected: (contentTypeListItem:ContentTypeListItem) => {
+                    this.closeAndIssueNewContentEvent(contentTypeListItem);
                 }
             });
 
@@ -56,9 +56,9 @@ module app_new {
             api_dom.Body.get().appendChild(this);
         }
 
-        private closeAndIssueNewContentEvent(contentType:api_schema_content.ContentTypeSummary) {
+        private closeAndIssueNewContentEvent(contentTypeListItem:ContentTypeListItem) {
             this.close();
-            new NewContentEvent(contentType, this.parentContent).fire();
+            new NewContentEvent(contentTypeListItem.getContentType(), this.parentContent, contentTypeListItem.isSiteRoot()).fire();
         }
 
         setParentContent(value:api_content.Content) {

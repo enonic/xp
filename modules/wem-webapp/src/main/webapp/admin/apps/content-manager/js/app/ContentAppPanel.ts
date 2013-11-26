@@ -12,7 +12,7 @@ module app {
             });
 
             app_new.NewContentEvent.on((event) => {
-                this.handleNew(event.getContentType(), event.getParentContent());
+                this.handleNew(event.getContentType(), event.getParentContent(), event.isSiteRoot());
             });
 
             app_browse.OpenContentEvent.on((event) => {
@@ -46,9 +46,9 @@ module app {
                 });
         }
 
-        private handleNew(contentType:api_schema_content.ContentTypeSummary, parentContent:api_content.Content) {
+        private handleNew(contentTypeSummary:api_schema_content.ContentTypeSummary, parentContent:api_content.Content, siteRoot:boolean) {
 
-            var tabId = api_app.AppBarTabId.forNew(contentType.getName());
+            var tabId = api_app.AppBarTabId.forNew(contentTypeSummary.getName());
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
             if (tabMenuItem != null) {
@@ -56,19 +56,21 @@ module app {
 
             } else {
 
-                var contentTypeRequest = new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName(contentType.getName())).send();
-                jQuery.
-                    when(contentTypeRequest).
-                    then((contentTypeResponse:api_rest.JsonResponse) => {
+                new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName(contentTypeSummary.getName())).
+                    send().done((contentTypeResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
 
-                        var newContentType = new api_schema_content.ContentType(contentTypeResponse.getJson());
+                        var contentType = new api_schema_content.ContentType(contentTypeResponse.getResult());
 
-                        tabMenuItem = new api_app.AppBarTabMenuItem("New " + contentType.getDisplayName(), tabId);
-                        var wizardPanel = new app_wizard.ContentWizardPanel(tabId, newContentType, parentContent);
+                        tabMenuItem = new api_app.AppBarTabMenuItem("New " + contentTypeSummary.getDisplayName(), tabId);
+                        var wizardPanel;
+                        if(siteRoot) {
+                            wizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType, parentContent);
+                        } else {
+                            wizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent);
+                        }
                         wizardPanel.renderNew();
                         this.addWizardPanel(tabMenuItem, wizardPanel);
                         wizardPanel.reRender();
-
                     });
             }
         }
@@ -114,15 +116,15 @@ module app {
 
                 } else {
 
-
                     var getContentByIdPromise = new api_content.GetContentByIdRequest(content.getId()).send();
                     var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName(content.getType())).send();
                     jQuery.
                         when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
-                        then((contentResponse:api_rest.JsonResponse<api_content_json.ContentJson>, contentTypeResponse:api_rest.JsonResponse) => {
+                        then((contentResponse:api_rest.JsonResponse<api_content_json.ContentJson>, contentTypeResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
 
                             var contentToEdit:api_content.Content = new api_content.Content(contentResponse.getResult());
-                            var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(<api_schema_content_json.ContentTypeJson>contentTypeResponse.getJson());
+                            var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(contentTypeResponse.getResult());
+
                             tabMenuItem = new api_app.AppBarTabMenuItem(contentToEdit.getDisplayName(), tabId, true);
 
                             if (contentToEdit.getPath().hasParent()) {
