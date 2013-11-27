@@ -7,9 +7,11 @@ import java.io.InputStream;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 
 public abstract class BlobRecord
+    implements Blob
 {
     private final BlobKey key;
 
