@@ -1,13 +1,13 @@
 module api_form_inputtype_content_image {
 
-    export class SelectedOptionView extends api_ui_combobox.SelectedOptionView<SelectedOption> {
+    export class SelectedOptionView extends api_ui_combobox.SelectedOptionView<api_content.ContentSummary> {
 
-        private selectedOption:SelectedOption;
+        private content:api_content.ContentSummary;
 
         private lastInRow:boolean;
 
-        constructor(option:api_ui_combobox.Option<SelectedOption>) {
-            this.selectedOption = option.displayValue;
+        constructor(option:api_ui_combobox.Option<api_content.ContentSummary>) {
+            this.content = option.displayValue;
             super(option);
         }
 
@@ -19,12 +19,10 @@ module api_form_inputtype_content_image {
 
         layout() {
 
-            var content = this.selectedOption.getContent();
-
-            this.getEl().setBackgroundImage("url(" + content.getIconUrl() + "?size=140&thumbnail=false)");
+            this.getEl().setBackgroundImage("url(" + this.content.getIconUrl() + "?size=140&thumbnail=false)");
 
             var label = new api_dom.DivEl(null, "label");
-            label.getEl().setInnerHtml(content.getName());
+            label.getEl().setInnerHtml(this.content.getName());
             this.appendChild(label);
         }
 

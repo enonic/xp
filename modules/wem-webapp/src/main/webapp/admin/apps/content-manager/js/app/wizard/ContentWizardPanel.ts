@@ -4,6 +4,8 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("common/images/default_content.png");
 
+        private persistedDraft:api_content.Content;
+
         private parentContent:api_content.Content;
 
         private contentType:api_schema_content.ContentType;
@@ -107,10 +109,16 @@ module app_wizard {
             super.renderNew();
 
             this.contentForm.renderNew(this.contentType.getForm());
+            //this.persistNewDraft();
+        }
+
+        setPersistedDraft(value:api_content.Content) {
+            this.persistedDraft = value;
         }
 
         setPersistedItem(content:api_content.Content) {
             super.setPersistedItem(content);
+            this.persistedDraft = content;
 
             this.contentWizardHeader.initNames(content.getDisplayName(), content.getName());
             // setup displayName and name to be generated automatically
@@ -121,6 +129,34 @@ module app_wizard {
             var contentData:api_content.ContentData = content.getContentData();
 
             this.contentForm.renderExisting(contentData, content.getForm());
+        }
+
+        persistNewDraft() {
+
+            var contentData = new api_content.ContentData();
+
+            new api_content.CreateContentRequest()
+                .setTemporary(true)
+                .setContentName("draft")
+                .setParentContentPath(this.parentContent.getPath().toString())
+                .setContentType(this.contentType.getName())
+                .setDisplayName("")
+                .setForm(this.contentForm.getForm())
+                .setContentData(contentData)
+                .send()
+                .done((createResponse:api_rest.JsonResponse<any>) => {
+
+                      var json = createResponse.getJson();
+
+                      if (json.error) {
+                          api_notify.showError(json.error.message);
+                      } else {
+                          api_notify.showFeedback('Content draft was created!');
+                          var content:api_content.Content = new api_content.Content(json.result);
+
+                          this.setPersistedDraft(content);
+                      }
+                });
         }
 
         persistNewItem(successCallback?:(contentId:string, contentPath:string) => void) {
@@ -136,7 +172,7 @@ module app_wizard {
                 setContentData(contentData);
 
             if (this.iconUploadId) {
-                createRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName(null, '_thumb.png')));
+                createRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName('_thumb.png')));
             }
             var attachments:api_content.Attachment[] = this.contentForm.getFormView().getAttachments();
             createRequest.addAttachments(attachments);
@@ -170,7 +206,7 @@ module app_wizard {
                 setContentData(this.contentForm.getContentData());
 
             if (this.iconUploadId) {
-                updateRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName(null, '_thumb.png')));
+                updateRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName('_thumb.png')));
             }
 
             updateRequest.send().done((updateResponse:api_rest.JsonResponse<any>) => {

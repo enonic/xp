@@ -1,6 +1,6 @@
 module api_form_inputtype_content_image {
 
-    export class SelectedOptionsView extends api_ui_combobox.SelectedOptionsView<SelectedOption> {
+    export class SelectedOptionsView extends api_ui_combobox.SelectedOptionsView<api_content.ContentSummary> {
 
         private numberOfOptionsPerRow:number = 3;
 
@@ -8,7 +8,7 @@ module api_form_inputtype_content_image {
 
         private clearer:api_dom.DivEl;
 
-        private editedSelectedOptionView:api_ui_combobox.SelectedOptionView<SelectedOption>;
+        private editedSelectedOptionView:api_ui_combobox.SelectedOptionView<api_content.ContentSummary>;
 
         private dialog:ImageSelectorDialog;
 
@@ -26,12 +26,12 @@ module api_form_inputtype_content_image {
             this.appendChild(this.clearer);
         }
 
-        createSelectedOption(option:api_ui_combobox.Option<SelectedOption>, index:number):api_ui_combobox.SelectedOption<SelectedOption> {
+        createSelectedOption(option:api_ui_combobox.Option<api_content.ContentSummary>, index:number):api_ui_combobox.SelectedOption<api_content.ContentSummary> {
 
-            return new api_ui_combobox.SelectedOption<SelectedOption>(new SelectedOptionView(option), option, index);
+            return new api_ui_combobox.SelectedOption<api_content.ContentSummary>(new SelectedOptionView(option), option, index);
         }
 
-        addOptionView(selectedOption:api_ui_combobox.SelectedOption<SelectedOption>) {
+        addOptionView(selectedOption:api_ui_combobox.SelectedOption<api_content.ContentSummary>) {
 
             this.dialog.hide();
             var optionView:SelectedOptionView = <SelectedOptionView>selectedOption.getOptionView();
@@ -47,7 +47,7 @@ module api_form_inputtype_content_image {
             this.refreshStyles();
         }
 
-        removeOptionView(selectedOption:api_ui_combobox.SelectedOption<SelectedOption>) {
+        removeOptionView(selectedOption:api_ui_combobox.SelectedOption<api_content.ContentSummary>) {
             super.removeOptionView(selectedOption);
 
             this.optionCount--;
@@ -55,10 +55,9 @@ module api_form_inputtype_content_image {
             this.refreshStyles();
         }
 
-        showImageSelectorDialog(selectedOption:api_ui_combobox.Option<SelectedOption>, selectedOptionIndex:number) {
+        showImageSelectorDialog(selectedOption:api_ui_combobox.Option<api_content.ContentSummary>, selectedOptionIndex:number) {
 
-            var imageSelectorOption:SelectedOption = selectedOption.displayValue;
-            var content = imageSelectorOption.getContent();
+            var content = selectedOption.displayValue;
 
             this.dialog.setContent(content);
             this.dialog.show();

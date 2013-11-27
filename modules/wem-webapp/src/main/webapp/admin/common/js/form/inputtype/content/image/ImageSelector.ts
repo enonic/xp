@@ -13,7 +13,7 @@ module api_form_inputtype_content_image {
 
         private input:api_form.Input;
 
-        private comboBox:api_ui_combobox.ComboBox<SelectedOption>;
+        private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
 
         private libraryButton:api_ui.Button;
 
@@ -58,15 +58,8 @@ module api_form_inputtype_content_image {
             this.uploadDialog = new UploadDialog();
             this.uploadDialog.addListener({
                 onImageUploaded: (id:string, fileName:string, mimeType:string) => {
-                    //this.createTemporaryImageContent(id, fileName, mimeType);
 
-                    var dataPath = api_data.DataPath.fromString(this.config.dataPath.toString() + "[" + this.comboBox.countSelected() + "]");
-                    var attachmentName = new api_content.AttachmentName(dataPath, fileName);
-                    var imageSelectorOption = SelectedOption.fromUpload(id, attachmentName);
-                    this.comboBox.selectOption(<api_ui_combobox.Option<SelectedOption>>{
-                        value: id,
-                        displayValue: imageSelectorOption
-                    });
+                    this.createTemporaryImageContent(id, fileName, mimeType);
                 }
             });
         }
@@ -84,10 +77,9 @@ module api_form_inputtype_content_image {
                         .send()
                         .done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentSummaryJson>) => {
                             var contentSummary = new api_content.ContentSummary(jsonResponse.getResult());
-                            var imageSelectorOption = SelectedOption.fromContent(contentSummary);
-                            this.comboBox.selectOption(<api_ui_combobox.Option<SelectedOption>>{
+                            this.comboBox.selectOption(<api_ui_combobox.Option<api_content.ContentSummary>>{
                                 value: contentSummary.getId(),
-                                displayValue: imageSelectorOption
+                                displayValue: contentSummary
                             });
                         });
                 });
@@ -121,11 +113,9 @@ module api_form_inputtype_content_image {
 
         getValues(): api_data.Value[] {
             var values:api_data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.Option<SelectedOption>) => {
+            this.comboBox.getSelectedData().forEach((option:api_ui_combobox.Option<api_content.ContentSummary>) => {
 
-                // Value is a string either containing: contentId=xx
-                // Value is a string either containing: attachmentName=xx
-                var value = new api_data.Value(option.value, api_data.ValueTypes.STRING);
+                var value = new api_data.Value(option.value, api_data.ValueTypes.CONTENT_ID);
 
                 values.push(value);
             });
@@ -133,9 +123,7 @@ module api_form_inputtype_content_image {
         }
 
         getAttachments():api_content.Attachment[] {
-            var attachments:api_content.Attachment[] = [];
-
-            return attachments;
+            return [];
         }
 
         getHTMLElement(): HTMLElement {
@@ -166,18 +154,18 @@ module api_form_inputtype_content_image {
             throw new Error("ImageSelector manages occurrences self");
         }
 
-        private createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<SelectedOption> {
+        private createComboBox(input:api_form.Input):api_ui_combobox.ComboBox<api_content.ContentSummary> {
 
             this.selectedOptionsView = new SelectedOptionsView();
 
-            var comboBoxConfig = <api_ui_combobox.ComboBoxConfig<SelectedOption>> {
+            var comboBoxConfig = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>> {
                 rowHeight: 50,
-                optionFormatter:  this.optionFormatter,
+                optionFormatter: this.optionFormatter,
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum()
             };
 
-            var comboBox = new api_ui_combobox.ComboBox<SelectedOption>(input.getName(), comboBoxConfig);
+            var comboBox = new api_ui_combobox.ComboBox<api_content.ContentSummary>(input.getName(), comboBoxConfig);
 
             this.loadOptions("");
 
@@ -191,7 +179,7 @@ module api_form_inputtype_content_image {
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     this.loadOptions(newValue);
                 },
-                onOptionSelected: (item:api_ui_combobox.Option<SelectedOption>) => {
+                onOptionSelected: (item:api_ui_combobox.Option<api_content.ContentSummary>) => {
                     if (this.comboBox.maximumOccurrencesReached()) {
                         this.uploadButton.setEnabled(false);
                     }
@@ -209,51 +197,80 @@ module api_form_inputtype_content_image {
             this.contentSummaryLoader.search(searchString);
         }
 
-        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.Option<SelectedOption>[] {
-            var options:api_ui_combobox.Option<SelectedOption>[] = [];
+        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.Option<api_content.ContentSummary>[] {
+            var options:api_ui_combobox.Option<api_content.ContentSummary>[] = [];
             contents.forEach((content:api_content.ContentSummary) => {
-                var imageSelectorSelectedOption:SelectedOption = SelectedOption.fromContent(content);
-
                 options.push({
                     value: content.getId(),
-                    displayValue: imageSelectorSelectedOption
+                    displayValue: content
                 });
             });
             return options;
         }
 
-        private optionFormatter(row:number, cell:number, option:SelectedOption, columnDef:any, dataContext:api_ui_combobox.Option<SelectedOption>):string {
+        private optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.Option<api_content.ContentSummary>):string {
 
-            if( option.hasContent() ) {
-                var content = option.getContent();
+            var imgEl = new api_dom.ImgEl();
+            imgEl.setClass("icon");
+            imgEl.getEl().setSrc(content.getIconUrl());
 
-                var imgEl = new api_dom.ImgEl();
-                imgEl.setClass("icon");
-                imgEl.getEl().setSrc(content.getIconUrl());
+            var contentEl = new api_dom.DivEl();
+            contentEl.setClass("content-summary");
 
-                var contentEl = new api_dom.DivEl();
-                contentEl.setClass("content-summary");
+            var displayNameEl = new api_dom.DivEl();
+            displayNameEl.setClass("display-name");
+            displayNameEl.getEl().setAttribute("title", content.getDisplayName());
+            displayNameEl.getEl().setInnerHtml(content.getDisplayName());
 
-                var displayNameEl = new api_dom.DivEl();
-                displayNameEl.setClass("display-name");
-                displayNameEl.getEl().setAttribute("title", content.getDisplayName());
-                displayNameEl.getEl().setInnerHtml(content.getDisplayName());
+            var pathEl = new api_dom.DivEl();
+            pathEl.setClass("path");
+            pathEl.getEl().setAttribute("title", content.getPath().toString());
+            pathEl.getEl().setInnerHtml(content.getPath().toString());
 
-                var pathEl = new api_dom.DivEl();
-                pathEl.setClass("path");
-                pathEl.getEl().setAttribute("title", content.getPath().toString());
-                pathEl.getEl().setInnerHtml(content.getPath().toString());
+            contentEl.appendChild(displayNameEl);
+            contentEl.appendChild(pathEl);
 
-                contentEl.appendChild(displayNameEl);
-                contentEl.appendChild(pathEl);
+            return imgEl.toString() + contentEl.toString();
 
-                return imgEl.toString() + contentEl.toString();
-            }
-            else {
-                throw new Error("No column formatter supported for ImageSelectorOption without content");
-            }
         }
 
+        private createTemporaryImageContent(uploadID:string, attachmentNameAsString:string, mimeType:string) {
+
+            new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName( "image" ) ).send().done((response:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>)=>{
+                var contentType = new api_schema_content.ContentType(response.getResult());
+                var attachmentName = new api_content.AttachmentName(attachmentNameAsString);
+
+                var contentDataFactory = new api_content_image.ImageContentDataFactory();
+                contentDataFactory.setImage(attachmentName);
+                contentDataFactory.setMimeType(mimeType);
+                var contentData = contentDataFactory.create();
+
+                var attachment = new api_content.Attachment(uploadID, attachmentName);
+
+                new api_content.CreateContentRequest()
+                    .setTemporary(true)
+                    .setContentName(attachmentName.toString())
+                    .setContentType(contentType.getName())
+                    .setDisplayName(attachmentName.toString())
+                    .setForm(contentType.getForm())
+                    .setContentData(contentData)
+                    .addAttachment(attachment)
+                    .send()
+                    .done((createResponse:api_rest.JsonResponse<any>) => {
+                          var jsonResult = createResponse.getJson();
+
+                          if (jsonResult.result != null) {
+                              var content = new api_content.Content(jsonResult.result);
+                              this.comboBox.selectOption({
+                                                             value: content.getId(),
+                                                             displayValue: content
+                                                         });
+                          } else if (jsonResult.failure) {
+                              api_notify.showError(jsonResult.failure);
+                          }
+                     });
+            });
+        }
     }
 
     api_form_input.InputTypeManager.register("ImageSelector", ImageSelector);

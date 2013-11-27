@@ -19,7 +19,7 @@ module api_content_image{
         public create():api_content.ContentData {
             var contentData = new api_content.ContentData();
 
-            var imageValue = new api_data.Value( this.image.getFileName(), api_data.ValueTypes.STRING );
+            var imageValue = new api_data.Value( this.image.toString(), api_data.ValueTypes.STRING );
             var mimeTypeValue = new api_data.Value( this.mimeType, api_data.ValueTypes.STRING );
 
             contentData.addData(api_data.Property.fromNameValue("image", imageValue ));

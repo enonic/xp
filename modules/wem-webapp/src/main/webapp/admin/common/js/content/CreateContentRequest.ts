@@ -78,8 +78,20 @@ module api_content {
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,
-                attachments: this.attachments
+                attachments: this.attachmentsToJson()
             };
+        }
+
+        private attachmentsToJson():any {
+            var array:any[] = [];
+            this.attachments.forEach((attachment:api_content.Attachment)=>{
+                var obj = {
+                    "uploadId" : attachment.getUploadId(),
+                    "attachmentName" : attachment.getAttachmentName().toString()
+                };
+                array.push(obj);
+            });
+            return array;
         }
 
         getRequestPath():api_rest.Path {

@@ -1,4 +1,3 @@
-///<reference path='SelectedOption.ts' />
 ///<reference path='SelectedOptionView.ts' />
 ///<reference path='SelectedOptionsView.ts' />
 ///<reference path='ImageSelectorDialog.ts' />
