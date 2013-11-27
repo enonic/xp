@@ -9,7 +9,7 @@ public class CreateContentException
 {
     public CreateContentException( final CreateContent command, final Throwable t )
     {
-        super( "Failed to create content [" + command.getDisplayName() + "] at path [" + command.getParentContentPath() + "]: " +
+        super( t, "Failed to create content [" + command.getDisplayName() + "] at path [" + command.getParentContentPath() + "]: " +
                    t.getMessage() );
     }
 
