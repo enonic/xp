@@ -39,6 +39,15 @@ public class NodePath
         return newNodePath( this ).absolute( false ).build();
     }
 
+    public NodePath asAbsolute()
+    {
+        if ( isAbsolute() )
+        {
+            return this;
+        }
+        return newNodePath( this ).absolute( true ).build();
+    }
+
     public NodePath getParentPath()
     {
         return new NodePath( new Builder( this ).removeLastElement() );
