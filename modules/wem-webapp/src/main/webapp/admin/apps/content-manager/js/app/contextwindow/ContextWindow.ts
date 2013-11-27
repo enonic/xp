@@ -87,7 +87,6 @@ module app_contextwindow {
                 });
 
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('deselectComponent.liveEdit', (event) => {
-                console.log("firing deselect event");
                 new ComponentDeselectEvent().fire();
                 this.selectedComponent = null;
             });
