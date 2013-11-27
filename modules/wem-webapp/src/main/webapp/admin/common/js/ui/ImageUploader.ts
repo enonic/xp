@@ -82,11 +82,11 @@ module api_ui {
             this.setImageVisible(false);
         }
 
-        getName() {
+        getName():string {
             return this.name;
         }
 
-        getValue() {
+        getValue():string {
             return this.value;
         }
 
@@ -252,15 +252,5 @@ module api_ui {
                 }
             });
         }
-    }
-
-    export interface ImageFile {
-
-        id: string;
-
-        name: string;
-
-        mimeType: string;
-
     }
 }
