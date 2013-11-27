@@ -3,20 +3,17 @@ package com.enonic.wem.core.content.site;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.content.page.PartTemplate;
 import com.enonic.wem.api.content.page.PartTemplateName;
 import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.Vendor;
@@ -25,10 +22,10 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
+import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static org.junit.Assert.*;
 
 public class CreateSiteTemplateHandlerTest
@@ -64,13 +61,13 @@ public class CreateSiteTemplateHandlerTest
 
         final ModuleKeys moduleKeys = ModuleKeys.from( ModuleKey.from( "foomodule-1.0.0" ) );
 
-        CreateSiteTemplate command = Commands.site().template().create()
-            .siteTemplateKey( SiteTemplateKey.from( "Intranet-1.0.0" ) )
-            .displayName( "name" )
-            .vendor( vendor )
-            .modules( moduleKeys )
-            .description( "description" )
-            .rootContentType( ContentTypeName.from( "document" ) );
+        CreateSiteTemplate command = Commands.site().template().create().
+            siteTemplateKey( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
+            displayName( "name" ).
+            vendor( vendor ).
+            modules( moduleKeys ).
+            description( "description" ).
+            rootContentType( ContentTypeName.from( "document" ) );
 
         PartTemplate.Builder templateBuilder = PartTemplate.newPartTemplate();
         templateBuilder.name( new PartTemplateName( "template-name" ) );
@@ -80,11 +77,10 @@ public class CreateSiteTemplateHandlerTest
 
         command.addTemplate( ResourcePath.from( "path" ), template );
 
-        final Set<ContentTypeName> set = Sets.newHashSet();
-        set.add( ContentTypeName.from( "article" ) );
-        final ContentTypeNames names = new ContentTypeNames( ImmutableSet.copyOf( set ) );
-
-        command.supportedContentTypes( names );
+        final ContentTypeFilter contentTypeFilter = newContentFilter().
+            allowContentType( "article" ).
+            build();
+        command.contentTypeFilter( contentTypeFilter );
 
         final File templatesDir = new File( tempDir.toFile(), "sites" );
         templatesDir.mkdir();

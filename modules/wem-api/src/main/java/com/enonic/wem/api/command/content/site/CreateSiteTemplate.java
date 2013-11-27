@@ -6,13 +6,13 @@ import java.util.Map;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public class CreateSiteTemplate
     extends Command<SiteTemplate>
@@ -27,7 +27,7 @@ public class CreateSiteTemplate
 
     private ModuleKeys modules;
 
-    private ContentTypeNames supportedContentTypes;
+    private ContentTypeFilter contentTypeFilter;
 
     private ContentTypeName rootContentType;
 
@@ -63,9 +63,9 @@ public class CreateSiteTemplate
         return this;
     }
 
-    public CreateSiteTemplate supportedContentTypes( final ContentTypeNames supportedContentTypes )
+    public CreateSiteTemplate contentTypeFilter( final ContentTypeFilter contentTypeFilter )
     {
-        this.supportedContentTypes = supportedContentTypes;
+        this.contentTypeFilter = contentTypeFilter;
         return this;
     }
 
@@ -106,9 +106,9 @@ public class CreateSiteTemplate
         return modules;
     }
 
-    public ContentTypeNames getSupportedContentTypes()
+    public ContentTypeFilter getContentTypeFilter()
     {
-        return supportedContentTypes;
+        return contentTypeFilter;
     }
 
     public ContentTypeName getRootContentType()

@@ -15,7 +15,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 public final class ContentTypeNames
     extends AbstractImmutableEntitySet<ContentTypeName>
 {
-    public ContentTypeNames( final ImmutableSet<ContentTypeName> set )
+    private ContentTypeNames( final ImmutableSet<ContentTypeName> set )
     {
         super( set );
     }

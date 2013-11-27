@@ -2,7 +2,6 @@ package com.enonic.wem.api.content.site;
 
 
 import java.util.Iterator;
-import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -13,7 +12,6 @@ import com.enonic.wem.api.content.page.TemplateName;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 import static com.google.common.collect.Maps.uniqueIndex;
 
@@ -203,24 +201,6 @@ public final class SiteTemplate
         {
             this.modules = modules;
             return this;
-        }
-
-        public Builder templates( final Map<ResourcePath, Template> templates )
-        {
-            for ( Map.Entry<ResourcePath, Template> entry : templates.entrySet() )
-            {
-                addTemplate( entry.getKey(), entry.getValue() );
-            }
-
-            return this;
-        }
-
-        public Builder contentTypeFilter( final ContentTypeNames contentTypes )
-        {
-            final ContentTypeFilter.Builder builder = ContentTypeFilter.newContentFilter();
-            builder.allowContentTypes( contentTypes );
-
-            return contentTypeFilter( builder.build() );
         }
 
         public Builder contentTypeFilter( final ContentTypeFilter contentTypeFilter )
