@@ -481,7 +481,7 @@ public class ContentResource
         uploadService.removeItem( attachmentParams.getUploadId() );
 
         return Attachment.newAttachment().
-            name( attachmentParams.getAttachmentName().getFileName() ).
+            name( attachmentParams.getAttachmentName() ).
             mimeType( uploadItem.getMimeType() ).
             binary( binary ).
             build();

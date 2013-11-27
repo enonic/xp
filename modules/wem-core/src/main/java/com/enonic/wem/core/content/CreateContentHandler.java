@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -75,8 +76,9 @@ public class CreateContentHandler
 
             final Content.Builder builder = Content.newContent();
             final String displayName = command.getDisplayName();
-            final ContentPath parentContentPath = command.isTemporary() ? TEMPORARY_PARENT_PATH : command.getParentContentPath();
-            final String name = command.getName();
+            final String name = command.isTemporary() ? resolveTemporaryName() : command.getName();
+            final ContentPath parentContentPath = command.isTemporary() ? resolveTemporaryPath() : command.getParentContentPath();
+
 
             final ContentPath contentPath = name == null
                 ? resolvePathForNewContent( parentContentPath, displayName, session )
@@ -102,7 +104,10 @@ public class CreateContentHandler
             final Content content = builder.build();
 
             final Client client = context.getClient();
-            validateContentData( client, content );
+            if ( !command.isTemporary() )
+            {
+                validateContentData( client, content );
+            }
 
             final ContentId contentId = contentDao.create( content, session );
 
@@ -146,8 +151,19 @@ public class CreateContentHandler
         }
         catch ( final Exception e )
         {
+            e.printStackTrace();
             throw new CreateContentException( command, e );
         }
+    }
+
+    private String resolveTemporaryName()
+    {
+        return UUID.randomUUID().toString() + "-" + command.getName();
+    }
+
+    private ContentPath resolveTemporaryPath()
+    {
+        return TEMPORARY_PARENT_PATH;
     }
 
     private Attachment resolveThumbnailAttachment( final Content content )

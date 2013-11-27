@@ -47,29 +47,27 @@ public class ContentImageResource
 
     @GET
     @Path("{contentId}")
-    public Response getContentImage( @PathParam("contentId") final String contentId,
+    public Response getContentImage( @PathParam("contentId") final String contentIdAsString,
                                      @QueryParam("size") @DefaultValue("128") final int size,
                                      @QueryParam("thumbnail") @DefaultValue("true") final boolean thumbnail )
         throws Exception
     {
-        if ( contentId == null )
+        if ( contentIdAsString == null )
         {
             throw new WebApplicationException( Response.Status.BAD_REQUEST );
         }
 
-        final ContentId contentIdValue = ContentId.from( contentId );
-        final Content content = findContent( contentIdValue );
+        final ContentId contentId = ContentId.from( contentIdAsString );
+        final Content content = findContent( contentId );
         if ( content == null )
         {
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final ContentTypeName contentType = content.getType();
-
         if ( thumbnail )
         {
             // check if content has a thumbnail attachment ("_thumb.png")
-            final Attachment attachmentThumbnail = findAttachment( contentIdValue, CreateContent.THUMBNAIL_NAME );
+            final Attachment attachmentThumbnail = findAttachment( contentId, CreateContent.THUMBNAIL_NAME );
             if ( attachmentThumbnail != null )
             {
                 final BufferedImage thumbnailImage = helper.getImageFromBinary( attachmentThumbnail.getBinary(), size, ScaleSquareFilter );
@@ -79,10 +77,11 @@ public class ContentImageResource
 
         final String mimeType;
         final BufferedImage contentImage;
+        final ContentTypeName contentType = content.getType();
         if ( contentType.isImageMedia() )
         {
             final String attachmentName = getImageAttachmentName( content );
-            final Attachment attachment = findAttachment( contentIdValue, attachmentName );
+            final Attachment attachment = findAttachment( contentId, attachmentName );
 
             final Binary binary = attachment.getBinary();
             if ( thumbnail )
@@ -110,7 +109,7 @@ public class ContentImageResource
         final ContentData contentData = content.getContentData();
 
         final Property image = contentData.getProperty( "image" );
-        return image == null ? content.getName() : image.getString();
+        return image == null ? content.getName() : image.getAttachmentName();
     }
 
     private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )
@@ -130,7 +129,7 @@ public class ContentImageResource
             return null;
         }
         final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentTypeName );
-        return client.execute( contentType().get(). byNames().contentTypeNames( qualifiedNames ) ).first();
+        return client.execute( contentType().get().byNames().contentTypeNames( qualifiedNames ) ).first();
     }
 
     private Content findContent( final ContentId contentId )

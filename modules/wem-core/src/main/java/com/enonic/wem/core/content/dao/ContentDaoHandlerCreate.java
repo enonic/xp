@@ -145,15 +145,17 @@ final class ContentDaoHandlerCreate
             name( node.name() ).
             icon( node.icon() ).
             rootDataSet( node.data() ).
-            parent( node.parent() ).
+            parent( node.parent().asAbsolute() ).
             entityIndexConfig( node.getEntityIndexConfig() ).
             build();
 
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( this.session );
 
-        final com.enonic.wem.api.entity.Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
-
-        indexService.indexNode( persistedNode );
+        if ( !content.isTemporary() )
+        {
+            final com.enonic.wem.api.entity.Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
+            indexService.indexNode( persistedNode );
+        }
     }
 
     private Node createContentVersionHistory( final Content content, final Node contentNode )
