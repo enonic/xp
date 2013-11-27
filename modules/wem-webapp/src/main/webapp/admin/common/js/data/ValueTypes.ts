@@ -11,7 +11,9 @@ module api_data{
 
         static ATTACHMENT_NAME = new ValueType("AttachmentName");
 
-        static ALL:ValueType[] = [ ValueTypes.STRING, ValueTypes.DATE_TIME, ValueTypes.ATTACHMENT_NAME ];
+        static CONTENT_ID = new ValueType("ContentId");
+
+        static ALL:ValueType[] = [ ValueTypes.STRING, ValueTypes.DATE_TIME, ValueTypes.ATTACHMENT_NAME, ValueTypes.CONTENT_ID ];
 
         static fromName(name:string):ValueType {
             var match = null;
