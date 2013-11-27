@@ -4,10 +4,10 @@
   <descriptor>mainmodule-1.0.0:/components/landing-page.xml</descriptor>
   <config>
     <property name="pause" type="Long">10000</property>
-    <dataSet name="thing">
+    <data-set name="thing">
       <property name="first" type="String">one</property>
       <property name="second" type="String">two</property>
-    </dataSet>
+    </data-set>
   </config>
   <can-render>
     <content-type>com.enonic.sometype</content-type>

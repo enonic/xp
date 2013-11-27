@@ -1,5 +1,9 @@
 package com.enonic.wem.xml;
 
+import com.enonic.wem.xml.content.page.ImageDescriptorXml;
+import com.enonic.wem.xml.content.page.LayoutDescriptorXml;
+import com.enonic.wem.xml.content.page.PageDescriptorXml;
+import com.enonic.wem.xml.content.page.PartDescriptorXml;
 import com.enonic.wem.xml.template.ImageTemplateXml;
 import com.enonic.wem.xml.template.LayoutTemplateXml;
 import com.enonic.wem.xml.template.PageTemplateXml;
@@ -36,6 +40,26 @@ public final class XmlSerializers
     public static XmlSerializer<ImageTemplateXml> imageTemplate()
     {
         return create( ImageTemplateXml.class );
+    }
+
+    public static XmlSerializer<PageDescriptorXml> pageDescriptor()
+    {
+        return create( PageDescriptorXml.class );
+    }
+
+    public static XmlSerializer<PartDescriptorXml> partDescriptor()
+    {
+        return create( PartDescriptorXml.class );
+    }
+
+    public static XmlSerializer<LayoutDescriptorXml> layoutDescriptor()
+    {
+        return create( LayoutDescriptorXml.class );
+    }
+
+    public static XmlSerializer<ImageDescriptorXml> imageDescriptor()
+    {
+        return create( ImageDescriptorXml.class );
     }
 
 }

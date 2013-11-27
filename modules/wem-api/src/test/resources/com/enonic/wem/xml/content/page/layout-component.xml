@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout-component>
+  <display-name>A Layout</display-name>
+  <controller>mainmodule-1.0.0:/controller/layout-ctrl.js</controller>
+  <config>
+    <input name="width" type="DecimalNumber">
+      <label>Column width</label>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+    </input>
+  </config>
+</layout-component>

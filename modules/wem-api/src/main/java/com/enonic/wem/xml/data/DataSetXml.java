@@ -12,7 +12,7 @@ import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.xml.XmlObject;
 
-@XmlRootElement(name = "dataSet")
+@XmlRootElement(name = "data-set")
 public class DataSetXml
     implements XmlObject<DataSet, DataSet>, DataXml
 {
@@ -20,7 +20,7 @@ public class DataSetXml
     @XmlAttribute(name = "name", required = true)
     private String name;
 
-    @XmlElements({@XmlElement(name = "dataSet", type = DataSetXml.class), @XmlElement(name = "property", type = PropertyXml.class)})
+    @XmlElements({@XmlElement(name = "data-set", type = DataSetXml.class), @XmlElement(name = "property", type = PropertyXml.class)})
     private List<DataXml> dataItems = new ArrayList<>();
 
     @Override

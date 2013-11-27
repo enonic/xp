@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-abstract class BaseDescriptor
+public abstract class BaseDescriptor
     implements ComponentDescriptor
 {
     private final ComponentDescriptorName name;
@@ -47,7 +47,7 @@ abstract class BaseDescriptor
         return config;
     }
 
-    protected abstract static class BaseDescriptorBuilder<T extends BaseDescriptorBuilder>
+    public abstract static class BaseDescriptorBuilder<T extends BaseDescriptorBuilder>
     {
         protected ComponentDescriptorName name;
 
@@ -56,6 +56,17 @@ abstract class BaseDescriptor
         protected ModuleResourceKey controllerResource;
 
         protected Form config;
+
+        public T name( final ComponentDescriptorName name )
+        {
+            this.name = name;
+            return (T) this;
+        }
+
+        public T name( final String name )
+        {
+            return this.name( new ComponentDescriptorName( name ) );
+        }
 
         public T displayName( final String displayName )
         {
