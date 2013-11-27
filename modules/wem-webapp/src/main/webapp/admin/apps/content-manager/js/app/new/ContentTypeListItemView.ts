@@ -9,9 +9,11 @@ module app_new {
 
             var h6 = new api_dom.H6El();
             h6.getEl().setInnerHtml(item.getDisplayName());
+            h6.getEl().setAttribute("title", item.getDisplayName());
 
             var p = new api_dom.PEl();
             p.getEl().setInnerHtml(item.getName());
+            p.getEl().setAttribute("title", item.getName());
 
             this.appendChild(img);
             this.appendChild(h6);
