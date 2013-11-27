@@ -23,8 +23,8 @@ module api_content {
             super.setMethod("POST");
         }
 
-        setDraft(temporary:boolean):CreateContentRequest {
-            this.draft = temporary;
+        setDraft(value:boolean):CreateContentRequest {
+            this.draft = value;
             return this;
         }
 

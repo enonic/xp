@@ -1,8 +1,8 @@
 {
-    "temporary": false,
-    "contentName": "content-path",
-    "parentContentPath": "parent-path:/",
-    "qualifiedContentTypeName": "my-type",
+    "draft": false,
+    "name": "content-path",
+    "parent": "parent-path:/",
+    "contentType": "my-type",
     "contentData": [],
     "form": {
         "formItems": []

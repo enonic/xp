@@ -146,7 +146,7 @@ module api_remote_content {
 
     export interface CreateOrUpdateParams {
         contentId?: string;
-        temporary?: boolean;
+        draft?: boolean;
         contentName?: string;
         parentContentPath?: string;
         qualifiedContentTypeName: string;
