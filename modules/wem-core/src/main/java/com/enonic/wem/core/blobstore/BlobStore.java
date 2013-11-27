@@ -3,6 +3,8 @@ package com.enonic.wem.core.blobstore;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.enonic.wem.api.blob.BlobKey;
+
 /**
  * Append-only store for binary streams. A blob store consists of a number
  * of identifiable blob records that each contain a distinct binary stream.

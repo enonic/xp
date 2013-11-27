@@ -1,4 +1,4 @@
-package com.enonic.wem.core.blobstore;
+package com.enonic.wem.api.blob;
 
 public final class BlobKey
 {

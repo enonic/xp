@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import com.enonic.wem.core.blobstore.BlobKey;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.blobstore.BlobRecord;
 import com.enonic.wem.core.blobstore.BlobStoreException;
 

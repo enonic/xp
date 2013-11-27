@@ -1,53 +1,46 @@
 package com.enonic.wem.core.content.binary.dao;
 
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import java.io.IOException;
 
-import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.api.content.binary.BinaryId;
+import javax.inject.Inject;
+
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.core.blobstore.BlobRecord;
+import com.enonic.wem.core.blobstore.BlobStore;
+import com.enonic.wem.core.blobstore.BlobStoreException;
 
 
 public class BinaryDaoImpl
     implements BinaryDao
 {
 
+    private BlobStore blobStore;
+
     @Override
-    public BinaryId createBinary( final Binary binary, final Session session )
+    public BlobKey createBinary( final CreateBlob createBlob )
+        throws BlobStoreException
     {
         try
         {
-            return new BinaryDaoHandlerCreate( session ).handle( binary );
+            final BlobRecord blobRecord = blobStore.addRecord( createBlob.input.openStream() );
+            return blobRecord.getKey();
         }
-        catch ( RepositoryException e )
+        catch ( IOException e )
         {
-            throw new RuntimeException( e );
+            throw new RuntimeException( "Failed to createBinary", e );
         }
     }
 
     @Override
-    public Binary getBinary( final BinaryId binaryId, final Session session )
+    public BlobRecord getBinary( final BlobKey blobKey )
     {
-        try
-        {
-            return new BinaryDaoHandlerGet( session ).handle( binaryId );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( e );
-        }
+        return this.blobStore.getRecord( blobKey );
     }
 
-    @Override
-    public boolean deleteBinary( final BinaryId binaryId, final Session session )
+    @Inject
+    public void setBlobStore( final BlobStore blobStore )
     {
-        try
-        {
-            return new BinaryDaoHandlerDelete( session ).handle( binaryId );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new RuntimeException( e );
-        }
+        this.blobStore = blobStore;
     }
 }

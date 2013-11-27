@@ -1,16 +1,22 @@
 package com.enonic.wem.core.content.binary.dao;
 
 
-import javax.jcr.Session;
+import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.api.content.binary.BinaryId;
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.core.blobstore.BlobRecord;
+import com.enonic.wem.core.blobstore.BlobStoreException;
 
 public interface BinaryDao
 {
-    BinaryId createBinary( Binary binary, Session session );
+    BlobKey createBinary( CreateBlob createBlob )
+        throws BlobStoreException;
 
-    Binary getBinary( BinaryId binaryId, Session session );
+    BlobRecord getBinary( BlobKey blobKey );
 
-    boolean deleteBinary( BinaryId binaryId, Session session );
+    public class CreateBlob
+    {
+        public ByteSource input;
+    }
+
 }

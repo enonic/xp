@@ -3,7 +3,6 @@ package com.enonic.wem.core.content.binary;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.binary.GetBinary;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.binary.dao.BinaryDao;
 
@@ -17,8 +16,8 @@ public class GetBinaryHandler
     public void handle()
         throws Exception
     {
-        final Binary result = binaryDao.getBinary( command.getBinaryId(), context.getJcrSession() );
-        command.setResult( result );
+        //final Binary result = binaryDao.getBinary( command.getBinaryId(), context.getJcrSession() );
+        //command.setResult( result );
     }
 
     @Inject

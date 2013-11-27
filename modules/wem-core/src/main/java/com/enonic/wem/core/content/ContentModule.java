@@ -10,7 +10,6 @@ import com.enonic.wem.core.content.attachment.GetAttachmentHandler;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDaoImpl;
 import com.enonic.wem.core.content.binary.CreateBinaryHandler;
-import com.enonic.wem.core.content.binary.DeleteBinaryHandler;
 import com.enonic.wem.core.content.binary.GetBinaryHandler;
 import com.enonic.wem.core.content.binary.dao.BinaryDao;
 import com.enonic.wem.core.content.binary.dao.BinaryDaoImpl;
@@ -46,7 +45,6 @@ public final class ContentModule
         commands.add( ValidateContentDataHandler.class );
 
         commands.add( CreateBinaryHandler.class );
-        commands.add( DeleteBinaryHandler.class );
         commands.add( GetBinaryHandler.class );
 
         commands.add( CreateAttachmentHandler.class );

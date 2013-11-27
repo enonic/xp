@@ -8,7 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
-import com.enonic.wem.core.blobstore.BlobKey;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.blobstore.BlobKeyCreator;
 import com.enonic.wem.core.blobstore.BlobRecord;
 

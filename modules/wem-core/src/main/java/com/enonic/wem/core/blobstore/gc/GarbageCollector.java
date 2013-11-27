@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.core.blobstore.BlobKey;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.blobstore.BlobStore;
 
 public final class GarbageCollector

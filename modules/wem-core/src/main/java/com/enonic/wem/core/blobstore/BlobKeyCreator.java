@@ -10,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
 
 import com.google.common.io.ByteStreams;
 
+import com.enonic.wem.api.blob.BlobKey;
+
 public final class BlobKeyCreator
 {
     private static final String DIGEST = "SHA-1";

@@ -16,17 +16,14 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.core.blobstore.BlobKey;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.blobstore.BlobKeyCreator;
 import com.enonic.wem.core.blobstore.BlobRecord;
 import com.enonic.wem.core.blobstore.BlobStore;
 import com.enonic.wem.core.blobstore.BlobStoreException;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.lifecycle.LifecycleBean;
-import com.enonic.wem.core.lifecycle.RunLevel;
 
 public final class FileBlobStore
-    extends LifecycleBean
     implements BlobStore
 {
     private final static Logger LOG = LoggerFactory.getLogger( FileBlobStore.class );
@@ -38,22 +35,8 @@ public final class FileBlobStore
     @Inject
     public FileBlobStore( final SystemConfig systemConfig )
     {
-        super( RunLevel.L1 );
         this.dir = systemConfig.getBlobStoreDir();
-    }
-
-    @Override
-    protected void doStart()
-        throws Exception
-    {
         mkdirs( this.dir, true );
-    }
-
-    @Override
-    protected void doStop()
-        throws Exception
-    {
-        // Do nothing
     }
 
     public BlobRecord getRecord( final BlobKey key )
