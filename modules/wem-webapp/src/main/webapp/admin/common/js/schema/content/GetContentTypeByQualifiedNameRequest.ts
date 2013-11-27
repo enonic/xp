@@ -1,18 +1,18 @@
 module api_schema_content {
 
-    export class GetContentTypeByQualifiedNameRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeJson> {
+    export class GetContentTypeByNameRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeJson> {
 
         private name:ContentTypeName;
 
         private mixinReferencesToFormItems:boolean = true;
 
-        constructor(qualifiedName:ContentTypeName) {
+        constructor(name:ContentTypeName) {
             super();
             super.setMethod("GET");
-            this.name = qualifiedName;
+            this.name = name;
         }
 
-        setMixinReferencesToFormItems(value:boolean):GetContentTypeByQualifiedNameRequest {
+        setMixinReferencesToFormItems(value:boolean):GetContentTypeByNameRequest {
             this.mixinReferencesToFormItems = value;
             return this;
         }

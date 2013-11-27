@@ -1,6 +1,6 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
-public class AttachmentParams
+public class AttachmentJson
 {
     private String uploadId;
 

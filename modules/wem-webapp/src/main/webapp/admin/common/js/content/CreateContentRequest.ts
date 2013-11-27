@@ -2,13 +2,13 @@ module api_content {
 
     export class CreateContentRequest extends ContentResourceRequest<any> {
 
-        private temporary:boolean = false;
+        private draft:boolean = false;
 
-        private contentName:string;
+        private name:string;
 
-        private parentContentPath:string;
+        private parent:ContentPath;
 
-        private qualifiedContentTypeName:string;
+        private contentType:api_schema_content.ContentTypeName;
 
         private form:api_form.Form;
 
@@ -23,23 +23,23 @@ module api_content {
             super.setMethod("POST");
         }
 
-        setTemporary(temporary:boolean):CreateContentRequest {
-            this.temporary = temporary;
+        setDraft(temporary:boolean):CreateContentRequest {
+            this.draft = temporary;
             return this;
         }
 
-        setContentName(contentName:string):CreateContentRequest {
-            this.contentName = contentName;
+        setName(value:string):CreateContentRequest {
+            this.name = value;
             return this;
         }
 
-        setParentContentPath(parentContentPath:string):CreateContentRequest {
-            this.parentContentPath = parentContentPath;
+        setParent(value:ContentPath):CreateContentRequest {
+            this.parent = value;
             return this;
         }
 
-        setContentType(qualifiedContentTypeName:string):CreateContentRequest {
-            this.qualifiedContentTypeName = qualifiedContentTypeName;
+        setContentType(value:api_schema_content.ContentTypeName):CreateContentRequest {
+            this.contentType = value;
             return this;
         }
 
@@ -71,10 +71,10 @@ module api_content {
 
         getParams():Object {
             return {
-                temporary: this.temporary,
-                contentName: this.contentName,
-                parentContentPath: this.parentContentPath,
-                qualifiedContentTypeName: this.qualifiedContentTypeName,
+                draft: this.draft,
+                name: this.name,
+                parent: this.parent.toString(),
+                contentType: this.contentType.toString(),
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,

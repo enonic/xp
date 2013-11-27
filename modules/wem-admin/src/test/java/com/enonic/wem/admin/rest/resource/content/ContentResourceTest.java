@@ -588,7 +588,7 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
-        CreateContent command = new CreateContent().displayName( "Content One" ).parentContentPath( ContentPath.from( "parent-path" ) );
+        CreateContent command = new CreateContent().displayName( "Content One" ).parent( ContentPath.from( "parent-path" ) );
         Exception e = new Exception( "Exception occured." );
 
         Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenThrow( new CreateContentException( command, e ) );

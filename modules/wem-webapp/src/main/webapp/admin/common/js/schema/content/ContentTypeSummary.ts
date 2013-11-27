@@ -8,7 +8,7 @@ module api_schema_content{
 
         private final:boolean;
 
-        private superType:string;
+        private superType:api_schema_content.ContentTypeName;
 
         private contentDisplayNameScript:string;
 
@@ -16,16 +16,19 @@ module api_schema_content{
 
         private owner:string;
 
-
         constructor(json:api_schema_content_json.ContentTypeSummaryJson) {
             super(json);
             this.allowChildContent = json.allowChildContent;
             this.final = json.final;
             this.abstract = json.abstract;
-            this.superType = json.superType;
+            this.superType = new api_schema_content.ContentTypeName(json.superType);
             this.contentDisplayNameScript = json.contentDisplayNameScript;
             this.owner = json.owner;
             this.modifier = json.modifier;
+        }
+
+        getContentTypeName(): api_schema_content.ContentTypeName {
+            return new api_schema_content.ContentTypeName(this.getName());
         }
 
         isFinal():boolean {
@@ -40,7 +43,7 @@ module api_schema_content{
             return this.allowChildContent;
         }
 
-        getSuperType():string {
+        getSuperType():api_schema_content.ContentTypeName {
             return this.superType;
         }
 

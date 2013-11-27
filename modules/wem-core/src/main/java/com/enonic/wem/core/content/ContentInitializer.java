@@ -41,7 +41,7 @@ public class ContentInitializer
             contentType( contentTypeName ).
             form( getContentType( contentTypeName ).form() ).
             displayName( displayName ).
-            parentContentPath( parent ).
+            parent( parent ).
             owner( AccountKey.anonymous() ).
             contentData( new ContentData() );
         CreateContentResult createContentResult = client.execute( createContent );

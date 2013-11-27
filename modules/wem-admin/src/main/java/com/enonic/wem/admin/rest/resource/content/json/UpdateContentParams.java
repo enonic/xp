@@ -22,7 +22,7 @@ public class UpdateContentParams
 
     private String displayName;
 
-    private List<AttachmentParams> attachments;
+    private List<AttachmentJson> attachments;
 
     public ContentId getContentId()
     {
@@ -49,9 +49,9 @@ public class UpdateContentParams
         return qualifiedContentTypeName;
     }
 
-    public void setQualifiedContentTypeName( final String qualifiedContentTypeName )
+    public void setContentType( final String value )
     {
-        this.qualifiedContentTypeName = ContentTypeName.from( qualifiedContentTypeName );
+        this.qualifiedContentTypeName = ContentTypeName.from( value );
     }
 
     public void setContentData( final List<DataJson> contentData )
@@ -84,12 +84,12 @@ public class UpdateContentParams
         this.displayName = displayName;
     }
 
-    public List<AttachmentParams> getAttachments()
+    public List<AttachmentJson> getAttachments()
     {
         return attachments;
     }
 
-    public void setAttachments( final List<AttachmentParams> attachmentParams )
+    public void setAttachments( final List<AttachmentJson> attachmentParams )
     {
         this.attachments = attachmentParams;
     }

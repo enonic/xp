@@ -136,10 +136,10 @@ module app_wizard {
             var contentData = new api_content.ContentData();
 
             new api_content.CreateContentRequest()
-                .setTemporary(true)
-                .setContentName("draft")
-                .setParentContentPath(this.parentContent.getPath().toString())
-                .setContentType(this.contentType.getName())
+                .setDraft(true)
+                .setName("draft")
+                .setParent(this.parentContent.getPath())
+                .setContentType(this.contentType.getContentTypeName())
                 .setDisplayName("")
                 .setForm(this.contentForm.getForm())
                 .setContentData(contentData)
@@ -164,9 +164,9 @@ module app_wizard {
             var contentData = this.contentForm.getContentData();
 
             var createRequest = new api_content.CreateContentRequest().
-                setContentName(this.contentWizardHeader.getName()).
-                setParentContentPath(this.parentContent.getPath().toString()).
-                setContentType(this.contentType.getName()).
+                setName(this.contentWizardHeader.getName()).
+                setParent(this.parentContent.getPath()).
+                setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentForm.getForm()).
                 setContentData(contentData);
@@ -200,7 +200,7 @@ module app_wizard {
 
             var updateRequest = new api_content.UpdateContentRequest(this.getPersistedItem().getId()).
                 setContentName(this.contentWizardHeader.getName()).
-                setContentType(this.contentType.getName()).
+                setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentForm.getForm()).
                 setContentData(this.contentForm.getContentData());

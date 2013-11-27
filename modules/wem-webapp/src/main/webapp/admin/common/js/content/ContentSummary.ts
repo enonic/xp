@@ -12,7 +12,7 @@ module api_content{
 
         private children:boolean;
 
-        private type:string;
+        private type:api_schema_content.ContentTypeName;
 
         private iconUrl:string;
 
@@ -35,7 +35,7 @@ module api_content{
             this.path = ContentPath.fromString(json.path);
             this.root = json.root;
             this.children = json.hasChildren;
-            this.type = json.type;
+            this.type = new api_schema_content.ContentTypeName(json.type);
             this.iconUrl = json.iconUrl;
             this.modifier = json.modifier;
             this.owner = json.owner;
@@ -61,7 +61,7 @@ module api_content{
             return this.children;
         }
 
-        getType():string {
+        getType():api_schema_content.ContentTypeName {
             return this.type;
         }
 

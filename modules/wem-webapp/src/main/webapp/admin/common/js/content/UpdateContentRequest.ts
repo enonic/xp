@@ -4,9 +4,9 @@ module api_content {
 
         private id:string;
 
-        private contentName:string;
+        private name:string;
 
-        private qualifiedContentTypeName:string;
+        private contentType:api_schema_content.ContentTypeName;
 
         private form:api_form.Form;
 
@@ -27,13 +27,13 @@ module api_content {
             return this;
         }
 
-        setContentName(contentName:string):UpdateContentRequest {
-            this.contentName = contentName;
+        setContentName(value:string):UpdateContentRequest {
+            this.name = value;
             return this;
         }
 
-        setContentType(qualifiedContentTypeName:string):UpdateContentRequest {
-            this.qualifiedContentTypeName = qualifiedContentTypeName;
+        setContentType(value:api_schema_content.ContentTypeName):UpdateContentRequest {
+            this.contentType = value;
             return this;
         }
 
@@ -66,8 +66,8 @@ module api_content {
         getParams():Object {
             return {
                 contentId: this.id,
-                contentName: this.contentName,
-                qualifiedContentTypeName: this.qualifiedContentTypeName,
+                contentName: this.name,
+                contentType: this.contentType.toString(),
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,

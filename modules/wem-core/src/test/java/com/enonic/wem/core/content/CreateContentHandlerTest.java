@@ -95,7 +95,7 @@ public class CreateContentHandlerTest
 
         CreateContent command = Commands.content().create();
         command.displayName( "My Content" );
-        command.parentContentPath( ContentPath.from( "/" ) );
+        command.parent( ContentPath.from( "/" ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
         command.contentType( ContentTypeName.from( "my_content_type" ) );
         ContentData contentData = new ContentData();
@@ -132,7 +132,7 @@ public class CreateContentHandlerTest
         final String displayName = "My Content";
         command.displayName( displayName );
         final String rootPath = "/rootcontent";
-        command.parentContentPath( ContentPath.from( rootPath ) );
+        command.parent( ContentPath.from( rootPath ) );
         command.owner( UserKey.from( "myStore:myUser" ) );
         command.contentType( ContentTypeName.from( "my_content_type" ) );
 

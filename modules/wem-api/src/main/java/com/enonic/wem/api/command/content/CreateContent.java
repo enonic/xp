@@ -35,7 +35,7 @@ public final class CreateContent
 
     private ContentPath parentContentPath;
 
-    private boolean temporary;
+    private boolean draft;
 
     private Map<String, Attachment> attachments = Maps.newHashMap();
 
@@ -45,7 +45,7 @@ public final class CreateContent
         return this;
     }
 
-    public CreateContent parentContentPath( final ContentPath parentContentPath )
+    public CreateContent parent( final ContentPath parentContentPath )
     {
         this.parentContentPath = parentContentPath;
         return this;
@@ -81,15 +81,15 @@ public final class CreateContent
         return this;
     }
 
-    public CreateContent temporary()
+    public CreateContent draft()
     {
-        this.temporary = true;
+        this.draft = true;
         return this;
     }
 
-    public CreateContent temporary( final boolean createTemporaryContent )
+    public CreateContent draft( final boolean value )
     {
-        this.temporary = createTemporaryContent;
+        this.draft = value;
         return this;
     }
 
@@ -144,9 +144,9 @@ public final class CreateContent
         return name;
     }
 
-    public boolean isTemporary()
+    public boolean isDraft()
     {
-        return temporary;
+        return draft;
     }
 
     public Collection<Attachment> getAttachments()
@@ -164,7 +164,7 @@ public final class CreateContent
     {
         Preconditions.checkNotNull( this.contentData, "contentData cannot be null" );
         Preconditions.checkNotNull( this.form, "form cannot be null" );
-        Preconditions.checkArgument( temporary || this.parentContentPath != null, "parentContentPath cannot be null" );
+        Preconditions.checkArgument( draft || this.parentContentPath != null, "parentContentPath cannot be null" );
         Preconditions.checkNotNull( this.displayName, "displayName cannot be null" );
     }
 }

@@ -56,7 +56,7 @@ module app {
 
             } else {
 
-                new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName(contentTypeSummary.getName())).
+                new api_schema_content.GetContentTypeByNameRequest(new api_schema_content.ContentTypeName(contentTypeSummary.getName())).
                     send().done((contentTypeResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
 
                         var contentType = new api_schema_content.ContentType(contentTypeResponse.getResult());
@@ -117,7 +117,7 @@ module app {
                 } else {
 
                     var getContentByIdPromise = new api_content.GetContentByIdRequest(content.getId()).send();
-                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName(content.getType())).send();
+                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByNameRequest(content.getType()).send();
                     jQuery.
                         when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
                         then((contentResponse:api_rest.JsonResponse<api_content_json.ContentJson>, contentTypeResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {

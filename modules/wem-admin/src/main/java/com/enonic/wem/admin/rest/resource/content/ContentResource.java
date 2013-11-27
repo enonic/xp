@@ -32,10 +32,10 @@ import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractFacetedContentListJson;
-import com.enonic.wem.admin.rest.resource.content.json.AttachmentParams;
+import com.enonic.wem.admin.rest.resource.content.json.AttachmentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
-import com.enonic.wem.admin.rest.resource.content.json.CreateContentParams;
+import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateOrUpdateContentJsonResult;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
@@ -363,23 +363,13 @@ public class ContentResource
 
     @POST
     @Path("create")
-    public CreateOrUpdateContentJsonResult create( final CreateContentParams params )
+    public CreateOrUpdateContentJsonResult create( final CreateContentJson params )
     {
         try
         {
-            ContentData contentData = parseContentData( params.getContentData() );
+            final CreateContent createContent = params.getCreateContent();
             final List<Attachment> attachments = parseAttachments( params.getAttachments() );
-
-            final CreateContent createContent = Commands.content().create().
-                parentContentPath( params.getParentContentPath() ).
-                name( params.getContentName() ).
-                contentType( params.getQualifiedContentTypeName() ).
-                form( params.getForm().getForm() ).
-                contentData( contentData ).
-                displayName( params.getDisplayName() ).
-                owner( AccountKey.anonymous() ).
-                temporary( params.getTemporary() ).
-                attachments( attachments );
+            createContent.attachments( attachments );
 
             final CreateContentResult createContentResult = client.execute( createContent );
 
@@ -455,33 +445,33 @@ public class ContentResource
         return contentData;
     }
 
-    private List<Attachment> parseAttachments( final List<AttachmentParams> attachmentParamsList )
+    private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )
         throws FileNotFoundException
     {
         List<Attachment> attachments = new ArrayList<>();
-        if ( attachmentParamsList != null )
+        if ( attachmentJsonList != null )
         {
-            for ( AttachmentParams attachmentParams : attachmentParamsList )
+            for ( AttachmentJson attachmentJson : attachmentJsonList )
             {
-                attachments.add( createAttachment( attachmentParams ) );
+                attachments.add( createAttachment( attachmentJson ) );
             }
         }
         return attachments;
     }
 
-    private Attachment createAttachment( final AttachmentParams attachmentParams )
+    private Attachment createAttachment( final AttachmentJson attachmentJson )
         throws FileNotFoundException
     {
-        final UploadItem uploadItem = uploadService.getItem( attachmentParams.getUploadId() );
+        final UploadItem uploadItem = uploadService.getItem( attachmentJson.getUploadId() );
 
-        Preconditions.checkArgument( uploadItem != null, "Uploaded file not found: [%s]", attachmentParams.getUploadId() );
+        Preconditions.checkArgument( uploadItem != null, "Uploaded file not found: [%s]", attachmentJson.getUploadId() );
 
         final Binary binary = Binary.from( new FileInputStream( uploadItem.getFile() ) );
 
-        uploadService.removeItem( attachmentParams.getUploadId() );
+        uploadService.removeItem( attachmentJson.getUploadId() );
 
         return Attachment.newAttachment().
-            name( attachmentParams.getAttachmentName() ).
+            name( attachmentJson.getAttachmentName() ).
             mimeType( uploadItem.getMimeType() ).
             binary( binary ).
             build();

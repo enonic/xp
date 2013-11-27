@@ -236,7 +236,7 @@ module api_form_inputtype_content_image {
 
         private createTemporaryImageContent(uploadID:string, attachmentNameAsString:string, mimeType:string) {
 
-            new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName( "image" ) ).send().done((response:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>)=>{
+            new api_schema_content.GetContentTypeByNameRequest(new api_schema_content.ContentTypeName( "image" ) ).send().done((response:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>)=>{
                 var contentType = new api_schema_content.ContentType(response.getResult());
                 var attachmentName = new api_content.AttachmentName(attachmentNameAsString);
 
@@ -248,9 +248,9 @@ module api_form_inputtype_content_image {
                 var attachment = new api_content.Attachment(uploadID, attachmentName);
 
                 new api_content.CreateContentRequest()
-                    .setTemporary(true)
-                    .setContentName(attachmentName.toString())
-                    .setContentType(contentType.getName())
+                    .setDraft(true)
+                    .setName(attachmentName.toString())
+                    .setContentType(contentType.getContentTypeName())
                     .setDisplayName(attachmentName.toString())
                     .setForm(contentType.getForm())
                     .setContentData(contentData)

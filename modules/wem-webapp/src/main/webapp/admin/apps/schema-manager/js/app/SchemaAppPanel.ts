@@ -87,7 +87,7 @@ module app {
                         var schemaWizardPanel;
 
                         if( schema.getSchemaKind() == api_schema.SchemaKind.CONTENT_TYPE ) {
-                            new api_schema_content.GetContentTypeByQualifiedNameRequest(new api_schema_content.ContentTypeName(schema.getName())).
+                            new api_schema_content.GetContentTypeByNameRequest(new api_schema_content.ContentTypeName(schema.getName())).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
                                                 var contentType = new api_schema_content.ContentType(jsonResponse.getResult());
 

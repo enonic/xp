@@ -76,15 +76,15 @@ public class CreateContentHandler
 
             final Content.Builder builder = Content.newContent();
             final String displayName = command.getDisplayName();
-            final String name = command.isTemporary() ? resolveTemporaryName() : command.getName();
-            final ContentPath parentContentPath = command.isTemporary() ? resolveTemporaryPath() : command.getParentContentPath();
+            final String name = command.isDraft() ? resolveTemporaryName() : command.getName();
+            final ContentPath parentContentPath = command.isDraft() ? resolveTemporaryPath() : command.getParentContentPath();
 
 
             final ContentPath contentPath = name == null
                 ? resolvePathForNewContent( parentContentPath, displayName, session )
                 : ContentPath.from( parentContentPath, name );
 
-            if ( !command.isTemporary() )
+            if ( !command.isDraft() )
             {
                 checkParentContentAllowsChildren( parentContentPath, session );
             }
@@ -104,7 +104,7 @@ public class CreateContentHandler
             final Content content = builder.build();
 
             final Client client = context.getClient();
-            if ( !command.isTemporary() )
+            if ( !command.isDraft() )
             {
                 validateContentData( client, content );
             }

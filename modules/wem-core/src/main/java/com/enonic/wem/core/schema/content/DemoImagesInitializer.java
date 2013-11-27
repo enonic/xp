@@ -71,7 +71,7 @@ public class DemoImagesInitializer
             form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
             displayName( displayName ).
             name( fileName ).
-            parentContentPath( parent ).
+            parent( parent ).
             contentData( dataSet ).
             attachments( attachment );
         client.execute( createContent ).getContentId();
