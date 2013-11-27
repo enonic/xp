@@ -39,13 +39,13 @@ final class SystemConfigImpl
     @Override
     public File getModulesDir()
     {
-        return new File( getDataDir(), "modules" );
+        return new File( getConfigDir(), "modules" );
     }
 
     @Override
     public File getTemplatesDir()
     {
-        return new File( getDataDir(), "templates" );
+        return new File( getConfigDir(), "templates" );
     }
 
     @Override
