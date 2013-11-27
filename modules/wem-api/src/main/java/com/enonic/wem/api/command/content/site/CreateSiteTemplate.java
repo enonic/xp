@@ -1,6 +1,7 @@
 package com.enonic.wem.api.command.content.site;
 
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.enonic.wem.api.command.Command;
@@ -30,7 +31,7 @@ public class CreateSiteTemplate
 
     private ContentTypeName rootContentType;
 
-    private Map<ResourcePath, Template> templates;
+    private Map<ResourcePath, Template> templates = new HashMap<>();
 
     public CreateSiteTemplate siteTemplateKey( final SiteTemplateKey siteTemplateKey )
     {
@@ -78,6 +79,46 @@ public class CreateSiteTemplate
     {
         this.templates.put( resourcePath, template );
         return this;
+    }
+
+    public SiteTemplateKey getSiteTemplateKey()
+    {
+        return siteTemplateKey;
+    }
+
+    public String getDisplayName()
+    {
+        return displayName;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public Vendor getVendor()
+    {
+        return vendor;
+    }
+
+    public ModuleKeys getModules()
+    {
+        return modules;
+    }
+
+    public ContentTypeNames getSupportedContentTypes()
+    {
+        return supportedContentTypes;
+    }
+
+    public ContentTypeName getRootContentType()
+    {
+        return rootContentType;
+    }
+
+    public Map<ResourcePath, Template> getTemplates()
+    {
+        return templates;
     }
 
     @Override
