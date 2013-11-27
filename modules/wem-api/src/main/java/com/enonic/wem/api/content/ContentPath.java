@@ -2,6 +2,7 @@ package com.enonic.wem.api.content;
 
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
@@ -247,6 +248,13 @@ public final class ContentPath
         return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( name ).build();
     }
 
+    public static ContentPath from( final ContentPath parent, final ContentPath relative )
+    {
+        final Builder builder = newPath().spaceName( parent.spaceName ).elements( parent.elements );
+        builder.addElements( relative.elements );
+        return builder.build();
+    }
+
     public static ContentPath createPathToEmbeddedContent( final ContentPath parent, final String name )
     {
         return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( EMBEDDED ).addElement( name ).build();
@@ -312,6 +320,14 @@ public final class ContentPath
             validatePathElement( pathElement );
             this.elements.add( pathElement );
             return this;
+        }
+
+        public void addElements( final List<String> elements )
+        {
+            for( String element : elements )
+            {
+                addElement( element );
+            }
         }
 
         private void validatePathElement( final String pathElement )
