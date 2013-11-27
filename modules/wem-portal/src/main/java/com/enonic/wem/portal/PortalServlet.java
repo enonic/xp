@@ -1,20 +1,32 @@
 package com.enonic.wem.portal;
 
+import java.io.IOException;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.enonic.wem.portal.dispatch.PortalDispatcher;
 
 @Singleton
 public final class PortalServlet
     extends HttpServlet
 {
-    /*
-    @Override
-    protected void configure()
-    {
-        setFeature( ResourceConfig.FEATURE_NORMALIZE_URI, true );
-        setFeature( ResourceConfig.FEATURE_CANONICALIZE_URI_PATH, true );
+    private final PortalDispatcher dispatcher;
 
-        addClass( PortalDispatcherHandler.class );
-        addClass( NormalizeFilter.class );
-    }*/
+    @Inject
+    public PortalServlet( final PortalDispatcher dispatcher )
+    {
+        this.dispatcher = dispatcher;
+    }
+
+    @Override
+    protected void service( final HttpServletRequest req, final HttpServletResponse res )
+        throws ServletException, IOException
+    {
+        this.dispatcher.dispatch( req, res );
+    }
 }

@@ -16,7 +16,7 @@ public final class PortalWebInitializer
     {
         final ServletRegistration.Dynamic portalServlet = context.addServlet( "portal", this.portalServlet );
         portalServlet.setLoadOnStartup( 4 );
-        portalServlet.addMapping( "/site/*" );
+        portalServlet.addMapping( "/portal/*" );
     }
 
     @Inject
