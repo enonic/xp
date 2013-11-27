@@ -78,8 +78,7 @@ public class UpdateSiteHandlerTest
             }
         };
 
-        final UpdateSite command = new UpdateSite().content( content.getId() );
-        command.editor( editor );
+        final UpdateSite command = new UpdateSite().content( content.getId() ).editor( editor );
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenAnswer( new Answer<UpdateContent>() {
             public UpdateContent answer(InvocationOnMock invocation) throws Throwable {
@@ -132,8 +131,7 @@ public class UpdateSiteHandlerTest
             }
         };
 
-        final UpdateSite command = new UpdateSite().content( content.getId() );
-        command.editor( editor );
+        final UpdateSite command = new UpdateSite().content( content.getId() ).editor( editor );
 
         assertEquals( originalSite, content.getSite() );
 

@@ -37,7 +37,7 @@ public class UpdateSiteHandler
 
         if ( editBuilder.isChanges() )
         {
-            final Site edited = editBuilder.build();
+            final Site editedSite = editBuilder.build();
 
             final UpdateContent updateContent = Commands.content()
                 .update()
@@ -48,7 +48,7 @@ public class UpdateSiteHandler
                     @Override
                     public Content.EditBuilder edit( final Content toBeEdited )
                     {
-                        return editContent( toBeEdited ).site( edited );
+                        return editContent( toBeEdited ).site( editedSite );
                     }
                 } );
 
