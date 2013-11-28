@@ -1,7 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content.site;
 
 
-import com.enonic.wem.admin.json.site.SiteJson;
+import com.enonic.wem.admin.json.content.site.SiteJson;
 import com.enonic.wem.admin.rest.resource.ErrorJson;
 import com.enonic.wem.api.content.site.Site;
 
