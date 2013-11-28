@@ -37,6 +37,7 @@ public final class ContentModule
         commands.add( GenerateContentNameHandler.class );
         commands.add( GetChildContentHandler.class );
         commands.add( GetContentByIdHandler.class );
+        commands.add( GetContentByPathHandler.class );
         commands.add( GetContentsHandler.class );
         commands.add( GetRootContentHandler.class );
         commands.add( GetContentVersionHandler.class );
