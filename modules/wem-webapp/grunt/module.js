@@ -34,10 +34,6 @@ function concatLibJs(grunt, args) {
         return;
     }
 
-    if (grunt.option('no-lib')) {
-        return;
-    }
-
     var config = {
         src: sourceFile,
         dest: targetFile
