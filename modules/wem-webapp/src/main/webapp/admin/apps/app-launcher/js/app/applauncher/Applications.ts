@@ -2,6 +2,7 @@ module app_launcher {
 
     export class Applications {
 
+        private static PROFILE_DESC = 'Access and edit your profile';
         private static DESCR1 = 'Vel eius tation id, duo principes inciderint mediocritatem ut. Utroque ponderum duo ei. Cu cum choro delenit, est elitr utroque scripserit te. Mea ad lorem munere epicuri, clita omnes evertitur sed an. Eu aliquid ornatus principes vel. An eam justo malis debitis, ignota vocibus periculis in sit, alia adolescens ei has.';
         private static DESCR2 = 'Ius nibh voluptua lobortis ut, ex nec hinc vitae. Eu qui reque movet, tota vivendum postulant ea mea, his oporteat consetetur te. Deserunt vituperatoribus cum ut, cu pri euismod expetenda adipiscing. Facilisi assueverit ad his, at mel posidonium neglegentur consequuntur. Sapientem complectitur usu te, errem platonem ad eam, ne vis assum fastidii.';
         private static DESCR3 = 'Doctus recteque intellegat duo ut, cu vidit neglegentur duo, has tritani verterem id. Feugiat omnesque intellegam ut sea, elitr tractatos et mel, pri paulo definiebas liberavisse ea. Eos diceret electram no, ad liber dictas vel. Vix solum tation veritus eu.';
@@ -9,6 +10,7 @@ module app_launcher {
         private static ICONS_PATH = api_util.getAdminUri('common/images/icons/metro/40x40/');
 
         private static applications:Application[] = [
+            new Application('profile', 'Profile', api_util.getAdminUri('common/images/tsi-profil.jpg'), Applications.PROFILE_DESC, null, true),
             new Application('content-manager', 'Content Manager',
                 Applications.ICONS_PATH + 'database.png',
                 Applications.DESCR1),

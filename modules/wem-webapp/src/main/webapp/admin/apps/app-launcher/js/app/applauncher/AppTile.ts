@@ -6,6 +6,9 @@ module app_launcher {
         constructor(application:Application) {
             super(null, 'app-tile');
             this.app = application;
+            if (this.app.useFullSizeIcon()) {
+                this.addClass("fullsize");
+            }
 
             var link = new api_dom.AEl();
             link.setUrl('#/' + application.getName());

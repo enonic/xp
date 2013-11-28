@@ -5,14 +5,16 @@ module app_launcher {
         private name:string;
         private description:string;
         private iconUrl:string;
+        private fullSizeIcon:boolean;
         private openTabs:number;
         private appFrame:api_dom.IFrameEl;
         private loaded:boolean;
 
-        constructor(id: string, name:string, iconUrl:string, description?:string, appFrame:api_dom.IFrameEl = null) {
+        constructor(id: string, name:string, iconUrl:string, description?:string, appFrame:api_dom.IFrameEl = null, fullSizeIcon:boolean = false) {
             this.id = id;
             this.name = name;
             this.iconUrl = iconUrl;
+            this.fullSizeIcon = fullSizeIcon;
             this.description = description;
             this.openTabs = 0;
         }
@@ -63,6 +65,10 @@ module app_launcher {
             return this.appFrame != null;
         }
 
+        useFullSizeIcon():boolean {
+            return this.fullSizeIcon;
+        }
+
         hide() {
             if (this.appFrame) {
                 this.appFrame.hide();
@@ -75,6 +81,10 @@ module app_launcher {
 
         setLoaded(value:boolean) {
             this.loaded = value;
+        }
+
+        setFullSizeIcon(value:boolean) {
+            this.fullSizeIcon = value;
         }
     }
 
