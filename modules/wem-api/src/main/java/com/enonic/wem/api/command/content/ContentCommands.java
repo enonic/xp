@@ -18,9 +18,9 @@ public final class ContentCommands
         return new DeleteContent();
     }
 
-    public GetContents get()
+    public ContentGetCommands get()
     {
-        return new GetContents();
+        return new ContentGetCommands();
     }
 
     public GetRootContent getRoots()

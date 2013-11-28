@@ -23,6 +23,9 @@ import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
+import com.enonic.wem.api.command.content.GetContentById;
+import com.enonic.wem.api.command.content.GetContentByIds;
+import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.command.content.GetRootContent;
@@ -93,7 +96,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( aContent );
 
         String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).get( String.class );
 
@@ -112,7 +115,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( aContent );
 
         String jsonString = resource().path( "content/bypath" ).queryParam( "path", "/my_a_content" ).
             queryParam( "expand", "summary" ).get( String.class );
@@ -189,7 +192,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySetWithArray.myArray[0]", new Value.Double( 3.14159 ) );
         aContentData.setProperty( "mySetWithArray.myArray[1]", new Value.Double( 1.333 ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( aContent );
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
@@ -208,7 +211,7 @@ public class ContentResourceTest
         aContentData.setProperty( "mySet.setProperty1", new Value.Long( 1 ) );
         aContentData.setProperty( "mySet.setProperty2", new Value.Long( 2 ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( aContent );
 
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).
             queryParam( "expand", "summary" ).get( String.class );
@@ -329,7 +332,7 @@ public class ContentResourceTest
         throws Exception
     {
         final Content cContent = createContent( "ccc", "my_c_content", "my_type" );
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( cContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.from( cContent ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
@@ -345,7 +348,7 @@ public class ContentResourceTest
         throws Exception
     {
         final Content cContent = createContent( "ccc", "my_c_content", "my_type" );
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( cContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.from( cContent ) );
 
         final Content aContent = createContent( "aaa", "my_a_content", "my_type" );
         final Content bContent = createContent( "bbb", "my_b_content", "my_type" );
@@ -361,8 +364,7 @@ public class ContentResourceTest
     public void list_content_by_id_not_found()
         throws Exception
     {
-
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
+        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.empty() );
 
         String jsonString = resource().path( "content/list" ).queryParam( "parentId", "ccc" ).get( String.class );
 
@@ -407,7 +409,7 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
             createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my_type" ) ) );
@@ -444,7 +446,7 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
             createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my_type" ) ) );
@@ -481,7 +483,7 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( FindContent.class ) ) ).thenReturn(
             createContentIndexQueryResult( Contents.from( aContent, bContent ), true ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.from( aContent, bContent ) );
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my_type" ) ) );
@@ -612,7 +614,7 @@ public class ContentResourceTest
         ContentPath contentPath = ContentPath.from( parentPath, "content-path" );
         CreateContentResult result = new CreateContentResult( contentId, contentPath );
         Content content = createContent( "content-id", "content-path", "content-type" );
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( content ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
         Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenReturn( result );
 
         String jsonString = resource().path( "content/create" ).
@@ -672,7 +674,7 @@ public class ContentResourceTest
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( null );
         Content content = createContent( "content-id", "content-path", "content-type" );
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( content ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
         String jsonString = resource().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
@@ -691,7 +693,7 @@ public class ContentResourceTest
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenReturn( UpdateContentResult.SUCCESS );
         Content content = createContent( "content-id", "content-path", "content-type" );
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.from( content ) );
+        Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
         String jsonString = resource().path( "content/update" ).
             entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );

@@ -55,8 +55,8 @@ import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
 import com.enonic.wem.api.command.content.GetChildContent;
+import com.enonic.wem.api.command.content.GetContentByIds;
 import com.enonic.wem.api.command.content.GetContentVersion;
-import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
@@ -67,7 +67,6 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.ContentSelector;
-import com.enonic.wem.api.content.ContentSelectors;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.RenameContentException;
@@ -136,18 +135,9 @@ public class ContentResource
 
     private Content doGetContent( final ContentSelector contentSelector )
     {
-        final ContentSelectors contentSelectors;
-        if ( contentSelector instanceof ContentId )
-        {
-            contentSelectors = ContentIds.from( (ContentId) contentSelector );
-        }
-        else
-        {
-            contentSelectors = ContentPaths.from( (ContentPath) contentSelector );
-        }
-        final GetContents getContents = Commands.content().get().selectors( contentSelectors );
-        final Contents contents = client.execute( getContents );
-        return contents.isNotEmpty() ? contents.first() : null;
+        return ( contentSelector instanceof ContentId )
+            ? client.execute( Commands.content().get().byId( (ContentId) contentSelector ) )
+            : client.execute( Commands.content().get().byPath( (ContentPath) contentSelector ) );
     }
 
     private Content doGetVersionOfContent( final ContentSelector contentSelector, final ContentVersionId versionId )
@@ -205,8 +195,7 @@ public class ContentResource
         }
         else
         {
-            final GetContents getContent = Commands.content().get().selectors( ContentIds.from( parentIdParam ) );
-            Contents parentContents = client.execute( getContent );
+            final Contents parentContents = client.execute( Commands.content().get().byIds( ContentIds.from( parentIdParam ) ) );
 
             if ( parentContents.isNotEmpty() )
             {
@@ -296,7 +285,7 @@ public class ContentResource
         final FindContent findContent = Commands.content().find().query( contentIndexQuery );
         final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( findContent );
 
-        final GetContents getContents = Commands.content().get().selectors( ContentIds.from( contentIndexQueryResult.getContentIds() ) );
+        final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentIndexQueryResult.getContentIds() ) );
         final Contents contents = this.client.execute( getContents );
 
         if ( EXPAND_FULL.equalsIgnoreCase( params.getExpand() ) )
