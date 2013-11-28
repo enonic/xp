@@ -40,7 +40,6 @@ public final class ContentModule
         commands.add( GetContentByIdsHandler.class );
         commands.add( GetContentByPathHandler.class );
         commands.add( GetContentByPathsHandler.class );
-        commands.add( GetContentsHandler.class );
         commands.add( GetRootContentHandler.class );
         commands.add( GetContentVersionHandler.class );
         commands.add( GetContentVersionHistoryHandler.class );
