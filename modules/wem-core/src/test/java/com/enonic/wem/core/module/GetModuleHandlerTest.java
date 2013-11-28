@@ -15,6 +15,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -26,7 +27,7 @@ public class GetModuleHandlerTest
 
     private SystemConfig systemConfig;
 
-    private ModuleImporter moduleImporter;
+    private ModuleExporter moduleExporter;
 
     private Path tempDir;
 
@@ -36,9 +37,9 @@ public class GetModuleHandlerTest
     {
         handler = new GetModuleHandler();
         systemConfig = Mockito.mock( SystemConfig.class );
-        moduleImporter = Mockito.mock( ModuleImporter.class );
+        moduleExporter = Mockito.mock( ModuleExporter.class );
         handler.setSystemConfig( systemConfig );
-        handler.setModuleImporter( moduleImporter );
+        handler.setModuleImporter( moduleExporter );
         tempDir = Files.createTempDirectory( "wemce" );
 
     }
@@ -56,7 +57,7 @@ public class GetModuleHandlerTest
         Module fooModule = createModule();
 
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
-        Mockito.when( moduleImporter.importModuleFromDirectory( fooModuleDir.toPath() ) ).thenReturn( fooModule );
+        Mockito.when( moduleExporter.importFromDirectory( fooModuleDir.toPath() ) ).thenReturn( fooModule );
 
         GetModule getModuleCommand = Commands.module().get().module( fooModule.getModuleKey() );
         handler.setCommand( getModuleCommand );

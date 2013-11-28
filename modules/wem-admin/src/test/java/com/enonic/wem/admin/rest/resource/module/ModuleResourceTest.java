@@ -35,7 +35,6 @@ import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.exporters.ModuleExporter;
-import com.enonic.wem.core.module.ModuleImporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
@@ -117,9 +116,9 @@ public class ModuleResourceTest
             queryParam( "moduleKey", "testmodule-1.0.0" );
         final byte[] response = webResource.get( byte[].class );
 
-        final ModuleImporter moduleImporter = new ModuleImporter();
+        final ModuleExporter moduleExporter = new ModuleExporter();
         final Path zipFilePath = Files.write( tempDir.resolve( "testmodule-1.0.0.zip" ), response );
-        final Module exportedModule = moduleImporter.importModuleFromZip( zipFilePath );
+        final Module exportedModule = moduleExporter.importFromZip( zipFilePath );
 
         assertEquals( "module display name", exportedModule.getDisplayName() );
         assertEquals( "testmodule-1.0.0", exportedModule.getModuleKey().toString() );

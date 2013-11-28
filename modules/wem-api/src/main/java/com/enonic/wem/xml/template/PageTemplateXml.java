@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
@@ -34,5 +35,6 @@ public final class PageTemplateXml
     {
         toTemplate( builder );
         builder.canRender( ContentTypeNames.from( this.canRender ) );
+        builder.name( new PageTemplateName( getName() ) );
     }
 }

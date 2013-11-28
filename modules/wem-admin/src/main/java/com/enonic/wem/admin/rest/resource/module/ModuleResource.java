@@ -34,7 +34,6 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.exporters.ModuleExporter;
-import com.enonic.wem.core.module.ModuleImporter;
 
 import static com.enonic.wem.api.command.Commands.module;
 
@@ -80,11 +79,11 @@ public class ModuleResource
         {
             final Path tempZipFile = tempDirectory.resolve( fileName );
             Files.copy( uploadedInputStream, tempZipFile );
-            final ModuleImporter moduleImporter = new ModuleImporter();
+            final ModuleExporter moduleExporter = new ModuleExporter();
             final Module importedModule;
             try
             {
-                importedModule = moduleImporter.importModuleFromZip( tempZipFile );
+                importedModule = moduleExporter.importFromZip( tempZipFile );
             }
             catch ( Exception e )
             {

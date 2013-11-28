@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout-template>
+  <name>layout-name</name>
   <display-name>Layout template</display-name>
   <descriptor>mainmodule-1.0.0:/components/layout-temp.xml</descriptor>
   <config>

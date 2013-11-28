@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page-template>
+  <name>main-page</name>
   <display-name>Main page template</display-name>
   <descriptor>mainmodule-1.0.0:/components/landing-page.xml</descriptor>
   <config>
