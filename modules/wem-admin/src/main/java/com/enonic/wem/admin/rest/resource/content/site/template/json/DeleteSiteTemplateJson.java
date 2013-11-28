@@ -1,21 +1,23 @@
 package com.enonic.wem.admin.rest.resource.content.site.template.json;
 
-import com.enonic.wem.admin.rest.ResultJson;
-import com.enonic.wem.admin.rest.resource.ErrorJson;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 
-public class DeleteSiteTemplateJson extends ResultJson<String>
+public class DeleteSiteTemplateJson
 {
-    protected DeleteSiteTemplateJson( final String result, final ErrorJson error )
+
+    private SiteTemplateKey key;
+
+    @JsonCreator
+    public DeleteSiteTemplateJson( @JsonProperty("key") String key ) {
+
+        this.key = SiteTemplateKey.from( key );
+    }
+
+    public SiteTemplateKey getKey()
     {
-        super( result, error );
-    }
-
-    public static DeleteSiteTemplateJson error(String error) {
-        return new DeleteSiteTemplateJson( null, new ErrorJson( error ) );
-    }
-
-    public static DeleteSiteTemplateJson result(SiteTemplateKey key) {
-        return new DeleteSiteTemplateJson( key.toString(), null );
+        return key;
     }
 }
