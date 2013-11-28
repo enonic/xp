@@ -26,7 +26,7 @@ public class SiteJson
 
     String getTemplateName()
     {
-        return site.getTemplateName().toString();
+        return site.getTemplate().toString();
     }
 
     List<ModuleConfigJson> getModuleConfigs()

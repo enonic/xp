@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.site;
 
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.site.UpdateSite;
@@ -39,23 +38,21 @@ public class UpdateSiteHandler
         {
             final Site editedSite = editBuilder.build();
 
-            final UpdateContent updateContent = Commands.content()
-                .update()
-                .modifier( AccountKey.anonymous() )
-                .selector( command.getContent() )
-                .editor( new ContentEditor()
+            final UpdateContent updateContent = Commands.content().update().selector( command.getContent() ).editor( new ContentEditor()
+            {
+                @Override
+                public Content.EditBuilder edit( final Content toBeEdited )
                 {
-                    @Override
-                    public Content.EditBuilder edit( final Content toBeEdited )
-                    {
-                        return editContent( toBeEdited ).site( editedSite );
-                    }
-                } );
+                    return editContent( toBeEdited ).site( editedSite );
+                }
+            } );
 
-            final Content.EditBuilder builder = updateContent.getEditor().edit( content );
-
-            final Content result = builder.build();
-            command.setResult( result );
+            context.getClient().execute( updateContent );
         }
+
+        final Content updatedContent =
+            context.getClient().execute( Commands.content().get().selectors( ContentIds.from( command.getContent() ) ) ).first();
+
+        command.setResult( updatedContent );
     }
 }

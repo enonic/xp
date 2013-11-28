@@ -12,16 +12,16 @@ import com.enonic.wem.api.command.content.site.UpdateSite;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteEditor;
-import com.enonic.wem.api.content.site.SiteTemplateName;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 
-public class UpdateSiteParams
+public class UpdateSiteJson
 {
     private final UpdateSite updateSite;
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
-    UpdateSiteParams( @JsonProperty("content") String content, @JsonProperty("siteTemplate") final String siteTemplate,
-                      @JsonProperty("moduleConfigs") final List<ModuleConfigJson> moduleConfigs )
+    UpdateSiteJson( @JsonProperty("content") String content, @JsonProperty("siteTemplate") final String siteTemplate,
+                    @JsonProperty("moduleConfigs") final List<ModuleConfigJson> moduleConfigs )
     {
         this.updateSite = new UpdateSite().
             content( ContentId.from( content ) ).
@@ -31,7 +31,7 @@ public class UpdateSiteParams
                 public Site.EditBuilder edit( final Site toBeEdited )
                 {
                     return Site.editSite( toBeEdited ).
-                        template( new SiteTemplateName( siteTemplate ) ).
+                        template( SiteTemplateKey.from( siteTemplate ) ).
                         moduleConfigs( ModuleConfigJson.toModuleConfigs( moduleConfigs ) );
                 }
             } );

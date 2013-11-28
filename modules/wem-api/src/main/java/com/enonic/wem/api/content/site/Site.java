@@ -10,19 +10,19 @@ import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public class Site
 {
-    private final SiteTemplateName templateName;
+    private final SiteTemplateKey template;
 
     private final ModuleConfigs moduleConfigs;
 
     private Site( final BaseBuilder builder )
     {
-        this.templateName = builder.templateName;
+        this.template = builder.templateName;
         this.moduleConfigs = ModuleConfigs.from( builder.moduleConfigs );
     }
 
-    public SiteTemplateName getTemplateName()
+    public SiteTemplateKey getTemplate()
     {
-        return templateName;
+        return template;
     }
 
     public ModuleConfigs getModuleConfigs()
@@ -44,13 +44,13 @@ public class Site
 
         final Site that = (Site) o;
 
-        return Objects.equals( this.templateName, that.templateName ) && Objects.equals( this.moduleConfigs, that.moduleConfigs );
+        return Objects.equals( this.template, that.template ) && Objects.equals( this.moduleConfigs, that.moduleConfigs );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( templateName, moduleConfigs );
+        return Objects.hash( template, moduleConfigs );
     }
 
     public static Builder newSite()
@@ -70,13 +70,13 @@ public class Site
 
     public static class BaseBuilder
     {
-        SiteTemplateName templateName;
+        SiteTemplateKey templateName;
 
         List<ModuleConfig> moduleConfigs = new ArrayList<>();
 
         BaseBuilder( final Site source )
         {
-            this.templateName = source.getTemplateName();
+            this.templateName = source.getTemplate();
             this.moduleConfigs = source.getModuleConfigs().getList();
         }
 
@@ -99,17 +99,17 @@ public class Site
             this.original = original;
         }
 
-        public EditBuilder template( SiteTemplateName value )
+        public EditBuilder template( SiteTemplateKey value )
         {
-            changes.recordChange( newPossibleChange( "templateName" ).from( this.original.getTemplateName() ).to( value ).build() );
+            changes.recordChange( newPossibleChange( "template" ).from( this.original.getTemplate() ).to( value ).build() );
             this.templateName = value;
             return this;
         }
 
         public EditBuilder moduleConfigs( ModuleConfigs configs )
         {
-            changes.recordChange( newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs().getList() ).to(
-                configs.getList() ).build() );
+            changes.recordChange(
+                newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs().getList() ).to( configs.getList() ).build() );
             moduleConfigs = configs.getList();
             return this;
         }
@@ -145,7 +145,7 @@ public class Site
             super();
         }
 
-        public Builder template( SiteTemplateName value )
+        public Builder template( SiteTemplateKey value )
         {
             this.templateName = value;
             return this;
@@ -159,7 +159,10 @@ public class Site
 
         public Builder moduleConfigs( ModuleConfigs configs )
         {
-            moduleConfigs = configs.getList();
+            if ( configs != null )
+            {
+                moduleConfigs = configs.getList();
+            }
             return this;
         }
 

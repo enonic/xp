@@ -1,10 +1,11 @@
 package com.enonic.wem.api.command.content.site;
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 
 public class DeleteSite
-    extends Command<Boolean>
+    extends Command<Content>
 {
     private ContentId content;
 

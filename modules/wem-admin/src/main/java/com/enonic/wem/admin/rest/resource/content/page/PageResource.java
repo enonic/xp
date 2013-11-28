@@ -14,7 +14,7 @@ public class PageResource
 {
     @POST
     @Path("create")
-    public CreatePageResult create( final CreatePageParams params )
+    public CreatePageResult create( final CreatePageJson params )
     {
         client.execute( params.getCreatePage() );
 

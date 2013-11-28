@@ -19,21 +19,20 @@ public class SiteResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateSiteResult create( final CreateSiteParams params )
+    public CreateSiteResult create( final CreateSiteJson createSiteJson )
     {
-        final CreateSite createSiteCommand = params.getCreateSite();
+        final CreateSite createSiteCommand = createSiteJson.getCreateSite();
         client.execute( createSiteCommand );
         final Site createdSite = createSiteCommand.getResult().getSite();
-
         return CreateSiteResult.success( createdSite );
     }
 
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public UpdateSiteResult update( final UpdateSiteParams params )
+    public UpdateSiteResult update( final UpdateSiteJson updateSiteJson )
     {
-        final UpdateSite updateSiteCommand = params.getUpdateSite();
+        final UpdateSite updateSiteCommand = updateSiteJson.getUpdateSite();
         client.execute( updateSiteCommand );
         final Site updatedSite = updateSiteCommand.getResult().getSite();
         return UpdateSiteResult.success( updatedSite );

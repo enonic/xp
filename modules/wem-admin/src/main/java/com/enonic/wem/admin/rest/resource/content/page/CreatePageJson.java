@@ -13,13 +13,13 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 
-public class CreatePageParams
+public class CreatePageJson
 {
     private final CreatePage createPage;
 
     @JsonCreator
-    public CreatePageParams( @JsonProperty("content") String content, @JsonProperty("pageTemplate") String pageTemplate,
-                             @JsonProperty("config") List<DataJson> config )
+    public CreatePageJson( @JsonProperty("content") String content, @JsonProperty("pageTemplate") String pageTemplate,
+                           @JsonProperty("config") List<DataJson> config )
     {
         this.createPage = new CreatePage().
             content( ContentId.from( content ) ).

@@ -9,13 +9,13 @@ import com.enonic.wem.api.command.content.site.CreateSite;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 
-public class CreateSiteParams
+public class CreateSiteJson
 {
     private final CreateSite createSite;
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
-    CreateSiteParams( @JsonProperty("content") String content, @JsonProperty("siteTemplate") String siteTemplate )
+    CreateSiteJson( @JsonProperty("content") String content, @JsonProperty("siteTemplate") String siteTemplate )
     {
         this.createSite = new CreateSite().
             content( ContentId.from( content ) ).
