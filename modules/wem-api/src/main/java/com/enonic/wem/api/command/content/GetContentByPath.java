@@ -22,6 +22,34 @@ public class GetContentByPath
         Preconditions.checkNotNull( path, "path must be specified" );
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final GetContentByPath that = (GetContentByPath) o;
+
+        if ( !path.equals( that.path ) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return path.hashCode();
+    }
+
     public ContentPath getPath()
     {
         return this.path;
