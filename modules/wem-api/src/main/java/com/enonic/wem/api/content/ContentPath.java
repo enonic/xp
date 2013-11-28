@@ -5,16 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
-import com.enonic.wem.api.space.SpaceName;
-
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
 
 public final class ContentPath
     implements ContentSelector
@@ -23,13 +17,9 @@ public final class ContentPath
 
     private static final String ELEMENT_DIVIDER = "/";
 
-    private static final String SPACE_PREFIX_DIVIDER = ":";
-
     private final ImmutableList<String> elements;
 
     private final String refString;
-
-    private final SpaceName spaceName;
 
     private static final String EMBEDDED = "__embedded";
 
@@ -38,12 +28,10 @@ public final class ContentPath
     private ContentPath( final Builder builder )
     {
         Preconditions.checkNotNull( builder.elements );
-        this.spaceName = builder.spaceName;
 
-        final String spacePrefix = spaceName == null ? "" : spaceName.name() + SPACE_PREFIX_DIVIDER;
         if ( builder.elements.isEmpty() )
         {
-            refString = spacePrefix + ELEMENT_DIVIDER;
+            refString = ELEMENT_DIVIDER;
             this.elements = ImmutableList.of();
         }
         else
@@ -51,7 +39,7 @@ public final class ContentPath
             final ImmutableList.Builder<String> elementsBuilder = ImmutableList.builder();
             elementsBuilder.addAll( builder.elements );
             this.elements = elementsBuilder.build();
-            this.refString = spacePrefix + ELEMENT_DIVIDER + Joiner.on( ELEMENT_DIVIDER ).join( elements );
+            this.refString = ELEMENT_DIVIDER + Joiner.on( ELEMENT_DIVIDER ).join( elements );
         }
 
         pathToEmbeddedContent = resolveIsPathToEmbeddedContent();
@@ -95,24 +83,9 @@ public final class ContentPath
         return this.elements.isEmpty();
     }
 
-    public boolean isAbsolute()
-    {
-        return this.spaceName != null;
-    }
-
-    public boolean isRelative()
-    {
-        return this.spaceName == null;
-    }
-
     public boolean isPathToEmbeddedContent()
     {
         return pathToEmbeddedContent;
-    }
-
-    public SpaceName getSpace()
-    {
-        return spaceName;
     }
 
     public int elementCount()
@@ -128,14 +101,14 @@ public final class ContentPath
         }
 
         final LinkedList<String> parentElements = newListOfParentElements();
-        return newPath().spaceName( this.spaceName ).elements( parentElements ).build();
+        return newPath().elements( parentElements ).build();
     }
 
     public ContentPath withName( final String name )
     {
         Preconditions.checkNotNull( name, "name not given" );
         final LinkedList<String> newElements = newListOfParentElements();
-        return newPath().spaceName( this.spaceName ).elements( newElements ).addElement( name ).build();
+        return newPath().elements( newElements ).addElement( name ).build();
     }
 
     public String getRelativePath()
@@ -155,10 +128,6 @@ public final class ContentPath
 
     public boolean isChildOf( final ContentPath possibleParentPath )
     {
-        if ( !Objects.equal( this.spaceName, possibleParentPath.spaceName ) )
-        {
-            return false;
-        }
         if ( elementCount() <= possibleParentPath.elementCount() )
         {
             return false;
@@ -226,44 +195,27 @@ public final class ContentPath
 
     public static ContentPath from( final String path )
     {
-        final boolean isAbsolute = path.contains( SPACE_PREFIX_DIVIDER );
-        final String relativePath;
-        final String spaceName;
-        if ( isAbsolute )
-        {
-            relativePath = substringAfter( path, SPACE_PREFIX_DIVIDER );
-            spaceName = substringBefore( path, SPACE_PREFIX_DIVIDER );
-        }
-        else
-        {
-            relativePath = path;
-            spaceName = null;
-        }
-        final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( relativePath );
-        return newPath().elements( pathElements ).spaceName( spaceName ).build();
+        final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path );
+        return newPath().elements( pathElements ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final String name )
     {
-        return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( name ).build();
+        return newPath().elements( parent.elements ).addElement( name ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final ContentPath relative )
     {
-        final Builder builder = newPath().spaceName( parent.spaceName ).elements( parent.elements );
+        final Builder builder = newPath().elements( parent.elements );
         builder.addElements( relative.elements );
         return builder.build();
     }
 
     public static ContentPath createPathToEmbeddedContent( final ContentPath parent, final String name )
     {
-        return newPath().spaceName( parent.spaceName ).elements( parent.elements ).addElement( EMBEDDED ).addElement( name ).build();
+        return newPath().elements( parent.elements ).addElement( EMBEDDED ).addElement( name ).build();
     }
 
-    public static ContentPath rootOf( final SpaceName spaceName )
-    {
-        return newPath().spaceName( spaceName ).build();
-    }
 
     public static Builder newPath()
     {
@@ -274,23 +226,9 @@ public final class ContentPath
     {
         private LinkedList<String> elements;
 
-        private SpaceName spaceName;
-
         private Builder()
         {
             this.elements = Lists.newLinkedList();
-            this.spaceName = null;
-        }
-
-        public Builder spaceName( final SpaceName spaceName )
-        {
-            this.spaceName = spaceName;
-            return this;
-        }
-
-        public Builder spaceName( final String spaceName )
-        {
-            return spaceName( spaceName == null ? null : SpaceName.from( spaceName ) );
         }
 
         public Builder elements( final String... pathElements )
@@ -324,7 +262,7 @@ public final class ContentPath
 
         public void addElements( final List<String> elements )
         {
-            for( String element : elements )
+            for ( String element : elements )
             {
                 addElement( element );
             }
@@ -336,8 +274,6 @@ public final class ContentPath
             Preconditions.checkArgument( !pathElement.isEmpty(), "A path element cannot be empty" );
             Preconditions.checkArgument( !pathElement.contains( ELEMENT_DIVIDER ),
                                          "A path element cannot contain an element divider '%s': [%s]", ELEMENT_DIVIDER, pathElement );
-            Preconditions.checkArgument( !pathElement.contains( SPACE_PREFIX_DIVIDER ),
-                                         "A path element cannot contain an element divider '%s': [%s]", SPACE_PREFIX_DIVIDER, pathElement );
         }
 
         public ContentPath build()

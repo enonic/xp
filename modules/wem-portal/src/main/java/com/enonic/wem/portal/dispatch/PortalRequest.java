@@ -1,6 +1,5 @@
 package com.enonic.wem.portal.dispatch;
 
-import com.enonic.wem.api.space.SpaceName;
 
 public class PortalRequest
 {
@@ -10,9 +9,9 @@ public class PortalRequest
 
     protected String mode;
 
-    public void createPortalRequestPath( final SpaceName spaceName )
+    public void createPortalRequestPath( )
     {
-        this.portalRequestPath = new PortalRequestPath( spaceName );
+        this.portalRequestPath = new PortalRequestPath( );
     }
 
     public void appendPath( final String element )

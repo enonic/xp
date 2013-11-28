@@ -37,7 +37,7 @@ public class ContentNodeTranslatorTest
 
         final Content mycontent = Content.newContent().
             name( "mycontent" ).
-            path( ContentPath.from( "mySpace:/myPath" ) ).
+            path( ContentPath.from( "/myPath" ) ).
             type( ContentTypeName.from( "my-content-type" ) ).
             contentData( new ContentData( rootDataSet.toRootDataSet() ) ).
             build();
@@ -58,7 +58,7 @@ public class ContentNodeTranslatorTest
 
         final Content mycontent = Content.newContent().
             name( "mycontent" ).
-            path( ContentPath.from( "mySpace:/myPath" ) ).
+            path( ContentPath.from( "/myPath" ) ).
             type( ContentTypeName.from( "my-content-type" ) ).
             contentData( new ContentData( rootDataSet.toRootDataSet() ) ).
             build();
@@ -91,7 +91,7 @@ public class ContentNodeTranslatorTest
 
         final Content mycontent = Content.newContent().
             name( "mycontent" ).
-            path( ContentPath.from( "mySpace:/myPath" ) ).
+            path( ContentPath.from( "/myPath" ) ).
             type( ContentTypeName.from( "my-content-type" ) ).
             form( form ).
             build();
@@ -131,7 +131,7 @@ public class ContentNodeTranslatorTest
             id( ContentId.from( "myId" ) ).
             displayName( "myDisplayName" ).
             name( "myContent" ).
-            path( ContentPath.from( "mySpace:/myPath" ) ).
+            path( ContentPath.from( "/myPath" ) ).
             type( ContentTypeName.from( "my-content-type" ) ).
             form( form ).
             contentData( new ContentData( rootDataSet.toRootDataSet() ) ).

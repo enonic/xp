@@ -18,7 +18,7 @@ public class ContentServiceImpl
         final PortalRequestPath portalRequestPath = pageRequest.getPortalRequest().getPortalRequestPath();
 
         final ContentPath contentPath =
-            ContentPath.newPath().spaceName( portalRequestPath.getSpaceName() ).elements( portalRequestPath.getElements() ).build();
+            ContentPath.newPath().elements( portalRequestPath.getElements() ).build();
 
         return findContent( contentPath );
     }

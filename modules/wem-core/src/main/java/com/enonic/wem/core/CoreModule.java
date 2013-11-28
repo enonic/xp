@@ -20,7 +20,6 @@ import com.enonic.wem.core.relationship.RelationshipModule;
 import com.enonic.wem.core.resource.ResourceModule;
 import com.enonic.wem.core.schema.SchemaModule;
 import com.enonic.wem.core.servlet.ServletModule;
-import com.enonic.wem.core.space.SpaceModule;
 import com.enonic.wem.core.userstore.UserStoreModule;
 import com.enonic.wem.migrate.MigrateModule;
 
@@ -46,7 +45,6 @@ public final class CoreModule
         install( new RelationshipModule() );
         install( new SchemaModule() );
         install( new IndexModule() );
-        install( new SpaceModule() );
         install( new UserStoreModule() );
         install( new ResourceModule() );
         install( new ModuleModule() );

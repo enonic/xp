@@ -8,7 +8,7 @@ import com.enonic.wem.api.support.Changes;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
-public class Site
+public final class Site
 {
     private final SiteTemplateKey template;
 

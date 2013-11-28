@@ -11,7 +11,7 @@ public final class PageTemplate
     private PageTemplate( final Builder builder )
     {
         super( builder.name, builder.displayName, builder.descriptor, builder.config );
-        this.canRender = builder.canRender;
+        this.canRender = builder.canRender != null ? builder.canRender : ContentTypeNames.empty();
     }
 
     public ContentTypeNames getCanRender()

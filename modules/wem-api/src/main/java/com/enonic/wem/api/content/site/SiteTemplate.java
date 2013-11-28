@@ -18,7 +18,7 @@ import static com.google.common.collect.Maps.uniqueIndex;
 public final class SiteTemplate
     implements Iterable<Template>, Identity<SiteTemplateKey>
 {
-    private static final ResourcePath DEFAULT_TEMPLATES_PATH = ResourcePath.from( "components/" );
+    public static final ResourcePath DEFAULT_TEMPLATES_PATH = ResourcePath.from( "components/" );
 
     private final SiteTemplateKey siteTemplateKey;
 

@@ -22,8 +22,6 @@ import com.enonic.wem.admin.rest.resource.schema.SchemaResource;
 import com.enonic.wem.admin.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.wem.admin.rest.resource.schema.mixin.MixinResource;
 import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeResource;
-import com.enonic.wem.admin.rest.resource.space.SpaceImageResource;
-import com.enonic.wem.admin.rest.resource.space.SpaceResource;
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
 import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource;
@@ -52,9 +50,6 @@ public final class RestServlet
         addClass( AuthResource.class );
         addClass( ToolsResource.class );
         addClass( StatusResource.class );
-
-        addClass( SpaceResource.class );
-        addClass( SpaceImageResource.class );
 
         addClass( RelationshipResource.class );
         addClass( RelationshipTypeResource.class );

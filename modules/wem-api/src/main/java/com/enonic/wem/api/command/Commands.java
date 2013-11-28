@@ -14,14 +14,11 @@ import com.enonic.wem.api.command.schema.SchemaCommands;
 import com.enonic.wem.api.command.schema.content.ContentTypeCommands;
 import com.enonic.wem.api.command.schema.mixin.MixinCommands;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypeCommands;
-import com.enonic.wem.api.command.space.SpaceCommands;
 import com.enonic.wem.api.command.userstore.UserStoreCommands;
 
 public final class Commands
 {
     private static final NodeCommands NODE_COMMANDS = new NodeCommands();
-
-    private static final SpaceCommands SPACE_COMMANDS = new SpaceCommands();
 
     private static final AccountCommands ACCOUNT_COMMANDS = new AccountCommands();
 
@@ -108,11 +105,6 @@ public final class Commands
     public static RelationshipTypeCommands relationshipType()
     {
         return RELATIONSHIP_TYPE_COMMANDS;
-    }
-
-    public static SpaceCommands space()
-    {
-        return SPACE_COMMANDS;
     }
 
     public static BinaryCommands binary()

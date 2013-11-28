@@ -46,7 +46,6 @@ public class RelationshipDaoImplTest
     public void setupDao()
         throws Exception
     {
-        session.getNode( "/wem/spaces" ).addNode( "myspace" );
         contentDao = new ContentDaoImpl();
         relationshipDao = new RelationshipDaoImpl();
 
@@ -60,9 +59,9 @@ public class RelationshipDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "myspace:/" ), session );
-        ContentId contentA = contentDao.create( createContent( "myspace:a" ), session ).getId();
-        ContentId contentB = contentDao.create( createContent( "myspace:b" ), session ).getId();
+
+        ContentId contentA = contentDao.create( createContent( "a" ), session ).getId();
+        ContentId contentB = contentDao.create( createContent( "b" ), session ).getId();
         commit();
 
         // exercise
@@ -78,9 +77,8 @@ public class RelationshipDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "myspace:/" ), session );
-        ContentId contentA = contentDao.create( createContent( "myspace:a" ), session ).getId();
-        ContentId contentB = contentDao.create( createContent( "myspace:b" ), session ).getId();
+        ContentId contentA = contentDao.create( createContent( "a" ), session ).getId();
+        ContentId contentB = contentDao.create( createContent( "b" ), session ).getId();
         commit();
 
         relationshipDao.create( createRelationship( contentA, contentB, PARENT ), session );
@@ -103,9 +101,8 @@ public class RelationshipDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "myspace:/" ), session );
-        ContentId contentA = contentDao.create( createContent( "myspace:a" ), session ).getId();
-        ContentId contentB = contentDao.create( createContent( "myspace:b" ), session ).getId();
+        ContentId contentA = contentDao.create( createContent( "a" ), session ).getId();
+        ContentId contentB = contentDao.create( createContent( "b" ), session ).getId();
         commit();
 
         relationshipDao.create( createRelationship( contentA, contentB, LINK ), session );
@@ -129,9 +126,8 @@ public class RelationshipDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "myspace:/" ), session );
-        ContentId contentA = contentDao.create( createContent( "myspace:a" ), session ).getId();
-        ContentId contentB = contentDao.create( createContent( "myspace:b" ), session ).getId();
+        ContentId contentA = contentDao.create( createContent( "a" ), session ).getId();
+        ContentId contentB = contentDao.create( createContent( "b" ), session ).getId();
         commit();
 
         relationshipDao.create( createRelationship( contentA, contentB, PARENT ), session );
@@ -157,9 +153,8 @@ public class RelationshipDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "myspace:/" ), session );
-        ContentId contentA = contentDao.create( createContent( "myspace:a" ), session ).getId();
-        ContentId contentB = contentDao.create( createContent( "myspace:b" ), session ).getId();
+        ContentId contentA = contentDao.create( createContent( "a" ), session ).getId();
+        ContentId contentB = contentDao.create( createContent( "b" ), session ).getId();
         commit();
 
         relationshipDao.create( createRelationship( contentA, contentB, PARENT, DataPath.from( "myParent[3].myData[1]" ) ), session );
@@ -184,11 +179,10 @@ public class RelationshipDaoImplTest
         throws Exception
     {
         // setup
-        contentDao.create( createContent( "myspace:/" ), session );
-        ContentId contentIdA = contentDao.create( createContent( "myspace:a" ), session ).getId();
-        ContentId contentIdB = contentDao.create( createContent( "myspace:b" ), session ).getId();
-        ContentId contentIdC = contentDao.create( createContent( "myspace:c" ), session ).getId();
-        ContentId contentIdD = contentDao.create( createContent( "myspace:d" ), session ).getId();
+        ContentId contentIdA = contentDao.create( createContent( "a" ), session ).getId();
+        ContentId contentIdB = contentDao.create( createContent( "b" ), session ).getId();
+        ContentId contentIdC = contentDao.create( createContent( "c" ), session ).getId();
+        ContentId contentIdD = contentDao.create( createContent( "d" ), session ).getId();
         commit();
 
         relationshipDao.create(

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.space.SpaceNames;
 import com.enonic.wem.core.index.elastic.AbstractJsonTest;
 
 public class SearchSourceFactoryTest
@@ -54,19 +53,6 @@ public class SearchSourceFactoryTest
         final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
 
         assertJson( "contentTypeFilter_result.json", searchSourceBuilder );
-    }
-
-    @Test
-    public void testSpacesFilter()
-        throws Exception
-    {
-        ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
-        contentIndexQuery.setFullTextSearchString( "test" );
-        contentIndexQuery.setSpaceNames( SpaceNames.from( "mySpace1", "mySpace2" ) );
-
-        final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
-
-        assertJson( "spacesFilter_result.json", searchSourceBuilder );
     }
 
     @Test
@@ -127,7 +113,6 @@ public class SearchSourceFactoryTest
     {
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( "test" );
-        contentIndexQuery.setSpaceNames( SpaceNames.from( "mySpace1", "mySpace2" ) );
         contentIndexQuery.setContentTypeNames(
             ContentTypeNames.from( "contentTypes:myContentType1", "contentTypes:myContentType2" ) );
 

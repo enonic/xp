@@ -75,9 +75,15 @@ public class CreateSiteTemplate
         return this;
     }
 
-    public CreateSiteTemplate addTemplate( final ResourcePath resourcePath, Template template )
+    public CreateSiteTemplate addTemplate( final ResourcePath resourcePath, final Template template )
     {
         this.templates.put( resourcePath, template );
+        return this;
+    }
+
+    public CreateSiteTemplate addTemplate( final Template template )
+    {
+        this.templates.put( SiteTemplate.DEFAULT_TEMPLATES_PATH, template );
         return this;
     }
 

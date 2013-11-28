@@ -12,7 +12,6 @@
 
   </node>
 
-  <node name="spaces" type="nt:unstructured"/>
   <node name="contents" type="wem:contents"/>
   <node name="contentTypes" type="nt:unstructured"/>
   <node name="mixins" type="nt:unstructured"/>

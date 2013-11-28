@@ -21,7 +21,7 @@ public final class CreatePageTemplate
 
     private ContentTypeNames canRender;
 
-    public CreatePageTemplate templateName( final PageTemplateName name )
+    public CreatePageTemplate name( final PageTemplateName name )
     {
         this.name = name;
         return this;

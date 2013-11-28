@@ -75,7 +75,6 @@ public class SearchSourceFactory
         Set<FilterBuilder> filtersToApply = Sets.newHashSet();
 
         createAndAddContentTypeFilterIfApplicable( contentIndexQuery, filtersToApply );
-        createAndAddSpacesFilterIfApplicable( contentIndexQuery, filtersToApply );
         createAndAddRangeFilterIfApplicable( contentIndexQuery, filtersToApply );
 
         if ( filtersToApply.isEmpty() )
@@ -144,16 +143,6 @@ public class SearchSourceFactory
             }
 
             filtersToApply.add( boolFilterBuilder );
-        }
-    }
-
-    private static void createAndAddSpacesFilterIfApplicable( final ContentIndexQuery contentIndexQuery,
-                                                              final Set<FilterBuilder> filtersToApply )
-    {
-        if ( contentIndexQuery.getSpaceNames() != null && contentIndexQuery.getSpaceNames().isNotEmpty() )
-        {
-            Collection<String> spaceNames = getCollectionAsLowercase( contentIndexQuery.getSpaceNames().getAsStringSet() );
-            filtersToApply.add( createTermsFilter( spaceNames, ContentIndexField.SPACE ) );
         }
     }
 

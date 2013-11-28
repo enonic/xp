@@ -10,15 +10,12 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.space.SpaceName;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
-import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENTS_ROOT_PATH;
 import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
 
 public class ContentJcrHelper
 {
@@ -82,8 +79,7 @@ public class ContentJcrHelper
         return nodeToContent( contentNode, contentJcrMapper );
     }
 
-    public static final Content doFindContent( final ContentId contentId, final Session session,
-                                           final ContentJcrMapper contentJcrMapper )
+    public static final Content doFindContent( final ContentId contentId, final Session session, final ContentJcrMapper contentJcrMapper )
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( contentId, session );
@@ -98,28 +94,21 @@ public class ContentJcrHelper
     protected static ContentPath getContentPathFromNode( final Node node )
         throws RepositoryException
     {
-        final String jcrNodePath = substringAfter( node.getPath(), SPACES_PATH );
-        final String spaceName = substringBefore( jcrNodePath, "/" + SPACE_CONTENT_ROOT_NODE );
-        final String contentPath = substringAfter( jcrNodePath, "/" + SPACE_CONTENT_ROOT_NODE );
-        return ContentPath.from( spaceName + ":" + contentPath );
+        final String contentPath = substringAfter( node.getPath(), CONTENTS_ROOT_PATH );
+        return ContentPath.from( contentPath );
     }
 
     protected static String resolveNodePath( final ContentPath contentPath )
     {
         if ( contentPath.isRoot() )
         {
-            return getSpaceRootPath( contentPath.getSpace() );
+            return CONTENTS_ROOT_PATH;
         }
         else
         {
             final String relativePathToContent = contentPath.getRelativePath();
-            return getSpaceRootPath( contentPath.getSpace() ) + "/" + removeStart( relativePathToContent, "/" );
+            return CONTENTS_ROOT_PATH + removeStart( relativePathToContent, "/" );
         }
-    }
-
-    protected static String getSpaceRootPath( final SpaceName spaceName )
-    {
-        return SPACES_PATH + spaceName.name() + "/" + SPACE_CONTENT_ROOT_NODE;
     }
 
     protected static Content nodeToContent( final Node contentNode, final ContentJcrMapper contentJcrMapper )

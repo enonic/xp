@@ -33,7 +33,6 @@ import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
-import com.enonic.wem.api.command.space.GetSpaces;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
@@ -57,8 +56,6 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.api.schema.content.validator.MaximumOccurrencesValidationError;
 import com.enonic.wem.api.schema.content.validator.MissingRequiredValueValidationError;
-import com.enonic.wem.api.space.Space;
-import com.enonic.wem.api.space.Spaces;
 
 import static org.junit.Assert.*;
 
@@ -413,8 +410,6 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my_type" ) ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( createSpace( "my_space" ) ) );
-
         String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_with_facets_params.json" ),
                                                                       MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "find_content_id_with_facets.json", jsonString );
@@ -450,8 +445,6 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my_type" ) ) );
 
-        Mockito.when( client.execute( Mockito.isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( createSpace( "my_space" ) ) );
-
         String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_summary_with_facets_params.json" ),
                                                                       MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "find_content_summary_with_facets.json", jsonString );
@@ -486,8 +479,6 @@ public class ContentResourceTest
 
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my_type" ) ) );
-
-        Mockito.when( client.execute( Mockito.isA( GetSpaces.class ) ) ).thenReturn( Spaces.from( createSpace( "my_space" ) ) );
 
         String jsonString = resource().path( "content/find" ).entity( readFromFile( "find_content_full_without_facets_params.json" ),
                                                                       MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -786,14 +777,6 @@ public class ContentResourceTest
         return ContentType.newContentType().
             displayName( "My type" ).
             name( name ).
-            build();
-    }
-
-    private Space createSpace( String name )
-    {
-        return Space.newSpace().
-            name( name ).
-            displayName( "My space" ).
             build();
     }
 }

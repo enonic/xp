@@ -82,7 +82,6 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.space.SpaceNames;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -261,7 +260,6 @@ public class ContentResource
         contentIndexQuery.setFullTextSearchString( params.getFulltext() );
         contentIndexQuery.setIncludeFacets( params.isIncludeFacets() );
         contentIndexQuery.setContentTypeNames( ContentTypeNames.from( params.getContentTypes() ) );
-        contentIndexQuery.setSpaceNames( SpaceNames.from( params.getSpaces() ) );
 
         if ( params.getCount() >= 0 )
         {

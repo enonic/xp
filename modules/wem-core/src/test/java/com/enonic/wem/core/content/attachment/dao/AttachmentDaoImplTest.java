@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
@@ -39,7 +38,6 @@ public class AttachmentDaoImplTest
     {
         attachmentDao = new AttachmentDaoImpl();
         contentDao = new ContentDaoImpl();
-        session.getNode( "/wem/spaces" ).addNode( "myspace" );
 
         indexService = Mockito.mock( IndexService.class );
         ( (ContentDaoImpl) contentDao ).setIndexService( indexService );
@@ -53,7 +51,7 @@ public class AttachmentDaoImplTest
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
 
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
 
@@ -62,7 +60,7 @@ public class AttachmentDaoImplTest
         commit();
 
         // verify
-        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root" );
+        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "mysite" );
         Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
         Node createdAttachmentNode = attachmentsNode.getNode( attachment.getName() );
         assertNotNull( createdAttachmentNode );
@@ -80,16 +78,16 @@ public class AttachmentDaoImplTest
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
 
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
 
         // exercise
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // verify
-        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root" );
+        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "mysite" );
         Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
         Node createdAttachmentNode = attachmentsNode.getNode( attachment.getName() );
         assertNotNull( createdAttachmentNode );
@@ -106,10 +104,10 @@ public class AttachmentDaoImplTest
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // exercise
@@ -128,14 +126,14 @@ public class AttachmentDaoImplTest
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // exercise
-        final Attachment retrievedAttachment = attachmentDao.getAttachment( ContentPath.from( "myspace:/" ), "file.jpg", session );
+        final Attachment retrievedAttachment = attachmentDao.getAttachment( ContentPath.from( "/mysite" ), "file.jpg", session );
 
         // verify
         assertNotNull( retrievedAttachment );
@@ -150,14 +148,14 @@ public class AttachmentDaoImplTest
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // exercise
-        final Attachment retrievedAttachment = attachmentDao.getAttachment( ContentPath.from( "myspace:/" ), "other.jpg", session );
+        final Attachment retrievedAttachment = attachmentDao.getAttachment( ContentPath.from( "/mysite" ), "other.jpg", session );
 
         // verify
         assertNull( retrievedAttachment );
@@ -171,11 +169,11 @@ public class AttachmentDaoImplTest
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment2, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment2, session );
         commit();
 
         // exercise
@@ -184,7 +182,7 @@ public class AttachmentDaoImplTest
 
         // verify
         assertTrue( deleted );
-        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root" );
+        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "mysite" );
         Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
         assertEquals( 1, attachmentsNode.getNodes().getSize() );
         assertNull( JcrHelper.getNodeOrNull( attachmentsNode, attachment.getName() ) );
@@ -199,20 +197,20 @@ public class AttachmentDaoImplTest
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment2, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment2, session );
         commit();
 
         // exercise
-        boolean deleted = attachmentDao.deleteAttachment( ContentPath.from( "myspace:/" ), "file.jpg", session );
+        boolean deleted = attachmentDao.deleteAttachment( ContentPath.from( "/mysite" ), "file.jpg", session );
         commit();
 
         // verify
         assertTrue( deleted );
-        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root" );
+        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "mysite" );
         Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
         assertEquals( 1, attachmentsNode.getNodes().getSize() );
         assertNull( JcrHelper.getNodeOrNull( attachmentsNode, attachment.getName() ) );
@@ -226,19 +224,19 @@ public class AttachmentDaoImplTest
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // exercise
-        boolean deleted = attachmentDao.deleteAttachment( ContentPath.from( "myspace:/" ), "otherfile.jpg", session );
+        boolean deleted = attachmentDao.deleteAttachment( ContentPath.from( "/mysite" ), "otherfile.jpg", session );
         commit();
 
         // verify
         assertFalse( deleted );
-        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root" );
+        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "mysite" );
         Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
         assertEquals( 1, attachmentsNode.getNodes().getSize() );
         assertNotNull( JcrHelper.getNodeOrNull( attachmentsNode, attachment.getName() ) );
@@ -256,14 +254,14 @@ public class AttachmentDaoImplTest
         final Attachment attachment3 =
             newAttachment().binary( binary ).name( "file-large.jpg" ).mimeType( "image/jpeg" ).label( "large" ).build();
 
-        final Content contentRoot = newContent().path( ContentPath.from( "myspace:/" ) ).build();
+        final Content contentRoot = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( contentRoot, session );
-        final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).name( "file" ).build();
+        final Content content = newContent().path( ContentPath.from( "/mysite/file" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/file" ), attachment, session );
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/file" ), attachment2, session );
-        attachmentDao.createAttachment( ContentPath.from( "myspace:/file" ), attachment3, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite/file" ), attachment, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite/file" ), attachment2, session );
+        attachmentDao.createAttachment( ContentPath.from( "/mysite/file" ), attachment3, session );
         commit();
 
         // exercise
@@ -272,7 +270,7 @@ public class AttachmentDaoImplTest
 
         // verify
         assertTrue( renamed );
-        Node contentNode = session.getNode( "/" + ContentDao.SPACES_PATH + "myspace/root/file" );
+        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "mysite/file" );
         Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
         assertEquals( 3, attachmentsNode.getNodes().getSize() );
         final NodeIterator attachmentsNodes = attachmentsNode.getNodes();

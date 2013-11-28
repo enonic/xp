@@ -7,14 +7,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.core.content.ContentNodeTranslator;
 import com.enonic.wem.core.entity.dao.CreateNodeArguments;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
@@ -22,12 +19,11 @@ import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
 
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENTS_ROOT_PATH;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_ATTACHMENTS_NODE;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_EMBEDDED_NODE;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_NEXT_VERSION_PROPERTY;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
-import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
-import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE;
 import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 
 
@@ -48,14 +44,14 @@ final class ContentDaoHandlerCreate
     {
         this.nodeName = this.resolveNodeName( content );
 
-        final Content storedContent = storeAsContentInJct( content );
+        final Content storedContent = storeAsContentInJcr( content );
 
         storeContentAsNode( content );
 
         return storedContent;
     }
 
-    private Content storeAsContentInJct( final Content content )
+    private Content storeAsContentInJcr( final Content content )
         throws RepositoryException
     {
         if ( content.getId() != null )
@@ -63,35 +59,22 @@ final class ContentDaoHandlerCreate
             throw new IllegalArgumentException( "Attempt to create new content with assigned id: " + content.getId() );
         }
         final ContentPath path = content.getPath();
-        Preconditions.checkArgument( path.isAbsolute(), "Content path must be absolute: " + path.toString() );
 
         final Node root = session.getRootNode();
-        final String spaceNodePath = SPACES_PATH + path.getSpace().name();
-
-        if ( !root.hasNode( spaceNodePath ) )
-        {
-            throw new SpaceNotFoundException( path.getSpace() );
-        }
 
         final Node newContentNode;
-        final String spaceRootPath = getSpaceRootPath( path.getSpace() );
+        final String spaceRootPath = CONTENTS_ROOT_PATH;
 
         if ( path.isRoot() )
         {
-            if ( root.hasNode( spaceRootPath ) )
-            {
-                throw new ContentAlreadyExistException( path );
-            }
-            final Node spaceNode = root.getNode( spaceNodePath );
-
-            newContentNode = addContentToJcr( content, spaceNode, nodeName );
+            throw new ContentAlreadyExistException( path );
         }
         else if ( path.elementCount() == 1 )
         {
             final Node contentsNode = JcrHelper.getNodeOrNull( root, spaceRootPath );
             if ( contentsNode == null )
             {
-                throw new ContentNotFoundException( ContentPath.rootOf( path.getSpace() ) );
+                throw new ContentNotFoundException( ContentPath.ROOT );
             }
             if ( contentsNode.hasNode( nodeName ) )
             {
@@ -122,7 +105,7 @@ final class ContentDaoHandlerCreate
             newContentNode.addNode( CONTENT_EMBEDDED_NODE, NT_UNSTRUCTURED );
         }
 
-        return ContentJcrHelper.nodeToContent( newContentNode, contentJcrMapper);
+        return ContentJcrHelper.nodeToContent( newContentNode, contentJcrMapper );
     }
 
     private Node addContentToJcr( final Content content, final Node parentNode, final String nodeName )
@@ -142,8 +125,7 @@ final class ContentDaoHandlerCreate
         }
         else
         {
-
-            return content.getName() == null ? SPACE_CONTENT_ROOT_NODE : content.getName();
+            return content.getName();
         }
     }
 

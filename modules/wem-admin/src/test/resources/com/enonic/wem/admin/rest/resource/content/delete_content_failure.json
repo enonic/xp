@@ -1,9 +1,9 @@
 {
     "failures" : [ {
-        "path" : "myspace:/1",
+        "path" : "/2",
         "reason" : "NOT_FOUND"
     }, {
-        "path" : "myspace:/2",
+        "path" : "/1",
         "reason" : "UNABLE_TO_DELETE"
     } ],
     "successes" : [ ]

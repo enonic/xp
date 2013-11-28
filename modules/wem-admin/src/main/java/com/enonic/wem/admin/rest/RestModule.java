@@ -17,10 +17,6 @@ import com.enonic.wem.admin.rpc.account.VerifyUniqueEmailRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.CreateRelationshipRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.GetRelationshipRpcHandler;
 import com.enonic.wem.admin.rpc.relationship.UpdateRelationshipPropertiesRpcHandler;
-import com.enonic.wem.admin.rpc.space.CreateOrUpdateSpaceRpcHandler;
-import com.enonic.wem.admin.rpc.space.DeleteSpaceRpcHandler;
-import com.enonic.wem.admin.rpc.space.GetSpaceRpcHandler;
-import com.enonic.wem.admin.rpc.space.ListSpacesRpcHandler;
 import com.enonic.wem.admin.rpc.system.GetSystemInfoRpcHandler;
 import com.enonic.wem.admin.rpc.userstore.CreateOrUpdateUserStoreRpcHandler;
 import com.enonic.wem.admin.rpc.userstore.DeleteUserStoreRpcHandler;
@@ -60,11 +56,6 @@ public final class RestModule
         handlers.add( GetUserStoreRpcHandler.class );
 
         handlers.add( GetSystemInfoRpcHandler.class );
-
-        handlers.add( CreateOrUpdateSpaceRpcHandler.class );
-        handlers.add( DeleteSpaceRpcHandler.class );
-        handlers.add( GetSpaceRpcHandler.class );
-        handlers.add( ListSpacesRpcHandler.class );
 
         handlers.add( CreateRelationshipRpcHandler.class );
         handlers.add( GetRelationshipRpcHandler.class );

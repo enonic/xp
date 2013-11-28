@@ -14,15 +14,13 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrConstants;
 
 import static com.enonic.wem.api.content.Content.newContent;
+import static com.enonic.wem.core.content.dao.ContentDao.CONTENTS_ROOT_PATH;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_HISTORY_NODE;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
-import static com.enonic.wem.core.content.dao.ContentDao.SPACES_PATH;
-import static com.enonic.wem.core.content.dao.ContentDao.SPACE_CONTENT_ROOT_NODE;
 import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
@@ -52,7 +50,7 @@ public abstract class AbstractContentDaoHandler
                 continue;
             }
             final String jcrNodePath = contentNode.getPath();
-            final String contentPath = substringAfter( jcrNodePath, SPACES_PATH );
+            final String contentPath = substringAfter( jcrNodePath, CONTENTS_ROOT_PATH );
             final Content.Builder contentBuilder = newContent().path( ContentPath.from( contentPath ) );
             contentJcrMapper.toContent( contentNode, contentBuilder );
             contentList.add( new ContentAndNode( contentBuilder.build(), contentNode ) );
@@ -64,17 +62,17 @@ public abstract class AbstractContentDaoHandler
         throws RepositoryException
     {
         final Node rootNode = session.getRootNode();
-        final Node contentsNode = getNodeOrNull( rootNode, SPACES_PATH );
+        final Node contentsNode = getNodeOrNull( rootNode, CONTENTS_ROOT_PATH );
 
         final List<Node> topNodes = Lists.newArrayList();
 
         if ( contentsNode != null )
         {
-            final NodeIterator spaceNodesIterator = contentsNode.getNodes();
-            while ( spaceNodesIterator.hasNext() )
+            final NodeIterator rootNodesIterator = contentsNode.getNodes();
+            while ( rootNodesIterator.hasNext() )
             {
-                final Node spaceNode = spaceNodesIterator.nextNode();
-                topNodes.add( spaceNode.getNode( SPACE_CONTENT_ROOT_NODE ) );
+                final Node rootContentNode = rootNodesIterator.nextNode();
+                topNodes.add( rootContentNode);
             }
         }
 
@@ -141,11 +139,6 @@ public abstract class AbstractContentDaoHandler
         throws RepositoryException
     {
         return ContentJcrHelper.isNonContentNode( node );
-    }
-
-    protected String getSpaceRootPath( final SpaceName spaceName )
-    {
-        return ContentJcrHelper.getSpaceRootPath( spaceName );
     }
 
     protected Content nodeToContent( final Node contentNode )

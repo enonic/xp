@@ -42,12 +42,12 @@ public class DemoImagesInitializer
 
     private void createImages()
     {
-        final ContentPath folderImagesBig = ContentPath.from( "bildearkiv:/trampoliner/jumping-jack-big-bounce" );
+        final ContentPath folderImagesBig = ContentPath.from( "bildearkiv/trampoliner/jumping-jack-big-bounce" );
         for ( String fileName : FOLDER_IMAGES_BIG )
         {
             createImageContent( folderImagesBig, fileName, StringUtils.substringBefore( fileName, "." ) );
         }
-        final ContentPath folderImagesPop = ContentPath.from( "bildearkiv:/trampoliner/jumping-jack-pop" );
+        final ContentPath folderImagesPop = ContentPath.from( "bildearkiv/trampoliner/jumping-jack-pop" );
         for ( String fileName : FOLDER_IMAGES_POP )
         {
             createImageContent( folderImagesPop, fileName, StringUtils.substringBefore( fileName, "." ) );

@@ -55,8 +55,6 @@ public class CreateContentHandler
 
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
 
-    private ContentNodeTranslator contentNodeTranslator = new ContentNodeTranslator();
-
     @Override
     public void handle()
         throws Exception
@@ -74,7 +72,7 @@ public class CreateContentHandler
                 ? resolvePathForNewContent( parentContentPath, displayName, session )
                 : ContentPath.from( parentContentPath, name );
 
-            if ( !command.isDraft() )
+            if ( !command.isDraft() && !parentContentPath.isRoot() )
             {
                 checkParentContentAllowsChildren( parentContentPath, session );
             }

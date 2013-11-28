@@ -55,8 +55,6 @@ public class ContentIndexDocumentsFactory
                       false, true );
         addIfNotNull( indexDocument, ContentIndexField.MODIFIER,
                       content.getModifier() != null ? content.getModifier().getQualifiedName() : null, false, true );
-        addIfNotNull( indexDocument, ContentIndexField.SPACE,
-                      content.getPath().getSpace() != null ? content.getPath().getSpace().toString() : null, true, true );
     }
 
     private static void addIfNotNull( final IndexDocument indexDocument, final String field, final Object value,

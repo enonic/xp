@@ -21,11 +21,9 @@ import com.enonic.wem.core.jcr.JcrConstants;
 
 public interface ContentDao
 {
-    public static final String SPACES_NODE = "spaces";
+    public static final String CONTENTS_NODE = "contents";
 
-    public static final String SPACES_PATH = JcrConstants.ROOT_NODE + "/" + SPACES_NODE + "/";
-
-    public static final String SPACE_CONTENT_ROOT_NODE = "root";
+    public static final String CONTENTS_ROOT_PATH = JcrConstants.ROOT_NODE + "/" + CONTENTS_NODE + "/";
 
     public static final String NON_CONTENT_NODE_PREFIX = "__";
 

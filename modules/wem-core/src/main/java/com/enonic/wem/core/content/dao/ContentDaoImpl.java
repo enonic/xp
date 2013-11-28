@@ -72,7 +72,7 @@ public class ContentDaoImpl
 
                 if ( contentPath.isRoot() )
                 {
-                    throw new UnableToDeleteContentException( contentPath, "Root content of a space." );
+                    throw new UnableToDeleteContentException( contentPath, "Root content." );
                 }
 
                 new ContentDaoHandlerDelete( session, this.indexService ).deleteContentByPath( contentPath );

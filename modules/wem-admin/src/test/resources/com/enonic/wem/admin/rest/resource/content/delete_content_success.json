@@ -1,8 +1,8 @@
 {
     "failures" : [ ],
     "successes" : [ {
-        "path" : "myspace:/1"
+        "path" : "/2"
     }, {
-        "path" : "myspace:/2"
+        "path" : "/1"
     } ]
 }
