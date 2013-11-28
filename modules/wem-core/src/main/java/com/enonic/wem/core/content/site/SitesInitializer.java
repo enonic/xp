@@ -27,7 +27,6 @@ import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.core.schema.content.ContentTypesInitializer;
 import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.command.Commands.site;
@@ -77,11 +76,6 @@ public class SitesInitializer
         final ResourcePath pageTemplateController = ResourcePath.from( "controllers/main-page.js" );
         final ModuleResourceKey pageTemplateDescriptor = new ModuleResourceKey( controllerModule.getModuleKey(), pageTemplateController );
 
-//        final CreatePageTemplate createPageTemplate = Commands.page().template().createPageTemplate().
-//            name( new PageTemplateName( "mainpage" ) ).
-//            displayName( "Main Page" ).
-//            descriptor( pageTemplateDescriptor );
-//        final PageTemplate pageTemplate = client.execute( createPageTemplate );
         final PageTemplate pageTemplate = newPageTemplate().
             name( new PageTemplateName( "mainpage" ) ).
             displayName( "Main Page" ).
@@ -143,7 +137,7 @@ public class SitesInitializer
             parent( ContentPath.ROOT ).
             displayName( displayName ).
             contentType( ContentTypeName.page() ).
-            form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
+            form( Form.newForm().build() ).
             contentData( new ContentData() );
         final ContentId contentId = client.execute( createContent ).getContentId();
         return contentId;

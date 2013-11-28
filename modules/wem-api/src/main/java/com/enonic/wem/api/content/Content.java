@@ -197,7 +197,7 @@ public final class Content
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Content.class );
         IllegalEdit.check( "modifier", this.getModifier(), to.getModifier(), Content.class );
         IllegalEdit.check( "owner", this.getOwner(), to.getOwner(), Content.class );
-        IllegalEdit.check( "site", this.getSite(), to.getSite(), Content.class );
+//        IllegalEdit.check( "site", this.getSite(), to.getSite(), Content.class );
         IllegalEdit.check( "page", this.getPage(), to.getPage(), Content.class );
     }
 
