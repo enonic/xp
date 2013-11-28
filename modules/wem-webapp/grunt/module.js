@@ -34,6 +34,10 @@ function concatLibJs(grunt, args) {
         return;
     }
 
+    if (grunt.option('no-lib')) {
+        return;
+    }
+
     var config = {
         src: sourceFile,
         dest: targetFile
@@ -52,6 +56,10 @@ function compileTs(grunt, args) {
     var targetFile = baseDir + '/_all.js';
 
     if (!grunt.file.exists(sourceFile)) {
+        return;
+    }
+
+    if (grunt.option('no-ts')) {
         return;
     }
 
@@ -129,11 +137,17 @@ function renameFilesTask(grunt, files) {
 
 module.exports = function (grunt) {
 
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-directives');
-    grunt.loadNpmTasks('grunt-ts');
-
     grunt.registerMultiTask('module', 'Build an admin module', function () {
+
+        grunt.loadNpmTasks('grunt-contrib-less');
+        grunt.loadNpmTasks('grunt-directives');
+        grunt.loadNpmTasks('grunt-ts');
+
+        grunt.registerMultiTask('rename', 'Rename files', function () {
+
+            renameFilesTask(grunt, this.files);
+
+        });
 
         var options = this.options({
             sourcemap: false,
@@ -150,10 +164,5 @@ module.exports = function (grunt) {
 
     });
 
-    grunt.registerMultiTask('rename', 'Rename files', function () {
-
-        renameFilesTask(grunt, this.files);
-
-    });
-
 };
+
