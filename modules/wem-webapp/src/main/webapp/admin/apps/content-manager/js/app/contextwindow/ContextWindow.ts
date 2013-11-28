@@ -25,7 +25,11 @@ module app_contextwindow {
                 this.draggingMask.hide();
             };
 
-            super({draggableOptions: { start: dragStart, stop: dragStop, handle: ".tab-menu" } });
+            super({draggableOptions: {
+                start: dragStart,
+                stop: dragStop,
+                handle: ".tab-menu"
+            } });
             this.contextWindowOptions = options;
             this.addClass("context-window");
             this.setMenuClass("live-edit-font-icon-menu");

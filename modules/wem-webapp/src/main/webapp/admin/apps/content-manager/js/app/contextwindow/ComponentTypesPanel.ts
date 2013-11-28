@@ -58,6 +58,7 @@ module app_contextwindow {
                 distance: 10,
                 addClasses: false,
                 helper: 'clone',
+                scope: 'component',
                 start: (event, ui) => {
                     this.onStartDrag(event, ui);
                 },
@@ -70,6 +71,7 @@ module app_contextwindow {
                 tolerance: 'pointer',
                 addClasses: false,
                 accept: '.comp',
+                scope: 'component',
                 over: (event, ui) => {
                     this.onDragOverIFrame(event, ui);
                 }
@@ -111,7 +113,12 @@ module app_contextwindow {
             this.contextWindow.hide();
         }
 
-        private getData():void {
+        trySimulateDragAndDrop() {
+            jQuery('[data-context-window-draggable="true"]').trigger('dropdeactivate');
+        }
+
+        private
+            getData():void {
             jQuery.ajax({
                 url: api_util.getAdminUri("apps/content-manager/js/data/context-window/mock-component-types.json"),
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
