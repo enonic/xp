@@ -24,10 +24,6 @@ public class ContentTypesInitializerTest
         contentTypesInitializer.setClient( client );
         contentTypesInitializer.initialize();
 
-        assertEquals( true, ContentTypesInitializer.SPACE.isFinal() );
-        assertEquals( false, ContentTypesInitializer.SPACE.isAbstract() );
-        assertEquals( null, ContentTypesInitializer.SPACE.getSuperType() );
-
         assertEquals( false, ContentTypesInitializer.STRUCTURED.isFinal() );
         assertEquals( true, ContentTypesInitializer.STRUCTURED.isAbstract() );
         assertEquals( null, ContentTypesInitializer.STRUCTURED.getSuperType() );

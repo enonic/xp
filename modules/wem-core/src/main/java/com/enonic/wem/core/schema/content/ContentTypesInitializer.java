@@ -23,9 +23,6 @@ public class ContentTypesInitializer
 {
     public static Form MEDIA_IMAGE_FORM = createMediaImageForm();
 
-    static final ContentType SPACE = createSystemType( ContentTypeName.space() ).
-        setFinal( true ).setAbstract( false ).build();
-
     static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
         setFinal( false ).setAbstract( true ).build();
 
@@ -82,7 +79,7 @@ public class ContentTypesInitializer
         setFinal( true ).setAbstract( false ).allowChildContent( false ).build();
 
     private static final ContentType[] SYSTEM_TYPES =
-        {UNSTRUCTURED, STRUCTURED, SPACE, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
+        {UNSTRUCTURED, STRUCTURED, FOLDER, PAGE, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
             MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE};
 
     private static final String[] DEMO_CONTENT_TYPES =

@@ -48,7 +48,6 @@ public class ContentTypeNameTest
         assertTrue( ContentTypeName.folder().isFolder() );
         assertTrue( ContentTypeName.page().isPage() );
         assertTrue( ContentTypeName.shortcut().isShortcut() );
-        assertTrue( ContentTypeName.space().isSpace() );
         assertTrue( ContentTypeName.structured().isStructured() );
         assertTrue( ContentTypeName.unstructured().isUnstructured() );
 
@@ -69,7 +68,6 @@ public class ContentTypeNameTest
         assertEquals( "folder", ContentTypeName.folder().getContentTypeName() );
         assertEquals( "page", ContentTypeName.page().getContentTypeName() );
         assertEquals( "shortcut", ContentTypeName.shortcut().getContentTypeName() );
-        assertEquals( "space", ContentTypeName.space().getContentTypeName() );
         assertEquals( "structured", ContentTypeName.structured().getContentTypeName() );
         assertEquals( "unstructured", ContentTypeName.unstructured().getContentTypeName() );
 

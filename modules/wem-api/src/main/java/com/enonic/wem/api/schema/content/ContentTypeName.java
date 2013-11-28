@@ -8,8 +8,6 @@ public final class ContentTypeName
 {
     private static final ContentTypeName UNSTRUCTURED = new ContentTypeName( "unstructured" );
 
-    private static final ContentTypeName SPACE = new ContentTypeName( "space" );
-
     private static final ContentTypeName STRUCTURED = new ContentTypeName( "structured" );
 
     private static final ContentTypeName FOLDER = new ContentTypeName( "folder" );
@@ -52,11 +50,6 @@ public final class ContentTypeName
     public String getContentTypeName()
     {
         return toString();
-    }
-
-    public boolean isSpace()
-    {
-        return SPACE.equals( this );
     }
 
     public boolean isUnstructured()
@@ -147,11 +140,6 @@ public final class ContentTypeName
     public boolean isExecutableMedia()
     {
         return MEDIA_EXECUTABLE.equals( this );
-    }
-
-    public static ContentTypeName space()
-    {
-        return SPACE;
     }
 
     public static ContentTypeName structured()
