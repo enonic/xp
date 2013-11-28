@@ -1,6 +1,8 @@
 package com.enonic.wem.runner;
 
 import java.io.File;
+import java.io.InputStream;
+import java.util.logging.LogManager;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.WebResourceRoot;
@@ -12,7 +14,9 @@ final class Runner
     private final Tomcat tomcat;
 
     public Runner()
+        throws Exception
     {
+        setupLogging();
         this.tomcat = new Tomcat();
         init();
     }
@@ -87,5 +91,13 @@ final class Runner
         throws Exception
     {
         this.tomcat.stop();
+    }
+
+    private void setupLogging()
+        throws Exception
+    {
+        final InputStream in = getClass().getResourceAsStream( "/logging.properties" );
+        LogManager.getLogManager().reset();
+        LogManager.getLogManager().readConfiguration( in );
     }
 }
