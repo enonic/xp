@@ -27,7 +27,6 @@ import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.GetContentByIds;
 import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.command.content.GetContentVersion;
-import com.enonic.wem.api.command.content.GetContents;
 import com.enonic.wem.api.command.content.GetRootContent;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.command.content.UpdateContent;
@@ -127,7 +126,7 @@ public class ContentResourceTest
     public void get_content_by_path_not_found()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
+        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.empty() );
 
         try
         {
@@ -223,7 +222,7 @@ public class ContentResourceTest
     public void get_content_by_id_not_found()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( GetContents.class ) ) ).thenReturn( Contents.empty() );
+        Mockito.when( client.execute( Mockito.isA( GetContentByIds.class ) ) ).thenReturn( Contents.empty() );
 
         try
         {
