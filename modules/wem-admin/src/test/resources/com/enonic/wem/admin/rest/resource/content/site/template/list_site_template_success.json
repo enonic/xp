@@ -1,0 +1,26 @@
+{
+    "error" : null,
+    "result" : {
+        "siteTemplates" : [ {
+            "contentTypeFilter" : {
+                "image" : true,
+                "shortcut" : false
+            },
+            "deletable" : true,
+            "displayName" : "displayName",
+            "editable" : true,
+            "info" : "info",
+            "key" : "name-1.0.0",
+            "modules" : [ "module1-1.0.0" ],
+            "name" : "name",
+            "rootContentType" : "folder",
+            "url" : "url",
+            "vendor" : {
+                "name" : "vendorName",
+                "url" : "vendorUrl"
+            },
+            "version" : "1.0.0"
+        } ],
+        "total" : 1
+    }
+}
