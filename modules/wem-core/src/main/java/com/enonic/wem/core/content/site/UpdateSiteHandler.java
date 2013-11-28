@@ -4,7 +4,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.site.UpdateSite;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.Site;
@@ -20,8 +19,7 @@ public class UpdateSiteHandler
     public void handle()
         throws Exception
     {
-        final Content content =
-            context.getClient().execute( Commands.content().get().selectors( ContentIds.from( command.getContent() ) ) ).first();
+        final Content content = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
 
         if ( content == null )
         {
@@ -50,8 +48,7 @@ public class UpdateSiteHandler
             context.getClient().execute( updateContent );
         }
 
-        final Content updatedContent =
-            context.getClient().execute( Commands.content().get().selectors( ContentIds.from( command.getContent() ) ) ).first();
+        final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
 
         command.setResult( updatedContent );
     }

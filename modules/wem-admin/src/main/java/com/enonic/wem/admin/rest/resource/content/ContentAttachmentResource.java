@@ -18,7 +18,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
 
@@ -77,7 +76,7 @@ public class ContentAttachmentResource
 
     private Content findContent( final ContentId contentId )
     {
-        return client.execute( Commands.content().get().selectors( ContentIds.from( contentId ) ) ).first();
+        return client.execute( Commands.content().get().byId( contentId ) );
     }
 
     private Attachment findAttachment( final ContentId contentId, final String attachmentName )

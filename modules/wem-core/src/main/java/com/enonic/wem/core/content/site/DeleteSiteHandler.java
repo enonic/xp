@@ -4,7 +4,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.site.DeleteSite;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.core.command.CommandHandler;
 
@@ -30,8 +29,7 @@ public class DeleteSiteHandler
 
         context.getJcrSession().save();
 
-        final Content updatedContent =
-            context.getClient().execute( Commands.content().get().selectors( ContentIds.from( command.getContent() ) ) ).first();
+        final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
 
         command.setResult( updatedContent );
     }
