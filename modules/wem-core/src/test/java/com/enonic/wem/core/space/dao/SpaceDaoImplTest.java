@@ -75,7 +75,7 @@ public class SpaceDaoImplTest
             type( ContentTypeName.space() ).
             displayName( space.getDisplayName() ).
             build();
-        return contentDao.create( rootContent, session );
+        return contentDao.create( rootContent, session ).getId();
     }
 
     @Test

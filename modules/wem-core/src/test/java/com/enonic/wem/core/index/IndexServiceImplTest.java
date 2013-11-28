@@ -151,21 +151,6 @@ public class IndexServiceImplTest
         Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).index( Mockito.isA( Collection.class ) );
     }
 
-    @Test
-    public void indexContent_given_temporary_content_then_content_must_not_be_indexed()
-        throws Exception
-    {
-
-        Content myTemporaryContent = Content.newContent().path( ContentPath.from( "_temporary:/myTemporaryContent" ) ).build();
-
-        final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        indexService.setElasticsearchIndexService( elasticsearchIndexService );
-
-        indexService.indexContent( myTemporaryContent );
-
-        Mockito.verify( elasticsearchIndexService, Mockito.times( 0 ) ).index( Mockito.isA( Collection.class ) );
-    }
-
     private IndexMappingProvider setUpIndexMappingMock()
     {
         final IndexMappingProvider indexMappingProvider = Mockito.mock( IndexMappingProvider.class );

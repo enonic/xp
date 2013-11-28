@@ -98,7 +98,6 @@ public class UpdateContentHandler
                 validateContentData( context, edited );
 
                 final List<ContentId> embeddedContentsToKeep = new ArrayList<>();
-                final List<Content> temporaryContents = new ArrayList<>();
                 new PropertyVisitor()
                 {
                     @Override
@@ -107,11 +106,7 @@ public class UpdateContentHandler
                         final Content content = contentDao.select( property.getContentId(), session );
                         if ( content != null )
                         {
-                            if ( content.isTemporary() )
-                            {
-                                temporaryContents.add( content );
-                            }
-                            else if ( content.isEmbedded() )
+                            if ( content.isEmbedded() )
                             {
                                 embeddedContentsToKeep.add( content.getId() );
                             }
@@ -135,7 +130,7 @@ public class UpdateContentHandler
                 contentDao.update( edited, createNewVersion, session );
                 session.save();
 
-                createEmbeddedContents( session, edited, temporaryContents );
+                //TODO: Remove: createEmbeddedContents( session, edited, temporaryContents );
 
                 // delete embedded contents not longer to keep
                 for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit )

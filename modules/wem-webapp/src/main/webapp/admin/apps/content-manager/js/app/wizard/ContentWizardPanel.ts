@@ -109,7 +109,7 @@ module app_wizard {
             super.renderNew();
 
             this.contentForm.renderNew(this.contentType.getForm());
-            //this.persistNewDraft();
+            this.persistNewDraft();
         }
 
         setPersistedDraft(value:api_content.Content) {
@@ -137,10 +137,10 @@ module app_wizard {
 
             new api_content.CreateContentRequest()
                 .setDraft(true)
-                .setName("draft")
+                .setName(this.contentWizardHeader.getName())
                 .setParent(this.parentContent.getPath())
                 .setContentType(this.contentType.getContentTypeName())
-                .setDisplayName("")
+                .setDisplayName(this.contentWizardHeader.getDisplayName())
                 .setForm(this.contentForm.getForm())
                 .setContentData(contentData)
                 .send()

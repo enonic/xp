@@ -2,10 +2,7 @@ package com.enonic.wem.core.content;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -28,14 +25,10 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.api.data.Property;
-import com.enonic.wem.api.data.PropertyVisitor;
-import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
@@ -48,8 +41,6 @@ import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
-    private static final ContentPath TEMPORARY_PARENT_PATH = ContentPath.rootOf( SpaceName.temporary() );
-
     private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
 
     private static final int THUMBNAIL_SIZE = 512;
@@ -76,9 +67,8 @@ public class CreateContentHandler
 
             final Content.Builder builder = Content.newContent();
             final String displayName = command.getDisplayName();
-            final String name = command.isDraft() ? resolveTemporaryName() : command.getName();
-            final ContentPath parentContentPath = command.isDraft() ? resolveTemporaryPath() : command.getParentContentPath();
-
+            final String name = command.getName();
+            final ContentPath parentContentPath = command.getParentContentPath();
 
             final ContentPath contentPath = name == null
                 ? resolvePathForNewContent( parentContentPath, displayName, session )
@@ -89,7 +79,7 @@ public class CreateContentHandler
                 checkParentContentAllowsChildren( parentContentPath, session );
             }
 
-            final List<Content> temporaryContents = resolveTemporaryContents( command, session );
+            // TODO: Remove: final List<Content> temporaryContents = resolveTemporaryContents( command, session );
 
             builder.path( contentPath );
             builder.displayName( displayName );
@@ -100,6 +90,7 @@ public class CreateContentHandler
             builder.modifiedTime( DateTime.now() );
             builder.owner( command.getOwner() );
             builder.modifier( command.getOwner() );
+            builder.draft( command.isDraft() );
 
             final Content content = builder.build();
 
@@ -109,61 +100,50 @@ public class CreateContentHandler
                 validateContentData( client, content );
             }
 
-            final ContentId contentId = contentDao.create( content, session );
+            final Content storedContent = contentDao.create( content, session );
 
             session.save();
-            addAttachments( client, contentId, command.getAttachments() );
+            addAttachments( client, storedContent.getId(), command.getAttachments() );
             final Attachment thumbnailAttachment = resolveThumbnailAttachment( content );
             if ( thumbnailAttachment != null )
             {
-                client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( thumbnailAttachment ) );
+                client.execute( Commands.attachment().create().contentSelector( storedContent.getId() ).attachment( thumbnailAttachment ) );
             }
 
             try
             {
-
+                /*TODO: Remove
                 for ( Content tempContent : temporaryContents )
                 {
                     final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
                     createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
-                }
+                }*/
 
                 relationshipService.syncRelationships( new SyncRelationshipsCommand().
                     client( client ).
                     jcrSession( session ).
                     contentType( content.getType() ).
-                    contentToUpdate( contentId ).
+                    contentToUpdate( storedContent.getId() ).
                     contentAfterEditing( content.getContentData() ) );
                 session.save();
             }
             catch ( Exception e )
             {
                 // Temporary way of rollback: try delete content if any failure
-                contentDao.forceDelete( contentId, session );
+                contentDao.forceDelete( storedContent.getId(), session );
                 session.save();
                 throw e;
             }
 
-            final Content storedContent = builder.id( contentId ).build();
             indexService.indexContent( storedContent );
 
-            command.setResult( new CreateContentResult( contentId, contentPath ) );
+            command.setResult( new CreateContentResult( storedContent.getId(), contentPath ) );
         }
         catch ( final Exception e )
         {
             e.printStackTrace();
             throw new CreateContentException( command, e );
         }
-    }
-
-    private String resolveTemporaryName()
-    {
-        return UUID.randomUUID().toString() + "-" + command.getName();
-    }
-
-    private ContentPath resolveTemporaryPath()
-    {
-        return TEMPORARY_PARENT_PATH;
     }
 
     private Attachment resolveThumbnailAttachment( final Content content )
@@ -213,32 +193,6 @@ public class CreateContentHandler
     {
         contentDao.moveContent( tempContent.getId(), pathToEmbeddedContent, session );
         session.save();
-    }
-
-    private List<Content> resolveTemporaryContents( final CreateContent command, final Session session )
-    {
-        final List<Content> temporaryContents = new ArrayList<>();
-        if ( command.getContentData() == null )
-        {
-            return temporaryContents;
-        }
-        final PropertyVisitor propertyVisitor = new PropertyVisitor()
-        {
-            @Override
-            public void visit( final Property data )
-            {
-                final Content content = contentDao.select( data.getContentId(), session );
-                if ( content != null )
-                {
-                    if ( content.isTemporary() )
-                    {
-                        temporaryContents.add( content );
-                    }
-                }
-            }
-        }.restrictType( ValueTypes.CONTENT_ID );
-        propertyVisitor.traverse( command.getContentData() );
-        return temporaryContents;
     }
 
     private ContentPath resolvePathForNewContent( final ContentPath parentPath, final String displayName, final Session session )

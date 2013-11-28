@@ -172,9 +172,9 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
 
         Content content = createContent( "myspace:someContent" );
-        ContentId createdContentId = contentDao.create( content, session );
+        Content storedContent = contentDao.create( content, session );
 
-        Content anotherContent = newContent( content ).id( createdContentId ).path( ContentPath.from( "myspace:anotherContent" ) ).build();
+        Content anotherContent = newContent( content ).id( storedContent.getId() ).path( ContentPath.from( "myspace:anotherContent" ) ).build();
         assertNotNull( anotherContent.getId() );
         contentDao.create( anotherContent, session );
 
@@ -280,11 +280,11 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         contentDao.create( createContent( "myspace:parentContent" ), session );
-        ContentId contentId = contentDao.create( createContent( "myspace:parentContent/contentToDelete" ), session );
+        Content storedContent = contentDao.create( createContent( "myspace:parentContent/contentToDelete" ), session );
         commit();
 
         // exercise
-        contentDao.delete( contentId, session );
+        contentDao.delete( storedContent.getId(), session );
         commit();
 
         // verify
@@ -360,16 +360,16 @@ public class ContentDaoImplTest
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
         content.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue" ) );
-        ContentId contentId1 = contentDao.create( content, session );
+        Content storedContent = contentDao.create( content, session );
 
         Content content2 = newContent().path( ContentPath.from( "myspace:myContent2" ) ).build();
         content2.getContentData().setProperty( "myData", new Value.String( "myValue2" ) );
         content2.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue2" ) );
-        ContentId contentId2 = contentDao.create( content2, session );
+        Content storedContent2 = contentDao.create( content2, session );
         commit();
 
         // exercise
-        Contents actualContents = contentDao.select( ContentIds.from( contentId1, contentId2 ), session );
+        Contents actualContents = contentDao.select( ContentIds.from( storedContent.getId(), storedContent2.getId() ), session );
 
         // verify
         assertNotNull( actualContents );
@@ -395,11 +395,11 @@ public class ContentDaoImplTest
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
         content.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue" ) );
-        ContentId contentId = contentDao.create( content, session );
+        Content storedContent = contentDao.create( content, session );
         commit();
 
         // exercise
-        Content actualContent = contentDao.select( contentId, session );
+        Content actualContent = contentDao.select( storedContent.getId(), session );
 
         // verify
         assertNotNull( actualContent );
@@ -462,15 +462,15 @@ public class ContentDaoImplTest
         Content content = newContent().path( ContentPath.from( "myspace:myContent" ) ).build();
         content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
         content.getContentData().setProperty( "mySet.myData", new Value.String( "myOtherValue" ) );
-        ContentId contentId = contentDao.create( content, session );
+        Content storedContent = contentDao.create( content, session );
         commit();
 
         // exercise
-        contentDao.renameContent( contentId, "newContentName", session );
+        contentDao.renameContent( storedContent.getId(), "newContentName", session );
         commit();
 
         // verify
-        Content storedContent = contentDao.select( contentId, session );
+        storedContent = contentDao.select( storedContent.getId(), session );
         assertNotNull( storedContent );
         assertEquals( ContentPath.from( "myspace:newContentName" ), storedContent.getPath() );
 
@@ -486,11 +486,11 @@ public class ContentDaoImplTest
         contentDao.create( createContent( "myspace:/" ), session );
         contentDao.create( newContent().path( ContentPath.from( "myspace:myExistingContent" ) ).build(), session );
 
-        ContentId contentId = contentDao.create( newContent().path( ContentPath.from( "myspace:myContent" ) ).build(), session );
+        Content storedContent = contentDao.create( newContent().path( ContentPath.from( "myspace:myContent" ) ).build(), session );
         commit();
 
         // exercise
-        contentDao.renameContent( contentId, "myExistingContent", session );
+        contentDao.renameContent( storedContent.getId(), "myExistingContent", session );
         commit();
     }
 
@@ -501,16 +501,16 @@ public class ContentDaoImplTest
         // setup
         contentDao.create( createContent( "myspace:/" ), session );
         contentDao.create( createContent( "myspace:/parentA" ), session );
-        ContentId contentToMove = contentDao.create( createContent( "myspace:parentA/contentToMove" ), session );
+        Content contentToMove = contentDao.create( createContent( "myspace:parentA/contentToMove" ), session );
         contentDao.create( createContent( "myspace:/parentB" ), session );
         commit();
 
         // exercise
-        contentDao.moveContent( contentToMove, ContentPath.from( "myspace:/parentB/contentToMove" ), session );
+        contentDao.moveContent( contentToMove.getId(), ContentPath.from( "myspace:/parentB/contentToMove" ), session );
         commit();
 
         // verify
-        Content storedContent = contentDao.select( contentToMove, session );
+        Content storedContent = contentDao.select( contentToMove.getId(), session );
         assertNotNull( storedContent );
         assertEquals( ContentPath.from( "myspace:/parentB/contentToMove" ), storedContent.getPath() );
 

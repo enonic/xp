@@ -54,11 +54,11 @@ public class AttachmentDaoImplTest
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
 
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
-        final ContentId contentId = contentDao.create( content, session );
+        final Content storedContent = contentDao.create( content, session );
         commit();
 
         // exercise
-        attachmentDao.createAttachment( contentId, attachment, session );
+        attachmentDao.createAttachment( storedContent.getId(), attachment, session );
         commit();
 
         // verify
@@ -107,13 +107,13 @@ public class AttachmentDaoImplTest
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
-        final ContentId contentId = contentDao.create( content, session );
+        final Content storedContent = contentDao.create( content, session );
         commit();
         attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
         commit();
 
         // exercise
-        final Attachment retrievedAttachment = attachmentDao.getAttachment( contentId, "file.jpg", session );
+        final Attachment retrievedAttachment = attachmentDao.getAttachment( storedContent.getId(), "file.jpg", session );
 
         // verify
         assertNotNull( retrievedAttachment );
@@ -172,14 +172,14 @@ public class AttachmentDaoImplTest
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).build();
-        final ContentId contentId = contentDao.create( content, session );
+        final Content storedContent = contentDao.create( content, session );
         commit();
         attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment, session );
         attachmentDao.createAttachment( ContentPath.from( "myspace:/" ), attachment2, session );
         commit();
 
         // exercise
-        boolean deleted = attachmentDao.deleteAttachment( contentId, "file.jpg", session );
+        boolean deleted = attachmentDao.deleteAttachment( storedContent.getId(), "file.jpg", session );
         commit();
 
         // verify
@@ -259,7 +259,7 @@ public class AttachmentDaoImplTest
         final Content contentRoot = newContent().path( ContentPath.from( "myspace:/" ) ).build();
         contentDao.create( contentRoot, session );
         final Content content = newContent().path( ContentPath.from( "myspace:/" ) ).name( "file" ).build();
-        final ContentId contentId = contentDao.create( content, session );
+        final Content storedContent = contentDao.create( content, session );
         commit();
         attachmentDao.createAttachment( ContentPath.from( "myspace:/file" ), attachment, session );
         attachmentDao.createAttachment( ContentPath.from( "myspace:/file" ), attachment2, session );
@@ -267,7 +267,7 @@ public class AttachmentDaoImplTest
         commit();
 
         // exercise
-        boolean renamed = attachmentDao.renameAttachments( contentId, "file", "other-file.jpg", session );
+        boolean renamed = attachmentDao.renameAttachments( storedContent.getId(), "file", "other-file.jpg", session );
         commit();
 
         // verify

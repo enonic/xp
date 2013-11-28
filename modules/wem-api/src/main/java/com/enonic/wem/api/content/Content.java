@@ -24,6 +24,8 @@ import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 public final class Content
     implements IllegalEditAware<Content>, ChangeTraceable
 {
+    private final boolean draft;
+
     private final String displayName;
 
     private final ContentTypeName type;
@@ -67,6 +69,7 @@ public final class Content
             builder.versionId = ContentVersionId.initial();
         }
 
+        this.draft = builder.draft;
         this.displayName = builder.displayName;
         this.type = builder.type;
         this.path = builder.path;
@@ -82,11 +85,6 @@ public final class Content
         this.childrenIds = builder.childrenIdsBuilder.build();
         this.site = builder.site;
         this.page = builder.page;
-    }
-
-    public boolean isTemporary()
-    {
-        return getPath().getSpace().isTemporary();
     }
 
     public ContentPath getPath()
@@ -114,6 +112,11 @@ public final class Content
         {
             return null;
         }
+    }
+
+    public boolean isDraft()
+    {
+        return draft;
     }
 
     public String getDisplayName()
@@ -186,6 +189,7 @@ public final class Content
         throws IllegalEditException
     {
         IllegalEdit.check( "id", this.getId(), to.getId(), Content.class );
+        IllegalEdit.check( "draft", this.isDraft(), to.isDraft(), Content.class );
         IllegalEdit.check( "versionId", this.getVersionId(), to.getVersionId(), Content.class );
         IllegalEdit.check( "path", this.getPath(), to.getPath(), Content.class );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Content.class );
@@ -202,6 +206,7 @@ public final class Content
     {
         final Objects.ToStringHelper s = Objects.toStringHelper( this );
         s.add( "id", id );
+        s.add( "draft", draft );
         s.add( "path", path );
         s.add( "version", versionId );
         s.add( "displayName", displayName );
@@ -231,6 +236,8 @@ public final class Content
 
     static abstract class BaseBuilder
     {
+        boolean draft;
+
         ContentPath path;
 
         ContentId contentId;
@@ -271,6 +278,7 @@ public final class Content
         BaseBuilder( final Content content )
         {
             this.contentId = content.id;
+            this.draft = content.draft;
             this.path = content.path;
             this.type = content.type;
             this.form = content.form; // TODO make DataSet immutable, or make copy
@@ -386,6 +394,12 @@ public final class Content
                 path = ContentPath.ROOT;
             }
             this.path = this.path.withName( name );
+            return this;
+        }
+
+        public Builder draft( final boolean draft )
+        {
+            this.draft = draft;
             return this;
         }
 

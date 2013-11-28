@@ -141,11 +141,8 @@ public class IndexService
 
     public void indexContent( final Content content )
     {
-        if ( !content.isTemporary() )
-        {
-            final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
-            elasticsearchIndexService.index( indexDocuments );
-        }
+        final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
+        elasticsearchIndexService.index( indexDocuments );
     }
 
     public void indexNode( final Node node )

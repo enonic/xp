@@ -1,6 +1,8 @@
 package com.enonic.wem.core.content.dao;
 
 
+import java.util.UUID;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -10,7 +12,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
@@ -33,6 +34,8 @@ import static org.apache.jackrabbit.JcrConstants.NT_UNSTRUCTURED;
 final class ContentDaoHandlerCreate
     extends AbstractContentDaoHandler
 {
+    private String nodeName;
+
     private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
 
     ContentDaoHandlerCreate( final Session session, final IndexService indexService )
@@ -40,17 +43,19 @@ final class ContentDaoHandlerCreate
         super( session, indexService );
     }
 
-    ContentId handle( final Content content )
+    Content handle( final Content content )
         throws RepositoryException
     {
-        final ContentId storedContentId = storeAsContentInJct( content );
+        this.nodeName = this.resolveNodeName( content );
+
+        final Content storedContent = storeAsContentInJct( content );
 
         storeContentAsNode( content );
 
-        return storedContentId;
+        return storedContent;
     }
 
-    private ContentId storeAsContentInJct( final Content content )
+    private Content storeAsContentInJct( final Content content )
         throws RepositoryException
     {
         if ( content.getId() != null )
@@ -79,7 +84,7 @@ final class ContentDaoHandlerCreate
             }
             final Node spaceNode = root.getNode( spaceNodePath );
 
-            newContentNode = addContentToJcr( content, spaceNode );
+            newContentNode = addContentToJcr( content, spaceNode, nodeName );
         }
         else if ( path.elementCount() == 1 )
         {
@@ -88,11 +93,11 @@ final class ContentDaoHandlerCreate
             {
                 throw new ContentNotFoundException( ContentPath.rootOf( path.getSpace() ) );
             }
-            if ( contentsNode.hasNode( path.getName() ) )
+            if ( contentsNode.hasNode( nodeName ) )
             {
                 throw new ContentAlreadyExistException( path );
             }
-            newContentNode = addContentToJcr( content, contentsNode );
+            newContentNode = addContentToJcr( content, contentsNode, nodeName );
         }
         else
         {
@@ -101,11 +106,11 @@ final class ContentDaoHandlerCreate
             {
                 throw new ContentNotFoundException( path.getParentPath() );
             }
-            else if ( parentContentNode.hasNode( path.getName() ) )
+            else if ( parentContentNode.hasNode( nodeName ) )
             {
                 throw new ContentAlreadyExistException( path );
             }
-            newContentNode = addContentToJcr( content, parentContentNode );
+            newContentNode = addContentToJcr( content, parentContentNode, nodeName );
         }
         final Node contentVersionHistoryNode = createContentVersionHistory( content, newContentNode );
         addContentVersion( content, contentVersionHistoryNode );
@@ -117,17 +122,29 @@ final class ContentDaoHandlerCreate
             newContentNode.addNode( CONTENT_EMBEDDED_NODE, NT_UNSTRUCTURED );
         }
 
-        return ContentIdFactory.from( newContentNode );
+        return ContentJcrHelper.nodeToContent( newContentNode, contentJcrMapper);
     }
 
-    private Node addContentToJcr( final Content content, final Node parentNode )
+    private Node addContentToJcr( final Content content, final Node parentNode, final String nodeName )
         throws RepositoryException
     {
-        final String nodeName = content.getName() == null ? SPACE_CONTENT_ROOT_NODE : content.getName();
         final Node newContentNode = parentNode.addNode( nodeName, JcrConstants.CONTENT_NODETYPE );
         contentJcrMapper.toJcr( content, newContentNode );
 
         return newContentNode;
+    }
+
+    private String resolveNodeName( final Content content )
+    {
+        if ( content.isDraft() )
+        {
+            return "__draft__" + UUID.randomUUID().toString();
+        }
+        else
+        {
+
+            return content.getName() == null ? SPACE_CONTENT_ROOT_NODE : content.getName();
+        }
     }
 
     private void storeContentAsNode( final Content content )
@@ -142,7 +159,7 @@ final class ContentDaoHandlerCreate
 
         final CreateNodeArguments createNodeArguments = CreateNodeArguments.newCreateNodeArgs().
             creator( UserKey.superUser() ).
-            name( node.name() ).
+            name( this.nodeName ).
             icon( node.icon() ).
             rootDataSet( node.data() ).
             parent( node.parent().asAbsolute() ).
@@ -151,11 +168,8 @@ final class ContentDaoHandlerCreate
 
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( this.session );
 
-        if ( !content.isTemporary() )
-        {
-            final com.enonic.wem.api.entity.Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
-            indexService.indexNode( persistedNode );
-        }
+        final com.enonic.wem.api.entity.Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
+        indexService.indexNode( persistedNode );
     }
 
     private Node createContentVersionHistory( final Content content, final Node contentNode )

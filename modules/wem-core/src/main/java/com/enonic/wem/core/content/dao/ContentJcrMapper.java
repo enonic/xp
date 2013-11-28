@@ -28,6 +28,8 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 
 final class ContentJcrMapper
 {
+    static final String DRAFT = "draft";
+
     static final String TYPE = "type";
 
     static final String FORM = "form";
@@ -55,6 +57,7 @@ final class ContentJcrMapper
     void toJcr( final Content content, final Node contentNode )
         throws RepositoryException
     {
+        contentNode.setProperty( DRAFT, content.isDraft() );
         contentNode.setProperty( TYPE, content.getType() != null ? content.getType().toString() : null );
         contentNode.setProperty( FORM, content.getForm() != null ? formItemsJsonSerializer.toString( content.getForm() ) : null );
         contentNode.setProperty( DATA, contentDataSerializer.toString( content.getContentData() ) );
@@ -70,6 +73,7 @@ final class ContentJcrMapper
     void toContent( final Node contentNode, final Content.Builder contentBuilder )
         throws RepositoryException
     {
+        contentBuilder.draft( contentNode.getProperty( DRAFT ).getBoolean() );
         if ( contentNode.hasProperty( FORM ) )
         {
             final Form form =

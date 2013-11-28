@@ -62,11 +62,6 @@ public final class Space
         return icon;
     }
 
-    public boolean isTemporary()
-    {
-        return name.isTemporary();
-    }
-
     @Override
     public boolean equals( final Object o )
     {

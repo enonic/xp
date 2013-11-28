@@ -39,9 +39,9 @@ public interface ContentDao
 
     public static final String CONTENT_NEXT_VERSION_PROPERTY = "nextVersion";
 
-    ContentId create( Content content, Session session );
+    Content create( Content content, Session session );
 
-    void update( Content content, boolean createNewVersion, Session session );
+    Content update( Content content, boolean createNewVersion, Session session );
 
     void delete( ContentSelector contentSelector, Session session )
         throws ContentNotFoundException, UnableToDeleteContentException;

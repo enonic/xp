@@ -32,7 +32,6 @@ public class NodeJcrDao
         ensurePath( new NodePath( "mixins" ) );
         ensurePath( new NodePath( "content-types" ) );
         ensurePath( new NodePath( "content" ) );
-        ensurePath( new NodePath( "_temporary" ) );
     }
 
     private void ensurePath( final NodePath path )

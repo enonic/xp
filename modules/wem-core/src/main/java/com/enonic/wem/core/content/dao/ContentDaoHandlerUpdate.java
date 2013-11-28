@@ -21,7 +21,7 @@ final class ContentDaoHandlerUpdate
         super( session, indexService );
     }
 
-    void handle( Content content, final boolean createNewVersion )
+    Content handle( Content content, final boolean createNewVersion )
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( content.getPath() );
@@ -38,6 +38,8 @@ final class ContentDaoHandlerUpdate
             final Node contentVersionHistoryParent = getContentVersionHistoryNode( contentNode );
             addContentVersion( content, contentVersionHistoryParent );
         }
+
+        return content;
     }
 
     private Content increaseContentVersion( final Content content, final Node contentNode )

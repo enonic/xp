@@ -36,7 +36,7 @@ public class ContentDaoImpl
     private IndexService indexService;
 
     @Override
-    public ContentId create( final Content content, final Session session )
+    public Content create( final Content content, final Session session )
     {
         try
         {
@@ -49,11 +49,11 @@ public class ContentDaoImpl
     }
 
     @Override
-    public void update( final Content content, final boolean createNewVersion, final Session session )
+    public Content update( final Content content, final boolean createNewVersion, final Session session )
     {
         try
         {
-            new ContentDaoHandlerUpdate( session, this.indexService ).handle( content, createNewVersion );
+            return new ContentDaoHandlerUpdate( session, this.indexService ).handle( content, createNewVersion );
         }
         catch ( RepositoryException e )
         {

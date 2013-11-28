@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 
 import com.enonic.wem.api.command.space.CreateSpace;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.space.Space;
@@ -51,15 +50,12 @@ public final class CreateSpaceHandler
             modifiedTime( space.getModifiedTime() ).
             displayName( space.getDisplayName() ).
             build();
-        final ContentId rootContentId = contentDao.create( rootContent, session );
+        final Content storedRootContent = contentDao.create( rootContent, session );
         session.save();
 
-        if ( !space.isTemporary() )
-        {
-            indexService.indexContent( contentDao.select( rootContentId, session ) );
-        }
+        indexService.indexContent( contentDao.select( storedRootContent.getId(), session ) );
 
-        final Space createdSpace = newSpace( space ).rootContent( rootContentId ).build();
+        final Space createdSpace = newSpace( space ).rootContent( storedRootContent.getId() ).build();
 
         command.setResult( createdSpace );
     }

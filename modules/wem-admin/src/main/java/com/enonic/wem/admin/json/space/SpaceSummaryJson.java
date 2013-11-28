@@ -50,11 +50,11 @@ public class SpaceSummaryJson
 
     public boolean getEditable()
     {
-        return !space.isTemporary() && !space.getName().toString().equals( "default" );
+        return !space.getName().toString().equals( "default" );
     }
 
     public boolean getDeletable()
     {
-        return !space.isTemporary() && !space.getName().toString().equals( "default" );
+        return !space.getName().toString().equals( "default" );
     }
 }

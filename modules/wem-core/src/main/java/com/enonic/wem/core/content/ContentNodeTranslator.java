@@ -6,7 +6,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -21,7 +20,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.space.SpaceName;
 import com.enonic.wem.core.support.SerializerForFormItemToData;
 
 public class ContentNodeTranslator
@@ -36,7 +34,7 @@ public class ContentNodeTranslator
 
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
-    private static final ContentPath TEMPORARY_PARENT_PATH = ContentPath.rootOf( SpaceName.temporary() );
+    public static final String DRAFT_PATH = "draft";
 
     public static final String DISPLAY_NAME_PATH = "displayName";
 
@@ -46,7 +44,7 @@ public class ContentNodeTranslator
 
     public Node toNode( final Content content )
     {
-        final NodePath parentItemPath = createParentItemPath( content );
+        final NodePath parentNodePath = createParentNodePath();
 
         final RootDataSet rootDataSet = propertiesToRootDataSet( content );
 
@@ -55,22 +53,15 @@ public class ContentNodeTranslator
         return Node.newNode().
             id( content.getId() != null ? EntityId.from( content.getId() ) : null ).
             name( ContentToNodeNameResolver.resolve( content ) ).
-            parent( parentItemPath ).
+            parent( parentNodePath ).
             rootDataSet( rootDataSet ).
             entityIndexConfig( entityIndexConfig ).
             build();
     }
 
-    private NodePath createParentItemPath( final Content content )
+    private NodePath createParentNodePath()
     {
-        if ( content.isTemporary() )
-        {
-            return NodePath.newPath( TEMPORARY_PARENT_PATH.toString() ).build();
-        }
-        else
-        {
-            return NodePath.newPath( "/content" ).build();
-        }
+        return NodePath.newPath( "/content" ).build();
     }
 
     public RootDataSet propertiesToRootDataSet( final Content content )
@@ -88,6 +79,7 @@ public class ContentNodeTranslator
 
     private void addContentProperties( final Content content, final RootDataSet rootDataSet )
     {
+        addPropertyIfNotNull( rootDataSet, DRAFT_PATH, content.isDraft() );
         addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PATH, content.getDisplayName() );
         addPropertyIfNotNull( rootDataSet, CONTENT_TYPE_PATH, content.getType().getContentTypeName() );
         addPropertyIfNotNull( rootDataSet, PARENT_CONTENT_PATH_PATH,

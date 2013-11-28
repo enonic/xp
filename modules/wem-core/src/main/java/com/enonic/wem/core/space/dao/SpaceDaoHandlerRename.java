@@ -4,8 +4,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.wem.api.exception.SpaceAlreadyExistException;
 import com.enonic.wem.api.exception.SpaceNotFoundException;
 import com.enonic.wem.api.space.SpaceName;
@@ -21,7 +19,6 @@ final class SpaceDaoHandlerRename
     public boolean handle( final SpaceName spaceName, final String newName )
         throws RepositoryException
     {
-        Preconditions.checkArgument( !spaceName.isTemporary(), "Temporary space cannot be renamed" );
         final Node spaceNode = getSpaceNode( spaceName );
         if ( spaceNode == null )
         {

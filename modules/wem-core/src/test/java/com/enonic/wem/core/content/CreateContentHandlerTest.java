@@ -30,6 +30,7 @@ import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
 
+import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -91,7 +92,7 @@ public class CreateContentHandlerTest
     {
         // setup
         Mockito.when( contentDao.create( Mockito.isA( Content.class ), Mockito.any( Session.class ) ) ).thenReturn(
-            com.enonic.wem.api.content.ContentId.from( "100" ) );
+            newContent().id( ContentId.from( "100" )).build() );
 
         CreateContent command = Commands.content().create();
         command.displayName( "My Content" );
@@ -126,7 +127,7 @@ public class CreateContentHandlerTest
     {
         // setup
         Mockito.when( contentDao.create( Mockito.isA( Content.class ), Mockito.any( Session.class ) ) ).thenReturn(
-            com.enonic.wem.api.content.ContentId.from( "100" ) );
+            newContent().id( ContentId.from( "100" )).build() );
 
         CreateContent command = Commands.content().create();
         final String displayName = "My Content";
