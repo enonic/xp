@@ -35,4 +35,24 @@ module app_contextwindow {
             api_event.onEvent('componentRemoved', handler);
         }
     }
+
+    export class LiveEditDragStartEvent extends api_event.Event {
+        constructor() {
+            super('liveEditDragStart');
+        }
+
+        static on(handler:(event:LiveEditDragStartEvent) => void) {
+            api_event.onEvent('liveEditDragStart', handler);
+        }
+    }
+
+    export class LiveEditDragStopEvent extends api_event.Event {
+        constructor() {
+            super('liveEditDragStop');
+        }
+
+        static on(handler:(event:LiveEditDragStopEvent) => void) {
+            api_event.onEvent('liveEditDragStop', handler);
+        }
+    }
 }

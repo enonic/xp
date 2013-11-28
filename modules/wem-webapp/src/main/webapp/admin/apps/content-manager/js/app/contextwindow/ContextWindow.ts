@@ -95,6 +95,14 @@ module app_contextwindow {
                 new ComponentRemovedEvent().fire();
                 this.selectedComponent = null;
             });
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('sortableStop.liveEdit', (event) => {
+                new LiveEditDragStopEvent().fire()
+                this.show();
+            });
+            this.getLiveEditJQuery()(this.getLiveEditWindow()).on('sortableStart.liveEdit', (event) => {
+                new LiveEditDragStartEvent().fire()
+                this.hide();
+            });
 
 
         }
