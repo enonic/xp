@@ -3,6 +3,7 @@ package com.enonic.wem.core;
 import com.google.inject.AbstractModule;
 
 import com.enonic.wem.core.account.AccountModule;
+import com.enonic.wem.core.blob.BlobModule;
 import com.enonic.wem.core.blobstore.BlobStoreModule;
 import com.enonic.wem.core.client.ClientModule;
 import com.enonic.wem.core.config.ConfigModule;
@@ -40,6 +41,7 @@ public final class CoreModule
         install( new BlobStoreModule() );
         install( new EntityModule() );
         install( new AccountModule() );
+        install( new BlobModule() );
         install( new ContentModule() );
         install( new SiteModule() );
         install( new RelationshipModule() );

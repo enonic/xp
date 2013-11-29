@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.binary.dao;
+package com.enonic.wem.core.blob.binary.dao;
 
 
 import com.google.common.io.ByteSource;
@@ -7,7 +7,7 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.blobstore.BlobRecord;
 import com.enonic.wem.core.blobstore.BlobStoreException;
 
-public interface BinaryDao
+public interface BlobDao
 {
     BlobKey createBinary( CreateBlob createBlob )
         throws BlobStoreException;

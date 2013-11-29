@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.binary.dao;
+package com.enonic.wem.core.blob.binary.dao;
 
 
 import java.io.IOException;
@@ -11,8 +11,8 @@ import com.enonic.wem.core.blobstore.BlobStore;
 import com.enonic.wem.core.blobstore.BlobStoreException;
 
 
-public class BinaryDaoImpl
-    implements BinaryDao
+public class BlobDaoImpl
+    implements BlobDao
 {
 
     private BlobStore blobStore;

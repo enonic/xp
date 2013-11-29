@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.binary;
+package com.enonic.wem.core.blob.binary;
 
 import javax.inject.Inject;
 import javax.jcr.Session;
@@ -8,29 +8,29 @@ import com.google.common.io.ByteStreams;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.content.binary.CreateBinary;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.binary.dao.BinaryDao;
+import com.enonic.wem.core.blob.binary.dao.BlobDao;
 
 
 public class CreateBinaryHandler
     extends CommandHandler<CreateBinary>
 {
-    private BinaryDao binaryDao;
+    private BlobDao blobDao;
 
     @Override
     public void handle()
         throws Exception
     {
         final Session session = context.getJcrSession();
-        final BinaryDao.CreateBlob createBlob = new BinaryDao.CreateBlob();
+        final BlobDao.CreateBlob createBlob = new BlobDao.CreateBlob();
         createBlob.input = ByteStreams.asByteSource( command.getBinary().toByteArray() );
-        final BlobKey blobKey = binaryDao.createBinary( createBlob );
+        final BlobKey blobKey = blobDao.createBinary( createBlob );
         session.save();
         command.setResult( null );
     }
 
     @Inject
-    public void setBinaryDao( final BinaryDao binaryDao )
+    public void setBlobDao( final BlobDao blobDao )
     {
-        this.binaryDao = binaryDao;
+        this.blobDao = blobDao;
     }
 }

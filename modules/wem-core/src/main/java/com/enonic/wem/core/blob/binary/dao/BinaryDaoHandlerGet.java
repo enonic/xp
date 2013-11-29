@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.binary.dao;
+package com.enonic.wem.core.blob.binary.dao;
 
 
 import java.io.InputStream;
