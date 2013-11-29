@@ -4,12 +4,15 @@ package com.enonic.wem.api.command.content.page;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PartTemplate;
 import com.enonic.wem.api.content.page.PartTemplateName;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class CreatePartTemplate
     extends Command<PartTemplate>
 {
+    private SiteTemplateKey siteTemplate;
+
     private PartTemplateName name;
 
     private String displayName;
@@ -17,6 +20,12 @@ public final class CreatePartTemplate
     private ModuleResourceKey descriptor;
 
     private RootDataSet config;
+
+    public CreatePartTemplate siteTemplate( final SiteTemplateKey value )
+    {
+        this.siteTemplate = value;
+        return this;
+    }
 
     public CreatePartTemplate templateName( final PartTemplateName name )
     {

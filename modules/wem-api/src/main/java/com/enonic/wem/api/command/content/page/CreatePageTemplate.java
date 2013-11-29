@@ -4,6 +4,7 @@ package com.enonic.wem.api.command.content.page;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -11,6 +12,8 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 public final class CreatePageTemplate
     extends Command<PageTemplate>
 {
+    private SiteTemplateKey siteTemplate;
+
     private PageTemplateName name;
 
     private String displayName;
@@ -20,6 +23,12 @@ public final class CreatePageTemplate
     private RootDataSet config;
 
     private ContentTypeNames canRender;
+
+    public CreatePageTemplate siteTemplate( final SiteTemplateKey value )
+    {
+        this.siteTemplate = value;
+        return this;
+    }
 
     public CreatePageTemplate name( final PageTemplateName name )
     {

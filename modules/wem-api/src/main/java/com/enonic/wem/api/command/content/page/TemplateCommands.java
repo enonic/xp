@@ -4,53 +4,23 @@ package com.enonic.wem.api.command.content.page;
 public final class TemplateCommands
 {
 
-    public CreatePageTemplate createPageTemplate()
+    public PageTemplateCommands page()
     {
-        return new CreatePageTemplate();
+        return new PageTemplateCommands();
     }
 
-    public CreatePartTemplate createPartTemplate()
+    public ImageTemplateCommands image()
     {
-        return new CreatePartTemplate();
+        return new ImageTemplateCommands();
     }
 
-    public CreateLayoutTemplate createLayoutTemplate()
+    public PartTemplateCommands part()
     {
-        return new CreateLayoutTemplate();
+        return new PartTemplateCommands();
     }
 
-    public CreateImageTemplate createImageTemplate()
+    public LayoutTemplateCommands layout()
     {
-        return new CreateImageTemplate();
-    }
-
-    public UpdatePageTemplate updatePageTemplate()
-    {
-        return new UpdatePageTemplate();
-    }
-
-    public UpdatePartTemplate updatePartTemplate()
-    {
-        return new UpdatePartTemplate();
-    }
-
-    public UpdateLayoutTemplate updateLayoutTemplate()
-    {
-        return new UpdateLayoutTemplate();
-    }
-
-    public UpdateImageTemplate updateImageTemplate()
-    {
-        return new UpdateImageTemplate();
-    }
-
-    public DeleteTemplate deleteTemplate()
-    {
-        return new DeleteTemplate();
-    }
-
-    public GetTemplateCommands get()
-    {
-        return new GetTemplateCommands();
+        return new LayoutTemplateCommands();
     }
 }

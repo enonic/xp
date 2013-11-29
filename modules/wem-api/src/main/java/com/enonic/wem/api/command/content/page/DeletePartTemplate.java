@@ -4,25 +4,16 @@ package com.enonic.wem.api.command.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.PartTemplate;
 import com.enonic.wem.api.content.page.PartTemplateKey;
 
-public final class UpdatePartTemplate
+public final class DeletePartTemplate
     extends Command<Boolean>
 {
     private PartTemplateKey key;
 
-    private TemplateEditor<PartTemplate> editor;
-
-    public UpdatePartTemplate key( final PartTemplateKey key )
+    public DeletePartTemplate key( final PartTemplateKey value )
     {
-        this.key = key;
-        return this;
-    }
-
-    public UpdatePartTemplate editor( final TemplateEditor<PartTemplate> editor )
-    {
-        this.editor = editor;
+        this.key = value;
         return this;
     }
 
@@ -35,10 +26,5 @@ public final class UpdatePartTemplate
     public PartTemplateKey getKey()
     {
         return key;
-    }
-
-    public TemplateEditor<PartTemplate> getEditor()
-    {
-        return editor;
     }
 }

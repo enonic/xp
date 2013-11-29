@@ -4,12 +4,15 @@ package com.enonic.wem.api.command.content.page;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.LayoutTemplate;
 import com.enonic.wem.api.content.page.LayoutTemplateName;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class CreateLayoutTemplate
     extends Command<LayoutTemplate>
 {
+    private SiteTemplateKey siteTemplate;
+
     private LayoutTemplateName name;
 
     private String displayName;
@@ -17,6 +20,12 @@ public final class CreateLayoutTemplate
     private ModuleResourceKey descriptor;
 
     private RootDataSet config;
+
+    public CreateLayoutTemplate siteTemplate( final SiteTemplateKey value )
+    {
+        this.siteTemplate = value;
+        return this;
+    }
 
     public CreateLayoutTemplate templateName( final LayoutTemplateName name )
     {

@@ -4,12 +4,15 @@ package com.enonic.wem.api.command.content.page;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ImageTemplate;
 import com.enonic.wem.api.content.page.ImageTemplateName;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
 public final class CreateImageTemplate
     extends Command<ImageTemplate>
 {
+    private SiteTemplateKey siteTemplate;
+
     private ImageTemplateName name;
 
     private String displayName;
@@ -17,6 +20,12 @@ public final class CreateImageTemplate
     private ModuleResourceKey descriptor;
 
     private RootDataSet config;
+
+    public CreateImageTemplate siteTemplate( final SiteTemplateKey value )
+    {
+        this.siteTemplate = value;
+        return this;
+    }
 
     public CreateImageTemplate templateName( final ImageTemplateName name )
     {

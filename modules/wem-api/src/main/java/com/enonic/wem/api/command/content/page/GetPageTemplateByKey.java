@@ -7,22 +7,14 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 
-public final class UpdatePageTemplate
-    extends Command<Boolean>
+public class GetPageTemplateByKey
+    extends Command<PageTemplate>
 {
     private PageTemplateKey key;
 
-    private TemplateEditor<PageTemplate> editor;
-
-    public UpdatePageTemplate key( final PageTemplateKey key )
+    public GetPageTemplateByKey key( final PageTemplateKey key )
     {
         this.key = key;
-        return this;
-    }
-
-    public UpdatePageTemplate editor( final TemplateEditor<PageTemplate> editor )
-    {
-        this.editor = editor;
         return this;
     }
 
@@ -35,10 +27,5 @@ public final class UpdatePageTemplate
     public PageTemplateKey getKey()
     {
         return key;
-    }
-
-    public TemplateEditor<PageTemplate> getEditor()
-    {
-        return editor;
     }
 }

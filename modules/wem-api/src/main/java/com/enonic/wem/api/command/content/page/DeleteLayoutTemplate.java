@@ -4,25 +4,16 @@ package com.enonic.wem.api.command.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.LayoutTemplate;
 import com.enonic.wem.api.content.page.LayoutTemplateKey;
 
-public final class UpdateLayoutTemplate
+public final class DeleteLayoutTemplate
     extends Command<Boolean>
 {
     private LayoutTemplateKey key;
 
-    private TemplateEditor<LayoutTemplate> editor;
-
-    public UpdateLayoutTemplate key( final LayoutTemplateKey key )
+    public DeleteLayoutTemplate key( final LayoutTemplateKey value )
     {
-        this.key = key;
-        return this;
-    }
-
-    public UpdateLayoutTemplate editor( final TemplateEditor<LayoutTemplate> editor )
-    {
-        this.editor = editor;
+        this.key = value;
         return this;
     }
 
@@ -35,10 +26,5 @@ public final class UpdateLayoutTemplate
     public LayoutTemplateKey getKey()
     {
         return key;
-    }
-
-    public TemplateEditor<LayoutTemplate> getEditor()
-    {
-        return editor;
     }
 }

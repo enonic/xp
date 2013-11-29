@@ -4,25 +4,16 @@ package com.enonic.wem.api.command.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.ImageTemplate;
 import com.enonic.wem.api.content.page.ImageTemplateKey;
 
-public final class UpdateImageTemplate
+public final class DeleteImageTemplate
     extends Command<Boolean>
 {
     private ImageTemplateKey key;
 
-    private TemplateEditor<ImageTemplate> editor;
-
-    public UpdateImageTemplate key( final ImageTemplateKey key )
+    public DeleteImageTemplate key( final ImageTemplateKey value )
     {
-        this.key = key;
-        return this;
-    }
-
-    public UpdateImageTemplate editor( final TemplateEditor<ImageTemplate> editor )
-    {
-        this.editor = editor;
+        this.key = value;
         return this;
     }
 
@@ -35,10 +26,5 @@ public final class UpdateImageTemplate
     public ImageTemplateKey getKey()
     {
         return key;
-    }
-
-    public TemplateEditor<ImageTemplate> getEditor()
-    {
-        return editor;
     }
 }
