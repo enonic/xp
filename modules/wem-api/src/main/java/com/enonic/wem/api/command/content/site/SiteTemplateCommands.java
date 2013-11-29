@@ -9,6 +9,11 @@ public class SiteTemplateCommands
         return new CreateSiteTemplate();
     }
 
+    public UpdateSiteTemplate update()
+    {
+        return new UpdateSiteTemplate();
+    }
+
     public DeleteSiteTemplate delete( final SiteTemplateKey key )
     {
         return new DeleteSiteTemplate( key );

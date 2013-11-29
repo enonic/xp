@@ -4,16 +4,16 @@ package com.enonic.wem.api.command.content.page.part;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.command.content.page.TemplateEditor;
 import com.enonic.wem.api.content.page.part.PartTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplateEditor;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 
 public final class UpdatePartTemplate
-    extends Command<Boolean>
+    extends Command<PartTemplate>
 {
     private PartTemplateKey key;
 
-    private TemplateEditor<PartTemplate> editor;
+    private PartTemplateEditor editor;
 
     public UpdatePartTemplate key( final PartTemplateKey key )
     {
@@ -21,7 +21,7 @@ public final class UpdatePartTemplate
         return this;
     }
 
-    public UpdatePartTemplate editor( final TemplateEditor<PartTemplate> editor )
+    public UpdatePartTemplate editor( final PartTemplateEditor editor )
     {
         this.editor = editor;
         return this;
@@ -38,7 +38,7 @@ public final class UpdatePartTemplate
         return key;
     }
 
-    public TemplateEditor<PartTemplate> getEditor()
+    public PartTemplateEditor getEditor()
     {
         return editor;
     }

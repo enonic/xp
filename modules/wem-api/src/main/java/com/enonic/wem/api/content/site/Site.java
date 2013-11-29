@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.enonic.wem.api.support.Changes;
+import com.enonic.wem.api.support.EditBuilder;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
@@ -14,7 +15,7 @@ public final class Site
 
     private final ModuleConfigs moduleConfigs;
 
-    private Site( final BaseBuilder builder )
+    private Site( final SiteProperties builder )
     {
         this.template = builder.templateName;
         this.moduleConfigs = ModuleConfigs.from( builder.moduleConfigs );
@@ -63,50 +64,51 @@ public final class Site
         return new Builder( source );
     }
 
-    public static EditBuilder editSite( final Site toBeEdited )
+    public static SiteEditBuilder editSite( final Site toBeEdited )
     {
-        return new EditBuilder( toBeEdited );
+        return new SiteEditBuilder( toBeEdited );
     }
 
-    public static class BaseBuilder
+    static class SiteProperties
     {
         SiteTemplateKey templateName;
 
         List<ModuleConfig> moduleConfigs = new ArrayList<>();
 
-        BaseBuilder( final Site source )
+        SiteProperties( final Site source )
         {
             this.templateName = source.getTemplate();
             this.moduleConfigs = source.getModuleConfigs().getList();
         }
 
-        BaseBuilder()
+        SiteProperties()
         {
 
         }
     }
 
-    public static class EditBuilder
-        extends BaseBuilder
+    public static class SiteEditBuilder
+        extends SiteProperties
+        implements EditBuilder<Site>
     {
         private final Site original;
 
         private final Changes.Builder changes = new Changes.Builder();
 
-        public EditBuilder( final Site original )
+        public SiteEditBuilder( final Site original )
         {
             super( original );
             this.original = original;
         }
 
-        public EditBuilder template( SiteTemplateKey value )
+        public SiteEditBuilder template( SiteTemplateKey value )
         {
             changes.recordChange( newPossibleChange( "template" ).from( this.original.getTemplate() ).to( value ).build() );
             this.templateName = value;
             return this;
         }
 
-        public EditBuilder moduleConfigs( ModuleConfigs configs )
+        public SiteEditBuilder moduleConfigs( ModuleConfigs configs )
         {
             changes.recordChange(
                 newPossibleChange( "moduleConfigs" ).from( original.getModuleConfigs().getList() ).to( configs.getList() ).build() );
@@ -133,7 +135,7 @@ public final class Site
     }
 
     public static class Builder
-        extends BaseBuilder
+        extends SiteProperties
     {
         public Builder( final Site source )
         {

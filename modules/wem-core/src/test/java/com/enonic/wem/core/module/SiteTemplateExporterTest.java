@@ -92,7 +92,7 @@ public class SiteTemplateExporterTest
     {
         assertEquals( "Intranet-1.0.0", siteTemplate1.getKey().toString() );
         assertEquals( "Enonic Intranet", siteTemplate1.getDisplayName() );
-        assertEquals( "A social intranet for the Enterprise", siteTemplate1.getInfo() );
+        assertEquals( "A social intranet for the Enterprise", siteTemplate1.getDescription() );
         assertEquals( "Enonic", siteTemplate1.getVendor().getName() );
         assertEquals( "https://www.enonic.com", siteTemplate1.getVendor().getUrl() );
 
@@ -151,7 +151,7 @@ public class SiteTemplateExporterTest
         return SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
-            info( "A social intranet for the Enterprise" ).
+            description( "A social intranet for the Enterprise" ).
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                       "com.enonic.resolvers-1.0.0" ) ).

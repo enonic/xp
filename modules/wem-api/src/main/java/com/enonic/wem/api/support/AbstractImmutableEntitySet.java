@@ -61,14 +61,14 @@ public abstract class AbstractImmutableEntitySet<T>
     }
 
     @Override
-    public int hashCode()
-    {
-        return this.set.hashCode();
-    }
-
-    @Override
     public boolean equals( final Object o )
     {
         return ( o != null ) && ( this.getClass().isInstance( o ) ) && this.set.equals( ( (AbstractImmutableEntitySet) o ).set );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.set.hashCode();
     }
 }

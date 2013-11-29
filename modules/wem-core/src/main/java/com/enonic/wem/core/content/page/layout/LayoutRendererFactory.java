@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.page.rendering;
+package com.enonic.wem.core.content.page.layout;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
@@ -11,7 +11,7 @@ import com.enonic.wem.core.rendering.RendererFactory;
 public class LayoutRendererFactory
     implements RendererFactory
 {
-    static void register()
+    public static void register()
     {
         RenderablesRegister.get().register( LayoutComponent.class, new LayoutRendererFactory() );
     }

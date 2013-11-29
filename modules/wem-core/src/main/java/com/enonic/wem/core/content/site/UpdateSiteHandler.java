@@ -30,20 +30,22 @@ public class UpdateSiteHandler
             throw new SiteNotFoundException( command.getContent() );
         }
 
-        Site.EditBuilder editBuilder = command.getEditor().edit( content.getSite() );
+        Site.SiteEditBuilder editBuilder = command.getEditor().edit( content.getSite() );
 
         if ( editBuilder.isChanges() )
         {
             final Site editedSite = editBuilder.build();
 
-            final UpdateContent updateContent = Commands.content().update().contentId( command.getContent() ).editor( new ContentEditor()
-            {
-                @Override
-                public Content.EditBuilder edit( final Content toBeEdited )
+            final UpdateContent updateContent = Commands.content().update().
+                contentId( command.getContent() ).
+                editor( new ContentEditor()
                 {
-                    return editContent( toBeEdited ).site( editedSite );
-                }
-            } );
+                    @Override
+                    public Content.EditBuilder edit( final Content toBeEdited )
+                    {
+                        return editContent( toBeEdited ).site( editedSite );
+                    }
+                } );
 
             context.getClient().execute( updateContent );
         }

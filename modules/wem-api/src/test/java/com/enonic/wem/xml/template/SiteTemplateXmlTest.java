@@ -28,7 +28,7 @@ public class SiteTemplateXmlTest
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
-            info( "A social intranet for the Enterprise" ).
+            description( "A social intranet for the Enterprise" ).
             url( "http://www.enonic.com/intranet" ).
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
@@ -56,7 +56,7 @@ public class SiteTemplateXmlTest
         final SiteTemplate siteTemplate = builder.build();
 
         assertEquals( "Enonic Intranet", siteTemplate.getDisplayName() );
-        assertEquals( "A social intranet for the Enterprise", siteTemplate.getInfo() );
+        assertEquals( "A social intranet for the Enterprise", siteTemplate.getDescription() );
         assertEquals( "http://www.enonic.com/intranet", siteTemplate.getUrl() );
         assertEquals( "Enonic", siteTemplate.getVendor().getName() );
         assertEquals( "https://www.enonic.com", siteTemplate.getVendor().getUrl() );

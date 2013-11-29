@@ -1,15 +1,15 @@
-package com.enonic.wem.core.content.page;
+package com.enonic.wem.core.content.page.part;
 
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.page.layout.GetLayoutTemplateByKey;
+import com.enonic.wem.api.command.content.page.part.GetPartTemplateByKey;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
-import com.enonic.wem.api.content.page.layout.LayoutTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.core.command.CommandHandler;
 
-public class GetLayoutTemplateByKeyHandler
-    extends CommandHandler<GetLayoutTemplateByKey>
+public class GetPartTemplateByKeyHandler
+    extends CommandHandler<GetPartTemplateByKey>
 {
     @Override
     public void handle()
@@ -17,7 +17,7 @@ public class GetLayoutTemplateByKeyHandler
     {
         final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( command.getKey().getSiteTemplateKey() );
         final SiteTemplate siteTemplate = context.getClient().execute( getSiteTemplateCommand );
-        final LayoutTemplate template = siteTemplate.getLayoutTemplates().getTemplate( command.getKey().getTemplateName() );
-        command.setResult( template );
+        final PartTemplate imageTemplate = siteTemplate.getPartTemplates().getTemplate( command.getKey().getTemplateName() );
+        command.setResult( imageTemplate );
     }
 }

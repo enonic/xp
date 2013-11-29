@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
 public final class PartTemplates
@@ -14,15 +15,23 @@ public final class PartTemplates
 {
     private final ImmutableMap<PartTemplateName, PartTemplate> templatesByName;
 
+    private final ImmutableMap<ResourcePath, PartTemplate> templatesByPath;
+
     private PartTemplates( final ImmutableList<PartTemplate> list )
     {
         super( list );
         this.templatesByName = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.templatesByPath = Maps.uniqueIndex( list, new ToPathFunction() );
     }
 
     public PartTemplate getTemplate( final PartTemplateName name )
     {
         return this.templatesByName.get( name );
+    }
+
+    public PartTemplate getTemplate( final ResourcePath path )
+    {
+        return this.templatesByPath.get( path );
     }
 
     public static PartTemplates empty()
@@ -53,6 +62,16 @@ public final class PartTemplates
         public PartTemplateName apply( final PartTemplate value )
         {
             return value.getName();
+        }
+    }
+
+    private final static class ToPathFunction
+        implements Function<PartTemplate, ResourcePath>
+    {
+        @Override
+        public ResourcePath apply( final PartTemplate value )
+        {
+            return value.getPath();
         }
     }
 

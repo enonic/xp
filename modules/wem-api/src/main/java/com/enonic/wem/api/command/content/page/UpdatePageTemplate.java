@@ -5,14 +5,15 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateEditor;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 
 public final class UpdatePageTemplate
-    extends Command<Boolean>
+    extends Command<PageTemplate>
 {
     private PageTemplateKey key;
 
-    private TemplateEditor<PageTemplate> editor;
+    private PageTemplateEditor editor;
 
     public UpdatePageTemplate key( final PageTemplateKey key )
     {
@@ -20,7 +21,7 @@ public final class UpdatePageTemplate
         return this;
     }
 
-    public UpdatePageTemplate editor( final TemplateEditor<PageTemplate> editor )
+    public UpdatePageTemplate editor( final PageTemplateEditor editor )
     {
         this.editor = editor;
         return this;
@@ -37,7 +38,7 @@ public final class UpdatePageTemplate
         return key;
     }
 
-    public TemplateEditor<PageTemplate> getEditor()
+    public PageTemplateEditor getEditor()
     {
         return editor;
     }

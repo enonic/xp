@@ -48,7 +48,7 @@ public final class SiteTemplateXml
     public void from( final SiteTemplate template )
     {
         this.displayName = template.getDisplayName();
-        this.info = template.getInfo();
+        this.info = template.getDescription();
         this.url = template.getUrl();
 
         final Vendor vendor = template.getVendor();
@@ -76,7 +76,7 @@ public final class SiteTemplateXml
     {
         builder.
             displayName( this.displayName ).
-            info( this.info ).
+            description( this.info ).
             url( this.url ).
             rootContentType( ContentTypeName.from( this.siteContent ) );
 

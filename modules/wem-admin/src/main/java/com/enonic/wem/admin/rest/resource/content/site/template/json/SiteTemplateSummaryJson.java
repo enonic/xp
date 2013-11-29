@@ -12,7 +12,8 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
-public class SiteTemplateSummaryJson implements ItemJson
+public class SiteTemplateSummaryJson
+    implements ItemJson
 {
     private SiteTemplate siteTemplate;
 
@@ -43,7 +44,7 @@ public class SiteTemplateSummaryJson implements ItemJson
 
     public String getInfo()
     {
-        return this.siteTemplate.getInfo();
+        return this.siteTemplate.getDescription();
     }
 
     public String getUrl()
@@ -59,7 +60,7 @@ public class SiteTemplateSummaryJson implements ItemJson
     public List<String> getModules()
     {
         ImmutableList.Builder<String> builder = ImmutableList.builder();
-        for ( ModuleKey moduleKey : this.siteTemplate.getModules())
+        for ( ModuleKey moduleKey : this.siteTemplate.getModules() )
         {
             builder.add( moduleKey.toString() );
         }

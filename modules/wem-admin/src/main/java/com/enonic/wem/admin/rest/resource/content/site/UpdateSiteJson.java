@@ -28,7 +28,7 @@ public class UpdateSiteJson
             editor( new SiteEditor()
             {
                 @Override
-                public Site.EditBuilder edit( final Site toBeEdited )
+                public Site.SiteEditBuilder edit( final Site toBeEdited )
                 {
                     return Site.editSite( toBeEdited ).
                         template( SiteTemplateKey.from( siteTemplate ) ).

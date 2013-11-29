@@ -30,7 +30,7 @@ public class SiteTest
             newArrayList( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build(),
                           newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() );
 
-        Site.EditBuilder editBuilder = Site.editSite( original ).
+        Site.SiteEditBuilder editBuilder = Site.editSite( original ).
             template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
             moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
@@ -52,7 +52,7 @@ public class SiteTest
             newArrayList( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build(),
                           newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() );
 
-        Site.EditBuilder editBuilder = Site.editSite( original ).
+        Site.SiteEditBuilder editBuilder = Site.editSite( original ).
             template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
             moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
@@ -74,7 +74,7 @@ public class SiteTest
             newArrayList( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build(),
                           newModuleConfig().module( ModuleKey.from( "changed-1.1.2" ) ).config( new RootDataSet() ).build() );
 
-        Site.EditBuilder editBuilder = Site.editSite( original ).
+        Site.SiteEditBuilder editBuilder = Site.editSite( original ).
             template( SiteTemplateKey.from( new SiteTemplateName( "unchanged" ), new SiteTemplateVersion( "1.0.0" ) ) ).
             moduleConfigs( ModuleConfigs.from( newConfigs ) );
 
@@ -96,7 +96,7 @@ public class SiteTest
             newArrayList( newModuleConfig().module( ModuleKey.from( "unchanged-1.1.1" ) ).config( new RootDataSet() ).build(),
                           newModuleConfig().module( ModuleKey.from( "unchanged-1.1.2" ) ).config( new RootDataSet() ).build() );
 
-        Site.EditBuilder editBuilder = Site.editSite( original ).
+        Site.SiteEditBuilder editBuilder = Site.editSite( original ).
             template( SiteTemplateKey.from( new SiteTemplateName( "changed" ), new SiteTemplateVersion( "1.0.0" ) ) ).
             moduleConfigs( ModuleConfigs.from( newConfigs ) );
 

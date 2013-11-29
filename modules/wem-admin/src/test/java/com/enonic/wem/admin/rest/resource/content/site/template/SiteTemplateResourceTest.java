@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.content.site.template;
 
 import javax.ws.rs.core.MediaType;
 
-import org.elasticsearch.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -17,8 +16,6 @@ import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateName;
-import com.enonic.wem.api.content.site.SiteTemplateVersion;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKeys;
@@ -68,9 +65,8 @@ public class SiteTemplateResourceTest
     {
         Mockito.when( client.execute( Mockito.isA( DeleteSiteTemplate.class ) ) ).thenReturn(
             SiteTemplateKey.from( "sitetemplate-1.0.0" ) );
-        String response =
-            resource().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
-                                                                      MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        String response = resource().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
+                                                                                    MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "delete_site_template_success.json", response );
     }
 
@@ -80,25 +76,18 @@ public class SiteTemplateResourceTest
     {
         Mockito.when( client.execute( Mockito.isA( DeleteSiteTemplate.class ) ) ).thenThrow(
             new NoSiteTemplateExistsException( SiteTemplateKey.from( "sitetemplate-1.0.0" ) ) );
-        String response =
-            resource().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).post(
-                String.class );
+        String response = resource().path( "content/site/template/delete" ).entity( readFromFile( "delete_site_template_params.json" ),
+                                                                                    MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "delete_site_template_failure.json", response );
     }
 
     private SiteTemplate createSiteTemplate()
     {
-        return SiteTemplate.newSiteTemplate()
-            .key( SiteTemplateKey.from( "name-1.0.0" ) )
-            .displayName( "displayName" )
-            .info( "info" )
-            .url( "url" )
-            .vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() )
-            .modules( ModuleKeys.from( "module1-1.0.0" ) )
-            .contentTypeFilter(
-                ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.imageMedia() ).denyContentType( ContentTypeName.shortcut() ).build() )
-            .rootContentType( ContentTypeName.folder() )
-            .build();
+        return SiteTemplate.newSiteTemplate().key( SiteTemplateKey.from( "name-1.0.0" ) ).displayName( "displayName" ).description(
+            "info" ).url( "url" ).vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() ).modules(
+            ModuleKeys.from( "module1-1.0.0" ) ).contentTypeFilter(
+            ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.imageMedia() ).denyContentType(
+                ContentTypeName.shortcut() ).build() ).rootContentType( ContentTypeName.folder() ).build();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.enonic.wem.core.content.page.rendering;
+package com.enonic.wem.core.content.page.image;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.page.image.ImageComponent;
@@ -11,7 +11,7 @@ import com.enonic.wem.core.rendering.RendererFactory;
 public class ImageRendererFactory
     implements RendererFactory
 {
-    static void register()
+    public static void register()
     {
         RenderablesRegister.get().register( ImageComponent.class, new ImageRendererFactory() );
     }

@@ -2,9 +2,14 @@ package com.enonic.wem.api.content.page;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ResourcePath;
 
 public abstract class Template<NAME extends TemplateName>
 {
+    private final ResourcePath parentPath;
+
+    private final ResourcePath path;
+
     private final NAME name;
 
     private final String displayName;
@@ -13,12 +18,24 @@ public abstract class Template<NAME extends TemplateName>
 
     private final RootDataSet config;
 
-    protected Template( final BaseTemplateBuilder builder )
+    protected Template( final TemplateProperties properties )
     {
-        this.name = (NAME) builder.name;
-        this.displayName = builder.displayName;
-        this.descriptor = builder.descriptor;
-        this.config = builder.config;
+        this.parentPath = properties.parentPath;
+        this.name = (NAME) properties.name;
+        this.path = ResourcePath.from( this.parentPath, this.name.toString() );
+        this.displayName = properties.displayName;
+        this.descriptor = properties.descriptor;
+        this.config = properties.config;
+    }
+
+    public ResourcePath getParentPath()
+    {
+        return parentPath;
+    }
+
+    public ResourcePath getPath()
+    {
+        return path;
     }
 
     public NAME getName()
@@ -41,8 +58,10 @@ public abstract class Template<NAME extends TemplateName>
         return config;
     }
 
-    public abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, NAME extends TemplateName>
+    public abstract static class TemplateProperties<T extends BaseTemplateBuilder, NAME extends TemplateName>
     {
+        protected ResourcePath parentPath = ResourcePath.root();
+
         protected NAME name;
 
         protected String displayName;
@@ -50,10 +69,20 @@ public abstract class Template<NAME extends TemplateName>
         protected ModuleResourceKey descriptor;
 
         protected RootDataSet config;
+    }
 
+    public abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, NAME extends TemplateName>
+        extends TemplateProperties<T, NAME>
+    {
         public T name( final NAME name )
         {
             this.name = name;
+            return typecastToTemplateBuilder( this );
+        }
+
+        public T parentPath( final ResourcePath parentPath )
+        {
+            this.parentPath = parentPath;
             return typecastToTemplateBuilder( this );
         }
 

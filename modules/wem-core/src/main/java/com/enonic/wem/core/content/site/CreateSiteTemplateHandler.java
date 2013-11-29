@@ -30,7 +30,7 @@ public class CreateSiteTemplateHandler
             vendor( command.getVendor() ).
             key( command.getSiteTemplateKey() ).
             modules( command.getModules() ).
-            info( command.getDescription() ).
+            description( command.getDescription() ).
             rootContentType( command.getRootContentType() ).
             contentTypeFilter( command.getContentTypeFilter() );
         final Map<ResourcePath, Template> templatesByPath = command.getTemplates();

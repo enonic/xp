@@ -33,7 +33,7 @@ public class SiteTemplateTest
         SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
-            info( "A social intranet for the Enterprise" ).
+            description( "A social intranet for the Enterprise" ).
             vendor( newVendor().name( "Enonic" ).url( "https://www.enonic.com" ).build() ).
             modules( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                       "com.enonic.resolvers-1.0.0" ) ).
@@ -45,7 +45,7 @@ public class SiteTemplateTest
         assertEquals( new SiteTemplateName( "Intranet" ), siteTemplate.getName() );
         assertEquals( new SiteTemplateVersion( "1.0.0" ), siteTemplate.getVersion() );
         assertEquals( "Enonic Intranet", siteTemplate.getDisplayName() );
-        assertEquals( "A social intranet for the Enterprise", siteTemplate.getInfo() );
+        assertEquals( "A social intranet for the Enterprise", siteTemplate.getDescription() );
         assertEquals( ModuleKeys.from( "com.enonic.intranet-1.0.0", "com.company.sampleModule-1.1.0", "com.company.theme.someTheme-1.4.1",
                                        "com.enonic.resolvers-1.0.0" ), siteTemplate.getModules() );
         assertEquals( contentTypeFilter, siteTemplate.getContentTypeFilter() );
@@ -90,7 +90,7 @@ public class SiteTemplateTest
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().
             key( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
             displayName( "Enonic Intranet" ).
-            info( "A social intranet for the Enterprise" ).
+            description( "A social intranet for the Enterprise" ).
             addTemplate( ResourcePath.from( "components/pages/" ), pageTemplate ).
             addTemplate( partTemplate ).
             addTemplate( layoutTemplate ).
@@ -100,7 +100,7 @@ public class SiteTemplateTest
         assertEquals( new SiteTemplateName( "Intranet" ), siteTemplate.getName() );
         assertEquals( new SiteTemplateVersion( "1.0.0" ), siteTemplate.getVersion() );
         assertEquals( "Enonic Intranet", siteTemplate.getDisplayName() );
-        assertEquals( "A social intranet for the Enterprise", siteTemplate.getInfo() );
+        assertEquals( "A social intranet for the Enterprise", siteTemplate.getDescription() );
         assertEquals( "[components/pages/main-page, components/news-part, components/my-layout]",
                       Iterators.toString( siteTemplate.resourcePathIterator() ) );
         assertEquals( layoutTemplate, siteTemplate.getTemplate( ResourcePath.from( "components/my-layout" ) ) );
