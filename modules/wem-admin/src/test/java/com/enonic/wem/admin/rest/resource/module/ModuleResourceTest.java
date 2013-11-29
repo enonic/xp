@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -71,8 +70,6 @@ public class ModuleResourceTest
     }
 
     @Test
-    @Ignore
-    // TODO: Rework to make it work with http servlet multipart
     public void install_module_exception()
         throws Exception
     {
@@ -87,8 +84,6 @@ public class ModuleResourceTest
     }
 
     @Test
-    @Ignore
-    // TODO: Rework to make it work with http servlet multipart
     public void install_module_success()
         throws Exception
     {

@@ -4,7 +4,6 @@ import java.io.InputStream;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -40,7 +39,6 @@ public class UploadResourceTest
     }
 
     @Test
-    @Ignore
     public void testUpload_onePart()
         throws Exception
     {
@@ -50,7 +48,6 @@ public class UploadResourceTest
     }
 
     @Test
-    @Ignore
     public void testUpload_twoParts()
         throws Exception
     {

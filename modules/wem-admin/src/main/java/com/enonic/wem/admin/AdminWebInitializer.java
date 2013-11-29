@@ -1,7 +1,6 @@
 package com.enonic.wem.admin;
 
 import javax.inject.Inject;
-import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
@@ -28,9 +27,6 @@ public final class AdminWebInitializer
         final ServletRegistration.Dynamic restServlet = context.addServlet( "rest", this.restServlet );
         restServlet.setLoadOnStartup( 3 );
         restServlet.addMapping( "/admin/rest/*" );
-
-        final MultipartConfigElement multiPartConfig = new MultipartConfigElement( null, -1, -1, 0 );
-        restServlet.setMultipartConfig( multiPartConfig );
 
         final ServletRegistration.Dynamic appServlet = context.addServlet( "app", this.appServlet );
         appServlet.setLoadOnStartup( 4 );

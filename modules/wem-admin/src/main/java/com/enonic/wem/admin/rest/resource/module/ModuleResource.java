@@ -1,21 +1,22 @@
 package com.enonic.wem.admin.rest.resource.module;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
+
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
 
 import com.enonic.wem.admin.json.module.ListModuleJson;
 import com.enonic.wem.admin.json.module.ModuleSummaryJson;
@@ -34,7 +35,6 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.exporters.ModuleExporter;
 import com.enonic.wem.core.module.ModuleImporter;
-import com.enonic.wem.core.servlet.MultipartHelper;
 
 import static com.enonic.wem.api.command.Commands.module;
 
@@ -56,34 +56,30 @@ public class ModuleResource
 
     @POST
     @javax.ws.rs.Path("delete")
-    public ModuleDeleteResultJson delete( ModuleDeleteParams params )
-    {
-        DeleteModule command = Commands.module().delete().module( params.getModuleKey() );
-        boolean deleted = client.execute( command );
-        if ( deleted )
-        {
-            return ModuleDeleteResultJson.result( params.getModuleKey() );
-        }
-        else
-        {
-            return ModuleDeleteResultJson.error( "Module: '" + params.getModuleKey().toString() + "' as not found" );
+    public ModuleDeleteResultJson delete(ModuleDeleteParams params) {
+        DeleteModule command = Commands.module().delete().module(params.getModuleKey());
+        boolean deleted = client.execute(command);
+        if (deleted) {
+            return ModuleDeleteResultJson.result(params.getModuleKey());
+        } else {
+            return ModuleDeleteResultJson.error("Module: '" + params.getModuleKey().toString() + "' as not found");
         }
     }
 
     @POST
     @javax.ws.rs.Path("install")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public InstallModuleResultJson install( HttpServletRequest req )
-        throws Exception
+    public InstallModuleResultJson install( @FormDataParam("file") InputStream uploadedInputStream,
+                                            @FormDataParam("file") FormDataContentDisposition fileDetail )
+        throws IOException
     {
-        final Part part = req.getPart( "file" );
-        final String fileName = MultipartHelper.getFileName( part );
-        final Path tempDirectory = Files.createTempDirectory( "modules" );
+        final String fileName = fileDetail.getFileName();
 
+        final Path tempDirectory = Files.createTempDirectory( "modules" );
         try
         {
             final Path tempZipFile = tempDirectory.resolve( fileName );
-            Files.copy( part.getInputStream(), tempZipFile );
+            Files.copy( uploadedInputStream, tempZipFile );
             final ModuleImporter moduleImporter = new ModuleImporter();
             final Module importedModule;
             try
@@ -147,4 +143,5 @@ public class ModuleResource
             FileUtils.deleteDirectory( tempDirectory.toFile() );
         }
     }
+
 }

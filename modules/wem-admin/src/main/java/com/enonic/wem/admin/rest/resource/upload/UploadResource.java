@@ -1,10 +1,9 @@
 package com.enonic.wem.admin.rest.resource.upload;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,11 +15,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.common.collect.Lists;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.json.JsonResult;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
-import com.enonic.wem.core.servlet.MultipartHelper;
 
 @Path("upload")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,17 +30,19 @@ public final class UploadResource
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public JsonResult upload( final HttpServletRequest req )
+    public JsonResult upload( final FormDataMultiPart formDataMultiPart )
         throws Exception
     {
         final List<UploadItem> items = Lists.newArrayList();
-        final Part part = req.getPart( "file" );
 
-        if ( part != null )
+        final List<FormDataBodyPart> fields = formDataMultiPart.getFields( "file" );
+        if ( fields != null )
         {
-            upload( items, part );
+            for ( FormDataBodyPart field : fields )
+            {
+                upload( items, field.getValueAs( InputStream.class ), field );
+            }
         }
-
         return new UploadResult( items );
     }
 
@@ -67,13 +69,13 @@ public final class UploadResource
         return Response.ok( item.getFile(), mediaType ).build();
     }
 
-    private void upload( final List<UploadItem> items, final Part part )
+    private void upload( final List<UploadItem> items, final InputStream fileInputStream, final FormDataBodyPart formDataBodyPart )
         throws Exception
     {
-        final String name = MultipartHelper.getFileName( part );
-        final String mediaType = part.getContentType();
+        final String name = formDataBodyPart.getContentDisposition().getFileName();
+        final String mediaType = formDataBodyPart.getMediaType().toString();
 
-        final UploadItem item = this.uploadService.upload( name, mediaType, part.getInputStream() );
+        final UploadItem item = this.uploadService.upload( name, mediaType, fileInputStream );
         items.add( item );
     }
 
