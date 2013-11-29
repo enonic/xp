@@ -43,6 +43,8 @@ final class ContentJcrMapper
 
     static final String OWNER = "owner";
 
+    static final String NAME = "name";
+
     static final String DISPLAY_NAME = "displayName";
 
     static final String VERSION_ID = "versionId";
@@ -54,6 +56,7 @@ final class ContentJcrMapper
     void toJcr( final Content content, final Node contentNode )
         throws RepositoryException
     {
+        contentNode.setProperty( NAME, content.getName() );
         contentNode.setProperty( DRAFT, content.isDraft() );
         contentNode.setProperty( TYPE, content.getType() != null ? content.getType().toString() : null );
         contentNode.setProperty( FORM, content.getForm() != null ? formItemsJsonSerializer.toString( content.getForm() ) : null );

@@ -6,6 +6,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -42,9 +43,11 @@ public class ContentNodeTranslator
 
     public static final String PARENT_CONTENT_PATH_PATH = "parentContentPath";
 
+    private static final NodePath CONTENTS_ROOT_PATH = NodePath.newPath( "/content" ).build();
+
     public Node toNode( final Content content )
     {
-        final NodePath parentNodePath = createParentNodePath();
+        final NodePath parentNodePath = CONTENTS_ROOT_PATH;
 
         final RootDataSet rootDataSet = propertiesToRootDataSet( content );
 
@@ -57,11 +60,6 @@ public class ContentNodeTranslator
             rootDataSet( rootDataSet ).
             entityIndexConfig( entityIndexConfig ).
             build();
-    }
-
-    private NodePath createParentNodePath()
-    {
-        return NodePath.newPath( "/content" ).build();
     }
 
     public RootDataSet propertiesToRootDataSet( final Content content )
@@ -159,6 +157,7 @@ public class ContentNodeTranslator
 
         final Content.Builder builder = Content.newContent().
             id( ContentId.from( node.id().toString() ) ).
+            parentPath( ContentPath.from( node.path().getParentPath().removeFromBeginning( CONTENTS_ROOT_PATH ).toString() ) ).
             name( node.name() ).
             form( Form.newForm().addFormItems( formItems ).build() ).
             createdTime( node.getCreatedTime() ).

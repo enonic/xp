@@ -8,6 +8,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.serializer.DataXmlSerializer;
@@ -47,6 +48,8 @@ public class ContentXmlSerializer
 
     public void generate( Content content, Element contentEl )
     {
+        contentEl.addContent(
+            new Element( "parentPath" ).setText( content.getParentPath() != null ? content.getParentPath().toString() : "" ) );
         contentEl.addContent( new Element( "name" ).setText( content.getName() ) );
 
         if ( content.getType() != null )
@@ -82,6 +85,11 @@ public class ContentXmlSerializer
     public Content parse( final Element contentEl )
     {
         final Content.Builder contentBuilder = Content.newContent();
+        final String parentPath = contentEl.getChildText( "parentPath" );
+        if ( !StringUtils.isBlank( parentPath ) )
+        {
+            contentBuilder.parentPath( ContentPath.from( parentPath ) );
+        }
         final String name = contentEl.getChildText( "name" );
         if ( !StringUtils.isBlank( name ) )
         {

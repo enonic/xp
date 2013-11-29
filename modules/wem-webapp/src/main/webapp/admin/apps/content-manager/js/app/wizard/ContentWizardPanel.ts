@@ -4,8 +4,6 @@ module app_wizard {
 
         private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("common/images/default_content.png");
 
-        private persistedDraft:api_content.Content;
-
         private parentContent:api_content.Content;
 
         private contentType:api_schema_content.ContentType;
@@ -112,13 +110,8 @@ module app_wizard {
             this.persistNewDraft();
         }
 
-        setPersistedDraft(value:api_content.Content) {
-            this.persistedDraft = value;
-        }
-
         setPersistedItem(content:api_content.Content) {
             super.setPersistedItem(content);
-            this.persistedDraft = content;
 
             this.contentWizardHeader.initNames(content.getDisplayName(), content.getName());
             // setup displayName and name to be generated automatically
@@ -154,7 +147,7 @@ module app_wizard {
                           api_notify.showFeedback('Content draft was created!');
                           var content:api_content.Content = new api_content.Content(json.result);
 
-                          this.setPersistedDraft(content);
+                          this.setPersistedItem(content);
                       }
                 });
         }
@@ -164,6 +157,7 @@ module app_wizard {
             var contentData = this.contentForm.getContentData();
 
             var createRequest = new api_content.CreateContentRequest().
+                setDraft(false).
                 setName(this.contentWizardHeader.getName()).
                 setParent(this.parentContent.getPath()).
                 setContentType(this.contentType.getContentTypeName()).

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content>
-  <name/>
+  <parentPath>/</parentPath>
+  <name>mycontent</name>
   <type>unstructured</type>
   <data>
     <myInput type="String">A value</myInput>

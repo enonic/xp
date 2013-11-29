@@ -47,7 +47,7 @@ public class ContentJsonSerializer
         final ObjectNode jsonContent = objectMapper().createObjectNode();
 
         jsonContent.put( "id", content.getId() == null ? null : content.getId().toString() );
-        jsonContent.put( "path", content.getPath().toString() );
+        jsonContent.put( "parentPath", content.getParentPath() != null ? content.getParentPath().toString() : null );
         jsonContent.put( "name", content.getName() );
         jsonContent.put( "type", content.getType() != null ? content.getType().toString() : null );
         jsonContent.put( "displayName", content.getDisplayName() );
@@ -109,7 +109,13 @@ public class ContentJsonSerializer
         {
             contentBuilder.id( ContentId.from( id ) );
         }
-        contentBuilder.path( ContentPath.from( getStringValue( "path", contentNode, null ) ) );
+
+        final String parentPathAsString = getStringValue( "parentPath", contentNode, null );
+        if ( parentPathAsString != null )
+        {
+            contentBuilder.parentPath( ContentPath.from( parentPathAsString ) );
+        }
+        contentBuilder.name( getStringValue( "name", contentNode, null ) );
         contentBuilder.displayName( getStringValue( "displayName", contentNode, null ) );
         contentBuilder.owner( getUserKeyValue( "owner", contentNode ) );
         contentBuilder.creator( getUserKeyValue( "creator", contentNode ) );

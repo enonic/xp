@@ -25,7 +25,10 @@ public class ContentToNodeNameResolverTest
     public void resolve_when_path_has_no_elements_the_name_is_used()
         throws Exception
     {
-        final Content test = Content.newContent().name( "content" ).build();
+        final Content test = Content.newContent().
+            parentPath( ContentPath.ROOT ).
+            name( "content" ).
+            build();
 
         final String resolvedPath = ContentToNodeNameResolver.resolve( test );
         assertEquals( "content", resolvedPath );

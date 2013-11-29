@@ -77,6 +77,10 @@ public class GetRootContentHandlerTest
 
     private Content createContent( String name )
     {
-        return Content.newContent().name( name ).displayName( name ).modifiedTime( DateTime.now() ).createdTime( DateTime.now() ).build();
+        return Content.newContent().
+            name( name ).displayName( name ).
+            parentPath( ContentPath.ROOT ).
+            modifiedTime( DateTime.now() ).
+            createdTime( DateTime.now() ).build();
     }
 }

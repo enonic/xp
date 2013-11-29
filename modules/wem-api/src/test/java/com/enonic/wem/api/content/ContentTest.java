@@ -37,9 +37,19 @@ public class ContentTest
     }
 
     @Test
+    public void build_with_path_given_root_path()
+    {
+        Content content = Content.newContent().path( ContentPath.ROOT ).build();
+        assertEquals( null, content.getParentPath() );
+        assertEquals( "/", content.getPath().toString() );
+        assertEquals( "", content.getName() );
+    }
+
+    @Test
     public void isEmbedded()
     {
-        Content content = Content.newContent().path( ContentPath.from( "mySite:myParent/__embedded/myEmbedded" ) ).build();
+        ContentPath parentPath = ContentPath.from( "mySite:myParent/__embedded" );
+        Content content = Content.newContent().parentPath( parentPath ).name("MyEmbedded").build();
         assertEquals( true, content.isEmbedded() );
     }
 

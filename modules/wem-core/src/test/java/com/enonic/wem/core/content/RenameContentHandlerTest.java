@@ -12,6 +12,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
@@ -57,6 +58,7 @@ public class RenameContentHandlerTest
         final ContentId contentId = ContentId.from( "1fad493a-6a72-41a3-bac4-88aba3d83bcc" );
         final Content content = Content.newContent().
             id( contentId ).
+            parentPath( ContentPath.ROOT ).
             name( "myContent" ).
             displayName( "MyContent" ).
             owner( UserKey.superUser() ).

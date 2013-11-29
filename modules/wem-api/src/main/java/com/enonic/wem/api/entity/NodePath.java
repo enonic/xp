@@ -6,23 +6,23 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.Path;
+import com.enonic.wem.api.BasePath2;
 
 public class NodePath
-    extends Path<NodePath>
+    extends BasePath2<NodePath,NodePath.Element,NodePath.Builder>
 {
-    public final static NodePath ROOT = new NodePath( new Builder().absolute( true ).trailingDivider( false ) );
+    public final static NodePath ROOT = new NodePath( "/" );
 
     private static final char ELEMENT_DIVIDER = '/';
 
     public NodePath( final String path )
     {
-        super( newPath( path ) );
+        super( new Builder( path ) );
     }
 
     public NodePath( final NodePath parent, final String element )
     {
-        super( newPath( parent ).addElement( element ) );
+        super( new Builder( parent ).addElement( element ) );
     }
 
     public NodePath( final Builder builder )
@@ -45,7 +45,8 @@ public class NodePath
         {
             return this;
         }
-        return newNodePath( this ).absolute( true ).build();
+        final Builder builder = newNodePath( this );
+        return builder.absolute( true ).build();
     }
 
     public NodePath getParentPath()
@@ -87,13 +88,24 @@ public class NodePath
         return parentPaths;
     }
 
+    protected Builder newBuilder()
+    {
+        return new Builder();
+    }
+
+    @Override
+    protected Builder newBuilder( final NodePath source )
+    {
+        return new Builder( source );
+    }
+
     public static Builder newPath( final NodePath source )
     {
         Preconditions.checkNotNull( source, "source to build copy from not given" );
         return new Builder( source );
     }
 
-    public static NodePath.Builder newPath( final String path )
+    public static Builder newPath( final String path )
     {
         final Builder builder = new Builder();
         builder.elementDivider( ELEMENT_DIVIDER );
@@ -102,7 +114,7 @@ public class NodePath
     }
 
     public static class Element
-        extends Path.Element
+        extends BasePath2.Element
     {
         public Element( final String name )
         {
@@ -111,7 +123,7 @@ public class NodePath
     }
 
     public static class Builder
-        extends Path.Builder<NodePath.Builder>
+        extends BasePath2.Builder<Builder,NodePath>
     {
         public Builder()
         {
@@ -121,6 +133,16 @@ public class NodePath
         public Builder( final NodePath source )
         {
             super( source );
+        }
+
+        public Builder( final String path )
+        {
+            super( path, ELEMENT_DIVIDER );
+        }
+
+        protected Element newElement( String value )
+        {
+            return new Element( value );
         }
 
         public NodePath build()

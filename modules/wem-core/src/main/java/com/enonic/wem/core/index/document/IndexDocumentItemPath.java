@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.Path;
+import com.enonic.wem.api.BasePath2;
 import com.enonic.wem.api.data.DataPath;
 import com.enonic.wem.api.data.Property;
 
@@ -107,7 +107,7 @@ public class IndexDocumentItemPath
 
 
     public static class Element
-        extends Path.Element
+        extends BasePath2.Element
     {
         public Element( final String name )
         {

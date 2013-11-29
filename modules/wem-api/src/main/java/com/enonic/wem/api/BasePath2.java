@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
-public class Path<T extends Path>
+public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath2.Element, BUILDER extends BasePath2.Builder>
 {
     private static final char DEFAULT_ELEMENT_DIVIDER = '/';
 
@@ -20,31 +20,11 @@ public class Path<T extends Path>
 
     private final boolean trailingDivider;
 
-    private final ImmutableList<Element> elements;
+    private final ImmutableList<ELEMENT> elements;
 
     private final String refString;
 
-    public Path( final ImmutableList<Element> elements )
-    {
-        this( newPath().addElements( elements.iterator() ) );
-    }
-
-    public Path( final ImmutableList<Element> elements, final char elementDivider )
-    {
-        this( newPath().addElements( elements.iterator() ).elementDivider( elementDivider ) );
-    }
-
-    public Path( Path path, final char elementDivider )
-    {
-        this( newPath( path ).elementDivider( elementDivider ) );
-    }
-
-    public Path( String path, final char elementDivider )
-    {
-        this( newPath( path, elementDivider ) );
-    }
-
-    public Path( final Builder builder )
+    public BasePath2( final Builder builder )
     {
         this.elementDivider = builder.elementDivider != null ? builder.elementDivider : DEFAULT_ELEMENT_DIVIDER;
         this.absolute = builder.absolute;
@@ -85,9 +65,9 @@ public class Path<T extends Path>
         return this.trailingDivider;
     }
 
-    public Path<T> trimTrailingDivider()
+    public BasePath2<PATH,ELEMENT,BUILDER> trimTrailingDivider()
     {
-        return newPath( this ).trailingDivider( false ).build();
+        return newBuilder( (PATH)this ).trailingDivider( false ).build();
     }
 
     public int elementCount()
@@ -95,17 +75,17 @@ public class Path<T extends Path>
         return this.elements.size();
     }
 
-    public Iterator<Element> iterator()
+    public Iterator<ELEMENT> iterator()
     {
         return elements.iterator();
     }
 
-    protected Element getFirstElement()
+    protected ELEMENT getFirstElement()
     {
         return elements.get( 0 );
     }
 
-    protected Element getElement( final int index )
+    protected ELEMENT getElement( final int index )
     {
         return elements.get( index );
     }
@@ -115,14 +95,16 @@ public class Path<T extends Path>
         return elements.get( index ).toString();
     }
 
-    protected Element getLastElement()
+    protected ELEMENT getLastElement()
     {
         return elements.get( elements.size() - 1 );
     }
 
-    public Path getParentPath()
+    public PATH getParentPath()
     {
-        return new Path( new Builder( this ).removeLastElement() );
+        final Builder builder = newBuilder( (PATH) this );
+        builder.removeLastElement();
+        return (PATH) builder.build();
     }
 
     public Iterable<String> resolvePathElementNames()
@@ -133,6 +115,33 @@ public class Path<T extends Path>
             pathElements.add( element.toString() );
         }
         return pathElements;
+    }
+
+    public <T extends BasePath2> T removeFromBeginning( final T path )
+    {
+        if ( path.elementCount() == 0 )
+        {
+            //noinspection unchecked
+            return (T) this;
+        }
+
+        for ( int i = 0; i < path.elementCount(); i++ )
+        {
+            if ( !path.getElement( i ).equals( this.getElement( i ) ) )
+            {
+                //noinspection unchecked
+                return (T) this;
+            }
+        }
+
+        final Builder builder = this.newBuilder().absolute( this.isAbsolute() ).trailingDivider( this.hasTrailingDivider() );
+        for ( int i = path.elementCount(); i < this.elementCount(); i++ )
+        {
+            builder.addElement( this.getElement( i ) );
+        }
+
+        //noinspection unchecked
+        return (T) builder.build();
     }
 
     private String doToString()
@@ -167,12 +176,12 @@ public class Path<T extends Path>
         {
             return true;
         }
-        if ( !( o instanceof Path ) )
+        if ( !( o instanceof BasePath2 ) )
         {
             return false;
         }
 
-        final Path path = (Path) o;
+        final BasePath2 path = (BasePath2) o;
         return Objects.equals( absolute, path.absolute ) &&
             Objects.equals( elementDivider, path.elementDivider ) &&
             Objects.equals( trailingDivider, path.trailingDivider ) &&
@@ -189,7 +198,6 @@ public class Path<T extends Path>
     {
         return refString;
     }
-
 
     public static class Element
     {
@@ -229,17 +237,16 @@ public class Path<T extends Path>
         }
     }
 
-    protected static Builder newPath()
-    {
-        return new Builder();
-    }
+    protected abstract Builder<BUILDER,PATH> newBuilder();
 
-    protected static Builder newPath( final String path, final char elementDivider )
+    protected abstract Builder<BUILDER,PATH> newBuilder( PATH source );
+
+    /*protected static Builder newPath( final String path, final char elementDivider )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
         if ( path.length() == 0 )
         {
-            return new Builder().absolute( false ).trailingDivider( false );
+            return newBuilder().absolute( false ).trailingDivider( false );
         }
 
         final boolean absolute = path.charAt( 0 ) == elementDivider;
@@ -254,14 +261,9 @@ public class Path<T extends Path>
             builder.addElement( pathElement );
         }
         return builder;
-    }
+    }*/
 
-    protected static Builder newPath( final Path source )
-    {
-        return new Builder( source );
-    }
-
-    protected static class Builder<T extends Builder>
+    public static abstract class Builder<B extends Builder, P extends BasePath2>
     {
         private Character elementDivider;
 
@@ -273,7 +275,7 @@ public class Path<T extends Path>
 
         private ImmutableList.Builder<Element> elementListBuilder = new ImmutableList.Builder<>();
 
-        public Builder( final Path source )
+        public Builder( final BasePath2 source )
         {
             Preconditions.checkNotNull( source, "source to build copy from not given" );
             this.elementDivider = source.elementDivider;
@@ -282,36 +284,42 @@ public class Path<T extends Path>
             this.elements = source.elements;
         }
 
+        public Builder( final String elements, final char elementDivider )
+        {
+            this.elementDivider = elementDivider;
+            this.elements( elements );
+        }
+
         public Builder()
         {
 
         }
 
         @SuppressWarnings("unchecked")
-        private T getThis()
+        private B getThis()
         {
-            return (T) this;
+            return (B) this;
         }
 
-        public T elementDivider( final char elementDivider )
+        public B elementDivider( final char elementDivider )
         {
             this.elementDivider = elementDivider;
             return getThis();
         }
 
-        public T trailingDivider( final boolean value )
+        public B trailingDivider( final boolean value )
         {
             this.trailingDivider = value;
             return getThis();
         }
 
-        public T absolute( final boolean value )
+        public B absolute( final boolean value )
         {
             this.absolute = value;
             return getThis();
         }
 
-        public T elements( final String elements )
+        public B elements( final String elements )
         {
             if ( elements.length() == 0 )
             {
@@ -334,7 +342,7 @@ public class Path<T extends Path>
             return getThis();
         }
 
-        public T addElement( final String value )
+        public B addElement( final String value )
         {
             if ( this.elements != null )
             {
@@ -343,18 +351,23 @@ public class Path<T extends Path>
                 {
                     newList.add( element );
                 }
-                newList.add( new Element( value ) );
+                newList.add( newElement( value ) );
                 this.elementListBuilder = newList;
                 this.elements = null;
             }
             else
             {
-                this.elementListBuilder.add( new Element( value ) );
+                this.elementListBuilder.add( newElement( value ) );
             }
             return getThis();
         }
 
-        public T addElement( final Element value )
+        protected Element newElement( final String value )
+        {
+            return new Element( value );
+        }
+
+        public B addElement( final Element value )
         {
             if ( this.elements != null )
             {
@@ -375,13 +388,13 @@ public class Path<T extends Path>
             return getThis();
         }
 
-        public T addElements( final Iterator<Element> elements )
+        public B addElements( final Iterator<Element> elements )
         {
             this.elementListBuilder.addAll( elements );
             return getThis();
         }
 
-        public T removeLastElement()
+        public B removeLastElement()
         {
             if ( this.elements != null )
             {
@@ -407,7 +420,7 @@ public class Path<T extends Path>
             return getThis();
         }
 
-        public T removeFirstElement()
+        public B removeFirstElement()
         {
             if ( this.elements != null )
             {
@@ -433,9 +446,6 @@ public class Path<T extends Path>
             return getThis();
         }
 
-        public Path build()
-        {
-            return new Path( this );
-        }
+        public abstract P build();
     }
 }

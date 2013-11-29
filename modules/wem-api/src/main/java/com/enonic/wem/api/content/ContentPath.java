@@ -52,18 +52,13 @@ public final class ContentPath
             final String pathElement = elements.get( i );
             if ( EMBEDDED.equals( pathElement ) )
             {
-                final boolean lastElement = i == elements.size() - 1;
-                if ( lastElement )
-                {
-                    throw new IllegalArgumentException( "Missing name of embedded Content: " + refString );
-                }
                 final boolean firstElement = i == 0;
                 if ( firstElement )
                 {
                     throw new IllegalArgumentException( "Expected a path to a Content before the embedded marker: " + refString );
                 }
-                final boolean notSecondToLastElement = i != elements.size() - 2;
-                if ( notSecondToLastElement )
+                final boolean moreThanOneElementAfterEmbeddedMarker = this.elements.size() - i > 2;
+                if ( moreThanOneElementAfterEmbeddedMarker )
                 {
                     throw new IllegalArgumentException( "Expected only one element after the embedded marker: " + refString );
                 }

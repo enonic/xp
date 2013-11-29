@@ -44,6 +44,54 @@ public class NodePathTest
     }
 
     @Test
+    public void isEmpty()
+    {
+        assertEquals( false, new NodePath( "first" ).isEmpty() );
+        assertEquals( true, new NodePath( "" ).isEmpty() );
+    }
+
+    @Test
+    public void isRoot()
+    {
+        assertEquals( true, new NodePath( "/" ).isRoot() );
+    }
+
+    @Test
+    public void isAbsolute()
+    {
+        assertEquals( true, new NodePath( "/first" ).isAbsolute() );
+        assertEquals( false, new NodePath( "first" ).isAbsolute() );
+    }
+
+    @Test
+    public void hasTrailingDivider()
+    {
+        assertEquals( true, new NodePath( "first/" ).hasTrailingDivider() );
+        assertEquals( false, new NodePath( "first" ).hasTrailingDivider() );
+        assertEquals( false, new NodePath( "/" ).hasTrailingDivider() );
+    }
+
+    @Test
+    public void trimTrailingDivider()
+    {
+        assertEquals( "first", new NodePath( "first/" ).trimTrailingDivider().toString() );
+    }
+
+    @Test
+    public void tostring()
+    {
+        assertEquals( "", new NodePath( "" ).toString() );
+        assertEquals( "/", new NodePath( "/" ).toString() );
+        assertEquals( "first", new NodePath( "first" ).toString() );
+        assertEquals( "/first", new NodePath( "/first" ).toString() );
+        assertEquals( "first/", new NodePath( "first/" ).toString() );
+        assertEquals( "first/second", new NodePath( "first/second" ).toString() );
+        assertEquals( "/first/second", new NodePath( "/first/second" ).toString() );
+        assertEquals( "/first/second/", new NodePath( "/first/second/" ).toString() );
+        assertEquals( "first/second/", new NodePath( "first/second/" ).toString() );
+    }
+
+    @Test
     public void ROOT()
     {
         assertEquals( "/", NodePath.ROOT.toString() );
@@ -62,5 +110,13 @@ public class NodePathTest
         assertEquals( "/one/two", parentPaths.get( 0 ).toString() );
         assertEquals( "/one", parentPaths.get( 1 ).toString() );
         assertEquals( "/", parentPaths.get( 2 ).toString() );
+    }
+
+    @Test
+    public void removeFromBeginning()
+    {
+        NodePath nodePath = new NodePath( "/one/two/three/four" );
+        NodePath removedFrom = nodePath.removeFromBeginning( new NodePath( "/one/two" ) );
+        assertEquals( "/three/four", removedFrom.toString() );
     }
 }

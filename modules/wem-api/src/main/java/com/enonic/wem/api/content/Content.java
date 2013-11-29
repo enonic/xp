@@ -30,6 +30,10 @@ public final class Content
 
     private final ContentTypeName type;
 
+    private final ContentPath parentPath;
+
+    private final String name;
+
     private final ContentPath path;
 
     private final ContentId id;
@@ -58,7 +62,10 @@ public final class Content
 
     private Content( final BaseBuilder builder )
     {
-        Preconditions.checkNotNull( builder.path, "path is mandatory for a content" );
+        if ( builder.parentPath != null && builder.name == null )
+        {
+            throw new IllegalArgumentException( "name cannot be null when parentPath is given" );
+        }
 
         if ( builder.type == null )
         {
@@ -72,7 +79,9 @@ public final class Content
         this.draft = builder.draft;
         this.displayName = builder.displayName;
         this.type = builder.type;
-        this.path = builder.path;
+        this.name = builder.name;
+        this.parentPath = builder.parentPath;
+        this.path = resolvePath( builder );
         this.id = builder.contentId;
         this.form = builder.form;
         this.contentData = builder.contentData;
@@ -85,6 +94,29 @@ public final class Content
         this.childrenIds = builder.childrenIdsBuilder.build();
         this.site = builder.site;
         this.page = builder.page;
+    }
+
+    private ContentPath resolvePath( final BaseBuilder builder )
+    {
+        if ( builder.parentPath == null && builder.name == null )
+        {
+            return null;
+        }
+        else if ( builder.parentPath == null )
+        {
+            Preconditions.checkArgument( builder.name.equals( "" ),
+                                         "Expected name to be blank when parentPath is null. Or if a name is wanted, then a parentPath is required" );
+            return ContentPath.ROOT;
+        }
+        else
+        {
+            return ContentPath.from( builder.parentPath, builder.name );
+        }
+    }
+
+    public ContentPath getParentPath()
+    {
+        return parentPath;
     }
 
     public ContentPath getPath()
@@ -104,14 +136,7 @@ public final class Content
 
     public String getName()
     {
-        if ( path.hasName() )
-        {
-            return path.getName();
-        }
-        else
-        {
-            return null;
-        }
+        return this.name;
     }
 
     public boolean isDraft()
@@ -238,7 +263,9 @@ public final class Content
     {
         boolean draft;
 
-        ContentPath path;
+        ContentPath parentPath;
+
+        String name;
 
         ContentId contentId;
 
@@ -270,7 +297,7 @@ public final class Content
 
         BaseBuilder()
         {
-            this.path = ContentPath.ROOT;
+            this.name = "";
             this.contentData = new ContentData();
             this.childrenIdsBuilder = ImmutableList.builder();
         }
@@ -279,7 +306,8 @@ public final class Content
         {
             this.contentId = content.id;
             this.draft = content.draft;
-            this.path = content.path;
+            this.parentPath = content.parentPath;
+            this.name = content.name;
             this.type = content.type;
             this.form = content.form; // TODO make DataSet immutable, or make copy
             this.contentData = content.contentData; // TODO make DataSet immutable, or make copy
@@ -381,19 +409,35 @@ public final class Content
             super( content );
         }
 
-        public Builder path( final ContentPath path )
+        public Builder parentPath( final ContentPath path )
         {
-            this.path = path;
+            this.parentPath = path;
             return this;
         }
 
         public Builder name( final String name )
         {
-            if ( this.path == null )
+            this.name = name;
+            return this;
+        }
+
+        public Builder path( final String path )
+        {
+            return path( ContentPath.from(
+                path ) );
+        }
+
+        public Builder path( final ContentPath path )
+        {
+            this.parentPath = path.getParentPath();
+            if ( path.elementCount() > 0 )
             {
-                path = ContentPath.ROOT;
+                this.name = path.getElement( path.elementCount() - 1 );
             }
-            this.path = this.path.withName( name );
+            else
+            {
+                this.name = "";
+            }
             return this;
         }
 

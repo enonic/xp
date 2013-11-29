@@ -122,8 +122,8 @@ public class ContentPathTest
         assertEquals( false, ContentPath.from( "/parent/child" ).isPathToEmbeddedContent() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void given_no_name_for_embedded_content_then_exception_is_thrown()
+    @Test
+    public void given_no_name_for_embedded_content_then_no_exception_is_thrown()
         throws Exception
     {
         ContentPath.from( "/parent/__embedded/" ).isPathToEmbeddedContent();

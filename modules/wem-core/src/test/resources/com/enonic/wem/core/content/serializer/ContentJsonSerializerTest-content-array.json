@@ -1,13 +1,13 @@
 {
     "id": null,
-    "path": "/",
-    "name": null,
+    "parentPath": "/",
+    "name": "mycontent",
     "type": "my_type",
     "displayName": null,
     "owner": null,
     "creator": null,
     "modifier": null,
-    "isRoot": true,
+    "isRoot": false,
     "modifiedTime": null,
     "createdTime": null,
     "data": [

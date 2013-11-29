@@ -130,6 +130,7 @@ public class ContentNodeTranslatorTest
         final Content myContent = Content.newContent().
             id( ContentId.from( "myId" ) ).
             displayName( "myDisplayName" ).
+            parentPath( ContentPath.ROOT ).
             name( "myContent" ).
             path( ContentPath.from( "/myPath" ) ).
             type( ContentTypeName.from( "my-content-type" ) ).
@@ -150,8 +151,7 @@ public class ContentNodeTranslatorTest
         assertNotNull( translatedContent.getForm() );
         assertEquals( myContent.getForm(), translatedContent.getForm() );
         assertNotNull( translatedContent.getPath() );
-        // TODO: This will not match for now, since the space is removed when translating to Node
-        //assertEquals( myContent.getPath(), translatedContent.getPath() );
+        assertEquals( myContent.getPath(), translatedContent.getPath() );
         assertNotNull( translatedContent.getName() );
         assertEquals( myContent.getName(), translatedContent.getName() );
         Assert.assertNotNull( contentData );

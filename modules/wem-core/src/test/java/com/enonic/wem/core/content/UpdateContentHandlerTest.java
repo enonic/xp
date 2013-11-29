@@ -200,6 +200,7 @@ public class UpdateContentHandlerTest
     {
         return newContent().
             id( ContentId.from( "1" ) ).
+            parentPath( ContentPath.ROOT ).
             name( "myContent" ).
             createdTime( CREATED_TIME ).
             displayName( "MyContent" ).

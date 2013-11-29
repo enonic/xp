@@ -52,7 +52,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void property()
     {
-        Content content = newContent().build();
+        Content content = newContent().path( "/mycontent" ).build();
         content.getContentData().setProperty( "myInput", new Value.String( "A value" ) );
 
         String serialized = toString( content );
@@ -72,7 +72,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void set()
     {
-        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet.myOtherInput", new Value.String( "2" ) );
 
@@ -96,7 +96,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_values()
     {
-        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "myArray[1]", new Value.String( "2" ) );
 
@@ -120,7 +120,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_set()
     {
-        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet.myArray[1]", new Value.String( "2" ) );
 
@@ -159,7 +159,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_set()
     {
-        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet[0].myInput", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet[0].myOtherInput", new Value.String( "a" ) );
         content.getContentData().setProperty( "mySet[1].myInput", new Value.String( "2" ) );
@@ -217,7 +217,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_array()
     {
-        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet[0].myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet[0].myArray[1]", new Value.String( "2" ) );
         content.getContentData().setProperty( "mySet[1].myArray[0]", new Value.String( "3" ) );
@@ -396,7 +396,7 @@ public abstract class AbstractContentSerializerTest
             creator( AccountKey.superUser() ).
             modifier( AccountKey.anonymous() ).
             displayName( "My content" ).
-            path( ContentPath.from( "site1/mycontent" ) ).
+            path( ContentPath.from( "/site1/mycontent" ) ).
             build();
         content.getContentData().setProperty( "mySet[0].myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet[0].myArray[1]", new Value.String( "2" ) );
