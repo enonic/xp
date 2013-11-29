@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page.rendering;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.Part;
+import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.core.rendering.Context;
 import com.enonic.wem.core.rendering.RenderablesRegister;
 import com.enonic.wem.core.rendering.Renderer;
@@ -13,7 +13,7 @@ public class PartRendererFactory
 {
     static void register()
     {
-        RenderablesRegister.get().register( Part.class, new PartRendererFactory() );
+        RenderablesRegister.get().register( PartComponent.class, new PartRendererFactory() );
     }
 
     private PartRendererFactory()

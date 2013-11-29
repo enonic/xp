@@ -2,7 +2,7 @@ package com.enonic.wem.xml.content.page;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.ImageDescriptor;
+import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.BaseXmlSerializerTest;

@@ -1,12 +1,14 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.part;
 
+
+import com.enonic.wem.api.content.page.Template;
 
 public final class PartTemplate
     extends Template<PartTemplateName>
 {
     private PartTemplate( final Builder builder )
     {
-        super( builder.name, builder.displayName, builder.descriptor, builder.config );
+        super( builder );
     }
 
     public static Builder newPartTemplate()

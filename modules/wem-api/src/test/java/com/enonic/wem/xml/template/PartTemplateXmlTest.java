@@ -2,8 +2,8 @@ package com.enonic.wem.xml.template;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.PartTemplate;
-import com.enonic.wem.api.content.page.PartTemplateName;
+import com.enonic.wem.api.content.page.part.PartTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleResourceKey;

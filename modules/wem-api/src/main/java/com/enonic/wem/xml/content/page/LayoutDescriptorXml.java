@@ -2,7 +2,7 @@ package com.enonic.wem.xml.content.page;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.api.content.page.LayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 
 @XmlRootElement(name = "layout-component")
 public final class LayoutDescriptorXml

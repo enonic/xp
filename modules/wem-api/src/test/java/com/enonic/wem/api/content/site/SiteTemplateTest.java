@@ -4,12 +4,12 @@ import org.junit.Test;
 
 import com.google.common.collect.Iterators;
 
-import com.enonic.wem.api.content.page.LayoutTemplate;
-import com.enonic.wem.api.content.page.LayoutTemplateName;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateName;
-import com.enonic.wem.api.content.page.PartTemplate;
-import com.enonic.wem.api.content.page.PartTemplateName;
+import com.enonic.wem.api.content.page.layout.LayoutTemplate;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
+import com.enonic.wem.api.content.page.part.PartTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKeys;

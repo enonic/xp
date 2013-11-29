@@ -2,6 +2,10 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.layout.LayoutComponent;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
+import com.enonic.wem.api.content.page.part.PartComponent;
+import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 
@@ -30,12 +34,12 @@ public class ComponentsTest
         RootDataSet partConfig = new RootDataSet();
         partConfig.addProperty( "width", new Value.Long( 150 ) );
 
-        Part part = Part.newPart().
+        PartComponent partComponent = PartComponent.newPart().
             partTemplateName( new PartTemplateName( "partTemplateName" ) ).
             config( partConfig ).
             build();
 
-        assertEquals( "partTemplateName", part.getTemplateName().toString() );
+        assertEquals( "partTemplateName", partComponent.getTemplateName().toString() );
     }
 
     @Test
@@ -44,11 +48,11 @@ public class ComponentsTest
         RootDataSet layoutConfig = new RootDataSet();
         layoutConfig.addProperty( "columns", new Value.Long( 2 ) );
 
-        Layout layout = Layout.newLayout().
+        LayoutComponent layoutComponent = LayoutComponent.newLayout().
             layoutTemplateName( new LayoutTemplateName( "layoutTemplateName" ) ).
             config( layoutConfig ).
             build();
 
-        assertEquals( "layoutTemplateName", layout.getTemplateName().toString() );
+        assertEquals( "layoutTemplateName", layoutComponent.getTemplateName().toString() );
     }
 }

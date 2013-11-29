@@ -2,8 +2,8 @@ package com.enonic.wem.xml.template;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.api.content.page.ImageTemplate;
-import com.enonic.wem.api.content.page.ImageTemplateName;
+import com.enonic.wem.api.content.page.image.ImageTemplate;
+import com.enonic.wem.api.content.page.image.ImageTemplateName;
 
 @XmlRootElement(name = "image-template")
 public final class ImageTemplateXml

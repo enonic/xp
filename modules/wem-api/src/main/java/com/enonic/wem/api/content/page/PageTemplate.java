@@ -10,7 +10,7 @@ public final class PageTemplate
 
     private PageTemplate( final Builder builder )
     {
-        super( builder.name, builder.displayName, builder.descriptor, builder.config );
+        super( builder );
         this.canRender = builder.canRender != null ? builder.canRender : ContentTypeNames.empty();
     }
 

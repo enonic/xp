@@ -2,8 +2,8 @@ package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.ImageTemplate;
-import com.enonic.wem.api.content.page.ImageTemplateName;
+import com.enonic.wem.api.content.page.image.ImageTemplate;
+import com.enonic.wem.api.content.page.image.ImageTemplateName;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;

@@ -2,7 +2,7 @@ package com.enonic.wem.xml.content.page;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.api.content.page.PartDescriptor;
+import com.enonic.wem.api.content.page.part.PartDescriptor;
 
 @XmlRootElement(name = "part-component")
 public final class PartDescriptorXml

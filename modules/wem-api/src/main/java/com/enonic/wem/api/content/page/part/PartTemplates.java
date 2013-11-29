@@ -1,4 +1,4 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.part;
 
 import java.util.Collection;
 

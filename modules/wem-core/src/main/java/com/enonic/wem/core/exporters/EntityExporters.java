@@ -3,10 +3,10 @@ package com.enonic.wem.core.exporters;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.enonic.wem.api.content.page.ImageTemplate;
-import com.enonic.wem.api.content.page.LayoutTemplate;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PartTemplate;
+import com.enonic.wem.api.content.page.image.ImageTemplate;
+import com.enonic.wem.api.content.page.layout.LayoutTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.Module;
 

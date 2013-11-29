@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page.rendering;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.Layout;
+import com.enonic.wem.api.content.page.layout.LayoutComponent;
 import com.enonic.wem.core.rendering.Context;
 import com.enonic.wem.core.rendering.RenderablesRegister;
 import com.enonic.wem.core.rendering.Renderer;
@@ -13,7 +13,7 @@ public class LayoutRendererFactory
 {
     static void register()
     {
-        RenderablesRegister.get().register( Layout.class, new LayoutRendererFactory() );
+        RenderablesRegister.get().register( LayoutComponent.class, new LayoutRendererFactory() );
     }
 
     private LayoutRendererFactory()

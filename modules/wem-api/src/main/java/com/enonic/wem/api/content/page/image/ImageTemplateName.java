@@ -1,5 +1,7 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.image;
 
+
+import com.enonic.wem.api.content.page.TemplateName;
 
 public class ImageTemplateName
     extends TemplateName

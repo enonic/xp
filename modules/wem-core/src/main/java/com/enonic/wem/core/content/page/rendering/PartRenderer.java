@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.page.rendering;
 
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.Part;
+import com.enonic.wem.api.content.page.part.PartComponent;
 import com.enonic.wem.core.rendering.BaseRenderer;
 import com.enonic.wem.core.rendering.Context;
 import com.enonic.wem.core.rendering.Renderer;
@@ -10,7 +10,7 @@ import com.enonic.wem.core.rendering.RenderingResult;
 
 public class PartRenderer
     extends BaseRenderer
-    implements Renderer<Part>
+    implements Renderer<PartComponent>
 {
     public PartRenderer( final Client client, final Context context )
     {
@@ -18,7 +18,7 @@ public class PartRenderer
     }
 
     @Override
-    public RenderingResult execute( final Part part )
+    public RenderingResult execute( final PartComponent partComponent )
     {
         return null;
     }

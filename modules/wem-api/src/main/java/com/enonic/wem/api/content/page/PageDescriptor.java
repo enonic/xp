@@ -6,7 +6,7 @@ public final class PageDescriptor
 {
     private PageDescriptor( final Builder builder )
     {
-        super( builder.name, builder.displayName, builder.controllerResource, builder.config );
+        super( builder );
     }
 
     public static PageDescriptor.Builder newPageDescriptor()

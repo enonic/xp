@@ -14,13 +14,12 @@ public abstract class BaseDescriptor
 
     private final Form config;
 
-    protected BaseDescriptor( final ComponentDescriptorName name, final String displayName, final ModuleResourceKey controllerResource,
-                              final Form config )
+    protected BaseDescriptor( final BaseDescriptorBuilder builder )
     {
-        this.name = name;
-        this.displayName = displayName;
-        this.controllerResource = controllerResource;
-        this.config = config != null ? config : Form.newForm().build();
+        this.name = builder.name;
+        this.displayName = builder.displayName;
+        this.controllerResource = builder.controllerResource;
+        this.config = builder.config != null ? builder.config : Form.newForm().build();
     }
 
     @Override

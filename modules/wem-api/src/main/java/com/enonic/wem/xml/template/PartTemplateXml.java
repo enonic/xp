@@ -2,8 +2,8 @@ package com.enonic.wem.xml.template;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.api.content.page.PartTemplate;
-import com.enonic.wem.api.content.page.PartTemplateName;
+import com.enonic.wem.api.content.page.part.PartTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplateName;
 
 @XmlRootElement(name = "part-template")
 public final class PartTemplateXml

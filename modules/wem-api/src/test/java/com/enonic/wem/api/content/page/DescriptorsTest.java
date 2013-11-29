@@ -2,6 +2,9 @@ package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.image.ImageDescriptor;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
+import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleResourceKey;

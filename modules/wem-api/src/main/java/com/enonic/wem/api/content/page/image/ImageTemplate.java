@@ -1,12 +1,14 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.image;
 
+
+import com.enonic.wem.api.content.page.Template;
 
 public final class ImageTemplate
     extends Template<ImageTemplateName>
 {
     private ImageTemplate( final Builder builder )
     {
-        super( builder.name, builder.displayName, builder.descriptor, builder.config );
+        super( builder );
     }
 
     public static Builder newImageTemplate()

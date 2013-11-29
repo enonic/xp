@@ -1,7 +1,7 @@
 package com.enonic.wem.core.content.page.rendering;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.content.page.Image;
+import com.enonic.wem.api.content.page.image.ImageComponent;
 import com.enonic.wem.core.rendering.Context;
 import com.enonic.wem.core.rendering.RenderablesRegister;
 import com.enonic.wem.core.rendering.Renderer;
@@ -13,7 +13,7 @@ public class ImageRendererFactory
 {
     static void register()
     {
-        RenderablesRegister.get().register( Image.class, new ImageRendererFactory() );
+        RenderablesRegister.get().register( ImageComponent.class, new ImageRendererFactory() );
     }
 
     private ImageRendererFactory()

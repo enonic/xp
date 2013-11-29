@@ -3,7 +3,7 @@ package com.enonic.wem.core.exporters;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import com.enonic.wem.api.content.page.ImageTemplate;
+import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.xml.XmlSerializers;
 import com.enonic.wem.xml.template.ImageTemplateXml;
 

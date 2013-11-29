@@ -13,12 +13,12 @@ public abstract class Template<NAME extends TemplateName>
 
     private final RootDataSet config;
 
-    protected Template( final NAME name, final String displayName, final ModuleResourceKey descriptor, final RootDataSet config )
+    protected Template( final BaseTemplateBuilder builder )
     {
-        this.name = name;
-        this.displayName = displayName;
-        this.descriptor = descriptor;
-        this.config = config;
+        this.name = (NAME) builder.name;
+        this.displayName = builder.displayName;
+        this.descriptor = builder.descriptor;
+        this.config = builder.config;
     }
 
     public NAME getName()

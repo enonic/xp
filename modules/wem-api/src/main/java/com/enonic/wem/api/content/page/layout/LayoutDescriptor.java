@@ -1,11 +1,13 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.layout;
+
+import com.enonic.wem.api.content.page.BaseDescriptor;
 
 public class LayoutDescriptor
     extends BaseDescriptor
 {
     private LayoutDescriptor( final Builder builder )
     {
-        super( builder.name, builder.displayName, builder.controllerResource, builder.config );
+        super( builder );
     }
 
     public static LayoutDescriptor.Builder newLayoutDescriptor()

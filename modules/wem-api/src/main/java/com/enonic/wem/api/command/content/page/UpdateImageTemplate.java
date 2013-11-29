@@ -4,8 +4,8 @@ package com.enonic.wem.api.command.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.ImageTemplate;
-import com.enonic.wem.api.content.page.ImageTemplateKey;
+import com.enonic.wem.api.content.page.image.ImageTemplate;
+import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 
 public final class UpdateImageTemplate
     extends Command<Boolean>

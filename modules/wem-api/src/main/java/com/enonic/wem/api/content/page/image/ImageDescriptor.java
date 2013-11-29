@@ -1,12 +1,14 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.image;
 
+
+import com.enonic.wem.api.content.page.BaseDescriptor;
 
 public final class ImageDescriptor
     extends BaseDescriptor
 {
     private ImageDescriptor( final Builder builder )
     {
-        super( builder.name, builder.displayName, builder.controllerResource, builder.config );
+        super( builder );
     }
 
     public static ImageDescriptor.Builder newImageDescriptor()

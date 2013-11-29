@@ -1,16 +1,17 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.image;
 
 
+import com.enonic.wem.api.content.page.BasePageComponent;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
-public class Image
-    extends PageComponent<ImageTemplateName>
+public class ImageComponent
+    extends BasePageComponent<ImageTemplateName>
     implements RegionPlaceableComponent
 {
     private final RootDataSet config;
 
-    public Image( final Builder builder )
+    public ImageComponent( final Builder builder )
     {
         super( builder.imageTemplateName );
         this.config = builder.config;
@@ -49,9 +50,9 @@ public class Image
             return this;
         }
 
-        public Image build()
+        public ImageComponent build()
         {
-            return new Image( this );
+            return new ImageComponent( this );
         }
     }
 

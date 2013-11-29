@@ -4,7 +4,7 @@ package com.enonic.wem.api.command.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.LayoutTemplateKey;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 
 public final class DeleteLayoutTemplate
     extends Command<Boolean>

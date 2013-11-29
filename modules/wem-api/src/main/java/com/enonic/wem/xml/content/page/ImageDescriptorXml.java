@@ -2,7 +2,7 @@ package com.enonic.wem.xml.content.page;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.api.content.page.ImageDescriptor;
+import com.enonic.wem.api.content.page.image.ImageDescriptor;
 
 @XmlRootElement(name = "image-component")
 public final class ImageDescriptorXml

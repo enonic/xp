@@ -4,7 +4,7 @@ package com.enonic.wem.api.command.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.PartTemplateKey;
+import com.enonic.wem.api.content.page.part.PartTemplateKey;
 
 public final class DeletePartTemplate
     extends Command<Boolean>

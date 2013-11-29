@@ -1,12 +1,14 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.part;
 
+
+import com.enonic.wem.api.content.page.BaseDescriptor;
 
 public class PartDescriptor
     extends BaseDescriptor
 {
     private PartDescriptor( final Builder builder )
     {
-        super( builder.name, builder.displayName, builder.controllerResource, builder.config );
+        super( builder );
     }
 
     public static PartDescriptor.Builder newPartDescriptor()

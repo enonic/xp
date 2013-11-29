@@ -2,8 +2,8 @@ package com.enonic.wem.xml.template;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.api.content.page.LayoutTemplate;
-import com.enonic.wem.api.content.page.LayoutTemplateName;
+import com.enonic.wem.api.content.page.layout.LayoutTemplate;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
 
 @XmlRootElement(name = "layout-template")
 public final class LayoutTemplateXml

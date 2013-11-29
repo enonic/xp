@@ -1,16 +1,17 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.part;
 
 
+import com.enonic.wem.api.content.page.BasePageComponent;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
-public final class Part
-    extends PageComponent<PartTemplateName>
+public final class PartComponent
+    extends BasePageComponent<PartTemplateName>
     implements RegionPlaceableComponent
 {
     private final RootDataSet config;
 
-    public Part( final Builder builder )
+    public PartComponent( final Builder builder )
     {
         super( builder.partTemplateName );
         this.config = builder.config;
@@ -49,9 +50,9 @@ public final class Part
             return this;
         }
 
-        public Part build()
+        public PartComponent build()
         {
-            return new Part( this );
+            return new PartComponent( this );
         }
     }
 }

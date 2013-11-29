@@ -4,8 +4,8 @@ package com.enonic.wem.api.command.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.LayoutTemplate;
-import com.enonic.wem.api.content.page.LayoutTemplateKey;
+import com.enonic.wem.api.content.page.layout.LayoutTemplate;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 
 public class GetLayoutTemplateByKey
     extends Command<LayoutTemplate>

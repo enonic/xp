@@ -1,17 +1,17 @@
-package com.enonic.wem.api.content.page;
+package com.enonic.wem.api.content.page.part;
 
 
 import java.util.Objects;
 
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 
-public class LayoutTemplateKey
+public class PartTemplateKey
 {
     private final SiteTemplateKey siteTemplateKey;
 
-    private final LayoutTemplateName templateName;
+    private final PartTemplateName templateName;
 
-    public LayoutTemplateKey( final SiteTemplateKey siteTemplateKey, final LayoutTemplateName templateName )
+    public PartTemplateKey( final SiteTemplateKey siteTemplateKey, final PartTemplateName templateName )
     {
         this.siteTemplateKey = siteTemplateKey;
         this.templateName = templateName;
@@ -22,7 +22,7 @@ public class LayoutTemplateKey
         return siteTemplateKey;
     }
 
-    public LayoutTemplateName getTemplateName()
+    public PartTemplateName getTemplateName()
     {
         return templateName;
     }
@@ -34,12 +34,12 @@ public class LayoutTemplateKey
         {
             return true;
         }
-        if ( !( o instanceof LayoutTemplateKey ) )
+        if ( !( o instanceof PartTemplateKey ) )
         {
             return false;
         }
 
-        final LayoutTemplateKey that = (LayoutTemplateKey) o;
+        final PartTemplateKey that = (PartTemplateKey) o;
 
         return Objects.equals( this.siteTemplateKey, that.siteTemplateKey ) && Objects.equals( this.templateName, that.templateName );
     }
