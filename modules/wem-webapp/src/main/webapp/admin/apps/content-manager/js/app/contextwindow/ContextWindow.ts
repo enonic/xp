@@ -2,9 +2,13 @@ module app_contextwindow {
     export interface ContextWindowOptions {
         liveEditEl?:api_dom.IFrameEl;
         liveEditId?:string;
+        site:api_content.Content;
     }
 
     export class ContextWindow extends api_ui.NavigableFloatingWindow {
+
+        private site:api_content.Content;
+
         private componentTypesPanel:ComponentTypesPanel;
         private inspectorPanel:InspectorPanel;
         private emulatorPanel:EmulatorPanel;
@@ -17,6 +21,8 @@ module app_contextwindow {
         private minimizer:Minimizer;
 
         constructor(options:ContextWindowOptions) {
+            this.site = options.site;
+
             var dragStart = (event, ui) => {
                 this.draggingMask.show();
             };
@@ -65,6 +71,10 @@ module app_contextwindow {
             if (options.liveEditEl) {
                 this.liveEditEl = options.liveEditEl;
             }
+        }
+
+        getSite():api_content.Content {
+            return this.site;
         }
 
         afterRender() {

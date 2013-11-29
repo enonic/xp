@@ -4,12 +4,16 @@ module api_content_page{
 
         private config:api_data.RootDataSet;
 
-        constructor(builder:ImageBuilder) {
+        constructor(builder?:ImageBuilder) {
             super(builder);
         }
 
         getConfig():api_data.RootDataSet {
             return this.config;
+        }
+
+        setConfig(value:api_data.RootDataSet) {
+            this.config = value;
         }
     }
 

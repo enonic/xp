@@ -4,7 +4,7 @@ module app_wizard {
         private frame:api_dom.IFrameEl;
         private url:string;
 
-        constructor(url:string = api_util.getUri("dev/live-edit-page/bootstrap.jsp?edit=true")) {
+        constructor(site:api_content.Content, url:string = api_util.getUri("dev/live-edit-page/bootstrap.jsp?edit=true")) {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
 
@@ -18,7 +18,9 @@ module app_wizard {
             // Wait for iframe to be loaded before adding context window!
             var intervalId = setInterval(() => {
                 if (this.frame.isLoaded()) {
-                    var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame});
+                    var contextWindow = new app_contextwindow.ContextWindow({
+                                                                                liveEditEl: this.frame,
+                                                                                site:site});
                     this.appendChild(contextWindow);
                     clearInterval(intervalId);
                 }

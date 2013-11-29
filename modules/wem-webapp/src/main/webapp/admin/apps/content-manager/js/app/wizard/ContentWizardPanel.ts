@@ -48,7 +48,8 @@ module app_wizard {
             var stepToolbar = new api_ui_toolbar.Toolbar();
             stepToolbar.addAction(actions.getPublishAction());
 
-            var livePanel = new LiveFormPanel();
+            var site:api_content.Content = null; // TODO: resolve nearest site content
+            var livePanel = new LiveFormPanel(site);
 
             this.contentWizardHeader.initNames("New " + this.contentType.getDisplayName(), null);
             this.contentWizardHeader.setAutogenerateName(true);

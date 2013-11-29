@@ -1,6 +1,8 @@
 module app_contextwindow_image {
     export class ImageSelectPanel extends api_ui.Panel {
 
+        private image:api_content_page.Image;
+
         private contextWindow:app_contextwindow.ContextWindow;
 
         private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
@@ -192,6 +194,15 @@ module app_contextwindow_image {
             contentSummary.appendChild(path);
 
             return img.toString() + contentSummary.toString();
+        }
+
+        setImage(image:api_content_page.Image) {
+            this.image = image;
+            this.refreshUI();
+        }
+
+        private refreshUI() {
+
         }
     }
 }
