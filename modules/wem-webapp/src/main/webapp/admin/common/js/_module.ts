@@ -19,13 +19,10 @@
 
 ///<reference path='model/_module.ts' />
 
-///<reference path='handler/_module.ts' />
-
 ///<reference path='remote/_module.ts' />
 ///<reference path='remote/account/_module.ts' />
 ///<reference path='remote/content/_module.ts' />
 ///<reference path='remote/contenttype/_module.ts' />
-///<reference path='remote/space/_module.ts' />
 ///<reference path='remote/userstore/_module.ts' />
 ///<reference path='remote/util/_module.ts' />
 
