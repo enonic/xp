@@ -14,13 +14,14 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class GetModulesHandler
         extends CommandHandler<GetModules> {
 
     private SystemConfig systemConfig;
 
-    private ModuleImporter moduleImporter;
+    private ModuleExporter moduleExporter;
 
     @Override
     public void handle()
@@ -44,7 +45,7 @@ public class GetModulesHandler
         for (ModuleKey moduleKey : moduleKeys) {
             final File moduleDir = new File(systemConfig.getModulesDir(), moduleKey.toString());
             if (moduleDir.exists() && moduleDir.isDirectory()) {
-                Module module = moduleImporter.importModuleFromDirectory(moduleDir.toPath());
+                Module module = moduleExporter.importFromDirectory(moduleDir.toPath());
                 modules.add(module);
             }
         }
@@ -55,7 +56,7 @@ public class GetModulesHandler
         List<Module> modules = new ArrayList<>();
         for (File moduleDir: systemConfig.getModulesDir().listFiles()) {
             if (moduleDir.isDirectory()) {
-                Module module = moduleImporter.importModuleFromDirectory(moduleDir.toPath());
+                Module module = moduleExporter.importFromDirectory(moduleDir.toPath());
                 modules.add(module);
             }
         }
@@ -68,7 +69,7 @@ public class GetModulesHandler
     }
 
     @Inject
-    public void setModuleImporter(final ModuleImporter moduleImporter) {
-        this.moduleImporter = moduleImporter;
+    public void setModuleExporter(final ModuleExporter moduleExporter) {
+        this.moduleExporter = moduleExporter;
     }
 }

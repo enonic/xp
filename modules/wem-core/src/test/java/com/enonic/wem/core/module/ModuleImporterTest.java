@@ -58,7 +58,7 @@ public class ModuleImporterTest
         final Module module = createModule();
         final Path exportedModuleDir = new ModuleExporter().exportToDirectory( module, tempDir );
 
-        final Module importedModule = new ModuleImporter().importModuleFromDirectory( exportedModuleDir );
+        final Module importedModule = new ModuleExporter().importFromDirectory( exportedModuleDir );
 
         assertNotNull( importedModule );
         assertEquals( "testmodule-1.0.0", importedModule.getModuleKey().toString() );
@@ -86,7 +86,7 @@ public class ModuleImporterTest
         final Module module = createModule();
         final Path exportedModuleZip = new ModuleExporter().exportToZip( module, tempDir );
 
-        final Module importedModule = new ModuleImporter().importModuleFromZip( exportedModuleZip );
+        final Module importedModule = new ModuleExporter().importFromZip( exportedModuleZip );
 
         assertEquals( "testmodule-1.0.0", importedModule.getModuleKey().toString() );
         assertEquals( "testmodule", importedModule.getName().toString() );

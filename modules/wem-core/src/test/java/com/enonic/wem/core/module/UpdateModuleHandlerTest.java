@@ -50,7 +50,6 @@ public class UpdateModuleHandlerTest
         handler = new UpdateModuleHandler();
         handler.setContext( this.context );
         handler.setSystemConfig( systemConfig );
-        handler.setModuleImporter( new ModuleImporter() );
         handler.setModuleExporter( new ModuleExporter() );
     }
 
@@ -115,7 +114,7 @@ public class UpdateModuleHandlerTest
         assertTrue( edited );
         assertTrue( "Module directory not found: " + moduleDir, Files.isDirectory( moduleDir ) );
 
-        Module updatedModule = new ModuleImporter().importModuleFromDirectory( moduleDir );
+        Module updatedModule = new ModuleExporter().importFromDirectory( moduleDir );
 
         assertEquals( "Display name should have been edited", module.getDisplayName() + " (edited)", updatedModule.getDisplayName() );
         assertEquals( module.getInfo(), updatedModule.getInfo() );
@@ -169,7 +168,7 @@ public class UpdateModuleHandlerTest
         assertFalse( edited );
         assertTrue( "Module directory not found: " + moduleDir, Files.isDirectory( moduleDir ) );
 
-        Module updatedModule = new ModuleImporter().importModuleFromDirectory( moduleDir );
+        Module updatedModule = new ModuleExporter().importFromDirectory( moduleDir );
 
         assertEquals( module.getDisplayName(), updatedModule.getDisplayName() );
         assertEquals( module.getInfo(), updatedModule.getInfo() );

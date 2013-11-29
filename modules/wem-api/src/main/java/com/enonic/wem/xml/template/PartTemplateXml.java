@@ -3,6 +3,7 @@ package com.enonic.wem.xml.template;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.page.PartTemplate;
+import com.enonic.wem.api.content.page.PartTemplateName;
 
 @XmlRootElement(name = "part-template")
 public final class PartTemplateXml
@@ -19,5 +20,6 @@ public final class PartTemplateXml
     public void to( final PartTemplate.Builder builder )
     {
         toTemplate( builder );
+        builder.name( new PartTemplateName( getName() ) );
     }
 }

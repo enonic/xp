@@ -3,6 +3,7 @@ package com.enonic.wem.xml.template;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.content.page.ImageTemplate;
+import com.enonic.wem.api.content.page.ImageTemplateName;
 
 @XmlRootElement(name = "image-template")
 public final class ImageTemplateXml
@@ -19,5 +20,6 @@ public final class ImageTemplateXml
     public void to( final ImageTemplate.Builder builder )
     {
         toTemplate( builder );
+        builder.name( new ImageTemplateName( getName() ) );
     }
 }

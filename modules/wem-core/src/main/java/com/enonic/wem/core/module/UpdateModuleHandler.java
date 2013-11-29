@@ -17,8 +17,6 @@ public class UpdateModuleHandler
 
     private SystemConfig systemConfig;
 
-    private ModuleImporter moduleImporter;
-
     private ModuleExporter moduleExporter;
 
     @Override
@@ -32,7 +30,7 @@ public class UpdateModuleHandler
             throw new ModuleNotFoundException( command.getModuleKey() );
         }
 
-        Module module = moduleImporter.importModuleFromDirectory( moduleDir.toPath() );
+        Module module = moduleExporter.importFromDirectory( moduleDir.toPath() );
         Module editedModule = command.getEditor().edit( module );
         boolean edited = editedModule != null && !editedModule.equals( module );
         if ( edited )
@@ -47,12 +45,6 @@ public class UpdateModuleHandler
     public void setSystemConfig( final SystemConfig systemConfig )
     {
         this.systemConfig = systemConfig;
-    }
-
-    @Inject
-    public void setModuleImporter( final ModuleImporter moduleImporter )
-    {
-        this.moduleImporter = moduleImporter;
     }
 
     @Inject

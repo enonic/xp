@@ -17,6 +17,7 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -27,7 +28,7 @@ public class GetModulesHandlerTest
 
     private SystemConfig systemConfig;
 
-    private ModuleImporter moduleImporter;
+    private ModuleExporter moduleExporter;
 
     private Path tempDir;
 
@@ -37,9 +38,9 @@ public class GetModulesHandlerTest
     {
         handler = new GetModulesHandler();
         systemConfig = Mockito.mock( SystemConfig.class );
-        moduleImporter = Mockito.mock( ModuleImporter.class );
+        moduleExporter = Mockito.mock( ModuleExporter.class );
         handler.setSystemConfig( systemConfig );
-        handler.setModuleImporter( moduleImporter );
+        handler.setModuleExporter( moduleExporter );
         tempDir = Files.createTempDirectory( "wemce" );
     }
 
@@ -86,8 +87,8 @@ public class GetModulesHandlerTest
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Module aModule = createModule( "amodule-1.0.0" );
         Module bModule = createModule( "bmodule-1.0.0" );
-        Mockito.when( moduleImporter.importModuleFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
-        Mockito.when( moduleImporter.importModuleFromDirectory( bModuleDir.toPath() ) ).thenReturn( bModule );
+        Mockito.when( moduleExporter.importFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
+        Mockito.when( moduleExporter.importFromDirectory( bModuleDir.toPath() ) ).thenReturn( bModule );
 
         GetModules command = Commands.module().list().modules( ModuleKeys.from( "amodule-1.0.0", "bmodule-1.0.0" ) );
         handler.setCommand( command );
@@ -109,8 +110,8 @@ public class GetModulesHandlerTest
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Module aModule = createModule( "amodule-1.0.0" );
         Module bModule = createModule( "bmodule-1.0.0" );
-        Mockito.when( moduleImporter.importModuleFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
-        Mockito.when( moduleImporter.importModuleFromDirectory( bModuleDir.toPath() ) ).thenReturn( bModule );
+        Mockito.when( moduleExporter.importFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
+        Mockito.when( moduleExporter.importFromDirectory( bModuleDir.toPath() ) ).thenReturn( bModule );
 
         GetModules command =
             Commands.module().list().modules( ModuleKeys.from( "amodule-1.0.0", "bmodule-1.0.0", "cmodule-1.0.0", "dmodule-1.0.0" ) );

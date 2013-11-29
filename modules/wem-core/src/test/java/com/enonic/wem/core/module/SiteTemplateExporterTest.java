@@ -30,6 +30,7 @@ import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.site.ContentTypeFilter.newContentFilter;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
@@ -68,6 +69,8 @@ public class SiteTemplateExporterTest
 
         assertNotNull( exportedSiteTemplateZip );
         assertTrue( Files.exists( exportedSiteTemplateZip ) && Files.isRegularFile( exportedSiteTemplateZip ) );
+
+        checkTemplate( new SiteTemplateExporter().importFromZip( exportedSiteTemplateZip ) );
     }
 
     @Test
@@ -81,6 +84,22 @@ public class SiteTemplateExporterTest
 
         assertNotNull( exportedSiteTemplateDir );
         assertTrue( Files.exists( exportedSiteTemplateDir ) && Files.isDirectory( exportedSiteTemplateDir ) );
+
+        checkTemplate( new SiteTemplateExporter().importFromDirectory( exportedSiteTemplateDir ) );
+    }
+
+    private void checkTemplate( final SiteTemplate siteTemplate1 )
+    {
+        assertEquals( "Intranet-1.0.0", siteTemplate1.getKey().toString() );
+        assertEquals( "Enonic Intranet", siteTemplate1.getDisplayName() );
+        assertEquals( "A social intranet for the Enterprise", siteTemplate1.getInfo() );
+        assertEquals( "Enonic", siteTemplate1.getVendor().getName() );
+        assertEquals( "https://www.enonic.com", siteTemplate1.getVendor().getUrl() );
+
+        assertNotNull( siteTemplate1.getTemplate( new ImageTemplateName( "my-image" ) ) );
+        assertNotNull( siteTemplate1.getTemplate( new PartTemplateName( "my-part" ) ) );
+        assertNotNull( siteTemplate1.getTemplate( new LayoutTemplateName( "my-layout" ) ) );
+        assertNotNull( siteTemplate1.getTemplate( new PageTemplateName( "my-page" ) ) );
     }
 
     private SiteTemplate createSiteTemplate()
@@ -89,7 +108,7 @@ public class SiteTemplateExporterTest
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         final PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            name( new PartTemplateName( "news-part" ) ).
+            name( new PartTemplateName( "my-part" ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ) ).
@@ -99,7 +118,7 @@ public class SiteTemplateExporterTest
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            name( new PageTemplateName( "main-page" ) ).
+            name( new PageTemplateName( "my-page" ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).

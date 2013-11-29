@@ -10,6 +10,7 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class GetModuleHandler
     extends CommandHandler<GetModule>
@@ -17,7 +18,7 @@ public class GetModuleHandler
 
     private SystemConfig systemConfig;
 
-    private ModuleImporter moduleImporter;
+    private ModuleExporter moduleExporter;
 
     @Override
     public void handle()
@@ -28,7 +29,7 @@ public class GetModuleHandler
         final File moduleDir = new File( modulesDir, moduleKey.toString() );
         if ( moduleDir.exists() )
         {
-            Module module = moduleImporter.importModuleFromDirectory( moduleDir.toPath() );
+            final Module module = moduleExporter.importFromDirectory( moduleDir.toPath() );
             command.setResult( module );
             return;
         }
@@ -45,8 +46,8 @@ public class GetModuleHandler
 
 
     @Inject
-    public void setModuleImporter( final ModuleImporter moduleImporter )
+    public void setModuleImporter( final ModuleExporter moduleExporter )
     {
-        this.moduleImporter = moduleImporter;
+        this.moduleExporter = moduleExporter;
     }
 }

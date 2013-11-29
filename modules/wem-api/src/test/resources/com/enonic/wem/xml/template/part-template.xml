@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <part-template>
+  <name>news-part</name>
   <display-name>News part template</display-name>
   <descriptor>mainmodule-1.0.0:/components/news-part.xml</descriptor>
   <config>
