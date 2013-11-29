@@ -16,10 +16,10 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
+import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.document.IndexDocumentItemPath;
-import com.enonic.wem.core.index.document.IndexValueType;
 
 import static org.junit.Assert.*;
 

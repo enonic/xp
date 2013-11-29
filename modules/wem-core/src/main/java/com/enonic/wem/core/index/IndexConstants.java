@@ -16,10 +16,13 @@ public class IndexConstants
 
     public final static String DEFAULT_COLLECTION = "default";
 
+    @Deprecated
     public final static String ALL_USERDATA_STRING_FIELD = ALL_USERDATA_BASE;
 
+    @Deprecated
     public final static String ALL_USERDATA_NUMBER_FIELD = ALL_USERDATA_BASE + FIELD_TYPE_SPERATATOR + NUMBER_FIELD_POSTFIX;
 
+    @Deprecated
     public final static String ALL_USERDATA_DATE_FIELD = ALL_USERDATA_BASE + FIELD_TYPE_SPERATATOR + DATE_FIELD_POSTFIX;
 
 }

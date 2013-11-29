@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
+@Deprecated
 public class ContentIndexQuery
 {
 

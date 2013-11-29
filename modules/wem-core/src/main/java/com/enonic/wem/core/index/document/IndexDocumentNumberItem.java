@@ -1,5 +1,7 @@
 package com.enonic.wem.core.index.document;
 
+import com.enonic.wem.core.index.IndexValueType;
+
 public class IndexDocumentNumberItem
     extends AbstractIndexDocumentItem<Double>
 {

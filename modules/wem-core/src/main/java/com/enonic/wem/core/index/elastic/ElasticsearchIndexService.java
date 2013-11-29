@@ -9,6 +9,7 @@ import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.content.ContentSearchResults;
 import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.entity.EntitySearchResult;
 
 public interface ElasticsearchIndexService
 {
@@ -27,6 +28,8 @@ public interface ElasticsearchIndexService
     public void delete( final DeleteDocument deleteDocument );
 
     public ContentSearchResults search( final ContentIndexQuery contentIndexQuery );
+
+    public EntitySearchResult search( final ElasticsearchQuery elasticsearchQuery );
 
     public void deleteIndex( final Index index );
 }

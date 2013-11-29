@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.document;
+package com.enonic.wem.core.index;
 
 public enum IndexValueType
 {
@@ -16,6 +16,8 @@ public enum IndexValueType
     GEO_POINT( "_geopoint" ),
 
     STRING( "" );
+
+    public static final String INDEX_VALUE_TYPE_SEPARATOR = ".";
 
     private final String postfix;
 

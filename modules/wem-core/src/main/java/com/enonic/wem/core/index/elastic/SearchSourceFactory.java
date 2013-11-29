@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.elastic.searchsource;
+package com.enonic.wem.core.index.elastic;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +24,7 @@ import com.enonic.wem.core.index.content.ContentIndexField;
 
 public class SearchSourceFactory
 {
+    @Deprecated
     public static SearchSourceBuilder create( final ContentIndexQuery contentIndexQuery )
     {
         final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();

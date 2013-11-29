@@ -1,6 +1,7 @@
 package com.enonic.wem.core.index.document;
 
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.core.index.IndexValueType;
 
 public abstract class AbstractIndexDocumentItem<T>
 {

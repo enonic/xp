@@ -70,7 +70,7 @@ public class IndexDocumentItemFactory
             indexDocumentItems.add( createNumericItemType( path, propertyValue ) );
         }
 
-        if ( propertyValue.isGeographicCoordinate() )
+        if ( propertyValue.isGeoPoint() )
         {
             indexDocumentItems.add( createGeoPointItemType( path, propertyValue ) );
         }

@@ -42,7 +42,7 @@ public abstract class Value<T>
         return ( this instanceof Double || this instanceof Long );
     }
 
-    public boolean isGeographicCoordinate()
+    public boolean isGeoPoint()
     {
         return this instanceof GeoPoint;
     }

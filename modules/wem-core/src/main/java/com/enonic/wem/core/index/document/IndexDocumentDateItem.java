@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
+import com.enonic.wem.core.index.IndexValueType;
+
 public class IndexDocumentDateItem
     extends AbstractIndexDocumentItem<Date>
 {

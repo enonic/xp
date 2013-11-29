@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.index.elastic.AbstractJsonTest;
+import com.enonic.wem.core.index.elastic.SearchSourceFactory;
 
 public class SearchSourceFactoryTest
     extends AbstractJsonTest
@@ -47,8 +48,7 @@ public class SearchSourceFactoryTest
     {
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( "test" );
-        contentIndexQuery.setContentTypeNames(
-            ContentTypeNames.from( "my_content_type_1", "my_content_type_2" ) );
+        contentIndexQuery.setContentTypeNames( ContentTypeNames.from( "my_content_type_1", "my_content_type_2" ) );
 
         final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
 
@@ -113,8 +113,7 @@ public class SearchSourceFactoryTest
     {
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( "test" );
-        contentIndexQuery.setContentTypeNames(
-            ContentTypeNames.from( "contentTypes:myContentType1", "contentTypes:myContentType2" ) );
+        contentIndexQuery.setContentTypeNames( ContentTypeNames.from( "contentTypes:myContentType1", "contentTypes:myContentType2" ) );
 
         final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
 

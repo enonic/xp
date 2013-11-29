@@ -1,6 +1,7 @@
 package com.enonic.wem.core.index.document;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.core.index.IndexValueType;
 
 public class IndexDocumentGeoPointItem
     extends AbstractIndexDocumentItem<String>

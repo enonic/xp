@@ -3,6 +3,7 @@ package com.enonic.wem.core.index.elastic.indexsource;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import com.enonic.wem.core.index.IndexFieldNameNormalizer;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 
 public class IndexFieldNameResolver
@@ -18,15 +19,12 @@ public class IndexFieldNameResolver
             throw new IllegalArgumentException( "item path cannot be null or empty" );
         }
 
-        return washFieldBasename( item.getPath() + ( Strings.isNullOrEmpty( item.getIndexBaseType().getPostfix() )
-            ? ""
-            : SEPARATOR + item.getIndexBaseType().getPostfix() ) );
+        final String normalizedName = IndexFieldNameNormalizer.normalize( item.getPath() );
 
-    }
+        final String postFix =
+            Strings.isNullOrEmpty( item.getIndexBaseType().getPostfix() ) ? "" : SEPARATOR + item.getIndexBaseType().getPostfix();
 
-    private static String washFieldBasename( final String fieldBaseName )
-    {
-        return fieldBaseName.toLowerCase();
+        return normalizedName + postFix;
     }
 
 }

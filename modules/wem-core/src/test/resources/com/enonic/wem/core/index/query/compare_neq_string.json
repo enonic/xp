@@ -1,0 +1,7 @@
+{"bool": {
+    "must_not": {
+        "term": {
+            "mystring": "myValue"
+        }
+    }
+}}

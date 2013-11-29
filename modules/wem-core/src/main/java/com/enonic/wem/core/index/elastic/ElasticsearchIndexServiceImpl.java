@@ -44,7 +44,7 @@ import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
 import com.enonic.wem.core.index.elastic.result.FacetFactory;
-import com.enonic.wem.core.index.elastic.searchsource.SearchSourceFactory;
+import com.enonic.wem.core.index.entity.EntitySearchResult;
 
 
 public class ElasticsearchIndexServiceImpl
@@ -183,6 +183,12 @@ public class ElasticsearchIndexServiceImpl
         }
 
         LOG.info( "Mapping for index " + index + ", index-type: " + indexType + " deleted" );
+    }
+
+    @Override
+    public EntitySearchResult search( final ElasticsearchQuery elasticsearchQuery )
+    {
+        return null;
     }
 
     @Override
