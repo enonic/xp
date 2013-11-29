@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.command.content.page.image;
 
 
 public final class ImageTemplateCommands

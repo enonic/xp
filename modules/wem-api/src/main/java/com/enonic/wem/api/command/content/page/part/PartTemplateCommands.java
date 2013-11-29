@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.command.content.page.part;
 
 
 public final class PartTemplateCommands

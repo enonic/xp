@@ -1,6 +1,10 @@
 package com.enonic.wem.api.command.content.page;
 
 
+import com.enonic.wem.api.command.content.page.image.ImageTemplateCommands;
+import com.enonic.wem.api.command.content.page.layout.LayoutTemplateCommands;
+import com.enonic.wem.api.command.content.page.part.PartTemplateCommands;
+
 public final class TemplateCommands
 {
 

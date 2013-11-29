@@ -1,18 +1,18 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.command.content.page.part;
 
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.layout.LayoutTemplates;
+import com.enonic.wem.api.content.page.part.PartTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 
-public class GetLayoutTemplatesBySiteTemplate
-    extends Command<LayoutTemplates>
+public class GetPartTemplatesBySiteTemplate
+    extends Command<PartTemplates>
 {
     private SiteTemplateKey siteTemplate;
 
-    public GetLayoutTemplatesBySiteTemplate siteTemplate( final SiteTemplateKey siteTemplate )
+    public GetPartTemplatesBySiteTemplate siteTemplate( final SiteTemplateKey siteTemplate )
     {
         this.siteTemplate = siteTemplate;
         return this;

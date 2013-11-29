@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.page;
 
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.page.GetPartTemplatesBySiteTemplate;
+import com.enonic.wem.api.command.content.page.part.GetPartTemplatesBySiteTemplate;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.core.command.CommandHandler;

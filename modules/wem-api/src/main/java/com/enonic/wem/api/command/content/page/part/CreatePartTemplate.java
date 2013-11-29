@@ -1,19 +1,19 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.command.content.page.part;
 
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
+import com.enonic.wem.api.content.page.part.PartTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-public final class CreateLayoutTemplate
-    extends Command<LayoutTemplate>
+public final class CreatePartTemplate
+    extends Command<PartTemplate>
 {
     private SiteTemplateKey siteTemplate;
 
-    private LayoutTemplateName name;
+    private PartTemplateName name;
 
     private String displayName;
 
@@ -21,31 +21,31 @@ public final class CreateLayoutTemplate
 
     private RootDataSet config;
 
-    public CreateLayoutTemplate siteTemplate( final SiteTemplateKey value )
+    public CreatePartTemplate siteTemplate( final SiteTemplateKey value )
     {
         this.siteTemplate = value;
         return this;
     }
 
-    public CreateLayoutTemplate templateName( final LayoutTemplateName name )
+    public CreatePartTemplate templateName( final PartTemplateName name )
     {
         this.name = name;
         return this;
     }
 
-    public CreateLayoutTemplate displayName( final String displayName )
+    public CreatePartTemplate displayName( final String displayName )
     {
         this.displayName = displayName;
         return this;
     }
 
-    public CreateLayoutTemplate descriptor( final ModuleResourceKey descriptor )
+    public CreatePartTemplate descriptor( final ModuleResourceKey descriptor )
     {
         this.descriptor = descriptor;
         return this;
     }
 
-    public CreateLayoutTemplate config( final RootDataSet config )
+    public CreatePartTemplate config( final RootDataSet config )
     {
         this.config = config;
         return this;

@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.page;
 
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.page.GetLayoutTemplateByKey;
+import com.enonic.wem.api.command.content.page.layout.GetLayoutTemplateByKey;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.site.SiteTemplate;

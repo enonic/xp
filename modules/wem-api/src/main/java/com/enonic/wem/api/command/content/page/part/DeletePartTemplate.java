@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.command.content.page.part;
 
 
 import com.google.common.base.Preconditions;

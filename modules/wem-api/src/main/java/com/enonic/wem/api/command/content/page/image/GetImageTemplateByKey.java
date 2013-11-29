@@ -1,4 +1,4 @@
-package com.enonic.wem.api.command.content.page;
+package com.enonic.wem.api.command.content.page.image;
 
 
 import com.google.common.base.Preconditions;
@@ -7,22 +7,14 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 
-public final class UpdateImageTemplate
-    extends Command<Boolean>
+public class GetImageTemplateByKey
+    extends Command<ImageTemplate>
 {
     private ImageTemplateKey key;
 
-    private TemplateEditor<ImageTemplate> editor;
-
-    public UpdateImageTemplate key( final ImageTemplateKey key )
+    public GetImageTemplateByKey key( final ImageTemplateKey key )
     {
         this.key = key;
-        return this;
-    }
-
-    public UpdateImageTemplate editor( final TemplateEditor<ImageTemplate> editor )
-    {
-        this.editor = editor;
         return this;
     }
 
@@ -35,10 +27,5 @@ public final class UpdateImageTemplate
     public ImageTemplateKey getKey()
     {
         return key;
-    }
-
-    public TemplateEditor<ImageTemplate> getEditor()
-    {
-        return editor;
     }
 }
