@@ -7,7 +7,6 @@ import javax.annotation.concurrent.Immutable;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
@@ -16,22 +15,22 @@ import com.enonic.wem.api.support.AbstractImmutableEntityList;
 public final class Modules
     extends AbstractImmutableEntityList<Module>
 {
-    private final ImmutableMap<ModuleName, Module> map;
+    private final ImmutableMap<ModuleKey, Module> map;
 
     private Modules( final ImmutableList<Module> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, new ToNameFunction() );
+        this.map = Maps.uniqueIndex( list, new ToKeyFunction() );
     }
 
-    public ImmutableSet<ModuleName> getNames()
+    public ModuleKeys getModuleKeys()
     {
-        return map.keySet();
+        return ModuleKeys.from( map.keySet() );
     }
 
-    public Module getModule( final ModuleName moduleName )
+    public Module getModule( final ModuleKey ModuleKey )
     {
-        return map.get( moduleName );
+        return map.get( ModuleKey );
     }
 
     @Override
@@ -61,13 +60,13 @@ public final class Modules
         return new Modules( ImmutableList.copyOf( modules ) );
     }
 
-    private final static class ToNameFunction
-        implements Function<Module, ModuleName>
+    private final static class ToKeyFunction
+        implements Function<Module, ModuleKey>
     {
         @Override
-        public ModuleName apply( final Module value )
+        public ModuleKey apply( final Module value )
         {
-            return value.getName();
+            return value.getKey();
         }
     }
 
