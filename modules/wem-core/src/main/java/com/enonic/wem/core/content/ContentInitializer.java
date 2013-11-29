@@ -26,10 +26,10 @@ public class ContentInitializer
     public void initialize()
         throws Exception
     {
-        final ContentPath parent = ContentPath.from( "bildearkiv" );
-        createContent( parent, "Misc", ContentTypeName.folder() );
-        createContent( parent, "People", ContentTypeName.folder() );
-        final ContentPath trampolinerContent = createContent( parent, "Trampoliner", ContentTypeName.folder() );
+        final ContentPath bildeArkivContent = createContent( ContentPath.ROOT, "Bildearkiv", ContentTypeName.folder() );
+        createContent( bildeArkivContent, "Misc", ContentTypeName.folder() );
+        createContent( bildeArkivContent, "People", ContentTypeName.folder() );
+        final ContentPath trampolinerContent = createContent( bildeArkivContent, "Trampoliner", ContentTypeName.folder() );
         createContent( trampolinerContent, "Jumping Jack - Big Bounce", ContentTypeName.folder() );
         createContent( trampolinerContent, "Jumping Jack - Pop", ContentTypeName.folder() );
     }

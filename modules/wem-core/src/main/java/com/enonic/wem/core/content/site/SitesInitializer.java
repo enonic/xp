@@ -60,7 +60,6 @@ public class SitesInitializer
     {
         createSite( "bluman trampoliner", "Bluman Trampoliner" );
         createSite( "bluman intranett", "Bluman Intranett" );
-        createSite( "bildearkiv", "Bildearkiv" );
     }
 
     private void createSite( final String name, final String displayName )
