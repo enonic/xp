@@ -11,7 +11,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public final class ContentIds
     extends AbstractImmutableEntitySet<ContentId>
-    implements ContentSelectors<ContentId>
+    implements Iterable<ContentId>
 {
     private ContentIds( final ImmutableSet<ContentId> set )
     {

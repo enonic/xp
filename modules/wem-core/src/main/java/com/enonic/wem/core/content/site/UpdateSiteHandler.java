@@ -36,7 +36,7 @@ public class UpdateSiteHandler
         {
             final Site editedSite = editBuilder.build();
 
-            final UpdateContent updateContent = Commands.content().update().selector( command.getContent() ).editor( new ContentEditor()
+            final UpdateContent updateContent = Commands.content().update().contentId( command.getContent() ).editor( new ContentEditor()
             {
                 @Override
                 public Content.EditBuilder edit( final Content toBeEdited )

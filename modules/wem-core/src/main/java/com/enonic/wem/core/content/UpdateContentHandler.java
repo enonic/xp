@@ -70,10 +70,10 @@ public class UpdateContentHandler
         try
         {
             final Session session = context.getJcrSession();
-            final Content persistedContent = contentDao.select( command.getSelector(), session );
+            final Content persistedContent = contentDao.selectById( command.getContentId(), session );
             if ( persistedContent == null )
             {
-                throw new ContentNotFoundException( command.getSelector() );
+                throw new ContentNotFoundException( command.getContentId() );
             }
 
             final Client client = context.getClient();
@@ -103,7 +103,7 @@ public class UpdateContentHandler
                     @Override
                     public void visit( final Property property )
                     {
-                        final Content content = contentDao.select( property.getContentId(), session );
+                        final Content content = contentDao.selectById( property.getContentId(), session );
                         if ( content != null )
                         {
                             if ( content.isEmbedded() )
@@ -137,7 +137,7 @@ public class UpdateContentHandler
                 {
                     if ( !embeddedContentsToKeep.contains( embeddedContentBeforeEdit.getId() ) )
                     {
-                        contentDao.delete( embeddedContentBeforeEdit.getId(), session );
+                        contentDao.deleteById( embeddedContentBeforeEdit.getId(), session );
                         session.save();
                     }
                 }
@@ -211,7 +211,7 @@ public class UpdateContentHandler
             @Override
             public void visit( final Property property )
             {
-                final Content content = contentDao.select( property.getContentId(), session );
+                final Content content = contentDao.selectById( property.getContentId(), session );
                 if ( content != null )
                 {
                     if ( content.isEmbedded() )
@@ -244,7 +244,7 @@ public class UpdateContentHandler
     {
         for ( Attachment attachment : attachments )
         {
-            client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( attachment ) );
+            client.execute( Commands.attachment().create().contentId( contentId ).attachment( attachment ) );
         }
     }
 
@@ -257,7 +257,7 @@ public class UpdateContentHandler
             name( CreateContent.THUMBNAIL_NAME ).
             mimeType( THUMBNAIL_MIME_TYPE ).
             build();
-        client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( thumbnailAttachment ) );
+        client.execute( Commands.attachment().create().contentId( contentId ).attachment( thumbnailAttachment ) );
     }
 
     public Binary createImageThumbnail( final Binary binary, final int size )

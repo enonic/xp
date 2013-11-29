@@ -66,7 +66,6 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.RenameContentException;
@@ -107,11 +106,15 @@ public class ContentResource
         final Content content;
         if ( versionParam == null )
         {
-            content = doGetContent( id );
+            content = client.execute( Commands.content().get().byId( id ) );
         }
         else
         {
-            content = doGetVersionOfContent( id, ContentVersionId.of( versionParam ) );
+            final GetContentVersion getContentVersion = Commands.content().getVersion().
+                contentId( id ).
+                version( ContentVersionId.of( versionParam ) );
+
+            content = client.execute( getContentVersion );
         }
 
         if ( content == null )
@@ -132,22 +135,6 @@ public class ContentResource
         }
     }
 
-    private Content doGetContent( final ContentSelector contentSelector )
-    {
-        return ( contentSelector instanceof ContentId )
-            ? client.execute( Commands.content().get().byId( (ContentId) contentSelector ) )
-            : client.execute( Commands.content().get().byPath( (ContentPath) contentSelector ) );
-    }
-
-    private Content doGetVersionOfContent( final ContentSelector contentSelector, final ContentVersionId versionId )
-    {
-        final GetContentVersion getContentVersion = Commands.content().getVersion().
-            selector( contentSelector ).
-            version( versionId );
-
-        return client.execute( getContentVersion );
-    }
-
     @GET
     @Path("bypath")
     public ContentIdJson getByPath( @QueryParam("path") final String pathParam, @QueryParam("version") final Long versionParam,
@@ -157,11 +144,15 @@ public class ContentResource
         final ContentPath path = ContentPath.from( pathParam );
         if ( versionParam == null )
         {
-            content = doGetContent( path );
+            content = client.execute( Commands.content().get().byPath( path ) );
         }
         else
         {
-            content = doGetVersionOfContent( ContentPath.from( pathParam ), ContentVersionId.of( versionParam ) );
+            final GetContentVersion getContentVersion = Commands.content().getVersion().
+                contentPath( path ).
+                version( ContentVersionId.of( versionParam ) );
+
+            content = client.execute( getContentVersion );
         }
 
         if ( content == null )
@@ -341,7 +332,7 @@ public class ContentResource
         {
             final DeleteContent deleteContent = Commands.content().delete();
             deleteContent.deleter( AccountKey.anonymous() );
-            deleteContent.selector( contentToDelete );
+            deleteContent.contentPath( contentToDelete );
             jsonResult.addResult( contentToDelete, client.execute( deleteContent ) );
         }
 
@@ -360,7 +351,7 @@ public class ContentResource
 
             final CreateContentResult createContentResult = client.execute( createContent );
 
-            final Content content = doGetContent( createContentResult.getContentId() );
+            final Content content = client.execute( Commands.content().get().byId( createContentResult.getContentId() ) );
 
             return CreateOrUpdateContentJsonResult.result( new ContentJson( content ) );
         }
@@ -380,7 +371,7 @@ public class ContentResource
             final List<Attachment> attachments = parseAttachments( params.getAttachments() );
 
             final UpdateContent updateContent = Commands.content().update().
-                selector( params.getContentId() ).
+                contentId( params.getContentId() ).
                 modifier( AccountKey.anonymous() ).
                 attachments( attachments ).
                 editor( new ContentEditor()
@@ -406,7 +397,7 @@ public class ContentResource
 
             if ( updateContentResult == UpdateContentResult.SUCCESS || updateContentResult == null )
             {
-                final Content content = doGetContent( params.getContentId() );
+                final Content content = client.execute( Commands.content().get().byId( params.getContentId() ) );
                 return CreateOrUpdateContentJsonResult.result( new ContentJson( content ) );
             }
             else

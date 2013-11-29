@@ -5,14 +5,14 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentPath;
 
 public final class DeleteAttachment
     extends Command<Boolean>
 {
     private String attachmentName;
 
-    private ContentSelector contentSelector;
+    private ContentPath contentPath;
 
     public DeleteAttachment attachmentName( final String attachmentName )
     {
@@ -20,9 +20,9 @@ public final class DeleteAttachment
         return this;
     }
 
-    public DeleteAttachment contentSelector( final ContentSelector contentSelector )
+    public DeleteAttachment contentPath( final ContentPath contentPath )
     {
-        this.contentSelector = contentSelector;
+        this.contentPath = contentPath;
         return this;
     }
 
@@ -31,9 +31,9 @@ public final class DeleteAttachment
         return attachmentName;
     }
 
-    public ContentSelector getContentSelector()
+    public ContentPath getContentPath()
     {
-        return contentSelector;
+        return contentPath;
     }
 
     @Override
@@ -50,20 +50,19 @@ public final class DeleteAttachment
         }
 
         final DeleteAttachment that = (DeleteAttachment) o;
-        return Objects.equal( this.attachmentName, that.attachmentName ) && Objects.equal( this.contentSelector, that.contentSelector );
+        return Objects.equal( this.attachmentName, that.attachmentName ) && Objects.equal( this.contentPath, that.contentPath );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.attachmentName, this.contentSelector );
+        return Objects.hashCode( this.attachmentName, this.contentPath );
     }
 
     @Override
     public void validate()
     {
         Preconditions.checkNotNull( this.attachmentName, "attachmentName cannot be null" );
-        Preconditions.checkNotNull( this.contentSelector, "contentSelector cannot be null" );
+        Preconditions.checkNotNull( this.contentPath, "contentPath cannot be null" );
     }
-
 }

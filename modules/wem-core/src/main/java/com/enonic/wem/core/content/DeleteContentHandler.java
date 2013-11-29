@@ -28,7 +28,7 @@ public class DeleteContentHandler
         final Session session = context.getJcrSession();
 
         // Temporary solution to ease the index-service since content selector are supposed to be rewritten
-        final Content contentToDelete = contentDao.select( command.getSelector(), session );
+        final Content contentToDelete = contentDao.selectByPath( command.getContentPath(), session );
 
         if ( contentToDelete == null )
         {
@@ -38,7 +38,7 @@ public class DeleteContentHandler
 
         try
         {
-            contentDao.delete( command.getSelector(), session );
+            contentDao.deleteByPath( command.getContentPath(), session );
             session.save();
             indexService.deleteContent( contentToDelete.getId() );
             command.setResult( DeleteContentResult.SUCCESS );

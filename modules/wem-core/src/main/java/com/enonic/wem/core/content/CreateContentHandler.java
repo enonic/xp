@@ -105,7 +105,7 @@ public class CreateContentHandler
             final Attachment thumbnailAttachment = resolveThumbnailAttachment( content );
             if ( thumbnailAttachment != null )
             {
-                client.execute( Commands.attachment().create().contentSelector( storedContent.getId() ).attachment( thumbnailAttachment ) );
+                client.execute( Commands.attachment().create().contentId( storedContent.getId() ).attachment( thumbnailAttachment ) );
             }
 
             try
@@ -174,7 +174,7 @@ public class CreateContentHandler
 
     private void checkParentContentAllowsChildren( final ContentPath parentContentPath, final Session session )
     {
-        final Content content = contentDao.select( parentContentPath, session );
+        final Content content = contentDao.selectByPath( parentContentPath, session );
         if ( content != null )
         {
             final ContentType contentType = getContentType( content );
@@ -207,7 +207,7 @@ public class CreateContentHandler
 
     private boolean contentExists( final ContentPath contentPath, final Session session )
     {
-        final Content content = contentDao.select( contentPath, session );
+        final Content content = contentDao.selectByPath( contentPath, session );
         return content != null;
     }
 
@@ -233,7 +233,7 @@ public class CreateContentHandler
     {
         for ( Attachment attachment : attachments )
         {
-            client.execute( Commands.attachment().create().contentSelector( contentId ).attachment( attachment ) );
+            client.execute( Commands.attachment().create().contentId( contentId ).attachment( attachment ) );
         }
     }
 

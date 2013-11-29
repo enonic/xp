@@ -19,7 +19,16 @@ public class GetAttachmentHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
-        final Attachment attachment = attachmentDao.getAttachment( command.getContentSelector(), command.getAttachmentName(), session );
+        final Attachment attachment;
+
+        if ( command.getContentId() != null )
+        {
+            attachment = attachmentDao.getAttachmentById( command.getContentId(), command.getAttachmentName(), session );
+        } else
+        {
+            attachment = attachmentDao.getAttachmentByPath( command.getContentPath(), command.getAttachmentName(), session );
+        }
+
         session.save();
         command.setResult( attachment );
     }

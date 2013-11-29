@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.attachment.DeleteAttachment;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 
@@ -44,19 +43,19 @@ public class DeleteAttachmentHandlerTest
         throws Exception
     {
         //setup
-        when( attachmentDao.deleteAttachment( isA( ContentSelector.class ), isA( String.class ), any( Session.class ) ) ).
+        when( attachmentDao.deleteAttachmentByPath( isA( ContentPath.class ), isA( String.class ), any( Session.class ) ) ).
             thenReturn( true );
 
         // exercise
         final DeleteAttachment command =
-            Commands.attachment().delete().contentSelector( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
+            Commands.attachment().delete().contentPath( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
 
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        Mockito.verify( attachmentDao, only() ).deleteAttachment( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),
-                                                                  any( Session.class ) );
+        Mockito.verify( attachmentDao, only() ).deleteAttachmentByPath( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),
+                                                                        any( Session.class ) );
 
         assertTrue( command.getResult() );
     }
@@ -66,19 +65,19 @@ public class DeleteAttachmentHandlerTest
         throws Exception
     {
         //setup
-        when( attachmentDao.deleteAttachment( isA( ContentSelector.class ), isA( String.class ), any( Session.class ) ) ).
+        when( attachmentDao.deleteAttachmentByPath( isA( ContentPath.class ), isA( String.class ), any( Session.class ) ) ).
             thenReturn( false );
 
         // exercise
         final DeleteAttachment command =
-            Commands.attachment().delete().contentSelector( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
+            Commands.attachment().delete().contentPath( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
 
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        Mockito.verify( attachmentDao, only() ).deleteAttachment( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),
-                                                                  any( Session.class ) );
+        Mockito.verify( attachmentDao, only() ).deleteAttachmentByPath( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),
+                                                                        any( Session.class ) );
 
         assertFalse( command.getResult() );
     }

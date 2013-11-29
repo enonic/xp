@@ -7,7 +7,6 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.core.index.IndexService;
 
@@ -18,24 +17,11 @@ public class AttachmentDaoImpl
     private IndexService indexService;
 
     @Override
-    public void createAttachment( final ContentSelector contentSelector, final Attachment attachment, final Session session )
+    public void createAttachmentById( final ContentId contentId, final Attachment attachment, final Session session )
     {
         try
         {
-            if ( contentSelector instanceof ContentPath )
-            {
-                final ContentPath contentPath = (ContentPath) contentSelector;
-                new AttachmentDaoHandlerCreate( session, this.indexService ).handle( contentPath, attachment );
-            }
-            else if ( contentSelector instanceof ContentId )
-            {
-                final ContentId contentId = (ContentId) contentSelector;
-                new AttachmentDaoHandlerCreate( session, this.indexService ).handle( contentId, attachment );
-            }
-            else
-            {
-                throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
-            }
+            new AttachmentDaoHandlerCreate( session, this.indexService ).handle( contentId, attachment );
         }
         catch ( RepositoryException e )
         {
@@ -44,24 +30,11 @@ public class AttachmentDaoImpl
     }
 
     @Override
-    public Attachment getAttachment( final ContentSelector contentSelector, final String attachmentName, final Session session )
+    public void createAttachmentByPath( final ContentPath contentPath, final Attachment attachment, final Session session )
     {
         try
         {
-            if ( contentSelector instanceof ContentPath )
-            {
-                final ContentPath contentPath = (ContentPath) contentSelector;
-                return new AttachmentDaoHandlerGet( session, this.indexService ).handle( contentPath, attachmentName );
-            }
-            else if ( contentSelector instanceof ContentId )
-            {
-                final ContentId contentId = (ContentId) contentSelector;
-                return new AttachmentDaoHandlerGet( session, this.indexService ).handle( contentId, attachmentName );
-            }
-            else
-            {
-                throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
-            }
+            new AttachmentDaoHandlerCreate( session, this.indexService ).handle( contentPath, attachment );
         }
         catch ( RepositoryException e )
         {
@@ -70,24 +43,50 @@ public class AttachmentDaoImpl
     }
 
     @Override
-    public boolean deleteAttachment( final ContentSelector contentSelector, final String attachmentName, final Session session )
+    public Attachment getAttachmentById( final ContentId contentId, final String attachmentName, final Session session )
     {
         try
         {
-            if ( contentSelector instanceof ContentPath )
-            {
-                final ContentPath contentPath = (ContentPath) contentSelector;
-                return new AttachmentDaoHandlerDelete( session, this.indexService ).handle( contentPath, attachmentName );
-            }
-            else if ( contentSelector instanceof ContentId )
-            {
-                final ContentId contentId = (ContentId) contentSelector;
-                return new AttachmentDaoHandlerDelete( session, this.indexService ).handle( contentId, attachmentName );
-            }
-            else
-            {
-                throw new IllegalArgumentException( "Unsupported content selector: " + contentSelector.getClass().getCanonicalName() );
-            }
+            return new AttachmentDaoHandlerGet( session, this.indexService ).handle( contentId, attachmentName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public Attachment getAttachmentByPath( final ContentPath contentPath, final String attachmentName, final Session session )
+    {
+        try
+        {
+            return new AttachmentDaoHandlerGet( session, this.indexService ).handle( contentPath, attachmentName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public boolean deleteAttachmentById( final ContentId contentId, final String attachmentName, final Session session )
+    {
+        try
+        {
+            return new AttachmentDaoHandlerDelete( session, this.indexService ).handle( contentId, attachmentName );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public boolean deleteAttachmentByPath( final ContentPath contentPath, final String attachmentName, final Session session )
+    {
+        try
+        {
+            return new AttachmentDaoHandlerDelete( session, this.indexService ).handle( contentPath, attachmentName );
         }
         catch ( RepositoryException e )
         {

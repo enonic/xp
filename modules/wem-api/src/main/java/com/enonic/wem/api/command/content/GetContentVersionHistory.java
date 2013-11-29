@@ -4,22 +4,22 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.versioning.ContentVersionHistory;
 
 public final class GetContentVersionHistory
     extends Command<ContentVersionHistory>
 {
-    private ContentSelector selector;
+    private ContentId contentId;
 
-    public ContentSelector getSelector()
+    public ContentId getContentId()
     {
-        return this.selector;
+        return contentId;
     }
 
-    public GetContentVersionHistory selector( final ContentSelector selector )
+    public GetContentVersionHistory contentId( final ContentId contentId )
     {
-        this.selector = selector;
+        this.contentId = contentId;
         return this;
     }
 
@@ -37,18 +37,18 @@ public final class GetContentVersionHistory
         }
 
         final GetContentVersionHistory that = (GetContentVersionHistory) o;
-        return Objects.equal( this.selector, that.selector );
+        return Objects.equal( this.contentId, that.contentId );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.selector );
+        return Objects.hashCode( this.contentId );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.selector, "Content selector cannot be null" );
+        Preconditions.checkNotNull( this.contentId, "ContentId cannot be null" );
     }
 }

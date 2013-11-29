@@ -5,30 +5,30 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.DeleteContentResult;
 
 public final class DeleteContent
     extends Command<DeleteContentResult>
 {
-    private ContentSelector selector;
+    private ContentPath contentPath;
 
     private AccountKey deleter;
-
-    public ContentSelector getSelector()
-    {
-        return this.selector;
-    }
 
     public AccountKey getDeleter()
     {
         return deleter;
     }
 
-    public DeleteContent selector( final ContentSelector selector )
+    public DeleteContent contentPath( final ContentPath contentPath )
     {
-        this.selector = selector;
+        this.contentPath = contentPath;
         return this;
+    }
+
+    public ContentPath getContentPath()
+    {
+        return contentPath;
     }
 
     public DeleteContent deleter( final AccountKey deleter )
@@ -40,6 +40,6 @@ public final class DeleteContent
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.selector, "Content selector cannot be null" );
+        Preconditions.checkNotNull( this.contentPath, "ContentPath cannot be null" );
     }
 }

@@ -10,29 +10,20 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.editor.ContentEditor;
 
 public final class UpdateContent
     extends Command<UpdateContentResult>
 {
-    private ContentSelector selector;
-
     private ContentEditor editor;
 
     private UserKey modifier;
 
+    private ContentId contentId;
+
     private Map<String, Attachment> attachments = Maps.newHashMap();
-
-    public UpdateContent()
-    {
-    }
-
-    public ContentSelector getSelector()
-    {
-        return this.selector;
-    }
 
     public ContentEditor getEditor()
     {
@@ -44,16 +35,21 @@ public final class UpdateContent
         return modifier;
     }
 
-    public UpdateContent selector( final ContentSelector selectors )
-    {
-        this.selector = selectors;
-        return this;
-    }
-
     public UpdateContent editor( final ContentEditor editor )
     {
         this.editor = editor;
         return this;
+    }
+
+    public UpdateContent contentId( final ContentId contentId )
+    {
+        this.contentId = contentId;
+        return this;
+    }
+
+    public ContentId getContentId()
+    {
+        return contentId;
     }
 
     public UpdateContent modifier( final UserKey modifier )
@@ -91,7 +87,7 @@ public final class UpdateContent
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.selector, "selector cannot be null" );
+        Preconditions.checkNotNull( this.contentId, "contentId cannot be null" );
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 }

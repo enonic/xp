@@ -66,7 +66,7 @@ public class ContentDaoImplTest
         // exercise
         try
         {
-            contentDao.delete( ContentPath.from( "/" ), session );
+            contentDao.deleteByPath( ContentPath.from( "/" ), session );
             fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -134,7 +134,7 @@ public class ContentDaoImplTest
         // verify
         assertNotNull( session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "myContent" ) );
 
-        Content storedContent = contentDao.select( ContentPath.from( "/myContent" ), session );
+        Content storedContent = contentDao.selectByPath( ContentPath.from( "/myContent" ), session );
 
         assertEquals( "1", storedContent.getContentData().getProperty( "myData" ).getString() );
         assertEquals( "2", storedContent.getContentData().getProperty( "mySet.myData" ).getString() );
@@ -178,7 +178,7 @@ public class ContentDaoImplTest
         // verify
         assertNotNull( session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "myContent" ) );
 
-        Content storedContent = contentDao.select( ContentPath.from( "/myContent" ), session );
+        Content storedContent = contentDao.selectByPath( ContentPath.from( "/myContent" ), session );
         assertEquals( "changed value", storedContent.getContentData().getProperty( "myData" ).getString() );
     }
 
@@ -194,7 +194,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        contentDao.delete( ContentPath.from( "/myContent" ), session );
+        contentDao.deleteByPath( ContentPath.from( "/myContent" ), session );
         commit();
 
         // verify
@@ -212,7 +212,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        contentDao.delete( ContentPath.from( "/parentContent/contentToDelete" ), session );
+        contentDao.deleteByPath( ContentPath.from( "/parentContent/contentToDelete" ), session );
         commit();
 
         // verify
@@ -232,7 +232,7 @@ public class ContentDaoImplTest
         // exercise
         try
         {
-            contentDao.delete( ContentPath.from( "/parentContent" ), session );
+            contentDao.deleteByPath( ContentPath.from( "/parentContent" ), session );
             fail( "Expected exception" );
         }
         catch ( Exception e )
@@ -252,7 +252,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        contentDao.delete( storedContent.getId(), session );
+        contentDao.deleteById( storedContent.getId(), session );
         commit();
 
         // verify
@@ -272,7 +272,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        Content actualContent = contentDao.select( ContentPath.from( "/myContent" ), session );
+        Content actualContent = contentDao.selectByPath( ContentPath.from( "/myContent" ), session );
 
         // verify
         assertNotNull( actualContent );
@@ -300,7 +300,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        Contents actualContents = contentDao.select( ContentPaths.from( "/myContent", "/myContent2" ), session );
+        Contents actualContents = contentDao.selectByPaths( ContentPaths.from( "/myContent", "/myContent2" ), session );
 
         // verify
         assertNotNull( actualContents );
@@ -334,7 +334,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        Contents actualContents = contentDao.select( ContentIds.from( storedContent.getId(), storedContent2.getId() ), session );
+        Contents actualContents = contentDao.selectByIds( ContentIds.from( storedContent.getId(), storedContent2.getId() ), session );
 
         // verify
         assertNotNull( actualContents );
@@ -363,7 +363,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        Content actualContent = contentDao.select( storedContent.getId(), session );
+        Content actualContent = contentDao.selectById( storedContent.getId(), session );
 
         // verify
         assertNotNull( actualContent );
@@ -385,8 +385,8 @@ public class ContentDaoImplTest
         commit();
 
         // execute
-        Content contentWithoutChildren = contentDao.select( ContentPath.from( "/parentWithoutChildren" ), session );
-        Content contentWithChild = contentDao.select( ContentPath.from( "/parentWithChild" ), session );
+        Content contentWithoutChildren = contentDao.selectByPath( ContentPath.from( "/parentWithoutChildren" ), session );
+        Content contentWithChild = contentDao.selectByPath( ContentPath.from( "/parentWithChild" ), session );
 
         // verify
         assertNotNull( contentWithoutChildren );
@@ -431,11 +431,11 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        storedContent = contentDao.select( storedContent.getId(), session );
+        storedContent = contentDao.selectById( storedContent.getId(), session );
         assertNotNull( storedContent );
         assertEquals( ContentPath.from( "/newContentName" ), storedContent.getPath() );
 
-        Content contentNotFound = contentDao.select( ContentPath.from( "/myContent" ), session );
+        Content contentNotFound = contentDao.selectByPath( ContentPath.from( "/myContent" ), session );
         assertNull( contentNotFound );
     }
 
@@ -469,11 +469,11 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Content storedContent = contentDao.select( contentToMove.getId(), session );
+        Content storedContent = contentDao.selectById( contentToMove.getId(), session );
         assertNotNull( storedContent );
         assertEquals( ContentPath.from( "/parentB/contentToMove" ), storedContent.getPath() );
 
-        Content contentNotFound = contentDao.select( ContentPath.from( "/parentA/contentToMove" ), session );
+        Content contentNotFound = contentDao.selectByPath( ContentPath.from( "/parentA/contentToMove" ), session );
         assertNull( contentNotFound );
     }
 

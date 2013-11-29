@@ -16,7 +16,7 @@ public class DeleteSiteHandler
     public void handle()
         throws Exception
     {
-        UpdateContent updateContent = Commands.content().update().selector( command.getContent() ).editor( new ContentEditor()
+        UpdateContent updateContent = Commands.content().update().contentId( command.getContent() ).editor( new ContentEditor()
         {
             @Override
             public Content.EditBuilder edit( final Content toBeEdited )

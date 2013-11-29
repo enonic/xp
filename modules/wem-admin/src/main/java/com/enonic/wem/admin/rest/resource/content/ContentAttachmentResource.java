@@ -81,7 +81,7 @@ public class ContentAttachmentResource
 
     private Attachment findAttachment( final ContentId contentId, final String attachmentName )
     {
-        return client.execute( Commands.attachment().get().contentSelector( contentId ).attachmentName( attachmentName ) );
+        return client.execute( Commands.attachment().get().contentId( contentId ).attachmentName( attachmentName ) );
     }
 
     @Inject

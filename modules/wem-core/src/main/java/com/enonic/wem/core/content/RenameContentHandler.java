@@ -28,7 +28,7 @@ public class RenameContentHandler
         {
             final Session session = context.getJcrSession();
             final ContentId contentId = command.getContentId();
-            final Content content = contentDao.select( contentId, session );
+            final Content content = contentDao.selectById( contentId, session );
             if ( content == null )
             {
                 throw new ContentNotFoundException( contentId );
