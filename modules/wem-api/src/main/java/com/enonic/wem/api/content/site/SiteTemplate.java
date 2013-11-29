@@ -2,18 +2,23 @@ package com.enonic.wem.api.content.site;
 
 
 import java.util.Iterator;
+import java.util.Map;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.api.Identity;
+import com.enonic.wem.api.content.page.ImageTemplate;
+import com.enonic.wem.api.content.page.ImageTemplates;
+import com.enonic.wem.api.content.page.LayoutTemplate;
+import com.enonic.wem.api.content.page.LayoutTemplates;
+import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplates;
+import com.enonic.wem.api.content.page.PartTemplate;
+import com.enonic.wem.api.content.page.PartTemplates;
 import com.enonic.wem.api.content.page.Template;
-import com.enonic.wem.api.content.page.TemplateName;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-
-import static com.google.common.collect.Maps.uniqueIndex;
 
 public final class SiteTemplate
     implements Iterable<Template>, Identity<SiteTemplateKey>
@@ -38,7 +43,13 @@ public final class SiteTemplate
 
     private final ImmutableMap<ResourcePath, Template> templatesByPath;
 
-    private final ImmutableMap<TemplateName, Template> templatesByName;
+    private final PageTemplates pageTemplates;
+
+    private final PartTemplates partTemplates;
+
+    private final LayoutTemplates layoutTemplates;
+
+    private final ImageTemplates imageTemplates;
 
     private SiteTemplate( final Builder builder )
     {
@@ -51,7 +62,36 @@ public final class SiteTemplate
         this.contentTypeFilter = builder.contentTypeFilter;
         this.rootContentType = builder.rootContentType;
         this.templatesByPath = builder.templates.build();
-        this.templatesByName = uniqueIndex( this.templatesByPath.values(), new ToNameFunction() );
+
+        final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.newPageTemplates();
+        final PartTemplates.Builder partTemplatesBuilder = PartTemplates.newPartTemplates();
+        final ImageTemplates.Builder imageTemplatesBuilder = ImageTemplates.newImageTemplates();
+        final LayoutTemplates.Builder layoutTemplatesBuilder = LayoutTemplates.newLayoutTemplates();
+
+        for ( Map.Entry<ResourcePath, Template> entry : this.templatesByPath.entrySet() )
+        {
+            if ( entry.getValue() instanceof LayoutTemplate )
+            {
+                layoutTemplatesBuilder.add( (LayoutTemplate) entry.getValue() );
+            }
+            else if ( entry.getValue() instanceof PageTemplate )
+            {
+                pageTemplatesBuilder.add( (PageTemplate) entry.getValue() );
+            }
+            else if ( entry.getValue() instanceof PartTemplate )
+            {
+                partTemplatesBuilder.add( (PartTemplate) entry.getValue() );
+            }
+            else if ( entry.getValue() instanceof ImageTemplate )
+            {
+                imageTemplatesBuilder.add( (ImageTemplate) entry.getValue() );
+            }
+        }
+
+        this.pageTemplates = pageTemplatesBuilder.build();
+        this.partTemplates = partTemplatesBuilder.build();
+        this.imageTemplates = imageTemplatesBuilder.build();
+        this.layoutTemplates = layoutTemplatesBuilder.build();
     }
 
     public SiteTemplateKey getKey()
@@ -104,20 +144,35 @@ public final class SiteTemplate
         return rootContentType;
     }
 
-    public Template getTemplate( final TemplateName templateName )
+    @Override
+    public Iterator<Template> iterator()
     {
-        return this.templatesByName.get( templateName );
+        return templatesByPath.values().iterator();
+    }
+
+    public PageTemplates getPageTemplates()
+    {
+        return pageTemplates;
+    }
+
+    public PartTemplates getPartTemplates()
+    {
+        return partTemplates;
+    }
+
+    public LayoutTemplates getLayoutTemplates()
+    {
+        return layoutTemplates;
+    }
+
+    public ImageTemplates getImageTemplates()
+    {
+        return imageTemplates;
     }
 
     public Template getTemplate( final ResourcePath path )
     {
         return this.templatesByPath.get( path );
-    }
-
-    @Override
-    public Iterator<Template> iterator()
-    {
-        return templatesByName.values().iterator();
     }
 
     public Iterator<ResourcePath> resourcePathIterator()
@@ -218,16 +273,6 @@ public final class SiteTemplate
         public SiteTemplate build()
         {
             return new SiteTemplate( this );
-        }
-    }
-
-    private final static class ToNameFunction
-        implements Function<Template, TemplateName>
-    {
-        @Override
-        public TemplateName apply( final Template value )
-        {
-            return value.getName();
         }
     }
 }

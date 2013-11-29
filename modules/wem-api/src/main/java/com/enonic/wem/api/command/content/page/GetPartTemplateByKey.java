@@ -4,15 +4,15 @@ package com.enonic.wem.api.command.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PartTemplate;
+import com.enonic.wem.api.content.page.PartTemplateKey;
 
 public class GetPartTemplateByKey
     extends Command<PartTemplate>
 {
-    private PageTemplateKey key;
+    private PartTemplateKey key;
 
-    public GetPartTemplateByKey key( final PageTemplateKey key )
+    public GetPartTemplateByKey key( final PartTemplateKey key )
     {
         this.key = key;
         return this;
@@ -24,7 +24,7 @@ public class GetPartTemplateByKey
         Preconditions.checkNotNull( key, "key is required" );
     }
 
-    public PageTemplateKey getKey()
+    public PartTemplateKey getKey()
     {
         return key;
     }

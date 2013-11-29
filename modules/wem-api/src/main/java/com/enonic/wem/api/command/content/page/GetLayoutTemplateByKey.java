@@ -5,14 +5,14 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.LayoutTemplate;
-import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.LayoutTemplateKey;
 
 public class GetLayoutTemplateByKey
     extends Command<LayoutTemplate>
 {
-    private PageTemplateKey key;
+    private LayoutTemplateKey key;
 
-    public GetLayoutTemplateByKey key( final PageTemplateKey key )
+    public GetLayoutTemplateByKey key( final LayoutTemplateKey key )
     {
         this.key = key;
         return this;
@@ -24,7 +24,7 @@ public class GetLayoutTemplateByKey
         Preconditions.checkNotNull( key, "key is required" );
     }
 
-    public PageTemplateKey getKey()
+    public LayoutTemplateKey getKey()
     {
         return key;
     }

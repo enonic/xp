@@ -5,14 +5,14 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.page.ImageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.ImageTemplateKey;
 
 public class GetImageTemplateByKey
     extends Command<ImageTemplate>
 {
-    private PageTemplateKey key;
+    private ImageTemplateKey key;
 
-    public GetImageTemplateByKey key( final PageTemplateKey key )
+    public GetImageTemplateByKey key( final ImageTemplateKey key )
     {
         this.key = key;
         return this;
@@ -24,7 +24,7 @@ public class GetImageTemplateByKey
         Preconditions.checkNotNull( key, "key is required" );
     }
 
-    public PageTemplateKey getKey()
+    public ImageTemplateKey getKey()
     {
         return key;
     }

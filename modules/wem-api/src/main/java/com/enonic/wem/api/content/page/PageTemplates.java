@@ -2,16 +2,27 @@ package com.enonic.wem.api.content.page;
 
 import java.util.Collection;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.support.AbstractImmutableEntityList;
 
-public class PageTemplates
+public final class PageTemplates
     extends AbstractImmutableEntityList<PageTemplate>
 {
+    private final ImmutableMap<PageTemplateName, PageTemplate> templatesByName;
+
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
         super( list );
+        this.templatesByName = Maps.uniqueIndex( list, new ToNameFunction() );
+    }
+
+    public PageTemplate getTemplate( final PageTemplateName name )
+    {
+        return this.templatesByName.get( name );
     }
 
     public static PageTemplates empty()
@@ -33,6 +44,37 @@ public class PageTemplates
     public static PageTemplates from( final Collection<? extends PageTemplate> templates )
     {
         return new PageTemplates( ImmutableList.copyOf( templates ) );
+    }
+
+    private final static class ToNameFunction
+        implements Function<PageTemplate, PageTemplateName>
+    {
+        @Override
+        public PageTemplateName apply( final PageTemplate value )
+        {
+            return value.getName();
+        }
+    }
+
+    public static Builder newPageTemplates()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<PageTemplate> list = new ImmutableList.Builder<>();
+
+        public Builder add( PageTemplate template )
+        {
+            this.list.add( template );
+            return this;
+        }
+
+        public PageTemplates build()
+        {
+            return new PageTemplates( this.list.build() );
+        }
     }
 
 }

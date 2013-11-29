@@ -104,6 +104,6 @@ public class SiteTemplateTest
         assertEquals( "[components/pages/main-page, components/news-part, components/my-layout]",
                       Iterators.toString( siteTemplate.resourcePathIterator() ) );
         assertEquals( layoutTemplate, siteTemplate.getTemplate( ResourcePath.from( "components/my-layout" ) ) );
-        assertEquals( partTemplate, siteTemplate.getTemplate( new PartTemplateName( "news-part" ) ) );
+        assertEquals( partTemplate, siteTemplate.getPartTemplates().getTemplate( new PartTemplateName( "news-part" ) ) );
     }
 }

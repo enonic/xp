@@ -8,6 +8,7 @@ import com.enonic.wem.core.blobstore.BlobStoreModule;
 import com.enonic.wem.core.client.ClientModule;
 import com.enonic.wem.core.config.ConfigModule;
 import com.enonic.wem.core.content.ContentModule;
+import com.enonic.wem.core.content.page.PageModule;
 import com.enonic.wem.core.content.site.SiteModule;
 import com.enonic.wem.core.entity.EntityModule;
 import com.enonic.wem.core.event.EventModule;
@@ -44,6 +45,7 @@ public final class CoreModule
         install( new BlobModule() );
         install( new ContentModule() );
         install( new SiteModule() );
+        install( new PageModule() );
         install( new RelationshipModule() );
         install( new SchemaModule() );
         install( new IndexModule() );

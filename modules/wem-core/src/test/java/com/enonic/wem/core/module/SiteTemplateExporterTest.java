@@ -96,10 +96,10 @@ public class SiteTemplateExporterTest
         assertEquals( "Enonic", siteTemplate1.getVendor().getName() );
         assertEquals( "https://www.enonic.com", siteTemplate1.getVendor().getUrl() );
 
-        assertNotNull( siteTemplate1.getTemplate( new ImageTemplateName( "my-image" ) ) );
-        assertNotNull( siteTemplate1.getTemplate( new PartTemplateName( "my-part" ) ) );
-        assertNotNull( siteTemplate1.getTemplate( new LayoutTemplateName( "my-layout" ) ) );
-        assertNotNull( siteTemplate1.getTemplate( new PageTemplateName( "my-page" ) ) );
+        assertNotNull( siteTemplate1.getImageTemplates().getTemplate( new ImageTemplateName( "my-image" ) ) );
+        assertNotNull( siteTemplate1.getPartTemplates().getTemplate( new PartTemplateName( "my-part" ) ) );
+        assertNotNull( siteTemplate1.getLayoutTemplates().getTemplate( new LayoutTemplateName( "my-layout" ) ) );
+        assertNotNull( siteTemplate1.getPageTemplates().getTemplate( new PageTemplateName( "my-page" ) ) );
     }
 
     private SiteTemplate createSiteTemplate()
