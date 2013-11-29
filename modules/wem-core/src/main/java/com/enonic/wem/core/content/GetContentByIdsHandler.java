@@ -17,7 +17,7 @@ public class GetContentByIdsHandler
     public void handle()
         throws Exception
     {
-        final Contents result = contentDao.select( command.getIds(), context.getJcrSession() );
+        final Contents result = contentDao.selectByIds( command.getIds(), context.getJcrSession() );
         command.setResult( result );
     }
 

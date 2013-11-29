@@ -89,14 +89,14 @@ public class UpdateContentHandlerTest
         ContentData existingContentData = new ContentData();
         existingContentData.add( new Property.String( "myData", "aaa" ) );
 
-        Mockito.when( contentDao.select( eq( ContentPath.from( "myContent" ) ), Mockito.any( Session.class ) ) ).thenReturn( null );
+        Mockito.when( contentDao.selectById( eq( ContentId.from( "myContent" ) ), Mockito.any( Session.class ) ) ).thenReturn( null );
 
         final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
-            selector( ContentPath.from( "myContent" ) ).
+            contentId( ContentId.from( "myContent" ) ).
             editor( new ContentEditor()
             {
                 @Override
@@ -128,14 +128,14 @@ public class UpdateContentHandlerTest
 
         Content existingContent = createContent( existingContentData );
 
-        Mockito.when( contentDao.select( eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
+        Mockito.when( contentDao.selectById( eq( existingContent.getId() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
 
         final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
-            selector( existingContent.getPath() ).
+            contentId( existingContent.getId() ).
             editor( new ContentEditor()
             {
                 @Override
@@ -165,14 +165,14 @@ public class UpdateContentHandlerTest
 
         Content existingContent = createContent( existingContentData );
 
-        Mockito.when( contentDao.select( eq( existingContent.getPath() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
+        Mockito.when( contentDao.selectById( eq( existingContent.getId() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
 
         final ContentData changedContentData = new ContentData();
         changedContentData.add( new Property.String( "myData", "bbb" ) );
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
-            selector( existingContent.getPath() ).
+            contentId( existingContent.getId() ).
             editor( new ContentEditor()
             {
                 @Override

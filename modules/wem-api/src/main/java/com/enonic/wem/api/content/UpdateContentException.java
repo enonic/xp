@@ -9,7 +9,6 @@ public class UpdateContentException
 {
     public UpdateContentException( final UpdateContent command, final Throwable t )
     {
-        super( t, "Failed to update content [" + command.getSelector() + "]: " +
-            t.getMessage() );
+        super( t, "Failed to update content [" + command.getContentId() + "]: " + t.getMessage() );
     }
 }

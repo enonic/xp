@@ -1,11 +1,11 @@
 package com.enonic.wem.api.command.content.attachment;
 
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
-import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 
 public final class CreateAttachment
@@ -13,7 +13,9 @@ public final class CreateAttachment
 {
     private Attachment attachment;
 
-    private ContentSelector contentSelector;
+    private ContentId contentId;
+
+    private ContentPath contentPath;
 
     public CreateAttachment attachment( final Attachment attachment )
     {
@@ -21,9 +23,15 @@ public final class CreateAttachment
         return this;
     }
 
-    public CreateAttachment contentSelector( final ContentSelector contentSelector )
+    public CreateAttachment contentId( final ContentId contentId )
     {
-        this.contentSelector = contentSelector;
+        this.contentId = contentId;
+        return this;
+    }
+
+    public CreateAttachment contentPath( final ContentPath contentPath )
+    {
+        this.contentPath = contentPath;
         return this;
     }
 
@@ -32,9 +40,14 @@ public final class CreateAttachment
         return attachment;
     }
 
-    public ContentSelector getContentSelector()
+    public ContentId getContentId()
     {
-        return contentSelector;
+        return contentId;
+    }
+
+    public ContentPath getContentPath()
+    {
+        return contentPath;
     }
 
     @Override
@@ -44,27 +57,45 @@ public final class CreateAttachment
         {
             return true;
         }
-
-        if ( !( o instanceof CreateAttachment ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
 
         final CreateAttachment that = (CreateAttachment) o;
-        return Objects.equal( this.attachment, that.attachment ) && Objects.equal( this.contentSelector, that.contentSelector );
+
+        if ( attachment != null ? !attachment.equals( that.attachment ) : that.attachment != null )
+        {
+            return false;
+        }
+        if ( contentId != null ? !contentId.equals( that.contentId ) : that.contentId != null )
+        {
+            return false;
+        }
+        if ( contentPath != null ? !contentPath.equals( that.contentPath ) : that.contentPath != null )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.attachment, this.contentSelector );
+        int result = attachment != null ? attachment.hashCode() : 0;
+        result = 31 * result + ( contentId != null ? contentId.hashCode() : 0 );
+        result = 31 * result + ( contentPath != null ? contentPath.hashCode() : 0 );
+        return result;
     }
 
     @Override
     public void validate()
     {
+        if ( this.contentId == null )
+        {
+            Preconditions.checkNotNull( this.contentPath, "contentId/contentPath cannot be null" );
+        }
         Preconditions.checkNotNull( this.attachment, "attachment cannot be null" );
-        Preconditions.checkNotNull( this.contentSelector, "contentSelector cannot be null" );
     }
-
 }

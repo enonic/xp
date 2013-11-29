@@ -17,7 +17,7 @@ public class GetContentByPathsHandler
     public void handle()
         throws Exception
     {
-        final Contents result = contentDao.select( command.getPaths(), context.getJcrSession() );
+        final Contents result = contentDao.selectByPaths( command.getPaths(), context.getJcrSession() );
         command.setResult( result );
     }
 

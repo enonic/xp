@@ -13,7 +13,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public final class ContentPaths
     extends AbstractImmutableEntitySet<ContentPath>
-    implements ContentSelectors<ContentPath>
+    implements Iterable<ContentPath>
 {
     private ContentPaths( final ImmutableSet<ContentPath> set )
     {

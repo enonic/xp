@@ -64,7 +64,7 @@ public class RenameContentHandlerTest
             owner( UserKey.superUser() ).
             contentData( new ContentData() ).
             build();
-        Mockito.when( contentDao.select( isA( ContentId.class ), any( Session.class ) ) ).thenReturn( content );
+        Mockito.when( contentDao.selectById( isA( ContentId.class ), any( Session.class ) ) ).thenReturn( content );
         Mockito.when( contentDao.renameContent( isA( ContentId.class ), eq( "newName" ), any( Session.class ) ) ).thenReturn( true );
         Mockito.when( attachmentDao.renameAttachments( isA( ContentId.class ), eq( "myContent" ), eq( "newName" ),
                                                        any( Session.class ) ) ).thenReturn( true );

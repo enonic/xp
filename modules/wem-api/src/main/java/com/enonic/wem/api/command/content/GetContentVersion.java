@@ -1,23 +1,30 @@
 package com.enonic.wem.api.command.content;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentSelector;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 
 public final class GetContentVersion
     extends Command<Content>
 {
-    private ContentSelector selector;
+    private ContentId contentId;
+
+    private ContentPath contentPath;
 
     private ContentVersionId version;
 
-    public ContentSelector getSelector()
+    public ContentId getContentId()
     {
-        return this.selector;
+        return contentId;
+    }
+
+    public ContentPath getContentPath()
+    {
+        return contentPath;
     }
 
     public ContentVersionId getVersion()
@@ -25,9 +32,15 @@ public final class GetContentVersion
         return version;
     }
 
-    public GetContentVersion selector( final ContentSelector selector )
+    public GetContentVersion contentId( final ContentId contentId )
     {
-        this.selector = selector;
+        this.contentId = contentId;
+        return this;
+    }
+
+    public GetContentVersion contentPath( final ContentPath contentPath )
+    {
+        this.contentPath = contentPath;
         return this;
     }
 
@@ -44,26 +57,45 @@ public final class GetContentVersion
         {
             return true;
         }
-
-        if ( !( o instanceof GetContentVersion ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
 
         final GetContentVersion that = (GetContentVersion) o;
-        return Objects.equal( this.selector, that.selector ) && Objects.equal( this.version, that.version );
+
+        if ( contentId != null ? !contentId.equals( that.contentId ) : that.contentId != null )
+        {
+            return false;
+        }
+        if ( contentPath != null ? !contentPath.equals( that.contentPath ) : that.contentPath != null )
+        {
+            return false;
+        }
+        if ( version != null ? !version.equals( that.version ) : that.version != null )
+        {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.selector, this.version );
+        int result = contentId != null ? contentId.hashCode() : 0;
+        result = 31 * result + ( contentPath != null ? contentPath.hashCode() : 0 );
+        result = 31 * result + ( version != null ? version.hashCode() : 0 );
+        return result;
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.selector, "Content selector cannot be null" );
+        if ( this.contentId == null )
+        {
+            Preconditions.checkNotNull( this.contentPath, "ContentId/ContentPath cannot be null" );
+        }
         Preconditions.checkNotNull( this.version, "Content version cannot be null" );
     }
 }

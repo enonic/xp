@@ -18,7 +18,7 @@ public class DeleteAttachmentHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
-        final boolean deleted = attachmentDao.deleteAttachment( command.getContentSelector(), command.getAttachmentName(), session );
+        final boolean deleted = attachmentDao.deleteAttachmentByPath( command.getContentPath(), command.getAttachmentName(), session );
         session.save();
         command.setResult( deleted );
     }

@@ -23,7 +23,7 @@ public class CreateSiteHandler
             build();
 
         final UpdateContent updateContent = Commands.content().update().
-            selector( command.getContent() ).
+            contentId( command.getContent() ).
             editor( new ContentEditor()
             {
                 @Override

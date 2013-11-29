@@ -56,7 +56,7 @@ public class AttachmentDaoImplTest
         commit();
 
         // exercise
-        attachmentDao.createAttachment( storedContent.getId(), attachment, session );
+        attachmentDao.createAttachmentById( storedContent.getId(), attachment, session );
         commit();
 
         // verify
@@ -83,7 +83,7 @@ public class AttachmentDaoImplTest
         commit();
 
         // exercise
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // verify
@@ -107,11 +107,11 @@ public class AttachmentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // exercise
-        final Attachment retrievedAttachment = attachmentDao.getAttachment( storedContent.getId(), "file.jpg", session );
+        final Attachment retrievedAttachment = attachmentDao.getAttachmentById( storedContent.getId(), "file.jpg", session );
 
         // verify
         assertNotNull( retrievedAttachment );
@@ -129,11 +129,11 @@ public class AttachmentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // exercise
-        final Attachment retrievedAttachment = attachmentDao.getAttachment( ContentPath.from( "/mysite" ), "file.jpg", session );
+        final Attachment retrievedAttachment = attachmentDao.getAttachmentByPath( ContentPath.from( "/mysite" ), "file.jpg", session );
 
         // verify
         assertNotNull( retrievedAttachment );
@@ -151,11 +151,11 @@ public class AttachmentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // exercise
-        final Attachment retrievedAttachment = attachmentDao.getAttachment( ContentPath.from( "/mysite" ), "other.jpg", session );
+        final Attachment retrievedAttachment = attachmentDao.getAttachmentByPath( ContentPath.from( "/mysite" ), "other.jpg", session );
 
         // verify
         assertNull( retrievedAttachment );
@@ -172,12 +172,12 @@ public class AttachmentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment2, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment2, session );
         commit();
 
         // exercise
-        boolean deleted = attachmentDao.deleteAttachment( storedContent.getId(), "file.jpg", session );
+        boolean deleted = attachmentDao.deleteAttachmentById( storedContent.getId(), "file.jpg", session );
         commit();
 
         // verify
@@ -200,12 +200,12 @@ public class AttachmentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment2, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment2, session );
         commit();
 
         // exercise
-        boolean deleted = attachmentDao.deleteAttachment( ContentPath.from( "/mysite" ), "file.jpg", session );
+        boolean deleted = attachmentDao.deleteAttachmentByPath( ContentPath.from( "/mysite" ), "file.jpg", session );
         commit();
 
         // verify
@@ -227,11 +227,11 @@ public class AttachmentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "/mysite" ), attachment, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite" ), attachment, session );
         commit();
 
         // exercise
-        boolean deleted = attachmentDao.deleteAttachment( ContentPath.from( "/mysite" ), "otherfile.jpg", session );
+        boolean deleted = attachmentDao.deleteAttachmentByPath( ContentPath.from( "/mysite" ), "otherfile.jpg", session );
         commit();
 
         // verify
@@ -259,9 +259,9 @@ public class AttachmentDaoImplTest
         final Content content = newContent().path( ContentPath.from( "/mysite/file" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
-        attachmentDao.createAttachment( ContentPath.from( "/mysite/file" ), attachment, session );
-        attachmentDao.createAttachment( ContentPath.from( "/mysite/file" ), attachment2, session );
-        attachmentDao.createAttachment( ContentPath.from( "/mysite/file" ), attachment3, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite/file" ), attachment, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite/file" ), attachment2, session );
+        attachmentDao.createAttachmentByPath( ContentPath.from( "/mysite/file" ), attachment3, session );
         commit();
 
         // exercise

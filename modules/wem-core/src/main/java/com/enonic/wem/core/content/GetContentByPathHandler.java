@@ -3,8 +3,7 @@ package com.enonic.wem.core.content;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.content.GetContentByPath;
-import com.enonic.wem.api.content.ContentPaths;
-import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 
@@ -18,8 +17,8 @@ public class GetContentByPathHandler
     public void handle()
         throws Exception
     {
-        final Contents result = contentDao.select( ContentPaths.from( command.getPath() ), context.getJcrSession() );
-        command.setResult( result.first() );
+        final Content result = contentDao.selectByPath( command.getPath(), context.getJcrSession() );
+        command.setResult( result );
     }
 
     @Inject

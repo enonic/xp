@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public final class ContentPath
-    implements ContentSelector
 {
     public static final ContentPath ROOT = newPath().build();
 

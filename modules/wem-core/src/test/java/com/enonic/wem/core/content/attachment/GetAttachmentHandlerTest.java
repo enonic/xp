@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.attachment.GetAttachment;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.ContentSelector;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -50,20 +49,20 @@ public class GetAttachmentHandlerTest
         // setup
         final Binary binary = Binary.from( "some data".getBytes() );
         final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
-        when( attachmentDao.getAttachment( isA( ContentSelector.class ), isA( String.class ), any( Session.class ) ) ).thenReturn(
+        when( attachmentDao.getAttachmentByPath( isA( ContentPath.class ), isA( String.class ), any( Session.class ) ) ).thenReturn(
             attachment );
 
         // exercise
 
         final GetAttachment command =
-            Commands.attachment().get().contentSelector( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
+            Commands.attachment().get().contentPath( ContentPath.from( "myspace:/image" ) ).attachmentName( "file.jpg" );
 
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        verify( attachmentDao, atLeastOnce() ).getAttachment( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),
-                                                              any( Session.class ) );
+        verify( attachmentDao, atLeastOnce() ).getAttachmentByPath( eq( ContentPath.from( "myspace:/image" ) ), eq( "file.jpg" ),
+                                                                    any( Session.class ) );
         assertEquals( attachment, command.getResult() );
     }
 

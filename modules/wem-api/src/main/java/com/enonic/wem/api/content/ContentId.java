@@ -4,7 +4,6 @@ import com.enonic.wem.api.support.AbstractId;
 
 public class ContentId
     extends AbstractId
-    implements ContentSelector
 {
     public ContentId( final String id )
     {

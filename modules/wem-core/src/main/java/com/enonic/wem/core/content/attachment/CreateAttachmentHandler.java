@@ -18,7 +18,16 @@ public class CreateAttachmentHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
-        attachmentDao.createAttachment( command.getContentSelector(), command.getAttachment(), session );
+
+        if ( command.getContentId() != null )
+        {
+            attachmentDao.createAttachmentById( command.getContentId(), command.getAttachment(), session );
+        }
+        else
+        {
+            attachmentDao.createAttachmentByPath( command.getContentPath(), command.getAttachment(), session );
+        }
+
         session.save();
     }
 

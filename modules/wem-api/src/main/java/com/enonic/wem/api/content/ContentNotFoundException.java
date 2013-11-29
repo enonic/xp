@@ -16,9 +16,4 @@ public final class ContentNotFoundException
     {
         super( MessageFormat.format( "Content with id [{0}] was not found", contentId.toString() ) );
     }
-
-    public ContentNotFoundException( final ContentSelector selector )
-    {
-        super( MessageFormat.format( "Content with id [{0}] was not found", selector.toString() ) );
-    }
 }

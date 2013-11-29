@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentSelectors;
+import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.index.IndexService;
@@ -32,12 +32,12 @@ final class ContentDaoHandlerGetContentTree
         return doBuildContentTree( doGetTopContentNodes() );
     }
 
-    Tree<Content> handle( final ContentSelectors<ContentId> contentSelectors )
+    Tree<Content> handle( final ContentIds contentIds )
         throws RepositoryException
     {
         final List<Node> topLevelNodes = Lists.newArrayList();
 
-        final Iterator<ContentId> contentIdIterator = contentSelectors.iterator();
+        final Iterator<ContentId> contentIdIterator = contentIds.iterator();
         while ( contentIdIterator.hasNext() )
         {
             final Node foundNode = doGetContentNode( contentIdIterator.next() );

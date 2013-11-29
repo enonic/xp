@@ -621,7 +621,7 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
-        UpdateContent command = new UpdateContent().selector( ContentId.from( "content-id" ) );
+        UpdateContent command = new UpdateContent().contentId( ContentId.from( "content-id" ) );
         Exception e = new Exception( "Exception occured." );
 
         Mockito.when( client.execute( Mockito.isA( UpdateContent.class ) ) ).thenThrow( new UpdateContentException( command, e ) );

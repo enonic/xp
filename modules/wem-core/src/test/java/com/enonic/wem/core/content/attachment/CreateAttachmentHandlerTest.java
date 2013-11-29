@@ -51,13 +51,13 @@ public class CreateAttachmentHandlerTest
         final Binary binary = Binary.from( "some binary data".getBytes() );
         final Attachment attachment = newAttachment().name( "file.jpg" ).label( "small" ).mimeType( "image/jpeg" ).binary( binary ).build();
         final CreateAttachment command =
-            Commands.attachment().create().contentSelector( ContentPath.from( "myspace:/image" ) ).attachment( attachment );
+            Commands.attachment().create().contentPath( ContentPath.from( "myspace:/image" ) ).attachment( attachment );
 
         // exercise
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        verify( attachmentDao, times( 1 ) ).createAttachment( isA( ContentPath.class ), isA( Attachment.class ), any( Session.class ) );
+        verify( attachmentDao, times( 1 ) ).createAttachmentByPath( isA( ContentPath.class ), isA( Attachment.class ), any( Session.class ) );
     }
 }
