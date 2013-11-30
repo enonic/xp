@@ -1,5 +1,5 @@
 {
-    "term": {
+    "wildcard": {
         "myfield": "myValue"
     }
 }

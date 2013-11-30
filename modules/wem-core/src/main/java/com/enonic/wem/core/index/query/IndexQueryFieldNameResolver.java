@@ -20,6 +20,15 @@ public class IndexQueryFieldNameResolver
         return createValueTypeAwareFieldName( baseFieldName, firstValue );
     }
 
+    public static String resolveStringFieldName( final CompareExpr compareExpr )
+    {
+        final FieldExpr field = compareExpr.getField();
+
+        final String stringFieldName = IndexFieldNameNormalizer.normalize( field.getName() );
+
+        return stringFieldName;
+    }
+
     private static String createValueTypeAwareFieldName( final String baseFieldName, final ValueExpr valueExpr )
     {
         final Value<?> value = valueExpr.getValue();

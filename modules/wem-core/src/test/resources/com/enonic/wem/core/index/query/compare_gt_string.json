@@ -1,0 +1,10 @@
+{
+    "range": {
+        "myfield": {
+            "from": "myString",
+            "to": null,
+            "include_lower": false,
+            "include_upper": true
+        }
+    }
+}

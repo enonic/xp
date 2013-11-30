@@ -12,8 +12,9 @@ import com.enonic.wem.query.expr.QueryExpr;
 
 public class ElasticsearchQueryBuilderFactory
 {
+    private CompareQueryFactory compareQueryFactory = new CompareQueryFactory();
 
-    private CompareQueryBuilder compareQueryBuilder = new CompareQueryBuilder();
+    private DynamicQueryFactory dynamicQueryFactory = new DynamicQueryFactory();
 
     public QueryBuilder create( final QueryExpr queryExpr )
     {
@@ -34,11 +35,12 @@ public class ElasticsearchQueryBuilderFactory
         }
         else if ( constraint instanceof DynamicConstraintExpr )
         {
+            return dynamicQueryFactory.create( (DynamicConstraintExpr) constraint );
 
         }
         else if ( constraint instanceof CompareExpr )
         {
-            return compareQueryBuilder.build( (CompareExpr) constraint );
+            return compareQueryFactory.create( (CompareExpr) constraint );
 
         }
         else if ( constraint instanceof NotExpr )

@@ -1,7 +1,7 @@
 {
     "bool": {
         "must_not": {
-            "term": {
+            "wildcard": {
                 "myfield": "myValue"
             }
         }
