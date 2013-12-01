@@ -1,14 +1,26 @@
-package com.enonic.wem.admin.rest.resource.schema.mixin.json;
+package com.enonic.wem.admin.rest.resource.schema.mixin;
 
 import com.enonic.wem.api.schema.mixin.MixinName;
 
-public class MixinCreateJson
+public class MixinUpdateJson
 {
+    private MixinName mixinToUpdate;
+
     private MixinName name;
 
     private String config;
 
     private String iconReference;
+
+    public MixinName getMixinToUpdate()
+    {
+        return mixinToUpdate;
+    }
+
+    public void setMixinToUpdate( final String mixinToUpdate )
+    {
+        this.mixinToUpdate = MixinName.from( mixinToUpdate );
+    }
 
     public MixinName getName()
     {

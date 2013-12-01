@@ -20,7 +20,7 @@ public class SchemaJsonSerializer
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put( "key", schema.getSchemaKey().toString() );
-        objectNode.put( "name", schema.getName() );
+        objectNode.put( "name", schema.getName().toString() );
         objectNode.put( "displayName", schema.getDisplayName() );
         objectNode.put( "type", schema.getClass().getSimpleName() );
         JsonSerializerUtil.setDateTimeValue( "createdTime", schema.getCreatedTime(), objectNode );

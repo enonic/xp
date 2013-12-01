@@ -57,12 +57,18 @@ public class SchemaJson
 
     protected SchemaJson( final Schema schema )
     {
-        this.key = schema.getSchemaKey().toString();
-        this.name = schema.getName();
+        this.key = schema.getSchemaKey() != null ? schema.getSchemaKey().toString() : null;
+        this.name = schema.getName() != null ? schema.getName().toString() : null;
         this.displayName = schema.getDisplayName();
         this.createdTime = schema.getCreatedTime();
         this.modifiedTime = schema.getModifiedTime();
-        this.iconUrl = SchemaImageUriResolver.resolve( schema.getSchemaKey() );
+        if ( schema.getSchemaKey() != null )
+        {
+            this.iconUrl = SchemaImageUriResolver.resolve( schema.getSchemaKey() );
+        }
+        else {
+            this.iconUrl = null;
+        }
         this.hasChildren = schema.hasChildren();
     }
 

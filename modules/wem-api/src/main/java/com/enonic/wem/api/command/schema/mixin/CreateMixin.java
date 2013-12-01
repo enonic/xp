@@ -8,11 +8,12 @@ import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.FormItem;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinName;
 
 public final class CreateMixin
     extends Command<Mixin>
 {
-    private String name;
+    private MixinName name;
 
     private FormItems formItems = new FormItems( null );
 
@@ -21,9 +22,15 @@ public final class CreateMixin
     private Icon icon;
 
 
-    public CreateMixin name( final String name )
+    public CreateMixin name( final MixinName name )
     {
         this.name = name;
+        return this;
+    }
+
+    public CreateMixin name( final String name )
+    {
+        this.name = MixinName.from( name );
         return this;
     }
 
@@ -51,7 +58,7 @@ public final class CreateMixin
         return this;
     }
 
-    public String getName()
+    public MixinName getName()
     {
         return name;
     }

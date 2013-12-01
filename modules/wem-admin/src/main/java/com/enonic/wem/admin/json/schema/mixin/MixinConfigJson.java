@@ -5,7 +5,9 @@ import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
 public class MixinConfigJson
 {
-    private final static MixinXmlSerializer mixinXmlSerializer = new MixinXmlSerializer().prettyPrint( true );
+    private final static MixinXmlSerializer mixinXmlSerializer = new MixinXmlSerializer().
+        includeName( false ).
+        prettyPrint( true );
 
     private final String mixinXml;
 

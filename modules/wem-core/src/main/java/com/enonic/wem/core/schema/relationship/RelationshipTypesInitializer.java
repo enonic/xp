@@ -8,10 +8,10 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.core.support.BaseInitializer;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
-import static com.enonic.wem.api.schema.relationship.editor.SetRelationshipTypeEditor.newSetRelationshipTypeEditor;
 
 
 public class RelationshipTypesInitializer
@@ -47,7 +47,7 @@ public class RelationshipTypesInitializer
         for ( RelationshipType relationshipType : SYSTEM_TYPES )
         {
             relationshipType = RelationshipType.newRelationshipType( relationshipType ).
-                icon( loadIcon( relationshipType.getContentTypeName().toString() ) ).
+                icon( loadIcon( relationshipType.getName().toString() ) ).
                 build();
             createOrUpdate( relationshipType );
         }
@@ -55,7 +55,7 @@ public class RelationshipTypesInitializer
 
     private void createOrUpdate( final RelationshipType relationshipType )
     {
-        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( relationshipType.getContentTypeName() );
+        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( relationshipType.getName() );
         final boolean notExists = client.execute( Commands.relationshipType().exists().names( relationshipTypeNames ) ).isEmpty();
         if ( notExists )
         {
@@ -74,15 +74,23 @@ public class RelationshipTypesInitializer
         else
         {
             final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-            updateCommand.name( relationshipType.getContentTypeName() );
-            updateCommand.editor( newSetRelationshipTypeEditor().
-                displayName( relationshipType.getDisplayName() ).
-                fromSemantic( relationshipType.getFromSemantic() ).
-                toSemantic( relationshipType.getToSemantic() ).
-                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
-                allowedToTypes( relationshipType.getAllowedToTypes() ).
-                icon( relationshipType.getIcon() ).
-                build() );
+            updateCommand.name( relationshipType.getName() );
+            updateCommand.editor( new RelationshipTypeEditor()
+            {
+                @Override
+                public RelationshipType edit( final RelationshipType relationshipType )
+                {
+                    return RelationshipType.newRelationshipType( relationshipType ).
+                        displayName(relationshipType.getDisplayName()).
+                        fromSemantic( relationshipType.getFromSemantic() ).
+                        toSemantic( relationshipType.getToSemantic() ).
+                        addAllowedFromTypes( relationshipType.getAllowedFromTypes() ).
+                        addAllowedToTypes( relationshipType.getAllowedToTypes() ).
+                        icon( relationshipType.getIcon() ).
+                        build();
+                }
+            });
+
             client.execute( updateCommand );
         }
     }

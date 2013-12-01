@@ -29,7 +29,7 @@ final class RelationshipTypeDaoHandlerCreate
     protected final void doHandle()
         throws RepositoryException
     {
-        final RelationshipTypeName relationshipTypeName = relationshipType.getContentTypeName();
+        final RelationshipTypeName relationshipTypeName = relationshipType.getName();
         if ( relationshipTypeExists( relationshipTypeName ) )
         {
             throw new SystemException( "RelationshipType already exists: {0}", relationshipTypeName.toString() );

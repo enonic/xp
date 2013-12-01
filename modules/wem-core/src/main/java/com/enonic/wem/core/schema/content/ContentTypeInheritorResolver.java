@@ -26,9 +26,9 @@ public class ContentTypeInheritorResolver
         final ContentTypeNames.Builder builder = ContentTypeNames.newContentTypeNames();
         for ( final ContentType potentialInheritor : this.allContentTypes )
         {
-            if ( potentialInheritor.inherit( contentType.getContentTypeName() ) )
+            if ( potentialInheritor.inherit( contentType.getName() ) )
             {
-                builder.add( potentialInheritor.getContentTypeName() );
+                builder.add( potentialInheritor.getName() );
             }
         }
         return builder.build();

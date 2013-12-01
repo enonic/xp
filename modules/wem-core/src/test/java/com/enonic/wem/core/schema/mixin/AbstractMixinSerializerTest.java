@@ -91,7 +91,7 @@ public abstract class AbstractMixinSerializerTest
         Mixin mixin = toMixin( getSerializedString( "parse-FormItemSetMixin" ) );
 
         // verify
-        assertEquals( "address", mixin.getName() );
+        assertEquals( "address", mixin.getName().toString() );
         assertEquals( "Address Mixin", mixin.getDisplayName() );
 
         assertTrue( mixin.getFormItems() instanceof FormItems );

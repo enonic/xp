@@ -18,7 +18,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
-import com.enonic.wem.admin.rest.resource.schema.relationship.json.RelationshipTypeCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -28,12 +27,11 @@ import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
-import com.enonic.wem.api.exception.BaseException;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
-import com.enonic.wem.api.schema.relationship.editor.SetRelationshipTypeEditor;
+import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
 
 @Path("schema/relationship")
@@ -127,91 +125,79 @@ public class RelationshipTypeResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateOrUpdateSchemaJsonResult create( RelationshipTypeCreateOrUpdateJson param )
+    public CreateOrUpdateSchemaJsonResult create( RelationshipTypeCreateJson json )
     {
         try
         {
-            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getConfig() );
+            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( json.getConfig() );
 
-            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
-            createRelationshipType( relationshipType, icon );
+            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
+
+            final CreateRelationshipType createCommand = Commands.relationshipType().create();
+            createCommand.
+                name( json.getName() ).
+                displayName( relationshipType.getDisplayName() ).
+                fromSemantic( relationshipType.getFromSemantic() ).
+                toSemantic( relationshipType.getToSemantic() ).
+                allowedFromTypes( relationshipType.getAllowedFromTypes() ).
+                allowedToTypes( relationshipType.getAllowedToTypes() ).
+                icon( icon );
+
+            this.client.execute( createCommand );
 
             return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( relationshipType ) );
         }
         catch ( Exception e )
         {
             return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
-        }
-
-
-    }
-
-    private void createRelationshipType( final RelationshipType relationshipType, final Icon icon )
-    {
-        final CreateRelationshipType createCommand = Commands.relationshipType().create();
-        createCommand.
-            name( relationshipType.getName() ).
-            displayName( relationshipType.getDisplayName() ).
-            fromSemantic( relationshipType.getFromSemantic() ).
-            toSemantic( relationshipType.getToSemantic() ).
-            allowedFromTypes( relationshipType.getAllowedFromTypes() ).
-            allowedToTypes( relationshipType.getAllowedToTypes() ).
-            icon( icon );
-
-        try
-        {
-            client.execute( createCommand );
-        }
-        catch ( BaseException e )
-        {
-            throw new WebApplicationException( e );
         }
     }
 
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateOrUpdateSchemaJsonResult update( RelationshipTypeCreateOrUpdateJson param )
+    public CreateOrUpdateSchemaJsonResult update( final RelationshipTypeUpdateJson json )
     {
         try
         {
-            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getConfig() );
+            final RelationshipType parsed = new RelationshipTypeXmlSerializer().toRelationshipType( json.getConfig() );
 
-            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
-            updateRelationshipType( relationshipType, icon );
+            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
 
-            return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( relationshipType ) );
+            final RelationshipTypeEditor editor = new RelationshipTypeEditor()
+            {
+                @Override
+                public RelationshipType edit( final RelationshipType relationshipType )
+                {
+                    final RelationshipType.Builder builder = RelationshipType.newRelationshipType( relationshipType );
+                    builder.name( json.getName() );
+                    builder.displayName( parsed.getDisplayName() );
+                    builder.fromSemantic( parsed.getFromSemantic() );
+                    builder.toSemantic( parsed.getToSemantic() );
+                    builder.addAllowedFromTypes( parsed.getAllowedFromTypes() );
+                    builder.addAllowedToTypes( parsed.getAllowedToTypes() );
+                    if ( icon != null )
+                    {
+                        builder.icon( icon );
+                    }
+                    return builder.build();
+                }
+            };
+
+            final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
+            updateCommand.name( json.getRelationshipTypeToUpdate() );
+            updateCommand.editor( editor );
+
+            client.execute( updateCommand );
+
+            return CreateOrUpdateSchemaJsonResult.result( new RelationshipTypeJson( parsed ) );
         }
         catch ( Exception e )
         {
             return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
-
-
     }
 
-    private void updateRelationshipType( final RelationshipType relationshipType, final Icon icon )
-    {
-        final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-        updateCommand.name( relationshipType.getContentTypeName() );
-        updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
-            displayName( relationshipType.getDisplayName() ).
-            fromSemantic( relationshipType.getFromSemantic() ).
-            toSemantic( relationshipType.getToSemantic() ).
-            allowedFromTypes( relationshipType.getAllowedFromTypes() ).
-            allowedToTypes( relationshipType.getAllowedToTypes() ).
-            icon( icon ).
-            build() );
-
-        try
-        {
-            client.execute( updateCommand );
-        }
-        catch ( BaseException e )
-        {
-            throw new WebApplicationException( e );
-        }
-    }
 
     @Inject
     public void setUploadService( final UploadService uploadService )

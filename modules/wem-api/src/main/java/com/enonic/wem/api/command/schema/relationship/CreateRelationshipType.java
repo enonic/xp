@@ -11,7 +11,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 public final class CreateRelationshipType
     extends Command<RelationshipTypeName>
 {
-    private String name;
+    private RelationshipTypeName name;
 
     private String displayName;
 
@@ -26,6 +26,12 @@ public final class CreateRelationshipType
     private Icon icon;
 
     public CreateRelationshipType name( final String name )
+    {
+        this.name = RelationshipTypeName.from( name );
+        return this;
+    }
+
+    public CreateRelationshipType name( final RelationshipTypeName name )
     {
         this.name = name;
         return this;
@@ -67,7 +73,7 @@ public final class CreateRelationshipType
         return this;
     }
 
-    public String getName()
+    public RelationshipTypeName getName()
     {
         return name;
     }

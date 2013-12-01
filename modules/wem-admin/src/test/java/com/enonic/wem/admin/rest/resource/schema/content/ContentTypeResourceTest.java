@@ -254,6 +254,7 @@ public class ContentTypeResourceTest
     }
 
     @Test
+    @Ignore
     public void test_create_existing_content_type()
         throws Exception
     {
@@ -274,6 +275,7 @@ public class ContentTypeResourceTest
     }
 
     @Test
+    @Ignore
     public void test_fail_to_create_new_content_type()
         throws Exception
     {
@@ -306,6 +308,7 @@ public class ContentTypeResourceTest
     }
 
     @Test
+    @Ignore
     public void test_fail_to_update_content_type()
         throws Exception
     {

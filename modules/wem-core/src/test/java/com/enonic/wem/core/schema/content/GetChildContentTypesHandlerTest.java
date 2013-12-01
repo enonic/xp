@@ -89,7 +89,7 @@ public class GetChildContentTypesHandlerTest
         // verify
         types = command.getResult();
         assertEquals( 1, types.getSize() );
-        assertEquals( "my_type", types.get( 0 ).getContentTypeName().toString() );
+        assertEquals( "my_type", types.get( 0 ).getName().toString() );
 
         // exercise
         command = Commands.contentType().get().children().parentName( ContentTypeName.from( node2.name() ) );
@@ -99,7 +99,7 @@ public class GetChildContentTypesHandlerTest
         // verify
         types = command.getResult();
         assertEquals( 2, types.getSize() );
-        assertEquals( "sub_type_1", types.get( 0 ).getContentTypeName().toString() );
-        assertEquals( "sub_type_2", types.get( 1 ).getContentTypeName().toString() );
+        assertEquals( "sub_type_1", types.get( 0 ).getName().toString() );
+        assertEquals( "sub_type_2", types.get( 1 ).getName().toString() );
     }
 }

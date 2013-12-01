@@ -181,7 +181,7 @@ public class CreateContentHandler
             if ( !contentType.allowChildContent() )
             {
                 throw new SystemException( "Content [{0}] of type [{1}] does not allow children", parentContentPath,
-                                           contentType.getContentTypeName() );
+                                           contentType.getName() );
             }
         }
     }

@@ -13,7 +13,7 @@ public abstract class BaseSchema<T extends SchemaName>
 {
     final SchemaId id;
 
-    final SchemaName name;
+    final T name;
 
     final String displayName;
 
@@ -30,7 +30,7 @@ public abstract class BaseSchema<T extends SchemaName>
     protected BaseSchema( final Builder builder )
     {
         this.id = builder.id;
-        this.name = builder.name;
+        this.name = (T) builder.name;
         this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -44,12 +44,10 @@ public abstract class BaseSchema<T extends SchemaName>
         return id;
     }
 
-    public String getName()
+    public T getName()
     {
-        return name != null ? name.toString() : null;
+        return name;
     }
-
-    public abstract T getContentTypeName();
 
     public String getDisplayName()
     {
@@ -81,11 +79,11 @@ public abstract class BaseSchema<T extends SchemaName>
         return icon;
     }
 
-    public static class Builder<T extends Builder>
+    public static class Builder<T extends Builder,SCHEMA_NAME extends SchemaName>
     {
         private SchemaId id;
 
-        private SchemaName name;
+        private SCHEMA_NAME name;
 
         private String displayName;
 
@@ -108,12 +106,13 @@ public abstract class BaseSchema<T extends SchemaName>
         {
             Preconditions.checkNotNull( schema, "schema cannot be null" );
             this.id = schema.id;
-            this.name = schema.name;
+            this.name = (SCHEMA_NAME) schema.name;
             this.displayName = schema.displayName;
             this.createdTime = schema.createdTime;
             this.modifiedTime = schema.modifiedTime;
             this.creator = schema.creator;
             this.modifier = schema.modifier;
+            this.icon = schema.icon;
         }
 
         private T getThis()
@@ -127,7 +126,7 @@ public abstract class BaseSchema<T extends SchemaName>
             return getThis();
         }
 
-        public T name( final SchemaName value )
+        public T name( final SCHEMA_NAME value )
         {
             this.name = value;
             return getThis();

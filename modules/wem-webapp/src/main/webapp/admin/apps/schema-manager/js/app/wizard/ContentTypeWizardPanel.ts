@@ -86,7 +86,10 @@ module app_wizard {
 
         updatePersistedItem(successCallback ? : () => void) {
             var formData = this.contentTypeForm.getFormData();
-            var updateContentTypeRequest = new api_schema_content.UpdateContentTypeRequest(this.contentTypeWizardHeader.getName(), formData.xml,
+            var newName = new api_schema_content.ContentTypeName(this.contentTypeWizardHeader.getName());
+            var updateContentTypeRequest = new api_schema_content.UpdateContentTypeRequest(this.persistedContentType.getContentTypeName(),
+                                                                                           newName,
+                                                                                           formData.xml,
                 this.getIconUrl());
 
             updateContentTypeRequest.send().done((response:api_rest.JsonResponse<any>) => {
@@ -94,12 +97,12 @@ module app_wizard {
                 if (jsonResponse.error) {
                     api_notify.showError(jsonResponse.error.msg);
                 } else {
-                    var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(jsonResponse.result);
+                    var updatedContentType:api_schema_content.ContentType = new api_schema_content.ContentType(jsonResponse.result);
                     new app_wizard.ContentTypeUpdatedEvent().fire();
                     api_notify.showFeedback('Content type was saved!');
 
-                    new api_schema.SchemaUpdatedEvent( contentType ).fire();
-
+                    new api_schema.SchemaUpdatedEvent( updatedContentType ).fire();
+                    this.setPersistedItem(updatedContentType);
                     if (successCallback) {
                         successCallback.call(this);
                     }

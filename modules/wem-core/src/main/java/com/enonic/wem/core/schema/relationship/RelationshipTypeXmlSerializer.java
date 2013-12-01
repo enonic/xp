@@ -41,7 +41,7 @@ public class RelationshipTypeXmlSerializer
 
     private void generate( final RelationshipType type, final Element typeEl )
     {
-        typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
+        typeEl.addContent( new Element( "name" ).setText( type.getName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( type.getDisplayName() ) );
 
         typeEl.addContent( new Element( "from-semantic" ).setText( type.getFromSemantic() ) );

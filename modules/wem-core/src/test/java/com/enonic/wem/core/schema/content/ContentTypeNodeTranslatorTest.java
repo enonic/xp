@@ -40,7 +40,7 @@ public class ContentTypeNodeTranslatorTest
     {
         final String myDisplayNameValue = "My display name";
         CreateContentType command = Commands.contentType().create().
-            name( "myName" ).
+            name( "myname" ).
             displayName( myDisplayNameValue ).
             form( Form.newForm().build() );
 
@@ -56,7 +56,7 @@ public class ContentTypeNodeTranslatorTest
         // Setup:
         final String myDisplayNameValue = "My display name";
         CreateContentType command = Commands.contentType().create().
-            name( "myName" ).
+            name( "myname" ).
             displayName( myDisplayNameValue ).
             form( Form.newForm().build() );
 
@@ -74,7 +74,7 @@ public class ContentTypeNodeTranslatorTest
         // Setup:
 
         CreateContentType command = Commands.contentType().create().
-            name( "myName" ).
+            name( "myname" ).
             displayName( "myDisplayName" ).
             allowChildContent( true ).
             builtIn( true ).
@@ -97,7 +97,7 @@ public class ContentTypeNodeTranslatorTest
         // Setup:
 
         CreateContentType command = Commands.contentType().create().
-            name( "myName" ).
+            name( "myname" ).
             displayName( "myDisplayName" ).
             form( Form.newForm().
                 addFormItem( Input.
@@ -129,7 +129,7 @@ public class ContentTypeNodeTranslatorTest
         final ContentType contentType = translator.fromNode( node );
 
         assertEquals( new SchemaId( "1" ), contentType.getId() );
-        assertEquals( ContentTypesInitializer.UNSTRUCTURED.getContentTypeName().toString(),
+        assertEquals( ContentTypesInitializer.UNSTRUCTURED.getName().toString(),
                       contentType.getSuperType().getContentTypeName() );
     }
 

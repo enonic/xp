@@ -30,7 +30,7 @@ public class RelationshipTypeJsonSerializer
     {
         final ObjectMapper mapper = objectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
-        objectNode.put( "name", relationshipType.getName() );
+        objectNode.put( "name", relationshipType.getName().toString() );
         objectNode.put( "displayName", relationshipType.getDisplayName() );
         objectNode.put( "fromSemantic", relationshipType.getFromSemantic() );
         objectNode.put( "toSemantic", relationshipType.getToSemantic() );

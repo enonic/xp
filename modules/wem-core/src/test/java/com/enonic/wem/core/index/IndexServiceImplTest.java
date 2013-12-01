@@ -13,8 +13,6 @@ import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.index.elastic.IndexMapping;
 import com.enonic.wem.core.index.elastic.IndexMappingProvider;

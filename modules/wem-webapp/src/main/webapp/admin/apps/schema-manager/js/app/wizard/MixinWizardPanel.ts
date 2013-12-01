@@ -75,7 +75,7 @@ module app_wizard {
                 if (jsonResponse.error) {
                     api_notify.showError(jsonResponse.error.msg);
                 } else {
-                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.getResult());
+                    var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.result);
                     this.setPersistedItem(mixin);
                     this.getTabId().changeToEditMode(mixin.getKey());
                     api_notify.showFeedback( 'Mixin was created!' );
@@ -106,7 +106,7 @@ module app_wizard {
                 } else {
                     var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.result);
                     api_notify.showFeedback( 'Mixin was updated!' );
-
+                    this.setPersistedItem(mixin);
                     new api_schema.SchemaUpdatedEvent( mixin ).fire();
 
                     if ( successCallback )

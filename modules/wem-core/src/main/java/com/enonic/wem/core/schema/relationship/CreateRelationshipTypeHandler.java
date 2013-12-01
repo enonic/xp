@@ -45,7 +45,7 @@ public final class CreateRelationshipTypeHandler
         final Session session = context.getJcrSession();
         relationshipTypeDao.create( relationshipType, session );
         session.save();
-        command.setResult( relationshipType.getContentTypeName() );
+        command.setResult( relationshipType.getName() );
     }
 
     @Inject

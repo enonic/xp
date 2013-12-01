@@ -63,7 +63,7 @@ public class ContentTypeNodeTranslator
         final EntityIndexConfig entityIndexConfig = ContentTypeEntityIndexConfigFactory.create( rootDataSet );
 
         return Commands.node().create().
-            name( command.getName() ).
+            name( command.getName().toString() ).
             parent( parentItemPath ).
             icon( command.getIcon() ).
             data( rootDataSet ).
@@ -130,7 +130,7 @@ public class ContentTypeNodeTranslator
             public Node.EditBuilder edit( final Node toBeEdited )
             {
                 return Node.editNode( toBeEdited ).
-                    name( contentType.getName() ).
+                    name( contentType.getName().toString() ).
                     icon( contentType.getIcon() ).
                     rootDataSet( rootDataSet );
             }

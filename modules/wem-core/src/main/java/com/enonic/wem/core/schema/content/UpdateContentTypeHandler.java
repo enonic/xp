@@ -54,7 +54,7 @@ public final class UpdateContentTypeHandler
             client( context.getClient() ).
             build();
 
-        validator.validate( contentType.getContentTypeName(), contentType.getSuperType() );
+        validator.validate( contentType.getName(), contentType.getSuperType() );
 
         final ContentTypeValidationResult validationResult = validator.getResult();
 
@@ -63,7 +63,7 @@ public final class UpdateContentTypeHandler
             return;
         }
 
-        throw new InvalidContentTypeException( contentType.getContentTypeName(), validationResult.getFirst().getErrorMessage() );
+        throw new InvalidContentTypeException( contentType.getName(), validationResult.getFirst().getErrorMessage() );
     }
 
 }

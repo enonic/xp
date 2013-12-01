@@ -1,51 +1,38 @@
 {
-  "error" : null,
-  "result" : {
-    "schemaKind" : "Mixin",
-    "createdTime" : null,
-    "creator" : null,
-    "deletable" : true,
-    "displayName" : "My Mixin",
-    "editable" : true,
-    "hasChildren" : false,
-    "iconUrl" : "http://localhost/admin/rest/schema/image/Mixin:my_set",
-    "items" : [ {
-      "FormItemSet" : {
-        "name" : "my_set",
-        "label" : "My set",
-        "customText" : null,
-        "helpText" : null,
-        "immutable" : false,
-        "occurrences" : {
-          "minimum" : 1,
-          "maximum" : 3
-        },
-        "items" : [ {
-          "Input" : {
-            "name" : "myInput",
-            "label" : "My input",
-            "customText" : null,
-            "helpText" : null,
-            "validationRegexp" : null,
-            "immutable" : false,
-            "indexed" : false,
-            "inputType" : {
-              "name" : "TextLine"
-            },
-            "occurrences" : {
-              "minimum" : 0,
-              "maximum" : 1
-            },
-            "config" : { }
-          }
-        } ]
-      }
-    } ],
-    "key" : "Mixin:my_set",
-    "modifiedTime" : null,
-    "modifier" : null,
-    "name" : "my_set"
-  }
+    "error": null,
+    "result": {
+        "schemaKind": "Mixin",
+        "createdTime": null,
+        "creator": null,
+        "deletable": true,
+        "displayName": null,
+        "editable": true,
+        "hasChildren": false,
+        "iconUrl": "http://localhost/admin/rest/schema/image/Mixin:some_input",
+        "items": [
+            {
+                "Input": {
+                    "name": "some_input",
+                    "label": null,
+                    "customText": null,
+                    "helpText": null,
+                    "validationRegexp": null,
+                    "immutable": false,
+                    "indexed": false,
+                    "inputType": {
+                        "name": "TextLine"
+                    },
+                    "occurrences": {
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "config": { }
+                }
+            }
+        ],
+        "key": "Mixin:some_input",
+        "modifiedTime": null,
+        "modifier": null,
+        "name": "some_input"
+    }
 }
-
-

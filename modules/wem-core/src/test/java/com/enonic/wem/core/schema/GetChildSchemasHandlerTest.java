@@ -52,7 +52,7 @@ public class GetChildSchemasHandlerTest
             name( "my_content_type" ).
             displayName( "My content type" ).
             setAbstract( false ).
-            superType( unstructuredContentType.getContentTypeName() ).
+            superType( unstructuredContentType.getName() ).
             build();
 
         final ContentTypes contentTypes = ContentTypes.from( contentType );
@@ -67,7 +67,7 @@ public class GetChildSchemasHandlerTest
         Schemas schemas = command.getResult();
         assertEquals( 1, schemas.getSize() );
         assertTrue( schemas.get( 0 ).getSchemaKey().isContentType() );
-        assertEquals( "my_content_type", schemas.get( 0 ).getContentTypeName().toString() );
+        assertEquals( "my_content_type", schemas.get( 0 ).getName().toString() );
     }
 
 }

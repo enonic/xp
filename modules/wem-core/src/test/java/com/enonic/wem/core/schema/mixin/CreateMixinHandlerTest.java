@@ -63,7 +63,7 @@ public class CreateMixinHandlerTest
 
         Mixin mixin = command.getResult();
         assertNotNull( mixin );
-        assertEquals( "age", mixin.getName() );
+        assertEquals( "age", mixin.getName().toString() );
     }
 
 }

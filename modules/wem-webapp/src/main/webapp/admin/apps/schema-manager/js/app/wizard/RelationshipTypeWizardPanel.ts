@@ -10,8 +10,6 @@ module app_wizard {
 
         private relationShipTypeWizardHeader :api_app_wizard.WizardHeaderWithName;
 
-        private persistedRelationshipType :api_schema_relationshiptype.RelationshipType;
-
         private relationshipTypeForm :RelationshipTypeForm;
 
         constructor(tabId:api_app.AppBarTabId) {
@@ -51,8 +49,6 @@ module app_wizard {
             this.relationShipTypeWizardHeader.setName(relationshipType.getName());
             this.formIcon.setSrc(relationshipType.getIcon());
 
-            this.persistedRelationshipType = relationshipType;
-
             new api_schema_relationshiptype.GetRelationshipTypeConfigByNameRequest(relationshipType.getRelationshiptypeName()).send().
                 done((response:api_rest.JsonResponse <api_schema_relationshiptype.GetRelationshipTypeConfigResult>) => {
                     this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
@@ -61,7 +57,8 @@ module app_wizard {
 
         persistNewItem(successCallback ? : () => void) {
             var formData = this.relationshipTypeForm.getFormData();
-            var request = new api_schema_relationshiptype.CreateRelationshipTypeRequest(formData.xml, this.getIconUrl());
+            var newName = new api_schema_relationshiptype.RelationshipTypeName( this.relationShipTypeWizardHeader.getName() );
+            var request = new api_schema_relationshiptype.CreateRelationshipTypeRequest(newName, formData.xml, this.getIconUrl());
             request.send().done((response:api_rest.JsonResponse<any>)=> {
                 var jsonResponse = response.getJson();
                 if (jsonResponse.error) {
@@ -84,13 +81,16 @@ module app_wizard {
 
         updatePersistedItem(successCallback ? : () => void) {
             var formData = this.relationshipTypeForm.getFormData();
-            var request = new api_schema_relationshiptype.UpdateRelationshipTypeRequest(formData.xml, this.getIconUrl());
+            var newName = new api_schema_relationshiptype.RelationshipTypeName( this.relationShipTypeWizardHeader.getName() );
+            var request = new api_schema_relationshiptype.UpdateRelationshipTypeRequest(this.getPersistedItem().getRelationshiptypeName(),
+                                                                                        newName, formData.xml, this.getIconUrl());
             request.send().done((response:api_rest.JsonResponse<any>)=> {
                 var jsonResponse = response.getJson();
                 if (jsonResponse.error) {
                     api_notify.showError(jsonResponse.error.msg);
                 } else {
                     var relationshipType:api_schema_relationshiptype.RelationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.result);
+                    this.setPersistedItem(relationshipType);
                     new app_wizard.RelationshipTypeUpdatedEvent().fire();
                     api_notify.showFeedback('Relationship type was saved!');
 

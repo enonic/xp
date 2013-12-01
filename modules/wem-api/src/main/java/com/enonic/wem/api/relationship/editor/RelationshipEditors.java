@@ -60,10 +60,5 @@ public abstract class RelationshipEditors
             return this;
         }
 
-
-        public SetRelationshipPropertiesEditor build()
-        {
-            return new SetRelationshipPropertiesEditor( properties.build() );
-        }
     }
 }

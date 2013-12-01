@@ -90,7 +90,7 @@ public class SchemaImageResourceTest
         final ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
             displayName( "My content type" ).
-            superType( systemContentType.getContentTypeName() ).
+            superType( systemContentType.getName() ).
             build();
         setupContentType( contentType );
 
@@ -217,7 +217,7 @@ public class SchemaImageResourceTest
         list.add( contentType );
         final ContentTypes result = ContentTypes.from( list );
         final GetContentTypes command =
-            new GetContentTypes().contentTypeNames( ContentTypeNames.from( contentType.getContentTypeName() ) );
+            new GetContentTypes().contentTypeNames( ContentTypeNames.from( contentType.getName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 
@@ -226,7 +226,7 @@ public class SchemaImageResourceTest
         final List<Mixin> list = Lists.newArrayList();
         list.add( mixin );
         final Mixins result = Mixins.from( list );
-        final GetMixins command = new GetMixins().names( MixinNames.from( mixin.getContentTypeName() ) );
+        final GetMixins command = new GetMixins().names( MixinNames.from( mixin.getName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 
@@ -236,7 +236,7 @@ public class SchemaImageResourceTest
         list.add( relationshipType );
         final RelationshipTypes result = RelationshipTypes.from( list );
         final GetRelationshipTypes command =
-            new GetRelationshipTypes().names( RelationshipTypeNames.from( relationshipType.getContentTypeName() ) );
+            new GetRelationshipTypes().names( RelationshipTypeNames.from( relationshipType.getName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 

@@ -2,19 +2,23 @@ module api_schema_relationshiptype {
 
     export class CreateRelationshipTypeRequest extends RelationshipTypeResourceRequest<any> {
 
+        private name:RelationshipTypeName;
+
         private config:string;
 
         private iconReference:string;
 
-        constructor(relationshipType:string, iconReference:string) {
+        constructor(name:RelationshipTypeName, config:string, iconReference:string) {
             super();
             super.setMethod("POST");
-            this.config = relationshipType;
+            this.name = name;
+            this.config = config;
             this.iconReference = iconReference;
         }
 
         getParams():Object {
             return {
+                "name": this.name.toString(),
                 "config": this.config,
                 "iconReference": this.iconReference
             }

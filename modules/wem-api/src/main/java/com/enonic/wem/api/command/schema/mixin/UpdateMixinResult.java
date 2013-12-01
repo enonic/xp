@@ -1,8 +1,19 @@
 package com.enonic.wem.api.command.schema.mixin;
 
-public enum UpdateMixinResult
+import com.enonic.wem.api.schema.mixin.Mixin;
+
+public class UpdateMixinResult
 {
-    SUCCESS,
-    NOT_FOUND
+    private final Mixin persistedMixin;
+
+    public UpdateMixinResult( final Mixin persistedMixin )
+    {
+        this.persistedMixin = persistedMixin;
+    }
+
+    public Mixin getPersistedMixin()
+    {
+        return persistedMixin;
+    }
 }
 

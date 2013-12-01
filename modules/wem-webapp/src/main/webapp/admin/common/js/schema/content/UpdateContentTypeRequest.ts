@@ -2,15 +2,18 @@ module api_schema_content {
 
     export class UpdateContentTypeRequest extends ContentTypeResourceRequest<any> {
 
-        private name:string;
+        private contentTypeToUpdate:ContentTypeName;
+
+        private name:ContentTypeName;
 
         private config:string;
 
         private iconReference:string;
 
-        constructor(name:string, config:string, iconReference:string) {
+        constructor(contentTypeToUpdate:ContentTypeName, name:ContentTypeName, config:string, iconReference:string) {
             super();
             super.setMethod('POST');
+            this.contentTypeToUpdate = contentTypeToUpdate;
             this.name = name;
             this.config = config;
             this.iconReference = iconReference;
@@ -18,7 +21,8 @@ module api_schema_content {
 
         getParams():Object {
             return {
-                name: this.name,
+                contentTypeToUpdate: this.contentTypeToUpdate.toString(),
+                name: this.name.toString(),
                 config: this.config,
                 iconReference: this.iconReference
             }

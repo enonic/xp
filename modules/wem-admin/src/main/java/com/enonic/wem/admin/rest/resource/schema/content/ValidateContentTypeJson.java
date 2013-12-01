@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.content.json;
+package com.enonic.wem.admin.rest.resource.schema.content;
 
 import java.util.List;
 

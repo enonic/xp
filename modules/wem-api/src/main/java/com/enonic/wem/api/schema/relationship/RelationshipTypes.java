@@ -62,7 +62,7 @@ public final class RelationshipTypes
         @Override
         public RelationshipTypeName apply( final RelationshipType value )
         {
-            return value.getContentTypeName();
+            return value.getName();
         }
     }
 }

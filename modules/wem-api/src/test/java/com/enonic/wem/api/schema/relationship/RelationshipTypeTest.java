@@ -26,7 +26,7 @@ public class RelationshipTypeTest
         RelationshipType relationshipType = builder.build();
 
         // verify
-        assertEquals( "like", relationshipType.getName() );
+        assertEquals( "like", relationshipType.getName().toString() );
         assertEquals( "likes", relationshipType.getFromSemantic() );
         assertEquals( "liked by", relationshipType.getToSemantic() );
         assertEquals( ContentTypeNames.from( "person" ), relationshipType.getAllowedFromTypes() );

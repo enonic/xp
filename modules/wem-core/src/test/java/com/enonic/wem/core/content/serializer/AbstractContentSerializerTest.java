@@ -291,7 +291,7 @@ public abstract class AbstractContentSerializerTest
             build();
         //contentTypeFetcher.add( contentType );
 
-        Content content = newContent().type( contentType.getContentTypeName() ).build();
+        Content content = newContent().type( contentType.getName() ).build();
         content.getContentData().setProperty( "myText", new Value.String( "A value" ) );
         content.getContentData().setProperty( "formItemSet.myText", new Value.String( "A another value" ) );
 
@@ -320,7 +320,7 @@ public abstract class AbstractContentSerializerTest
             build();
         //contentTypeFetcher.add( contentType );
 
-        Content content = newContent().type( contentType.getContentTypeName() ).build();
+        Content content = newContent().type( contentType.getName() ).build();
         content.getContentData().setProperty( "formItemSet[0].myText", new Value.String( "Value 1" ) );
         content.getContentData().setProperty( "formItemSet[1].myText", new Value.String( "Value 2" ) );
 
@@ -349,7 +349,7 @@ public abstract class AbstractContentSerializerTest
             addFormItem( layout ).
             build();
 
-        Content content = newContent().type( contentType.getContentTypeName() ).build();
+        Content content = newContent().type( contentType.getName() ).build();
         content.getContentData().setProperty( "myText", new Value.String( "A value" ) );
 
         String serialized = toString( content );

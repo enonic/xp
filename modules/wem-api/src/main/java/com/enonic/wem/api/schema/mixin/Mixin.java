@@ -21,13 +21,7 @@ public class Mixin
     @Override
     public SchemaKey getSchemaKey()
     {
-        return SchemaKey.from( getContentTypeName() );
-    }
-
-    @Override
-    public MixinName getContentTypeName()
-    {
-        return MixinName.from( getName() );
+        return getName() != null ? SchemaKey.from( getName() ) : null;
     }
 
     @Override
@@ -52,7 +46,7 @@ public class Mixin
     }
 
     public static class Builder
-        extends BaseSchema.Builder<Builder>
+        extends BaseSchema.Builder<Builder,MixinName>
     {
         private FormItems formItems = new FormItems( null );
 

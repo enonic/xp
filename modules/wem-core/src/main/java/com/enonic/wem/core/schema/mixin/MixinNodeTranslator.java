@@ -39,7 +39,7 @@ class MixinNodeTranslator
         final EntityIndexConfig indexConfig = MixinEntityIndexConfigFactory.create( rootDataSet );
 
         return Commands.node().create().
-            name( createMixin.getName() ).
+            name( createMixin.getName().toString() ).
             parent( parentItemPath ).
             icon( createMixin.getIcon() ).
             data( rootDataSet ).
@@ -86,7 +86,7 @@ class MixinNodeTranslator
             public Node.EditBuilder edit( final Node toBeEdited )
             {
                 return Node.editNode( toBeEdited ).
-                    name( mixin.getName() ).
+                    name( mixin.getName().toString() ).
                     icon( mixin.getIcon() ).
                     rootDataSet( rootDataSet );
             }

@@ -12,7 +12,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 public final class CreateContentType
     extends Command<ContentType>
 {
-    private String name;
+    private ContentTypeName name;
 
     private String displayName;
 
@@ -32,15 +32,21 @@ public final class CreateContentType
 
     private String contentDisplayNameScript;
 
-    public String getName()
+    public ContentTypeName getName()
     {
         return name;
     }
 
 
-    public CreateContentType name( final String name )
+    public CreateContentType name( final ContentTypeName name )
     {
         this.name = name;
+        return this;
+    }
+
+    public CreateContentType name( final String name )
+    {
+        this.name = ContentTypeName.from( name );
         return this;
     }
 

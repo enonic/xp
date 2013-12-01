@@ -1,13 +1,13 @@
-package com.enonic.wem.admin.rest.resource.schema.content.json;
+package com.enonic.wem.admin.rest.resource.schema.content;
 
 
-public class ContentTypeCreateOrUpdateJson
+public class ContentTypeCreateJson
 {
+    private String name;
+
     private String config;
 
     private String iconReference;
-
-    private String name;
 
     public String getName()
     {

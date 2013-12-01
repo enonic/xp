@@ -80,7 +80,7 @@ public class RelationshipTypeDaoImplTest
         assertNotNull( relationshipTypes );
         assertEquals( 1, relationshipTypes.getSize() );
         RelationshipType createdRelationshipType = relationshipTypes.first();
-        assertEquals( "like", createdRelationshipType.getName() );
+        assertEquals( "like", createdRelationshipType.getName().toString() );
         assertEquals( like, createdRelationshipType );
     }
 
@@ -117,9 +117,9 @@ public class RelationshipTypeDaoImplTest
         RelationshipType retrievedRelationshipType1 = relationshipTypes.get( RelationshipTypeName.from( "like" ) );
         RelationshipType retrievedRelationshipType2 = relationshipTypes.get( RelationshipTypeName.from( "hate" ) );
 
-        assertEquals( "like", retrievedRelationshipType1.getName() );
+        assertEquals( "like", retrievedRelationshipType1.getName().toString() );
         assertEquals( like, retrievedRelationshipType1 );
-        assertEquals( "hate", retrievedRelationshipType2.getName() );
+        assertEquals( "hate", retrievedRelationshipType2.getName().toString() );
         assertEquals( hates, retrievedRelationshipType2 );
     }
 
@@ -157,9 +157,9 @@ public class RelationshipTypeDaoImplTest
         RelationshipType retrievedRelationshipType1 = relationshipTypes.get( RelationshipTypeName.from( "like" ) );
         RelationshipType retrievedRelationshipType2 = relationshipTypes.get( RelationshipTypeName.from( "hate" ) );
 
-        assertEquals( "like", retrievedRelationshipType1.getName() );
+        assertEquals( "like", retrievedRelationshipType1.getName().toString() );
         assertEquals( like, retrievedRelationshipType1 );
-        assertEquals( "hate", retrievedRelationshipType2.getName() );
+        assertEquals( "hate", retrievedRelationshipType2.getName().toString() );
         assertEquals( hates, retrievedRelationshipType2 );
     }
 
@@ -198,7 +198,7 @@ public class RelationshipTypeDaoImplTest
         assertNotNull( relationshipTypesAfterUpdate );
         assertEquals( 1, relationshipTypesAfterUpdate.getSize() );
         RelationshipType relationshipType1 = relationshipTypesAfterUpdate.first();
-        assertEquals( "like", relationshipType1.getName() );
+        assertEquals( "like", relationshipType1.getName().toString() );
         assertEquals( "accepts", relationshipType1.getFromSemantic() );
         assertEquals( "accepted by", relationshipType1.getToSemantic() );
         assertEquals( ContentTypeNames.from( "worker" ), relationshipType1.getAllowedFromTypes() );

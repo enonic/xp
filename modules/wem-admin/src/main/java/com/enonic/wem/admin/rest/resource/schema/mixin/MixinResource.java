@@ -18,8 +18,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateJson;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinUpdateJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -28,24 +26,24 @@ import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
-import com.enonic.wem.api.exception.BaseException;
+import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.Mixins;
-import com.enonic.wem.api.schema.mixin.editor.SetMixinEditor;
+import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
 import com.enonic.wem.api.support.serializer.ParsingException;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
 import static com.enonic.wem.api.command.Commands.mixin;
-import static com.enonic.wem.api.schema.mixin.editor.SetMixinEditor.newSetMixinEditor;
 
 @Path("schema/mixin")
 @Produces(MediaType.APPLICATION_JSON)
 public class MixinResource
     extends AbstractResource
 {
-    private final MixinXmlSerializer mixinXmlSerializer = new MixinXmlSerializer();
+    private final MixinXmlSerializer mixinXmlSerializer = new MixinXmlSerializer().
+        includeName( false );
 
     private UploadService uploadService;
 
@@ -105,12 +103,6 @@ public class MixinResource
         final Mixin mixin = parseXml( params.getConfig() );
         final Icon icon = fetchIcon( params.getIconReference() );
 
-        if ( fetchMixin( params.getName() ) != null )
-        {
-            String message = String.format( "Mixin [%s] already exists.",mixin.getContentTypeName() );
-            return CreateOrUpdateSchemaJsonResult.error( message );
-        }
-
         final CreateMixin createCommand = mixin().create().
             name( params.getName().toString() ).
             displayName( mixin.getDisplayName() ).
@@ -119,9 +111,11 @@ public class MixinResource
 
         try
         {
-            return CreateOrUpdateSchemaJsonResult.result( new MixinJson( client.execute( createCommand ) ) );
+            final Mixin createdMixin = client.execute( createCommand );
+            final MixinJson mixinJson = new MixinJson( createdMixin );
+            return CreateOrUpdateSchemaJsonResult.result( mixinJson );
         }
-        catch ( BaseException e )
+        catch ( Exception e )
         {
             return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
@@ -130,34 +124,41 @@ public class MixinResource
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateOrUpdateSchemaJsonResult update( MixinUpdateJson params )
+    public CreateOrUpdateSchemaJsonResult update( final MixinUpdateJson params )
     {
-        final Mixin mixin = parseXml( params.getConfig() );
-        final Icon icon = fetchIcon( params.getIconReference() );
-
-        if ( fetchMixin( mixin.getContentTypeName() ) == null )
-        {
-            String message = String.format( "Mixin [%s] not found.", mixin.getContentTypeName() );
-            return CreateOrUpdateSchemaJsonResult.error( message );
-        }
-
-        final SetMixinEditor editor = newSetMixinEditor().
-            displayName( mixin.getDisplayName() ).
-            formItems( mixin.getFormItems() ).
-            icon( icon ).
-            build();
-
-        final UpdateMixin updateCommand = mixin().update().
-            name( params.getMixinToUpdate() ).
-            editor( editor );
-
         try
         {
-            client.execute( updateCommand );
-            return CreateOrUpdateSchemaJsonResult.result( new MixinJson( mixin ) );
+            final Mixin parsed = parseXml( params.getConfig() );
+            final Icon icon = fetchIcon( params.getIconReference() );
+
+            final MixinEditor editor = new MixinEditor()
+            {
+                @Override
+                public Mixin edit( final Mixin mixin )
+                {
+                    final Mixin.Builder builder = Mixin.newMixin( mixin );
+                    builder.name( params.getName() );
+                    builder.displayName( parsed.getDisplayName() );
+                    builder.formItems( parsed.getFormItems() );
+                    if ( icon != null )
+                    {
+                        builder.icon( icon );
+                    }
+                    return builder.build();
+                }
+            };
+
+            final UpdateMixin updateCommand = mixin().update().
+                name( params.getMixinToUpdate() ).
+                editor( editor );
+
+            final UpdateMixinResult result = client.execute( updateCommand );
+            final Mixin updatedMixin = result.getPersistedMixin();
+            return CreateOrUpdateSchemaJsonResult.result( new MixinJson( updatedMixin ) );
         }
-        catch ( BaseException e )
+        catch ( Exception e )
         {
+            e.printStackTrace();
             return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
     }

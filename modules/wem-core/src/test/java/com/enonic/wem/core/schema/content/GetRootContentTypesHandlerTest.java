@@ -64,7 +64,7 @@ public class GetRootContentTypesHandlerTest
         verify( client, atLeastOnce() ).execute( Mockito.isA( GetNodesByParent.class ) );
         final ContentTypes types = command.getResult();
         assertEquals( 1, types.getSize() );
-        assertEquals( "my_content_type1", types.get( 0 ).getContentTypeName().toString() );
+        assertEquals( "my_content_type1", types.get( 0 ).getName().toString() );
 
     }
 }

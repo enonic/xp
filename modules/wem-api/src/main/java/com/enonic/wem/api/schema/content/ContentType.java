@@ -58,14 +58,9 @@ public final class ContentType
     @Override
     public SchemaKey getSchemaKey()
     {
-        return SchemaKey.from( getContentTypeName() );
+        return getName() != null ? SchemaKey.from( getName() ) : null;
     }
 
-    @Override
-    public ContentTypeName getContentTypeName()
-    {
-        return ContentTypeName.from( getName() );
-    }
 
     @Override
     public boolean hasChildren()
@@ -159,7 +154,7 @@ public final class ContentType
     }
 
     public static class Builder
-        extends BaseSchema.Builder<Builder>
+        extends BaseSchema.Builder<Builder,ContentTypeName>
     {
         private boolean isAbstract;
 

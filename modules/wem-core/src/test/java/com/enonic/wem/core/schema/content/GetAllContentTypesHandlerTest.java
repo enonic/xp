@@ -143,7 +143,7 @@ public class GetAllContentTypesHandlerTest
     {
         final ContentType contentType = result.getContentType( ContentTypeName.from( contentTypeName ) );
         assertNotNull( contentType );
-        assertEquals( contentTypeName, contentType.getName() );
+        assertEquals( contentTypeName, contentType.getName().toString() );
         assertEquals( displayName, contentType.getDisplayName() );
     }
 }

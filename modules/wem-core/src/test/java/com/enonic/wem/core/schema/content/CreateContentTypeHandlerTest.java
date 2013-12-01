@@ -61,7 +61,7 @@ public class CreateContentTypeHandlerTest
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
         final Node node = Node.newNode().
-            name( contentType.getName() ).
+            name( contentType.getName().toString() ).
             id( EntityId.from( "1" ) ).
             property( "displayName", contentType.getDisplayName() ).
             build();
@@ -75,7 +75,7 @@ public class CreateContentTypeHandlerTest
         // verify
         ContentType createdContentType = command.getResult();
         assertNotNull( createdContentType );
-        assertEquals( "my_content_type", createdContentType.getContentTypeName().toString() );
+        assertEquals( "my_content_type", createdContentType.getName().toString() );
     }
 
     @Test(expected = InvalidContentTypeException.class)
@@ -94,7 +94,7 @@ public class CreateContentTypeHandlerTest
             build();
 
         final Node node = Node.newNode().
-            name( contentType.getName() ).
+            name( contentType.getName().toString() ).
             id( EntityId.from( "1" ) ).
             property( "displayName", "Inheriting a final ContentType" ).
             property( "superType", ContentTypeName.shortcut().toString() ).

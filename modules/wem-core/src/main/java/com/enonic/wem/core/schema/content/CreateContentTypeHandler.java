@@ -22,7 +22,7 @@ public final class CreateContentTypeHandler
         throws Exception
     {
 
-        validate( ContentTypeName.from( command.getName() ), command.getSuperType() );
+        validate( command.getName(), command.getSuperType() );
 
         final CreateNode createNodeCommand = CONTENT_TYPE_NODE_TRANSLATOR.toCreateNodeCommand( command );
         final CreateNodeResult createNodeResult = context.getClient().execute( createNodeCommand );

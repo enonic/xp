@@ -1,7 +1,6 @@
 {
-  "error" : {
-    "msg" : "Content type creation failed"
-  },
-  "result" : null
+    "error" : {
+        "msg" : "name cannot be null"
+    },
+    "result" : null
 }
-

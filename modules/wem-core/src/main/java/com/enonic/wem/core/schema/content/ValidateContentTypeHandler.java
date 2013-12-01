@@ -19,7 +19,7 @@ public class ValidateContentTypeHandler
             client( context.getClient() ).
             build();
 
-        validator.validate( contentType.getContentTypeName(), contentType.getSuperType() );
+        validator.validate( contentType.getName(), contentType.getSuperType() );
         command.setResult( validator.getResult() );
     }
 

@@ -11,27 +11,23 @@ module app_delete {
 
             this.getDeleteAction().addExecutionListener(() => {
 
-                var CONTENT_TYPE = api_schema.SchemaKind.CONTENT_TYPE.toString(),
-                    RELATIONSHIP_TYPE = api_schema.SchemaKind.RELATIONSHIP_TYPE.toString(),
-                    MIXIN = api_schema.SchemaKind.MIXIN.toString();
-
-                var names = {};
-                names[CONTENT_TYPE] = [];
-                names[RELATIONSHIP_TYPE] = [];
-                names[MIXIN] = [];
+                var deleteContentTypeRequest = new api_schema_content.DeleteContentTypeRequest();
+                var deleteMixinRequest = new api_schema_mixin.DeleteMixinRequest();
+                var deleteRelationshipTypeRequest = new api_schema_relationshiptype.DeleteRelationshipTypeRequest();
 
                 this.schemaToDelete.forEach((schema:api_schema.Schema) => {
-                    names[schema.getSchemaKind().toString()].push(schema.getName());
+                    if( schema.getSchemaKind().toString() == api_schema.SchemaKind.CONTENT_TYPE.toString() ) {
+                        deleteContentTypeRequest.addName(new api_schema_content.ContentTypeName(schema.getName()));
+                    }
+                    else if( schema.getSchemaKind().toString() == api_schema.SchemaKind.MIXIN.toString() ) {
+                        deleteMixinRequest.addName(new api_schema_mixin.MixinName(schema.getName()));
+                    }
+                    else if( schema.getSchemaKind().toString() == api_schema.SchemaKind.RELATIONSHIP_TYPE.toString() ) {
+                        deleteRelationshipTypeRequest.addName(new api_schema_relationshiptype.RelationshipTypeName(schema.getName()));
+                    }
                 });
 
-                var deleteContentTypeRequest = names[CONTENT_TYPE].length == 0 ? null :
-                    new api_schema_content.DeleteContentTypeRequest(names[CONTENT_TYPE]).send();
-                var deleteRelationshipTypeRequest = names[RELATIONSHIP_TYPE].length == 0 ? null :
-                    new api_schema_relationshiptype.DeleteRelationshipTypeRequest(names[RELATIONSHIP_TYPE]).send();
-                var deleteMixinRequest = names[MIXIN] ? null :
-                    new api_schema_mixin.DeleteMixinRequest(names[MIXIN]).send();
-
-                jQuery.when(deleteContentTypeRequest, deleteRelationshipTypeRequest, deleteMixinRequest)
+                jQuery.when(deleteContentTypeRequest.send(), deleteRelationshipTypeRequest.send(), deleteMixinRequest.send())
                     .done((contentTypeResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>,
                             relationshipTypeResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>,
                             mixinResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {

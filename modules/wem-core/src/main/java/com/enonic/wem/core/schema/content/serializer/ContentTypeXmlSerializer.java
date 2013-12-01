@@ -44,7 +44,7 @@ public class ContentTypeXmlSerializer
 
     private void generate( final ContentType type, final Element typeEl )
     {
-        typeEl.addContent( new Element( "name" ).setText( type.getName() ) );
+        typeEl.addContent( new Element( "name" ).setText( type.getName().toString() ) );
         typeEl.addContent( new Element( "display-name" ).setText( type.getDisplayName() ) );
         typeEl.addContent( new Element( "content-display-name-script" ).setText( type.getContentDisplayNameScript() ) );
         typeEl.addContent( new Element( "super-type" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );

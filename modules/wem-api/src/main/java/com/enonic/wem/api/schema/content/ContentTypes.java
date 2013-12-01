@@ -60,7 +60,7 @@ public final class ContentTypes
         @Override
         public ContentTypeName apply( final ContentType value )
         {
-            return value.getContentTypeName();
+            return value.getName();
         }
     }
 

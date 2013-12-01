@@ -61,7 +61,7 @@ public final class Mixins
         @Override
         public MixinName apply( final Mixin value )
         {
-            return value.getContentTypeName();
+            return value.getName();
         }
     }
 

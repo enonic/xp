@@ -30,7 +30,7 @@ public class MixinJsonSerializer
     {
         final ObjectMapper mapper = new ObjectMapper();
         final ObjectNode objectNode = mapper.createObjectNode();
-        objectNode.put( "name", mixin.getName() );
+        objectNode.put( "name", mixin.getName().toString() );
         objectNode.put( "displayName", mixin.getDisplayName() );
 
         objectNode.putArray( "items" ).addAll( (ArrayNode) formItemsSerializer.serialize( mixin.getFormItems() ) );

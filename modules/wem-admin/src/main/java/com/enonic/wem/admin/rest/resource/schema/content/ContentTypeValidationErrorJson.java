@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.content.json;
+package com.enonic.wem.admin.rest.resource.schema.content;
 
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationError;
 

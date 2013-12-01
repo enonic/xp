@@ -88,8 +88,8 @@ public class MixinReference
 
         public Builder( final Mixin mixin )
         {
-            this.name = mixin.getContentTypeName().toString();
-            this.mixinName = mixin.getContentTypeName();
+            this.name = mixin.getName().toString();
+            this.mixinName = mixin.getName();
         }
 
         public Builder name( String value )
@@ -100,7 +100,7 @@ public class MixinReference
 
         public Builder mixin( final Mixin mixin )
         {
-            this.mixinName = mixin.getContentTypeName();
+            this.mixinName = mixin.getName();
             return this;
         }
 

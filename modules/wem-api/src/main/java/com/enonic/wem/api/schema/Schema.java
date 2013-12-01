@@ -3,7 +3,6 @@ package com.enonic.wem.api.schema;
 
 import org.joda.time.DateTime;
 
-import com.enonic.wem.api.Name;
 import com.enonic.wem.api.support.ChangeTraceable;
 
 public interface Schema
@@ -11,9 +10,7 @@ public interface Schema
 {
     SchemaKey getSchemaKey();
 
-    String getName();
-
-    Name getContentTypeName();
+    SchemaName getName();
 
     String getDisplayName();
 

@@ -61,11 +61,11 @@ public class ValidateContentDataHandlerTest
 
         Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( contentType );
 
-        final Content content = Content.newContent().type( contentType.getContentTypeName() ).build();
+        final Content content = Content.newContent().type( contentType.getName() ).build();
 
         // exercise
         final ValidateContentData command =
-            Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getContentTypeName() );
+            Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getName() );
         this.handler.setCommand( command );
         this.handler.handle();
 
@@ -92,12 +92,12 @@ public class ValidateContentDataHandlerTest
 
         Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( contentType );
 
-        final Content content = newContent().type( contentType.getContentTypeName() ).build();
+        final Content content = newContent().type( contentType.getName() ).build();
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "thing" ) );
 
         // exercise
         final ValidateContentData command =
-            Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getContentTypeName() );
+            Commands.content().validate().contentData( content.getContentData() ).contentType( contentType.getName() );
         this.handler.setCommand( command );
         this.handler.handle();
 
