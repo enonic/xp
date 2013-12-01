@@ -94,10 +94,10 @@ public class ContentTypeResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
-        MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
-        qualifiedNames.add( "qualifiedName", MY_CTY_QUALIFIED_NAME.toString() );
+        MultivaluedMap<String, String> names = new MultivaluedMapImpl();
+        names.add( "name", MY_CTY_QUALIFIED_NAME.toString() );
         String jsonString =
-            resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "mixinReferencesToFormItems", "false" ).get(
+            resource().path( "schema/content" ).queryParams( names ).queryParam( "mixinReferencesToFormItems", "false" ).get(
                 String.class );
 
         // verify
@@ -165,10 +165,10 @@ public class ContentTypeResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
-        MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
-        qualifiedNames.add( "qualifiedName", MY_CTY_QUALIFIED_NAME.toString() );
+        MultivaluedMap<String, String> names = new MultivaluedMapImpl();
+        names.add( "name", MY_CTY_QUALIFIED_NAME.toString() );
         String jsonString =
-            resource().path( "schema/content" ).queryParams( qualifiedNames ).queryParam( "mixinReferencesToFormItems", "false" ).get(
+            resource().path( "schema/content" ).queryParams( names ).queryParam( "mixinReferencesToFormItems", "false" ).get(
                 String.class );
 
         // verify
@@ -195,9 +195,9 @@ public class ContentTypeResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
-        MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
-        qualifiedNames.add( "qualifiedName", MY_CTY_QUALIFIED_NAME.toString() );
-        String jsonString = resource().path( "schema/content/config" ).queryParams( qualifiedNames ).get( String.class );
+        MultivaluedMap<String, String> names = new MultivaluedMapImpl();
+        names.add( "name", MY_CTY_QUALIFIED_NAME.toString() );
+        String jsonString = resource().path( "schema/content/config" ).queryParams( names ).get( String.class );
 
         // verify
         assertJson( "ContentTypeResourceTest-get_contentType_with_format_as_xml-result.json", jsonString );
@@ -223,11 +223,11 @@ public class ContentTypeResourceTest
         Mockito.when( client.execute( Mockito.isA( GetAllContentTypes.class ) ) ).thenReturn( ContentTypes.from( contentType ) );
 
         // execute
-        MultivaluedMap<String, String> qualifiedNames = new MultivaluedMapImpl();
-        qualifiedNames.add( "qualifiedNames", MY_CTY_QUALIFIED_NAME.toString() );
+        MultivaluedMap<String, String> names = new MultivaluedMapImpl();
+        names.add( "names", MY_CTY_QUALIFIED_NAME.toString() );
         String jsonString = resource().
             path( "schema/content/all" ).
-            queryParams( qualifiedNames ).
+            queryParams( names ).
             queryParam( "format", "JSON" ).
             queryParam( "mixinReferencesToFormItems", "false" ).
             get( String.class );

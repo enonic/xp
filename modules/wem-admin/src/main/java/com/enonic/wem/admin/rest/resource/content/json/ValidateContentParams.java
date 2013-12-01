@@ -8,18 +8,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 @XmlRootElement
 public class ValidateContentParams
 {
-    private String qualifiedContentTypeName;
+    private String contentTypeName;
 
     private JsonNode contentData;
 
-    public String getQualifiedContentTypeName()
+    public String getContentTypeName()
     {
-        return qualifiedContentTypeName;
+        return contentTypeName;
     }
 
-    public void setQualifiedContentTypeName( final String qualifiedContentTypeName )
+    public void setContentTypeName( final String contentTypeName )
     {
-        this.qualifiedContentTypeName = qualifiedContentTypeName;
+        this.contentTypeName = contentTypeName;
     }
 
     public JsonNode getContentData()

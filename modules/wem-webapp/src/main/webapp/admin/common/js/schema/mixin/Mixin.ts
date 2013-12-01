@@ -15,6 +15,10 @@ module api_schema_mixin {
             this.schemaKey = "mixin:" + this.getName();
         }
 
+        getMixinName(): MixinName {
+            return new MixinName(this.getName());
+        }
+
         getFormItems():api_form.FormItem[] {
             return this.formItems;
         }

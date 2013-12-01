@@ -10,18 +10,18 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 public final class GetRelationshipTypes
     extends Command<RelationshipTypes>
 {
-    private RelationshipTypeNames qualifiedNames;
+    private RelationshipTypeNames names;
 
     private boolean all = false;
 
-    public RelationshipTypeNames getQualifiedNames()
+    public RelationshipTypeNames getNames()
     {
-        return this.qualifiedNames;
+        return this.names;
     }
 
-    public GetRelationshipTypes qualifiedNames( final RelationshipTypeNames qualifiedNames )
+    public GetRelationshipTypes names( final RelationshipTypeNames names )
     {
-        this.qualifiedNames = qualifiedNames;
+        this.names = names;
         return this;
     }
 
@@ -50,13 +50,13 @@ public final class GetRelationshipTypes
         }
 
         final GetRelationshipTypes that = (GetRelationshipTypes) o;
-        return Objects.equal( this.qualifiedNames, that.qualifiedNames ) && ( this.all == that.all );
+        return Objects.equal( this.names, that.names ) && ( this.all == that.all );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedNames, this.all );
+        return Objects.hashCode( this.names, this.all );
     }
 
     @Override
@@ -64,12 +64,12 @@ public final class GetRelationshipTypes
     {
         if ( all )
         {
-            Preconditions.checkArgument( this.qualifiedNames == null,
-                                         "all cannot be true at the same time as qualifiedNames is specified" );
+            Preconditions.checkArgument( this.names == null,
+                                         "all cannot be true at the same time as names are specified" );
         }
         else
         {
-            Preconditions.checkNotNull( this.qualifiedNames, "qualifiedNames cannot be null" );
+            Preconditions.checkNotNull( this.names, "names cannot be null" );
         }
     }
 

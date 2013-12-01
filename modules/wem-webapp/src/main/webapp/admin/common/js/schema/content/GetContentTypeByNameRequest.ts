@@ -19,7 +19,7 @@ module api_schema_content {
 
         getParams():Object {
             return {
-                qualifiedName: this.name.toString(),
+                name: this.name.toString(),
                 mixinReferencesToFormItems: this.mixinReferencesToFormItems
             };
         }

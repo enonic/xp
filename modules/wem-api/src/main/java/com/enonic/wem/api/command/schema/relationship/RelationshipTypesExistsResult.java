@@ -7,31 +7,31 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 public class RelationshipTypesExistsResult
 {
     // DO NOT COMMIT ?
-    private final RelationshipTypeNames qualifiedNames;
+    private final RelationshipTypeNames names;
 
-    private RelationshipTypesExistsResult( final RelationshipTypeNames qualifiedNames )
+    private RelationshipTypesExistsResult( final RelationshipTypeNames names )
     {
-        this.qualifiedNames = qualifiedNames;
+        this.names = names;
     }
 
     public boolean isEmpty()
     {
-        return qualifiedNames.isEmpty();
+        return names.isEmpty();
     }
 
     public boolean isNotEmpty()
     {
-        return qualifiedNames.isEmpty();
+        return names.isEmpty();
     }
 
-    public boolean exists( RelationshipTypeName qualifiedName )
+    public boolean exists( RelationshipTypeName name )
     {
-        return qualifiedNames.contains( qualifiedName );
+        return names.contains( name );
     }
 
-    public RelationshipTypeNames getQualifiedNames()
+    public RelationshipTypeNames getNames()
     {
-        return qualifiedNames;
+        return names;
     }
 
     public static RelationshipTypesExistsResult empty()

@@ -99,8 +99,8 @@ public class ContentXmlSerializer
         final String typeAsString = contentEl.getChildText( "type" );
         if ( typeAsString != null )
         {
-            final ContentTypeName qualifiedContentTypeName = ContentTypeName.from( typeAsString );
-            contentBuilder.type( qualifiedContentTypeName );
+            final ContentTypeName contentTypeName = ContentTypeName.from( typeAsString );
+            contentBuilder.type( contentTypeName );
         }
 
         final RootDataSet rootDataSet = dataSerializer.parse( contentEl.getChild( "data" ) );

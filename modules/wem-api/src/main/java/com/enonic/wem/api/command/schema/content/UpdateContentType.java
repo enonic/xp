@@ -10,13 +10,13 @@ import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 public final class UpdateContentType
     extends Command<UpdateContentTypeResult>
 {
-    private ContentTypeName qualifiedName;
+    private ContentTypeName name;
 
     private ContentTypeEditor editor;
 
-    public UpdateContentType contentTypeName( final ContentTypeName qualifiedName )
+    public UpdateContentType contentTypeName( final ContentTypeName name )
     {
-        this.qualifiedName = qualifiedName;
+        this.name = name;
         return this;
     }
 
@@ -28,7 +28,7 @@ public final class UpdateContentType
 
     public ContentTypeName getContentTypeName()
     {
-        return qualifiedName;
+        return name;
     }
 
     public ContentTypeEditor getEditor()
@@ -50,19 +50,19 @@ public final class UpdateContentType
         }
 
         final UpdateContentType that = (UpdateContentType) o;
-        return Objects.equal( this.qualifiedName, that.qualifiedName ) && Objects.equal( this.editor, that.editor );
+        return Objects.equal( this.name, that.name ) && Objects.equal( this.editor, that.editor );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedName, this.editor );
+        return Objects.hashCode( this.name, this.editor );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedName, "qualifiedName cannot be null" );
+        Preconditions.checkNotNull( this.name, "name cannot be null" );
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 }

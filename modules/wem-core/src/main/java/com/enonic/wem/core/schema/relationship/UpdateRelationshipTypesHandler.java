@@ -23,7 +23,7 @@ public final class UpdateRelationshipTypesHandler
 
         final RelationshipTypeEditor editor = command.getEditor();
 
-        final RelationshipType existing = relationshipTypeDao.select( command.getQualifiedName(), session );
+        final RelationshipType existing = relationshipTypeDao.select( command.getName(), session );
 
         final RelationshipType changed = editor.edit( existing );
         if ( changed != null )

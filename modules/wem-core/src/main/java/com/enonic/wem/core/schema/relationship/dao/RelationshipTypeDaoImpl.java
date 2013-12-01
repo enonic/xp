@@ -25,15 +25,15 @@ public final class RelationshipTypeDaoImpl
     }
 
     @Override
-    public void delete( final RelationshipTypeName qualifiedName, final Session session )
+    public void delete( final RelationshipTypeName relationshipTypeName, final Session session )
     {
-        new RelationshipTypeDaoHandlerDelete( session ).qualifiedRelationshipTypeName( qualifiedName ).handle();
+        new RelationshipTypeDaoHandlerDelete( session ).relationshipTypeName( relationshipTypeName ).handle();
     }
 
     @Override
-    public RelationshipTypeNames exists( final RelationshipTypeNames qNames, final Session session )
+    public RelationshipTypeNames exists( final RelationshipTypeNames relationshipTypeNames, final Session session )
     {
-        final RelationshipTypeDaoHandlerExists handler = new RelationshipTypeDaoHandlerExists( session ).selectors( qNames );
+        final RelationshipTypeDaoHandlerExists handler = new RelationshipTypeDaoHandlerExists( session ).selectors( relationshipTypeNames );
         handler.handle();
         return handler.getResult();
     }
@@ -47,18 +47,18 @@ public final class RelationshipTypeDaoImpl
     }
 
     @Override
-    public RelationshipTypes select( final RelationshipTypeNames selectors, final Session session )
+    public RelationshipTypes select( final RelationshipTypeNames relationshipTypeNames, final Session session )
     {
-        final RelationshipTypeDaoHandlerSelect handler = new RelationshipTypeDaoHandlerSelect( session ).selectors( selectors );
+        final RelationshipTypeDaoHandlerSelect handler = new RelationshipTypeDaoHandlerSelect( session ).selectors( relationshipTypeNames );
         handler.handle();
         return handler.getResult();
     }
 
     @Override
-    public RelationshipType select( final RelationshipTypeName qualifiedName, final Session session )
+    public RelationshipType select( final RelationshipTypeName relationshipTypeName, final Session session )
     {
         final RelationshipTypeDaoHandlerSelect handler =
-            new RelationshipTypeDaoHandlerSelect( session ).selectors( RelationshipTypeNames.from( qualifiedName ) );
+            new RelationshipTypeDaoHandlerSelect( session ).selectors( RelationshipTypeNames.from( relationshipTypeName ) );
         handler.handle();
         return handler.getResult().first();
     }

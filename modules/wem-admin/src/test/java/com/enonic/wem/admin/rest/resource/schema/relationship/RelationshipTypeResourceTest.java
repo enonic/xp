@@ -81,10 +81,10 @@ public class RelationshipTypeResourceTest
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final RelationshipTypeNames names =
             RelationshipTypeNames.from( RelationshipTypeName.from( "the_relationship_type" ) );
-        Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( client.execute( Commands.relationshipType().get().names( names ) ) ).thenReturn( relationshipTypes );
 
         String response =
-            resource().path( "schema/relationship" ).queryParam( "qualifiedName", "the_relationship_type" ).get( String.class );
+            resource().path( "schema/relationship" ).queryParam( "name", "the_relationship_type" ).get( String.class );
 
         assertJson( "get_relationship_type.json", response );
 
@@ -101,10 +101,10 @@ public class RelationshipTypeResourceTest
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType );
         final RelationshipTypeNames names =
             RelationshipTypeNames.from( RelationshipTypeName.from( "the_relationship_type" ) );
-        Mockito.when( client.execute( Commands.relationshipType().get().qualifiedNames( names ) ) ).thenReturn( relationshipTypes );
+        Mockito.when( client.execute( Commands.relationshipType().get().names( names ) ) ).thenReturn( relationshipTypes );
 
         String response =
-            resource().path( "schema/relationship/config" ).queryParam( "qualifiedName", "the_relationship_type" ).get( String.class );
+            resource().path( "schema/relationship/config" ).queryParam( "name", "the_relationship_type" ).get( String.class );
 
         assertJson( "get_relationship_type_config.json", response );
     }
@@ -117,7 +117,7 @@ public class RelationshipTypeResourceTest
         {
             Mockito.when( client.execute( Mockito.any( GetRelationshipTypes.class ) ) ).thenReturn( RelationshipTypes.empty() );
 
-            resource().path( "schema/relationship" ).queryParam( "qualifiedName", "relationship_type" ).get( String.class );
+            resource().path( "schema/relationship" ).queryParam( "name", "relationship_type" ).get( String.class );
         }
         catch ( UniformInterfaceException e )
         {
@@ -203,10 +203,10 @@ public class RelationshipTypeResourceTest
     public void testUpdate()
         throws Exception
     {
-        RelationshipTypeNames qualifiedNames = RelationshipTypeNames.from( RelationshipTypeName.from( "love" ) );
+        RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( RelationshipTypeName.from( "love" ) );
 
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn(
-            RelationshipTypesExistsResult.from( qualifiedNames ) );
+            RelationshipTypesExistsResult.from( relationshipTypeNames ) );
         Mockito.when( client.execute( isA( UpdateRelationshipType.class ) ) ).thenReturn( Boolean.TRUE );
 
         Mockito.when( this.uploadService.getItem( "reference" ) ).thenReturn( null );

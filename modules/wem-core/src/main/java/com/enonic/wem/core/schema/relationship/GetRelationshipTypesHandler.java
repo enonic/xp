@@ -27,7 +27,7 @@ public final class GetRelationshipTypesHandler
         }
         else
         {
-            final RelationshipTypeNames selectors = command.getQualifiedNames();
+            final RelationshipTypeNames selectors = command.getNames();
             relationshipTypes = relationshipTypeDao.select( selectors, session );
         }
         command.setResult( relationshipTypes );

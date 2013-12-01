@@ -87,7 +87,8 @@ module app {
                         var schemaWizardPanel;
 
                         if( schema.getSchemaKind() == api_schema.SchemaKind.CONTENT_TYPE ) {
-                            new api_schema_content.GetContentTypeByNameRequest(new api_schema_content.ContentTypeName(schema.getName())).
+                            var contentType = <api_schema_content.ContentType>schema;
+                            new api_schema_content.GetContentTypeByNameRequest(contentType.getContentTypeName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
                                                 var contentType = new api_schema_content.ContentType(jsonResponse.getResult());
 
@@ -100,7 +101,8 @@ module app {
                                             });
                         }
                         else if( schema.getSchemaKind() == api_schema.SchemaKind.RELATIONSHIP_TYPE ) {
-                            new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(schema.getName()).
+                            var relationhipType = <api_schema_relationshiptype.RelationshipType>schema;
+                            new api_schema_relationshiptype.GetRelationshipTypeByNameRequest(relationhipType.getRelationshiptypeName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
                                                 var relationshipType = new api_schema_relationshiptype.RelationshipType(jsonResponse.getResult());
 
@@ -113,7 +115,8 @@ module app {
                                             });
                         }
                         else if( schema.getSchemaKind() == api_schema.SchemaKind.MIXIN ) {
-                            new api_schema_mixin.GetMixinByQualifiedNameRequest(schema.getName()).
+                            var mixin = <api_schema_mixin.Mixin>schema;
+                            new api_schema_mixin.GetMixinByQualifiedNameRequest(mixin.getMixinName()).
                                 send().done((jsonResponse:api_rest.JsonResponse<api_schema_mixin_json.MixinJson>)=> {
                                                 var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.getResult());
                                                 tabMenuItem = new api_app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);

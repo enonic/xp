@@ -100,8 +100,8 @@ public class ContentJsonSerializer
         final String typeAsString = getStringValue( "type", contentNode, null );
         if ( typeAsString != null )
         {
-            final ContentTypeName qualifiedContentTypeName = ContentTypeName.from( typeAsString );
-            contentBuilder.type( qualifiedContentTypeName );
+            final ContentTypeName contentTypeName = ContentTypeName.from( typeAsString );
+            contentBuilder.type( contentTypeName );
         }
 
         final String id = getStringValue( "id", contentNode, null );

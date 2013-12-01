@@ -12,9 +12,9 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
 public final class QualifiedRelationshipTypeNames
-    extends AbstractImmutableEntitySet<QualifiedRelationshipTypeName>
+    extends AbstractImmutableEntitySet<RelationshipTypeName>
 {
-    private QualifiedRelationshipTypeNames( final ImmutableSet<QualifiedRelationshipTypeName> set )
+    private QualifiedRelationshipTypeNames( final ImmutableSet<RelationshipTypeName> set )
     {
         super( set );
     }
@@ -24,19 +24,19 @@ public final class QualifiedRelationshipTypeNames
         return add( parseQualifiedNames( relationshipTypeNames ) );
     }
 
-    public QualifiedRelationshipTypeNames add( final QualifiedRelationshipTypeName... relationshipTypeNames )
+    public QualifiedRelationshipTypeNames add( final RelationshipTypeName... relationshipTypeNames )
     {
         return add( ImmutableSet.copyOf( relationshipTypeNames ) );
     }
 
-    public QualifiedRelationshipTypeNames add( final Iterable<QualifiedRelationshipTypeName> relationshipTypeNames )
+    public QualifiedRelationshipTypeNames add( final Iterable<RelationshipTypeName> relationshipTypeNames )
     {
         return add( ImmutableSet.copyOf( relationshipTypeNames ) );
     }
 
-    private QualifiedRelationshipTypeNames add( final ImmutableSet<QualifiedRelationshipTypeName> relationshipTypeNames )
+    private QualifiedRelationshipTypeNames add( final ImmutableSet<RelationshipTypeName> relationshipTypeNames )
     {
-        final HashSet<QualifiedRelationshipTypeName> tmp = Sets.newHashSet();
+        final HashSet<RelationshipTypeName> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
         tmp.addAll( relationshipTypeNames );
         return new QualifiedRelationshipTypeNames( ImmutableSet.copyOf( tmp ) );
@@ -44,7 +44,7 @@ public final class QualifiedRelationshipTypeNames
 
     public static QualifiedRelationshipTypeNames empty()
     {
-        final ImmutableSet<QualifiedRelationshipTypeName> set = ImmutableSet.of();
+        final ImmutableSet<RelationshipTypeName> set = ImmutableSet.of();
         return new QualifiedRelationshipTypeNames( set );
     }
 
@@ -53,30 +53,30 @@ public final class QualifiedRelationshipTypeNames
         return new QualifiedRelationshipTypeNames( parseQualifiedNames( relationshipTypeNames ) );
     }
 
-    public static QualifiedRelationshipTypeNames from( final QualifiedRelationshipTypeName... relationshipTypeNames )
+    public static QualifiedRelationshipTypeNames from( final RelationshipTypeName... relationshipTypeNames )
     {
         return new QualifiedRelationshipTypeNames( ImmutableSet.copyOf( relationshipTypeNames ) );
     }
 
-    public static QualifiedRelationshipTypeNames from( final Iterable<QualifiedRelationshipTypeName> relationshipTypeNames )
+    public static QualifiedRelationshipTypeNames from( final Iterable<RelationshipTypeName> relationshipTypeNames )
     {
         return new QualifiedRelationshipTypeNames( ImmutableSet.copyOf( relationshipTypeNames ) );
     }
 
-    private static ImmutableSet<QualifiedRelationshipTypeName> parseQualifiedNames( final String... relationshipTypeNames )
+    private static ImmutableSet<RelationshipTypeName> parseQualifiedNames( final String... relationshipTypeNames )
     {
         final Collection<String> list = Lists.newArrayList( relationshipTypeNames );
-        final Collection<QualifiedRelationshipTypeName> relationshipTypeNameList = Collections2.transform( list, new ParseFunction() );
+        final Collection<RelationshipTypeName> relationshipTypeNameList = Collections2.transform( list, new ParseFunction() );
         return ImmutableSet.copyOf( relationshipTypeNameList );
     }
 
     private final static class ParseFunction
-        implements Function<String, QualifiedRelationshipTypeName>
+        implements Function<String, RelationshipTypeName>
     {
         @Override
-        public QualifiedRelationshipTypeName apply( final String value )
+        public RelationshipTypeName apply( final String value )
         {
-            return QualifiedRelationshipTypeName.from( value );
+            return RelationshipTypeName.from( value );
         }
     }
 }

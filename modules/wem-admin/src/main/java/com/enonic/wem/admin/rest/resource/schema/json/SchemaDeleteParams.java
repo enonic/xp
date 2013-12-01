@@ -4,15 +4,15 @@ import java.util.List;
 
 public class SchemaDeleteParams
 {
-    private List<String> qualifiedNames;
+    private List<String> names;
 
-    public List<String> getQualifiedNames()
+    public List<String> getNames()
     {
-        return qualifiedNames;
+        return names;
     }
 
-    public void setQualifiedNames( final List<String> qualifiedNames )
+    public void setNames( final List<String> names )
     {
-        this.qualifiedNames = qualifiedNames;
+        this.names = names;
     }
 }

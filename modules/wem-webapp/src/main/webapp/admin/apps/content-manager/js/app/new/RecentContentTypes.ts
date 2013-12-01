@@ -24,20 +24,20 @@ module app_new {
         public addRecentContentType(contentType:api_schema_content.ContentTypeSummary) {
 
             var cookie:string = api_util.CookieHelper.getCookie(this.cookieKey);
-            var qualifiedContentTypeNames = cookie ? cookie.split(this.valueSeparator) : [];
+            var contentTypeNames = cookie ? cookie.split(this.valueSeparator) : [];
 
-            var qualifiedContentTypeName = contentType.getName();
-            if (qualifiedContentTypeNames.length === 0 || qualifiedContentTypeNames[0] !== qualifiedContentTypeName) {
-                qualifiedContentTypeNames.unshift(qualifiedContentTypeName);
+            var contentTypeName = contentType.getName();
+            if (contentTypeNames.length === 0 || contentTypeNames[0] !== contentTypeName) {
+                contentTypeNames.unshift(contentTypeName);
             }
 
-            if (qualifiedContentTypeNames.length > this.maximum) {
+            if (contentTypeNames.length > this.maximum) {
                 // constrain recent items quantity to maximum
-                qualifiedContentTypeNames = qualifiedContentTypeNames.slice(0, this.maximum);
+                contentTypeNames = contentTypeNames.slice(0, this.maximum);
             }
 
             // add chosen item to recent list
-            api_util.CookieHelper.setCookie(this.cookieKey, qualifiedContentTypeNames.join(this.valueSeparator));
+            api_util.CookieHelper.setCookie(this.cookieKey, contentTypeNames.join(this.valueSeparator));
         }
 
         public getRecentContentTypes():api_schema_content.ContentTypeName[] {

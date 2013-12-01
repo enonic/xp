@@ -118,7 +118,7 @@ module api_remote_content {
     }
 
     export interface ValidateParams {
-        qualifiedContentTypeName: string;
+        contentTypeName: string;
         contentData: Data;
     }
 
@@ -149,7 +149,7 @@ module api_remote_content {
         draft?: boolean;
         contentName?: string;
         parentContentPath?: string;
-        qualifiedContentTypeName: string;
+        contentTypeName: string;
         contentData: {
             [key:string]: string;
         };

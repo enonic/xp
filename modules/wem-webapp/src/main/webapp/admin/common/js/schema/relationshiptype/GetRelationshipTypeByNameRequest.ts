@@ -1,10 +1,10 @@
-module api_schema_mixin {
+module api_schema_relationshiptype {
 
-    export class GetMixinByQualifiedNameRequest extends MixinResourceRequest<api_schema_mixin_json.MixinJson> {
+    export class GetRelationshipTypeByNameRequest extends RelationshipTypeResourceRequest<api_schema_relationshiptype_json.RelationshipTypeJson> {
 
-        private name:MixinName;
+        private name:RelationshipTypeName;
 
-        constructor(name:MixinName) {
+        constructor(name:RelationshipTypeName) {
             super();
             super.setMethod("GET");
             this.name = name;

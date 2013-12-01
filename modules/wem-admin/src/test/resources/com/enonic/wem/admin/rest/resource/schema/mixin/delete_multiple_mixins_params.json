@@ -1,5 +1,5 @@
 {
-    "qualifiedNames": [
+    "names": [
         "existing_mixin",
         "being_used_mixin",
         "not_existing_mixin"

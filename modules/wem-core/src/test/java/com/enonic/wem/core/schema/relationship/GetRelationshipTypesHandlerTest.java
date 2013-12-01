@@ -58,7 +58,7 @@ public class GetRelationshipTypesHandlerTest
 
         // exercise
         final RelationshipTypeNames names = RelationshipTypeNames.from( "like" );
-        final GetRelationshipTypes command = Commands.relationshipType().get().qualifiedNames( names );
+        final GetRelationshipTypes command = Commands.relationshipType().get().names( names );
 
         this.handler.setCommand( command );
         this.handler.handle();

@@ -17,10 +17,10 @@ final class ContentDaoHandlerCountContentTypeUsage
         super( session, indexService );
     }
 
-    int handle( ContentTypeName qualifiedContentTypeName )
+    int handle( ContentTypeName contentTypeName )
         throws RepositoryException
     {
-        if ( qualifiedContentTypeName == null )
+        if ( contentTypeName == null )
         {
             return 0;
         }
@@ -30,24 +30,24 @@ final class ContentDaoHandlerCountContentTypeUsage
         int count = 0;
         for ( ContentAndNode topContentAndNode : topContentAndNodes )
         {
-            count += countContentTypeUsageInNode( qualifiedContentTypeName, topContentAndNode );
+            count += countContentTypeUsageInNode( contentTypeName, topContentAndNode );
         }
         return count;
     }
 
 
-    private int countContentTypeUsageInNode( final ContentTypeName qualifiedContentTypeName, ContentAndNode parentContentAndNode )
+    private int countContentTypeUsageInNode( final ContentTypeName contentTypeName, ContentAndNode parentContentAndNode )
         throws RepositoryException
     {
         int count = 0;
-        if ( qualifiedContentTypeName.equals( parentContentAndNode.content.getType() ) )
+        if ( contentTypeName.equals( parentContentAndNode.content.getType() ) )
         {
             count++;
         }
         for ( ContentAndNode childContentAndNode : doContentNodesToContentAndNodes(
             doGetChildContentNodes( parentContentAndNode.contentNode ) ) )
         {
-            count += countContentTypeUsageInNode( qualifiedContentTypeName, childContentAndNode );
+            count += countContentTypeUsageInNode( contentTypeName, childContentAndNode );
         }
         return count;
     }

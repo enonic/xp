@@ -21,7 +21,7 @@ module app_wizard {
                     .setYesCallback(() => {
                         wizardPanel.close();
                         new api_schema_content.DeleteContentTypeRequest()
-                            .addQualifiedName(wizardPanel.getPersistedItem().getName())
+                            .addName(wizardPanel.getPersistedItem().getContentTypeName())
                             .send()
                             .done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();

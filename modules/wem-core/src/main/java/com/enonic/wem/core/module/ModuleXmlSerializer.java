@@ -61,9 +61,9 @@ public final class ModuleXmlSerializer
             dependencies.addContent( new Element( "module" ).setText( moduleKey.toString() ) );
         }
 
-        for ( ContentTypeName qualifiedName : module.getContentTypeDependencies() )
+        for ( ContentTypeName contentTypeName : module.getContentTypeDependencies() )
         {
-            dependencies.addContent( new Element( "content-type" ).setText( qualifiedName.toString() ) );
+            dependencies.addContent( new Element( "content-type" ).setText( contentTypeName.toString() ) );
         }
         moduleEl.addContent( dependencies );
 

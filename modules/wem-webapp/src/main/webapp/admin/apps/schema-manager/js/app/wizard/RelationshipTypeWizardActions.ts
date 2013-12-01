@@ -21,7 +21,7 @@
                     .setYesCallback(() => {
                         wizardPanel.close();
                         new api_schema_relationshiptype.DeleteRelationshipTypeRequest()
-                            .addQualifiedName(wizardPanel.getPersistedItem().getName())
+                            .addName(wizardPanel.getPersistedItem().getRelationshiptypeName())
                             .send()
                             .done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();

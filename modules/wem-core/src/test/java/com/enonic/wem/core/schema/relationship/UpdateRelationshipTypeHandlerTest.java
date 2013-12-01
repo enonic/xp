@@ -68,7 +68,7 @@ public class UpdateRelationshipTypeHandlerTest
 
         // exercise
         UpdateRelationshipType command = Commands.relationshipType().update().
-            selector( RelationshipTypeName.from( "like" ) ).
+            name( RelationshipTypeName.from( "like" ) ).
             editor( new RelationshipTypeEditor()
             {
                 @Override

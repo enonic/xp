@@ -13,7 +13,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 final class RelationshipTypeDaoHandlerExists
     extends AbstractRelationshipTypeDaoHandler<RelationshipTypeNames>
 {
-    private RelationshipTypeNames qualifiedNames;
+    private RelationshipTypeNames relationshipTypeNames;
 
     RelationshipTypeDaoHandlerExists( final Session session )
     {
@@ -21,27 +21,27 @@ final class RelationshipTypeDaoHandlerExists
     }
 
 
-    RelationshipTypeDaoHandlerExists selectors( final RelationshipTypeNames qNames )
+    RelationshipTypeDaoHandlerExists selectors( final RelationshipTypeNames names )
     {
-        this.qualifiedNames = qNames;
+        this.relationshipTypeNames = names;
         return this;
     }
 
     protected void doHandle()
         throws RepositoryException
     {
-        setResult( handle( qualifiedNames ) );
+        setResult( handle( relationshipTypeNames ) );
     }
 
-    private RelationshipTypeNames handle( final RelationshipTypeNames qualifiedNames )
+    private RelationshipTypeNames handle( final RelationshipTypeNames names )
         throws RepositoryException
     {
         final List<RelationshipTypeName> existing = Lists.newArrayList();
-        for ( RelationshipTypeName qName : qualifiedNames )
+        for ( RelationshipTypeName name : names )
         {
-            if ( nodeExists( qName ) )
+            if ( nodeExists( name ) )
             {
-                existing.add( qName );
+                existing.add( name );
             }
 
         }

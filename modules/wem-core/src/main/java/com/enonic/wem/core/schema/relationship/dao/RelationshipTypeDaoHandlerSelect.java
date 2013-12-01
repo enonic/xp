@@ -18,25 +18,25 @@ import com.enonic.wem.core.jcr.JcrHelper;
 final class RelationshipTypeDaoHandlerSelect
     extends AbstractRelationshipTypeDaoHandler<RelationshipTypes>
 {
-    private RelationshipTypeNames qualifiedNames;
+    private RelationshipTypeNames relationshipTypeNames;
 
     RelationshipTypeDaoHandlerSelect( final Session session )
     {
         super( session );
     }
 
-    public RelationshipTypeDaoHandlerSelect selectors( final RelationshipTypeNames qualifiedNames )
+    public RelationshipTypeDaoHandlerSelect selectors( final RelationshipTypeNames names )
     {
-        this.qualifiedNames = qualifiedNames;
+        this.relationshipTypeNames = names;
         return this;
     }
 
     protected void doHandle()
         throws RepositoryException
     {
-        if ( qualifiedNames != null )
+        if ( relationshipTypeNames != null )
         {
-            setResult( select( qualifiedNames ) );
+            setResult( select( relationshipTypeNames ) );
         }
         else
         {
@@ -61,11 +61,11 @@ final class RelationshipTypeDaoHandlerSelect
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    private RelationshipTypes select( final RelationshipTypeNames qualifiedNames )
+    private RelationshipTypes select( final RelationshipTypeNames names )
         throws RepositoryException
     {
         final List<RelationshipType> relationshipTypeList = Lists.newArrayList();
-        for ( RelationshipTypeName relationshipTypeName : qualifiedNames )
+        for ( RelationshipTypeName relationshipTypeName : names )
         {
             final RelationshipType relationshipType = getRelationshipType( relationshipTypeName );
             if ( relationshipType != null )
@@ -76,10 +76,10 @@ final class RelationshipTypeDaoHandlerSelect
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    private RelationshipType getRelationshipType( final RelationshipTypeName qualifiedName )
+    private RelationshipType getRelationshipType( final RelationshipTypeName name )
         throws RepositoryException
     {
-        final Node relationshipTypeNode = getRelationshipTypeNode( qualifiedName );
+        final Node relationshipTypeNode = getRelationshipTypeNode( name );
         if ( relationshipTypeNode == null )
         {
             return null;

@@ -14,7 +14,7 @@ public class UpdateContentParams
 
     private String contentName;
 
-    private ContentTypeName qualifiedContentTypeName;
+    private ContentTypeName contentType;
 
     private List<DataJson> contentData;
 
@@ -44,14 +44,14 @@ public class UpdateContentParams
         this.contentName = contentName;
     }
 
-    public ContentTypeName getQualifiedContentTypeName()
+    public ContentTypeName getContentType()
     {
-        return qualifiedContentTypeName;
+        return contentType;
     }
 
     public void setContentType( final String value )
     {
-        this.qualifiedContentTypeName = ContentTypeName.from( value );
+        this.contentType = ContentTypeName.from( value );
     }
 
     public void setContentData( final List<DataJson> contentData )

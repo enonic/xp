@@ -10,14 +10,14 @@ import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 public final class UpdateRelationshipType
     extends Command<Boolean>
 {
-    private RelationshipTypeName qualifiedName;
+    private RelationshipTypeName name;
 
     private RelationshipTypeEditor editor;
 
 
-    public UpdateRelationshipType selector( final RelationshipTypeName qualifiedName )
+    public UpdateRelationshipType name( final RelationshipTypeName name )
     {
-        this.qualifiedName = qualifiedName;
+        this.name = name;
         return this;
     }
 
@@ -27,9 +27,9 @@ public final class UpdateRelationshipType
         return this;
     }
 
-    public RelationshipTypeName getQualifiedName()
+    public RelationshipTypeName getName()
     {
-        return qualifiedName;
+        return name;
     }
 
     public RelationshipTypeEditor getEditor()
@@ -51,19 +51,19 @@ public final class UpdateRelationshipType
         }
 
         final UpdateRelationshipType that = (UpdateRelationshipType) o;
-        return Objects.equal( this.qualifiedName, that.qualifiedName ) && Objects.equal( this.editor, that.editor );
+        return Objects.equal( this.name, that.name ) && Objects.equal( this.editor, that.editor );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.qualifiedName, this.editor );
+        return Objects.hashCode( this.name, this.editor );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedName, "qualifiedName cannot be null" );
+        Preconditions.checkNotNull( this.name, "name cannot be null" );
         Preconditions.checkNotNull( this.editor, "editor cannot be null" );
     }
 }

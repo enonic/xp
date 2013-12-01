@@ -18,13 +18,13 @@ public interface RelationshipTypeDao
 
     public void update( final RelationshipType relationshipType, final Session session );
 
-    public void delete( final RelationshipTypeName qualifiedName, final Session session );
+    public void delete( final RelationshipTypeName relationshipTypeName, final Session session );
 
-    public RelationshipTypeNames exists( final RelationshipTypeNames qNames, final Session session );
+    public RelationshipTypeNames exists( final RelationshipTypeNames relationshipTypeNames, final Session session );
 
     public RelationshipTypes selectAll( Session session );
 
-    public RelationshipTypes select( RelationshipTypeNames qualifiedNames, final Session session );
+    public RelationshipTypes select( RelationshipTypeNames relationshipTypeNames, final Session session );
 
-    public RelationshipType select( RelationshipTypeName qualifiedNames, final Session session );
+    public RelationshipType select( RelationshipTypeName relationshipTypeName, final Session session );
 }

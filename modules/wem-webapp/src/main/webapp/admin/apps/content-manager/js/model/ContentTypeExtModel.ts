@@ -2,7 +2,6 @@ Ext.define('Admin.model.schemaManager.ContentTypeModel', {
     extend: 'Ext.data.Model',
 
     fields: <any[]> [
-        'qualifiedName',
         'name',
         'displayName',
         'module',
@@ -12,5 +11,5 @@ Ext.define('Admin.model.schemaManager.ContentTypeModel', {
         'iconUrl'
     ],
 
-    idProperty: 'qualifiedName'
+    idProperty: 'name'
 });

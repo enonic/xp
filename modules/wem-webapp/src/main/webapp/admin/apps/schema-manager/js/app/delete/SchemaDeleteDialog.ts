@@ -15,26 +15,27 @@ module app_delete {
                     RELATIONSHIP_TYPE = api_schema.SchemaKind.RELATIONSHIP_TYPE.toString(),
                     MIXIN = api_schema.SchemaKind.MIXIN.toString();
 
-                var qualifiedNames = {};
-                qualifiedNames[CONTENT_TYPE] = [];
-                qualifiedNames[RELATIONSHIP_TYPE] = [];
-                qualifiedNames[MIXIN] = [];
+                var names = {};
+                names[CONTENT_TYPE] = [];
+                names[RELATIONSHIP_TYPE] = [];
+                names[MIXIN] = [];
 
                 this.schemaToDelete.forEach((schema:api_schema.Schema) => {
-                    qualifiedNames[schema.getSchemaKind().toString()].push(schema.getName());
+                    names[schema.getSchemaKind().toString()].push(schema.getName());
                 });
 
-                var deleteContentTypeRequest = qualifiedNames[CONTENT_TYPE].length == 0 ? null :
-                    new api_schema_content.DeleteContentTypeRequest(qualifiedNames[CONTENT_TYPE]).send();
-                var deleteRelationshipTypeRequest = qualifiedNames[RELATIONSHIP_TYPE].length == 0 ? null :
-                    new api_schema_relationshiptype.DeleteRelationshipTypeRequest(qualifiedNames[RELATIONSHIP_TYPE]).send();
-                var deleteMixinRequest = qualifiedNames[MIXIN] ? null :
-                    new api_schema_mixin.DeleteMixinRequest(qualifiedNames[MIXIN]).send();
+                var deleteContentTypeRequest = names[CONTENT_TYPE].length == 0 ? null :
+                    new api_schema_content.DeleteContentTypeRequest(names[CONTENT_TYPE]).send();
+                var deleteRelationshipTypeRequest = names[RELATIONSHIP_TYPE].length == 0 ? null :
+                    new api_schema_relationshiptype.DeleteRelationshipTypeRequest(names[RELATIONSHIP_TYPE]).send();
+                var deleteMixinRequest = names[MIXIN] ? null :
+                    new api_schema_mixin.DeleteMixinRequest(names[MIXIN]).send();
 
                 jQuery.when(deleteContentTypeRequest, deleteRelationshipTypeRequest, deleteMixinRequest)
                     .done((contentTypeResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>,
                             relationshipTypeResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>,
                             mixinResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+
                         var successes = [].concat(contentTypeResponse ? contentTypeResponse.getResult().successes : []);
                         successes = successes.concat(relationshipTypeResponse ? relationshipTypeResponse.getResult().successes : []);
                         successes = successes.concat(mixinResponse ? mixinResponse.getResult().successes : []);

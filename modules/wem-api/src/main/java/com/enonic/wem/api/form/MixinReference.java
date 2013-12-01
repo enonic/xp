@@ -104,15 +104,15 @@ public class MixinReference
             return this;
         }
 
-        public Builder mixin( String qualifiedName )
+        public Builder mixin( String name )
         {
-            this.mixinName = MixinName.from( qualifiedName );
+            this.mixinName = MixinName.from( name );
             return this;
         }
 
-        public Builder mixin( MixinName qualifiedName )
+        public Builder mixin( MixinName mixinName )
         {
-            this.mixinName = qualifiedName;
+            this.mixinName = mixinName;
             return this;
         }
 

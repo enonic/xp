@@ -18,7 +18,7 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
-import com.enonic.wem.admin.rest.resource.schema.relationship.json.RelationshipTypeCreateOrUpdateParam;
+import com.enonic.wem.admin.rest.resource.schema.relationship.json.RelationshipTypeCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -44,7 +44,7 @@ public class RelationshipTypeResource
     private UploadService uploadService;
 
     @GET
-    public RelationshipTypeJson get( @QueryParam("qualifiedName") final String name )
+    public RelationshipTypeJson get( @QueryParam("name") final String name )
     {
         final RelationshipTypeName relationshipTypeName = RelationshipTypeName.from( name );
         final RelationshipType relationshipType = fetchRelationshipType( relationshipTypeName );
@@ -61,7 +61,7 @@ public class RelationshipTypeResource
 
     @GET
     @Path("config")
-    public RelationshipTypeConfigJson getConfig( @QueryParam("qualifiedName") final String name )
+    public RelationshipTypeConfigJson getConfig( @QueryParam("name") final String name )
     {
         final RelationshipTypeName relationshipTypeName = RelationshipTypeName.from( name );
         final RelationshipType relationshipType = fetchRelationshipType( relationshipTypeName );
@@ -79,7 +79,7 @@ public class RelationshipTypeResource
 
     public RelationshipType fetchRelationshipType( final RelationshipTypeName name )
     {
-        final GetRelationshipTypes command = Commands.relationshipType().get().qualifiedNames( RelationshipTypeNames.from( name ) );
+        final GetRelationshipTypes command = Commands.relationshipType().get().names( RelationshipTypeNames.from( name ) );
         final RelationshipTypes relationshipTypes = client.execute( command );
         return relationshipTypes.isEmpty() ? null : relationshipTypes.first();
     }
@@ -98,13 +98,13 @@ public class RelationshipTypeResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SchemaDeleteJson delete( SchemaDeleteParams param )
     {
-        final RelationshipTypeNames qualifiedNames =
-            RelationshipTypeNames.from( param.getQualifiedNames().toArray( new String[param.getQualifiedNames().size()] ) );
+        final RelationshipTypeNames relationshipTypeNames =
+            RelationshipTypeNames.from( param.getNames().toArray( new String[param.getNames().size()] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
-        for ( RelationshipTypeName relationshipTypeName : qualifiedNames )
+        for ( RelationshipTypeName relationshipTypeName : relationshipTypeNames )
         {
-            final DeleteRelationshipType deleteCommand = Commands.relationshipType().delete().qualifiedName( relationshipTypeName );
+            final DeleteRelationshipType deleteCommand = Commands.relationshipType().delete().name( relationshipTypeName );
             final DeleteRelationshipTypeResult result = client.execute( deleteCommand );
 
             switch ( result )
@@ -127,11 +127,11 @@ public class RelationshipTypeResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateOrUpdateSchemaJsonResult create( RelationshipTypeCreateOrUpdateParam param )
+    public CreateOrUpdateSchemaJsonResult create( RelationshipTypeCreateOrUpdateJson param )
     {
         try
         {
-            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getRelationshipType() );
+            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getConfig() );
 
             final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
             createRelationshipType( relationshipType, icon );
@@ -171,11 +171,11 @@ public class RelationshipTypeResource
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateOrUpdateSchemaJsonResult update( RelationshipTypeCreateOrUpdateParam param )
+    public CreateOrUpdateSchemaJsonResult update( RelationshipTypeCreateOrUpdateJson param )
     {
         try
         {
-            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getRelationshipType() );
+            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( param.getConfig() );
 
             final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( param.getIconReference() );
             updateRelationshipType( relationshipType, icon );
@@ -193,7 +193,7 @@ public class RelationshipTypeResource
     private void updateRelationshipType( final RelationshipType relationshipType, final Icon icon )
     {
         final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-        updateCommand.selector( relationshipType.getContentTypeName() );
+        updateCommand.name( relationshipType.getContentTypeName() );
         updateCommand.editor( SetRelationshipTypeEditor.newSetRelationshipTypeEditor().
             displayName( relationshipType.getDisplayName() ).
             fromSemantic( relationshipType.getFromSemantic() ).

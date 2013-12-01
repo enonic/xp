@@ -1,6 +1,5 @@
 {
     "name": "all_schemas",
-    "qualifiedName": "all_schemas",
     "displayName": "All the Base Types",
     "contentDisplayNameScript": "$('firstName') + ' ' + $('lastName')",
     "superType": "content",

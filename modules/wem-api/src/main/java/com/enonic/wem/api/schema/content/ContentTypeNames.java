@@ -108,9 +108,9 @@ public final class ContentTypeNames
     {
         Set<String> contentTypeNamesAsStrings = Sets.newHashSet();
 
-        for ( ContentTypeName qualifiedContentTypeName : this.getSet() )
+        for ( ContentTypeName contentTypeName : this.getSet() )
         {
-            contentTypeNamesAsStrings.add( qualifiedContentTypeName.toString() );
+            contentTypeNamesAsStrings.add( contentTypeName.toString() );
         }
 
         return contentTypeNamesAsStrings;

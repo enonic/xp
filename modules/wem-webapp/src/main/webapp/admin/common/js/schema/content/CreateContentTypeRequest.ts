@@ -4,7 +4,7 @@ module api_schema_content {
 
         private name:string;
 
-        private contentType:string;
+        private config:string;
 
         private iconReference:string;
 
@@ -12,14 +12,14 @@ module api_schema_content {
             super();
             super.setMethod('POST');
             this.name = name;
-            this.contentType = contentType;
+            this.config = contentType;
             this.iconReference = iconReference;
         }
 
         getParams():Object {
             return {
                 name: this.name,
-                contentType: this.contentType,
+                config: this.config,
                 iconReference: this.iconReference
             }
         }

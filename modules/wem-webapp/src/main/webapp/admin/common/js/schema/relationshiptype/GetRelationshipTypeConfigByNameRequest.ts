@@ -1,18 +1,18 @@
 module api_schema_relationshiptype {
 
-    export class GetRelationshipTypeConfigByQualifiedNameRequest extends RelationshipTypeResourceRequest<GetRelationshipTypeConfigResult> {
+    export class GetRelationshipTypeConfigByNameRequest extends RelationshipTypeResourceRequest<GetRelationshipTypeConfigResult> {
 
-        private qualifiedName:string;
+        private name:RelationshipTypeName;
 
-        constructor(qualifiedName:string) {
+        constructor(name:RelationshipTypeName) {
             super();
             super.setMethod("GET");
-            this.qualifiedName = qualifiedName;
+            this.name = name;
         }
 
         getParams():Object {
             return {
-                qualifiedName: this.qualifiedName
+                name: this.name.toString()
             };
         }
 

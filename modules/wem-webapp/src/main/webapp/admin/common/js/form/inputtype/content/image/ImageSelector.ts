@@ -46,7 +46,11 @@ module api_form_inputtype_content_image {
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;
 
-            new api_schema_relationshiptype.GetRelationshipTypeByQualifiedNameRequest(config.inputConfig.relationshipType.name || "default").send()
+            var name = new api_schema_relationshiptype.RelationshipTypeName("default");
+            if( config.inputConfig.relationshipType.name != null ) {
+                name = new api_schema_relationshiptype.RelationshipTypeName(config.inputConfig.relationshipType.name);
+            }
+            new api_schema_relationshiptype.GetRelationshipTypeByNameRequest(name).send()
                 .done((jsonResponse:api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
                     var relationshipType = jsonResponse.getResult();
                     this.comboBox.setInputIconUrl(relationshipType.iconUrl);

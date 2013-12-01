@@ -2,29 +2,29 @@ module api_schema_relationshiptype {
 
     export class DeleteRelationshipTypeRequest extends RelationshipTypeResourceRequest<api_schema.SchemaDeleteJson> {
 
-        private qualifiedNames: string[] = [];
+        private names: string[] = [];
 
-        constructor(qualifiedNames?:string[]) {
+        constructor(names?:string[]) {
             super();
             super.setMethod("POST");
-            if (qualifiedNames) {
-                this.setQualifiedNames(qualifiedNames);
+            if (names) {
+                this.setNames(names);
             }
         }
 
-        setQualifiedNames(qualifiedNames:string[]):DeleteRelationshipTypeRequest {
-            this.qualifiedNames = qualifiedNames;
+        setNames(names:string[]):DeleteRelationshipTypeRequest {
+            this.names = names;
             return this;
         }
 
-        addQualifiedName(qualifiedName:string):DeleteRelationshipTypeRequest {
-            this.qualifiedNames.push(qualifiedName);
+        addName(name:RelationshipTypeName):DeleteRelationshipTypeRequest {
+            this.names.push(name.toString());
             return this;
         }
 
         getParams():Object {
             return {
-                qualifiedNames: this.qualifiedNames
+                names: this.names
             };
         }
 

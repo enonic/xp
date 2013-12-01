@@ -18,7 +18,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.json.schema.SchemaJson;
-import com.enonic.wem.admin.rest.resource.schema.exception.InvalidSchemaTypeException;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.GetChildSchemas;

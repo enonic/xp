@@ -306,16 +306,16 @@ public class ContentResource
     @Path("validate")
     public ValidateContentJson validate( final ValidateContentParams params )
     {
-        final ContentTypeName qualifiedContentTypeName = ContentTypeName.from( params.getQualifiedContentTypeName() );
+        final ContentTypeName contentTypeName = ContentTypeName.from( params.getContentTypeName() );
 
         GetContentTypes getContentType =
-            Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( qualifiedContentTypeName ) );
+            Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( contentTypeName ) );
         final ContentType contentType = client.execute( getContentType ).first();
 
         final ContentData contentData = new ContentDataParser( contentType ).parse( params.getContentData() );
 
         final DataValidationErrors validationErrors =
-            client.execute( Commands.content().validate().contentData( contentData ).contentType( qualifiedContentTypeName ) );
+            client.execute( Commands.content().validate().contentData( contentData ).contentType( contentTypeName ) );
 
         return new ValidateContentJson( validationErrors );
     }

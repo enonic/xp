@@ -18,8 +18,8 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateParams;
-import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinUpdateParams;
+import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinCreateJson;
+import com.enonic.wem.admin.rest.resource.schema.mixin.json.MixinUpdateJson;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.UploadedIconFetcher;
 import com.enonic.wem.api.Icon;
@@ -56,7 +56,7 @@ public class MixinResource
     }
 
     @GET
-    public MixinJson get( @QueryParam("qualifiedName") final String name )
+    public MixinJson get( @QueryParam("name") final String name )
     {
         final MixinName mixinName = MixinName.from( name );
         final Mixin mixin = fetchMixin( mixinName );
@@ -73,7 +73,7 @@ public class MixinResource
 
     @GET
     @Path("config")
-    public MixinConfigJson getConfig( @QueryParam("qualifiedName") final String name )
+    public MixinConfigJson getConfig( @QueryParam("name") final String name )
     {
         final MixinName mixinName = MixinName.from( name );
         final Mixin mixin = fetchMixin( mixinName );
@@ -100,7 +100,7 @@ public class MixinResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateOrUpdateSchemaJsonResult create( MixinCreateParams params )
+    public CreateOrUpdateSchemaJsonResult create( MixinCreateJson params )
     {
         final Mixin mixin = parseXml( params.getConfig() );
         final Icon icon = fetchIcon( params.getIconReference() );
@@ -130,7 +130,7 @@ public class MixinResource
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public CreateOrUpdateSchemaJsonResult update( MixinUpdateParams params )
+    public CreateOrUpdateSchemaJsonResult update( MixinUpdateJson params )
     {
         final Mixin mixin = parseXml( params.getConfig() );
         final Icon icon = fetchIcon( params.getIconReference() );
@@ -167,7 +167,7 @@ public class MixinResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
-        final MixinNames mixinNames = MixinNames.from( params.getQualifiedNames().toArray( new String[0] ) );
+        final MixinNames mixinNames = MixinNames.from( params.getNames().toArray( new String[0] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( MixinName mixinName : mixinNames )

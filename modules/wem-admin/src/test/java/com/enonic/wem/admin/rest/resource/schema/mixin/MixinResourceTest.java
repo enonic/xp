@@ -91,8 +91,7 @@ public class MixinResourceTest
 
         Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
-        String response =
-            resource().path( "schema/mixin" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
+        String response = resource().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
 
         assertJson( "get_mixin.json", response );
     }
@@ -108,7 +107,7 @@ public class MixinResourceTest
 
         Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
-        String result = resource().path( "schema/mixin/config" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
+        String result = resource().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
             String.class );
 
         assertJson( "get_mixin_config.json", result );
@@ -121,7 +120,7 @@ public class MixinResourceTest
         Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
         try
         {
-            resource().path( "schema/mixin" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
+            resource().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
 
             Assert.assertFalse( "Exception should've been thrown already", true );
         }
@@ -138,7 +137,7 @@ public class MixinResourceTest
         Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
         try
         {
-            resource().path( "schema/mixin/config" ).queryParam( "qualifiedName", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
+            resource().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
                 String.class );
 
             Assert.assertFalse( "Exception should've been thrown already", true );
@@ -249,7 +248,7 @@ public class MixinResourceTest
         Mockito.when( client.execute( isA( GetMixins.class ) ) ).thenReturn( Mixins.empty() );
         String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "create_mixin_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
-        assertJson("update_mixin_not_found.json", result);
+        assertJson( "update_mixin_not_found.json", result );
     }
 
     @Test

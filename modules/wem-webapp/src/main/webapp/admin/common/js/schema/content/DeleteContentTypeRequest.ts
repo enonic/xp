@@ -2,29 +2,29 @@ module api_schema_content {
 
     export class DeleteContentTypeRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeJson> {
 
-        private qualifiedNames: string[] = [];
+        private names: string[] = [];
 
-        constructor(qualifiedNames?:string[]) {
+        constructor(names?:string[]) {
             super();
             super.setMethod("POST");
-            if (qualifiedNames) {
-                this.setQualifiedNames(qualifiedNames);
+            if (names) {
+                this.addNames(names);
             }
         }
 
-        setQualifiedNames(qualifiedNames:string[]):DeleteContentTypeRequest {
-            this.qualifiedNames = qualifiedNames;
+        addNames(names:string[]):DeleteContentTypeRequest {
+            this.names = names;
             return this;
         }
 
-        addQualifiedName(qualifiedName:string):DeleteContentTypeRequest {
-            this.qualifiedNames.push(qualifiedName);
+        addName(name:ContentTypeName):DeleteContentTypeRequest {
+            this.names.push(name.toString());
             return this;
         }
 
         getParams():Object {
             return {
-                qualifiedNames: this.qualifiedNames
+                names: this.names
             };
         }
 

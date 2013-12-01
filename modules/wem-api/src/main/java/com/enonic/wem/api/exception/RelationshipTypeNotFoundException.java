@@ -5,8 +5,8 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 public final class RelationshipTypeNotFoundException
     extends BaseException
 {
-    public RelationshipTypeNotFoundException( final RelationshipTypeName qName )
+    public RelationshipTypeNotFoundException( final RelationshipTypeName name )
     {
-        super( "RelationshipType [{0}] was not found", qName );
+        super( "RelationshipType [{0}] was not found", name );
     }
 }

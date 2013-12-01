@@ -1,7 +1,7 @@
 {
     "contentId": "content-id",
     "contentName": "content-name",
-    "qualifiedContentTypeName": "my-type",
+    "contentType": "my-type",
     "form": {
         "formItems": []
     },

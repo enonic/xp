@@ -226,7 +226,7 @@ public class SchemaImageResourceTest
         final List<Mixin> list = Lists.newArrayList();
         list.add( mixin );
         final Mixins result = Mixins.from( list );
-        final GetMixins command = new GetMixins().qualifiedNames( MixinNames.from( mixin.getContentTypeName() ) );
+        final GetMixins command = new GetMixins().names( MixinNames.from( mixin.getContentTypeName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 
@@ -236,7 +236,7 @@ public class SchemaImageResourceTest
         list.add( relationshipType );
         final RelationshipTypes result = RelationshipTypes.from( list );
         final GetRelationshipTypes command =
-            new GetRelationshipTypes().qualifiedNames( RelationshipTypeNames.from( relationshipType.getContentTypeName() ) );
+            new GetRelationshipTypes().names( RelationshipTypeNames.from( relationshipType.getContentTypeName() ) );
         Mockito.when( client.execute( command ) ).thenReturn( result );
     }
 

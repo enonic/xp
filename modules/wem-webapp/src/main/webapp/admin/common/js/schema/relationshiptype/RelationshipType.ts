@@ -18,6 +18,10 @@ module api_schema_relationshiptype {
             this.allowedToTypes = relationshipTypeJson.allowedToTypes;
         }
 
+        getRelationshiptypeName():RelationshipTypeName {
+            return new RelationshipTypeName(this.getName());
+        }
+
         getFromSemantic():string {
             return this.fromSemantic;
         }

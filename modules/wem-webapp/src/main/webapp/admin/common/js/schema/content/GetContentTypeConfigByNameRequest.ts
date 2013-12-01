@@ -1,18 +1,18 @@
 module api_schema_content {
 
-    export class GetContentTypeConfigByQualifiedNameRequest extends ContentTypeResourceRequest<GetContentTypeConfigResult> {
+    export class GetContentTypeConfigByNameRequest extends ContentTypeResourceRequest<GetContentTypeConfigResult> {
 
-        private qualifiedName:string;
+        private name:ContentTypeName;
 
-        constructor(qualifiedName:string) {
+        constructor(name:ContentTypeName) {
             super();
             super.setMethod("GET");
-            this.qualifiedName = qualifiedName;
+            this.name = name;
         }
 
         getParams():Object {
             return {
-                qualifiedName: this.qualifiedName
+                name: this.name.toString()
             };
         }
 

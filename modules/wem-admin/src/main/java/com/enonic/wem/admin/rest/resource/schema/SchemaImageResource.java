@@ -109,8 +109,8 @@ public final class SchemaImageResource
         {
             return null;
         }
-        final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentTypeName );
-        return client.execute( contentType().get(). byNames().contentTypeNames( qualifiedNames ) ).first();
+        final ContentTypeNames contentTypeNames = ContentTypeNames.from( contentTypeName );
+        return client.execute( contentType().get(). byNames().contentTypeNames( contentTypeNames ) ).first();
     }
 
     private Icon findMixinIcon( final MixinName mixinName )
@@ -122,7 +122,7 @@ public final class SchemaImageResource
     private Icon findRelationshipTypeIcon( final RelationshipTypeName relationshipTypeName )
     {
         final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( relationshipTypeName );
-        RelationshipType relationshipType = client.execute( relationshipType().get().qualifiedNames( relationshipTypeNames ) ).first();
+        RelationshipType relationshipType = client.execute( relationshipType().get().names( relationshipTypeNames ) ).first();
         return relationshipType == null ? null : relationshipType.getIcon();
 
     }

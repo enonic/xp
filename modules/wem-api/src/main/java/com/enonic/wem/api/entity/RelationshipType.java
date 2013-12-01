@@ -8,7 +8,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.Name;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 
@@ -23,7 +22,7 @@ public final class RelationshipType
 
     private final DateTime modifiedTime;
 
-    private final QualifiedRelationshipTypeName qualifiedName;
+    private final RelationshipTypeName relationshipTypeName;
 
     private final String fromSemantic;
 
@@ -41,7 +40,7 @@ public final class RelationshipType
         this.displayName = builder.displayName;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
-        this.qualifiedName = new QualifiedRelationshipTypeName( builder.name );
+        this.relationshipTypeName = new RelationshipTypeName( builder.name );
         this.fromSemantic = builder.fromSemantic;
         this.toSemantic = builder.toSemantic;
         this.icon = builder.icon;
@@ -52,9 +51,9 @@ public final class RelationshipType
         return name != null ? name.toString() : null;
     }
 
-    public QualifiedRelationshipTypeName getQualifiedName()
+    public RelationshipTypeName getRelationshipTypeName()
     {
-        return qualifiedName;
+        return relationshipTypeName;
     }
 
     public String getDisplayName()
@@ -103,7 +102,7 @@ public final class RelationshipType
         final RelationshipType that = (RelationshipType) o;
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.displayName, that.displayName ) &&
-            Objects.equal( this.qualifiedName, that.qualifiedName ) &&
+            Objects.equal( this.relationshipTypeName, that.relationshipTypeName ) &&
             Objects.equal( this.fromSemantic, that.fromSemantic ) &&
             Objects.equal( this.toSemantic, that.toSemantic );
     }
@@ -111,7 +110,7 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, displayName, qualifiedName, fromSemantic, toSemantic );
+        return Objects.hashCode( name, displayName, relationshipTypeName, fromSemantic, toSemantic );
     }
 
     public void checkIllegalEdit( final RelationshipType to )

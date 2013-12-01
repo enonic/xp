@@ -2,25 +2,13 @@ package com.enonic.wem.admin.rest.resource.schema.mixin.json;
 
 import com.enonic.wem.api.schema.mixin.MixinName;
 
-public class MixinUpdateParams
+public class MixinCreateJson
 {
-    private MixinName mixinToUpdate;
-
     private MixinName name;
 
     private String config;
 
     private String iconReference;
-
-    public MixinName getMixinToUpdate()
-    {
-        return mixinToUpdate;
-    }
-
-    public void setMixinToUpdate( final String mixinToUpdate )
-    {
-        this.mixinToUpdate = MixinName.from( mixinToUpdate );
-    }
 
     public MixinName getName()
     {

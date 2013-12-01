@@ -2,7 +2,6 @@ module api_remote_contenttype {
 
     export interface ContentType extends api_remote.Item {
         name: string;
-        qualifiedName?: string;
         displayName: string;
         contentDisplayNameScript: string;
         superType: string;
@@ -87,7 +86,7 @@ module api_remote_contenttype {
     }
 
     export interface GetParams {
-        qualifiedNames: string[];
+        names: string[];
         format: string;
         mixinReferencesToFormItems?: boolean;
     }
@@ -111,7 +110,7 @@ module api_remote_contenttype {
     }
 
     export interface DeleteParams {
-        qualifiedContentTypeNames:string[];
+        names:string[];
     }
 
     export interface DeleteResult {
@@ -120,12 +119,12 @@ module api_remote_contenttype {
     }
 
     export interface ContentTypeDeleteSuccess {
-        qualifiedContentTypeName:string;
+        name:string;
 
     }
 
     export interface ContentTypeDeleteFailure {
-        qualifiedContentTypeName:string;
+        name:string;
         reason:string;
     }
 

@@ -4,22 +4,22 @@ module api_schema_content {
 
         private name:string;
 
-        private contentType:string;
+        private config:string;
 
         private iconReference:string;
 
-        constructor(name:string, contentType:string, iconReference:string) {
+        constructor(name:string, config:string, iconReference:string) {
             super();
             super.setMethod('POST');
             this.name = name;
-            this.contentType = contentType;
+            this.config = config;
             this.iconReference = iconReference;
         }
 
         getParams():Object {
             return {
                 name: this.name,
-                contentType: this.contentType,
+                config: this.config,
                 iconReference: this.iconReference
             }
         }

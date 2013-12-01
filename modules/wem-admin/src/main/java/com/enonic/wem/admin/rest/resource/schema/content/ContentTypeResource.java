@@ -17,7 +17,7 @@ import com.enonic.wem.admin.json.schema.content.ContentTypeConfigJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.schema.content.json.ContentTypeCreateOrUpdateParams;
+import com.enonic.wem.admin.rest.resource.schema.content.json.ContentTypeCreateOrUpdateJson;
 import com.enonic.wem.admin.rest.resource.schema.content.json.ValidateContentTypeJson;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
@@ -56,37 +56,37 @@ public class ContentTypeResource
     private ContentTypeXmlSerializer contentTypeXmlSerializer = new ContentTypeXmlSerializer();
 
     @GET
-    public ContentTypeJson get( @QueryParam("qualifiedName") final String qualifiedNameAsString,
+    public ContentTypeJson get( @QueryParam("name") final String nameAsString,
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
     {
-        final ContentTypeName qualifiedName = ContentTypeName.from( qualifiedNameAsString );
+        final ContentTypeName name = ContentTypeName.from( nameAsString );
         final GetContentTypes getContentTypes = Commands.contentType().get().
-            byNames().contentTypeNames( ContentTypeNames.from( qualifiedName ) ).
+            byNames().contentTypeNames( ContentTypeNames.from( name ) ).
             mixinReferencesToFormItems( mixinReferencesToFormItems );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
         if ( contentTypes.isEmpty() )
         {
-            throw new NotFoundException( String.format( "ContentTypes [%s] not found", qualifiedName ) );
+            throw new NotFoundException( String.format( "ContentTypes [%s] not found", name ) );
         }
         return new ContentTypeJson( contentTypes.first() );
     }
 
     @GET
     @Path("config")
-    public ContentTypeConfigJson getConfig( @QueryParam("qualifiedName") final String qualifiedNameAsString )
+    public ContentTypeConfigJson getConfig( @QueryParam("name") final String nameAsString )
     {
-        final ContentTypeName qualifiedName = ContentTypeName.from( qualifiedNameAsString );
+        final ContentTypeName name = ContentTypeName.from( nameAsString );
         final GetContentTypes getContentTypes = Commands.contentType().
             get().
-            byNames().contentTypeNames( ContentTypeNames.from( qualifiedName ) ).
+            byNames().contentTypeNames( ContentTypeNames.from( name ) ).
             mixinReferencesToFormItems( false );
 
         final ContentTypes contentTypes = client.execute( getContentTypes );
 
         if ( contentTypes.isEmpty() )
         {
-            throw new NotFoundException( String.format( "ContentTypes [%s] not found", qualifiedName ) );
+            throw new NotFoundException( String.format( "ContentTypes [%s] not found", name ) );
         }
 
         return new ContentTypeConfigJson( contentTypes.first() );
@@ -107,7 +107,7 @@ public class ContentTypeResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
-        final ContentTypeNames contentTypeNames = ContentTypeNames.from( params.getQualifiedNames().toArray( new String[0] ) );
+        final ContentTypeNames contentTypeNames = ContentTypeNames.from( params.getNames().toArray( new String[0] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( ContentTypeName contentTypeName : contentTypeNames )
@@ -138,11 +138,11 @@ public class ContentTypeResource
 
     @POST
     @Path("create")
-    public CreateOrUpdateSchemaJsonResult create( ContentTypeCreateOrUpdateParams params )
+    public CreateOrUpdateSchemaJsonResult create( ContentTypeCreateOrUpdateJson json )
     {
         try
         {
-            ContentType contentType = contentTypeXmlSerializer.toContentType( params.getContentType() );
+            ContentType contentType = contentTypeXmlSerializer.toContentType( json.getConfig() );
 
             if ( contentTypeExists( contentType.getContentTypeName() ) )
             {
@@ -150,14 +150,14 @@ public class ContentTypeResource
                     "ContentType already exists [" + contentType.getContentTypeName().toString() + "] TODO: make form reload" );
             }
 
-            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
+            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
             if ( icon != null )
             {
                 contentType = newContentType( contentType ).icon( icon ).build();
             }
 
             final CreateContentType createCommand = contentType().create().
-                name( params.getName() ).
+                name( json.getName() ).
                 displayName( contentType.getDisplayName() ).
                 superType( contentType.getSuperType() ).
                 setAbstract( contentType.isAbstract() ).
@@ -183,13 +183,13 @@ public class ContentTypeResource
 
     @POST
     @Path("update")
-    public CreateOrUpdateSchemaJsonResult update( ContentTypeCreateOrUpdateParams params )
+    public CreateOrUpdateSchemaJsonResult update( ContentTypeCreateOrUpdateJson json )
     {
         try
         {
-            ContentType contentType = new ContentTypeXmlSerializer().toContentType( params.getContentType() );
+            ContentType contentType = new ContentTypeXmlSerializer().toContentType( json.getConfig() );
 
-            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( params.getIconReference() );
+            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
             if ( icon != null )
             {
                 contentType = newContentType( contentType ).icon( icon ).build();
@@ -245,9 +245,9 @@ public class ContentTypeResource
         return new ValidateContentTypeJson( validationResult, contentType );
     }
 
-    private boolean contentTypeExists( final ContentTypeName qualifiedName )
+    private boolean contentTypeExists( final ContentTypeName contentTypeName )
     {
-        final ContentType existing = client.execute( contentType().get().byName().contentTypeName( qualifiedName ) );
+        final ContentType existing = client.execute( contentType().get().byName().contentTypeName( contentTypeName ) );
         return existing != null;
     }
 

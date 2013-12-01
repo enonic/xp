@@ -12,9 +12,9 @@ public class SchemaDeleteJson
 
     private List<FailureJson> failures = Lists.newArrayList();
 
-    public void success( final Name qualifiedName )
+    public void success( final Name name )
     {
-        successes.add( new SuccessJson( qualifiedName ) );
+        successes.add( new SuccessJson( name ) );
     }
 
     public void failure( final Name name, final String reason )

@@ -1,5 +1,5 @@
 {
     "name" : "my_set",
     "iconReference": "edc1af66-ecb4-4f8a-8df4-0738418f84fc",
-    "config": "<mixin><name>my_set</name><qualified-name>my_set</qualified-name><display-name>My Mixin</display-name><items><form-item-set name=\"my_set\"><label>My set</label><immutable>false</immutable><customText>Custom text</customText><helpText>Custom text</helpText><occurrences minimum=\"1\" maximum=\"3\" /><items><input type=\"TextLine\" built-in=\"true\" name=\"myInput\"><label>My input</label><immutable>false</immutable><indexed>false</indexed><customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></items></form-item-set></items></mixin>"
+    "config": "<mixin><name>my_set</name><display-name>My Mixin</display-name><items><form-item-set name=\"my_set\"><label>My set</label><immutable>false</immutable><customText>Custom text</customText><helpText>Custom text</helpText><occurrences minimum=\"1\" maximum=\"3\" /><items><input type=\"TextLine\" built-in=\"true\" name=\"myInput\"><label>My input</label><immutable>false</immutable><indexed>false</indexed><customText /><helpText /><occurrences minimum=\"0\" maximum=\"1\" /></input></items></form-item-set></items></mixin>"
 }

@@ -70,7 +70,7 @@ public interface ContentDao
 
     Tree<Content> getContentTree( Session session );
 
-    int countContentTypeUsage( ContentTypeName qualifiedContentTypeName, Session session );
+    int countContentTypeUsage( ContentTypeName contentTypeName, Session session );
 
     Content getContentVersionById( ContentId contentId, ContentVersionId versionId, Session session );
 

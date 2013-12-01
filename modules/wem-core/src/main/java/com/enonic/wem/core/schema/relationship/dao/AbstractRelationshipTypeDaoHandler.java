@@ -21,10 +21,10 @@ abstract class AbstractRelationshipTypeDaoHandler<T>
         this.session = session;
     }
 
-    protected boolean nodeExists( final RelationshipTypeName qualifiedName )
+    protected boolean nodeExists( final RelationshipTypeName relationshipTypeName )
         throws RepositoryException
     {
-        final Node node = this.getRelationshipTypeNode( qualifiedName );
+        final Node node = this.getRelationshipTypeNode( relationshipTypeName );
         if ( node == null )
         {
             return false;
@@ -33,23 +33,23 @@ abstract class AbstractRelationshipTypeDaoHandler<T>
         return true;
     }
 
-    protected final Node getRelationshipTypeNode( final RelationshipTypeName qualifiedName )
+    protected final Node getRelationshipTypeNode( final RelationshipTypeName relationshipTypeName )
         throws RepositoryException
     {
-        final String path = getNodePath( qualifiedName );
+        final String path = getNodePath( relationshipTypeName );
         final Node rootNode = session.getRootNode();
         return JcrHelper.getNodeOrNull( rootNode, path );
     }
 
-    protected final String getNodePath( final RelationshipTypeName qualifiedName )
+    protected final String getNodePath( final RelationshipTypeName relationshipTypeName )
     {
-        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + qualifiedName.toString();
+        return RelationshipTypeDao.RELATIONSHIP_TYPES_PATH + relationshipTypeName.toString();
     }
 
-    protected final boolean relationshipTypeExists( final RelationshipTypeName qualifiedName )
+    protected final boolean relationshipTypeExists( final RelationshipTypeName relationshipTypeName )
         throws RepositoryException
     {
-        final String relationshipTypePath = getNodePath( qualifiedName );
+        final String relationshipTypePath = getNodePath( relationshipTypeName );
         return session.getRootNode().hasNode( relationshipTypePath );
     }
 }

@@ -1,24 +1,12 @@
-package com.enonic.wem.admin.rest.resource.schema.mixin.json;
+package com.enonic.wem.admin.rest.resource.schema.relationship.json;
 
-import com.enonic.wem.api.schema.mixin.MixinName;
 
-public class MixinCreateParams
+public class RelationshipTypeCreateOrUpdateJson
 {
-    private MixinName name;
 
     private String config;
 
     private String iconReference;
-
-    public MixinName getName()
-    {
-        return name;
-    }
-
-    public void setName( final String name )
-    {
-        this.name = MixinName.from( name );
-    }
 
     public String getConfig()
     {

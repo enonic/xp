@@ -208,11 +208,11 @@ public class ContentDaoImpl
     }
 
     @Override
-    public int countContentTypeUsage( final ContentTypeName qualifiedContentTypeName, Session session )
+    public int countContentTypeUsage( final ContentTypeName contentTypeName, Session session )
     {
         try
         {
-            return new ContentDaoHandlerCountContentTypeUsage( session, indexService ).handle( qualifiedContentTypeName );
+            return new ContentDaoHandlerCountContentTypeUsage( session, indexService ).handle( contentTypeName );
         }
         catch ( RepositoryException e )
         {

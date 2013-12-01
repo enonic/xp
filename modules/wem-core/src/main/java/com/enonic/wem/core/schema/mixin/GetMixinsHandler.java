@@ -33,8 +33,8 @@ public final class GetMixinsHandler
         }
         else
         {
-            final MixinNames qualifiedNames = command.getMixinNames();
-            mixins = getMixins( qualifiedNames );
+            final MixinNames mixinNames = command.getNames();
+            mixins = getMixins( mixinNames );
         }
 
         command.setResult( mixins );
@@ -49,9 +49,9 @@ public final class GetMixinsHandler
     private Mixins getMixins( final MixinNames mixinNames )
     {
         final List<Mixin> mixinList = new ArrayList<>( mixinNames.getSize() );
-        for ( MixinName qualifiedName : mixinNames )
+        for ( MixinName mixinName : mixinNames )
         {
-            final Mixin mixin = getMixin( qualifiedName );
+            final Mixin mixin = getMixin( mixinName );
             if ( mixin != null )
             {
                 mixinList.add( mixin );
@@ -60,9 +60,9 @@ public final class GetMixinsHandler
         return Mixins.from( mixinList );
     }
 
-    private Mixin getMixin( final MixinName qualifiedName )
+    private Mixin getMixin( final MixinName mixinName )
     {
-        final NodePath nodePath = new NodePath( "/mixins/" + qualifiedName.toString() );
+        final NodePath nodePath = new NodePath( "/mixins/" + mixinName.toString() );
         final GetNodeByPath getNodeByPathCommand = Commands.node().get().byPath( nodePath );
 
         final Node node = context.getClient().execute( getNodeByPathCommand );

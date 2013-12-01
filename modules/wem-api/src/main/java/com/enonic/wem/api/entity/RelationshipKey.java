@@ -10,7 +10,7 @@ import com.enonic.wem.api.data.DataPath;
  */
 public final class RelationshipKey
 {
-    private final QualifiedRelationshipTypeName type;
+    private final RelationshipTypeName type;
 
     private final EntityId fromItem;
 
@@ -21,7 +21,7 @@ public final class RelationshipKey
      */
     private final DataPath managingData;
 
-    private RelationshipKey( final QualifiedRelationshipTypeName type, final EntityId fromContent, final EntityId toItem,
+    private RelationshipKey( final RelationshipTypeName type, final EntityId fromContent, final EntityId toItem,
                              final DataPath managingData )
     {
         this.type = type;
@@ -38,7 +38,7 @@ public final class RelationshipKey
         this.managingData = builder.managingData;
     }
 
-    public QualifiedRelationshipTypeName getType()
+    public RelationshipTypeName getType()
     {
         return type;
     }
@@ -100,12 +100,12 @@ public final class RelationshipKey
         return Objects.hash( type, fromItem, toItem, managingData );
     }
 
-    public static RelationshipKey from( final QualifiedRelationshipTypeName type, final EntityId fromItem, final EntityId toItem )
+    public static RelationshipKey from( final RelationshipTypeName type, final EntityId fromItem, final EntityId toItem )
     {
         return new RelationshipKey( type, fromItem, toItem, null );
     }
 
-    public static RelationshipKey from( final QualifiedRelationshipTypeName type, final EntityId fromItem, final DataPath managingData,
+    public static RelationshipKey from( final RelationshipTypeName type, final EntityId fromItem, final DataPath managingData,
                                         final EntityId toItem )
     {
         return new RelationshipKey( type, fromItem, toItem, managingData );
@@ -118,7 +118,7 @@ public final class RelationshipKey
 
     public static class Builder
     {
-        private QualifiedRelationshipTypeName type;
+        private RelationshipTypeName type;
 
         private EntityId fromItem;
 
@@ -126,7 +126,7 @@ public final class RelationshipKey
 
         private DataPath managingData;
 
-        public Builder type( QualifiedRelationshipTypeName relationshipType )
+        public Builder type( RelationshipTypeName relationshipType )
         {
             this.type = relationshipType;
             return this;

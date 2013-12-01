@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.schema.exception;
+package com.enonic.wem.admin.rest.resource.schema;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

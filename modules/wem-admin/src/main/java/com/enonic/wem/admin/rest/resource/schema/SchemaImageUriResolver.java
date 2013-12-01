@@ -13,9 +13,9 @@ public final class SchemaImageUriResolver
         return ServletRequestUrlHelper.createUrl( "/admin/rest/schema/image/" + schemaValue );
     }
 
-    public static String resolve( final ContentTypeName qualifiedName )
+    public static String resolve( final ContentTypeName contentTypeName )
     {
-        final SchemaKey schemaKey = SchemaKey.from( qualifiedName );
+        final SchemaKey schemaKey = SchemaKey.from( contentTypeName );
         return resolve( schemaKey );
     }
 }

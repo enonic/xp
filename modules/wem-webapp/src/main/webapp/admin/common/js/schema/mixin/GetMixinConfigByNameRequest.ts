@@ -1,18 +1,18 @@
 module api_schema_mixin {
 
-    export class GetMixinConfigByQualifiedNameRequest extends MixinResourceRequest<GetMixinConfigResult> {
+    export class GetMixinConfigByNameRequest extends MixinResourceRequest<GetMixinConfigResult> {
 
-        private qualifiedName:string;
+        private name:MixinName;
 
-        constructor(qualifiedName:string) {
+        constructor(name:MixinName) {
             super();
             super.setMethod("GET");
-            this.qualifiedName = qualifiedName;
+            this.name = name;
         }
 
         getParams():Object {
             return {
-                qualifiedName: this.qualifiedName
+                name: this.name.toString()
             };
         }
 

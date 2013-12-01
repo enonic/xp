@@ -28,11 +28,11 @@ final class RelationshipTypeDaoHandlerUpdate
         throws RepositoryException
     {
 
-        final RelationshipTypeName qualifiedName = relationshipType.getContentTypeName();
-        final Node node = getRelationshipTypeNode( qualifiedName );
+        final RelationshipTypeName relationshipTypeName = relationshipType.getContentTypeName();
+        final Node node = getRelationshipTypeNode( relationshipTypeName );
         if ( node == null )
         {
-            throw new RelationshipTypeNotFoundException( qualifiedName );
+            throw new RelationshipTypeNotFoundException( relationshipTypeName );
         }
 
         final RelationshipType existing = relationshipTypeJcrMapper.toRelationshipType( node );

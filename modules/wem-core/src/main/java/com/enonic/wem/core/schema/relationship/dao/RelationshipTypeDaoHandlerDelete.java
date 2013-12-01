@@ -13,7 +13,7 @@ final class RelationshipTypeDaoHandlerDelete
 {
     private RelationshipTypeName relationshipTypeName;
 
-    RelationshipTypeDaoHandlerDelete qualifiedRelationshipTypeName( final RelationshipTypeName relationshipTypeName )
+    RelationshipTypeDaoHandlerDelete relationshipTypeName( final RelationshipTypeName relationshipTypeName )
     {
         this.relationshipTypeName = relationshipTypeName;
         return this;

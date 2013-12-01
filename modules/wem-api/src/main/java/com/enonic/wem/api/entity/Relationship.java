@@ -74,7 +74,7 @@ public final class Relationship
         return modifier;
     }
 
-    public QualifiedRelationshipTypeName getType()
+    public RelationshipTypeName getType()
     {
         return key.getType();
     }
@@ -140,7 +140,7 @@ public final class Relationship
 
         private DateTime createdTime;
 
-        private QualifiedRelationshipTypeName type;
+        private RelationshipTypeName type;
 
         private EntityId fromItem;
 
@@ -179,7 +179,7 @@ public final class Relationship
             return this;
         }
 
-        public Builder type( QualifiedRelationshipTypeName value )
+        public Builder type( RelationshipTypeName value )
         {
             this.type = value;
             return this;

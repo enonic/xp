@@ -19,7 +19,7 @@ public final class DeleteRelationshipTypeHandler
     public void handle()
         throws Exception
     {
-        final RelationshipTypeName relationshipTypeName = command.getQualifiedName();
+        final RelationshipTypeName relationshipTypeName = command.getName();
         try
         {
             relationshipTypeDao.delete( relationshipTypeName, context.getJcrSession() );

@@ -9,16 +9,16 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 public final class RelationshipTypesExists
     extends Command<RelationshipTypesExistsResult>
 {
-    private RelationshipTypeNames qualifiedNames;
+    private RelationshipTypeNames names;
 
-    public RelationshipTypeNames getQualifiedNames()
+    public RelationshipTypeNames getNames()
     {
-        return this.qualifiedNames;
+        return this.names;
     }
 
-    public RelationshipTypesExists qualifiedNames( final RelationshipTypeNames qualifiedNames )
+    public RelationshipTypesExists names( final RelationshipTypeNames names )
     {
-        this.qualifiedNames = qualifiedNames;
+        this.names = names;
         return this;
     }
 
@@ -36,19 +36,19 @@ public final class RelationshipTypesExists
         }
 
         final RelationshipTypesExists that = (RelationshipTypesExists) o;
-        return Objects.equal( this.qualifiedNames, that.qualifiedNames );
+        return Objects.equal( this.names, that.names );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( qualifiedNames );
+        return Objects.hashCode( names );
     }
 
     @Override
     public void validate()
     {
-        Preconditions.checkNotNull( this.qualifiedNames, "qualifiedNames cannot be null" );
+        Preconditions.checkNotNull( this.names, "names cannot be null" );
     }
 
 }

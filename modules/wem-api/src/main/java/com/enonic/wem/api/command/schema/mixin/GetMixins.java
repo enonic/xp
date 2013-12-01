@@ -10,18 +10,18 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 public final class GetMixins
     extends Command<Mixins>
 {
-    private MixinNames mixinNames;
+    private MixinNames names;
 
     private boolean getAllContentTypes = false;
 
-    public MixinNames getMixinNames()
+    public MixinNames getNames()
     {
-        return this.mixinNames;
+        return this.names;
     }
 
-    public GetMixins qualifiedNames( final MixinNames qualifiedNames )
+    public GetMixins names( final MixinNames names )
     {
-        this.mixinNames = qualifiedNames;
+        this.names = names;
         return this;
     }
 
@@ -50,13 +50,13 @@ public final class GetMixins
         }
 
         final GetMixins that = (GetMixins) o;
-        return Objects.equal( this.mixinNames, that.mixinNames ) && ( this.getAllContentTypes == that.getAllContentTypes );
+        return Objects.equal( this.names, that.names ) && ( this.getAllContentTypes == that.getAllContentTypes );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.mixinNames, this.getAllContentTypes );
+        return Objects.hashCode( this.names, this.getAllContentTypes );
     }
 
     @Override
@@ -64,11 +64,11 @@ public final class GetMixins
     {
         if ( getAllContentTypes )
         {
-            Preconditions.checkArgument( this.mixinNames == null, "Cannot specify both get all and get content type mixinNames" );
+            Preconditions.checkArgument( this.names == null, "Cannot specify both get all and get content type names" );
         }
         else
         {
-            Preconditions.checkNotNull( this.mixinNames, "Content type cannot be null" );
+            Preconditions.checkNotNull( this.names, "Content type cannot be null" );
         }
     }
 

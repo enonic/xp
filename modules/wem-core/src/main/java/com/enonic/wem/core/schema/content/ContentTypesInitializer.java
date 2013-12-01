@@ -129,8 +129,8 @@ public class ContentTypesInitializer
 
     private void createOrUpdate( final ContentType contentType )
     {
-        final ContentTypeNames qualifiedNames = ContentTypeNames.from( contentType.getContentTypeName() );
-        final boolean contentTypeExists = !client.execute( contentType().get().byNames().contentTypeNames( qualifiedNames ) ).isEmpty();
+        final ContentTypeNames contentTypeNames = ContentTypeNames.from( contentType.getContentTypeName() );
+        final boolean contentTypeExists = !client.execute( contentType().get().byNames().contentTypeNames( contentTypeNames ) ).isEmpty();
         if ( !contentTypeExists )
         {
             final CreateContentType createCommand = contentType().create().
@@ -161,10 +161,9 @@ public class ContentTypesInitializer
         }
     }
 
-    private static ContentType.Builder createSystemType( final ContentTypeName qualifiedName )
+    private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
-        final String displayName = WordUtils.capitalize( qualifiedName.getContentTypeName() );
-        final String contentTypeName = qualifiedName.getContentTypeName();
+        final String displayName = WordUtils.capitalize( contentTypeName.getContentTypeName() );
         return newContentType().
             name( contentTypeName ).
             displayName( displayName ).

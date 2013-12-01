@@ -2,29 +2,29 @@ module api_schema_mixin {
 
     export class DeleteMixinRequest extends MixinResourceRequest<api_schema_mixin_json.MixinJson> {
 
-        private qualifiedNames: string[] = [];
+        private names: string[] = [];
 
-        constructor(qualifiedNames?:string[]) {
+        constructor(names?:string[]) {
             super();
             super.setMethod("POST");
-            if (qualifiedNames) {
-                this.setQualifiedNames(qualifiedNames);
+            if (names) {
+                this.setNames(names);
             }
         }
 
-        setQualifiedNames(qualifiedNames:string[]):DeleteMixinRequest {
-            this.qualifiedNames = qualifiedNames;
+        setNames(names:string[]):DeleteMixinRequest {
+            this.names = names;
             return this;
         }
 
-        addQualifiedName(qualifiedName:string):DeleteMixinRequest {
-            this.qualifiedNames.push(qualifiedName);
+        addName(name:MixinName):DeleteMixinRequest {
+            this.names.push(name.toString());
             return this;
         }
 
         getParams():Object {
             return {
-                qualifiedNames: this.qualifiedNames
+                names: this.names
             };
         }
 

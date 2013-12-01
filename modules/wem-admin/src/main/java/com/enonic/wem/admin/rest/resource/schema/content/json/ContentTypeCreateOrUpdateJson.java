@@ -1,10 +1,9 @@
 package com.enonic.wem.admin.rest.resource.schema.content.json;
 
 
-public class ContentTypeCreateOrUpdateParams
+public class ContentTypeCreateOrUpdateJson
 {
-
-    private String contentType;
+    private String config;
 
     private String iconReference;
 
@@ -30,14 +29,14 @@ public class ContentTypeCreateOrUpdateParams
         this.iconReference = iconReference;
     }
 
-    public String getContentType()
+    public String getConfig()
     {
-        return contentType;
+        return config;
     }
 
-    public void setContentType( final String contentType )
+    public void setConfig( final String config )
     {
-        this.contentType = contentType;
+        this.config = config;
     }
 
 }

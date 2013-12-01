@@ -55,8 +55,8 @@ public class RelationshipTypesInitializer
 
     private void createOrUpdate( final RelationshipType relationshipType )
     {
-        final RelationshipTypeNames qualifiedNames = RelationshipTypeNames.from( relationshipType.getContentTypeName() );
-        final boolean notExists = client.execute( Commands.relationshipType().exists().qualifiedNames( qualifiedNames ) ).isEmpty();
+        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( relationshipType.getContentTypeName() );
+        final boolean notExists = client.execute( Commands.relationshipType().exists().names( relationshipTypeNames ) ).isEmpty();
         if ( notExists )
         {
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
@@ -74,7 +74,7 @@ public class RelationshipTypesInitializer
         else
         {
             final UpdateRelationshipType updateCommand = Commands.relationshipType().update();
-            updateCommand.selector( relationshipType.getContentTypeName() );
+            updateCommand.name( relationshipType.getContentTypeName() );
             updateCommand.editor( newSetRelationshipTypeEditor().
                 displayName( relationshipType.getDisplayName() ).
                 fromSemantic( relationshipType.getFromSemantic() ).
@@ -87,18 +87,18 @@ public class RelationshipTypesInitializer
         }
     }
 
-    private static RelationshipType createRelationshipType( final RelationshipTypeName qualifiedName, final String displayName,
+    private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
                                                             final String fromSemantic, final String toSemantic )
     {
-        return createRelationshipType( qualifiedName, displayName, fromSemantic, toSemantic, ContentTypeNames.empty() );
+        return createRelationshipType( relationshipTypeName, displayName, fromSemantic, toSemantic, ContentTypeNames.empty() );
     }
 
-    private static RelationshipType createRelationshipType( final RelationshipTypeName qualifiedName, final String displayName,
+    private static RelationshipType createRelationshipType( final RelationshipTypeName relationshipTypeName, final String displayName,
                                                             final String fromSemantic, final String toSemantic,
                                                             final ContentTypeNames toContentTypes )
     {
         return newRelationshipType().
-            name( qualifiedName ).
+            name( relationshipTypeName ).
             displayName( displayName ).
             fromSemantic( fromSemantic ).
             toSemantic( toSemantic ).
