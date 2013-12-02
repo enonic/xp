@@ -17,6 +17,7 @@ module app_delete {
                         api_notify.showError('The Module was not deleted: ' + respJson.error.message);
                     } else {
                         api_notify.showFeedback('Module \'' + respJson.result + '\' was deleted');
+                        new api_module.ModuleDeletedEvent(api_module.ModuleKey.fromString(respJson.result)).fire();
                     }
                     this.close();
                 }).fail(() => {

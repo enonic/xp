@@ -7,3 +7,5 @@
 ///<reference path='ExportModuleRequest.ts' />
 ///<reference path='DeleteModuleRequest.ts' />
 ///<reference path='GetModuleRequest.ts' />
+///<reference path='ModuleDeletedEvent.ts' />
+///<reference path='ModuleImportedEvent.ts' />

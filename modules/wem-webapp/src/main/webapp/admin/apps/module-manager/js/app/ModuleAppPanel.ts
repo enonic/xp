@@ -2,7 +2,6 @@ module app {
 
     export class ModuleAppPanel extends api_app.BrowseAndWizardBasedAppPanel<api_module.Module> {
 
-
         constructor(appBar:api_app.AppBar) {
             var browsePanel = new app_browse.ModuleBrowsePanel();
 
@@ -28,6 +27,7 @@ module app {
                         api_notify.showError('The Module could not be imported: ' + respJson.error.message);
                     } else {
                         api_notify.showFeedback('Module \'' + respJson.result.displayName + '\' was installed');
+                        new api_module.ModuleImportedEvent(new api_module.Module(respJson.result)).fire();
                     }
                 } ).fail((resp:api_rest.JsonResponse)=> {
                     api_notify.showError('Invalid Module file');
