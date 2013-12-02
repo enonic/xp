@@ -20,7 +20,7 @@ module app_browse {
             this.setItemId("ModuleTreeGridPanel");
 
             this.setActiveList(api_app_browse_grid.TreeGridPanel.GRID);
-            this.setKeyField("moduleKey");
+            this.setKeyField("key");
 
         }
 
