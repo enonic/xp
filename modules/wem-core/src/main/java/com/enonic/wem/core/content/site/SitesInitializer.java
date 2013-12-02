@@ -125,6 +125,7 @@ public class SitesInitializer
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
             addTemplate( pageTemplate );
+        client.execute( Commands.site().template().delete( siteTemplateKey ) );
         return client.execute( createSiteTemplate );
     }
 
@@ -170,14 +171,17 @@ public class SitesInitializer
             config( createDemoModuleForm() ).
             moduleDirectoryEntry( moduleDirectoryEntry );
 
+        client.execute( Commands.module().delete().module( DEMO_MODULE_KEY ) );
         return client.execute( createModule );
     }
 
     private Form createPageDescriptorForm() {
 
-        // TODO: Add some regions
         return Form.newForm().
             addFormItem( newInput().name( "background-color" ).label( "Background color" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "main" ).label( "Main region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
+            addFormItem( newInput().name( "header" ).label( "Header region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
+            addFormItem( newInput().name( "footer" ).label( "Footer region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
             build();
     }
 
