@@ -20,6 +20,10 @@ module api_content{
 
         private owner:string;
 
+        private site:boolean;
+
+        private page:boolean;
+
         static fromJsonArray(jsonArray:api_content_json.ContentSummaryJson[]):ContentSummary[] {
             var array:ContentSummary[] = [];
             jsonArray.forEach((json:api_content_json.ContentSummaryJson) => {
@@ -33,12 +37,14 @@ module api_content{
             this.name = json.name;
             this.displayName = json.displayName;
             this.path = ContentPath.fromString(json.path);
-            this.root = json.root;
+            this.root = json.isRoot;
             this.children = json.hasChildren;
             this.type = new api_schema_content.ContentTypeName(json.type);
             this.iconUrl = json.iconUrl;
             this.modifier = json.modifier;
             this.owner = json.owner;
+            this.site = json.isSite;
+            this.page = json.isPage;
         }
 
         getName():string {
@@ -47,6 +53,10 @@ module api_content{
 
         getDisplayName():string {
             return this.displayName;
+        }
+
+        hasParent():boolean {
+            return this.path.hasParentContent();
         }
 
         getPath():ContentPath {
@@ -76,5 +86,14 @@ module api_content{
         getModifier():string {
             return this.modifier;
         }
+
+        isSite():boolean {
+            return this.site;
+        }
+
+        isPage():boolean {
+            return this.page;
+        }
+
     }
 }

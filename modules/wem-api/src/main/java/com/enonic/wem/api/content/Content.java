@@ -124,6 +124,15 @@ public final class Content
         return path;
     }
 
+    public boolean isRoot()
+    {
+        if ( path == null )
+        {
+            return false;
+        }
+        return this.path.elementCount() == 1;
+    }
+
     public boolean isEmbedded()
     {
         return path.isPathToEmbeddedContent();
@@ -199,9 +208,19 @@ public final class Content
         return !childrenIds.isEmpty();
     }
 
+    public boolean isSite()
+    {
+        return site != null;
+    }
+
     public Site getSite()
     {
         return site;
+    }
+
+    public boolean isPage()
+    {
+        return page != null;
     }
 
     public Page getPage()
@@ -423,8 +442,7 @@ public final class Content
 
         public Builder path( final String path )
         {
-            return path( ContentPath.from(
-                path ) );
+            return path( ContentPath.from( path ) );
         }
 
         public Builder path( final ContentPath path )

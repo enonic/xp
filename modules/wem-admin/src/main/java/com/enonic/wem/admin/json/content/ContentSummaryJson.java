@@ -19,12 +19,18 @@ public class ContentSummaryJson
 
     private final boolean deletable;
 
+    private final boolean isSite;
+
+    private final boolean isPage;
+
     public ContentSummaryJson( Content content )
     {
         super( content.getId() );
         this.content = content;
         this.iconUrl = ContentImageUriResolver.resolve( content );
-        this.editable = ( !this.content.isEmbedded() ) && !this.isRoot();
+        this.isSite = content.isSite();
+        this.isPage = content.isPage();
+        this.editable = ( !this.content.isEmbedded() );
         this.deletable = !this.content.hasChildren() && ( !this.content.isEmbedded() );
     }
 
@@ -58,9 +64,9 @@ public class ContentSummaryJson
         return content.getOwner() != null ? content.getOwner().toString() : null;
     }
 
-    public boolean isRoot()
+    public boolean getIsRoot()
     {
-        return content.getPath().isRoot();
+        return content.isRoot();
     }
 
     public String getCreatedTime()
@@ -86,6 +92,16 @@ public class ContentSummaryJson
     public boolean getHasChildren()
     {
         return content.hasChildren();
+    }
+
+    public boolean getIsSite()
+    {
+        return isSite;
+    }
+
+    public boolean getIsPage()
+    {
+        return isPage;
     }
 
     @Override

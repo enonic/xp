@@ -127,7 +127,7 @@ module app {
 
                             tabMenuItem = new api_app.AppBarTabMenuItem(contentToEdit.getDisplayName(), tabId, true);
 
-                            if (contentToEdit.getPath().hasParent()) {
+                            if (contentToEdit.hasParent()) {
                                 new api_content.GetContentByPathRequest(contentToEdit.getPath().getParentPath()).send().
                                     done((parentContentResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
                                         var parentContent:api_content.Content = new api_content.Content(parentContentResponse.getResult());

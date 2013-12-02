@@ -1,0 +1,46 @@
+{
+    "createdTime": "2013-08-23T12:55:09.162Z",
+    "creator": "user:system:admin",
+    "data": [
+        {
+            "Property": {
+                "name": "myProperty",
+                "type": "String",
+                "value": "myValue"
+            }
+        }
+    ],
+    "deletable": true,
+    "displayName": "My Content",
+    "editable": true,
+    "form": null,
+    "hasChildren": false,
+    "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+    "id": "aaa",
+    "isPage": false,
+    "isRoot": true,
+    "isSite": true,
+    "modifiedTime": "2013-08-23T12:55:09.162Z",
+    "modifier": "user:system:admin",
+    "name": "my_a_content",
+    "owner": "user:myStore:me",
+    "path": "/my_a_content",
+    "site": {
+        "moduleConfigs": [
+            {
+                "module": "mymodule-1.0.0",
+                "config": [
+                    {
+                        "Property": {
+                            "name": "A",
+                            "type": "Long",
+                            "value": "1"
+                        }
+                    }
+                ]
+            }
+        ],
+        "templateName": "mysitetemplate-1.0.0"
+    },
+    "type": "my_type"
+}

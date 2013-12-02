@@ -9,12 +9,14 @@
             "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/aaa",
             "id": "aaa",
+            "isPage": false,
+            "isRoot": true,
+            "isSite": false,
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "modifier": "user:system:admin",
             "name": "my_a_content",
             "owner": "user:myStore:me",
             "path": "/my_a_content",
-            "root": false,
             "type": "my_type"
         },
         {
@@ -26,12 +28,14 @@
             "hasChildren": false,
             "iconUrl": "http://localhost/admin/rest/content/image/bbb",
             "id": "bbb",
+            "isPage": false,
+            "isRoot": true,
+            "isSite": false,
             "modifiedTime": "2013-08-23T12:55:09.162Z",
             "modifier": "user:system:admin",
             "name": "my_b_content",
             "owner": "user:myStore:me",
             "path": "/my_b_content",
-            "root": false,
             "type": "my_type"
         }
     ]

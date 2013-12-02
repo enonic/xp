@@ -50,7 +50,7 @@ module api_content{
             return this.elements;
         }
 
-        hasParent():boolean {
+        hasParentContent():boolean {
             return this.elements.length > 1;
         }
 

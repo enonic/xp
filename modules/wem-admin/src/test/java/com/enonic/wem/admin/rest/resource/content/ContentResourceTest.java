@@ -42,13 +42,19 @@ import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
+import com.enonic.wem.api.content.site.ModuleConfig;
+import com.enonic.wem.api.content.site.ModuleConfigs;
+import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.api.facet.QueryFacet;
 import com.enonic.wem.api.facet.TermsFacet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -193,6 +199,33 @@ public class ContentResourceTest
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
         assertJson( "get_content_full.json", jsonString );
+    }
+
+    @Test
+    public void get_site_content_by_id()
+        throws Exception
+    {
+        RootDataSet moduleConfigConfig = new RootDataSet();
+        moduleConfigConfig.setProperty( "A", new Value.Long( 1 ) );
+        ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+            module( ModuleKey.from( "mymodule-1.0.0" ) ).
+            config( moduleConfigConfig ).
+            build();
+        Site site = Site.newSite().
+            template( SiteTemplateKey.from( "mysitetemplate-1.0.0" ) ).
+            moduleConfigs( ModuleConfigs.from( moduleConfig ) ).build();
+
+        Content content = createContent( "aaa", "my_a_content", "my_type" );
+        content = Content.newContent( content ).site( site ).build();
+
+        ContentData contentData = content.getContentData();
+        contentData.setProperty( "myProperty", new Value.String( "myValue" ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
+
+        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+
+        assertJson( "get_content_with_site.json", jsonString );
     }
 
     @Test

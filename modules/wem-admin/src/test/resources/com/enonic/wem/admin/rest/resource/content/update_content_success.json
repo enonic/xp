@@ -1,23 +1,25 @@
 {
-  "error" : null,
-  "result" : {
-    "createdTime" : "2013-08-23T12:55:09.162Z",
-    "creator" : "user:system:admin",
-    "data" : [ ],
-    "deletable" : true,
-    "displayName" : "My Content",
-    "editable" : true,
-    "form" : null,
-    "hasChildren" : false,
-    "iconUrl" : "http://localhost/admin/rest/content/image/content-id",
-    "id" : "content-id",
-    "modifiedTime" : "2013-08-23T12:55:09.162Z",
-    "modifier" : "user:system:admin",
-    "name" : "content-path",
-    "owner" : "user:myStore:me",
-    "path" : "/content-path",
-    "root" : false,
-    "type" : "content-type"
-  }
+    "error": null,
+    "result": {
+        "createdTime": "2013-08-23T12:55:09.162Z",
+        "creator": "user:system:admin",
+        "data": [ ],
+        "deletable": true,
+        "displayName": "My Content",
+        "editable": true,
+        "form": null,
+        "hasChildren": false,
+        "iconUrl": "http://localhost/admin/rest/content/image/content-id",
+        "id": "content-id",
+        "isPage": false,
+        "isRoot": true,
+        "isSite": false,
+        "modifiedTime": "2013-08-23T12:55:09.162Z",
+        "modifier": "user:system:admin",
+        "name": "content-path",
+        "owner": "user:myStore:me",
+        "path": "/content-path",
+        "site": null,
+        "type": "content-type"
+    }
 }
-

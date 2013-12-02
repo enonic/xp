@@ -8,7 +8,7 @@ module api_content_json{
 
         path:string;
 
-        root:boolean;
+        isRoot:boolean;
 
         hasChildren:boolean;
 
@@ -19,6 +19,10 @@ module api_content_json{
         modifier:string;
 
         owner:string;
+
+        isSite:boolean;
+
+        isPage:boolean;
 
     }
 }

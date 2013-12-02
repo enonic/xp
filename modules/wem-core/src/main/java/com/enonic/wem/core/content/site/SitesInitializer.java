@@ -8,14 +8,17 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.site.CreateSite;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.module.CreateModule;
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.site.ModuleConfig;
+import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -41,6 +44,10 @@ public class SitesInitializer
 {
     private Client client;
 
+    private final static SiteTemplateKey BLUMAN_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "Blueman-1.0.0" );
+
+    private Module demoModule;
+
     private SiteTemplate siteTemplate;
 
     protected SitesInitializer()
@@ -52,7 +59,9 @@ public class SitesInitializer
     public void initialize()
         throws Exception
     {
-        this.siteTemplate = createSiteTemplate();
+        this.demoModule = createDemoModule();
+        final PageTemplate pageTemplate = createPageTemplate( this.demoModule );
+        this.siteTemplate = createSiteTemplate( BLUMAN_SITE_TEMPLATE_KEY, ModuleKeys.from( this.demoModule.getKey() ), pageTemplate );
         createDefaultSites();
     }
 
@@ -64,46 +73,64 @@ public class SitesInitializer
 
     private void createSite( final String name, final String displayName )
     {
-        final ContentId content = createSiteRootContent( name, displayName );
+        final ContentId content = createSiteContent( name, displayName );
 
-        final CreateSite createSite = site().create().content( content ).template( this.siteTemplate.getKey() );
-        final Content siteContent = client.execute( createSite ).getContent();
+        final ModuleConfig moduleConfig = ModuleConfig.newModuleConfig().
+            module( this.demoModule.getModuleKey() ).
+            config( createDemoModuleData( "First", "Second" ) ).build();
+
+        final CreateSite createSite = site().create().
+            content( content ).
+            template( this.siteTemplate.getKey() ).
+            moduleConfigs( ModuleConfigs.from( moduleConfig ) );
+        client.execute( createSite ).getContent();
     }
 
-    private PageTemplate createPageTemplate( final Module controllerModule )
+    private PageTemplate createPageTemplate( final Module module )
     {
         final ResourcePath pageTemplateController = ResourcePath.from( "controllers/main-page.js" );
-        final ModuleResourceKey pageTemplateDescriptor = new ModuleResourceKey( controllerModule.getModuleKey(), pageTemplateController );
+        final ModuleResourceKey descriptorModuleResourceKey = new ModuleResourceKey( module.getModuleKey(), pageTemplateController );
 
-        final PageTemplate pageTemplate = newPageTemplate().
+        return newPageTemplate().
             name( new PageTemplateName( "mainpage" ) ).
             displayName( "Main Page" ).
-            descriptor( pageTemplateDescriptor ).
+            descriptor( descriptorModuleResourceKey ).
             build();
-        return pageTemplate;
     }
 
-    private SiteTemplate createSiteTemplate()
+    private SiteTemplate createSiteTemplate( final SiteTemplateKey siteTemplateKey, final ModuleKeys moduleKeys,
+                                             final PageTemplate pageTemplate )
     {
-        final Module defaultModule = createDefaultModule();
-        final PageTemplate pageTemplate = createPageTemplate( defaultModule );
-
         final CreateSiteTemplate createSiteTemplate = site().template().create().
-            siteTemplateKey( SiteTemplateKey.from( "Blueman-1.0.0" ) ).
+            siteTemplateKey( siteTemplateKey ).
             displayName( "Blueman Site Template" ).
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
-            modules( ModuleKeys.from( defaultModule.getKey() ) ).
+            modules( moduleKeys ).
             description( "Demo site template" ).
             rootContentType( ContentTypeName.page() ).
             addTemplate( pageTemplate );
         return client.execute( createSiteTemplate );
     }
 
-    private Module createDefaultModule()
+    private RootDataSet createDemoModuleData( final String a, final String b )
     {
-        final Form config = Form.newForm().
-            addFormItem( Input.newInput().name( "dummy-param" ).inputType( InputTypes.TEXT_LINE ).build() ).
+        RootDataSet data = new RootDataSet();
+        data.setProperty( "my-config-a", new Value.String( a ) );
+        data.setProperty( "my-config-b", new Value.String( b ) );
+        return data;
+    }
+
+    private Form createDemoModuleForm()
+    {
+        return Form.newForm().
+            addFormItem( Input.newInput().name( "my-config-a" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( Input.newInput().name( "my-config-b" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
+    }
+
+    private Module createDemoModule()
+    {
+        final Form config = createDemoModuleForm();
 
         final ModuleFileEntry.Builder controllersDir = directoryBuilder( "controllers" ).
             addFile( "main-page.js", asByteSource( "some_code();".getBytes() ) );
@@ -129,7 +156,7 @@ public class SitesInitializer
         return client.execute( createModule );
     }
 
-    private ContentId createSiteRootContent( final String name, final String displayName )
+    private ContentId createSiteContent( final String name, final String displayName )
     {
         final CreateContent createContent = Commands.content().create().
             name( name ).
@@ -138,8 +165,7 @@ public class SitesInitializer
             contentType( ContentTypeName.page() ).
             form( Form.newForm().build() ).
             contentData( new ContentData() );
-        final ContentId contentId = client.execute( createContent ).getContentId();
-        return contentId;
+        return client.execute( createContent ).getContentId();
     }
 
     @Inject
