@@ -42,6 +42,7 @@ final class XmlSerializerImpl<X extends XmlObject>
         try
         {
             final Marshaller marshaller = this.context.createMarshaller();
+            marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true );
             final StringWriter writer = new StringWriter();
             marshaller.marshal( object, writer );
             return writer.toString();
