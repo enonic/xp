@@ -1,0 +1,16 @@
+{
+    "contentId": "content-id",
+    "siteTemplateKey": "template-1.0.0",
+    "moduleConfigs": [
+        {
+            "module": "module-1.0.0",
+            "config": [{
+                "Property": {
+                    "name": "property1",
+                    "type": "String",
+                    "value": "value1"
+                }
+            }]
+        }
+    ]
+}

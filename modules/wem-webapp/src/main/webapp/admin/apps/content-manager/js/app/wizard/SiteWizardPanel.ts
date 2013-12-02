@@ -27,8 +27,9 @@ module app_wizard {
         persistNewItem(successCallback?:() => void) {
             var content:api_content.Content = this.getPersistedItem();
             new api_content_site.CreateSiteRequest(content.getId())
-                .setSiteTemplateId(this.site.getTemplateName())
-                .setModuleConfigs(this.site.getModuleConfigs()).send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
+                .setSiteTemplateKey(this.site.getTemplateName())
+                .setModuleConfigs(this.site.getModuleConfigs())
+                .send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
                     //TODO
             });
         }
@@ -37,7 +38,8 @@ module app_wizard {
             var content:api_content.Content = this.getPersistedItem();
             new api_content_site.UpdateSiteRequest(content.getId())
                 .setSiteTemplateId(this.site.getTemplateName())
-                .setModuleConfigs(this.site.getModuleConfigs()).send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
+                .setModuleConfigs(this.site.getModuleConfigs())
+                .send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
                     //TODO
             });
         }
@@ -47,7 +49,8 @@ module app_wizard {
                 callback(this.site);
             } else {
                 var content:api_content.Content = this.getPersistedItem();
-                new api_content_site.GetSiteRequest(content.getId() ).send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
+                new api_content_site.GetSiteRequest(content.getId() )
+                    .send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
                     this.site = new api_content_site.Site(siteResponse.getResult());
                     callback(this.site);
                 })

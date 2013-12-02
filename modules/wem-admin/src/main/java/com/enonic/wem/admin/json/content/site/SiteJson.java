@@ -24,12 +24,12 @@ public class SiteJson
         }
     }
 
-    String getTemplateName()
+    public String getTemplateName()
     {
         return site.getTemplate().toString();
     }
 
-    List<ModuleConfigJson> getModuleConfigs()
+    public List<ModuleConfigJson> getModuleConfigs()
     {
         return moduleConfigJsonList;
     }

@@ -2,7 +2,9 @@ package com.enonic.wem.core.content.site;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
+import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.site.CreateSite;
+import com.enonic.wem.api.command.content.site.CreateSiteResult;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.site.Site;
@@ -33,12 +35,17 @@ public class CreateSiteHandler
                 }
             } );
 
-        context.getClient().execute( updateContent );
+        UpdateContentResult updateResult = context.getClient().execute( updateContent );
 
-        context.getJcrSession().save();
-
-        final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
-
-        command.setResult( updatedContent );
+        if ( UpdateContentResult.Type.SUCCESS.equals( updateResult.getType() ) )
+        {
+            context.getJcrSession().save();
+            final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
+            command.setResult( CreateSiteResult.success( updatedContent ) );
+        }
+        else
+        {
+            command.setResult( CreateSiteResult.error( updateResult.getMessage() ) );
+        }
     }
 }

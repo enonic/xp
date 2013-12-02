@@ -22,9 +22,11 @@ public class SiteResource
     public CreateSiteResult create( final CreateSiteJson createSiteJson )
     {
         final CreateSite createSiteCommand = createSiteJson.getCreateSite();
-        client.execute( createSiteCommand );
-        final Site createdSite = createSiteCommand.getResult().getSite();
-        return CreateSiteResult.success( createdSite );
+        final com.enonic.wem.api.command.content.site.CreateSiteResult createSiteResult = client.execute( createSiteCommand );
+
+        return createSiteResult.getContent() != null
+            ? CreateSiteResult.success( createSiteResult.getContent().getSite() )
+            : CreateSiteResult.error( createSiteResult.getMessage() );
     }
 
     @POST
@@ -35,6 +37,7 @@ public class SiteResource
         final UpdateSite updateSiteCommand = updateSiteJson.getUpdateSite();
         client.execute( updateSiteCommand );
         final Site updatedSite = updateSiteCommand.getResult().getSite();
+
         return UpdateSiteResult.success( updatedSite );
     }
 

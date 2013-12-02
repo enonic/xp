@@ -67,7 +67,7 @@ public class SitesInitializer
         final ContentId content = createSiteRootContent( name, displayName );
 
         final CreateSite createSite = site().create().content( content ).template( this.siteTemplate.getKey() );
-        final Content siteContent = client.execute( createSite );
+        final Content siteContent = client.execute( createSite ).getContent();
     }
 
     private PageTemplate createPageTemplate( final Module controllerModule )

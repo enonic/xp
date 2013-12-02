@@ -41,8 +41,14 @@ public class RootDataSetJson
     @JsonCreator
     public RootDataSetJson( @JsonProperty("value") final List<DataJson> datas )
     {
-        this.list = null;
-        this.rootDataSet = null;
+        ImmutableList.Builder<DataJson> listBuilder = ImmutableList.builder();
+        this.rootDataSet = new RootDataSet();
+        for ( DataJson dataJson : datas )
+        {
+            this.rootDataSet.add( dataJson.getData() );
+            listBuilder.add( dataJson );
+        }
+        this.list = listBuilder.build();
     }
 
     public List<DataJson> getValue()
