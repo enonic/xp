@@ -8,7 +8,7 @@ import com.enonic.wem.api.data.type.InconvertibleValueException;
 import com.enonic.wem.api.data.type.ValueType;
 
 public class Property
-    extends Data
+    extends Data<Property>
 {
     private Value value;
 
@@ -211,7 +211,7 @@ public class Property
     }
 
     @Override
-    public com.enonic.wem.api.data.Data copy()
+    public Property copy()
     {
         return new Property( this );
     }

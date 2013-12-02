@@ -2,11 +2,12 @@ package com.enonic.wem.api.command.content.page;
 
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.PageEditor;
 
 public class UpdatePage
-    extends Command<Boolean>
+    extends Command<Content>
 {
     private ContentId content;
 

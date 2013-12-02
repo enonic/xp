@@ -21,11 +21,11 @@ public class ComponentsTest
         pageConfig.addProperty( "pause", new Value.Long( 200 ) );
 
         Page page = Page.newPage().
-            pageTemplateName( new PageTemplateName( "pageTemplateName" ) ).
+            template( new PageTemplateName( "pageTemplateName" ) ).
             config( pageConfig ).
             build();
 
-        assertEquals( "pageTemplateName", page.getTemplateName().toString() );
+        assertEquals( "pageTemplateName", page.getTemplate().toString() );
     }
 
     @Test
@@ -39,7 +39,7 @@ public class ComponentsTest
             config( partConfig ).
             build();
 
-        assertEquals( "partTemplateName", partComponent.getTemplateName().toString() );
+        assertEquals( "partTemplateName", partComponent.getTemplate().toString() );
     }
 
     @Test
@@ -53,6 +53,6 @@ public class ComponentsTest
             config( layoutConfig ).
             build();
 
-        assertEquals( "layoutTemplateName", layoutComponent.getTemplateName().toString() );
+        assertEquals( "layoutTemplateName", layoutComponent.getTemplate().toString() );
     }
 }

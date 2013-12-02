@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
-public abstract class Data
+public abstract class Data<T extends Data>
 {
     protected static final String ROOT_NAME = "";
 
@@ -166,7 +166,7 @@ public abstract class Data
         return parent.getArray( this );
     }
 
-    public abstract Data copy();
+    public abstract T copy();
 
     public abstract boolean valueEquals( Data data );
 

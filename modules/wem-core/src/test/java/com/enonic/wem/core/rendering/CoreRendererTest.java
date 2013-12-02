@@ -60,7 +60,7 @@ public class CoreRendererTest
         // exercise
         CoreRenderer coreRenderer = new CoreRenderer( client, context );
         Page page = newPage().
-            pageTemplateName( pageTemplateName ).
+            template( pageTemplateName ).
             build();
         RenderingResult result = coreRenderer.render( page );
 

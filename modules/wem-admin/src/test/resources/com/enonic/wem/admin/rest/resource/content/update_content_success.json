@@ -18,6 +18,7 @@
         "modifier": "user:system:admin",
         "name": "content-path",
         "owner": "user:myStore:me",
+        "page": null,
         "path": "/content-path",
         "site": null,
         "type": "content-type"

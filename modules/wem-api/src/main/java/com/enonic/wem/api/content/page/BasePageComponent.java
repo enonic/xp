@@ -6,15 +6,15 @@ import com.enonic.wem.api.rendering.Component;
 public abstract class BasePageComponent<NAME extends TemplateName>
     implements Component
 {
-    private final NAME templateName;
+    private final NAME template;
 
-    protected BasePageComponent( final NAME templateName )
+    protected BasePageComponent( final NAME template )
     {
-        this.templateName = templateName;
+        this.template = template;
     }
 
-    public NAME getTemplateName()
+    public NAME getTemplate()
     {
-        return templateName;
+        return template;
     }
 }

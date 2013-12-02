@@ -1,27 +1,27 @@
-package com.enonic.wem.core.content.site;
+package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
-import com.enonic.wem.api.command.content.site.CreateSite;
-import com.enonic.wem.api.command.content.site.CreateSiteResult;
+import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.editor.ContentEditor;
-import com.enonic.wem.api.content.site.Site;
+import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.core.command.CommandHandler;
 
 import static com.enonic.wem.api.content.Content.editContent;
+import static com.enonic.wem.api.content.page.Page.newPage;
 
-public class CreateSiteHandler
-    extends CommandHandler<CreateSite>
+public class CreatePageHandler
+    extends CommandHandler<CreatePage>
 {
     @Override
     public void handle()
         throws Exception
     {
-        final Site site = Site.newSite().
-            template( command.getTemplate() ).
-            moduleConfigs( command.getModuleConfigs() ).
+        final Page page = newPage().
+            template( command.getPageTemplate() ).
+            config( command.getConfig() ).
             build();
 
         final UpdateContent updateContent = Commands.content().update().
@@ -31,20 +31,21 @@ public class CreateSiteHandler
                 @Override
                 public Content.EditBuilder edit( final Content toBeEdited )
                 {
-                    return editContent( toBeEdited ).site( site );
+                    return editContent( toBeEdited ).page( page );
                 }
             } );
 
-        UpdateContentResult updateResult = context.getClient().execute( updateContent );
+        final UpdateContentResult updateResult = context.getClient().execute( updateContent );
 
         if ( UpdateContentResult.Type.SUCCESS.equals( updateResult.getType() ) )
         {
             final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
-            command.setResult( CreateSiteResult.success( updatedContent ) );
+            command.setResult( updatedContent );
         }
         else
         {
-            command.setResult( CreateSiteResult.error( updateResult.getMessage() ) );
+            // TODO: change when update content just return updated content
+            throw new RuntimeException( "Failed to create page:" + updateResult.getMessage() );
         }
     }
 }

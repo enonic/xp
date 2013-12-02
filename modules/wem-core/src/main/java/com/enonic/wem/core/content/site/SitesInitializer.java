@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.command.content.site.CreateSite;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.module.CreateModule;
@@ -35,6 +36,7 @@ import com.enonic.wem.core.support.BaseInitializer;
 import com.enonic.wem.xml.XmlSerializers;
 import com.enonic.wem.xml.content.page.PageDescriptorXml;
 
+import static com.enonic.wem.api.command.Commands.page;
 import static com.enonic.wem.api.command.Commands.site;
 import static com.enonic.wem.api.content.page.PageDescriptor.newPageDescriptor;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
@@ -57,6 +59,8 @@ public class SitesInitializer
 
     private SiteTemplate siteTemplate;
 
+    private PageTemplate mainPageTemplate;
+
     protected SitesInitializer()
     {
         super( 13, "sites" );
@@ -67,16 +71,13 @@ public class SitesInitializer
         throws Exception
     {
         this.demoModule = createDemoModule();
-        final PageTemplate pageTemplate = createPageTemplate( this.demoModule );
-        this.siteTemplate = createSiteTemplate( BLUMAN_SITE_TEMPLATE_KEY, ModuleKeys.from( this.demoModule.getKey() ), pageTemplate );
-        createDefaultSites();
-    }
+        mainPageTemplate = createPageTemplate( this.demoModule );
+        this.siteTemplate = createSiteTemplate( BLUMAN_SITE_TEMPLATE_KEY, ModuleKeys.from( this.demoModule.getKey() ), mainPageTemplate );
 
-    private void createDefaultSites()
-    {
         createSite( "bluman trampoliner", "Bluman Trampoliner" );
         createSite( "bluman intranett", "Bluman Intranett" );
     }
+
 
     private void createSite( final String name, final String displayName )
     {
@@ -90,7 +91,13 @@ public class SitesInitializer
             content( content ).
             template( this.siteTemplate.getKey() ).
             moduleConfigs( ModuleConfigs.from( moduleConfig ) );
-        client.execute( createSite ).getContent();
+        client.execute( createSite );
+
+        final CreatePage createPage = page().create().
+            content( content ).
+            pageTemplate( this.mainPageTemplate.getName() ).
+            config( createPageTemplateConfig( "red" ) );
+        client.execute( createPage );
     }
 
     private PageTemplate createPageTemplate( final Module module )
@@ -134,7 +141,8 @@ public class SitesInitializer
         final ModuleFileEntry.Builder controllersDir = newModuleDirectory( "controllers" ).
             addFile( "main-page.js", asByteSource( "some_code();".getBytes() ) );
 
-        final ModuleResourceKey controllerResourceKey =  new ModuleResourceKey( DEMO_MODULE_KEY, ResourcePath.from( "/controllers/main.page.js" )  );
+        final ModuleResourceKey controllerResourceKey =
+            new ModuleResourceKey( DEMO_MODULE_KEY, ResourcePath.from( "/controllers/main.page.js" ) );
 
         final PageDescriptor pageDescriptor = newPageDescriptor().
             name( "landing-page" ).
@@ -175,13 +183,16 @@ public class SitesInitializer
         return client.execute( createModule );
     }
 
-    private Form createPageDescriptorForm() {
+    private Form createPageDescriptorForm()
+    {
 
         return Form.newForm().
             addFormItem( newInput().name( "background-color" ).label( "Background color" ).inputType( InputTypes.TEXT_LINE ).build() ).
             addFormItem( newInput().name( "main" ).label( "Main region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
-            addFormItem( newInput().name( "header" ).label( "Header region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
-            addFormItem( newInput().name( "footer" ).label( "Footer region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
+            addFormItem(
+                newInput().name( "header" ).label( "Header region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
+            addFormItem(
+                newInput().name( "footer" ).label( "Footer region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
             build();
     }
 
@@ -213,7 +224,8 @@ public class SitesInitializer
         return client.execute( createContent ).getContentId();
     }
 
-    private String serialize( PageDescriptor pageDescriptor ){
+    private String serialize( PageDescriptor pageDescriptor )
+    {
         final PageDescriptorXml pageDescriptorXml = new PageDescriptorXml();
         pageDescriptorXml.from( pageDescriptor );
         return XmlSerializers.pageDescriptor().serialize( pageDescriptorXml );

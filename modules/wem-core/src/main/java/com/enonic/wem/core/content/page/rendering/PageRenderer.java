@@ -42,7 +42,7 @@ public final class PageRenderer
     @Override
     public RenderingResult execute( final Page page )
     {
-        final PageTemplate template = getPageTemplate( page.getTemplateName(), client );
+        final PageTemplate template = getPageTemplate( page.getTemplate(), client );
         final PageDescriptor descriptor = getPageDescriptor( template.getDescriptor(), client );
 
         final ModuleResourceKey controllerResource = descriptor.getControllerResource();

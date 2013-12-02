@@ -92,12 +92,12 @@ final class ContentJcrMapper
         contentNode.setProperty( FORM, content.getForm() != null ? formItemsJsonSerializer.toString( content.getForm() ) : null );
         if ( content.getSite() != null )
         {
-            Node siteNode = contentNode.addNode( SITE );
+            final Node siteNode = contentNode.hasNode( SITE ) ? contentNode.getNode( SITE ) : contentNode.addNode( SITE );
             siteToJcr( content.getSite(), siteNode );
         }
         if ( content.getPage() != null )
         {
-            Node pageNode = contentNode.addNode( PAGE );
+            final Node pageNode = contentNode.hasNode( PAGE ) ? contentNode.getNode( PAGE ) : contentNode.addNode( PAGE );
             pageToJcr( content.getPage(), pageNode );
         }
         contentNode.setProperty( DATA, contentDataSerializer.toString( content.getContentData() ) );
@@ -114,7 +114,8 @@ final class ContentJcrMapper
         throws RepositoryException
     {
         siteNode.setProperty( SITE_TEMPLATE, site.getTemplate().toString() );
-        Node moduleConfigsNode = siteNode.addNode( SITE_MODULE_CONFIGS );
+        Node moduleConfigsNode =
+            siteNode.hasNode( SITE_MODULE_CONFIGS ) ? siteNode.getNode( SITE_MODULE_CONFIGS ) : siteNode.addNode( SITE_MODULE_CONFIGS );
         for ( ModuleConfig moduleConfig : site.getModuleConfigs() )
         {
             moduleConfigToJcr( moduleConfig, moduleConfigsNode );
@@ -124,7 +125,9 @@ final class ContentJcrMapper
     private void moduleConfigToJcr( final ModuleConfig moduleConfig, final Node moduleConfigsNode )
         throws RepositoryException
     {
-        Node moduleConfigNode = moduleConfigsNode.addNode( SITE_MODULE_CONFIG );
+        Node moduleConfigNode = moduleConfigsNode.hasNode( SITE_MODULE_CONFIG )
+            ? moduleConfigsNode.getNode( SITE_MODULE_CONFIG )
+            : moduleConfigsNode.addNode( SITE_MODULE_CONFIG );
         moduleConfigNode.setProperty( SITE_MODULE, moduleConfig.getModule().toString() );
         moduleConfigNode.setProperty( SITE_CONFIG, rootDataSetJsonSerializer.toString( moduleConfig.getConfig() ) );
     }
@@ -132,7 +135,7 @@ final class ContentJcrMapper
     private void pageToJcr( final Page page, final Node pageNode )
         throws RepositoryException
     {
-        pageNode.setProperty( PAGE_TEMPLATE, page.getTemplateName().toString() );
+        pageNode.setProperty( PAGE_TEMPLATE, page.getTemplate().toString() );
         pageNode.setProperty( PAGE_CONFIG, rootDataSetJsonSerializer.toString( page.getConfig() ) );
     }
 
@@ -236,7 +239,7 @@ final class ContentJcrMapper
         final PageTemplateName pageTemplate = new PageTemplateName( getPropertyString( pageNode, PAGE_TEMPLATE ) );
         final RootDataSet config = rootDataSetJsonSerializer.toObject( pageNode.getProperty( PAGE_CONFIG ).getString() );
         return Page.newPage().
-            pageTemplateName( pageTemplate ).
+            template( pageTemplate ).
             config( config ).
             build();
     }

@@ -20,6 +20,9 @@ public class PageModule
     protected void configure()
     {
         final CommandBinder commands = CommandBinder.from( binder() );
+        commands.add( CreatePageHandler.class );
+        commands.add( UpdatePageHandler.class );
+
         commands.add( GetPageTemplateByKeyHandler.class );
         commands.add( GetPageTemplatesBySiteTemplateHandler.class );
         commands.add( UpdatePageTemplateHandler.class );

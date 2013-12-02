@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.data.type.ValueType;
 
 public class DataSet
-    extends Data
+    extends Data<DataSet>
     implements Iterable<Data>
 {
     private LinkedHashMap<DataId, Data> dataById = new LinkedHashMap<>();
@@ -443,11 +443,15 @@ public class DataSet
 
     public RootDataSet toRootDataSet()
     {
+        if ( this instanceof RootDataSet )
+        {
+            return (RootDataSet) this;
+        }
         return new RootDataSet( newDataSet( this ) );
     }
 
     @Override
-    public Data copy()
+    public DataSet copy()
     {
         return newDataSet( this ).build();
     }

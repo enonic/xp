@@ -27,8 +27,6 @@ public class DeleteSiteHandler
 
         context.getClient().execute( updateContent );
 
-        context.getJcrSession().save();
-
         final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
 
         command.setResult( updatedContent );

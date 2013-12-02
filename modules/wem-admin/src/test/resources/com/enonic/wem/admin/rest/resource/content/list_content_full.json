@@ -18,6 +18,7 @@
             "modifier": "user:system:admin",
             "name": "my_a_content",
             "owner": "user:myStore:me",
+            "page": null,
             "path": "/my_a_content",
             "site": null,
             "type": "my_type"
@@ -40,6 +41,7 @@
             "modifier": "user:system:admin",
             "name": "my_b_content",
             "owner": "user:myStore:me",
+            "page": null,
             "path": "/my_b_content",
             "site": null,
             "type": "my_type"
