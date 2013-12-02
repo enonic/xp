@@ -1,0 +1,27 @@
+{
+    "error": null,
+    "result": {
+        "contentFilter": {
+            "allow": [ "*" ],
+            "deny": [ "com.enonic.tweet", "system.folder", "com.enonic.article", "com.enonic.employee" ]
+        },
+        "deletable": true,
+        "description": "Demo site template",
+        "displayName": "Blueman Site Template",
+        "editable": true,
+        "imageTemplates": [ "mainimage" ],
+        "key": "blueman-1.0.0",
+        "layoutTemplates": [ "mainlayout" ],
+        "modules": [ "module1-1.0.0", "module2-1.0.0" ],
+        "name": "blueman",
+        "pageTemplates": [ "mainpage" ],
+        "partTemplates": [ "mainpart" ],
+        "siteContent": "page",
+        "url": "http://enonic.net",
+        "vendor": {
+            "name": "Enonic AS",
+            "url": "http://www.enonic.com"
+        },
+        "version": "1.0.0"
+    }
+}

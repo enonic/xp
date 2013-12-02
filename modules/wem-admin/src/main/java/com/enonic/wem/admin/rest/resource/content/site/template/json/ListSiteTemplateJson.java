@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.wem.admin.json.content.site.SiteTemplateSummaryJson;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplates;
 
