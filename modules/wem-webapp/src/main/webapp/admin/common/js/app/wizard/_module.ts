@@ -10,6 +10,7 @@
 ///<reference path='WizardStepNavigator.ts' />
 ///<reference path='WizardStepNavigationArrow.ts' />
 ///<reference path='WizardStep.ts' />
+///<reference path='WizardStepForm.ts' />
 ///<reference path='WizardPanelListener.ts' />
 ///<reference path='WizardPanel.ts' />
 ///<reference path='SaveBeforeCloseDialog.ts' />

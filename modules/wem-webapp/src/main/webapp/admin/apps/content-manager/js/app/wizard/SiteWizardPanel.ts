@@ -3,16 +3,23 @@ module app_wizard {
     export class SiteWizardPanel extends ContentWizardPanel {
 
         private site:api_content_site.Site;
+
         private siteModule:api_module.Module;
+
         private siteTemplate:api_content_site_template.SiteTemplateSummary;
 
+        private siteWizardStepForm:SiteWizardStepForm;
+
         constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content) {
+
+            this.siteWizardStepForm = new SiteWizardStepForm();
+
             super(tabId, contentType, parentContent);
         }
 
         createSteps():api_app_wizard.WizardStep[] {
             var steps:api_app_wizard.WizardStep[] = super.createSteps();
-            steps.unshift(new api_app_wizard.WizardStep("Site", new api_ui.Panel("SitePanel")));
+            steps.unshift(new api_app_wizard.WizardStep("Site", this.siteWizardStepForm));
             return steps;
         }
 

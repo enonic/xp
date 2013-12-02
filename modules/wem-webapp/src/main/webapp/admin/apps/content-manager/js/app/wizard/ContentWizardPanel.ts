@@ -12,7 +12,9 @@ module app_wizard {
 
         private contentWizardHeader:api_app_wizard.WizardHeaderWithDisplayNameAndName;
 
-        private contentForm:ContentForm;
+        private contentWizardStepForm:ContentWizardStepForm;
+
+        private pageWizardStepForm:PageWizardStepForm;
 
         private iconUploadId:string;
 
@@ -54,6 +56,9 @@ module app_wizard {
             this.contentWizardHeader.initNames("New " + this.contentType.getDisplayName(), null);
             this.contentWizardHeader.setAutogenerateName(true);
 
+            this.contentWizardStepForm = new ContentWizardStepForm();
+            this.pageWizardStepForm = new PageWizardStepForm();
+
             super({
                 tabId: tabId,
                 formIcon: this.formIcon,
@@ -79,7 +84,7 @@ module app_wizard {
 
                 this.getEl().addEventListener("keyup", (e) => {
 
-                    this.displayNameScriptExecutor.setFormView(this.contentForm.getFormView());
+                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
                     var displayName = this.displayNameScriptExecutor.execute();
 
@@ -90,8 +95,8 @@ module app_wizard {
 
         createSteps():api_app_wizard.WizardStep[] {
             var steps:api_app_wizard.WizardStep[] = [];
-            this.contentForm = new ContentForm();
-            steps.push(new api_app_wizard.WizardStep(this.contentType.getDisplayName(), this.contentForm));
+            steps.push(new api_app_wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
+            steps.push(new api_app_wizard.WizardStep("Page", this.pageWizardStepForm));
             return steps;
         }
 
@@ -107,7 +112,9 @@ module app_wizard {
         renderNew() {
             super.renderNew();
 
-            this.contentForm.renderNew(this.contentType.getForm());
+            this.contentWizardStepForm.renderNew(this.contentType.getForm());
+            // TODO: GetPageTemplateRequest use descriptor config form
+            this.pageWizardStepForm.renderNew(null);
             this.persistNewDraft();
         }
 
@@ -122,7 +129,9 @@ module app_wizard {
             this.formIcon.setSrc(content.getIconUrl());
             var contentData:api_content.ContentData = content.getContentData();
 
-            this.contentForm.renderExisting(contentData, content.getForm());
+            this.contentWizardStepForm.renderExisting(contentData, content.getForm());
+            // TODO: Get form from descriptor and rootdataset from page/template
+            this.pageWizardStepForm.renderExisting(null,  null);
         }
 
         persistNewDraft() {
@@ -135,7 +144,7 @@ module app_wizard {
                 .setParent(this.parentContent.getPath())
                 .setContentType(this.contentType.getContentTypeName())
                 .setDisplayName(this.contentWizardHeader.getDisplayName())
-                .setForm(this.contentForm.getForm())
+                .setForm(this.contentWizardStepForm.getForm())
                 .setContentData(contentData)
                 .send()
                 .done((createResponse:api_rest.JsonResponse<any>) => {
@@ -155,7 +164,7 @@ module app_wizard {
 
         persistNewItem(successCallback?:(contentId:string, contentPath:string) => void) {
 
-            var contentData = this.contentForm.getContentData();
+            var contentData = this.contentWizardStepForm.getContentData();
 
             var createRequest = new api_content.CreateContentRequest().
                 setDraft(false).
@@ -163,13 +172,13 @@ module app_wizard {
                 setParent(this.parentContent.getPath()).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setForm(this.contentForm.getForm()).
+                setForm(this.contentWizardStepForm.getForm()).
                 setContentData(contentData);
 
             if (this.iconUploadId) {
                 createRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName('_thumb.png')));
             }
-            var attachments:api_content.Attachment[] = this.contentForm.getFormView().getAttachments();
+            var attachments:api_content.Attachment[] = this.contentWizardStepForm.getFormView().getAttachments();
             createRequest.addAttachments(attachments);
 
             createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
@@ -197,8 +206,8 @@ module app_wizard {
                 setContentName(this.contentWizardHeader.getName()).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setForm(this.contentForm.getForm()).
-                setContentData(this.contentForm.getContentData());
+                setForm(this.contentWizardStepForm.getForm()).
+                setContentData(this.contentWizardStepForm.getContentData());
 
             if (this.iconUploadId) {
                 updateRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName('_thumb.png')));
@@ -230,7 +239,7 @@ module app_wizard {
             } else {
                 return !this.stringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
                     || !this.stringsEqual(persistedContent.getName(), this.contentWizardHeader.getName())
-                    || !persistedContent.getContentData().equals(this.contentForm.getContentData());
+                    || !persistedContent.getContentData().equals(this.contentWizardStepForm.getContentData());
             }
         }
 

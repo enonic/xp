@@ -1,6 +1,8 @@
 ///<reference path='ContentWizardEvents.ts' />
 ///<reference path='ContentWizardActions.ts' />
-///<reference path='ContentForm.ts' />
+///<reference path='ContentWizardStepForm.ts' />
+///<reference path='PageWizardStepForm.ts' />
+///<reference path='SiteWizardStepForm.ts' />
 ///<reference path='ContentWizardToolbar.ts' />
 ///<reference path='DisplayNameScriptExecutor.ts' />
 ///<reference path='ContentWizardPanel.ts' />
