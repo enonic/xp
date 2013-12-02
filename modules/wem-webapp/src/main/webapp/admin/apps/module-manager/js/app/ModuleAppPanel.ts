@@ -2,7 +2,6 @@ module app {
 
     export class ModuleAppPanel extends api_app.BrowseAndWizardBasedAppPanel<api_module.Module> {
 
-
         constructor(appBar:api_app.AppBar) {
             var browsePanel = new app_browse.ModuleBrowsePanel();
 
@@ -27,6 +26,7 @@ module app {
                 dialog.onFinishUpload((resp:api_module.InstallModuleResponse)=> {
 
                     api_notify.showFeedback('Module \'' + resp.getModules().map((modl:api_module.Module) => {console.log(modl); return modl.getDisplayName()} ).join(', ') + '\' was installed');
+                    new api_module.ModuleImportedEvent().fire();
                     dialog.close();
                 } ).
                 onError((resp:api_rest.JsonResponse)=> {
