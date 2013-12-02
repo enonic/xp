@@ -196,7 +196,7 @@ public final class Module
 
         private Builder()
         {
-            this.moduleDirectoryEntry = ModuleFileEntry.directoryBuilder( "" );
+            this.moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" );
         }
 
         private Builder( final Module source )

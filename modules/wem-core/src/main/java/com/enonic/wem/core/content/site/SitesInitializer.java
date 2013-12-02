@@ -11,6 +11,7 @@ import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.site.ModuleConfig;
@@ -20,10 +21,10 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleVersion;
@@ -31,11 +32,15 @@ import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.support.BaseInitializer;
+import com.enonic.wem.xml.XmlSerializers;
+import com.enonic.wem.xml.content.page.PageDescriptorXml;
 
 import static com.enonic.wem.api.command.Commands.site;
+import static com.enonic.wem.api.content.page.PageDescriptor.newPageDescriptor;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
-import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
+import static com.enonic.wem.api.form.Input.newInput;
+import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static com.google.common.io.ByteStreams.asByteSource;
 
 
@@ -43,6 +48,8 @@ public class SitesInitializer
     extends BaseInitializer
 {
     private Client client;
+
+    private final static ModuleKey DEMO_MODULE_KEY = ModuleKey.from( "demo-1.0.0" );
 
     private final static SiteTemplateKey BLUMAN_SITE_TEMPLATE_KEY = SiteTemplateKey.from( "Blueman-1.0.0" );
 
@@ -94,8 +101,16 @@ public class SitesInitializer
         return newPageTemplate().
             name( new PageTemplateName( "mainpage" ) ).
             displayName( "Main Page" ).
+            config( createPageTemplateConfig( "blue" ) ).
             descriptor( descriptorModuleResourceKey ).
             build();
+    }
+
+    private RootDataSet createPageTemplateConfig( final String backgroundColor )
+    {
+        RootDataSet data = new RootDataSet();
+        data.setProperty( "background-color", new Value.String( backgroundColor ) );
+        return data;
     }
 
     private SiteTemplate createSiteTemplate( final SiteTemplateKey siteTemplateKey, final ModuleKeys moduleKeys,
@@ -113,6 +128,59 @@ public class SitesInitializer
         return client.execute( createSiteTemplate );
     }
 
+    private Module createDemoModule()
+    {
+        final ModuleFileEntry.Builder controllersDir = newModuleDirectory( "controllers" ).
+            addFile( "main-page.js", asByteSource( "some_code();".getBytes() ) );
+
+        final ModuleResourceKey controllerResourceKey =  new ModuleResourceKey( DEMO_MODULE_KEY, ResourcePath.from( "/controllers/main.page.js" )  );
+
+        final PageDescriptor pageDescriptor = newPageDescriptor().
+            name( "landing-page" ).
+            displayName( "Landing page" ).
+            config( createPageDescriptorForm() ).
+            controllerResource( controllerResourceKey ).
+            build();
+
+        final String pageDescriptorAsString = serialize( pageDescriptor );
+
+        final ModuleFileEntry.Builder componentPagesDir = newModuleDirectory( "pages" ).
+            addFile( "landing-page.xml", asByteSource( pageDescriptorAsString.getBytes() ) );
+
+        final ModuleFileEntry.Builder componentsDir = newModuleDirectory( "components" ).
+            addEntry( componentPagesDir );
+
+        final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
+            addEntry( controllersDir ).
+            addEntry( componentsDir ).
+            build();
+
+        final CreateModule createModule = Commands.module().create().
+            name( DEMO_MODULE_KEY.getName().toString() ).
+            version( DEMO_MODULE_KEY.getVersion() ).
+            displayName( "Demo module" ).
+            info( "For demo purposes only." ).
+            url( "http://enonic.net" ).
+            vendorName( "Enonic AS" ).
+            vendorUrl( "http://www.enonic.com" ).
+            minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
+            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
+            moduleDependencies( ModuleKeys.empty() ).
+            contentTypeDependencies( ContentTypeNames.empty() ).
+            config( createDemoModuleForm() ).
+            moduleDirectoryEntry( moduleDirectoryEntry );
+
+        return client.execute( createModule );
+    }
+
+    private Form createPageDescriptorForm() {
+
+        // TODO: Add some regions
+        return Form.newForm().
+            addFormItem( newInput().name( "background-color" ).label( "Background color" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            build();
+    }
+
     private RootDataSet createDemoModuleData( final String a, final String b )
     {
         RootDataSet data = new RootDataSet();
@@ -124,37 +192,9 @@ public class SitesInitializer
     private Form createDemoModuleForm()
     {
         return Form.newForm().
-            addFormItem( Input.newInput().name( "my-config-a" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( Input.newInput().name( "my-config-b" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "my-config-a" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem( newInput().name( "my-config-b" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
-    }
-
-    private Module createDemoModule()
-    {
-        final Form config = createDemoModuleForm();
-
-        final ModuleFileEntry.Builder controllersDir = directoryBuilder( "controllers" ).
-            addFile( "main-page.js", asByteSource( "some_code();".getBytes() ) );
-        final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.directoryBuilder( "" ).
-            addEntry( controllersDir ).
-            build();
-
-        final CreateModule createModule = Commands.module().create().
-            name( "demo-module" ).
-            version( ModuleVersion.from( 1, 0, 0 ) ).
-            displayName( "Demo module" ).
-            info( "For demo purposes only." ).
-            url( "http://enonic.net" ).
-            vendorName( "Enonic AS" ).
-            vendorUrl( "http://www.enonic.com" ).
-            minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
-            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
-            moduleDependencies( ModuleKeys.empty() ).
-            contentTypeDependencies( ContentTypeNames.empty() ).
-            config( config ).
-            moduleDirectoryEntry( moduleDirectoryEntry );
-
-        return client.execute( createModule );
     }
 
     private ContentId createSiteContent( final String name, final String displayName )
@@ -167,6 +207,12 @@ public class SitesInitializer
             form( Form.newForm().build() ).
             contentData( new ContentData() );
         return client.execute( createContent ).getContentId();
+    }
+
+    private String serialize( PageDescriptor pageDescriptor ){
+        final PageDescriptorXml pageDescriptorXml = new PageDescriptorXml();
+        pageDescriptorXml.from( pageDescriptor );
+        return XmlSerializers.pageDescriptor().serialize( pageDescriptorXml );
     }
 
     @Inject

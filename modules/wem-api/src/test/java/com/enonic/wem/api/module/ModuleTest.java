@@ -10,7 +10,7 @@ import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
-import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
+import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
@@ -19,10 +19,10 @@ public class ModuleTest
     @Test
     public void testCreateModule()
     {
-        final ModuleFileEntry publicDir = directoryBuilder( "public" ).
+        final ModuleFileEntry publicDir = newModuleDirectory( "public" ).
             addFile( Paths.get( "/modules/mymodule/public/file1.txt" ) ).
             build();
-        final ModuleFileEntry templatesDir = directoryBuilder( "templates" ).
+        final ModuleFileEntry templatesDir = newModuleDirectory( "templates" ).
             addFile( Paths.get( "/modules/mymodule/templates/mytemplate.tpl" ) ).
             build();
 
@@ -49,7 +49,7 @@ public class ModuleTest
             config( config ).
             addFileEntry( publicDir ).
             addFileEntry( templatesDir ).
-            addFileEntry( directoryBuilder( "emptydir" ).build() ).
+            addFileEntry( newModuleDirectory( "emptydir" ).build() ).
             build();
 
         assertEquals( "mymodule-1.0.0", module.getModuleKey().toString() );
@@ -70,10 +70,10 @@ public class ModuleTest
     @Test
     public void testModuleCopy()
     {
-        final ModuleFileEntry publicDir = directoryBuilder( "public" ).
+        final ModuleFileEntry publicDir = newModuleDirectory( "public" ).
             addFile( Paths.get( "/modules/mymodule/public/file1.txt" ) ).
             build();
-        final ModuleFileEntry templatesDir = directoryBuilder( "templates" ).
+        final ModuleFileEntry templatesDir = newModuleDirectory( "templates" ).
             addFile( Paths.get( "/modules/mymodule/templates/mytemplate.tpl" ) ).
             build();
 
@@ -100,7 +100,7 @@ public class ModuleTest
             config( config ).
             addFileEntry( publicDir ).
             addFileEntry( templatesDir ).
-            addFileEntry( directoryBuilder( "emptydir" ).build() ).
+            addFileEntry( newModuleDirectory( "emptydir" ).build() ).
             build();
 
         final Module copiedModule = Module.newModule( sourceModule ).build();

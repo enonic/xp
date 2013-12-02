@@ -1,11 +1,15 @@
 package com.enonic.wem.api.module;
 
+import com.google.common.base.Preconditions;
+
 public final class ModuleName
 {
     private final String name;
 
     private ModuleName( final String name )
     {
+        Preconditions.checkArgument( !name.contains( ModuleKey.SEPARATOR ),
+                                     "ModuleName [" + name + "] cannot contain " + ModuleKey.SEPARATOR );
         this.name = name;
     }
 

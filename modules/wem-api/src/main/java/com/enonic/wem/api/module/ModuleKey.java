@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class ModuleKey
 {
-    private static final String SEPARATOR = "-";
+    static final String SEPARATOR = "-";
 
     private final ModuleName name;
 

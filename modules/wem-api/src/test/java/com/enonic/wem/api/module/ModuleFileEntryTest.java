@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.google.common.io.ByteSource;
 
-import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
+import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
 import static com.google.common.io.ByteStreams.asByteSource;
 import static org.junit.Assert.*;
@@ -44,7 +44,7 @@ public class ModuleFileEntryTest
     @Test
     public void testCreateModuleFileEntryDirectoryEmpty()
     {
-        final ModuleFileEntry directory = directoryBuilder( "public" ).build();
+        final ModuleFileEntry directory = newModuleDirectory( "public" ).build();
 
         // verify
         assertEquals( "public", directory.getName() );
@@ -58,7 +58,7 @@ public class ModuleFileEntryTest
     @Test
     public void testCreateModuleFileEntryDirectoryWithFiles()
     {
-        final ModuleFileEntry directory = directoryBuilder( "public" ).
+        final ModuleFileEntry directory = newModuleDirectory( "public" ).
             addFile( Paths.get( "/temp/text1.txt" ) ).
             addFile( Paths.get( "/temp/text2.txt" ) ).
             build();
@@ -78,12 +78,12 @@ public class ModuleFileEntryTest
     @Test
     public void testCreateModuleFileEntryDirectoryWith2Levels()
     {
-        final ModuleFileEntry.Builder directoryBuilder = directoryBuilder( "public" ).
+        final ModuleFileEntry.Builder directoryBuilder = newModuleDirectory( "public" ).
             addFile( Paths.get( "/temp/text1.txt" ) ).
             addFile( Paths.get( "/temp/text2.txt" ) ).
             addFile( "text3.txt", asByteSource( "data".getBytes() ) );
 
-        final ModuleFileEntry.Builder subDirectory = directoryBuilder( "javascript" ).
+        final ModuleFileEntry.Builder subDirectory = newModuleDirectory( "javascript" ).
             addFile( Paths.get( "/temp/file.js" ) ).
             addFile( Paths.get( "/temp/file2.js" ) );
 
@@ -102,12 +102,12 @@ public class ModuleFileEntryTest
     @Test
     public void testGetEntryByPath()
     {
-        final ModuleFileEntry.Builder directoryBuilder = directoryBuilder( "public" ).
+        final ModuleFileEntry.Builder directoryBuilder = newModuleDirectory( "public" ).
             addFile( Paths.get( "/temp/text1.txt" ) ).
             addFile( Paths.get( "/temp/text2.txt" ) ).
             addFile( Paths.get( "/temp/text3.txt" ) );
 
-        final ModuleFileEntry.Builder subDirectory = directoryBuilder( "javascript" ).
+        final ModuleFileEntry.Builder subDirectory = newModuleDirectory( "javascript" ).
             addFile( Paths.get( "/temp/file.js" ) ).
             addFile( Paths.get( "/temp/file2.js" ) );
 
@@ -129,11 +129,11 @@ public class ModuleFileEntryTest
     @Test
     public void testEditByCopy()
     {
-        final ModuleFileEntry.Builder directoryBuilder = directoryBuilder( "public" ).
+        final ModuleFileEntry.Builder directoryBuilder = newModuleDirectory( "public" ).
             addFile( Paths.get( "/temp/text1.txt" ) ).
             addFile( Paths.get( "/temp/text2.txt" ) ).
             addFile( Paths.get( "/temp/text3.txt" ) );
-        final ModuleFileEntry.Builder subDirectory = directoryBuilder( "javascript" ).
+        final ModuleFileEntry.Builder subDirectory = newModuleDirectory( "javascript" ).
             addFile( Paths.get( "/temp/file.js" ) ).
             addFile( Paths.get( "/temp/file2.js" ) );
         final ModuleFileEntry directory = directoryBuilder.addEntry( subDirectory ).build();
@@ -143,7 +143,7 @@ public class ModuleFileEntryTest
             name( "private" ).
             remove( "text1.txt" );
         editedDir.getEntry( "text3.txt" ).name( "text3.txt.backup" );
-        editedDir.getEntry( "javascript" ).addEntry( directoryBuilder( "emptyDir" ) );
+        editedDir.getEntry( "javascript" ).addEntry( newModuleDirectory( "emptyDir" ) );
 
         System.out.println( editedDir.build().asTreeString() );
     }

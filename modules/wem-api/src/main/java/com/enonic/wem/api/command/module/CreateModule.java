@@ -8,13 +8,14 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class CreateModule
     extends Command<Module>
 {
-    private String name;
+    private ModuleName name;
 
     private ModuleVersion version;
 
@@ -44,7 +45,7 @@ public final class CreateModule
     {
         CreateModule createModule = new CreateModule();
         createModule.displayName( module.getDisplayName() );
-        createModule.name = module.getName().toString();
+        createModule.name = module.getName();
         createModule.version = module.getVersion();
         createModule.displayName = module.getDisplayName();
         createModule.info = module.getInfo();
@@ -60,9 +61,15 @@ public final class CreateModule
         return createModule;
     }
 
-    public CreateModule name( final String name )
+    public CreateModule name( final ModuleName name )
     {
         this.name = name;
+        return this;
+    }
+
+    public CreateModule name( final String name )
+    {
+        this.name = ModuleName.from( name );
         return this;
     }
 
@@ -138,7 +145,7 @@ public final class CreateModule
         return this;
     }
 
-    public String getName()
+    public ModuleName getName()
     {
         return name;
     }

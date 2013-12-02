@@ -9,7 +9,6 @@ import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.exporters.ModuleExporter;
@@ -26,7 +25,7 @@ public class CreateModuleHandler
     public void handle()
         throws Exception
     {
-        final ModuleKey moduleKey = ModuleKey.from( ModuleName.from( command.getName() ), command.getVersion() );
+        final ModuleKey moduleKey = ModuleKey.from( command.getName(), command.getVersion() );
         final Module.Builder moduleBuilder = Module.newModule().
             moduleKey( moduleKey ).
             displayName( command.getDisplayName() ).

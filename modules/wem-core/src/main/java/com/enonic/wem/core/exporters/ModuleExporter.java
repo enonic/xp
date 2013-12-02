@@ -89,7 +89,7 @@ public class ModuleExporter
                 if ( Files.isDirectory( path ) )
                 {
                     final String dirName = path.getFileName().toString().replace( FS_SEPARATOR, "" );
-                    final ModuleFileEntry.Builder directoryEntry = ModuleFileEntry.directoryBuilder( dirName );
+                    final ModuleFileEntry.Builder directoryEntry = ModuleFileEntry.newModuleDirectory( dirName );
                     importFiles( directoryEntry, path, false );
                     parentEntry.addEntry( directoryEntry );
                 }

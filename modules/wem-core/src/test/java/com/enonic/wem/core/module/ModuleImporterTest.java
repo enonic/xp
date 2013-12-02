@@ -23,7 +23,7 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.exporters.ModuleExporter;
 
-import static com.enonic.wem.api.module.ModuleFileEntry.directoryBuilder;
+import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
 import static org.junit.Assert.*;
 
@@ -107,10 +107,10 @@ public class ModuleImporterTest
 
     private Module createModule()
     {
-        final ModuleFileEntry publicDir = directoryBuilder( "public" ).
+        final ModuleFileEntry publicDir = newModuleDirectory( "public" ).
             addEntry( newFileEntry( "file1.txt", ByteStreams.asByteSource( "some data".getBytes() ) ) ).
             build();
-        final ModuleFileEntry templatesDir = directoryBuilder( "templates" ).
+        final ModuleFileEntry templatesDir = newModuleDirectory( "templates" ).
             addEntry( newFileEntry( "template1.txt", ByteStreams.asByteSource( "some more data".getBytes() ) ) ).
             build();
 
@@ -137,7 +137,7 @@ public class ModuleImporterTest
             config( config ).
             addFileEntry( publicDir ).
             addFileEntry( templatesDir ).
-            addFileEntry( directoryBuilder( "emptydir" ).build() ).
+            addFileEntry( newModuleDirectory( "emptydir" ).build() ).
             build();
         return module;
     }

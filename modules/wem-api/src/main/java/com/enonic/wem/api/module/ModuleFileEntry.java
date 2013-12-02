@@ -237,7 +237,7 @@ public final class ModuleFileEntry
         return new Builder( false, resource.getName() ).resource( resource ).build();
     }
 
-    public static Builder directoryBuilder( final String name )
+    public static Builder newModuleDirectory( final String name )
     {
         return new Builder( true, name );
     }
