@@ -109,7 +109,11 @@ module api_app_browse{
         refreshFilterAndGrid() {
             if (this.isRefreshNeeded()) {
                 // do the search to update facets as well as the grid
-                this.filterPanel.search();
+                if (this.filterPanel) {
+                    this.filterPanel.search();
+                } else {
+                    this.treeGridPanel.refresh();
+                }
                 this.refreshNeeded = false;
             }
         }

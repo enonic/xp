@@ -2,7 +2,6 @@ module app {
 
     export class ModuleAppPanel extends api_app.BrowseAndWizardBasedAppPanel<api_module.Module> {
 
-
         constructor(appBar:api_app.AppBar) {
             var browsePanel = new app_browse.ModuleBrowsePanel();
 
@@ -22,6 +21,7 @@ module app {
             });
 
             app_browse.ImportModuleEvent.on(() => {
+<<<<<<< HEAD
                 var dialog = new app_import.UploadDialog();
 
                 dialog.onFinishUpload((resp:api_module.InstallModuleResponse)=> {
@@ -30,6 +30,17 @@ module app {
                     dialog.close();
                 } ).
                 onError((resp:api_rest.JsonResponse)=> {
+=======
+                new api_module.InstallModuleRequest().send().done((resp:api_rest.JsonResponse)=> {
+                    var respJson = resp.getJson();
+                    if (respJson.error) {
+                        api_notify.showError('The Module could not be imported: ' + respJson.error.message);
+                    } else {
+                        api_notify.showFeedback('Module \'' + respJson.result.displayName + '\' was installed');
+                        new api_module.ModuleImportedEvent(new api_module.Module(respJson.result)).fire();
+                    }
+                } ).fail((resp:api_rest.JsonResponse)=> {
+>>>>>>> c76e83c... CMS-2494 Refresh grid after updates in Module App
                     api_notify.showError('Invalid Module file');
                     dialog.close();
                 } );
