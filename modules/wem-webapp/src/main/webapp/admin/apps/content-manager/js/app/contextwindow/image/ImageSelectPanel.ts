@@ -58,7 +58,9 @@ module app_contextwindow_image {
             this.appendChild(this.deck);
 
             app_contextwindow.ComponentSelectEvent.on((event) => {
+                //TODO: set image here
                 if (!event.getComponent().isEmpty()) {
+                    this.image = new api_content_page.Image();
                     this.itemSelected();
                     if (event.getComponent().getItemId()) {
                         console.log("itemId:", event.getComponent().getItemId());

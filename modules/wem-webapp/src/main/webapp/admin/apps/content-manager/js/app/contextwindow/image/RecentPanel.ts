@@ -12,6 +12,7 @@ module app_contextwindow_image {
             this.recentGrid = new RecentGrid(this.dataView);
 
             var contentSummaryLoader = new api_form_inputtype_content.ContentSummaryLoader();
+            contentSummaryLoader.setCount(28);
             contentSummaryLoader.setAllowedContentTypes(["image"]);
             contentSummaryLoader.addListener({
                 onLoading: () => {

@@ -20,6 +20,10 @@ module api_form_inputtype_content {
             this.findContentRequest = new api_content.FindContentRequest().setExpand("summary").setCount(100);
         }
 
+        setCount(count:number) {
+            this.findContentRequest.setCount(count);
+        }
+
         setAllowedContentTypes(contentTypes:string[]) {
             this.findContentRequest.setContentTypes(contentTypes);
         }
@@ -78,6 +82,7 @@ module api_form_inputtype_content {
         private notifyLoaded(contentSummaries:api_content.ContentSummary[]) {
             this.listeners.forEach((listener:ContentSummaryLoaderListener) => {
                 if (listener.onLoaded) {
+                    console.log("notifiyng", contentSummaries);
                     listener.onLoaded(contentSummaries);
                 }
             });

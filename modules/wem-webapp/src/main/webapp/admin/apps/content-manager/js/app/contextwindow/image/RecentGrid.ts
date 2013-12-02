@@ -29,8 +29,10 @@ module app_contextwindow_image {
             var title = new api_dom.H5El();
             title.getEl().setInnerHtml(dataContext.getDisplayName());
 
+            var subtitleStr = dataContext.path.refString;
+            subtitleStr = subtitleStr.substring(0, 43) + "...";
             var subtitle = new api_dom.H6El();
-            subtitle.getEl().setInnerHtml(dataContext.path.refString);
+            subtitle.getEl().setInnerHtml(subtitleStr);
 
             row.appendChild(image);
             row.appendChild(title);
