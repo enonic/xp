@@ -15,7 +15,6 @@ module app_wizard {
             var text = api_ui.TextInput.middle();
             text.setName("test");
 
-            fieldset.add(new api_ui_form.FormItem("Test", text));
             fieldset.add(new api_ui_form.FormItem("XML", textArea));
 
             this.fieldset(fieldset);
