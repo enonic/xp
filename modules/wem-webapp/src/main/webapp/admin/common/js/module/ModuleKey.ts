@@ -8,10 +8,10 @@ module api_module{
 
         private version:string;
 
-        private refString:string
+        private refString:string;
 
         public static fromString(str:string):ModuleKey{
-            var sepIndex:number = str.indexOf(ModuleKey.SEPARATOR)
+            var sepIndex:number = str.lastIndexOf(ModuleKey.SEPARATOR);
             if( sepIndex == -1 ) {
                 throw new Error("ModuleKey must contain separator '" + ModuleKey.SEPARATOR + "':" + str);
             }

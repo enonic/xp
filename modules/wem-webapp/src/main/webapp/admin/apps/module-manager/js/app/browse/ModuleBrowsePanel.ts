@@ -4,11 +4,13 @@ module app_browse {
 
         private browseActions:app_browse.ModuleBrowseActions;
 
+        private moduleTreeGridPanel:ModuleTreeGridPanel;
+
         private toolbar:ModuleBrowseToolbar;
 
         constructor() {
             var treeGridContextMenu = new app_browse.ModuleTreeGridContextMenu();
-            var treeGridPanel = components.gridPanel = new ModuleTreeGridPanel({
+            this.moduleTreeGridPanel = components.gridPanel = new ModuleTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
 
@@ -23,12 +25,22 @@ module app_browse {
 
             super({
                 browseToolbar: this.toolbar,
-                treeGridPanel: treeGridPanel,
+                treeGridPanel: this.moduleTreeGridPanel,
                 browseItemPanel: browseItemPanel,
                 filterPanel: undefined
             });
 
-            treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
+            api_module.ModuleImportedEvent.on((event:api_module.ModuleImportedEvent) => {
+                this.setRefreshNeeded(true);
+                this.refreshFilterAndGrid();
+            });
+
+            api_module.ModuleDeletedEvent.on((event:api_module.ModuleDeletedEvent) => {
+                var moduleKey = event.getModuleKey();
+                this.moduleTreeGridPanel.remove(moduleKey.toString());
+            });
+
+            this.moduleTreeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
                 onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }
