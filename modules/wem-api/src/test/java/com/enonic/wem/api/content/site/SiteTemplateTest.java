@@ -102,7 +102,7 @@ public class SiteTemplateTest
         assertEquals( "Enonic Intranet", siteTemplate.getDisplayName() );
         assertEquals( "A social intranet for the Enterprise", siteTemplate.getDescription() );
         assertEquals( "[components/pages/main-page, components/news-part, components/my-layout]",
-                      Iterators.toString( siteTemplate.resourcePathIterator() ) );
+                      Iterators.toString( siteTemplate.resourcePaths().iterator() ) );
         assertEquals( layoutTemplate, siteTemplate.getTemplate( ResourcePath.from( "components/my-layout" ) ) );
         assertEquals( partTemplate, siteTemplate.getPartTemplates().getTemplate( new PartTemplateName( "news-part" ) ) );
     }

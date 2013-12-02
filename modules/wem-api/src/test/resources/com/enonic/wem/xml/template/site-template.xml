@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site-template>
   <display-name>Enonic Intranet</display-name>
-  <info>A social intranet for the Enterprise</info>
+  <description>A social intranet for the Enterprise</description>
   <url>http://www.enonic.com/intranet</url>
   <vendor>
     <name>Enonic</name>

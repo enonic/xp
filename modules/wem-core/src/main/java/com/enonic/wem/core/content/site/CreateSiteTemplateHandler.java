@@ -27,6 +27,7 @@ public class CreateSiteTemplateHandler
     {
         final SiteTemplate.Builder builder = SiteTemplate.newSiteTemplate().
             displayName( command.getDisplayName() ).
+            url( command.getUrl() ).
             vendor( command.getVendor() ).
             key( command.getSiteTemplateKey() ).
             modules( command.getModules() ).

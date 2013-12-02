@@ -107,6 +107,7 @@ public class SitesInitializer
             vendor( newVendor().name( "Enonic AS" ).url( "http://www.enonic.com" ).build() ).
             modules( moduleKeys ).
             description( "Demo site template" ).
+            url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
             addTemplate( pageTemplate );
         return client.execute( createSiteTemplate );

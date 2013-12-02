@@ -25,8 +25,8 @@ public final class SiteTemplateXml
     @XmlElement(name = "display-name", required = false)
     private String displayName;
 
-    @XmlElement(name = "info", required = false)
-    private String info;
+    @XmlElement(name = "description", required = false)
+    private String description;
 
     @XmlElement(name = "url", required = false)
     private String url;
@@ -48,7 +48,7 @@ public final class SiteTemplateXml
     public void from( final SiteTemplate template )
     {
         this.displayName = template.getDisplayName();
-        this.info = template.getDescription();
+        this.description = template.getDescription();
         this.url = template.getUrl();
 
         final Vendor vendor = template.getVendor();
@@ -76,7 +76,7 @@ public final class SiteTemplateXml
     {
         builder.
             displayName( this.displayName ).
-            description( this.info ).
+            description( this.description ).
             url( this.url ).
             rootContentType( ContentTypeName.from( this.siteContent ) );
 

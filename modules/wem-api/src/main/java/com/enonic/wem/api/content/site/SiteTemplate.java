@@ -179,9 +179,9 @@ public final class SiteTemplate
         return this.templatesByPath.get( path );
     }
 
-    public Iterator<ResourcePath> resourcePathIterator()
+    public Iterable<ResourcePath> resourcePaths()
     {
-        return templatesByPath.keySet().iterator();
+        return templatesByPath.keySet();
     }
 
     public static Builder newSiteTemplate()

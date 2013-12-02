@@ -23,6 +23,8 @@ public class CreateSiteTemplate
 
     private String description;
 
+    private String url;
+
     private Vendor vendor;
 
     private ModuleKeys modules;
@@ -48,6 +50,12 @@ public class CreateSiteTemplate
     public CreateSiteTemplate description( final String description )
     {
         this.description = description;
+        return this;
+    }
+
+    public CreateSiteTemplate url( final String url )
+    {
+        this.url = url;
         return this;
     }
 
@@ -100,6 +108,11 @@ public class CreateSiteTemplate
     public String getDescription()
     {
         return description;
+    }
+
+    public String getUrl()
+    {
+        return url;
     }
 
     public Vendor getVendor()
