@@ -26,10 +26,12 @@ module app {
 
                 dialog.onFinishUpload((resp:api_module.InstallModuleResponse)=> {
 
-                        api_notify.showFeedback('Module \'' + resp.getModules().map((modl:api_module.Module) => {console.log(modl); return modl.getDisplayName()} ).join(', ') + '\' was installed');
+                    api_notify.showFeedback('Module \'' + resp.getModules().map((modl:api_module.Module) => {console.log(modl); return modl.getDisplayName()} ).join(', ') + '\' was installed');
+                    dialog.close();
                 } ).
                 onError((resp:api_rest.JsonResponse)=> {
-                        api_notify.showError('Invalid Module file');
+                    api_notify.showError('Invalid Module file');
+                    dialog.close();
                 } );
                 dialog.open();
             });
