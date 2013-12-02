@@ -148,7 +148,7 @@ module app_wizard {
                           api_notify.showFeedback('Content draft was created!');
                           var content:api_content.Content = new api_content.Content(json.result);
 
-                          this.setPersistedItem(content);
+                          //this.setPersistedItem(content);
                       }
                 });
         }
