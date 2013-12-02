@@ -1,10 +1,13 @@
 package com.enonic.wem.core.index.query;
 
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.GeoPoint;
 
-public class AbstractQueryBuilderFactory
+public class AbstractBuilderFactory
 {
     Object getValueAsType( Value value )
     {
@@ -28,4 +31,10 @@ public class AbstractQueryBuilderFactory
 
         return value.asString();
     }
+
+    QueryBuilder buildNotQuery( final QueryBuilder negated )
+    {
+        return QueryBuilders.boolQuery().mustNot( negated );
+    }
+
 }

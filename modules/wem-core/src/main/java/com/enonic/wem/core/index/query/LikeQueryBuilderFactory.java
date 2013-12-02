@@ -7,13 +7,12 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.query.expr.CompareExpr;
 
 public class LikeQueryBuilderFactory
-    extends AbstractQueryBuilderFactory
+    extends AbstractBuilderFactory
 {
 
     public QueryBuilder create( final CompareExpr compareExpr )
     {
-
-        final String queryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( compareExpr );
+        final String queryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( compareExpr.getField().getName() );
         final Value<?> value = compareExpr.getFirstValue().getValue();
 
         return QueryBuilders.wildcardQuery( queryFieldName, value.getString() );

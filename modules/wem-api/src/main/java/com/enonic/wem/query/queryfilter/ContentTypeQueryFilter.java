@@ -7,7 +7,7 @@ import com.google.common.collect.Sets;
 import com.enonic.wem.api.data.Value;
 
 public class ContentTypeQueryFilter
-    extends QueryFilter
+    extends ValueQueryFilter
 {
 
     private ContentTypeQueryFilter( final Builder builder )

@@ -7,7 +7,7 @@ import com.enonic.wem.query.expr.CompareExpr;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
 public class RangeQueryBuilderFactory
-    extends AbstractQueryBuilderFactory
+    extends AbstractBuilderFactory
 {
 
     public QueryBuilder create( final CompareExpr compareExpr )

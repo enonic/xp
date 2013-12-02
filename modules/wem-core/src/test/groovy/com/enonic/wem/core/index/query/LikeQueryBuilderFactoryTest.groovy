@@ -7,7 +7,6 @@ import org.elasticsearch.index.query.QueryBuilder
 
 class LikeQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
 {
-
     def "compare like string"( )
     {
         given:
@@ -20,6 +19,5 @@ class LikeQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         then:
         cleanString( expected ) == cleanString( query.toString() )
     }
-
 
 }

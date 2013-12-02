@@ -1,11 +1,11 @@
 package com.enonic.wem.core.index.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 
 import com.enonic.wem.query.expr.CompareExpr;
 
 public class CompareQueryFactory
+    extends AbstractBuilderFactory
 {
     private TermQueryBuilderFactory termQueryBuilderFactory = new TermQueryBuilderFactory();
 
@@ -44,11 +44,6 @@ public class CompareQueryFactory
             default:
                 throw new IndexQueryBuilderException( "Operator " + operator + " not supported in builder" );
         }
-    }
-
-    private QueryBuilder buildNotQuery( final QueryBuilder negated )
-    {
-        return QueryBuilders.boolQuery().mustNot( negated );
     }
 
 }

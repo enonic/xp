@@ -6,10 +6,10 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Value;
 
-public class GenericQueryFilter
-    extends QueryFilter
+public class GenericValueQueryFilter
+    extends ValueQueryFilter
 {
-    private GenericQueryFilter( final Builder builder )
+    private GenericValueQueryFilter( final Builder builder )
     {
         super( builder.fieldName, builder.values );
     }
@@ -32,9 +32,9 @@ public class GenericQueryFilter
             return this;
         }
 
-        public GenericQueryFilter build()
+        public GenericValueQueryFilter build()
         {
-            return new GenericQueryFilter( this );
+            return new GenericValueQueryFilter( this );
         }
 
     }

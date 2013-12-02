@@ -12,6 +12,8 @@ public class EntityQuery
 {
     private final QueryExpr query;
 
+    private final ImmutableSet<QueryFilter> filters;
+
     private final ImmutableSet<QueryFilter> queryFilters;
 
     private final ImmutableSet<Facet> facets;
@@ -19,11 +21,12 @@ public class EntityQuery
     public EntityQuery( final Builder builder )
     {
         this.query = builder.query;
+        this.filters = ImmutableSet.copyOf( builder.filters );
         this.queryFilters = ImmutableSet.copyOf( builder.queryFilters );
         this.facets = ImmutableSet.copyOf( builder.facets );
     }
 
-    public static Builder newEntityQuery()
+    public static Builder newQuery()
     {
         return new Builder();
     }
@@ -33,6 +36,13 @@ public class EntityQuery
         return query;
     }
 
+    // These are filters that are applied outside query, not considered in facets
+    public ImmutableSet<QueryFilter> getFilters()
+    {
+        return filters;
+    }
+
+    // These are filters to be applied into query, and considered in facets also
     public ImmutableSet<QueryFilter> getQueryFilters()
     {
         return queryFilters;
@@ -47,6 +57,8 @@ public class EntityQuery
     {
         private QueryExpr query;
 
+        private Set<QueryFilter> filters = Sets.newHashSet();
+
         private Set<QueryFilter> queryFilters = Sets.newHashSet();
 
         private Set<Facet> facets = Sets.newHashSet();
@@ -57,7 +69,13 @@ public class EntityQuery
             return this;
         }
 
-        public Builder addFilter( final QueryFilter queryFilter )
+        public Builder addFilter( final QueryFilter filter )
+        {
+            this.filters.add( filter );
+            return this;
+        }
+
+        public Builder addQueryFilter( final QueryFilter queryFilter )
         {
             this.queryFilters.add( queryFilter );
             return this;

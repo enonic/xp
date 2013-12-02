@@ -14,8 +14,8 @@ public class EntityQueryTest
     public void build()
         throws Exception
     {
-        final EntityQuery entityQuery = EntityQuery.newEntityQuery().
-            addFilter( QueryFilter.newQueryFilter().
+        final EntityQuery entityQuery = EntityQuery.newQuery().
+            addFilter( QueryFilter.newValueQueryFilter().
                 fieldName( "myField" ).
                 add( new Value.String( "test1" ), new Value.String( "test2" ) ).
                 build() ).
@@ -26,7 +26,7 @@ public class EntityQueryTest
             build();
 
         assertNotNull( entityQuery.getQuery() );
-        assertEquals( 2, entityQuery.getQueryFilters().size() );
+        assertEquals( 2, entityQuery.getFilters().size() );
 
     }
 }

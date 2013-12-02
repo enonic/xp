@@ -1,0 +1,5 @@
+{
+    "terms": {
+        "myfield": ["myValue", "mySecondValue"]
+    }
+}

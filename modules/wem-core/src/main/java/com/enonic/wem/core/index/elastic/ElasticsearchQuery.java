@@ -10,42 +10,53 @@ import com.enonic.wem.core.index.IndexType;
 
 public class ElasticsearchQuery
 {
+    private final QueryBuilder query;
 
-    //TODO: Make builder if to be used
-    private QueryBuilder query;
+    private final FilterBuilder filter;
 
-    private FilterBuilder filter;
+    private final FacetBuilder facet;
 
-    private FacetBuilder facet;
+    private final IndexType indexType;
 
-    private IndexType indexType;
+    private final Index index;
 
-    private Index index;
-
-
-    public void setQuery( final QueryBuilder query )
+    private ElasticsearchQuery( final Builder builder )
     {
-        this.query = query;
+        this.query = builder.query;
+        this.filter = builder.filter;
+        this.facet = builder.facet;
+        this.indexType = builder.indexType;
+        this.index = builder.index;
     }
 
-    public void setFilter( final FilterBuilder filter )
+    public QueryBuilder getQuery()
     {
-        this.filter = filter;
+        return query;
     }
 
-    public void setFacet( final FacetBuilder facet )
+    public FilterBuilder getFilter()
     {
-        this.facet = facet;
+        return filter;
     }
 
-    public void setIndexType( final IndexType indexType )
+    public FacetBuilder getFacet()
     {
-        this.indexType = indexType;
+        return facet;
     }
 
-    public void setIndex( final Index index )
+    public IndexType getIndexType()
     {
-        this.index = index;
+        return indexType;
+    }
+
+    public Index getIndex()
+    {
+        return index;
+    }
+
+    public static Builder newQuery()
+    {
+        return new Builder();
     }
 
     public SearchSourceBuilder toSearchSourceBuilder()
@@ -57,5 +68,68 @@ public class ElasticsearchQuery
 
         return builder;
     }
+
+
+    @Override
+    public String toString()
+    {
+        return "ElasticsearchQuery{" +
+            "query=" + query +
+            ", filter=" + filter +
+            ", facet=" + facet +
+            ", indexType=" + indexType +
+            ", index=" + index +
+            '}';
+    }
+
+    public static class Builder
+    {
+        private QueryBuilder query;
+
+        private FilterBuilder filter;
+
+        private FacetBuilder facet;
+
+        private IndexType indexType;
+
+        private Index index;
+
+        public Builder query( final QueryBuilder query )
+        {
+            this.query = query;
+            return this;
+        }
+
+        public Builder filter( final FilterBuilder filter )
+        {
+            this.filter = filter;
+            return this;
+        }
+
+        public Builder facet( final FacetBuilder facet )
+        {
+            this.facet = facet;
+            return this;
+        }
+
+        public Builder indexType( final IndexType indexType )
+        {
+            this.indexType = indexType;
+            return this;
+        }
+
+        public Builder index( final Index index )
+        {
+            this.index = index;
+            return this;
+        }
+
+        public ElasticsearchQuery build()
+        {
+            return new ElasticsearchQuery( this );
+        }
+
+    }
+
 
 }

@@ -1,0 +1,23 @@
+{
+    "filtered": {
+        "query": {
+            "bool": {
+                "must_not": {
+                    "range": {
+                        "myfield._number": {
+                            "from": 1.0,
+                            "to": null,
+                            "include_lower": false,
+                            "include_upper": true
+                        }
+                    }
+                }
+            }
+        },
+        "filter": {
+            "terms": {
+                "myfield": ["myValue", "mySecondValue"]
+            }
+        }
+    }
+}

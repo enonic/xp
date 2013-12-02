@@ -49,7 +49,7 @@ class FulltextFunctionArgumentsTest extends Specification
 
     }
 
-    def "fulltext illegal operator arguments"( )
+    def "fulltext illegal operator argument"( )
     {
         given:
         def arguments = [ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" )]

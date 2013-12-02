@@ -1,11 +1,14 @@
 package com.enonic.wem.core.index.query;
 
+import com.google.common.collect.ImmutableSet;
+
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.core.index.IndexFieldNameNormalizer;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.query.expr.CompareExpr;
 import com.enonic.wem.query.expr.FieldExpr;
 import com.enonic.wem.query.expr.ValueExpr;
+import com.enonic.wem.query.queryfilter.ValueQueryFilter;
 
 public class IndexQueryFieldNameResolver
 {
@@ -17,21 +20,28 @@ public class IndexQueryFieldNameResolver
 
         final ValueExpr firstValue = compareExpr.getFirstValue();
 
+        return createValueTypeAwareFieldName( baseFieldName, firstValue.getValue() );
+    }
+
+    public static String resolve( final ValueQueryFilter valueQueryFilter )
+    {
+        final String valueQueryFilterFieldName = valueQueryFilter.getFieldName();
+
+        final String baseFieldName = IndexFieldNameNormalizer.normalize( valueQueryFilterFieldName );
+
+        final ImmutableSet<Value> values = valueQueryFilter.getValues();
+        final Value firstValue = values.iterator().next();
+
         return createValueTypeAwareFieldName( baseFieldName, firstValue );
     }
 
-    public static String resolveStringFieldName( final CompareExpr compareExpr )
+    public static String resolveStringFieldName( final String queryFieldName )
     {
-        final FieldExpr field = compareExpr.getField();
-
-        final String stringFieldName = IndexFieldNameNormalizer.normalize( field.getName() );
-
-        return stringFieldName;
+        return IndexFieldNameNormalizer.normalize( queryFieldName );
     }
 
-    private static String createValueTypeAwareFieldName( final String baseFieldName, final ValueExpr valueExpr )
+    private static String createValueTypeAwareFieldName( final String baseFieldName, final Value value )
     {
-        final Value<?> value = valueExpr.getValue();
 
         if ( value.isDateType() )
         {

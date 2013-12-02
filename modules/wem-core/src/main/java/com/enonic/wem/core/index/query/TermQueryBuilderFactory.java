@@ -7,7 +7,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.query.expr.CompareExpr;
 
 public class TermQueryBuilderFactory
-    extends AbstractQueryBuilderFactory
+    extends AbstractBuilderFactory
 {
     public QueryBuilder create( final CompareExpr compareExpr )
     {
