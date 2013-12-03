@@ -6,3 +6,5 @@
 ///<reference path='ImageJson.ts' />
 ///<reference path='RegionJson.ts' />
 ///<reference path='PageJson.ts' />
+///<reference path='ImageTemplateSummaryJson.ts' />
+///<reference path='ImageTemplateSummaryListJson.ts' />

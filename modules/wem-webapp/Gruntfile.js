@@ -12,12 +12,6 @@ module.exports = function (grunt) {
                     declaration: true
                 }
             },
-            space_manager: {
-                module: 'admin/apps/space-manager',
-                options: {
-                    sourcemap: true
-                }
-            },
             content_manager: {
                 module: 'admin/apps/content-manager',
                 options: {
@@ -63,7 +57,6 @@ module.exports = function (grunt) {
     grunt.registerTask('default', 'all');
     grunt.registerTask('all', ['module']);
     grunt.registerTask('cm', ['module:content_manager']);
-    grunt.registerTask('sp', ['module:space_manager']);
     grunt.registerTask('sc', ['module:schema_manager']);
     grunt.registerTask('md', ['module:module_manager']);
     grunt.registerTask('tm', ['module:template_manager']);

@@ -5,3 +5,4 @@
 ///<reference path='GetSiteRequest.ts' />
 ///<reference path='CreateSiteRequest.ts' />
 ///<reference path='UpdateSiteRequest.ts' />
+///<reference path='SiteTemplateKey.ts' />
