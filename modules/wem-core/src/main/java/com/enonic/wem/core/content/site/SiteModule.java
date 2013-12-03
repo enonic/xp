@@ -20,5 +20,6 @@ public class SiteModule
         commands.add( DeleteSiteTemplateHandler.class );
         commands.add( GetSiteTemplateByKeyHandler.class );
         commands.add( CreateSiteTemplateHandler.class );
+        commands.add( GetAllSiteTemplatesHandler.class );
     }
 }

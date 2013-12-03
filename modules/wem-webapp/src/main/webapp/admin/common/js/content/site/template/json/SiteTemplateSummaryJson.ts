@@ -12,6 +12,18 @@ module api_content_site_template_json{
 
         supportedContentTypes:string[];
 
-        rootContentType:string;
+        siteContent:string;
+
+        editable:boolean;
+
+        deletable:boolean;
+
+        version:string;
+
+        url:string;
+
+        key:string;
+
+        description:string;
     }
 }
