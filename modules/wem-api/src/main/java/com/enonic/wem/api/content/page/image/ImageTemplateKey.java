@@ -1,52 +1,38 @@
 package com.enonic.wem.api.content.page.image;
 
 
-import java.util.Objects;
+import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.module.ModuleKey;
+
+import static com.google.common.base.Splitter.on;
+import static com.google.common.collect.Iterators.toArray;
 
 public class ImageTemplateKey
+    extends TemplateKey<ImageTemplateName>
 {
-    private final SiteTemplateKey siteTemplateKey;
-
-    private final ImageTemplateName templateName;
-
-    public ImageTemplateKey( final SiteTemplateKey siteTemplateKey, final ImageTemplateName templateName )
+    private ImageTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final ImageTemplateName templateName )
     {
-        this.siteTemplateKey = siteTemplateKey;
-        this.templateName = templateName;
+        super( siteTemplateKey, moduleKey, templateName );
     }
 
-    public SiteTemplateKey getSiteTemplateKey()
+    public static ImageTemplateKey from( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,
+                                         final ImageTemplateName templateName )
     {
-        return siteTemplateKey;
+        return new ImageTemplateKey( siteTemplateKey, moduleKey, templateName );
     }
 
-    public ImageTemplateName getTemplateName()
+    public static ImageTemplateKey from( final String templateKey )
     {
-        return templateName;
-    }
+        final String[] templateKeyParts = toArray( on( SEPARATOR ).split( templateKey ).iterator(), String.class );
+        Preconditions.checkArgument( templateKeyParts.length != 3, "Invalid ImageTemplateKey" );
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof ImageTemplateKey ) )
-        {
-            return false;
-        }
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( templateKeyParts[0] );
+        final ModuleKey moduleKey = ModuleKey.from( templateKeyParts[1] );
+        final ImageTemplateName pageTemplateName = new ImageTemplateName( templateKeyParts[2] );
 
-        final ImageTemplateKey that = (ImageTemplateKey) o;
-
-        return Objects.equals( this.siteTemplateKey, that.siteTemplateKey ) && Objects.equals( this.templateName, that.templateName );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( this.siteTemplateKey, this.templateName );
+        return new ImageTemplateKey( siteTemplateKey, moduleKey, pageTemplateName );
     }
 }

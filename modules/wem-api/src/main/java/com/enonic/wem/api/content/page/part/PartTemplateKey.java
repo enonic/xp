@@ -1,52 +1,38 @@
 package com.enonic.wem.api.content.page.part;
 
 
-import java.util.Objects;
+import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.page.TemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.module.ModuleKey;
+
+import static com.google.common.base.Splitter.on;
+import static com.google.common.collect.Iterators.toArray;
 
 public class PartTemplateKey
+    extends TemplateKey<PartTemplateName>
 {
-    private final SiteTemplateKey siteTemplateKey;
-
-    private final PartTemplateName templateName;
-
-    public PartTemplateKey( final SiteTemplateKey siteTemplateKey, final PartTemplateName templateName )
+    private PartTemplateKey( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey, final PartTemplateName templateName )
     {
-        this.siteTemplateKey = siteTemplateKey;
-        this.templateName = templateName;
+        super( siteTemplateKey, moduleKey, templateName );
     }
 
-    public SiteTemplateKey getSiteTemplateKey()
+    public static PartTemplateKey from( final SiteTemplateKey siteTemplateKey, final ModuleKey moduleKey,
+                                        final PartTemplateName templateName )
     {
-        return siteTemplateKey;
+        return new PartTemplateKey( siteTemplateKey, moduleKey, templateName );
     }
 
-    public PartTemplateName getTemplateName()
+    public static PartTemplateKey from( final String templateKey )
     {
-        return templateName;
-    }
+        final String[] templateKeyParts = toArray( on( SEPARATOR ).split( templateKey ).iterator(), String.class );
+        Preconditions.checkArgument( templateKeyParts.length != 3, "Invalid PartTemplateKey" );
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof PartTemplateKey ) )
-        {
-            return false;
-        }
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( templateKeyParts[0] );
+        final ModuleKey moduleKey = ModuleKey.from( templateKeyParts[1] );
+        final PartTemplateName pageTemplateName = new PartTemplateName( templateKeyParts[2] );
 
-        final PartTemplateKey that = (PartTemplateKey) o;
-
-        return Objects.equals( this.siteTemplateKey, that.siteTemplateKey ) && Objects.equals( this.templateName, that.templateName );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( this.siteTemplateKey, this.templateName );
+        return new PartTemplateKey( siteTemplateKey, moduleKey, pageTemplateName );
     }
 }
