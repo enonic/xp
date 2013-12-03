@@ -35,6 +35,23 @@ public class CreateSiteTemplate
 
     private Map<ResourcePath, Template> templates = new HashMap<>();
 
+    public static CreateSiteTemplate fromSiteTemplate(SiteTemplate siteTemplate)
+    {
+        CreateSiteTemplate createSiteTemplate = new CreateSiteTemplate();
+        createSiteTemplate.siteTemplateKey( siteTemplate.getKey() );
+        createSiteTemplate.displayName( siteTemplate.getDisplayName() );
+        createSiteTemplate.description( siteTemplate.getDescription() );
+        createSiteTemplate.url(siteTemplate.getUrl());
+        createSiteTemplate.vendor(siteTemplate.getVendor());
+        createSiteTemplate.modules(siteTemplate.getModules());
+        createSiteTemplate.contentTypeFilter( siteTemplate.getContentTypeFilter() );
+        createSiteTemplate.rootContentType(siteTemplate.getRootContentType());
+        for (ResourcePath resourcePath : siteTemplate.resourcePaths() ) {
+            createSiteTemplate.addTemplate( resourcePath, siteTemplate.getTemplate( resourcePath ) );
+        }
+        return createSiteTemplate;
+    }
+
     public CreateSiteTemplate siteTemplateKey( final SiteTemplateKey siteTemplateKey )
     {
         this.siteTemplateKey = siteTemplateKey;

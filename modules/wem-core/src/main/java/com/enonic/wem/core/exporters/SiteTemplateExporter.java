@@ -34,8 +34,11 @@ public final class SiteTemplateExporter
         final String id = resolveId( directoryPath );
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( id );
         builder.key( siteTemplateKey );
-
-        importTemplates( builder, directoryPath.resolve( COMPONENTS_DIR ) );
+        final Path componentsDir = directoryPath.resolve( COMPONENTS_DIR );
+        if ( Files.exists( componentsDir ) )
+        {
+            importTemplates( builder, componentsDir );
+        }
 
         return builder.build();
     }
