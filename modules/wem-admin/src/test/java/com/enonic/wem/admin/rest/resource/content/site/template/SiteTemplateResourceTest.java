@@ -25,13 +25,13 @@ import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
 import com.enonic.wem.api.command.content.site.GetAllSiteTemplates;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
-import com.enonic.wem.api.content.page.image.ImageTemplateName;
+import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
-import com.enonic.wem.api.content.page.part.PartTemplateName;
+import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -45,14 +45,13 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.page.image.ImageTemplate.newImageTemplate;
 import static com.enonic.wem.api.content.page.layout.LayoutTemplate.newLayoutTemplate;
 import static com.enonic.wem.api.content.page.part.PartTemplate.newPartTemplate;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
-
-import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
 public class SiteTemplateResourceTest
     extends AbstractResourceTest
@@ -136,22 +135,22 @@ public class SiteTemplateResourceTest
         throws Exception
     {
         final PageTemplate pageTemplate = newPageTemplate().
-            name( new PageTemplateName( "mainpage" ) ).
+            key( PageTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainpage" ) ).
             displayName( "Main Page" ).
             descriptor( new ModuleResourceKey( ModuleKey.from( "mod-1.0.0" ), ResourcePath.from( "components/page-descr.xml" ) ) ).
             build();
         final PartTemplate partTemplate = newPartTemplate().
-            name( new PartTemplateName( "mainpart" ) ).
+            key( PartTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainpart" ) ).
             displayName( "Main Part" ).
             descriptor( new ModuleResourceKey( ModuleKey.from( "mod-1.0.0" ), ResourcePath.from( "components/part-descr.xml" ) ) ).
             build();
         final ImageTemplate imageTemplate = newImageTemplate().
-            name( new ImageTemplateName( "mainimage" ) ).
+            key( ImageTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainimage" ) ).
             displayName( "Main Image" ).
             descriptor( new ModuleResourceKey( ModuleKey.from( "mod-1.0.0" ), ResourcePath.from( "components/image-descr.xml" ) ) ).
             build();
         final LayoutTemplate layoutTemplate = newLayoutTemplate().
-            name( new LayoutTemplateName( "mainlayout" ) ).
+            key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainlayout" ) ).
             displayName( "Main Layout" ).
             descriptor( new ModuleResourceKey( ModuleKey.from( "mod-1.0.0" ), ResourcePath.from( "components/layout-descr.xml" ) ) ).
             build();

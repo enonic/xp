@@ -26,7 +26,7 @@ public final class PageTemplateKey
     public static PageTemplateKey from( final String templateKey )
     {
         final String[] templateKeyParts = toArray( on( SEPARATOR ).split( templateKey ).iterator(), String.class );
-        Preconditions.checkArgument( templateKeyParts.length != 3, "Invalid PageTemplateKey" );
+        Preconditions.checkArgument( templateKeyParts.length == 3, "Invalid PageTemplateKey" );
 
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( templateKeyParts[0] );
         final ModuleKey moduleKey = ModuleKey.from( templateKeyParts[1] );

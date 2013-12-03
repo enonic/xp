@@ -10,7 +10,7 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class ImageTemplate
-    extends Template<ImageTemplateName>
+    extends Template<ImageTemplateName, ImageTemplateKey>
 {
     private ImageTemplate( final ImageTemplateProperties properties )
     {
@@ -28,7 +28,7 @@ public final class ImageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, ImageTemplateName>
+        extends BaseTemplateBuilder<Builder, ImageTemplateName, ImageTemplateKey>
     {
         private Builder()
         {

@@ -4,7 +4,7 @@ package com.enonic.wem.api.command.content.page;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class CreatePage
@@ -12,7 +12,7 @@ public class CreatePage
 {
     private ContentId content;
 
-    private PageTemplateName pageTemplate;
+    private PageTemplateKey pageTemplate;
 
     private RootDataSet config;
 
@@ -22,7 +22,7 @@ public class CreatePage
         return this;
     }
 
-    public CreatePage pageTemplate( PageTemplateName value )
+    public CreatePage pageTemplate( PageTemplateKey value )
     {
         this.pageTemplate = value;
         return this;
@@ -44,7 +44,7 @@ public class CreatePage
         return content;
     }
 
-    public PageTemplateName getPageTemplate()
+    public PageTemplateKey getPageTemplate()
     {
         return pageTemplate;
     }

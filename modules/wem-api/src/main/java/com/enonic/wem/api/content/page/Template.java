@@ -4,11 +4,13 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 
-public abstract class Template<NAME extends TemplateName>
+public abstract class Template<NAME extends TemplateName, KEY extends TemplateKey<NAME>>
 {
     private final ResourcePath parentPath;
 
     private final ResourcePath path;
+
+    private final KEY key;
 
     private final NAME name;
 
@@ -21,11 +23,17 @@ public abstract class Template<NAME extends TemplateName>
     protected Template( final TemplateProperties properties )
     {
         this.parentPath = properties.parentPath;
-        this.name = (NAME) properties.name;
+        this.key = (KEY) properties.key;
+        this.name = this.key != null ? this.key.getTemplateName() : (NAME) properties.name;
         this.path = ResourcePath.from( this.parentPath, this.name.toString() );
         this.displayName = properties.displayName;
         this.descriptor = properties.descriptor;
         this.config = properties.config;
+    }
+
+    public KEY getKey()
+    {
+        return key;
     }
 
     public ResourcePath getParentPath()
@@ -58,9 +66,11 @@ public abstract class Template<NAME extends TemplateName>
         return config;
     }
 
-    public abstract static class TemplateProperties<T extends BaseTemplateBuilder, NAME extends TemplateName>
+    public abstract static class TemplateProperties<T extends BaseTemplateBuilder, NAME extends TemplateName, KEY extends TemplateKey<NAME>>
     {
         protected ResourcePath parentPath = ResourcePath.root();
+
+        protected KEY key;
 
         protected NAME name;
 
@@ -71,9 +81,15 @@ public abstract class Template<NAME extends TemplateName>
         protected RootDataSet config;
     }
 
-    public abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, NAME extends TemplateName>
-        extends TemplateProperties<T, NAME>
+    public abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, NAME extends TemplateName, KEY extends TemplateKey<NAME>>
+        extends TemplateProperties<T, NAME, KEY>
     {
+        public T key( final KEY key )
+        {
+            this.key = key;
+            return typecastToTemplateBuilder( this );
+        }
+
         public T name( final NAME name )
         {
             this.name = name;

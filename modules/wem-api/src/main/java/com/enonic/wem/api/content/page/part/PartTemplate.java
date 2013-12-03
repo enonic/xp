@@ -10,7 +10,7 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class PartTemplate
-    extends Template<PartTemplateName>
+    extends Template<PartTemplateName, PartTemplateKey>
 {
     private PartTemplate( final Builder builder )
     {
@@ -28,7 +28,7 @@ public final class PartTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, PartTemplateName>
+        extends BaseTemplateBuilder<Builder, PartTemplateName, PartTemplateKey>
     {
         private Builder()
         {

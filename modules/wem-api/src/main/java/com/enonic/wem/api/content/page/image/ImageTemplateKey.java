@@ -27,7 +27,7 @@ public class ImageTemplateKey
     public static ImageTemplateKey from( final String templateKey )
     {
         final String[] templateKeyParts = toArray( on( SEPARATOR ).split( templateKey ).iterator(), String.class );
-        Preconditions.checkArgument( templateKeyParts.length != 3, "Invalid ImageTemplateKey" );
+        Preconditions.checkArgument( templateKeyParts.length == 3, "Invalid ImageTemplateKey" );
 
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( templateKeyParts[0] );
         final ModuleKey moduleKey = ModuleKey.from( templateKeyParts[1] );

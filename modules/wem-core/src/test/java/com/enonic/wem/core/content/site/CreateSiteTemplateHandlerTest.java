@@ -12,6 +12,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.content.page.part.PartTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -30,6 +31,11 @@ import static org.junit.Assert.*;
 
 public class CreateSiteTemplateHandlerTest
 {
+
+    private static final ModuleKey MODULE_KEY = ModuleKey.from( "foomodule-1.0.0" );
+
+    private static final SiteTemplateKey SITE_TEMPLATE = SiteTemplateKey.from( "Intranet-1.0.0" );
+
     private CreateSiteTemplateHandler handler;
 
     private SystemConfig systemConfig;
@@ -59,10 +65,10 @@ public class CreateSiteTemplateHandlerTest
         vendorBuilder.url( "http://enonic.net" );
         final Vendor vendor = vendorBuilder.build();
 
-        final ModuleKeys moduleKeys = ModuleKeys.from( ModuleKey.from( "foomodule-1.0.0" ) );
+        final ModuleKeys moduleKeys = ModuleKeys.from( MODULE_KEY );
 
         CreateSiteTemplate command = Commands.site().template().create().
-            siteTemplateKey( SiteTemplateKey.from( "Intranet-1.0.0" ) ).
+            siteTemplateKey( SITE_TEMPLATE ).
             displayName( "name" ).
             vendor( vendor ).
             modules( moduleKeys ).
@@ -70,7 +76,7 @@ public class CreateSiteTemplateHandlerTest
             rootContentType( ContentTypeName.from( "document" ) );
 
         PartTemplate.Builder templateBuilder = PartTemplate.newPartTemplate();
-        templateBuilder.name( new PartTemplateName( "template-name" ) );
+        templateBuilder.key( PartTemplateKey.from( SITE_TEMPLATE, MODULE_KEY, new PartTemplateName( "template-name" ) ) );
         templateBuilder.displayName( "display-name" );
         templateBuilder.descriptor( ModuleResourceKey.from( "resource-1.0.0" ) );
         PartTemplate template = templateBuilder.build();

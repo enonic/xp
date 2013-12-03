@@ -3,9 +3,9 @@ package com.enonic.wem.api.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.layout.LayoutComponent;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.part.PartComponent;
-import com.enonic.wem.api.content.page.part.PartTemplateName;
+import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 
@@ -21,11 +21,13 @@ public class ComponentsTest
         pageConfig.addProperty( "pause", new Value.Long( 200 ) );
 
         Page page = Page.newPage().
-            template( new PageTemplateName( "pageTemplateName" ) ).
+            template( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|pageTemplateName" ) ).
             config( pageConfig ).
             build();
 
-        assertEquals( "pageTemplateName", page.getTemplate().toString() );
+        assertEquals( "pageTemplateName", page.getTemplate().getTemplateName().toString() );
+        assertEquals( "mainmodule-1.0.0", page.getTemplate().getModuleKey().toString() );
+        assertEquals( "sitetemplate-1.0.0", page.getTemplate().getSiteTemplateKey().toString() );
     }
 
     @Test
@@ -35,11 +37,13 @@ public class ComponentsTest
         partConfig.addProperty( "width", new Value.Long( 150 ) );
 
         PartComponent partComponent = PartComponent.newPart().
-            partTemplateName( new PartTemplateName( "partTemplateName" ) ).
+            template( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|partTemplateName" ) ).
             config( partConfig ).
             build();
 
-        assertEquals( "partTemplateName", partComponent.getTemplate().toString() );
+        assertEquals( "partTemplateName", partComponent.getTemplate().getTemplateName().toString() );
+        assertEquals( "mainmodule-1.0.0", partComponent.getTemplate().getModuleKey().toString() );
+        assertEquals( "sitetemplate-1.0.0", partComponent.getTemplate().getSiteTemplateKey().toString() );
     }
 
     @Test
@@ -49,10 +53,12 @@ public class ComponentsTest
         layoutConfig.addProperty( "columns", new Value.Long( 2 ) );
 
         LayoutComponent layoutComponent = LayoutComponent.newLayout().
-            layoutTemplateName( new LayoutTemplateName( "layoutTemplateName" ) ).
+            template( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|layoutTemplateName" ) ).
             config( layoutConfig ).
             build();
 
-        assertEquals( "layoutTemplateName", layoutComponent.getTemplate().toString() );
+        assertEquals( "layoutTemplateName", layoutComponent.getTemplate().getTemplateName().toString() );
+        assertEquals( "mainmodule-1.0.0", layoutComponent.getTemplate().getModuleKey().toString() );
+        assertEquals( "sitetemplate-1.0.0", layoutComponent.getTemplate().getSiteTemplateKey().toString() );
     }
 }

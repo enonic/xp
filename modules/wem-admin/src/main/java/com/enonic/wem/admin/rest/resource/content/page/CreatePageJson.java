@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 
 public class CreatePageJson
@@ -23,7 +23,7 @@ public class CreatePageJson
     {
         this.createPage = new CreatePage().
             content( ContentId.from( content ) ).
-            pageTemplate( new PageTemplateName( pageTemplate ) ).
+            pageTemplate( PageTemplateKey.from( pageTemplate ) ).
             config( parseData( config ) );
     }
 

@@ -8,7 +8,7 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Page
-    extends BasePageComponent<PageTemplateName>
+    extends BasePageComponent<PageTemplateKey>
 {
     private final RootDataSet config;
 
@@ -32,7 +32,7 @@ public final class Page
     {
         RootDataSet config;
 
-        PageTemplateName template;
+        PageTemplateKey template;
 
         PageProperties()
         {
@@ -60,7 +60,7 @@ public final class Page
             this.original = original;
         }
 
-        public PageEditBuilder template( PageTemplateName value )
+        public PageEditBuilder template( PageTemplateKey value )
         {
             changes.recordChange( newPossibleChange( "template" ).from( this.original.getTemplate() ).to( value ).build() );
             this.template = value;
@@ -106,7 +106,7 @@ public final class Page
             return this;
         }
 
-        public Builder template( final PageTemplateName value )
+        public Builder template( final PageTemplateKey value )
         {
             this.template = value;
             return this;

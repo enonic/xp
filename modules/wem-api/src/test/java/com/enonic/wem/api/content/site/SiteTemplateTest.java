@@ -5,10 +5,11 @@ import org.junit.Test;
 import com.google.common.collect.Iterators;
 
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
-import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
@@ -61,7 +62,7 @@ public class SiteTemplateTest
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         final PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            name( new PartTemplateName( "news-part" ) ).
+            key( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|news-part" ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ) ).
@@ -70,7 +71,7 @@ public class SiteTemplateTest
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
         final LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            name( new LayoutTemplateName( "my-layout" ) ).
+            key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|my-layout" ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-layout.xml" ) ).
@@ -80,7 +81,7 @@ public class SiteTemplateTest
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            name( new PageTemplateName( "main-page" ) ).
+            key( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|main-page" ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).

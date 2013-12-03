@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
-import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
@@ -236,10 +236,10 @@ final class ContentJcrMapper
     private Page jcrToPage( final Node pageNode )
         throws RepositoryException
     {
-        final PageTemplateName pageTemplate = new PageTemplateName( getPropertyString( pageNode, PAGE_TEMPLATE ) );
+        final PageTemplateKey pageTemplateKey = PageTemplateKey.from( getPropertyString( pageNode, PAGE_TEMPLATE ) );
         final RootDataSet config = rootDataSetJsonSerializer.toObject( pageNode.getProperty( PAGE_CONFIG ).getString() );
         return Page.newPage().
-            template( pageTemplate ).
+            template( pageTemplateKey ).
             config( config ).
             build();
     }

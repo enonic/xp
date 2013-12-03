@@ -14,13 +14,25 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
-import com.enonic.wem.api.content.site.*;
+import com.enonic.wem.api.content.site.ModuleConfig;
+import com.enonic.wem.api.content.site.ModuleConfigs;
+import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
+import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.*;
+import com.enonic.wem.api.module.Module;
+import com.enonic.wem.api.module.ModuleFileEntry;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleKeys;
+import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ModuleVersion;
+import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.support.BaseInitializer;
@@ -86,7 +98,7 @@ public class SitesInitializer
 
         final CreatePage createPage = page().create().
             content( content ).
-            pageTemplate( this.mainPageTemplate.getName() ).
+            pageTemplate( this.mainPageTemplate.getKey() ).
             config( createPageTemplateConfig( "red" ) );
         client.execute( createPage );
     }
@@ -97,7 +109,7 @@ public class SitesInitializer
         final ModuleResourceKey descriptorModuleResourceKey = new ModuleResourceKey( module.getModuleKey(), pageTemplateController );
 
         return newPageTemplate().
-            name( new PageTemplateName( "mainpage" ) ).
+            key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "mainpage" ) ) ).
             displayName( "Main Page" ).
             config( createPageTemplateConfig( "blue" ) ).
             descriptor( descriptorModuleResourceKey ).
@@ -128,7 +140,8 @@ public class SitesInitializer
         {
             client.execute( Commands.site().template().delete( siteTemplateKey ) );
         }
-        catch (NoSiteTemplateExistsException e) {
+        catch ( NoSiteTemplateExistsException e )
+        {
 
         }
         return client.execute( createSiteTemplate );
@@ -181,7 +194,8 @@ public class SitesInitializer
         {
             client.execute( Commands.module().delete().module( DEMO_MODULE_KEY ) );
         }
-        catch (ModuleNotFoundException e) {
+        catch ( ModuleNotFoundException e )
+        {
 
         }
         return client.execute( createModule );

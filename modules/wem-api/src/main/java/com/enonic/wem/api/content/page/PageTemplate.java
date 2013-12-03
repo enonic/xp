@@ -10,7 +10,7 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class PageTemplate
-    extends Template<PageTemplateName>
+    extends Template<PageTemplateName, PageTemplateKey>
 {
     private final ContentTypeNames canRender;
 
@@ -37,7 +37,7 @@ public final class PageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, PageTemplateName>
+        extends BaseTemplateBuilder<Builder, PageTemplateName, PageTemplateKey>
     {
         private ContentTypeNames canRender;
 

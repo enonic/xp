@@ -13,12 +13,16 @@ import junit.framework.Assert;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
 import com.enonic.wem.api.content.page.PageTemplate;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
+import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplateName;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
 import com.enonic.wem.api.content.page.part.PartTemplate;
+import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
 import com.enonic.wem.api.content.site.SiteTemplate;
@@ -26,6 +30,7 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -43,6 +48,8 @@ public class GetSiteTemplateByKeyHandlerTest
     private static final String KEY = "Intranet-1.0.0";
 
     private static final SiteTemplateKey TEMPLATE_KEY = SiteTemplateKey.from( KEY );
+
+    private static final ModuleKey MODULE_KEY = ModuleKey.from( "mymodule-1.0.0" );
 
     private GetSiteTemplateByKeyHandler handler;
 
@@ -129,7 +136,7 @@ public class GetSiteTemplateByKeyHandlerTest
         partTemplateConfig.addProperty( "width", new Value.Long( 200 ) );
 
         final PartTemplate partTemplate = PartTemplate.newPartTemplate().
-            name( new PartTemplateName( "my-part" ) ).
+            key( PartTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new PartTemplateName( "my-part" ) ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ) ).
@@ -139,7 +146,7 @@ public class GetSiteTemplateByKeyHandlerTest
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
 
         final PageTemplate pageTemplate = PageTemplate.newPageTemplate().
-            name( new PageTemplateName( "my-page" ) ).
+            key( PageTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new PageTemplateName( "my-page" ) ) ).
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
@@ -150,7 +157,7 @@ public class GetSiteTemplateByKeyHandlerTest
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
 
         final LayoutTemplate layoutTemplate = LayoutTemplate.newLayoutTemplate().
-            name( new LayoutTemplateName( "my-layout" ) ).
+            key( LayoutTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new LayoutTemplateName( "my-layout" ) ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-layout.xml" ) ).
@@ -160,7 +167,7 @@ public class GetSiteTemplateByKeyHandlerTest
         imageTemplateConfig.addProperty( "width", new Value.Long( 3000 ) );
 
         final ImageTemplate imageTemplate = ImageTemplate.newImageTemplate().
-            name( new ImageTemplateName( "my-image" ) ).
+            key( ImageTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new ImageTemplateName( "my-image" ) ) ).
             displayName( "Image template" ).
             config( imageTemplateConfig ).
             descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-image.xml" ) ).

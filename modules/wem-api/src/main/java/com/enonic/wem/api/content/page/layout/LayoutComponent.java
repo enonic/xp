@@ -5,14 +5,14 @@ import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
 
 public final class LayoutComponent
-    extends BasePageComponent<LayoutTemplateName>
+    extends BasePageComponent<LayoutTemplateKey>
     implements RegionPlaceableComponent
 {
     private final RootDataSet config;
 
     public LayoutComponent( final Builder builder )
     {
-        super( builder.layoutTemplateName );
+        super( builder.layoutTemplateKey );
         this.config = builder.config;
     }
 
@@ -30,7 +30,7 @@ public final class LayoutComponent
     {
         private RootDataSet config;
 
-        private LayoutTemplateName layoutTemplateName;
+        private LayoutTemplateKey layoutTemplateKey;
 
         private Builder()
         {
@@ -43,9 +43,9 @@ public final class LayoutComponent
             return this;
         }
 
-        public Builder layoutTemplateName( final LayoutTemplateName layoutTemplateName )
+        public Builder template( final LayoutTemplateKey layoutTemplateKey )
         {
-            this.layoutTemplateName = layoutTemplateName;
+            this.layoutTemplateKey = layoutTemplateKey;
             return this;
         }
 

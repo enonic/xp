@@ -3,19 +3,19 @@ package com.enonic.wem.api.content.page;
 
 import com.enonic.wem.api.rendering.Component;
 
-public abstract class BasePageComponent<NAME extends TemplateName>
+public abstract class BasePageComponent<TEMPLATE extends TemplateKey>
     implements Component
 {
     private String id;
 
-    private final NAME template;
+    private final TEMPLATE template;
 
-    protected BasePageComponent( final NAME template )
+    protected BasePageComponent( final TEMPLATE template )
     {
         this.template = template;
     }
 
-    public NAME getTemplate()
+    public TEMPLATE getTemplate()
     {
         return template;
     }

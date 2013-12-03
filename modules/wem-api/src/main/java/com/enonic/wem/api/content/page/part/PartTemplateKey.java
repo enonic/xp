@@ -27,7 +27,7 @@ public class PartTemplateKey
     public static PartTemplateKey from( final String templateKey )
     {
         final String[] templateKeyParts = toArray( on( SEPARATOR ).split( templateKey ).iterator(), String.class );
-        Preconditions.checkArgument( templateKeyParts.length != 3, "Invalid PartTemplateKey" );
+        Preconditions.checkArgument( templateKeyParts.length == 3, "Invalid PartTemplateKey" );
 
         final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( templateKeyParts[0] );
         final ModuleKey moduleKey = ModuleKey.from( templateKeyParts[1] );
