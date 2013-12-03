@@ -31,12 +31,12 @@ import com.enonic.wem.admin.json.content.ContentSummaryJson;
 import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.admin.rest.resource.content.json.AbstractFacetedContentListJson;
 import com.enonic.wem.admin.rest.resource.content.json.AttachmentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
-import com.enonic.wem.admin.rest.resource.content.json.CreateOrUpdateContentJsonResult;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentIdListJson;
@@ -63,13 +63,9 @@ import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
-import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.CreateContentException;
-import com.enonic.wem.api.content.RenameContentException;
-import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
@@ -341,7 +337,7 @@ public class ContentResource
 
     @POST
     @Path("create")
-    public CreateOrUpdateContentJsonResult create( final CreateContentJson params )
+    public Result create( final CreateContentJson params )
     {
         try
         {
@@ -353,17 +349,17 @@ public class ContentResource
 
             final Content content = client.execute( Commands.content().get().byId( createContentResult.getContentId() ) );
 
-            return CreateOrUpdateContentJsonResult.result( new ContentJson( content ) );
+            return Result.result( new ContentJson( content ) );
         }
-        catch ( CreateContentException | FileNotFoundException e )
+        catch ( Exception e )
         {
-            return CreateOrUpdateContentJsonResult.error( e.getMessage() );
+            return Result.exception( e );
         }
     }
 
     @POST
     @Path("update")
-    public CreateOrUpdateContentJsonResult update( final UpdateContentParams params )
+    public Result update( final UpdateContentParams params )
     {
         try
         {
@@ -398,17 +394,17 @@ public class ContentResource
             if ( updateContentResult == UpdateContentResult.SUCCESS || updateContentResult == null )
             {
                 final Content content = client.execute( Commands.content().get().byId( params.getContentId() ) );
-                return CreateOrUpdateContentJsonResult.result( new ContentJson( content ) );
+                return Result.result( new ContentJson( content ) );
             }
             else
             {
-                return CreateOrUpdateContentJsonResult.error( updateContentResult.getMessage() );
+                return Result.error( updateContentResult.getMessage() );
             }
 
         }
-        catch ( UpdateContentException | ContentNotFoundException | RenameContentException | FileNotFoundException e )
+        catch ( Exception e )
         {
-            return CreateOrUpdateContentJsonResult.error( e.getMessage() );
+            return Result.exception( e );
         }
     }
 

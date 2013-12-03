@@ -88,8 +88,7 @@ public class GetModuleHandlerTest
 
     private Module createModule()
     {
-
-        final Module module = Module.newModule().
+        return Module.newModule().
             moduleKey( ModuleKey.from( "foomodule-1.0.0" ) ).
             displayName( "module display name" ).
             info( "module-info" ).
@@ -99,6 +98,5 @@ public class GetModuleHandlerTest
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
             maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
             build();
-        return module;
     }
 }

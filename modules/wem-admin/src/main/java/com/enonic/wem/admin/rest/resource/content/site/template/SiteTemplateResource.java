@@ -20,19 +20,14 @@ import com.sun.jersey.multipart.FormDataParam;
 import com.enonic.wem.admin.json.content.site.SiteTemplateJson;
 import com.enonic.wem.admin.json.content.site.SiteTemplateSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteTemplateJson;
-import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteTemplateResultJson;
-import com.enonic.wem.admin.rest.resource.content.site.template.json.GetSiteTemplateResultJson;
-import com.enonic.wem.admin.rest.resource.content.site.template.json.ImportSiteTemplateResultJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
-import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateResultJson;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
-import com.enonic.wem.api.command.content.site.GetAllSiteTemplates;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
@@ -43,86 +38,92 @@ public final class SiteTemplateResource
 {
     @GET
     @javax.ws.rs.Path("list")
-    public ListSiteTemplateResultJson listSiteTemplate()
+    public Result listSiteTemplate()
     {
-        GetAllSiteTemplates listCommand = Commands.site().template().get().all();
         try
         {
-            SiteTemplates siteTemplates = client.execute( listCommand );
-            return ListSiteTemplateResultJson.result( new ListSiteTemplateJson( siteTemplates ) );
+            SiteTemplates siteTemplates = client.execute( Commands.site().template().get().all() );
+            return Result.result( new ListSiteTemplateJson( siteTemplates ) );
         }
         catch ( Exception e )
         {
-            return ListSiteTemplateResultJson.error( e.getMessage() );
+            return Result.exception( e );
         }
     }
 
     @POST
     @javax.ws.rs.Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
-    public DeleteSiteTemplateResultJson deleteSiteTemplate( final DeleteSiteTemplateJson params )
+    public Result deleteSiteTemplate( final DeleteSiteTemplateJson params )
     {
-        final DeleteSiteTemplate command = Commands.site().template().delete( params.getKey() );
         try
         {
-            final SiteTemplateKey key = client.execute( command );
+            final DeleteSiteTemplate command = Commands.site().template().delete( params.getKey() );
 
-            return DeleteSiteTemplateResultJson.result( key );
+            final SiteTemplateKey keyOfDeletedSiteTemplate = client.execute( command );
+
+            return Result.result( keyOfDeletedSiteTemplate.toString() );
         }
         catch ( Exception e )
         {
-            return DeleteSiteTemplateResultJson.error( e.getMessage() );
+            return Result.exception( e );
         }
     }
 
     @GET
-    public GetSiteTemplateResultJson getSiteTemplate( @QueryParam("key") final String siteTemplateKeyParam )
+    public Result getSiteTemplate( @QueryParam("key") final String siteTemplateKeyParam )
     {
-        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyParam );
         try
         {
+            final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyParam );
+
             final SiteTemplate siteTemplate = client.execute( Commands.site().template().get().byKey( siteTemplateKey ) );
-            return GetSiteTemplateResultJson.result( new SiteTemplateJson( siteTemplate ) );
+            return Result.result( new SiteTemplateJson( siteTemplate ) );
         }
-        catch ( SiteTemplateNotFoundException e )
+        catch ( Exception e )
         {
-            return GetSiteTemplateResultJson.error( String.format( "Site Template [%s] not found", siteTemplateKeyParam ) );
+            return Result.exception( e );
         }
     }
 
     @POST
     @javax.ws.rs.Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public ImportSiteTemplateResultJson importSiteTemplate( @FormDataParam("file") InputStream uploadedInputStream,
-                                                            @FormDataParam("file") FormDataContentDisposition fileDetail )
+    public Result importSiteTemplate( @FormDataParam("file") InputStream uploadedInputStream,
+                                      @FormDataParam("file") FormDataContentDisposition formDataContentDisposition )
         throws IOException
     {
-        final String fileName = fileDetail.getFileName();
 
-        final Path tempDirectory = Files.createTempDirectory( "modules" );
+        Path tempDirectory = null;
         try
         {
-            final Path tempZipFile = tempDirectory.resolve( fileName );
-            Files.copy( uploadedInputStream, tempZipFile );
-            final SiteTemplateExporter siteTemplateImporter = new SiteTemplateExporter();
-            final SiteTemplate importedSiteTemplate;
             try
             {
+                tempDirectory = Files.createTempDirectory( "modules" );
+                final String fileName = formDataContentDisposition.getFileName();
+                final Path tempZipFile = tempDirectory.resolve( fileName );
+                Files.copy( uploadedInputStream, tempZipFile );
+                final SiteTemplateExporter siteTemplateImporter = new SiteTemplateExporter();
+                final SiteTemplate importedSiteTemplate;
+
                 importedSiteTemplate = siteTemplateImporter.importFromZip( tempZipFile );
+
+                final CreateSiteTemplate createSiteTemplateCommand = CreateSiteTemplate.fromSiteTemplate( importedSiteTemplate );
+                final SiteTemplate createdSiteTemplate = client.execute( createSiteTemplateCommand );
+
+                return Result.result( new SiteTemplateSummaryJson( createdSiteTemplate ) );
             }
             catch ( Exception e )
             {
-                return ImportSiteTemplateResultJson.error( e.getMessage() );
+                return Result.error( e.getMessage() );
             }
-
-            final CreateSiteTemplate createSiteTemplateCommand = CreateSiteTemplate.fromSiteTemplate( importedSiteTemplate );
-            final SiteTemplate createdSiteTemplate = client.execute( createSiteTemplateCommand );
-
-            return ImportSiteTemplateResultJson.result( new SiteTemplateSummaryJson( createdSiteTemplate ) );
         }
         finally
         {
-            FileUtils.deleteDirectory( tempDirectory.toFile() );
+            if ( tempDirectory != null )
+            {
+                FileUtils.deleteDirectory( tempDirectory.toFile() );
+            }
         }
     }
 

@@ -21,10 +21,8 @@ import com.sun.jersey.multipart.FormDataParam;
 import com.enonic.wem.admin.json.module.ListModuleJson;
 import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.module.json.InstallModuleResultJson;
-import com.enonic.wem.admin.rest.resource.module.json.ListModuleResultJson;
+import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
-import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteResultJson;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.command.module.DeleteModule;
@@ -46,58 +44,74 @@ public class ModuleResource
 
     @GET
     @javax.ws.rs.Path("list")
-    public ListModuleResultJson list()
+    public Result list()
     {
-        Modules modules = client.execute( Commands.module().list() );
-        return ListModuleResultJson.result( new ListModuleJson( modules ) );
+        try
+        {
+            Modules modules = client.execute( Commands.module().list() );
+            return Result.result( new ListModuleJson( modules ) );
+        }
+        catch ( Exception e )
+        {
+            return Result.exception( e );
+        }
     }
-
 
     @POST
     @javax.ws.rs.Path("delete")
-    public ModuleDeleteResultJson delete(ModuleDeleteParams params) {
-        DeleteModule command = Commands.module().delete().module(params.getModuleKey());
-        boolean deleted = client.execute(command);
-        if (deleted) {
-            return ModuleDeleteResultJson.result(params.getModuleKey());
-        } else {
-            return ModuleDeleteResultJson.error("Module: '" + params.getModuleKey().toString() + "' as not found");
+    public Result delete( ModuleDeleteParams params )
+    {
+        try
+        {
+            DeleteModule command = Commands.module().delete().module( params.getModuleKey() );
+            Module deleted = client.execute( command );
+            return Result.result( deleted );
+        }
+        catch ( Exception e )
+        {
+            return Result.exception( e );
         }
     }
 
     @POST
     @javax.ws.rs.Path("install")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public InstallModuleResultJson install( @FormDataParam("file") InputStream uploadedInputStream,
-                                            @FormDataParam("file") FormDataContentDisposition fileDetail )
+    public Result install( @FormDataParam("file") InputStream uploadedInputStream,
+                           @FormDataParam("file") FormDataContentDisposition fileDetail )
         throws IOException
     {
-        final String fileName = fileDetail.getFileName();
-
-        final Path tempDirectory = Files.createTempDirectory( "modules" );
+        Path tempDirectory = null;
         try
         {
-            final Path tempZipFile = tempDirectory.resolve( fileName );
-            Files.copy( uploadedInputStream, tempZipFile );
-            final ModuleExporter moduleExporter = new ModuleExporter();
-            final Module importedModule;
             try
             {
+                final String fileName = fileDetail.getFileName();
+
+                tempDirectory = Files.createTempDirectory( "modules" );
+
+                final Path tempZipFile = tempDirectory.resolve( fileName );
+                Files.copy( uploadedInputStream, tempZipFile );
+                final ModuleExporter moduleExporter = new ModuleExporter();
+                final Module importedModule;
+
                 importedModule = moduleExporter.importFromZip( tempZipFile );
+
+                final CreateModule createModuleCommand = CreateModule.fromModule( importedModule );
+                final Module createdModule = client.execute( createModuleCommand );
+
+                return Result.result( new ModuleSummaryJson( createdModule ) );
             }
             catch ( Exception e )
             {
-                return InstallModuleResultJson.error( e.getMessage() );
+                return Result.exception( e );
             }
-
-            final CreateModule createModuleCommand = CreateModule.fromModule( importedModule );
-            final Module createdModule = client.execute( createModuleCommand );
-
-            return InstallModuleResultJson.result( new ModuleSummaryJson( createdModule ) );
         }
         finally
         {
-            FileUtils.deleteDirectory( tempDirectory.toFile() );
+            if ( tempDirectory != null )
+            {
+                FileUtils.deleteDirectory( tempDirectory.toFile() );
+            }
         }
     }
 

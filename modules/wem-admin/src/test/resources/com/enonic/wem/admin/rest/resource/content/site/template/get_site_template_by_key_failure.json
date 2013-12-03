@@ -1,6 +1,6 @@
 {
     "error" : {
-        "message" : "Site Template [blueman-1.0.0] not found"
+        "message" : "SiteTemplate [blueman-1.0.0] was not found"
     },
     "result" : null
 }

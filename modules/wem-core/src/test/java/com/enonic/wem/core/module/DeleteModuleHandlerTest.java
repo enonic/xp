@@ -10,8 +10,12 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.DeleteModule;
+import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleNotFoundException;
+import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.core.config.SystemConfig;
+import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static org.junit.Assert.*;
 
@@ -22,6 +26,8 @@ public class DeleteModuleHandlerTest
 
     private SystemConfig systemConfig;
 
+    private ModuleExporter moduleExporter;
+
     private Path tempDir;
 
     @Before
@@ -30,7 +36,9 @@ public class DeleteModuleHandlerTest
     {
         handler = new DeleteModuleHandler();
         systemConfig = Mockito.mock( SystemConfig.class );
+        moduleExporter = Mockito.mock( ModuleExporter.class );
         handler.setSystemConfig( systemConfig );
+        handler.setModuleImporter( moduleExporter );
         tempDir = Files.createTempDirectory( "wemce" );
     }
 
@@ -47,18 +55,21 @@ public class DeleteModuleHandlerTest
 
         assertTrue( moduleDir.exists() );
 
+        Module fooModule = createModule();
+
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
+        Mockito.when( moduleExporter.importFromDirectory( moduleDir.toPath() ) ).thenReturn( fooModule );
 
         DeleteModule command = Commands.module().delete().module( ModuleKey.from( "foomodule-1.0.0" ) );
         handler.setCommand( command );
         handler.handle();
 
-        assertTrue( command.getResult() );
+        assertNotNull( command.getResult() );
         assertFalse( moduleDir.exists() );
         assertFalse( subModuleDir.exists() );
     }
 
-    @Test
+    @Test(expected = ModuleNotFoundException.class)
     public void testDeleteNonExistingModule()
         throws Exception
     {
@@ -72,7 +83,21 @@ public class DeleteModuleHandlerTest
         DeleteModule command = Commands.module().delete().module( ModuleKey.from( "foomodule-1.0.0" ) );
         handler.setCommand( command );
         handler.handle();
+    }
 
-        assertFalse( command.getResult() );
+    private Module createModule()
+    {
+
+        final Module module = Module.newModule().
+            moduleKey( ModuleKey.from( "foomodule-1.0.0" ) ).
+            displayName( "module display name" ).
+            info( "module-info" ).
+            url( "http://enonic.net" ).
+            vendorName( "Enonic" ).
+            vendorUrl( "https://www.enonic.com" ).
+            minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
+            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
+            build();
+        return module;
     }
 }
