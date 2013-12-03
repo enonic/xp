@@ -5,11 +5,6 @@
 ///<reference path='PageComponent.ts' />
 ///<reference path='TemplatesResourceRequest.ts' />
 
-///<reference path='ImageTemplateName.ts' />
-///<reference path='ImageComponent.ts' />
-///<reference path='ImageTemplate.ts' />
-///<reference path='GetImageTemplatesRequest.ts' />
-
 ///<reference path='PartTemplateName.ts' />
 ///<reference path='PartTemplate.ts' />
 ///<reference path='PartComponent.ts' />

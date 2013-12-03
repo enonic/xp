@@ -1,7 +1,7 @@
 module app_contextwindow_image {
     export class ImageSelectPanel extends api_ui.Panel {
 
-        private image:api_content_page.ImageComponent;
+        private image:api_content_page_image.ImageComponent;
 
         private contextWindow:app_contextwindow.ContextWindow;
 
@@ -60,7 +60,7 @@ module app_contextwindow_image {
             app_contextwindow.ComponentSelectEvent.on((event) => {
                 //TODO: set image here
                 if (!event.getComponent().isEmpty()) {
-                    this.image = new api_content_page.ImageComponent();
+                    this.image = new api_content_page_image.ImageComponent();
                     this.itemSelected();
                     if (event.getComponent().getItemId()) {
                         console.log("itemId:", event.getComponent().getItemId());
@@ -197,7 +197,7 @@ module app_contextwindow_image {
             return img.toString() + contentSummary.toString();
         }
 
-        setImage(image:api_content_page.ImageComponent) {
+        setImage(image:api_content_page_image.ImageComponent) {
             this.image = image;
             this.refreshUI();
         }
