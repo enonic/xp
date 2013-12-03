@@ -4,7 +4,7 @@ module api_content_page{
 
         private config:api_data.RootDataSet;
 
-        private contentId:string;
+        private imageContent:api_content.ContentId;
 
         constructor(builder?:ImageComponentBuilder) {
             super(builder);
@@ -17,14 +17,25 @@ module api_content_page{
         setConfig(value:api_data.RootDataSet) {
             this.config = value;
         }
+
+        setImageContent(value:api_content.ContentId) {
+            this.imageContent = value;
+        }
     }
 
     export class ImageComponentBuilder extends ComponentBuilder<ImageTemplateName>{
 
         config:api_data.RootDataSet;
 
+        imageContent:api_content.ContentId;
+
         public setConfig(value:api_data.RootDataSet):ImageComponentBuilder {
             this.config = value;
+            return this;
+        }
+
+        public setImageContent(value:api_content.ContentId):ImageComponentBuilder {
+            this.imageContent = value;
             return this;
         }
 

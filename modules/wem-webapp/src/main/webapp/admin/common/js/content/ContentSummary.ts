@@ -2,6 +2,8 @@ module api_content{
 
     export class ContentSummary extends api_item.BaseItem implements api_node.Node {
 
+        private contentId:ContentId;
+
         private name:string;
 
         private displayName:string;
@@ -34,6 +36,7 @@ module api_content{
 
         constructor(json:api_content_json.ContentSummaryJson) {
             super(json);
+            this.contentId = new ContentId( json.id );
             this.name = json.name;
             this.displayName = json.displayName;
             this.path = ContentPath.fromString(json.path);
@@ -45,6 +48,10 @@ module api_content{
             this.owner = json.owner;
             this.site = json.isSite;
             this.page = json.isPage;
+        }
+
+        getContentId():ContentId {
+            return this.contentId;
         }
 
         getName():string {

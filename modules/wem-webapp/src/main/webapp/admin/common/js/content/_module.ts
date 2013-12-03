@@ -1,5 +1,6 @@
 ///<reference path='AttachmentName.ts' />
 ///<reference path='Attachment.ts' />
+///<reference path='ContentId.ts' />
 ///<reference path='ContentPath.ts' />
 ///<reference path='ContentSummary.ts' />
 ///<reference path='ContentData.ts' />
