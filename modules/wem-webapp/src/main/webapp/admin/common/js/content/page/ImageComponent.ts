@@ -1,12 +1,12 @@
 module api_content_page{
 
-    export class Image extends PageComponent<ImageTemplateName> {
+    export class ImageComponent extends PageComponent<ImageTemplateName> {
 
         private config:api_data.RootDataSet;
 
         private contentId:string;
 
-        constructor(builder?:ImageBuilder) {
+        constructor(builder?:ImageComponentBuilder) {
             super(builder);
         }
 
@@ -19,17 +19,17 @@ module api_content_page{
         }
     }
 
-    export class ImageBuilder extends ComponentBuilder<ImageTemplateName>{
+    export class ImageComponentBuilder extends ComponentBuilder<ImageTemplateName>{
 
         config:api_data.RootDataSet;
 
-        public setConfig(value:api_data.RootDataSet):ImageBuilder {
+        public setConfig(value:api_data.RootDataSet):ImageComponentBuilder {
             this.config = value;
             return this;
         }
 
-        public build():Image {
-            return new Image(this);
+        public build():ImageComponent {
+            return new ImageComponent(this);
         }
     }
 }
