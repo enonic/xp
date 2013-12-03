@@ -9,14 +9,15 @@ module app_browse_grid {
             this.extDataStore = <any> new Ext.data.Store({
                 model: 'Admin.model.templateManager.TemplateModel',
 
-                autoLoad: false,
+                autoLoad: true,
 
                 proxy: {
                     type: 'ajax',
-                    url: api_util.getAdminUri('apps/template-manager/js/json/list.json'),
+                    url: api_util.getAdminUri('rest/content/site/template/list'),
                     reader: {
                         type: 'json',
-                        root: 'templates'
+                        root: 'result.siteTemplates',
+                        totalProperty: 'result.total'
                     }
                 }
 

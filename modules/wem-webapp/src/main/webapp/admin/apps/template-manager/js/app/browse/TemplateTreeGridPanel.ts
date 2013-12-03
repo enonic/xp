@@ -21,7 +21,7 @@ module app_browse {
             this.setItemId("TemplateTreeGridPanel");
 
             this.setActiveList(api_app_browse_grid.TreeGridPanel.GRID);
-            this.setKeyField("id");
+            this.setKeyField("key");
         }
 
         private createColumns() {
@@ -29,10 +29,17 @@ module app_browse {
                 {
                     header: 'Display Name',
                     dataIndex: 'displayName',
-                    sortable: true,
-                    flex: 1,
+                    flex: 0.5,
                     renderer: this.nameRenderer,
                     scope: this
+                },
+                {
+                    header: 'Version',
+                    dataIndex: 'version'
+                },
+                {
+                    header: 'Vendor Name',
+                    dataIndex: 'vendorName'
                 }
             ];
         }
@@ -60,7 +67,7 @@ module app_browse {
 
             var template = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, template.iconUrl, value, template.path);
+            return Ext.String.format(nameTemplate, activeListType, api_util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), value, template.name);
         }
     }
 
