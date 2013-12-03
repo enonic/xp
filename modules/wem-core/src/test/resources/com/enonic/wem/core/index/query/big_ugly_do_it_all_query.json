@@ -1,0 +1,51 @@
+{
+    "from": 0, "size": 10, "query": {
+    "filtered": {
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "range": {
+                            "myfield._number": {
+                                "from": 1.0,
+                                "to": null,
+                                "include_lower": true,
+                                "include_upper": true
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "myfield": {
+                                "query": "myPhrase",
+                                "operator": "OR"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "filter": {
+            "exists": {
+                "field": "doesthisfieldexist"
+            }
+        }
+    }
+}, "filter": {
+    "terms": {
+        "myfield": ["myValue", "mySecondValue"]
+    }
+}, "explain": false, "sort": [
+    {
+        "_geo_distance": {
+            "myfield._geopoint": [-50.0, -70.0]
+        }
+    },
+    {
+        "myfield._orderby": {
+            "order": "desc",
+            "ignore_unmapped": true
+        }
+    }
+]
+}

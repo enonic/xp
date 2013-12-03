@@ -17,6 +17,9 @@ import com.enonic.wem.core.index.IndexType;
 
 public class ElasticsearchQuery
 {
+
+    public static final int DEFAULT_SIZE = 10;
+
     private final QueryBuilder query;
 
     private final FilterBuilder filter;
@@ -29,6 +32,12 @@ public class ElasticsearchQuery
 
     private final ImmutableSet<SortBuilder> sortBuilders;
 
+    private final int from;
+
+    private final int size;
+
+    private final boolean explain;
+
     private ElasticsearchQuery( final Builder builder )
     {
         this.query = builder.query;
@@ -37,6 +46,9 @@ public class ElasticsearchQuery
         this.indexType = builder.indexType;
         this.index = builder.index;
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
+        this.size = builder.size;
+        this.from = builder.from;
+        this.explain = builder.explain;
     }
 
     public QueryBuilder getQuery()
@@ -69,6 +81,21 @@ public class ElasticsearchQuery
         return new Builder();
     }
 
+    public int getFrom()
+    {
+        return from;
+    }
+
+    public int getSize()
+    {
+        return size;
+    }
+
+    public boolean doExplain()
+    {
+        return explain;
+    }
+
     public ImmutableSet<SortBuilder> getSortBuilders()
     {
         return sortBuilders;
@@ -76,10 +103,17 @@ public class ElasticsearchQuery
 
     public SearchSourceBuilder toSearchSourceBuilder()
     {
-        final SearchSourceBuilder builder = SearchSourceBuilder.searchSource();
-        builder.query( this.query );
-        builder.facet( this.facet );
-        builder.filter( this.filter );
+        SearchSourceBuilder builder = new SearchSourceBuilder().
+            query( this.getQuery() ).
+            filter( this.getFilter() ).
+            from( this.getFrom() ).
+            size( this.getSize() ).
+            explain( this.doExplain() );
+
+        if ( this.getFacet() != null )
+        {
+            builder.facet( this.getFacet() );
+        }
 
         for ( final SortBuilder sortBuilder : this.getSortBuilders() )
         {
@@ -124,6 +158,11 @@ public class ElasticsearchQuery
 
         private Set<SortBuilder> sortBuilders = Sets.newHashSet();
 
+        private int from = 0;
+
+        private int size = DEFAULT_SIZE;
+
+        private boolean explain = false;
 
         public Builder query( final QueryBuilder query )
         {
@@ -160,6 +199,25 @@ public class ElasticsearchQuery
             this.sortBuilders = sortBuilders;
             return this;
         }
+
+        public Builder from( final int from )
+        {
+            this.from = from;
+            return this;
+        }
+
+        public Builder size( final int size )
+        {
+            this.size( size );
+            return this;
+        }
+
+        public Builder explain( final boolean explain )
+        {
+            this.explain = explain;
+            return this;
+        }
+
 
         public ElasticsearchQuery build()
         {

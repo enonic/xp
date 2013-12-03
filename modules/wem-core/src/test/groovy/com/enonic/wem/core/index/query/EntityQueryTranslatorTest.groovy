@@ -11,9 +11,9 @@ import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermsFilterBuilder
 import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder
-import spock.lang.Specification
+import spock.lang.Ignore
 
-class EntityQueryTranslatorTest extends Specification
+class EntityQueryTranslatorTest extends BaseTestQueryBuilderFactory
 {
     def "query values populated"( )
     {
@@ -80,7 +80,7 @@ class EntityQueryTranslatorTest extends Specification
     {
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
-        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 ORDER BY geoDistance('myField', '-70,-50') DESC" ) ).build();
+        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 ORDER BY geoDistance('myField', '-70,-50') ASC" ) ).build();
 
         when:
         def translatedQuery = entityQueryTranslator.translate( entityQuery )
@@ -91,6 +91,33 @@ class EntityQueryTranslatorTest extends Specification
         translatedQuery.getSortBuilders() != null;
         translatedQuery.getSortBuilders().size() == 1;
         translatedQuery.getSortBuilders().iterator().next() instanceof GeoDistanceSortBuilder
+
+        println translatedQuery.toSearchSourceBuilder().toString()
     }
+
+    @Ignore // Because of changes in order of stuff.
+    def "big ugly query containing everything"( )
+    {
+        given:
+        def EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
+        def EntityQuery.Builder builder = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 AND fulltext('myField', 'myPhrase', 'OR') ORDER BY geoDistance('myField', '-70,-50') ASC, myField DESC" ) )
+        def expected = this.getClass().getResource( "big_ugly_do_it_all_query.json" ).text
+
+        builder.addFilter( QueryFilter.newValueQueryFilter().
+                                   fieldName( "myField" ).
+                                   add( new Value.String( "myValue" ) ).
+                                   add( new Value.String( "mySecondValue" ) ).
+                                   build() );
+
+        builder.addQueryFilter( QueryFilter.newExistsFilter( "doesThisFieldExist" ) );
+
+        when:
+        def translatedQuery = entityQueryTranslator.translate( builder.build() )
+
+        then:
+        cleanString( expected ) == cleanString( translatedQuery.toSearchSourceBuilder().toString() )
+
+    }
+
 
 }

@@ -45,6 +45,7 @@ import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
 import com.enonic.wem.core.index.elastic.result.FacetFactory;
 import com.enonic.wem.core.index.entity.EntitySearchResult;
+import com.enonic.wem.core.index.entity.EntitySearchResultFactory;
 
 
 public class ElasticsearchIndexServiceImpl
@@ -60,6 +61,8 @@ public class ElasticsearchIndexServiceImpl
     public static final TimeValue CLUSTER_NOWAIT_TIMEOUT = TimeValue.timeValueSeconds( 1 );
 
     private IndexSettingsBuilder indexSettingsBuilder;
+
+    private EntitySearchResultFactory entitySearchResultFactory = new EntitySearchResultFactory();
 
     @Override
     public IndexStatus getIndexStatus( final Index index, final boolean waitForStatusYellow )
@@ -188,8 +191,14 @@ public class ElasticsearchIndexServiceImpl
     @Override
     public EntitySearchResult search( final ElasticsearchQuery elasticsearchQuery )
     {
+        final SearchRequest searchRequest = Requests.
+            searchRequest( elasticsearchQuery.getIndex().getName() ).
+            types( elasticsearchQuery.getIndexType().name() ).
+            source( elasticsearchQuery.toSearchSourceBuilder() );
 
-        return null;
+        final SearchResponse searchResponse = doSearchRequest( searchRequest );
+
+        return entitySearchResultFactory.create( searchResponse );
     }
 
     @Override

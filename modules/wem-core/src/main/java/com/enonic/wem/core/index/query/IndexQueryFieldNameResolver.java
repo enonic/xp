@@ -1,5 +1,6 @@
 package com.enonic.wem.core.index.query;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.data.Value;
@@ -37,17 +38,17 @@ public class IndexQueryFieldNameResolver
 
     public static String resolveStringFieldName( final String queryFieldName )
     {
-        return IndexFieldNameNormalizer.normalize( queryFieldName );
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.STRING );
     }
 
-    public static String resolveOrderByFieldName( final String orderByFieldName )
+    public static String resolveOrderByFieldName( final String queryFieldName )
     {
-        return appendIndexValueType( IndexFieldNameNormalizer.normalize( orderByFieldName ), IndexValueType.ORDERBY );
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.ORDERBY );
     }
 
-    public static String resolveGeoPointFieldName( final String orderByFieldName )
+    public static String resolveGeoPointFieldName( final String queryFieldName )
     {
-        return appendIndexValueType( IndexFieldNameNormalizer.normalize( orderByFieldName ), IndexValueType.GEO_POINT );
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.GEO_POINT );
     }
 
     private static String createValueTypeAwareFieldName( final String baseFieldName, final Value value )
@@ -73,7 +74,10 @@ public class IndexQueryFieldNameResolver
 
     private static String appendIndexValueType( final String baseFieldName, final IndexValueType indexValueType )
     {
-        return baseFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + indexValueType.getPostfix();
+
+        return baseFieldName + ( Strings.isNullOrEmpty( indexValueType.getPostfix() )
+            ? ""
+            : IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + indexValueType.getPostfix() );
     }
 
 }
