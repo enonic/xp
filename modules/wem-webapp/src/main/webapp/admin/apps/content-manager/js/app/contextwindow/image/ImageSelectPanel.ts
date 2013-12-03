@@ -106,13 +106,11 @@ module app_contextwindow_image {
 
         private itemSelected() {
             this.selectedOptionsView.show();
-            this.comboBox.hide();
             this.deck.showPanel(1);
         }
 
         private itemRemoved() {
             this.selectedOptionsView.hide();
-            this.comboBox.show();
             this.deck.showPanel(0);
         }
 
@@ -122,7 +120,8 @@ module app_contextwindow_image {
                 rowHeight: 50,
                 maximumOccurrences: 1,
                 optionFormatter: this.optionFormatter,
-                selectedOptionsView: this.selectedOptionsView
+                selectedOptionsView: this.selectedOptionsView,
+                hideComboBoxWhenMaxReached: true
             };
 
             var comboBox = new api_ui_combobox.ComboBox("imagePicker", comboBoxConfig);

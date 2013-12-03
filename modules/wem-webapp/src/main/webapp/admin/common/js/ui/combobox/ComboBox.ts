@@ -24,6 +24,8 @@ module api_ui_combobox {
 
         private rowHeight;
 
+        private hideComboBoxWhenMaxReached:boolean;
+
         /**
          * Indicates if combobox is currently has focus
          * @type {boolean}
@@ -36,6 +38,7 @@ module api_ui_combobox {
             super("div", "ComboBox", "combobox");
             this.getEl().setAttribute("name", name);
 
+            this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;
             this.optionFormatter = config.optionFormatter;
             if( config.selectedOptionsView != null ) {
                 this.selectedOptionsCtrl = new SelectedOptionsCtrl(config.selectedOptionsView,
@@ -272,6 +275,10 @@ module api_ui_combobox {
         private handleSelectedOptionRemoved(removedSelectedOption:SelectedOption<T>) {
             this.updateDropdownStyles();
             this.input.openForTypingAndFocus();
+
+            if (this.hideComboBoxWhenMaxReached) {
+                this.show();
+            }
         }
 
         private selectRow(index:number) {
@@ -296,6 +303,9 @@ module api_ui_combobox {
             }
             if (!silent) {
                 this.notifyOptionSelected(option);
+            }
+            if (this.maximumOccurrencesReached() && this.hideComboBoxWhenMaxReached) {
+                this.hide();
             }
         }
 

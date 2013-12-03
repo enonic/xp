@@ -14,6 +14,8 @@ module api_ui_combobox {
 
         filter?: (item:any, args:any) => boolean;
 
+        hideComboBoxWhenMaxReached?:boolean;
+
     }
 
 }

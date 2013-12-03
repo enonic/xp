@@ -166,7 +166,8 @@ module api_form_inputtype_content_image {
                 rowHeight: 50,
                 optionFormatter: this.optionFormatter,
                 selectedOptionsView: this.selectedOptionsView,
-                maximumOccurrences: input.getOccurrences().getMaximum()
+                maximumOccurrences: input.getOccurrences().getMaximum(),
+                hideComboBoxWhenMaxReached: true
             };
 
             var comboBox = new api_ui_combobox.ComboBox<api_content.ContentSummary>(input.getName(), comboBoxConfig);

@@ -48,7 +48,8 @@ module api_form_inputtype_singleselector {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
                 selectedOptionsView: selectedOptionsView,
-                maximumOccurrences: 1
+                maximumOccurrences: 1,
+                hideComboBoxWhenMaxReached: true
             });
             comboBox.addListener({
                 onInputValueChanged: function (oldValue, newValue, grid) {

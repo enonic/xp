@@ -71,7 +71,8 @@ module api_form_inputtype_combobox {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
                 selectedOptionsView: this.selectedOptionsView,
-                maximumOccurrences: input.getOccurrences().getMaximum()
+                maximumOccurrences: input.getOccurrences().getMaximum(),
+                hideComboBoxWhenMaxReached: true
             };
             var comboBox = new api_ui_combobox.ComboBox<string>(name, comboboxConfig);
 
