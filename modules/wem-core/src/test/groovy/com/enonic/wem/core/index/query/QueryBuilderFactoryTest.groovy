@@ -53,7 +53,6 @@ class QueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         cleanString( expected ) == cleanString( builtQuery.toString() )
     }
 
-
     @Ignore // Since the order of the two filters are random goddamnit!
     def "create query with two queryfilters"( )
     {

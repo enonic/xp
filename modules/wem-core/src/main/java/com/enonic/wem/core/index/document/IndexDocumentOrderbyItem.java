@@ -16,7 +16,7 @@ public class IndexDocumentOrderbyItem
     @Override
     public IndexValueType getIndexBaseType()
     {
-        return IndexValueType.SORTABLE;
+        return IndexValueType.ORDERBY;
     }
 
     @Override

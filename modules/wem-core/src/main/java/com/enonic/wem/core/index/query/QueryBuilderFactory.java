@@ -51,7 +51,6 @@ public class QueryBuilderFactory
         {
             return queryBuilder;
         }
-
     }
 
     private QueryBuilder buildConstraint( final Expression constraint )
@@ -67,7 +66,6 @@ public class QueryBuilderFactory
         else if ( constraint instanceof DynamicConstraintExpr )
         {
             return dynamicQueryFactory.create( (DynamicConstraintExpr) constraint );
-
         }
         else if ( constraint instanceof CompareExpr )
         {

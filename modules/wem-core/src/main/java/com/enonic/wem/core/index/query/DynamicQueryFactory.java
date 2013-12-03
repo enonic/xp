@@ -2,30 +2,25 @@ package com.enonic.wem.core.index.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import com.enonic.wem.core.index.query.function.FulltextQueryBuilderFactory;
+import com.enonic.wem.core.index.query.function.FunctionQueryBuilderFactory;
 import com.enonic.wem.query.expr.DynamicConstraintExpr;
 import com.enonic.wem.query.expr.FunctionExpr;
 
 public class DynamicQueryFactory
 {
-    public QueryBuilder create( final DynamicConstraintExpr constraintExpr )
+    private FunctionQueryBuilderFactory functionQueryBuilderFactory = new FunctionQueryBuilderFactory();
+
+    public QueryBuilder create( final DynamicConstraintExpr expression )
     {
-        final FunctionExpr function = constraintExpr.getFunction();
+        final FunctionExpr function = expression.getFunction();
 
-        if ( function == null )
+        if ( function != null )
         {
-            return null;
+            return functionQueryBuilderFactory.create( function );
         }
 
-        final String functioName = function.getName();
-
-        if ( "fulltext".equals( functioName ) )
-        {
-            return FulltextQueryBuilderFactory.create( function );
-        }
-
-        throw new UnsupportedOperationException( "Function '" + functioName + "' is not supported" );
-
+        return null;
     }
+
 
 }

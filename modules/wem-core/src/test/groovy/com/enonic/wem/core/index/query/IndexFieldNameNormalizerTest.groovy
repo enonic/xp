@@ -14,7 +14,6 @@ class IndexFieldNameNormalizerTest extends Specification
         normalizedFieldName == IndexFieldNameNormalizer.normalize( path )
 
         where:
-
         path    | normalizedFieldName
         "A"     | "a"
         "a"     | "a"
@@ -24,4 +23,14 @@ class IndexFieldNameNormalizerTest extends Specification
     }
 
 
+    def "dummy"( )
+    {
+        given:
+
+        when:
+        String test = "1"
+
+        then:
+        test == "1"
+    }
 }

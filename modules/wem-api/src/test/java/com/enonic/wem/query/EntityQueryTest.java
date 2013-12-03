@@ -22,11 +22,12 @@ public class EntityQueryTest
             addFilter( QueryFilter.newContentTypeFilter().
                 add( "myContentTypeId", "myOtherContentTypeId" ).
                 build() ).
-            query( QueryParser.parse( "data/test > 3" ) ).
+            query( QueryParser.parse( "data/test > 3 ORDER BY test ASC" ) ).
             build();
 
         assertNotNull( entityQuery.getQuery() );
         assertEquals( 2, entityQuery.getFilters().size() );
+
 
     }
 }

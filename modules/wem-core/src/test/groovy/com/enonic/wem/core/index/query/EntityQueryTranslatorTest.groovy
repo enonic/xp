@@ -9,6 +9,8 @@ import com.enonic.wem.query.queryfilter.QueryFilter
 import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermsFilterBuilder
+import org.elasticsearch.search.sort.FieldSortBuilder
+import org.elasticsearch.search.sort.GeoDistanceSortBuilder
 import spock.lang.Specification
 
 class EntityQueryTranslatorTest extends Specification
@@ -54,6 +56,41 @@ class EntityQueryTranslatorTest extends Specification
         translatedQuery.getFilter() != null;
         translatedQuery.getFilter() instanceof TermsFilterBuilder
         translatedQuery.getFacet() == null;
+    }
+
+    def "sort values populated"( )
+    {
+        given:
+        EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
+        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 ORDER BY myField DESC" ) ).build();
+
+        when:
+        def translatedQuery = entityQueryTranslator.translate( entityQuery )
+
+        then:
+        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB );
+        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY );
+        translatedQuery.getSortBuilders() != null;
+        translatedQuery.getSortBuilders().size() == 1;
+        translatedQuery.getSortBuilders().iterator().next() instanceof FieldSortBuilder
+    }
+
+
+    def "sort value function geoDistance"( )
+    {
+        given:
+        EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
+        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 ORDER BY geoDistance('myField', '-70,-50') DESC" ) ).build();
+
+        when:
+        def translatedQuery = entityQueryTranslator.translate( entityQuery )
+
+        then:
+        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB );
+        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY );
+        translatedQuery.getSortBuilders() != null;
+        translatedQuery.getSortBuilders().size() == 1;
+        translatedQuery.getSortBuilders().iterator().next() instanceof GeoDistanceSortBuilder
     }
 
 }

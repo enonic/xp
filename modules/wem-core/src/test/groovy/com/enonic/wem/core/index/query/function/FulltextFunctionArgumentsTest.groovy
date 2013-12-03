@@ -59,6 +59,7 @@ class FulltextFunctionArgumentsTest extends Specification
 
         then:
         def exception = thrown( FunctionQueryBuilderException )
-        exception.message.contains( 'Illegal argument \'DUMMY\' in function \'fulltext\', positon 3' )
+        exception.message == 'Illegal argument \'DUMMY\' in function \'fulltext\', positon 3'
+        exception.getCause().message == "No enum constant org.elasticsearch.index.query.MatchQueryBuilder.Operator.DUMMY"
     }
 }

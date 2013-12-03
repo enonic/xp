@@ -6,9 +6,10 @@ import org.joda.time.DateTime
 import spock.lang.Specification
 import spock.lang.Unroll
 
-@Unroll
+
 class IndexFieldNameResolverTest extends Specification
 {
+    @Unroll
     def "resolve name for item-type #item.getIndexBaseType()"( )
     {
         expect:
@@ -25,7 +26,7 @@ class IndexFieldNameResolverTest extends Specification
         new IndexDocumentDateItem( IndexDocumentItemPath.from( "a.b.c" ), DateTime.now() )                    | "a_b_c._datetime"
     }
 
-
+    @Unroll
     def "resolve name from path #pathAsString"( )
     {
         expect:
@@ -39,5 +40,16 @@ class IndexFieldNameResolverTest extends Specification
         "a.b.c.d"    | "a_b_c_d"
     }
 
+
+    def "dummy"( )
+    {
+        given:
+
+        when:
+        String test = "1"
+
+        then:
+        test == "1"
+    }
 
 }

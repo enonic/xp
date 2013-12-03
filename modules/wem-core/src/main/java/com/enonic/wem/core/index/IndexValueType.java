@@ -11,7 +11,7 @@ public enum IndexValueType
 
     ANALYZED( "_analyzed" ),
 
-    SORTABLE( "_orderby" ),
+    ORDERBY( "_orderby" ),
 
     GEO_POINT( "_geopoint" ),
 

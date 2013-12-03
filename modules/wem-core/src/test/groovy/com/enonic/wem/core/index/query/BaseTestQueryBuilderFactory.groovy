@@ -20,8 +20,18 @@ class BaseTestQueryBuilderFactory extends Specification
         DateTimeZone.setDefault( origDefault );
     }
 
+    def "dummy"( )
+    {
+        given:
 
-    def "cleanString"( final String input )
+        when:
+        String test = "1"
+
+        then:
+        test == "1"
+    }
+
+    def cleanString( final String input )
     {
         String output = input.replace( LINE_BREAK, "" );
         output = Strings.trimAllWhitespace( output )

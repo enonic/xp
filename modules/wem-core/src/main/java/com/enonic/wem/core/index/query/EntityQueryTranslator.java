@@ -13,6 +13,8 @@ public class EntityQueryTranslator
 
     private FacetBuilderFactory facetBuilderFactory = new FacetBuilderFactory();
 
+    private SortBuilderFactory sortBuilderFactory = new SortBuilderFactory();
+
     public ElasticsearchQuery translate( final EntityQuery entityQuery )
     {
         ElasticsearchQuery elasticsearchQuery = ElasticsearchQuery.newQuery().
@@ -21,6 +23,7 @@ public class EntityQueryTranslator
             query( queryBuilderFactory.create( entityQuery.getQuery(), entityQuery.getQueryFilters() ) ).
             filter( filterBuilderFactory.create( entityQuery.getFilters() ) ).
             facet( facetBuilderFactory.create( entityQuery.getFacets() ) ).
+            sortBuilders( sortBuilderFactory.create( entityQuery.getOrderBys() ) ).
             build();
 
         return elasticsearchQuery;

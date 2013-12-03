@@ -50,7 +50,7 @@ public class FulltextFunctionArguments
             }
             catch ( IllegalArgumentException e )
             {
-                throw new FunctionQueryBuilderException( "fulltext", OPERATOR_INDEX + 1, operatorAsString );
+                throw new FunctionQueryBuilderException( "fulltext", OPERATOR_INDEX + 1, operatorAsString, e );
             }
         }
     }

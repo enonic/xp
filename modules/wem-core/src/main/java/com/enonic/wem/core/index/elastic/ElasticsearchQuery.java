@@ -1,9 +1,16 @@
 package com.enonic.wem.core.index.elastic;
 
+import java.util.Set;
+
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.facet.FacetBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
@@ -20,6 +27,8 @@ public class ElasticsearchQuery
 
     private final Index index;
 
+    private final ImmutableSet<SortBuilder> sortBuilders;
+
     private ElasticsearchQuery( final Builder builder )
     {
         this.query = builder.query;
@@ -27,6 +36,7 @@ public class ElasticsearchQuery
         this.facet = builder.facet;
         this.indexType = builder.indexType;
         this.index = builder.index;
+        this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
     }
 
     public QueryBuilder getQuery()
@@ -59,6 +69,11 @@ public class ElasticsearchQuery
         return new Builder();
     }
 
+    public ImmutableSet<SortBuilder> getSortBuilders()
+    {
+        return sortBuilders;
+    }
+
     public SearchSourceBuilder toSearchSourceBuilder()
     {
         final SearchSourceBuilder builder = SearchSourceBuilder.searchSource();
@@ -66,19 +81,32 @@ public class ElasticsearchQuery
         builder.facet( this.facet );
         builder.filter( this.filter );
 
+        for ( final SortBuilder sortBuilder : this.getSortBuilders() )
+        {
+            builder.sort( sortBuilder );
+        }
+
         return builder;
     }
-
 
     @Override
     public String toString()
     {
+        String sortBuildersAsString = "";
+
+        if ( sortBuilders != null && sortBuilders.size() > 0 )
+        {
+            Joiner joiner = Joiner.on( "," );
+            sortBuildersAsString = joiner.join( getSortBuilders() );
+        }
+
         return "ElasticsearchQuery{" +
             "query=" + query +
             ", filter=" + filter +
             ", facet=" + facet +
             ", indexType=" + indexType +
             ", index=" + index +
+            ", sortBuilders=" + sortBuildersAsString +
             '}';
     }
 
@@ -93,6 +121,9 @@ public class ElasticsearchQuery
         private IndexType indexType;
 
         private Index index;
+
+        private Set<SortBuilder> sortBuilders = Sets.newHashSet();
+
 
         public Builder query( final QueryBuilder query )
         {
@@ -121,6 +152,12 @@ public class ElasticsearchQuery
         public Builder index( final Index index )
         {
             this.index = index;
+            return this;
+        }
+
+        public Builder sortBuilders( final Set<SortBuilder> sortBuilders )
+        {
+            this.sortBuilders = sortBuilders;
             return this;
         }
 

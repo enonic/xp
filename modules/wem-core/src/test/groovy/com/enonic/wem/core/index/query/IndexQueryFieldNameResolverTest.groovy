@@ -24,4 +24,15 @@ class IndexQueryFieldNameResolverTest extends Specification
         "A.B.C" | ValueExpr.geoPoint( "80,80" )               | "a_b_c._geopoint"
         "A.B.C" | ValueExpr.dateTime( "2013-08-01T10:00:00" ) | "a_b_c._datetime"
     }
+
+    def "dummy"( )
+    {
+        given:
+
+        when:
+        String test = "1"
+
+        then:
+        test == "1"
+    }
 }

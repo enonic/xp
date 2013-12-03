@@ -188,6 +188,7 @@ public class ElasticsearchIndexServiceImpl
     @Override
     public EntitySearchResult search( final ElasticsearchQuery elasticsearchQuery )
     {
+
         return null;
     }
 

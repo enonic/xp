@@ -1,6 +1,6 @@
 {
     "match": {
-        "myField": {
+        "myfield": {
             "query": "mysearchphrase",
             "operator": "OR"
         }

@@ -40,6 +40,16 @@ public class IndexQueryFieldNameResolver
         return IndexFieldNameNormalizer.normalize( queryFieldName );
     }
 
+    public static String resolveOrderByFieldName( final String orderByFieldName )
+    {
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( orderByFieldName ), IndexValueType.ORDERBY );
+    }
+
+    public static String resolveGeoPointFieldName( final String orderByFieldName )
+    {
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( orderByFieldName ), IndexValueType.GEO_POINT );
+    }
+
     private static String createValueTypeAwareFieldName( final String baseFieldName, final Value value )
     {
 

@@ -2,9 +2,11 @@ package com.enonic.wem.query;
 
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.query.expr.OrderExpr;
 import com.enonic.wem.query.expr.QueryExpr;
 import com.enonic.wem.query.queryfilter.QueryFilter;
 
@@ -18,12 +20,15 @@ public class EntityQuery
 
     private final ImmutableSet<Facet> facets;
 
+    private final ImmutableList<OrderExpr> orderBys;
+
     public EntityQuery( final Builder builder )
     {
         this.query = builder.query;
         this.filters = ImmutableSet.copyOf( builder.filters );
         this.queryFilters = ImmutableSet.copyOf( builder.queryFilters );
         this.facets = ImmutableSet.copyOf( builder.facets );
+        this.orderBys = query != null ? ImmutableList.copyOf( query.getOrderList() ) : ImmutableList.<OrderExpr>of();
     }
 
     public static Builder newQuery()
@@ -51,6 +56,11 @@ public class EntityQuery
     public ImmutableSet<Facet> getFacets()
     {
         return facets;
+    }
+
+    public ImmutableList<OrderExpr> getOrderBys()
+    {
+        return orderBys;
     }
 
     public static class Builder
