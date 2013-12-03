@@ -36,7 +36,7 @@ module app_browse_filter {
                             setRanges(ranges).
                             setExpand(api_content.FindContentRequest.EXPAND_SUMMARY).
                             send().done((jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
-                                var result:api_content.FindContentResult<api_content_json.ContentSummaryJson> = jsonResponse.getResult();
+                                var result = jsonResponse.getResult();
                                 this.updateFacets(api_facet.FacetFactory.createFacets(result.facets));
                                 new ContentBrowseSearchEvent(result.contents).fire();
                             })
@@ -48,9 +48,9 @@ module app_browse_filter {
         }
 
         private resetFacets(supressEvent?:boolean) {
-            new api_content.FindContentRequest().setCount(0).send().done(
-                (jsonResponse:api_rest.JsonResponse) => {
-                    var termsFacets:api_facet.Facet[] = api_facet.FacetFactory.createFacets(jsonResponse.getJson().facets);
+            new api_content.FindContentRequest<api_content.FindContentResult<api_content_json.ContentSummaryJson>>().setCount(0).send().done(
+                (jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
+                    var termsFacets:api_facet.Facet[] = api_facet.FacetFactory.createFacets(jsonResponse.getResult().facets);
                     this.updateFacets(termsFacets);
                     if (!supressEvent) {
                         new ContentBrowseResetEvent().fire();

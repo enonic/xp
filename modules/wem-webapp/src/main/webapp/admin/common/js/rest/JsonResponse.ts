@@ -18,7 +18,12 @@ module api_rest {
         }
 
         getResult():T {
-            return <T>this.json;
+            if( this.json.result ) {
+                return <T>this.json.result;
+            }
+            else {
+                return <T>this.json;
+            }
         }
     }
 }

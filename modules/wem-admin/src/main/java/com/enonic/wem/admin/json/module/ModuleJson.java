@@ -12,9 +12,9 @@ public class ModuleJson
 {
     private final FormJson config;
 
-    private final ImmutableList<ModuleKeyJson> moduleDependencies;
+    private final ImmutableList<String> moduleDependencies;
 
-    private final ImmutableList<ContentTypeNameJson> contentTypeDependencies;
+    private final ImmutableList<String> contentTypeDependencies;
 
     private final ModuleFileEntryJson moduleDirectoryEntry;
 
@@ -24,23 +24,22 @@ public class ModuleJson
 
         this.config = module.getConfig() != null ? new FormJson( module.getConfig() ) : null;
 
-
-        final ImmutableList.Builder<ModuleKeyJson> mBuilder = ImmutableList.builder();
+        final ImmutableList.Builder<String> mBuilder = ImmutableList.builder();
         for ( final ModuleKey moduleKey : module.getModuleDependencies() )
         {
-            mBuilder.add( new ModuleKeyJson( moduleKey ) );
+            mBuilder.add( moduleKey.toString() );
         }
         this.moduleDependencies = mBuilder.build();
 
-
-        final ImmutableList.Builder<ContentTypeNameJson> cBuilder = ImmutableList.builder();
+        final ImmutableList.Builder<String> cBuilder = ImmutableList.builder();
         for ( final ContentTypeName contentTypeName : module.getContentTypeDependencies() )
         {
-            cBuilder.add( new ContentTypeNameJson( contentTypeName ) );
+            cBuilder.add( contentTypeName.toString() );
         }
         this.contentTypeDependencies = cBuilder.build();
 
-        this.moduleDirectoryEntry = module.getModuleDirectoryEntry() != null ? new ModuleFileEntryJson( module.getModuleDirectoryEntry() ) : null;
+        this.moduleDirectoryEntry =
+            module.getModuleDirectoryEntry() != null ? new ModuleFileEntryJson( module.getModuleDirectoryEntry() ) : null;
     }
 
     public FormJson getConfig()
@@ -48,12 +47,12 @@ public class ModuleJson
         return config;
     }
 
-    public ImmutableList<ModuleKeyJson> getModuleDependencies()
+    public ImmutableList<String> getModuleDependencies()
     {
         return moduleDependencies;
     }
 
-    public ImmutableList<ContentTypeNameJson> getContentTypeDependencies()
+    public ImmutableList<String> getContentTypeDependencies()
     {
         return contentTypeDependencies;
     }

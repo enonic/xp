@@ -31,8 +31,8 @@ window.onload = () => {
         var parentContent:api_content.ContentSummary = event.getParentContent();
 
         new api_content.GetContentByIdRequest(parentContent.getId()).send().
-            done((jsonResponse:api_rest.JsonResponse) => {
-                var newParentContent = new api_content.Content(jsonResponse.getJson());
+            done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
+                var newParentContent = new api_content.Content(jsonResponse.getResult());
                 newContentDialog.setParentContent(newParentContent);
                 newContentDialog.open();
             });

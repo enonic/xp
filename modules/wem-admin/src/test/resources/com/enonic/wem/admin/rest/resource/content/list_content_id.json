@@ -1,10 +1,13 @@
 {
-    "contents": [
-        {
-            "id": "aaa"
-        },
-        {
-            "id": "bbb"
-        }
-    ]
+    "error": null,
+    "result": {
+        "contents": [
+            {
+                "id": "aaa"
+            },
+            {
+                "id": "bbb"
+            }
+        ]
+    }
 }

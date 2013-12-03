@@ -1,3 +1,6 @@
 {
-    "contentName":"some-rea11y-werd-name"
+    "error": null,
+    "result": {
+        "contentName": "some-rea11y-werd-name"
+    }
 }

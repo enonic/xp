@@ -1,4 +1,7 @@
 {
-    "errors": [],
-    "hasErrors": false
+    "error": null,
+    "result": {
+        "errors": [ ],
+        "hasErrors": false
+    }
 }

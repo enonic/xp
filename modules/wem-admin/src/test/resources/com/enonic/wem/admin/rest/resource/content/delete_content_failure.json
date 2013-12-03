@@ -1,10 +1,16 @@
 {
-    "failures" : [ {
-        "path" : "/2",
-        "reason" : "NOT_FOUND"
-    }, {
-        "path" : "/1",
-        "reason" : "UNABLE_TO_DELETE"
-    } ],
-    "successes" : [ ]
+    "error": null,
+    "result": {
+        "failures": [
+            {
+                "path": "/2",
+                "reason": "NOT_FOUND"
+            },
+            {
+                "path": "/1",
+                "reason": "UNABLE_TO_DELETE"
+            }
+        ],
+        "successes": [ ]
+    }
 }

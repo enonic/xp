@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -36,8 +37,8 @@ import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.exporters.ModuleExporter;
 
-import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
+import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static org.junit.Assert.*;
 
 public class ModuleResourceTest
@@ -60,7 +61,10 @@ public class ModuleResourceTest
     {
         try
         {
-            FileUtils.deleteDirectory( tempDir.toFile() );
+            if ( tempDir != null )
+            {
+                FileUtils.deleteDirectory( tempDir.toFile() );
+            }
         }
         catch ( IOException e )
         {

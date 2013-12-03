@@ -1,5 +1,6 @@
-package com.enonic.wem.admin.json.module;
+package com.enonic.wem.admin.rest.resource.module.json;
 
+import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.Modules;
 import com.google.common.collect.ImmutableList;

@@ -16,18 +16,18 @@ module app_delete {
                     deleteRequest.addContentPath(this.contentToDelete[i].getPath());
                 }
 
-                deleteRequest.send().done((jsonResponse:api_rest.JsonResponse) => {
+                deleteRequest.send().done((jsonResponse:api_rest.JsonResponse<api_content.DeleteContentResult>) => {
 
-                    var json = jsonResponse.getJson(),
+                    var result = jsonResponse.getResult(),
                         paths = [],
                         deletedContents:api_content.ContentSummary[] = [];
 
-                    for (var i = 0; i < json.successes.length; i++) {
-                        var path = json.successes[i].path;
+                    for (var i = 0; i < result.successes.length; i++) {
+                        var path = result.successes[i].path;
                         paths.push(path);
 
                         this.contentToDelete.forEach((content:api_content.ContentSummary) => {
-                            if(path == content.getPath()) {
+                            if(path == content.getPath().toString()) {
                                 deletedContents.push(content);
                             }
                         })

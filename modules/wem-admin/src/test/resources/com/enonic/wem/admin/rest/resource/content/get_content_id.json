@@ -1,3 +1,6 @@
 {
-    "id" : "aaa"
+    "error": null,
+    "result": {
+        "id": "aaa"
+    }
 }

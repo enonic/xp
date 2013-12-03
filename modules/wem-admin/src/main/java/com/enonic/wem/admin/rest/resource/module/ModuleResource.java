@@ -18,11 +18,11 @@ import org.apache.commons.io.FileUtils;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
-import com.enonic.wem.admin.json.module.ListModuleJson;
 import com.enonic.wem.admin.json.module.ModuleJson;
 import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.Result;
+import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.CreateModule;
@@ -49,7 +49,7 @@ public class ModuleResource
     {
         try
         {
-            Modules modules = client.execute( Commands.module().list() );
+            final Modules modules = client.execute( Commands.module().list() );
             return Result.result( new ListModuleJson( modules ) );
         }
         catch ( Exception e )
@@ -66,7 +66,7 @@ public class ModuleResource
         {
             DeleteModule command = Commands.module().delete().module( params.getModuleKey() );
             Module deleted = client.execute( command );
-            return Result.result( deleted );
+            return Result.result( new ModuleJson( deleted ) );
         }
         catch ( Exception e )
         {
@@ -159,11 +159,18 @@ public class ModuleResource
     }
 
     @GET
-    public ModuleJson getByKey( @QueryParam("moduleKey") ModuleKey moduleKey )
+    public Result getByKey( @QueryParam("moduleKey") String moduleKey )
     {
-        final GetModule getModuleCommand = Commands.module().get().module( moduleKey );
-        final Module module = client.execute( getModuleCommand );
+        try
+        {
+            final GetModule getModuleCommand = Commands.module().get().module( ModuleKey.from( moduleKey ) );
+            final Module module = client.execute( getModuleCommand );
 
-        return new ModuleJson( module );
+            return Result.result( new ModuleJson( module ) );
+        }
+        catch ( Exception e )
+        {
+            return Result.exception( e );
+        }
     }
 }

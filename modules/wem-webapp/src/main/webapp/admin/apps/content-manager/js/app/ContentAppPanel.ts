@@ -117,9 +117,9 @@ module app {
                 } else {
 
                     var getContentByIdPromise = new api_content.GetContentByIdRequest(content.getId()).send();
-                    var getContentTypeByQualifiedNamePromise = new api_schema_content.GetContentTypeByNameRequest(content.getType()).send();
+                    var getContentTypeByNamePromise = new api_schema_content.GetContentTypeByNameRequest(content.getType()).send();
                     jQuery.
-                        when(getContentByIdPromise, getContentTypeByQualifiedNamePromise).
+                        when(getContentByIdPromise, getContentTypeByNamePromise).
                         then((contentResponse:api_rest.JsonResponse<api_content_json.ContentJson>, contentTypeResponse:api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
 
                             var contentToEdit:api_content.Content = new api_content.Content(contentResponse.getResult());

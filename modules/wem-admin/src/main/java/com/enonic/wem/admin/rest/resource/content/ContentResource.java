@@ -32,12 +32,11 @@ import com.enonic.wem.admin.json.content.ContentSummaryListJson;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.Result;
-import com.enonic.wem.admin.rest.resource.content.json.AbstractFacetedContentListJson;
 import com.enonic.wem.admin.rest.resource.content.json.AttachmentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
-import com.enonic.wem.admin.rest.resource.content.json.DeleteContentJson;
+import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentIdListJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentListJson;
@@ -95,77 +94,91 @@ public class ContentResource
     private final String EXPAND_NONE = "none";
 
     @GET
-    public ContentIdJson getById( @QueryParam("id") final String idParam, @QueryParam("version") final Long versionParam,
-                                  @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
+    public Result getById( @QueryParam("id") final String idParam, @QueryParam("version") final Long versionParam,
+                           @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final ContentId id = ContentId.from( idParam );
-        final Content content;
-        if ( versionParam == null )
+        try
         {
-            content = client.execute( Commands.content().get().byId( id ) );
-        }
-        else
-        {
-            final GetContentVersion getContentVersion = Commands.content().getVersion().
-                contentId( id ).
-                version( ContentVersionId.of( versionParam ) );
+            final ContentId id = ContentId.from( idParam );
+            final Content content;
+            if ( versionParam == null )
+            {
+                content = client.execute( Commands.content().get().byId( id ) );
+            }
+            else
+            {
+                final GetContentVersion getContentVersion = Commands.content().getVersion().
+                    contentId( id ).
+                    version( ContentVersionId.of( versionParam ) );
 
-            content = client.execute( getContentVersion );
-        }
+                content = client.execute( getContentVersion );
+            }
 
-        if ( content == null )
-        {
-            throw new NotFoundException( String.format( "Content [%s] was not found", idParam ) );
+            if ( content == null )
+            {
+                throw new NotFoundException( String.format( "Content [%s] was not found", idParam ) );
+            }
+            else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
+            {
+                return Result.result( new ContentIdJson( id ) );
+            }
+            else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
+            {
+                return Result.result( new ContentSummaryJson( content ) );
+            }
+            else
+            {
+                return Result.result( new ContentJson( content ) );
+            }
         }
-        else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
+        catch ( Exception e )
         {
-            return new ContentIdJson( id );
-        }
-        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
-        {
-            return new ContentSummaryJson( content );
-        }
-        else
-        {
-            return new ContentJson( content );
+            return Result.exception( e );
         }
     }
 
     @GET
     @Path("bypath")
-    public ContentIdJson getByPath( @QueryParam("path") final String pathParam, @QueryParam("version") final Long versionParam,
-                                    @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
+    public Result getByPath( @QueryParam("path") final String pathParam, @QueryParam("version") final Long versionParam,
+                             @QueryParam("expand") @DefaultValue(EXPAND_FULL) final String expandParam )
     {
-        final Content content;
-        final ContentPath path = ContentPath.from( pathParam );
-        if ( versionParam == null )
+        try
         {
-            content = client.execute( Commands.content().get().byPath( path ) );
-        }
-        else
-        {
-            final GetContentVersion getContentVersion = Commands.content().getVersion().
-                contentPath( path ).
-                version( ContentVersionId.of( versionParam ) );
+            final Content content;
+            final ContentPath path = ContentPath.from( pathParam );
+            if ( versionParam == null )
+            {
+                content = client.execute( Commands.content().get().byPath( path ) );
+            }
+            else
+            {
+                final GetContentVersion getContentVersion = Commands.content().getVersion().
+                    contentPath( path ).
+                    version( ContentVersionId.of( versionParam ) );
 
-            content = client.execute( getContentVersion );
-        }
+                content = client.execute( getContentVersion );
+            }
 
-        if ( content == null )
-        {
-            throw new NotFoundException( String.format( "Content [%s] was not found", pathParam ) );
+            if ( content == null )
+            {
+                throw new NotFoundException( String.format( "Content [%s] was not found", pathParam ) );
+            }
+            else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
+            {
+                return Result.result( new ContentIdJson( content.getId() ) );
+            }
+            else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
+            {
+                return Result.result( new ContentSummaryJson( content ) );
+            }
+            else
+            {
+                return Result.result( new ContentJson( content ) );
+            }
         }
-        else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
+        catch ( Exception e )
         {
-            return new ContentIdJson( content.getId() );
-        }
-        else if ( EXPAND_SUMMARY.equalsIgnoreCase( expandParam ) )
-        {
-            return new ContentSummaryJson( content );
-        }
-        else
-        {
-            return new ContentJson( content );
+            return Result.exception( e );
         }
     }
 
@@ -210,129 +223,168 @@ public class ContentResource
 
     @GET
     @Path("list/bypath")
-    public AbstractContentListJson listByPath( @QueryParam("parentPath") final String parentPathParam,
-                                               @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
+    public Result listByPath( @QueryParam("parentPath") final String parentPathParam,
+                              @QueryParam("expand") @DefaultValue(EXPAND_SUMMARY) final String expandParam )
     {
-        final Contents contents;
-        if ( StringUtils.isEmpty( parentPathParam ) )
+        try
         {
-            contents = client.execute( Commands.content().getRoots() );
-        }
-        else
-        {
-            final GetChildContent getChildContent = Commands.content().getChildren().parentPath( ContentPath.from( parentPathParam ) );
-            contents = client.execute( getChildContent );
-        }
+            final Contents contents;
+            if ( StringUtils.isEmpty( parentPathParam ) )
+            {
+                contents = client.execute( Commands.content().getRoots() );
+            }
+            else
+            {
+                final GetChildContent getChildContent = Commands.content().getChildren().parentPath( ContentPath.from( parentPathParam ) );
+                contents = client.execute( getChildContent );
+            }
 
-        if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
-        {
-            return new ContentIdListJson( contents );
+            if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
+            {
+                return Result.result( new ContentIdListJson( contents ) );
+            }
+            else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
+            {
+                return Result.result( new ContentListJson( contents ) );
+            }
+            else
+            {
+                return Result.result( new ContentSummaryListJson( contents ) );
+            }
         }
-        else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
+        catch ( Exception e )
         {
-            return new ContentListJson( contents );
-        }
-        else
-        {
-            return new ContentSummaryListJson( contents );
+            return Result.exception( e );
         }
     }
 
     @POST
     @Path("find")
     @Consumes(MediaType.APPLICATION_JSON)
-    public AbstractFacetedContentListJson find( final ContentFindParams params )
+    public Result find( final ContentFindParams params )
     {
-        final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
-        contentIndexQuery.setFullTextSearchString( params.getFulltext() );
-        contentIndexQuery.setIncludeFacets( params.isIncludeFacets() );
-        contentIndexQuery.setContentTypeNames( ContentTypeNames.from( params.getContentTypes() ) );
-
-        if ( params.getCount() >= 0 )
+        try
         {
-            contentIndexQuery.setSize( params.getCount() );
-        }
+            final ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
+            contentIndexQuery.setFullTextSearchString( params.getFulltext() );
+            contentIndexQuery.setIncludeFacets( params.isIncludeFacets() );
+            contentIndexQuery.setContentTypeNames( ContentTypeNames.from( params.getContentTypes() ) );
 
-        Set<ContentFindParams.Range> ranges = params.getRanges();
-        if ( ranges != null && ranges.size() > 0 )
-        {
-            for ( ContentFindParams.Range range : ranges )
+            if ( params.getCount() >= 0 )
             {
-                contentIndexQuery.addRange( range.getLower(), range.getUpper() );
+                contentIndexQuery.setSize( params.getCount() );
+            }
+
+            Set<ContentFindParams.Range> ranges = params.getRanges();
+            if ( ranges != null && ranges.size() > 0 )
+            {
+                for ( ContentFindParams.Range range : ranges )
+                {
+                    contentIndexQuery.addRange( range.getLower(), range.getUpper() );
+                }
+            }
+
+            if ( params.isIncludeFacets() )
+            {
+                contentIndexQuery.setFacets( params.getFacets() );
+            }
+
+            final FindContent findContent = Commands.content().find().query( contentIndexQuery );
+            final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( findContent );
+
+            final GetContentByIds getContents =
+                Commands.content().get().byIds( ContentIds.from( contentIndexQueryResult.getContentIds() ) );
+            final Contents contents = this.client.execute( getContents );
+
+            if ( EXPAND_FULL.equalsIgnoreCase( params.getExpand() ) )
+            {
+                return Result.result(
+                    new FacetedContentListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null ) );
+            }
+            else if ( EXPAND_SUMMARY.equalsIgnoreCase( params.getExpand() ) )
+            {
+                return Result.result(
+                    new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null ) );
+            }
+            else
+            {
+                return Result.result(
+                    new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null ) );
             }
         }
-
-        if ( params.isIncludeFacets() )
+        catch ( Exception e )
         {
-            contentIndexQuery.setFacets( params.getFacets() );
-        }
-
-        final FindContent findContent = Commands.content().find().query( contentIndexQuery );
-        final ContentIndexQueryResult contentIndexQueryResult = this.client.execute( findContent );
-
-        final GetContentByIds getContents = Commands.content().get().byIds( ContentIds.from( contentIndexQueryResult.getContentIds() ) );
-        final Contents contents = this.client.execute( getContents );
-
-        if ( EXPAND_FULL.equalsIgnoreCase( params.getExpand() ) )
-        {
-            return new FacetedContentListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
-        }
-        else if ( EXPAND_SUMMARY.equalsIgnoreCase( params.getExpand() ) )
-        {
-            return new FacetedContentSummaryListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
-        }
-        else
-        {
-            return new FacetedContentIdListJson( contents, params.isIncludeFacets() ? contentIndexQueryResult.getFacets() : null );
+            return Result.exception( e );
         }
     }
 
     @GET
     @Path("generateName")
-    public ContentNameJson generateName( @QueryParam("displayName") final String displayNameParam )
+    public Result generateName( @QueryParam("displayName") final String displayNameParam )
     {
-        final GenerateContentName generateContentName = Commands.content().generateContentName().displayName( displayNameParam );
+        try
+        {
+            final GenerateContentName generateContentName = Commands.content().generateContentName().displayName( displayNameParam );
 
-        final String generatedContentName = client.execute( generateContentName );
+            final String generatedContentName = client.execute( generateContentName );
 
-        return new ContentNameJson( generatedContentName );
+            return Result.result( new ContentNameJson( generatedContentName ) );
+        }
+        catch ( Exception e )
+        {
+            return Result.exception( e );
+        }
     }
 
     @POST
     @Path("validate")
-    public ValidateContentJson validate( final ValidateContentParams params )
+    public Result validate( final ValidateContentParams params )
     {
-        final ContentTypeName contentTypeName = ContentTypeName.from( params.getContentTypeName() );
+        try
+        {
+            final ContentTypeName contentTypeName = ContentTypeName.from( params.getContentTypeName() );
 
-        GetContentTypes getContentType =
-            Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( contentTypeName ) );
-        final ContentType contentType = client.execute( getContentType ).first();
+            GetContentTypes getContentType =
+                Commands.contentType().get().byNames().contentTypeNames( ContentTypeNames.from( contentTypeName ) );
+            final ContentType contentType = client.execute( getContentType ).first();
 
-        final ContentData contentData = new ContentDataParser( contentType ).parse( params.getContentData() );
+            final ContentData contentData = new ContentDataParser( contentType ).parse( params.getContentData() );
 
-        final DataValidationErrors validationErrors =
-            client.execute( Commands.content().validate().contentData( contentData ).contentType( contentTypeName ) );
+            final DataValidationErrors validationErrors =
+                client.execute( Commands.content().validate().contentData( contentData ).contentType( contentTypeName ) );
 
-        return new ValidateContentJson( validationErrors );
+            return Result.result( new ValidateContentJson( validationErrors ) );
+        }
+        catch ( Exception e )
+        {
+            return Result.exception( e );
+        }
     }
 
     @POST
     @Path("delete")
-    public DeleteContentJson delete( final DeleteContentParams params )
+    public Result delete( final DeleteContentParams params )
     {
-        final ContentPaths contentsToDelete = ContentPaths.from( params.getContentPaths() );
-
-        final DeleteContentJson jsonResult = new DeleteContentJson();
-
-        for ( final ContentPath contentToDelete : contentsToDelete )
+        try
         {
-            final DeleteContent deleteContent = Commands.content().delete();
-            deleteContent.deleter( AccountKey.anonymous() );
-            deleteContent.contentPath( contentToDelete );
-            jsonResult.addResult( contentToDelete, client.execute( deleteContent ) );
-        }
+            final ContentPaths contentsToDelete = ContentPaths.from( params.getContentPaths() );
 
-        return jsonResult;
+            final DeleteContentResultJson jsonResult = new DeleteContentResultJson();
+
+            for ( final ContentPath contentToDelete : contentsToDelete )
+            {
+                final DeleteContent deleteContent = Commands.content().delete();
+                deleteContent.deleter( AccountKey.anonymous() );
+                deleteContent.contentPath( contentToDelete );
+                jsonResult.addResult( contentToDelete, client.execute( deleteContent ) );
+            }
+
+            return Result.result( jsonResult );
+        }
+        catch ( Exception e )
+        {
+            return Result.exception( e );
+        }
     }
 
     @POST

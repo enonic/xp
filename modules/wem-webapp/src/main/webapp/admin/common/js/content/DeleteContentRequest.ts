@@ -1,6 +1,6 @@
 module api_content {
 
-    export class DeleteContentRequest extends ContentResourceRequest<any> {
+    export class DeleteContentRequest extends ContentResourceRequest<DeleteContentResult> {
 
         private contentPaths:ContentPath[] = [];
 

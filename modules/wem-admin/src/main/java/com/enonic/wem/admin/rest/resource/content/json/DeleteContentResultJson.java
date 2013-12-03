@@ -7,7 +7,7 @@ import java.util.List;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.DeleteContentResult;
 
-public class DeleteContentJson
+public class DeleteContentResultJson
 {
     private List<Success> successes = new ArrayList<>();
 
