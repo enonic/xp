@@ -314,7 +314,7 @@ public class ContentResourceTest
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
 
-        assertJson( "list_content_summary.json", jsonString );
+        assertJson( "list_content_summary_byPath.json", jsonString );
     }
 
     @Test
@@ -328,7 +328,7 @@ public class ContentResourceTest
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).
             queryParam( "expand", "full" ).get( String.class );
 
-        assertJson( "list_content_full.json", jsonString );
+        assertJson( "list_content_full_byPath.json", jsonString );
     }
 
     @Test
@@ -340,7 +340,7 @@ public class ContentResourceTest
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "parentPath", "/" ).get( String.class );
 
-        assertJson( "list_content_empty.json", jsonString );
+        assertJson( "list_content_empty_byPath.json", jsonString );
     }
 
     @Test
@@ -353,7 +353,7 @@ public class ContentResourceTest
 
         String jsonString = resource().path( "content/list/bypath" ).queryParam( "expand", "none" ).get( String.class );
 
-        assertJson( "list_content_id.json", jsonString );
+        assertJson( "list_content_id_byPath.json", jsonString );
     }
 
     @Test

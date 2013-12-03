@@ -15,6 +15,7 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.site.CreateSite;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.Site;
@@ -50,9 +51,7 @@ public class SiteResourceTest
     {
         Content content = createSiteContent( "content-id", "Content Name", "content-type" );
 
-        Mockito.when( client.execute( Mockito.isA( CreateSite.class ) ) ).thenReturn(
-            com.enonic.wem.api.command.content.site.CreateSiteResult.error(
-                String.format( "Content with id [%s] was not found", content.getId() ) ) );
+        Mockito.when( client.execute( Mockito.isA( CreateSite.class ) ) ).thenThrow( new ContentNotFoundException( content.getId() ) );
 
         String jsonString = resource().path( "content/site/create" ).
             entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
@@ -67,8 +66,7 @@ public class SiteResourceTest
     {
         Content content = createSiteContent( "content-id", "Content Name", "content-type" );
 
-        Mockito.when( client.execute( Mockito.isA( CreateSite.class ) ) ).thenReturn(
-            com.enonic.wem.api.command.content.site.CreateSiteResult.success( content ) );
+        Mockito.when( client.execute( Mockito.isA( CreateSite.class ) ) ).thenReturn( content );
 
         String jsonString = resource().path( "content/site/create" ).
             entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

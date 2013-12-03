@@ -36,7 +36,7 @@ module app_wizard {
             new api_content_site.CreateSiteRequest(content.getId())
                 .setSiteTemplateKey(this.site.getTemplateName())
                 .setModuleConfigs(this.site.getModuleConfigs())
-                .send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
+                .send().done((siteResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
                     //TODO
             });
         }
@@ -46,7 +46,7 @@ module app_wizard {
             new api_content_site.UpdateSiteRequest(content.getId())
                 .setSiteTemplateId(this.site.getTemplateName())
                 .setModuleConfigs(this.site.getModuleConfigs())
-                .send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
+                .send().done((siteResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
                     //TODO
             });
         }

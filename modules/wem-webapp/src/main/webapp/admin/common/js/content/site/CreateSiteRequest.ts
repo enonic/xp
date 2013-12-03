@@ -1,6 +1,6 @@
 module api_content_site {
 
-    export class CreateSiteRequest extends SiteResourceRequest<api_content_site_json.SiteJson> {
+    export class CreateSiteRequest extends SiteResourceRequest<api_content_json.ContentJson> {
 
         private contentId:string;
         private siteTemplateKey:string;

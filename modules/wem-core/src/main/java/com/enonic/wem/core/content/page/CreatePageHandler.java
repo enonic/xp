@@ -5,6 +5,7 @@ import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.core.command.CommandHandler;
@@ -42,10 +43,13 @@ public class CreatePageHandler
             final Content updatedContent = context.getClient().execute( Commands.content().get().byId( command.getContent() ) );
             command.setResult( updatedContent );
         }
-        else
+        else if ( UpdateContentResult.Type.NOT_FOUND.equals( updateResult.getType() ) )
         {
-            // TODO: change when update content just return updated content
-            throw new RuntimeException( "Failed to create page:" + updateResult.getMessage() );
+            throw new ContentNotFoundException( command.getContent() );
+        }
+        else if ( UpdateContentResult.Type.ILLEGAL_EDIT.equals( updateResult.getType() ) )
+        {
+            throw new IllegalArgumentException( "Illegal edit of content: " + updateResult.getMessage() );
         }
     }
 }
