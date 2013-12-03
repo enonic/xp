@@ -47,7 +47,7 @@ public class ContentNodeTranslator
 
     public Node toNode( final Content content )
     {
-        final NodePath parentNodePath = CONTENTS_ROOT_PATH;
+        final NodePath parentNodePath = NodePath.newPath( CONTENTS_ROOT_PATH ).elements( content.getParentPath().toString() ).build();
 
         final RootDataSet rootDataSet = propertiesToRootDataSet( content );
 

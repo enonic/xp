@@ -241,28 +241,6 @@ public abstract class BasePath2<PATH extends BasePath2, ELEMENT extends BasePath
 
     protected abstract Builder<BUILDER,PATH> newBuilder( PATH source );
 
-    /*protected static Builder newPath( final String path, final char elementDivider )
-    {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        if ( path.length() == 0 )
-        {
-            return newBuilder().absolute( false ).trailingDivider( false );
-        }
-
-        final boolean absolute = path.charAt( 0 ) == elementDivider;
-        final boolean hasTrailingDivider = !( path.length() == 1 && absolute ) && path.charAt( path.length() - 1 ) == elementDivider;
-
-        final Builder builder = new Builder();
-        builder.absolute( absolute );
-        builder.trailingDivider( hasTrailingDivider );
-        builder.elementDivider( elementDivider );
-        for ( final String pathElement : Splitter.on( elementDivider ).omitEmptyStrings().trimResults().split( path ) )
-        {
-            builder.addElement( pathElement );
-        }
-        return builder;
-    }*/
-
     public static abstract class Builder<B extends Builder, P extends BasePath2>
     {
         private Character elementDivider;
