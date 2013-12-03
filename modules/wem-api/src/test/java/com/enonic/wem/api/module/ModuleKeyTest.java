@@ -25,6 +25,14 @@ public class ModuleKeyTest
     }
 
     @Test
+    public void testParseModuleNameWithDash()
+    {
+        final ModuleKey moduleKey = ModuleKey.from( "my-module-3.2.1" );
+
+        assertEquals( ModuleKey.from( ModuleName.from( "my-module" ), ModuleVersion.from( 3, 2, 1 ) ), moduleKey );
+    }
+
+    @Test
     public void testModuleVersionToStringParse()
     {
         final ModuleKey moduleKey = ModuleKey.from( ModuleName.from( "mymodule" ), ModuleVersion.from( 3, 2, 1 ) );
