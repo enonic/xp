@@ -4,7 +4,7 @@ module api_content_page_region{
 
         private name:string;
 
-        private pageComponents:api_content_page.PageComponent<api_content_page.TemplateName>[] = [];
+        private pageComponents:api_content_page.BasePageComponent<api_content_page.TemplateName>[] = [];
 
         constructor() {
 

@@ -1,6 +1,6 @@
 module api_content_page{
 
-    export class PageComponent<TEMPLATE_NAME extends TemplateName> {
+    export class BasePageComponent<TEMPLATE_NAME extends TemplateName> {
 
         private id:number;
 
