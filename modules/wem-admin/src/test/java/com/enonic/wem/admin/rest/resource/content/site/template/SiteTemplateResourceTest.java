@@ -1,15 +1,26 @@
 package com.enonic.wem.admin.rest.resource.content.site.template;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
 import com.enonic.wem.api.command.content.site.GetAllSiteTemplates;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
@@ -41,11 +52,15 @@ import static com.enonic.wem.api.content.page.layout.LayoutTemplate.newLayoutTem
 import static com.enonic.wem.api.content.page.part.PartTemplate.newPartTemplate;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 
+import com.enonic.wem.core.exporters.SiteTemplateExporter;
+
 public class SiteTemplateResourceTest
     extends AbstractResourceTest
 {
 
     private Client client;
+
+    private Path tempDir;
 
     @Override
     protected Object getResourceInstance()
@@ -61,8 +76,23 @@ public class SiteTemplateResourceTest
 
     @Before
     public void setup()
+        throws IOException
     {
         mockCurrentContextHttpRequest();
+        tempDir = Files.createTempDirectory( "wemtest" );
+    }
+
+    @After
+    public void after()
+    {
+        try
+        {
+            FileUtils.deleteDirectory( tempDir.toFile() );
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -168,6 +198,42 @@ public class SiteTemplateResourceTest
             queryParam( "key", siteTemplate.toString() ).
             get( String.class );
         assertJson( "get_site_template_by_key_failure.json", response );
+    }
+
+    @Test
+    public void import_site_template_exception()
+        throws Exception
+    {
+        final WebResource webResource = resource().path( "content/site/template/import" );
+        final FormDataMultiPart mp = new FormDataMultiPart();
+        final FormDataContentDisposition file = FormDataContentDisposition.name( "file" ).fileName( "template-1.0.0.zip" ).build();
+        mp.bodyPart( new FormDataBodyPart( file, "INVALID_ZIP_CONTENT" ) );
+
+        final String jsonString = webResource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, mp );
+
+        assertJson( "import_site_template_exception.json", jsonString );
+    }
+
+    @Test
+    public void import_site_template_success()
+        throws Exception
+    {
+        final SiteTemplate siteTemplate = createSiteTemplate();
+        Mockito.when( client.execute( Mockito.isA( CreateSiteTemplate.class ) ) ).thenReturn( siteTemplate );
+
+        final SiteTemplateExporter siteTemplateExporter = new SiteTemplateExporter();
+        final Path exportedSiteTemplateFile = siteTemplateExporter.exportToZip( siteTemplate, tempDir );
+
+        final WebResource webResource = resource().path( "content/site/template/import" );
+        final FormDataMultiPart mp = new FormDataMultiPart();
+        final FormDataContentDisposition file = FormDataContentDisposition.name( "file" ).fileName( "name-1.0.0.zip" ).build();
+        final byte[] fileData = Files.readAllBytes( exportedSiteTemplateFile );
+        final FormDataBodyPart p = new FormDataBodyPart( file, fileData, MediaType.APPLICATION_OCTET_STREAM_TYPE );
+        mp.bodyPart( p );
+
+        final String jsonString = webResource.type( MediaType.MULTIPART_FORM_DATA_TYPE ).post( String.class, mp );
+
+        assertJson( "import_site_template_success.json", jsonString );
     }
 
     private SiteTemplate createSiteTemplate()
