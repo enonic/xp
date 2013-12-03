@@ -33,6 +33,11 @@ public final class ModuleKey
         return version;
     }
 
+    public String getRefString()
+    {
+        return refString;
+    }
+
     @Override
     public boolean equals( final Object o )
     {

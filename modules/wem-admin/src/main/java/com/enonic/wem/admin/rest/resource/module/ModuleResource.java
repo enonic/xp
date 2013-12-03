@@ -19,6 +19,7 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 import com.enonic.wem.admin.json.module.ListModuleJson;
+import com.enonic.wem.admin.json.module.ModuleJson;
 import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.Result;
@@ -157,4 +158,12 @@ public class ModuleResource
         }
     }
 
+    @GET
+    public ModuleJson getByKey( @QueryParam("moduleKey") ModuleKey moduleKey )
+    {
+        final GetModule getModuleCommand = Commands.module().get().module( moduleKey );
+        final Module module = client.execute( getModuleCommand );
+
+        return new ModuleJson( module );
+    }
 }

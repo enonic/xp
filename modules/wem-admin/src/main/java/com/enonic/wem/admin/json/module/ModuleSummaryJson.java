@@ -6,7 +6,7 @@ import com.enonic.wem.api.module.Module;
 public class ModuleSummaryJson
     implements ItemJson
 {
-    private final Module module;
+    final Module module;
 
     private final boolean editable;
 
