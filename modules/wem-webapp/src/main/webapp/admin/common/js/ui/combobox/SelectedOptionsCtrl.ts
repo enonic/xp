@@ -33,7 +33,6 @@ module api_ui_combobox {
 
         addOption(option:Option<T>):boolean {
 
-            console.log( "SelectedOptionsCtrl.addOption", option );
             if (!this.canAdd(option)) {
                 return false;
             }

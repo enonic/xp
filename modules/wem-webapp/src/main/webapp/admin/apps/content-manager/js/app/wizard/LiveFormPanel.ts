@@ -18,14 +18,30 @@ module app_wizard {
             // Wait for iframe to be loaded before adding context window!
             var intervalId = setInterval(() => {
                 if (this.frame.isLoaded()) {
-                    var contextWindow = new app_contextwindow.ContextWindow({
-                                                                                liveEditEl: this.frame,
-                                                                                site:site});
+                    var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame, site:site});
                     this.appendChild(contextWindow);
                     clearInterval(intervalId);
                 }
             }, 200);
 
+        }
+
+        renderNew() {
+
+        }
+
+        renderExisting(content:api_content.Content) {
+
+            var page = content.getPage();
+            var config = page.getTemplate().getConfig();
+            if( page.getConfig() != null ) {
+                config = page.getConfig();
+            }
+            var regionResolver = new api_content_page_region.RegionResolver(config);
+            var regions = regionResolver.resolve();
+            //var region = regions.getByName();
+            //region.getPart(id);
+            // TODO: live edit render request to server
         }
     }
 }

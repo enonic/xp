@@ -4,6 +4,8 @@ module api_content_page{
 
         private config:api_data.RootDataSet;
 
+        private contentId:string;
+
         constructor(builder?:ImageBuilder) {
             super(builder);
         }

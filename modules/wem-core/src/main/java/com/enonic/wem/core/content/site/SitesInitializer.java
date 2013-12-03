@@ -15,21 +15,12 @@ import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateName;
-import com.enonic.wem.api.content.site.ModuleConfig;
-import com.enonic.wem.api.content.site.ModuleConfigs;
-import com.enonic.wem.api.content.site.SiteTemplate;
-import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.*;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleFileEntry;
-import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.api.module.*;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.support.BaseInitializer;
@@ -132,7 +123,14 @@ public class SitesInitializer
             url( "http://enonic.net" ).
             rootContentType( ContentTypeName.page() ).
             addTemplate( pageTemplate );
-        client.execute( Commands.site().template().delete( siteTemplateKey ) );
+
+        try
+        {
+            client.execute( Commands.site().template().delete( siteTemplateKey ) );
+        }
+        catch (NoSiteTemplateExistsException e) {
+
+        }
         return client.execute( createSiteTemplate );
     }
 
@@ -179,7 +177,13 @@ public class SitesInitializer
             config( createDemoModuleForm() ).
             moduleDirectoryEntry( moduleDirectoryEntry );
 
-        client.execute( Commands.module().delete().module( DEMO_MODULE_KEY ) );
+        try
+        {
+            client.execute( Commands.module().delete().module( DEMO_MODULE_KEY ) );
+        }
+        catch (ModuleNotFoundException e) {
+
+        }
         return client.execute( createModule );
     }
 

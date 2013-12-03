@@ -87,7 +87,7 @@ public class RootDataSetJsonSerializerTest
 
         String serialized = serializer.toString( rootDataSet );
         assertSerializedResult( "property_with_DataSet", serializer.toString( rootDataSet ) );
-
+        System.out.println(serialized);
         RootDataSet parsedRootDataSet = serializer.parse( serialized );
         RootDataSet parsedData = parsedRootDataSet.getProperty( "myData" ).getData();
         assertEquals( "1", parsedData.getProperty( "a" ).getString() );

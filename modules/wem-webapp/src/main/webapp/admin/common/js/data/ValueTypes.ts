@@ -13,7 +13,10 @@ module api_data{
 
         static CONTENT_ID = new ValueType("ContentId");
 
-        static ALL:ValueType[] = [ ValueTypes.STRING, ValueTypes.DATE_TIME, ValueTypes.ATTACHMENT_NAME, ValueTypes.CONTENT_ID ];
+        static REGION = new ValueType("Region");
+
+        static ALL:ValueType[] = [ ValueTypes.STRING, ValueTypes.DATE_TIME, ValueTypes.ATTACHMENT_NAME, ValueTypes.CONTENT_ID, ValueTypes.REGION
+        ];
 
         static fromName(name:string):ValueType {
             var match = null;

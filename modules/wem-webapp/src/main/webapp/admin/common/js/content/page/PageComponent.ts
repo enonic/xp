@@ -2,6 +2,8 @@ module api_content_page{
 
     export class PageComponent<TEMPLATE_NAME extends TemplateName> {
 
+        private id:number;
+
         private template:Template<TEMPLATE_NAME>;
 
         constructor(builder?:ComponentBuilder<TEMPLATE_NAME>) {

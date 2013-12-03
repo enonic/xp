@@ -1,6 +1,7 @@
 package com.enonic.wem.api.content.page.image;
 
 
+import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.BasePageComponent;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.RootDataSet;
@@ -9,6 +10,8 @@ public class ImageComponent
     extends BasePageComponent<ImageTemplateName>
     implements RegionPlaceableComponent
 {
+    private ContentId image;
+
     private final RootDataSet config;
 
     public ImageComponent( final Builder builder )
