@@ -1,0 +1,45 @@
+{
+    "error": null,
+    "result": {
+        "createdTime": "2013-08-23T12:55:09.162Z",
+        "creator": "user:system:admin",
+        "data": [
+            {
+                "Property": {
+                    "name": "myProperty",
+                    "type": "String",
+                    "value": "myValue"
+                }
+            }
+        ],
+        "deletable": true,
+        "displayName": "My Content",
+        "editable": true,
+        "form": null,
+        "hasChildren": false,
+        "iconUrl": "http://localhost/admin/rest/content/image/aaa",
+        "id": "aaa",
+        "isPage": true,
+        "isRoot": true,
+        "isSite": false,
+        "modifiedTime": "2013-08-23T12:55:09.162Z",
+        "modifier": "user:system:admin",
+        "name": "my_a_content",
+        "owner": "user:myStore:me",
+        "page": {
+            "config": [
+                {
+                    "Property": {
+                        "name": "background-color",
+                        "type": "String",
+                        "value": "blue"
+                    }
+                }
+            ],
+            "template": "mysitetemplate-1.0.0|mymodule-1.0.0|mypagetemplate"
+        },
+        "path": "/my_a_content",
+        "site": null,
+        "type": "my_type"
+    }
+}

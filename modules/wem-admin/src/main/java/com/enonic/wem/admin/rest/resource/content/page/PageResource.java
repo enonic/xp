@@ -6,6 +6,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.admin.rest.resource.Result;
 
 @Path("content/page")
 @Produces(MediaType.APPLICATION_JSON)
@@ -14,7 +15,7 @@ public class PageResource
 {
     @POST
     @Path("create")
-    public CreatePageResult create( final CreatePageJson params )
+    public Result create( final CreatePageJson params )
     {
         client.execute( params.getCreatePage() );
 

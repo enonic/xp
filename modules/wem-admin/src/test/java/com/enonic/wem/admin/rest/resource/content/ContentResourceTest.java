@@ -41,6 +41,8 @@ import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
@@ -226,6 +228,29 @@ public class ContentResourceTest
         String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
 
         assertJson( "get_content_with_site.json", jsonString );
+    }
+
+    @Test
+    public void get_page_content_by_id()
+        throws Exception
+    {
+        final RootDataSet pageConfig = new RootDataSet();
+        pageConfig.setProperty( "background-color", new Value.String( "blue" ) );
+        Page page = Page.newPage().
+            template( PageTemplateKey.from( "mysitetemplate-1.0.0|mymodule-1.0.0|mypagetemplate" ) ).
+            config( pageConfig ).build();
+
+        Content content = createContent( "aaa", "my_a_content", "my_type" );
+        content = Content.newContent( content ).page( page ).build();
+
+        ContentData contentData = content.getContentData();
+        contentData.setProperty( "myProperty", new Value.String( "myValue" ) );
+
+        Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
+
+        String jsonString = resource().path( "content" ).queryParam( "id", "aaa" ).get( String.class );
+
+        assertJson( "get_content_with_page.json", jsonString );
     }
 
     @Test
