@@ -58,6 +58,22 @@ public final class SiteTemplates
         return new SiteTemplates( ImmutableList.copyOf( siteTemplates ) );
     }
 
+    public static class Builder
+    {
+        private ImmutableList.Builder<SiteTemplate> builder = ImmutableList.builder();
+
+        public Builder add( SiteTemplate siteTemplate )
+        {
+            builder.add( siteTemplate );
+            return this;
+        }
+
+        public SiteTemplates build()
+        {
+            return new SiteTemplates( builder.build() );
+        }
+    }
+
     private final static class ToNameFunction
         implements Function<SiteTemplate, SiteTemplateName>
     {

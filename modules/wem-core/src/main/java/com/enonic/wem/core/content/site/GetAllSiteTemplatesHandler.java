@@ -3,8 +3,6 @@ package com.enonic.wem.core.content.site;
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -36,14 +34,14 @@ public class GetAllSiteTemplatesHandler
             }
         } );
 
-        List<SiteTemplate> templates = new ArrayList<>();
+        SiteTemplates.Builder templatesBuilder = new SiteTemplates.Builder();
         for ( File templateDir : allTemplateDirs )
         {
             final SiteTemplate siteTemplate = siteTemplateExporter.importFromDirectory( templateDir.toPath() );
-            templates.add( siteTemplate );
+            templatesBuilder.add( siteTemplate );
         }
 
-        command.setResult( SiteTemplates.from( templates ) );
+        command.setResult( templatesBuilder.build() );
     }
 
     @Inject
