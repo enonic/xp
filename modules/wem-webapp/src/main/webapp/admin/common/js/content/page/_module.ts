@@ -2,7 +2,6 @@
 ///<reference path='ComponentDescriptor.ts' />
 ///<reference path='TemplateName.ts' />
 ///<reference path='Template.ts' />
-///<reference path='BasePageComponentJson.ts' />
 ///<reference path='BasePageComponent.ts' />
 
 ///<reference path='PageTemplateName.ts' />
