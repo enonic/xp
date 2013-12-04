@@ -17,7 +17,7 @@ public class GetImageTemplateByKeyHandler
     {
         final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( command.getKey().getSiteTemplateKey() );
         final SiteTemplate siteTemplate = context.getClient().execute( getSiteTemplateCommand );
-        final ImageTemplate imageTemplate = siteTemplate.getImageTemplates().getTemplate( command.getKey().getTemplateName() );
+        final ImageTemplate imageTemplate = siteTemplate.getImageTemplates().getTemplate( command.getKey() );
         command.setResult( imageTemplate );
     }
 }

@@ -8,9 +8,7 @@
                 "displayName": "Image template",
                 "editable": true,
                 "key": "sitetemplate-1.0.0|mainmodule-1.0.0|image",
-                "moduleKey": "mainmodule-1.0.0",
-                "name": "image",
-                "siteTemplateKey": "sitetemplate-1.0.0"
+                "name": "image"
             },
             {
                 "deletable": true,
@@ -18,9 +16,7 @@
                 "displayName": "Responsive Image template",
                 "editable": true,
                 "key": "sitetemplate-1.0.0|module2-1.0.0|imageresponsive",
-                "moduleKey": "module2-1.0.0",
-                "name": "imageresponsive",
-                "siteTemplateKey": "sitetemplate-1.0.0"
+                "name": "imageresponsive"
             }
         ],
         "total": 2
