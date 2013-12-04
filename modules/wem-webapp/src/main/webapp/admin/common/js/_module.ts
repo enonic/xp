@@ -76,11 +76,12 @@
 ///<reference path='content/site/template/json/_module.ts' />
 ///<reference path='content/json/_module.ts' />
 ///<reference path='content/_module.ts' />
+///<reference path='content/page/_module.ts' />
 ///<reference path='content/page/image/_module.ts' />
 ///<reference path='content/page/layout/_module.ts' />
 ///<reference path='content/page/part/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
-///<reference path='content/page/_module.ts' />
+
 
 ///<reference path='schema/_module.ts' />
 

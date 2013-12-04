@@ -12,7 +12,6 @@ module app_browse {
             this.addAction(actions.DUPLICATE_CONTENT);
             this.addAction(actions.MOVE_CONTENT);
             this.addGreedySpacer();
-            this.addAction(actions.BROWSE_CONTENT_SETTINGS);
 
             var previewDetailsToggler = new api_ui.ToggleSlide({
                 turnOnAction: actions.SHOW_PREVIEW,
