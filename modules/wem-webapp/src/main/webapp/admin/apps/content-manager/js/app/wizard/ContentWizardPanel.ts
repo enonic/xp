@@ -21,7 +21,6 @@ module app_wizard {
         private displayNameScriptExecutor:DisplayNameScriptExecutor;
 
         constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content) {
-            console.log("CONTENTTYPE", contentType);
 
             this.parentContent = parentContent;
             this.contentType = contentType;
