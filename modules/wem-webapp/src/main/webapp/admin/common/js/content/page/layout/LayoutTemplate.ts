@@ -1,15 +1,15 @@
-module api_content_page{
+module api_content_page_layout {
 
-    export class LayoutTemplate extends Template<LayoutTemplateName> {
+    export class LayoutTemplate extends api_content_page.Template<LayoutTemplateName> {
 
         constructor(builder:LayoutTemplateBuilder) {
             super(builder);
         }
     }
 
-    export class LayoutTemplateBuilder extends TemplateBuilder<LayoutTemplateName> {
+    export class LayoutTemplateBuilder extends api_content_page.TemplateBuilder<LayoutTemplateName> {
 
-        public build():Template<LayoutTemplateName> {
+        public build():api_content_page.Template<LayoutTemplateName> {
             return new LayoutTemplate(this);
         }
     }
