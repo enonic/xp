@@ -15,9 +15,7 @@ import com.enonic.wem.api.support.serializer.AbstractJsonSerializer;
 import com.enonic.wem.api.support.serializer.JsonSerializerUtil;
 
 import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_NAME;
-import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_PATH;
-import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_TYPE;
-import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_VALUE;
+import static com.enonic.wem.api.data.serializer.DataJsonSerializer.DATA_SET;
 
 public class DataSetJsonSerializer
     extends AbstractJsonSerializer<DataSet>
@@ -41,12 +39,9 @@ public class DataSetJsonSerializer
         final ObjectNode dataSetObj = objectMapper().createObjectNode();
 
         final String name = dataSet.getName();
-        final String path = dataSet.getPath().toString();
 
         dataSetObj.put( DATA_NAME, name );
-        dataSetObj.put( DATA_PATH, path );
-        dataSetObj.put( DATA_TYPE, DataSet.class.getSimpleName() );
-        dataSetObj.put( DATA_VALUE, serializeEntries( dataSet ) );
+        dataSetObj.put( DATA_SET, serializeEntries( dataSet ) );
         return dataSetObj;
     }
 
@@ -74,7 +69,7 @@ public class DataSetJsonSerializer
     {
         final String name = JsonSerializerUtil.getStringValue( DATA_NAME, dataSetNode );
         final DataSet dataSet = DataSet.newDataSet().name( name ).build();
-        final ArrayNode entriesArray = (ArrayNode) dataSetNode.get( DATA_VALUE );
+        final ArrayNode entriesArray = (ArrayNode) dataSetNode.get( DATA_SET );
         parseEntries( entriesArray, dataSet );
         return dataSet;
     }

@@ -15,6 +15,8 @@ public final class DataJsonSerializer
 
     static final String DATA_VALUE = "value";
 
+    static final String DATA_SET = "set";
+
     static final String DATA_TYPE = "type";
 
     static final String DATA_PATH = "path";
@@ -27,20 +29,20 @@ public final class DataJsonSerializer
     {
         super( objectMapper );
         this.dataSetSerializer = dataSetSerializer;
-        this.propertySerializer = new PropertyJsonSerializer( objectMapper );
+        this.propertySerializer = new PropertyJsonSerializer( this, objectMapper );
     }
 
     public DataJsonSerializer( final ObjectMapper objectMapper )
     {
         super( objectMapper );
         this.dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
-        this.propertySerializer = new PropertyJsonSerializer( objectMapper );
+        this.propertySerializer = new PropertyJsonSerializer( this, objectMapper );
     }
 
     public DataJsonSerializer()
     {
         dataSetSerializer = new DataSetJsonSerializer( objectMapper() );
-        propertySerializer = new PropertyJsonSerializer( objectMapper() );
+        propertySerializer = new PropertyJsonSerializer( this, objectMapper() );
     }
 
     public final JsonNode serialize( final Data data )
@@ -63,7 +65,7 @@ public final class DataJsonSerializer
 
     protected final Data parse( final JsonNode entryNode )
     {
-        if ( entryNode.get( DATA_VALUE ).isArray() )
+        if ( entryNode.has( DATA_SET ) )
         {
             return dataSetSerializer.parse( entryNode );
         }

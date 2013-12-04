@@ -13,18 +13,14 @@
     "data": [
         {
             "name": "mySet",
-            "path": "mySet[0]",
-            "type": "DataSet",
-            "value": [
+            "set": [
                 {
                     "name": "myArray",
-                    "path": "mySet[0].myArray[0]",
                     "type": "String",
                     "value": "1"
                 },
                 {
                     "name": "myArray",
-                    "path": "mySet[0].myArray[1]",
                     "type": "String",
                     "value": "2"
                 }
@@ -32,18 +28,14 @@
         },
         {
             "name": "mySet",
-            "path": "mySet[1]",
-            "type": "DataSet",
-            "value": [
+            "set": [
                 {
                     "name": "myArray",
-                    "path": "mySet[1].myArray[0]",
                     "type": "String",
                     "value": "3"
                 },
                 {
                     "name": "myArray",
-                    "path": "mySet[1].myArray[1]",
                     "type": "String",
                     "value": "4"
                 }

@@ -13,7 +13,6 @@
     "data": [
         {
             "name": "myInput",
-            "path": "myInput",
             "type": "String",
             "value": "A value"
         }

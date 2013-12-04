@@ -13,18 +13,14 @@
     "data": [
         {
             "name": "mySet",
-            "path": "mySet",
-            "type": "DataSet",
-            "value": [
+            "set": [
                 {
                     "name": "myInput",
-                    "path": "mySet.myInput",
                     "type": "String",
                     "value": "1"
                 },
                 {
                     "name": "myOtherInput",
-                    "path": "mySet.myOtherInput",
                     "type": "String",
                     "value": "2"
                 }

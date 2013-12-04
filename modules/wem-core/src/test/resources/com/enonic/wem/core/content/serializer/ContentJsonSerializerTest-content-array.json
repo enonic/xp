@@ -13,13 +13,11 @@
     "data": [
         {
             "name": "myArray",
-            "path": "myArray[0]",
             "type": "String",
             "value": "1"
         },
         {
             "name": "myArray",
-            "path": "myArray[1]",
             "type": "String",
             "value": "2"
         }

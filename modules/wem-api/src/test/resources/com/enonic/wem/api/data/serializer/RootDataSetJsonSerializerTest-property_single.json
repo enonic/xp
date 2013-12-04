@@ -1,7 +1,6 @@
 [
     {
         "name": "myProp",
-        "path": "myProp",
         "type": "String",
         "value": "a"
     }

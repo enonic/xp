@@ -1,12 +1,9 @@
 [
     {
         "name": "mySet",
-        "path": "mySet",
-        "type": "DataSet",
-        "value": [
+        "set": [
             {
                 "name": "myProp",
-                "path": "mySet.myProp",
                 "type": "String",
                 "value": "a"
             }
