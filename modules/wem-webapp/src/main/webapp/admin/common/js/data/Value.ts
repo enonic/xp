@@ -6,8 +6,7 @@ module api_data{
 
         private type:ValueType;
 
-        constructor( value:Object, type:ValueType )
-        {
+        constructor( value:Object, type:ValueType ) {
             api_util.assertNotNull( value, "value of a Value cannot be null" );
             api_util.assertNotNull( type, "type of a Value cannot be null" );
             this.value = value;
@@ -18,13 +17,11 @@ module api_data{
             return <string>this.value;
         }
 
-        isRootDataSet():boolean
-        {
+        isRootDataSet():boolean {
             return ValueTypes.DATA.toString() == this.type.toString();
         }
 
-        asRootDataSet():RootDataSet
-        {
+        asRootDataSet():RootDataSet {
             return <RootDataSet>this.value;
         }
 
@@ -32,13 +29,12 @@ module api_data{
             return this.type;
         }
 
-        setValue( value:Object )
-        {
+        setValue( value:Object ) {
             this.value = value;
         }
 
         equals(value:Value):boolean {
-            return this.value == value.value && this.type.toString().equals( value.getType().toString() );
+            return this.value == value.value && this.type.toString() == value.getType().toString();
         }
     }
 }

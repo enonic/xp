@@ -21,8 +21,7 @@ module api_data{
             ValueTypes.CONTENT_ID, ValueTypes.REGION
         ];
 
-        public static fromName( name:string ):ValueType
-        {
+        public static fromName( name:string ):ValueType {
             var match = null;
             ValueTypes.ALL.forEach( (valueType:ValueType) => {
                 if( valueType.toString() == name ) {
