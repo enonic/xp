@@ -1,6 +1,6 @@
 module api_module {
 
-    export class GetModuleRequest extends ModuleResourceRequest<any> {
+    export class GetModuleRequest extends ModuleResourceRequest<api_module_json.ModuleJson> {
 
         private key:string;
 

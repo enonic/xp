@@ -1,6 +1,6 @@
 module api_module {
 
-    export class DeleteModuleRequest extends ModuleResourceRequest<any> {
+    export class DeleteModuleRequest extends ModuleResourceRequest<api_module_json.ModuleJson> {
 
         private key:string;
 

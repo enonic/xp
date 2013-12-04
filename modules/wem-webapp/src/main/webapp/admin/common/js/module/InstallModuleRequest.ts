@@ -1,6 +1,6 @@
 module api_module {
 
-    export class InstallModuleRequest extends ModuleResourceRequest<any> {
+    export class InstallModuleRequest extends ModuleResourceRequest<api_module_json.ModuleSummaryJson> {
 
         private uploader:any;
         private triggerElement:api_dom.Element;
