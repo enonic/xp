@@ -29,7 +29,7 @@ public class GetModuleHandler
         final File moduleDir = new File( modulesDir, moduleKey.toString() );
         if ( moduleDir.exists() )
         {
-            final Module module = moduleExporter.importFromDirectory( moduleDir.toPath() );
+            final Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
             command.setResult( module );
             return;
         }

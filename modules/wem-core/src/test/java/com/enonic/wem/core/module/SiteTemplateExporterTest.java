@@ -75,7 +75,7 @@ public class SiteTemplateExporterTest
         assertNotNull( exportedSiteTemplateZip );
         assertTrue( Files.exists( exportedSiteTemplateZip ) && Files.isRegularFile( exportedSiteTemplateZip ) );
 
-        checkTemplate( new SiteTemplateExporter().importFromZip( exportedSiteTemplateZip ) );
+        checkTemplate( new SiteTemplateExporter().importFromZip( exportedSiteTemplateZip ).build() );
     }
 
     @Test
@@ -90,7 +90,7 @@ public class SiteTemplateExporterTest
         assertNotNull( exportedSiteTemplateDir );
         assertTrue( Files.exists( exportedSiteTemplateDir ) && Files.isDirectory( exportedSiteTemplateDir ) );
 
-        checkTemplate( new SiteTemplateExporter().importFromDirectory( exportedSiteTemplateDir ) );
+        checkTemplate( new SiteTemplateExporter().importFromDirectory( exportedSiteTemplateDir ).build() );
     }
 
     private void checkTemplate( final SiteTemplate siteTemplate1 )

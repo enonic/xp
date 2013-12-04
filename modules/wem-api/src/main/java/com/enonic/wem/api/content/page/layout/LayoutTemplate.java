@@ -28,7 +28,7 @@ public class LayoutTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, LayoutTemplateName, LayoutTemplateKey>
+        extends BaseTemplateBuilder<Builder, LayoutTemplate, LayoutTemplateName, LayoutTemplateKey>
     {
         private Builder()
         {

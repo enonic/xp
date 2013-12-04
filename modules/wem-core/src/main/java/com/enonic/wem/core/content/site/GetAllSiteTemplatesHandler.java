@@ -37,7 +37,7 @@ public class GetAllSiteTemplatesHandler
         SiteTemplates.Builder templatesBuilder = new SiteTemplates.Builder();
         for ( File templateDir : allTemplateDirs )
         {
-            final SiteTemplate siteTemplate = siteTemplateExporter.importFromDirectory( templateDir.toPath() );
+            final SiteTemplate siteTemplate = siteTemplateExporter.importFromDirectory( templateDir.toPath() ).build();
             templatesBuilder.add( siteTemplate );
         }
 

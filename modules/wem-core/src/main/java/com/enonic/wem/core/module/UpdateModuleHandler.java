@@ -30,7 +30,7 @@ public class UpdateModuleHandler
             throw new ModuleNotFoundException( command.getModuleKey() );
         }
 
-        Module module = moduleExporter.importFromDirectory( moduleDir.toPath() );
+        Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
         Module editedModule = command.getEditor().edit( module );
         boolean edited = editedModule != null && !editedModule.equals( module );
         if ( edited )

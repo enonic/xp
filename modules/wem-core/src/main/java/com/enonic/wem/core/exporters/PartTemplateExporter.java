@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.xml.XmlSerializers;
 import com.enonic.wem.xml.template.PartTemplateXml;
 
-@XMLFilename("PartTemplate.xml")
+@XMLFilename("part-template.xml")
 public final class PartTemplateExporter
-    extends AbstractEntityExporter<PartTemplate>
+    extends AbstractEntityExporter<PartTemplate, PartTemplate.Builder>
 {
     @Override
     protected String toXMLString( final PartTemplate partTemplate )
@@ -20,11 +20,11 @@ public final class PartTemplateExporter
     }
 
     @Override
-    protected PartTemplate fromXMLString( final String xml, final Path directoryPath )
+    protected PartTemplate.Builder fromXMLString( final String xml, final Path directoryPath )
         throws IOException
     {
         final PartTemplate.Builder builder = PartTemplate.newPartTemplate();
         XmlSerializers.partTemplate().parse( xml ).to( builder );
-        return builder.build();
+        return builder;
     }
 }

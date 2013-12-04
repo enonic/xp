@@ -54,16 +54,16 @@ public class GetModuleHandlerTest
         File fooModuleDir = new File( modulesDir, "foomodule-1.0.0" );
         fooModuleDir.mkdir();
 
-        Module fooModule = createModule();
+        Module.Builder fooModule = createModule();
 
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Mockito.when( moduleExporter.importFromDirectory( fooModuleDir.toPath() ) ).thenReturn( fooModule );
 
-        GetModule getModuleCommand = Commands.module().get().module( fooModule.getModuleKey() );
+        GetModule getModuleCommand = Commands.module().get().module( fooModule.build().getModuleKey() );
         handler.setCommand( getModuleCommand );
         handler.handle();
 
-        assertEquals( fooModule, getModuleCommand.getResult() );
+        assertEquals( fooModule.build().toString(), getModuleCommand.getResult().toString() );
 
     }
 
@@ -77,7 +77,7 @@ public class GetModuleHandlerTest
         File fooModuleDir = new File( modulesDir, "module-1.2.3" );
         fooModuleDir.mkdir();
 
-        Module fooModule = createModule();
+        Module fooModule = createModule().build();
 
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 
@@ -86,7 +86,7 @@ public class GetModuleHandlerTest
         handler.handle();
     }
 
-    private Module createModule()
+    private Module.Builder createModule()
     {
         return Module.newModule().
             moduleKey( ModuleKey.from( "foomodule-1.0.0" ) ).
@@ -96,7 +96,6 @@ public class GetModuleHandlerTest
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" ).
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
-            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
-            build();
+            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) );
     }
 }

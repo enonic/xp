@@ -17,7 +17,8 @@ import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class GetModulesHandler
-        extends CommandHandler<GetModules> {
+    extends CommandHandler<GetModules>
+{
 
     private SystemConfig systemConfig;
 
@@ -25,51 +26,64 @@ public class GetModulesHandler
 
     @Override
     public void handle()
-            throws Exception {
+        throws Exception
+    {
         final ModuleKeys moduleKeys = command.getModules();
 
         List<Module> modules;
 
-        if (moduleKeys != null) {
-            modules = getModulesByKeys(moduleKeys);
-        } else {
+        if ( moduleKeys != null )
+        {
+            modules = getModulesByKeys( moduleKeys );
+        }
+        else
+        {
             modules = getAllModules();
         }
 
-
-        command.setResult(Modules.from(modules));
+        command.setResult( Modules.from( modules ) );
     }
 
-    private List<Module> getModulesByKeys(ModuleKeys moduleKeys) throws IOException {
+    private List<Module> getModulesByKeys( ModuleKeys moduleKeys )
+        throws IOException
+    {
         List<Module> modules = new ArrayList<>();
-        for (ModuleKey moduleKey : moduleKeys) {
-            final File moduleDir = new File(systemConfig.getModulesDir(), moduleKey.toString());
-            if (moduleDir.exists() && moduleDir.isDirectory()) {
-                Module module = moduleExporter.importFromDirectory(moduleDir.toPath());
-                modules.add(module);
+        for ( ModuleKey moduleKey : moduleKeys )
+        {
+            final File moduleDir = new File( systemConfig.getModulesDir(), moduleKey.toString() );
+            if ( moduleDir.exists() && moduleDir.isDirectory() )
+            {
+                Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
+                modules.add( module );
             }
         }
         return modules;
     }
 
-    private List<Module> getAllModules() throws IOException {
+    private List<Module> getAllModules()
+        throws IOException
+    {
         List<Module> modules = new ArrayList<>();
-        for (File moduleDir: systemConfig.getModulesDir().listFiles()) {
-            if (moduleDir.isDirectory()) {
-                Module module = moduleExporter.importFromDirectory(moduleDir.toPath());
-                modules.add(module);
+        for ( File moduleDir : systemConfig.getModulesDir().listFiles() )
+        {
+            if ( moduleDir.isDirectory() )
+            {
+                Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
+                modules.add( module );
             }
         }
         return modules;
     }
 
     @Inject
-    public void setSystemConfig(final SystemConfig systemConfig) {
+    public void setSystemConfig( final SystemConfig systemConfig )
+    {
         this.systemConfig = systemConfig;
     }
 
     @Inject
-    public void setModuleExporter(final ModuleExporter moduleExporter) {
+    public void setModuleExporter( final ModuleExporter moduleExporter )
+    {
         this.moduleExporter = moduleExporter;
     }
 }

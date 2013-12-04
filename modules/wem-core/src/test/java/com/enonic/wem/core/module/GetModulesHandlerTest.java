@@ -85,8 +85,8 @@ public class GetModulesHandlerTest
         aModuleDir.mkdir();
         bModuleDir.mkdir();
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
-        Module aModule = createModule( "amodule-1.0.0" );
-        Module bModule = createModule( "bmodule-1.0.0" );
+        Module.Builder aModule = createModule( "amodule-1.0.0" );
+        Module.Builder bModule = createModule( "bmodule-1.0.0" );
         Mockito.when( moduleExporter.importFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
         Mockito.when( moduleExporter.importFromDirectory( bModuleDir.toPath() ) ).thenReturn( bModule );
 
@@ -94,7 +94,7 @@ public class GetModulesHandlerTest
         handler.setCommand( command );
         handler.handle();
 
-        assertEquals( Modules.from( aModule, bModule ), command.getResult() );
+        assertEquals( Modules.from( aModule.build(), bModule.build() ).toString(), command.getResult().toString() );
     }
 
     @Test
@@ -108,8 +108,8 @@ public class GetModulesHandlerTest
         aModuleDir.mkdir();
         bModuleDir.mkdir();
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
-        Module aModule = createModule( "amodule-1.0.0" );
-        Module bModule = createModule( "bmodule-1.0.0" );
+        Module.Builder aModule = createModule( "amodule-1.0.0" );
+        Module.Builder bModule = createModule( "bmodule-1.0.0" );
         Mockito.when( moduleExporter.importFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
         Mockito.when( moduleExporter.importFromDirectory( bModuleDir.toPath() ) ).thenReturn( bModule );
 
@@ -118,13 +118,12 @@ public class GetModulesHandlerTest
         handler.setCommand( command );
         handler.handle();
 
-        assertEquals( Modules.from( aModule, bModule ), command.getResult() );
+        assertEquals( Modules.from( aModule.build(), bModule.build() ).toString(), command.getResult().toString() );
     }
 
-    private Module createModule( String moduleKey )
+    private Module.Builder createModule( String moduleKey )
     {
-
-        final Module module = Module.newModule().
+        return Module.newModule().
             moduleKey( ModuleKey.from( moduleKey ) ).
             displayName( "module display name" ).
             info( "module-info" ).
@@ -132,8 +131,6 @@ public class GetModulesHandlerTest
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" ).
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
-            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
-            build();
-        return module;
+            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) );
     }
 }

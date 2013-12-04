@@ -28,7 +28,7 @@ public final class ImageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, ImageTemplateName, ImageTemplateKey>
+        extends BaseTemplateBuilder<Builder, ImageTemplate, ImageTemplateName, ImageTemplateKey>
     {
         private Builder()
         {

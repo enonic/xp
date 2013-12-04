@@ -81,49 +81,56 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
         protected RootDataSet config;
     }
 
-    public abstract static class BaseTemplateBuilder<T extends BaseTemplateBuilder, NAME extends TemplateName, KEY extends TemplateKey<NAME>>
-        extends TemplateProperties<T, NAME, KEY>
+    public abstract static class BaseTemplateBuilder<B extends BaseTemplateBuilder, T extends Template, NAME extends TemplateName, KEY extends TemplateKey<NAME>>
+        extends TemplateProperties<B, NAME, KEY>
     {
-        public T key( final KEY key )
+        public B key( final KEY key )
         {
             this.key = key;
             return typecastToTemplateBuilder( this );
         }
 
-        public T name( final NAME name )
+        public B name( final NAME name )
         {
             this.name = name;
             return typecastToTemplateBuilder( this );
         }
 
-        public T parentPath( final ResourcePath parentPath )
+        public NAME getName()
+        {
+            return this.name;
+        }
+
+        public B parentPath( final ResourcePath parentPath )
         {
             this.parentPath = parentPath;
             return typecastToTemplateBuilder( this );
         }
 
-        public T displayName( final String displayName )
+        public B displayName( final String displayName )
         {
             this.displayName = displayName;
             return typecastToTemplateBuilder( this );
         }
 
-        public T descriptor( final ModuleResourceKey descriptor )
+        public B descriptor( final ModuleResourceKey descriptor )
         {
             this.descriptor = descriptor;
             return typecastToTemplateBuilder( this );
         }
 
-        public T config( final RootDataSet config )
+        public B config( final RootDataSet config )
         {
             this.config = config;
             return typecastToTemplateBuilder( this );
         }
 
+        public abstract T build();
+
         @SuppressWarnings("unchecked")
-        private T typecastToTemplateBuilder( final BaseTemplateBuilder object )
+        private B typecastToTemplateBuilder( final BaseTemplateBuilder object )
         {
-            return (T) object;
+            return (B) object;
         }
     }
 }

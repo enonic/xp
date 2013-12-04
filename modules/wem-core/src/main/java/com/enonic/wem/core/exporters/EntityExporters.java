@@ -14,17 +14,17 @@ public class EntityExporters
 {
     private final static Map<Class, AbstractEntityExporter> classToExporterMap = new HashMap<>();
 
-    public static <T> AbstractEntityExporter<T> getForObject( T object )
+    public static <I, O> AbstractEntityExporter<I, O> getForObject( I object )
     {
         return getForClass( object.getClass() );
     }
 
-    public static <T> AbstractEntityExporter<T> getForClass( Class clazz )
+    public static <I, O> AbstractEntityExporter<I, O> getForClass( Class clazz )
     {
         return classToExporterMap.get( clazz );
     }
 
-    protected static <T> AbstractEntityExporter<T> getByFilename( final String filename )
+    protected static <I, O> AbstractEntityExporter<I, O> getByFilename( final String filename )
     {
         for ( final AbstractEntityExporter entityExporter : classToExporterMap.values() )
         {

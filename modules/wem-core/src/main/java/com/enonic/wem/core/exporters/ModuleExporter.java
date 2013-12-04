@@ -13,17 +13,17 @@ import com.enonic.wem.core.module.ModuleXmlSerializer;
 
 @XMLFilename("module.xml")
 public class ModuleExporter
-    extends AbstractEntityExporter<Module>
+    extends AbstractEntityExporter<Module, Module.Builder>
 {
     public static final String MODULE_XML = ModuleExporter.class.getAnnotation( XMLFilename.class ).value();
 
     private final ModuleXmlSerializer xmlSerializer = new ModuleXmlSerializer();
 
     @Override
-    public void exportObject( final Module object, final Path rootPath )
+    public void exportObject( final Module object, final Path rootPath, final String objectName )
         throws IOException
     {
-        super.exportObject( object, rootPath );
+        super.exportObject( object, rootPath, "" );
 
         exportFiles( object.getModuleDirectoryEntry(), rootPath );
     }
@@ -35,7 +35,7 @@ public class ModuleExporter
     }
 
     @Override
-    protected Module fromXMLString( final String xml, final Path directoryPath )
+    protected Module.Builder fromXMLString( final String xml, final Path directoryPath )
         throws IOException
     {
         final ModuleKey moduleKey = ModuleKey.from( resolveId( directoryPath ) );
@@ -46,7 +46,7 @@ public class ModuleExporter
         final ModuleFileEntry.Builder rootEntry = moduleBuilder.getModuleDirectoryEntry();
         importFiles( rootEntry, directoryPath, true );
 
-        return moduleBuilder.build();
+        return moduleBuilder;
     }
 
     private void exportFiles( final Object parentEntry, final Path parentDirectory )

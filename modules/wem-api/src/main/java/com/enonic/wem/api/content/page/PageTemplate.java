@@ -37,7 +37,7 @@ public final class PageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, PageTemplateName, PageTemplateKey>
+        extends BaseTemplateBuilder<Builder, PageTemplate, PageTemplateName, PageTemplateKey>
     {
         private ContentTypeNames canRender;
 

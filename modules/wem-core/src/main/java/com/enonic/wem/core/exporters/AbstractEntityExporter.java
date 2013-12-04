@@ -21,17 +21,22 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.wem.api.Identity;
 import com.enonic.wem.api.exception.SystemException;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * export either to zip file or directory
  *
- * @param <T> - external entity type to export
+ * @param <I> - external entity type to export from
+ * @param <O> - external entity type to import to
  */
-public abstract class AbstractEntityExporter<T>
-    implements EntityExporter<T>
+public abstract class AbstractEntityExporter<I, O>
+    implements EntityExporter<I, O>
 {
     private final static Map<String, String> ZIP_FS_ENV = ImmutableMap.of( "create", "true" );
 
-    public Path exportToZip( final T object, final Path targetDirectory )
+    static final String NAME_SEPARATOR = ".";
+
+    public Path exportToZip( final I object, final Path targetDirectory )
         throws IOException
     {
         final Identity identity = Identity.class.cast( object );
@@ -56,13 +61,13 @@ public abstract class AbstractEntityExporter<T>
 
         try (final FileSystem zipFs = FileSystems.newFileSystem( zipUri, ZIP_FS_ENV ))
         {
-            exportObject( object, zipFs.getPath( "/" ) );
+            exportObject( object, zipFs.getPath( "/" ), "" );
         }
 
         return zipLocation;
     }
 
-    public Path exportToDirectory( final T object, final Path exportLocation )
+    public Path exportToDirectory( final I object, final Path exportLocation )
         throws IOException
     {
         if ( !Files.isDirectory( exportLocation ) )
@@ -76,7 +81,7 @@ public abstract class AbstractEntityExporter<T>
         final Path rootPath = exportLocation.resolve( directoryName );
         createPath( rootPath );
 
-        exportObject( object, rootPath );
+        exportObject( object, rootPath, "" );
 
         return rootPath;
     }
@@ -92,7 +97,7 @@ public abstract class AbstractEntityExporter<T>
         return rootPath;
     }
 
-    public T importFromZip( final Path zipFile )
+    public O importFromZip( final Path zipFile )
         throws IOException
     {
         if ( !Files.exists( zipFile ) )
@@ -113,7 +118,7 @@ public abstract class AbstractEntityExporter<T>
         }
     }
 
-    public T importFromDirectory( final Path directoryPath )
+    public O importFromDirectory( final Path directoryPath )
         throws IOException
     {
         if ( !Files.exists( directoryPath ) )
@@ -127,7 +132,7 @@ public abstract class AbstractEntityExporter<T>
             {
                 if ( !Files.isDirectory( file ) )
                 {
-                    final T object = importObject( directoryPath, file );
+                    final O object = importObject( directoryPath, file );
 
                     if ( object != null )
                     {
@@ -145,18 +150,19 @@ public abstract class AbstractEntityExporter<T>
         return getClass().getAnnotation( XMLFilename.class ).value();
     }
 
-    protected T importObject( final Path directoryPath, final Path file )
+    protected O importObject( final Path directoryPath, final Path file )
         throws IOException
     {
         final String xml = new String( Files.readAllBytes( file ), Charset.forName( "UTF-8" ) );
-        final AbstractEntityExporter<T> entityExporter = EntityExporters.<T>getByFilename( file.getFileName().toString() );
-        return entityExporter != null ? entityExporter.fromXMLString( xml, directoryPath ) : null;
+        return fromXMLString( xml, directoryPath );
     }
 
-    protected void exportObject( final T object, final Path rootPath )
+    protected void exportObject( final I object, final Path rootPath, final String objectName )
         throws IOException
     {
-        final Path xmlFile = rootPath.resolve( getXmlFileName() );
+        final String fileNameSuffix = getXmlFileName();
+        final String xmlFileName = isNullOrEmpty( objectName ) ? fileNameSuffix : objectName + NAME_SEPARATOR + fileNameSuffix;
+        final Path xmlFile = rootPath.resolve( xmlFileName );
         final String xml = toXMLString( object );
         Files.write( xmlFile, xml.getBytes( Charset.forName( "UTF-8" ) ) );
     }
@@ -185,8 +191,8 @@ public abstract class AbstractEntityExporter<T>
         return externalFilename.replaceAll( ".*[\\\\/]", "" ).replaceAll( "\\.zip$", "" );
     }
 
-    protected abstract String toXMLString( final T object );
+    protected abstract String toXMLString( final I object );
 
-    protected abstract T fromXMLString( final String xml, final Path directoryPath )
+    protected abstract O fromXMLString( final String xml, final Path directoryPath )
         throws IOException;
 }

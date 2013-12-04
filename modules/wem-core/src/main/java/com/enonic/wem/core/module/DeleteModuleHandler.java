@@ -31,7 +31,7 @@ public class DeleteModuleHandler
             throw new ModuleNotFoundException( command.getModule() );
         }
 
-        final Module module = moduleExporter.importFromDirectory( moduleDir.toPath() );
+        final Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
         FileUtils.deleteDirectory( moduleDir );
 
         command.setResult( module );

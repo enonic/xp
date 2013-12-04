@@ -114,7 +114,7 @@ public class UpdateModuleHandlerTest
         assertTrue( edited );
         assertTrue( "Module directory not found: " + moduleDir, Files.isDirectory( moduleDir ) );
 
-        Module updatedModule = new ModuleExporter().importFromDirectory( moduleDir );
+        Module updatedModule = new ModuleExporter().importFromDirectory( moduleDir ).build();
 
         assertEquals( "Display name should have been edited", module.getDisplayName() + " (edited)", updatedModule.getDisplayName() );
         assertEquals( module.getInfo(), updatedModule.getInfo() );
@@ -168,7 +168,7 @@ public class UpdateModuleHandlerTest
         assertFalse( edited );
         assertTrue( "Module directory not found: " + moduleDir, Files.isDirectory( moduleDir ) );
 
-        Module updatedModule = new ModuleExporter().importFromDirectory( moduleDir );
+        Module updatedModule = new ModuleExporter().importFromDirectory( moduleDir ).build();
 
         assertEquals( module.getDisplayName(), updatedModule.getDisplayName() );
         assertEquals( module.getInfo(), updatedModule.getInfo() );

@@ -121,7 +121,7 @@ public class ModuleResourceTest
 
         final ModuleExporter moduleExporter = new ModuleExporter();
         final Path zipFilePath = Files.write( tempDir.resolve( "testmodule-1.0.0.zip" ), response );
-        final Module exportedModule = moduleExporter.importFromZip( zipFilePath );
+        final Module exportedModule = moduleExporter.importFromZip( zipFilePath ).build();
 
         assertEquals( "module display name", exportedModule.getDisplayName() );
         assertEquals( "testmodule-1.0.0", exportedModule.getModuleKey().toString() );

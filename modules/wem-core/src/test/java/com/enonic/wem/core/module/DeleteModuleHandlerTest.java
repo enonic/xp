@@ -55,7 +55,7 @@ public class DeleteModuleHandlerTest
 
         assertTrue( moduleDir.exists() );
 
-        Module fooModule = createModule();
+        Module.Builder fooModule = createModule();
 
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Mockito.when( moduleExporter.importFromDirectory( moduleDir.toPath() ) ).thenReturn( fooModule );
@@ -85,10 +85,10 @@ public class DeleteModuleHandlerTest
         handler.handle();
     }
 
-    private Module createModule()
+    private Module.Builder createModule()
     {
 
-        final Module module = Module.newModule().
+        final Module.Builder module = Module.newModule().
             moduleKey( ModuleKey.from( "foomodule-1.0.0" ) ).
             displayName( "module display name" ).
             info( "module-info" ).
@@ -96,8 +96,7 @@ public class DeleteModuleHandlerTest
             vendorName( "Enonic" ).
             vendorUrl( "https://www.enonic.com" ).
             minSystemVersion( ModuleVersion.from( 5, 0, 0 ) ).
-            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
-            build();
+            maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) );
         return module;
     }
 }

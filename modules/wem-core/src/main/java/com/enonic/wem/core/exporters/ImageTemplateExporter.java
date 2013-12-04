@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.xml.XmlSerializers;
 import com.enonic.wem.xml.template.ImageTemplateXml;
 
-@XMLFilename("ImageTemplate.xml")
+@XMLFilename("image-template.xml")
 public final class ImageTemplateExporter
-    extends AbstractEntityExporter<ImageTemplate>
+    extends AbstractEntityExporter<ImageTemplate, ImageTemplate.Builder>
 {
     @Override
     protected String toXMLString( final ImageTemplate imageTemplate )
@@ -20,12 +20,12 @@ public final class ImageTemplateExporter
     }
 
     @Override
-    protected ImageTemplate fromXMLString( final String xml, final Path directoryPath )
+    protected ImageTemplate.Builder fromXMLString( final String xml, final Path directoryPath )
         throws IOException
     {
         final ImageTemplate.Builder builder = ImageTemplate.newImageTemplate();
         XmlSerializers.imageTemplate().parse( xml ).to( builder );
-        return builder.build();
+        return builder;
     }
 }
 

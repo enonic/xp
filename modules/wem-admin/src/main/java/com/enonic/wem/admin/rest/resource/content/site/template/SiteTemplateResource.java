@@ -106,7 +106,7 @@ public final class SiteTemplateResource
                 final SiteTemplateExporter siteTemplateImporter = new SiteTemplateExporter();
                 final SiteTemplate importedSiteTemplate;
 
-                importedSiteTemplate = siteTemplateImporter.importFromZip( tempZipFile );
+                importedSiteTemplate = siteTemplateImporter.importFromZip( tempZipFile ).build();
 
                 final CreateSiteTemplate createSiteTemplateCommand = CreateSiteTemplate.fromSiteTemplate( importedSiteTemplate );
                 final SiteTemplate createdSiteTemplate = client.execute( createSiteTemplateCommand );

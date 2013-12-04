@@ -7,9 +7,9 @@ import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.xml.XmlSerializers;
 import com.enonic.wem.xml.template.LayoutTemplateXml;
 
-@XMLFilename("LayoutTemplate.xml")
+@XMLFilename("layout-template.xml")
 public final class LayoutTemplateExporter
-    extends AbstractEntityExporter<LayoutTemplate>
+    extends AbstractEntityExporter<LayoutTemplate, LayoutTemplate.Builder>
 {
     @Override
     protected String toXMLString( final LayoutTemplate layoutTemplate )
@@ -20,11 +20,11 @@ public final class LayoutTemplateExporter
     }
 
     @Override
-    protected LayoutTemplate fromXMLString( final String xml, final Path directoryPath )
+    protected LayoutTemplate.Builder fromXMLString( final String xml, final Path directoryPath )
         throws IOException
     {
         final LayoutTemplate.Builder builder = LayoutTemplate.newLayoutTemplate();
         XmlSerializers.layoutTemplate().parse( xml ).to( builder );
-        return builder.build();
+        return builder;
     }
 }

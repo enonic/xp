@@ -3,17 +3,17 @@ package com.enonic.wem.core.exporters;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public interface EntityExporter<T>
+public interface EntityExporter<I, O>
 {
-    Path exportToZip( final T object, final Path targetDirectory )
+    Path exportToZip( final I object, final Path targetDirectory )
         throws IOException;
 
-    Path exportToDirectory( final T object, final Path targetDirectory )
+    Path exportToDirectory( final I object, final Path targetDirectory )
         throws IOException;
 
-    T importFromZip( final Path zipFile )
+    O importFromZip( final Path zipFile )
         throws IOException;
 
-    T importFromDirectory( final Path directoryPath )
+    O importFromDirectory( final Path directoryPath )
         throws IOException;
 }

@@ -95,7 +95,7 @@ public class ModuleResource
                 final ModuleExporter moduleExporter = new ModuleExporter();
                 final Module importedModule;
 
-                importedModule = moduleExporter.importFromZip( tempZipFile );
+                importedModule = moduleExporter.importFromZip( tempZipFile ).build();
 
                 final CreateModule createModuleCommand = CreateModule.fromModule( importedModule );
                 final Module createdModule = client.execute( createModuleCommand );

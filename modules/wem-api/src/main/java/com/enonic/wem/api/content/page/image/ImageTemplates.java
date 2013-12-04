@@ -17,20 +17,19 @@ public final class ImageTemplates
 
     private final ImmutableMap<ResourcePath, ImageTemplate> templatesByPath;
 
-    //private final ImmutableMap<ImageTemplateKey, ImageTemplate> templatesByKey;
+    private final ImmutableMap<ImageTemplateKey, ImageTemplate> templatesByKey;
 
     private ImageTemplates( final ImmutableList<ImageTemplate> list )
     {
         super( list );
         this.templatesByName = Maps.uniqueIndex( list, new ToNameFunction() );
         this.templatesByPath = Maps.uniqueIndex( list, new ToPathFunction() );
-        //this.templatesByKey = Maps.uniqueIndex( list, new ToKeyFunction() );
+        this.templatesByKey = Maps.uniqueIndex( list, new ToKeyFunction() );
     }
 
     public ImageTemplate getTemplate( final ImageTemplateKey key )
     {
-        //return this.templatesByKey.get( name );
-        return null;
+        return this.templatesByKey.get( key );
     }
 
     public ImageTemplate getTemplate( final ImageTemplateName name )
@@ -102,6 +101,10 @@ public final class ImageTemplates
     public static class Builder
     {
         private ImmutableList.Builder<ImageTemplate> list = new ImmutableList.Builder<>();
+
+        private Builder()
+        {
+        }
 
         public Builder add( ImageTemplate template )
         {

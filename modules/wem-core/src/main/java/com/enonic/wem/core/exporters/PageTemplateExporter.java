@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import com.enonic.wem.api.content.page.PageTemplate;
-import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.xml.XmlSerializers;
 import com.enonic.wem.xml.template.PageTemplateXml;
 
-@XMLFilename("PageTemplate.xml")
+@XMLFilename("page-template.xml")
 public final class PageTemplateExporter
-    extends AbstractEntityExporter<PageTemplate>
+    extends AbstractEntityExporter<PageTemplate, PageTemplate.Builder>
 {
     @Override
     protected String toXMLString( final PageTemplate pageTemplate )
@@ -21,11 +20,11 @@ public final class PageTemplateExporter
     }
 
     @Override
-    protected PageTemplate fromXMLString( final String xml, final Path directoryPath )
+    protected PageTemplate.Builder fromXMLString( final String xml, final Path directoryPath )
         throws IOException
     {
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate();
         XmlSerializers.pageTemplate().parse( xml ).to( builder );
-        return builder.build();
+        return builder;
     }
 }

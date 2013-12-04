@@ -28,7 +28,7 @@ public final class PartTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, PartTemplateName, PartTemplateKey>
+        extends BaseTemplateBuilder<Builder, PartTemplate, PartTemplateName, PartTemplateKey>
     {
         private Builder()
         {

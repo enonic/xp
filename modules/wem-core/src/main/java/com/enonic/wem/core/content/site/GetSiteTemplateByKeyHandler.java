@@ -29,7 +29,7 @@ public class GetSiteTemplateByKeyHandler
 
         if ( templateDir.exists() )
         {
-            final SiteTemplate siteTemplate = siteTemplateExporter.importFromDirectory( templateDir.toPath() );
+            final SiteTemplate siteTemplate = siteTemplateExporter.importFromDirectory( templateDir.toPath() ).build();
             command.setResult( siteTemplate );
             return;
         }
