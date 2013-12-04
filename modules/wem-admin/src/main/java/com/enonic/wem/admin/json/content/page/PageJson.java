@@ -26,7 +26,7 @@ public final class PageJson
 
     public List<DataJson> getConfig()
     {
-        return configJson.getValue();
+        return configJson.getSet();
     }
 
 }

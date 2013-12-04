@@ -20,6 +20,6 @@ public class ImageTemplateJson
 
     public List<DataJson> getConfig()
     {
-        return configJson.getValue();
+        return configJson.getSet();
     }
 }

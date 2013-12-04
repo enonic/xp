@@ -21,8 +21,7 @@
             {
                 "DataSet": {
                     "name": "mySetWithArray",
-                    "type": "DataSet",
-                    "value": [
+                    "set": [
                         {
                             "Property": {
                                 "name": "myArray",

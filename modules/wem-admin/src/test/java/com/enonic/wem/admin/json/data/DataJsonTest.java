@@ -4,7 +4,6 @@ package com.enonic.wem.admin.json.data;
 import java.io.IOException;
 
 import org.joda.time.DateMidnight;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.DataSet;
@@ -70,24 +69,23 @@ public class DataJsonTest
     }
 
     @Test
-    @Ignore
     public void deserialize_serialization_of_RootDataSet()
         throws IOException
     {
+        RootDataSet dataPropertyValue = new RootDataSet();
+        dataPropertyValue.setProperty( "a", new Value.String( "1" ) );
+        dataPropertyValue.setProperty( "b", new Value.String( "2" ) );
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.setProperty( "Long", new Value.Long( 1 ) );
-        rootDataSet.setProperty( "Double", new Value.Double( 1.1 ) );
-        rootDataSet.setProperty( "DateMidnight", new Value.DateMidnight( new DateMidnight( 2012, 12, 12 ) ) );
-        rootDataSet.setProperty( "HtmlPart", new Value.HtmlPart( "<div></div>" ) );
-        RootDataSetJson dataSetJson = new RootDataSetJson( rootDataSet );
+        rootDataSet.setProperty( "mydata", new Value.Data( dataPropertyValue ) );
+        RootDataSetJson rootDataSetJson = new RootDataSetJson( rootDataSet );
 
         // serialize from object
-        String expectedSerialization = jsonTestHelper.objectToString( dataSetJson );
+        String expectedSerialization = jsonTestHelper.objectToString( rootDataSetJson );
 
         System.out.println( expectedSerialization );
 
         // de-serialize
-        DataJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, DataJson.class );
+        RootDataSetJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, RootDataSetJson.class );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );

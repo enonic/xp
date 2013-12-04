@@ -85,8 +85,7 @@ module api_data{
 
             return <api_data_json.DataTypeWrapperJson>{ DataSet: <api_data_json.DataSetJson>{
                 name: this.getName(),
-                type: "DataSet",
-                value: Data.datasToJson(this.getDataArray())
+                set: Data.datasToJson( this.getDataArray() )
             }};
         }
 

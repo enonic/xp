@@ -44,7 +44,7 @@ public class ModuleConfigJson
 
     public List<DataJson> getConfig()
     {
-        return configAsJson.getValue();
+        return configAsJson.getSet();
     }
 
     @JsonIgnore

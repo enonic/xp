@@ -20,6 +20,6 @@ public class PageTemplateJson
 
     public List<DataJson> getConfig()
     {
-        return configJson.getValue();
+        return configJson.getSet();
     }
 }

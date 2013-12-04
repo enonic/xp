@@ -39,7 +39,7 @@ public class RootDataSetJson
     }
 
     @JsonCreator
-    public RootDataSetJson( @JsonProperty("value") final List<DataJson> datas )
+    public RootDataSetJson( @JsonProperty("set") final List<DataJson> datas )
     {
         ImmutableList.Builder<DataJson> listBuilder = ImmutableList.builder();
         this.rootDataSet = new RootDataSet();
@@ -51,7 +51,7 @@ public class RootDataSetJson
         this.list = listBuilder.build();
     }
 
-    public List<DataJson> getValue()
+    public List<DataJson> getSet()
     {
         return this.list;
     }
@@ -59,6 +59,16 @@ public class RootDataSetJson
     @JsonIgnore
     public RootDataSet getRootDataSet()
     {
+        return rootDataSet;
+    }
+
+    public static RootDataSet dataJsonListToRootDataSet( final List<DataJson> set )
+    {
+        final RootDataSet rootDataSet = new RootDataSet();
+        for ( DataJson dataJson : set )
+        {
+            rootDataSet.add( dataJson.getData() );
+        }
         return rootDataSet;
     }
 }

@@ -5,7 +5,19 @@ module api_data{
         private value:Value;
 
         static fromJson(json) {
-            var value = new Value(json.value, ValueTypes.fromName(json.type));
+
+            var valueType:ValueType = ValueTypes.fromName( json.type );
+            var value;
+            if ( valueType == ValueTypes.DATA )
+            {
+                var rootDataSet = DataFactory.createRootDataSet( <api_data_json.DataJson[]>json.set );
+                value = new Value( rootDataSet, valueType );
+            }
+            else
+            {
+                value = new Value( json.value, valueType );
+            }
+
             return new Property(json.name, value);
         }
 
@@ -18,6 +30,7 @@ module api_data{
         }
 
         constructor(name:string, value:Value) {
+            api_util.assertNotNull( value, "value of a Property cannot be null" );
             super(name);
             this.value = value;
         }

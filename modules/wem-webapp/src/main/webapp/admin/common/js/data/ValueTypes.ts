@@ -5,6 +5,8 @@ module api_data{
      */
     export class ValueTypes {
 
+        static DATA = new ValueType( "Data" );
+
         static STRING = new ValueType("String");
 
         static DATE_TIME = new ValueType("DateTime");
@@ -15,10 +17,12 @@ module api_data{
 
         static REGION = new ValueType("Region");
 
-        static ALL:ValueType[] = [ ValueTypes.STRING, ValueTypes.DATE_TIME, ValueTypes.ATTACHMENT_NAME, ValueTypes.CONTENT_ID, ValueTypes.REGION
+        static ALL:ValueType[] = [ ValueTypes.DATA, ValueTypes.STRING, ValueTypes.DATE_TIME, ValueTypes.ATTACHMENT_NAME,
+            ValueTypes.CONTENT_ID, ValueTypes.REGION
         ];
 
-        static fromName(name:string):ValueType {
+        public static fromName( name:string ):ValueType
+        {
             var match = null;
             ValueTypes.ALL.forEach( (valueType:ValueType) => {
                 if( valueType.toString() == name ) {

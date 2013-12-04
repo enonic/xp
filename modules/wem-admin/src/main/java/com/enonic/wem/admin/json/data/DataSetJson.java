@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
@@ -36,8 +37,7 @@ public class DataSetJson
     }
 
     @JsonCreator
-    public DataSetJson( @JsonProperty("name") final String name, @JsonProperty("type") final String type,
-                        @JsonProperty("value") final List<DataJson> datas )
+    public DataSetJson( @JsonProperty("name") final String name, @JsonProperty("set") final List<DataJson> datas )
     {
         super( DataSet.newDataSet().name( name ).data( unwrapData( datas ) ).build() );
 
@@ -66,12 +66,13 @@ public class DataSetJson
         return dataList;
     }
 
-    public String getType()
+    @JsonIgnore
+    public List<DataJson> getValue()
     {
-        return DataSet.class.getSimpleName();
+        return getSet();
     }
 
-    public List<DataJson> getValue()
+    public List<DataJson> getSet()
     {
         return this.list;
     }

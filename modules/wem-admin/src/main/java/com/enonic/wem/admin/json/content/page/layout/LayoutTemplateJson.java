@@ -20,6 +20,6 @@ public class LayoutTemplateJson
 
     public List<DataJson> getConfig()
     {
-        return configJson.getValue();
+        return configJson.getSet();
     }
 }

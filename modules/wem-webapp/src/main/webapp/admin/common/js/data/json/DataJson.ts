@@ -1,9 +1,10 @@
-module api_data_json{
+module api_data_json
+{
 
-    export interface DataJson {
+    export interface DataJson
+    {
 
         name:string;
 
-        type:string;
     }
 }

@@ -20,6 +20,6 @@ public class PartTemplateJson
 
     public List<DataJson> getConfig()
     {
-        return configJson.getValue();
+        return configJson.getSet();
     }
 }

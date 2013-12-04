@@ -9,6 +9,7 @@ module api_data{
         private parent:DataSet;
 
         constructor(name:string) {
+            api_util.assertNotNull( name, "name of a Data cannot be null" );
             this.name = name;
         }
 
