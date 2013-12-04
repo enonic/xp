@@ -2,11 +2,11 @@ module api_content {
 
     export class GetContentByIdRequest extends ContentResourceRequest<api_content_json.ContentJson> {
 
-        private id:string;
+        private id:ContentId;
 
         private expand:string;
 
-        constructor(id:string) {
+        constructor(id:ContentId) {
             super();
             super.setMethod("GET");
             this.id = id;
@@ -19,7 +19,7 @@ module api_content {
 
         getParams():Object {
             return {
-                id: this.id,
+                id: this.id.toString(),
                 expand: this.expand
             };
         }

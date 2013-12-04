@@ -17,7 +17,7 @@ module app_contextwindow_image {
 
         private selectedOption:api_ui_combobox.Option<api_content.ContentSummary>;
 
-        private liveEditItems:{[key: number]: api_ui_combobox.Option<api_content.ContentSummary>
+        private liveEditItems:{[key: number]: api_content.ContentSummary
         };
 
         private liveEditIndex:number = 1;
@@ -64,12 +64,8 @@ module app_contextwindow_image {
                     this.itemSelected();
                     if (event.getComponent().getItemId()) {
                         console.log("itemId:", event.getComponent().getItemId());
-                        if (this.selectedOption != null) {
-                            this.comboBox.removeSelectedItem(this.selectedOption, true);
-                        }
                         var itemId = event.getComponent().getItemId();
-                        this.selectedOption = this.liveEditItems[itemId];
-                        this.comboBox.selectOption(this.selectedOption, true);
+                        this.setSelectedContent(this.liveEditItems[itemId]);
                     }
                 } else if (this.selectedOption != null) {
                     this.comboBox.removeSelectedItem(this.selectedOption, true);
@@ -139,7 +135,7 @@ module app_contextwindow_image {
                     //TODO: Mocked live use of image
                     this.selectedOption = item;
                     this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, item.displayValue.getIconUrl());
-                    this.liveEditItems[this.liveEditIndex] = item;
+                    this.liveEditItems[this.liveEditIndex] = item.displayValue;
                     this.itemSelected();
                     this.liveEditIndex++;
                 }
@@ -197,13 +193,31 @@ module app_contextwindow_image {
             return img.toString() + contentSummary.toString();
         }
 
+        private setSelectedContent(content:api_content.ContentSummary, removeCurrent:boolean = true) {
+            api_util.assertNotNull(content, "Cannot set content null");
+            var option:api_ui_combobox.Option<api_content.ContentSummary> = {
+                value: content.getId(),
+                displayValue: content
+            };
+            if (this.selectedOption != null) {
+                this.comboBox.removeSelectedItem(this.selectedOption, true);
+
+            }
+            this.selectedOption = option;
+            this.comboBox.selectOption(this.selectedOption, true);
+        }
+
         setImage(image:api_content_page_image.ImageComponent) {
             this.image = image;
             this.refreshUI();
         }
 
         private refreshUI() {
-            //TODO: Set image as selected in combobox. Need contentsummary from image
+            new api_content.GetContentByIdRequest(this.image.getImageContentId())
+                .send()
+                .done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentSummaryJson>) => {
+                    this.setSelectedContent(new api_content.ContentSummary(jsonResponse.getResult()))
+                });
         }
     }
 }

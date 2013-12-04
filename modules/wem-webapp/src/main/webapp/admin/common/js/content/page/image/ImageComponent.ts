@@ -14,6 +14,10 @@ module api_content_page_image{
             return this.config;
         }
 
+        getImageContentId():api_content.ContentId {
+            return this.imageContent;
+        }
+
         setConfig(value:api_data.RootDataSet) {
             this.config = value;
         }

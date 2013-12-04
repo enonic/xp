@@ -30,7 +30,7 @@ window.onload = () => {
 
         var parentContent:api_content.ContentSummary = event.getParentContent();
 
-        new api_content.GetContentByIdRequest(parentContent.getId()).send().
+        new api_content.GetContentByIdRequest(parentContent.getContentId()).send().
             done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
                 var newParentContent = new api_content.Content(jsonResponse.getResult());
                 newContentDialog.setParentContent(newParentContent);
@@ -53,7 +53,7 @@ function route(path:api_rest.Path) {
         case 'edit':
             var id = path.getElement(1);
             if (id) {
-                var getContentByIdPromise = new api_content.GetContentByIdRequest(id).send();
+                var getContentByIdPromise = new api_content.GetContentByIdRequest(new api_content.ContentId(id)).send();
                 jQuery.when(getContentByIdPromise).then((contentResponse:api_rest.JsonResponse) => {
                     new app_browse.EditContentEvent([new api_content.ContentSummary(contentResponse.getJson())]).fire();
                 });
@@ -62,7 +62,7 @@ function route(path:api_rest.Path) {
         case 'view' :
             var id = path.getElement(1);
             if (id) {
-                var getContentByIdPromise = new api_content.GetContentByIdRequest(id).send();
+                var getContentByIdPromise = new api_content.GetContentByIdRequest(new api_content.ContentId(id)).send();
                 jQuery.when(getContentByIdPromise).then((contentResponse:api_rest.JsonResponse) => {
                     new app_browse.OpenContentEvent([new api_content.ContentSummary(contentResponse.getJson())]).fire();
                 });

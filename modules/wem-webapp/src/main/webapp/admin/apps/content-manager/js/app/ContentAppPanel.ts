@@ -116,7 +116,7 @@ module app {
 
                 } else {
 
-                    var getContentByIdPromise = new api_content.GetContentByIdRequest(content.getId()).send();
+                    var getContentByIdPromise = new api_content.GetContentByIdRequest(content.getContentId()).send();
                     var getContentTypeByNamePromise = new api_schema_content.GetContentTypeByNameRequest(content.getType()).send();
                     jQuery.
                         when(getContentByIdPromise, getContentTypeByNamePromise).

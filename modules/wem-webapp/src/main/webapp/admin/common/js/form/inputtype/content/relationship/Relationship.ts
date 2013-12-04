@@ -86,7 +86,7 @@ module api_form_inputtype_content_relationship {
 
             if (properties != null) {
                 properties.forEach((property:api_data.Property) => {
-                    new api_content.GetContentByIdRequest(property.getString())
+                    new api_content.GetContentByIdRequest(new api_content.ContentId(property.getString()))
                         .setExpand(api_content.ContentResourceRequest.EXPAND_SUMMARY)
                         .send()
                         .done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentSummaryJson>) => {
