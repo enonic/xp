@@ -27,7 +27,7 @@ public class ListImageTemplateJson
         return this.list.size();
     }
 
-    public List<ImageTemplateSummaryJson> getSiteTemplates()
+    public List<ImageTemplateSummaryJson> getImageTemplates()
     {
         return this.list;
     }
