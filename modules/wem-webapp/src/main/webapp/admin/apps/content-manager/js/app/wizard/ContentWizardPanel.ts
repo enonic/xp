@@ -21,11 +21,13 @@ module app_wizard {
         private displayNameScriptExecutor:DisplayNameScriptExecutor;
 
         constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content) {
+            console.log("CONTENTTYPE", contentType);
 
             this.parentContent = parentContent;
             this.contentType = contentType;
             this.contentWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
-            this.formIcon = new api_app_wizard.FormIcon(ContentWizardPanel.DEFAULT_CONTENT_ICON_URL, "Click to upload icon",
+            var iconUrl = contentType.getIcon() ? contentType.getIcon() : ContentWizardPanel.DEFAULT_CONTENT_ICON_URL;
+            this.formIcon = new api_app_wizard.FormIcon(iconUrl, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
             this.formIcon.addListener({

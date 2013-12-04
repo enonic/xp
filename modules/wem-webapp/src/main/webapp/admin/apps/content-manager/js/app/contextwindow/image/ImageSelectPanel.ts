@@ -203,7 +203,7 @@ module app_contextwindow_image {
         }
 
         private refreshUI() {
-
+            //TODO: Set image as selected in combobox. Need contentsummary from image
         }
     }
 }
