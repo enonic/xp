@@ -1,6 +1,6 @@
-module api_content_page{
+module api_content_page_layout{
 
-    export class LayoutComponent extends BasePageComponent<LayoutTemplateName> {
+    export class LayoutComponent extends api_content_page.BasePageComponent<LayoutTemplateKey,LayoutTemplateName> {
 
         private config:api_data.RootDataSet;
 
@@ -13,7 +13,7 @@ module api_content_page{
         }
     }
 
-    export class LayoutComponentBuilder extends ComponentBuilder<LayoutTemplateName>{
+    export class LayoutComponentBuilder extends api_content_page.BaseComponentBuilder<LayoutTemplateKey,LayoutTemplateName>{
 
         config:api_data.RootDataSet;
 

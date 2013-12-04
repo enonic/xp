@@ -1,6 +1,6 @@
 module api_content_page_image{
 
-    export class ImageComponent extends api_content_page.BasePageComponent<ImageTemplateName> {
+    export class ImageComponent extends api_content_page.BasePageComponent<ImageTemplateKey,ImageTemplateName> {
 
         private config:api_data.RootDataSet;
 
@@ -23,7 +23,7 @@ module api_content_page_image{
         }
     }
 
-    export class ImageComponentBuilder extends api_content_page.ComponentBuilder<ImageTemplateName>{
+    export class ImageComponentBuilder extends api_content_page.BaseComponentBuilder<ImageTemplateKey,ImageTemplateName>{
 
         config:api_data.RootDataSet;
 

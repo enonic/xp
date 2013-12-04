@@ -1,15 +1,15 @@
-module api_content_page{
+module api_content_page_part{
 
-    export class PartTemplate extends Template<PartTemplateName> {
+    export class PartTemplate extends api_content_page.Template<PartTemplateKey,PartTemplateName> {
 
         constructor(builder:PartTemplateBuilder) {
             super(builder);
         }
     }
 
-    export class PartTemplateBuilder extends TemplateBuilder<PartTemplateName> {
+    export class PartTemplateBuilder extends api_content_page.TemplateBuilder<PartTemplateKey,PartTemplateName> {
 
-        public build():Template<PartTemplateName> {
+        public build():PartTemplate {
             return new PartTemplate(this);
         }
     }

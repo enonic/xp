@@ -1,6 +1,6 @@
 module api_content_page{
 
-    export class PageTemplate extends Template<PageTemplateName> {
+    export class PageTemplate extends Template<PageTemplateKey,PageTemplateName> {
 
         private canRender:api_schema_content.ContentTypeName[];
 
@@ -14,7 +14,7 @@ module api_content_page{
         }
     }
 
-    export class PageTemplateBuilder extends TemplateBuilder<PageTemplateName> {
+    export class PageTemplateBuilder extends TemplateBuilder<PageTemplateKey,PageTemplateName> {
 
         canRender:api_schema_content.ContentTypeName[];
 

@@ -1,6 +1,6 @@
-module api_content_page{
+module api_content_page_part{
 
-    export class PartComponent extends BasePageComponent<PartTemplateName>{
+    export class PartComponent extends api_content_page.BasePageComponent<PartTemplateKey,PartTemplateName>{
 
         private config:api_data.RootDataSet;
 
@@ -13,7 +13,7 @@ module api_content_page{
         }
     }
 
-    export class PartComponentBuilder extends ComponentBuilder<PartTemplateName>{
+    export class PartComponentBuilder extends api_content_page.BaseComponentBuilder<PartTemplateKey,PartTemplateName>{
 
         config:api_data.RootDataSet;
 

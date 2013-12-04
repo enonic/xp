@@ -2,9 +2,9 @@ module api_content_page_image{
 
     export class GetImageTemplatesRequest extends ImageTemplateResource<api_content_page_image_json.ImageTemplateSummaryListJson> {
 
-        private siteTemplateKey: api_content_site.SiteTemplateKey;
+        private siteTemplateKey:api_content_site_template.SiteTemplateKey;
 
-        constructor(siteTemplateKey: api_content_site.SiteTemplateKey) {
+        constructor(siteTemplateKey:api_content_site_template.SiteTemplateKey) {
             super();
             super.setMethod("POST");
             this.siteTemplateKey = siteTemplateKey;

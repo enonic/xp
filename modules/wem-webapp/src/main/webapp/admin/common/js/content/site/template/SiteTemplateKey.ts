@@ -1,4 +1,4 @@
-module api_content_site {
+module api_content_site_template {
 
     export class SiteTemplateKey {
 

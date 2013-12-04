@@ -1,23 +1,25 @@
 module api_content_page_image{
 
-    export class ImageTemplate extends api_content_page.Template<ImageTemplateName> {
+    export class ImageTemplate extends ImageTemplateSummary {
 
         constructor(builder:ImageTemplateBuilder) {
             super(builder);
         }
     }
 
-    export class ImageTemplateBuilder extends api_content_page.TemplateBuilder<ImageTemplateName> {
+    export class ImageTemplateBuilder extends api_content_page.TemplateSummaryBuilder<ImageTemplateKey,ImageTemplateName> {
 
-        public build():api_content_page.Template<ImageTemplateName> {
-            return new ImageTemplate(this);
+        public build():ImageTemplate {
+            return new ImageTemplateSummary(this);
         }
 
-        static fromJson( json: api_content_page_image_json.ImageTemplateSummaryJson ):ImageTemplate {
-            var imageTemplate: ImageTemplateBuilder = new ImageTemplateBuilder();
-            imageTemplate.setName( new ImageTemplateName( json.name ) );
-            imageTemplate.setDisplayName( json.displayName );
-            return imageTemplate.build();
+        static fromJson( json: api_content_page_image_json.ImageTemplateSummaryJson ):ImageTemplateSummary {
+            var builder = new ImageTemplateBuilder();
+            builder.setKey( ImageTemplateKey.fromString( json.key ) );
+            builder.setName( new ImageTemplateName( json.name ) );
+            builder.setDisplayName( json.displayName );
+            builder.setDescriptorModuleResourceKey( new api_module.ModuleResourceKey( json.descriptor ) );
+            return builder.build();
         }
     }
 }

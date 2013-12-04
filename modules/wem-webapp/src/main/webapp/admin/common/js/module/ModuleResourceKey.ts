@@ -10,16 +10,16 @@ module api_module{
 
         private refString:string;
 
-        public static fromString(str:string):ModuleKey{
+        public static fromString(str:string):ModuleResourceKey{
             var sepIndex:number = str.indexOf(ModuleResourceKey.SEPARATOR);
             if( sepIndex == -1 ) {
                 throw new Error("ModuleResourceKey must contain separator '" + ModuleResourceKey.SEPARATOR + "':" + str);
             }
 
-            var name = str.substring(0, sepIndex);
-            var version = str.substring(sepIndex+1, str.length);
+            var moduleKey = str.substring(0, sepIndex);
+            var path = str.substring(sepIndex+1, str.length);
 
-            return new ModuleKey(name, version);
+            return new ModuleResourceKey(ModuleKey.fromString(moduleKey), ResourcePath.fromString(path));
         }
 
         constructor(moduleKey:ModuleKey, path:ResourcePath) {
