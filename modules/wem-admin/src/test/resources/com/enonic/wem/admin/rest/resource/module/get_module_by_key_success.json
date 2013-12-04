@@ -1,0 +1,65 @@
+{
+  "error" : null,
+  "result" : {
+    "config" : {
+      "formItems" : [ {
+        "Input" : {
+          "name" : "some-name",
+          "label" : null,
+          "customText" : null,
+          "helpText" : null,
+          "validationRegexp" : null,
+          "immutable" : false,
+          "indexed" : false,
+          "inputType" : {
+            "name" : "TextLine"
+          },
+          "occurrences" : {
+            "minimum" : 0,
+            "maximum" : 1
+          },
+          "config" : { }
+        }
+      } ]
+    },
+    "contentTypeDependencies" : [ "article", "ctype2", "ctype1", "ctype3" ],
+    "deletable" : true,
+    "displayName" : "module display name",
+    "editable" : true,
+    "info" : "module-info",
+    "key" : "testmodule-1.0.0",
+    "maxSystemVersion" : "6.0.0",
+    "minSystemVersion" : "5.0.0",
+    "moduleDependencies" : [ "modulefoo-1.0.0", "modA-1.0.0", "modB-1.0.0" ],
+    "moduleDirectoryEntry" : {
+      "entries" : [ {
+        "entries" : [ {
+          "entries" : [ ],
+          "name" : "file1.txt",
+          "resource" : "Resource{name=file1.txt, byteSource=ByteStreams.asByteSource(736F6D652064617461), size=unknown}"
+        } ],
+        "name" : "public",
+        "resource" : null
+      }, {
+        "entries" : [ {
+          "entries" : [ ],
+          "name" : "template1.txt",
+          "resource" : "Resource{name=template1.txt, byteSource=ByteStreams.asByteSource(736F6D65206D6F72652064617461), size=unknown}"
+        } ],
+        "name" : "templates",
+        "resource" : null
+      }, {
+        "entries" : [ ],
+        "name" : "emptydir",
+        "resource" : null
+      } ],
+      "name" : "testmodule-1.0.0",
+      "resource" : null
+    },
+    "name" : "testmodule",
+    "url" : "http://enonic.net",
+    "vendorName" : "Enonic",
+    "vendorUrl" : "https://www.enonic.com",
+    "version" : "1.0.0"
+  }
+}

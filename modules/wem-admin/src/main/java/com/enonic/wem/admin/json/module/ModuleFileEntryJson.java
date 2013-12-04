@@ -30,7 +30,7 @@ public class ModuleFileEntryJson
 
     public String getResource()
     {
-        return moduleFileEntry.getResource().toString();
+        return moduleFileEntry.getResource() != null ? moduleFileEntry.getResource().toString() : null;
     }
 
     public ImmutableCollection<ModuleFileEntryJson> getEntries()

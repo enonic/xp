@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -171,6 +170,20 @@ public class ModuleResourceTest
         {
             assertEquals( 400, e.getResponse().getStatus() );
         }
+    }
+
+    @Test
+    public void get_module_by_key()
+        throws Exception
+    {
+        final Module module = createModule();
+        Mockito.when( client.execute( Mockito.isA( GetModule.class ) ) ).thenReturn( module );
+
+        String response = resource().
+            path( "module" ).
+            queryParam( "moduleKey", "testmodule-1.0.0" ).
+            get( String.class );
+        assertJson( "get_module_by_key_success.json", response );
     }
 
     private Module createModule()
