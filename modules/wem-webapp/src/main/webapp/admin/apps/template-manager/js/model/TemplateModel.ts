@@ -2,8 +2,8 @@ Ext.define('Admin.model.templateManager.TemplateModel', {
     extend: 'Ext.data.Model',
 
     fields: <any[]> [
-        'id', 'displayName', 'path', 'iconUrl', 'hasChildren'
+        'key', 'displayName', 'name', 'description', 'url', 'siteContent', 'version', 'modules', 'contentFilter', 'deletable', 'editable'
     ],
 
-    idProperty: 'id'
+    idProperty: 'key'
 });
