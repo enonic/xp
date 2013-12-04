@@ -12,5 +12,12 @@ module api_content_page_image{
         public build():api_content_page.Template<ImageTemplateName> {
             return new ImageTemplate(this);
         }
+
+        static fromJson( json: api_content_page_json.ImageTemplateSummaryJson ):ImageTemplate {
+            var imageTemplate: ImageTemplateBuilder = new ImageTemplateBuilder();
+            imageTemplate.setName( new ImageTemplateName( json.name ) );
+            imageTemplate.setDisplayName( json.displayName );
+            return imageTemplate.build();
+        }
     }
 }

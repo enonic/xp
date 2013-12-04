@@ -1,6 +1,6 @@
 module api_content_page_image{
 
-    export class GetImageTemplatesRequest extends api_content_page.TemplatesResourceRequest<api_content_page_json.ImageTemplateSummaryListJson> {
+    export class GetImageTemplatesRequest extends ImageTemplateResource<api_content_page_json.ImageTemplateSummaryListJson> {
 
         private siteTemplateKey: api_content_site.SiteTemplateKey;
 

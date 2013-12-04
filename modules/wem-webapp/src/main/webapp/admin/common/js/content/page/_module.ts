@@ -4,7 +4,6 @@
 ///<reference path='Template.ts' />
 ///<reference path='BasePageComponentJson.ts' />
 ///<reference path='BasePageComponent.ts' />
-///<reference path='TemplatesResourceRequest.ts' />
 
 ///<reference path='PageTemplateName.ts' />
 ///<reference path='PageTemplate.ts' />
