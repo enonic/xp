@@ -3,36 +3,27 @@ package com.enonic.wem.xml.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
+import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.xml.XmlObject;
 
-@XmlRootElement(name = "data-set")
-public class DataSetXml
-    implements XmlObject<DataSet, DataSet>, DataXml
+@XmlRootElement(name = "data")
+public class RootDataSetValueXml
+    implements XmlObject<RootDataSet, RootDataSet>
 {
-
-    @XmlAttribute(name = "name", required = true)
-    String name;
-
     @XmlElements({@XmlElement(name = "data-set", type = DataSetXml.class), @XmlElement(name = "property", type = PropertyXml.class)})
     private List<DataXml> dataItems = new ArrayList<>();
 
-    @Override
-    public String getName()
-    {
-        return this.name;
-    }
 
     @Override
-    public void from( final DataSet dataSet )
+    public void from( final RootDataSet value )
     {
-        for ( Data data : dataSet )
+        for ( final Data data : value )
         {
             if ( data.isProperty() )
             {
@@ -51,7 +42,7 @@ public class DataSetXml
     }
 
     @Override
-    public void to( final DataSet output )
+    public void to( final RootDataSet output )
     {
         for ( DataXml dataXml : this.dataItems )
         {

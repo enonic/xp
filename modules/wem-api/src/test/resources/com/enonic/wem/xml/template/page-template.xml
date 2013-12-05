@@ -9,6 +9,11 @@
       <property name="first" type="String">one</property>
       <property name="second" type="String">two</property>
     </data-set>
+    <property name="myRegion" type="Data">
+      <data>
+        <property name="region" type="String">dummy</property>
+      </data>
+    </property>
   </config>
   <can-render>
     <content-type>com.enonic.sometype</content-type>

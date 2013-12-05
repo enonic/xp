@@ -26,6 +26,13 @@ public abstract class BaseXmlSerializerTest
         throws Exception
     {
         final String expectedXml = readFromFile( expectedFileName );
-        assertThat( "Serialization not as expected", the( actualSerialization ), isEquivalentTo( the( expectedXml ) ) );
+        try
+        {
+            assertThat( "Serialization not as expected", the( actualSerialization ), isEquivalentTo( the( expectedXml ) ) );
+        }
+        catch ( AssertionError e )
+        {
+            assertEquals( "Serialization not as expected", actualSerialization, expectedXml );
+        }
     }
 }

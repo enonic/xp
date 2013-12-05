@@ -22,10 +22,14 @@ public class PageTemplateXmlTest
     public void testFrom()
         throws Exception
     {
+        RootDataSet myRegion = new RootDataSet();
+        myRegion.setProperty( "region", new Value.String( "dummy" ) );
+
         RootDataSet pageTemplateConfig = new RootDataSet();
         pageTemplateConfig.addProperty( "pause", new Value.Long( 10000 ) );
         pageTemplateConfig.addProperty( "thing.first", new Value.String( "one" ) );
         pageTemplateConfig.addProperty( "thing.second", new Value.String( "two" ) );
+        pageTemplateConfig.addProperty( "myRegion", new Value.Data( myRegion ) );
 
         PageTemplate pageTemplate = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|main-page" ) ).
@@ -57,8 +61,14 @@ public class PageTemplateXmlTest
         assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ), pageTemplate.getDescriptor() );
         assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "com.enonic.sometype" ) ) );
         assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "some.other.type" ) ) );
-        assertEquals( 10000L, pageTemplate.getConfig().getProperty( "pause" ).getLong().longValue() );
-        assertEquals( "one", pageTemplate.getConfig().getProperty( "thing.first" ).getString() );
-        assertEquals( "two", pageTemplate.getConfig().getProperty( "thing.second" ).getString() );
+
+        RootDataSet config = pageTemplate.getConfig();
+        assertEquals( 10000L, config.getProperty( "pause" ).getLong().longValue() );
+        assertEquals( "one", config.getProperty( "thing.first" ).getString() );
+        assertEquals( "two", config.getProperty( "thing.second" ).getString() );
+
+        RootDataSet myRegion = config.getProperty( "myRegion" ).getData();
+        assertEquals( "dummy", myRegion.getProperty( "region" ).getString() );
+
     }
 }
