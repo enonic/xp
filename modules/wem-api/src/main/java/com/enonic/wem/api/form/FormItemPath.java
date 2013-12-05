@@ -10,6 +10,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.data.DataPath;
+
 @Immutable
 public class FormItemPath
     implements Iterable<String>
@@ -45,6 +47,18 @@ public class FormItemPath
 
         final List<String> pathElements = splitPathIntoElements( path );
         return new FormItemPath( ImmutableList.copyOf( pathElements ) );
+    }
+
+    public static FormItemPath from( final DataPath dataPath )
+    {
+        Preconditions.checkNotNull( dataPath, "dataPath cannot be null" );
+
+        ImmutableList.Builder<String> elements = new ImmutableList.Builder<>();
+        for ( DataPath.Element element : dataPath )
+        {
+            elements.add( element.getName() );
+        }
+        return new FormItemPath( elements.build() );
     }
 
     public FormItemPath( final FormItemPath parentPath, final String name )
