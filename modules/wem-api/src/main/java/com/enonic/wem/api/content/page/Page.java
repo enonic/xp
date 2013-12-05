@@ -14,8 +14,13 @@ public final class Page
 
     private Page( final PageProperties properties )
     {
-        super( properties.template );
+        super( properties );
         this.config = properties.config;
+    }
+
+    public boolean hasConfig()
+    {
+        return config != null;
     }
 
     public RootDataSet getConfig()
@@ -29,10 +34,9 @@ public final class Page
     }
 
     static class PageProperties
+        extends Properties<PageTemplateKey>
     {
         RootDataSet config;
-
-        PageTemplateKey template;
 
         PageProperties()
         {

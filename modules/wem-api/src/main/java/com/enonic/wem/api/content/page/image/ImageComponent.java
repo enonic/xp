@@ -4,7 +4,9 @@ package com.enonic.wem.api.content.page.image;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.page.BasePageComponent;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
+import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.data.Value;
 
 public class ImageComponent
     extends BasePageComponent<ImageTemplateKey>
@@ -16,8 +18,14 @@ public class ImageComponent
 
     public ImageComponent( final Builder builder )
     {
-        super( builder.imageTemplateKey );
+        super( builder );
+        this.image = builder.image;
         this.config = builder.config;
+    }
+
+    public ContentId getImage()
+    {
+        return image;
     }
 
     public RootDataSet getConfig()
@@ -25,31 +33,56 @@ public class ImageComponent
         return config;
     }
 
-    public static Builder newImage()
+    @Override
+    public DataSet toDataSet()
+    {
+        final DataSet componentDataSet = super.toDataSet();
+        componentDataSet.setProperty( "image", new Value.ContentId( this.image ) );
+        componentDataSet.setProperty( "config", new Value.Data( this.config ) );
+        return componentDataSet;
+    }
+
+    public static Builder newImageComponent()
     {
         return new Builder();
     }
 
     public static class Builder
+        extends BasePageComponent.Builder<ImageTemplateKey>
     {
-        private RootDataSet config;
+        private ContentId image;
 
-        private ImageTemplateKey imageTemplateKey;
+        private RootDataSet config;
 
         private Builder()
         {
             this.config = RootDataSet.newDataSet().build().toRootDataSet();
         }
 
-        public Builder config( final RootDataSet config )
+        public Builder from( final DataSet dataSet )
         {
-            this.config = config;
+            final Builder builder = new Builder();
+            builder.template( ImageTemplateKey.from( dataSet.getProperty( "template" ).getString() ) );
+            builder.image( ContentId.from( dataSet.getProperty( "image" ).getString() ) );
+            builder.config( dataSet.getProperty( "config" ).getData() );
+            return builder;
+        }
+
+        public Builder image( final ContentId value )
+        {
+            this.image = value;
             return this;
         }
 
-        public Builder imageTemplateKey( final ImageTemplateKey imageTemplateKey )
+        public Builder template( ImageTemplateKey value )
         {
-            this.imageTemplateKey = imageTemplateKey;
+            this.template = value;
+            return this;
+        }
+
+        public Builder config( final RootDataSet config )
+        {
+            this.config = config;
             return this;
         }
 
