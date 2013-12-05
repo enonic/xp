@@ -24,17 +24,15 @@ public class PartTemplateResource
     @Path("list")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    public Result list( @QueryParam("siteTemplateKey") String siteTemplateKeyAsString )
+    public Result list( @QueryParam("key") String siteTemplateKeyAsString )
     {
         try
         {
-
             GetPartTemplatesBySiteTemplate command =
                 Commands.page().template().part().getBySiteTemplate().siteTemplate( SiteTemplateKey.from( siteTemplateKeyAsString ) );
             PartTemplates partTemplates = this.client.execute( command );
 
             return Result.result( new PartTemplateListJson( partTemplates ) );
-
         }
         catch ( Exception e )
         {
