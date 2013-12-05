@@ -36,14 +36,12 @@ import com.enonic.wem.admin.rest.resource.content.json.AttachmentJson;
 import com.enonic.wem.admin.rest.resource.content.json.ContentFindParams;
 import com.enonic.wem.admin.rest.resource.content.json.ContentNameJson;
 import com.enonic.wem.admin.rest.resource.content.json.CreateContentJson;
-import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.DeleteContentParams;
+import com.enonic.wem.admin.rest.resource.content.json.DeleteContentResultJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentIdListJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentListJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams;
-import com.enonic.wem.admin.rest.resource.content.json.ValidateContentJson;
-import com.enonic.wem.admin.rest.resource.content.json.ValidateContentParams;
 import com.enonic.wem.admin.rest.service.upload.UploadItem;
 import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.account.AccountKey;
@@ -58,7 +56,6 @@ import com.enonic.wem.api.command.content.GetContentByIds;
 import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
-import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
@@ -72,10 +69,7 @@ import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
 import com.enonic.wem.api.content.query.ContentIndexQueryResult;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.api.schema.content.ContentType;
-import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 
 import static com.enonic.wem.api.content.Content.editContent;
 
@@ -336,6 +330,7 @@ public class ContentResource
         }
     }
 
+    /* TODO: Re-introduce or remove when doing task: CMS-2256 Validate occurrences before save when user clicks Publish
     @POST
     @Path("validate")
     public Result validate( final ValidateContentParams params )
@@ -359,7 +354,7 @@ public class ContentResource
         {
             return Result.exception( e );
         }
-    }
+    }*/
 
     @POST
     @Path("delete")

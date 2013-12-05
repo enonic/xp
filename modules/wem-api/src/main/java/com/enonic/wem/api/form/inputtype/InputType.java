@@ -93,6 +93,7 @@ public abstract class InputType
         return this.inputTypeName.toString();
     }
 
+    // TODO: Remove when doing task?: CMS-2256 Validate occurrences before save when user clicks Publish
     public abstract Value newValue( final String value );
 
     private String resolveName()

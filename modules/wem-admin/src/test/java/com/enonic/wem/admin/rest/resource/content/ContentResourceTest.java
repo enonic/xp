@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -556,6 +557,7 @@ public class ContentResourceTest
     }
 
     @Test
+    @Ignore
     public void validate_content_success()
         throws Exception
     {
@@ -573,6 +575,7 @@ public class ContentResourceTest
     }
 
     @Test
+    @Ignore
     public void validate_content_error()
         throws Exception
     {

@@ -11,6 +11,8 @@ import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.region.PageRegions;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
@@ -45,13 +47,24 @@ public final class PageRenderer
         final PageDescriptor descriptor = getPageDescriptor( template.getDescriptor(), client );
 
         final ModuleResourceKey controllerResource = descriptor.getControllerResource();
-        final RootDataSet pageConfig = page.getConfig();
+        final RootDataSet config = page.hasConfig() ? page.getConfig() : template.getConfig();
 
-        final Controller controller = controllerFactory.create( controllerResource, pageConfig, context );
+        printRegions( config, descriptor );
+
+        final Controller controller = controllerFactory.create( controllerResource, config, context );
 
         final ControllerResult controllerResult = controller.execute();
 
         return newRenderingResult().success( controllerResult.isSuccess() ).build();
+    }
+
+    private void printRegions( final RootDataSet config, final PageDescriptor descriptor )
+    {
+        final PageRegions pageRegions = PageRegions.resolve( config, descriptor.getConfig() );
+        for ( Region region : pageRegions )
+        {
+            System.out.println( region.getName() );
+        }
     }
 
     private PageTemplate getPageTemplate( final PageTemplateKey pageTemplateKey, final Client client )

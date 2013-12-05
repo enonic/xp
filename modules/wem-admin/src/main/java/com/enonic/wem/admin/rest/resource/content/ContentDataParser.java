@@ -44,12 +44,12 @@ public final class ContentDataParser
                 final Input input = contentType.form().getInput( FormItemPath.from( path.resolvePathElementNames() ) );
                 if ( input != null )
                 {
-                    final Value value = input.getInputType().newValue( fieldValue );
-                    contentData.setProperty( path, value );
+                    //final Value value = input.getInputType().newValue( fieldValue );
+                    //contentData.setProperty( path, value );
                 }
                 else
                 {
-                    contentData.setProperty( path, new Value.String( fieldValue ) );
+                    //contentData.setProperty( path, new Value.String( fieldValue ) );
                 }
             }
         }

@@ -1,16 +1,18 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.enonic.wem.admin.json.data.DataJson;
 
 @XmlRootElement
 public class ValidateContentParams
 {
     private String contentTypeName;
 
-    private JsonNode contentData;
+    private List<DataJson> contentDataAsDataJsonList;
 
     public String getContentTypeName()
     {
@@ -22,13 +24,13 @@ public class ValidateContentParams
         this.contentTypeName = contentTypeName;
     }
 
-    public JsonNode getContentData()
+    public List<DataJson> getContentData()
     {
-        return contentData;
+        return contentDataAsDataJsonList;
     }
 
-    public void setContentData( final JsonNode contentData )
+    public void setContentData( final List<DataJson> contentData )
     {
-        this.contentData = contentData;
+        this.contentDataAsDataJsonList = contentData;
     }
 }
