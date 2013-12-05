@@ -127,9 +127,13 @@ public class IndexService
         }
     }
 
-    private void deleteIndex( final Index index )
+    public void deleteIndex( final Index... indexes )
     {
-        elasticsearchIndexService.deleteIndex( index );
+        for ( final Index index : indexes )
+        {
+            elasticsearchIndexService.deleteIndex( index );
+            //elasticsearchIndexService.getIndexStatus( index, true );
+        }
     }
 
     public void indexAccount( final Account account )
@@ -203,6 +207,8 @@ public class IndexService
     {
         for ( final Index index : indices )
         {
+            elasticsearchIndexService.getIndexStatus( index, true );
+
             if ( !indexExists( index ) )
             {
                 createIndex( index );
