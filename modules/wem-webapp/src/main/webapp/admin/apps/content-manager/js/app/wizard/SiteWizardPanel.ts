@@ -44,7 +44,7 @@ module app_wizard {
         updatePersistedItem(successCallback?:() => void) {
             var content:api_content.Content = this.getPersistedItem();
             new api_content_site.UpdateSiteRequest(content.getId())
-                .setSiteTemplateId(this.site.getTemplateName())
+                .setSiteTemplateKey(this.site.getTemplateName())
                 .setModuleConfigs(this.site.getModuleConfigs())
                 .send().done((siteResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
                     //TODO

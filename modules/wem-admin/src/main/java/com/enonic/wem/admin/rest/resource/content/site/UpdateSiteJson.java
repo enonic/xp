@@ -20,7 +20,7 @@ public class UpdateSiteJson
 
     @SuppressWarnings("UnusedDeclaration")
     @JsonCreator
-    UpdateSiteJson( @JsonProperty("content") String content, @JsonProperty("siteTemplate") final String siteTemplate,
+    UpdateSiteJson( @JsonProperty("contentId") String content, @JsonProperty("siteTemplateKey") final String siteTemplate,
                     @JsonProperty("moduleConfigs") final List<ModuleConfigJson> moduleConfigs )
     {
         this.updateSite = new UpdateSite().

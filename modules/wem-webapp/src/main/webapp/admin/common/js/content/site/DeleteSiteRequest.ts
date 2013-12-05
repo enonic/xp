@@ -1,6 +1,6 @@
 module api_content_site {
 
-    export class UpdateSiteRequest extends SiteResourceRequest<api_content_json.ContentJson> {
+    export class DeleteSiteRequest extends SiteResourceRequest<api_content_json.ContentJson> {
 
         private contentId:string;
         private siteTemplateKey:string;
@@ -12,18 +12,17 @@ module api_content_site {
             this.contentId = contentId;
         }
 
-        setSiteTemplateKey(siteTemplateKey:string):UpdateSiteRequest {
+        setSiteTemplateKey(siteTemplateKey:string):CreateSiteRequest {
             this.siteTemplateKey = siteTemplateKey;
             return this;
         }
 
-        setModuleConfigs(moduleConfigs:ModuleConfig[]):UpdateSiteRequest {
+        setModuleConfigs(moduleConfigs:ModuleConfig[]):CreateSiteRequest {
             this.moduleConfigs = moduleConfigs;
             return this;
         }
 
         getParams():Object {
-
             return {
                 contentId: this.contentId,
                 siteTemplateKey: this.siteTemplateKey,
@@ -32,7 +31,7 @@ module api_content_site {
         }
 
         getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "update");
+            return api_rest.Path.fromParent(super.getResourcePath(), "create");
         }
     }
 }

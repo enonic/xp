@@ -10,6 +10,7 @@ import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.api.command.content.site.CreateSite;
+import com.enonic.wem.api.command.content.site.DeleteSite;
 import com.enonic.wem.api.command.content.site.UpdateSite;
 import com.enonic.wem.api.content.Content;
 
@@ -44,10 +45,27 @@ public class SiteResource
         try
         {
             final UpdateSite updateSiteCommand = updateSiteJson.getUpdateSite();
-            client.execute( updateSiteCommand );
-            final Content updatedContent = updateSiteCommand.getResult();
+            final Content updatedContent = client.execute( updateSiteCommand );
 
             return Result.result( new ContentJson( updatedContent ) );
+        }
+        catch ( Exception e )
+        {
+            return Result.exception( e );
+        }
+    }
+
+    @POST
+    @Path("delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Result delete( final DeleteSiteJson deleteSiteJson )
+    {
+        try
+        {
+            final DeleteSite deleteSiteCommand = deleteSiteJson.getDeleteSite();
+            final Content deletedContent = client.execute( deleteSiteCommand );
+
+            return Result.result( new ContentJson( deletedContent ) );
         }
         catch ( Exception e )
         {
