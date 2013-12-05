@@ -25,7 +25,7 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class SiteTemplate
-    implements Iterable<Template>, Identity<SiteTemplateKey>
+    implements Iterable<Template>, Identity<SiteTemplateKey, SiteTemplateName>
 {
     public static final ResourcePath DEFAULT_TEMPLATES_PATH = ResourcePath.from( "components/" );
 

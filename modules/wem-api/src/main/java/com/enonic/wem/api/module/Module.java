@@ -18,7 +18,7 @@ import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 @Immutable
 public final class Module
-    implements Identity<ModuleKey>
+    implements Identity<ModuleKey, ModuleName>
 {
     private final ModuleKey moduleKey;
 

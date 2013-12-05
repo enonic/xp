@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
@@ -25,7 +26,6 @@ import com.enonic.wem.xml.XmlSerializers;
 import com.enonic.wem.xml.template.SiteTemplateXml;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
-import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 @XMLFilename("site-template.xml")
 public final class SiteTemplateExporter
@@ -81,8 +81,7 @@ public final class SiteTemplateExporter
                                   final SiteTemplateKey siteTemplateKey )
         throws IOException
     {
-
-        final String pathName = substringBeforeLast( parentDirectory.getFileName().toString(), File.separator );
+        final String pathName = StringUtils.remove( parentDirectory.getFileName().toString(), File.separatorChar );
         final ModuleKey moduleKey = ModuleKey.from( pathName );
         try (final DirectoryStream<Path> ds = Files.newDirectoryStream( parentDirectory ))
         {
