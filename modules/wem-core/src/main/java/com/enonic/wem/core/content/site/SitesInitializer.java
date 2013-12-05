@@ -16,6 +16,8 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.image.ImageTemplateKey;
+import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.content.site.ModuleConfig;
 import com.enonic.wem.api.content.site.ModuleConfigs;
 import com.enonic.wem.api.content.site.NoSiteTemplateExistsException;
@@ -43,6 +45,8 @@ import static com.enonic.wem.api.command.Commands.page;
 import static com.enonic.wem.api.command.Commands.site;
 import static com.enonic.wem.api.content.page.PageDescriptor.newPageDescriptor;
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
+import static com.enonic.wem.api.content.page.image.ImageComponent.newImageComponent;
+import static com.enonic.wem.api.content.page.region.Region.newRegion;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
@@ -99,7 +103,7 @@ public class SitesInitializer
         final CreatePage createPage = page().create().
             content( content ).
             pageTemplate( this.mainPageTemplate.getKey() ).
-            config( createPageTemplateConfig( "red" ) );
+            config( createPageTemplateConfig( "red", createRegion() ) );
         client.execute( createPage );
     }
 
@@ -111,15 +115,18 @@ public class SitesInitializer
         return newPageTemplate().
             key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "mainpage" ) ) ).
             displayName( "Main Page" ).
-            config( createPageTemplateConfig( "blue" ) ).
+            config( createPageTemplateConfig( "blue", createRegion() ) ).
             descriptor( descriptorModuleResourceKey ).
             build();
     }
 
-    private RootDataSet createPageTemplateConfig( final String backgroundColor )
+    private RootDataSet createPageTemplateConfig( final String backgroundColor, final Region region )
     {
         RootDataSet data = new RootDataSet();
         data.setProperty( "background-color", new Value.String( backgroundColor ) );
+        data.setProperty( "main", new Value.Data( region.toData() ) );
+        data.setProperty( "header", new Value.Data( region.toData() ) );
+        data.setProperty( "footer", new Value.Data( region.toData() ) );
         return data;
     }
 
@@ -211,6 +218,22 @@ public class SitesInitializer
                 newInput().name( "header" ).label( "Header region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
             addFormItem(
                 newInput().name( "footer" ).label( "Footer region" ).maximumOccurrences( 1 ).inputType( InputTypes.REGION ).build() ).
+            build();
+    }
+
+    private Region createRegion()
+    {
+        RootDataSet imageComponentConfig = new RootDataSet();
+        imageComponentConfig.setProperty( "width", new Value.Long( 300 ) );
+        imageComponentConfig.setProperty( "caption", new Value.String( "My photo" ) );
+
+        return newRegion().
+            name( "myRegion" ).
+            add( newImageComponent().
+                image( ContentId.from( "123" ) ).
+                template( ImageTemplateKey.from( "mysitetemplate-1.0.0|mymodule-1.0.0|mypagetemplate" ) ).
+                config( imageComponentConfig ).
+                build() ).
             build();
     }
 
