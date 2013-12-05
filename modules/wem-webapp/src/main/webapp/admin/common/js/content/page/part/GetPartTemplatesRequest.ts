@@ -6,7 +6,7 @@ module api_content_page_part {
 
         constructor(siteTemplateKey:api_content_site_template.SiteTemplateKey) {
             super();
-            super.setMethod("POST");
+            super.setMethod("GET");
             this.siteTemplateKey = siteTemplateKey;
         }
 
