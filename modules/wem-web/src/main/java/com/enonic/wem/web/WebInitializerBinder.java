@@ -1,4 +1,4 @@
-package com.enonic.wem.core.servlet;
+package com.enonic.wem.web;
 
 import com.google.inject.Binder;
 import com.google.inject.Scopes;

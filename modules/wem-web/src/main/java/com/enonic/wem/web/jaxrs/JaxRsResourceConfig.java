@@ -1,9 +1,10 @@
-package com.enonic.wem.admin.jaxrs;
+package com.enonic.wem.web.jaxrs;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.core.DefaultResourceConfig;
+import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
 import com.sun.jersey.spi.container.ResourceFilterFactory;
@@ -41,7 +42,7 @@ final class JaxRsResourceConfig
             this.resourceFilterFactories.add( type.getName() );
         }
 
-        if ( isProviderClass( type ) || isRootResourceClass( type ) )
+        if ( ResourceConfig.isProviderClass( type ) || ResourceConfig.isRootResourceClass( type ) )
         {
             getClasses().add( type );
         }

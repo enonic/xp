@@ -3,7 +3,7 @@ package com.enonic.wem.portal;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
-import com.enonic.wem.core.servlet.WebInitializerBinder;
+import com.enonic.wem.web.WebInitializerBinder;
 import com.enonic.wem.portal.attachment.AttachmentService;
 import com.enonic.wem.portal.attachment.AttachmentServiceImpl;
 import com.enonic.wem.portal.content.ContentService;

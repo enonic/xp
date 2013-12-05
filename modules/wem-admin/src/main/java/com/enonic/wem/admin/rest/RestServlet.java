@@ -2,7 +2,7 @@ package com.enonic.wem.admin.rest;
 
 import com.google.inject.Singleton;
 
-import com.enonic.wem.admin.jaxrs.JaxRsServlet;
+import com.enonic.wem.web.jaxrs.JaxRsServlet;
 import com.enonic.wem.admin.jsonrpc.controller.JsonRpcController;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;

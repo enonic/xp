@@ -1,4 +1,4 @@
-package com.enonic.wem.core.servlet;
+package com.enonic.wem.web.servlet;
 
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;

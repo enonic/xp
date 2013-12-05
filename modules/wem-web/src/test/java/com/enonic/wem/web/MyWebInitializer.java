@@ -1,13 +1,13 @@
-package com.enonic.wem.core.servlet;
+package com.enonic.wem.web;
 
 import javax.servlet.ServletContext;
 
-final class ServletWebInitializer
+public final class MyWebInitializer
     implements WebInitializer
 {
     @Override
     public void initialize( final ServletContext context )
     {
-        context.addListener( new RequestContextListener() );
+        // Do nothing
     }
 }

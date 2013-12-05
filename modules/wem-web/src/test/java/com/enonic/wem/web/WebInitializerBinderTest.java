@@ -1,4 +1,4 @@
-package com.enonic.wem.core.servlet;
+package com.enonic.wem.web;
 
 import java.util.Set;
 
@@ -22,7 +22,7 @@ public class WebInitializerBinderTest
             @Override
             protected void configure()
             {
-                WebInitializerBinder.from( binder() ).add( ServletWebInitializer.class );
+                WebInitializerBinder.from( binder() ).add( MyWebInitializer.class );
             }
         };
 
@@ -33,7 +33,7 @@ public class WebInitializerBinderTest
 
         final Set<WebInitializer> set = castToSet( result );
         assertEquals( 1, set.size() );
-        assertSame( ServletWebInitializer.class, set.iterator().next().getClass() );
+        assertSame( MyWebInitializer.class, set.iterator().next().getClass() );
     }
 
     @SuppressWarnings("unchecked")

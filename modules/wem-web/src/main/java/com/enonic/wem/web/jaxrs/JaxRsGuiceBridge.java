@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.jaxrs;
+package com.enonic.wem.web.jaxrs;
 
 import com.google.inject.Injector;
 import com.sun.jersey.core.spi.component.ComponentContext;

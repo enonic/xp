@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.jaxrs;
+package com.enonic.wem.web.jaxrs;
 
 import java.util.Map;
 
