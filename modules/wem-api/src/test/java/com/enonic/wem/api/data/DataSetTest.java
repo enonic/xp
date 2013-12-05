@@ -2,6 +2,7 @@ package com.enonic.wem.api.data;
 
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -482,6 +483,27 @@ public class DataSetTest
 
         assertEquals( true, rootDataSet.isRoot() );
         assertEquals( "", rootDataSet.getName() );
+    }
+
+    @Test
+    public void getDataSets()
+    {
+        DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
+        dataSet.setProperty( "prop", new Value.String( "1" ) );
+
+        DataSet set1 = DataSet.newDataSet().name( "mySet" ).build();
+        set1.setProperty( "prop", new Value.String( "1" ) );
+        dataSet.add( set1 );
+
+        DataSet set2 = DataSet.newDataSet().name( "mySet" ).build();
+        set2.setProperty( "prop", new Value.String( "1" ) );
+        dataSet.add( set2 );
+
+        // exercise
+        List<DataSet> foundDataSets =  dataSet.getDataSets();
+
+        // verify
+        assertEquals( 2, foundDataSets.size()  );
     }
 
 }
