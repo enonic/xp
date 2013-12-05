@@ -1,2 +1,2 @@
-///<reference path='LayoutTemplateJson.ts' />
-///<reference path='ListLayoutTemplateJson.ts' />
+///<reference path='LayoutTemplateSummaryJson.ts' />
+///<reference path='LayoutTemplateSummaryListJson.ts' />

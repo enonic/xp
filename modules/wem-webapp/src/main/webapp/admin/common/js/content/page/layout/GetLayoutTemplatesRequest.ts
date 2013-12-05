@@ -2,9 +2,9 @@ module api_content_page_layout {
 
     export class GetLayoutTemplatesRequest extends LayoutTemplateResourceRequest {
 
-        private siteTemplateKey:string;
+        private siteTemplateKey:api_content_site_template.SiteTemplateKey;
 
-        constructor(siteTemplateKey:string) {
+        constructor(siteTemplateKey:api_content_site_template.SiteTemplateKey) {
             super();
             super.setMethod("GET");
             this.siteTemplateKey = siteTemplateKey;
@@ -12,7 +12,7 @@ module api_content_page_layout {
 
         getParams():Object {
             return {
-                key: this.siteTemplateKey
+                key: this.siteTemplateKey.toString()
             };
         }
 
