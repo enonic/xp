@@ -2,36 +2,22 @@ module api_content_site {
 
     export class DeleteSiteRequest extends SiteResourceRequest<api_content_json.ContentJson> {
 
-        private contentId:string;
-        private siteTemplateKey:string;
-        private moduleConfigs:ModuleConfig[];
+        private contentId: string;
 
-        constructor(contentId:string) {
+        constructor(contentId: string) {
             super();
             super.setMethod("POST");
             this.contentId = contentId;
         }
 
-        setSiteTemplateKey(siteTemplateKey:string):CreateSiteRequest {
-            this.siteTemplateKey = siteTemplateKey;
-            return this;
-        }
-
-        setModuleConfigs(moduleConfigs:ModuleConfig[]):CreateSiteRequest {
-            this.moduleConfigs = moduleConfigs;
-            return this;
-        }
-
-        getParams():Object {
+        getParams(): Object {
             return {
-                contentId: this.contentId,
-                siteTemplateKey: this.siteTemplateKey,
-                moduleConfigs: this.moduleConfigs
+                contentId: this.contentId
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "create");
+        getRequestPath(): api_rest.Path {
+            return api_rest.Path.fromParent(super.getResourcePath(), "delete");
         }
     }
 }
