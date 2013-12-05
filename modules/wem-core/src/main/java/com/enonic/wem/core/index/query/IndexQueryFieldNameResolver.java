@@ -9,7 +9,7 @@ import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.query.expr.CompareExpr;
 import com.enonic.wem.query.expr.FieldExpr;
 import com.enonic.wem.query.expr.ValueExpr;
-import com.enonic.wem.query.queryfilter.ValueQueryFilter;
+import com.enonic.wem.query.filter.ValueFilter;
 
 public class IndexQueryFieldNameResolver
 {
@@ -24,7 +24,7 @@ public class IndexQueryFieldNameResolver
         return createValueTypeAwareFieldName( baseFieldName, firstValue.getValue() );
     }
 
-    public static String resolve( final ValueQueryFilter valueQueryFilter )
+    public static String resolve( final ValueFilter valueQueryFilter )
     {
         final String valueQueryFilterFieldName = valueQueryFilter.getFieldName();
 

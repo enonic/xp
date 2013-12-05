@@ -1,4 +1,4 @@
-package com.enonic.wem.query.queryfilter;
+package com.enonic.wem.query.filter;
 
 import java.util.Set;
 
@@ -6,12 +6,12 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.data.Value;
 
-public class ValueQueryFilter
-    extends QueryFilter
+public class ValueFilter
+    extends Filter
 {
     private final ImmutableSet<Value> values;
 
-    ValueQueryFilter( final String fieldName, final Set<Value> values )
+    ValueFilter( final String fieldName, final Set<Value> values )
     {
         super( fieldName );
         this.values = ImmutableSet.copyOf( values );

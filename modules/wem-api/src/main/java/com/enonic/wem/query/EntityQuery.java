@@ -8,15 +8,15 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.query.expr.OrderExpr;
 import com.enonic.wem.query.expr.QueryExpr;
-import com.enonic.wem.query.queryfilter.QueryFilter;
+import com.enonic.wem.query.filter.Filter;
 
 public class EntityQuery
 {
     private final QueryExpr query;
 
-    private final ImmutableSet<QueryFilter> filters;
+    private final ImmutableSet<Filter> filters;
 
-    private final ImmutableSet<QueryFilter> queryFilters;
+    private final ImmutableSet<Filter> queryFilters;
 
     private final ImmutableSet<Facet> facets;
 
@@ -42,13 +42,13 @@ public class EntityQuery
     }
 
     // These are filters that are applied outside query, not considered in facets
-    public ImmutableSet<QueryFilter> getFilters()
+    public ImmutableSet<Filter> getFilters()
     {
         return filters;
     }
 
     // These are filters to be applied into query, and considered in facets also
-    public ImmutableSet<QueryFilter> getQueryFilters()
+    public ImmutableSet<Filter> getQueryFilters()
     {
         return queryFilters;
     }
@@ -67,9 +67,9 @@ public class EntityQuery
     {
         private QueryExpr query;
 
-        private Set<QueryFilter> filters = Sets.newHashSet();
+        private Set<Filter> filters = Sets.newHashSet();
 
-        private Set<QueryFilter> queryFilters = Sets.newHashSet();
+        private Set<Filter> queryFilters = Sets.newHashSet();
 
         private Set<Facet> facets = Sets.newHashSet();
 
@@ -79,13 +79,13 @@ public class EntityQuery
             return this;
         }
 
-        public Builder addFilter( final QueryFilter filter )
+        public Builder addFilter( final Filter filter )
         {
             this.filters.add( filter );
             return this;
         }
 
-        public Builder addQueryFilter( final QueryFilter queryFilter )
+        public Builder addQueryFilter( final Filter queryFilter )
         {
             this.queryFilters.add( queryFilter );
             return this;

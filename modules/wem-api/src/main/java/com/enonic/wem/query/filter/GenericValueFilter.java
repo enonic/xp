@@ -1,4 +1,4 @@
-package com.enonic.wem.query.queryfilter;
+package com.enonic.wem.query.filter;
 
 import java.util.Set;
 
@@ -6,10 +6,10 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Value;
 
-public class GenericValueQueryFilter
-    extends ValueQueryFilter
+public class GenericValueFilter
+    extends ValueFilter
 {
-    private GenericValueQueryFilter( final Builder builder )
+    private GenericValueFilter( final Builder builder )
     {
         super( builder.fieldName, builder.values );
     }
@@ -32,9 +32,9 @@ public class GenericValueQueryFilter
             return this;
         }
 
-        public GenericValueQueryFilter build()
+        public GenericValueFilter build()
         {
-            return new GenericValueQueryFilter( this );
+            return new GenericValueFilter( this );
         }
 
     }

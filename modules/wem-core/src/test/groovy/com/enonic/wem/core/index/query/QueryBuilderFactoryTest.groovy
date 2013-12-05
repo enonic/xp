@@ -1,8 +1,8 @@
 package com.enonic.wem.core.index.query
 
 import com.enonic.wem.api.data.Value
+import com.enonic.wem.query.filter.Filter
 import com.enonic.wem.query.parser.QueryParser
-import com.enonic.wem.query.queryfilter.QueryFilter
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
 import spock.lang.Ignore
@@ -35,13 +35,13 @@ class QueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         QueryBuilderFactory factory = new QueryBuilderFactory();
         def expected = this.getClass().getResource( "query_with_queryfilter.json" ).text
 
-        def queryFilter = QueryFilter.newValueQueryFilter().
+        def queryFilter = Filter.newValueQueryFilter().
                 fieldName( "myField" ).
                 add( new Value.String( "myValue" ) ).
                 add( new Value.String( "mySecondValue" ) ).
                 build()
 
-        Set<QueryFilter> queryFilters = Sets.newHashSet();
+        Set<Filter> queryFilters = Sets.newHashSet();
         queryFilters.add( queryFilter );
 
         def query = QueryParser.parse( "not( myField > 1) " )
@@ -60,15 +60,15 @@ class QueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         QueryBuilderFactory factory = new QueryBuilderFactory();
         def expected = this.getClass().getResource( "query_with_2_queryfilters.json" ).text
 
-        def queryFilter1 = QueryFilter.newValueQueryFilter().
+        def queryFilter1 = Filter.newValueQueryFilter().
                 fieldName( "myField" ).
                 add( new Value.String( "myValue" ) ).
                 add( new Value.String( "mySecondValue" ) ).
                 build()
 
-        def queryFilter2 = QueryFilter.newExistsFilter( "myField" )
+        def queryFilter2 = Filter.newExistsFilter( "myField" )
 
-        Set<QueryFilter> queryFilters = Sets.newHashSet();
+        Set<Filter> queryFilters = Sets.newHashSet();
         queryFilters.add( queryFilter1 );
         queryFilters.add( queryFilter2 );
 

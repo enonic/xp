@@ -1,7 +1,7 @@
 package com.enonic.wem.core.index.query
 
 import com.enonic.wem.api.data.Value
-import com.enonic.wem.query.queryfilter.QueryFilter
+import com.enonic.wem.query.filter.Filter
 import org.elasticsearch.index.query.FilterBuilder
 
 class FilterBuilderFactoryTest extends BaseTestQueryBuilderFactory
@@ -9,7 +9,7 @@ class FilterBuilderFactoryTest extends BaseTestQueryBuilderFactory
     def "create string value filter"( )
     {
         given:
-        def queryFilter = QueryFilter.newValueQueryFilter().
+        def queryFilter = Filter.newValueQueryFilter().
                 fieldName( "myField" ).
                 add( new Value.String( "myValue" ) ).
                 add( new Value.String( "mySecondValue" ) ).
@@ -27,7 +27,7 @@ class FilterBuilderFactoryTest extends BaseTestQueryBuilderFactory
     def "create number value filter"( )
     {
         given:
-        def queryFilter = QueryFilter.newValueQueryFilter().
+        def queryFilter = Filter.newValueQueryFilter().
                 fieldName( "myField" ).
                 add( new Value.Double( 1.0 ) ).
                 add( new Value.Double( 2.0 ) ).
@@ -45,7 +45,7 @@ class FilterBuilderFactoryTest extends BaseTestQueryBuilderFactory
     def "create number exists filter"( )
     {
         given:
-        def queryFilter = QueryFilter.newExistsFilter( "myField" );
+        def queryFilter = Filter.newExistsFilter( "myField" );
         def expected = this.getClass().getResource( "filter_exists.json" ).text
         FilterBuilderFactory factory = new FilterBuilderFactory();
 

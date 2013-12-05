@@ -3,8 +3,8 @@ package com.enonic.wem.query;
 import org.junit.Test;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.query.filter.Filter;
 import com.enonic.wem.query.parser.QueryParser;
-import com.enonic.wem.query.queryfilter.QueryFilter;
 
 import static org.junit.Assert.*;
 
@@ -15,11 +15,11 @@ public class EntityQueryTest
         throws Exception
     {
         final EntityQuery entityQuery = EntityQuery.newQuery().
-            addFilter( QueryFilter.newValueQueryFilter().
+            addFilter( Filter.newValueQueryFilter().
                 fieldName( "myField" ).
                 add( new Value.String( "test1" ), new Value.String( "test2" ) ).
                 build() ).
-            addFilter( QueryFilter.newContentTypeFilter().
+            addFilter( Filter.newContentTypeFilter().
                 add( "myContentTypeId", "myOtherContentTypeId" ).
                 build() ).
             query( QueryParser.parse( "data/test > 3 ORDER BY test ASC" ) ).

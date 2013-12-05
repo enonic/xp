@@ -4,8 +4,8 @@ import com.enonic.wem.api.data.Value
 import com.enonic.wem.core.index.Index
 import com.enonic.wem.core.index.IndexType
 import com.enonic.wem.query.EntityQuery
+import com.enonic.wem.query.filter.Filter
 import com.enonic.wem.query.parser.QueryParser
-import com.enonic.wem.query.queryfilter.QueryFilter
 import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermsFilterBuilder
@@ -38,7 +38,7 @@ class EntityQueryTranslatorTest extends BaseTestQueryBuilderFactory
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
 
-        def queryFilter = QueryFilter.newValueQueryFilter().
+        def queryFilter = Filter.newValueQueryFilter().
                 fieldName( "myField" ).
                 add( new Value.String( "myValue" ) ).
                 add( new Value.String( "mySecondValue" ) ).
@@ -103,13 +103,13 @@ class EntityQueryTranslatorTest extends BaseTestQueryBuilderFactory
         def EntityQuery.Builder builder = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 AND fulltext('myField', 'myPhrase', 'OR') ORDER BY geoDistance('myField', '-70,-50') ASC, myField DESC" ) )
         def expected = this.getClass().getResource( "big_ugly_do_it_all_query.json" ).text
 
-        builder.addFilter( QueryFilter.newValueQueryFilter().
+        builder.addFilter( Filter.newValueQueryFilter().
                                    fieldName( "myField" ).
                                    add( new Value.String( "myValue" ) ).
                                    add( new Value.String( "mySecondValue" ) ).
                                    build() );
 
-        builder.addQueryFilter( QueryFilter.newExistsFilter( "doesThisFieldExist" ) );
+        builder.addQueryFilter( Filter.newExistsFilter( "doesThisFieldExist" ) );
 
         when:
         def translatedQuery = entityQueryTranslator.translate( builder.build() )

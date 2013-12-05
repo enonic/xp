@@ -14,7 +14,7 @@ import com.enonic.wem.query.expr.Expression;
 import com.enonic.wem.query.expr.LogicalExpr;
 import com.enonic.wem.query.expr.NotExpr;
 import com.enonic.wem.query.expr.QueryExpr;
-import com.enonic.wem.query.queryfilter.QueryFilter;
+import com.enonic.wem.query.filter.Filter;
 
 public class QueryBuilderFactory
     extends AbstractBuilderFactory
@@ -25,7 +25,7 @@ public class QueryBuilderFactory
 
     private FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory();
 
-    public QueryBuilder create( final QueryExpr queryExpr, final ImmutableSet<QueryFilter> queryFilters )
+    public QueryBuilder create( final QueryExpr queryExpr, final ImmutableSet<Filter> queryFilters )
     {
         final QueryBuilder queryBuilder;
 

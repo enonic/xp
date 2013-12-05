@@ -1,4 +1,4 @@
-package com.enonic.wem.query.queryfilter;
+package com.enonic.wem.query.filter;
 
 import java.util.Set;
 
@@ -6,11 +6,11 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Value;
 
-public class ContentTypeQueryFilter
-    extends ValueQueryFilter
+public class ContentTypeFilter
+    extends ValueFilter
 {
 
-    private ContentTypeQueryFilter( final Builder builder )
+    private ContentTypeFilter( final Builder builder )
     {
         super( "contentType", builder.contentTypeIds );
     }
@@ -29,9 +29,9 @@ public class ContentTypeQueryFilter
             return this;
         }
 
-        public ContentTypeQueryFilter build()
+        public ContentTypeFilter build()
         {
-            return new ContentTypeQueryFilter( this );
+            return new ContentTypeFilter( this );
         }
     }
 }

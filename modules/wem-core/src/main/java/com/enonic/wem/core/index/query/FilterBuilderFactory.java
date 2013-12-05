@@ -13,24 +13,24 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.query.queryfilter.ExistsQueryFilter;
-import com.enonic.wem.query.queryfilter.QueryFilter;
-import com.enonic.wem.query.queryfilter.ValueQueryFilter;
+import com.enonic.wem.query.filter.ExistsFilter;
+import com.enonic.wem.query.filter.Filter;
+import com.enonic.wem.query.filter.ValueFilter;
 
 public class FilterBuilderFactory
     extends AbstractBuilderFactory
 {
-    public FilterBuilder create( final QueryFilter queryFilter )
+    public FilterBuilder create( final Filter queryFilter )
     {
         if ( queryFilter == null )
         {
             return null;
         }
 
-        return doCreate( ImmutableSet.<QueryFilter>of( queryFilter ) );
+        return doCreate( ImmutableSet.<Filter>of( queryFilter ) );
     }
 
-    public FilterBuilder create( final ImmutableSet<QueryFilter> queryFilters )
+    public FilterBuilder create( final ImmutableSet<Filter> queryFilters )
     {
         if ( queryFilters == null || queryFilters.isEmpty() )
         {
@@ -40,19 +40,19 @@ public class FilterBuilderFactory
         return doCreate( queryFilters );
     }
 
-    private FilterBuilder doCreate( final ImmutableSet<QueryFilter> queryFilters )
+    private FilterBuilder doCreate( final ImmutableSet<Filter> queryFilters )
     {
         List<FilterBuilder> filtersToApply = Lists.newArrayList();
 
-        for ( final QueryFilter filter : queryFilters )
+        for ( final Filter filter : queryFilters )
         {
-            if ( filter instanceof ExistsQueryFilter )
+            if ( filter instanceof ExistsFilter )
             {
-                filtersToApply.add( createExistsFilter( (ExistsQueryFilter) filter ) );
+                filtersToApply.add( createExistsFilter( (ExistsFilter) filter ) );
             }
-            else if ( filter instanceof ValueQueryFilter )
+            else if ( filter instanceof ValueFilter )
             {
-                filtersToApply.add( createTermFilter( (ValueQueryFilter) filter ) );
+                filtersToApply.add( createTermFilter( (ValueFilter) filter ) );
             }
         }
 
@@ -69,7 +69,7 @@ public class FilterBuilderFactory
     }
 
 
-    private FilterBuilder createTermFilter( final ValueQueryFilter filter )
+    private FilterBuilder createTermFilter( final ValueFilter filter )
     {
         final String queryFieldName = IndexQueryFieldNameResolver.resolve( filter );
 
@@ -83,7 +83,7 @@ public class FilterBuilderFactory
         return new TermsFilterBuilder( queryFieldName, values );
     }
 
-    private FilterBuilder createExistsFilter( final ExistsQueryFilter filter )
+    private FilterBuilder createExistsFilter( final ExistsFilter filter )
     {
         final String resolvedQueryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( filter.getFieldName() );
 
