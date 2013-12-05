@@ -1,7 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.page.part;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -45,8 +43,7 @@ public class PartTemplateResourceTest
     {
 
         Mockito.when( client.execute( Mockito.isA( GetPartTemplatesBySiteTemplate.class ) ) ).thenReturn( createTemplates() );
-        String result = resource().path( "content/page/part/template/list" ).entity( readFromFile( "part_template_list_params.json" ),
-                                                                                     MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        String result = resource().path( "content/page/part/template/list" ).queryParam( "siteTemplateKey", "sitetemplate-1.0.0" ).get( String.class );
         assertJson( "part_template_list.json", result );
     }
 
@@ -55,8 +52,7 @@ public class PartTemplateResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetPartTemplatesBySiteTemplate.class ) ) ).thenReturn( PartTemplates.empty() );
-        String result = resource().path( "content/page/part/template/list" ).entity( readFromFile( "part_template_list_params.json" ),
-                                                                                     MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        String result = resource().path( "content/page/part/template/list" ).queryParam( "siteTemplateKey", "sitetemplate-1.0.0" ).get( String.class );
         assertJson( "part_template_empty_list.json", result );
     }
 
@@ -66,8 +62,7 @@ public class PartTemplateResourceTest
     {
         Mockito.when( client.execute( Mockito.isA( GetPartTemplatesBySiteTemplate.class ) ) ).thenThrow(
             new SiteTemplateNotFoundException( SiteTemplateKey.from( "sitetemplate-1.0.0" ) ) );
-        String result = resource().path( "content/page/part/template/list" ).entity( readFromFile( "part_template_list_params.json" ),
-                                                                                     MediaType.APPLICATION_JSON_TYPE ).post( String.class );
+        String result = resource().path( "content/page/part/template/list" ).queryParam( "siteTemplateKey", "sitetemplate-1.0.0" ).get( String.class );
         assertJson( "part_template_list_with_exception.json", result );
     }
 

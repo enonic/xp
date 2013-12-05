@@ -1,26 +1,23 @@
 {
   "error" : null,
   "result" : {
-    "siteTemplates" : [ {
+    "partTemplates" : [ {
       "deletable" : true,
       "descriptor" : "module-1.0.0:/tpl.xml",
       "displayName" : "partTemplate1",
       "editable" : true,
       "key" : "sitetemplate-1.0.0|module-1.0.0|partTemplate1",
-      "moduleKey" : "module-1.0.0",
-      "name" : "partTemplate1",
-      "siteTemplateKey" : "sitetemplate-1.0.0"
+      "name" : "partTemplate1"
     }, {
       "deletable" : true,
       "descriptor" : "module-1.0.0:/tpl.xml",
       "displayName" : "partTemplate2",
       "editable" : true,
       "key" : "sitetemplate-1.0.0|module-1.0.0|partTemplate2",
-      "moduleKey" : "module-1.0.0",
-      "name" : "partTemplate2",
-      "siteTemplateKey" : "sitetemplate-1.0.0"
+      "name" : "partTemplate2"
     } ],
     "total" : 2
   }
 }
+
 

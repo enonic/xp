@@ -27,7 +27,7 @@ public class PartTemplateListJson
         return list.size();
     }
 
-    public List<PartTemplateSummaryJson> getSiteTemplates()
+    public List<PartTemplateSummaryJson> getPartTemplates()
     {
         return list;
     }
