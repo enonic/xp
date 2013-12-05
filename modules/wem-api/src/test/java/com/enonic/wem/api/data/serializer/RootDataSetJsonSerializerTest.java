@@ -78,19 +78,17 @@ public class RootDataSetJsonSerializerTest
     @Test
     public void property_with_DataSet()
     {
-        RootDataSet value = new RootDataSet();
-        value.setProperty( "a", new Value.String( "1" ) );
-        value.setProperty( "set.b", new Value.String( "2" ) );
+        RootDataSet regionMain = new RootDataSet();
+        regionMain.setProperty( "a", new Value.String( "1" ) );
 
         RootDataSet rootDataSet = new RootDataSet();
-        rootDataSet.addProperty( "myData", new Value.Data( value ) );
+        rootDataSet.addProperty( "regionMain", new Value.Data( regionMain ) );
 
         String serialized = serializer.toString( rootDataSet );
         assertSerializedResult( "property_with_DataSet", serializer.toString( rootDataSet ) );
-        System.out.println(serialized);
+
         RootDataSet parsedRootDataSet = serializer.parse( serialized );
-        RootDataSet parsedData = parsedRootDataSet.getProperty( "myData" ).getData();
+        RootDataSet parsedData = parsedRootDataSet.getProperty( "regionMain" ).getData();
         assertEquals( "1", parsedData.getProperty( "a" ).getString() );
-        assertEquals( "2", parsedData.getProperty( "set.b" ).getString() );
     }
 }

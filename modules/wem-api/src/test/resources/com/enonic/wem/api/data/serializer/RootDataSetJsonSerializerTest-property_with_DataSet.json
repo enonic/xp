@@ -1,22 +1,12 @@
 [
     {
-        "name": "myData",
+        "name": "regionMain",
         "type": "Data",
         "value": [
             {
                 "name": "a",
                 "type": "String",
                 "value": "1"
-            },
-            {
-                "name": "set",
-                "set": [
-                    {
-                        "name": "b",
-                        "type": "String",
-                        "value": "2"
-                    }
-                ]
             }
         ]
     }
