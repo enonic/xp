@@ -9,6 +9,9 @@ import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 
+import static com.enonic.wem.api.content.page.Page.newPage;
+import static com.enonic.wem.api.content.page.layout.LayoutComponent.newLayoutComponent;
+import static com.enonic.wem.api.content.page.part.PartComponent.newPartComponent;
 import static org.junit.Assert.*;
 
 public class ComponentsTest
@@ -20,7 +23,7 @@ public class ComponentsTest
         RootDataSet pageConfig = new RootDataSet();
         pageConfig.addProperty( "pause", new Value.Long( 200 ) );
 
-        Page page = Page.newPage().
+        Page page = newPage().
             template( PageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|pageTemplateName" ) ).
             config( pageConfig ).
             build();
@@ -36,7 +39,7 @@ public class ComponentsTest
         RootDataSet partConfig = new RootDataSet();
         partConfig.addProperty( "width", new Value.Long( 150 ) );
 
-        PartComponent partComponent = PartComponent.newPart().
+        PartComponent partComponent = newPartComponent().
             template( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|partTemplateName" ) ).
             config( partConfig ).
             build();
@@ -52,7 +55,7 @@ public class ComponentsTest
         RootDataSet layoutConfig = new RootDataSet();
         layoutConfig.addProperty( "columns", new Value.Long( 2 ) );
 
-        LayoutComponent layoutComponent = LayoutComponent.newLayout().
+        LayoutComponent layoutComponent = newLayoutComponent().
             template( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|layoutTemplateName" ) ).
             config( layoutConfig ).
             build();
