@@ -2,7 +2,7 @@ module app_delete {
 
     export class ModuleDeleteDialog extends api_app_delete.DeleteDialog {
 
-        private moduleToDelete:api_module.Module;
+        private moduleToDelete:api_module.ModuleSummary;
 
         constructor() {
             super("Module");
@@ -26,7 +26,7 @@ module app_delete {
             });
         }
 
-        setModuleToDelete(moduleModel:api_module.Module) {
+        setModuleToDelete(moduleModel:api_module.ModuleSummary) {
             this.moduleToDelete = moduleModel;
             var deleteItem = new api_app_delete.DeleteItem(api_util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), moduleModel.getDisplayName());
             var deleteItems:api_app_delete.DeleteItem[] = [deleteItem];

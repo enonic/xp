@@ -1,14 +1,14 @@
 module app_browse {
 
     export class BaseModuleModelEvent extends api_event.Event {
-        private model:api_module.Module[];
+        private model:api_module.ModuleSummary[];
 
-        constructor(name:string, model:api_module.Module[]) {
+        constructor(name:string, model:api_module.ModuleSummary[]) {
             this.model = model;
             super(name);
         }
 
-        getModules():api_module.Module[] {
+        getModules():api_module.ModuleSummary[] {
             return this.model;
         }
     }
@@ -36,11 +36,11 @@ module app_browse {
 
     export class DeleteModulePromptEvent extends BaseModuleModelEvent {
 
-        constructor(moduleModel:api_module.Module) {
+        constructor(moduleModel:api_module.ModuleSummary) {
             super('deleteModulePrompt', [moduleModel]);
         }
 
-        getModule():api_module.Module {
+        getModule():api_module.ModuleSummary {
             return this.getModules()[0];
         }
 

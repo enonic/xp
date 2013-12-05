@@ -110,15 +110,15 @@ module api_module {
 
     export class InstallModuleResponse extends api_rest.JsonResponse<any> {
 
-        private moduleResponses:api_rest.JsonResponse<api_module.Module>[];
+        private moduleResponses:api_rest.JsonResponse<api_module.ModuleSummary>[];
 
-        constructor (moduleResponses:api_rest.JsonResponse<api_module.Module>[]) {
+        constructor (moduleResponses:api_rest.JsonResponse<api_module.ModuleSummary>[]) {
             super( '{}' );
             this.moduleResponses = moduleResponses
         }
 
-        getModules():Module[]{
-            return this.moduleResponses.map((resp:api_rest.JsonResponse) => { return new Module(resp.getJson().result)})
+        getModules():ModuleSummary[]{
+            return this.moduleResponses.map((resp:api_rest.JsonResponse) => { return new ModuleSummary(resp.getJson().result)})
         }
     }
 }
