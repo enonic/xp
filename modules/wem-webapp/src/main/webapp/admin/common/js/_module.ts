@@ -64,7 +64,8 @@
 ///<reference path='form/layout/_module.ts' />
 
 ///<reference path='item/_module.ts' />
-
+///<reference path='module/_module.ts' />
+///<reference path='module/json/_module.ts' />
 
 ///<reference path='node/_module.ts' />
 
