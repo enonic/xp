@@ -12,6 +12,7 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.api.data.type.ValueType;
@@ -393,6 +394,23 @@ public class DataSet
             return null;
         }
         return data.toDataSet();
+    }
+
+    /**
+     * Returns a ImmutableList of found DataSet-s.
+     */
+    public ImmutableList<DataSet> getDataSets()
+    {
+        final ImmutableList.Builder<DataSet> list = new ImmutableList.Builder<DataSet>();
+
+        for ( Data data : this.dataById.values() )
+        {
+            if ( data.isDataSet() )
+            {
+                list.add( data.toDataSet() );
+            }
+        }
+        return list.build();
     }
 
     /**
