@@ -13,6 +13,7 @@ import com.enonic.wem.admin.rest.resource.auth.AuthResource;
 import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
 import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.content.ContentResource;
+import com.enonic.wem.admin.rest.resource.content.page.layout.LayoutTemplateResource;
 import com.enonic.wem.admin.rest.resource.content.site.SiteResource;
 import com.enonic.wem.admin.rest.resource.content.site.template.SiteTemplateResource;
 import com.enonic.wem.admin.rest.resource.jcr.GetNodesResource;
@@ -71,6 +72,8 @@ public final class RestServlet
         addClass( LocaleResource.class );
 
         addClass( SiteTemplateResource.class );
+
+        addClass( LayoutTemplateResource.class );
 
         addSingleton( JsonRpcController.class );
 
