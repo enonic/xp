@@ -1,32 +1,22 @@
 package com.enonic.wem.portal;
 
-import java.io.IOException;
-
-import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.enonic.wem.portal.dispatch.PortalDispatcher;
+import com.sun.jersey.api.core.ResourceConfig;
+
+import com.enonic.wem.portal.content.ContentResource;
+import com.enonic.wem.portal.services.ServicesResource;
+import com.enonic.wem.web.jaxrs.JaxRsServlet;
 
 @Singleton
 public final class PortalServlet
-    extends HttpServlet
+    extends JaxRsServlet
 {
-    private final PortalDispatcher dispatcher;
-
-    @Inject
-    public PortalServlet( final PortalDispatcher dispatcher )
-    {
-        this.dispatcher = dispatcher;
-    }
-
     @Override
-    protected void service( final HttpServletRequest req, final HttpServletResponse res )
-        throws ServletException, IOException
+    protected void configure()
     {
-        this.dispatcher.dispatch( req, res );
+        setFeature( ResourceConfig.FEATURE_DISABLE_WADL, true );
+        addClass( ContentResource.class );
+        addClass( ServicesResource.class );
     }
 }

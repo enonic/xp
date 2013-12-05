@@ -21,6 +21,11 @@
       <artifactId>wem-web</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.mozilla</groupId>
+      <artifactId>rhino</artifactId>
+      <version>1.7R4</version>
+    </dependency>
   </dependencies>
 
 </project>
