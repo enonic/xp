@@ -1,31 +1,31 @@
 module api_content_page{
 
-    export class BasePageComponent<TEMPLATE_KEY extends TemplateKey,TEMPLATE_NAME extends TemplateName> {
+    export class BasePageComponent<TEMPLATE_KEY extends TemplateKey> {
 
         private id:number;
 
-        private template:Template<TEMPLATE_KEY,TEMPLATE_NAME>;
+        private template:TEMPLATE_KEY;
 
-        constructor(builder?:BaseComponentBuilder<TEMPLATE_KEY,TEMPLATE_NAME>) {
+        constructor(builder?:BaseComponentBuilder<TEMPLATE_KEY>) {
             if( builder != undefined ) {
                 this.template = builder.template;
             }
         }
 
-        getTemplate():Template<TEMPLATE_KEY,TEMPLATE_NAME> {
+        getTemplate():TEMPLATE_KEY {
             return this.template;
         }
 
-        setTemplate(template:Template<TEMPLATE_KEY,TEMPLATE_NAME>) {
+        setTemplate(template:TEMPLATE_KEY) {
             this.template = template;
         }
     }
 
-    export class BaseComponentBuilder<TEMPLATE_KEY extends TemplateKey,TEMPLATE_NAME extends TemplateName> {
+    export class BaseComponentBuilder<TEMPLATE_KEY extends TemplateKey> {
 
-        template:Template<TEMPLATE_KEY,TEMPLATE_NAME>;
+        template:TEMPLATE_KEY;
 
-        setTemplate(value:Template<TEMPLATE_KEY,TEMPLATE_NAME>):BaseComponentBuilder<TEMPLATE_KEY,TEMPLATE_NAME> {
+        setTemplate(value:TEMPLATE_KEY):BaseComponentBuilder<TEMPLATE_KEY> {
             this.template = value;
             return this;
         }

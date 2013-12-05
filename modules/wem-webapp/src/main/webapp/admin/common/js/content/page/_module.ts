@@ -9,4 +9,7 @@
 ///<reference path='PageTemplateName.ts' />
 ///<reference path='PageTemplateKey.ts' />
 ///<reference path='PageTemplate.ts' />
+///<reference path='PageTemplateResourceRequest.ts' />
+///<reference path='GetPageTemplateByKeyRequest.ts' />
+
 ///<reference path='Page.ts' />

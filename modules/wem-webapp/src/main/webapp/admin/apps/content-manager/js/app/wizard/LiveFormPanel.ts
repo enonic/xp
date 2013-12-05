@@ -1,10 +1,11 @@
 module app_wizard {
     export class LiveFormPanel extends api_ui.Panel {
 
-        private frame:api_dom.IFrameEl;
-        private url:string;
+        private frame: api_dom.IFrameEl;
 
-        constructor(site:api_content.Content, url:string = api_util.getUri("dev/live-edit-page/bootstrap.jsp?edit=true")) {
+        private url: string;
+
+        constructor(site: api_content.Content, url: string = api_util.getUri("dev/live-edit-page/bootstrap.jsp?edit=true")) {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
 
@@ -18,7 +19,7 @@ module app_wizard {
             // Wait for iframe to be loaded before adding context window!
             var intervalId = setInterval(() => {
                 if (this.frame.isLoaded()) {
-                    var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame, site:site});
+                    var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame, site: site});
                     this.appendChild(contextWindow);
                     clearInterval(intervalId);
                 }
@@ -30,11 +31,11 @@ module app_wizard {
 
         }
 
-        renderExisting(content:api_content.Content) {
+        renderExisting(content: api_content.Content, pageTemplate: api_content_page.PageTemplate) {
 
             var page = content.getPage();
-            var config = page.getTemplate().getConfig();
-            if( page.getConfig() != null ) {
+            var config = pageTemplate.getConfig();
+            if (page.hasConfig()) {
                 config = page.getConfig();
             }
             var regionResolver = new api_content_page_region.RegionResolver(config);

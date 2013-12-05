@@ -6,13 +6,21 @@ module api_content{
 
         private form:api_form.Form;
 
+        private siteObj:api_content_site.Site;
+
         private pageObj:api_content_page.Page;
 
         constructor(json:api_content_json.ContentJson) {
             super(json);
             this.data = ContentDataFactory.createContentData(json.data);
             this.form = json.form != null ? new api_form.Form(json.form) : null;
-            // TODO: read page from json...
+
+            if( this.isSite() ){
+                this.siteObj = new api_content_site.Site(json.site);
+            }
+            if( this.isPage() ) {
+                this.pageObj = new api_content_page.PageBuilder().fromJson(json.page).build();
+            }
         }
 
         getContentData():ContentData {

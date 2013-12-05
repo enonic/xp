@@ -2,25 +2,27 @@ module app_wizard {
 
     export class ContentWizardPanel extends api_app_wizard.WizardPanel<api_content.Content> {
 
-        private static DEFAULT_CONTENT_ICON_URL:string = api_util.getAdminUri("common/images/default_content.png");
+        private static DEFAULT_CONTENT_ICON_URL: string = api_util.getAdminUri("common/images/default_content.png");
 
-        private parentContent:api_content.Content;
+        private parentContent: api_content.Content;
 
-        private contentType:api_schema_content.ContentType;
+        private contentType: api_schema_content.ContentType;
 
-        private formIcon:api_app_wizard.FormIcon;
+        private formIcon: api_app_wizard.FormIcon;
 
-        private contentWizardHeader:api_app_wizard.WizardHeaderWithDisplayNameAndName;
+        private contentWizardHeader: api_app_wizard.WizardHeaderWithDisplayNameAndName;
 
-        private contentWizardStepForm:ContentWizardStepForm;
+        private contentWizardStepForm: ContentWizardStepForm;
 
-        private pageWizardStepForm:PageWizardStepForm;
+        private pageWizardStepForm: PageWizardStepForm;
 
-        private iconUploadId:string;
+        private iconUploadId: string;
 
-        private displayNameScriptExecutor:DisplayNameScriptExecutor;
+        private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
-        constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content) {
+        private livePanel: LiveFormPanel;
+
+        constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content) {
 
             this.parentContent = parentContent;
             this.contentType = contentType;
@@ -31,7 +33,7 @@ module app_wizard {
 
             this.formIcon.addListener({
 
-                onUploadFinished: (uploadId:string, mimeType:string, uploadName:string) => {
+                onUploadFinished: (uploadId: string, mimeType: string, uploadName: string) => {
 
                     this.iconUploadId = uploadId;
 
@@ -51,8 +53,8 @@ module app_wizard {
             var stepToolbar = new api_ui_toolbar.Toolbar();
             stepToolbar.addAction(actions.getPublishAction());
 
-            var site:api_content.Content = null; // TODO: resolve nearest site content
-            var livePanel = new LiveFormPanel(site);
+            var site: api_content.Content = null; // TODO: resolve nearest site content
+            this.livePanel = new LiveFormPanel(site);
 
             this.contentWizardHeader.initNames("New " + this.contentType.getDisplayName(), null);
             this.contentWizardHeader.setAutogenerateName(true);
@@ -67,7 +69,7 @@ module app_wizard {
                 stepToolbar: stepToolbar,
                 header: this.contentWizardHeader,
                 actions: actions,
-                livePanel: livePanel,
+                livePanel: this.livePanel,
                 steps: this.createSteps()
             });
 
@@ -94,8 +96,8 @@ module app_wizard {
             }
         }
 
-        createSteps():api_app_wizard.WizardStep[] {
-            var steps:api_app_wizard.WizardStep[] = [];
+        createSteps(): api_app_wizard.WizardStep[] {
+            var steps: api_app_wizard.WizardStep[] = [];
             steps.push(new api_app_wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
             steps.push(new api_app_wizard.WizardStep("Page", this.pageWizardStepForm));
             return steps;
@@ -117,9 +119,11 @@ module app_wizard {
             // TODO: GetPageTemplateRequest use descriptor config form
             this.pageWizardStepForm.renderNew(null);
             this.persistNewDraft();
+
+            this.livePanel.renderNew();
         }
 
-        setPersistedItem(content:api_content.Content) {
+        setPersistedItem(content: api_content.Content) {
             super.setPersistedItem(content);
 
             this.contentWizardHeader.initNames(content.getDisplayName(), content.getName());
@@ -128,11 +132,26 @@ module app_wizard {
             this.contentWizardHeader.setAutogenerateName(!content.getName());
 
             this.formIcon.setSrc(content.getIconUrl());
-            var contentData:api_content.ContentData = content.getContentData();
+            var contentData: api_content.ContentData = content.getContentData();
 
             this.contentWizardStepForm.renderExisting(contentData, content.getForm());
-            // TODO: Get form from descriptor and rootdataset from page/template
-            this.pageWizardStepForm.renderExisting(null,  null);
+
+            if (content.isPage()) {
+                var page = content.getPage();
+                var getPageTemplateRequest = new api_content_page.GetPageTemplateByKeyRequest(page.getTemplate());
+                getPageTemplateRequest.
+                    send().
+                    done((response: api_rest.JsonResponse<api_content_page_json.PageTemplateJson>) => {
+                        var pageTemplate = new api_content_page.PageTemplateBuilder().
+                            fromJson(response.getResult()).build();
+
+                        // TODO: Get form from descriptor and rootdataset from page/template
+                        this.pageWizardStepForm.renderExisting(null, null);
+
+
+                        this.livePanel.renderExisting(content, pageTemplate);
+                    });
+            }
         }
 
         persistNewDraft() {
@@ -148,22 +167,22 @@ module app_wizard {
                 .setForm(this.contentWizardStepForm.getForm())
                 .setContentData(contentData)
                 .send()
-                .done((createResponse:api_rest.JsonResponse<any>) => {
+                .done((createResponse: api_rest.JsonResponse<any>) => {
 
-                      var json = createResponse.getJson();
+                    var json = createResponse.getJson();
 
-                      if (json.error) {
-                          api_notify.showError(json.error.message);
-                      } else {
-                          api_notify.showFeedback('Content draft was created!');
-                          var content:api_content.Content = new api_content.Content(json.result);
+                    if (json.error) {
+                        api_notify.showError(json.error.message);
+                    } else {
+                        api_notify.showFeedback('Content draft was created!');
+                        var content: api_content.Content = new api_content.Content(json.result);
 
-                          //this.setPersistedItem(content);
-                      }
+                        //this.setPersistedItem(content);
+                    }
                 });
         }
 
-        persistNewItem(successCallback?:(contentId:string, contentPath:string) => void) {
+        persistNewItem(successCallback?: (contentId: string, contentPath: string) => void) {
 
             var contentData = this.contentWizardStepForm.getContentData();
 
@@ -179,17 +198,17 @@ module app_wizard {
             if (this.iconUploadId) {
                 createRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName('_thumb.png')));
             }
-            var attachments:api_content.Attachment[] = this.contentWizardStepForm.getFormView().getAttachments();
+            var attachments: api_content.Attachment[] = this.contentWizardStepForm.getFormView().getAttachments();
             createRequest.addAttachments(attachments);
 
-            createRequest.send().done((createResponse:api_rest.JsonResponse<any>) => {
+            createRequest.send().done((createResponse: api_rest.JsonResponse<any>) => {
 
                 var json = createResponse.getJson();
                 if (json.error) {
                     api_notify.showError(json.error.message);
                 } else {
                     api_notify.showFeedback('Content was created!');
-                    var content:api_content.Content = new api_content.Content(json.result);
+                    var content: api_content.Content = new api_content.Content(json.result);
                     new api_content.ContentCreatedEvent(content).fire();
                     this.setPersistedItem(content);
                     this.getTabId().changeToEditMode(content.getId());
@@ -201,7 +220,7 @@ module app_wizard {
             });
         }
 
-        updatePersistedItem(successCallback?:() => void) {
+        updatePersistedItem(successCallback?: () => void) {
 
             var updateRequest = new api_content.UpdateContentRequest(this.getPersistedItem().getId()).
                 setContentName(this.contentWizardHeader.getName()).
@@ -214,13 +233,13 @@ module app_wizard {
                 updateRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName('_thumb.png')));
             }
 
-            updateRequest.send().done((updateResponse:api_rest.JsonResponse<any>) => {
+            updateRequest.send().done((updateResponse: api_rest.JsonResponse<any>) => {
                 var json = updateResponse.getJson();
                 if (json.error) {
                     api_notify.showError(json.error.message);
                 } else {
                     api_notify.showFeedback('Content was updated!');
-                    var content:api_content.Content = new api_content.Content(json.result);
+                    var content: api_content.Content = new api_content.Content(json.result);
                     new api_content.ContentUpdatedEvent(content).fire();
                     if (successCallback) {
                         successCallback.call(this, json.contentId, json.contentPath);
@@ -233,26 +252,26 @@ module app_wizard {
             });
         }
 
-        hasUnsavedChanges():boolean {
-            var persistedContent:api_content.Content = this.getPersistedItem();
+        hasUnsavedChanges(): boolean {
+            var persistedContent: api_content.Content = this.getPersistedItem();
             if (persistedContent == undefined) {
                 return true;
             } else {
                 return !this.stringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
-                    || !this.stringsEqual(persistedContent.getName(), this.contentWizardHeader.getName())
+                           || !this.stringsEqual(persistedContent.getName(), this.contentWizardHeader.getName())
                     || !persistedContent.getContentData().equals(this.contentWizardStepForm.getContentData());
             }
         }
 
-        getParentContent():api_content.Content {
+        getParentContent(): api_content.Content {
             return this.parentContent;
         }
 
-        getContentType():api_schema_content.ContentType {
+        getContentType(): api_schema_content.ContentType {
             return this.contentType;
         }
 
-        private stringsEqual(str1:string, str2:string):boolean {
+        private stringsEqual(str1: string, str2: string): boolean {
             // strings are equal if both of them are empty or not specified or they are identical
             return (!str1 && !str2) || (str1 == str2);
         }
