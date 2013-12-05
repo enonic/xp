@@ -1,14 +1,14 @@
-module api_data{
+module api_data {
 
     export class DataSet extends Data {
 
-        private dataById:{[s:string] : Data; } = {};
+        private dataById: {[s:string] : Data;} = {};
 
-        constructor(name:string) {
+        constructor(name: string) {
             super(name);
         }
 
-        nameCount(name:string):number {
+        nameCount(name: string): number {
             var count = 0;
             for (var i in this.dataById) {
                 var data = this.dataById[i];
@@ -19,7 +19,7 @@ module api_data{
             return count;
         }
 
-        addData(data:Data) {
+        addData(data: Data) {
             data.setParent(this);
             var index = this.nameCount(data.getName());
             data.setArrayIndex(index);
@@ -27,7 +27,7 @@ module api_data{
             this.dataById[dataId.toString()] = data;
         }
 
-        getDataArray():Data[] {
+        getDataArray(): Data[] {
             var datas = [];
             for (var i in this.dataById) {
                 var data = this.dataById[i];
@@ -36,15 +36,39 @@ module api_data{
             return datas;
         }
 
-        getData(dataId:string):Data {
-            return this.dataById[DataId.from(dataId).toString()];
+        getData(dataId: string): Data {
+            return this.getDataFromDataId(DataId.from(dataId));
         }
 
-        getDataByName(name:string):Data[] {
+        getDataFromDataPath(path: DataPath): Data {
 
-            var matches:Data[] = [];
+            if (path.elementCount() > 1) {
+                return this.doForwardGetData(path);
+            }
+            else {
+                return this.getDataFromDataId(path.getFirstElement().toDataId());
+            }
+        }
+
+        private doForwardGetData(path: DataPath): Data {
+
+            var data = this.getDataFromDataId(path.getFirstElement().toDataId());
+            if (data == null) {
+                return null;
+            }
+
+            return data.toDataSet().getDataFromDataPath(path.asNewWithoutFirstPathElement());
+        }
+
+        getDataFromDataId(dataId: DataId): Data {
+            return this.dataById[dataId.toString()];
+        }
+
+        getDataByName(name: string): Data[] {
+
+            var matches: Data[] = [];
             for (var i in this.dataById) {
-                var data:Data = this.dataById[i];
+                var data: Data = this.dataById[i];
                 if (name === data.getName()) {
                     matches.push(data);
                 }
@@ -53,10 +77,27 @@ module api_data{
             return matches;
         }
 
-        getPropertiesByName(name:string):Property[] {
+        getProperty(path: string): Property {
+            return this.getPropertyFromDataPath(DataPath.fromString(path));
+        }
 
-            var matches:Property[] = [];
-            this.getDataByName(name).forEach((data:Data) => {
+        getPropertyFromDataPath(path: DataPath): Property {
+            var data = this.getDataFromDataPath(path);
+            if (data == null) {
+                return null;
+            }
+            return data.toProperty();
+        }
+
+        getPropertyFromDataId(dataId: DataId): Property {
+            var data = this.getDataFromDataId(dataId);
+            return data.toProperty();
+        }
+
+        getPropertiesByName(name: string): Property[] {
+
+            var matches: Property[] = [];
+            this.getDataByName(name).forEach((data: Data) => {
                 if (name === data.getName() && data instanceof Property) {
                     matches.push(<Property>data);
                 }
@@ -67,10 +108,34 @@ module api_data{
             return matches;
         }
 
-        getDataSetsByName(name:string):DataSet[] {
+        getDataSet(path: string): DataSet {
+            return this.getDataSetFromDataPath(DataPath.fromString(path));
+        }
 
-            var matches:DataSet[] = [];
-            this.getDataByName(name).forEach((data:Data) => {
+        getDataSetFromDataPath(path: DataPath): DataSet {
+            var data = this.getDataFromDataPath(path);
+            if (data == null) {
+                return null;
+            }
+            return data.toDataSet();
+        }
+
+        getDataSets(): DataSet[] {
+
+            var dataSets: DataSet[] = [];
+            for (var i in this.dataById) {
+                var data: Data = this.dataById[i];
+                if (data instanceof DataSet) {
+                    dataSets.push(data.toDataSet());
+                }
+            }
+            return dataSets;
+        }
+
+        getDataSetsByName(name: string): DataSet[] {
+
+            var matches: DataSet[] = [];
+            this.getDataByName(name).forEach((data: Data) => {
                 if (name === data.getName() && data instanceof DataSet) {
                     matches.push(<DataSet>data);
                 }
@@ -81,15 +146,15 @@ module api_data{
             return matches;
         }
 
-        toDataSetJson():api_data_json.DataTypeWrapperJson {
+        toDataSetJson(): api_data_json.DataTypeWrapperJson {
 
             return <api_data_json.DataTypeWrapperJson>{ DataSet: <api_data_json.DataSetJson>{
                 name: this.getName(),
-                set: Data.datasToJson( this.getDataArray() )
+                set: Data.datasToJson(this.getDataArray())
             }};
         }
 
-        equals(dataSet:DataSet):boolean {
+        equals(dataSet: DataSet): boolean {
             var dataArray1 = this.getDataArray();
             var dataArray2 = dataSet.getDataArray();
 
@@ -97,7 +162,7 @@ module api_data{
                 return false;
             }
 
-            for (var i = 0 ; i < dataArray1.length ; i++) {
+            for (var i = 0; i < dataArray1.length; i++) {
                 var data1 = dataArray1[i];
                 var data2 = dataSet.getData(data1.getId().toString());
 

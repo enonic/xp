@@ -37,6 +37,16 @@ module api_data{
             return this.arrayIndex;
         }
 
+        toDataSet():DataSet {
+            api_util.assert(this instanceof DataSet, "Expected Data to be a DataSet: " + api_util.getClassName(this));
+            return <DataSet>this;
+        }
+
+        toProperty():Property {
+            api_util.assert(this instanceof Property, "Expected Data to be a Property: " + api_util.getClassName(this));
+            return <Property>this;
+        }
+
         toDataJson():api_data_json.DataTypeWrapperJson {
 
             if (this instanceof Property) {

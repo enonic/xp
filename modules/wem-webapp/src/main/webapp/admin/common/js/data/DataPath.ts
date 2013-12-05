@@ -1,44 +1,39 @@
-module api_data{
+module api_data {
 
     export class DataPath {
 
-        private static DEFAULT_ELEMENT_DIVIDER:string = ".";
+        private static ELEMENT_DIVIDER: string = ".";
 
-        private elementDivider:string;
+        private absolute: boolean;
 
-        private absolute:boolean;
+        private elements: DataPathElement[];
 
-        private elements:DataPathElement[];
+        private refString: string;
 
-        private refString:string;
-
-        static fromString(s:string, elementDivider?:string) {
-            if (elementDivider == null) {
-                elementDivider = DataPath.DEFAULT_ELEMENT_DIVIDER;
-            }
-            var absolute:boolean = s.charAt(0) == elementDivider;
-            var elements:string[] = s.split(elementDivider);
+        static fromString(s: string) {
+            var absolute: boolean = s.charAt(0) == DataPath.ELEMENT_DIVIDER;
+            var elements: string[] = s.split(DataPath.ELEMENT_DIVIDER);
             elements = DataPath.removeEmptyElements(elements);
-            var dataPathElements:DataPathElement[] = [];
-            elements.forEach((s:string) => {
+            var dataPathElements: DataPathElement[] = [];
+            elements.forEach((s: string) => {
                 dataPathElements.push(DataPathElement.fromString(s));
             });
-            return new DataPath(dataPathElements, elementDivider, absolute);
+            return new DataPath(dataPathElements, absolute);
         }
 
-        static fromParent(parent:DataPath, ...childElements:DataPathElement[]) {
+        static fromParent(parent: DataPath, ...childElements: DataPathElement[]) {
 
-            var elements:DataPathElement[] = parent.elements.slice(0);
-            childElements.forEach((element:DataPathElement) => {
+            var elements: DataPathElement[] = parent.elements.slice(0);
+            childElements.forEach((element: DataPathElement) => {
                 elements.push(element);
             });
 
-            return new DataPath(elements, parent.elementDivider, parent.isAbsolute());
+            return new DataPath(elements, parent.isAbsolute());
         }
 
-        private static removeEmptyElements(elements:string[]):string[] {
-            var filteredElements:string[] = [];
-            elements.forEach((element:string) => {
+        private static removeEmptyElements(elements: string[]): string[] {
+            var filteredElements: string[] = [];
+            elements.forEach((element: string) => {
                 if (element.length > 0) {
                     filteredElements.push(element);
                 }
@@ -46,10 +41,10 @@ module api_data{
             return filteredElements;
         }
 
-        constructor(elements:DataPathElement[], elementDivider?:string, absolute?:boolean) {
-            this.elementDivider = elementDivider != null ? elementDivider : DataPath.DEFAULT_ELEMENT_DIVIDER;
+        constructor(elements: DataPathElement[], absolute?: boolean) {
+
             this.absolute = absolute == undefined ? true : absolute;
-            elements.forEach((element:DataPathElement, index:number) => {
+            elements.forEach((element: DataPathElement, index: number) => {
                 if (element == null) {
                     throw new Error("Path element was null at index: " + index);
                 }
@@ -58,46 +53,46 @@ module api_data{
                 }
             });
             this.elements = elements;
-            this.refString = (this.absolute ? this.elementDivider : "") + this.elements.join(this.elementDivider);
+            this.refString = (this.absolute ? DataPath.ELEMENT_DIVIDER : "") + this.elements.join(DataPath.ELEMENT_DIVIDER);
         }
 
-        newWithoutFirstElement():DataPath {
+        newWithoutFirstElement(): DataPath {
             var arr = this.elements;
             arr.shift();
             return new DataPath(arr);
         }
 
-        elementCount():number {
+        elementCount(): number {
             return this.getElements().length;
         }
 
-        getElements():DataPathElement[] {
+        getElements(): DataPathElement[] {
             return this.elements;
         }
 
-        getElement(index:number):DataPathElement {
+        getElement(index: number): DataPathElement {
             return this.elements[index];
         }
 
-        getFirstElement():DataPathElement {
+        getFirstElement(): DataPathElement {
             return this.elements[0];
         }
 
-        getLastElement():DataPathElement {
-            return this.elements[this.elements.length-1];
+        getLastElement(): DataPathElement {
+            return this.elements[this.elements.length - 1];
         }
 
-        hasParent():boolean {
+        hasParent(): boolean {
             return this.elements.length > 0;
         }
 
-        getParentPath():DataPath {
+        getParentPath(): DataPath {
 
             if (this.elements.length < 1) {
                 return null;
             }
-            var parentElemements:DataPathElement[] = [];
-            this.elements.forEach((element:DataPathElement, index:number)=> {
+            var parentElemements: DataPathElement[] = [];
+            this.elements.forEach((element: DataPathElement, index: number)=> {
                 if (index < this.elements.length - 1) {
                     parentElemements.push(element);
                 }
@@ -109,39 +104,51 @@ module api_data{
             return this.refString;
         }
 
-        isAbsolute():boolean {
+        isAbsolute(): boolean {
             return this.absolute;
+        }
+
+        asNewWithoutFirstPathElement(): DataPath {
+            api_util.assert(this.elementCount() > 1,
+                "Cannot create new path without first path element when path does not contain more than one element");
+            var elements: DataPathElement[] = [];
+            this.elements.forEach((element: DataPathElement, index: number) => {
+                if (index > 0) {
+                    elements.push(new DataPathElement(element.getName(), element.getIndex()));
+                }
+            });
+            return new DataPath( elements, this.isAbsolute() );
         }
     }
 
     export class DataPathElement {
 
-        private name:string;
+        private name: string;
 
-        private index:number;
+        private index: number;
 
-        constructor(name:string, index:number) {
+        constructor(name: string, index: number) {
             this.name = name;
             this.index = index;
         }
 
-        getName():string {
+        getName(): string {
             return this.name
         }
 
-        getIndex():number {
+        getIndex(): number {
             return this.index;
         }
 
-        toDataId():api_data.DataId {
-            return new api_data.DataId( this.name, this.index );
+        toDataId(): api_data.DataId {
+            return new api_data.DataId(this.name, this.index);
         }
 
-        toString():string {
+        toString(): string {
             return this.name + "[" + this.index + "]";
         }
 
-        static fromString(str:string) {
+        static fromString(str: string) {
             if (str.indexOf("[") == -1) {
                 return new DataPathElement(str, 0);
             }
