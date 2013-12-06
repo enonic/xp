@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.page.image;
 import com.enonic.wem.api.content.page.BaseDescriptor;
 
 public final class ImageDescriptor
-    extends BaseDescriptor
+    extends BaseDescriptor<ImageDescriptorKey>
 {
     private ImageDescriptor( final Builder builder )
     {
@@ -17,7 +17,7 @@ public final class ImageDescriptor
     }
 
     public static class Builder
-        extends BaseDescriptorBuilder<Builder>
+        extends BaseDescriptorBuilder<Builder, ImageDescriptorKey>
     {
         private Builder()
         {

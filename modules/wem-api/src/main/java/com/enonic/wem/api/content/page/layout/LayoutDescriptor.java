@@ -3,7 +3,7 @@ package com.enonic.wem.api.content.page.layout;
 import com.enonic.wem.api.content.page.BaseDescriptor;
 
 public class LayoutDescriptor
-    extends BaseDescriptor
+    extends BaseDescriptor<LayoutDescriptorKey>
 {
     private LayoutDescriptor( final Builder builder )
     {
@@ -16,7 +16,7 @@ public class LayoutDescriptor
     }
 
     public static class Builder
-        extends BaseDescriptorBuilder<Builder>
+        extends BaseDescriptorBuilder<Builder, LayoutDescriptorKey>
     {
         private Builder()
         {

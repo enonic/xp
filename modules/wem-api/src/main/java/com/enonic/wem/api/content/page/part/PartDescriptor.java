@@ -4,7 +4,7 @@ package com.enonic.wem.api.content.page.part;
 import com.enonic.wem.api.content.page.BaseDescriptor;
 
 public class PartDescriptor
-    extends BaseDescriptor
+    extends BaseDescriptor<PartDescriptorKey>
 {
     private PartDescriptor( final Builder builder )
     {
@@ -17,7 +17,7 @@ public class PartDescriptor
     }
 
     public static class Builder
-        extends BaseDescriptorBuilder<Builder>
+        extends BaseDescriptorBuilder<Builder, PartDescriptorKey>
     {
         private Builder()
         {

@@ -1,13 +1,13 @@
-package com.enonic.wem.api.module;
-
+package com.enonic.wem.api.content.page;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ResourcePath;
 
-public final class ModuleResourceKey
+public abstract class DescriptorKey
 {
-    private static final String SEPARATOR = ":";
+    protected static final String SEPARATOR = ":";
 
     private final ModuleKey moduleKey;
 
@@ -15,7 +15,7 @@ public final class ModuleResourceKey
 
     private final String refString;
 
-    public ModuleResourceKey( final ModuleKey moduleKey, final ResourcePath path )
+    protected DescriptorKey( final ModuleKey moduleKey, final ResourcePath path )
     {
         this.moduleKey = moduleKey;
         this.path = path;
@@ -44,7 +44,7 @@ public final class ModuleResourceKey
             return false;
         }
 
-        final ModuleResourceKey that = (ModuleResourceKey) o;
+        final DescriptorKey that = (DescriptorKey) o;
         return Objects.equals( this.refString, that.refString );
     }
 
@@ -57,12 +57,5 @@ public final class ModuleResourceKey
     public String toString()
     {
         return refString;
-    }
-
-    public static ModuleResourceKey from( final String moduleResourceKey )
-    {
-        final String moduleKey = StringUtils.substringBefore( moduleResourceKey, SEPARATOR );
-        final String resourcePath = StringUtils.substringAfter( moduleResourceKey, SEPARATOR );
-        return new ModuleResourceKey( ModuleKey.from( moduleKey ), ResourcePath.from( resourcePath ) );
     }
 }

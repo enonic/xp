@@ -1,11 +1,14 @@
 package com.enonic.wem.api.content.page;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-public abstract class BaseDescriptor
-    implements ComponentDescriptor
+public abstract class BaseDescriptor<KEY extends DescriptorKey>
 {
+    private final KEY key;
+
     private final ComponentDescriptorName name;
 
     private final String displayName;
@@ -16,39 +19,43 @@ public abstract class BaseDescriptor
 
     protected BaseDescriptor( final BaseDescriptorBuilder builder )
     {
-        // TODO: CMS-2557: Preconditions.checkNotNull( builder.name, "name cannot be null" );
+        Preconditions.checkNotNull( builder.name, "name cannot be null" );
+        this.key = (KEY) builder.key;
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.controllerResource = builder.controllerResource;
         this.config = builder.config != null ? builder.config : Form.newForm().build();
     }
 
-    @Override
+    public KEY getKey()
+    {
+        return key;
+    }
+
     public ComponentDescriptorName getName()
     {
         return name;
     }
 
-    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
-    @Override
     public ModuleResourceKey getControllerResource()
     {
         return controllerResource;
     }
 
-    @Override
     public Form getConfigForm()
     {
         return config;
     }
 
-    public abstract static class BaseDescriptorBuilder<T extends BaseDescriptorBuilder>
+    public abstract static class BaseDescriptorBuilder<T extends BaseDescriptor.BaseDescriptorBuilder, KEY>
     {
+        protected KEY key;
+
         protected ComponentDescriptorName name;
 
         protected String displayName;
@@ -57,10 +64,16 @@ public abstract class BaseDescriptor
 
         protected Form config;
 
+        public T setKey( final KEY key )
+        {
+            this.key = key;
+            return typecastToBuilder( this );
+        }
+
         public T name( final ComponentDescriptorName name )
         {
             this.name = name;
-            return (T) this;
+            return typecastToBuilder( this );
         }
 
         public T name( final String name )
@@ -71,19 +84,25 @@ public abstract class BaseDescriptor
         public T displayName( final String displayName )
         {
             this.displayName = displayName;
-            return (T) this;
+            return typecastToBuilder( this );
         }
 
         public T controllerResource( final ModuleResourceKey controllerResource )
         {
             this.controllerResource = controllerResource;
-            return (T) this;
+            return typecastToBuilder( this );
         }
 
         public T config( final Form value )
         {
             this.config = value;
-            return (T) this;
+            return typecastToBuilder( this );
+        }
+
+        @SuppressWarnings("unchecked")
+        private T typecastToBuilder( final BaseDescriptorBuilder object )
+        {
+            return (T) object;
         }
 
     }

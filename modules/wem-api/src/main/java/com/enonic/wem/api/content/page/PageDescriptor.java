@@ -2,7 +2,7 @@ package com.enonic.wem.api.content.page;
 
 
 public final class PageDescriptor
-    extends BaseDescriptor
+    extends BaseDescriptor<PageDescriptorKey>
 {
     private PageDescriptor( final Builder builder )
     {
@@ -15,7 +15,7 @@ public final class PageDescriptor
     }
 
     public static class Builder
-        extends BaseDescriptorBuilder<Builder>
+        extends BaseDescriptorBuilder<Builder, PageDescriptorKey>
     {
         private Builder()
         {
