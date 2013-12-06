@@ -52,10 +52,11 @@ module api_rest {
                         deferred.resolve(new JsonResponse(request.response));
                     }
                     else {
-                        var message:string = "HTTP Status " + request.status + " - " + request.statusText;
-                        api_notify.showError(message);
+                        var errorJson:any = JSON.parse(request.response);
+                        var notifyMessage:string = "HTTP Status " + request.status + " - " + request.statusText + ": " + errorJson.message;
+                        api_notify.showError(notifyMessage);
 
-                        deferred.fail(new RequestError(request.statusText, request.responseText));
+                        deferred.reject(new RequestError(request.status, request.statusText, request.responseText, errorJson.message));
                     }
                 }
             };
@@ -83,10 +84,11 @@ module api_rest {
                         deferred.resolve(new JsonResponse(request.response));
                     }
                     else {
-                        var message:string = "HTTP Status " + request.status + " - " + request.statusText;
-                        api_notify.showError(message);
+                        var errorJson:any = JSON.parse(request.response);
+                        var notifyMessage:string = "HTTP Status " + request.status + " - " + request.statusText + ": " + errorJson.message;
+                        api_notify.showError(notifyMessage);
 
-                        deferred.fail(new RequestError(request.statusText, request.responseText));
+                        deferred.reject(new RequestError(request.status, request.statusText, request.responseText, errorJson.message));
                     }
                 }
             };
