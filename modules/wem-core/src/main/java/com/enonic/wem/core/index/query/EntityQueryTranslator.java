@@ -3,6 +3,7 @@ package com.enonic.wem.core.index.query;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.elastic.ElasticsearchQuery;
+import com.enonic.wem.core.index.query.facet.FacetBuilderFactory;
 import com.enonic.wem.query.EntityQuery;
 
 public class EntityQueryTranslator
@@ -22,7 +23,7 @@ public class EntityQueryTranslator
             indexType( IndexType.ENTITY ).
             query( queryBuilderFactory.create( entityQuery.getQuery(), entityQuery.getQueryFilters() ) ).
             filter( filterBuilderFactory.create( entityQuery.getFilters() ) ).
-            facet( facetBuilderFactory.create( entityQuery.getFacets() ) ).
+            addFacets( facetBuilderFactory.create( entityQuery.getFacetQueries() ) ).
             sortBuilders( sortBuilderFactory.create( entityQuery.getOrderBys() ) ).
             build();
 

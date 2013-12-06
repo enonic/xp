@@ -1,0 +1,13 @@
+{
+    "myTermsFacetQuery": {
+        "terms": {
+            "fields": ["mysecondfield", "myfirstfield"],
+            "size": 10,
+            "exclude": ["myexludedfield", "myseconexcludedfield"],
+            "regex": "myRegexp",
+            "regex_flags": "CASE_INSENSITIVE|",
+            "order": "reverse_count",
+            "all_terms": true
+        }
+    }
+}

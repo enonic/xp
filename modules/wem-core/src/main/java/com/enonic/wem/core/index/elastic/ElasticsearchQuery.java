@@ -1,5 +1,6 @@
 package com.enonic.wem.core.index.elastic;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.elasticsearch.index.query.FilterBuilder;
@@ -24,7 +25,7 @@ public class ElasticsearchQuery
 
     private final FilterBuilder filter;
 
-    private final FacetBuilder facet;
+    private final ImmutableSet<FacetBuilder> facetBuilders;
 
     private final IndexType indexType;
 
@@ -42,7 +43,7 @@ public class ElasticsearchQuery
     {
         this.query = builder.query;
         this.filter = builder.filter;
-        this.facet = builder.facet;
+        this.facetBuilders = ImmutableSet.copyOf( builder.facetBuilders );
         this.indexType = builder.indexType;
         this.index = builder.index;
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
@@ -61,9 +62,9 @@ public class ElasticsearchQuery
         return filter;
     }
 
-    public FacetBuilder getFacet()
+    public ImmutableSet<FacetBuilder> getFacetBuilders()
     {
-        return facet;
+        return facetBuilders;
     }
 
     public IndexType getIndexType()
@@ -110,9 +111,12 @@ public class ElasticsearchQuery
             size( this.getSize() ).
             explain( this.doExplain() );
 
-        if ( this.getFacet() != null )
+        if ( this.getFacetBuilders() != null && !this.getFacetBuilders().isEmpty() )
         {
-            builder.facet( this.getFacet() );
+            for ( final FacetBuilder facetBuilder : this.getFacetBuilders() )
+            {
+                builder.facet( facetBuilder );
+            }
         }
 
         for ( final SortBuilder sortBuilder : this.getSortBuilders() )
@@ -137,7 +141,7 @@ public class ElasticsearchQuery
         return "ElasticsearchQuery{" +
             "query=" + query +
             ", filter=" + filter +
-            ", facet=" + facet +
+            ", facet=" + facetBuilders +
             ", indexType=" + indexType +
             ", index=" + index +
             ", sortBuilders=" + sortBuildersAsString +
@@ -150,7 +154,7 @@ public class ElasticsearchQuery
 
         private FilterBuilder filter;
 
-        private FacetBuilder facet;
+        private Set<FacetBuilder> facetBuilders = Sets.newHashSet();
 
         private IndexType indexType;
 
@@ -176,9 +180,19 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder facet( final FacetBuilder facet )
+        public Builder addFacet( final FacetBuilder facetBuilder )
         {
-            this.facet = facet;
+            this.facetBuilders.add( facetBuilder );
+            return this;
+        }
+
+        public Builder addFacets( final Collection<FacetBuilder> facetBuilders )
+        {
+            if ( facetBuilders != null )
+            {
+                this.facetBuilders.addAll( facetBuilders );
+            }
+
             return this;
         }
 

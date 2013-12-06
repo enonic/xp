@@ -13,27 +13,28 @@ import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder
 import spock.lang.Ignore
 
-class EntityQueryTranslatorTest extends BaseTestQueryBuilderFactory
+class EntityQueryTranslatorTest
+        extends BaseTestBuilderFactory
 {
-    def "query values populated"( )
+    def "query values populated"()
     {
         given:
-        EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
-        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1" ) ).build();
+        EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator()
+        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1" ) ).build()
 
         when:
         def translatedQuery = entityQueryTranslator.translate( entityQuery )
 
         then:
-        translatedQuery.getQuery() != null;
+        translatedQuery.getQuery() != null
         translatedQuery.getQuery() instanceof RangeQueryBuilder
-        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB );
-        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY );
-        translatedQuery.getFilter() == null;
-        translatedQuery.getFacet() == null;
+        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB )
+        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY )
+        translatedQuery.getFilter() == null
+        translatedQuery.getFacetBuilders().isEmpty()
     }
 
-    def "filter values populated"( )
+    def "filter values populated"()
     {
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
@@ -50,15 +51,15 @@ class EntityQueryTranslatorTest extends BaseTestQueryBuilderFactory
         def translatedQuery = entityQueryTranslator.translate( entityQuery )
 
         then:
-        translatedQuery.getQuery() instanceof MatchAllQueryBuilder;
-        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB );
-        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY );
-        translatedQuery.getFilter() != null;
+        translatedQuery.getQuery() instanceof MatchAllQueryBuilder
+        translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB )
+        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY )
+        translatedQuery.getFilter() != null
         translatedQuery.getFilter() instanceof TermsFilterBuilder
-        translatedQuery.getFacet() == null;
+        translatedQuery.getFacetBuilders().isEmpty()
     }
 
-    def "sort values populated"( )
+    def "sort values populated"()
     {
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
@@ -76,11 +77,12 @@ class EntityQueryTranslatorTest extends BaseTestQueryBuilderFactory
     }
 
 
-    def "sort value function geoDistance"( )
+    def "sort value function geoDistance"()
     {
         given:
         EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
-        EntityQuery entityQuery = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 ORDER BY geoDistance('myField', '-70,-50') ASC" ) ).build();
+        EntityQuery entityQuery = EntityQuery.newQuery().query(
+                QueryParser.parse( "myField >= 1 ORDER BY geoDistance('myField', '-70,-50') ASC" ) ).build();
 
         when:
         def translatedQuery = entityQueryTranslator.translate( entityQuery )
@@ -96,11 +98,12 @@ class EntityQueryTranslatorTest extends BaseTestQueryBuilderFactory
     }
 
     @Ignore // Because of changes in order of stuff.
-    def "big ugly query containing everything"( )
+    def "big ugly query containing everything"()
     {
         given:
         def EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
-        def EntityQuery.Builder builder = EntityQuery.newQuery().query( QueryParser.parse( "myField >= 1 AND fulltext('myField', 'myPhrase', 'OR') ORDER BY geoDistance('myField', '-70,-50') ASC, myField DESC" ) )
+        def EntityQuery.Builder builder = EntityQuery.newQuery().query( QueryParser.parse(
+                "myField >= 1 AND fulltext('myField', 'myPhrase', 'OR') ORDER BY geoDistance('myField', '-70,-50') ASC, myField DESC" ) )
         def expected = this.getClass().getResource( "big_ugly_do_it_all_query.json" ).text
 
         builder.addFilter( Filter.newValueQueryFilter().

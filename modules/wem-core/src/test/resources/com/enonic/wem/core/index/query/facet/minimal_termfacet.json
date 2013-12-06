@@ -1,0 +1,10 @@
+{
+    "myTermsFacetQuery": {
+        "terms": {
+            "field": "myfirstfield",
+            "size": 10,
+            "order": "term",
+            "all_terms": false
+        }
+    }
+}

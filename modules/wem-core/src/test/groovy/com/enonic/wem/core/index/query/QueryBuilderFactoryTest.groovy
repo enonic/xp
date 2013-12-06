@@ -8,10 +8,11 @@ import com.google.common.collect.Sets
 import spock.lang.Ignore
 import spock.lang.Unroll
 
-class QueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
+class QueryBuilderFactoryTest
+        extends BaseTestBuilderFactory
 {
     @Unroll
-    def "create query #query"( )
+    def "create query #query"()
     {
         given:
         def QueryBuilderFactory factory = new QueryBuilderFactory()
@@ -29,7 +30,7 @@ class QueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         "function/fulltext_3_args.json" | QueryParser.parse( "fulltext('myField', 'my search phrase', 'OR')" )
     }
 
-    def "create query with queryfilter"( )
+    def "create query with queryfilter"()
     {
         given:
         QueryBuilderFactory factory = new QueryBuilderFactory();
@@ -54,7 +55,7 @@ class QueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
     }
 
     @Ignore // Since the order of the two filters are random goddamnit!
-    def "create query with two queryfilters"( )
+    def "create query with two queryfilters"()
     {
         given:
         QueryBuilderFactory factory = new QueryBuilderFactory();

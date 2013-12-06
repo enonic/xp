@@ -5,10 +5,11 @@ import com.enonic.wem.query.expr.FieldExpr
 import com.enonic.wem.query.expr.ValueExpr
 import spock.lang.Unroll
 
-class CompareQueryFactoryTest extends BaseTestQueryBuilderFactory
+class CompareQueryFactoryTest
+        extends BaseTestBuilderFactory
 {
     @Unroll
-    def "build #compareExpr"( )
+    def "build #compareExpr"()
     {
         given:
         def CompareQueryFactory builder = new CompareQueryFactory();
@@ -29,7 +30,8 @@ class CompareQueryFactoryTest extends BaseTestQueryBuilderFactory
         "compare_eq_geopoint.json"     | CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) )
         "compare_neq_string.json"      | CompareExpr.neq( new FieldExpr( "myField" ), ValueExpr.string( "myValue" ) )
         "compare_not_like_string.json" | CompareExpr.notLike( new FieldExpr( "myField" ), ValueExpr.string( "myValue" ) )
-        "compare_not_in_string.json"   | CompareExpr.notIn( new FieldExpr( "myField" ), [ValueExpr.string( "myFirstValue" ), ValueExpr.string( "mySecondValue" )] );
+        "compare_not_in_string.json"   |
+                CompareExpr.notIn( new FieldExpr( "myField" ), [ValueExpr.string( "myFirstValue" ), ValueExpr.string( "mySecondValue" )] );
     }
 
 }

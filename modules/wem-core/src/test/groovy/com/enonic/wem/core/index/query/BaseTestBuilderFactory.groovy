@@ -1,26 +1,31 @@
 package com.enonic.wem.core.index.query
 
 import org.elasticsearch.common.Strings
+import org.elasticsearch.common.xcontent.ToXContent
+import org.elasticsearch.common.xcontent.XContentBuilder
+import org.elasticsearch.common.xcontent.XContentFactory
+import org.elasticsearch.search.facet.FacetBuilder
 import org.joda.time.DateTimeZone
 import spock.lang.Specification
 
-class BaseTestQueryBuilderFactory extends Specification
+class BaseTestBuilderFactory
+        extends Specification
 {
     private static final String LINE_BREAK = System.getProperty( "line.separator" )
 
     private static DateTimeZone origDefault = DateTimeZone.getDefault();
 
-    def setupSpec( )
+    def setupSpec()
     {
         DateTimeZone.setDefault( DateTimeZone.UTC );
     }
 
-    def cleanupSpec( )
+    def cleanupSpec()
     {
         DateTimeZone.setDefault( origDefault );
     }
 
-    def "dummy"( )
+    def "dummy"()
     {
         given:
 
@@ -36,6 +41,17 @@ class BaseTestQueryBuilderFactory extends Specification
         String output = input.replace( LINE_BREAK, "" );
         output = Strings.trimAllWhitespace( output )
         return output;
+    }
+
+    public String getJson( FacetBuilder facetBuilder )
+            throws Exception
+    {
+        final XContentBuilder builder = XContentFactory.jsonBuilder();
+        builder.startObject();
+        facetBuilder.toXContent( builder, ToXContent.EMPTY_PARAMS );
+        builder.endObject();
+
+        return builder.string();
     }
 
 }

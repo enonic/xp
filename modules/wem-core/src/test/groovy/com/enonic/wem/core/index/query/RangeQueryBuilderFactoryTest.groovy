@@ -5,9 +5,10 @@ import com.enonic.wem.query.expr.FieldExpr
 import com.enonic.wem.query.expr.ValueExpr
 import org.elasticsearch.index.query.QueryBuilder
 
-class RangeQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
+class RangeQueryBuilderFactoryTest
+        extends BaseTestBuilderFactory
 {
-    def "compare gt number"( )
+    def "compare gt number"()
     {
         given:
         def RangeQueryBuilderFactory builder = new RangeQueryBuilderFactory();
@@ -20,7 +21,7 @@ class RangeQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         cleanString( expected ) == cleanString( query.toString() )
     }
 
-    def "compare gte number"( )
+    def "compare gte number"()
     {
         given:
         def RangeQueryBuilderFactory builder = new RangeQueryBuilderFactory();
@@ -33,20 +34,21 @@ class RangeQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         cleanString( expected ) == cleanString( query.toString() )
     }
 
-    def "compare gt datetime"( )
+    def "compare gt datetime"()
     {
         given:
         def RangeQueryBuilderFactory builder = new RangeQueryBuilderFactory();
         def expected = this.getClass().getResource( "compare_gt_datetime.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.gt( new FieldExpr( "myField" ), ValueExpr.dateTime( "2013-11-29T11:00:00" ) ) );
+        final QueryBuilder query = builder.create(
+                CompareExpr.gt( new FieldExpr( "myField" ), ValueExpr.dateTime( "2013-11-29T11:00:00" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
     }
 
-    def "compare gt string"( )
+    def "compare gt string"()
     {
         given:
         def RangeQueryBuilderFactory builder = new RangeQueryBuilderFactory();

@@ -4,9 +4,10 @@ import com.enonic.wem.api.data.Value
 import com.enonic.wem.query.filter.Filter
 import org.elasticsearch.index.query.FilterBuilder
 
-class FilterBuilderFactoryTest extends BaseTestQueryBuilderFactory
+class FilterBuilderFactoryTest
+        extends BaseTestBuilderFactory
 {
-    def "create string value filter"( )
+    def "create string value filter"()
     {
         given:
         def queryFilter = Filter.newValueQueryFilter().
@@ -24,7 +25,7 @@ class FilterBuilderFactoryTest extends BaseTestQueryBuilderFactory
         cleanString( expected ) == cleanString( filterBuilder.toString() )
     }
 
-    def "create number value filter"( )
+    def "create number value filter"()
     {
         given:
         def queryFilter = Filter.newValueQueryFilter().
@@ -42,7 +43,7 @@ class FilterBuilderFactoryTest extends BaseTestQueryBuilderFactory
         cleanString( expected ) == cleanString( filterBuilder.toString() )
     }
 
-    def "create number exists filter"( )
+    def "create number exists filter"()
     {
         given:
         def queryFilter = Filter.newExistsFilter( "myField" );

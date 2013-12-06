@@ -5,9 +5,10 @@ import com.enonic.wem.query.expr.FieldExpr
 import com.enonic.wem.query.expr.ValueExpr
 import org.elasticsearch.index.query.QueryBuilder
 
-class LikeQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
+class LikeQueryBuilderFactoryTest
+        extends BaseTestBuilderFactory
 {
-    def "compare like string"( )
+    def "compare like string"()
     {
         given:
         def LikeQueryBuilderFactory builder = new LikeQueryBuilderFactory();

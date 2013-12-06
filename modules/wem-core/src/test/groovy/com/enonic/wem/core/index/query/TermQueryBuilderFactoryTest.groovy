@@ -5,9 +5,10 @@ import com.enonic.wem.query.expr.FieldExpr
 import com.enonic.wem.query.expr.ValueExpr
 import org.elasticsearch.index.query.QueryBuilder
 
-class TermQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
+class TermQueryBuilderFactoryTest
+        extends BaseTestBuilderFactory
 {
-    def "compare eq string"( )
+    def "compare eq string"()
     {
         given:
         def TermQueryBuilderFactory builder = new TermQueryBuilderFactory();
@@ -20,7 +21,7 @@ class TermQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         cleanString( expected ) == cleanString( query.toString() )
     }
 
-    def "compare eq number"( )
+    def "compare eq number"()
     {
         given:
         def TermQueryBuilderFactory builder = new TermQueryBuilderFactory();
@@ -33,28 +34,30 @@ class TermQueryBuilderFactoryTest extends BaseTestQueryBuilderFactory
         cleanString( expected ) == cleanString( query.toString() )
     }
 
-    def "compare eq datetime"( )
+    def "compare eq datetime"()
     {
         given:
         def TermQueryBuilderFactory builder = new TermQueryBuilderFactory();
         def expected = this.getClass().getResource( "compare_eq_datetime.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.dateTime( "2013-11-29T09:42:00" ) ) );
+        final QueryBuilder query = builder.create(
+                CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.dateTime( "2013-11-29T09:42:00" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
 
     }
 
-    def "compare eq geo point"( )
+    def "compare eq geo point"()
     {
         given:
         def TermQueryBuilderFactory builder = new TermQueryBuilderFactory();
         def expected = this.getClass().getResource( "compare_eq_geopoint.json" ).text
 
         when:
-        final QueryBuilder query = builder.create( CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) ) );
+        final QueryBuilder query = builder.create(
+                CompareExpr.eq( new FieldExpr( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) ) );
 
         then:
         cleanString( expected ) == cleanString( query.toString() )
