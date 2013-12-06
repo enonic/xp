@@ -85,6 +85,7 @@
 ///<reference path='content/page/image/json/_module.ts' />
 ///<reference path='content/page/layout/_module.ts' />
 ///<reference path='content/page/layout/json/_module.ts' />
+///<reference path='content/page/part/json/_module.ts' />
 ///<reference path='content/page/part/_module.ts' />
 ///<reference path='content/page/region/_module.ts' />
 

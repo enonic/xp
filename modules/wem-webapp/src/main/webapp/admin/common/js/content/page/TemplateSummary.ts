@@ -8,12 +8,12 @@ module api_content_page{
 
         private displayName:string;
 
-        private descriptorModuleResourceKey:api_module.ModuleResourceKey;
+        private descriptor:api_module.ModuleResourceKey;
 
         constructor(builder:TemplateSummaryBuilder<KEY,NAME>) {
             this.name = builder.name;
             this.displayName = builder.displayName;
-            this.descriptorModuleResourceKey = builder.descriptorModuleResourceKey;
+            this.descriptor = builder.descriptor;
         }
 
         getKey():KEY {
@@ -28,8 +28,8 @@ module api_content_page{
             return this.displayName;
         }
 
-        getDescriptorModuleResourceKey():api_module.ModuleResourceKey {
-            return this.descriptorModuleResourceKey;
+        getDescriptor():api_module.ModuleResourceKey {
+            return this.descriptor;
         }
     }
 
@@ -41,7 +41,7 @@ module api_content_page{
 
         displayName:string;
 
-        descriptorModuleResourceKey:api_module.ModuleResourceKey;
+        descriptor:api_module.ModuleResourceKey;
 
         public setKey(value:KEY):TemplateSummaryBuilder<KEY,NAME> {
             this.key = value;
@@ -58,8 +58,8 @@ module api_content_page{
             return this;
         }
 
-        public setDescriptorModuleResourceKey(value:api_module.ModuleResourceKey):TemplateSummaryBuilder<KEY,NAME> {
-            this.descriptorModuleResourceKey = value;
+        public setDescriptor(value:api_module.ModuleResourceKey):TemplateSummaryBuilder<KEY,NAME> {
+            this.descriptor = value;
             return this;
         }
 

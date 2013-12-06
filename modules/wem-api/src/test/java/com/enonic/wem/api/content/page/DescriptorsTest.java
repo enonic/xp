@@ -24,6 +24,7 @@ public class DescriptorsTest
                 build();
 
         PageDescriptor pageDescriptor = PageDescriptor.newPageDescriptor().
+            name( "landing-page" ).
             displayName( "Landing page" ).
             config( pageForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) ).
@@ -40,6 +41,7 @@ public class DescriptorsTest
             build();
 
         PartDescriptor partDescriptor = PartDescriptor.newPartDescriptor().
+            name( "news-part" ).
             displayName( "News part" ).
             config( partForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/news-part.js" ) ).
@@ -56,6 +58,7 @@ public class DescriptorsTest
             build();
 
         LayoutDescriptor layoutDescriptor = LayoutDescriptor.newLayoutDescriptor().
+            name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/fancy-layout.js" ) ).
@@ -72,6 +75,7 @@ public class DescriptorsTest
             build();
 
         ImageDescriptor partDescriptor = ImageDescriptor.newImageDescriptor().
+            name( "image" ).
             displayName( "Image" ).
             config( partForm ).
             build();

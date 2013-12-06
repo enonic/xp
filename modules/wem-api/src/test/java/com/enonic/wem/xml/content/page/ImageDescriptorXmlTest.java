@@ -51,7 +51,7 @@ public class ImageDescriptorXmlTest
 
         assertEquals( "An Image", imageDescriptor.getDisplayName() );
         assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/image-ctrl.js" ), imageDescriptor.getControllerResource() );
-        final Form config = imageDescriptor.getConfig();
+        final Form config = imageDescriptor.getConfigForm();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );

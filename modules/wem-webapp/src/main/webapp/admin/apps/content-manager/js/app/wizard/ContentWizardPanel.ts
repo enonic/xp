@@ -145,11 +145,20 @@ module app_wizard {
                         var pageTemplate = new api_content_page.PageTemplateBuilder().
                             fromJson(response.getResult()).build();
 
-                        // TODO: Get form from descriptor and rootdataset from page/template
-                        this.pageWizardStepForm.renderExisting(null, null);
+                        var getPageDescriptorRequest = new api_content_page.GetPageDescriptorByModuleResourceKeyRequest(pageTemplate.getDescriptor());
+                        getPageDescriptorRequest.
+                            send().
+                            done((response: api_rest.JsonResponse<api_content_page_json.PageDescriptorJson>)=> {
+
+                                var pageDescriptor = new api_content_page.PageDescriptorBuilder().
+                                    fromJson(response.getResult()).build();
+
+                                // TODO: Get form from descriptor and rootdataset from page/template
+                                this.pageWizardStepForm.renderExisting(content, pageTemplate, pageDescriptor);
 
 
-                        this.livePanel.renderExisting(content, pageTemplate);
+                                this.livePanel.renderExisting(content, pageTemplate);
+                        });
                     });
             }
         }

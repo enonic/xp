@@ -12,6 +12,9 @@ module api_content_page{
 
         constructor(builder:ComponentDescriptorBuilder) {
             this.name = builder.name;
+            this.displayName = builder.displayName;
+            this.form = builder.form;
+            this.controllerResource = builder.controllerResource;
         }
 
         getName():ComponentDescriptorName {
@@ -41,24 +44,5 @@ module api_content_page{
 
         controllerResource:api_module.ModuleResourceKey;
 
-        public setName(value:ComponentDescriptorName):ComponentDescriptorBuilder {
-            this.name = value;
-            return this;
-        }
-
-        public setDisplayName(value:string):ComponentDescriptorBuilder {
-            this.displayName = value;
-            return this;
-        }
-
-        public setForm(value:api_form.Form):ComponentDescriptorBuilder {
-            this.form = value;
-            return this;
-        }
-
-        public setControllerResource(value:api_module.ModuleResourceKey):ComponentDescriptorBuilder {
-            this.controllerResource = value;
-            return this;
-        }
     }
 }

@@ -1,5 +1,10 @@
 ///<reference path='ComponentDescriptorName.ts' />
 ///<reference path='ComponentDescriptor.ts' />
+
+///<reference path='PageDescriptor.ts' />
+///<reference path='PageDescriptorResourceRequest.ts' />
+///<reference path='GetPageDescriptorByModuleResourceKeyRequest.ts' />
+
 ///<reference path='TemplateKey.ts' />
 ///<reference path='TemplateName.ts' />
 ///<reference path='TemplateSummary.ts' />

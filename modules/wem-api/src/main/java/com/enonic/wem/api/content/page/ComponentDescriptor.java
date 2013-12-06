@@ -10,7 +10,7 @@ public interface ComponentDescriptor
 
     String getDisplayName();
 
-    Form getConfig();
+    Form getConfigForm();
 
     ModuleResourceKey getControllerResource();
 }

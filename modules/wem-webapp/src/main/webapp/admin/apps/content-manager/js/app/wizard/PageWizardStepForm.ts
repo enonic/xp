@@ -16,7 +16,7 @@ module app_wizard {
             //this.layout(form, null);
         }
 
-        renderExisting(contentData:api_data.RootDataSet, form:api_form.Form) {
+        renderExisting(content:api_content.Content, pageTemplate:api_content_page.PageTemplate, pageDescriptor:api_content_page.PageDescriptor) {
             //this.removeChildren();
             //this.form = form;
             //this.layout(form, contentData);

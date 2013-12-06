@@ -1,10 +1,10 @@
 module api_content_page {
 
-    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<api_content_page_json.PageTemplateJson> {
+    export class GetPageDescriptorByModuleResourceKeyRequest extends PageDescriptorResourceRequest<api_content_page_json.PageDescriptorJson> {
 
-        private key:PageTemplateKey;
+        private key:api_module.ModuleResourceKey;
 
-        constructor(key:PageTemplateKey) {
+        constructor(key:api_module.ModuleResourceKey) {
             super();
             super.setMethod("GET");
             this.key = key;

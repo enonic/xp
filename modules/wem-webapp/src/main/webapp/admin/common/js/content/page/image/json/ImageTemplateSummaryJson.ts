@@ -1,14 +1,7 @@
 module api_content_page_image_json
 {
-
-    export interface ImageTemplateSummaryJson extends api_item.ItemJson
+    export interface ImageTemplateSummaryJson extends api_content_page_json.TemplateSummaryJson
     {
-        key: string;
 
-        name: string;
-
-        displayName: string;
-
-        descriptor: string;
     }
 }

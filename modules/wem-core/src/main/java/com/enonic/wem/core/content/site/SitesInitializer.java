@@ -12,6 +12,7 @@ import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
@@ -77,8 +78,18 @@ public class SitesInitializer
     public void initialize()
         throws Exception
     {
-        this.demoModule = createDemoModule();
-        mainPageTemplate = createPageTemplate( this.demoModule );
+        final ModuleResourceKey controllerResourceKey =
+            new ModuleResourceKey( DEMO_MODULE_KEY, ResourcePath.from( "/controllers/main.page.js" ) );
+
+        final PageDescriptor pageDescriptor = newPageDescriptor().
+            name( "landing-page" ).
+            displayName( "Landing page" ).
+            config( createPageDescriptorForm() ).
+            controllerResource( controllerResourceKey ).
+            build();
+
+        this.demoModule = createDemoModule( pageDescriptor );
+        mainPageTemplate = createPageTemplate( this.demoModule, pageDescriptor.getName() );
         this.siteTemplate = createSiteTemplate( BLUMAN_SITE_TEMPLATE_KEY, ModuleKeys.from( this.demoModule.getKey() ), mainPageTemplate );
 
         createSite( "bluman trampoliner", "Bluman Trampoliner" );
@@ -107,10 +118,10 @@ public class SitesInitializer
         client.execute( createPage );
     }
 
-    private PageTemplate createPageTemplate( final Module module )
+    private PageTemplate createPageTemplate( final Module module, final ComponentDescriptorName componentDescriptorName )
     {
-        final ResourcePath pageTemplateController = ResourcePath.from( "controllers/main-page.js" );
-        final ModuleResourceKey descriptorModuleResourceKey = new ModuleResourceKey( module.getModuleKey(), pageTemplateController );
+        final ModuleResourceKey descriptorModuleResourceKey =
+            new ModuleResourceKey( module.getModuleKey(), ResourcePath.from( "/components/" + componentDescriptorName.toString() + ".xml" ) );
 
         return newPageTemplate().
             key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "mainpage" ) ) ).
@@ -154,28 +165,15 @@ public class SitesInitializer
         return client.execute( createSiteTemplate );
     }
 
-    private Module createDemoModule()
+    private Module createDemoModule( final PageDescriptor pageDescriptor )
     {
         final ModuleFileEntry.Builder controllersDir = newModuleDirectory( "controllers" ).
-            addFile( "main-page.js", asByteSource( "some_code();".getBytes() ) );
-
-        final ModuleResourceKey controllerResourceKey =
-            new ModuleResourceKey( DEMO_MODULE_KEY, ResourcePath.from( "/controllers/main.page.js" ) );
-
-        final PageDescriptor pageDescriptor = newPageDescriptor().
-            name( "landing-page" ).
-            displayName( "Landing page" ).
-            config( createPageDescriptorForm() ).
-            controllerResource( controllerResourceKey ).
-            build();
+            addFile( pageDescriptor.getName().toString() + ".js", asByteSource( "some_code();".getBytes() ) );
 
         final String pageDescriptorAsString = serialize( pageDescriptor );
 
-        final ModuleFileEntry.Builder componentPagesDir = newModuleDirectory( "pages" ).
-            addFile( "landing-page.xml", asByteSource( pageDescriptorAsString.getBytes() ) );
-
         final ModuleFileEntry.Builder componentsDir = newModuleDirectory( "components" ).
-            addEntry( componentPagesDir );
+            addFile( pageDescriptor.getName().toString() + ".xml", asByteSource( pageDescriptorAsString.getBytes() ) );
 
         final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
             addEntry( controllersDir ).

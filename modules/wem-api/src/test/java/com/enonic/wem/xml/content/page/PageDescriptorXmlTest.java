@@ -91,7 +91,7 @@ public class PageDescriptorXmlTest
 
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
         assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ), pageDescriptor.getControllerResource() );
-        final Form config = pageDescriptor.getConfig();
+        final Form config = pageDescriptor.getConfigForm();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "pause" ).toInput().getInputType() );
         assertEquals( "Pause parameter", config.getFormItem( "pause" ).toInput().getLabel() );

@@ -51,7 +51,7 @@ public class LayoutDescriptorXmlTest
 
         assertEquals( "A Layout", layoutDescriptor.getDisplayName() );
         assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/layout-ctrl.js" ), layoutDescriptor.getControllerResource() );
-        final Form config = layoutDescriptor.getConfig();
+        final Form config = layoutDescriptor.getConfigForm();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );

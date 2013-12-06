@@ -16,6 +16,7 @@ public abstract class BaseDescriptor
 
     protected BaseDescriptor( final BaseDescriptorBuilder builder )
     {
+        // TODO: CMS-2557: Preconditions.checkNotNull( builder.name, "name cannot be null" );
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.controllerResource = builder.controllerResource;
@@ -41,7 +42,7 @@ public abstract class BaseDescriptor
     }
 
     @Override
-    public Form getConfig()
+    public Form getConfigForm()
     {
         return config;
     }

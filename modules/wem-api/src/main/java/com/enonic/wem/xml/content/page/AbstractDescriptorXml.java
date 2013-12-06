@@ -24,7 +24,7 @@ abstract class AbstractDescriptorXml<I, O>
     {
         this.displayName = descriptor.getDisplayName();
         this.controller = descriptor.getControllerResource().toString();
-        this.configForm.from( descriptor.getConfig() );
+        this.configForm.from( descriptor.getConfigForm() );
     }
 
     protected void toDescriptor( final BaseDescriptor.BaseDescriptorBuilder builder )

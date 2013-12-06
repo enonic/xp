@@ -51,7 +51,7 @@ public class PartDescriptorXmlTest
 
         assertEquals( "A Part", partDescriptor.getDisplayName() );
         assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/part-ctrl.js" ), partDescriptor.getControllerResource() );
-        final Form config = partDescriptor.getConfig();
+        final Form config = partDescriptor.getConfigForm();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );
         assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );

@@ -1,3 +1,5 @@
+///<reference path='ImageDescriptor.ts' />
+
 ///<reference path='ImageTemplateName.ts' />
 ///<reference path='ImageTemplateKey.ts' />
 ///<reference path='ImageComponent.ts' />

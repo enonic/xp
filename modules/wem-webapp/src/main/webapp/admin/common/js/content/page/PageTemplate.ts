@@ -23,7 +23,7 @@ module api_content_page {
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setName(new PageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorModuleResourceKey(api_module.ModuleResourceKey.fromString(json.descriptor));
+            this.setDescriptor(api_module.ModuleResourceKey.fromString(json.descriptor));
             this.setConfig(api_data.DataFactory.createRootDataSet(json.config));
             json.canRender.forEach((name: string)=> {
                 this.canRender.push(new api_schema_content.ContentTypeName(name))
