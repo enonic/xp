@@ -34,15 +34,5 @@ module api_rest {
             setPath(this.getRequestPath());
             return jsonRequest.send();
         }
-
-        deferredSend():JQueryDeferred<Response>{
-
-            var jsonRequest = new JsonRequest<T>().
-                setMethod(this.method).
-                setParams(this.getParams()).
-                setPath(this.getRequestPath());
-            return jsonRequest.deferredSend();
-        }
-
     }
 }

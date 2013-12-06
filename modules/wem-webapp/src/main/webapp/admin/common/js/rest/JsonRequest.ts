@@ -72,38 +72,6 @@ module api_rest {
             return deferred.promise();
         }
 
-        deferredSend():JQueryDeferred<Response> {
-
-            var deferred:JQueryDeferred<Response> = jQuery.Deferred<Response>();
-
-            var request:XMLHttpRequest = new XMLHttpRequest();
-            request.onreadystatechange = () => {
-
-                if (request.readyState == 4) {
-                    if (request.status >= 200 && request.status < 300) {
-                        deferred.resolve(new JsonResponse(request.response));
-                    }
-                    else {
-                        var errorJson:any = JSON.parse(request.response);
-                        var notifyMessage:string = "HTTP Status " + request.status + " - " + request.statusText + ": " + errorJson.message;
-                        api_notify.showError(notifyMessage);
-
-                        deferred.reject(new RequestError(request.status, request.statusText, request.responseText, errorJson.message));
-                    }
-                }
-            };
-
-            if ("POST" == this.method.toUpperCase()) {
-                request = this.preparePOSTRequest(request);
-            }
-            else {
-                var request = this.prepareGETRequest(request);
-                request.send();
-            }
-
-            return deferred;
-        }
-
         private static serializeParams(params:Object):string {
             var str = "";
             for (var key in params) {
