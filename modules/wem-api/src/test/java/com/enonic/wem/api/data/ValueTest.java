@@ -51,6 +51,7 @@ public class ValueTest
     public void isJavaType()
     {
         assertTrue( new Value.String( "Some text" ).isJavaType( String.class ) );
+        assertTrue( new Value.Boolean( false ).isJavaType( Boolean.class ));
         assertTrue( new Value.DateMidnight( org.joda.time.DateMidnight.now() ).isJavaType( org.joda.time.DateMidnight.class ) );
     }
 
@@ -80,6 +81,14 @@ public class ValueTest
         assertSame( value, new Value.DateMidnight( value ).getDate() );
         assertEquals( value, new Value.DateMidnight( new DateTime( 2013, 1, 1, 12, 0, 0 ) ).getDate() );
         assertEquals( value, new Value.DateMidnight( "2013-1-1" ).getDate() );
+    }
+
+    @Test
+    public void construct_Boolean()
+    {
+        Boolean value = new Value.Boolean( true ).asBoolean();
+
+        assertEquals( true, value.booleanValue() );
     }
 
     @Test(expected = InconvertibleValueException.class)

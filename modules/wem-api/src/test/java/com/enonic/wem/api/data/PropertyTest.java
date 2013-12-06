@@ -54,6 +54,14 @@ public class PropertyTest
     }
 
     @Test
+    public void getBoolean_given_value_as_string()
+    {
+        Property property = new Property.Boolean( "mySwitch", "true" );
+        assertEquals( Boolean.class, property.getBoolean().getClass() );
+        assertEquals( true, property.getBoolean().booleanValue() );
+    }
+
+    @Test
     public void getDouble_given_value_as_long()
     {
         Property property = new Property.Long( "myNumber", 2 );

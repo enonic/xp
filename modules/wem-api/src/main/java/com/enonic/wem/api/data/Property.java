@@ -116,6 +116,12 @@ public class Property
         return getArray().getValue( arrayIndex ).asLong();
     }
 
+    public java.lang.Boolean getBoolean()
+        throws InconvertibleValueException
+    {
+        return value.asBoolean();
+    }
+
     public java.lang.Double getDouble()
         throws InconvertibleValueException
     {
@@ -397,6 +403,35 @@ public class Property
         public Date copy()
         {
             return new Date( this );
+        }
+    }
+
+    public final static class Boolean
+        extends Property
+    {
+        public Boolean( final java.lang.String name, final java.lang.Boolean value )
+        {
+            super( name, new Value.Boolean( value ) );
+        }
+
+        public Boolean( final java.lang.String name, final java.lang.String value )
+        {
+            super (name, new Value.String( value ));
+        }
+
+        public Boolean( final java.lang.String name, final Value value )
+        {
+            super( name, value );
+        }
+
+        Boolean( final Boolean source )
+        {
+            super( source );
+        }
+
+        public Boolean copy()
+        {
+            return new Boolean( this );
         }
     }
 

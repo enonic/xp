@@ -67,7 +67,7 @@ public abstract class JavaTypeConverter<T>
             {
                 return value.toString();
             }
-            else if ( value instanceof Boolean )
+            else if ( value instanceof java.lang.Boolean )
             {
                 return value.toString();
             }
@@ -146,6 +146,48 @@ public abstract class JavaTypeConverter<T>
         public java.lang.Long convertFromString( final java.lang.String value )
         {
             return new java.lang.Long( value );
+        }
+    }
+
+    public static final class Boolean
+        extends JavaTypeConverter<java.lang.Boolean>
+    {
+        public static final Boolean GET = new Boolean();
+
+        private Boolean()
+        {
+            super( java.lang.Boolean.class );
+        }
+
+        @Override
+        public java.lang.Boolean convertFrom( final Object value )
+        {
+            if ( value == null )
+            {
+                return null;
+            }
+
+            if ( value instanceof java.lang.Boolean )
+            {
+                return (java.lang.Boolean) value;
+            }
+            else if ( value instanceof java.lang.String )
+            {
+                java.lang.String s = (java.lang.String) value;
+                if ( s.equalsIgnoreCase( "null" ) )
+                {
+                    return null;
+                }
+                return java.lang.Boolean.parseBoolean( (java.lang.String) value );
+            }
+
+            return null;
+        }
+
+        @Override
+        public java.lang.Boolean convertFromString( final java.lang.String value )
+        {
+            return java.lang.Boolean.parseBoolean( value );
         }
     }
 
@@ -254,7 +296,7 @@ public abstract class JavaTypeConverter<T>
             {
                 if ( value instanceof org.joda.time.DateMidnight )
                 {
-                    return (org.joda.time.DateTime) ( (org.joda.time.DateMidnight) value ).toDateTime();
+                    return ( (org.joda.time.DateMidnight) value ).toDateTime();
                 }
                 if ( value instanceof org.joda.time.DateTime )
                 {

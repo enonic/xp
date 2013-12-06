@@ -88,6 +88,17 @@ public abstract class Value<T>
     }
 
     /**
+     * Attempts to return value as Boolean using casting.
+     *
+     * @throws ClassCastException if value is not of type Double.
+     */
+    public java.lang.Boolean getBoolean()
+        throws ClassCastException
+    {
+        return (java.lang.Boolean) object;
+    }
+
+    /**
      * Attempts to return value as Double using casting.
      *
      * @throws ClassCastException if value is not of type Double.
@@ -156,8 +167,7 @@ public abstract class Value<T>
     /**
      * Attempts to return value as String, using best effort converting if value is not of type String.
      *
-     * @throws com.enonic.wem.api.data.type.InconvertibleValueException
-     *          if value is not convertible to String.
+     * @throws com.enonic.wem.api.data.type.InconvertibleValueException if value is not convertible to String.
      */
     public java.lang.String asString()
         throws InconvertibleValueException
@@ -214,6 +224,22 @@ public abstract class Value<T>
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.Long.GET );
+        }
+        return converted;
+    }
+
+    /**
+     * Attempts to return value as Boolean, using best effort converting if value is not of type Boolean.
+     *
+     * @throws InconvertibleValueException if value is not convertible to Boolean.
+     */
+    public java.lang.Boolean asBoolean()
+        throws InconvertibleValueException
+    {
+        final java.lang.Boolean converted = JavaTypeConverter.Boolean.GET.convertFrom( object );
+        if (object != null && converted == null)
+        {
+            throw new InconvertibleValueException( object, JavaTypeConverter.Boolean.GET );
         }
         return converted;
     }
@@ -376,6 +402,20 @@ public abstract class Value<T>
             super( ValueTypes.LONG, java.lang.Long.valueOf( value ) );
         }
 
+    }
+
+    public static final class Boolean
+        extends Value<java.lang.Boolean>
+    {
+        public Boolean( final java.lang.Boolean value )
+        {
+            super( ValueTypes.BOOLEAN, value );
+        }
+
+        public Boolean( final java.lang.String value )
+        {
+            super( ValueTypes.BOOLEAN, java.lang.Boolean.parseBoolean( value ) );
+        }
     }
 
     public static final class Double

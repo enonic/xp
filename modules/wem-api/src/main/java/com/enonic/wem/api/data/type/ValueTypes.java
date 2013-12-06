@@ -35,6 +35,8 @@ public final class ValueTypes
 
     public static final EntityId ENTITY_ID = new EntityId( 12 );
 
+    public static final Boolean BOOLEAN = new Boolean( 13 );
+
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
 
     private static final Map<java.lang.String, ValueType> typesByName = new HashMap<>();
@@ -54,6 +56,7 @@ public final class ValueTypes
         register( GEO_POINT );
         register( ATTACHMENT_NAME );
         register( ENTITY_ID );
+        register( BOOLEAN );
     }
 
     private static void register( ValueType valueType )
