@@ -8,8 +8,10 @@ module api_content_page_image {
 
         constructor(builder?: ImageComponentBuilder) {
             super(builder);
-            this.config = builder.config;
-            this.imageContent = builder.imageContent;
+            if (builder) {
+                this.config = builder.config;
+                this.imageContent = builder.imageContent;
+            }
         }
 
         getConfig(): api_data.RootDataSet {

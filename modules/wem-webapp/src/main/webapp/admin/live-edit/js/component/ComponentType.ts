@@ -32,17 +32,11 @@ module LiveEdit.component {
     export class ComponentType {
 
         private type:Type;
-
         private typeName:string;
-
         private cssSelector:string;
-
         private iconCls:string;
-
         private cursor:string;
-
         private highlighterStyle:HighlighterStyle;
-
         private contextMenuConfig:string[];
 
         constructor(type:Type) {

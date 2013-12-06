@@ -10,32 +10,25 @@ module LiveEdit.component {
     export class Component {
 
         element:JQuery;
-
         componentType:ComponentType;
-
         key:string;
-
         name:string;
-
         elementDimensions:ElementDimensions;
-
         selectedAsParent:boolean = false;
 
-        constructor(element:JQuery) {
+        constructor(element?:JQuery) {
 
-            if (element.length == 0) {
-                throw "Could not create component. No element";
+//            if (element.length == 0) {
+//                throw "Could not create component. No element";
+//            }
+
+            if (element) {
+                this.setElement(element);
+                this.setName(this.getComponentNameFromElement());
+                this.setKey(this.getComponentKeyFromElement());
+                this.setElementDimensions(this.getDimensionsFromElement());
+                this.setComponentType(new LiveEdit.component.ComponentType(this.resolveComponentTypeEnum()));
             }
-
-            this.setElement(element);
-
-            this.setName(this.getComponentNameFromElement());
-
-            this.setKey(this.getComponentKeyFromElement());
-
-            this.setElementDimensions(this.getDimensionsFromElement());
-
-            this.setComponentType(new LiveEdit.component.ComponentType( this.resolveComponentTypeEnum() ));
         }
 
         getItemId():number {

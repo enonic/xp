@@ -27,14 +27,14 @@ module api_rest {
 
         private prepareGETRequest(request:XMLHttpRequest) {
             var paramString = JsonRequest.serializeParams(this.params);
-            request.open(this.method, this.path.toString() + "?" + paramString, true);
+            request.open(this.method, api_util.getUri(this.path.toString()) + "?" + paramString, true);
             request.setRequestHeader("Accept", "application/json");
             return request;
         }
 
         private preparePOSTRequest(request:XMLHttpRequest) {
             var paramString = JSON.stringify(this.params);
-            request.open(this.method, this.path.toString(), true);
+            request.open(this.method, api_util.getUri(this.path.toString()), true);
             request.setRequestHeader("Accept", "application/json");
             request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             request.send(paramString);
