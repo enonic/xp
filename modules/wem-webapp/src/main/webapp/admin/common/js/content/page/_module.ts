@@ -17,4 +17,7 @@
 ///<reference path='PageTemplateResourceRequest.ts' />
 ///<reference path='GetPageTemplateByKeyRequest.ts' />
 
+///<reference path='PageResourceRequest.ts' />
+///<reference path='UpdatePageRequest.ts' />
+
 ///<reference path='Page.ts' />
