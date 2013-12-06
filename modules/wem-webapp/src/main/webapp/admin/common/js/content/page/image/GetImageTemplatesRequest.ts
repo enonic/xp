@@ -17,7 +17,7 @@ module api_content_page_image{
         }
 
         getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "image/template/list");
+            return api_rest.Path.fromParent(super.getResourcePath(), "list");
         }
     }
 }
