@@ -87,7 +87,7 @@ module api_module {
                     results.push(new api_rest.JsonResponse(response.response));
                     //this.deferred.resolve(new api_rest.JsonResponse(response.response));
                 } else {
-                    this.deferred.reject(new api_rest.RequestError(response.statusText, response.responseText));
+                    this.deferred.reject(new api_rest.RequestError(response.status, response.statusText, response.responseText, null));
                 }
 
             });
@@ -98,7 +98,7 @@ module api_module {
             });
 
             this.uploader.bind('Error', (up, files) => {
-                this.deferred.reject(new api_rest.RequestError(files.code, files.message));
+                this.deferred.reject(new api_rest.RequestError(null, files.code, files.message, null));
             });
 
             this.uploader.init();
