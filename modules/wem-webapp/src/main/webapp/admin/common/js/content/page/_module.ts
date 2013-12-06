@@ -3,7 +3,7 @@
 
 ///<reference path='PageDescriptor.ts' />
 ///<reference path='PageDescriptorResourceRequest.ts' />
-///<reference path='GetPageDescriptorByModuleResourceKeyRequest.ts' />
+///<reference path='GetPageDescriptorByKeyRequest.ts' />
 
 ///<reference path='TemplateKey.ts' />
 ///<reference path='TemplateName.ts' />

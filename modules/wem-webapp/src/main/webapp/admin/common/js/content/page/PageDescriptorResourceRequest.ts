@@ -1,6 +1,6 @@
 module api_content_page {
 
-    export class PageDescriptorResourceRequest<T> extends api_rest.ResourceRequest<T>{
+    export class PageDescriptorResourceRequest<JSON> extends api_rest.ResourceRequest<JSON>{
 
         private resourcePath:api_rest.Path;
 
@@ -11,6 +11,10 @@ module api_content_page {
 
         getResourcePath():api_rest.Path {
             return this.resourcePath;
+        }
+
+        fromJsonToPageDescriptor(json:api_content_page_json.PageDescriptorJson):api_content_page.PageDescriptor {
+            return new api_content_page.PageDescriptorBuilder().fromJson(json).build();
         }
     }
 }

@@ -138,20 +138,14 @@ module app_wizard {
 
             if (content.isPage()) {
                 var page = content.getPage();
-                var getPageTemplateRequest = new api_content_page.GetPageTemplateByKeyRequest(page.getTemplate());
-                getPageTemplateRequest.
-                    send().
-                    done((response: api_rest.JsonResponse<api_content_page_json.PageTemplateJson>) => {
-                        var pageTemplate = new api_content_page.PageTemplateBuilder().
-                            fromJson(response.getResult()).build();
 
-                        var getPageDescriptorRequest = new api_content_page.GetPageDescriptorByModuleResourceKeyRequest(pageTemplate.getDescriptor());
-                        getPageDescriptorRequest.
-                            send().
-                            done((response: api_rest.JsonResponse<api_content_page_json.PageDescriptorJson>)=> {
+                new api_content_page.GetPageTemplateByKeyRequest(page.getTemplate()).
+                    sendAndParse().
+                    done((pageTemplate: api_content_page.PageTemplate) => {
 
-                                var pageDescriptor = new api_content_page.PageDescriptorBuilder().
-                                    fromJson(response.getResult()).build();
+                        new api_content_page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptor()).
+                            sendAndParse().
+                            done((pageDescriptor: api_content_page.PageDescriptor)=> {
 
                                 // TODO: Get form from descriptor and rootdataset from page/template
                                 this.pageWizardStepForm.renderExisting(content, pageTemplate, pageDescriptor);

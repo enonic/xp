@@ -12,5 +12,10 @@ module api_content_page {
         getResourcePath():api_rest.Path {
             return this.resourcePath;
         }
+
+        fromJsonToPageTemplate(json:api_content_page_json.PageTemplateJson):api_content_page.PageTemplate {
+            return new api_content_page.PageTemplateBuilder().
+                fromJson(json).build();
+        }
     }
 }
