@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableList;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataBodyPart;
@@ -98,10 +97,10 @@ public class SiteTemplateResourceTest
     public void list_site_template_success()
         throws Exception
     {
-        SiteTemplate siteTemplate = createSiteTemplate();
+        final SiteTemplate siteTemplate = createSiteTemplate();
+        final SiteTemplates siteTemplates = SiteTemplates.from( siteTemplate );
 
-        Mockito.when( client.execute( Mockito.isA( GetAllSiteTemplates.class ) ) ).thenReturn(
-            SiteTemplates.from( ImmutableList.of( siteTemplate ) ) );
+        Mockito.when( client.execute( Mockito.isA( GetAllSiteTemplates.class ) ) ).thenReturn( siteTemplates );
 
         String resultJson = resource().path( "content/site/template/list" ).get( String.class );
 

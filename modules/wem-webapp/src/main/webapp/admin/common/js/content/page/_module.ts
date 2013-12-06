@@ -10,6 +10,7 @@
 ///<reference path='TemplateSummary.ts' />
 ///<reference path='Template.ts' />
 ///<reference path='BasePageComponent.ts' />
+///<reference path="GetPageTemplatesRequest.ts"/>
 
 ///<reference path='PageTemplateName.ts' />
 ///<reference path='PageTemplateKey.ts' />
