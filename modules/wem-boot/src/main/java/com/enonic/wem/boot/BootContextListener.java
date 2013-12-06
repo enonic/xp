@@ -39,12 +39,20 @@ public final class BootContextListener
     @Override
     public void contextInitialized( final ServletContextEvent event )
     {
-        this.env = new BootEnvironment();
-        this.env.initialize();
+        try
+        {
+            this.env = new BootEnvironment();
+            this.env.initialize();
 
-        createInjector();
-        configure( event.getServletContext() );
-        this.lifecycleService.startAll();
+            createInjector();
+            configure( event.getServletContext() );
+            this.lifecycleService.startAll();
+        }
+        catch ( final RuntimeException e )
+        {
+            LOG.error( "Failed to start server", e );
+            throw e;
+        }
     }
 
     @Override
