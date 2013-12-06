@@ -1,6 +1,5 @@
 package com.enonic.wem.core.exporters;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -67,7 +66,8 @@ public abstract class AbstractEntityExporter<I, O>
 
         try (final FileSystem zipFs = FileSystems.newFileSystem( zipUri, ZIP_FS_ENV ))
         {
-            final Path parentDirectory = zipFs.getPath( "/" ).resolve( identity.getKey().toString() );
+            final String rootPath = zipFs.getSeparator();
+            final Path parentDirectory = zipFs.getPath( rootPath ).resolve( identity.getKey().toString() );
             createPath( parentDirectory );
             exportObject( object, parentDirectory, "" );
         }
@@ -122,7 +122,8 @@ public abstract class AbstractEntityExporter<I, O>
 
         try (final FileSystem zipFs = FileSystems.newFileSystem( zipFile, null ))
         {
-            final Path root = zipFs.getPath( "/" ).getRoot();
+            final String rootPath = zipFs.getSeparator();
+            final Path root = zipFs.getPath( rootPath ).getRoot();
             final Path parentDir = getFirstDirectory( root );
 
             return importFromDirectory( parentDir );
@@ -208,7 +209,7 @@ public abstract class AbstractEntityExporter<I, O>
 
     private String getFileName( final Path path )
     {
-        return stripEnd( path.getFileName().toString(), File.separator );
+        return stripEnd( path.getFileName().toString(), path.getFileSystem().getSeparator() );
     }
 
     protected String resolveId( final Path directoryPath )

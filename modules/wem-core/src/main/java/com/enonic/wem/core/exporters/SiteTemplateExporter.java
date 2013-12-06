@@ -1,6 +1,5 @@
 package com.enonic.wem.core.exporters;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -81,7 +80,8 @@ public final class SiteTemplateExporter
                                   final SiteTemplateKey siteTemplateKey )
         throws IOException
     {
-        final String pathName = StringUtils.remove( parentDirectory.getFileName().toString(), File.separatorChar );
+        final String pathSeparator = parentDirectory.getFileSystem().getSeparator();
+        final String pathName = StringUtils.remove( parentDirectory.getFileName().toString(), pathSeparator );
         final ModuleKey moduleKey = ModuleKey.from( pathName );
         try (final DirectoryStream<Path> ds = Files.newDirectoryStream( parentDirectory ))
         {
