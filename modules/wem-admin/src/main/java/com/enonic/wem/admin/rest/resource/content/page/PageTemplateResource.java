@@ -5,12 +5,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.enonic.wem.admin.json.content.page.PageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.PageTemplateJson;
 import com.enonic.wem.admin.json.content.page.PageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.page.GetPageTemplatesBySiteTemplate;
+import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplates;
@@ -24,16 +26,14 @@ public final class PageTemplateResource
     extends AbstractResource
 {
     @GET
-    @javax.ws.rs.Path("list")
-    public Result list( @QueryParam("siteTemplateKey") String key )
+    public Result getByKey( @QueryParam("key") final String pageTemplateKeyAsString )
     {
         try
         {
-            final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from(key);
-            GetPageTemplatesBySiteTemplate command = Commands.page().template().page().getBySiteTemplate().siteTemplate( siteTemplateKey );
-            final PageTemplates pageTemplates = client.execute( command );
-
-            return Result.result( new PageTemplateListJson( pageTemplates ) );
+            final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
+            final PageTemplate pageTemplate = client.execute( page().template().page().getByKey().key( pageTemplateKey ) );
+            final PageDescriptor descriptor = PageDescriptorResource.getDescriptor( pageTemplate.getDescriptor(), client );
+            return Result.result( new PageTemplateJson( pageTemplate, new PageDescriptorJson( descriptor ) ) );
         }
         catch ( Exception e )
         {
@@ -42,13 +42,16 @@ public final class PageTemplateResource
     }
 
     @GET
-    public Result getByKey( @QueryParam("key") final String pageTemplateKeyAsString )
+    @javax.ws.rs.Path("list")
+    public Result list( @QueryParam("siteTemplateKey") String key )
     {
         try
         {
-            final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
-            final PageTemplate pageTemplate = client.execute( page().template().page().getByKey().key( pageTemplateKey ) );
-            return Result.result( new PageTemplateJson( pageTemplate ) );
+            final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( key );
+            GetPageTemplatesBySiteTemplate command = Commands.page().template().page().getBySiteTemplate().siteTemplate( siteTemplateKey );
+            final PageTemplates pageTemplates = client.execute( command );
+
+            return Result.result( new PageTemplateListJson( pageTemplates ) );
         }
         catch ( Exception e )
         {

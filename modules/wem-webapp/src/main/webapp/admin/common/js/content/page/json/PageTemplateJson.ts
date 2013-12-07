@@ -1,14 +1,8 @@
 module api_content_page_json{
 
-    export interface PageTemplateJson{
+    export interface PageTemplateJson extends PageTemplateSummaryJson {
 
-        key:string;
-
-        name:string;
-
-        displayName:string;
-
-        descriptor:string;
+        descriptor:PageDescriptorJson;
 
         config: api_data_json.DataTypeWrapperJson[];
 

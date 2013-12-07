@@ -12,14 +12,27 @@ public class PartTemplateJson
 {
     private final RootDataSetJson configJson;
 
+    private final PartDescriptorJson descriptorJson;
+
     public PartTemplateJson( final PartTemplate template )
+    {
+        this( template, null );
+    }
+
+    public PartTemplateJson( final PartTemplate template, final PartDescriptorJson descriptorJson )
     {
         super( template );
         this.configJson = new RootDataSetJson( template.getConfig() );
+        this.descriptorJson = descriptorJson;
     }
 
     public List<DataJson> getConfig()
     {
         return configJson.getSet();
+    }
+
+    public PartDescriptorJson getDescriptor()
+    {
+        return descriptorJson;
     }
 }

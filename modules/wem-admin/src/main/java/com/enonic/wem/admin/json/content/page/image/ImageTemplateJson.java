@@ -12,14 +12,27 @@ public class ImageTemplateJson
 {
     private final RootDataSetJson configJson;
 
-    public ImageTemplateJson( final ImageTemplate imageTemplate )
+    private final ImageDescriptorJson descriptorJson;
+
+    public ImageTemplateJson( final ImageTemplate template )
     {
-        super( imageTemplate );
+        this( template, null );
+    }
+
+    public ImageTemplateJson( final ImageTemplate template, final ImageDescriptorJson descriptorJson )
+    {
+        super( template );
         this.configJson = new RootDataSetJson( imageTemplate.getConfig() );
+        this.descriptorJson = descriptorJson;
     }
 
     public List<DataJson> getConfig()
     {
         return configJson.getSet();
+    }
+
+    public ImageDescriptorJson getDescriptor()
+    {
+        return descriptorJson;
     }
 }

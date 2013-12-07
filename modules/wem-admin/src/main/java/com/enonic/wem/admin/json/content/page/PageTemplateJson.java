@@ -17,7 +17,14 @@ public class PageTemplateJson
 
     private final ImmutableList<String> canRender;
 
+    private final PageDescriptorJson descriptorJson;
+
     public PageTemplateJson( final PageTemplate template )
+    {
+        this( template, null );
+    }
+
+    public PageTemplateJson( final PageTemplate template, final PageDescriptorJson descriptorJson )
     {
         super( template );
         this.configJson = new RootDataSetJson( template.getConfig() );
@@ -27,6 +34,7 @@ public class PageTemplateJson
             canRenderBuilder.add( contentTypeName.toString() );
         }
         this.canRender = canRenderBuilder.build();
+        this.descriptorJson = descriptorJson;
     }
 
     public List<DataJson> getConfig()
@@ -37,5 +45,10 @@ public class PageTemplateJson
     public List<String> getCanRender()
     {
         return canRender;
+    }
+
+    public PageDescriptorJson getDescriptor()
+    {
+        return descriptorJson;
     }
 }

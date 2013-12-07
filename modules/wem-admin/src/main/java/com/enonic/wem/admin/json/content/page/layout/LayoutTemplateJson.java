@@ -12,14 +12,27 @@ public class LayoutTemplateJson
 {
     private final RootDataSetJson configJson;
 
+    private final LayoutDescriptorJson descriptorJson;
+
     public LayoutTemplateJson( final LayoutTemplate template )
     {
-        super( template );
-        this.configJson = new RootDataSetJson( template.getConfig() );
+        this( template, null );
     }
 
     public List<DataJson> getConfig()
     {
         return configJson.getSet();
+    }
+
+    public LayoutTemplateJson( final LayoutTemplate template, final LayoutDescriptorJson descriptorJson )
+    {
+        super( template );
+        this.configJson = new RootDataSetJson( template.getConfig() );
+        this.descriptorJson = descriptorJson;
+    }
+
+    public LayoutDescriptorJson getDescriptor()
+    {
+        return descriptorJson;
     }
 }

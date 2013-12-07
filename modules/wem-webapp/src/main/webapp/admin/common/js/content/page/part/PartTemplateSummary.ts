@@ -18,7 +18,7 @@ module api_content_page_part{
             builder.setKey( PartTemplateKey.fromString( json.key ) );
             builder.setName( new PartTemplateName( json.name ) );
             builder.setDisplayName( json.displayName );
-            builder.setDescriptor( api_module.ModuleResourceKey.fromString( json.descriptor ) );
+            builder.setDescriptorModuleResourceKey( api_module.ModuleResourceKey.fromString( json.descriptorModuleResourceKey ) );
             return builder;
         }
     }

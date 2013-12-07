@@ -143,16 +143,10 @@ module app_wizard {
                     sendAndParse().
                     done((pageTemplate: api_content_page.PageTemplate) => {
 
-                        new api_content_page.GetPageDescriptorByKeyRequest(pageTemplate.getDescriptor()).
-                            sendAndParse().
-                            done((pageDescriptor: api_content_page.PageDescriptor)=> {
-
-                                // TODO: Get form from descriptor and rootdataset from page/template
-                                this.pageWizardStepForm.renderExisting(content, pageTemplate, pageDescriptor);
+                        this.pageWizardStepForm.renderExisting(content, pageTemplate);
 
 
-                                this.livePanel.renderExisting(content, pageTemplate);
-                        });
+                        this.livePanel.renderExisting(content, pageTemplate);
                     });
             }
         }

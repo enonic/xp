@@ -8,6 +8,6 @@ module api_content_page_json
 
         displayName:string;
 
-        descriptor:string;
+        descriptorModuleResourceKey:string;
     }
 }
