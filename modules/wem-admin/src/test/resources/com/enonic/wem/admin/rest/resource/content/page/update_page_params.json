@@ -1,0 +1,11 @@
+{
+    "contentId": "content-id",
+    "pageTemplateKey": "template-1.0.0|mymodule-1.0.0|my-page",
+    "config": [{
+        "Property": {
+            "name": "property1",
+            "type": "String",
+            "value": "value3"
+        }
+    }]
+}

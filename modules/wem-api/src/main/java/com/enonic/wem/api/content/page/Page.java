@@ -50,6 +50,11 @@ public final class Page
         }
     }
 
+    public static PageEditBuilder editPage( final Page toBeEdited )
+    {
+        return new PageEditBuilder( toBeEdited );
+    }
+
     public static class PageEditBuilder
         extends PageProperties
         implements EditBuilder<Page>
