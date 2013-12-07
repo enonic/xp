@@ -7,19 +7,19 @@ import com.enonic.wem.api.content.page.PageTemplates;
 
 public class PageTemplateListJson
 {
-    private final ImmutableList<PageTemplateJson> templates;
+    private final ImmutableList<PageTemplateSummaryJson> templates;
 
     public PageTemplateListJson( final PageTemplates pageTemplates )
     {
-        final ImmutableList.Builder<PageTemplateJson> builder = ImmutableList.builder();
+        final ImmutableList.Builder<PageTemplateSummaryJson> builder = ImmutableList.builder();
         for ( final PageTemplate pageTemplate : pageTemplates )
         {
-            builder.add( new PageTemplateJson( pageTemplate ) );
+            builder.add( new PageTemplateSummaryJson( pageTemplate ) );
         }
         this.templates = builder.build();
     }
 
-    public ImmutableList<PageTemplateJson> getTemplates()
+    public ImmutableList<PageTemplateSummaryJson> getTemplates()
     {
         return templates;
     }

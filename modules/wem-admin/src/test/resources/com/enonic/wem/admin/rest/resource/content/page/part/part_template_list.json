@@ -1,23 +1,24 @@
 {
-  "error" : null,
-  "result" : {
-    "partTemplates" : [ {
-      "deletable" : true,
-      "descriptor" : "module-1.0.0:/tpl.xml",
-      "displayName" : "partTemplate1",
-      "editable" : true,
-      "key" : "sitetemplate-1.0.0|module-1.0.0|partTemplate1",
-      "name" : "partTemplate1"
-    }, {
-      "deletable" : true,
-      "descriptor" : "module-1.0.0:/tpl.xml",
-      "displayName" : "partTemplate2",
-      "editable" : true,
-      "key" : "sitetemplate-1.0.0|module-1.0.0|partTemplate2",
-      "name" : "partTemplate2"
-    } ],
-    "total" : 2
-  }
+    "error": null,
+    "result": {
+        "partTemplates": [
+            {
+                "deletable": true,
+                "descriptorModuleResourceKey": "module-1.0.0:/tpl.xml",
+                "displayName": "partTemplate1",
+                "editable": true,
+                "key": "sitetemplate-1.0.0|module-1.0.0|partTemplate1",
+                "name": "partTemplate1"
+            },
+            {
+                "deletable": true,
+                "descriptorModuleResourceKey": "module-1.0.0:/tpl.xml",
+                "displayName": "partTemplate2",
+                "editable": true,
+                "key": "sitetemplate-1.0.0|module-1.0.0|partTemplate2",
+                "name": "partTemplate2"
+            }
+        ],
+        "total": 2
+    }
 }
-
-

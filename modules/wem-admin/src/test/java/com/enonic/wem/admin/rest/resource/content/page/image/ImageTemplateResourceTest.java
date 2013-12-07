@@ -22,10 +22,11 @@ public class ImageTemplateResourceTest
     public void list_image_templates_by_site_template_success()
         throws Exception
     {
-        final ImageTemplates siteTemplate = createImageTemplates();
-        Mockito.when( client.execute( Mockito.isA( GetImageTemplatesBySiteTemplate.class ) ) ).thenReturn( siteTemplate );
+        final ImageTemplates imageTemplates = createImageTemplates();
+        Mockito.when( client.execute( Mockito.isA( GetImageTemplatesBySiteTemplate.class ) ) ).thenReturn( imageTemplates );
 
-        String resultJson = resource().path( "content/page/image/template/list" ).queryParam( "key", "sitetemplate-1.0.0" ) .get( String.class );
+        String resultJson =
+            resource().path( "content/page/image/template/list" ).queryParam( "siteTemplateKey", "sitetemplate-1.0.0" ).get( String.class );
 
         assertJson( "list_image_template_success.json", resultJson );
     }
