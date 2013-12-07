@@ -1,59 +1,67 @@
 module api_module {
 
-    export class Module extends api_item.BaseItem {
+    export class Module extends api_module.ModuleSummary {
 
-        private moduleKey:ModuleKey;
+        private config:api_form.Form;
 
-        private displayName:string;
+        private moduleDependencies: api_module.ModuleKey[] = [];
 
-        private vendorName:string;
+        private contentTypeDependencies: api_schema_content.ContentTypeName[] = [];
 
-        private vendorUrl:string;
+        private moduleDirectoryEntry: api_module.ModuleFileEntry;
 
-        private url:string;
+        private minSystemVersion: string;
+
+        private maxSystemVersion: string;
 
         static fromExtModel(model:Ext_data_Model):Module {
-            return new api_module.Module(model.raw);
+            return new api_module.Module(<api_module_json.ModuleJson>model.raw);
         }
 
-        constructor(json:any){
+        constructor(json:api_module_json.ModuleJson){
             super(json);
-            this.moduleKey = ModuleKey.fromString(json.key);
-            this.displayName = json.displayName;
-            this.vendorName = json.vendorName;
-            this.vendorUrl = json.vendorUrl;
-            this.url = json.url;
+
+            this.config = json.config != null ? new api_form.Form(json.config) : null;
+            this.minSystemVersion = json.minSystemVersion;
+            this.maxSystemVersion = json.maxSystemVersion;
+
+            if (json.moduleDependencies != null) {
+                json.moduleDependencies.forEach((dependency:string) => {
+                    this.moduleDependencies.push(api_module.ModuleKey.fromString(dependency));
+                });
+            }
+
+            if (json.contentTypeDependencies != null) {
+                json.contentTypeDependencies.forEach((dependency:string) => {
+                    this.contentTypeDependencies.push(new api_schema_content.ContentTypeName(dependency));
+                });
+            }
+
+            this.moduleDirectoryEntry = new api_module.ModuleFileEntry(json.moduleDirectoryEntry);
         }
 
-        getDisplayName():string {
-            return this.displayName;
+        getForm():api_form.Form {
+            return this.config;
         }
 
-        getModuleKey():ModuleKey {
-            return this.moduleKey;
+        getMinSystemVersion():string {
+            return this.minSystemVersion;
         }
 
-        getVersion():string {
-            return this.moduleKey.getVersion();
+        getMaxSystemVersion():string {
+            return this.maxSystemVersion;
         }
 
-        getName():string
-        {
-            return this.moduleKey.getName();
+        getModuleDependencies(): api_module.ModuleKey[] {
+            return this.moduleDependencies;
         }
 
-        getVendorName():string {
-            return this.vendorName;
+        getContentTypeDependencies(): api_schema_content.ContentTypeName[] {
+            return this.contentTypeDependencies;
         }
 
-        getVendorUrl():string {
-            return this.vendorUrl;
+        getModuleDirectoryEntry(): api_module.ModuleFileEntry {
+            return this.moduleDirectoryEntry;
         }
-
-        getUrl():string {
-            return this.url;
-        }
-
-
     }
 }

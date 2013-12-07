@@ -69,7 +69,7 @@ module app_wizard {
                 callback(this.siteModule);
             } else {
                 var content:api_content.Content = this.getPersistedItem();
-                new api_module.GetModuleRequest(content.getId() ).send().done((moduleResponse:api_rest.JsonResponse) => {
+                new api_module.GetModuleRequest(content.getId() ).send().done((moduleResponse:api_rest.JsonResponse<api_module_json.ModuleJson>) => {
                     this.siteModule = new api_module.Module(moduleResponse.getResult());
                     callback(this.siteModule);
                 });

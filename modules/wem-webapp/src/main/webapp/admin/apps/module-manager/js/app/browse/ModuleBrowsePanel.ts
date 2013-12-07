@@ -1,6 +1,6 @@
 module app_browse {
 
-    export class ModuleBrowsePanel extends api_app_browse.BrowsePanel<api_module.Module> {
+    export class ModuleBrowsePanel extends api_app_browse.BrowsePanel<api_module.ModuleSummary> {
 
         private browseActions:app_browse.ModuleBrowseActions;
 
@@ -47,15 +47,15 @@ module app_browse {
             });
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem<api_module.Module>[] {
+        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem<api_module.ModuleSummary>[] {
 
-            var browseItems:api_app_browse.BrowseItem<api_module.Module>[] = [];
+            var browseItems:api_app_browse.BrowseItem<api_module.ModuleSummary>[] = [];
 
             models.forEach((model:Ext_data_Model, index:number) => {
 
-                var moduleModel:api_module.Module = api_module.Module.fromExtModel(model);
+                var moduleModel:api_module.ModuleSummary = api_module.ModuleSummary.fromExtModel(model);
 
-                var item = new api_app_browse.BrowseItem<api_module.Module>(moduleModel ).
+                var item = new api_app_browse.BrowseItem<api_module.ModuleSummary>(moduleModel ).
                     setDisplayName(moduleModel.getDisplayName()).
                     setPath(moduleModel.getName()).
                     setIconUrl(api_util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'));
