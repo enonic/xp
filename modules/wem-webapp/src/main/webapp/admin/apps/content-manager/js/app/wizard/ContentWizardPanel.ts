@@ -6,6 +6,8 @@ module app_wizard {
 
         private parentContent: api_content.Content;
 
+        private siteContent: api_content.Content;
+
         private contentType: api_schema_content.ContentType;
 
         private formIcon: api_app_wizard.FormIcon;
@@ -25,6 +27,8 @@ module app_wizard {
         constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content) {
 
             this.parentContent = parentContent;
+            // TODO: getNearestSite nearest site:
+            // this.siteContent = this.getNearestSite(content.getContentId());
             this.contentType = contentType;
             this.contentWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
             var iconUrl = contentType.getIcon() ? contentType.getIcon() : ContentWizardPanel.DEFAULT_CONTENT_ICON_URL;
@@ -60,7 +64,11 @@ module app_wizard {
             this.contentWizardHeader.setAutogenerateName(true);
 
             this.contentWizardStepForm = new ContentWizardStepForm();
-            this.pageWizardStepForm = new PageWizardStepForm();
+            var pageWizardStepFormConfig:PageWizardStepFormConfig = {
+                parentContent: this.parentContent,
+                siteContent: this.siteContent
+            };
+            this.pageWizardStepForm = new PageWizardStepForm(pageWizardStepFormConfig);
 
             super({
                 tabId: tabId,
@@ -117,7 +125,7 @@ module app_wizard {
 
             this.contentWizardStepForm.renderNew(this.contentType.getForm());
             // TODO: GetPageTemplateRequest use descriptor config form
-            this.pageWizardStepForm.renderNew(null);
+            this.pageWizardStepForm.renderNew();
             this.persistNewDraft();
 
             this.livePanel.renderNew();
@@ -271,6 +279,11 @@ module app_wizard {
         private stringsEqual(str1: string, str2: string): boolean {
             // strings are equal if both of them are empty or not specified or they are identical
             return (!str1 && !str2) || (str1 == str2);
+        }
+
+        private getNearestSite(content:api_content.ContentId):api_content.Content {
+            // TODO: CMS-2534
+            return null;
         }
     }
 
