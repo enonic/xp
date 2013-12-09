@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
     var CONFIG = {
-        baseUri: '/'
+        baseUri: 'http://localhost:8080'
     };
 </script>
 
@@ -27,6 +27,7 @@
 
         var emptyImageComponent = LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(component);
         $("#main").prepend(emptyImageComponent.getHTMLElement());
+        emptyImageComponent.init();
     });
 </script>
 
