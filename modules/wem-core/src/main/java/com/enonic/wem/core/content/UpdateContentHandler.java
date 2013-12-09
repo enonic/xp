@@ -95,7 +95,9 @@ public class UpdateContentHandler
                 Content edited = editBuilder.build();
                 persistedContent.checkIllegalEdit( edited );
 
-                validateContentData( context, edited );
+                if( !edited.isDraft() ) {
+                    validateContentData( context, edited );
+                }
 
                 final List<ContentId> embeddedContentsToKeep = new ArrayList<>();
                 new PropertyVisitor()
