@@ -24,8 +24,11 @@ module app_wizard {
 
         private livePanel: LiveFormPanel;
 
+        private persistAsDraft:boolean;
+
         constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content) {
 
+            this.persistAsDraft = true;
             this.parentContent = parentContent;
             // TODO: getNearestSite nearest site:
             // this.siteContent = this.getNearestSite(content.getContentId());
@@ -64,7 +67,7 @@ module app_wizard {
             this.contentWizardHeader.setAutogenerateName(true);
 
             this.contentWizardStepForm = new ContentWizardStepForm();
-            var pageWizardStepFormConfig:PageWizardStepFormConfig = {
+            var pageWizardStepFormConfig: PageWizardStepFormConfig = {
                 parentContent: this.parentContent,
                 siteContent: this.siteContent
             };
@@ -126,7 +129,7 @@ module app_wizard {
             this.contentWizardStepForm.renderNew(this.contentType.getForm());
             // TODO: GetPageTemplateRequest use descriptor config form
             this.pageWizardStepForm.renderNew();
-            this.persistNewDraft();
+            this.persistNewItem();
 
             this.livePanel.renderNew();
         }
@@ -159,40 +162,12 @@ module app_wizard {
             }
         }
 
-        persistNewDraft() {
-
-            var contentData = new api_content.ContentData();
-
-            new api_content.CreateContentRequest()
-                .setDraft(true)
-                .setName(this.contentWizardHeader.getName())
-                .setParent(this.parentContent.getPath())
-                .setContentType(this.contentType.getContentTypeName())
-                .setDisplayName(this.contentWizardHeader.getDisplayName())
-                .setForm(this.contentWizardStepForm.getForm())
-                .setContentData(contentData)
-                .send()
-                .done((createResponse: api_rest.JsonResponse<any>) => {
-
-                    var json = createResponse.getJson();
-
-                    if (json.error) {
-                        api_notify.showError(json.error.message);
-                    } else {
-                        api_notify.showFeedback('Content draft was created!');
-                        var content: api_content.Content = new api_content.Content(json.result);
-
-                        //this.setPersistedItem(content);
-                    }
-                });
-        }
-
         persistNewItem(successCallback?: (contentId: string, contentPath: string) => void) {
 
             var contentData = this.contentWizardStepForm.getContentData();
 
             var createRequest = new api_content.CreateContentRequest().
-                setDraft(false).
+                setDraft(this.persistAsDraft).
                 setName(this.contentWizardHeader.getName()).
                 setParent(this.parentContent.getPath()).
                 setContentType(this.contentType.getContentTypeName()).
@@ -206,22 +181,17 @@ module app_wizard {
             var attachments: api_content.Attachment[] = this.contentWizardStepForm.getFormView().getAttachments();
             createRequest.addAttachments(attachments);
 
-            createRequest.send().done((createResponse: api_rest.JsonResponse<any>) => {
+            createRequest.sendAndParse().done((createdContent: api_content.Content) => {
 
-                var json = createResponse.getJson();
-                if (json.error) {
-                    api_notify.showError(json.error.message);
-                } else {
-                    api_notify.showFeedback('Content was created!');
-                    var content: api_content.Content = new api_content.Content(json.result);
-                    new api_content.ContentCreatedEvent(content).fire();
-                    this.setPersistedItem(content);
-                    this.getTabId().changeToEditMode(content.getId());
+                api_notify.showFeedback('Content was created!');
+                new api_content.ContentCreatedEvent(createdContent).fire();
+                this.setPersistedItem(createdContent);
+                this.getTabId().changeToEditMode(createdContent.getId());
 
-                    if (successCallback) {
-                        successCallback.call(this, json.contentId, json.contentPath);
-                    }
+                if (successCallback) {
+                    successCallback.call(this, createdContent.getContentId().toString(), createdContent.getPath().toString());
                 }
+
             });
         }
 
@@ -281,7 +251,7 @@ module app_wizard {
             return (!str1 && !str2) || (str1 == str2);
         }
 
-        private getNearestSite(content:api_content.ContentId):api_content.Content {
+        private getNearestSite(content: api_content.ContentId): api_content.Content {
             // TODO: CMS-2534
             return null;
         }

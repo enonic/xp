@@ -16,5 +16,9 @@ module api_content {
         getResourcePath():api_rest.Path {
             return this.resourcePath;
         }
+
+        fromJsonToContent(json:api_content_json.ContentJson):Content {
+            return new Content(json);
+        }
     }
 }

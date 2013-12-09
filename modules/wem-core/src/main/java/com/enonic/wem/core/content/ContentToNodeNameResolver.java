@@ -13,7 +13,7 @@ public class ContentToNodeNameResolver
             return null;
         }
 
-        return content.getPath() == null ? content.getName() : content.getPath().getRelativePath();
+        return content.getName();
     }
 
 }

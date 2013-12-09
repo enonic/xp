@@ -1,6 +1,6 @@
 module api_content {
 
-    export class CreateContentRequest extends ContentResourceRequest<any> {
+    export class CreateContentRequest extends ContentResourceRequest<api_content_json.ContentJson> {
 
         private draft:boolean = false;
 
@@ -96,6 +96,19 @@ module api_content {
 
         getRequestPath():api_rest.Path {
             return api_rest.Path.fromParent(super.getResourcePath(), "create");
+        }
+
+        sendAndParse(): JQueryPromise<Content> {
+
+            var deferred = jQuery.Deferred<Content>();
+
+            this.send().done((response: api_rest.JsonResponse<api_content_json.ContentJson>) => {
+                deferred.resolve(this.fromJsonToContent(response.getResult()));
+            }).fail((response: api_rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
         }
 
     }
