@@ -12,6 +12,7 @@ public class EntitySearchResultFactory
         return EntitySearchResult.newResult().
             hits( hits.getHits().length ).
             totalHits( hits.totalHits() ).
+            maxScore( hits.maxScore() ).
             addEntries( hits.getHits() ).
             build();
     }

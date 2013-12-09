@@ -15,11 +15,14 @@ public class EntitySearchResult
 
     private final long hits;
 
+    private final float maxScore;
+
     private EntitySearchResult( final Builder builder )
     {
         this.entries = ImmutableSet.copyOf( builder.entries );
         this.totalHits = builder.totalHits;
         this.hits = builder.hits;
+        this.maxScore = builder.maxScore;
     }
 
     public static Builder newResult()
@@ -35,6 +38,8 @@ public class EntitySearchResult
 
         private long hits;
 
+        private float maxScore;
+
         public EntitySearchResult build()
         {
             return new EntitySearchResult( this );
@@ -49,6 +54,12 @@ public class EntitySearchResult
         public Builder hits( final long hits )
         {
             this.hits = hits;
+            return this;
+        }
+
+        public Builder maxScore( final float maxScore )
+        {
+            this.maxScore = maxScore;
             return this;
         }
 
