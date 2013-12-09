@@ -32,7 +32,6 @@ import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
-import com.enonic.wem.api.support.serializer.ParsingException;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
 import static com.enonic.wem.api.command.Commands.mixin;
@@ -42,9 +41,6 @@ import static com.enonic.wem.api.command.Commands.mixin;
 public class MixinResource
     extends AbstractResource
 {
-    private final MixinXmlSerializer mixinXmlSerializer = new MixinXmlSerializer().
-        generateName( false );
-
     private UploadService uploadService;
 
     @Inject
@@ -100,7 +96,9 @@ public class MixinResource
     @Consumes(MediaType.APPLICATION_JSON)
     public CreateOrUpdateSchemaJsonResult create( MixinCreateJson params )
     {
-        final Mixin mixin = parseXml( params.getConfig() );
+        final Mixin mixin = new MixinXmlSerializer().
+            overrideName( params.getName().toString() ).
+            toMixin( params.getConfig() );
         final Icon icon = fetchIcon( params.getIconReference() );
 
         final CreateMixin createCommand = mixin().create().
@@ -128,7 +126,9 @@ public class MixinResource
     {
         try
         {
-            final Mixin parsed = parseXml( params.getConfig() );
+            final Mixin parsed = new MixinXmlSerializer().
+                overrideName( params.getName().toString() ).
+                toMixin( params.getConfig() );
             final Icon icon = fetchIcon( params.getIconReference() );
 
             final MixinEditor editor = new MixinEditor()
@@ -192,18 +192,6 @@ public class MixinResource
         }
 
         return deletionResult;
-    }
-
-    private Mixin parseXml( String mixinXml )
-    {
-        try
-        {
-            return mixinXmlSerializer.toMixin( mixinXml );
-        }
-        catch ( ParsingException e )
-        {
-            throw new WebApplicationException( e );
-        }
     }
 
     private Icon fetchIcon( String iconReference )
