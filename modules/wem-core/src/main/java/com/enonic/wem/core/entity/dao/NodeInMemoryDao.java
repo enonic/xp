@@ -34,7 +34,7 @@ public class NodeInMemoryDao
     public Node createNode( final CreateNodeArguments createNodeArguments )
     {
         Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
-                                     "Path to parent Item must be absolute: " + createNodeArguments.parent().toString() );
+                                     "Path to parent Node must be absolute: " + createNodeArguments.parent().toString() );
         if ( !nodeIdByPath.pathHasItem( createNodeArguments.parent() ) )
         {
             throw new NoNodeAtPathFound( createNodeArguments.parent() );
