@@ -4,9 +4,9 @@ import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
+import com.enonic.wem.api.query.expr.DynamicOrderExpr;
+import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
-import com.enonic.wem.query.expr.DynamicOrderExpr;
-import com.enonic.wem.query.expr.FunctionExpr;
 
 public class DynamicSortBuilderFactory
 {

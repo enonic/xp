@@ -6,8 +6,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
-import com.enonic.wem.query.expr.CompareExpr;
-import com.enonic.wem.query.expr.ValueExpr;
+import com.enonic.wem.api.query.expr.CompareExpr;
+import com.enonic.wem.api.query.expr.ValueExpr;
 
 public class InQueryBuilderFactory
 {

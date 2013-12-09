@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.core.index.facet.Facets;
+import com.enonic.wem.core.index.accountfacet.AccountFacets;
 
 
 public final class AccountSearchResults
@@ -17,14 +17,14 @@ public final class AccountSearchResults
 
     private final List<AccountSearchHit> hits;
 
-    private final Facets facets;
+    private final AccountFacets accountFacets;
 
     public AccountSearchResults( int from, int total )
     {
         this.from = from;
         this.total = total;
         this.hits = new ArrayList<AccountSearchHit>();
-        this.facets = new Facets();
+        this.accountFacets = new AccountFacets();
     }
 
     public int getCount()
@@ -60,9 +60,9 @@ public final class AccountSearchResults
         return this.hits.iterator();
     }
 
-    public Facets getFacets()
+    public AccountFacets getAccountFacets()
     {
-        return facets;
+        return accountFacets;
     }
 
     @Override
@@ -87,7 +87,7 @@ public final class AccountSearchResults
         {
             return false;
         }
-        if ( facets != null ? !facets.equals( that.facets ) : that.facets != null )
+        if ( accountFacets != null ? !accountFacets.equals( that.accountFacets ) : that.accountFacets != null )
         {
             return false;
         }
@@ -105,7 +105,7 @@ public final class AccountSearchResults
         int result = from;
         result = 31 * result + total;
         result = 31 * result + ( hits != null ? hits.hashCode() : 0 );
-        result = 31 * result + ( facets != null ? facets.hashCode() : 0 );
+        result = 31 * result + ( accountFacets != null ? accountFacets.hashCode() : 0 );
         return result;
     }
 }

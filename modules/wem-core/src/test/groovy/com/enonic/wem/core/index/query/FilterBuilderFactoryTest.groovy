@@ -1,7 +1,7 @@
 package com.enonic.wem.core.index.query
 
 import com.enonic.wem.api.data.Value
-import com.enonic.wem.query.filter.Filter
+import com.enonic.wem.api.query.filter.Filter
 import org.elasticsearch.index.query.FilterBuilder
 
 class FilterBuilderFactoryTest

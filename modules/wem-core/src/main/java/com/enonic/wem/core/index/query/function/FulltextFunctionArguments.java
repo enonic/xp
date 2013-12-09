@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.elasticsearch.index.query.MatchQueryBuilder;
 
-import com.enonic.wem.query.expr.ValueExpr;
+import com.enonic.wem.api.query.expr.ValueExpr;
 
 public class FulltextFunctionArguments
     extends AbstractFunctionArguments

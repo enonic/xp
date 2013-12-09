@@ -2,7 +2,7 @@ package com.enonic.wem.core.index.query.function;
 
 import java.util.List;
 
-import com.enonic.wem.query.expr.ValueExpr;
+import com.enonic.wem.api.query.expr.ValueExpr;
 
 public abstract class AbstractFunctionArguments
 {

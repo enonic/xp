@@ -10,7 +10,6 @@ import com.enonic.wem.api.account.AccountType;
 import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserKey;
-import com.enonic.wem.api.account.query.AccountFacet;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.Commands;
@@ -20,8 +19,8 @@ import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.index.account.AccountSearchQuery;
 import com.enonic.wem.core.index.account.AccountSearchResults;
 import com.enonic.wem.core.index.account.AccountSearchService;
-import com.enonic.wem.core.index.facet.Facet;
-import com.enonic.wem.core.index.facet.FacetEntry;
+import com.enonic.wem.core.index.accountfacet.AccountFacet;
+import com.enonic.wem.core.index.accountfacet.AccountFacetEntry;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
@@ -141,11 +140,11 @@ public class FindAccountsHandlerTest
         searchResults.add( group3, 1 );
         searchResults.add( role1, 1 );
         searchResults.add( role2, 1 );
-        final Facet facet = new Facet( "organization" );
-        facet.addEntry( new FacetEntry( "Enonic", 2 ) );
-        facet.addEntry( new FacetEntry( "Acme, inc.", 3 ) );
-        facet.addEntry( new FacetEntry( "Foo Bars", 3 ) );
-        searchResults.getFacets().addFacet( facet );
+        final AccountFacet accountFacet = new AccountFacet( "organization" );
+        accountFacet.addEntry( new AccountFacetEntry( "Enonic", 2 ) );
+        accountFacet.addEntry( new AccountFacetEntry( "Acme, inc.", 3 ) );
+        accountFacet.addEntry( new AccountFacetEntry( "Foo Bars", 3 ) );
+        searchResults.getAccountFacets().addFacet( accountFacet );
         doReturn( searchResults ).when( accountSearchService ).search( Matchers.<AccountSearchQuery>any() );
 
         // exercise
@@ -165,11 +164,11 @@ public class FindAccountsHandlerTest
         assertEquals( 7, accountResult.getTotalSize() );
         assertNotNull( accountResult.getFacets() );
 
-        AccountFacet facetInResults = accountResult.getFacets().getFacet( "organization" );
-        assertNotNull( facetInResults );
-        assertEquals( 3, facetInResults.getEntries().size() );
-        assertEquals( "organization", facetInResults.getName() );
-        assertEquals( 3, facetInResults.getEntries().size() );
+        com.enonic.wem.api.account.query.AccountFacet accountFacetInResults = accountResult.getFacets().getFacet( "organization" );
+        assertNotNull( accountFacetInResults );
+        assertEquals( 3, accountFacetInResults.getEntries().size() );
+        assertEquals( "organization", accountFacetInResults.getName() );
+        assertEquals( 3, accountFacetInResults.getEntries().size() );
     }
 
 

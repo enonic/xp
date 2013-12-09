@@ -803,18 +803,20 @@ public class ContentResourceTest
         {
             Facets facets = new Facets();
 
-            TermsFacet contentTypesFacet = new TermsFacet();
-            contentTypesFacet.setName( "contentType" );
-            contentTypesFacet.addResult( "folder", "Folder", 5 );
-            contentTypesFacet.addResult( "image", "Image", 24 );
-            contentTypesFacet.addResult( "space", "Space", 4 );
+            TermsFacet contentTypesFacet = TermsFacet.newTermsFacet( "contentType" ).
+                addEntry( "folder", 5 ).
+                addEntry( "image", 24 ).
+                addEntry( "space", 4 ).
+                build();
+
             facets.addFacet( contentTypesFacet );
 
-            TermsFacet spacesFacet = new TermsFacet();
-            spacesFacet.setName( "space" );
-            spacesFacet.addResult( "bildearkiv", "Bildearkiv", 30 );
-            spacesFacet.addResult( "bluman trampoliner", "Bluman Trampoliner", 1 );
-            spacesFacet.addResult( "bluman intranett", "Bluman Intranett", 1 );
+            TermsFacet spacesFacet = TermsFacet.newTermsFacet( "space" ).
+                addEntry( "bildearkiv", 30 ).
+                addEntry( "bluman trampoliner", 1 ).
+                addEntry( "bluman intranett", 1 ).
+                build();
+
             facets.addFacet( spacesFacet );
 
             QueryFacet query1 = new QueryFacet( 0l );

@@ -1,15 +1,16 @@
 package com.enonic.wem.core.index.query
 
-import com.enonic.wem.query.expr.CompareExpr
-import com.enonic.wem.query.expr.FieldExpr
-import com.enonic.wem.query.expr.ValueExpr
+import com.enonic.wem.api.query.expr.CompareExpr
+import com.enonic.wem.api.query.expr.FieldExpr
+import com.enonic.wem.api.query.expr.ValueExpr
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class IndexQueryFieldNameResolverTest extends Specification
+class IndexQueryFieldNameResolverTest
+        extends Specification
 {
     @Unroll
-    def "resolve path #field with value of type #valueExp.value.type expect #resolvedFieldName"( )
+    def "resolve path #field with value of type #valueExp.value.type expect #resolvedFieldName"()
     {
         expect:
         resolvedFieldName == IndexQueryFieldNameResolver.resolve( CompareExpr.eq( new FieldExpr( field ), valueExp ) )
@@ -25,7 +26,7 @@ class IndexQueryFieldNameResolverTest extends Specification
         "A.B.C" | ValueExpr.dateTime( "2013-08-01T10:00:00" ) | "a_b_c._datetime"
     }
 
-    def "dummy"( )
+    def "dummy"()
     {
         given:
 

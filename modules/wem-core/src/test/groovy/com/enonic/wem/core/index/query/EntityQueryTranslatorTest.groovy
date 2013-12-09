@@ -1,11 +1,12 @@
 package com.enonic.wem.core.index.query
 
 import com.enonic.wem.api.data.Value
+import com.enonic.wem.api.query.EntityQuery
+import com.enonic.wem.api.query.facet.FacetQuery
+import com.enonic.wem.api.query.filter.Filter
+import com.enonic.wem.api.query.parser.QueryParser
 import com.enonic.wem.core.index.Index
 import com.enonic.wem.core.index.IndexType
-import com.enonic.wem.query.EntityQuery
-import com.enonic.wem.query.filter.Filter
-import com.enonic.wem.query.parser.QueryParser
 import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.index.query.RangeQueryBuilder
 import org.elasticsearch.index.query.TermsFilterBuilder
@@ -93,18 +94,37 @@ class EntityQueryTranslatorTest
         translatedQuery.getSortBuilders() != null;
         translatedQuery.getSortBuilders().size() == 1;
         translatedQuery.getSortBuilders().iterator().next() instanceof GeoDistanceSortBuilder
-
-        println translatedQuery.toSearchSourceBuilder().toString()
     }
+
+    def "match all with termsfacet"()
+    {
+        given:
+        def expected = this.getClass().getResource( "match_all_with_termsfacet.json" ).text
+        EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
+        EntityQuery entityQuery = EntityQuery.newQuery().
+                addFacet( FacetQuery.newTermsFacetQuery( "myTermsFacet" ).fields( ["myField"] ).build() ).
+                build();
+
+        when:
+        def translatedQuery = entityQueryTranslator.translate( entityQuery )
+
+        then:
+        def String translatedQueryString = translatedQuery.toSearchSourceBuilder().toString()
+        cleanString( expected ) == cleanString( translatedQueryString )
+
+    }
+
 
     @Ignore // Because of changes in order of stuff.
     def "big ugly query containing everything"()
     {
         given:
-        def EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
-        def EntityQuery.Builder builder = EntityQuery.newQuery().query( QueryParser.parse(
-                "myField >= 1 AND fulltext('myField', 'myPhrase', 'OR') ORDER BY geoDistance('myField', '-70,-50') ASC, myField DESC" ) )
         def expected = this.getClass().getResource( "big_ugly_do_it_all_query.json" ).text
+        def EntityQueryTranslator entityQueryTranslator = new EntityQueryTranslator();
+        def EntityQuery.Builder builder = EntityQuery.
+                newQuery().
+                query( QueryParser.parse(
+                        "myField >= 1 AND fulltext('myField', 'myPhrase', 'OR') ORDER BY geoDistance('myField', '-70,-50') ASC, myField DESC" ) )
 
         builder.addFilter( Filter.newValueQueryFilter().
                                    fieldName( "myField" ).
@@ -114,13 +134,14 @@ class EntityQueryTranslatorTest
 
         builder.addQueryFilter( Filter.newExistsFilter( "doesThisFieldExist" ) );
 
+        builder.addFacet( FacetQuery.newTermsFacetQuery( "myTermFacet" ).fields( ["myTermField"] ).build() );
+
         when:
         def translatedQuery = entityQueryTranslator.translate( builder.build() )
 
         then:
-        cleanString( expected ) == cleanString( translatedQuery.toSearchSourceBuilder().toString() )
-
+        def String translatedQueryString = translatedQuery.toSearchSourceBuilder().toString()
+        //println translatedQueryString;
+        cleanString( expected ) == cleanString( translatedQueryString )
     }
-
-
 }

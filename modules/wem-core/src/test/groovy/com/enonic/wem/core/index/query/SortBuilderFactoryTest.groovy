@@ -1,15 +1,16 @@
 package com.enonic.wem.core.index.query
 
-import com.enonic.wem.query.expr.*
+import com.enonic.wem.api.query.expr.*
 import com.google.common.collect.Sets
 import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder
 import spock.lang.Specification
 
-class SortBuilderFactoryTest extends Specification
+class SortBuilderFactoryTest
+        extends Specification
 {
 
-    def "create field sort"( )
+    def "create field sort"()
     {
         given:
         SortBuilderFactory factory = new SortBuilderFactory()
@@ -24,7 +25,7 @@ class SortBuilderFactoryTest extends Specification
         sortBuilders.iterator().next() instanceof FieldSortBuilder
     }
 
-    def "create multiple field sort"( )
+    def "create multiple field sort"()
     {
         given:
         SortBuilderFactory factory = new SortBuilderFactory();
@@ -41,13 +42,15 @@ class SortBuilderFactoryTest extends Specification
         sortBuilders.iterator().next() instanceof FieldSortBuilder
     }
 
-    def "create geo distance"( )
+    def "create geo distance"()
     {
         given:
         SortBuilderFactory factory = new SortBuilderFactory()
         Set<OrderExpr> orderExpressions = Sets.newHashSet()
 
-        orderExpressions.add( new DynamicOrderExpr( new FunctionExpr( "geoDistance", [ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" )] ), OrderExpr.Direction.ASC ) )
+        orderExpressions.add(
+                new DynamicOrderExpr( new FunctionExpr( "geoDistance", [ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" )] ),
+                                      OrderExpr.Direction.ASC ) )
 
         when:
         def sortBuilders = factory.create( orderExpressions )

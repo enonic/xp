@@ -9,10 +9,10 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.query.expr.DynamicOrderExpr;
+import com.enonic.wem.api.query.expr.FieldOrderExpr;
+import com.enonic.wem.api.query.expr.OrderExpr;
 import com.enonic.wem.core.index.query.function.DynamicSortBuilderFactory;
-import com.enonic.wem.query.expr.DynamicOrderExpr;
-import com.enonic.wem.query.expr.FieldOrderExpr;
-import com.enonic.wem.query.expr.OrderExpr;
 
 public class SortBuilderFactory
     extends AbstractBuilderFactory

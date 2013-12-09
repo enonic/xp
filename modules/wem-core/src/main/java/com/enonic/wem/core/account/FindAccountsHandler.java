@@ -11,9 +11,6 @@ import com.google.common.collect.Lists;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
 import com.enonic.wem.api.account.AccountType;
-import com.enonic.wem.api.account.query.AccountFacet;
-import com.enonic.wem.api.account.query.AccountFacetEntry;
-import com.enonic.wem.api.account.query.AccountFacets;
 import com.enonic.wem.api.account.query.AccountQuery;
 import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.account.FindAccounts;
@@ -25,9 +22,9 @@ import com.enonic.wem.core.index.account.AccountSearchHit;
 import com.enonic.wem.core.index.account.AccountSearchQuery;
 import com.enonic.wem.core.index.account.AccountSearchResults;
 import com.enonic.wem.core.index.account.AccountSearchService;
-import com.enonic.wem.core.index.facet.Facet;
-import com.enonic.wem.core.index.facet.FacetEntry;
-import com.enonic.wem.core.index.facet.Facets;
+import com.enonic.wem.core.index.accountfacet.AccountFacet;
+import com.enonic.wem.core.index.accountfacet.AccountFacetEntry;
+import com.enonic.wem.core.index.accountfacet.AccountFacets;
 
 import static com.enonic.wem.api.account.query.AccountQuery.Direction;
 
@@ -67,10 +64,10 @@ public final class FindAccountsHandler
 
         final AccountSearchResults searchResults = accountSearchService.search( searchQuery );
         final List<AccountKey> accounts = getSearchResults( session, searchResults );
-        final AccountFacets facets = getSearchFacets( searchResults );
+        final com.enonic.wem.api.account.query.AccountFacets accountFacets = getSearchFacets( searchResults );
 
         final AccountQueryHits accountResult = new AccountQueryHits( searchResults.getTotal(), AccountKeys.from( accounts ) );
-        accountResult.setFacets( facets );
+        accountResult.setFacets( accountFacets );
         return accountResult;
     }
 
@@ -89,26 +86,28 @@ public final class FindAccountsHandler
         return accounts;
     }
 
-    private AccountFacets getSearchFacets( final AccountSearchResults searchResults )
+    private com.enonic.wem.api.account.query.AccountFacets getSearchFacets( final AccountSearchResults searchResults )
     {
-        final AccountFacets accountFacets = new AccountFacets();
-        final Facets searchFacets = searchResults.getFacets();
-        for ( Facet searchFacet : searchFacets )
+        final com.enonic.wem.api.account.query.AccountFacets accountAccountFacets = new com.enonic.wem.api.account.query.AccountFacets();
+        final AccountFacets searchAccountFacets = searchResults.getAccountFacets();
+        for ( AccountFacet searchAccountFacet : searchAccountFacets )
         {
-            final AccountFacet accountFacet = getSearchFacets( searchFacet );
-            accountFacets.addFacet( accountFacet );
+            final com.enonic.wem.api.account.query.AccountFacet accountAccountFacet = getSearchFacets( searchAccountFacet );
+            accountAccountFacets.addFacet( accountAccountFacet );
         }
-        return accountFacets;
+        return accountAccountFacets;
     }
 
-    private AccountFacet getSearchFacets( final Facet searchFacet )
+    private com.enonic.wem.api.account.query.AccountFacet getSearchFacets( final AccountFacet searchAccountFacet )
     {
-        final AccountFacet facet = new AccountFacet( searchFacet.getName() );
-        for ( FacetEntry facetEntry : searchFacet )
+        final com.enonic.wem.api.account.query.AccountFacet accountFacet =
+            new com.enonic.wem.api.account.query.AccountFacet( searchAccountFacet.getName() );
+        for ( AccountFacetEntry accountFacetEntry : searchAccountFacet )
         {
-            facet.addEntry( new AccountFacetEntry( facetEntry.getTerm(), facetEntry.getCount() ) );
+            accountFacet.addEntry(
+                new com.enonic.wem.api.account.query.AccountFacetEntry( accountFacetEntry.getTerm(), accountFacetEntry.getCount() ) );
         }
-        return facet;
+        return accountFacet;
     }
 
     @Inject

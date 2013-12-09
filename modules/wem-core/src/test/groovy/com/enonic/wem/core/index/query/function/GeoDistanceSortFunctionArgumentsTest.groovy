@@ -1,15 +1,17 @@
 package com.enonic.wem.core.index.query.function
 
-import com.enonic.wem.query.expr.ValueExpr
+import com.enonic.wem.api.query.expr.ValueExpr
 import spock.lang.Specification
 
-class GeoDistanceSortFunctionArgumentsTest extends Specification
+class GeoDistanceSortFunctionArgumentsTest
+        extends Specification
 {
 
-    def "arguments read"( )
+    def "arguments read"()
     {
         when:
-        GeoDistanceSortFunctionArguments arguments = new GeoDistanceSortFunctionArguments( [ValueExpr.string( "myField" ), ValueExpr.string( "79,80" )] )
+        GeoDistanceSortFunctionArguments arguments = new GeoDistanceSortFunctionArguments(
+                [ValueExpr.string( "myField" ), ValueExpr.string( "79,80" )] )
 
         then:
         arguments.fieldName == "myField"
@@ -18,10 +20,11 @@ class GeoDistanceSortFunctionArgumentsTest extends Specification
         arguments.longitude == 80
     }
 
-    def "illegal geo-position"( )
+    def "illegal geo-position"()
     {
         when:
-        GeoDistanceSortFunctionArguments arguments = new GeoDistanceSortFunctionArguments( [ValueExpr.string( "myField" ), ValueExpr.string( "179, 80" )] )
+        GeoDistanceSortFunctionArguments arguments = new GeoDistanceSortFunctionArguments(
+                [ValueExpr.string( "myField" ), ValueExpr.string( "179, 80" )] )
 
         then:
         def exception = thrown( FunctionQueryBuilderException )

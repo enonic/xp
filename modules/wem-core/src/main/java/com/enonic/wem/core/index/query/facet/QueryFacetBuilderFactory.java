@@ -2,10 +2,10 @@ package com.enonic.wem.core.index.query.facet;
 
 import org.elasticsearch.search.facet.query.QueryFacetBuilder;
 
+import com.enonic.wem.api.query.facet.QueryFacetQuery;
 import com.enonic.wem.core.index.query.AbstractBuilderFactory;
 import com.enonic.wem.core.index.query.FilterBuilderFactory;
 import com.enonic.wem.core.index.query.QueryBuilderFactory;
-import com.enonic.wem.query.facet.QueryFacetQuery;
 
 public class QueryFacetBuilderFactory
     extends AbstractBuilderFactory

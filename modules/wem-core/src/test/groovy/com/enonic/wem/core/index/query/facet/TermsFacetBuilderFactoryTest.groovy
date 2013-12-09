@@ -1,9 +1,9 @@
 package com.enonic.wem.core.index.query.facet
 
+import com.enonic.wem.api.query.facet.FacetQuery
+import com.enonic.wem.api.query.facet.RegExpFlag
+import com.enonic.wem.api.query.facet.TermsFacetQuery
 import com.enonic.wem.core.index.query.BaseTestBuilderFactory
-import com.enonic.wem.query.facet.FacetQuery
-import com.enonic.wem.query.facet.RegExpFlag
-import com.enonic.wem.query.facet.TermsFacetQuery
 import org.elasticsearch.search.facet.terms.TermsFacetBuilder
 
 class TermsFacetBuilderFactoryTest

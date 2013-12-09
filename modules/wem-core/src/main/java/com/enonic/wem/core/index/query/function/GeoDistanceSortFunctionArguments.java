@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.data.type.GeoPoint;
-import com.enonic.wem.query.expr.ValueExpr;
+import com.enonic.wem.api.query.expr.ValueExpr;
 
 public class GeoDistanceSortFunctionArguments
     extends AbstractFunctionArguments

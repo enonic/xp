@@ -7,9 +7,9 @@ import org.elasticsearch.search.facet.FacetBuilder;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.wem.query.facet.FacetQuery;
-import com.enonic.wem.query.facet.QueryFacetQuery;
-import com.enonic.wem.query.facet.TermsFacetQuery;
+import com.enonic.wem.api.query.facet.FacetQuery;
+import com.enonic.wem.api.query.facet.QueryFacetQuery;
+import com.enonic.wem.api.query.facet.TermsFacetQuery;
 
 public class FacetBuilderFactory
 {

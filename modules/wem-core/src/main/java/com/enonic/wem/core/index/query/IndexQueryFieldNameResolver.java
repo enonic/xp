@@ -4,12 +4,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.api.query.expr.CompareExpr;
+import com.enonic.wem.api.query.expr.FieldExpr;
+import com.enonic.wem.api.query.expr.ValueExpr;
+import com.enonic.wem.api.query.filter.ValueFilter;
 import com.enonic.wem.core.index.IndexFieldNameNormalizer;
 import com.enonic.wem.core.index.IndexValueType;
-import com.enonic.wem.query.expr.CompareExpr;
-import com.enonic.wem.query.expr.FieldExpr;
-import com.enonic.wem.query.expr.ValueExpr;
-import com.enonic.wem.query.filter.ValueFilter;
 
 public class IndexQueryFieldNameResolver
 {

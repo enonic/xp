@@ -1,12 +1,13 @@
 package com.enonic.wem.core.index.query.function
 
-import com.enonic.wem.query.expr.ValueExpr
+import com.enonic.wem.api.query.expr.ValueExpr
 import org.elasticsearch.index.query.MatchQueryBuilder
 import spock.lang.Specification
 
-class FulltextFunctionArgumentsTest extends Specification
+class FulltextFunctionArgumentsTest
+        extends Specification
 {
-    def "fulltext 3 arguments"( )
+    def "fulltext 3 arguments"()
     {
         given:
         def arguments = [ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "or" )]
@@ -20,7 +21,7 @@ class FulltextFunctionArgumentsTest extends Specification
         functionArguments.getOperator() == MatchQueryBuilder.Operator.OR
     }
 
-    def "fulltext 2 arguments"( )
+    def "fulltext 2 arguments"()
     {
         given:
         def arguments = [ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" )]
@@ -35,7 +36,7 @@ class FulltextFunctionArgumentsTest extends Specification
     }
 
 
-    def "fulltext 1 arguments"( )
+    def "fulltext 1 arguments"()
     {
         given:
         def arguments = [ValueExpr.string( "myField" )]
@@ -49,7 +50,7 @@ class FulltextFunctionArgumentsTest extends Specification
 
     }
 
-    def "fulltext illegal operator argument"( )
+    def "fulltext illegal operator argument"()
     {
         given:
         def arguments = [ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" )]

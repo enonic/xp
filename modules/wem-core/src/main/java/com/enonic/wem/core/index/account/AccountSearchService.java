@@ -18,7 +18,8 @@ import org.elasticsearch.search.facet.terms.TermsFacet;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.facet.FacetEntry;
+import com.enonic.wem.core.index.accountfacet.AccountFacet;
+import com.enonic.wem.core.index.accountfacet.AccountFacetEntry;
 
 
 public class AccountSearchService
@@ -72,12 +73,12 @@ public class AccountSearchService
             if ( facet instanceof TermsFacet )
             {
                 TermsFacet tf = (TermsFacet) facet;
-                com.enonic.wem.core.index.facet.Facet resultFacet = new com.enonic.wem.core.index.facet.Facet( tf.getName() );
-                searchResult.getFacets().addFacet( resultFacet );
+                AccountFacet resultAccountFacet = new AccountFacet( tf.getName() );
+                searchResult.getAccountFacets().addFacet( resultAccountFacet );
                 for ( TermsFacet.Entry entry : tf )
                 {
-                    FacetEntry facetEntry = new FacetEntry( entry.getTerm().toString(), entry.getCount() );
-                    resultFacet.addEntry( facetEntry );
+                    AccountFacetEntry accountFacetEntry = new AccountFacetEntry( entry.getTerm().toString(), entry.getCount() );
+                    resultAccountFacet.addEntry( accountFacetEntry );
                 }
             }
         }

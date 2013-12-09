@@ -1,10 +1,10 @@
 package com.enonic.wem.core.index.query.facet
 
+import com.enonic.wem.api.query.facet.FacetQuery
+import com.enonic.wem.api.query.facet.QueryFacetQuery
+import com.enonic.wem.api.query.facet.TermsFacetQuery
+import com.enonic.wem.api.query.parser.QueryParser
 import com.enonic.wem.core.index.query.BaseTestBuilderFactory
-import com.enonic.wem.query.facet.FacetQuery
-import com.enonic.wem.query.facet.QueryFacetQuery
-import com.enonic.wem.query.facet.TermsFacetQuery
-import com.enonic.wem.query.parser.QueryParser
 import org.elasticsearch.search.facet.FacetBuilder
 import org.elasticsearch.search.facet.query.QueryFacetBuilder
 import org.elasticsearch.search.facet.terms.TermsFacetBuilder

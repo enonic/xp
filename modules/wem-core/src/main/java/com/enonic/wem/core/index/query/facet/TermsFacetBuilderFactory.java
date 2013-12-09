@@ -10,10 +10,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.query.facet.RegExpFlag;
+import com.enonic.wem.api.query.facet.TermsFacetQuery;
 import com.enonic.wem.core.index.query.AbstractBuilderFactory;
 import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
-import com.enonic.wem.query.facet.RegExpFlag;
-import com.enonic.wem.query.facet.TermsFacetQuery;
 
 public class TermsFacetBuilderFactory
     extends AbstractBuilderFactory

@@ -21,7 +21,7 @@ public class TermsFacetJson
         super( facet );
 
         ImmutableList.Builder<TermFacetEntryJson> builder = ImmutableList.builder();
-        for ( TermsFacetEntry result : facet.getResults() )
+        for ( TermsFacetEntry result : facet.getEntries() )
         {
             builder.add( new TermFacetEntryJson( result ) );
         }

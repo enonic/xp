@@ -3,8 +3,8 @@ package com.enonic.wem.core.index.query.function;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 
+import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.core.index.query.IndexQueryFieldNameResolver;
-import com.enonic.wem.query.expr.FunctionExpr;
 
 public class FunctionQueryBuilderFactory
 {

@@ -7,14 +7,14 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.wem.query.expr.CompareExpr;
-import com.enonic.wem.query.expr.ConstraintExpr;
-import com.enonic.wem.query.expr.DynamicConstraintExpr;
-import com.enonic.wem.query.expr.Expression;
-import com.enonic.wem.query.expr.LogicalExpr;
-import com.enonic.wem.query.expr.NotExpr;
-import com.enonic.wem.query.expr.QueryExpr;
-import com.enonic.wem.query.filter.Filter;
+import com.enonic.wem.api.query.expr.CompareExpr;
+import com.enonic.wem.api.query.expr.ConstraintExpr;
+import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
+import com.enonic.wem.api.query.expr.Expression;
+import com.enonic.wem.api.query.expr.LogicalExpr;
+import com.enonic.wem.api.query.expr.NotExpr;
+import com.enonic.wem.api.query.expr.QueryExpr;
+import com.enonic.wem.api.query.filter.Filter;
 
 public class QueryBuilderFactory
     extends AbstractBuilderFactory

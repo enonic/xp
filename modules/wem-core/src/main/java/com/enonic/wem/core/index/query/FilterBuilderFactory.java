@@ -13,9 +13,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.query.filter.ExistsFilter;
-import com.enonic.wem.query.filter.Filter;
-import com.enonic.wem.query.filter.ValueFilter;
+import com.enonic.wem.api.query.filter.ExistsFilter;
+import com.enonic.wem.api.query.filter.Filter;
+import com.enonic.wem.api.query.filter.ValueFilter;
 
 public class FilterBuilderFactory
     extends AbstractBuilderFactory

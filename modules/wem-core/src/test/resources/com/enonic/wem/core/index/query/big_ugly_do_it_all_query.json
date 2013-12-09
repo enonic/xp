@@ -47,5 +47,14 @@
             "ignore_unmapped": true
         }
     }
-]
+], "facets": {
+    "myTermFacet": {
+        "terms": {
+            "field": "mytermfield",
+            "size": 10,
+            "order": "term",
+            "all_terms": false
+        }
+    }
+}
 }

@@ -2,64 +2,99 @@ package com.enonic.wem.api.facet;
 
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public class TermsFacet
     extends AbstractFacet
     implements Facet
 {
-    private Long total;
+    private final long total;
 
-    private Long missing;
+    private final long missing;
 
-    private Long other;
+    private final long other;
 
-    private Set<TermsFacetEntry> results = Sets.newLinkedHashSet();
+    private final ImmutableSet<TermsFacetEntry> entries;
 
-    public Set<TermsFacetEntry> getResults()
+    private TermsFacet( final Builder builder )
     {
-        return results;
+        super( builder.name );
+
+        this.total = builder.total;
+        this.missing = builder.missing;
+        this.other = builder.other;
+        this.entries = ImmutableSet.copyOf( builder.entries );
     }
 
-    public void addResult( String term, Integer count )
-    {
-        results.add( new TermsFacetEntry( term, count ) );
-    }
-
-    public void addResult( String term, String displayName, Integer count )
-    {
-        results.add( new TermsFacetEntry( term, displayName, count ) );
-    }
-
-    public Long getTotal()
+    public long getTotal()
     {
         return total;
     }
 
-    public void setTotal( final Long total )
-    {
-        this.total = total;
-    }
-
-    public Long getMissing()
+    public long getMissing()
     {
         return missing;
     }
 
-    public void setMissing( final Long missing )
-    {
-        this.missing = missing;
-    }
-
-    public Long getOther()
+    public long getOther()
     {
         return other;
     }
 
-    public void setOther( final Long other )
+    public ImmutableSet<TermsFacetEntry> getEntries()
     {
-        this.other = other;
+        return entries;
     }
 
+    public static Builder newTermsFacet( final String name )
+    {
+        return new Builder( name );
+    }
 
+    public static class Builder
+        extends AbstractFacet.Builder
+    {
+        private long total;
+
+        private long missing;
+
+        private long other;
+
+        private Set<TermsFacetEntry> entries = Sets.newLinkedHashSet();
+
+        public Builder( final String name )
+        {
+            super( name );
+        }
+
+        public Builder total( final long total )
+        {
+            this.total = total;
+            return this;
+        }
+
+        public Builder missing( final long missing )
+        {
+            this.missing = missing;
+            return this;
+        }
+
+        public Builder other( final long other )
+        {
+            this.other = other;
+            return this;
+        }
+
+        public Builder addEntry( final String term, final int count )
+        {
+            entries.add( new TermsFacetEntry( term, count ) );
+            return this;
+        }
+
+        public TermsFacet build()
+        {
+            return new TermsFacet( this );
+        }
+    }
 }

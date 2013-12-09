@@ -2,9 +2,9 @@ package com.enonic.wem.core.index.query;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
+import com.enonic.wem.api.query.expr.DynamicConstraintExpr;
+import com.enonic.wem.api.query.expr.FunctionExpr;
 import com.enonic.wem.core.index.query.function.FunctionQueryBuilderFactory;
-import com.enonic.wem.query.expr.DynamicConstraintExpr;
-import com.enonic.wem.query.expr.FunctionExpr;
 
 public class DynamicQueryFactory
 {

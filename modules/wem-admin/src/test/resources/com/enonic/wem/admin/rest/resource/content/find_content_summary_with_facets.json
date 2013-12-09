@@ -47,17 +47,17 @@
                 "entries": [
                     {
                         "count": 5,
-                        "displayName": "Folder",
+                        "displayName": "folder",
                         "name": "folder"
                     },
                     {
                         "count": 24,
-                        "displayName": "Image",
+                        "displayName": "image",
                         "name": "image"
                     },
                     {
                         "count": 4,
-                        "displayName": "Space",
+                        "displayName": "space",
                         "name": "space"
                     }
                 ],
@@ -68,17 +68,17 @@
                 "entries": [
                     {
                         "count": 30,
-                        "displayName": "Bildearkiv",
+                        "displayName": "bildearkiv",
                         "name": "bildearkiv"
                     },
                     {
                         "count": 1,
-                        "displayName": "Bluman Trampoliner",
+                        "displayName": "bluman trampoliner",
                         "name": "bluman trampoliner"
                     },
                     {
                         "count": 1,
-                        "displayName": "Bluman Intranett",
+                        "displayName": "bluman intranett",
                         "name": "bluman intranett"
                     }
                 ],

@@ -10,6 +10,12 @@ public class QueryFacet
         this.count = count;
     }
 
+    public QueryFacet( final String name, final long count )
+    {
+        this.name = name;
+        this.count = count;
+    }
+
     public Long getCount()
     {
         return count;

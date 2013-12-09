@@ -3,7 +3,7 @@ package com.enonic.wem.api.facet;
 public abstract class AbstractFacet
     implements Facet
 {
-    private String name;
+    protected String name;
 
     public String getName()
     {
@@ -14,4 +14,24 @@ public abstract class AbstractFacet
     {
         this.name = name;
     }
+
+    protected AbstractFacet( final String name )
+    {
+        this.name = name;
+    }
+
+    protected AbstractFacet()
+    {
+    }
+
+    static class Builder
+    {
+        String name;
+
+        Builder( final String name )
+        {
+            this.name = name;
+        }
+    }
+
 }

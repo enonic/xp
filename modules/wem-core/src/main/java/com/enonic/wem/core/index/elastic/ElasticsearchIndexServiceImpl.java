@@ -43,8 +43,8 @@ import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
 import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
 import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
-import com.enonic.wem.core.index.elastic.result.FacetFactory;
-import com.enonic.wem.core.index.entity.EntitySearchResult;
+import com.enonic.wem.core.index.elastic.result.OldFacetFactory;
+import com.enonic.wem.core.index.entity.EntityQueryResult;
 import com.enonic.wem.core.index.entity.EntitySearchResultFactory;
 
 
@@ -189,7 +189,7 @@ public class ElasticsearchIndexServiceImpl
     }
 
     @Override
-    public EntitySearchResult search( final ElasticsearchQuery elasticsearchQuery )
+    public EntityQueryResult search( final ElasticsearchQuery elasticsearchQuery )
     {
         final SearchRequest searchRequest = Requests.
             searchRequest( elasticsearchQuery.getIndex().getName() ).
@@ -224,7 +224,7 @@ public class ElasticsearchIndexServiceImpl
             contentSearchResults.add( new ContentSearchHit( ContentId.from( hit.getId() ), hit.score() ) );
         }
 
-        final Facets facets = FacetFactory.create( searchResponse );
+        final Facets facets = OldFacetFactory.create( searchResponse );
 
         contentSearchResults.setFacets( facets );
 

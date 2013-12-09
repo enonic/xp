@@ -1,0 +1,14 @@
+{
+    "from": 0, "size": 10, "query": {
+    "match_all": {}
+}, "explain": false, "facets": {
+    "myTermsFacet": {
+        "terms": {
+            "field": "myfield",
+            "size": 10,
+            "order": "term",
+            "all_terms": false
+        }
+    }
+}
+}
