@@ -1,7 +1,7 @@
 package com.enonic.wem.core.module;
 
+
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.CreateModule;
-import com.enonic.wem.api.command.module.GetModuleResource;
+import com.enonic.wem.api.command.module.CreateModuleResource;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -23,21 +23,21 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
+import static com.enonic.wem.api.resource.Resource.newResource;
 import static com.google.common.io.ByteStreams.asByteSource;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
-public class GetModuleResourceHandlerTest
+public class CreateModuleResourceHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private GetModuleResourceHandler handler;
+    private CreateModuleResourceHandler handler;
 
     private SystemConfig systemConfig;
 
@@ -49,7 +49,7 @@ public class GetModuleResourceHandlerTest
 
         systemConfig = Mockito.mock( SystemConfig.class );
         when( systemConfig.getModulesDir() ).thenReturn( java.nio.file.Files.createTempDirectory( "module" ).toFile() );
-        handler = new GetModuleResourceHandler();
+        handler = new CreateModuleResourceHandler();
         handler.setContext( this.context );
         handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
 
@@ -70,51 +70,36 @@ public class GetModuleResourceHandlerTest
     }
 
     @Test
-    public void getModuleResource()
+    public void createModuleResource()
         throws Exception
     {
         // setup
-        final ResourcePath path = ResourcePath.from( "public/javascript/controller.js" );
+        final ResourcePath path = ResourcePath.from( "other/folder/myfile.js" );
         final ModuleKey moduleKey = ModuleKey.from( "modulename-1.0.0" );
         final ModuleResourceKey resourceKey = new ModuleResourceKey( moduleKey, path );
-        final GetModuleResource command = Commands.module().getResource().resourceKey( resourceKey );
+        final Resource resource = newResource().name( "myfile.js" ).stringValue( "test data" ).build();
+        final CreateModuleResource command = Commands.module().createResource().resourceKey( resourceKey ).resource( resource );
 
         // exercise
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        final Resource resource = command.getResult();
-        assertNotNull( resource );
-        assertEquals( "controller.js", resource.getName() );
-        assertEquals( 9, resource.getSize() );
-        assertArrayEquals( "some data".getBytes( Charset.forName( "UTF-8" ) ), resource.getByteSource().read() );
+        final Resource resourceResult = command.getResult();
+        assertNotNull( resourceResult );
+        assertEquals( "myfile.js", resourceResult.getName() );
     }
 
     @Test(expected = ModuleNotFoundException.class)
-    public void getResourceModuleNotFound()
+    public void createResourceModuleNotFound()
         throws Exception
     {
         // setup
         final ResourcePath path = ResourcePath.from( "public/javascript/controller.js" );
         final ModuleKey moduleKey = ModuleKey.from( "othermodule-1.0.0" );
         final ModuleResourceKey resourceKey = new ModuleResourceKey( moduleKey, path );
-        final GetModuleResource command = Commands.module().getResource().resourceKey( resourceKey );
-
-        // exercise
-        this.handler.setCommand( command );
-        this.handler.handle();
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void getResourceNotFound()
-        throws Exception
-    {
-        // setup
-        final ResourcePath path = ResourcePath.from( "public/javascript/missing.file" );
-        final ModuleKey moduleKey = ModuleKey.from( "modulename-1.0.0" );
-        final ModuleResourceKey resourceKey = new ModuleResourceKey( moduleKey, path );
-        final GetModuleResource command = Commands.module().getResource().resourceKey( resourceKey );
+        final Resource resource = newResource().name( "controller.js" ).stringValue( "test data" ).build();
+        final CreateModuleResource command = Commands.module().createResource().resourceKey( resourceKey ).resource( resource );
 
         // exercise
         this.handler.setCommand( command );

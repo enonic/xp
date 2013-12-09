@@ -64,7 +64,7 @@ public abstract class BaseDescriptor<KEY extends DescriptorKey>
 
         protected Form config;
 
-        public T setKey( final KEY key )
+        public T key( final KEY key )
         {
             this.key = key;
             return typecastToBuilder( this );

@@ -14,6 +14,7 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
@@ -39,8 +40,6 @@ import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.support.BaseInitializer;
-import com.enonic.wem.xml.XmlSerializers;
-import com.enonic.wem.xml.content.page.PageDescriptorXml;
 
 import static com.enonic.wem.api.command.Commands.page;
 import static com.enonic.wem.api.command.Commands.site;
@@ -120,8 +119,8 @@ public class SitesInitializer
 
     private PageTemplate createPageTemplate( final Module module, final ComponentDescriptorName componentDescriptorName )
     {
-        final ModuleResourceKey descriptorModuleResourceKey =
-            new ModuleResourceKey( module.getModuleKey(), ResourcePath.from( "/components/" + componentDescriptorName.toString() + ".xml" ) );
+        final ModuleResourceKey descriptorModuleResourceKey = new ModuleResourceKey( module.getModuleKey(), ResourcePath.from(
+            "/components/" + componentDescriptorName.toString() + ".xml" ) );
 
         return newPageTemplate().
             key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "mainpage" ) ) ).
@@ -160,7 +159,7 @@ public class SitesInitializer
         }
         catch ( NoSiteTemplateExistsException e )
         {
-
+            // IGNORE IF NOT FOUND
         }
         return client.execute( createSiteTemplate );
     }
@@ -170,14 +169,8 @@ public class SitesInitializer
         final ModuleFileEntry.Builder controllersDir = newModuleDirectory( "controllers" ).
             addFile( pageDescriptor.getName().toString() + ".js", asByteSource( "some_code();".getBytes() ) );
 
-        final String pageDescriptorAsString = serialize( pageDescriptor );
-
-        final ModuleFileEntry.Builder componentsDir = newModuleDirectory( "components" ).
-            addFile( pageDescriptor.getName().toString() + ".xml", asByteSource( pageDescriptorAsString.getBytes() ) );
-
         final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
             addEntry( controllersDir ).
-            addEntry( componentsDir ).
             build();
 
         final CreateModule createModule = Commands.module().create().
@@ -201,9 +194,15 @@ public class SitesInitializer
         }
         catch ( ModuleNotFoundException e )
         {
-
+            // IGNORE IF NOT FOUND
         }
-        return client.execute( createModule );
+        final Module module = client.execute( createModule );
+
+        final ResourcePath pageDescriptorPath = ResourcePath.from( "/components/" + pageDescriptor.getName().toString() + ".xml" );
+        final PageDescriptorKey pageDescriptorKey = PageDescriptorKey.from( module.getKey(), pageDescriptorPath );
+        client.execute( Commands.page().descriptor().page().create( pageDescriptor ).key( pageDescriptorKey ) );
+
+        return module;
     }
 
     private Form createPageDescriptorForm()
@@ -261,13 +260,6 @@ public class SitesInitializer
             form( Form.newForm().build() ).
             contentData( new ContentData() );
         return client.execute( createContent ).getContentId();
-    }
-
-    private String serialize( PageDescriptor pageDescriptor )
-    {
-        final PageDescriptorXml pageDescriptorXml = new PageDescriptorXml();
-        pageDescriptorXml.from( pageDescriptor );
-        return XmlSerializers.pageDescriptor().serialize( pageDescriptorXml );
     }
 
     @Inject

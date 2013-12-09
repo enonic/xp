@@ -9,9 +9,9 @@ public final class PageDescriptorXml
     extends AbstractDescriptorXml<PageDescriptor, PageDescriptor.Builder>
 {
     @Override
-    public void from( final PageDescriptor template )
+    public void from( final PageDescriptor pageDescriptor )
     {
-        fromDescriptor( template );
+        fromDescriptor( pageDescriptor );
     }
 
     @Override

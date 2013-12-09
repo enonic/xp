@@ -22,4 +22,9 @@ public final class PageCommands
     {
         return new TemplateCommands();
     }
+
+    public DescriptorCommands descriptor()
+    {
+        return new DescriptorCommands();
+    }
 }

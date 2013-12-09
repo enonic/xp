@@ -23,7 +23,7 @@ abstract class AbstractDescriptorXml<I, O>
     protected void fromDescriptor( final BaseDescriptor descriptor )
     {
         this.displayName = descriptor.getDisplayName();
-        this.controller = descriptor.getControllerResource().toString();
+        this.controller = descriptor.getControllerResource() != null ? descriptor.getControllerResource().toString() : "";
         this.configForm.from( descriptor.getConfigForm() );
     }
 

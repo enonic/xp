@@ -15,6 +15,7 @@ public final class ModuleModule
         commands.add( GetModuleHandler.class );
         commands.add( GetModulesHandler.class );
         commands.add( GetModuleResourceHandler.class );
+        commands.add( CreateModuleResourceHandler.class );
         commands.add( DeleteModuleHandler.class );
         commands.add( UpdateModuleHandler.class );
     }
