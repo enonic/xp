@@ -17,7 +17,6 @@ module LiveEdit.component {
         selectedAsParent:boolean = false;
 
         constructor(element?:JQuery) {
-
 //            if (element.length == 0) {
 //                throw "Could not create component. No element";
 //            }
@@ -29,6 +28,10 @@ module LiveEdit.component {
                 this.setElementDimensions(this.getDimensionsFromElement());
                 this.setComponentType(new LiveEdit.component.ComponentType(this.resolveComponentTypeEnum()));
             }
+        }
+
+        public static fromElement(element:api_dom.Element):Component {
+            return new Component($(element.getHTMLElement()));
         }
 
         getItemId():number {

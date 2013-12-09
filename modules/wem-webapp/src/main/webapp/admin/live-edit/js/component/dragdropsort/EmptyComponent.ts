@@ -6,25 +6,31 @@ module LiveEdit.component.dragdropsort {
     export class EmptyComponent {
 
         public static createEmptyComponentHtml(component:LiveEdit.component.Component):api_dom.Element {
-
-            console.log("creating empty component", component);
-
             var emptyComponent = new api_dom.DivEl();
             emptyComponent.addClass("live-edit-empty-component");
-            emptyComponent.addClass("made-by-api");
             emptyComponent.getEl().setData('live-edit-empty-component', "true");
             emptyComponent.getEl().setData('live-edit-type', component.getComponentType().getName());
 
             if (component.componentType.getName() == "image") {
+                var iconEl = new api_dom.DivEl();
+                iconEl.setClass(component.getComponentType().getIconCls());
+                emptyComponent.appendChild(iconEl);
+
                 var uploaderConfig = {
                     multiSelection: true,
                     buttonsVisible: false,
                     imageVisible: false
                 };
                 var imageUploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
-                console.log("imageuploader", imageUploader);
+                imageUploader.addListener({
+                    onFileUploaded: (id:string, name:string, mimeType:string) => {
+                        console.log("file is uploaded", arguments);
+                    },
+                    onUploadComplete: () => {
+                        console.log("upload complete", arguments);
+                    }
+                });
                 emptyComponent.appendChild(imageUploader);
-
             } else {
                 var emptyComponentIcon = new api_dom.DivEl();
                 emptyComponentIcon.addClass(component.getComponentType().getIconCls() + ' live-edit-empty-component-icon');
@@ -35,18 +41,22 @@ module LiveEdit.component.dragdropsort {
             return emptyComponent;
         }
 
-        public static restoreEmptyComponent() {
+        public static restoreEmptyComponent():api_dom.Element {
             var currentComponent = LiveEdit.component.Selection.getSelectedComponent();
             if (currentComponent) {
+                console.log("restoring to empty component");
                 var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(currentComponent).getHTMLElement());
-                var emptyComponent = new LiveEdit.component.Component(emptyElement);
+                var emptyComponent = LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(currentComponent);//new LiveEdit.component.Component(emptyElement);
 
-                currentComponent.getElement().replaceWith(emptyComponent.getElement());
+                currentComponent.getElement().replaceWith(emptyComponent.getHTMLElement());
+                emptyComponent.init();
 
                 //$(window).trigger('sortableUpdate.liveEdit');
 
-                LiveEdit.component.Selection.select(emptyComponent);
+                LiveEdit.component.Selection.select(LiveEdit.component.Component.fromElement(emptyComponent));
+                return emptyComponent;
             }
+            return null;
         }
 
         public static loadComponent(componentKey:string, itemid:number, imageUrl?:string):void {

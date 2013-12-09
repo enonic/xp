@@ -10,6 +10,8 @@ module api_ui {
 
         maximumOccurrences?: number;
 
+        textInput?: boolean;
+
     }
 
     export class ImageUploader extends api_dom.FormInputEl implements api_event.Observable {
@@ -31,7 +33,7 @@ module api_ui {
         private imageVisible:boolean;
         private maximumOccurrences:number;
 
-        private listeners:ImageUploaderListener[] =[];
+        private listeners:ImageUploaderListener[] = [];
 
         constructor(name:string, uploadUrl:string, config:ImageUploaderConfig = {}) {
             super("div", "ImageUploader", "image-uploader");
@@ -42,9 +44,11 @@ module api_ui {
             this.imageVisible = (config.imageVisible == undefined) ? true : config.imageVisible;
             this.maximumOccurrences = (config.maximumOccurrences == undefined) ? 0 : config.maximumOccurrences;
 
-            this.input = api_ui.TextInput.middle();
-            this.input.setPlaceholder("Paste URL to image here");
-            this.appendChild(this.input);
+            if (config.textInput) {
+                this.input = api_ui.TextInput.middle();
+                this.input.setPlaceholder("Paste URL to image here");
+                this.appendChild(this.input);
+            }
 
             this.dropzone = new api_dom.DivEl("DropZone", "dropzone");
             this.refreshDropzoneLabel();
@@ -125,7 +129,9 @@ module api_ui {
         }
 
         private setDropzoneVisible(visible:boolean) {
-            this.input.setVisible(visible);
+            if (this.input) {
+                this.input.setVisible(visible);
+            }
             this.dropzone.setVisible(visible);
         }
 
@@ -148,7 +154,7 @@ module api_ui {
             var uploader = new plupload.Uploader({
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
                 multi_selection: this.multiSelection,
-                browse_button: elId,
+                //browse_button: elId,
                 url: this.uploadUrl,
                 multipart: true,
                 drop_element: elId,
