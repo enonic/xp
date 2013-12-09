@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.command.content.page.UpdatePage;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -70,6 +71,21 @@ public class PageResourceTest
             post( String.class );
 
         assertJson( "update_page_failure.json", jsonString );
+    }
+
+    @Test
+    public void create_page_success()
+        throws Exception
+    {
+        Content content = createPage( "content-id", "Content Name", "content-type" );
+
+        Mockito.when( client.execute( Mockito.isA( CreatePage.class ) ) ).thenReturn( content );
+
+        String jsonString = resource().path( "content/page/create" ).
+            entity( readFromFile( "update_page_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post( String.class );
+
+        assertJson( "update_page_success.json", jsonString );
     }
 
     private Content createPage( final String id, final String name, final String contentTypeName )

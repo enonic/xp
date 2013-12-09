@@ -18,12 +18,13 @@ public class CreatePageJson
     private final CreatePage createPage;
 
     @JsonCreator
-    public CreatePageJson( @JsonProperty("content") String content, @JsonProperty("pageTemplate") String pageTemplate,
+    public CreatePageJson( @JsonProperty("contentId") String contentId,
+                           @JsonProperty("pageTemplateKey") String pageTemplateKey,
                            @JsonProperty("config") List<DataJson> config )
     {
         this.createPage = new CreatePage().
-            content( ContentId.from( content ) ).
-            pageTemplate( PageTemplateKey.from( pageTemplate ) ).
+            content( ContentId.from( contentId ) ).
+            pageTemplate( PageTemplateKey.from( pageTemplateKey ) ).
             config( parseData( config ) );
     }
 
