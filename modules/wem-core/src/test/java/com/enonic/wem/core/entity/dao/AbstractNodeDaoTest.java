@@ -139,7 +139,7 @@ public abstract class AbstractNodeDaoTest
         catch ( Exception e )
         {
             assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "Path to parent Item must be absolute: not-absolute-parent-path", e.getMessage() );
+            assertEquals( "Path to parent Node must be absolute: not-absolute-parent-path", e.getMessage() );
         }
     }
 

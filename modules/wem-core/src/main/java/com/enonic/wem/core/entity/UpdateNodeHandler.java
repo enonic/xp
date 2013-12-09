@@ -35,14 +35,14 @@ public class UpdateNodeHandler
     {
         final Session session = context.getJcrSession();
 
-        final NodeJcrDao itemDao = new NodeJcrDao( session );
+        final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
 
-        final Node persisted = itemDao.getNodeById( command.getNode() );
+        final Node persisted = nodeJcrDao.getNodeById( command.getNode() );
 
         final Node.EditBuilder editBuilder = command.getEditor().edit( persisted );
         if ( !editBuilder.isChanges() )
         {
-            // TODO: set status NO CHANGE?
+            command.setResult( new UpdateNodeResult( persisted ) );
             return;
         }
 
@@ -50,13 +50,13 @@ public class UpdateNodeHandler
         persisted.checkIllegalEdit( edited );
 
         final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().
-            itemToUpdate( command.getNode() ).
+            nodeToUpdate( command.getNode() ).
             name( edited.name() ).
             icon( edited.icon() ).
             rootDataSet( edited.data() ).
             build();
 
-        final Node persistedNode = itemDao.updateNode( updateNodeArgs );
+        final Node persistedNode = nodeJcrDao.updateNode( updateNodeArgs );
         session.save();
 
         indexService.indexNode( persistedNode );

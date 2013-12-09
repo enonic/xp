@@ -28,7 +28,7 @@ public class NodeJcrDao
         this.session = session;
         this.jcrHelper = new NodeJcrHelper( this.session );
 
-        // TODO: A temporary hack to ensure that paths to root containers of different types of items already exists
+        // TODO: A temporary hack to ensure that paths to root containers of different types of nodes already exists
         ensurePath( new NodePath( "mixins" ) );
         ensurePath( new NodePath( "content-types" ) );
         ensurePath( new NodePath( "content" ) );
@@ -42,9 +42,9 @@ public class NodeJcrDao
     @Override
     public Node createNode( final CreateNodeArguments createNodeArguments )
     {
-        Preconditions.checkNotNull( createNodeArguments.parent(), "Path of parent Item must be specified" );
+        Preconditions.checkNotNull( createNodeArguments.parent(), "Path of parent Node must be specified" );
         Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
-                                     "Path to parent Item must be absolute: " + createNodeArguments.parent() );
+                                     "Path to parent Node must be absolute: " + createNodeArguments.parent() );
 
         final javax.jcr.Node parentNodeNode = jcrHelper.getNodeByPath( createNodeArguments.parent() );
 
@@ -64,8 +64,8 @@ public class NodeJcrDao
     @Override
     public Node updateNode( final UpdateNodeArgs updateNodeArgs )
     {
-        Preconditions.checkNotNull( updateNodeArgs.itemToUpdate(), "itemToUpdate must be specified" );
-        final javax.jcr.Node existingNodeNode = jcrHelper.getItemNodeById( updateNodeArgs.itemToUpdate() );
+        Preconditions.checkNotNull( updateNodeArgs.nodeToUpdate(), "nodeToUpdate must be specified" );
+        final javax.jcr.Node existingNodeNode = jcrHelper.getItemNodeById( updateNodeArgs.nodeToUpdate() );
         return jcrHelper.updateItemNode( existingNodeNode, updateNodeArgs );
     }
 

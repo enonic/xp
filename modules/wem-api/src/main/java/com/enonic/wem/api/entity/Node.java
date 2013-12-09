@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.support.ChangeTraceable;
-import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;
 import com.enonic.wem.api.support.illegaledit.IllegalEditException;
@@ -111,9 +110,7 @@ public final class Node
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), Node.class );
         IllegalEdit.check( "modifiedTime", this.getModifiedTime(), to.getModifiedTime(), Node.class );
 
-        IllegalEdit.check( "name", this.name(), to.name(), Node.class );
         IllegalEdit.check( "parent", this.parent(), to.parent(), Node.class );
-        IllegalEdit.check( "path", this.path(), to.path(), Node.class );
         IllegalEdit.check( "creator", this.creator(), to.creator(), Node.class );
         IllegalEdit.check( "modifier", this.modifier(), to.modifier(), Node.class );
     }
@@ -187,9 +184,7 @@ public final class Node
     public static class EditBuilder
         extends Entity.EditBuilder<EditBuilder>
     {
-        private final Node original;
-
-        private final Changes.Builder changes = new Changes.Builder();
+        private final Node originalNode;
 
         private String name;
 
@@ -200,26 +195,26 @@ public final class Node
             super( original );
             this.name = original.name;
             this.icon = original.icon;
-            this.original = original;
+            this.originalNode = original;
         }
 
         public EditBuilder name( final String value )
         {
-            changes.recordChange( newPossibleChange( "name" ).from( this.original.name ).to( value ).build() );
+            changes.recordChange( newPossibleChange( "name" ).from( this.originalNode.name ).to( value ).build() );
             this.name = value;
             return this;
         }
 
         public EditBuilder icon( final Icon value )
         {
-            changes.recordChange( newPossibleChange( "icon" ).from( this.original.icon ).to( value ).build() );
+            changes.recordChange( newPossibleChange( "icon" ).from( this.originalNode.icon ).to( value ).build() );
             this.icon = value;
             return this;
         }
 
         public Node build()
         {
-            Node.BaseBuilder baseBuilder = new BaseBuilder( this.original );
+            Node.BaseBuilder baseBuilder = new BaseBuilder( this.originalNode );
             baseBuilder.data = this.data;
             baseBuilder.entityIndexConfig = this.entityIndexConfig;
 

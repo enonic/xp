@@ -10,7 +10,7 @@ public class UpdateNodeArgs
 {
     private final UserKey updater;
 
-    private final EntityId itemToUpdate;
+    private final EntityId nodeToUpdate;
 
     private final String name;
 
@@ -21,7 +21,7 @@ public class UpdateNodeArgs
     UpdateNodeArgs( Builder builder )
     {
         this.updater = builder.updater;
-        this.itemToUpdate = builder.itemToUpdate;
+        this.nodeToUpdate = builder.nodeToUpdate;
         this.name = builder.name;
         this.icon = builder.icon;
         this.rootDataSet = builder.rootDataSet;
@@ -32,9 +32,9 @@ public class UpdateNodeArgs
         return updater;
     }
 
-    EntityId itemToUpdate()
+    EntityId nodeToUpdate()
     {
-        return itemToUpdate;
+        return nodeToUpdate;
     }
 
     String name()
@@ -61,7 +61,7 @@ public class UpdateNodeArgs
     {
         private UserKey updater;
 
-        private EntityId itemToUpdate;
+        private EntityId nodeToUpdate;
 
         private String name;
 
@@ -75,9 +75,9 @@ public class UpdateNodeArgs
             return this;
         }
 
-        public Builder itemToUpdate( EntityId value )
+        public Builder nodeToUpdate( EntityId value )
         {
-            this.itemToUpdate = value;
+            this.nodeToUpdate = value;
             return this;
         }
 

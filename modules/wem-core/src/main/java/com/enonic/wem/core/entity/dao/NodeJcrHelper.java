@@ -19,9 +19,9 @@ import com.enonic.wem.core.jcr.JcrConstants;
 
 class NodeJcrHelper
 {
-    private static final String ITEMS_NODE = "items";
+    private static final String NODES_JCRNODE_NAME = "items";
 
-    static final String ITEMS_PATH = JcrConstants.ROOT_NODE + "/" + ITEMS_NODE + "/";
+    static final String NODES_JCRPATH = JcrConstants.ROOT_NODE + "/" + NODES_JCRNODE_NAME + "/";
 
     private final Session session;
 
@@ -35,7 +35,7 @@ class NodeJcrHelper
         try
         {
             final javax.jcr.Node root = session.getRootNode();
-            return root.getNode( ITEMS_PATH );
+            return root.getNode( NODES_JCRPATH );
         }
         catch ( RepositoryException e )
         {
@@ -129,8 +129,22 @@ class NodeJcrHelper
     {
         try
         {
-            NodeJcrMapper.updateNodeJcrNode( updateNodeArgs, existingNodeNode );
-            return NodeJcrMapper.toNode( existingNodeNode ).build();
+            final boolean nameChanged = !existingNodeNode.getName().equals( updateNodeArgs.name() );
+            if ( nameChanged )
+            {
+                final NodePath existingNodePath = NodeJcrMapper.resolveNodePath( existingNodeNode );
+                final NodePath newNodePath = new NodePath( existingNodePath.getParentPath(), updateNodeArgs.name() );
+                final String newJcrNodePath = toJcrPath( newNodePath );
+                session.move( existingNodeNode.getPath(), newJcrNodePath );
+                final javax.jcr.Node renamedNode = getItemNodeById( updateNodeArgs.nodeToUpdate() );
+                NodeJcrMapper.updateNodeJcrNode( updateNodeArgs, renamedNode );
+                return NodeJcrMapper.toNode( renamedNode ).build();
+            }
+            else
+            {
+                NodeJcrMapper.updateNodeJcrNode( updateNodeArgs, existingNodeNode );
+                return NodeJcrMapper.toNode( existingNodeNode ).build();
+            }
         }
         catch ( RepositoryException e )
         {
@@ -202,4 +216,8 @@ class NodeJcrHelper
         return childNodes.build();
     }
 
+    static String toJcrPath( final NodePath nodePath )
+    {
+        return "/" + NodeJcrHelper.NODES_JCRPATH + nodePath.asRelative().toString();
+    }
 }

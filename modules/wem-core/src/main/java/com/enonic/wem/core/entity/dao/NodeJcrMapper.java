@@ -100,13 +100,13 @@ class NodeJcrMapper
         }
     }
 
-    private static NodePath resolveNodePath( javax.jcr.Node node )
-        throws RepositoryException
+    static NodePath resolveNodePath( javax.jcr.Node node )
+    throws RepositoryException
     {
         final String jcrNodePath = node.getPath();
-        Preconditions.checkState( jcrNodePath.startsWith( "/" + NodeJcrHelper.ITEMS_PATH ),
-                                  "path to node does not start with [/" + NodeJcrHelper.ITEMS_PATH + "] as expected: " + jcrNodePath );
-        final String nodePath = jcrNodePath.substring( NodeJcrHelper.ITEMS_PATH.length(), jcrNodePath.length() );
+        Preconditions.checkState( jcrNodePath.startsWith( "/" + NodeJcrHelper.NODES_JCRPATH ),
+                                  "path to node does not start with [/" + NodeJcrHelper.NODES_JCRPATH + "] as expected: " + jcrNodePath );
+        final String nodePath = jcrNodePath.substring( NodeJcrHelper.NODES_JCRPATH.length(), jcrNodePath.length() );
         return new NodePath( nodePath );
     }
 }

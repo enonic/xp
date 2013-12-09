@@ -118,14 +118,14 @@ public class Entity
     public static class EditBuilder<B extends EditBuilder>
         extends BaseBuilder
     {
-        private final Entity original;
+        private final Entity originalEntity;
 
-        private final Changes.Builder changes = new Changes.Builder();
+        protected final Changes.Builder changes = new Changes.Builder();
 
         public EditBuilder( final Entity original )
         {
             super( original );
-            this.original = original;
+            this.originalEntity = original;
         }
 
         public B property( final String path, final String value )
@@ -133,7 +133,7 @@ public class Entity
             if ( value != null )
             {
                 this.data.setProperty( path, new Value.String( value ) );
-                changes.recordChange( newPossibleChange( "data" ).from( this.original.data() ).to( this.data ).build() );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
         }
@@ -143,7 +143,7 @@ public class Entity
             if ( value != null )
             {
                 this.data.setProperty( path, new Value.Long( value ) );
-                changes.recordChange( newPossibleChange( "data" ).from( this.original.data() ).to( this.data ).build() );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
         }
@@ -153,7 +153,7 @@ public class Entity
             if ( value != null )
             {
                 this.data.setProperty( path, new Value.DateTime( value ) );
-                changes.recordChange( newPossibleChange( "data" ).from( this.original.data() ).to( this.data ).build() );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
         }
@@ -163,7 +163,7 @@ public class Entity
             if ( value != null )
             {
                 this.data.setProperty( path, value );
-                changes.recordChange( newPossibleChange( "data" ).from( this.original.data() ).to( this.data ).build() );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
         }
@@ -173,7 +173,7 @@ public class Entity
             if ( value != null )
             {
                 this.data.add( value );
-                changes.recordChange( newPossibleChange( "data" ).from( this.original.data() ).to( this.data ).build() );
+                changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             }
             return getThisBuilder();
         }
@@ -181,14 +181,14 @@ public class Entity
         public B rootDataSet( final RootDataSet value )
         {
             this.data = value;
-            changes.recordChange( newPossibleChange( "data" ).from( this.original.data() ).to( this.data ).build() );
+            changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
             return getThisBuilder();
         }
 
         public B entityIndexConfig( final EntityIndexConfig entityIndexConfig )
         {
             changes.recordChange(
-                newPossibleChange( "data" ).from( this.original.entityIndexConfig ).to( this.entityIndexConfig ).build() );
+                newPossibleChange( "data" ).from( this.originalEntity.entityIndexConfig ).to( this.entityIndexConfig ).build() );
             this.entityIndexConfig = entityIndexConfig;
             return getThisBuilder();
         }

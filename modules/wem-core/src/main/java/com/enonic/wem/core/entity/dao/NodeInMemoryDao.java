@@ -63,7 +63,7 @@ public class NodeInMemoryDao
     @Override
     public Node updateNode( final UpdateNodeArgs updateNodeArgs )
     {
-        final Node existing = nodeById.get( updateNodeArgs.itemToUpdate() );
+        final Node existing = nodeById.get( updateNodeArgs.nodeToUpdate() );
 
         final Node persistedNode = newNode( existing ).
             modifiedTime( DateTime.now() ).

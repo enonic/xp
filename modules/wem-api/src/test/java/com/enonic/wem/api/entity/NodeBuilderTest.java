@@ -163,24 +163,6 @@ public class NodeBuilderTest
     }
 
     @Test(expected = IllegalEditException.class)
-    public void checkIllegalEdit_given_changed_name_then_illegal()
-        throws Exception
-    {
-
-        final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
-            name( "myName" ).
-            parent( NodePath.ROOT ).
-            build();
-
-        final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
-            name( "myChangedeName" ).
-            parent( NodePath.ROOT ).
-            build();
-
-        myNode.checkIllegalEdit( myEditedNode );
-    }
-
-    @Test(expected = IllegalEditException.class)
     public void checkIllegalEdit_given_changed_modifier_then_illegal()
         throws Exception
     {
