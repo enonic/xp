@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
     var CONFIG = {
-        baseUri: '/'
+        baseUri: 'http://localhost:8080'
     };
 </script>
 
@@ -22,11 +22,14 @@
     $(function() {
         var componentType = new LiveEdit.component.ComponentType(LiveEdit.component.Type.IMAGE);
         componentType.setName("image");
+        componentType.setIconCls("live-edit-font-icon-image");
         var component = new LiveEdit.component.Component();
         component.setComponentType(componentType);
 
+
         var emptyImageComponent = LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(component);
         $("#main").prepend(emptyImageComponent.getHTMLElement());
+        emptyImageComponent.init();
     });
 </script>
 

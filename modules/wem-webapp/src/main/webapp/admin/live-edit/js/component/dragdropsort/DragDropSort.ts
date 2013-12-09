@@ -178,10 +178,11 @@ module LiveEdit.component.dragdropsort.DragDropSort {
 
             var bogusComponent = new LiveEdit.component.Component($(event.target).children(CONTEXT_WINDOW_DRAG_SOURCE_SELECTOR));
 
-            var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(bogusComponent).getHTMLElement());
-            var emptyComponent = new LiveEdit.component.Component(emptyElement);
+            //var emptyComponent:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(bogusComponent).getHTMLElement());
+            var emptyComponent = LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(bogusComponent);//new LiveEdit.component.Component(emptyElement);
 
-            bogusComponent.getElement().replaceWith(emptyComponent.getElement());
+            bogusComponent.getElement().replaceWith(emptyComponent.getHTMLElement());
+            emptyComponent.init();
 
             $(window).trigger('sortableUpdate.liveEdit');
 
@@ -189,7 +190,7 @@ module LiveEdit.component.dragdropsort.DragDropSort {
             // Remove it now so the auto selection is properly aligned.
             this.removePaddingFromLayoutComponent();
 
-            LiveEdit.component.Selection.select(emptyComponent);
+            LiveEdit.component.Selection.select(LiveEdit.component.Component.fromElement(emptyComponent));
         }
     }
 

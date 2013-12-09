@@ -40,8 +40,8 @@ declare var $liveEdit;
         });
     });
 
-    // Prevent the user from clicking on things
-    // This needs more work as we want them to click on Live Edit ui stuff.
+//    Prevent the user from clicking on things
+//    This needs more work as we want them to click on Live Edit ui stuff.
     $(document).ready(() => {
         $(document).on('mousedown', 'btn, button, a, select, input', (event) => {
             event.preventDefault();
