@@ -71,7 +71,7 @@ public final class SiteTemplateResource
     }
 
     @GET
-    public Result getSiteTemplate( @QueryParam("key") final String siteTemplateKeyParam )
+    public Result getSiteTemplate( @QueryParam("siteTemplateKey") final String siteTemplateKeyParam )
     {
         try
         {

@@ -179,7 +179,7 @@ public class SiteTemplateResourceTest
         Mockito.when( client.execute( Mockito.isA( GetSiteTemplateByKey.class ) ) ).thenReturn( siteTemplate );
         String response = resource().
             path( "content/site/template" ).
-            queryParam( "key", siteTemplate.getKey().toString() ).
+            queryParam( "siteTemplateKey", siteTemplate.getKey().toString() ).
             get( String.class );
         assertJson( "get_site_template_by_key_success.json", response );
     }
@@ -193,7 +193,7 @@ public class SiteTemplateResourceTest
             new SiteTemplateNotFoundException( siteTemplate ) );
         String response = resource().
             path( "content/site/template" ).
-            queryParam( "key", siteTemplate.toString() ).
+            queryParam( "siteTemplateKey", siteTemplate.toString() ).
             get( String.class );
         assertJson( "get_site_template_by_key_failure.json", response );
     }

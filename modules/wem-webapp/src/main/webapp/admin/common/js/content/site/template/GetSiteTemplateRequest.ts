@@ -2,17 +2,17 @@ module api_content_site_template {
 
     export class GetSiteTemplateRequest extends SiteTemplateResourceRequest<api_content_site_template_json.SiteTemplateSummaryJson> {
 
-        private siteTemplateId:string;
+        private siteTemplateKey:SiteTemplateKey;
 
-        constructor(siteTemplateId:string) {
+        constructor(siteTemplateId:SiteTemplateKey) {
             super();
             super.setMethod("GET");
-            this.siteTemplateId = siteTemplateId;
+            this.siteTemplateKey = siteTemplateId;
         }
 
         getParams():Object {
             return {
-                siteTemplateId: this.siteTemplateId
+                siteTemplateKey: this.siteTemplateKey.toString()
             };
         }
 

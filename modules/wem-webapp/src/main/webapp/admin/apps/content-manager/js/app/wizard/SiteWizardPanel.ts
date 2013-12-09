@@ -34,7 +34,7 @@ module app_wizard {
         persistNewItem(successCallback?:() => void) {
             var content:api_content.Content = this.getPersistedItem();
             new api_content_site.CreateSiteRequest(content.getId())
-                .setSiteTemplateKey(this.site.getTemplateName())
+                .setSiteTemplateKey(this.site.getTemplateKey())
                 .setModuleConfigs(this.site.getModuleConfigs())
                 .send().done((siteResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
                     //TODO
@@ -44,7 +44,7 @@ module app_wizard {
         updatePersistedItem(successCallback?:() => void) {
             var content:api_content.Content = this.getPersistedItem();
             new api_content_site.UpdateSiteRequest(content.getId())
-                .setSiteTemplateKey(this.site.getTemplateName())
+                .setSiteTemplateKey(this.site.getTemplateKey())
                 .setModuleConfigs(this.site.getModuleConfigs())
                 .send().done((siteResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
                     //TODO
@@ -82,7 +82,7 @@ module app_wizard {
                 callback(this.siteTemplate)
             } else {
                 var content:api_content.Content = this.getPersistedItem();
-                new api_content_site_template.GetSiteTemplateRequest(content.getId()).send().done((templateResponse:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>) => {
+                new api_content_site_template.GetSiteTemplateRequest(content.getPage().getTemplate().getSiteTemplateKey()).send().done((templateResponse:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>) => {
                     this.siteTemplate = new api_content_site_template.SiteTemplateSummary(templateResponse.getResult());
                     callback(this.siteTemplate)
                 });

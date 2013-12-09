@@ -3,7 +3,7 @@ module api_content_site {
     export class UpdateSiteRequest extends SiteResourceRequest<api_content_json.ContentJson> {
 
         private contentId: string;
-        private siteTemplateKey: string;
+        private siteTemplateKey: api_content_site_template.SiteTemplateKey;
         private moduleConfigs: ModuleConfig[];
 
         constructor(contentId: string) {
@@ -12,7 +12,7 @@ module api_content_site {
             this.contentId = contentId;
         }
 
-        setSiteTemplateKey(siteTemplateKey: string): UpdateSiteRequest {
+        setSiteTemplateKey(siteTemplateKey: api_content_site_template.SiteTemplateKey): UpdateSiteRequest {
             this.siteTemplateKey = siteTemplateKey;
             return this;
         }
@@ -26,7 +26,7 @@ module api_content_site {
 
             return {
                 contentId: this.contentId,
-                siteTemplateKey: this.siteTemplateKey,
+                siteTemplateKey: this.siteTemplateKey.toString(),
                 moduleConfigs: this.moduleConfigs
             };
         }
