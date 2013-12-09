@@ -1,7 +1,9 @@
 package com.enonic.wem.core.module;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,8 @@ public class GetModulesHandler
 {
 
     private SystemConfig systemConfig;
+
+    private ModuleResourcePathResolver moduleResourcePathResolver;
 
     private ModuleExporter moduleExporter;
 
@@ -50,10 +54,10 @@ public class GetModulesHandler
         List<Module> modules = new ArrayList<>();
         for ( ModuleKey moduleKey : moduleKeys )
         {
-            final File moduleDir = new File( systemConfig.getModulesDir(), moduleKey.toString() );
-            if ( moduleDir.exists() && moduleDir.isDirectory() )
+            final Path moduleDir = moduleResourcePathResolver.resolveModulePath( moduleKey );
+            if ( Files.isDirectory( moduleDir ) )
             {
-                Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
+                Module module = moduleExporter.importFromDirectory( moduleDir ).build();
                 modules.add( module );
             }
         }
@@ -64,12 +68,15 @@ public class GetModulesHandler
         throws IOException
     {
         List<Module> modules = new ArrayList<>();
-        for ( File moduleDir : systemConfig.getModulesDir().listFiles() )
+        try (final DirectoryStream<Path> ds = Files.newDirectoryStream( systemConfig.getModulesDir() ))
         {
-            if ( moduleDir.isDirectory() )
+            for ( Path moduleDir : ds )
             {
-                Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
-                modules.add( module );
+                if ( Files.isDirectory( moduleDir ) )
+                {
+                    Module module = moduleExporter.importFromDirectory( moduleDir ).build();
+                    modules.add( module );
+                }
             }
         }
         return modules;
@@ -79,6 +86,12 @@ public class GetModulesHandler
     public void setSystemConfig( final SystemConfig systemConfig )
     {
         this.systemConfig = systemConfig;
+    }
+
+    @Inject
+    public void setModuleResourcePathResolver( final ModuleResourcePathResolver moduleResourcePathResolver )
+    {
+        this.moduleResourcePathResolver = moduleResourcePathResolver;
     }
 
     @Inject

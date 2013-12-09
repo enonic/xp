@@ -1,6 +1,5 @@
 package com.enonic.wem.core.module;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -40,6 +39,7 @@ public class GetModulesHandlerTest
         systemConfig = Mockito.mock( SystemConfig.class );
         moduleExporter = Mockito.mock( ModuleExporter.class );
         handler.setSystemConfig( systemConfig );
+        handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
         handler.setModuleExporter( moduleExporter );
         tempDir = Files.createTempDirectory( "wemce" );
     }
@@ -48,8 +48,8 @@ public class GetModulesHandlerTest
     public void testGetModulesWithEmptyModuleKeys()
         throws Exception
     {
-        File modulesDir = new File( tempDir.toFile(), "modules" );
-        modulesDir.mkdir();
+        Path modulesDir = tempDir.resolve( "modules" );
+        Files.createDirectory( modulesDir );
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 
         GetModules command = Commands.module().list().modules( ModuleKeys.from( new ArrayList<ModuleKey>() ) );
@@ -63,8 +63,8 @@ public class GetModulesHandlerTest
     public void testGetNonExistingModules()
         throws Exception
     {
-        File modulesDir = new File( tempDir.toFile(), "modules" );
-        modulesDir.mkdir();
+        Path modulesDir = tempDir.resolve( "modules" );
+        Files.createDirectory( modulesDir );
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 
         GetModules command = Commands.module().list().modules( ModuleKeys.from( "amodule-1.0.0", "bmodule-1.0.0", "cmodule-1.0.0" ) );
@@ -78,17 +78,17 @@ public class GetModulesHandlerTest
     public void testGetExistingModules()
         throws Exception
     {
-        File modulesDir = new File( tempDir.toFile(), "modules" );
-        modulesDir.mkdir();
-        File aModuleDir = new File( modulesDir, "amodule-1.0.0" );
-        File bModuleDir = new File( modulesDir, "bmodule-1.0.0" );
-        aModuleDir.mkdir();
-        bModuleDir.mkdir();
+        Path modulesDir = tempDir.resolve( "modules" );
+        Files.createDirectory( modulesDir );
+        Path aModuleDir = modulesDir.resolve( "amodule-1.0.0" );
+        Path bModuleDir = modulesDir.resolve( "bmodule-1.0.0" );
+        Files.createDirectory( aModuleDir );
+        Files.createDirectory( bModuleDir );
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Module.Builder aModule = createModule( "amodule-1.0.0" );
         Module.Builder bModule = createModule( "bmodule-1.0.0" );
-        Mockito.when( moduleExporter.importFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
-        Mockito.when( moduleExporter.importFromDirectory( bModuleDir.toPath() ) ).thenReturn( bModule );
+        Mockito.when( moduleExporter.importFromDirectory( aModuleDir ) ).thenReturn( aModule );
+        Mockito.when( moduleExporter.importFromDirectory( bModuleDir ) ).thenReturn( bModule );
 
         GetModules command = Commands.module().list().modules( ModuleKeys.from( "amodule-1.0.0", "bmodule-1.0.0" ) );
         handler.setCommand( command );
@@ -101,17 +101,17 @@ public class GetModulesHandlerTest
     public void testGetExistingAndNonExistingModules()
         throws Exception
     {
-        File modulesDir = new File( tempDir.toFile(), "modules" );
-        modulesDir.mkdir();
-        File aModuleDir = new File( modulesDir, "amodule-1.0.0" );
-        File bModuleDir = new File( modulesDir, "bmodule-1.0.0" );
-        aModuleDir.mkdir();
-        bModuleDir.mkdir();
+        Path modulesDir = tempDir.resolve( "modules" );
+        Files.createDirectory( modulesDir );
+        Path aModuleDir = modulesDir.resolve( "amodule-1.0.0" );
+        Path bModuleDir = modulesDir.resolve( "bmodule-1.0.0" );
+        Files.createDirectory( aModuleDir );
+        Files.createDirectory( bModuleDir );
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
         Module.Builder aModule = createModule( "amodule-1.0.0" );
         Module.Builder bModule = createModule( "bmodule-1.0.0" );
-        Mockito.when( moduleExporter.importFromDirectory( aModuleDir.toPath() ) ).thenReturn( aModule );
-        Mockito.when( moduleExporter.importFromDirectory( bModuleDir.toPath() ) ).thenReturn( bModule );
+        Mockito.when( moduleExporter.importFromDirectory( aModuleDir ) ).thenReturn( aModule );
+        Mockito.when( moduleExporter.importFromDirectory( bModuleDir ) ).thenReturn( bModule );
 
         GetModules command =
             Commands.module().list().modules( ModuleKeys.from( "amodule-1.0.0", "bmodule-1.0.0", "cmodule-1.0.0", "dmodule-1.0.0" ) );

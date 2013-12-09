@@ -50,7 +50,7 @@ public class CreateModuleHandler
         }
         final Module module = moduleBuilder.build();
 
-        final Path moduleDirPath = systemConfig.getModulesDir().toPath();
+        final Path moduleDirPath = systemConfig.getModulesDir();
         Files.createDirectories( moduleDirPath );
 
         moduleExporter.exportToDirectory( module, moduleDirPath );

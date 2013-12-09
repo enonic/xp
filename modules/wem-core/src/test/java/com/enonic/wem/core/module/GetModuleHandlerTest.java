@@ -1,6 +1,5 @@
 package com.enonic.wem.core.module;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -38,7 +37,7 @@ public class GetModuleHandlerTest
         handler = new GetModuleHandler();
         systemConfig = Mockito.mock( SystemConfig.class );
         moduleExporter = Mockito.mock( ModuleExporter.class );
-        handler.setSystemConfig( systemConfig );
+        handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
         handler.setModuleImporter( moduleExporter );
         tempDir = Files.createTempDirectory( "wemce" );
 
@@ -48,16 +47,16 @@ public class GetModuleHandlerTest
     public void testGetExistingModule()
         throws Exception
     {
-        File modulesDir = new File( tempDir.toFile(), "modules" );
-        modulesDir.mkdir();
+        Path modulesDir = tempDir.resolve( "modules" );
+        Files.createDirectory( modulesDir );
 
-        File fooModuleDir = new File( modulesDir, "foomodule-1.0.0" );
-        fooModuleDir.mkdir();
+        Path fooModuleDir = modulesDir.resolve( "foomodule-1.0.0" );
+        Files.createDirectory( fooModuleDir );
 
         Module.Builder fooModule = createModule();
 
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
-        Mockito.when( moduleExporter.importFromDirectory( fooModuleDir.toPath() ) ).thenReturn( fooModule );
+        Mockito.when( moduleExporter.importFromDirectory( fooModuleDir ) ).thenReturn( fooModule );
 
         GetModule getModuleCommand = Commands.module().get().module( fooModule.build().getModuleKey() );
         handler.setCommand( getModuleCommand );
@@ -71,11 +70,11 @@ public class GetModuleHandlerTest
     public void testGetNonExistingModule()
         throws Exception
     {
-        File modulesDir = new File( tempDir.toFile(), "modules" );
-        modulesDir.mkdir();
+        Path modulesDir = tempDir.resolve( "modules" );
+        Files.createDirectory( modulesDir );
 
-        File fooModuleDir = new File( modulesDir, "module-1.2.3" );
-        fooModuleDir.mkdir();
+        Path fooModuleDir = modulesDir.resolve( "module-1.2.3" );
+        Files.createDirectory( fooModuleDir );
 
         Module fooModule = createModule().build();
 

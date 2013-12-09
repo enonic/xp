@@ -48,7 +48,7 @@ public class GetModuleResourceHandlerTest
         super.initialize();
 
         systemConfig = Mockito.mock( SystemConfig.class );
-        when( systemConfig.getModulesDir() ).thenReturn( java.nio.file.Files.createTempDirectory( "module" ).toFile() );
+        when( systemConfig.getModulesDir() ).thenReturn( java.nio.file.Files.createTempDirectory( "module" ) );
         handler = new GetModuleResourceHandler();
         handler.setContext( this.context );
         handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
@@ -61,7 +61,7 @@ public class GetModuleResourceHandlerTest
     {
         try
         {
-            FileUtils.deleteDirectory( systemConfig.getModulesDir() );
+            FileUtils.deleteDirectory( systemConfig.getModulesDir().toFile() );
         }
         catch ( IOException e )
         {

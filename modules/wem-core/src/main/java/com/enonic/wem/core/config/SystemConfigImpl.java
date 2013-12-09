@@ -1,6 +1,7 @@
 package com.enonic.wem.core.config;
 
 import java.io.File;
+import java.nio.file.Path;
 
 final class SystemConfigImpl
     implements SystemConfig
@@ -37,9 +38,9 @@ final class SystemConfigImpl
     }
 
     @Override
-    public File getModulesDir()
+    public Path getModulesDir()
     {
-        return new File( getConfigDir(), "modules" );
+        return getConfigDir().toPath().resolve( "modules" );
     }
 
     @Override

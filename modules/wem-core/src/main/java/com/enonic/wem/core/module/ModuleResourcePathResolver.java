@@ -22,7 +22,7 @@ public final class ModuleResourcePathResolver
 
     public Path resolveModulePath( final ModuleKey moduleKey )
     {
-        final Path basePath = systemConfig.getModulesDir().toPath();
+        final Path basePath = systemConfig.getModulesDir();
         return basePath.resolve( moduleKey.toString() );
     }
 

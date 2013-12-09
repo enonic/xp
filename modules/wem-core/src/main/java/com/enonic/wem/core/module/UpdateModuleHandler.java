@@ -1,6 +1,7 @@
 package com.enonic.wem.core.module;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -17,28 +18,36 @@ public class UpdateModuleHandler
 
     private SystemConfig systemConfig;
 
+    private ModuleResourcePathResolver moduleResourcePathResolver;
+
     private ModuleExporter moduleExporter;
 
     @Override
     public void handle()
         throws Exception
     {
-        final File modulesDir = systemConfig.getModulesDir();
-        final File moduleDir = new File( modulesDir, command.getModuleKey().toString() );
-        if ( !moduleDir.exists() )
+        final Path modulesDir = systemConfig.getModulesDir();
+        final Path moduleDir = moduleResourcePathResolver.resolveModulePath( command.getModuleKey() );
+        if ( Files.notExists( moduleDir ) )
         {
             throw new ModuleNotFoundException( command.getModuleKey() );
         }
 
-        Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
+        Module module = moduleExporter.importFromDirectory( moduleDir ).build();
         Module editedModule = command.getEditor().edit( module );
         boolean edited = editedModule != null && !editedModule.equals( module );
         if ( edited )
         {
-            moduleExporter.exportToDirectory( editedModule, modulesDir.toPath() );
+            moduleExporter.exportToDirectory( editedModule, modulesDir );
         }
 
         command.setResult( edited );
+    }
+
+    @Inject
+    public void setModuleResourcePathResolver( final ModuleResourcePathResolver moduleResourcePathResolver )
+    {
+        this.moduleResourcePathResolver = moduleResourcePathResolver;
     }
 
     @Inject

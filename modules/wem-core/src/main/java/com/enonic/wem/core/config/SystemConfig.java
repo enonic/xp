@@ -1,6 +1,7 @@
 package com.enonic.wem.core.config;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public interface SystemConfig
 {
@@ -12,7 +13,7 @@ public interface SystemConfig
 
     public File getConfigDir();
 
-    public File getModulesDir();
+    public Path getModulesDir();
 
     public File getTemplatesDir();
 

@@ -1,6 +1,5 @@
 package com.enonic.wem.core.module;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -37,7 +36,7 @@ public class DeleteModuleHandlerTest
         handler = new DeleteModuleHandler();
         systemConfig = Mockito.mock( SystemConfig.class );
         moduleExporter = Mockito.mock( ModuleExporter.class );
-        handler.setSystemConfig( systemConfig );
+        handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
         handler.setModuleImporter( moduleExporter );
         tempDir = Files.createTempDirectory( "wemce" );
     }
@@ -46,37 +45,37 @@ public class DeleteModuleHandlerTest
     public void testDeleteExistingModule()
         throws Exception
     {
-        final File modulesDir = new File( tempDir.toFile(), "modules" );
-        modulesDir.mkdir();
-        final File moduleDir = new File( modulesDir, "foomodule-1.0.0" );
-        moduleDir.mkdir();
-        final File subModuleDir = new File( moduleDir, "config" );
-        subModuleDir.mkdir();
+        final Path modulesDir = tempDir.resolve( "modules" );
+        Files.createDirectory( modulesDir );
+        final Path moduleDir = modulesDir.resolve( "foomodule-1.0.0" );
+        Files.createDirectory( moduleDir );
+        final Path subModuleDir = moduleDir.resolve( "config" );
+        Files.createDirectory( subModuleDir );
 
-        assertTrue( moduleDir.exists() );
+        assertTrue( Files.exists( moduleDir ) );
 
         Module.Builder fooModule = createModule();
 
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
-        Mockito.when( moduleExporter.importFromDirectory( moduleDir.toPath() ) ).thenReturn( fooModule );
+        Mockito.when( moduleExporter.importFromDirectory( moduleDir ) ).thenReturn( fooModule );
 
         DeleteModule command = Commands.module().delete().module( ModuleKey.from( "foomodule-1.0.0" ) );
         handler.setCommand( command );
         handler.handle();
 
         assertNotNull( command.getResult() );
-        assertFalse( moduleDir.exists() );
-        assertFalse( subModuleDir.exists() );
+        assertFalse( Files.exists( moduleDir ) );
+        assertFalse( Files.exists( subModuleDir ) );
     }
 
     @Test(expected = ModuleNotFoundException.class)
     public void testDeleteNonExistingModule()
         throws Exception
     {
-        final File modulesDir = new File( tempDir.toFile(), "modules" );
-        modulesDir.mkdir();
-        final File moduleDir = new File( modulesDir, "foomodule-1.2.0" );
-        moduleDir.mkdir();
+        final Path modulesDir = tempDir.resolve( "modules" );
+        Files.createDirectory( modulesDir );
+        final Path moduleDir = modulesDir.resolve( "foomodule-1.2.0" );
+        Files.createDirectory( moduleDir );
 
         Mockito.when( systemConfig.getModulesDir() ).thenReturn( modulesDir );
 

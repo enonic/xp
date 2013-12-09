@@ -1,6 +1,7 @@
 package com.enonic.wem.core.module;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -10,13 +11,12 @@ import com.enonic.wem.api.command.module.DeleteModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class DeleteModuleHandler
     extends CommandHandler<DeleteModule>
 {
-    private SystemConfig systemConfig;
+    private ModuleResourcePathResolver moduleResourcePathResolver;
 
     private ModuleExporter moduleExporter;
 
@@ -24,25 +24,23 @@ public class DeleteModuleHandler
     public void handle()
         throws Exception
     {
-        final File modulesDir = systemConfig.getModulesDir();
-        final File moduleDir = new File( modulesDir, command.getModule().toString() );
-        if ( !moduleDir.exists() )
+        final Path moduleDir = moduleResourcePathResolver.resolveModulePath( command.getModule() );
+        if ( Files.notExists( moduleDir ) )
         {
             throw new ModuleNotFoundException( command.getModule() );
         }
 
-        final Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
-        FileUtils.deleteDirectory( moduleDir );
+        final Module module = moduleExporter.importFromDirectory( moduleDir ).build();
+        FileUtils.deleteDirectory( moduleDir.toFile() );
 
         command.setResult( module );
     }
 
     @Inject
-    public void setSystemConfig( final SystemConfig systemConfig )
+    public void setModuleResourcePathResolver( final ModuleResourcePathResolver moduleResourcePathResolver )
     {
-        this.systemConfig = systemConfig;
+        this.moduleResourcePathResolver = moduleResourcePathResolver;
     }
-
 
     @Inject
     public void setModuleImporter( final ModuleExporter moduleExporter )

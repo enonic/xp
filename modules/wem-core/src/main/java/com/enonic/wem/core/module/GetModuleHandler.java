@@ -1,6 +1,7 @@
 package com.enonic.wem.core.module;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -9,14 +10,13 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class GetModuleHandler
     extends CommandHandler<GetModule>
 {
 
-    private SystemConfig systemConfig;
+    private ModuleResourcePathResolver moduleResourcePathResolver;
 
     private ModuleExporter moduleExporter;
 
@@ -24,12 +24,11 @@ public class GetModuleHandler
     public void handle()
         throws Exception
     {
-        final File modulesDir = systemConfig.getModulesDir();
         final ModuleKey moduleKey = command.getModuleKey();
-        final File moduleDir = new File( modulesDir, moduleKey.toString() );
-        if ( moduleDir.exists() )
+        final Path moduleDir = moduleResourcePathResolver.resolveModulePath( moduleKey );
+        if ( Files.exists( moduleDir ) )
         {
-            final Module module = moduleExporter.importFromDirectory( moduleDir.toPath() ).build();
+            final Module module = moduleExporter.importFromDirectory( moduleDir ).build();
             command.setResult( module );
             return;
         }
@@ -39,11 +38,10 @@ public class GetModuleHandler
 
 
     @Inject
-    public void setSystemConfig( final SystemConfig systemConfig )
+    public void setModuleResourcePathResolver( final ModuleResourcePathResolver moduleResourcePathResolver )
     {
-        this.systemConfig = systemConfig;
+        this.moduleResourcePathResolver = moduleResourcePathResolver;
     }
-
 
     @Inject
     public void setModuleImporter( final ModuleExporter moduleExporter )
