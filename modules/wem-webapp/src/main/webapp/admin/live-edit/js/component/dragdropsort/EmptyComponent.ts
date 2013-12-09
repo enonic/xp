@@ -24,7 +24,6 @@ module LiveEdit.component.dragdropsort {
                 var imageUploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
                 console.log("imageuploader", imageUploader);
                 emptyComponent.appendChild(imageUploader);
-                imageUploader.init();
 
             } else {
                 var emptyComponentIcon = new api_dom.DivEl();
