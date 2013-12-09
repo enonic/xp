@@ -6,6 +6,14 @@
     color: #d4e1f1;
     text-align: center;
     margin: 1px 0 10px 0;
+    position:relative;
+  &[data-live-edit-type="image"] {
+    padding:0;
+    .dropzone {
+      box-sizing: border-box;
+      background-color: transparent;
+    }
+  }
 }
 
 .live-edit-font-icon-spinner {
