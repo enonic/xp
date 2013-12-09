@@ -16,7 +16,7 @@
 </head>
 
 <body data-live-edit-type="page" data-live-edit-key="/path/to/this/page" data-live-edit-name="Jumping Jack - Frogger">
-<%@ include file="live-edit/loader-splash.jsp" %>
+<%--<%@ include file="live-edit/loader-splash.jsp" %>--%>
 <script src="js/jquery.js"></script>
 
 <div class="container">
