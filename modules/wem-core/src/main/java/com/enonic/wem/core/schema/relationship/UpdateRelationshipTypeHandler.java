@@ -10,8 +10,8 @@ import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 
-public final class UpdateRelationshipTypesHandler
-    extends CommandHandler<UpdateRelationshipType>
+public final class UpdateRelationshipTypeHandler
+extends CommandHandler<UpdateRelationshipType>
 {
     private RelationshipTypeDao relationshipTypeDao;
 

@@ -93,8 +93,7 @@ public final class RelationshipType
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( getName(), getDisplayName(), fromSemantic, toSemantic, allowedFromTypes,
-                                 allowedToTypes );
+        return Objects.hashCode( getName(), getDisplayName(), fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
     }
 
     public void checkIllegalEdit( final RelationshipType to )
@@ -102,8 +101,6 @@ public final class RelationshipType
         Preconditions.checkArgument( this.getCreatedTime().equals( to.getCreatedTime() ) );
         IllegalEdit.check( "createdTime", this.getCreatedTime(), to.getCreatedTime(), RelationshipType.class );
 
-        // Cannot be changed since they are a part of a Relationship's storage path in JCR.
-        IllegalEdit.check( "name", this.getName(), to.getName(), RelationshipType.class );
     }
 
     public static Builder newRelationshipType()
@@ -117,7 +114,7 @@ public final class RelationshipType
     }
 
     public static class Builder
-        extends BaseSchema.Builder<Builder,RelationshipTypeName>
+        extends BaseSchema.Builder<Builder, RelationshipTypeName>
     {
         private String fromSemantic;
 

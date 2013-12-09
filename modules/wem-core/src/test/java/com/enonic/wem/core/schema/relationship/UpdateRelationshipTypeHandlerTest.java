@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 public class UpdateRelationshipTypeHandlerTest
     extends AbstractCommandHandlerTest
 {
-    private UpdateRelationshipTypesHandler handler;
+    private UpdateRelationshipTypeHandler handler;
 
     private RelationshipTypeDao relationshipTypeDao;
 
@@ -38,7 +38,7 @@ public class UpdateRelationshipTypeHandlerTest
         super.initialize();
 
         relationshipTypeDao = Mockito.mock( RelationshipTypeDao.class );
-        handler = new UpdateRelationshipTypesHandler();
+        handler = new UpdateRelationshipTypeHandler();
         handler.setContext( this.context );
         handler.setRelationshipTypeDao( relationshipTypeDao );
     }
