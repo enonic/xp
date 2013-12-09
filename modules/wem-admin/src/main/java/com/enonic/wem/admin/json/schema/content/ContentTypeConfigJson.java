@@ -9,7 +9,7 @@ public class ContentTypeConfigJson
 
     public ContentTypeConfigJson( final ContentType contentType )
     {
-        this.contentTypeXml = new ContentTypeXmlSerializer().prettyPrint( true ).toString( contentType );
+        this.contentTypeXml = new ContentTypeXmlSerializer().prettyPrint( true ).generateName( false ).toString( contentType );
     }
 
     public String getContentTypeXml()

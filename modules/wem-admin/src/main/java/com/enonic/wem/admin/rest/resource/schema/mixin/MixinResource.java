@@ -43,7 +43,7 @@ public class MixinResource
     extends AbstractResource
 {
     private final MixinXmlSerializer mixinXmlSerializer = new MixinXmlSerializer().
-        includeName( false );
+        generateName( false );
 
     private UploadService uploadService;
 

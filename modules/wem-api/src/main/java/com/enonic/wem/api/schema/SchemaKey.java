@@ -32,6 +32,11 @@ public final class SchemaKey
         this.refString = Joiner.on( SEPARATOR ).join( this.type, this.localName );
     }
 
+    public SchemaKind getType()
+    {
+        return type;
+    }
+
     public boolean isContentType()
     {
         return this.type == SchemaKind.CONTENT_TYPE;

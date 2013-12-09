@@ -49,8 +49,6 @@ public class ContentTypeResource
 {
     private UploadService uploadService;
 
-    private ContentTypeXmlSerializer contentTypeXmlSerializer = new ContentTypeXmlSerializer();
-
     @GET
     public ContentTypeJson get( @QueryParam("name") final String nameAsString,
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
@@ -138,7 +136,8 @@ public class ContentTypeResource
     {
         try
         {
-            ContentType contentType = contentTypeXmlSerializer.toContentType( json.getConfig() );
+            ContentType contentType =
+                new ContentTypeXmlSerializer().overrideName( json.getName().toString() ).toContentType( json.getConfig() );
 
             final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
             if ( icon != null )
@@ -172,7 +171,8 @@ public class ContentTypeResource
     {
         try
         {
-            final ContentType parsed = new ContentTypeXmlSerializer().toContentType( json.getConfig() );
+            final ContentType parsed =
+                new ContentTypeXmlSerializer().overrideName( json.getName().toString() ).toContentType( json.getConfig() );
 
             final Icon uploadedIcon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
 

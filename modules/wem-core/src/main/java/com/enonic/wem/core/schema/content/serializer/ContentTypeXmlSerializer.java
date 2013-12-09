@@ -24,9 +24,25 @@ public class ContentTypeXmlSerializer
 
     private boolean prettyPrint = true;
 
-    public ContentTypeXmlSerializer prettyPrint( boolean value )
+    private boolean generateName = true;
+
+    private String overridingName = null;
+
+    public ContentTypeXmlSerializer prettyPrint( final boolean value )
     {
         this.prettyPrint = value;
+        return this;
+    }
+
+    public ContentTypeXmlSerializer generateName( final boolean value )
+    {
+        this.generateName = value;
+        return this;
+    }
+
+    public ContentTypeXmlSerializer overrideName( final String value )
+    {
+        this.overridingName = value;
         return this;
     }
 
@@ -44,7 +60,10 @@ public class ContentTypeXmlSerializer
 
     private void generate( final ContentType type, final Element typeEl )
     {
-        typeEl.addContent( new Element( "name" ).setText( type.getName().toString() ) );
+        if ( generateName )
+        {
+            typeEl.addContent( new Element( "name" ).setText( type.getName().toString() ) );
+        }
         typeEl.addContent( new Element( "display-name" ).setText( type.getDisplayName() ) );
         typeEl.addContent( new Element( "content-display-name-script" ).setText( type.getContentDisplayNameScript() ) );
         typeEl.addContent( new Element( "super-type" ).setText( type.getSuperType() != null ? type.getSuperType().toString() : null ) );
@@ -75,7 +94,7 @@ public class ContentTypeXmlSerializer
     private ContentType parse( final Element contentTypeEl )
         throws IOException
     {
-        final String name = contentTypeEl.getChildText( "name" );
+        final String name = overridingName != null ? overridingName : contentTypeEl.getChildText( "name" );
         final String displayName = contentTypeEl.getChildText( "display-name" );
         final String displayNameScript = contentTypeEl.getChildText( "content-display-name-script" );
         final String superTypeString = StringUtils.trimToNull( contentTypeEl.getChildText( "super-type" ) );

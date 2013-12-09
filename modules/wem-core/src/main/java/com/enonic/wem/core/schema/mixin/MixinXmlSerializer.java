@@ -23,7 +23,9 @@ public class MixinXmlSerializer
 
     private boolean prettyPrint = false;
 
-    private boolean includeName = true;
+    private boolean generateName = true;
+
+    private String overridingName = null;
 
     private final JdomHelper jdomHelper = new JdomHelper();
 
@@ -33,9 +35,15 @@ public class MixinXmlSerializer
         return this;
     }
 
-    public MixinXmlSerializer includeName( boolean value )
+    public MixinXmlSerializer generateName( boolean value )
     {
-        this.includeName = value;
+        this.generateName = value;
+        return this;
+    }
+
+    public MixinXmlSerializer overrideName( final String value )
+    {
+        this.overridingName = value;
         return this;
     }
 
@@ -55,7 +63,7 @@ public class MixinXmlSerializer
 
     private void generate( final Mixin mixin, final Element typeEl )
     {
-        if ( includeName )
+        if ( generateName )
         {
             typeEl.addContent( new Element( "name" ).setText( mixin.getName().toString() ) );
         }
@@ -83,10 +91,7 @@ public class MixinXmlSerializer
         throws IOException
     {
         final Mixin.Builder builder = newMixin();
-        if ( includeName )
-        {
-            builder.name( mixinEl.getChildTextTrim( "name" ) );
-        }
+        builder.name( overridingName != null ? overridingName : mixinEl.getChildTextTrim( "name" ) );
         builder.displayName( mixinEl.getChildTextTrim( "display-name" ) );
 
         Iterable<FormItem> formItems = formItemsSerializer.parse( mixinEl.getChild( "items" ) );
