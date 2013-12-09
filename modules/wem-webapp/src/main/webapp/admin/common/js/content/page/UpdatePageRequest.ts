@@ -2,17 +2,17 @@ module api_content_page {
 
     export class UpdatePageRequest extends PageResourceRequest<api_content_json.ContentJson> {
 
-        private contentId: string;
-        private pageTemplateKey: string;
+        private contentId: api_content.ContentId;
+        private pageTemplateKey: api_content_page.PageTemplateKey;
         private config: api_data.Data[];
 
-        constructor(contentId: string) {
+        constructor(contentId: api_content.ContentId) {
             super();
             super.setMethod("POST");
             this.contentId = contentId;
         }
 
-        setPageTemplateKey(pageTemplateKey: string): UpdatePageRequest {
+        setPageTemplateKey(pageTemplateKey: api_content_page.PageTemplateKey): UpdatePageRequest {
             this.pageTemplateKey = pageTemplateKey;
             return this;
         }
@@ -24,8 +24,8 @@ module api_content_page {
 
         getParams(): Object {
             return {
-                contentId: this.contentId,
-                pageTemplateKey: this.pageTemplateKey,
+                contentId: this.contentId.toString(),
+                pageTemplateKey: this.pageTemplateKey.toString(),
                 config: this.config
             };
         }
