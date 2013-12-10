@@ -18,8 +18,8 @@ public class BlobDaoImpl
     private BlobStore blobStore;
 
     @Override
-    public BlobKey createBinary( final CreateBlob createBlob )
-        throws BlobStoreException
+    public BlobKey create( final CreateBlob createBlob )
+    throws BlobStoreException
     {
         try
         {
@@ -33,7 +33,7 @@ public class BlobDaoImpl
     }
 
     @Override
-    public BlobRecord getBinary( final BlobKey blobKey )
+    public BlobRecord getBlobRecord( final BlobKey blobKey )
     {
         return this.blobStore.getRecord( blobKey );
     }

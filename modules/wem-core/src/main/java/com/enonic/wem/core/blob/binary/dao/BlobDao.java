@@ -9,10 +9,10 @@ import com.enonic.wem.core.blobstore.BlobStoreException;
 
 public interface BlobDao
 {
-    BlobKey createBinary( CreateBlob createBlob )
-        throws BlobStoreException;
+    BlobKey create( CreateBlob createBlob )
+    throws BlobStoreException;
 
-    BlobRecord getBinary( BlobKey blobKey );
+    BlobRecord getBlobRecord( BlobKey blobKey );
 
     public class CreateBlob
     {

@@ -3,7 +3,7 @@ package com.enonic.wem.api.command;
 import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
-import com.enonic.wem.api.command.content.binary.BinaryCommands;
+import com.enonic.wem.api.command.content.binary.BlobCommands;
 import com.enonic.wem.api.command.content.page.PageCommands;
 import com.enonic.wem.api.command.content.site.SiteCommands;
 import com.enonic.wem.api.command.entity.NodeCommands;
@@ -40,7 +40,7 @@ public final class Commands
 
     private static final RelationshipTypeCommands RELATIONSHIP_TYPE_COMMANDS = new RelationshipTypeCommands();
 
-    private static final BinaryCommands BINARY_COMMANDS = new BinaryCommands();
+    private static final BlobCommands BLOB_COMMANDS = new BlobCommands();
 
     private static final AttachmentCommands ATTACHMENT_COMMANDS = new AttachmentCommands();
 
@@ -107,9 +107,9 @@ public final class Commands
         return RELATIONSHIP_TYPE_COMMANDS;
     }
 
-    public static BinaryCommands binary()
+    public static BlobCommands blob()
     {
-        return BINARY_COMMANDS;
+        return BLOB_COMMANDS;
     }
 
     public static AttachmentCommands attachment()
