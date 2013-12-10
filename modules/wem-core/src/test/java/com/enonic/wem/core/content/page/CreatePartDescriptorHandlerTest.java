@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
 import com.enonic.wem.api.command.module.CreateModuleResource;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -51,7 +52,7 @@ public class CreatePartDescriptorHandlerTest
         final PartDescriptorKey key = PartDescriptorKey.from( module, path );
         final CreatePartDescriptor command = new CreatePartDescriptor().
             key( key ).
-            name( "news-part" ).
+            name( new ComponentDescriptorName( "news-part" ) ).
             displayName( "News part" ).
             config( partForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/news-part.js" ) );

@@ -27,24 +27,15 @@ public class CreateImageDescriptor
     {
     }
 
-    public CreateImageDescriptor( final ImageDescriptor imageDescriptor )
-    {
-        this.key = imageDescriptor.getKey();
-        this.name = imageDescriptor.getName();
-        this.displayName = imageDescriptor.getDisplayName();
-        this.controllerResource = imageDescriptor.getControllerResource();
-        this.config = imageDescriptor.getConfigForm();
-    }
-
     public CreateImageDescriptor key( final ImageDescriptorKey key )
     {
         this.key = key;
         return this;
     }
 
-    public CreateImageDescriptor name( final String name )
+    public CreateImageDescriptor name( final ComponentDescriptorName name )
     {
-        this.name = new ComponentDescriptorName( name );
+        this.name = name;
         return this;
     }
 

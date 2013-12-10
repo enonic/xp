@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.image.CreateImageDescriptor;
 import com.enonic.wem.api.command.module.CreateModuleResource;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -50,7 +51,7 @@ public class CreateImageDescriptorHandlerTest
         final ImageDescriptorKey key = ImageDescriptorKey.from( module, path );
         final CreateImageDescriptor command = new CreateImageDescriptor().
             key( key ).
-            name( "image" ).
+            name( new ComponentDescriptorName( "image" ) ).
             displayName( "Image" ).
             config( imageForm );
 

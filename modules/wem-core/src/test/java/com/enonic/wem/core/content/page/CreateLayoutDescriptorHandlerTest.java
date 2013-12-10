@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.layout.CreateLayoutDescriptor;
 import com.enonic.wem.api.command.module.CreateModuleResource;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -51,7 +52,7 @@ public class CreateLayoutDescriptorHandlerTest
         final LayoutDescriptorKey key = LayoutDescriptorKey.from( module, path );
         final CreateLayoutDescriptor command = new CreateLayoutDescriptor().
             key( key ).
-            name( "fancy-layout" ).
+            name( new ComponentDescriptorName( "fancy-layout" ) ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/fancy-layout.js" ) );

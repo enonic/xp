@@ -6,6 +6,7 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.page.CreatePage;
+import com.enonic.wem.api.command.content.page.CreatePageDescriptor;
 import com.enonic.wem.api.command.content.site.CreateSite;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.module.CreateModule;
@@ -200,7 +201,13 @@ public class SitesInitializer
 
         final ResourcePath pageDescriptorPath = ResourcePath.from( "/components/" + pageDescriptor.getName().toString() + ".xml" );
         final PageDescriptorKey pageDescriptorKey = PageDescriptorKey.from( module.getKey(), pageDescriptorPath );
-        client.execute( Commands.page().descriptor().page().create( pageDescriptor ).key( pageDescriptorKey ) );
+        final CreatePageDescriptor createPageDescriptor = Commands.page().descriptor().page().create().
+            key( pageDescriptorKey ).
+            name( pageDescriptor.getName() ).
+            config( pageDescriptor.getConfigForm() ).
+            controllerResource( pageDescriptor.getControllerResource() ).
+            displayName( pageDescriptor.getDisplayName() );
+        client.execute( createPageDescriptor );
 
         return module;
     }

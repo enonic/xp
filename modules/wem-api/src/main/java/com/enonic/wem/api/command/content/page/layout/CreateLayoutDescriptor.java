@@ -27,24 +27,15 @@ public class CreateLayoutDescriptor
     {
     }
 
-    public CreateLayoutDescriptor( final LayoutDescriptor layoutDescriptor )
-    {
-        this.key = layoutDescriptor.getKey();
-        this.name = layoutDescriptor.getName();
-        this.displayName = layoutDescriptor.getDisplayName();
-        this.controllerResource = layoutDescriptor.getControllerResource();
-        this.config = layoutDescriptor.getConfigForm();
-    }
-
     public CreateLayoutDescriptor key( final LayoutDescriptorKey key )
     {
         this.key = key;
         return this;
     }
 
-    public CreateLayoutDescriptor name( final String name )
+    public CreateLayoutDescriptor name( final ComponentDescriptorName name )
     {
-        this.name = new ComponentDescriptorName( name );
+        this.name = name;
         return this;
     }
 

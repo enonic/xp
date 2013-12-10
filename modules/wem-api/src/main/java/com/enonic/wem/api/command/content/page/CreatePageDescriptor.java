@@ -27,24 +27,15 @@ public class CreatePageDescriptor
     {
     }
 
-    public CreatePageDescriptor( final PageDescriptor pageDescriptor )
-    {
-        this.key = pageDescriptor.getKey();
-        this.name = pageDescriptor.getName();
-        this.displayName = pageDescriptor.getDisplayName();
-        this.controllerResource = pageDescriptor.getControllerResource();
-        this.config = pageDescriptor.getConfigForm();
-    }
-
     public CreatePageDescriptor key( final PageDescriptorKey key )
     {
         this.key = key;
         return this;
     }
 
-    public CreatePageDescriptor name( final String name )
+    public CreatePageDescriptor name( final ComponentDescriptorName name )
     {
-        this.name = new ComponentDescriptorName( name );
+        this.name = name;
         return this;
     }
 

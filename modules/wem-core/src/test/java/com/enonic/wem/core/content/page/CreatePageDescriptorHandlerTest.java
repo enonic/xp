@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.CreatePageDescriptor;
 import com.enonic.wem.api.command.module.CreateModuleResource;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -49,7 +50,7 @@ public class CreatePageDescriptorHandlerTest
         final PageDescriptorKey key = PageDescriptorKey.from( module, path );
         final CreatePageDescriptor command = new CreatePageDescriptor().
             key( key ).
-            name( "landing-page" ).
+            name( new ComponentDescriptorName( "landing-page" ) ).
             displayName( "Landing page" ).
             config( pageForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) );

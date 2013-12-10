@@ -27,24 +27,15 @@ public class CreatePartDescriptor
     {
     }
 
-    public CreatePartDescriptor( final PartDescriptor partDescriptor )
-    {
-        this.key = partDescriptor.getKey();
-        this.name = partDescriptor.getName();
-        this.displayName = partDescriptor.getDisplayName();
-        this.controllerResource = partDescriptor.getControllerResource();
-        this.config = partDescriptor.getConfigForm();
-    }
-
     public CreatePartDescriptor key( final PartDescriptorKey key )
     {
         this.key = key;
         return this;
     }
 
-    public CreatePartDescriptor name( final String name )
+    public CreatePartDescriptor name( final ComponentDescriptorName name )
     {
-        this.name = new ComponentDescriptorName( name );
+        this.name = name;
         return this;
     }
 
