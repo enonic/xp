@@ -33,7 +33,7 @@ public final class ExceptionRenderer
 
         public String getMessage()
         {
-            return this.message;
+            return this.message != null ? this.message : "Empty message in exception";
         }
 
         public List<String> getTrace()

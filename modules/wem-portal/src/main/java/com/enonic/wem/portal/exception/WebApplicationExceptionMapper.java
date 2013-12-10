@@ -13,10 +13,20 @@ public final class WebApplicationExceptionMapper
     public Response toResponse( final WebApplicationException e )
     {
         final ExceptionRenderer renderer = new ExceptionRenderer();
-        renderer.status( e.getResponse().getStatus() );
-        renderer.title( "An error occured" );
-        renderer.description( e.getMessage() );
         renderer.exception( e );
+        renderer.status( e.getResponse().getStatus() );
+        renderer.description( "An error occured with status code = " + e.getResponse().getStatus() + "." );
+
+        if ( e instanceof MethodNotAllowedException )
+        {
+            renderer.title( "Method Not Allowed" );
+        }
+        else
+        {
+            final Response.Status status = Response.Status.fromStatusCode( e.getResponse().getStatus() );
+            renderer.title( status.getReasonPhrase() );
+        }
+
         return renderer.render();
     }
 }

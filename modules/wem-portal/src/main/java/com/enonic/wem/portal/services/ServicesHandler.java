@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.services;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Set;
 
 import javax.ws.rs.HttpMethod;
@@ -25,6 +25,12 @@ final class ServicesHandler
 
     private final JsContext context;
 
+    private Path modulesDir;
+
+    private ModuleName moduleName;
+
+    private String serviceName;
+
     public ServicesHandler()
     {
         this.context = new JsContext();
@@ -33,6 +39,11 @@ final class ServicesHandler
     public void setControllerFactory( final JsControllerFactory value )
     {
         this.controllerFactory = value;
+    }
+
+    public void setModulesDir( final Path modulesDir )
+    {
+        this.modulesDir = modulesDir;
     }
 
     public void setMode( final String value )
@@ -46,10 +57,12 @@ final class ServicesHandler
 
     public void setModuleName( final ModuleName value )
     {
+        this.moduleName = value;
     }
 
     public void setServiceName( final String value )
     {
+        this.serviceName = value;
     }
 
     public void setHttpContext( final HttpContext value )
@@ -57,10 +70,21 @@ final class ServicesHandler
         this.context.setRequest( new JsHttpRequest( value.getRequest() ) );
     }
 
+    private Path resolveControllerDir()
+    {
+        final Path path = this.modulesDir.resolve( this.moduleName.toString() ).resolve( "service" ).resolve( serviceName );
+        if ( !path.toFile().isDirectory() )
+        {
+            throw new IllegalArgumentException( "No such service [" + this.serviceName + "] in module [" + this.moduleName + "]" );
+        }
+
+        return path;
+    }
+
     public Response handle()
     {
-        final JsController controller = this.controllerFactory.newController(
-            Paths.get( "/Users/srs/development/cms-homes/cms-5.0-home/modules/mymodule/service/weather" ) );
+        final Path path = resolveControllerDir();
+        final JsController controller = this.controllerFactory.newController( path );
 
         if ( controller.execute( this.context ) )
         {

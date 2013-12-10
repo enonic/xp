@@ -13,6 +13,7 @@ import com.sun.jersey.api.core.HttpContext;
 
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.core.config.SystemConfig;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 
 @Path("{mode}/{path:.+}/_/services/{module}/{service}")
@@ -36,6 +37,9 @@ public final class ServicesResource
     @Inject
     protected JsControllerFactory controllerFactory;
 
+    @Inject
+    protected SystemConfig systemConfig;
+
     @GET
     public Response handleGet()
     {
@@ -57,6 +61,7 @@ public final class ServicesResource
     private Response doHandle()
     {
         final ServicesHandler handler = new ServicesHandler();
+        handler.setModulesDir( this.systemConfig.getModulesDir() );
         handler.setMode( this.mode );
         handler.setContentPath( ContentPath.from( this.contentPath ) );
         handler.setModuleName( ModuleName.from( this.moduleName ) );
