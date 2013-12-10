@@ -154,7 +154,7 @@ module api_ui {
             var uploader = new plupload.Uploader({
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
                 multi_selection: this.multiSelection,
-                //browse_button: elId,
+                browse_button: elId,
                 url: this.uploadUrl,
                 multipart: true,
                 drop_element: elId,
