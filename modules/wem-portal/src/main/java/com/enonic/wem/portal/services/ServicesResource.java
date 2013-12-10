@@ -1,5 +1,6 @@
 package com.enonic.wem.portal.services;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -10,7 +11,11 @@ import javax.ws.rs.core.Response;
 
 import com.sun.jersey.api.core.HttpContext;
 
-@Path("{mode}/{path:.+}/_/services/{module}/{script}")
+import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.module.ModuleName;
+import com.enonic.wem.portal.controller.JsControllerFactory;
+
+@Path("{mode}/{path:.+}/_/services/{module}/{service}")
 public final class ServicesResource
 {
     @PathParam("mode")
@@ -22,11 +27,14 @@ public final class ServicesResource
     @PathParam("module")
     protected String moduleName;
 
-    @PathParam("script")
-    protected String scriptName;
+    @PathParam("service")
+    protected String serviceName;
 
     @Context
     protected HttpContext httpContext;
+
+    @Inject
+    protected JsControllerFactory controllerFactory;
 
     @GET
     public Response handleGet()
@@ -48,6 +56,13 @@ public final class ServicesResource
 
     private Response doHandle()
     {
-        return null;
+        final ServicesHandler handler = new ServicesHandler();
+        handler.setMode( this.mode );
+        handler.setContentPath( ContentPath.from( this.contentPath ) );
+        handler.setModuleName( ModuleName.from( this.moduleName ) );
+        handler.setServiceName( this.serviceName );
+        handler.setHttpContext( this.httpContext );
+        handler.setControllerFactory( this.controllerFactory );
+        return handler.handle();
     }
 }

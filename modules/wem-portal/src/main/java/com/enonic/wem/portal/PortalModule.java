@@ -1,11 +1,8 @@
 package com.enonic.wem.portal;
 
-import javax.inject.Singleton;
-
 import com.google.inject.AbstractModule;
 
-import com.enonic.wem.portal.script.RhinoScriptLoader;
-import com.enonic.wem.portal.script.RhinoScriptLoaderImpl;
+import com.enonic.wem.portal.script.ScriptModule;
 import com.enonic.wem.web.WebInitializerBinder;
 
 public final class PortalModule
@@ -14,7 +11,7 @@ public final class PortalModule
     @Override
     protected void configure()
     {
+        install( new ScriptModule() );
         WebInitializerBinder.from( binder() ).add( PortalWebInitializer.class );
-        bind( RhinoScriptLoader.class ).to( RhinoScriptLoaderImpl.class ).in( Singleton.class );
     }
 }
