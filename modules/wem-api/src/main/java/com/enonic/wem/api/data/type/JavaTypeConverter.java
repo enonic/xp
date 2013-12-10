@@ -162,22 +162,12 @@ public abstract class JavaTypeConverter<T>
         @Override
         public java.lang.Boolean convertFrom( final Object value )
         {
-            if ( value == null )
-            {
-                return null;
-            }
-
             if ( value instanceof java.lang.Boolean )
             {
                 return (java.lang.Boolean) value;
             }
             else if ( value instanceof java.lang.String )
             {
-                java.lang.String s = (java.lang.String) value;
-                if ( s.equalsIgnoreCase( "null" ) )
-                {
-                    return null;
-                }
                 return java.lang.Boolean.parseBoolean( (java.lang.String) value );
             }
 

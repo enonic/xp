@@ -23,6 +23,8 @@ module api_data {
 
         static LONG = new ValueType("Long");
 
+        static BOOLEAN = new ValueType("Boolean");
+
         static DOUBLE = new ValueType("Double");
 
         static GEO_POINT = new ValueType("GeoPoint");
@@ -42,6 +44,7 @@ module api_data {
             ValueTypes.DATE_TIME,
             ValueTypes.CONTENT_ID,
             ValueTypes.LONG,
+            ValueTypes.BOOLEAN,
             ValueTypes.DOUBLE,
             ValueTypes.GEO_POINT,
             ValueTypes.ATTACHMENT_NAME,

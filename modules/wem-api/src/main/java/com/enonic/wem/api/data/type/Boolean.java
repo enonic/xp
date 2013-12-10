@@ -23,6 +23,6 @@ public class Boolean
     @Override
     public Property newProperty( final String name, final Value value )
     {
-        return null;
+        return new Property.Boolean( name, value );
     }
 }
