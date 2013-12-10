@@ -43,11 +43,11 @@ public final class PageTemplateResource
 
     @GET
     @javax.ws.rs.Path("list")
-    public Result list( @QueryParam("siteTemplateKey") String key )
+    public Result list( @QueryParam("key") String siteTemplateKeyAsString )
     {
         try
         {
-            final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( key );
+            final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
             GetPageTemplatesBySiteTemplate command = Commands.page().template().page().getBySiteTemplate().siteTemplate( siteTemplateKey );
             final PageTemplates pageTemplates = client.execute( command );
 

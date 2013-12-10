@@ -1,6 +1,6 @@
 module api_content_page_part {
 
-    export class PartTemplateResourceRequest extends api_rest.ResourceRequest<PartTemplate> {
+    export class PartTemplateResourceRequest<T> extends api_rest.ResourceRequest<T> {
 
         private resourcePath:api_rest.Path;
 
@@ -11,6 +11,10 @@ module api_content_page_part {
 
         getResourcePath():api_rest.Path {
             return this.resourcePath;
+        }
+
+        fromJsonToPartTemplate(json:api_content_page_part_json.PartTemplateJson): api_content_page_part.PartTemplate {
+            return new PartTemplateBuilder().fromJson(json).build();
         }
     }
 }

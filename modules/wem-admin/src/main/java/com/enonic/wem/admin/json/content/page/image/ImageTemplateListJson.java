@@ -1,18 +1,17 @@
-package com.enonic.wem.admin.rest.resource.content.page.image.json;
+package com.enonic.wem.admin.json.content.page.image;
 
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.wem.admin.json.content.page.image.ImageTemplateSummaryJson;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplates;
 
-public class ListImageTemplateJson
+public class ImageTemplateListJson
 {
     private List<ImageTemplateSummaryJson> list;
 
-    public ListImageTemplateJson( ImageTemplates imageTemplates )
+    public ImageTemplateListJson( ImageTemplates imageTemplates )
     {
         ImmutableList.Builder<ImageTemplateSummaryJson> builder = ImmutableList.builder();
         for ( ImageTemplate imageTemplate : imageTemplates )
@@ -27,7 +26,7 @@ public class ListImageTemplateJson
         return this.list.size();
     }
 
-    public List<ImageTemplateSummaryJson> getImageTemplates()
+    public List<ImageTemplateSummaryJson> getTemplates()
     {
         return this.list;
     }

@@ -26,7 +26,7 @@ public class ImageTemplateResourceTest
         Mockito.when( client.execute( Mockito.isA( GetImageTemplatesBySiteTemplate.class ) ) ).thenReturn( imageTemplates );
 
         String resultJson =
-            resource().path( "content/page/image/template/list" ).queryParam( "siteTemplateKey", "sitetemplate-1.0.0" ).get( String.class );
+            resource().path( "content/page/image/template/list" ).queryParam( "key", "sitetemplate-1.0.0" ).get( String.class );
 
         assertJson( "list_image_template_success.json", resultJson );
     }

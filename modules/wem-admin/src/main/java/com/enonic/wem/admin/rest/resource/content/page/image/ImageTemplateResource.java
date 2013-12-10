@@ -8,9 +8,9 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.page.image.ImageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.image.ImageTemplateJson;
+import com.enonic.wem.admin.json.content.page.image.ImageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.Result;
-import com.enonic.wem.admin.rest.resource.content.page.image.json.ListImageTemplateJson;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplateByKey;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
@@ -26,7 +26,6 @@ import static com.enonic.wem.api.command.Commands.page;
 public class ImageTemplateResource
     extends AbstractResource
 {
-
     @GET
     public Result getByKey( @QueryParam("key") final String imageTemplateKeyAsString )
     {
@@ -48,7 +47,7 @@ public class ImageTemplateResource
 
     @GET
     @Path("list")
-    public Result listImageTemplatesBySiteTemplate( @QueryParam("siteTemplateKey") final String siteTemplateKeyAsString )
+    public Result listImageTemplatesBySiteTemplate( @QueryParam("key") final String siteTemplateKeyAsString )
     {
         try
         {
@@ -56,7 +55,7 @@ public class ImageTemplateResource
             final GetImageTemplatesBySiteTemplate listCommand = page().template().image().getBySiteTemplate().
                 siteTemplate( siteTemplateKey );
             final ImageTemplates imageTemplates = client.execute( listCommand );
-            return Result.result( new ListImageTemplateJson( imageTemplates ) );
+            return Result.result( new ImageTemplateListJson( imageTemplates ) );
         }
         catch ( Exception e )
         {

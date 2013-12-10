@@ -4,6 +4,6 @@ module api_content_page_image_json {
 
         total:number;
 
-        imageTemplates: ImageTemplateSummaryJson[];
+        templates: ImageTemplateSummaryJson[];
     }
 }

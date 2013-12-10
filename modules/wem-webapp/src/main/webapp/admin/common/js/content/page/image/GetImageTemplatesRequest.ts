@@ -6,13 +6,13 @@ module api_content_page_image{
 
         constructor(siteTemplateKey:api_content_site_template.SiteTemplateKey) {
             super();
-            super.setMethod("POST");
+            super.setMethod("GET");
             this.siteTemplateKey = siteTemplateKey;
         }
 
         getParams():Object {
             return {
-                siteTemplateKey: this.siteTemplateKey.toString()
+                key: this.siteTemplateKey.toString()
             };
         }
 

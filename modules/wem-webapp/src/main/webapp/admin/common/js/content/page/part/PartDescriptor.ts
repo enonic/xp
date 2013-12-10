@@ -1,4 +1,4 @@
-module api_content_page_image {
+module api_content_page_part {
 
     export class PartDescriptor extends api_content_page.ComponentDescriptor {
 

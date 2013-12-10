@@ -1,7 +1,7 @@
 {
     "error": null,
     "result": {
-        "partTemplates": [
+        "templates": [
             {
                 "deletable": true,
                 "descriptorModuleResourceKey": "module-1.0.0:/tpl.xml",

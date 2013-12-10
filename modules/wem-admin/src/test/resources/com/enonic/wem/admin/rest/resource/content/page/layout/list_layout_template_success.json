@@ -1,7 +1,7 @@
 {
     "error": null,
     "result": {
-        "layoutTemplates": [
+        "templates": [
             {
                 "deletable": true,
                 "descriptorModuleResourceKey": "module1-1.0.0:/components/layout1-template.xml",
