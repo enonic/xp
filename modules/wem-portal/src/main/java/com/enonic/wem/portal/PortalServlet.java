@@ -8,6 +8,7 @@ import com.enonic.wem.portal.content.ContentResource;
 import com.enonic.wem.portal.exception.DefaultExceptionMapper;
 import com.enonic.wem.portal.exception.RhinoExceptionMapper;
 import com.enonic.wem.portal.exception.WebApplicationExceptionMapper;
+import com.enonic.wem.portal.resource.PublicResource;
 import com.enonic.wem.portal.services.ServicesResource;
 import com.enonic.wem.web.jaxrs.JaxRsServlet;
 import com.enonic.wem.web.mvc.FreeMarkerViewWriter;
@@ -21,6 +22,7 @@ public final class PortalServlet
     {
         setFeature( ResourceConfig.FEATURE_DISABLE_WADL, true );
         addClass( ContentResource.class );
+        addClass( PublicResource.class );
         addClass( ServicesResource.class );
         addClass( FreeMarkerViewWriter.class );
         addClass( RhinoExceptionMapper.class );
