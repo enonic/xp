@@ -28,11 +28,11 @@ public final class BootContextListener
 
     private LifecycleService lifecycleService;
 
-    private void createInjector()
+    private void createInjector( final ServletContext context )
     {
         LOG.info( "Creating injector for all beans." );
 
-        final Injector injector = Guice.createInjector( Stage.PRODUCTION, new BootModule() );
+        final Injector injector = Guice.createInjector( Stage.PRODUCTION, new BootModule( context ) );
         injector.injectMembers( this );
     }
 
@@ -44,7 +44,7 @@ public final class BootContextListener
             this.env = new BootEnvironment();
             this.env.initialize();
 
-            createInjector();
+            createInjector( event.getServletContext() );
             configure( event.getServletContext() );
             this.lifecycleService.startAll();
         }
