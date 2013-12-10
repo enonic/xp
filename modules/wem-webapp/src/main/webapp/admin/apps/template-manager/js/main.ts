@@ -3,8 +3,8 @@ declare var Admin;
 declare var CONFIG;
 
 module components {
-    export var detailPanel:app_browse.TemplateBrowseItemPanel;
-    export var gridPanel:app_browse.TemplateTreeGridPanel;
+    export var detailPanel: app_browse.TemplateBrowseItemPanel;
+    export var gridPanel: app_browse.TemplateTreeGridPanel;
 }
 
 window.onload = () => {
@@ -16,11 +16,18 @@ window.onload = () => {
 
     appPanel.init();
 
+    var siteTemplateDeleteDialog: app_delete.SiteTemplateDeleteDialog = new app_delete.SiteTemplateDeleteDialog();
+    app_browse.DeleteSiteTemplatePromptEvent.on((event: app_browse.DeleteSiteTemplatePromptEvent) => {
+        siteTemplateDeleteDialog.setSiteTemplateToDelete(event.getSiteTemplate());
+        siteTemplateDeleteDialog.open();
+    });
+
+
     if (window.parent["appLoaded"]) {
         window.parent["appLoaded"](getAppName());
     }
 };
 
-function getAppName():string {
+function getAppName(): string {
     return jQuery(window.frameElement).data("wem-app");
 }

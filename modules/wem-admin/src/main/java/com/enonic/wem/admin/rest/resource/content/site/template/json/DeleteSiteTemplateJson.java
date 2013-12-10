@@ -11,7 +11,8 @@ public class DeleteSiteTemplateJson
     private SiteTemplateKey key;
 
     @JsonCreator
-    public DeleteSiteTemplateJson( @JsonProperty("key") String key ) {
+    public DeleteSiteTemplateJson( @JsonProperty("siteTemplateKey") String key )
+    {
 
         this.key = SiteTemplateKey.from( key );
     }

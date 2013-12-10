@@ -1,6 +1,6 @@
-module api_content_site_template_json{
+module api_content_site_template_json {
 
-    export class SiteTemplateSummaryJson {
+    export interface SiteTemplateSummaryJson extends api_item.ItemJson {
 
         name:string;
 

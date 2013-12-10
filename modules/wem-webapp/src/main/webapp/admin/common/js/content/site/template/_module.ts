@@ -3,3 +3,5 @@
 ///<reference path='SiteTemplateResourceRequest.ts' />
 ///<reference path='GetAllSiteTemplatesRequest.ts' />
 ///<reference path='GetSiteTemplateRequest.ts' />
+///<reference path='DeleteSiteTemplateRequest.ts' />
+///<reference path='SiteTemplateDeletedEvent.ts' />

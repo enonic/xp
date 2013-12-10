@@ -37,11 +37,13 @@ module app_browse {
 
         constructor() {
             super("Delete");
+            this.setEnabled(false);
             this.addExecutionListener(() => {
-                console.log("delete template action");
+                var selection = components.gridPanel.getSelection()[0];
+                var siteTemplateModel = api_content_site_template.SiteTemplateSummary.fromExtModel(selection);
+                new DeleteSiteTemplatePromptEvent(siteTemplateModel).fire();
             });
         }
-
     }
 
     export class DuplicateTemplateAction extends api_ui.Action {
@@ -68,18 +70,18 @@ module app_browse {
 
     export class TemplateBrowseActions {
 
-        public NEW_TEMPLATE:api_ui.Action;
-        public EDIT_TEMPLATE:api_ui.Action;
-        public OPEN_TEMPLATE:api_ui.Action;
-        public DELETE_TEMPLATE:api_ui.Action;
-        public DUPLICATE_TEMPLATE:api_ui.Action;
-        public EXPORT_TEMPLATE:api_ui.Action;
+        public NEW_TEMPLATE: api_ui.Action;
+        public EDIT_TEMPLATE: api_ui.Action;
+        public OPEN_TEMPLATE: api_ui.Action;
+        public DELETE_TEMPLATE: api_ui.Action;
+        public DUPLICATE_TEMPLATE: api_ui.Action;
+        public EXPORT_TEMPLATE: api_ui.Action;
 
-        private allActions:api_ui.Action[] = [];
+        private allActions: api_ui.Action[] = [];
 
-        private static INSTANCE:TemplateBrowseActions;
+        private static INSTANCE: TemplateBrowseActions;
 
-        static get():TemplateBrowseActions {
+        static get(): TemplateBrowseActions {
             if (!TemplateBrowseActions.INSTANCE) {
                 TemplateBrowseActions.INSTANCE = new TemplateBrowseActions();
             }
@@ -98,6 +100,11 @@ module app_browse {
                 this.DELETE_TEMPLATE, this.DUPLICATE_TEMPLATE, this.EXPORT_TEMPLATE);
         }
 
+        updateActionsEnabledState(modules: any[]) {
+            var modulesSelected = modules.length;
+            this.DELETE_TEMPLATE.setEnabled(modulesSelected > 0);
+            this.EXPORT_TEMPLATE.setEnabled(modulesSelected === 1);
+        }
 
     }
 
