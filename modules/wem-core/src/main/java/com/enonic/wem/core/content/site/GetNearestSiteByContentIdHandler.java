@@ -18,7 +18,7 @@ public class GetNearestSiteByContentIdHandler
         final GetContentById getContent = Commands.content().get().byId( command.getContent() );
         final Content content = context.getClient().execute( getContent );
 
-        if( content.isSite() )
+        if ( content.isSite() )
         {
             command.setResult( content );
         }
@@ -30,12 +30,12 @@ public class GetNearestSiteByContentIdHandler
 
     private Content checkOnSite( final ContentPath contentPath )
     {
-        if( contentPath != null )
+        if ( contentPath != null && !contentPath.isRoot() )
         {
             final GetContentByPath getContent = Commands.content().get().byPath( contentPath );
             final Content content = context.getClient().execute( getContent );
 
-            if( content.isSite() )
+            if ( content.isSite() )
             {
                 return content;
             }
