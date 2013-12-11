@@ -23,6 +23,8 @@ public interface NodeDao
 
     public Node updateNode( final UpdateNodeArgs updateNodeArgs );
 
+    public boolean moveNode( final NodePath originalPath, final NodePath newPath );
+
     public void deleteNodeById( final EntityId id );
 
     public void deleteNodeByPath( final NodePath path );

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+@Deprecated
 public class AllUserData
 {
     private Set<String> stringValues = Sets.newHashSet();

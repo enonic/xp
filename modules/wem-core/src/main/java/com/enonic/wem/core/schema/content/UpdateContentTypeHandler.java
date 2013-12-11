@@ -39,7 +39,6 @@ public final class UpdateContentTypeHandler
             validate( editedContentType );
 
             final NodeEditor nodeEditor = CONTENTTYPE_NO_NODE_TRANSLATOR.toNodeEditor( editedContentType );
-
             UpdateNode updateNode = CONTENTTYPE_NO_NODE_TRANSLATOR.toUpdateNodeCommand( persistedContentType.getId(), nodeEditor );
             context.getClient().execute( updateNode );
             command.setResult( UpdateContentTypeResult.SUCCESS );

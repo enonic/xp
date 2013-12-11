@@ -14,6 +14,7 @@ import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument2;
 
+@Deprecated
 public class XContentBuilderFactory
 {
     private XContentBuilderFactory()

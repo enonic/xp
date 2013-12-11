@@ -8,14 +8,22 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.entity.NodeEditor;
+import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.core.content.ContentNodeTranslator;
+import com.enonic.wem.core.entity.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
 import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_NEXT_VERSION_PROPERTY;
+import static com.enonic.wem.core.entity.dao.UpdateNodeArgs.newUpdateItemArgs;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 
 final class ContentDaoHandlerUpdate
     extends AbstractContentDaoHandler
 {
+    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
+
     ContentDaoHandlerUpdate( final Session session, final IndexService indexService )
     {
         super( session, indexService );
@@ -33,6 +41,8 @@ final class ContentDaoHandlerUpdate
         content = increaseContentVersion( content, contentNode );
         contentJcrMapper.toJcr( content, contentNode );
 
+        updateContentAsNode( content );
+
         if ( createNewVersion )
         {
             final Node contentVersionHistoryParent = getContentVersionHistoryNode( contentNode );
@@ -40,6 +50,45 @@ final class ContentDaoHandlerUpdate
         }
 
         return content;
+    }
+
+    private void updateContentAsNode( final Content content )
+        throws RepositoryException
+    {
+
+        final NodeJcrDao nodeJcrDao = new NodeJcrDao( this.session );
+
+        final NodeEditor nodeEditor = CONTENT_NODE_TRANSLATOR.toNodeEditor( content );
+
+        final NodePath nodePathToContent = new NodePath( "/content" + content.getPath().toString() );
+
+        final com.enonic.wem.api.entity.Node persisted = nodeJcrDao.getNodeByPath( nodePathToContent );
+
+        final com.enonic.wem.api.entity.Node.EditBuilder editBuilder = nodeEditor.edit( persisted );
+
+        if ( !editBuilder.isChanges() )
+
+        {
+            // TODO: set status NO CHANGE?
+            return;
+        }
+
+        final com.enonic.wem.api.entity.Node edited = editBuilder.build();
+
+        persisted.checkIllegalEdit( edited );
+
+        final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().
+            nodeToUpdate( persisted.id() ).
+            name( edited.name() ).
+            icon( edited.icon() ).
+            rootDataSet( edited.data() ).
+            build();
+
+        final com.enonic.wem.api.entity.Node updatedNode = nodeJcrDao.updateNode( updateNodeArgs );
+
+        session.save();
+
+        indexService.indexNode( updatedNode );
     }
 
     private Content increaseContentVersion( final Content content, final Node contentNode )

@@ -17,11 +17,11 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.jcr.JcrConstants;
 
-class NodeJcrHelper
+public class NodeJcrHelper
 {
     private static final String NODES_JCRNODE_NAME = "items";
 
-    static final String NODES_JCRPATH = JcrConstants.ROOT_NODE + "/" + NODES_JCRNODE_NAME + "/";
+    public static final String NODES_JCRPATH = JcrConstants.ROOT_NODE + "/" + NODES_JCRNODE_NAME + "/";
 
     private final Session session;
 

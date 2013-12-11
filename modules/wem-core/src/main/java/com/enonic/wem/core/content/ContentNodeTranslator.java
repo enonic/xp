@@ -19,7 +19,6 @@ import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItems;
-import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.support.SerializerForFormItemToData;
 
@@ -103,14 +102,30 @@ public class ContentNodeTranslator
         rootDataSet.add( contentData.toDataSet( CONTENT_DATA_PATH ) );
     }
 
-    UpdateNode toUpdateNodeCommand( final SchemaId id, final NodeEditor editor )
+    public UpdateNode toUpdateNodeCommand( final ContentId id, final NodeEditor editor )
     {
         return Commands.node().update().
-            item( EntityId.from( id ) ).
+            item( EntityId.from( id.toString() ) ).
             editor( editor );
     }
 
-    NodeEditor toNodeEditor( final Content content )
+    public NodeEditor toNodeEditor( final Content content )
+    {
+        final RootDataSet rootDataSet = createRootDataSetForEditor( content );
+
+        return new NodeEditor()
+        {
+            @Override
+            public Node.EditBuilder edit( final Node toBeEdited )
+            {
+                return Node.editNode( toBeEdited ).
+                    name( content.getName() ).
+                    rootDataSet( rootDataSet );
+            }
+        };
+    }
+
+    private RootDataSet createRootDataSetForEditor( final Content content )
     {
         final RootDataSet rootDataSet = new RootDataSet();
 
@@ -128,18 +143,7 @@ public class ContentNodeTranslator
             formItems.add( data );
         }
         rootDataSet.add( form );
-
-        return new NodeEditor()
-        {
-            @Override
-            public Node.EditBuilder edit( final Node toBeEdited )
-            {
-                return Node.editNode( toBeEdited ).
-                    name( content.getName() ).
-                    // icon( content.getIcon() ).
-                        rootDataSet( rootDataSet );
-            }
-        };
+        return rootDataSet;
     }
 
     private void addPropertyIfNotNull( final RootDataSet rootDataSet, final String propertyName, final Object value )

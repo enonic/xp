@@ -1,5 +1,6 @@
 package com.enonic.wem.core.index.elastic.indexsource;
 
+@Deprecated
 final class IndexSourceItem
 {
     private final String key;

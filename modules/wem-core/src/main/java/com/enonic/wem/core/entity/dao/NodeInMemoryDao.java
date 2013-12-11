@@ -108,4 +108,10 @@ public class NodeInMemoryDao
     {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean moveNode( final NodePath originalPath, final NodePath newPath )
+    {
+        throw new UnsupportedOperationException( "moveNode" );
+    }
 }

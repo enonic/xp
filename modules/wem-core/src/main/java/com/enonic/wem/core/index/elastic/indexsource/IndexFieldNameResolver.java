@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import com.enonic.wem.core.index.IndexFieldNameNormalizer;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 
+@Deprecated
 public class IndexFieldNameResolver
 {
     private final static String SEPARATOR = ".";

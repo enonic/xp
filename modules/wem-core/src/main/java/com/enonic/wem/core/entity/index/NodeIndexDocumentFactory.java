@@ -24,6 +24,8 @@ public class NodeIndexDocumentFactory
 
     protected static final IndexDocumentItemPath CREATED_TIME_PROPERTY = IndexDocumentItemPath.from( "createdTime" );
 
+    protected static final IndexDocumentItemPath NAME_PROPERTY = IndexDocumentItemPath.from( "name" );
+
     protected static final IndexDocumentItemPath CREATOR_PROPERTY_PATH = IndexDocumentItemPath.from( "creator" );
 
     protected static final IndexDocumentItemPath MODIFIED_TIME_PROPERTY_PATH = IndexDocumentItemPath.from( "modifiedTime" );
@@ -46,6 +48,13 @@ public class NodeIndexDocumentFactory
         enabled( true ).
         tokenizedEnabled( true ).
         fulltextEnabled( true ).
+        build();
+
+    public static final PropertyIndexConfig namePropertyIndexConfig = PropertyIndexConfig.
+        newPropertyIndexConfig().
+        enabled( true ).
+        tokenizedEnabled( true ).
+        fulltextEnabled( false ).
         build();
 
     public Collection<IndexDocument2> create( final Node node )
@@ -78,6 +87,8 @@ public class NodeIndexDocumentFactory
 
     private void addNodeMetaData( final Node node, final IndexDocument2.Builder builder )
     {
+        builder.addEntries( IndexDocumentItemFactory.create( NAME_PROPERTY, new Value.String( node.name() ), namePropertyIndexConfig ) );
+
         if ( node.getCreatedTime() != null )
         {
             builder.addEntries( IndexDocumentItemFactory.create( CREATED_TIME_PROPERTY, new Value.DateTime( node.getCreatedTime() ),

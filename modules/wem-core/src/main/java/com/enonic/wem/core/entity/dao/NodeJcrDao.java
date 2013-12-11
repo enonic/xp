@@ -1,6 +1,7 @@
 package com.enonic.wem.core.entity.dao;
 
 
+import javax.jcr.ItemExistsException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -8,6 +9,8 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.wem.api.content.ContentAlreadyExistException;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityFoundException;
 import com.enonic.wem.api.entity.NoEntityWithIdFound;
@@ -67,6 +70,30 @@ public class NodeJcrDao
         Preconditions.checkNotNull( updateNodeArgs.nodeToUpdate(), "nodeToUpdate must be specified" );
         final javax.jcr.Node existingNodeNode = jcrHelper.getItemNodeById( updateNodeArgs.nodeToUpdate() );
         return jcrHelper.updateItemNode( existingNodeNode, updateNodeArgs );
+    }
+
+
+    @Override
+    public boolean moveNode( final NodePath originalPath, final NodePath newPath )
+    {
+        if ( originalPath.equals( newPath ) )
+        {
+            return false;
+        }
+
+        try
+        {
+            session.move( originalPath.toString(), newPath.toString() );
+            return true;
+        }
+        catch ( ItemExistsException e )
+        {
+            throw new ContentAlreadyExistException( ContentPath.from( newPath.toString() ) );
+        }
+        catch ( RepositoryException e )
+        {
+            throw new RuntimeException( "Failed to move node", e );
+        }
     }
 
     @Override
