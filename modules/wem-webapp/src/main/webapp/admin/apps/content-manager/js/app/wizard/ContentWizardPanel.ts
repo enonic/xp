@@ -216,6 +216,8 @@ module app_wizard {
                     api_notify.showFeedback('Content was updated!');
                     var content: api_content.Content = new api_content.Content(json.result);
                     new api_content.ContentUpdatedEvent(content).fire();
+                    this.setPersistedItem(content);
+
                     if (successCallback) {
                         successCallback.call(this, json.contentId, json.contentPath);
                     }
