@@ -4,9 +4,13 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
+import com.google.gson.Gson;
+
 final class JsHttpResponseSerializer
 {
     private final JsHttpResponse from;
+
+    private Response.ResponseBuilder builder;
 
     public JsHttpResponseSerializer( final JsHttpResponse from )
     {
@@ -15,34 +19,44 @@ final class JsHttpResponseSerializer
 
     public Response serialize()
     {
-        final Response.ResponseBuilder builder = Response.status( this.from.getStatus() );
-        builder.type( this.from.getContentType() );
+        this.builder = Response.status( this.from.getStatus() );
+        this.builder.type( this.from.getContentType() );
 
-        serializeBody( builder );
-        serializeHeaders( builder );
+        serializeBody();
+        serializeHeaders();
 
-        return builder.build();
+        return this.builder.build();
     }
 
-    private void serializeBody( final Response.ResponseBuilder builder )
+    private void serializeBody()
     {
         final Object body = this.from.getBody();
         if ( body != null )
         {
-            builder.entity( convert( body ) );
+            this.builder.entity( convert( body ) );
         }
     }
 
-    private void serializeHeaders( final Response.ResponseBuilder builder )
+    private void serializeHeaders()
     {
         for ( final Map.Entry<String, String> header : this.from.getHeaders().entrySet() )
         {
-            builder.header( header.getKey(), header.getValue() );
+            this.builder.header( header.getKey(), header.getValue() );
         }
     }
 
     private Object convert( final Object value )
     {
-        return new JsObjectConverter().convert( value );
+        if ( value instanceof Map )
+        {
+            return convertToJson( value );
+        }
+
+        return value.toString();
+    }
+
+    private Object convertToJson( final Object value )
+    {
+        return new Gson().toJson( value );
     }
 }
