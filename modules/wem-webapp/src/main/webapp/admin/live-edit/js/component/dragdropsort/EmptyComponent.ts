@@ -19,7 +19,8 @@ module LiveEdit.component.dragdropsort {
                 var uploaderConfig = {
                     multiSelection: true,
                     buttonsVisible: false,
-                    imageVisible: false
+                    imageVisible: false,
+                    browseEnabled: false
                 };
                 var imageUploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
                 imageUploader.addListener({

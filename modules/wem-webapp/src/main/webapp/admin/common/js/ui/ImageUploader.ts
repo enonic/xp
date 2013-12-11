@@ -1,17 +1,12 @@
 module api_ui {
 
     export interface ImageUploaderConfig {
-
         multiSelection?: boolean;
-
         buttonsVisible?: boolean;
-
         imageVisible?: boolean;
-
         maximumOccurrences?: number;
-
         textInput?: boolean;
-
+        browseEnabled?: boolean;
     }
 
     export class ImageUploader extends api_dom.FormInputEl implements api_event.Observable {
@@ -32,6 +27,7 @@ module api_ui {
         private buttonsVisible:boolean;
         private imageVisible:boolean;
         private maximumOccurrences:number;
+        private browseEnabled:boolean;
 
         private listeners:ImageUploaderListener[] = [];
 
@@ -43,6 +39,7 @@ module api_ui {
             this.buttonsVisible = (config.buttonsVisible == undefined) ? true : config.buttonsVisible;
             this.imageVisible = (config.imageVisible == undefined) ? true : config.imageVisible;
             this.maximumOccurrences = (config.maximumOccurrences == undefined) ? 0 : config.maximumOccurrences;
+            this.browseEnabled = (config.browseEnabled == undefined) ? true : config.browseEnabled;
 
             if (config.textInput) {
                 this.input = api_ui.TextInput.middle();
@@ -151,10 +148,12 @@ module api_ui {
                 throw new Error("ImageUploader: plupload not found, check if it is included in page.");
             }
 
+            var browseButton = this.browseEnabled ? elId : null;
+
             var uploader = new plupload.Uploader({
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
                 multi_selection: this.multiSelection,
-                browse_button: elId,
+                browse_button: browseButton,
                 url: this.uploadUrl,
                 multipart: true,
                 drop_element: elId,
