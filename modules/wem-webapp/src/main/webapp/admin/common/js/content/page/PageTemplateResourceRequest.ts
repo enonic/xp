@@ -14,7 +14,7 @@ module api_content_page {
         }
 
         fromJsonToPageTemplate(json:api_content_page_json.PageTemplateJson):api_content_page.PageTemplate {
-            return new api_content_page.PageTemplateBuilder().
+            return new PageTemplateBuilder().
                 fromJson(json).build();
         }
     }

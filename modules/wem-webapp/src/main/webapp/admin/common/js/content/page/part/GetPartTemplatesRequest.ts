@@ -1,6 +1,6 @@
 module api_content_page_part {
 
-    export class GetPartTemplatesRequest extends PartTemplateResourceRequest {
+    export class GetPartTemplatesRequest extends PartTemplateResourceRequest<api_content_page_part_json.PartTemplateSummaryListJson> {
 
         private siteTemplateKey:api_content_site_template.SiteTemplateKey;
 
@@ -10,14 +10,9 @@ module api_content_page_part {
             this.siteTemplateKey = siteTemplateKey;
         }
 
-        setSiteTemplateKey(siteTemplateKey:api_content_site_template.SiteTemplateKey):GetPartTemplatesRequest {
-            this.siteTemplateKey = siteTemplateKey;
-            return this;
-        }
-
         getParams():Object {
             return {
-                siteTemplateKey: this.siteTemplateKey.toString()
+                key: this.siteTemplateKey.toString()
             };
         }
 

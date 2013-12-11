@@ -8,3 +8,4 @@
 
 ///<reference path='LayoutTemplateResourceRequest.ts' />
 ///<reference path='GetLayoutTemplatesRequest.ts' />
+///<reference path='GetLayoutTemplateByKeyRequest.ts' />

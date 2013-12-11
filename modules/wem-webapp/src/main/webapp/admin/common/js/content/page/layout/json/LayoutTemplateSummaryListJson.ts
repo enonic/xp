@@ -4,6 +4,6 @@ module api_content_page_layout_json
     {
         total:number;
 
-        layoutTemplates:LayoutTemplateSummaryJson[];
+        templates:LayoutTemplateSummaryJson[];
     }
 }

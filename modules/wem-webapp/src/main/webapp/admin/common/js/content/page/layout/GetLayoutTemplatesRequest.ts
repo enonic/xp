@@ -1,6 +1,6 @@
 module api_content_page_layout {
 
-    export class GetLayoutTemplatesRequest extends LayoutTemplateResourceRequest {
+    export class GetLayoutTemplatesRequest extends LayoutTemplateResourceRequest<api_content_page_layout_json.LayoutTemplateSummaryListJson> {
 
         private siteTemplateKey:api_content_site_template.SiteTemplateKey;
 
@@ -20,5 +20,4 @@ module api_content_page_layout {
             return api_rest.Path.fromParent(super.getResourcePath(), "list");
         }
     }
-
 }

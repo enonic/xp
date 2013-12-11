@@ -12,7 +12,7 @@ module api_content_page_image {
 
         getParams(): Object {
             return {
-                siteTemplateKey: this.siteTemplateKey.toString()
+                key: this.siteTemplateKey.toString()
             };
         }
 

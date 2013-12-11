@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.page.part.json;
+package com.enonic.wem.admin.json.content.page.part;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class PartTemplateListJson
         return list.size();
     }
 
-    public List<PartTemplateSummaryJson> getPartTemplates()
+    public List<PartTemplateSummaryJson> getTemplates()
     {
         return list;
     }

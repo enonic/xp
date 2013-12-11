@@ -2,17 +2,17 @@ module api_content_page {
 
     export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<api_content_page_json.PageTemplateJson> {
 
-        private key:PageTemplateKey;
+        private pageTemplateKey:api_content_page.PageTemplateKey;
 
-        constructor(key:PageTemplateKey) {
+        constructor(pageTemplateKey:api_content_page.PageTemplateKey) {
             super();
             super.setMethod("GET");
-            this.key = key;
+            this.pageTemplateKey = pageTemplateKey;
         }
 
         getParams():Object {
             return {
-                key: this.key.toString()
+                key: this.pageTemplateKey.toString()
             };
         }
 

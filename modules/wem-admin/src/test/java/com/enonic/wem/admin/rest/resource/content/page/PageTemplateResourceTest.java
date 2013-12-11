@@ -53,7 +53,7 @@ public class PageTemplateResourceTest
 
         String jsonString = resource().
             path( "content/page/template/list" ).
-            queryParam( "siteTemplateKey", "mySiteTemplate-1.0.0" ).
+            queryParam( "key", "mySiteTemplate-1.0.0" ).
             get( String.class );
 
         assertJson( "list_page_template_success.json", jsonString );

@@ -1,4 +1,4 @@
-module api_content_page_image {
+module api_content_page_layout {
 
     export class LayoutDescriptor extends api_content_page.ComponentDescriptor {
 
@@ -6,7 +6,7 @@ module api_content_page_image {
 
     export class LayoutDescriptorBuilder extends api_content_page.ComponentDescriptorBuilder {
 
-        public fromJson(json: api_content_page_layout_json.LayouteDescriptorJson): LayoutDescriptorBuilder {
+        public fromJson(json: api_content_page_layout_json.LayoutDescriptorJson): LayoutDescriptorBuilder {
 
             this.setName(new api_content_page.ComponentDescriptorName(json.name));
             this.setDisplayName(json.displayName);
