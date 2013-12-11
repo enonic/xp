@@ -21,4 +21,9 @@ public class SiteCommands
     {
         return new SiteTemplateCommands();
     }
+
+    public GetNearestSiteByContentId getNearestSite()
+    {
+        return new GetNearestSiteByContentId();
+    }
 }

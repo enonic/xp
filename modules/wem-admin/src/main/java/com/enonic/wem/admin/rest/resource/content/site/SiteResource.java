@@ -11,6 +11,7 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.api.command.content.site.CreateSite;
 import com.enonic.wem.api.command.content.site.DeleteSite;
+import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
 import com.enonic.wem.api.command.content.site.UpdateSite;
 import com.enonic.wem.api.content.Content;
 
@@ -73,4 +74,21 @@ public class SiteResource
         }
     }
 
+    @POST
+    @Path("nearest")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Result getNearest( final GetNearestSiteJson params )
+    {
+        try
+        {
+            final GetNearestSiteByContentId command = params.getGetNearestSiteByContentId();
+            final Content nearestSite = client.execute( command );
+
+            return Result.result( new ContentJson( nearestSite ) );
+        }
+        catch ( Exception e )
+        {
+            return Result.exception( e );
+        }
+    }
 }
