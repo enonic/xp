@@ -141,7 +141,7 @@
 
 <div>
     <#list exception.trace as item>
-        <pre><span class="line">&nbsp;</span><span class="code"> ${item}</span></pre>
+        <pre><span class="line">${item_index + 1}</span><span class="code"> ${item}</span></pre>
     </#list>
 </div>
 </#if>
