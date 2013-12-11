@@ -109,9 +109,9 @@ module api_content_site_template {
         private templates:SiteTemplateSummary[] = [];
         private errors:string[] = [];
 
-        constructor (moduleResponses:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>[]) {
+        constructor (templateResponses:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>[]) {
             super();
-            moduleResponses.forEach((response:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>) => {
+            templateResponses.forEach((response:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>) => {
                 var responseJson = response.getJson();
                 if (responseJson.result) {
                     this.templates.push(new SiteTemplateSummary(responseJson.result));

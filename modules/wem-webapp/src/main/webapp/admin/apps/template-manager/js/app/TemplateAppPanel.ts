@@ -23,7 +23,7 @@ module app {
             templateUploader.onFinishUpload((response:api_content_site_template.InstallSiteTemplateResponse) => {
                 var templates = response.getSiteTemplates();
                 if (templates.length > 0) {
-                    api_notify.showFeedback('Module \'' + templates.map((template:api_content_site_template.SiteTemplateSummary) => {console.log(template); return template.getDisplayName()} ).join(', ') + '\' was installed');
+                    api_notify.showFeedback('Template \'' + templates.map((template:api_content_site_template.SiteTemplateSummary) => {console.log(template); return template.getDisplayName()} ).join(', ') + '\' was installed');
                 }
                 var errors = response.getErrors();
                 if (errors.length > 0) {
