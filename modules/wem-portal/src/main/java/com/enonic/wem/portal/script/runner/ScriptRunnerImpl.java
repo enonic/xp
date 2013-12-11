@@ -10,7 +10,7 @@ import org.mozilla.javascript.Scriptable;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
-import com.enonic.wem.portal.script.exception.EvalScriptException;
+import com.enonic.wem.portal.script.EvalScriptException;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 final class ScriptRunnerImpl

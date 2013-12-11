@@ -7,7 +7,7 @@ import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 
 import com.enonic.wem.portal.script.cache.ScriptCache;
-import com.enonic.wem.portal.script.exception.EvalScriptException;
+import com.enonic.wem.portal.script.EvalScriptException;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public final class ScriptCompilerImpl

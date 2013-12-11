@@ -5,7 +5,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.enonic.wem.portal.exception.renderer.ExceptionRenderer;
-import com.enonic.wem.portal.script.exception.EvalScriptException;
+import com.enonic.wem.portal.script.EvalScriptException;
 
 @Provider
 public final class EvalScriptExceptionMapper

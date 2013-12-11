@@ -2,7 +2,7 @@ package com.enonic.wem.portal.script.loader;
 
 import java.io.IOException;
 
-import com.enonic.wem.portal.script.exception.GeneralScriptException;
+import com.google.common.base.Throwables;
 
 public abstract class ScriptSource
 {
@@ -33,7 +33,7 @@ public abstract class ScriptSource
         }
         catch ( final IOException e )
         {
-            throw new GeneralScriptException( "Loading [{0}] failed.", e );
+            throw Throwables.propagate( e );
         }
     }
 

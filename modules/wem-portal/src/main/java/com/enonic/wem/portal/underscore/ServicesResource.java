@@ -20,8 +20,7 @@ import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 
-@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-@Path("{mode}/{path:.+}/_/services/{module}/{service}")
+@Path("{mode}/{path:.+}/_/service/{module}/{service}")
 public final class ServicesResource
     extends UnderscoreResource
 {

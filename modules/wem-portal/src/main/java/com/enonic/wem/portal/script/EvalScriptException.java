@@ -1,11 +1,11 @@
-package com.enonic.wem.portal.script.exception;
+package com.enonic.wem.portal.script;
 
 import org.mozilla.javascript.RhinoException;
 
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public final class EvalScriptException
-    extends ScriptException
+    extends RuntimeException
 {
     private final ScriptSource source;
 
