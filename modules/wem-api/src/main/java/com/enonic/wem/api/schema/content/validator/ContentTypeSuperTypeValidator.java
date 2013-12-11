@@ -31,8 +31,8 @@ public class ContentTypeSuperTypeValidator
             }
             if ( superType.isFinal() )
             {
-                registerError( new ContentTypeValidationError( "Cannot inherit from a final ContentType: " + superType.getName(),
-                                                               contentTypeName ) );
+                registerError(
+                    new ContentTypeValidationError( "Cannot inherit from a final ContentType: " + superType.getName(), contentTypeName ) );
             }
         }
     }

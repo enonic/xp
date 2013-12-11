@@ -21,7 +21,6 @@ import com.enonic.wem.core.index.document.IndexDocumentItemPath;
 
 public class NodeIndexDocumentFactory
 {
-
     protected static final IndexDocumentItemPath CREATED_TIME_PROPERTY = IndexDocumentItemPath.from( "createdTime" );
 
     protected static final IndexDocumentItemPath NAME_PROPERTY = IndexDocumentItemPath.from( "name" );

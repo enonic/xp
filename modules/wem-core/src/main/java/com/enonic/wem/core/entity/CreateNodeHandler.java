@@ -8,9 +8,9 @@ import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.entity.dao.CreateNodeArguments;
-import com.enonic.wem.core.entity.dao.EntityDao;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
 
@@ -19,7 +19,16 @@ public class CreateNodeHandler
 {
     private IndexService indexService;
 
-    private EntityDao entityDao;
+    public CreateNodeHandler()
+    {
+    }
+
+    private CreateNodeHandler( final Builder builder )
+    {
+        this.indexService = builder.indexService;
+        this.context = builder.context;
+        this.command = builder.command;
+    }
 
     @Override
     public void handle()
@@ -42,24 +51,51 @@ public class CreateNodeHandler
 
         command.setResult( new CreateNodeResult( persistedNode ) );
 
-        // final EntityDao.CreateEntityArgs createEntityArgs = new EntityDao.CreateEntityArgs.Builder().
-        //     data( command.getData() ).
-        //     build();
-        //entityDao.create( createEntityArgs );
-
         indexService.indexNode( persistedNode );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     @Inject
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
-        // TODO: index item or in dao?
     }
 
-    @Inject
-    public void setEntityDao( final EntityDao entityDao )
+    public static class Builder
     {
-        this.entityDao = entityDao;
+        private IndexService indexService;
+
+        private CommandContext context;
+
+        private CreateNode command;
+
+        public Builder indexService( final IndexService indexService )
+        {
+            this.indexService = indexService;
+            return this;
+        }
+
+        public Builder context( final CommandContext context )
+        {
+            this.context = context;
+            return this;
+        }
+
+        public Builder command( final CreateNode command )
+        {
+            this.command = command;
+            return this;
+        }
+
+        public CreateNodeHandler build()
+        {
+            return new CreateNodeHandler( this );
+        }
     }
 }
+
+

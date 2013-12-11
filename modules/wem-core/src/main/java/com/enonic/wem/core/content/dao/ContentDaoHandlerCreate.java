@@ -54,47 +54,44 @@ final class ContentDaoHandlerCreate
     private Content storeAsContentInJcr( final Content content )
         throws RepositoryException
     {
-        if ( content.getId() != null )
-        {
-            throw new IllegalArgumentException( "Attempt to create new content with assigned id: " + content.getId() );
-        }
+        validateForCreate( content );
+
         final ContentPath path = content.getPath();
 
         final Node root = session.getRootNode();
 
         final Node newContentNode;
-        final String spaceRootPath = CONTENTS_ROOT_PATH;
 
-        if ( path.isRoot() )
+        if ( path.elementCount() == 1 )
         {
-            throw new ContentAlreadyExistException( path );
-        }
-        else if ( path.elementCount() == 1 )
-        {
-            final Node contentsNode = JcrHelper.getNodeOrNull( root, spaceRootPath );
-            if ( contentsNode == null )
+            final Node contentRootJcrNode = JcrHelper.getNodeOrNull( root, CONTENTS_ROOT_PATH );
+
+            if ( contentRootJcrNode == null )
             {
                 throw new ContentNotFoundException( ContentPath.ROOT );
             }
-            if ( contentsNode.hasNode( nodeName ) )
+            if ( contentRootJcrNode.hasNode( nodeName ) )
             {
                 throw new ContentAlreadyExistException( path );
             }
-            newContentNode = addContentToJcr( content, contentsNode, nodeName );
+
+            newContentNode = addContentToJcr( content, contentRootJcrNode, nodeName );
         }
         else
         {
-            final Node parentContentNode = doGetContentNode( path.getParentPath() );
-            if ( parentContentNode == null )
+            final Node parentContentJcrNode = doGetContentNode( path.getParentPath() );
+
+            if ( parentContentJcrNode == null )
             {
                 throw new ContentNotFoundException( path.getParentPath() );
             }
-            else if ( parentContentNode.hasNode( nodeName ) )
+            else if ( parentContentJcrNode.hasNode( nodeName ) )
             {
                 throw new ContentAlreadyExistException( path );
             }
-            newContentNode = addContentToJcr( content, parentContentNode, nodeName );
+            newContentNode = addContentToJcr( content, parentContentJcrNode, nodeName );
         }
+
         final Node contentVersionHistoryNode = createContentVersionHistory( content, newContentNode );
         addContentVersion( content, contentVersionHistoryNode );
 
@@ -106,6 +103,20 @@ final class ContentDaoHandlerCreate
         }
 
         return ContentJcrHelper.nodeToContent( newContentNode, contentJcrMapper );
+    }
+
+    private void validateForCreate( final Content content )
+    {
+        if ( content.getId() != null )
+        {
+            throw new IllegalArgumentException( "Attempt to create new content with assigned id: " + content.getId() );
+        }
+
+        if ( content.getPath().isRoot() )
+        {
+            throw new ContentAlreadyExistException( content.getPath() );
+        }
+
     }
 
     private Node addContentToJcr( final Content content, final Node parentNode, final String nodeName )

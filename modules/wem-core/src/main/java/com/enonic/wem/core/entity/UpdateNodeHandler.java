@@ -7,6 +7,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.command.entity.UpdateNodeResult;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.entity.dao.EntityDao;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
@@ -27,7 +28,16 @@ public class UpdateNodeHandler
         this.indexService = indexService;
     }
 
-    private EntityDao entityDao;
+    public UpdateNodeHandler()
+    {
+    }
+
+    public UpdateNodeHandler( final Builder builder )
+    {
+        this.indexService = builder.indexService;
+        this.context = builder.context;
+        this.command = builder.command;
+    }
 
     @Override
     public void handle()
@@ -71,9 +81,41 @@ public class UpdateNodeHandler
         command.setResult( new UpdateNodeResult( persistedNode ) );
     }
 
-    @Inject
-    public void setEntityDao( final EntityDao entityDao )
+    public static Builder create()
     {
-        this.entityDao = entityDao;
+        return new Builder();
     }
+
+    public static class Builder
+    {
+        private IndexService indexService;
+
+        private CommandContext context;
+
+        private UpdateNode command;
+
+        public Builder indexService( final IndexService indexService )
+        {
+            this.indexService = indexService;
+            return this;
+        }
+
+        public Builder context( final CommandContext context )
+        {
+            this.context = context;
+            return this;
+        }
+
+        public Builder command( final UpdateNode command )
+        {
+            this.command = command;
+            return this;
+        }
+
+        public UpdateNodeHandler build()
+        {
+            return new UpdateNodeHandler( this );
+        }
+    }
+
 }

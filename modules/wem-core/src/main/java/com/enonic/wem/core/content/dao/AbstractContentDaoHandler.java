@@ -72,7 +72,7 @@ public abstract class AbstractContentDaoHandler
             while ( rootNodesIterator.hasNext() )
             {
                 final Node rootContentNode = rootNodesIterator.nextNode();
-                topNodes.add( rootContentNode);
+                topNodes.add( rootContentNode );
             }
         }
 

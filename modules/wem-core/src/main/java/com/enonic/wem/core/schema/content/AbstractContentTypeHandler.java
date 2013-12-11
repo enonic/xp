@@ -2,6 +2,7 @@ package com.enonic.wem.core.schema.content;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
@@ -10,6 +11,7 @@ import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.command.CommandHandler;
+import com.enonic.wem.core.entity.GetNodesByParentHandler;
 
 public abstract class AbstractContentTypeHandler<T extends Command>
     extends CommandHandler<T>
@@ -18,9 +20,21 @@ public abstract class AbstractContentTypeHandler<T extends Command>
 
     ContentTypes getAllContentTypes()
     {
-        final Nodes nodes = context.getClient().execute( Commands.node().get().byParent( new NodePath( "/content-types" ) ) );
+        final GetNodesByParent getNodesByParentCommand = Commands.node().get().byParent( new NodePath( "/content-types" ) );
+
+        final Nodes nodes = getNodesByParent( getNodesByParentCommand );
 
         return CONTENT_TYPE_NODE_TRANSLATOR.fromNodes( nodes );
+    }
+
+    private Nodes getNodesByParent( final GetNodesByParent getNodesByParentCommand )
+    {
+        final GetNodesByParentHandler getNodesByParentHandler =
+            GetNodesByParentHandler.create().context( this.context ).command( getNodesByParentCommand ).build();
+
+        getNodesByParentHandler.handle();
+
+        return getNodesByParentCommand.getResult();
     }
 
     ContentType transformMixinReferences( final ContentType contentType )
