@@ -10,11 +10,16 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.wem.api.Client;
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.util.MediaTypes;
+
+import static com.enonic.wem.api.command.Commands.content;
 
 @Path("{mode}/{path:.+}/_/public/{module}/{resource:.+}")
 public final class PublicResource
@@ -36,9 +41,18 @@ public final class PublicResource
     @Inject
     protected ModuleResourcePathResolver modulePathResolver;
 
+    @Inject
+    protected Client client;
+
     @GET
     public Response getResource()
     {
+        final Content content = resolveContent();
+        if ( content == null )
+        {
+            return Response.status( Response.Status.NOT_FOUND ).build();
+        }
+
         final ModuleKey moduleKey = resolveModule();
         if ( moduleKey == null )
         {
@@ -59,6 +73,12 @@ public final class PublicResource
         {
             return Response.status( Response.Status.NOT_FOUND ).build();
         }
+    }
+
+    private Content resolveContent()
+    {
+        final ContentPath contentPath = ContentPath.from( this.contentPath );
+        return client.execute( content().get().byPath( contentPath ) );
     }
 
     private ModuleKey resolveModule()

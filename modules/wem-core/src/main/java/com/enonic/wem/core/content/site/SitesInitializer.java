@@ -170,8 +170,16 @@ public class SitesInitializer
         final ModuleFileEntry.Builder controllersDir = newModuleDirectory( "controllers" ).
             addFile( pageDescriptor.getName().toString() + ".js", asByteSource( "some_code();".getBytes() ) );
 
+        final ModuleFileEntry.Builder publicDir = newModuleDirectory( "public" );
+        final ModuleFileEntry.Builder cssDir = newModuleDirectory( "css" ).
+            addFile( "main.css", asByteSource( "body { \r\n\tbackground: blue; \r\n}".getBytes() ) );
+        final ModuleFileEntry.Builder jsDir = newModuleDirectory( "js" ).
+            addFile( "lib.js", asByteSource( "alert('Hello world!');".getBytes() ) );
+        publicDir.addEntry( cssDir ).addEntry( jsDir );
+
         final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
             addEntry( controllersDir ).
+            addEntry( publicDir ).
             build();
 
         final CreateModule createModule = Commands.module().create().

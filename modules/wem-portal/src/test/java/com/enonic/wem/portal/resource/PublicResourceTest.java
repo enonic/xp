@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +15,14 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.sun.jersey.api.client.ClientResponse;
 
+import com.enonic.wem.api.Client;
+import com.enonic.wem.api.account.UserKey;
+import com.enonic.wem.api.command.content.GetContentByPath;
+import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.AbstractResourceTest;
 
@@ -25,18 +33,23 @@ import static org.mockito.Mockito.when;
 public class PublicResourceTest
     extends AbstractResourceTest
 {
+    private PublicResource resource;
+
     private ModuleResourcePathResolver modulePathResolver;
 
-    private PublicResource resource;
+    private Client client;
 
     private Path tempDir;
 
     @Override
     protected Object getResourceInstance()
     {
-        resource = new PublicResource();
         modulePathResolver = Mockito.mock( ModuleResourcePathResolver.class );
+        client = Mockito.mock( Client.class );
+
+        resource = new PublicResource();
         resource.modulePathResolver = modulePathResolver;
+        resource.client = client;
         return resource;
     }
 
@@ -62,12 +75,15 @@ public class PublicResourceTest
         final Path filePath = tempDir.resolve( "main.css" );
         Files.write( filePath, "p {color:red;}".getBytes( Charsets.UTF_8 ) );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
+        Content content = createContent( "content-id", "path/to/content", "content-type" );
+        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( content );
 
         resource.mode = "live";
         resource.contentPath = "content";
         resource.moduleName = "demo-1.0.0";
         resource.resourceName = "css/main.css";
-        final ClientResponse resp = resource().path( "/portal/live/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
+        final ClientResponse resp =
+            resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
 
         assertEquals( 200, resp.getStatus() );
         assertEquals( "p {color:red;}", resp.getEntity( String.class ) );
@@ -80,12 +96,15 @@ public class PublicResourceTest
     {
         final Path filePath = tempDir.resolve( "main.css" );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
+        Content content = createContent( "content-id", "path/to/content", "content-type" );
+        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( content );
 
         resource.mode = "live";
         resource.contentPath = "content";
         resource.moduleName = "demo-1.0.0";
         resource.resourceName = "css/main.css";
-        final ClientResponse resp = resource().path( "/portal/live/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
+        final ClientResponse resp =
+            resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
 
         assertEquals( 404, resp.getStatus() );
     }
@@ -96,13 +115,48 @@ public class PublicResourceTest
     {
         final Path filePath = tempDir.resolve( "main.css" );
         when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
+        Content content = createContent( "content-id", "path/to/content", "content-type" );
+        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( content );
 
         resource.mode = "live";
         resource.contentPath = "content";
         resource.moduleName = "demo-1-2-3";
         resource.resourceName = "css/main.css";
-        final ClientResponse resp = resource().path( "/portal/live/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
+        final ClientResponse resp =
+            resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
 
         assertEquals( 404, resp.getStatus() );
+    }
+
+    @Test
+    public void getPublicResourceContentNotFound()
+        throws Exception
+    {
+        final Path filePath = tempDir.resolve( "main.css" );
+        when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
+        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( null );
+
+        resource.mode = "live";
+        resource.contentPath = "content";
+        resource.moduleName = "demo-1-2-3";
+        resource.resourceName = "css/main.css";
+        final ClientResponse resp =
+            resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
+
+        assertEquals( 404, resp.getStatus() );
+    }
+
+    private Content createContent( final String id, final String name, final String contentTypeName )
+    {
+        return Content.newContent().
+            id( ContentId.from( id ) ).
+            path( ContentPath.from( name ) ).
+            createdTime( DateTime.now() ).
+            owner( UserKey.from( "myStore:me" ) ).
+            displayName( "My Content" ).
+            modifiedTime( DateTime.now() ).
+            modifier( UserKey.superUser() ).
+            type( ContentTypeName.from( contentTypeName ) ).
+            build();
     }
 }
