@@ -132,18 +132,27 @@ public class ContentNodeTranslator
         addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PATH, content.getDisplayName() );
         addPropertyIfNotNull( rootDataSet, CONTENT_TYPE_PATH, content.getType().getContentTypeName() );
         addPropertyIfNotNull( rootDataSet, PARENT_CONTENT_PATH_PATH, content.getPath().getParentPath().toString() );
+        addFormInRootDataSet( content, rootDataSet );
 
-        final DataSet form = new DataSet( FORM_PATH );
+        return rootDataSet;
+    }
+
+    private void addFormInRootDataSet( final Content content, final RootDataSet rootDataSet )
+    {
+        if ( content.getForm() != null )
+        {
+            final DataSet form = new DataSet( FORM_PATH );
         final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
         form.add( formItems );
-        final List<Data> dataList = SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( content.getForm().getFormItems() );
+
+            final List<Data> dataList = SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( content.getForm().getFormItems() );
 
         for ( final Data data : dataList )
         {
             formItems.add( data );
         }
         rootDataSet.add( form );
-        return rootDataSet;
+        }
     }
 
     private void addPropertyIfNotNull( final RootDataSet rootDataSet, final String propertyName, final Object value )

@@ -87,7 +87,11 @@ public class NodeIndexDocumentFactory
 
     private void addNodeMetaData( final Node node, final IndexDocument2.Builder builder )
     {
-        builder.addEntries( IndexDocumentItemFactory.create( NAME_PROPERTY, new Value.String( node.name() ), namePropertyIndexConfig ) );
+        if ( node.name() != null )
+        {
+            builder.addEntries(
+                IndexDocumentItemFactory.create( NAME_PROPERTY, new Value.String( node.name() ), namePropertyIndexConfig ) );
+        }
 
         if ( node.getCreatedTime() != null )
         {

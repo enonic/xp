@@ -102,7 +102,7 @@ public class IndexService
         return elasticsearchIndexService.indexExists( index );
     }
 
-    private void createIndex( final Index index )
+    public void createIndex( final Index index )
     {
         try
         {

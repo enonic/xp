@@ -36,6 +36,10 @@ public final class ToolsResource
     public String cleanData()
         throws Exception
     {
+        this.indexService.deleteIndex( Index.WEM, Index.NODB );
+        this.indexService.createIndex( Index.WEM );
+        this.indexService.createIndex( Index.NODB );
+
         this.startupInitializer.initialize( true );
         this.indexService.deleteIndex( Index.WEM, Index.NODB );
         this.indexService.reIndex( Index.WEM, Index.NODB );

@@ -11,6 +11,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
+import com.enonic.wem.core.entity.dao.NodeJcrHelper;
 import com.enonic.wem.core.index.IndexService;
 
 class ContentDaoHandlerRename
@@ -48,7 +49,7 @@ class ContentDaoHandlerRename
 
     private String translateToNodePath( final String original )
     {
-        return Strings.replace( original, "wem/contents", "nodb/content" );
+        return Strings.replace( original, ContentDao.CONTENTS_ROOT_PATH, NodeJcrHelper.NODES_JCRPATH + "/content/" );
     }
 
 }
