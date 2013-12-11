@@ -43,7 +43,7 @@ module app_contextwindow_image {
 
             this.recentPanel = new RecentPanel();
 
-            this.templatePanel = new api_ui.Panel();
+            this.templatePanel = new api_ui.Panel("TemplatePanel", "template-panel");
             this.templatePanel.getEl().setInnerHtml("Template goes here");
 
             this.deck.addPanel(this.recentPanel);

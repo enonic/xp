@@ -13,14 +13,17 @@ module app_contextwindow_image {
 
             var image = new api_dom.ImgEl();
             image.getEl().setSrc(this.content.getIconUrl());
-            image.getEl().setHeight("35px");
-            image.getEl().setWidth("35px");
+            image.getEl().setHeight("48px");
+            image.getEl().setWidth("48px");
 
-            var label = new api_dom.DivEl(null, "label");
-            label.getEl().setInnerHtml(this.content.getName());
+            var title = new api_dom.DivEl(null, "title");
+            title.getEl().setInnerHtml(this.content.getName());
+
+            var subtitle = new api_dom.DivEl(null, "subtitle");
+            subtitle.getEl().setInnerHtml(api_util.limitString(this.content.getPath().toString(), 32));
+
 
             var removeButton = new api_dom.AEl(null, "remove");
-            removeButton.setText("&times;");
             removeButton.getEl().addEventListener('click', (event:Event) => {
                 this.notifySelectedOptionToBeRemoved();
 
@@ -30,7 +33,8 @@ module app_contextwindow_image {
             });
 
             this.appendChild(image);
-            this.appendChild(label);
+            this.appendChild(title);
+            this.appendChild(subtitle);
             this.appendChild(removeButton);
 
         }

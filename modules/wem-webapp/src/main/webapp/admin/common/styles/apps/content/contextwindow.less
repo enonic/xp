@@ -129,6 +129,7 @@
 
       input {
         height: 37px;
+        width:100%;
         padding: 4px 4px 4px 4px;
         border: 1px solid @admin-medium-gray-border;
         background-color: transparent;
@@ -172,29 +173,37 @@
     .selected-options {
       .imagePicker();
       .selected-option {
-        border: 1px solid @admin-light-gray-bg;
+        border: 1px solid @admin-medium-gray-border;
         overflow: hidden;
-        height: 37px;
+        height: auto;
+        padding:3px;
+        color:@admin-almost-white;
+        position:relative;
 
         img {
           float: left;
+          margin:-3px;
           margin-right:5px;
+          display:block;
         }
 
-        .label {
+        .title {
           float: left;
+          font-size:16px;
+        }
+
+        .subtitle {
+          color:@admin-medium-gray-font;
         }
 
         .remove {
-          color: #fff;
+          color: @admin-almost-white;
           display: block;
-          float: right;
-          font-size: 20px;
+          font-size: 14px;
           cursor: pointer;
-          padding-right: 10px;
-          &:before {
-            display:none;
-          }
+          position:absolute;
+          top:9px;
+          right:7px;
         }
       }
     }
@@ -204,9 +213,14 @@
         margin-left:15px;
       }
     }
+
+    .template-panel {
+      padding:15px;
+    }
   }
 }
 
 .imagePicker() {
   margin: 15px;
+  width:auto;
 }
