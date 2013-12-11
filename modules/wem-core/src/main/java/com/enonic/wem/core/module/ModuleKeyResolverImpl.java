@@ -2,7 +2,6 @@ package com.enonic.wem.core.module;
 
 import java.util.Map;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.wem.api.module.ModuleKey;
@@ -20,8 +19,8 @@ final class ModuleKeyResolverImpl
     }
 
     @Override
-    public Optional<ModuleKey> resolve( final ModuleName moduleName )
+    public ModuleKey resolve( final ModuleName moduleName )
     {
-        return Optional.fromNullable( this.modules.get( moduleName ) );
+        return this.modules.get( moduleName );
     }
 }
