@@ -1,13 +1,8 @@
-package com.enonic.wem.portal.script;
+package com.enonic.wem.portal.script.exception;
 
-public final class ScriptException
+public abstract class ScriptException
     extends RuntimeException
 {
-    public ScriptException( final String message )
-    {
-        super( message );
-    }
-
     public ScriptException( final Throwable cause )
     {
         super( cause );

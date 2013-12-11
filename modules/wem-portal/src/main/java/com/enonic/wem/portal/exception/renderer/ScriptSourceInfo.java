@@ -10,7 +10,7 @@ import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public final class ScriptSourceInfo
 {
-    private final static int NUM_SOURCE_LINES = 5;
+    private final static int NUM_DELTA_LINES = 3;
 
     private final ScriptSource source;
 
@@ -42,7 +42,7 @@ public final class ScriptSourceInfo
 
     public int getFromLine()
     {
-        return Math.max( 0, this.line - NUM_SOURCE_LINES ) + 1;
+        return Math.max( 0, this.line - NUM_DELTA_LINES ) + 1;
     }
 
     public List<String> getLines()
@@ -50,8 +50,10 @@ public final class ScriptSourceInfo
     {
         final String str = this.source.getScriptAsString();
         final Iterable<String> allLines = Splitter.onPattern( "\r?\n" ).split( str );
+        final List<String> lineList = Lists.newArrayList( allLines );
 
-        final int numLines = Math.max( 0, this.line - NUM_SOURCE_LINES );
-        return Lists.newArrayList( allLines ).subList( numLines, this.line );
+        final int firstLine = Math.max( 0, this.line - NUM_DELTA_LINES );
+        final int lastLine = Math.min( lineList.size(), this.line + NUM_DELTA_LINES );
+        return lineList.subList( firstLine, lastLine );
     }
 }

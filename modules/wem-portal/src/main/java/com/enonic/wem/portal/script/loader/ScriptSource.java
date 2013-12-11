@@ -2,11 +2,11 @@ package com.enonic.wem.portal.script.loader;
 
 import java.io.IOException;
 
+import com.enonic.wem.portal.script.exception.GeneralScriptException;
+
 public abstract class ScriptSource
 {
     private final String name;
-
-    private String source;
 
     public ScriptSource( final String name )
     {
@@ -26,14 +26,15 @@ public abstract class ScriptSource
     }
 
     public final String getScriptAsString()
-        throws IOException
     {
-        if ( this.source == null )
+        try
         {
-            this.source = readSource();
+            return readSource();
         }
-
-        return this.source;
+        catch ( final IOException e )
+        {
+            throw new GeneralScriptException( "Loading [{0}] failed.", e );
+        }
     }
 
     protected abstract String readSource()

@@ -121,7 +121,7 @@
 
 <#if source??>
 <h2>
-    In ${source.path} at line ${source.line}.
+    In ${source.name} at line ${source.line}.
 </h2>
 
 <div id="source-code">

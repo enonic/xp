@@ -3,10 +3,11 @@ package com.enonic.wem.portal.script.compiler;
 import javax.inject.Inject;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 
-import com.enonic.wem.portal.script.ScriptException;
 import com.enonic.wem.portal.script.cache.ScriptCache;
+import com.enonic.wem.portal.script.exception.EvalScriptException;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public final class ScriptCompilerImpl
@@ -38,11 +39,11 @@ public final class ScriptCompilerImpl
     {
         try
         {
-            return context.compileString( source.getScriptAsString(), source.getLocation(), 1, null );
+            return context.compileString( source.getScriptAsString(), source.getName(), 1, null );
         }
-        catch ( final Exception e )
+        catch ( final RhinoException e )
         {
-            throw new ScriptException( "Failed to compile script [" + source.getName() + "]", e );
+            throw new EvalScriptException( source, e );
         }
     }
 }

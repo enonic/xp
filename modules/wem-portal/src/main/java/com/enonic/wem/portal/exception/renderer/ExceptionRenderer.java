@@ -1,68 +1,13 @@
 package com.enonic.wem.portal.exception.renderer;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.List;
-
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import com.google.common.io.Files;
-
+import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.web.mvc.FreeMarkerView;
 
 public final class ExceptionRenderer
 {
-    private final static int NUM_SOURCE_LINES = 5;
-
-    public final class SourceInfo
-    {
-        private final Path path;
-
-        private final int line;
-
-        private final int column;
-
-        private final List<String> lines;
-
-        public SourceInfo( final Path path, final int line, final int column )
-        {
-            this.path = path;
-            this.line = line;
-            this.column = column;
-
-            final int numLines = Math.max( 0, this.line - NUM_SOURCE_LINES );
-            this.lines = readLines( this.path.toFile() ).subList( numLines, this.line );
-        }
-
-        public Path getPath()
-        {
-            return path;
-        }
-
-        public int getLine()
-        {
-            return line;
-        }
-
-        public int getColumn()
-        {
-            return column;
-        }
-
-        public int getFromLine()
-        {
-            return Math.max( 0, this.line - NUM_SOURCE_LINES ) + 1;
-        }
-
-        public List<String> getLines()
-        {
-            return this.lines;
-        }
-    }
-
     private final FreeMarkerView view;
 
     private Response.StatusType status;
@@ -97,9 +42,9 @@ public final class ExceptionRenderer
         return this;
     }
 
-    public ExceptionRenderer source( final Path path, final int line, final int column )
+    public ExceptionRenderer source( final ScriptSource source, final int line, final int column )
     {
-        final SourceInfo info = new SourceInfo( path, line, column );
+        final ScriptSourceInfo info = new ScriptSourceInfo( source, line, column );
         this.view.put( "source", info );
         return this;
     }
@@ -107,22 +52,5 @@ public final class ExceptionRenderer
     public Response render()
     {
         return Response.status( this.status ).entity( view ).type( MediaType.TEXT_HTML_TYPE ).build();
-    }
-
-    private static List<String> readLines( final File file )
-    {
-        if ( !file.isFile() )
-        {
-            return Lists.newArrayList();
-        }
-
-        try
-        {
-            return Files.readLines( file, Charsets.UTF_8 );
-        }
-        catch ( final Exception e )
-        {
-            return Lists.newArrayList();
-        }
     }
 }

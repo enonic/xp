@@ -3,12 +3,14 @@ package com.enonic.wem.portal.script.runner;
 import java.util.Map;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
+import com.enonic.wem.portal.script.exception.EvalScriptException;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 final class ScriptRunnerImpl
@@ -53,6 +55,10 @@ final class ScriptRunnerImpl
             setObjectsToScope();
             final Script script = this.compiler.compile( context, this.source );
             script.exec( context, this.scope );
+        }
+        catch ( final RhinoException e )
+        {
+            throw new EvalScriptException( this.source, e );
         }
         finally
         {
