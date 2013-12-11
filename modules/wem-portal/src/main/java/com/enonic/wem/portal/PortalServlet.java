@@ -6,7 +6,7 @@ import com.sun.jersey.api.core.ResourceConfig;
 
 import com.enonic.wem.portal.content.ContentResource;
 import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
-import com.enonic.wem.portal.exception.mapper.EvalScriptExceptionMapper;
+import com.enonic.wem.portal.exception.mapper.EvaluationExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.PortalWebExceptionMapper;
 import com.enonic.wem.portal.underscore.PublicResource;
 import com.enonic.wem.portal.underscore.ServicesResource;
@@ -25,7 +25,7 @@ public final class PortalServlet
         addClass( PublicResource.class );
         addClass( ServicesResource.class );
         addClass( FreeMarkerViewWriter.class );
-        addClass( EvalScriptExceptionMapper.class );
+        addClass( EvaluationExceptionMapper.class );
         addClass( PortalWebExceptionMapper.class );
         addClass( DefaultExceptionMapper.class );
     }

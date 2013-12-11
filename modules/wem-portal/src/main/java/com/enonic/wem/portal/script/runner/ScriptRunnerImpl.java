@@ -9,8 +9,8 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
-import com.enonic.wem.portal.script.EvalScriptException;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 final class ScriptRunnerImpl
@@ -58,7 +58,7 @@ final class ScriptRunnerImpl
         }
         catch ( final RhinoException e )
         {
-            throw new EvalScriptException( this.source, e );
+            throw new EvaluationException( this.source, e );
         }
         finally
         {

@@ -6,8 +6,8 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 
+import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.cache.ScriptCache;
-import com.enonic.wem.portal.script.EvalScriptException;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public final class ScriptCompilerImpl
@@ -43,7 +43,7 @@ public final class ScriptCompilerImpl
         }
         catch ( final RhinoException e )
         {
-            throw new EvalScriptException( source, e );
+            throw new EvaluationException( source, e );
         }
     }
 }

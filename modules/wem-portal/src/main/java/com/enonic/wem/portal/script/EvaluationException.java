@@ -4,12 +4,12 @@ import org.mozilla.javascript.RhinoException;
 
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
-public final class EvalScriptException
+public final class EvaluationException
     extends RuntimeException
 {
     private final ScriptSource source;
 
-    public EvalScriptException( final ScriptSource source, final RhinoException cause )
+    public EvaluationException( final ScriptSource source, final RhinoException cause )
     {
         super( cause );
         this.source = source;
