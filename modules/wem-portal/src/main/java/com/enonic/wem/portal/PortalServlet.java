@@ -5,9 +5,9 @@ import javax.inject.Singleton;
 import com.sun.jersey.api.core.ResourceConfig;
 
 import com.enonic.wem.portal.content.ContentResource;
-import com.enonic.wem.portal.exception.DefaultExceptionMapper;
-import com.enonic.wem.portal.exception.RhinoExceptionMapper;
-import com.enonic.wem.portal.exception.WebApplicationExceptionMapper;
+import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
+import com.enonic.wem.portal.exception.mapper.PortalWebExceptionMapper;
+import com.enonic.wem.portal.exception.mapper.RhinoExceptionMapper;
 import com.enonic.wem.portal.underscore.PublicResource;
 import com.enonic.wem.portal.underscore.ServicesResource;
 import com.enonic.wem.web.jaxrs.JaxRsServlet;
@@ -26,7 +26,7 @@ public final class PortalServlet
         addClass( ServicesResource.class );
         addClass( FreeMarkerViewWriter.class );
         addClass( RhinoExceptionMapper.class );
-        addClass( WebApplicationExceptionMapper.class );
+        addClass( PortalWebExceptionMapper.class );
         addClass( DefaultExceptionMapper.class );
     }
 }

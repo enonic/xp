@@ -6,7 +6,6 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -21,8 +20,7 @@ import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-
+@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 @Path("{mode}/{path:.+}/_/services/{module}/{service}")
 public final class ServicesResource
     extends UnderscoreResource
@@ -69,11 +67,6 @@ public final class ServicesResource
     private Response doHandle()
     {
         final ModuleKey moduleKey = resolveModule( this.contentPath, this.moduleName );
-        if ( moduleKey == null )
-        {
-            throw new WebApplicationException( NOT_FOUND );
-        }
-
         final JsContext context = new JsContext();
         context.setRequest( new JsHttpRequest( this.httpContext.getRequest() ) );
 

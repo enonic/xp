@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.exception;
+package com.enonic.wem.portal.exception.renderer;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -90,14 +90,14 @@ public final class ExceptionRenderer
 
     private final FreeMarkerView view;
 
-    private int status;
+    private Response.StatusType status;
 
     public ExceptionRenderer()
     {
         this.view = FreeMarkerView.template( "portalError.ftl" );
     }
 
-    public ExceptionRenderer status( final int status )
+    public ExceptionRenderer status( final Response.StatusType status )
     {
         this.status = status;
         this.view.put( "status", this.status );

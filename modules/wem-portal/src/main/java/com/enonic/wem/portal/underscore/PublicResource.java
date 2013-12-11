@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.google.common.net.MediaType;
@@ -13,9 +12,8 @@ import com.google.common.net.MediaType;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.util.MediaTypes;
-
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Path("{mode}/{path:.+}/_/public/{module}/{resource:.+}")
 public final class PublicResource
@@ -39,11 +37,6 @@ public final class PublicResource
     public Response getResource()
     {
         final ModuleKey moduleKey = resolveModule( this.contentPath, this.moduleName );
-        if ( moduleKey == null )
-        {
-            throw new WebApplicationException( NOT_FOUND );
-        }
-
         final ResourcePath resourcePath = PUBLIC_PATH.resolve( resourceName );
         final ModuleResourceKey moduleResource = new ModuleResourceKey( moduleKey, resourcePath );
         final java.nio.file.Path resourceFileSystemPath = modulePathResolver.resolveResourcePath( moduleResource );
@@ -56,7 +49,7 @@ public final class PublicResource
         }
         else
         {
-            throw new WebApplicationException( NOT_FOUND );
+            throw PortalWebException.notFound().build();
         }
     }
 }

@@ -9,6 +9,7 @@ import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.core.module.ModuleKeyResolver;
 import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
+import com.enonic.wem.portal.exception.PortalWebException;
 
 public abstract class UnderscoreResource
 {
@@ -25,15 +26,25 @@ public abstract class UnderscoreResource
     {
         try
         {
-            // module key with version
             return ModuleKey.from( moduleName );
         }
         catch ( final Exception e )
         {
-            // just module name, needs resolving to module key
-            final ContentPath path = ContentPath.from( contentPath );
-            final ModuleKeyResolver moduleResolver = this.moduleKeyResolver.forContent( path );
-            return moduleResolver.resolve( ModuleName.from( moduleName ) );
+            return resolveModuleFromSite( contentPath, moduleName );
         }
+    }
+
+    private ModuleKey resolveModuleFromSite( final String contentPath, final String moduleName )
+    {
+        final ContentPath path = ContentPath.from( contentPath );
+        final ModuleKeyResolver moduleResolver = this.moduleKeyResolver.forContent( path );
+        final ModuleKey key = moduleResolver.resolve( ModuleName.from( moduleName ) );
+
+        if ( key != null )
+        {
+            return key;
+        }
+
+        throw PortalWebException.notFound().description( "Module [{0}] not found for path [{1}].", moduleName, contentPath ).build();
     }
 }

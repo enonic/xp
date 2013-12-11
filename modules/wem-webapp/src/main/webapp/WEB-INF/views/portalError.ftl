@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>${title}</title>
+    <title>${status.statusCode} ${title}</title>
     <style>
         html, body, pre {
             margin: 0;
@@ -115,7 +115,7 @@
     </style>
 </head>
 <body>
-<h1>${title}</h1>
+<h1>${status.statusCode} ${title}</h1>
 
 <p id="detail">${description}</p>
 

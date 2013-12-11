@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
-import com.enonic.wem.portal.exception.MethodNotAllowedException;
+import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
@@ -91,7 +91,7 @@ final class JsControllerImpl
             return executeOptions();
         }
 
-        throw new MethodNotAllowedException();
+        throw PortalWebException.methodNotAllowed().build();
     }
 
     private Response doExecute( final ScriptSource script )
