@@ -92,8 +92,8 @@ public class SitesInitializer
         mainPageTemplate = createPageTemplate( this.demoModule, pageDescriptor.getName() );
         this.siteTemplate = createSiteTemplate( BLUMAN_SITE_TEMPLATE_KEY, ModuleKeys.from( this.demoModule.getKey() ), mainPageTemplate );
 
-        createSite( "bluman trampoliner", "Bluman Trampoliner" );
-        createSite( "bluman intranett", "Bluman Intranett" );
+        createSite( "bluman-trampoliner", "Bluman Trampoliner" );
+        createSite( "bluman-intranett", "Bluman Intranett" );
     }
 
 

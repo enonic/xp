@@ -63,14 +63,19 @@ public class DemoImagesInitializer
         {
             return;
         }
-        final ContentData dataSet = createContentData( fileName );
 
-        final Attachment attachment = newAttachment().name( fileName ).binary( binary ).mimeType( "image/jpeg" ).build();
+        // FIXME: hack to avoid exception from NodeName preconditions
+        final String filteredFileName =
+            fileName.replace( " ", "_" ).replace( "ø", "o" ).replace( "æ", "ae" ).replace( "å", "aa" ).toLowerCase();
+
+        final ContentData dataSet = createContentData( filteredFileName );
+
+        final Attachment attachment = newAttachment().name( filteredFileName ).binary( binary ).mimeType( "image/jpeg" ).build();
         final CreateContent createContent = Commands.content().create().
             contentType( ContentTypeName.imageMedia() ).
             form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
             displayName( displayName ).
-            name( fileName ).
+            name( filteredFileName ).
             parent( parent ).
             contentData( dataSet ).
             attachments( attachment );
