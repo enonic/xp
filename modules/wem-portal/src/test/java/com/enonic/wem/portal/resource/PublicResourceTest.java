@@ -23,6 +23,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.core.module.ModuleKeyResolver;
+import com.enonic.wem.core.module.ModuleKeyResolverService;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.AbstractResourceTest;
 
@@ -37,6 +39,10 @@ public class PublicResourceTest
 
     private ModuleResourcePathResolver modulePathResolver;
 
+    private ModuleKeyResolverService moduleKeyResolverService;
+
+    private ModuleKeyResolver moduleKeyResolver;
+
     private Client client;
 
     private Path tempDir;
@@ -45,11 +51,14 @@ public class PublicResourceTest
     protected Object getResourceInstance()
     {
         modulePathResolver = Mockito.mock( ModuleResourcePathResolver.class );
+        moduleKeyResolverService = Mockito.mock( ModuleKeyResolverService.class );
+        moduleKeyResolver = Mockito.mock( ModuleKeyResolver.class );
         client = Mockito.mock( Client.class );
-
+        when( moduleKeyResolverService.getModuleKeyResolverForContent( isA( ContentPath.class ) ) ).thenReturn( moduleKeyResolver );
         resource = new PublicResource();
         resource.modulePathResolver = modulePathResolver;
         resource.client = client;
+        resource.moduleKeyResolver = moduleKeyResolverService;
         return resource;
     }
 
