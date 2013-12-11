@@ -1,12 +1,18 @@
 package com.enonic.wem.portal.controller;
 
-import java.nio.file.Path;
 import java.util.Set;
 
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.Response;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.portal.exception.MethodNotAllowedException;
+import com.enonic.wem.portal.script.loader.ScriptLoader;
+import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
 import com.enonic.wem.portal.script.runner.ScriptRunnerFactory;
 
@@ -17,16 +23,33 @@ final class JsControllerImpl
 
     private final ScriptRunnerFactory factory;
 
-    private final Path path;
+    private final ScriptLoader loader;
 
-    public JsControllerImpl( final ScriptRunnerFactory factory, final Path path )
+    private ModuleResourceKey scriptDir;
+
+    private JsContext context;
+
+    public JsControllerImpl( final ScriptRunnerFactory factory, final ScriptLoader loader )
     {
         this.factory = factory;
-        this.path = path;
+        this.loader = loader;
     }
 
     @Override
-    public Set<String> getMethods()
+    public JsController scriptDir( final ModuleResourceKey dir )
+    {
+        this.scriptDir = dir;
+        return this;
+    }
+
+    @Override
+    public JsController context( final JsContext context )
+    {
+        this.context = context;
+        return this;
+    }
+
+    private Set<String> findMethods()
     {
         final Set<String> set = Sets.newHashSet();
         for ( final String method : ALL_METHODS )
@@ -41,44 +64,55 @@ final class JsControllerImpl
         return set;
     }
 
-    private Path findScript( final String method )
+    private ScriptSource findScript( final String method )
     {
-        return this.path.resolve( method.toLowerCase() + ".js" );
+        final ResourcePath path = this.scriptDir.getPath().resolve( method.toLowerCase() + ".js" );
+        final ModuleResourceKey key = new ModuleResourceKey( this.scriptDir.getModuleKey(), path );
+        return this.loader.loadFromModule( key );
     }
 
     private boolean hasScript( final String method )
     {
-        return fileExists( findScript( method ) );
-    }
-
-    private boolean fileExists( final Path path )
-    {
-        return path.toFile().isFile();
+        return findScript( method ) != null;
     }
 
     @Override
-    public boolean execute( final JsContext context )
+    public Response execute()
     {
-        final Path script = findScript( context.getRequest().getMethod() );
-        if ( fileExists( script ) )
+        final String method = this.context.getRequest().getMethod();
+        final ScriptSource script = findScript( method );
+        if ( script != null )
         {
-            doExecute( context, script );
-            return true;
+            return doExecute( script );
         }
 
-        return false;
+        if ( method.equals( HttpMethod.OPTIONS ) )
+        {
+            return executeOptions();
+        }
+
+        throw new MethodNotAllowedException();
     }
 
-    private void doExecute( final JsContext context, final Path script )
+    private Response doExecute( final ScriptSource script )
     {
-        context.setResponse( new JsHttpResponse() );
+        final JsHttpResponse response = new JsHttpResponse();
+        this.context.setResponse( response );
 
         final ScriptRunner runner = this.factory.newRunner();
-        runner.file( script );
-        runner.object( "context", context );
-        runner.object( "request", context.getRequest() );
-        runner.object( "response", context.getResponse() );
+        runner.source( script );
+        runner.property( "context", this.context );
+        runner.property( "request", this.context.getRequest() );
+        runner.property( "response", this.context.getResponse() );
 
         runner.execute();
+
+        return new JsHttpResponseSerializer( response ).serialize();
+    }
+
+    private Response executeOptions()
+    {
+        final String allow = Joiner.on( ", " ).join( findMethods() );
+        return Response.noContent().header( "Allow", allow ).build();
     }
 }

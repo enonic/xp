@@ -29,9 +29,9 @@ final class ModuleKeyResolverServiceImpl
     protected Client client;
 
     @Override
-    public ModuleKeyResolver getModuleKeyResolverForContent( final ContentPath contentPath )
+    public ModuleKeyResolver forContent( final Content content )
     {
-        final SiteTemplate siteTemplate = findSiteTemplate( contentPath );
+        final SiteTemplate siteTemplate = findSiteTemplate( content );
         if ( siteTemplate == null )
         {
             return EMPTY_RESOLVER;
@@ -48,14 +48,20 @@ final class ModuleKeyResolverServiceImpl
         return new ModuleKeyResolverImpl( moduleTable.build() );
     }
 
-    private SiteTemplate findSiteTemplate( final ContentPath contentPath )
+    @Override
+    public ModuleKeyResolver forContent( final ContentPath contentPath )
     {
         final Content content = getContent( contentPath );
         if ( content == null )
         {
-            return null;
+            return EMPTY_RESOLVER;
         }
 
+        return forContent( content );
+    }
+
+    private SiteTemplate findSiteTemplate( final Content content )
+    {
         final Site site = resolveSite( content.getId() );
         if ( site == null )
         {

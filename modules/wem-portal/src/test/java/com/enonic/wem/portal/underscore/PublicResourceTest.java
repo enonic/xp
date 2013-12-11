@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.resource;
+package com.enonic.wem.portal.underscore;
 
 
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class PublicResourceTest
         moduleKeyResolverService = Mockito.mock( ModuleKeyResolverService.class );
         moduleKeyResolver = Mockito.mock( ModuleKeyResolver.class );
         client = Mockito.mock( Client.class );
-        when( moduleKeyResolverService.getModuleKeyResolverForContent( isA( ContentPath.class ) ) ).thenReturn( moduleKeyResolver );
+        when( moduleKeyResolverService.forContent( isA( ContentPath.class ) ) ).thenReturn( moduleKeyResolver );
         resource = new PublicResource();
         resource.modulePathResolver = modulePathResolver;
         resource.client = client;

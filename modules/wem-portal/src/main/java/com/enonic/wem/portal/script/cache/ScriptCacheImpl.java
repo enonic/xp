@@ -1,7 +1,5 @@
 package com.enonic.wem.portal.script.cache;
 
-import java.nio.file.Path;
-
 import org.mozilla.javascript.Script;
 
 import com.google.common.cache.Cache;
@@ -10,7 +8,7 @@ import com.google.common.cache.CacheBuilder;
 public final class ScriptCacheImpl
     implements ScriptCache
 {
-    private final Cache<Path, ScriptCacheEntry> cache;
+    private final Cache<String, Script> cache;
 
     public ScriptCacheImpl()
     {
@@ -18,25 +16,14 @@ public final class ScriptCacheImpl
     }
 
     @Override
-    public Script get( final Path path )
+    public Script get( final String key )
     {
-        final ScriptCacheEntry entry = this.cache.getIfPresent( path );
-        if ( entry == null )
-        {
-            return null;
-        }
-
-        if ( entry.isModified() )
-        {
-            return null;
-        }
-
-        return entry.getScript();
+        return this.cache.getIfPresent( key );
     }
 
     @Override
-    public void put( final Path path, final Script script )
+    public void put( final String key, final Script script )
     {
-        this.cache.put( path, new ScriptCacheEntry( path, script ) );
+        this.cache.put( key, script );
     }
 }

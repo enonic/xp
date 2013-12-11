@@ -8,8 +8,8 @@ import com.enonic.wem.portal.content.ContentResource;
 import com.enonic.wem.portal.exception.DefaultExceptionMapper;
 import com.enonic.wem.portal.exception.RhinoExceptionMapper;
 import com.enonic.wem.portal.exception.WebApplicationExceptionMapper;
-import com.enonic.wem.portal.resource.PublicResource;
-import com.enonic.wem.portal.services.ServicesResource;
+import com.enonic.wem.portal.underscore.PublicResource;
+import com.enonic.wem.portal.underscore.ServicesResource;
 import com.enonic.wem.web.jaxrs.JaxRsServlet;
 import com.enonic.wem.web.mvc.FreeMarkerViewWriter;
 

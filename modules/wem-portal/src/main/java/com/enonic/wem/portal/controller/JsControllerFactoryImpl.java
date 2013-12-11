@@ -1,26 +1,22 @@
 package com.enonic.wem.portal.controller;
 
-import java.nio.file.Path;
-
 import javax.inject.Inject;
 
+import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.runner.ScriptRunnerFactory;
-import com.enonic.wem.portal.script.runner.ScriptRunnerFactoryImpl;
 
 public final class JsControllerFactoryImpl
     implements JsControllerFactory
 {
-    private final ScriptRunnerFactory scriptRunnerFactory;
+    @Inject
+    protected ScriptRunnerFactory scriptRunnerFactory;
 
     @Inject
-    public JsControllerFactoryImpl( final ScriptRunnerFactoryImpl scriptRunnerFactory )
-    {
-        this.scriptRunnerFactory = scriptRunnerFactory;
-    }
+    private ScriptLoader loader;
 
     @Override
-    public JsController newController( final Path path )
+    public JsController newController()
     {
-        return new JsControllerImpl( this.scriptRunnerFactory, path );
+        return new JsControllerImpl( this.scriptRunnerFactory, this.loader );
     }
 }

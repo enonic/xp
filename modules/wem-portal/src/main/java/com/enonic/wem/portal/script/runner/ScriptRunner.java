@@ -1,12 +1,12 @@
 package com.enonic.wem.portal.script.runner;
 
-import java.nio.file.Path;
+import com.enonic.wem.portal.script.loader.ScriptSource;
 
 public interface ScriptRunner
 {
-    public ScriptRunner file( Path file );
+    public ScriptRunner source( ScriptSource source );
 
-    public ScriptRunner object( String name, Object value );
+    public ScriptRunner property( String name, Object value );
 
     public void execute();
 }

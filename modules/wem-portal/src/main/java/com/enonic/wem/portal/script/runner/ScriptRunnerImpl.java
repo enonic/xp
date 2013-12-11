@@ -1,6 +1,5 @@
 package com.enonic.wem.portal.script.runner;
 
-import java.nio.file.Path;
 import java.util.Map;
 
 import org.mozilla.javascript.Context;
@@ -10,6 +9,7 @@ import org.mozilla.javascript.Scriptable;
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
+import com.enonic.wem.portal.script.loader.ScriptSource;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
@@ -20,7 +20,7 @@ final class ScriptRunnerImpl
 
     private final Map<String, Object> objects;
 
-    private Path file;
+    private ScriptSource source;
 
     public ScriptRunnerImpl( final ScriptCompiler compiler, final Scriptable scope )
     {
@@ -30,14 +30,14 @@ final class ScriptRunnerImpl
     }
 
     @Override
-    public ScriptRunner file( final Path file )
+    public ScriptRunner source( final ScriptSource source )
     {
-        this.file = file;
+        this.source = source;
         return this;
     }
 
     @Override
-    public ScriptRunner object( final String name, final Object value )
+    public ScriptRunner property( final String name, final Object value )
     {
         this.objects.put( name, value );
         return this;
@@ -51,7 +51,7 @@ final class ScriptRunnerImpl
         try
         {
             setObjectsToScope();
-            final Script script = this.compiler.compile( context, this.file );
+            final Script script = this.compiler.compile( context, this.source );
             script.exec( context, this.scope );
         }
         finally

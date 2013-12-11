@@ -1,10 +1,14 @@
 package com.enonic.wem.portal.controller;
 
-import java.util.Set;
+import javax.ws.rs.core.Response;
+
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public interface JsController
 {
-    public Set<String> getMethods();
+    public JsController scriptDir( ModuleResourceKey dir );
 
-    public boolean execute( JsContext context );
+    public JsController context( JsContext context );
+
+    public Response execute();
 }

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-public final class JsHttpResponseSerializer
+final class JsHttpResponseSerializer
 {
     private final JsHttpResponse from;
 
