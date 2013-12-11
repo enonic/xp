@@ -28,4 +28,15 @@ module app_browse {
         }
     }
 
+    export class ImportTemplateEvent extends api_event.Event {
+
+        constructor() {
+            super('importTemplate');
+        }
+
+        static on(handler:(event:ImportTemplateEvent) => void) {
+            api_event.onEvent('importTemplate', handler);
+        }
+
+    }
 }

@@ -1,15 +1,15 @@
 module app_import {
 
-    export class ModuleUploader extends api_dom.Element
+    export class TemplateUploader extends api_dom.Element
         implements api_ui_dialog.UploadDialogUploaderEl
     {
-        private uploader;
+        private uploader:api_content_site_template.InstallSiteTemplateRequest;
 
         private dropzone:api_dom.DivEl;
         private progress:api_ui.ProgressBar;
 
         constructor() {
-            super("div", "ModuleUploader", "image-uploader");
+            super("div", "TemplateUploader", "image-uploader");
 
             this.dropzone = new api_dom.DivEl("DropZone", "dropzone");
             this.dropzone.getEl().setInnerHtml("Drop files here or click to select");
@@ -22,14 +22,14 @@ module app_import {
 
         afterRender() {
             super.afterRender();
-            this.uploader = new api_module.InstallModuleRequest(this.dropzone);
+            this.uploader = new api_content_site_template.InstallSiteTemplateRequest(this.dropzone);
             this.setProgressVisible(false);
         }
 
         stop() {
-           if (this.uploader) {
+            if (this.uploader) {
                 this.uploader.stop();
-           }
+            }
         }
 
         reset() {
@@ -45,12 +45,13 @@ module app_import {
             this.progress.setVisible(visible);
         }
 
-        onFinishUpload(fn:(resp:api_module.InstallModuleResponse)=>void) {
+        onFinishUpload(fn:(resp:api_content_site_template.InstallSiteTemplateResponse)=>void) {
             this.uploader.done(fn);
         }
 
-        onError(fn:(resp:api_rest.JsonResponse)=>void) {
+        onError(fn:(resp:api_rest.Response)=>void) {
             this.uploader.fail(fn);
         }
     }
+
 }

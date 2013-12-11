@@ -1,5 +1,15 @@
 module app_browse {
 
+    export class ImportTemplateAction extends api_ui.Action {
+
+        constructor() {
+            super("Import");
+            this.addExecutionListener(() => {
+                new ImportTemplateEvent().fire();
+            });
+        }
+    }
+
     export class NewTemplateAction extends api_ui.Action {
 
         constructor() {
@@ -70,6 +80,7 @@ module app_browse {
 
     export class TemplateBrowseActions {
 
+        public IMPORT_TEMPLATE:api_ui.Action;
         public NEW_TEMPLATE: api_ui.Action;
         public EDIT_TEMPLATE: api_ui.Action;
         public OPEN_TEMPLATE: api_ui.Action;
@@ -89,6 +100,7 @@ module app_browse {
         }
 
         constructor() {
+            this.IMPORT_TEMPLATE = new ImportTemplateAction();
             this.NEW_TEMPLATE = new NewTemplateAction();
             this.EDIT_TEMPLATE = new EditTemplateAction();
             this.OPEN_TEMPLATE = new OpenTemplateAction();
@@ -96,7 +108,7 @@ module app_browse {
             this.DUPLICATE_TEMPLATE = new DuplicateTemplateAction();
             this.EXPORT_TEMPLATE = new ExportTemplateAction();
 
-            this.allActions.push(this.NEW_TEMPLATE, this.EDIT_TEMPLATE, this.OPEN_TEMPLATE,
+            this.allActions.push(this.IMPORT_TEMPLATE, this.NEW_TEMPLATE, this.EDIT_TEMPLATE, this.OPEN_TEMPLATE,
                 this.DELETE_TEMPLATE, this.DUPLICATE_TEMPLATE, this.EXPORT_TEMPLATE);
         }
 
