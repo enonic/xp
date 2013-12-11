@@ -16,11 +16,16 @@ module app_contextwindow_image {
             image.getEl().setHeight("48px");
             image.getEl().setWidth("48px");
 
+            var container = new api_dom.DivEl(null, "container");
+
             var title = new api_dom.DivEl(null, "title");
             title.getEl().setInnerHtml(this.content.getName());
 
             var subtitle = new api_dom.DivEl(null, "subtitle");
             subtitle.getEl().setInnerHtml(api_util.limitString(this.content.getPath().toString(), 32));
+
+            container.appendChild(title);
+            container.appendChild(subtitle);
 
 
             var removeButton = new api_dom.AEl(null, "remove");
@@ -33,8 +38,7 @@ module app_contextwindow_image {
             });
 
             this.appendChild(image);
-            this.appendChild(title);
-            this.appendChild(subtitle);
+            this.appendChild(container);
             this.appendChild(removeButton);
 
         }
