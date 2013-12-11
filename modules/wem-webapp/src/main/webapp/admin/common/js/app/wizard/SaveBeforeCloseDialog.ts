@@ -59,7 +59,7 @@ module api_app_wizard {
 
             this.close();
             this.wizardPanel.saveChanges(() => {
-                this.wizardPanel.close(true);
+                this.wizardPanel.close();
             });
         }
 
