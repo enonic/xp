@@ -19,7 +19,7 @@ public final class PortalWebExceptionMapper
         renderer.status( e.getStatus() );
         renderer.title( e.getStatus().getReasonPhrase() );
 
-        String description = e.getDescription();
+        String description = e.getMessage();
         if ( description == null )
         {
             description = "An error occured with status code = " + e.getStatus().getStatusCode() + ".";

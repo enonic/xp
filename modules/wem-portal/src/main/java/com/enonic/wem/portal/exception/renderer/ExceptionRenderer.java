@@ -15,32 +15,7 @@ import com.enonic.wem.web.mvc.FreeMarkerView;
 
 public final class ExceptionRenderer
 {
-    private final static int NUM_STACK_ELEMENTS = 14;
-
     private final static int NUM_SOURCE_LINES = 5;
-
-    public final class ExceptionInfo
-    {
-        private final String message;
-
-        private final List<String> trace;
-
-        public ExceptionInfo( final Throwable e )
-        {
-            this.message = e.getMessage();
-            this.trace = ExceptionRenderer.getStackTrace( e );
-        }
-
-        public String getMessage()
-        {
-            return this.message != null ? this.message : "Empty message in exception";
-        }
-
-        public List<String> getTrace()
-        {
-            return this.trace;
-        }
-    }
 
     public final class SourceInfo
     {
@@ -133,24 +108,6 @@ public final class ExceptionRenderer
     {
         return Response.status( this.status ).entity( view ).type( MediaType.TEXT_HTML_TYPE ).build();
     }
-
-    private static List<String> getStackTrace( final Throwable e )
-    {
-        List<String> list = Lists.newArrayList();
-        for ( final StackTraceElement item : e.getStackTrace() )
-        {
-            list.add( item.toString() );
-        }
-
-        if ( list.size() > NUM_STACK_ELEMENTS )
-        {
-            list = list.subList( 0, NUM_STACK_ELEMENTS );
-            list.add( "..." );
-        }
-
-        return list;
-    }
-
 
     private static List<String> readLines( final File file )
     {

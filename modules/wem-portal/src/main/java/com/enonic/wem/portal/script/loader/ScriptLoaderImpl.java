@@ -6,6 +6,8 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Optional;
+
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 
@@ -24,19 +26,20 @@ public final class ScriptLoaderImpl
     }
 
     @Override
-    public ScriptSource loadFromSystem( final String name )
+    public Optional<ScriptSource> loadFromSystem( final String name )
     {
         final URL url = this.classLoader.getResource( name );
         if ( url == null )
         {
-            return null;
+            return Optional.absent();
         }
 
-        return new UrlScriptSource( name, url );
+        final ScriptSource source = new UrlScriptSource( name, url );
+        return Optional.of( source );
     }
 
     @Override
-    public ScriptSource loadFromModule( final ModuleResourceKey key )
+    public Optional<ScriptSource> loadFromModule( final ModuleResourceKey key )
     {
         final String name = key.toString();
         final Path path = this.pathResolver.resolveResourcePath( key );
@@ -44,9 +47,10 @@ public final class ScriptLoaderImpl
 
         if ( !file.isFile() )
         {
-            return null;
+            return Optional.absent();
         }
 
-        return new FileScriptSource( name, file );
+        final ScriptSource source = new FileScriptSource( name, file );
+        return Optional.of( source );
     }
 }

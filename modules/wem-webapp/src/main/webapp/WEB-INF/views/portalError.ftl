@@ -140,7 +140,6 @@
 </h2>
 
 <div>
-    <pre class="error"><span class="line">-></span><span class="code">${exception.message}</span></pre>
     <#list exception.trace as item>
         <pre><span class="line">&nbsp;</span><span class="code"> ${item}</span></pre>
     </#list>

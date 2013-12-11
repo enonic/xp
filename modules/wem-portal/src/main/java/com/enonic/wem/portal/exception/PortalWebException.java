@@ -11,17 +11,17 @@ import com.enonic.wem.web.jaxrs.ExtendedStatus;
 public final class PortalWebException
     extends WebApplicationException
 {
-    private final static String DEFAULT_DESCRIPTION = "An error occured with status code = {0}.";
+    private final static String DEFAULT_MESSAGE = "An error occured with status code = {0}.";
 
     private final Response.StatusType status;
 
-    private final String description;
+    private final String message;
 
     private PortalWebException( final Builder builder )
     {
         super( builder.status.getStatusCode() );
         this.status = builder.status;
-        this.description = builder.description;
+        this.message = builder.message;
 
         if ( builder.cause != null )
         {
@@ -29,14 +29,15 @@ public final class PortalWebException
         }
     }
 
+    @Override
+    public String getMessage()
+    {
+        return this.message;
+    }
+
     public Response.StatusType getStatus()
     {
         return this.status;
-    }
-
-    public String getDescription()
-    {
-        return this.description;
     }
 
     @Override
@@ -62,12 +63,12 @@ public final class PortalWebException
 
         private Throwable cause;
 
-        private String description;
+        private String message;
 
         private Builder( final Response.StatusType status )
         {
             this.status = status;
-            description( DEFAULT_DESCRIPTION, this.status.getStatusCode() );
+            message( DEFAULT_MESSAGE, this.status.getStatusCode() );
         }
 
         public Builder cause( final Throwable cause )
@@ -76,9 +77,9 @@ public final class PortalWebException
             return this;
         }
 
-        public Builder description( final String message, final Object... args )
+        public Builder message( final String message, final Object... args )
         {
-            this.description = MessageFormat.format( message, args );
+            this.message = MessageFormat.format( message, args );
             return this;
         }
 

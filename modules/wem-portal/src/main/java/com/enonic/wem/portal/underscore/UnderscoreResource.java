@@ -2,6 +2,8 @@ package com.enonic.wem.portal.underscore;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Optional;
+
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.module.ModuleKey;
@@ -38,13 +40,13 @@ public abstract class UnderscoreResource
     {
         final ContentPath path = ContentPath.from( contentPath );
         final ModuleKeyResolver moduleResolver = this.moduleKeyResolver.forContent( path );
-        final ModuleKey key = moduleResolver.resolve( ModuleName.from( moduleName ) );
+        final Optional<ModuleKey> key = moduleResolver.resolve( ModuleName.from( moduleName ) );
 
-        if ( key != null )
+        if ( key.isPresent() )
         {
-            return key;
+            return key.get();
         }
 
-        throw PortalWebException.notFound().description( "Module [{0}] not found for path [{1}].", moduleName, contentPath ).build();
+        throw PortalWebException.notFound().message( "Module [{0}] not found for path [{1}].", moduleName, contentPath ).build();
     }
 }

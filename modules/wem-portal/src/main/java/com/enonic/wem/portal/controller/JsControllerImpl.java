@@ -6,6 +6,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.module.ModuleResourceKey;
@@ -64,7 +65,7 @@ final class JsControllerImpl
         return set;
     }
 
-    private ScriptSource findScript( final String method )
+    private Optional<ScriptSource> findScript( final String method )
     {
         final ResourcePath path = this.scriptDir.getPath().resolve( method.toLowerCase() + ".js" );
         final ModuleResourceKey key = new ModuleResourceKey( this.scriptDir.getModuleKey(), path );
@@ -80,10 +81,10 @@ final class JsControllerImpl
     public Response execute()
     {
         final String method = this.context.getRequest().getMethod();
-        final ScriptSource script = findScript( method );
-        if ( script != null )
+        final Optional<ScriptSource> script = findScript( method );
+        if ( script.isPresent() )
         {
-            return doExecute( script );
+            return doExecute( script.get() );
         }
 
         if ( method.equals( HttpMethod.OPTIONS ) )

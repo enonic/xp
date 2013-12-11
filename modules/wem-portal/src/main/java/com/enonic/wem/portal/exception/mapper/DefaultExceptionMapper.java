@@ -16,7 +16,14 @@ public final class DefaultExceptionMapper
         final ExceptionRenderer renderer = new ExceptionRenderer();
         renderer.status( Response.Status.INTERNAL_SERVER_ERROR );
         renderer.title( "An error occured" );
-        renderer.description( e.getMessage() );
+
+        String description = e.getClass().getName();
+        if ( e.getMessage() != null )
+        {
+            description += ": " + e.getMessage();
+        }
+
+        renderer.description( description );
         renderer.exception( e );
         return renderer.render();
     }
