@@ -51,7 +51,7 @@ public class CreateModuleResourceHandlerTest
         when( systemConfig.getModulesDir() ).thenReturn( java.nio.file.Files.createTempDirectory( "module" ) );
         handler = new CreateModuleResourceHandler();
         handler.setContext( this.context );
-        handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
+        handler.setModuleResourcePathResolver( new ModuleResourcePathResolverImpl( systemConfig ) );
 
         createModule();
     }

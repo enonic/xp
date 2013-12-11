@@ -36,7 +36,7 @@ public class DeleteModuleHandlerTest
         handler = new DeleteModuleHandler();
         systemConfig = Mockito.mock( SystemConfig.class );
         moduleExporter = Mockito.mock( ModuleExporter.class );
-        handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
+        handler.setModuleResourcePathResolver( new ModuleResourcePathResolverImpl( systemConfig ) );
         handler.setModuleImporter( moduleExporter );
         tempDir = Files.createTempDirectory( "wemce" );
     }

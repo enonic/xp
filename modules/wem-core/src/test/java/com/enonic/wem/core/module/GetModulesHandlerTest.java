@@ -39,7 +39,7 @@ public class GetModulesHandlerTest
         systemConfig = Mockito.mock( SystemConfig.class );
         moduleExporter = Mockito.mock( ModuleExporter.class );
         handler.setSystemConfig( systemConfig );
-        handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
+        handler.setModuleResourcePathResolver( new ModuleResourcePathResolverImpl( systemConfig ) );
         handler.setModuleExporter( moduleExporter );
         tempDir = Files.createTempDirectory( "wemce" );
     }

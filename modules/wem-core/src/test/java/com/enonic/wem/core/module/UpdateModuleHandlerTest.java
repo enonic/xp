@@ -50,7 +50,7 @@ public class UpdateModuleHandlerTest
         handler = new UpdateModuleHandler();
         handler.setContext( this.context );
         handler.setSystemConfig( systemConfig );
-        handler.setModuleResourcePathResolver( new ModuleResourcePathResolver( systemConfig ) );
+        handler.setModuleResourcePathResolver( new ModuleResourcePathResolverImpl( systemConfig ) );
         handler.setModuleExporter( new ModuleExporter() );
     }
 

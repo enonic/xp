@@ -15,11 +15,14 @@ public final class MediaTypes
     private MediaTypes()
     {
         put( "gif", MediaType.GIF );
-        put( "html", MediaType.HTML_UTF_8 );
+        put( "png", MediaType.PNG );
+        put( "jpeg", MediaType.JPEG );
+        put( "jpg", MediaType.JPEG );
         put( "pdf", MediaType.PDF );
         put( "json", MediaType.JSON_UTF_8 );
+        put( "js", MediaType.JAVASCRIPT_UTF_8 );
         put( "css", MediaType.CSS_UTF_8 );
-        put( "jpeg", MediaType.JPEG );
+        put( "html", MediaType.HTML_UTF_8 );
         put( "xml", MediaType.XML_UTF_8 );
     }
 
