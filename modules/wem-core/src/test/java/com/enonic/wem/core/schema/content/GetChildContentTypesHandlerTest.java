@@ -10,6 +10,7 @@ import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.command.schema.content.GetChildContentTypes;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -40,31 +41,31 @@ public class GetChildContentTypesHandlerTest
 
         final Node node1 = Node.newNode().
             id( EntityId.from( "1" ) ).
-            name( ContentTypeName.unstructured().toString() ).
+            name( NodeName.from( ContentTypeName.unstructured().toString() ) ).
             property( "displayName", "Unstructured root content type" ).
             property( "builtIn", "true" ).
             build();
         final Node node2 = Node.newNode().
             id( EntityId.from( "2" ) ).
-            name( "my_type" ).
+            name( NodeName.from( "my_type" ) ).
             property( "displayName", "My content type" ).
-            property( "superType", node1.name() ).
+            property( "superType", node1.name().toString() ).
             build();
         final Node node3 = Node.newNode().
             id( EntityId.from( "3" ) ).
-            name( "sub_type_1" ).
+            name( NodeName.from( "sub_type_1" ) ).
             property( "displayName", "My sub-content-1 type" ).
-            property( "superType", node2.name() ).
+            property( "superType", node2.name().toString() ).
             build();
         final Node node4 = Node.newNode().
             id( EntityId.from( "4" ) ).
-            name( "sub_type_2" ).
+            name( NodeName.from( "sub_type_2" ) ).
             property( "displayName", "My sub-content-2 type" ).
-            property( "superType", node2.name() ).
+            property( "superType", node2.name().toString() ).
             build();
         final Node node5 = Node.newNode().
             id( EntityId.from( "5" ) ).
-            name( ContentTypeName.folder().toString() ).
+            name( NodeName.from( ContentTypeName.folder().toString() ) ).
             property( "displayName", "Folder root content type" ).
             property( "builtIn", "true" ).
             build();
@@ -73,7 +74,7 @@ public class GetChildContentTypesHandlerTest
             Nodes.from( node1, node2, node3, node4, node5 ) );
 
         // exercise
-        GetChildContentTypes command = Commands.contentType().get().children().parentName( ContentTypeName.from( node5.name() ) );
+        GetChildContentTypes command = Commands.contentType().get().children().parentName( ContentTypeName.from( node5.name().toString() ) );
         this.handler.setCommand( command );
         this.handler.handle();
 
@@ -82,7 +83,7 @@ public class GetChildContentTypesHandlerTest
         assertEquals( 0, types.getSize() );
 
         // exercise
-        command = Commands.contentType().get().children().parentName( ContentTypeName.from( node1.name() ) );
+        command = Commands.contentType().get().children().parentName( ContentTypeName.from( node1.name().toString() ) );
         this.handler.setCommand( command );
         this.handler.handle();
 
@@ -92,7 +93,7 @@ public class GetChildContentTypesHandlerTest
         assertEquals( "my_type", types.get( 0 ).getName().toString() );
 
         // exercise
-        command = Commands.contentType().get().children().parentName( ContentTypeName.from( node2.name() ) );
+        command = Commands.contentType().get().children().parentName( ContentTypeName.from( node2.name().toString() ) );
         this.handler.setCommand( command );
         this.handler.handle();
 

@@ -14,6 +14,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.Form;
@@ -130,7 +131,7 @@ public class ContentTypeNodeTranslator
             public Node.EditBuilder edit( final Node toBeEdited )
             {
                 return Node.editNode( toBeEdited ).
-                    name( contentType.getName().toString() ).
+                    name( NodeName.from( contentType.getName().toString() ) ).
                     icon( contentType.getIcon() ).
                     rootDataSet( rootDataSet );
             }
@@ -166,7 +167,7 @@ public class ContentTypeNodeTranslator
 
         final ContentType.Builder builder = newContentType().
             id( new SchemaId( node.id().toString() ) ).
-            name( node.name() ).
+            name( node.name().toString() ).
             form( Form.newForm().addFormItems( formItems ).build() ).
             createdTime( node.getCreatedTime() ).
             creator( node.getCreator() ).

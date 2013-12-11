@@ -90,7 +90,7 @@ public class NodeIndexDocumentFactory
         if ( node.name() != null )
         {
             builder.addEntries(
-                IndexDocumentItemFactory.create( NAME_PROPERTY, new Value.String( node.name() ), namePropertyIndexConfig ) );
+                IndexDocumentItemFactory.create( NAME_PROPERTY, new Value.String( node.name().toString() ), namePropertyIndexConfig ) );
         }
 
         if ( node.getCreatedTime() != null )

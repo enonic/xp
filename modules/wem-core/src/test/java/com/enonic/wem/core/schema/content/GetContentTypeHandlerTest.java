@@ -11,6 +11,7 @@ import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -41,10 +42,10 @@ public class GetContentTypeHandlerTest
         throws Exception
     {
         final Node node = Node.newNode().
-            name( "content_type_1" ).
-            id( EntityId.from( "1" ) ).
-            property( "displayName", "DisplayName" ).
-            build();
+            name( NodeName.from( "content_type_1") ).
+                id( EntityId.from( "1" ) ).
+                property( "displayName", "DisplayName" ).
+                build();
 
         Mockito.when( client.execute( Mockito.isA( GetNodesByParent.class ) ) ).thenReturn( Nodes.from( node ) );
         Mockito.when( client.execute( Mockito.isA( GetNodeByPath.class ) ) ).thenReturn( node );

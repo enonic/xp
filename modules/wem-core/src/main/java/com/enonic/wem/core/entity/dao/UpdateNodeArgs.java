@@ -5,6 +5,7 @@ import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.NodeName;
 
 public class UpdateNodeArgs
 {
@@ -12,7 +13,7 @@ public class UpdateNodeArgs
 
     private final EntityId nodeToUpdate;
 
-    private final String name;
+    private final NodeName name;
 
     private final Icon icon;
 
@@ -37,7 +38,7 @@ public class UpdateNodeArgs
         return nodeToUpdate;
     }
 
-    String name()
+    NodeName name()
     {
         return name;
     }
@@ -63,7 +64,7 @@ public class UpdateNodeArgs
 
         private EntityId nodeToUpdate;
 
-        private String name;
+        private NodeName name;
 
         private Icon icon;
 
@@ -81,7 +82,7 @@ public class UpdateNodeArgs
             return this;
         }
 
-        public Builder name( String value )
+        public Builder name( NodeName value )
         {
             this.name = value;
             return this;

@@ -15,6 +15,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.FormItems;
@@ -86,7 +87,7 @@ class MixinNodeTranslator
             public Node.EditBuilder edit( final Node toBeEdited )
             {
                 return Node.editNode( toBeEdited ).
-                    name( mixin.getName().toString() ).
+                    name( NodeName.from( mixin.getName().toString() ) ).
                     icon( mixin.getIcon() ).
                     rootDataSet( rootDataSet );
             }
@@ -110,7 +111,7 @@ class MixinNodeTranslator
 
         return newMixin().
             id( new SchemaId( node.id().toString() ) ).
-            name( node.name() ).
+            name( node.name().toString() ).
             displayName( node.property( "displayName" ).getString() ).
             formItems( formItems ).
             createdTime( node.getCreatedTime() ).

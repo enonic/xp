@@ -14,7 +14,7 @@ public class ContentFactory
     {
         return newContent().
             id( ContentId.from( node.id().toString() ) ).
-            name( node.name() ).
+            name( node.name().toString() ).
             displayName( node.property( "displayName" ).getString() ).
             createdTime( node.getCreatedTime() ).
             creator( node.getCreator() ).

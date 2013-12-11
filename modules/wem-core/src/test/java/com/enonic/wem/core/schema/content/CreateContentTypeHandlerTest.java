@@ -11,6 +11,7 @@ import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -61,7 +62,7 @@ public class CreateContentTypeHandlerTest
             contentDisplayNameScript( contentType.getContentDisplayNameScript() );
 
         final Node node = Node.newNode().
-            name( contentType.getName().toString() ).
+            name( NodeName.from( contentType.getName().toString() ) ).
             id( EntityId.from( "1" ) ).
             property( "displayName", contentType.getDisplayName() ).
             build();
@@ -94,7 +95,7 @@ public class CreateContentTypeHandlerTest
             build();
 
         final Node node = Node.newNode().
-            name( contentType.getName().toString() ).
+            name( NodeName.from( contentType.getName().toString() ) ).
             id( EntityId.from( "1" ) ).
             property( "displayName", "Inheriting a final ContentType" ).
             property( "superType", ContentTypeName.shortcut().toString() ).

@@ -46,14 +46,14 @@ public abstract class AbstractNodeDaoTest
         rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
         CreateNodeArguments createNodeArguments = newCreateNodeArgs().
             parent( NodePath.ROOT ).
-            name( "myItem" ).
+            name( "my-item" ).
             rootDataSet( rootDataSet ).
             build();
 
         // exercise
         Node persisted = dao.createNode( createNodeArguments );
         assertNotNull( persisted.id() );
-        assertEquals( "myItem", persisted.name() );
+        assertEquals( "my-item", persisted.name().toString() );
         assertEquals( "A", persisted.property( "propertyOfItem" ).getString() );
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractNodeDaoTest
         {
             list.add( newCreateNodeArgs().
                 parent( NodePath.ROOT ).
-                name( "myItem-" + i ).
+                name( "my-item-" + i ).
                 rootDataSet( rootDataSet ).
                 build() );
         }
@@ -103,7 +103,7 @@ public abstract class AbstractNodeDaoTest
         rootDataSet.setProperty( "propertyOfItem", new Value.String( "A" ) );
         CreateNodeArguments createNodeArguments = newCreateNodeArgs().
             parent( NodePath.ROOT ).
-            name( "myItem" ).
+            name( "my-item" ).
             rootDataSet( rootDataSet ).
             build();
 
@@ -175,7 +175,7 @@ public abstract class AbstractNodeDaoTest
         // setup
         dao.createNode( newCreateNodeArgs().
             parent( NodePath.ROOT ).
-            name( "myItem" ).
+            name( "my-item" ).
             build() );
 
         // exercise
@@ -183,14 +183,14 @@ public abstract class AbstractNodeDaoTest
         {
             dao.createNode( newCreateNodeArgs().
                 parent( NodePath.ROOT ).
-                name( "myItem" ).
+                name( "my-item" ).
                 build() );
             fail( "Expected exception ItemAlreadyExist" );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof NodeAlreadyExist );
-            assertEquals( "Node already exist: /myItem", e.getMessage() );
+            assertEquals( "Node already exist: /my-item", e.getMessage() );
         }
     }
 }
