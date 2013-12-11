@@ -5,6 +5,7 @@ module app_browse {
         constructor(actions:TemplateBrowseActions) {
             super();
 
+            this.addAction(actions.IMPORT_TEMPLATE);
             this.addAction(actions.NEW_TEMPLATE);
             this.addAction(actions.EDIT_TEMPLATE);
             this.addAction(actions.OPEN_TEMPLATE);

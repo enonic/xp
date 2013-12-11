@@ -1,10 +1,14 @@
-module api_module {
+module api_content_site_template {
 
-    export class InstallModuleRequest extends ModuleResourceRequest<api_module_json.ModuleSummaryJson> {
+    export class InstallSiteTemplateRequest
+        extends SiteTemplateResourceRequest<api_content_site_template_json.SiteTemplateSummaryJson>
+    {
 
         private uploader:any;
         private triggerElement:api_dom.Element;
         private isExternalTriggerElement:boolean = false;
+
+        private multiSelection:boolean = true;
 
         private deferred:JQueryDeferred<api_rest.Response>;
 
@@ -24,7 +28,12 @@ module api_module {
         }
 
         getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "install");
+            return api_rest.Path.fromParent(super.getResourcePath(), "import");
+        }
+
+        setMultiSelection(value:boolean):InstallSiteTemplateRequest {
+            this.multiSelection = value;
+            return this;
         }
 
         send():JQueryPromise<api_rest.Response> {
@@ -35,7 +44,7 @@ module api_module {
             return this.deferred;
         }
 
-        done(fn:(resp:api_rest.JsonResponse<api_module_json.ModuleSummaryJson>[])=>void) {
+        done(fn:(resp:InstallSiteTemplateResponse)=>void) {
             this.deferred.done(fn);
         }
 
@@ -49,11 +58,12 @@ module api_module {
 
         private createUploader(triggerElement:api_dom.Element):any {
             if (!plupload) {
-                throw new Error("ImageUploader: plupload not found, check if it is included in page.");
+                throw new Error("InstallSiteTemplateRequest: plupload not found, check if it is included in page.");
             }
+
             this.uploader = new plupload.Uploader({
                 runtimes: 'gears,html5,flash,silverlight,browserplus',
-                multi_selection: true,
+                multi_selection: this.multiSelection,
                 browse_button: triggerElement.getId(),
                 url: this.getRequestPath(),
                 multipart: true,
@@ -69,10 +79,10 @@ module api_module {
                 up.start();
             });
 
-            var results:api_rest.JsonResponse<api_module_json.ModuleSummaryJson>[] = [];
+            var results:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>[] = [];
             this.uploader.bind('FileUploaded', (up, file, response) => {
                 if (response && response.status === 200) {
-                    results.push(new api_rest.JsonResponse<api_module_json.ModuleSummaryJson>(response.response));
+                    results.push(new api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>(response.response));
                 } else {
                     this.deferred.reject(new api_rest.RequestError(response.status, response.statusText, response.responseText, null));
                 }
@@ -80,7 +90,7 @@ module api_module {
             });
 
             this.uploader.bind('UploadComplete', (up, files) => {
-                this.deferred.resolve(new InstallModuleResponse(results));
+                this.deferred.resolve(new InstallSiteTemplateResponse(results));
             });
 
             this.uploader.bind('Error', (up, files) => {
@@ -94,25 +104,25 @@ module api_module {
 
     }
 
-    export class InstallModuleResponse extends api_rest.Response {
+    export class InstallSiteTemplateResponse extends api_rest.Response {
 
-        private modules:ModuleSummary[] = [];
+        private templates:SiteTemplateSummary[] = [];
         private errors:string[] = [];
 
-        constructor (moduleResponses:api_rest.JsonResponse<api_module_json.ModuleSummaryJson>[]) {
+        constructor (templateResponses:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>[]) {
             super();
-            moduleResponses.forEach((response:api_rest.JsonResponse<api_module_json.ModuleSummaryJson>) => {
+            templateResponses.forEach((response:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>) => {
                 var responseJson = response.getJson();
                 if (responseJson.result) {
-                    this.modules.push(new ModuleSummary(responseJson.result));
+                    this.templates.push(new SiteTemplateSummary(responseJson.result));
                 } else {
                     this.errors.push(responseJson.error.message);
                 }
             });
         }
 
-        getModules():ModuleSummary[] {
-            return this.modules;
+        getSiteTemplates():SiteTemplateSummary[] {
+            return this.templates;
         }
 
         getErrors():string[] {

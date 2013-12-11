@@ -47,6 +47,11 @@ module app_browse {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }
             });
+
+            api_content_site_template.SiteTemplateImportedEvent.on(() => {
+                this.setRefreshNeeded(true);
+                this.refreshFilterAndGrid();
+            });
         }
 
         extModelsToBrowseItems(models: Ext_data_Model[]): api_app_browse.BrowseItem<api_content_site_template.SiteTemplateSummary>[] {

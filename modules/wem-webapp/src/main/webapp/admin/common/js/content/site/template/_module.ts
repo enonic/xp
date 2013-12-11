@@ -4,4 +4,7 @@
 ///<reference path='GetAllSiteTemplatesRequest.ts' />
 ///<reference path='GetSiteTemplateRequest.ts' />
 ///<reference path='DeleteSiteTemplateRequest.ts' />
+///<reference path='InstallSiteTemplateRequest.ts' />
+
 ///<reference path='SiteTemplateDeletedEvent.ts' />
+///<reference path='SiteTemplateImportedEvent.ts' />
