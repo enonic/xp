@@ -11,6 +11,7 @@ import com.enonic.wem.api.command.entity.GetNodesByPaths;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -41,12 +42,12 @@ public class GetContentTypesHandlerTest
     {
         final Nodes nodes = Nodes.newNodes().
             add( Node.newNode().
-                name( "content_type_1" ).
+                name( NodeName.from( "content_type_1" ) ).
                 id( EntityId.from( "1" ) ).
                 property( "displayName", "DisplayName" ).
                 build() ).
             add( Node.newNode().
-                name( "content_type_2" ).
+                name( NodeName.from( "content_type_2" ) ).
                 id( EntityId.from( "2" ) ).
                 property( "displayName", "DisplayName2" ).
                 build() ).

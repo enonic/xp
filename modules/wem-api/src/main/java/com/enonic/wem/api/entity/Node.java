@@ -16,7 +16,7 @@ public final class Node
     extends Entity
     implements ChangeTraceable, IllegalEditAware<Node>
 {
-    private final String name;
+    private final NodeName name;
 
     private final NodePath parent;
 
@@ -59,7 +59,7 @@ public final class Node
         Preconditions.checkNotNull( this.parent, "parent must be set" );
     }
 
-    public String name()
+    public NodeName name()
     {
         return name;
     }
@@ -125,7 +125,7 @@ public final class Node
         return new Builder( id );
     }
 
-    public static Builder newNode( final EntityId id, final String name )
+    public static Builder newNode( final EntityId id, final NodeName name )
     {
         return new Builder( id, name );
     }
@@ -144,7 +144,7 @@ public final class Node
     public static class BaseBuilder
         extends Entity.BaseBuilder
     {
-        String name;
+        NodeName name;
 
         NodePath parent;
 
@@ -174,7 +174,7 @@ public final class Node
             this.icon = node.icon;
         }
 
-        BaseBuilder( final EntityId id, final String name )
+        BaseBuilder( final EntityId id, final NodeName name )
         {
             this.id = id;
             this.name = name;
@@ -186,7 +186,7 @@ public final class Node
     {
         private final Node originalNode;
 
-        private String name;
+        private NodeName name;
 
         private Icon icon;
 
@@ -198,7 +198,7 @@ public final class Node
             this.originalNode = original;
         }
 
-        public EditBuilder name( final String value )
+        public EditBuilder name( final NodeName value )
         {
             changes.recordChange( newPossibleChange( "name" ).from( this.originalNode.name ).to( value ).build() );
             this.name = value;
@@ -227,7 +227,7 @@ public final class Node
     public static class Builder
         extends Entity.Builder<Builder>
     {
-        private String name;
+        private NodeName name;
 
         private Icon icon;
 
@@ -254,13 +254,13 @@ public final class Node
 
         }
 
-        public Builder( final EntityId id, final String name )
+        public Builder( final EntityId id, final NodeName name )
         {
             this.id = id;
             this.name = name;
         }
 
-        public Builder name( final String value )
+        public Builder name( final NodeName value )
         {
             this.name = value;
             return this;

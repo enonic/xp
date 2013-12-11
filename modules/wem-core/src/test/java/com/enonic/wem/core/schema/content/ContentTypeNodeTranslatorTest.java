@@ -13,6 +13,7 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
@@ -123,7 +124,7 @@ public class ContentTypeNodeTranslatorTest
         final NodePath parentPath = NodePath.newPath( "my/test/parent" ).build();
         Node node = Node.newNode().
             id( EntityId.from( "1" ) ).
-            name( "my-name" ).
+            name( NodeName.from( "my-name" ) ).
             build();
 
         final ContentType contentType = translator.fromNode( node );
@@ -151,7 +152,7 @@ public class ContentTypeNodeTranslatorTest
         final NodePath parentPath = NodePath.newPath( "my/test/parent" ).build();
         Node node = Node.newNode().
             id( EntityId.from( "1" ) ).
-            name( "my-name" ).
+            name( NodeName.from( "my-name" ) ).
             rootDataSet( rootDataSet ).
             build();
 

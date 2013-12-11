@@ -20,9 +20,9 @@ public class NodePath
         super( new Builder( path ) );
     }
 
-    public NodePath( final NodePath parent, final String element )
+    public NodePath( final NodePath parent, final NodeName element )
     {
-        super( new Builder( parent ).addElement( element ) );
+        super( new Builder( parent ).addElement( element.toString() ) );
     }
 
     public NodePath( final Builder builder )

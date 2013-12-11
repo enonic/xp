@@ -14,6 +14,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -57,12 +58,12 @@ public class GetAllContentTypesHandlerTest
 
         final Nodes nodes = Nodes.newNodes().
             add( Node.newNode().
-                name( contentType1Name ).
+                name( NodeName.from( contentType1Name ) ).
                 id( EntityId.from( "123" ) ).
                 property( "displayName", "DisplayName" ).
                 build() ).
             add( Node.newNode().
-                name( contentType2Name ).
+                name( NodeName.from( contentType2Name ) ).
                 id( EntityId.from( "234" ) ).
                 property( "displayName", "DisplayName2" ).
                 build() ).
@@ -100,7 +101,7 @@ public class GetAllContentTypesHandlerTest
 
         final Nodes nodes = Nodes.newNodes().
             add( Node.newNode().
-                name( "my-contenttype-1" ).
+                name( NodeName.from( "my-contenttype-1" ) ).
                 id( EntityId.from( "1" ) ).
                 rootDataSet( rootDataSetWithForm ).
                 build() ).

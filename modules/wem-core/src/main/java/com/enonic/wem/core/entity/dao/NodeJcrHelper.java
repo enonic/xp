@@ -72,7 +72,7 @@ public class NodeJcrHelper
     {
         try
         {
-            final javax.jcr.Node newNodeJcrNode = parentJcrNode.addNode( node.name(), JcrConstants.ITEM_NODETYPE );
+            final javax.jcr.Node newNodeJcrNode = parentJcrNode.addNode( node.name().toString(), JcrConstants.ITEM_NODETYPE );
             updateItemNode( newNodeJcrNode, node );
             return NodeJcrMapper.toNode( newNodeJcrNode ).build();
         }
@@ -80,7 +80,7 @@ public class NodeJcrHelper
         {
             try
             {
-                final javax.jcr.Node existingNodeNode = parentJcrNode.getNode( node.name() );
+                final javax.jcr.Node existingNodeNode = parentJcrNode.getNode( node.name().toString() );
                 final Node existingNode = NodeJcrMapper.toNode( existingNodeNode ).build();
                 throw new NodeAlreadyExist( existingNode.path() );
             }
@@ -129,7 +129,7 @@ public class NodeJcrHelper
     {
         try
         {
-            final boolean nameChanged = !existingNodeNode.getName().equals( updateNodeArgs.name() );
+            final boolean nameChanged = !existingNodeNode.getName().equals( updateNodeArgs.name().toString() );
             if ( nameChanged )
             {
                 final NodePath existingNodePath = NodeJcrMapper.resolveNodePath( existingNodeNode );

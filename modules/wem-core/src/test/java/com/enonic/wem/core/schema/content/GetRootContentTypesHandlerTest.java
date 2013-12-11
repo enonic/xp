@@ -10,6 +10,7 @@ import com.enonic.wem.api.command.entity.GetNodesByParent;
 import com.enonic.wem.api.command.schema.content.GetRootContentTypes;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -41,13 +42,13 @@ public class GetRootContentTypesHandlerTest
         final Nodes nodes = Nodes.newNodes().
             add( Node.newNode().
                 id( EntityId.from( "1" ) ).
-                name( "my_content_type1" ).
+                name( NodeName.from( "my_content_type1" ) ).
                 property( "displayName", "Display Name 1" ).
                 property( "builtIn", Boolean.toString( true ) ).
                 build() ).
             add( Node.newNode().
                 id( EntityId.from( "2" ) ).
-                name( "my_content_type2" ).
+                name( NodeName.from( "my_content_type2" ) ).
                 property( "displayName", "Display Name 2" ).
                 property( "superType", "my_content_type1" ).
                 build() ).

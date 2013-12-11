@@ -16,6 +16,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItems;
@@ -54,7 +55,7 @@ public class ContentNodeTranslator
 
         return Node.newNode().
             id( content.getId() != null ? EntityId.from( content.getId() ) : null ).
-            name( ContentToNodeNameResolver.resolve( content ) ).
+            name( NodeName.from( ContentToNodeNameResolver.resolve( content ) ) ).
             parent( parentNodePath ).
             rootDataSet( rootDataSet ).
             entityIndexConfig( entityIndexConfig ).
@@ -119,7 +120,7 @@ public class ContentNodeTranslator
             public Node.EditBuilder edit( final Node toBeEdited )
             {
                 return Node.editNode( toBeEdited ).
-                    name( content.getName() ).
+                    name( NodeName.from( content.getName() ) ).
                     rootDataSet( rootDataSet );
             }
         };
@@ -171,7 +172,7 @@ public class ContentNodeTranslator
         final Content.Builder builder = Content.newContent().
             id( ContentId.from( node.id().toString() ) ).
             parentPath( ContentPath.from( node.path().getParentPath().removeFromBeginning( CONTENTS_ROOT_PATH ).toString() ) ).
-            name( node.name() ).
+            name( node.name().toString() ).
             form( Form.newForm().addFormItems( formItems ).build() ).
             createdTime( node.getCreatedTime() ).
             creator( node.getCreator() ).

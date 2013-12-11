@@ -11,6 +11,7 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.jcr.JcrHelper;
 import com.enonic.wem.core.support.dao.IconJcrMapper;
@@ -79,7 +80,7 @@ class NodeJcrMapper
             NodePath parentNodePath = nodePath.getParentPath();
 
             final EntityId entityId = EntityId.from( jcrNode.getIdentifier() );
-            final Node.Builder builder = Node.newNode( entityId, jcrNode.getName() );
+            final Node.Builder builder = Node.newNode( entityId, NodeName.from( jcrNode.getName() ) );
             builder.parent( parentNodePath );
             builder.creator( JcrHelper.getPropertyUserKey( jcrNode, CREATOR ) );
             builder.createdTime( getPropertyDateTime( jcrNode, CREATED_TIME ) );

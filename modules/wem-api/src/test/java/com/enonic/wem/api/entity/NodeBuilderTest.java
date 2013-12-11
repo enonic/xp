@@ -16,7 +16,7 @@ public class NodeBuilderTest
     public void build_given_no_properties_then_rootDataSet_not_null()
         throws Exception
     {
-        final Node myNode = Node.newNode().name( "myNode" ).parent( NodePath.ROOT ).build();
+        final Node myNode = Node.newNode().name( NodeName.from( "my-node" ) ).parent( NodePath.ROOT ).build();
         assertNotNull( myNode.data() );
     }
 
@@ -41,7 +41,7 @@ public class NodeBuilderTest
     {
 
         final Node myNode = Node.newNode().
-            name( "myNode" ).
+            name( NodeName.from( "my-node" ) ).
             parent( NodePath.ROOT ).
             property( "testPath", "testValue" ).
             build();
@@ -58,7 +58,7 @@ public class NodeBuilderTest
     {
 
         final Node myNode = Node.newNode().
-            name( "myNode" ).
+            name( NodeName.from( "my-node" ) ).
             parent( NodePath.ROOT ).
             property( "testPath", 1L ).
             build();
@@ -75,7 +75,7 @@ public class NodeBuilderTest
     {
 
         final Node myNode = Node.newNode().
-            name( "myNode" ).
+            name( NodeName.from( "my-node" ) ).
             parent( NodePath.ROOT ).
             property( "testPath", DateTime.now() ).
             build();
@@ -92,7 +92,7 @@ public class NodeBuilderTest
     {
 
         final Node myNode = Node.newNode().
-            name( "myNode" ).
+            name( NodeName.from( "my-node" ) ).
             parent( NodePath.ROOT ).
             property( "testPath", new Value.GeoPoint( "79,80" ) ).
             build();
@@ -107,14 +107,14 @@ public class NodeBuilderTest
     public void build_given_path()
     {
         final Node myNode = Node.newNode().
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             path( "test" ).
             build();
 
         final NodePath path = myNode.path();
 
-        assertEquals( "test/myName", myNode.path().toString() );
+        assertEquals( "test/my-name", myNode.path().toString() );
     }
 
     @Test
@@ -125,7 +125,7 @@ public class NodeBuilderTest
         DateTime dateTime = new DateTime( 2013, 10, 25, 10, 43 );
 
         final Node myNode = Node.newNode().
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             modifiedTime( dateTime ).
             createdTime( dateTime ).
@@ -150,12 +150,12 @@ public class NodeBuilderTest
     {
 
         final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             build();
 
         final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             parent( NodePath.newPath( "test" ).build() ).
             build();
 
@@ -168,12 +168,12 @@ public class NodeBuilderTest
     {
 
         final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             build();
 
         final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             modifier( UserKey.from( "test:modifier" ) ).
             build();
@@ -187,12 +187,12 @@ public class NodeBuilderTest
     {
 
         final Node myNode = Node.newNode( EntityId.from( "myid" ) ).
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             build();
 
         final Node myEditedNode = Node.newNode( EntityId.from( "myid" ) ).
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             parent( NodePath.ROOT ).
             property( "data", "myData" ).
             build();

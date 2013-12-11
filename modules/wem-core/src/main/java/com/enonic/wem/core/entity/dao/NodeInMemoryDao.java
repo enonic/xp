@@ -12,6 +12,7 @@ import com.enonic.wem.api.entity.NoEntityFoundException;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeAlreadyExist;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 
@@ -45,7 +46,7 @@ public class NodeInMemoryDao
             createdTime( DateTime.now() ).
             creator( createNodeArguments.creator() ).
             parent( createNodeArguments.parent() ).
-            name( createNodeArguments.name() ).
+            name( NodeName.from( createNodeArguments.name() ) ).
             icon( createNodeArguments.icon() ).
             rootDataSet( createNodeArguments.rootDataSet() ).
             build();

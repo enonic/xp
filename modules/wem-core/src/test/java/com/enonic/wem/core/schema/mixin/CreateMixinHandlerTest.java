@@ -12,6 +12,7 @@ import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -42,7 +43,7 @@ public class CreateMixinHandlerTest
         // setup
         Node node = Node.newNode().
             id( EntityId.from( "abc" ) ).
-            name( "age" ).
+            name( NodeName.from( "age" ) ).
             property( "displayName", "Age" ).
             addDataSet( new DataSet( "formItems" ) ).
             build();

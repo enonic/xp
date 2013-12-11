@@ -13,6 +13,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
@@ -104,7 +105,7 @@ public class NodeIndexDocumentFactoryTest
         Node node = Node.newNode().
             id( EntityId.from( "myId" ) ).
             parent( NodePath.ROOT ).
-            name( "myName" ).
+            name( NodeName.from( "my-name" ) ).
             createdTime( DateTime.now() ).
             creator( UserKey.from( "test:creator" ) ).
             modifier( UserKey.from( "test:modifier" ).asUser() ).
