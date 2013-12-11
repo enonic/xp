@@ -1,5 +1,9 @@
 package com.enonic.wem;
 
+import java.util.Properties;
+
+import com.google.common.base.Strings;
+
 public final class Version
 {
     private final static String BANNER = "" +
@@ -14,7 +18,46 @@ public final class Version
 
     private Version()
     {
-        setVersion( getClass().getPackage().getImplementationVersion() );
+        try
+        {
+            loadProperties();
+        }
+        catch ( final Exception e )
+        {
+            throw new Error( "Failed to load version.properties", e );
+        }
+    }
+
+    private void loadProperties()
+        throws Exception
+    {
+        final Properties props = new Properties();
+        props.load( getClass().getResourceAsStream( "version.properties" ) );
+
+        this.version = getProperty( props, "version", "x.x.x" );
+
+        final String timestamp = getProperty( props, "timestamp", null );
+        if ( timestamp != null )
+        {
+            this.version = this.version.replace( "SNAPSHOT", timestamp );
+        }
+    }
+
+    private static String getProperty( final Properties props, final String name, final String defValue )
+    {
+        final String value = props.getProperty( name );
+        if ( Strings.isNullOrEmpty( value ) )
+        {
+            return defValue;
+        }
+        else if ( value.startsWith( "${" ) )
+        {
+            return defValue;
+        }
+        else
+        {
+            return value;
+        }
     }
 
     public String getName()
