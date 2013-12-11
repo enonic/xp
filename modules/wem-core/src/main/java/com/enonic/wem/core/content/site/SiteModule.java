@@ -21,5 +21,6 @@ public class SiteModule
         commands.add( GetSiteTemplateByKeyHandler.class );
         commands.add( CreateSiteTemplateHandler.class );
         commands.add( GetAllSiteTemplatesHandler.class );
+        commands.add( GetNearestSiteByContentIdHandler.class );
     }
 }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.wem.admin.json.content.site.ModuleConfigJson;
+import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.UpdateSite;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.site.Site;
@@ -23,7 +24,7 @@ public class UpdateSiteJson
     UpdateSiteJson( @JsonProperty("contentId") String content, @JsonProperty("siteTemplateKey") final String siteTemplate,
                     @JsonProperty("moduleConfigs") final List<ModuleConfigJson> moduleConfigs )
     {
-        this.updateSite = new UpdateSite().
+        this.updateSite = Commands.site().update().
             content( ContentId.from( content ) ).
             editor( new SiteEditor()
             {
