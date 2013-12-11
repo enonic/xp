@@ -634,23 +634,21 @@ public class ContentResourceTest
         assertJson( "delete_content_both.json", jsonString );
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void create_content_exception()
         throws Exception
     {
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
-        CreateContent command = new CreateContent().displayName( "Content One" ).parent( ContentPath.from( "parent-path" ) );
-        Exception e = new Exception( "Exception occured." );
+        IllegalArgumentException e = new IllegalArgumentException( "Exception occured." );
 
-        Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenThrow( new CreateContentException( command, e ) );
+        Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenThrow( e );
 
-        String jsonString = resource().path( "content/create" ).
+        resource().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
 
-        assertJson( "create_content_exception.json", jsonString );
     }
 
     @Test

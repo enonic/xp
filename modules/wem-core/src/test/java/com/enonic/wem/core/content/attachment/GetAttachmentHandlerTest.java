@@ -6,11 +6,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.attachment.GetAttachment;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 
@@ -47,8 +47,7 @@ public class GetAttachmentHandlerTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment = newAttachment().blobKey( new BlobKey( "ABC" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         when( attachmentDao.getAttachmentByPath( isA( ContentPath.class ), isA( String.class ), any( Session.class ) ) ).thenReturn(
             attachment );
 

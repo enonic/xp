@@ -3,31 +3,34 @@ package com.enonic.wem.admin.rest.resource.upload;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.admin.rest.service.upload.UploadItem;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
+import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.blob.CreateBlob;
+import com.enonic.wem.api.command.content.blob.GetBlob;
 
 @Path("upload")
 @Produces(MediaType.APPLICATION_JSON)
 public final class UploadResource
+    extends AbstractResource
 {
-    private UploadService uploadService;
-
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public JsonResult upload( final FormDataMultiPart formDataMultiPart )
@@ -51,22 +54,18 @@ public final class UploadResource
     public Response getUploadedContent( @PathParam("id") final String id )
         throws Exception
     {
-        final UploadItem item = this.uploadService.getItem( id );
-        if ( item == null )
-        {
-            throw new WebApplicationException( Response.Status.NOT_FOUND );
-        }
-
+        final GetBlob getBlob = Commands.blob().get( new BlobKey( id ) );
+        final Blob blob = client.execute( getBlob );
         MediaType mediaType;
         try
         {
-            mediaType = MediaType.valueOf( item.getMimeType() );
+            mediaType = MediaType.valueOf( "png" ); // TODO: resolve mimetype form path
         }
         catch ( IllegalArgumentException e )
         {
             mediaType = MediaType.WILDCARD_TYPE;
         }
-        return Response.ok( item.getFile(), mediaType ).build();
+        return Response.ok( blob.getStream(), mediaType ).build();
     }
 
     private void upload( final List<UploadItem> items, final InputStream fileInputStream, final FormDataBodyPart formDataBodyPart )
@@ -75,13 +74,17 @@ public final class UploadResource
         final String name = formDataBodyPart.getContentDisposition().getFileName();
         final String mediaType = formDataBodyPart.getMediaType().toString();
 
-        final UploadItem item = this.uploadService.upload( name, mediaType, fileInputStream );
+        final CreateBlob createBlob = Commands.blob().create( fileInputStream );
+        final Blob blob = client.execute( createBlob );
+        final UploadItem item = UploadItem.newUploadItem().
+            mimeType( mediaType ).
+            size( blob.getLength() ).
+            name( name ).
+            uploadTime( DateTime.now().getMillis() ).
+            blobKey( blob.getKey() ).
+            build();
+
         items.add( item );
     }
 
-    @Inject
-    public void setUploadService( final UploadService uploadService )
-    {
-        this.uploadService = uploadService;
-    }
 }

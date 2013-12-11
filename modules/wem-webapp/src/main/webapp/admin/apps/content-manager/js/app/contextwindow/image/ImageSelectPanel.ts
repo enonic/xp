@@ -133,8 +133,9 @@ module app_contextwindow_image {
                 onOptionSelected: (item:api_ui_combobox.Option<api_content.ContentSummary>) => {
                     console.log("On option selected");
                     //TODO: Mocked live use of image
+                    var iconUrl = item.displayValue.getIconUrl();
                     this.selectedOption = item;
-                    this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, item.displayValue.getIconUrl());
+                    this.contextWindow.getLiveEditWindow().LiveEdit.component.dragdropsort.EmptyComponent.loadComponent('10070', this.liveEditIndex, iconUrl);
                     this.liveEditItems[this.liveEditIndex] = item.displayValue;
                     this.itemSelected();
                     this.liveEditIndex++;

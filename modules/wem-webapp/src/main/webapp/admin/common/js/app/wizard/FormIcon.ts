@@ -6,7 +6,7 @@ module api_app_wizard {
 
         onUploadStarted?();
 
-        onUploadFinished?(uploadId:string, mimeType:string, uploadName:string);
+        onUploadFinished?(uploadItem:api_ui.UploadItem);
     }
 
     export class FormIcon extends api_dom.ButtonEl implements api_event.Observable {
@@ -124,7 +124,14 @@ module api_app_wizard {
                     responseObj = Ext.decode(response.response);
                     if (responseObj.items && responseObj.items.length > 0) {
                         var file = responseObj.items[0];
-                        this.notifyUploadFinished(file.id, file.mimeType, file.name);
+
+                        var uploadItem:api_ui.UploadItem = new api_ui.UploadItemBuilder().
+                            setId(file.id).
+                            setName(file.name).
+                            setMimeType(file.mimeType).
+                            setSize(file.size).
+                            build();
+                        this.notifyUploadFinished(uploadItem);
                     }
                 }
 
@@ -153,10 +160,10 @@ module api_app_wizard {
             });
         }
 
-        private notifyUploadFinished(uploadId:string, mimeType:string, uploadName:string) {
+        private notifyUploadFinished(uploadItem:api_ui.UploadItem) {
             this.listeners.forEach((listener:FormIconListener) => {
                 if (listener.onUploadFinished) {
-                    listener.onUploadFinished(uploadId, mimeType, uploadName);
+                    listener.onUploadFinished(uploadItem);
                 }
             });
         }

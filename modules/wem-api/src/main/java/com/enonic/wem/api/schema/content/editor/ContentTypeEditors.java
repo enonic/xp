@@ -1,6 +1,6 @@
 package com.enonic.wem.api.schema.content.editor;
 
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.icon.Icon;
 
 public final class ContentTypeEditors
 {

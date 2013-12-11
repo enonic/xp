@@ -77,18 +77,17 @@ public class SiteResource
     @POST
     @Path("nearest")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Result getNearest( final GetNearestSiteJson params )
+    public ContentJson getNearest( final GetNearestSiteJson params )
     {
-        try
+        final GetNearestSiteByContentId command = params.getGetNearestSiteByContentId();
+        final Content nearestSite = client.execute( command );
+        if ( nearestSite != null )
         {
-            final GetNearestSiteByContentId command = params.getGetNearestSiteByContentId();
-            final Content nearestSite = client.execute( command );
-
-            return Result.result( new ContentJson( nearestSite ) );
+            return new ContentJson( nearestSite );
         }
-        catch ( Exception e )
+        else
         {
-            return Result.exception( e );
+            return null;
         }
     }
 }

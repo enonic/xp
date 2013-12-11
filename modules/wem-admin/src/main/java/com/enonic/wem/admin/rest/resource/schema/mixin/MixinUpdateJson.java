@@ -1,5 +1,6 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
+import com.enonic.wem.admin.json.icon.IconJson;
 import com.enonic.wem.api.schema.mixin.MixinName;
 
 public class MixinUpdateJson
@@ -10,7 +11,7 @@ public class MixinUpdateJson
 
     private String config;
 
-    private String iconReference;
+    private IconJson icon;
 
     public MixinName getMixinToUpdate()
     {
@@ -42,13 +43,13 @@ public class MixinUpdateJson
         this.config = config;
     }
 
-    public String getIconReference()
+    public IconJson getIconJson()
     {
-        return iconReference;
+        return icon;
     }
 
-    public void setIconReference( final String iconReference )
+    public void setIcon( final IconJson icon )
     {
-        this.iconReference = iconReference;
+        this.icon = icon;
     }
 }

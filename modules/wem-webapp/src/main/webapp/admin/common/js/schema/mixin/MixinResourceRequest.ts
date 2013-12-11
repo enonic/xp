@@ -11,5 +11,9 @@ module api_schema_mixin {
         getResourcePath():api_rest.Path {
             return this.resourceUrl;
         }
+
+        fromJsonToMixin(json:api_schema_mixin_json.MixinJson) {
+            return new Mixin(json);
+        }
     }
 }

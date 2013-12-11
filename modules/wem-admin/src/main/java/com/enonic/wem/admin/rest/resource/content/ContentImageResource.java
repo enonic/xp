@@ -13,15 +13,15 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -35,13 +35,15 @@ import static com.enonic.wem.api.command.Commands.contentType;
 @Produces("image/*")
 public class ContentImageResource
 {
-    private final ContentImageHelper helper;
+    private ContentImageHelper helper;
 
     private Client client;
 
-    public ContentImageResource()
+    @Inject
+    public void setClient( final Client client )
     {
-        this.helper = new ContentImageHelper();
+        this.client = client;
+        this.helper = new ContentImageHelper( client );
     }
 
     @GET
@@ -69,7 +71,8 @@ public class ContentImageResource
             final Attachment attachmentThumbnail = findAttachment( contentId, CreateContent.THUMBNAIL_NAME );
             if ( attachmentThumbnail != null )
             {
-                final BufferedImage thumbnailImage = helper.getImageFromBinary( attachmentThumbnail.getBinary(), size, ScaleSquareFilter );
+                final Blob blob = client.execute( Commands.blob().get( attachmentThumbnail.getBlobKey() ) );
+                final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
                 return Response.ok( thumbnailImage, attachmentThumbnail.getMimeType() ).build();
             }
         }
@@ -82,21 +85,26 @@ public class ContentImageResource
             final String attachmentName = getImageAttachmentName( content );
             final Attachment attachment = findAttachment( contentId, attachmentName );
 
-            final Binary binary = attachment.getBinary();
+            final Blob blob = client.execute( Commands.blob().get( attachment.getBlobKey() ) );
             if ( thumbnail )
             {
-                contentImage = helper.getImageFromBinary( binary, size, ScaleSquareFilter );
+                contentImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
             }
             else
             {
-                contentImage = helper.getImageFromBinary( binary, size, ScaleMax );
+                contentImage = helper.getImageFromBlob( blob, size, ScaleMax );
             }
             mimeType = attachment.getMimeType();
         }
         else
         {
             final Icon contentTypeIcon = findRootContentTypeIcon( contentType );
-            contentImage = helper.getIconImage( contentTypeIcon, size );
+            final Blob blob = client.execute( Commands.blob().get( contentTypeIcon.getBlobKey() ) );
+            if ( blob == null )
+            {
+                throw new WebApplicationException( Response.Status.NOT_FOUND );
+            }
+            contentImage = helper.resizeImage( blob, size );
             mimeType = contentTypeIcon.getMimeType();
         }
 
@@ -107,8 +115,8 @@ public class ContentImageResource
     {
         final ContentData contentData = content.getContentData();
 
-        final Property image = contentData.getProperty( "image" );
-        return image == null ? content.getName() : image.getAttachmentName();
+        final Property imageProperty = contentData.getProperty( "image" );
+        return imageProperty == null ? content.getName() : imageProperty.getString();
     }
 
     private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )
@@ -139,11 +147,5 @@ public class ContentImageResource
     private Attachment findAttachment( final ContentId contentId, final String attachmentName )
     {
         return client.execute( Commands.attachment().get().contentId( contentId ).attachmentName( attachmentName ) );
-    }
-
-    @Inject
-    public void setClient( final Client client )
-    {
-        this.client = client;
     }
 }

@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +16,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.inject.Inject;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
@@ -42,11 +39,8 @@ import com.enonic.wem.admin.rest.resource.content.json.FacetedContentIdListJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentListJson;
 import com.enonic.wem.admin.rest.resource.content.json.FacetedContentSummaryListJson;
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams;
-import com.enonic.wem.admin.rest.service.upload.UploadItem;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.FindContent;
@@ -63,7 +57,6 @@ import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
 import com.enonic.wem.api.content.query.ContentIndexQuery;
@@ -79,8 +72,6 @@ import static com.enonic.wem.api.content.Content.editContent;
 public class ContentResource
     extends AbstractResource
 {
-    private UploadService uploadService;
-
     private final String EXPAND_FULL = "full";
 
     private final String EXPAND_SUMMARY = "summary";
@@ -384,24 +375,13 @@ public class ContentResource
 
     @POST
     @Path("create")
-    public Result create( final CreateContentJson params )
+    public ContentJson create( final CreateContentJson params )
     {
-        try
-        {
-            final CreateContent createContent = params.getCreateContent();
-            final List<Attachment> attachments = parseAttachments( params.getAttachments() );
-            createContent.attachments( attachments );
+        final CreateContentResult createContentResult = client.execute( params.getCreateContent() );
 
-            final CreateContentResult createContentResult = client.execute( createContent );
+        final Content content = client.execute( Commands.content().get().byId( createContentResult.getContentId() ) );
 
-            final Content content = client.execute( Commands.content().get().byId( createContentResult.getContentId() ) );
-
-            return Result.result( new ContentJson( content ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        return new ContentJson( content );
     }
 
     @POST
@@ -474,33 +454,10 @@ public class ContentResource
         {
             for ( AttachmentJson attachmentJson : attachmentJsonList )
             {
-                attachments.add( createAttachment( attachmentJson ) );
+                attachments.add( attachmentJson.getAttachment() );
             }
         }
         return attachments;
     }
 
-    private Attachment createAttachment( final AttachmentJson attachmentJson )
-        throws FileNotFoundException
-    {
-        final UploadItem uploadItem = uploadService.getItem( attachmentJson.getUploadId() );
-
-        Preconditions.checkArgument( uploadItem != null, "Uploaded file not found: [%s]", attachmentJson.getUploadId() );
-
-        final Binary binary = Binary.from( new FileInputStream( uploadItem.getFile() ) );
-
-        uploadService.removeItem( attachmentJson.getUploadId() );
-
-        return Attachment.newAttachment().
-            name( attachmentJson.getAttachmentName() ).
-            mimeType( uploadItem.getMimeType() ).
-            binary( binary ).
-            build();
-    }
-
-    @Inject
-    public void setUploadService( final UploadService uploadService )
-    {
-        this.uploadService = uploadService;
-    }
 }

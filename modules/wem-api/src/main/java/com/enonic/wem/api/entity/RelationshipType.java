@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.Name;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
 import com.enonic.wem.api.support.illegaledit.IllegalEditAware;

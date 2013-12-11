@@ -1,15 +1,11 @@
 package com.enonic.wem.admin.rpc.account;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.inject.Inject;
-
-import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,8 +13,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
 import com.enonic.wem.admin.jsonrpc.JsonRpcContext;
-import com.enonic.wem.admin.rest.service.upload.UploadItem;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.admin.rpc.AbstractDataRpcHandler;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
@@ -40,8 +34,6 @@ import com.enonic.wem.api.command.Commands;
 public final class CreateOrUpdateAccountRpcHandler
     extends AbstractDataRpcHandler
 {
-    private UploadService uploadService;
-
     public CreateOrUpdateAccountRpcHandler()
     {
         super( "account_createOrUpdate" );
@@ -244,7 +236,7 @@ public final class CreateOrUpdateAccountRpcHandler
     private byte[] getImageContent( final String imageId )
         throws IOException
     {
-        final UploadItem item = uploadService.getItem( imageId );
+        /*final UploadItem item = uploadService.getItem( imageId );
         if ( item != null )
         {
             final File file = item.getFile();
@@ -252,13 +244,8 @@ public final class CreateOrUpdateAccountRpcHandler
             {
                 return FileUtils.readFileToByteArray( file );
             }
-        }
+        }*/
         return null;
     }
 
-    @Inject
-    public void setUploadService( final UploadService uploadService )
-    {
-        this.uploadService = uploadService;
-    }
 }

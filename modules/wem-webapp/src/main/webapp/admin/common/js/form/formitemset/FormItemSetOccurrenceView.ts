@@ -2,6 +2,8 @@ module api_form_formitemset {
 
     export class FormItemSetOccurrenceView extends api_form.FormItemOccurrenceView {
 
+        private context: api_form.FormContext;
+
         private formItemSetOccurrence:FormItemSetOccurrence;
 
         private formItemSet:api_form.FormItemSet;
@@ -18,9 +20,10 @@ module api_form_formitemset {
 
         private formItemSetOccurrencesContainer:api_dom.DivEl;
 
-        constructor(formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api_form.FormItemSet,
+        constructor(context: api_form.FormContext, formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api_form.FormItemSet,
                     dataSet:api_data.DataSet) {
             super("FormItemSetOccurrenceView", "form-item-set-occurrence-view", formItemSetOccurrence);
+            this.context = context;
             this.formItemSetOccurrence = formItemSetOccurrence;
             this.formItemSet = formItemSet;
             this.constructedWithData = dataSet != null;
@@ -49,6 +52,7 @@ module api_form_formitemset {
 
 
             this.formItemViews =  new api_form.FormItemLayer().
+                setFormContext(this.context).
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
                 layout(this.dataSet);

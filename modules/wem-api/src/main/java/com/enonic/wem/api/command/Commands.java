@@ -3,7 +3,7 @@ package com.enonic.wem.api.command;
 import com.enonic.wem.api.command.account.AccountCommands;
 import com.enonic.wem.api.command.content.ContentCommands;
 import com.enonic.wem.api.command.content.attachment.AttachmentCommands;
-import com.enonic.wem.api.command.content.binary.BlobCommands;
+import com.enonic.wem.api.command.content.blob.BlobCommands;
 import com.enonic.wem.api.command.content.page.PageCommands;
 import com.enonic.wem.api.command.content.site.SiteCommands;
 import com.enonic.wem.api.command.entity.NodeCommands;

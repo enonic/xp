@@ -24,7 +24,7 @@ module LiveEdit.component.dragdropsort {
                 };
                 var imageUploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
                 imageUploader.addListener({
-                    onFileUploaded: (id:string, name:string, mimeType:string) => {
+                    onFileUploaded: (uploadItem:api_ui.UploadItem) => {
                         console.log("file is uploaded", arguments);
                     },
                     onUploadComplete: () => {

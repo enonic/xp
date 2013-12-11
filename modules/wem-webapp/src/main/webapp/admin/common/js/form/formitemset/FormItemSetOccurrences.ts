@@ -5,6 +5,8 @@ module api_form_formitemset {
      */
     export class FormItemSetOccurrences extends api_form.FormItemOccurrences<FormItemSetOccurrenceView> {
 
+        private context: api_form.FormContext;
+
         private formItemSet:api_form.FormItemSet;
 
         private dataSets:api_data.DataSet[];
@@ -13,9 +15,9 @@ module api_form_formitemset {
 
         private formItemSetOccurrenceViews:api_form_formitemset.FormItemSetOccurrenceView[] = [];
 
-        constructor(occurrenceViewContainer:api_dom.Element, formItemSet:api_form.FormItemSet, dataSets:api_data.DataSet[]) {
+        constructor(context: api_form.FormContext, occurrenceViewContainer:api_dom.Element, formItemSet:api_form.FormItemSet, dataSets:api_data.DataSet[]) {
             super(formItemSet, occurrenceViewContainer, formItemSet.getOccurrences());
-
+            this.context = context;
             this.formItemSet = formItemSet;
             this.dataSets = dataSets;
 
@@ -58,7 +60,7 @@ module api_form_formitemset {
 
             var formItemSetOccurrences:FormItemSetOccurrences = this;
             var dataSet:api_data.DataSet = this.dataSets != null ? this.dataSets[occurrence.getIndex()] : null;
-            var newOccurrenceView:FormItemSetOccurrenceView = new FormItemSetOccurrenceView(occurrence, this.formItemSet, dataSet);
+            var newOccurrenceView:FormItemSetOccurrenceView = new FormItemSetOccurrenceView(this.context, occurrence, this.formItemSet, dataSet);
             newOccurrenceView.addListener(<api_form.FormItemOccurrenceViewListener>{
                 onRemoveButtonClicked: (toBeRemoved:FormItemSetOccurrenceView, index:number) => {
                     formItemSetOccurrences.doRemoveOccurrence(toBeRemoved, index);

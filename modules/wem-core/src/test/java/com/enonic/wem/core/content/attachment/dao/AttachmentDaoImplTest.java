@@ -10,10 +10,10 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.core.AbstractJcrTest;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentDaoImpl;
@@ -48,8 +48,8 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment =
+            newAttachment().blobKey( new BlobKey( "ABC" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
 
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         final Content storedContent = contentDao.create( content, session );
@@ -64,6 +64,8 @@ public class AttachmentDaoImplTest
         Node attachmentsNode = contentNode.getNode( ContentDao.CONTENT_ATTACHMENTS_NODE );
         Node createdAttachmentNode = attachmentsNode.getNode( attachment.getName() );
         assertNotNull( createdAttachmentNode );
+        assertEquals( attachment.getBlobKey(),
+                      new BlobKey( JcrHelper.getPropertyString( createdAttachmentNode, AttachmentJcrMapper.BLOB_KEY ) ) );
         assertEquals( attachment.getName(), JcrHelper.getPropertyString( createdAttachmentNode, AttachmentJcrMapper.NAME ) );
         assertEquals( attachment.getLabel(), JcrHelper.getPropertyString( createdAttachmentNode, AttachmentJcrMapper.LABEL ) );
         assertEquals( attachment.getMimeType(), JcrHelper.getPropertyString( createdAttachmentNode, AttachmentJcrMapper.MIME_TYPE ) );
@@ -75,8 +77,8 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment =
+            newAttachment().blobKey( new BlobKey( "ABC" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
 
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
@@ -102,8 +104,8 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment =
+            newAttachment().blobKey( new BlobKey( "ABC" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
@@ -124,8 +126,8 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment =
+            newAttachment().blobKey( new BlobKey( "ABC" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
@@ -146,8 +148,8 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment =
+            newAttachment().blobKey( new BlobKey( "ABC" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
@@ -166,9 +168,10 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
-        final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
+        final Attachment attachment =
+            newAttachment().blobKey( new BlobKey( "AAA" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment2 =
+            newAttachment().blobKey( new BlobKey( "BBB" ) ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         final Content storedContent = contentDao.create( content, session );
         commit();
@@ -194,9 +197,10 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
-        final Attachment attachment2 = newAttachment().binary( binary ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
+        final Attachment attachment =
+            newAttachment().blobKey( new BlobKey( "AAA" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment2 =
+            newAttachment().blobKey( new BlobKey( "BBB" ) ).name( "file2.jpg" ).mimeType( "image/jpeg" ).label( "big" ).build();
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
@@ -222,8 +226,8 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+        final Attachment attachment =
+            newAttachment().blobKey( new BlobKey( "ABC" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Content content = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( content, session );
         commit();
@@ -247,12 +251,11 @@ public class AttachmentDaoImplTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some data".getBytes() );
-        final Attachment attachment = newAttachment().binary( binary ).name( "file.jpg" ).mimeType( "image/jpeg" ).build();
+        final Attachment attachment = newAttachment().blobKey( new BlobKey( "CCC" ) ).name( "file.jpg" ).mimeType( "image/jpeg" ).build();
         final Attachment attachment2 =
-            newAttachment().binary( binary ).name( "file-small.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
+            newAttachment().blobKey( new BlobKey( "AAA" ) ).name( "file-small.jpg" ).mimeType( "image/jpeg" ).label( "small" ).build();
         final Attachment attachment3 =
-            newAttachment().binary( binary ).name( "file-large.jpg" ).mimeType( "image/jpeg" ).label( "large" ).build();
+            newAttachment().blobKey( new BlobKey( "BBB" ) ).name( "file-large.jpg" ).mimeType( "image/jpeg" ).label( "large" ).build();
 
         final Content contentRoot = newContent().path( ContentPath.from( "/mysite" ) ).build();
         contentDao.create( contentRoot, session );

@@ -11,7 +11,7 @@ import com.enonic.wem.admin.json.schema.content.ContentTypeJson;
 import com.enonic.wem.admin.json.schema.content.ContentTypeSummaryJson;
 import com.enonic.wem.admin.json.schema.mixin.MixinJson;
 import com.enonic.wem.admin.json.schema.relationship.RelationshipTypeJson;
-import com.enonic.wem.admin.rest.resource.schema.SchemaImageUriResolver;
+import com.enonic.wem.admin.rest.resource.schema.SchemaIconUrlResolver;
 import com.enonic.wem.api.schema.Schema;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.mixin.Mixin;
@@ -62,13 +62,7 @@ public class SchemaJson
         this.displayName = schema.getDisplayName();
         this.createdTime = schema.getCreatedTime();
         this.modifiedTime = schema.getModifiedTime();
-        if ( schema.getSchemaKey() != null )
-        {
-            this.iconUrl = SchemaImageUriResolver.resolve( schema.getSchemaKey() );
-        }
-        else {
-            this.iconUrl = null;
-        }
+        this.iconUrl = SchemaIconUrlResolver.resolve( schema.getSchemaKey() );
         this.hasChildren = schema.hasChildren();
     }
 

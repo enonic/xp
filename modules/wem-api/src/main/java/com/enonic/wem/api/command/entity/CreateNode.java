@@ -1,6 +1,6 @@
 package com.enonic.wem.api.command.entity;
 
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityIndexConfig;

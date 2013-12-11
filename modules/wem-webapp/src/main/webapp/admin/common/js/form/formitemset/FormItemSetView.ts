@@ -16,8 +16,8 @@ module api_form_formitemset {
 
         private collapseButton:api_ui.Button;
 
-        constructor(formItemSet:api_form.FormItemSet, dataSets?:api_data.DataSet[]) {
-            super("FormItemSetView", "form-item-set-view", formItemSet);
+        constructor(context:api_form.FormContext, formItemSet:api_form.FormItemSet, dataSets?:api_data.DataSet[]) {
+            super("FormItemSetView", "form-item-set-view", context, formItemSet);
 
             this.formItemSet = formItemSet;
             this.dataSets = dataSets != null ? dataSets : [];
@@ -25,7 +25,7 @@ module api_form_formitemset {
             this.occurrenceViewsContainer = new api_dom.DivEl(null, "occurrence-views-container");
             this.appendChild(this.occurrenceViewsContainer);
 
-            this.formItemSetOccurrences = new FormItemSetOccurrences(this.occurrenceViewsContainer, formItemSet, dataSets);
+            this.formItemSetOccurrences = new FormItemSetOccurrences(this.getContext(), this.occurrenceViewsContainer, formItemSet, dataSets);
             this.formItemSetOccurrences.layout();
             this.formItemSetOccurrences.addListener(<api_form.FormItemOccurrencesListener>{
                 onOccurrenceAdded: (occurrenceAdded:api_form.FormItemOccurrence) => {

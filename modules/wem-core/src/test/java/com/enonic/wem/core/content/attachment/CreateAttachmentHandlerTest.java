@@ -7,11 +7,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.attachment.CreateAttachment;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 
@@ -48,8 +48,7 @@ public class CreateAttachmentHandlerTest
         throws Exception
     {
         // setup
-        final Binary binary = Binary.from( "some binary data".getBytes() );
-        final Attachment attachment = newAttachment().name( "file.jpg" ).label( "small" ).mimeType( "image/jpeg" ).binary( binary ).build();
+        final Attachment attachment = newAttachment().name( "file.jpg" ).label( "small" ).mimeType( "image/jpeg" ).blobKey( new BlobKey( "ABC" ) ).build();
         final CreateAttachment command =
             Commands.attachment().create().contentPath( ContentPath.from( "myspace:/image" ) ).attachment( attachment );
 

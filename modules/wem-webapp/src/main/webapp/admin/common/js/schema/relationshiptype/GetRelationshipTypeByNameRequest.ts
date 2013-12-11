@@ -19,5 +19,18 @@ module api_schema_relationshiptype {
         getRequestPath():api_rest.Path {
             return super.getResourcePath();
         }
+
+        sendAndParse(): JQueryPromise<api_schema_relationshiptype.RelationshipType> {
+
+            var deferred = jQuery.Deferred<api_schema_relationshiptype_json.RelationshipTypeJson>();
+
+            this.send().done((response: api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
+                deferred.resolve(this.fromJsonToReleationshipType(response.getResult()));
+            }).fail((response: api_rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
+        }
     }
 }

@@ -3,9 +3,11 @@
 ///<reference path='ContentId.ts' />
 ///<reference path='ContentPath.ts' />
 ///<reference path='ContentSummary.ts' />
+///<reference path='ContentIconUrlResolver.ts' />
 ///<reference path='ContentData.ts' />
 ///<reference path='ContentDataFactory.ts' />
 ///<reference path='Content.ts' />
+
 ///<reference path='ContentResourceRequest.ts' />
 ///<reference path='GetContentByIdRequest.ts' />
 ///<reference path='GetContentByPathRequest.ts' />

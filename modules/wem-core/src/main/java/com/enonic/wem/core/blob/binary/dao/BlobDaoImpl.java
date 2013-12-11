@@ -1,8 +1,6 @@
 package com.enonic.wem.core.blob.binary.dao;
 
 
-import java.io.IOException;
-
 import javax.inject.Inject;
 
 import com.enonic.wem.api.blob.BlobKey;
@@ -18,18 +16,10 @@ public class BlobDaoImpl
     private BlobStore blobStore;
 
     @Override
-    public BlobKey create( final CreateBlob createBlob )
-    throws BlobStoreException
+    public BlobRecord create( final CreateBlob createBlob )
+        throws BlobStoreException
     {
-        try
-        {
-            final BlobRecord blobRecord = blobStore.addRecord( createBlob.input.openStream() );
-            return blobRecord.getKey();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to createBinary", e );
-        }
+        return blobStore.addRecord( createBlob.input );
     }
 
     @Override

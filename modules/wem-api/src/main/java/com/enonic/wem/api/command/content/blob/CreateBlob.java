@@ -1,24 +1,25 @@
-package com.enonic.wem.api.command.content.binary;
+package com.enonic.wem.api.command.content.blob;
 
+
+import java.io.InputStream;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteSource;
 
-import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Command;
 
 public final class CreateBlob
-    extends Command<BlobKey>
+    extends Command<Blob>
 {
-    private ByteSource byteSource;
+    private InputStream byteSource;
 
-    public CreateBlob( final ByteSource byteSource )
+    public CreateBlob( final InputStream byteSource )
     {
         this.byteSource = byteSource;
     }
 
-    public ByteSource getByteSource()
+    public InputStream getInputStream()
     {
         return byteSource;
     }

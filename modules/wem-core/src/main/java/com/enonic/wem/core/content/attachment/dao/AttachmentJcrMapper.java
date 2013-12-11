@@ -4,10 +4,10 @@ package com.enonic.wem.core.content.attachment.dao;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
-import com.enonic.wem.core.jcr.JcrHelper;
 
+import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 
 final class AttachmentJcrMapper
@@ -16,7 +16,7 @@ final class AttachmentJcrMapper
 
     static final String MIME_TYPE = "mimeType";
 
-    static final String BINARY = "binary";
+    static final String BLOB_KEY = "blobKey";
 
     static final String SIZE = "size";
 
@@ -28,7 +28,7 @@ final class AttachmentJcrMapper
         attachmentNode.setProperty( NAME, attachment.getName() );
         attachmentNode.setProperty( MIME_TYPE, attachment.getMimeType() );
         attachmentNode.setProperty( SIZE, attachment.getSize() );
-        JcrHelper.setPropertyBinary( attachmentNode, BINARY, attachment.getBinary().asInputStream() );
+        attachmentNode.setProperty( BLOB_KEY, attachment.getBlobKey().toString() );
         if ( attachment.getLabel() != null )
         {
             attachmentNode.setProperty( LABEL, attachment.getLabel() );
@@ -41,7 +41,8 @@ final class AttachmentJcrMapper
         attachmentBuilder.name( getPropertyString( attachmentNode, NAME ) );
         attachmentBuilder.mimeType( getPropertyString( attachmentNode, MIME_TYPE ) );
         attachmentBuilder.label( getPropertyString( attachmentNode, LABEL ) );
-        attachmentBuilder.binary( Binary.from( JcrHelper.getPropertyBinaryAsInputStream( attachmentNode, BINARY ) ) );
+        attachmentBuilder.size( getPropertyLong( attachmentNode, SIZE ) );
+        attachmentBuilder.blobKey( new BlobKey( getPropertyString( attachmentNode, BLOB_KEY ) ) );
     }
 
 }

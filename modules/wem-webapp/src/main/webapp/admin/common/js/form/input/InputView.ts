@@ -2,19 +2,18 @@ module api_form_input {
 
     export class InputView extends api_form.FormItemView {
 
-        private input:api_form.Input;
+        private input: api_form.Input;
 
-        private properties:api_data.Property[];
+        private properties: api_data.Property[];
 
-        private inputTypeView:api_form_inputtype.InputTypeView;
+        private inputTypeView: api_form_inputtype.InputTypeView;
 
-        private bottomButtonRow:api_dom.DivEl;
+        private bottomButtonRow: api_dom.DivEl;
 
-        private addButton:api_ui.Button;
+        private addButton: api_ui.Button;
 
-        constructor(input:api_form.Input, properties?:api_data.Property[]) {
-            super("InputView", "input-view", input);
-
+        constructor(context: api_form.FormContext, input: api_form.Input, properties?: api_data.Property[]) {
+            super("InputView", "input-view", context, input);
             this.input = input;
             this.properties = properties;
 
@@ -27,12 +26,14 @@ module api_form_input {
             var label = new InputLabel(this.input);
             this.appendChild(label);
 
-            var inputType:api_form.InputTypeName = this.input.getInputType();
+            var inputType: api_form.InputTypeName = this.input.getInputType();
 
             if (InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
                 var inputTypeViewConfig = <api_form_inputtype.InputTypeViewConfig> {
-                    dataPath: api_data.DataPath.fromString( this.input.getPath().toString() ),
+                    contentPath: this.getContext().getContentPath(),
+                    parentContentPath: this.getContext().getParentContentPath(),
+                    dataPath: api_data.DataPath.fromString(this.input.getPath().toString()),
                     inputConfig: inputTypeConfig
                 };
 
@@ -54,10 +55,10 @@ module api_form_input {
             if (!this.inputTypeView.isManagingAdd()) {
 
                 this.inputTypeView.addFormItemOccurrencesListener(<api_form.FormItemOccurrencesListener>{
-                    onOccurrenceAdded: (occurrenceAdded:api_form.FormItemOccurrence) => {
+                    onOccurrenceAdded: (occurrenceAdded: api_form.FormItemOccurrence) => {
                         this.refresh();
                     },
-                    onOccurrenceRemoved: (occurrenceRemoved:api_form.FormItemOccurrence) => {
+                    onOccurrenceRemoved: (occurrenceRemoved: api_form.FormItemOccurrence) => {
                         this.refresh();
                     }
                 });
@@ -81,17 +82,17 @@ module api_form_input {
             }
         }
 
-        getData():api_data.Data[] {
+        getData(): api_data.Data[] {
             return this.getProperties();
         }
 
-        getValue(index:number):api_data.Value {
+        getValue(index: number): api_data.Value {
             return this.inputTypeView.getValues()[index];
         }
 
-        getProperties():api_data.Property[] {
-            var properties:api_data.Property[] = [];
-            this.inputTypeView.getValues().forEach((value:api_data.Value, index:number) => {
+        getProperties(): api_data.Property[] {
+            var properties: api_data.Property[] = [];
+            this.inputTypeView.getValues().forEach((value: api_data.Value, index: number) => {
                 properties[index] = new api_data.Property(this.input.getName(), value);
             });
             return properties;
@@ -101,12 +102,12 @@ module api_form_input {
             return this.inputTypeView.getAttachments();
         }
 
-        validate(validationRecorder:api_form.ValidationRecorder) {
+        validate(validationRecorder: api_form.ValidationRecorder) {
 
             this.inputTypeView.validate(validationRecorder);
         }
 
-        hasValidOccurrences():boolean {
+        hasValidOccurrences(): boolean {
 
             return this.getData().length >= this.input.getOccurrences().getMaximum();
         }

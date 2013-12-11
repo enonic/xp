@@ -13,8 +13,6 @@ public final class ValueTypes
 
     public static final String STRING = new String( 1 );
 
-    public static final BinaryId BINARY_ID = new BinaryId( 2 );
-
     public static final HtmlPart HTML_PART = new HtmlPart( 3 );
 
     public static final Xml XML = new Xml( 4 );
@@ -31,11 +29,9 @@ public final class ValueTypes
 
     public static final GeoPoint GEO_POINT = new GeoPoint( 10 );
 
-    public static final AttachmentName ATTACHMENT_NAME = new AttachmentName( 11 );
+    public static final EntityId ENTITY_ID = new EntityId( 11 );
 
-    public static final EntityId ENTITY_ID = new EntityId( 12 );
-
-    public static final Boolean BOOLEAN = new Boolean( 13 );
+    public static final Boolean BOOLEAN = new Boolean( 12 );
 
     private static final Map<Integer, ValueType> typesByKey = new HashMap<>();
 
@@ -45,7 +41,6 @@ public final class ValueTypes
     {
         register( DATA );
         register( STRING );
-        register( BINARY_ID );
         register( HTML_PART );
         register( XML );
         register( DATE_MIDNIGHT );
@@ -54,7 +49,6 @@ public final class ValueTypes
         register( LONG );
         register( DOUBLE );
         register( GEO_POINT );
-        register( ATTACHMENT_NAME );
         register( ENTITY_ID );
         register( BOOLEAN );
     }

@@ -13,6 +13,10 @@ module api_rest {
             }
         }
 
+        isBlank():boolean {
+            return !this.json;
+        }
+
         getJson():any {
             return this.json;
         }

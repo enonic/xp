@@ -1,4 +1,7 @@
 {
     "config": "<relationship-type><name>love</name><display-name>Love</display-name><from-semantic/>loves<to-semantic /><to-semantic/>loved by<to-semantic /><allowed-from-types /><allowed-to-types /></relationship-type>",
-    "iconReference": "edc1af66-ecb4-4f8a-8df4-0738418f84fc"
+    "icon": {
+        "blobKey": "edc1af66-ecb4-4f8a-8df4-0738418f84fc",
+        "mimeType": "image/png"
+    }
 }

@@ -3,7 +3,8 @@ package com.enonic.wem.core.support.dao;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.icon.Icon;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 public final class IconJcrMapper
@@ -21,7 +22,7 @@ public final class IconJcrMapper
     {
         if ( icon != null )
         {
-            JcrHelper.setPropertyBinary( targetNode, ICON_PROPERTY, icon.asInputStream() );
+            targetNode.setProperty( ICON_PROPERTY, icon.getBlobKey().toString() );
             targetNode.setProperty( ICON_MIME_TYPE_PROPERTY, icon.getMimeType() );
         }
         else
@@ -40,16 +41,17 @@ public final class IconJcrMapper
     public Icon toIcon( final Node sourceNode )
         throws RepositoryException
     {
-        final byte[] iconData = JcrHelper.getPropertyBinary( sourceNode, ICON_PROPERTY );
-
-        if ( iconData != null )
+        if ( !sourceNode.hasProperty( ICON_PROPERTY ) )
         {
-            final String iconMimeType =
-                JcrHelper.getPropertyString( sourceNode, ICON_MIME_TYPE_PROPERTY, "image/png" ); // TODO remove default value
-            final Icon icon = iconData != null && iconData.length > 0 ? Icon.from( iconData, iconMimeType ) : null;
-            return icon;
+            return null;
         }
-        return null;
+
+        final BlobKey blobKey = new BlobKey( sourceNode.getProperty( ICON_PROPERTY ).getString() );
+
+        final String iconMimeType =
+            JcrHelper.getPropertyString( sourceNode, ICON_MIME_TYPE_PROPERTY, "image/png" ); // TODO remove default value
+
+        return Icon.from( blobKey, iconMimeType );
     }
 
 }

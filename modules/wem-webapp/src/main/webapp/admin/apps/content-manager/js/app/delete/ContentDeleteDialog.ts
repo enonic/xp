@@ -47,9 +47,8 @@ module app_delete {
 
             var deleteItems:api_app_delete.DeleteItem[] = [];
             for (var i in contentModels) {
-                var contentModel = contentModels[i];
-
-                var deleteItem = new api_app_delete.DeleteItem(contentModel.getIconUrl(), contentModel.getDisplayName());
+                var content = contentModels[i];
+                var deleteItem = new api_app_delete.DeleteItem(content.getIconUrl(), content.getDisplayName());
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);

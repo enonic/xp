@@ -2,32 +2,35 @@ module app_new {
 
     export class ContentTypeListItem {
 
-        private siteRoot:boolean;
+        private siteRoot: boolean;
 
-        private contentType:api_schema_content.ContentTypeSummary;
+        private contentType: api_schema_content.ContentTypeSummary;
 
-        constructor(contentType:api_schema_content.ContentTypeSummary, root?:boolean) {
+        private iconUrl: string;
+
+        constructor(contentType: api_schema_content.ContentTypeSummary, root?: boolean) {
             this.contentType = contentType;
             this.siteRoot = root || false;
+            this.iconUrl = contentType.getIconUrl();
         }
 
-        getName() {
+        getName(): string {
             return this.contentType.getName();
         }
 
-        getDisplayName() {
+        getDisplayName(): string {
             return this.contentType.getDisplayName();
         }
 
-        getIconUrl() {
-            return this.contentType.getIcon();
+        getIconUrl():string {
+            return this.iconUrl;
         }
 
-        getContentType():api_schema_content.ContentTypeSummary {
+        getContentType(): api_schema_content.ContentTypeSummary {
             return this.contentType;
         }
 
-        isSiteRoot() {
+        isSiteRoot():boolean {
             return this.siteRoot;
         }
     }

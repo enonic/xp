@@ -27,5 +27,18 @@ module api_schema_content {
         getRequestPath():api_rest.Path {
             return super.getResourcePath();
         }
+
+        sendAndParse(): JQueryPromise<api_content_page.PageTemplate> {
+
+            var deferred = jQuery.Deferred<api_schema_content_json.ContentTypeJson>();
+
+            this.send().done((response: api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
+                deferred.resolve(this.fromJsonToContentType(response.getResult()));
+            }).fail((response: api_rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
+        }
     }
 }

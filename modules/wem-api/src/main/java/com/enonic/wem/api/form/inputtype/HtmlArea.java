@@ -18,7 +18,7 @@ final class HtmlArea
     public void checkBreaksRequiredContract( final Property property )
         throws BreaksRequiredContractException
     {
-        final String stringValue = (String) property.getObject();
+        final String stringValue = property.getString();
         if ( StringUtils.isBlank( stringValue ) )
         {
             throw new BreaksRequiredContractException( property, this );

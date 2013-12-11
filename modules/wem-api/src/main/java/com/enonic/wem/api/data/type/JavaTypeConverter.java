@@ -71,10 +71,6 @@ public abstract class JavaTypeConverter<T>
             {
                 return value.toString();
             }
-            else if ( value instanceof com.enonic.wem.api.content.binary.BinaryId )
-            {
-                return value.toString();
-            }
             else if ( value instanceof com.enonic.wem.api.content.ContentId )
             {
                 return value.toString();
@@ -378,38 +374,6 @@ public abstract class JavaTypeConverter<T>
         public com.enonic.wem.api.entity.EntityId convertFromString( final java.lang.String value )
         {
             return com.enonic.wem.api.entity.EntityId.from( value );
-        }
-    }
-
-    public static final class BinaryId
-        extends JavaTypeConverter<com.enonic.wem.api.content.binary.BinaryId>
-    {
-        public static final BinaryId GET = new BinaryId();
-
-        private BinaryId()
-        {
-            super( com.enonic.wem.api.content.binary.BinaryId.class );
-        }
-
-        public com.enonic.wem.api.content.binary.BinaryId convertFrom( Object value )
-        {
-            if ( value instanceof com.enonic.wem.api.content.binary.BinaryId )
-            {
-                return (com.enonic.wem.api.content.binary.BinaryId) value;
-            }
-            else if ( value instanceof java.lang.String )
-            {
-                return com.enonic.wem.api.content.binary.BinaryId.from( (java.lang.String) value );
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public com.enonic.wem.api.content.binary.BinaryId convertFromString( final java.lang.String value )
-        {
-            return com.enonic.wem.api.content.binary.BinaryId.from( value );
         }
     }
 

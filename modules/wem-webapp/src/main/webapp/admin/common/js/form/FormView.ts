@@ -2,15 +2,18 @@ module api_form {
 
     export class FormView extends api_ui.Panel {
 
+        private context:FormContext;
+
         private form:Form;
 
         private contentData:api_content.ContentData;
 
         private formItemViews:FormItemView[] = [];
 
-        constructor(form:Form, contentData?:api_content.ContentData) {
+        constructor(context:FormContext, form:Form, contentData?:api_content.ContentData) {
             super("FormView");
             this.setClass("form-view");
+            this.context = context;
             this.form = form;
             this.contentData = contentData;
             this.doLayout();
@@ -18,6 +21,7 @@ module api_form {
 
         private doLayout() {
             this.formItemViews =  new FormItemLayer().
+                setFormContext(this.context).
                 setFormItems(this.form.getFormItems()).
                 setParentElement(this).
                 layout(this.contentData);

@@ -43,6 +43,9 @@
 ///<reference path='ui/tab/_module.ts' />
 ///<reference path='ui/toolbar/_module.ts' />
 
+///<reference path='blob/_module.ts' />
+///<reference path='icon/_module.ts' />
+
 ///<reference path='facet/_module.ts' />
 
 ///<reference path='data/json/_module.ts' />

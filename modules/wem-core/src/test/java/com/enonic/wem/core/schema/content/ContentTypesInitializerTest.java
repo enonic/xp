@@ -1,10 +1,15 @@
 package com.enonic.wem.core.schema.content;
 
 
+import java.io.InputStream;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -17,8 +22,10 @@ public class ContentTypesInitializerTest
     public void system()
         throws Exception
     {
+
         Client client = Mockito.mock( Client.class );
-        Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
+        Mockito.when( client.execute( Mockito.isA( CreateBlob.class ) ) ).thenReturn( createDummyBlob() );
+        Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
 
         ContentTypesInitializer contentTypesInitializer = new ContentTypesInitializer();
         contentTypesInitializer.setClient( client );
@@ -39,5 +46,29 @@ public class ContentTypesInitializerTest
         assertEquals( true, ContentTypesInitializer.MEDIA_TEXT.isFinal() );
         assertEquals( false, ContentTypesInitializer.MEDIA_TEXT.isAbstract() );
         assertEquals( ContentTypeName.media(), ContentTypesInitializer.MEDIA_TEXT.getSuperType() );
+    }
+
+    private Blob createDummyBlob()
+    {
+        return new Blob()
+        {
+            @Override
+            public BlobKey getKey()
+            {
+                return new BlobKey( "ABC" );
+            }
+
+            @Override
+            public long getLength()
+            {
+                return 0;
+            }
+
+            @Override
+            public InputStream getStream()
+            {
+                return null;
+            }
+        };
     }
 }

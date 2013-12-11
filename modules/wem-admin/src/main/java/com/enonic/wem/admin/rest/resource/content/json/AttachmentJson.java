@@ -1,28 +1,33 @@
 package com.enonic.wem.admin.rest.resource.content.json;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.content.attachment.Attachment;
+
 public class AttachmentJson
 {
-    private String uploadId;
+    private final Attachment attachment;
 
-    private String attachmentName;
-
-    public String getUploadId()
+    @JsonCreator
+    public AttachmentJson( @JsonProperty("blobKey") final String blobKeyAsString,
+                           @JsonProperty("attachmentName") final String attachmentNameAsString,
+                           @JsonProperty("mimeType") final String mimeType,
+                           @JsonProperty("size") final String sizeAsString )
     {
-        return uploadId;
+        this.attachment = Attachment.newAttachment().
+            blobKey( new BlobKey( blobKeyAsString ) ).
+            size( Long.valueOf( sizeAsString ) ).
+            name( attachmentNameAsString ).
+            mimeType( mimeType ).
+            build();
     }
 
-    public void setUploadId( final String uploadId )
+    @JsonIgnore
+    public Attachment getAttachment()
     {
-        this.uploadId = uploadId;
-    }
-
-    public String getAttachmentName()
-    {
-        return attachmentName;
-    }
-
-    public void setAttachmentName( final String attachmentName )
-    {
-        this.attachmentName = attachmentName;
+        return attachment;
     }
 }

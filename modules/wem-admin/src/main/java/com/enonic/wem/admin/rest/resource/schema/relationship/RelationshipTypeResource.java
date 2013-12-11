@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.relationship;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,9 +17,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
-import com.enonic.wem.admin.rpc.UploadedIconFetcher;
-import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
@@ -39,8 +35,6 @@ import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
 public class RelationshipTypeResource
     extends AbstractResource
 {
-    private UploadService uploadService;
-
     @GET
     public RelationshipTypeJson get( @QueryParam("name") final String name )
     {
@@ -131,8 +125,6 @@ public class RelationshipTypeResource
         {
             final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( json.getConfig() );
 
-            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
-
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
             createCommand.
                 name( json.getName() ).
@@ -141,7 +133,7 @@ public class RelationshipTypeResource
                 toSemantic( relationshipType.getToSemantic() ).
                 allowedFromTypes( relationshipType.getAllowedFromTypes() ).
                 allowedToTypes( relationshipType.getAllowedToTypes() ).
-                icon( icon );
+                icon( json.getIconJson() != null ? json.getIconJson().getIcon() : null );
 
             this.client.execute( createCommand );
 
@@ -162,8 +154,6 @@ public class RelationshipTypeResource
         {
             final RelationshipType parsed = new RelationshipTypeXmlSerializer().toRelationshipType( json.getConfig() );
 
-            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
-
             final RelationshipTypeEditor editor = new RelationshipTypeEditor()
             {
                 @Override
@@ -176,9 +166,9 @@ public class RelationshipTypeResource
                     builder.toSemantic( parsed.getToSemantic() );
                     builder.addAllowedFromTypes( parsed.getAllowedFromTypes() );
                     builder.addAllowedToTypes( parsed.getAllowedToTypes() );
-                    if ( icon != null )
+                    if ( json.getIconJson() != null )
                     {
-                        builder.icon( icon );
+                        builder.icon( json.getIconJson().getIcon() );
                     }
                     return builder.build();
                 }
@@ -196,12 +186,5 @@ public class RelationshipTypeResource
         {
             return CreateOrUpdateSchemaJsonResult.error( e.getMessage() );
         }
-    }
-
-
-    @Inject
-    public void setUploadService( final UploadService uploadService )
-    {
-        this.uploadService = uploadService;
     }
 }

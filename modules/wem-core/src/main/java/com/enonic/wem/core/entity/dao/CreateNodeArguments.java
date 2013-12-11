@@ -1,7 +1,7 @@
 package com.enonic.wem.core.entity.dao;
 
 
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityIndexConfig;

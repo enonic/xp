@@ -6,6 +6,7 @@ import java.util.Map;
 import org.elasticsearch.common.collect.Maps;
 
 import com.enonic.wem.admin.rest.resource.BaseImageHelper;
+import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.UserAccount;
 
@@ -14,9 +15,11 @@ final class AccountImageHelper
 {
     private final Map<String, BufferedImage> cache;
 
-    public AccountImageHelper()
+    public AccountImageHelper( final Client client )
         throws Exception
     {
+        super( client );
+
         this.cache = Maps.newHashMap();
         populate( "admin" );
         populate( "anonymous" );
@@ -32,7 +35,6 @@ final class AccountImageHelper
     }
 
     public BufferedImage getDefaultImage( final String key, final int size )
-        throws Exception
     {
         final BufferedImage image = this.cache.get( key );
         if ( image == null )
@@ -44,7 +46,6 @@ final class AccountImageHelper
     }
 
     public BufferedImage getAccountImage( final Account account, final int size )
-        throws Exception
     {
         if ( account == null )
         {

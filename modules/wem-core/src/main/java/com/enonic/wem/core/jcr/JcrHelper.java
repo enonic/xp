@@ -242,21 +242,6 @@ public final class JcrHelper
         }
     }
 
-    public static InputStream getPropertyBinaryAsInputStream( final Node node, final String propertyName )
-        throws RepositoryException
-    {
-        Property property = getInternalProperty( node, propertyName );
-        if ( property == null )
-        {
-            return null;
-        }
-        else
-        {
-            final Binary binaryValue = property.getValue().getBinary();
-            return binaryValue.getStream();
-        }
-    }
-
     private static Property getInternalProperty( final Node node, final String propertyName )
         throws RepositoryException
     {

@@ -19,8 +19,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.admin.rest.service.upload.UploadItem;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
@@ -52,15 +50,9 @@ public class MixinResourceTest
 
     private static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "text_area_1" );
 
-    private static byte[] IMAGE_DATA =
-        {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x1, 0x0, 0x1, 0x0, (byte) 0x80, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x0, 0x0,
-            0x0, 0x2c, 0x0, 0x0, 0x0, 0x0, 0x1, 0x0, 0x1, 0x0, 0x0, 0x2, 0x2, 0x44, 0x1, 0x0, 0x3b};
-
     private MixinResource resource = new MixinResource();
 
     private Client client;
-
-    private UploadService uploadService;
 
     @Before
     public void setup()
@@ -74,9 +66,6 @@ public class MixinResourceTest
         client = Mockito.mock( Client.class );
         resource = new MixinResource();
         resource.setClient( client );
-
-        uploadService = Mockito.mock( UploadService.class );
-        resource.setUploadService( uploadService );
 
         return resource;
     }
@@ -216,13 +205,10 @@ public class MixinResourceTest
             name( "my_set" ).
             build() );
 
-        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
-
         String result = resource().path( "schema/mixin/create" ).entity( readFromFile( "create_mixin_with_icon_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
 
         assertJson( "create_mixin.json", result );
-        verify( uploadService, times( 1 ) ).getItem( "edc1af66-ecb4-4f8a-8df4-0738418f84fc" );
         verify( client, times( 1 ) ).execute( isA( CreateMixin.class ) );
     }
 
@@ -235,12 +221,9 @@ public class MixinResourceTest
 
         Mockito.when( client.execute( isA( UpdateMixin.class ) ) ).thenReturn( new UpdateMixinResult( mixin ) );
 
-        uploadFile( "edc1af66-ecb4-4f8a-8df4-0738418f84fc", "icon.png", IMAGE_DATA, "image/png" );
-
         String result = resource().path( "schema/mixin/update" ).entity( readFromFile( "update_mixin_with_icon_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "update_mixin.json", result );
-        verify( uploadService, times( 1 ) ).getItem( "edc1af66-ecb4-4f8a-8df4-0738418f84fc" );
         verify( client, times( 1 ) ).execute( isA( UpdateMixin.class ) );
     }
 
@@ -280,26 +263,4 @@ public class MixinResourceTest
         assertJson( "delete_multiple_mixins.json", result );
     }
 
-    private void uploadFile( String id, String name, byte[] data, String type )
-        throws Exception
-    {
-        File file = createTempFile( data );
-        UploadItem item = Mockito.mock( UploadItem.class );
-        Mockito.when( item.getId() ).thenReturn( id );
-        Mockito.when( item.getMimeType() ).thenReturn( type );
-        Mockito.when( item.getUploadTime() ).thenReturn( 0L );
-        Mockito.when( item.getName() ).thenReturn( name );
-        Mockito.when( item.getSize() ).thenReturn( (long) data.length );
-        Mockito.when( item.getFile() ).thenReturn( file );
-        Mockito.when( this.uploadService.getItem( Mockito.<String>any() ) ).thenReturn( item );
-    }
-
-    private File createTempFile( byte[] data )
-        throws IOException
-    {
-        String id = UUID.randomUUID().toString();
-        File file = File.createTempFile( id, "" );
-        Files.write( data, file );
-        return file;
-    }
 }

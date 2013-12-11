@@ -30,5 +30,6 @@
 ///<reference path='PasswordInput.ts' />
 ///<reference path='TextArea.ts' />
 ///<reference path='CodeArea.ts' />
+///<reference path='UploadItem.ts' />
 ///<reference path='ImageUploader.ts' />
 ///<reference path='ImageUploaderListener.ts' />

@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.content;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -20,11 +19,7 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
-import com.enonic.wem.admin.rpc.UploadedIconFetcher;
-import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
 import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
@@ -34,21 +29,17 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
 
 import static com.enonic.wem.api.command.Commands.contentType;
-import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 
 @Path("schema/content")
 @Produces("application/json")
 public class ContentTypeResource
     extends AbstractResource
 {
-    private UploadService uploadService;
-
     @GET
     public ContentTypeJson get( @QueryParam("name") final String nameAsString,
                                 @QueryParam("mixinReferencesToFormItems") final Boolean mixinReferencesToFormItems )
@@ -136,26 +127,7 @@ public class ContentTypeResource
     {
         try
         {
-            ContentType contentType =
-                new ContentTypeXmlSerializer().overrideName( json.getName().toString() ).toContentType( json.getConfig() );
-
-            final Icon icon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
-            if ( icon != null )
-            {
-                contentType = newContentType( contentType ).icon( icon ).build();
-            }
-
-            final CreateContentType createCommand = contentType().create().
-                name( json.getName() ).
-                displayName( contentType.getDisplayName() ).
-                superType( contentType.getSuperType() ).
-                setAbstract( contentType.isAbstract() ).
-                setFinal( contentType.isFinal() ).
-                form( contentType.form() ).
-                icon( contentType.getIcon() ).
-                contentDisplayNameScript( contentType.getContentDisplayNameScript() );
-
-            final ContentType created = client.execute( createCommand );
+            final ContentType created = client.execute( json.getCreateContentType() );
             return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( created ) );
 
         }
@@ -171,40 +143,12 @@ public class ContentTypeResource
     {
         try
         {
-            final ContentType parsed =
-                new ContentTypeXmlSerializer().overrideName( json.getName().toString() ).toContentType( json.getConfig() );
+            final UpdateContentType updateContentType = json.getUpdateContentType();
+            client.execute( updateContentType );
+            final ContentType persistedContentType =
+                client.execute( Commands.contentType().get().byName().contentTypeName( json.getName() ) );
 
-            final Icon uploadedIcon = new UploadedIconFetcher( uploadService ).getUploadedIcon( json.getIconReference() );
-
-            final ContentTypeEditor editor = new ContentTypeEditor()
-            {
-                @Override
-                public ContentType edit( final ContentType contentType )
-                {
-                    final ContentType.Builder builder = ContentType.newContentType( contentType ).
-                        name( json.getName() ).
-                        displayName( parsed.getDisplayName() ).
-                        superType( parsed.getSuperType() ).
-                        setAbstract( parsed.isAbstract() ).
-                        setFinal( parsed.isFinal() ).
-                        contentDisplayNameScript( parsed.getContentDisplayNameScript() ).
-                        form( parsed.form() );
-
-                    if ( uploadedIcon != null )
-                    {
-                        builder.icon( uploadedIcon );
-                    }
-                    return builder.build();
-                }
-            };
-
-            final UpdateContentType updateCommand = contentType().update().
-                contentTypeName( json.getContentTypeToUpdate() ).
-                editor( editor );
-
-            client.execute( updateCommand );
-
-            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( parsed ) );
+            return CreateOrUpdateSchemaJsonResult.result( new ContentTypeJson( persistedContentType ) );
         }
         catch ( Exception e )
         {
@@ -232,9 +176,4 @@ public class ContentTypeResource
         return new ValidateContentTypeJson( validationResult, contentType );
     }
 
-    @Inject
-    public void setUploadService( final UploadService uploadService )
-    {
-        this.uploadService = uploadService;
-    }
 }

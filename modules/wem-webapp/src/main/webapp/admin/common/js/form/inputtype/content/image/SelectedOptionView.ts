@@ -19,7 +19,7 @@ module api_form_inputtype_content_image {
 
         layout() {
 
-            this.getEl().setBackgroundImage("url(" + this.content.getIconUrl() + "?size=140&thumbnail=false)");
+            this.getEl().setBackgroundImage("url(" + this.content.getIconUrl() + ")");
 
             var label = new api_dom.DivEl(null, "label");
             label.getEl().setInnerHtml(this.content.getName());

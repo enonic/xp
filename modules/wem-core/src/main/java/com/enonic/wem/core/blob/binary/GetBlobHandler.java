@@ -2,7 +2,7 @@ package com.enonic.wem.core.blob.binary;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.command.content.binary.GetBlob;
+import com.enonic.wem.api.command.content.blob.GetBlob;
 import com.enonic.wem.core.blob.binary.dao.BlobDao;
 import com.enonic.wem.core.blobstore.BlobRecord;
 import com.enonic.wem.core.command.CommandHandler;

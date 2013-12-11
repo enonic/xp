@@ -59,14 +59,30 @@ final class ContentDaoHandlerCreate
         final ContentPath path = content.getPath();
 
         final Node root = session.getRootNode();
-
+        final Node contentRootJcrNode = JcrHelper.getNodeOrNull( root, CONTENTS_ROOT_PATH );
         final Node newContentNode;
 
-        if ( path.elementCount() == 1 )
+        if ( path.isRoot() )
         {
-            final Node contentRootJcrNode = JcrHelper.getNodeOrNull( root, CONTENTS_ROOT_PATH );
-
+            throw new ContentAlreadyExistException( path );
+        }
+        else if ( path.elementCount() == 1 )
+        {
             if ( contentRootJcrNode == null )
+            {
+                throw new ContentAlreadyExistException( path );
+            }
+            if ( contentRootJcrNode.hasNode( nodeName ) )
+            {
+                throw new ContentAlreadyExistException( path );
+            }
+
+            newContentNode = addContentToJcr( content, contentRootJcrNode, nodeName );
+        }
+        else if ( path.elementCount() == 1 )
+        {
+            final Node contentsNode = JcrHelper.getNodeOrNull( root, CONTENTS_ROOT_PATH );
+            if ( contentsNode == null )
             {
                 throw new ContentNotFoundException( ContentPath.ROOT );
             }
@@ -89,7 +105,10 @@ final class ContentDaoHandlerCreate
             {
                 throw new ContentAlreadyExistException( path );
             }
-            newContentNode = addContentToJcr( content, parentContentJcrNode, nodeName );
+
+            final Node parentNode = content.isEmbedded() ? parentContentJcrNode.getNode( "__embedded" ) : parentContentJcrNode;
+
+            newContentNode = addContentToJcr( content, parentNode, nodeName );
         }
 
         final Node contentVersionHistoryNode = createContentVersionHistory( content, newContentNode );

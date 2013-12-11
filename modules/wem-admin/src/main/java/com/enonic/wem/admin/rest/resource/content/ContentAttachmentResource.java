@@ -2,7 +2,6 @@ package com.enonic.wem.admin.rest.resource.content;
 
 import java.awt.image.BufferedImage;
 
-import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,12 +13,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.enonic.wem.api.Client;
+import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 
 import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.ImageFilter.ScaleMax;
 
@@ -27,14 +26,13 @@ import static com.enonic.wem.admin.rest.resource.content.ContentImageHelper.Imag
 @Path("attachment/{contentId}")
 @Produces("*/*")
 public class ContentAttachmentResource
+    extends AbstractResource
 {
-    private Client client;
-
     private final ContentImageHelper helper;
 
     public ContentAttachmentResource()
     {
-        this.helper = new ContentImageHelper();
+        this.helper = new ContentImageHelper( client );
     }
 
     @GET
@@ -61,15 +59,15 @@ public class ContentAttachmentResource
             throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
 
-        final Binary binary = attachment.getBinary();
+        final Blob blob = client.execute( Commands.blob().get( attachment.getBlobKey() ) );
         final String mimeType = attachment.getMimeType();
         if ( size <= 0 )
         {
-            return Response.ok( binary.asInputStream(), mimeType ).build();
+            return Response.ok( blob.getStream(), mimeType ).build();
         }
         else
         {
-            final BufferedImage scaledImage = helper.getImageFromBinary( binary, size, ScaleMax );
+            final BufferedImage scaledImage = helper.getImageFromBlob( blob, size, ScaleMax );
             return Response.ok( scaledImage, mimeType ).build();
         }
     }
@@ -84,9 +82,4 @@ public class ContentAttachmentResource
         return client.execute( Commands.attachment().get().contentId( contentId ).attachmentName( attachmentName ) );
     }
 
-    @Inject
-    public void setClient( final Client client )
-    {
-        this.client = client;
-    }
 }

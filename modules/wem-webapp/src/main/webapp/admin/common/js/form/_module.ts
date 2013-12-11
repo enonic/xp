@@ -9,6 +9,7 @@
 ///<reference path='Form.ts' />
 ///<reference path='FormItemFactory.ts' />
 ///<reference path='ValidationRecorder.ts' />
+///<reference path='FormContext.ts' />
 ///<reference path='FormItemOccurrenceViewListener.ts' />
 ///<reference path='FormItemOccurrenceView.ts' />
 ///<reference path='FormItemOccurrencesListener.ts' />

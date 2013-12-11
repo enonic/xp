@@ -2,11 +2,18 @@ module api_form{
 
     export class FormItemLayer {
 
+        private context:FormContext;
+
         private formItems:api_form.FormItem[];
 
         private parentEl:api_dom.Element;
 
         private formItemViews:FormItemView[] = [];
+
+        setFormContext(context:FormContext):FormItemLayer {
+            this.context = context;
+            return this;
+        }
 
         setFormItems(formItems:api_form.FormItem[]):FormItemLayer {
             this.formItems = formItems;
@@ -35,21 +42,21 @@ module api_form{
             this.formItems.forEach((formItem:FormItem) => {
                 if (formItem instanceof FieldSet) {
                     var fieldSet:FieldSet = <api_form.FieldSet>formItem;
-                    var fieldSetView = new api_form_layout.FieldSetView(fieldSet);
+                    var fieldSetView = new api_form_layout.FieldSetView(this.context, fieldSet);
 
                     this.parentEl.appendChild(fieldSetView);
                     this.formItemViews.push(fieldSetView);
                 }
                 else if (formItem instanceof FormItemSet) {
                     var formItemSet:FormItemSet = <FormItemSet>formItem;
-                    var formItemSetView = new api_form_formitemset.FormItemSetView(formItemSet);
+                    var formItemSetView = new api_form_formitemset.FormItemSetView(this.context, formItemSet);
 
                     this.parentEl.appendChild(formItemSetView);
                     this.formItemViews.push(formItemSetView);
                 }
                 else if (formItem instanceof Input) {
                     var input:Input = <Input>formItem;
-                    var inputView = new api_form_input.InputView(input);
+                    var inputView = new api_form_input.InputView(this.context, input);
 
                     this.parentEl.appendChild(inputView);
                     this.formItemViews.push(inputView);
@@ -64,7 +71,7 @@ module api_form{
 
                     var formItemSet:FormItemSet = <FormItemSet>formItem;
                     var dataSets:api_data.DataSet[] = dataSet.getDataSetsByName(formItemSet.getName());
-                    var formItemSetView = new api_form_formitemset.FormItemSetView(formItemSet, dataSets);
+                    var formItemSetView = new api_form_formitemset.FormItemSetView(this.context, formItemSet, dataSets);
 
                     this.parentEl.appendChild(formItemSetView);
                     this.formItemViews.push(formItemSetView);
@@ -72,7 +79,7 @@ module api_form{
                 else if (formItem instanceof FieldSet) {
 
                     var fieldSet:FieldSet = <FieldSet>formItem;
-                    var fieldSetView = new api_form_layout.FieldSetView(fieldSet, dataSet);
+                    var fieldSetView = new api_form_layout.FieldSetView(this.context, fieldSet, dataSet);
 
                     this.parentEl.appendChild(fieldSetView);
                     this.formItemViews.push(fieldSetView);
@@ -81,7 +88,7 @@ module api_form{
 
                     var input:Input = <Input>formItem;
                     var properties:api_data.Property[] = dataSet.getPropertiesByName(input.getName());
-                    var inputView = new api_form_input.InputView(input, properties);
+                    var inputView = new api_form_input.InputView(this.context, input, properties);
 
                     this.parentEl.appendChild(inputView);
                     this.formItemViews.push(inputView);

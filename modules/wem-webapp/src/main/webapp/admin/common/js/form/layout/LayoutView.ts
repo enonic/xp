@@ -4,8 +4,8 @@ module api_form_layout {
 
         private layout:api_form.Layout;
 
-        constructor(layout:api_form.Layout, idPrefix:string, className:string) {
-            super(idPrefix, className, layout);
+        constructor(context: api_form.FormContext, layout:api_form.Layout, idPrefix:string, className:string) {
+            super(idPrefix, className, context, layout);
 
             this.layout = layout;
         }

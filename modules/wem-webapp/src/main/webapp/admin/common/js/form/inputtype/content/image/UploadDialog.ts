@@ -27,8 +27,8 @@ module api_form_inputtype_content_image {
             };
             this.uploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
             this.uploader.addListener({
-                onFileUploaded: (id:string, name:string, mimeType:string) => {
-                    this.notifyImageUploaded(id, name, mimeType);
+                onFileUploaded: (uploadItem:api_ui.UploadItem) => {
+                    this.notifyImageUploaded(uploadItem);
                 },
                 onUploadComplete: () => {
                     this.close();
@@ -66,9 +66,9 @@ module api_form_inputtype_content_image {
             });
         }
 
-        private notifyImageUploaded(id:string, name:string, mimeType:string) {
+        private notifyImageUploaded(uploadItem:api_ui.UploadItem) {
             this.listeners.forEach((listener:UploadDialogListener) => {
-                listener.onImageUploaded(id, name, mimeType);
+                listener.onImageUploaded(uploadItem);
             });
         }
 

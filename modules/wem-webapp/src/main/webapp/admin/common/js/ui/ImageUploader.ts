@@ -206,7 +206,13 @@ module api_ui {
 
                         this.setValue(file.id);
 
-                        this.notifyFileUploaded(file.id, file.name, file.mimeType);
+                        var uploadItem:UploadItem = new UploadItemBuilder().
+                            setId(file.id).
+                            setName(file.name).
+                            setMimeType(file.mimeType).
+                            setSize(file.size).
+                            build();
+                        this.notifyFileUploaded(uploadItem);
                     }
                 }
 
@@ -242,10 +248,10 @@ module api_ui {
             });
         }
 
-        private notifyFileUploaded(id:string, name:string, mimeType:string) {
+        private notifyFileUploaded(uploadItem:UploadItem) {
             this.listeners.forEach((listener:ImageUploaderListener) => {
                 if (listener.onFileUploaded) {
-                    listener.onFileUploaded(id, name, mimeType);
+                    listener.onFileUploaded(uploadItem);
                 }
             });
         }

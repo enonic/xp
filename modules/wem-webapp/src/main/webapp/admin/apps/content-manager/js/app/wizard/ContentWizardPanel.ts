@@ -2,8 +2,6 @@ module app_wizard {
 
     export class ContentWizardPanel extends api_app_wizard.WizardPanel<api_content.Content> {
 
-        private static DEFAULT_CONTENT_ICON_URL: string = api_util.getAdminUri("common/images/default_content.png");
-
         private parentContent: api_content.Content;
 
         private siteContent: api_content.Content;
@@ -18,33 +16,32 @@ module app_wizard {
 
         private pageWizardStepForm: PageWizardStepForm;
 
-        private iconUploadId: string;
+        private iconUploadItem: api_ui.UploadItem;
 
         private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
         private livePanel: LiveFormPanel;
 
-        private persistAsDraft:boolean;
+        private persistAsDraft: boolean;
 
-        constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content) {
+        constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content, site:api_content.Content) {
 
             this.persistAsDraft = true;
             this.parentContent = parentContent;
             // TODO: getNearestSite nearest site:
-            // this.siteContent = this.getNearestSite(content.getContentId());
+            this.siteContent = site;
             this.contentType = contentType;
             this.contentWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
-            var iconUrl = contentType.getIcon() ? contentType.getIcon() : ContentWizardPanel.DEFAULT_CONTENT_ICON_URL;
+            var iconUrl = api_content.ContentIconUrlResolver.default();
             this.formIcon = new api_app_wizard.FormIcon(iconUrl, "Click to upload icon",
                 api_util.getRestUri("upload"));
 
             this.formIcon.addListener({
 
-                onUploadFinished: (uploadId: string, mimeType: string, uploadName: string) => {
+                onUploadFinished: (uploadItem: api_ui.UploadItem) => {
 
-                    this.iconUploadId = uploadId;
-
-                    this.formIcon.setSrc(api_util.getRestUri('upload/' + uploadId));
+                    this.iconUploadItem = uploadItem;
+                    this.formIcon.setSrc(api_util.getRestUri('upload/' + this.iconUploadItem.getBlobKey()));
                 }
             });
 
@@ -124,14 +121,20 @@ module app_wizard {
         }
 
         renderNew() {
-            super.renderNew();
 
-            this.contentWizardStepForm.renderNew(this.contentType.getForm());
-            // TODO: GetPageTemplateRequest use descriptor config form
-            this.pageWizardStepForm.renderNew();
-            this.persistNewItem();
+            this.persistNewItem((createdContent: api_content.Content) => {
 
-            this.livePanel.renderNew();
+                super.renderNew();
+                var formContext = new api_form.FormContextBuilder().
+                    setParentContent(this.parentContent).
+                    setPersistedContent(createdContent).
+                    build();
+
+                this.contentWizardStepForm.renderNew(formContext, this.contentType.getForm());
+                // TODO: GetPageTemplateRequest use descriptor config form
+                this.pageWizardStepForm.renderNew();
+                this.livePanel.renderNew();
+            });
         }
 
         setPersistedItem(content: api_content.Content) {
@@ -145,7 +148,11 @@ module app_wizard {
             this.formIcon.setSrc(content.getIconUrl());
             var contentData: api_content.ContentData = content.getContentData();
 
-            this.contentWizardStepForm.renderExisting(contentData, content.getForm());
+            var formContext = new api_form.FormContextBuilder().
+                setParentContent(this.parentContent).
+                setPersistedContent(content).
+                build();
+            this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
 
             if (content.isPage()) {
                 var page = content.getPage();
@@ -162,9 +169,9 @@ module app_wizard {
             }
         }
 
-        persistNewItem(successCallback?: (contentId: string, contentPath: string) => void) {
+        persistNewItem(successCallback?: (createdContent: api_content.Content) => void) {
 
-            var contentData = this.contentWizardStepForm.getContentData();
+            var contentData = new api_content.ContentData();
 
             var createRequest = new api_content.CreateContentRequest().
                 setDraft(this.persistAsDraft).
@@ -172,27 +179,25 @@ module app_wizard {
                 setParent(this.parentContent.getPath()).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
-                setForm(this.contentWizardStepForm.getForm()).
+                setForm(this.contentType.getForm()).
                 setContentData(contentData);
 
-            if (this.iconUploadId) {
-                createRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName('_thumb.png')));
-            }
-            var attachments: api_content.Attachment[] = this.contentWizardStepForm.getFormView().getAttachments();
+            var attachments: api_content.Attachment[] = [];
             createRequest.addAttachments(attachments);
 
-            createRequest.sendAndParse().done((createdContent: api_content.Content) => {
+            createRequest.sendAndParse().
+                done((createdContent: api_content.Content) => {
 
-                api_notify.showFeedback('Content was created!');
-                new api_content.ContentCreatedEvent(createdContent).fire();
-                this.setPersistedItem(createdContent);
-                this.getTabId().changeToEditMode(createdContent.getId());
+                    api_notify.showFeedback('Content was created!');
+                    new api_content.ContentCreatedEvent(createdContent).fire();
+                    this.setPersistedItem(createdContent);
+                    this.getTabId().changeToEditMode(createdContent.getId());
 
-                if (successCallback) {
-                    successCallback.call(this, createdContent.getContentId().toString(), createdContent.getPath().toString());
-                }
+                    if (successCallback) {
+                        successCallback.call(this, createdContent);
+                    }
 
-            });
+                });
         }
 
         updatePersistedItem(successCallback?: () => void) {
@@ -204,29 +209,29 @@ module app_wizard {
                 setForm(this.contentWizardStepForm.getForm()).
                 setContentData(this.contentWizardStepForm.getContentData());
 
-            if (this.iconUploadId) {
-                updateRequest.addAttachment(new api_content.Attachment(this.iconUploadId, new api_content.AttachmentName('_thumb.png')));
+            if (this.iconUploadItem) {
+                var attachment = new api_content.AttachmentBuilder().
+                    setBlobKey(this.iconUploadItem.getBlobKey()).
+                    setAttachmentName(new api_content.AttachmentName('_thumb.png')).
+                    setMimeType(this.iconUploadItem.getMimeType()).
+                    setSize(this.iconUploadItem.getSize()).
+                    build();
+                updateRequest.addAttachment(attachment);
             }
 
-            updateRequest.send().done((updateResponse: api_rest.JsonResponse<any>) => {
-                var json = updateResponse.getJson();
-                if (json.error) {
-                    api_notify.showError(json.error.message);
-                } else {
+            updateRequest.
+                sendAndParse().
+                done((updatedContent: api_content.Content) => {
+
                     api_notify.showFeedback('Content was updated!');
-                    var content: api_content.Content = new api_content.Content(json.result);
-                    new api_content.ContentUpdatedEvent(content).fire();
-                    this.setPersistedItem(content);
-
+                    new api_content.ContentUpdatedEvent(updatedContent).fire();
+                    
+                    this.setPersistedItem(updatedContent);
+                    
                     if (successCallback) {
-                        successCallback.call(this, json.contentId, json.contentPath);
+                        successCallback.call(this, updatedContent);
                     }
-                }
-
-                if (successCallback) {
-                    successCallback.call(this);
-                }
-            });
+                });
         }
 
         hasUnsavedChanges(): boolean {
@@ -252,12 +257,6 @@ module app_wizard {
             // strings are equal if both of them are empty or not specified or they are identical
             return (!str1 && !str2) || (str1 == str2);
         }
-
-        private getNearestSite(content: api_content.ContentId): api_content.Content {
-            // TODO: CMS-2534
-            return null;
-        }
     }
-
 
 }

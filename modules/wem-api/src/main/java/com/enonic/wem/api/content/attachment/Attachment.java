@@ -3,11 +3,13 @@ package com.enonic.wem.api.content.attachment;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.binary.Binary;
+import com.enonic.wem.api.blob.BlobKey;
 
 public final class Attachment
 {
-    private final Binary binary;
+    private final BlobKey blobKey;
+
+    private final long size;
 
     private final String mimeType;
 
@@ -17,15 +19,21 @@ public final class Attachment
 
     public Attachment( final Builder builder )
     {
-        this.binary = builder.binary;
+        Preconditions.checkNotNull( builder.name, "name is mandatory for an Attachment" );
+        Preconditions.checkNotNull( builder.mimeType, "mimeType is mandatory for an Attachment" );
+        Preconditions.checkNotNull( builder.blobKey, "blobKey is mandatory for an Attachment" );
+        Preconditions.checkNotNull( builder.size, "size is mandatory for an Attachment" );
+
+        this.blobKey = builder.blobKey;
         this.mimeType = builder.mimeType;
         this.name = builder.name;
+        this.size = builder.size;
         this.label = builder.label;
     }
 
-    public Binary getBinary()
+    public BlobKey getBlobKey()
     {
-        return binary;
+        return blobKey;
     }
 
     public String getMimeType()
@@ -45,7 +53,7 @@ public final class Attachment
 
     public long getSize()
     {
-        return binary.getSize();
+        return size;
     }
 
     @Override
@@ -63,13 +71,14 @@ public final class Attachment
         return Objects.equal( this.name, that.name ) &&
             Objects.equal( this.mimeType, that.mimeType ) &&
             Objects.equal( this.label, that.label ) &&
-            Objects.equal( this.binary, that.binary );
+            Objects.equal( this.blobKey, that.blobKey ) &&
+            Objects.equal( this.size, that.size );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, mimeType, label, binary );
+        return Objects.hashCode( name, mimeType, label, size, blobKey );
     }
 
     @Override
@@ -79,7 +88,8 @@ public final class Attachment
         s.add( "name", name );
         s.add( "mimeType", mimeType );
         s.add( "label", label );
-        s.add( "binary", binary );
+        s.add( "size", size );
+        s.add( "blobKey", blobKey );
         return s.toString();
     }
 
@@ -95,7 +105,7 @@ public final class Attachment
 
     public static class Builder
     {
-        private Binary binary;
+        private BlobKey blobKey;
 
         private String mimeType;
 
@@ -103,25 +113,24 @@ public final class Attachment
 
         private String label;
 
+        private long size;
+
         private Builder()
         {
-            this.binary = null;
-            this.mimeType = null;
-            this.name = null;
-            this.label = null;
+
         }
 
         private Builder( final Attachment attachment )
         {
-            this.binary = attachment.binary;
+            this.blobKey = attachment.blobKey;
             this.mimeType = attachment.mimeType;
             this.name = attachment.name;
             this.label = attachment.label;
         }
 
-        public Builder binary( final Binary binary )
+        public Builder blobKey( final BlobKey blobKey )
         {
-            this.binary = binary;
+            this.blobKey = blobKey;
             return this;
         }
 
@@ -143,11 +152,14 @@ public final class Attachment
             return this;
         }
 
+        public Builder size( final long size )
+        {
+            this.size = size;
+            return this;
+        }
+
         public Attachment build()
         {
-            Preconditions.checkNotNull( name, "name is mandatory for an attachment" );
-            Preconditions.checkNotNull( mimeType, "mimeType is mandatory for an attachment" );
-            Preconditions.checkNotNull( binary, "binary is mandatory for an attachment" );
             return new Attachment( this );
         }
     }

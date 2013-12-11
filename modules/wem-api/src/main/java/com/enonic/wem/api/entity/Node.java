@@ -3,7 +3,7 @@ package com.enonic.wem.api.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;

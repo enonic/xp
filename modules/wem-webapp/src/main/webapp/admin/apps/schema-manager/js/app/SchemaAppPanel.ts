@@ -149,7 +149,7 @@ module app {
                             var schemaViewItem = new api_app_view.ViewItem<api_schema.Schema>(schema)
                                 .setDisplayName(schema.getDisplayName())
                                 .setPath(schema.getName())
-                                .setIconUrl(schema.getIcon());
+                                .setIconUrl(schema.getIconUrl());
 
                             schemaItemViewPanel.setItem(schemaViewItem);
 

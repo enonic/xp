@@ -12,5 +12,9 @@ module api_schema_relationshiptype {
         getResourcePath():api_rest.Path {
             return this.resourceUrl;
         }
+
+        fromJsonToReleationshipType(json:api_schema_relationshiptype_json.RelationshipTypeJson): api_schema_relationshiptype.RelationshipType {
+            return new api_schema_relationshiptype.RelationshipType(json);
+        }
     }
 }

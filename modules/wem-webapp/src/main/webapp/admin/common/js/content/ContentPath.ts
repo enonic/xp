@@ -2,6 +2,8 @@ module api_content{
 
     export class ContentPath {
 
+        public static ROOT = ContentPath.fromString("/");
+
         private static ELEMENT_DIVIDER:string = "/";
 
         private elements:string[];

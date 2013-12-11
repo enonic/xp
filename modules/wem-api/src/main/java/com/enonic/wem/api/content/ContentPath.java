@@ -205,11 +205,6 @@ public final class ContentPath
         return builder.build();
     }
 
-    public static ContentPath createPathToEmbeddedContent( final ContentPath parent, final String name )
-    {
-        return newPath().elements( parent.elements ).addElement( EMBEDDED ).addElement( name ).build();
-    }
-
 
     public static Builder newPath()
     {

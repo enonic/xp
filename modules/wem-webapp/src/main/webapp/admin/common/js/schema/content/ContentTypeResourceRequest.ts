@@ -12,5 +12,9 @@ module api_schema_content {
         getResourcePath():api_rest.Path {
             return this.resourceUrl;
         }
+
+        fromJsonToContentType(json:api_schema_content_json.ContentTypeJson):ContentType {
+            return new ContentType(json);
+        }
     }
 }

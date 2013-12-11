@@ -37,6 +37,8 @@ final class ContentJcrMapper
 {
     static final String DRAFT = "draft";
 
+    static final String EMBEDDED = "embedded";
+
     static final String TYPE = "type";
 
     static final String FORM = "form";
@@ -88,6 +90,7 @@ final class ContentJcrMapper
     {
         contentNode.setProperty( NAME, content.getName() );
         contentNode.setProperty( DRAFT, content.isDraft() );
+        contentNode.setProperty( EMBEDDED, content.isEmbedded() );
         contentNode.setProperty( TYPE, content.getType() != null ? content.getType().toString() : null );
         contentNode.setProperty( FORM, content.getForm() != null ? formItemsJsonSerializer.toString( content.getForm() ) : null );
         if ( content.getSite() != null )
@@ -143,6 +146,7 @@ final class ContentJcrMapper
         throws RepositoryException
     {
         contentBuilder.draft( contentNode.getProperty( DRAFT ).getBoolean() );
+        contentBuilder.embedded( contentNode.getProperty( EMBEDDED ).getBoolean() );
         if ( contentNode.hasProperty( FORM ) )
         {
             final Form form =

@@ -13,18 +13,22 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteStreams;
+
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
@@ -77,9 +81,8 @@ public class CreateContentHandler
                 checkParentContentAllowsChildren( parentContentPath, session );
             }
 
-            // TODO: Remove: final List<Content> temporaryContents = resolveTemporaryContents( command, session );
-
             builder.path( contentPath );
+            builder.embedded( command.isEmbed() );
             builder.displayName( displayName );
             builder.form( command.getForm() );
             builder.contentData( command.getContentData() );
@@ -240,22 +243,25 @@ public class CreateContentHandler
     private Attachment createThumbnailAttachment( final Attachment origin )
         throws Exception
     {
-        final Binary thumbnailBinary = createImageThumbnail( origin.getBinary(), THUMBNAIL_SIZE );
+        final Blob thumbnailBlob = createImageThumbnail( origin.getBlobKey(), THUMBNAIL_SIZE );
         return newAttachment( origin ).
-            binary( thumbnailBinary ).
+            blobKey( thumbnailBlob.getKey() ).
             name( CreateContent.THUMBNAIL_NAME ).
             mimeType( THUMBNAIL_MIME_TYPE ).
             build();
     }
 
-    public Binary createImageThumbnail( final Binary binary, final int size )
+    public Blob createImageThumbnail( final BlobKey originalImageBlobKey, final int size )
         throws Exception
     {
-        final BufferedImage image = ImageIO.read( binary.asInputStream() );
+        final Blob originalImage = context.getClient().execute( Commands.blob().get( originalImageBlobKey ) );
+        final BufferedImage image = ImageIO.read( originalImage.getStream() );
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final BufferedImage scaledImage = new ScaleMaxFilter( size ).filter( image );
         ImageIO.write( scaledImage, "png", outputStream );
-        return Binary.from( outputStream.toByteArray() );
+
+        CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( outputStream.toByteArray() ).getInput() );
+        return context.getClient().execute( createBlob );
     }
 
     @Inject

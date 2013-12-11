@@ -27,7 +27,7 @@ public final class AccountImageResource
     public AccountImageResource()
         throws Exception
     {
-        this.helper = new AccountImageHelper();
+        this.helper = new AccountImageHelper( client );
     }
 
     @GET

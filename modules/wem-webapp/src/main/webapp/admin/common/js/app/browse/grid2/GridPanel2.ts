@@ -2,13 +2,13 @@ module api_app_browse_grid2 {
 
     export class GridPanel2 extends api_ui.Panel {
 
-        private nameFormatter:(row:number, cell:number, value:any, columnDef:any, dataContext:Slick.SlickData) => string;
+        private nameFormatter: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
 
         constructor() {
             super("GridPanel2");
             this.addClass("grid-panel2");
 
-            this.nameFormatter = (row:number, cell:number, value:any, columnDef:any, item:api_content.ContentSummary) => {
+            this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: api_content.ContentSummary) => {
                 var rowEl = new api_dom.DivEl();
 
                 var icon = new api_dom.ImgEl();

@@ -2,23 +2,25 @@ package com.enonic.wem.core.support;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.blob.CreateBlob;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.core.initializer.InitializerTask;
 
 public abstract class BaseInitializer
     extends InitializerTask
 {
-    private static final Logger LOG = LoggerFactory.getLogger( BaseInitializer.class );
-
     private static final String FILE_SEPARATOR = "/";
 
     protected Client client;
@@ -42,8 +44,7 @@ public abstract class BaseInitializer
         }
         catch ( IOException e )
         {
-            LOG.warn( "File not found: " + filePath, e );
-            return null;
+            throw new RuntimeException( "Failed to load file: " + filePath, e );
         }
     }
 
@@ -52,13 +53,20 @@ public abstract class BaseInitializer
         final String filePath = metaInfFolderBasePath + FILE_SEPARATOR + name.toLowerCase() + ".png";
         try
         {
-            final byte[] iconData = IOUtils.toByteArray( this.getClass().getResourceAsStream( filePath ) );
-            return Icon.from( iconData, "image/png" );
+            final InputStream stream = this.getClass().getResourceAsStream( filePath );
+            if ( stream == null )
+            {
+                return null;
+            }
+
+            final byte[] iconData = IOUtils.toByteArray( stream );
+            final CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( iconData ).getInput() );
+            final Blob blob = client.execute( createBlob );
+            return Icon.from( blob.getKey(), "image/png" );
         }
         catch ( Exception e )
         {
-            LOG.warn( "Icon not found: " + filePath );
-            return null;
+            throw new RuntimeException( "Failed to load icon file: " + filePath, e );
         }
     }
 

@@ -37,6 +37,8 @@ public final class CreateContent
 
     private boolean draft;
 
+    private boolean embed;
+
     private Map<String, Attachment> attachments = Maps.newHashMap();
 
     public CreateContent contentType( final ContentTypeName value )
@@ -48,6 +50,12 @@ public final class CreateContent
     public CreateContent parent( final ContentPath parentContentPath )
     {
         this.parentContentPath = parentContentPath;
+        return this;
+    }
+
+    public CreateContent embed( final boolean value )
+    {
+        this.embed = value;
         return this;
     }
 
@@ -147,6 +155,10 @@ public final class CreateContent
     public boolean isDraft()
     {
         return draft;
+    }
+    public boolean isEmbed()
+    {
+        return embed;
     }
 
     public Collection<Attachment> getAttachments()

@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.account.UserKey;
 
 public abstract class BaseSchema<T extends SchemaName>

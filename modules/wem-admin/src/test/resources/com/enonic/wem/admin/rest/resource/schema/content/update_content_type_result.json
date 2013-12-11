@@ -1,44 +1,25 @@
 {
-  "error" : null,
-  "result" : {
-    "schemaKind" : "ContentType",
-    "abstract" : false,
-    "allowChildContent" : true,
-    "contentDisplayNameScript" : "",
-    "createdTime" : null,
-    "creator" : null,
-    "deletable" : true,
-    "displayName" : "HTML Area",
-    "editable" : true,
-    "final" : true,
-    "form" : {
-      "formItems" : [ {
-        "Input" : {
-          "name" : "htmlarea_text",
-          "label" : "HTML Area",
-          "customText" : "",
-          "helpText" : "HTML Area",
-          "validationRegexp" : null,
-          "immutable" : false,
-          "indexed" : false,
-          "inputType" : {
-            "name" : "HtmlArea"
-          },
-          "occurrences" : {
-            "minimum" : 0,
-            "maximum" : 1
-          },
-          "config" : { }
-        }
-      } ]
-    },
-    "hasChildren" : false,
-    "iconUrl" : "http://localhost/admin/rest/schema/image/ContentType:htmlarea",
-    "key" : "ContentType:htmlarea",
-    "modifiedTime" : null,
-    "modifier" : null,
-    "name" : "htmlarea",
-    "superType" : "structured"
-  }
+    "error": null,
+    "result": {
+        "schemaKind": "ContentType",
+        "abstract": false,
+        "allowChildContent": true,
+        "contentDisplayNameScript": null,
+        "createdTime": null,
+        "creator": null,
+        "deletable": true,
+        "displayName": null,
+        "editable": true,
+        "final": false,
+        "form": {
+            "formItems": [ ]
+        },
+        "hasChildren": false,
+        "iconUrl": "http://localhost/admin/rest/schema/image/ContentType:htmlarea",
+        "key": "ContentType:htmlarea",
+        "modifiedTime": null,
+        "modifier": null,
+        "name": "htmlarea",
+        "superType": "structured"
+    }
 }
-

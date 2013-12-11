@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,9 +17,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.admin.rest.resource.schema.json.CreateOrUpdateSchemaJsonResult;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
-import com.enonic.wem.admin.rpc.UploadedIconFetcher;
-import com.enonic.wem.api.Icon;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
@@ -41,14 +37,6 @@ import static com.enonic.wem.api.command.Commands.mixin;
 public class MixinResource
     extends AbstractResource
 {
-    private UploadService uploadService;
-
-    @Inject
-    public void setUploadService( final UploadService uploadService )
-    {
-        this.uploadService = uploadService;
-    }
-
     @GET
     public MixinJson get( @QueryParam("name") final String name )
     {
@@ -99,13 +87,12 @@ public class MixinResource
         final Mixin mixin = new MixinXmlSerializer().
             overrideName( params.getName().toString() ).
             toMixin( params.getConfig() );
-        final Icon icon = fetchIcon( params.getIconReference() );
 
         final CreateMixin createCommand = mixin().create().
             name( params.getName().toString() ).
             displayName( mixin.getDisplayName() ).
             formItems( mixin.getFormItems() ).
-            icon( icon );
+            icon( params.getIconJson() != null ? params.getIconJson().getIcon() : null );
 
         try
         {
@@ -129,7 +116,6 @@ public class MixinResource
             final Mixin parsed = new MixinXmlSerializer().
                 overrideName( params.getName().toString() ).
                 toMixin( params.getConfig() );
-            final Icon icon = fetchIcon( params.getIconReference() );
 
             final MixinEditor editor = new MixinEditor()
             {
@@ -140,9 +126,9 @@ public class MixinResource
                     builder.name( params.getName() );
                     builder.displayName( parsed.getDisplayName() );
                     builder.formItems( parsed.getFormItems() );
-                    if ( icon != null )
+                    if ( params.getIconJson() != null )
                     {
-                        builder.icon( icon );
+                        builder.icon( params.getIconJson().getIcon() );
                     }
                     return builder.build();
                 }
@@ -192,18 +178,6 @@ public class MixinResource
         }
 
         return deletionResult;
-    }
-
-    private Icon fetchIcon( String iconReference )
-    {
-        try
-        {
-            return new UploadedIconFetcher( uploadService ).getUploadedIcon( iconReference );
-        }
-        catch ( Exception e )
-        {
-            throw new WebApplicationException( e );
-        }
     }
 
     private Mixin fetchMixin( final MixinName name )

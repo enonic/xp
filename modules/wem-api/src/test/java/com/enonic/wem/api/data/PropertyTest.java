@@ -3,7 +3,6 @@ package com.enonic.wem.api.data;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
 import static junit.framework.Assert.assertEquals;
@@ -94,13 +93,6 @@ public class PropertyTest
     {
         Property property = new Property.String( "myText", "1" );
         assertEquals( new Long( 1 ), property.getLong() );
-    }
-
-    @Test
-    public void getBinaryId_given_value_as_string()
-    {
-        Property property = new Property.BinaryId( "myBinary", new BinaryId( "217482f4-b89a-4286-9111-5120d11da6c2" ) );
-        assertEquals( BinaryId.from( "217482f4-b89a-4286-9111-5120d11da6c2" ), property.getBinaryId() );
     }
 
     @Test

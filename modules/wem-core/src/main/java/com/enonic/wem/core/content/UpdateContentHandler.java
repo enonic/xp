@@ -8,27 +8,29 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteStreams;
+
 import com.enonic.wem.api.Client;
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
+import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
@@ -95,7 +97,8 @@ public class UpdateContentHandler
                 Content edited = editBuilder.build();
                 persistedContent.checkIllegalEdit( edited );
 
-                if( !edited.isDraft() ) {
+                if ( !edited.isDraft() )
+                {
                     validateContentData( context, edited );
                 }
 
@@ -188,23 +191,6 @@ public class UpdateContentHandler
         }
     }
 
-    private void createEmbeddedContents( final Session session, final Content edited, final List<Content> temporaryContents )
-        throws RepositoryException
-    {
-        for ( Content tempContent : temporaryContents )
-        {
-            final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( edited.getPath(), tempContent.getName() );
-            createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
-        }
-    }
-
-    private void createEmbeddedContent( final Content tempContent, final ContentPath pathToEmbeddedContent, final Session session )
-        throws RepositoryException
-    {
-        contentDao.moveContent( tempContent.getId(), pathToEmbeddedContent, session );
-        session.save();
-    }
-
     private List<Content> resolveEmbeddedContent( final Session session, final Content persistedContent )
     {
         final List<Content> embeddedContent = new ArrayList<>();
@@ -253,23 +239,25 @@ public class UpdateContentHandler
     private void addThumbnail( final Client client, final ContentId contentId, final Attachment attachment )
         throws Exception
     {
-        final Binary thumbnailBinary = createImageThumbnail( attachment.getBinary(), THUMBNAIL_SIZE );
+        final Blob thumbnailBlob = createImageThumbnail( attachment.getBlobKey(), THUMBNAIL_SIZE );
         final Attachment thumbnailAttachment = newAttachment( attachment ).
-            binary( thumbnailBinary ).
+            blobKey( thumbnailBlob.getKey() ).
             name( CreateContent.THUMBNAIL_NAME ).
             mimeType( THUMBNAIL_MIME_TYPE ).
             build();
         client.execute( Commands.attachment().create().contentId( contentId ).attachment( thumbnailAttachment ) );
     }
 
-    public Binary createImageThumbnail( final Binary binary, final int size )
+    public Blob createImageThumbnail( final BlobKey originalImageBlobKey, final int size )
         throws Exception
     {
-        final BufferedImage image = ImageIO.read( binary.asInputStream() );
+        final Blob originalImage = context.getClient().execute( Commands.blob().get( originalImageBlobKey ) );
+        final BufferedImage image = ImageIO.read( originalImage.getStream() );
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final BufferedImage scaledImage = new ScaleMaxFilter( size ).filter( image );
         ImageIO.write( scaledImage, "png", outputStream );
-        return Binary.from( outputStream.toByteArray() );
+        CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( outputStream.toByteArray() ).getInput() );
+        return context.getClient().execute( createBlob );
     }
 
     @Inject

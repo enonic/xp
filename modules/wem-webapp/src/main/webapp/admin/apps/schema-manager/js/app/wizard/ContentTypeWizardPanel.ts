@@ -4,21 +4,29 @@ module app_wizard {
 
         public static NEW_WIZARD_HEADER = "New Content Type";
 
-        private static  DEFAULT_SCHEMA_ICON_URL:string = api_util.getRestUri('schema/image/ContentType:structured');
+        private formIcon: api_app_wizard.FormIcon;
 
-        private formIcon :api_app_wizard.FormIcon;
+        private contentTypeIcon: api_icon.Icon;
 
-        private contentTypeWizardHeader :api_app_wizard.WizardHeaderWithName;
+        private contentTypeWizardHeader: api_app_wizard.WizardHeaderWithName;
 
-        private persistedContentType :api_schema_content.ContentType;
+        private persistedContentType: api_schema_content.ContentType;
 
-        private contentTypeForm :app_wizard.ContentTypeForm;
+        private contentTypeForm: app_wizard.ContentTypeForm;
 
-        constructor(tabId:api_app.AppBarTabId) {
+        constructor(tabId: api_app.AppBarTabId) {
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
-            this.formIcon = new api_app_wizard.FormIcon(ContentTypeWizardPanel.DEFAULT_SCHEMA_ICON_URL, "Click to upload icon",
+            this.formIcon =
+            new api_app_wizard.FormIcon(new api_schema_content.ContentTypeIconUrlResolver().resolveDefault(), "Click to upload icon",
                 api_util.getRestUri("upload"));
-
+            this.formIcon.addListener({
+                onUploadStarted: null,
+                onUploadFinished: (uploadItem: api_ui.UploadItem) => {
+                    this.contentTypeIcon = new api_icon.IconBuilder().
+                        setBlobKey(uploadItem.getBlobKey()).setMimeType(uploadItem.getMimeType()).build();
+                    this.formIcon.setSrc(api_util.getRestUri('upload/' + this.contentTypeIcon.getBlobKey()));
+                }
+            });
             var actions = new ContentTypeWizardActions(this);
 
             var mainToolbar = new ContentTypeWizardToolbar({
@@ -32,7 +40,7 @@ module app_wizard {
 
             this.contentTypeForm = new ContentTypeForm();
 
-            var steps:api_app_wizard.WizardStep[] = [];
+            var steps: api_app_wizard.WizardStep[] = [];
             steps.push(new api_app_wizard.WizardStep("Content Type", this.contentTypeForm));
 
             super({
@@ -45,69 +53,65 @@ module app_wizard {
             });
         }
 
-        setPersistedItem(contentType:api_schema_content.ContentType) {
+        setPersistedItem(contentType: api_schema_content.ContentType) {
             super.setPersistedItem(contentType);
 
             this.contentTypeWizardHeader.setName(contentType.getName());
-            this.formIcon.setSrc(contentType.getIcon());
+            this.formIcon.setSrc(contentType.getIconUrl());
 
             this.persistedContentType = contentType;
 
             new api_schema_content.GetContentTypeConfigByNameRequest(contentType.getContentTypeName()).send().
-                done((response:api_rest.JsonResponse <api_schema_content.GetContentTypeConfigResult>) => {
-                this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
-            });
+                done((response: api_rest.JsonResponse <api_schema_content.GetContentTypeConfigResult>) => {
+                    this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
+                });
         }
 
-        persistNewItem(successCallback ? : () => void) {
+        persistNewItem(successCallback ?: () => void) {
             var formData = this.contentTypeForm.getFormData();
-            var createContentTypeRequest = new api_schema_content.CreateContentTypeRequest(this.contentTypeWizardHeader.getName(), formData.xml,
-                this.getIconUrl());
-            createContentTypeRequest.send().done((response:api_rest.JsonResponse<any>) => {
-                var jsonResponse = response.getJson();
-                if (jsonResponse.error) {
-                    api_notify.showError(jsonResponse.error.msg);
-                } else {
-                    var contentType:api_schema_content.ContentType = new api_schema_content.ContentType(jsonResponse.result);
+            var createContentTypeRequest = new api_schema_content.CreateContentTypeRequest(this.contentTypeWizardHeader.getName(),
+                formData.xml,
+                this.contentTypeIcon);
+            createContentTypeRequest.
+                sendAndParse().
+                done((contentType: api_schema_content.ContentType) => {
+
                     this.setPersistedItem(contentType);
                     this.getTabId().changeToEditMode(contentType.getKey());
                     new app_wizard.ContentTypeCreatedEvent().fire();
                     api_notify.showFeedback('Content type was created!');
 
-                    new api_schema.SchemaCreatedEvent( contentType ).fire();
+                    new api_schema.SchemaCreatedEvent(contentType).fire();
 
                     if (successCallback) {
                         successCallback.call(this);
                     }
-                }
 
-            });
+                });
         }
 
-        updatePersistedItem(successCallback ? : () => void) {
+        updatePersistedItem(successCallback ?: () => void) {
+
             var formData = this.contentTypeForm.getFormData();
             var newName = new api_schema_content.ContentTypeName(this.contentTypeWizardHeader.getName());
             var updateContentTypeRequest = new api_schema_content.UpdateContentTypeRequest(this.persistedContentType.getContentTypeName(),
-                                                                                           newName,
-                                                                                           formData.xml,
-                this.getIconUrl());
+                newName,
+                formData.xml,
+                this.contentTypeIcon);
 
-            updateContentTypeRequest.send().done((response:api_rest.JsonResponse<any>) => {
-                var jsonResponse = response.getJson();
-                if (jsonResponse.error) {
-                    api_notify.showError(jsonResponse.error.msg);
-                } else {
-                    var updatedContentType:api_schema_content.ContentType = new api_schema_content.ContentType(jsonResponse.result);
+            updateContentTypeRequest.
+                sendAndParse().
+                done((contentType: api_schema_content.ContentType) => {
+
                     new app_wizard.ContentTypeUpdatedEvent().fire();
                     api_notify.showFeedback('Content type was saved!');
 
-                    new api_schema.SchemaUpdatedEvent( updatedContentType ).fire();
-                    this.setPersistedItem(updatedContentType);
+                    new api_schema.SchemaUpdatedEvent(contentType).fire();
+                    this.setPersistedItem(contentType);
                     if (successCallback) {
                         successCallback.call(this);
                     }
-                }
-            });
+                });
         }
     }
 }

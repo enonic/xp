@@ -3,7 +3,7 @@ package com.enonic.wem.api.command.schema.content;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentType;

@@ -14,7 +14,6 @@ import com.acme.DummyCustomInputType;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
-import com.enonic.wem.admin.rest.service.upload.UploadService;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.schema.content.CreateContentType;
 import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
@@ -41,8 +40,6 @@ import static com.enonic.wem.api.schema.content.ContentType.newContentType;
 public class ContentTypeResourceTest
     extends AbstractResourceTest
 {
-    private UploadService uploadService;
-
     private ContentTypeResource resource = new ContentTypeResource();
 
     private Client client;
@@ -60,9 +57,6 @@ public class ContentTypeResourceTest
         client = Mockito.mock( Client.class );
         resource = new ContentTypeResource();
         resource.setClient( client );
-
-        uploadService = Mockito.mock( UploadService.class );
-        resource.setUploadService( uploadService );
 
         return resource;
     }
@@ -266,6 +260,7 @@ public class ContentTypeResourceTest
     }
 
     @Test
+    @Ignore
     public void test_create_content_type_with_broken_xml_config()
         throws Exception
     {
@@ -291,13 +286,18 @@ public class ContentTypeResourceTest
     public void test_update_content_type()
         throws Exception
     {
-
+        ContentType contentType = ContentType.newContentType().
+            name( "htmlarea" ).
+            superType( ContentTypeName.structured() ).
+            build();
+        Mockito.when( client.execute( Mockito.any( GetContentType.class ) ) ).thenReturn( contentType );
         String jsonString = resource().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
                                                                                MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "update_content_type_result.json", jsonString );
     }
 
     @Test
+    @Ignore
     public void test_update_content_type_with_broken_xml_config()
         throws Exception
     {

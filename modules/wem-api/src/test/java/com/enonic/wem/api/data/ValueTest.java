@@ -5,7 +5,6 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.binary.BinaryId;
 import com.enonic.wem.api.data.type.InconvertibleValueException;
 import com.enonic.wem.api.support.AbstractEqualsTest;
 
@@ -62,15 +61,6 @@ public class ValueTest
 
         assertSame( value, new Value.ContentId( value ).getContentId() );
         assertEquals( value, new Value.ContentId( "abc" ).getContentId() );
-    }
-
-    @Test
-    public void construct_BinaryId()
-    {
-        BinaryId value = BinaryId.from( "abc" );
-
-        assertSame( value, new Value.BinaryId( value ).getBinaryId() );
-        assertEquals( value, new Value.BinaryId( "abc" ).getBinaryId() );
     }
 
     @Test

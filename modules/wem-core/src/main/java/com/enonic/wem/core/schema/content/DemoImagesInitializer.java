@@ -1,13 +1,17 @@
 package com.enonic.wem.core.schema.content;
 
+import java.io.IOException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.io.ByteStreams;
+
+import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.content.binary.Binary;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -41,6 +45,7 @@ public class DemoImagesInitializer
     }
 
     private void createImages()
+        throws IOException
     {
         final ContentPath folderImagesBig = ContentPath.from( "bildearkiv/trampoliner/jumping-jack-big-bounce" );
         for ( String fileName : FOLDER_IMAGES_BIG )
@@ -55,11 +60,12 @@ public class DemoImagesInitializer
     }
 
     private void createImageContent( final ContentPath parent, final String fileName, final String displayName )
+        throws IOException
     {
         // TODO: fix due to Intellij failing when building jar with ø in resource file
         final String fixedFileName = fileName.replace( "\u00f8", "_o_" );
-        final Binary binary = loadBinary( fixedFileName );
-        if ( binary == null )
+        final byte[] bytes = loadImageFileAsBytes( fixedFileName );
+        if ( bytes == null )
         {
             return;
         }
@@ -70,7 +76,9 @@ public class DemoImagesInitializer
 
         final ContentData dataSet = createContentData( filteredFileName );
 
-        final Attachment attachment = newAttachment().name( filteredFileName ).binary( binary ).mimeType( "image/jpeg" ).build();
+        final Blob blob = client.execute( Commands.blob().create( ByteStreams.newInputStreamSupplier( bytes ).getInput() ) );
+        final Attachment attachment = newAttachment().name( filteredFileName ).blobKey( blob.getKey() ).mimeType( "image/jpeg" ).build();
+
         final CreateContent createContent = Commands.content().create().
             contentType( ContentTypeName.imageMedia() ).
             form( ContentTypesInitializer.MEDIA_IMAGE_FORM ).
@@ -86,17 +94,16 @@ public class DemoImagesInitializer
     {
         final ContentData dataSet = new ContentData();
         dataSet.add( new Property.String( "mimeType", "image/png" ) );
-        dataSet.add( new Property.AttachmentName( "image", attachmentName ) );
+        dataSet.add( new Property.String( "image", attachmentName ) );
         return dataSet;
     }
 
-    protected Binary loadBinary( final String fileName )
+    protected byte[] loadImageFileAsBytes( final String fileName )
     {
         final String filePath = "/META-INF/demo-images/" + fileName;
         try
         {
-            final byte[] iconData = IOUtils.toByteArray( this.getClass().getResourceAsStream( filePath ) );
-            return Binary.from( iconData );
+            return IOUtils.toByteArray( this.getClass().getResourceAsStream( filePath ) );
         }
         catch ( Exception e )
         {

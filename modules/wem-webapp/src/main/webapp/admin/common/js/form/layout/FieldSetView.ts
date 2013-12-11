@@ -6,8 +6,8 @@ module api_form_layout {
 
         private formItemViews:api_form.FormItemView[] = [];
 
-         constructor(fieldSet:api_form.FieldSet, dataSet?:api_data.DataSet) {
-            super(fieldSet, "FieldSetView", "field-set-view");
+         constructor(context:api_form.FormContext, fieldSet:api_form.FieldSet, dataSet?:api_data.DataSet) {
+            super(context, fieldSet, "FieldSetView", "field-set-view");
 
             this.fieldSet = fieldSet;
             this.doLayout(dataSet);
@@ -55,6 +55,7 @@ module api_form_layout {
             this.appendChild(wrappingDiv);
 
             this.formItemViews =  new api_form.FormItemLayer().
+                setFormContext(this.getContext()).
                 setFormItems(this.fieldSet.getFormItems()).
                 setParentElement(wrappingDiv).
                 layout(dataSet);

@@ -1,6 +1,6 @@
 module api_schema_mixin {
 
-    export class UpdateMixinRequest extends MixinResourceRequest<any> {
+    export class UpdateMixinRequest extends MixinResourceRequest<api_schema_mixin_json.MixinJson> {
 
         private mixinToUpdate:string;
 
@@ -8,7 +8,7 @@ module api_schema_mixin {
 
         private config:string;
 
-        private iconReference:string;
+        private icon:api_icon.Icon;
 
         constructor() {
             super();
@@ -30,8 +30,8 @@ module api_schema_mixin {
             return this;
         }
 
-        setIconReference( value:string ):UpdateMixinRequest{
-            this.iconReference = value;
+        setIcon( value:api_icon.Icon ):UpdateMixinRequest{
+            this.icon = value;
             return this;
         }
 
@@ -40,7 +40,7 @@ module api_schema_mixin {
                 mixinToUpdate: this.mixinToUpdate,
                 name: this.name,
                 config: this.config,
-                iconReference: this.iconReference
+                icon: this.icon != null ? this.icon.toJson() : null
             };
         }
 
@@ -48,5 +48,18 @@ module api_schema_mixin {
             return api_rest.Path.fromParent( super.getResourcePath(), "update" );
         }
 
+
+        sendAndParse(): JQueryPromise<Mixin> {
+
+            var deferred = jQuery.Deferred<Mixin>();
+
+            this.send().done((response: api_rest.JsonResponse<api_schema_mixin_json.MixinJson>) => {
+                deferred.resolve(this.fromJsonToMixin(response.getResult()));
+            }).fail((response: api_rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
+        }
     }
 }

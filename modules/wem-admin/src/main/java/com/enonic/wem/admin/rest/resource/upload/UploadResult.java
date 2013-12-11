@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.wem.admin.json.JsonResult;
-import com.enonic.wem.admin.rest.service.upload.UploadItem;
 
 final class UploadResult
     extends JsonResult
@@ -31,7 +30,7 @@ final class UploadResult
     private ObjectNode toJson( final UploadItem item )
     {
         final ObjectNode json = objectNode();
-        json.put( "id", item.getId() );
+        json.put( "id", item.getBlobKey().toString() );
         json.put( "name", item.getName() );
         json.put( "mimeType", item.getMimeType() );
         json.put( "uploadTime", item.getUploadTime() );

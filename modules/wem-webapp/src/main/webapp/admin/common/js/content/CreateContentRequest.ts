@@ -2,78 +2,86 @@ module api_content {
 
     export class CreateContentRequest extends ContentResourceRequest<api_content_json.ContentJson> {
 
-        private draft:boolean = false;
+        private draft: boolean = false;
 
-        private name:string;
+        private name: string;
 
-        private parent:ContentPath;
+        private parent: ContentPath;
 
-        private contentType:api_schema_content.ContentTypeName;
+        private embed: boolean = false;
 
-        private form:api_form.Form;
+        private contentType: api_schema_content.ContentTypeName;
 
-        private contentData:ContentData;
+        private form: api_form.Form;
 
-        private displayName:string;
+        private contentData: ContentData;
 
-        private attachments:api_content.Attachment[] = [];
+        private displayName: string;
+
+        private attachments: api_content.Attachment[] = [];
 
         constructor() {
             super();
             super.setMethod("POST");
         }
 
-        setDraft(value:boolean):CreateContentRequest {
+        setDraft(value: boolean): CreateContentRequest {
             this.draft = value;
             return this;
         }
 
-        setName(value:string):CreateContentRequest {
+        setName(value: string): CreateContentRequest {
             this.name = value;
             return this;
         }
 
-        setParent(value:ContentPath):CreateContentRequest {
+        setParent(value: ContentPath): CreateContentRequest {
             this.parent = value;
             return this;
         }
 
-        setContentType(value:api_schema_content.ContentTypeName):CreateContentRequest {
+        setEmbed(value: boolean): CreateContentRequest {
+            this.embed = value;
+            return this;
+        }
+
+        setContentType(value: api_schema_content.ContentTypeName): CreateContentRequest {
             this.contentType = value;
             return this;
         }
 
-        setForm(form:api_form.Form):CreateContentRequest {
+        setForm(form: api_form.Form): CreateContentRequest {
             this.form = form;
             return this;
         }
 
-        setContentData(contentData:api_content.ContentData):CreateContentRequest {
+        setContentData(contentData: api_content.ContentData): CreateContentRequest {
             this.contentData = contentData;
             return this;
         }
 
-        setDisplayName(displayName:string):CreateContentRequest {
+        setDisplayName(displayName: string): CreateContentRequest {
             this.displayName = displayName;
             return this;
         }
 
-        addAttachment(attachment:api_content.Attachment):CreateContentRequest {
-            this.attachments.push( attachment );
+        addAttachment(attachment: api_content.Attachment): CreateContentRequest {
+            this.attachments.push(attachment);
             return this;
         }
 
-        addAttachments(attachments:api_content.Attachment[]):CreateContentRequest {
+        addAttachments(attachments: api_content.Attachment[]): CreateContentRequest {
             this.attachments = this.attachments.concat(attachments);
             return this;
         }
 
 
-        getParams():Object {
+        getParams(): Object {
             return {
                 draft: this.draft,
                 name: this.name,
                 parent: this.parent.toString(),
+                embed: this.embed,
                 contentType: this.contentType.toString(),
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
@@ -82,19 +90,21 @@ module api_content {
             };
         }
 
-        private attachmentsToJson():any {
-            var array:any[] = [];
-            this.attachments.forEach((attachment:api_content.Attachment)=>{
+        private attachmentsToJson(): any {
+            var array: any[] = [];
+            this.attachments.forEach((attachment: api_content.Attachment)=> {
                 var obj = {
-                    "uploadId" : attachment.getUploadId(),
-                    "attachmentName" : attachment.getAttachmentName().toString()
+                    "blobKey": attachment.getBlobKey().toString(),
+                    "attachmentName": attachment.getAttachmentName().toString(),
+                    "mimeType": attachment.getMimeType(),
+                    "size": attachment.getSize()
                 };
                 array.push(obj);
             });
             return array;
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath(): api_rest.Path {
             return api_rest.Path.fromParent(super.getResourcePath(), "create");
         }
 

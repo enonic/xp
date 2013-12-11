@@ -14,7 +14,10 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.Icon;
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobKey;
+import com.enonic.wem.api.command.content.blob.GetBlob;
+import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.mixin.GetMixins;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
@@ -29,6 +32,7 @@ import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
+import com.enonic.wem.core.blobstore.memory.MemoryBlobRecord;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.schema.mixin.Mixin.newMixin;
@@ -38,6 +42,10 @@ import static org.junit.Assert.*;
 public class SchemaImageResourceTest
 {
     private SchemaImageResource controller;
+
+    private static final BlobKey BLOB_KEY = new BlobKey( "ABC" );
+
+    private static final Icon ICON = Icon.from( BLOB_KEY, "image/png" );
 
     private Client client;
 
@@ -54,14 +62,15 @@ public class SchemaImageResourceTest
     public void testContentTypeIcon()
         throws Exception
     {
-        final byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        final Icon icon = Icon.from( data, "image/png" );
+        byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        Blob blob = new MemoryBlobRecord( BLOB_KEY, data );
+        Mockito.when( client.execute( Mockito.isA( GetBlob.class ) ) ).thenReturn( blob );
 
         final ContentType contentType = ContentType.newContentType().
             name( "my_content_type" ).
             displayName( "My content type" ).
             superType( ContentTypeName.from( "unstructured" ) ).
-            icon( icon ).
+            icon( ICON ).
             build();
         setupContentType( contentType );
 
@@ -77,13 +86,14 @@ public class SchemaImageResourceTest
     public void testContentTypeIcon_fromSuperType()
         throws Exception
     {
-        final byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        final Icon icon = Icon.from( data, "image/png" );
+        byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        Blob blob = new MemoryBlobRecord( BLOB_KEY, data );
+        Mockito.when( client.execute( Mockito.isA( GetBlob.class ) ) ).thenReturn( blob );
 
         final ContentType systemContentType = ContentType.newContentType().
             name( "unstructured" ).
             displayName( "Unstructured" ).
-            icon( icon ).
+            icon( ICON ).
             build();
         setupContentType( systemContentType );
 
@@ -112,8 +122,7 @@ public class SchemaImageResourceTest
         try
         {
             // exercise
-            final Response response = this.controller.getSchemaIcon( "ContentType:my_content_type", 10 );
-            final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
+            this.controller.getSchemaIcon( "ContentType:my_content_type", 10 );
         }
         catch ( WebApplicationException e )
         {
@@ -127,13 +136,14 @@ public class SchemaImageResourceTest
     public void testMixinIcon()
         throws Exception
     {
-        final byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        final Icon icon = Icon.from( data, "image/png" );
+        byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        Blob blob = new MemoryBlobRecord( BLOB_KEY, data );
+        Mockito.when( client.execute( Mockito.isA( GetBlob.class ) ) ).thenReturn( blob );
 
         Mixin mixin = newMixin().
             name( "postal_code" ).
             displayName( "My content type" ).
-            icon( icon ).
+            icon( ICON ).
             addFormItem( newInput().name( "postal_code" ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
         setupMixin( mixin );
@@ -169,8 +179,9 @@ public class SchemaImageResourceTest
     public void testRelationshipTypeIcon()
         throws Exception
     {
-        final byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
-        final Icon icon = Icon.from( data, "image/png" );
+        byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        Blob blob = new MemoryBlobRecord( BLOB_KEY, data );
+        Mockito.when( client.execute( Mockito.isA( GetBlob.class ) ) ).thenReturn( blob );
 
         RelationshipType relationshipType = newRelationshipType().
             name( "like" ).
@@ -178,7 +189,7 @@ public class SchemaImageResourceTest
             toSemantic( "liked by" ).
             addAllowedFromType( ContentTypeName.from( "person" ) ).
             addAllowedToType( ContentTypeName.from( "person" ) ).
-            icon( icon ).
+            icon( ICON ).
             build();
         setupRelationshipType( relationshipType );
 

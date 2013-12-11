@@ -9,8 +9,6 @@ module api_data {
 
         static STRING = new ValueType("String");
 
-        static BINARY_ID = new ValueType("BinaryId");
-
         static HTML_PART = new ValueType("HtmlPart");
 
         static XML = new ValueType("Xml");
@@ -37,7 +35,6 @@ module api_data {
             ValueTypes.DATA,
             ValueTypes.STRING,
             ValueTypes.DATE_TIME,
-            ValueTypes.BINARY_ID,
             ValueTypes.HTML_PART,
             ValueTypes.XML,
             ValueTypes.DATE_MIDNIGHT,

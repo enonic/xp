@@ -4,18 +4,16 @@ import com.enonic.wem.api.schema.SchemaKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
 
-public final class SchemaImageUriResolver
+public final class SchemaIconUrlResolver
 {
 
     public static String resolve( final SchemaKey schemaKey )
     {
-        final String schemaValue = schemaKey.toString();
-        return ServletRequestUrlHelper.createUrl( "/admin/rest/schema/image/" + schemaValue );
+        return ServletRequestUrlHelper.createUrl( "/admin/rest/schema/image/" + schemaKey.toString() );
     }
 
     public static String resolve( final ContentTypeName contentTypeName )
     {
-        final SchemaKey schemaKey = SchemaKey.from( contentTypeName );
-        return resolve( schemaKey );
+        return resolve( SchemaKey.from( contentTypeName ) );
     }
 }

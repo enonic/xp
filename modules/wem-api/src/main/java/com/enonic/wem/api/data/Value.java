@@ -121,17 +121,6 @@ public abstract class Value<T>
     }
 
     /**
-     * Attempts to return value as com.enonic.wem.api.content.binary.BinaryId using casting.
-     *
-     * @throws ClassCastException if value is not of type com.enonic.wem.api.content.binary.BinaryId.
-     */
-    public com.enonic.wem.api.content.binary.BinaryId getBinaryId()
-        throws ClassCastException
-    {
-        return (com.enonic.wem.api.content.binary.BinaryId) object;
-    }
-
-    /**
      * Attempts to return value as com.enonic.wem.api.content.ContentId using casting.
      *
      * @throws ClassCastException if value is not of type com.enonic.wem.api.content.ContentId.
@@ -292,22 +281,6 @@ public abstract class Value<T>
         if ( object != null && converted == null )
         {
             throw new InconvertibleValueException( object, JavaTypeConverter.DateTime.GET );
-        }
-        return converted;
-    }
-
-    /**
-     * Attempts to return value as com.enonic.wem.api.content.binary.BinaryId, using best effort converting if value is not of type com.enonic.wem.api.content.binary.BinaryId.
-     *
-     * @throws InconvertibleValueException if value is not convertible to com.enonic.wem.api.content.binary.BinaryId.
-     */
-    public com.enonic.wem.api.content.binary.BinaryId asBinaryId()
-        throws InconvertibleValueException
-    {
-        final com.enonic.wem.api.content.binary.BinaryId converted = JavaTypeConverter.BinaryId.GET.convertFrom( object );
-        if ( object != null && converted == null )
-        {
-            throw new InconvertibleValueException( object, JavaTypeConverter.BinaryId.GET );
         }
         return converted;
     }
@@ -493,29 +466,6 @@ public abstract class Value<T>
         public EntityId( final java.lang.String value )
         {
             super( ValueTypes.ENTITY_ID, com.enonic.wem.api.entity.EntityId.from( value ) );
-        }
-    }
-
-    public static final class AttachmentName
-        extends Value<java.lang.String>
-    {
-        public AttachmentName( final java.lang.String value )
-        {
-            super( ValueTypes.ATTACHMENT_NAME, value );
-        }
-    }
-
-    public static final class BinaryId
-        extends Value<com.enonic.wem.api.content.binary.BinaryId>
-    {
-        public BinaryId( final com.enonic.wem.api.content.binary.BinaryId value )
-        {
-            super( ValueTypes.BINARY_ID, value );
-        }
-
-        public BinaryId( final java.lang.String value )
-        {
-            super( ValueTypes.BINARY_ID, com.enonic.wem.api.content.binary.BinaryId.from( value ) );
         }
     }
 

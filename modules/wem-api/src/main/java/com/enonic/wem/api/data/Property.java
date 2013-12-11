@@ -173,29 +173,6 @@ public class Property
         return getArray().getValue( arrayIndex ).asDateTime();
     }
 
-    public java.lang.String getAttachmentName()
-        throws InconvertibleValueException
-    {
-        return value.asString();
-    }
-
-    public com.enonic.wem.api.content.binary.BinaryId getBinaryId()
-        throws InconvertibleValueException
-    {
-        return value.asBinaryId();
-    }
-
-    /**
-     * Returns the value at of the Property at the given array index as a BlobKey.
-     *
-     * @throws InconvertibleValueException if the value is of another type and cannot not be converted to a BlobKey.
-     */
-    public com.enonic.wem.api.content.binary.BinaryId getBinaryId( final int arrayIndex )
-        throws InconvertibleValueException
-    {
-        return getArray().getValue( arrayIndex ).asBinaryId();
-    }
-
     /**
      * Returns the value of the Property at the given array index.
      *
@@ -306,49 +283,6 @@ public class Property
         public EntityId copy()
         {
             return new EntityId( this );
-        }
-    }
-
-    public final static class BinaryId
-        extends Property
-    {
-        public BinaryId( final java.lang.String name, final com.enonic.wem.api.content.binary.BinaryId value )
-        {
-            super( name, new Value.BinaryId( value ) );
-        }
-
-        public BinaryId( final java.lang.String name, final Value value )
-        {
-            super( name, value );
-        }
-
-        BinaryId( final BinaryId source )
-        {
-            super( source );
-        }
-
-        public BinaryId copy()
-        {
-            return new BinaryId( this );
-        }
-    }
-
-    public final static class AttachmentName
-        extends Property
-    {
-        public AttachmentName( final java.lang.String name, final java.lang.String value )
-        {
-            super( name, new Value.AttachmentName( value ) );
-        }
-
-        public AttachmentName( final AttachmentName source )
-        {
-            super( source );
-        }
-
-        public AttachmentName copy()
-        {
-            return new AttachmentName( this );
         }
     }
 

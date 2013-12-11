@@ -3,7 +3,7 @@ package com.enonic.wem.admin.json.content;
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.json.ItemJson;
-import com.enonic.wem.admin.rest.resource.content.ContentImageUriResolver;
+import com.enonic.wem.admin.rest.resource.content.ContentImageIconUrlResolver;
 import com.enonic.wem.api.content.Content;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -27,7 +27,7 @@ public class ContentSummaryJson
     {
         super( content.getId() );
         this.content = content;
-        this.iconUrl = ContentImageUriResolver.resolve( content );
+        this.iconUrl = ContentImageIconUrlResolver.resolve( content );
         this.isSite = content.isSite();
         this.isPage = content.isPage();
         this.editable = ( !this.content.isEmbedded() );

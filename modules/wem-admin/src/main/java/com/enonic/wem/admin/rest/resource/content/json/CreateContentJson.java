@@ -22,15 +22,15 @@ public class CreateContentJson
 
     @JsonCreator
     CreateContentJson( @JsonProperty("draft") final String draft, @JsonProperty("name") final String name,
-                       @JsonProperty("displayName") final String displayName,
-                       @JsonProperty("parent") final String parent,
-                       @JsonProperty("contentType") final String contentType, @JsonProperty("form") final FormJson formJson,
-                       @JsonProperty("contentData") final List<DataJson> dataJsonList,
+                       @JsonProperty("displayName") final String displayName, @JsonProperty("parent") final String parent,
+                       @JsonProperty("embed") final boolean embed, @JsonProperty("contentType") final String contentType,
+                       @JsonProperty("form") final FormJson formJson, @JsonProperty("contentData") final List<DataJson> dataJsonList,
                        @JsonProperty("attachments") final List<AttachmentJson> attachmentJsonList )
     {
 
         this.createContent = new CreateContent();
         this.createContent.draft( Boolean.valueOf( draft ) );
+        this.createContent.embed( embed );
         this.createContent.name( name );
         this.createContent.displayName( displayName );
         this.createContent.parent( ContentPath.from( parent ) );
@@ -44,6 +44,10 @@ public class CreateContentJson
         }
         this.createContent.contentData( contentData );
 
+        for ( AttachmentJson attachmentJson : attachmentJsonList )
+        {
+            this.createContent.attachments( attachmentJson.getAttachment() );
+        }
     }
 
     @JsonIgnore
