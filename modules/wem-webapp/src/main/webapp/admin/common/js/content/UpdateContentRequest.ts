@@ -71,8 +71,22 @@ module api_content {
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),
                 displayName: this.displayName,
-                attachments: this.attachments
+                attachments: this.attachmentsToJson()
             };
+        }
+
+        private attachmentsToJson(): api_content_json.AttachmentJson[] {
+            var array: api_content_json.AttachmentJson[] = [];
+            this.attachments.forEach((attachment: api_content.Attachment)=> {
+                var attachmentJsonbj:api_content_json.AttachmentJson = {
+                    "blobKey": attachment.getBlobKey().toString(),
+                    "attachmentName": attachment.getAttachmentName().toString(),
+                    "mimeType": attachment.getMimeType(),
+                    "size": attachment.getSize()
+                };
+                array.push(attachmentJsonbj);
+            });
+            return array;
         }
 
         getRequestPath():api_rest.Path {

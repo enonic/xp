@@ -18,13 +18,13 @@ module app_wizard {
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
             new api_app_wizard.FormIcon(new api_schema_content.ContentTypeIconUrlResolver().resolveDefault(), "Click to upload icon",
-                api_util.getRestUri("upload"));
+                api_util.getRestUri("blob/upload"));
             this.formIcon.addListener({
                 onUploadStarted: null,
                 onUploadFinished: (uploadItem: api_ui.UploadItem) => {
                     this.contentTypeIcon = new api_icon.IconBuilder().
                         setBlobKey(uploadItem.getBlobKey()).setMimeType(uploadItem.getMimeType()).build();
-                    this.formIcon.setSrc(api_util.getRestUri('upload/' + this.contentTypeIcon.getBlobKey()));
+                    this.formIcon.setSrc(api_util.getRestUri('blob/' + this.contentTypeIcon.getBlobKey()));
                 }
             });
             var actions = new ContentTypeWizardActions(this);

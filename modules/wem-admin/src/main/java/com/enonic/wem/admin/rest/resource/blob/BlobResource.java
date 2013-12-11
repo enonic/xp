@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.upload;
+package com.enonic.wem.admin.rest.resource.blob;
 
 import java.io.InputStream;
 import java.util.List;
@@ -26,13 +26,14 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.command.content.blob.GetBlob;
 
-@Path("upload")
+@Path("blob")
 @Produces(MediaType.APPLICATION_JSON)
-public final class UploadResource
+public final class BlobResource
     extends AbstractResource
 {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("upload")
     public JsonResult upload( final FormDataMultiPart formDataMultiPart )
         throws Exception
     {

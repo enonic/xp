@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.upload;
+package com.enonic.wem.admin.rest.resource.blob;
 
 import com.enonic.wem.api.blob.BlobKey;
 

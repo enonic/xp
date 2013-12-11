@@ -90,16 +90,16 @@ module api_content {
             };
         }
 
-        private attachmentsToJson(): any {
-            var array: any[] = [];
+        private attachmentsToJson(): api_content_json.AttachmentJson[] {
+            var array: api_content_json.AttachmentJson[] = [];
             this.attachments.forEach((attachment: api_content.Attachment)=> {
-                var obj = {
+                var attachmentJsonbj:api_content_json.AttachmentJson = {
                     "blobKey": attachment.getBlobKey().toString(),
                     "attachmentName": attachment.getAttachmentName().toString(),
                     "mimeType": attachment.getMimeType(),
                     "size": attachment.getSize()
                 };
-                array.push(obj);
+                array.push(attachmentJsonbj);
             });
             return array;
         }

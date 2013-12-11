@@ -31,7 +31,7 @@ import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeRe
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
 import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource;
-import com.enonic.wem.admin.rest.resource.upload.UploadResource;
+import com.enonic.wem.admin.rest.resource.blob.BlobResource;
 import com.enonic.wem.admin.rest.resource.util.CountryResource;
 import com.enonic.wem.admin.rest.resource.util.LocaleResource;
 import com.enonic.wem.admin.rest.resource.util.TimeZoneResource;
@@ -53,7 +53,7 @@ public final class RestServlet
         addClass( ContentImageResource.class );
         addClass( ContentAttachmentResource.class );
         addClass( GetNodesResource.class );
-        addClass( UploadResource.class );
+        addClass( BlobResource.class );
         addClass( AuthResource.class );
         addClass( ToolsResource.class );
         addClass( StatusResource.class );

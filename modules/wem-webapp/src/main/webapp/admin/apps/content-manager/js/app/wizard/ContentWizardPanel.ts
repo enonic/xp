@@ -34,14 +34,14 @@ module app_wizard {
             this.contentWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
             var iconUrl = api_content.ContentIconUrlResolver.default();
             this.formIcon = new api_app_wizard.FormIcon(iconUrl, "Click to upload icon",
-                api_util.getRestUri("upload"));
+                api_util.getRestUri("blob/upload"));
 
             this.formIcon.addListener({
 
                 onUploadFinished: (uploadItem: api_ui.UploadItem) => {
 
                     this.iconUploadItem = uploadItem;
-                    this.formIcon.setSrc(api_util.getRestUri('upload/' + this.iconUploadItem.getBlobKey()));
+                    this.formIcon.setSrc(api_util.getRestUri('blob/' + this.iconUploadItem.getBlobKey()));
                 }
             });
 

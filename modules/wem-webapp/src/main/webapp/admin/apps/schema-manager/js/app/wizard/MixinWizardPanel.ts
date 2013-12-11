@@ -18,14 +18,14 @@ module app_wizard {
 
             this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(new api_schema_mixin.MixinIconUrlResolver().resolveDefault(),
-                "Click to upload icon", api_util.getRestUri("upload"));
+                "Click to upload icon", api_util.getRestUri("blob/upload"));
 
             this.formIcon.addListener({
                 onUploadStarted: null,
                 onUploadFinished: (uploadItem: api_ui.UploadItem) => {
                     this.mixinIcon = new api_icon.IconBuilder().
                         setBlobKey(uploadItem.getBlobKey()).setMimeType(uploadItem.getMimeType()).build();
-                    this.formIcon.setSrc(api_util.getRestUri('upload/' + this.mixinIcon.getBlobKey()));
+                    this.formIcon.setSrc(api_util.getRestUri('blob/' + this.mixinIcon.getBlobKey()));
                 }
             });
             var actions = new MixinWizardActions(this);
