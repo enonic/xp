@@ -16,7 +16,7 @@
         "name": "blueman",
         "pageTemplates": [ "mainpage" ],
         "partTemplates": [ "mainpart" ],
-        "siteContent": "page",
+        "rootContentType": "page",
         "url": "http://enonic.net",
         "vendor": {
             "name": "Enonic AS",
