@@ -79,10 +79,11 @@ public abstract class AbstractContentDaoHandler
         return topNodes.iterator();
     }
 
-    protected final NodeIterator doGetChildContentNodes( final Node contentParentNode )
+    @SuppressWarnings("unchecked")
+    protected final Iterator<Node> doGetChildContentNodes( final Node contentParentNode )
         throws RepositoryException
     {
-        return contentParentNode.getNodes();
+        return (Iterator<Node>) contentParentNode.getNodes();
     }
 
     protected final Node doGetContentNode( final ContentPath contentPath )

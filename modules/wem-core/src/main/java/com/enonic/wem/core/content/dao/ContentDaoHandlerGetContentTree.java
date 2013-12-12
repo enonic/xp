@@ -69,7 +69,7 @@ final class ContentDaoHandlerGetContentTree
     private TreeNode<Content> doCreateNode( final ContentAndNode parentContentAndNode )
         throws RepositoryException
     {
-        final NodeIterator childContentNodes = doGetChildContentNodes( parentContentAndNode.contentNode );
+        final Iterator<Node> childContentNodes = doGetChildContentNodes( parentContentAndNode.contentNode );
         final List<ContentAndNode> contentAndNodes = doContentNodesToContentAndNodes( childContentNodes );
 
         final TreeNode<Content> node = new TreeNode<>( parentContentAndNode.content );
