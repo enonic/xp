@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,11 +65,12 @@ public final class FileBlobStore
         }
         catch ( IOException e )
         {
-            throw new BlobStoreException( "Failed to open tempoary file", e );
+            throw new BlobStoreException( "Failed to open temporary file", e );
         }
         finally
         {
             delete( tmpFile );
+            IOUtils.closeQuietly( in );
         }
     }
 
