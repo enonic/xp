@@ -2,7 +2,7 @@ module api_content_site_json{
 
     export interface ModuleConfigJson {
 
-        moduleKey:api_module.ModuleKey;
+        moduleKey:string;
 
         config:api_data_json.DataJson[];
     }

@@ -31,7 +31,7 @@
         "site": {
             "moduleConfigs": [
                 {
-                    "module": "mymodule-1.0.0",
+                    "moduleKey": "mymodule-1.0.0",
                     "config": [
                         {
                             "Property": {

@@ -6,7 +6,7 @@ module api_module{
 
         private resource: string;
 
-        private entries: api_module.ModuleFileEntry[];
+        private entries: api_module.ModuleFileEntry[] = [];
 
         constructor(json:api_module_json.ModuleFileEntryJson) {
             this.name = json.name;

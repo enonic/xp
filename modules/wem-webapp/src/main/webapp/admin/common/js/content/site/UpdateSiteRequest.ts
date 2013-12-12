@@ -23,11 +23,14 @@ module api_content_site {
         }
 
         getParams(): Object {
-
+            var moduleConfigsJson = [];
+            for (var i = 0; i < this.moduleConfigs.length; i++) {
+                moduleConfigsJson.push(this.moduleConfigs[i].toJson());
+            }
             return {
                 contentId: this.contentId,
                 siteTemplateKey: this.siteTemplateKey.toString(),
-                moduleConfigs: this.moduleConfigs
+                moduleConfigs: moduleConfigsJson
             };
         }
 

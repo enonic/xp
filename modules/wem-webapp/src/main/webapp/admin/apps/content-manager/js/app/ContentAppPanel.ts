@@ -160,14 +160,12 @@ module app {
                                          site: api_content.Content): app_wizard.ContentWizardPanel {
 
             if (contentToEdit.isSite()) {
-                var siteWizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType,
-                    parentContent, site);
+                var siteWizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType, parentContent, site);
                 siteWizardPanel.setPersistedItem(contentToEdit);
                 return siteWizardPanel;
             }
             else {
-                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType,
-                    parentContent, site);
+                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent, site);
                 contentWizardPanel.setPersistedItem(contentToEdit);
                 return contentWizardPanel;
             }

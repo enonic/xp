@@ -2,22 +2,22 @@ module api_module {
 
     export class GetModuleRequest extends ModuleResourceRequest<api_module_json.ModuleJson> {
 
-        private key:string;
+        private moduleKey:api_module.ModuleKey;
 
-        constructor(key:string) {
+        constructor(moduleKey:api_module.ModuleKey) {
             super();
             super.setMethod("GET");
-            this.key = key;
+            this.moduleKey = moduleKey;
         }
 
         getParams():Object {
             return {
-                key: this.key
+                moduleKey: this.moduleKey.toString()
             };
         }
 
         getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "get");
+            return api_rest.Path.fromParent(super.getResourcePath());
         }
     }
 }

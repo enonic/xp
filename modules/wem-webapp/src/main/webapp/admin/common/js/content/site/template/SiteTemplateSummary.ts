@@ -70,6 +70,18 @@ module api_content_site_template {
             return this.siteContent;
         }
 
+        getVersion(): string {
+            return this.version;
+        }
+
+        getUrl(): string {
+            return this.url;
+        }
+
+        getDescription(): string {
+            return this.description;
+        }
+
         static fromJsonArray(jsonArray: api_content_site_template_json.SiteTemplateSummaryJson[]): SiteTemplateSummary[] {
             var array: SiteTemplateSummary[] = [];
 

@@ -21,12 +21,12 @@ public class ModuleConfigJson
     private final RootDataSetJson configAsJson;
 
     @JsonCreator
-    ModuleConfigJson( @JsonProperty("module") final String module, @JsonProperty("config") final List<DataJson> configAsDataJsonList )
+    ModuleConfigJson( @JsonProperty("moduleKey") final String moduleKey, @JsonProperty("config") final List<DataJson> configAsDataJsonList )
     {
         configAsJson = new RootDataSetJson( configAsDataJsonList );
 
         this.moduleConfig = ModuleConfig.newModuleConfig().
-            module( ModuleKey.from( module ) ).
+            module( ModuleKey.from( moduleKey ) ).
             config( configAsJson.getRootDataSet() ).
             build();
     }
@@ -37,7 +37,7 @@ public class ModuleConfigJson
         this.configAsJson = new RootDataSetJson( moduleConfig.getConfig() );
     }
 
-    public String getModule()
+    public String getModuleKey()
     {
         return moduleConfig.getModule().toString();
     }

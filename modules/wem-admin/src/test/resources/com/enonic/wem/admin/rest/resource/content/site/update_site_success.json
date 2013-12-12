@@ -23,7 +23,7 @@
         "site": {
             "moduleConfigs": [
                 {
-                    "module": "module-1.0.0",
+                    "moduleKey": "module-1.0.0",
                     "config": [
                         {
                             "Property": {

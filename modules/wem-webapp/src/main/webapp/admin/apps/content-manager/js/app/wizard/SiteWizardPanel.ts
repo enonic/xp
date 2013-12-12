@@ -18,78 +18,52 @@ module app_wizard {
             super(tabId, contentType, parentContent, siteContent);
         }
 
-        createSteps():api_app_wizard.WizardStep[] {
-            var steps:api_app_wizard.WizardStep[] = super.createSteps();
+        createSteps(): api_app_wizard.WizardStep[] {
+            var steps: api_app_wizard.WizardStep[] = super.createSteps();
             steps.unshift(new api_app_wizard.WizardStep("Site", this.siteWizardStepForm));
             return steps;
         }
 
         renderNew() {
             super.renderNew();
+
+            this.siteWizardStepForm.renderNew();
         }
 
-        setPersistedItem(content:api_content.Content) {
+        setPersistedItem(content: api_content.Content) {
             super.setPersistedItem(content);
+
+            var formContext = new api_form.FormContextBuilder().
+                setParentContent(this.getParentContent()).
+                setPersistedContent(content).
+                build();
+
+            this.siteWizardStepForm.renderExisting(formContext, content.getSite());
         }
 
-        persistNewItem(successCallback?:() => void) {
-            var content:api_content.Content = this.getPersistedItem();
-            new api_content_site.CreateSiteRequest(content.getId())
-                .setSiteTemplateKey(this.site.getTemplateKey())
-                .setModuleConfigs(this.site.getModuleConfigs())
-                .send().done((siteResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
-                    //TODO
-            });
+        persistNewItem(successCallback?: () => void) {
+            var content: api_content.Content = this.getPersistedItem();
+            if (content) {
+                new api_content_site.CreateSiteRequest(content.getId())
+                    .setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey())
+                    .setModuleConfigs(this.siteWizardStepForm.getModuleConfigs())
+                    .send().done((createResponse: api_rest.JsonResponse<api_content_json.ContentJson>) => {
+
+                        api_notify.showFeedback('Site was created!');
+                    });
+            }
         }
 
-        updatePersistedItem(successCallback?:() => void) {
-            var content:api_content.Content = this.getPersistedItem();
+        updatePersistedItem(successCallback?: () => void) {
+            var content: api_content.Content = this.getPersistedItem();
             new api_content_site.UpdateSiteRequest(content.getId())
-                .setSiteTemplateKey(this.site.getTemplateKey())
-                .setModuleConfigs(this.site.getModuleConfigs())
-                .send().done((siteResponse:api_rest.JsonResponse<api_content_json.ContentJson>) => {
-                    //TODO
-            });
-        }
+                .setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey())
+                .setModuleConfigs(this.siteWizardStepForm.getModuleConfigs())
+                .send().done((upateResponse: api_rest.JsonResponse<api_content_json.ContentJson>) => {
 
-        private getSite(callback:(site:api_content_site.Site) => void) {
-            if(this.site) {
-                callback(this.site);
-            } else {
-                var content:api_content.Content = this.getPersistedItem();
-                new api_content_site.GetSiteRequest(content.getId() )
-                    .send().done((siteResponse:api_rest.JsonResponse<api_content_site_json.SiteJson>) => {
-                    this.site = new api_content_site.Site(siteResponse.getResult());
-                    callback(this.site);
-                })
-            }
-        }
-
-        private getModule(callback:(siteModule:api_module.Module) => void) {
-            if( this.siteModule ) {
-                callback(this.siteModule);
-            } else {
-                var content:api_content.Content = this.getPersistedItem();
-                new api_module.GetModuleRequest(content.getId() ).send().done((moduleResponse:api_rest.JsonResponse<api_module_json.ModuleJson>) => {
-                    this.siteModule = new api_module.Module(moduleResponse.getResult());
-                    callback(this.siteModule);
+                    api_notify.showFeedback('Site was updated!');
                 });
-            }
         }
-
-
-        private getSiteTemplate(callback:(siteTemplate:api_content_site_template.SiteTemplateSummary) => void) {
-            if(this.siteTemplate) {
-                callback(this.siteTemplate)
-            } else {
-                var content:api_content.Content = this.getPersistedItem();
-                new api_content_site_template.GetSiteTemplateRequest(content.getPage().getTemplate().getSiteTemplateKey()).send().done((templateResponse:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>) => {
-                    this.siteTemplate = new api_content_site_template.SiteTemplateSummary(templateResponse.getResult());
-                    callback(this.siteTemplate)
-                });
-            }
-        }
-
     }
 
 }
