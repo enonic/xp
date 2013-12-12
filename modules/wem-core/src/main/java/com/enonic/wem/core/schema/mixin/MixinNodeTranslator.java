@@ -53,10 +53,7 @@ class MixinNodeTranslator
     {
         final RootDataSet rootDataSet = new RootDataSet();
         rootDataSet.setProperty( DISPLAY_NAME_PROPERTY, new Value.String( createMixin.getDisplayName() ) );
-        if ( createMixin.getIcon() != null )
-        {
-            rootDataSet.add( IconDataSerializer.toData( createMixin.getIcon(), new DataSet( ICON_DATA_SET ) ) );
-        }
+        IconDataSerializer.nullableToData( createMixin.getIcon(), ICON_DATA_SET, rootDataSet );
 
         final DataSet formItems = new DataSet( "formItems" );
         for ( Data data : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( createMixin.getFormItems() ) )

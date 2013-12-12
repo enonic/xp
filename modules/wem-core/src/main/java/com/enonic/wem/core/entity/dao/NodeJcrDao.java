@@ -57,7 +57,6 @@ public class NodeJcrDao
             creator( createNodeArguments.creator() ).
             parent( createNodeArguments.parent() ).
             name( NodeName.from( createNodeArguments.name() ) ).
-            icon( createNodeArguments.icon() ).
             rootDataSet( createNodeArguments.rootDataSet() ).
             entityIndexConfig( createNodeArguments.entityIndexConfig() ).
             build();

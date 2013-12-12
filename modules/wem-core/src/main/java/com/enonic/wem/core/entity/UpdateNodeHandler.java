@@ -62,7 +62,6 @@ public class UpdateNodeHandler
         final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().
             nodeToUpdate( command.getNode() ).
             name( edited.name() ).
-            icon( edited.icon() ).
             rootDataSet( edited.data() ).
             build();
 

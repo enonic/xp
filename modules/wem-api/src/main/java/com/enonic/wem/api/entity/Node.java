@@ -3,7 +3,6 @@ package com.enonic.wem.api.entity;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.support.ChangeTraceable;
 import com.enonic.wem.api.support.illegaledit.IllegalEdit;
@@ -26,9 +25,6 @@ public final class Node
 
     private final UserKey creator;
 
-    // TODO: Remove
-    private final Icon icon;
-
     private Node( final BaseBuilder builder )
     {
         super( builder );
@@ -41,7 +37,6 @@ public final class Node
         this.path = this.parent != null && this.name != null ? new NodePath( this.parent, this.name ) : null;
 
         this.modifier = builder.modifier;
-        this.icon = builder.icon;
     }
 
     public void validateForIndexing()
@@ -92,11 +87,6 @@ public final class Node
     public UserKey getModifier()
     {
         return modifier;
-    }
-
-    public Icon icon()
-    {
-        return icon;
     }
 
 
@@ -152,8 +142,6 @@ public final class Node
 
         UserKey creator;
 
-        Icon icon;
-
         BaseBuilder()
         {
         }
@@ -171,7 +159,6 @@ public final class Node
             this.parent = node.parent;
             this.creator = node.creator;
             this.modifier = node.modifier;
-            this.icon = node.icon;
         }
 
         BaseBuilder( final EntityId id, final NodeName name )
@@ -188,13 +175,10 @@ public final class Node
 
         private NodeName name;
 
-        private Icon icon;
-
         public EditBuilder( final Node original )
         {
             super( original );
             this.name = original.name;
-            this.icon = original.icon;
             this.originalNode = original;
         }
 
@@ -205,13 +189,6 @@ public final class Node
             return this;
         }
 
-        public EditBuilder icon( final Icon value )
-        {
-            changes.recordChange( newPossibleChange( "icon" ).from( this.originalNode.icon ).to( value ).build() );
-            this.icon = value;
-            return this;
-        }
-
         public Node build()
         {
             Node.BaseBuilder baseBuilder = new BaseBuilder( this.originalNode );
@@ -219,7 +196,6 @@ public final class Node
             baseBuilder.entityIndexConfig = this.entityIndexConfig;
 
             baseBuilder.name = this.name;
-            baseBuilder.icon = this.icon;
             return new Node( baseBuilder );
         }
     }
@@ -228,8 +204,6 @@ public final class Node
         extends Entity.Builder<Builder>
     {
         private NodeName name;
-
-        private Icon icon;
 
         private NodePath parent;
 
@@ -290,12 +264,6 @@ public final class Node
             return this;
         }
 
-        public Builder icon( final Icon value )
-        {
-            this.icon = value;
-            return this;
-        }
-
         public Node build()
         {
             BaseBuilder baseBuilder = new BaseBuilder();
@@ -308,7 +276,6 @@ public final class Node
             baseBuilder.parent = this.parent;
             baseBuilder.creator = this.creator;
             baseBuilder.modifier = this.modifier;
-            baseBuilder.icon = this.icon;
             baseBuilder.entityIndexConfig = this.entityIndexConfig;
             return new Node( baseBuilder );
         }

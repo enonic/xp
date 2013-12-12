@@ -23,6 +23,7 @@ import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.core.icon.IconDataSerializer;
 import com.enonic.wem.core.support.SerializerForFormItemToData;
 
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
@@ -32,6 +33,8 @@ public class ContentTypeNodeTranslator
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
     public static final String DISPLAY_NAME_PROPERTY = "displayName";
+
+    public static final String ICON_DATA_SET = "icon";
 
     public static final String SUPER_TYPE_PROPERTY = "superType";
 
@@ -66,7 +69,6 @@ public class ContentTypeNodeTranslator
         return Commands.node().create().
             name( command.getName().toString() ).
             parent( parentItemPath ).
-            icon( command.getIcon() ).
             data( rootDataSet ).
             entityIndexConfig( entityIndexConfig );
     }
@@ -75,6 +77,7 @@ public class ContentTypeNodeTranslator
     {
         final RootDataSet rootDataSet = new RootDataSet();
         addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PROPERTY, command.getDisplayName() );
+        IconDataSerializer.nullableToData( command.getIcon(), ICON_DATA_SET, rootDataSet );
         addPropertyIfNotNull( rootDataSet, SUPER_TYPE_PROPERTY, command.getSuperType() );
         addPropertyIfNotNull( rootDataSet, CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY, command.getContentDisplayNameScript() );
         addPropertyIfNotNull( rootDataSet, ALLOW_CHILD_CONTENT_PROPERTY, Boolean.toString( command.getAllowChildContent() ) );
@@ -107,6 +110,7 @@ public class ContentTypeNodeTranslator
     {
         final RootDataSet rootDataSet = new RootDataSet();
         addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PROPERTY, contentType.getDisplayName() );
+        IconDataSerializer.nullableToData( contentType.getIcon(), ICON_DATA_SET, rootDataSet );
         addPropertyIfNotNull( rootDataSet, SUPER_TYPE_PROPERTY, contentType.getSuperType() );
         addPropertyIfNotNull( rootDataSet, CONTENT_DISPLAY_NAME_SCRIPT_PROPERTY, contentType.getContentDisplayNameScript() );
         addPropertyIfNotNull( rootDataSet, ALLOW_CHILD_CONTENT_PROPERTY, Boolean.toString( contentType.allowChildContent() ) );
@@ -132,7 +136,6 @@ public class ContentTypeNodeTranslator
             {
                 return Node.editNode( toBeEdited ).
                     name( NodeName.from( contentType.getName().toString() ) ).
-                    icon( contentType.getIcon() ).
                     rootDataSet( rootDataSet );
             }
         };
@@ -173,7 +176,7 @@ public class ContentTypeNodeTranslator
             creator( node.getCreator() ).
             modifiedTime( node.getModifiedTime() ).
             modifier( node.getModifier() ).
-            icon( node.icon() );
+            icon( IconDataSerializer.toIconNullable( node.dataSet( ICON_DATA_SET ) ) );
 
         if ( node.property( DISPLAY_NAME_PROPERTY ) != null )
         {

@@ -14,7 +14,6 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.jcr.JcrHelper;
-import com.enonic.wem.core.support.dao.IconJcrMapper;
 import com.enonic.wem.core.support.dao.IndexConfigJcrMapper;
 
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
@@ -35,8 +34,6 @@ class NodeJcrMapper
 
     private static final IndexConfigJcrMapper indexConfigJcrMapper = new IndexConfigJcrMapper();
 
-    private static IconJcrMapper iconJcrMapper = new IconJcrMapper();
-
     static void toJcr( final Node node, final javax.jcr.Node jcrNode )
         throws RepositoryException
     {
@@ -44,11 +41,6 @@ class NodeJcrMapper
         JcrHelper.setPropertyUserKey( jcrNode, CREATOR, node.getCreator() );
         JcrHelper.setPropertyDateTime( jcrNode, MODIFIED_TIME, node.getModifiedTime() );
         JcrHelper.setPropertyUserKey( jcrNode, MODIFIER, node.getModifier() );
-
-        if ( node.icon() != null )
-        {
-            iconJcrMapper.toJcr( node.icon(), jcrNode );
-        }
 
         final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( node.data() );
         jcrNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
@@ -66,7 +58,6 @@ class NodeJcrMapper
 
         JcrHelper.setPropertyDateTime( nodeNode, MODIFIED_TIME, now );
         JcrHelper.setPropertyUserKey( nodeNode, MODIFIER, updateNodeArgs.updater() );
-        iconJcrMapper.toJcr( updateNodeArgs.icon(), nodeNode );
 
         final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( updateNodeArgs.rootDataSet() );
         nodeNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
@@ -86,7 +77,6 @@ class NodeJcrMapper
             builder.createdTime( getPropertyDateTime( jcrNode, CREATED_TIME ) );
             builder.modifier( JcrHelper.getPropertyUserKey( jcrNode, MODIFIER ) );
             builder.modifiedTime( getPropertyDateTime( jcrNode, MODIFIED_TIME ) );
-            builder.icon( iconJcrMapper.toIcon( jcrNode ) );
             builder.entityIndexConfig( indexConfigJcrMapper.toEntityIndexConfig( jcrNode ) );
 
             final String dataSetAsString = jcrNode.getProperty( ROOT_DATA_SET ).getString();
@@ -102,7 +92,7 @@ class NodeJcrMapper
     }
 
     static NodePath resolveNodePath( javax.jcr.Node node )
-    throws RepositoryException
+        throws RepositoryException
     {
         final String jcrNodePath = node.getPath();
         Preconditions.checkState( jcrNodePath.startsWith( "/" + NodeJcrHelper.NODES_JCRPATH ),

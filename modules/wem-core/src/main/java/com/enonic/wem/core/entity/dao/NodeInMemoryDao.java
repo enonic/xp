@@ -47,7 +47,6 @@ public class NodeInMemoryDao
             creator( createNodeArguments.creator() ).
             parent( createNodeArguments.parent() ).
             name( NodeName.from( createNodeArguments.name() ) ).
-            icon( createNodeArguments.icon() ).
             rootDataSet( createNodeArguments.rootDataSet() ).
             build();
 
@@ -70,7 +69,6 @@ public class NodeInMemoryDao
             modifiedTime( DateTime.now() ).
             modifier( updateNodeArgs.updater() ).
             name( updateNodeArgs.name() ).
-            icon( updateNodeArgs.icon() ).
             rootDataSet( updateNodeArgs.rootDataSet() ).
             build();
 

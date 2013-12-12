@@ -41,7 +41,6 @@ public class CreateNodeHandler
             creator( UserKey.superUser() ).
             parent( command.getParent() ).
             name( command.getName() ).
-            icon( command.getIcon() ).
             rootDataSet( command.getData() ).
             entityIndexConfig( command.getEntityIndexConfig() ).
             build();

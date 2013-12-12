@@ -1,7 +1,6 @@
 package com.enonic.wem.core.entity.dao;
 
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityIndexConfig;
@@ -15,8 +14,6 @@ public class CreateNodeArguments
 
     private final String name;
 
-    private final Icon icon;
-
     private final RootDataSet rootDataSet;
 
     private final EntityIndexConfig entityIndexConfig;
@@ -26,7 +23,6 @@ public class CreateNodeArguments
         this.creator = builder.creator;
         this.parent = builder.parent;
         this.name = builder.name;
-        this.icon = builder.icon;
         this.rootDataSet = builder.rootDataSet;
         this.entityIndexConfig = builder.entityIndexConfig;
     }
@@ -44,11 +40,6 @@ public class CreateNodeArguments
     String name()
     {
         return this.name;
-    }
-
-    Icon icon()
-    {
-        return this.icon;
     }
 
     RootDataSet rootDataSet()
@@ -74,8 +65,6 @@ public class CreateNodeArguments
 
         private String name;
 
-        private Icon icon;
-
         private RootDataSet rootDataSet;
 
         private EntityIndexConfig entityIndexConfig;
@@ -95,12 +84,6 @@ public class CreateNodeArguments
         public Builder name( String value )
         {
             this.name = value;
-            return this;
-        }
-
-        public Builder icon( Icon value )
-        {
-            this.icon = value;
             return this;
         }
 

@@ -1,7 +1,6 @@
 package com.enonic.wem.core.entity.dao;
 
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityId;
@@ -15,8 +14,6 @@ public class UpdateNodeArgs
 
     private final NodeName name;
 
-    private final Icon icon;
-
     private final RootDataSet rootDataSet;
 
     UpdateNodeArgs( Builder builder )
@@ -24,7 +21,6 @@ public class UpdateNodeArgs
         this.updater = builder.updater;
         this.nodeToUpdate = builder.nodeToUpdate;
         this.name = builder.name;
-        this.icon = builder.icon;
         this.rootDataSet = builder.rootDataSet;
     }
 
@@ -41,11 +37,6 @@ public class UpdateNodeArgs
     NodeName name()
     {
         return name;
-    }
-
-    Icon icon()
-    {
-        return icon;
     }
 
     RootDataSet rootDataSet()
@@ -66,8 +57,6 @@ public class UpdateNodeArgs
 
         private NodeName name;
 
-        private Icon icon;
-
         private RootDataSet rootDataSet;
 
         public Builder updater( UserKey value )
@@ -85,12 +74,6 @@ public class UpdateNodeArgs
         public Builder name( NodeName value )
         {
             this.name = value;
-            return this;
-        }
-
-        public Builder icon( Icon value )
-        {
-            this.icon = value;
             return this;
         }
 

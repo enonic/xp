@@ -80,7 +80,6 @@ final class ContentDaoHandlerUpdate
         final UpdateNodeArgs updateNodeArgs = newUpdateItemArgs().
             nodeToUpdate( persisted.id() ).
             name( edited.name() ).
-            icon( edited.icon() ).
             rootDataSet( edited.data() ).
             build();
 

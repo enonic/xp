@@ -1,6 +1,5 @@
 package com.enonic.wem.api.command.entity;
 
-import com.enonic.wem.api.icon.Icon;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.entity.EntityIndexConfig;
@@ -13,8 +12,6 @@ public class CreateNode
     private NodePath parent;
 
     private String name;
-
-    private Icon icon;
 
     private RootDataSet data;
 
@@ -38,12 +35,6 @@ public class CreateNode
         return this;
     }
 
-    public CreateNode icon( final Icon value )
-    {
-        this.icon = value;
-        return this;
-    }
-
     public CreateNode data( final RootDataSet value )
     {
         this.data = value;
@@ -64,11 +55,6 @@ public class CreateNode
     public NodePath getParent()
     {
         return parent;
-    }
-
-    public Icon getIcon()
-    {
-        return icon;
     }
 
     public RootDataSet getData()

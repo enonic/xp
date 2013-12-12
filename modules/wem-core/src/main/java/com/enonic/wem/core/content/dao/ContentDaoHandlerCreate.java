@@ -172,7 +172,6 @@ final class ContentDaoHandlerCreate
         final CreateNodeArguments createNodeArguments = CreateNodeArguments.newCreateNodeArgs().
             creator( UserKey.superUser() ).
             name( this.nodeName ).
-            icon( node.icon() ).
             rootDataSet( node.data() ).
             parent( node.parent().asAbsolute() ).
             entityIndexConfig( node.getEntityIndexConfig() ).
