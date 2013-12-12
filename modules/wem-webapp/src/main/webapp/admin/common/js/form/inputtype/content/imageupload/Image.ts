@@ -4,29 +4,43 @@ module api_form_inputtype_content_imageupload {
 
     export class Image extends api_form_inputtype_support.BaseInputTypeView {
 
+        private config: api_form_inputtype.InputTypeViewConfig<any>;
+
         private imageUploaders: api_ui.ImageUploader[] = [];
 
         private uploadItem:api_ui.UploadItem;
 
-        constructor() {
+        private attachmentName:string;
+
+        constructor(config: api_form_inputtype.InputTypeViewConfig<any>) {
             super("Image");
             this.addClass("image");
+            this.config = config;
         }
 
         createInputOccurrenceElement(index: number, property: api_data.Property): api_dom.Element {
 
-            var imageUploader = new api_ui.ImageUploader(this.getInput().getName() + "-" + index, api_util.getRestUri("upload"));
+            var inputName = this.getInput().getName() + "-" + index;
+
+            var imageUploaderConfig = <api_ui.ImageUploaderConfig> {
+                imageVisible: property != null,
+                maximumOccurrences: 1
+            };
+            var uploadUrl = api_util.getRestUri("blob/upload");
+            var imageUploader = new api_ui.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
             imageUploader.addListener({
                 onFileUploaded: (uploadItem: api_ui.UploadItem) => {
                     this.uploadItem = uploadItem;
+                    this.attachmentName = uploadItem.getName();
                 },
                 onUploadComplete: null
             });
 
             if (property != null) {
-                var imageUrl = api_util.getAdminUri("rest/content/image");
-                //imageUrl += "" + property.get;
-                imageUploader.setValue(property.getString());
+                this.attachmentName = property.getString();
+                var imageUrl = api_util.getRestUri("content/image/") + this.config.contentId;
+                imageUrl += "?thumbnail=false&size=494"; // TODO: size is hack
+                imageUploader.setValue(imageUrl);
             }
             this.imageUploaders.push(imageUploader);
             return imageUploader;
@@ -34,7 +48,7 @@ module api_form_inputtype_content_imageupload {
 
         getValue(occurrence: api_dom.Element): api_data.Value {
 
-            return new api_data.Value(this.uploadItem.getName(), api_data.ValueTypes.ATTACHMENT_NAME);
+            return new api_data.Value(this.attachmentName, api_data.ValueTypes.STRING);
         }
 
         getAttachments(): api_content.Attachment[] {

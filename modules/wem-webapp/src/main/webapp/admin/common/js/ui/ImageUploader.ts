@@ -93,8 +93,14 @@ module api_ui {
 
         setValue(value:string) {
             this.value = value;
-            var src = api_util.getAdminUri(value ? 'rest/upload/' + value : 'common/images/x-user-photo.png');
-            this.image.getEl().setSrc(src);
+            var src:string;
+            if( value.indexOf("http://") == -1 ) {
+                src = api_util.getAdminUri(value ? 'rest/blob/' + value : 'common/images/x-user-photo.png');
+            }
+            else {
+                src = value;
+            }
+            this.image.getEl().setSrc(value);
         }
 
         setMaximumOccurrences(value:number) {

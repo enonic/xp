@@ -11,6 +11,10 @@ module api_form {
             this.persistedContent = builder.persistedContent;
         }
 
+        getContentId(): api_content.ContentId {
+            return this.persistedContent.getContentId();
+        }
+
         getContentPath(): api_content.ContentPath {
             return this.persistedContent.getPath();
         }

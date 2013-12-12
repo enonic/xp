@@ -24,7 +24,8 @@ module app_wizard {
 
         private persistAsDraft: boolean;
 
-        constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content, site:api_content.Content) {
+        constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content,
+                    site: api_content.Content) {
 
             this.persistAsDraft = true;
             this.parentContent = parentContent;
@@ -182,9 +183,6 @@ module app_wizard {
                 setForm(this.contentType.getForm()).
                 setContentData(contentData);
 
-            var attachments: api_content.Attachment[] = [];
-            createRequest.addAttachments(attachments);
-
             createRequest.sendAndParse().
                 done((createdContent: api_content.Content) => {
 
@@ -209,6 +207,8 @@ module app_wizard {
                 setForm(this.contentWizardStepForm.getForm()).
                 setContentData(this.contentWizardStepForm.getContentData());
 
+            updateRequest.addAttachments(this.contentWizardStepForm.getFormView().getAttachments());
+
             if (this.iconUploadItem) {
                 var attachment = new api_content.AttachmentBuilder().
                     setBlobKey(this.iconUploadItem.getBlobKey()).
@@ -225,9 +225,9 @@ module app_wizard {
 
                     api_notify.showFeedback('Content was updated!');
                     new api_content.ContentUpdatedEvent(updatedContent).fire();
-                    
+
                     this.setPersistedItem(updatedContent);
-                    
+
                     if (successCallback) {
                         successCallback.call(this, updatedContent);
                     }

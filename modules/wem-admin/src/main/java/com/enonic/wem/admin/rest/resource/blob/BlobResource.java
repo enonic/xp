@@ -60,7 +60,7 @@ public final class BlobResource
         MediaType mediaType;
         try
         {
-            mediaType = MediaType.valueOf( "png" ); // TODO: resolve mimetype form path
+            mediaType = MediaType.valueOf( "png" );
         }
         catch ( IllegalArgumentException e )
         {

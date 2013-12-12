@@ -31,6 +31,7 @@ module api_form_input {
             if (InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
                 var inputTypeViewConfig = <api_form_inputtype.InputTypeViewConfig> {
+                    contentId: this.getContext().getContentId(),
                     contentPath: this.getContext().getContentPath(),
                     parentContentPath: this.getContext().getParentContentPath(),
                     dataPath: api_data.DataPath.fromString(this.input.getPath().toString()),

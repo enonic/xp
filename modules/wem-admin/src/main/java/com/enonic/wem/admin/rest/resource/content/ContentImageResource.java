@@ -72,8 +72,11 @@ public class ContentImageResource
             if ( attachmentThumbnail != null )
             {
                 final Blob blob = client.execute( Commands.blob().get( attachmentThumbnail.getBlobKey() ) );
-                final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
-                return Response.ok( thumbnailImage, attachmentThumbnail.getMimeType() ).build();
+                if ( blob != null )
+                {
+                    final BufferedImage thumbnailImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
+                    return Response.ok( thumbnailImage, attachmentThumbnail.getMimeType() ).build();
+                }
             }
         }
 
@@ -84,29 +87,38 @@ public class ContentImageResource
         {
             final String attachmentName = getImageAttachmentName( content );
             final Attachment attachment = findAttachment( contentId, attachmentName );
+            if ( attachment != null )
+            {
+                final Blob blob = client.execute( Commands.blob().get( attachment.getBlobKey() ) );
+                if ( blob != null )
+                {
+                    if ( thumbnail )
+                    {
+                        contentImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
+                    }
+                    else
+                    {
+                        contentImage = helper.getImageFromBlob( blob, size, ScaleMax );
+                    }
+                    mimeType = attachment.getMimeType();
+                    return Response.ok( contentImage, mimeType ).build();
+                }
+            }
+        }
 
-            final Blob blob = client.execute( Commands.blob().get( attachment.getBlobKey() ) );
-            if ( thumbnail )
-            {
-                contentImage = helper.getImageFromBlob( blob, size, ScaleSquareFilter );
-            }
-            else
-            {
-                contentImage = helper.getImageFromBlob( blob, size, ScaleMax );
-            }
-            mimeType = attachment.getMimeType();
-        }
-        else
+        final Icon contentTypeIcon = findRootContentTypeIcon( contentType );
+        if( contentTypeIcon == null )
         {
-            final Icon contentTypeIcon = findRootContentTypeIcon( contentType );
-            final Blob blob = client.execute( Commands.blob().get( contentTypeIcon.getBlobKey() ) );
-            if ( blob == null )
-            {
-                throw new WebApplicationException( Response.Status.NOT_FOUND );
-            }
-            contentImage = helper.resizeImage( blob, size );
-            mimeType = contentTypeIcon.getMimeType();
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
         }
+
+        final Blob blob = client.execute( Commands.blob().get( contentTypeIcon.getBlobKey() ) );
+        if ( blob == null )
+        {
+            throw new WebApplicationException( Response.Status.NOT_FOUND );
+        }
+        contentImage = helper.resizeImage( blob, size );
+        mimeType = contentTypeIcon.getMimeType();
 
         return Response.ok( contentImage, mimeType ).build();
     }

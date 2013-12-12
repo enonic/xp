@@ -27,8 +27,6 @@ module api_data {
 
         static GEO_POINT = new ValueType("GeoPoint");
 
-        static ATTACHMENT_NAME = new ValueType("AttachmentName");
-
         static ENTITY_ID = new ValueType("EntityId");
 
         static ALL: ValueType[] = [
@@ -44,7 +42,6 @@ module api_data {
             ValueTypes.BOOLEAN,
             ValueTypes.DOUBLE,
             ValueTypes.GEO_POINT,
-            ValueTypes.ATTACHMENT_NAME,
             ValueTypes.ENTITY_ID];
 
         public static fromName(name: string): ValueType {
