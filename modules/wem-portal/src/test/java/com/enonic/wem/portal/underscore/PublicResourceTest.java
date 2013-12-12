@@ -21,6 +21,8 @@ import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleName;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.module.ModuleKeyResolver;
@@ -93,6 +95,29 @@ public class PublicResourceTest
         resource.resourceName = "css/main.css";
         final ClientResponse resp =
             resource().path( "/portal/live/path/to/content/_/public/demo-1.0.0/css/main.css" ).get( ClientResponse.class );
+
+        assertEquals( 200, resp.getStatus() );
+        assertEquals( "p {color:red;}", resp.getEntity( String.class ) );
+        assertEquals( "text/css", resp.getHeaders().getFirst( "content-type" ) );
+    }
+
+    @Test
+    public void getPublicResourceResolvingModuleVersion()
+        throws Exception
+    {
+        final Path filePath = tempDir.resolve( "main.css" );
+        Files.write( filePath, "p {color:red;}".getBytes( Charsets.UTF_8 ) );
+        when( modulePathResolver.resolveResourcePath( isA( ModuleResourceKey.class ) ) ).thenReturn( filePath );
+        Content content = createContent( "content-id", "path/to/content", "content-type" );
+        when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( content );
+        when( moduleKeyResolver.resolve( ModuleName.from( "demo" ) ) ).thenReturn( ModuleKey.from( "demo-1.0.0" ) );
+
+        resource.mode = "live";
+        resource.contentPath = "content";
+        resource.moduleName = "demo";
+        resource.resourceName = "css/main.css";
+        final ClientResponse resp =
+            resource().path( "/portal/live/path/to/content/_/public/demo/css/main.css" ).get( ClientResponse.class );
 
         assertEquals( 200, resp.getStatus() );
         assertEquals( "p {color:red;}", resp.getEntity( String.class ) );

@@ -8,6 +8,7 @@ import com.enonic.wem.portal.content.ContentResource;
 import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.EvaluationExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.PortalWebExceptionMapper;
+import com.enonic.wem.portal.underscore.ImageResource;
 import com.enonic.wem.portal.underscore.PublicResource;
 import com.enonic.wem.portal.underscore.ServicesResource;
 import com.enonic.wem.web.jaxrs.JaxRsServlet;
@@ -23,6 +24,7 @@ public final class PortalServlet
         setFeature( ResourceConfig.FEATURE_DISABLE_WADL, true );
         addClass( ContentResource.class );
         addClass( PublicResource.class );
+        addClass( ImageResource.class );
         addClass( ServicesResource.class );
         addClass( FreeMarkerViewWriter.class );
         addClass( EvaluationExceptionMapper.class );
