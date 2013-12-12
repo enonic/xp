@@ -28,6 +28,7 @@ import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -106,9 +107,9 @@ public class CreateContentHandler
         }
     }
 
-    private String createDraftName()
+    private ContentName createDraftName()
     {
-        return "__draft__" + UUID.randomUUID().toString();
+        return new ContentName( "__draft__" + UUID.randomUUID().toString() );
     }
 
     private CreateNodeResult createNode( final CreateNode createNodeCommand )
@@ -158,7 +159,7 @@ public class CreateContentHandler
     {
         final Content.Builder builder = Content.newContent();
 
-        final String contentName = command.isDraft() ? createDraftName() : command.getName();
+        final ContentName contentName = command.isDraft() ? createDraftName() : command.getName();
 
         builder.name( command.getName() );
         builder.parentPath( command.getParentContentPath() );

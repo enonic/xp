@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
@@ -32,7 +33,7 @@ public final class CreateContent
 
     private String displayName;
 
-    private String name;
+    private ContentName name;
 
     private ContentPath parentContentPath;
 
@@ -85,6 +86,12 @@ public final class CreateContent
     }
 
     public CreateContent name( final String name )
+    {
+        this.name = ContentName.from( name );
+        return this;
+    }
+
+    public CreateContent name( final ContentName name )
     {
         this.name = name;
         return this;
@@ -148,7 +155,7 @@ public final class CreateContent
         return displayName;
     }
 
-    public String getName()
+    public ContentName getName()
     {
         return name;
     }
