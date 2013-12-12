@@ -6,18 +6,22 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
+import com.enonic.wem.portal.script.loader.ScriptLoader;
 
 public final class ScriptRunnerFactoryImpl
     implements ScriptRunnerFactory
 {
     private final ScriptCompiler compiler;
 
+    private final ScriptLoader scriptLoader;
+
     private Scriptable globalScope;
 
     @Inject
-    public ScriptRunnerFactoryImpl( final ScriptCompiler compiler )
+    public ScriptRunnerFactoryImpl( final ScriptCompiler compiler, final ScriptLoader scriptLoader )
     {
         this.compiler = compiler;
+        this.scriptLoader = scriptLoader;
         initialize();
     }
 
@@ -56,7 +60,7 @@ public final class ScriptRunnerFactoryImpl
         try
         {
             final Scriptable scope = createScope( context );
-            return new ScriptRunnerImpl( this.compiler, scope );
+            return new ScriptRunnerImpl( this.compiler, this.scriptLoader, scope );
         }
         finally
         {

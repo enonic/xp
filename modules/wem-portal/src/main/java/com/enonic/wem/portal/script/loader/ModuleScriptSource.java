@@ -6,15 +6,31 @@ import java.io.IOException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
-final class FileScriptSource
-    extends ScriptSource
+import com.enonic.wem.api.module.ModuleResourceKey;
+
+final class ModuleScriptSource
+    extends ScriptSourceBase
 {
+    private final ModuleResourceKey key;
+
     private final File file;
 
-    public FileScriptSource( final String name, final File file )
+    public ModuleScriptSource( final ModuleResourceKey key, final File file )
     {
-        super( name );
+        this.key = key;
         this.file = file;
+    }
+
+    @Override
+    public String getName()
+    {
+        return this.key.toString();
+    }
+
+    @Override
+    public ModuleResourceKey getResourceKey()
+    {
+        return this.key;
     }
 
     @Override

@@ -10,29 +10,25 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.core.module.ModuleKeyResolver;
 import com.enonic.wem.portal.exception.PortalWebException;
-import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
-import com.enonic.wem.portal.script.runner.ScriptRunnerFactory;
 
 final class JsControllerImpl
     implements JsController
 {
     private final static String[] ALL_METHODS = {HttpMethod.GET, HttpMethod.POST};
 
-    private final ScriptRunnerFactory factory;
-
-    private final ScriptLoader loader;
+    private final ScriptRunner runner;
 
     private ModuleResourceKey scriptDir;
 
     private JsContext context;
 
-    public JsControllerImpl( final ScriptRunnerFactory factory, final ScriptLoader loader )
+    public JsControllerImpl( final ScriptRunner runner )
     {
-        this.factory = factory;
-        this.loader = loader;
+        this.runner = runner;
     }
 
     @Override
@@ -46,6 +42,16 @@ final class JsControllerImpl
     public JsController context( final JsContext context )
     {
         this.context = context;
+        this.runner.property( "context", this.context );
+        this.runner.property( "request", this.context.getRequest() );
+        this.runner.property( "response", this.context.getResponse() );
+        return this;
+    }
+
+    @Override
+    public JsController moduleKeyResolver( final ModuleKeyResolver moduleKeyResolver )
+    {
+        this.runner.moduleKeyResolver( moduleKeyResolver );
         return this;
     }
 
@@ -68,7 +74,7 @@ final class JsControllerImpl
     {
         final ResourcePath path = this.scriptDir.getPath().resolve( method.toLowerCase() + ".js" );
         final ModuleResourceKey key = new ModuleResourceKey( this.scriptDir.getModuleKey(), path );
-        return this.loader.loadFromModule( key );
+        return this.runner.getLoader().loadFromModule( key );
     }
 
     private boolean hasScript( final String method )
@@ -96,18 +102,9 @@ final class JsControllerImpl
 
     private Response doExecute( final ScriptSource script )
     {
-        final JsHttpResponse response = new JsHttpResponse();
-        this.context.setResponse( response );
-
-        final ScriptRunner runner = this.factory.newRunner();
-        runner.source( script );
-        runner.property( "context", this.context );
-        runner.property( "request", this.context.getRequest() );
-        runner.property( "response", this.context.getResponse() );
-
-        runner.execute();
-
-        return new JsHttpResponseSerializer( response ).serialize();
+        this.runner.source( script );
+        this.runner.execute();
+        return new JsHttpResponseSerializer( this.context.getResponse() ).serialize();
     }
 
     private Response executeOptions()

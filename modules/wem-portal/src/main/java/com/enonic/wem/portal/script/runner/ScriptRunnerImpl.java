@@ -9,9 +9,12 @@ import org.mozilla.javascript.Scriptable;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.wem.core.module.ModuleKeyResolver;
 import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
+import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
+import com.enonic.wem.portal.script.require.RequireFunction;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
@@ -20,15 +23,26 @@ final class ScriptRunnerImpl
 
     private final ScriptCompiler compiler;
 
+    private final ScriptLoader scriptLoader;
+
     private final Map<String, Object> objects;
 
     private ScriptSource source;
 
-    public ScriptRunnerImpl( final ScriptCompiler compiler, final Scriptable scope )
+    private ModuleKeyResolver moduleKeyResolver;
+
+    public ScriptRunnerImpl( final ScriptCompiler compiler, final ScriptLoader scriptLoader, final Scriptable scope )
     {
         this.compiler = compiler;
+        this.scriptLoader = scriptLoader;
         this.scope = scope;
         this.objects = Maps.newHashMap();
+    }
+
+    @Override
+    public ScriptLoader getLoader()
+    {
+        return this.scriptLoader;
     }
 
     @Override
@@ -46,13 +60,22 @@ final class ScriptRunnerImpl
     }
 
     @Override
+    public ScriptRunner moduleKeyResolver( final ModuleKeyResolver value )
+    {
+        this.moduleKeyResolver = value;
+        return this;
+    }
+
+    @Override
     public void execute()
     {
         final Context context = Context.enter();
 
         try
         {
+            installRequire();
             setObjectsToScope();
+
             final Script script = this.compiler.compile( context, this.source );
             script.exec( context, this.scope );
         }
@@ -72,5 +95,15 @@ final class ScriptRunnerImpl
         {
             this.scope.put( entry.getKey(), this.scope, Context.javaToJS( entry.getValue(), this.scope ) );
         }
+    }
+
+    private void installRequire()
+    {
+        final RequireFunction function = new RequireFunction();
+        function.setScriptCompiler( this.compiler );
+        function.setScriptLoader( this.scriptLoader );
+        function.setModuleKeyResolver( this.moduleKeyResolver );
+        function.setSource( this.source );
+        function.install( this.scope );
     }
 }

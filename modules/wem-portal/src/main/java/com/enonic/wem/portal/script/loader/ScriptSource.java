@@ -1,50 +1,18 @@
 package com.enonic.wem.portal.script.loader;
 
-import java.io.IOException;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
-import com.google.common.base.Throwables;
-
-public abstract class ScriptSource
+public interface ScriptSource
 {
-    private final String name;
+    public String getName();
 
-    public ScriptSource( final String name )
-    {
-        this.name = name;
-    }
+    public String getLocation();
 
-    public final String getName()
-    {
-        return this.name;
-    }
+    public String getCacheKey();
 
-    public abstract String getLocation();
+    public String getScriptAsString();
 
-    public final String getCacheKey()
-    {
-        return getLocation() + "_" + getTimestamp();
-    }
+    public ModuleResourceKey getResourceKey();
 
-    public final String getScriptAsString()
-    {
-        try
-        {
-            return readSource();
-        }
-        catch ( final IOException e )
-        {
-            throw Throwables.propagate( e );
-        }
-    }
-
-    protected abstract String readSource()
-        throws IOException;
-
-    public abstract long getTimestamp();
-
-    @Override
-    public final String toString()
-    {
-        return this.name;
-    }
+    public long getTimestamp();
 }

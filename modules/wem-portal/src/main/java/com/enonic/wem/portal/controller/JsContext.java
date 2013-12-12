@@ -6,6 +6,11 @@ public final class JsContext
 
     private JsHttpResponse response;
 
+    public JsContext()
+    {
+        this.response = new JsHttpResponse();
+    }
+
     public JsHttpRequest getRequest()
     {
         return this.request;

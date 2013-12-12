@@ -58,7 +58,7 @@ public class PublicResourceTest
         resource = new PublicResource();
         resource.modulePathResolver = modulePathResolver;
         resource.client = client;
-        resource.moduleKeyResolver = moduleKeyResolverService;
+        resource.moduleKeyResolverService = moduleKeyResolverService;
         return resource;
     }
 

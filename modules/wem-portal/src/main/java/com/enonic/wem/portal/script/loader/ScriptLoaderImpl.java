@@ -12,6 +12,8 @@ import com.enonic.wem.core.module.ModuleResourcePathResolver;
 public final class ScriptLoaderImpl
     implements ScriptLoader
 {
+    private final static String BASE_CLASSPATH = "js/system/";
+
     private final ClassLoader classLoader;
 
     private final ModuleResourcePathResolver pathResolver;
@@ -26,7 +28,7 @@ public final class ScriptLoaderImpl
     @Override
     public ScriptSource loadFromSystem( final String name )
     {
-        final URL url = this.classLoader.getResource( name );
+        final URL url = this.classLoader.getResource( BASE_CLASSPATH + name );
         if ( url == null )
         {
             return null;
@@ -38,7 +40,6 @@ public final class ScriptLoaderImpl
     @Override
     public ScriptSource loadFromModule( final ModuleResourceKey key )
     {
-        final String name = key.toString();
         final Path path = this.pathResolver.resolveResourcePath( key );
         final File file = path.toFile();
 
@@ -47,6 +48,6 @@ public final class ScriptLoaderImpl
             return null;
         }
 
-        return new FileScriptSource( name, file );
+        return new ModuleScriptSource( key, file );
     }
 }

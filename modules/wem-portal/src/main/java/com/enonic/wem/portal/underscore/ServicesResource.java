@@ -18,7 +18,6 @@ import com.enonic.wem.portal.controller.JsContext;
 import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
-import com.enonic.wem.portal.script.loader.ScriptLoader;
 
 @Path("{mode}/{path:.+}/_/service/{module}/{service}")
 public final class ServicesResource
@@ -41,9 +40,6 @@ public final class ServicesResource
 
     @Inject
     protected JsControllerFactory controllerFactory;
-
-    @Inject
-    protected ScriptLoader scriptLoader;
 
     @GET
     public Response handleGet()
@@ -70,6 +66,7 @@ public final class ServicesResource
         context.setRequest( new JsHttpRequest( this.httpContext.getRequest() ) );
 
         final JsController controller = this.controllerFactory.newController();
+        controller.moduleKeyResolver( this.moduleKeyResolver );
 
         final ResourcePath localPath = ResourcePath.from( "service/" + this.serviceName );
         controller.scriptDir( new ModuleResourceKey( moduleKey, localPath ) );

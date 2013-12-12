@@ -7,15 +7,31 @@ import java.net.URLConnection;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+import com.enonic.wem.api.module.ModuleResourceKey;
+
 final class UrlScriptSource
-    extends ScriptSource
+    extends ScriptSourceBase
 {
+    private final String name;
+
     private final URL url;
 
     public UrlScriptSource( final String name, final URL url )
     {
-        super( name );
+        this.name = name;
         this.url = url;
+    }
+
+    @Override
+    public String getName()
+    {
+        return this.name;
+    }
+
+    @Override
+    public ModuleResourceKey getResourceKey()
+    {
+        return null;
     }
 
     @Override
