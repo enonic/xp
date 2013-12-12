@@ -260,8 +260,10 @@ public class SitesInitializer
     private Form createDemoModuleForm()
     {
         return Form.newForm().
-            addFormItem( newInput().name( "my-config-a" ).inputType( InputTypes.TEXT_LINE ).build() ).
-            addFormItem( newInput().name( "my-config-b" ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem(
+                newInput().name( "my-config-a" ).label( "My config A" ).maximumOccurrences( 1 ).inputType( InputTypes.TEXT_LINE ).build() ).
+            addFormItem(
+                newInput().name( "my-config-b" ).label( "My config B" ).maximumOccurrences( 1 ).inputType( InputTypes.TEXT_LINE ).build() ).
             build();
     }
 
