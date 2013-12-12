@@ -25,4 +25,17 @@
       line-height: 16px;
     }
   }
+  input, textarea {
+      .input-glow();
+  }
+}
+
+.input-glow() {
+  &:hover {
+    border:1px solid @admin-input-blue;
+  }
+  &:focus {
+    box-shadow: 0px 0px 5px @admin-input-blue;
+    border:1px solid @admin-input-blue;
+  }
 }
