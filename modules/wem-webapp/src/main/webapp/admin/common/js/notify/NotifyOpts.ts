@@ -11,7 +11,11 @@ module api_notify {
 
         if (message.getType() == Type.ERROR) {
             opts.backgroundColor = 'red';
-        } else if (message.getType() == Type.ACTION) {
+        }
+        else if (message.getType() == Type.WARNING) {
+            opts.backgroundColor = 'orange';
+        }
+        else if (message.getType() == Type.ACTION) {
             opts.backgroundColor = '#669c34';
         }
 

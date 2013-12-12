@@ -1,9 +1,10 @@
 package com.enonic.wem.api.module;
 
+import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.exception.BaseException;
 
 public class ModuleNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public ModuleNotFoundException( final ModuleKey moduleKey )
     {

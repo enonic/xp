@@ -3,6 +3,7 @@ module api_notify {
     export enum Type {
         INFO,
         ERROR,
+        WARNING,
         ACTION
     }
 
@@ -62,6 +63,10 @@ module api_notify {
 
     export function newError(text:string):Message {
         return new Message(Type.ERROR, text);
+    }
+
+    export function newWarning(text:string):Message {
+        return new Message(Type.WARNING, text);
     }
 
     export function newAction(text:string):Message {

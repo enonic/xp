@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.RenameContentException;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -25,35 +24,26 @@ public class RenameContentHandler
     public void handle()
         throws Exception
     {
-        try
+        final Session session = context.getJcrSession();
+        final ContentId contentId = command.getContentId();
+        final Content content = contentDao.selectById( contentId, session );
+        if ( content == null )
         {
-            final Session session = context.getJcrSession();
-            final ContentId contentId = command.getContentId();
-            final Content content = contentDao.selectById( contentId, session );
-            if ( content == null )
-            {
-                throw new ContentNotFoundException( contentId );
-            }
+            throw new ContentNotFoundException( contentId );
+        }
 
-            final String oldName = content.getName().toString();
-            final ContentName newName = command.getNewName();
+        final String oldName = content.getName().toString();
+        final ContentName newName = command.getNewName();
 
-            final boolean renamed = contentDao.renameContent( contentId, newName, session );
-            if ( renamed )
-            {
-                renameAttachments( contentId, oldName, newName.toString(), session );
-            }
-            command.setResult( renamed );
-            session.save();
-        }
-        catch ( ContentNotFoundException e )
+        final boolean renamed = contentDao.renameContent( contentId, newName, session );
+        if ( renamed )
         {
-            throw e;
+            renameAttachments( contentId, oldName, newName.toString(), session );
         }
-        catch ( Exception e )
-        {
-            throw new RenameContentException( command, e );
-        }
+        session.save();
+
+        final Content updatedContent = contentDao.selectById( contentId, session );
+        command.setResult( updatedContent );
     }
 
     private void renameAttachments( final ContentId contentId, final String oldName, final String newName, final Session session )

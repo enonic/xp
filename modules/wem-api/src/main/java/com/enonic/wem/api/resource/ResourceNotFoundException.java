@@ -1,10 +1,10 @@
 package com.enonic.wem.api.resource;
 
-import com.enonic.wem.api.exception.BaseException;
+import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.module.ResourcePath;
 
 public class ResourceNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     private final ResourcePath resourcePath;
 

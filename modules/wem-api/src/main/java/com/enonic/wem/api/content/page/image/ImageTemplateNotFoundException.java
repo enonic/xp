@@ -1,9 +1,10 @@
 package com.enonic.wem.api.content.page.image;
 
+import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.exception.BaseException;
 
 public final class ImageTemplateNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public ImageTemplateNotFoundException( final ImageTemplateKey key )
     {

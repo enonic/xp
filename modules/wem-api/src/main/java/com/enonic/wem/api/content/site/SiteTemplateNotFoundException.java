@@ -1,9 +1,10 @@
 package com.enonic.wem.api.content.site;
 
+import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.exception.BaseException;
 
 public final class SiteTemplateNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public SiteTemplateNotFoundException( final SiteTemplateKey templateKey )
     {

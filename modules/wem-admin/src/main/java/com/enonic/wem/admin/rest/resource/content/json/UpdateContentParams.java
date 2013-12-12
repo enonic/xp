@@ -6,13 +6,14 @@ import java.util.List;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public class UpdateContentParams
 {
     private ContentId contentId;
 
-    private String contentName;
+    private ContentName contentName;
 
     private ContentTypeName contentType;
 
@@ -34,14 +35,14 @@ public class UpdateContentParams
         this.contentId = ContentId.from( contentId );
     }
 
-    public String getContentName()
+    public ContentName getContentName()
     {
         return contentName;
     }
 
     public void setContentName( final String contentName )
     {
-        this.contentName = contentName;
+        this.contentName = ContentName.from( contentName );
     }
 
     public ContentTypeName getContentType()

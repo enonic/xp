@@ -19,6 +19,7 @@ import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.content.dao.ContentDao;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -81,8 +82,8 @@ public class RenameContentHandlerTest
         // verify
         verify( contentDao, Mockito.atLeastOnce() ).renameContent( isA( ContentId.class ), eq( new ContentName( "newname" ) ),
                                                                    any( Session.class ) );
-        boolean renamed = command.getResult();
-        assertTrue( renamed );
+        Content renamed = command.getResult();
+        assertNotNull( renamed );
     }
 
 }

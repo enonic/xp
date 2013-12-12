@@ -22,7 +22,18 @@ public class Name
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof Name ) && Objects.equals( ( (Name) o ).value, this.value );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof Name ) )
+        {
+            return false;
+        }
+
+        final Name that = (Name) o;
+
+        return Objects.equals( this.value, that.value );
     }
 
     @Override

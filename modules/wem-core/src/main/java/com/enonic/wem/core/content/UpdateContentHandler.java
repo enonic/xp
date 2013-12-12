@@ -2,9 +2,8 @@ package com.enonic.wem.core.content;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -14,6 +13,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.Client;
@@ -22,22 +22,20 @@ import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContent;
-import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
-import com.enonic.wem.api.support.illegaledit.IllegalEditException;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -69,104 +67,76 @@ public class UpdateContentHandler
     public void handle()
         throws Exception
     {
-        try
+
+        final Session session = context.getJcrSession();
+        final Content persistedContent = contentDao.selectById( command.getContentId(), session );
+        if ( persistedContent != null )
         {
-            final Session session = context.getJcrSession();
-            final Content persistedContent = contentDao.selectById( command.getContentId(), session );
-            if ( persistedContent == null )
-            {
-                throw new ContentNotFoundException( command.getContentId() );
-            }
-
-            final Client client = context.getClient();
-            final ContentId contentId = persistedContent.getId();
-            final List<Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent );
-
-            //TODO: the result is null if nothing was edited, but should be SUCCESS ?
-            Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
-
-            //TODO: Attachments have no editor and thus need to be checked separately, but probably should have one ?
-            if ( !command.getAttachments().isEmpty() )
-            {
-                addAttachments( client, contentId, command.getAttachments() );
-                addMediaThumbnail( client, session, command, persistedContent, contentId );
-            }
-
-            if ( editBuilder.isChanges() )
-            {
-                Content edited = editBuilder.build();
-                persistedContent.checkIllegalEdit( edited );
-
-                if ( !edited.isDraft() )
-                {
-                    validateContentData( context, edited );
-                }
-
-                final List<ContentId> embeddedContentsToKeep = new ArrayList<>();
-                new PropertyVisitor()
-                {
-                    @Override
-                    public void visit( final Property property )
-                    {
-                        final Content content = contentDao.selectById( property.getContentId(), session );
-                        if ( content != null )
-                        {
-                            if ( content.isEmbedded() )
-                            {
-                                embeddedContentsToKeep.add( content.getId() );
-                            }
-                        }
-                    }
-                }.restrictType( ValueTypes.CONTENT_ID ).traverse( edited.getContentData() );
-
-                relationshipService.syncRelationships( new SyncRelationshipsCommand().
-                    client( client ).
-                    jcrSession( session ).
-                    contentType( persistedContent.getType() ).
-                    contentToUpdate( contentId ).
-                    contentBeforeEditing( persistedContent.getContentData() ).
-                    contentAfterEditing( edited.getContentData() ) );
-
-                edited = newContent( edited ).
-                    modifiedTime( DateTime.now() ).
-                    modifier( command.getModifier() ).build();
-
-                final boolean createNewVersion = true;
-                contentDao.update( edited, createNewVersion, session );
-                session.save();
-
-                //TODO: Remove: createEmbeddedContents( session, edited, temporaryContents );
-
-                // delete embedded contents not longer to keep
-                for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit )
-                {
-                    if ( !embeddedContentsToKeep.contains( embeddedContentBeforeEdit.getId() ) )
-                    {
-                        contentDao.deleteById( embeddedContentBeforeEdit.getId(), session );
-                        session.save();
-                    }
-                }
-
-                try
-                {
-                    // TODO: Temporary easy solution. The index logic should eventually not be here anyway
-                    indexService.indexContent( edited );
-                }
-                catch ( Exception e )
-                {
-                    LOG.error( "Index content failed", e );
-                }
-                command.setResult( UpdateContentResult.SUCCESS );
-            }
+            throw new ContentNotFoundException( command.getContentId() );
         }
-        catch ( ContentNotFoundException | IllegalEditException e )
+
+        final Client client = context.getClient();
+        final ContentId contentId = persistedContent.getId();
+        final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent.getContentData() );
+
+        //TODO: the result is null if nothing was edited, but should be SUCCESS ?
+        Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
+
+        //TODO: Attachments have no editor and thus need to be checked separately, but probably should have one ?
+        if ( !command.getAttachments().isEmpty() )
         {
-            // TODO: exceptions swallowed, but why not bubble UpdateContentException up instead ?
-            command.setResult( UpdateContentResult.from( e ) );
+            addAttachments( client, contentId, command.getAttachments() );
+            addMediaThumbnail( client, session, command, persistedContent, contentId );
         }
-        catch ( Exception e )
+
+        if ( editBuilder.isChanges() )
         {
-            throw new UpdateContentException( command, e );
+            Content edited = editBuilder.build();
+            persistedContent.checkIllegalEdit( edited );
+
+            if ( !edited.isDraft() )
+            {
+                validateContentData( context, edited );
+            }
+
+            final Map<ContentId, Content> embeddedContentsToKeep = resolveEmbeddedContent( session, edited.getContentData() );
+
+            relationshipService.syncRelationships( new SyncRelationshipsCommand().
+                client( client ).
+                jcrSession( session ).
+                contentType( persistedContent.getType() ).
+                contentToUpdate( contentId ).
+                contentBeforeEditing( persistedContent.getContentData() ).
+                contentAfterEditing( edited.getContentData() ) );
+
+            edited = newContent( edited ).
+                modifiedTime( DateTime.now() ).
+                modifier( command.getModifier() ).build();
+
+            final boolean createNewVersion = true;
+            final Content updatedContent = contentDao.update( edited, createNewVersion, session );
+            session.save();
+
+            // delete embedded contents not longer to keep
+            for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit.values() )
+            {
+                if ( !embeddedContentsToKeep.containsKey( embeddedContentBeforeEdit.getId() ) )
+                {
+                    contentDao.deleteById( embeddedContentBeforeEdit.getId(), session );
+                    session.save();
+                }
+            }
+
+            try
+            {
+                // TODO: Temporary easy solution. The index logic should eventually not be here anyway
+                indexService.indexContent( edited );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Index content failed", e );
+            }
+            command.setResult( updatedContent );
         }
     }
 
@@ -191,9 +161,9 @@ public class UpdateContentHandler
         }
     }
 
-    private List<Content> resolveEmbeddedContent( final Session session, final Content persistedContent )
+    private ImmutableMap<ContentId, Content> resolveEmbeddedContent( final Session session, final ContentData contentData )
     {
-        final List<Content> embeddedContent = new ArrayList<>();
+        final ImmutableMap.Builder<ContentId, Content> embeddedContent = new ImmutableMap.Builder<>();
         new PropertyVisitor()
         {
             @Override
@@ -204,12 +174,12 @@ public class UpdateContentHandler
                 {
                     if ( content.isEmbedded() )
                     {
-                        embeddedContent.add( content );
+                        embeddedContent.put( content.getId(), content );
                     }
                 }
             }
-        }.restrictType( ValueTypes.CONTENT_ID ).traverse( persistedContent.getContentData() );
-        return embeddedContent;
+        }.restrictType( ValueTypes.CONTENT_ID ).traverse( contentData );
+        return embeddedContent.build();
     }
 
     private void validateContentData( final CommandContext context, final Content modifiedContent )

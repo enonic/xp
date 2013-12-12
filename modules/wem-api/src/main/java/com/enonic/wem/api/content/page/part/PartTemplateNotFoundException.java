@@ -1,9 +1,10 @@
 package com.enonic.wem.api.content.page.part;
 
+import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.exception.BaseException;
 
 public final class PartTemplateNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public PartTemplateNotFoundException( final PartTemplateKey key )
     {

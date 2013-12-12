@@ -5,11 +5,12 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 
 public final class RenameContent
-    extends Command<Boolean>
+    extends Command<Content>
 {
     private ContentId contentId;
 

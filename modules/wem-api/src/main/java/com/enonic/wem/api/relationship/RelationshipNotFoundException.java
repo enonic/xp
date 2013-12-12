@@ -2,8 +2,10 @@ package com.enonic.wem.api.relationship;
 
 import java.text.MessageFormat;
 
+import com.enonic.wem.api.NotFoundException;
+
 public final class RelationshipNotFoundException
-    extends RuntimeException
+    extends NotFoundException
 {
     public RelationshipNotFoundException( final RelationshipId id )
     {

@@ -13,11 +13,11 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.UpdateContent;
-import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
@@ -33,7 +33,6 @@ import com.enonic.wem.core.relationship.RelationshipService;
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 
@@ -79,7 +78,7 @@ public class UpdateContentHandlerTest
 
     }
 
-    @Test
+    @Test(expected = ContentNotFoundException.class)
     public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
         throws Exception
     {
@@ -109,11 +108,6 @@ public class UpdateContentHandlerTest
         // exercise
         this.handler.setCommand( command );
         handler.handle();
-
-        // verify
-        UpdateContentResult result = command.getResult();
-        assertEquals( UpdateContentResult.Type.NOT_FOUND, result.getType() );
-        Mockito.verify( contentDao, Mockito.times( 0 ) ).update( Mockito.any( Content.class ), eq( true ), Mockito.any( Session.class ) );
     }
 
     @Test

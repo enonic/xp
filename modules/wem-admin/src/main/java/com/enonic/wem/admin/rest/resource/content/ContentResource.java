@@ -1,6 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Strings;
 import com.sun.jersey.api.NotFoundException;
 
 import com.enonic.wem.admin.json.content.AbstractContentListJson;
@@ -48,11 +46,9 @@ import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.command.content.GetContentByIds;
 import com.enonic.wem.api.command.content.GetContentVersion;
 import com.enonic.wem.api.command.content.UpdateContent;
-import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
-import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
@@ -383,54 +379,38 @@ public class ContentResource
 
     @POST
     @Path("update")
-    public Result update( final UpdateContentParams params )
+    public ContentJson update( final UpdateContentParams params )
     {
-        try
-        {
-            final ContentData contentData = parseContentData( params.getContentData() );
-            final List<Attachment> attachments = parseAttachments( params.getAttachments() );
 
-            final UpdateContent updateContent = Commands.content().update().
-                contentId( params.getContentId() ).
-                modifier( AccountKey.anonymous() ).
-                attachments( attachments ).
-                editor( new ContentEditor()
+        final ContentData contentData = parseContentData( params.getContentData() );
+        final List<Attachment> attachments = parseAttachments( params.getAttachments() );
+
+        final UpdateContent updateContent = Commands.content().update().
+            contentId( params.getContentId() ).
+            modifier( AccountKey.anonymous() ).
+            attachments( attachments ).
+            editor( new ContentEditor()
+            {
+                @Override
+                public Content.EditBuilder edit( final Content toBeEdited )
                 {
-                    @Override
-                    public Content.EditBuilder edit( final Content toBeEdited )
-                    {
-                        return editContent( toBeEdited ).
-                            form( params.getForm().getForm() ).
-                            contentData( contentData ).
-                            displayName( params.getDisplayName() );
-                    }
-                } );
+                    return editContent( toBeEdited ).
+                        form( params.getForm().getForm() ).
+                        contentData( contentData ).
+                        displayName( params.getDisplayName() );
+                }
+            } );
 
-            final UpdateContentResult updateContentResult = client.execute( updateContent );
-
-            if ( ( updateContentResult == null || updateContentResult == UpdateContentResult.SUCCESS ) &&
-                !Strings.isNullOrEmpty( params.getContentName() ) )
-            {
-                // rename if the the update was successful or null (meaning nothing was edited) only
-                client.execute(
-                    Commands.content().rename().contentId( params.getContentId() ).newName( new ContentName( params.getContentName() ) ) );
-            }
-
-            if ( updateContentResult == UpdateContentResult.SUCCESS || updateContentResult == null )
-            {
-                final Content content = client.execute( Commands.content().get().byId( params.getContentId() ) );
-                return Result.result( new ContentJson( content ) );
-            }
-            else
-            {
-                return Result.error( updateContentResult.getMessage() );
-            }
-
-        }
-        catch ( Exception e )
+        final Content updatedContent = client.execute( updateContent );
+        if ( params.getContentName().equals( updatedContent.getName() ) )
         {
-            return Result.exception( e );
+            return new ContentJson( updatedContent );
         }
+
+        final Content renamedContent = client.execute( Commands.content().rename().
+            contentId( params.getContentId() ).
+            newName( params.getContentName() ) );
+        return new ContentJson( renamedContent );
     }
 
 
@@ -445,7 +425,6 @@ public class ContentResource
     }
 
     private List<Attachment> parseAttachments( final List<AttachmentJson> attachmentJsonList )
-        throws FileNotFoundException
     {
         List<Attachment> attachments = new ArrayList<>();
         if ( attachmentJsonList != null )

@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.enonic.wem.admin.jsonrpc.controller.JsonRpcController;
 import com.enonic.wem.admin.rest.exception.DefaultExceptionMapper;
 import com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper;
+import com.enonic.wem.admin.rest.exception.NotFoundExceptionMapper;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
 import com.enonic.wem.admin.rest.resource.account.AccountExportResource;
@@ -88,5 +89,6 @@ public final class RestServlet
 
         addClass( DefaultExceptionMapper.class );
         addClass( IllegalArgumentExceptionMapper.class );
+        addClass( NotFoundExceptionMapper.class );
     }
 }

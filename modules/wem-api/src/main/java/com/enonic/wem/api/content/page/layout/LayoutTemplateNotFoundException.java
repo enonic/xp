@@ -1,9 +1,10 @@
 package com.enonic.wem.api.content.page.layout;
 
+import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.exception.BaseException;
 
 public final class LayoutTemplateNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public LayoutTemplateNotFoundException( final LayoutTemplateKey key )
     {

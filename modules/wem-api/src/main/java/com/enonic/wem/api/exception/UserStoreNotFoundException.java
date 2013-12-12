@@ -1,9 +1,10 @@
 package com.enonic.wem.api.exception;
 
+import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.userstore.UserStoreName;
 
 public final class UserStoreNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public UserStoreNotFoundException( final UserStoreName name )
     {

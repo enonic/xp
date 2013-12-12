@@ -1,9 +1,10 @@
 package com.enonic.wem.api.exception;
 
+import com.enonic.wem.api.NotFoundException;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 
 public final class RelationshipTypeNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public RelationshipTypeNotFoundException( final RelationshipTypeName name )
     {

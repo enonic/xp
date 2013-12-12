@@ -54,7 +54,14 @@ module api_rest {
                     else {
                         var errorJson:any = JSON.parse(request.response);
                         var notifyMessage:string = "HTTP Status " + request.status + " - " + request.statusText + ": " + errorJson.message;
-                        api_notify.showError(notifyMessage);
+
+                        if( request.status == 404 ) {
+                            api_notify.showWarning(notifyMessage);
+                        }
+                        else {
+                            api_notify.showError(notifyMessage);
+                        }
+
 
                         deferred.reject(new RequestError(request.status, request.statusText, request.responseText, errorJson.message));
                     }

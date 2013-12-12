@@ -30,7 +30,6 @@ import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -69,39 +68,30 @@ public class CreateContentHandler
     public void handle()
         throws Exception
     {
-        try
+        final Session session = context.getJcrSession();
+
+        verifyParentAllowsChildren();
+
+        final Content builtContent = buildContent();
+
+        if ( !command.isDraft() )
         {
-            final Session session = context.getJcrSession();
-
-            verifyParentAllowsChildren();
-
-            final Content builtContent = buildContent();
-
-            if ( !command.isDraft() )
-            {
-                validateContentData( context.getClient(), builtContent );
-            }
-
-            final Content storedContent = contentDao.create( builtContent, session );
-            session.save();
-
-            addAttachments( builtContent, storedContent );
-
-            addRelationships( session, builtContent, storedContent );
-
-            final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent );
-            createNode( createNodeCommand );
-
-            indexService.indexContent( storedContent );
-
-            command.setResult( storedContent );
+            validateContentData( context.getClient(), builtContent );
         }
 
-        catch ( final Exception e )
-        {
-            e.printStackTrace();
-            throw new CreateContentException( command, e );
-        }
+        final Content storedContent = contentDao.create( builtContent, session );
+        session.save();
+
+        addAttachments( builtContent, storedContent );
+
+        addRelationships( session, builtContent, storedContent );
+
+        final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent );
+        createNode( createNodeCommand );
+
+        indexService.indexContent( storedContent );
+
+        command.setResult( storedContent );
     }
 
     private ContentName createDraftName()

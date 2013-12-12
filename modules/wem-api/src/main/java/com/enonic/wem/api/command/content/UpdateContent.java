@@ -10,12 +10,13 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.editor.ContentEditor;
 
 public final class UpdateContent
-    extends Command<UpdateContentResult>
+    extends Command<Content>
 {
     private ContentEditor editor;
 
