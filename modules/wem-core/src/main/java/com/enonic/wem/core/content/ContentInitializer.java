@@ -4,7 +4,6 @@ package com.enonic.wem.core.content;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentType;
@@ -26,28 +25,46 @@ public class ContentInitializer
     public void initialize()
         throws Exception
     {
-        final ContentPath bildeArkivContent = createContent( ContentPath.ROOT, "Bildearkiv", ContentTypeName.folder() );
-        createContent( bildeArkivContent, "Misc", ContentTypeName.folder() );
-        createContent( bildeArkivContent, "People", ContentTypeName.folder() );
+        ContentPath bildeArkivPath = client.execute( createFolder().
+            name( "bildearkiv" ).
+            parent( ContentPath.ROOT ).
+            displayName( "BildeArkiv" ) ).getContentPath();
 
-        final ContentPath trampolinerContent = createContent( bildeArkivContent, "Trampoliner", ContentTypeName.folder() );
-        createContent( trampolinerContent, "Jumping Jack - Big Bounce", ContentTypeName.folder() );
-        createContent( trampolinerContent, "Jumping Jack - Pop", ContentTypeName.folder() );
+        client.execute( createFolder().
+            name( "misc" ).
+            parent( bildeArkivPath ).
+            displayName( "Misc" ) ).getContentPath();
+
+        client.execute( createFolder().
+            name( "people" ).
+            parent( bildeArkivPath ).
+            displayName( "People" ) ).getContentPath();
+
+        ContentPath trampolinerPath = client.execute( createFolder().
+            name( "trampoliner" ).
+            parent( bildeArkivPath ).
+            displayName( "Trampoliner" ) ).getContentPath();
+
+        client.execute( createFolder().
+            name( "jumping-jack-big-bounce" ).
+            parent( trampolinerPath ).
+            displayName( "Jumping Jack - Big Bounce" ) ).getContentPath();
+
+        client.execute( createFolder().
+            name( "jumping-jack-pop" ).
+            parent( trampolinerPath ).
+            displayName( "Jumping Jack - Pop" ).
+            contentType( ContentTypeName.folder() ) ).getContentPath();
     }
 
-    private ContentPath createContent( final ContentPath parent, final String displayName, ContentTypeName contentTypeName )
+    private CreateContent createFolder()
     {
-        final CreateContent createContent = Commands.content().create().
-            contentType( contentTypeName ).
-            form( getContentType( contentTypeName ).form() ).
-            displayName( displayName ).
-            parent( parent ).
+        return Commands.content().create().
             owner( AccountKey.anonymous() ).
-            contentData( new ContentData() );
-        CreateContentResult createContentResult = client.execute( createContent );
-        return createContentResult.getContentPath();
+            contentData( new ContentData() ).
+            form( getContentType( ContentTypeName.folder() ).form() ).
+            contentType( ContentTypeName.folder() );
     }
-
 
     private ContentType getContentType( ContentTypeName name )
     {

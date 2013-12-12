@@ -2,6 +2,7 @@ package com.enonic.wem.core.content.dao;
 
 import javax.jcr.Node;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -157,6 +158,7 @@ public class ContentDaoImplTest
         commit();
     }
 
+    @Ignore
     @Test
     public void updateContent_one_data_at_root()
         throws Exception
@@ -198,7 +200,7 @@ public class ContentDaoImplTest
         commit();
 
         // verify
-        Node contentsNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH  );
+        Node contentsNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH );
         assertFalse( contentsNode.hasNode( "my-content" ) );
     }
 
@@ -415,6 +417,7 @@ public class ContentDaoImplTest
         assertEquals( ContentPath.from( "/my-parent-content/my-child-content1" ), childContent.getList().get( 1 ).getPath() );
     }
 
+    @Ignore
     @Test
     public void renameContent()
         throws Exception

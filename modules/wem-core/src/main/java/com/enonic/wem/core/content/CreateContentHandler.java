@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -23,6 +24,8 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.blob.CreateBlob;
+import com.enonic.wem.api.command.entity.CreateNode;
+import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
@@ -35,6 +38,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.entity.CreateNodeHandler;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
@@ -59,6 +63,8 @@ public class CreateContentHandler
 
     private final static Logger LOG = LoggerFactory.getLogger( CreateContentHandler.class );
 
+    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
+
     @Override
     public void handle()
         throws Exception
@@ -67,85 +73,148 @@ public class CreateContentHandler
         {
             final Session session = context.getJcrSession();
 
-            final Content.Builder builder = Content.newContent();
-            final String displayName = command.getDisplayName();
-            final String name = command.getName();
-            final ContentPath parentContentPath = command.getParentContentPath();
+            verifyParentAllowsChildren();
 
-            final ContentPath contentPath = name == null
-                ? resolvePathForNewContent( parentContentPath, displayName, session )
-                : ContentPath.from( parentContentPath, name );
+            final ContentPath resolvedContentPath = resolveContentPath( command.getParentContentPath() );
 
-            if ( !command.isDraft() && !parentContentPath.isRoot() )
-            {
-                checkParentContentAllowsChildren( parentContentPath, session );
-            }
+            final Content builtContent = buildContent( resolvedContentPath );
 
-            builder.path( contentPath );
-            builder.embedded( command.isEmbed() );
-            builder.displayName( displayName );
-            builder.form( command.getForm() );
-            builder.contentData( command.getContentData() );
-            builder.type( command.getContentType() );
-            builder.createdTime( DateTime.now() );
-            builder.modifiedTime( DateTime.now() );
-            builder.owner( command.getOwner() );
-            builder.modifier( command.getOwner() );
-            builder.draft( command.isDraft() );
-
-            final Content content = builder.build();
-
-            final Client client = context.getClient();
             if ( !command.isDraft() )
             {
-                validateContentData( client, content );
+                validateContentData( context.getClient(), builtContent );
             }
 
-            final Content storedContent = contentDao.create( content, session );
-
+            final Content storedContent = contentDao.create( builtContent, session );
             session.save();
-            addAttachments( client, storedContent.getId(), command.getAttachments() );
-            final Attachment thumbnailAttachment = resolveThumbnailAttachment( content );
-            if ( thumbnailAttachment != null )
-            {
-                client.execute( Commands.attachment().create().contentId( storedContent.getId() ).attachment( thumbnailAttachment ) );
-            }
 
-            try
-            {
-                /*TODO: Remove
-                for ( Content tempContent : temporaryContents )
-                {
-                    final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
-                    createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
-                }*/
+            addAttachments( builtContent, storedContent );
 
-                relationshipService.syncRelationships( new SyncRelationshipsCommand().
-                    client( client ).
-                    jcrSession( session ).
-                    contentType( content.getType() ).
-                    contentToUpdate( storedContent.getId() ).
-                    contentAfterEditing( content.getContentData() ) );
-                session.save();
-            }
-            catch ( Exception e )
-            {
-                // Temporary way of rollback: try delete content if any failure
-                contentDao.forceDelete( storedContent.getId(), session );
-                session.save();
-                throw e;
-            }
+            addRelationships( session, builtContent, storedContent );
+
+            // To command in translator
+            final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent );
+            final CreateNodeResult result = createNode( createNodeCommand );
+
+            //final Node nodePersistedContent = result.getPersistedNode();
 
             indexService.indexContent( storedContent );
 
-            command.setResult( new CreateContentResult( storedContent.getId(), contentPath ) );
+            command.setResult( new CreateContentResult( storedContent.getId(), resolvedContentPath ) );
         }
+
         catch ( final Exception e )
         {
             e.printStackTrace();
             throw new CreateContentException( command, e );
         }
     }
+
+    private String createDraftName()
+    {
+        return "__draft__" + UUID.randomUUID().toString();
+    }
+
+    private CreateNodeResult createNode( final CreateNode createNodeCommand )
+        throws Exception
+    {
+        CreateNodeHandler createNodeHandler = CreateNodeHandler.create().
+            command( createNodeCommand ).
+            indexService( indexService ).
+            context( this.context ).
+            build();
+        createNodeHandler.handle();
+
+        return createNodeCommand.getResult();
+    }
+
+
+    private void addRelationships( final Session session, final Content content, final Content storedContent )
+        throws RepositoryException
+    {
+        try
+        {
+            /*TODO: Remove
+            for ( Content tempContent : temporaryContents )
+            {
+                final ContentPath pathToEmbeddedContent = ContentPath.createPathToEmbeddedContent( contentPath, tempContent.getName() );
+                createEmbeddedContent( tempContent, pathToEmbeddedContent, session );
+            }*/
+
+            relationshipService.syncRelationships( new SyncRelationshipsCommand().
+                client( context.getClient() ).
+                jcrSession( session ).
+                contentType( content.getType() ).
+                contentToUpdate( storedContent.getId() ).
+                contentAfterEditing( content.getContentData() ) );
+            session.save();
+        }
+        catch ( Exception e )
+        {
+            // Temporary way of rollback: try delete content if any failure
+            contentDao.forceDelete( storedContent.getId(), session );
+            session.save();
+            throw e;
+        }
+    }
+
+    private Content buildContent( final ContentPath resolvedContentPath )
+    {
+        final Content.Builder builder = Content.newContent();
+
+        final String contentName = command.isDraft() ? createDraftName() : command.getName();
+
+        builder.path( resolvedContentPath );
+        builder.embedded( command.isEmbed() );
+        builder.displayName( command.getDisplayName() );
+        builder.form( command.getForm() );
+        builder.contentData( command.getContentData() );
+        builder.type( command.getContentType() );
+        builder.createdTime( DateTime.now() );
+        builder.modifiedTime( DateTime.now() );
+        builder.owner( command.getOwner() );
+        builder.modifier( command.getOwner() );
+        builder.draft( command.isDraft() );
+        builder.name( contentName );
+
+        return builder.build();
+    }
+
+    private void addAttachments( final Content content, final Content storedContent )
+        throws Exception
+    {
+        addAttachments( context.getClient(), storedContent.getId(), command.getAttachments() );
+
+        final Attachment thumbnailAttachment = resolveThumbnailAttachment( content );
+        if ( thumbnailAttachment != null )
+        {
+            context.getClient().execute(
+                Commands.attachment().create().contentId( storedContent.getId() ).attachment( thumbnailAttachment ) );
+        }
+    }
+
+    private ContentPath resolveContentPath( final ContentPath parentContentPath )
+    {
+        final String name = command.getName();
+
+        if ( name == null )
+        {
+            LOG.info( "Content name is null in create content. ParentContentPath: " + parentContentPath + ", DisplayName: " +
+                          command.getDisplayName() );
+        }
+
+        return name == null
+            ? resolvePathForNewContent( parentContentPath, command.getDisplayName(), context.getJcrSession() )
+            : ContentPath.from( parentContentPath, name );
+    }
+
+    private void verifyParentAllowsChildren()
+    {
+        if ( !command.isDraft() && !command.getParentContentPath().isRoot() )
+        {
+            checkParentContentAllowsChildren( command.getParentContentPath(), context.getJcrSession() );
+        }
+    }
+
 
     private Attachment resolveThumbnailAttachment( final Content content )
         throws Exception
@@ -255,12 +324,13 @@ public class CreateContentHandler
         throws Exception
     {
         final Blob originalImage = context.getClient().execute( Commands.blob().get( originalImageBlobKey ) );
+
         final BufferedImage image = ImageIO.read( originalImage.getStream() );
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final BufferedImage scaledImage = new ScaleMaxFilter( size ).filter( image );
         ImageIO.write( scaledImage, "png", outputStream );
-
         CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( outputStream.toByteArray() ).getInput() );
+
         return context.getClient().execute( createBlob );
     }
 

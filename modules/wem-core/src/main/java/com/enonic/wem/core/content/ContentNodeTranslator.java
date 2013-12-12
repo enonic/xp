@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import java.util.List;
 
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
@@ -61,6 +62,21 @@ public class ContentNodeTranslator
             entityIndexConfig( entityIndexConfig ).
             build();
     }
+
+    public CreateNode toCreateNode( final Content content )
+    {
+        final NodePath parentNodePath = NodePath.newPath( CONTENTS_ROOT_PATH ).elements( content.getParentPath().toString() ).build();
+        final RootDataSet rootDataSet = propertiesToRootDataSet( content );
+
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( rootDataSet );
+
+        return new CreateNode().
+            data( rootDataSet ).
+            entityIndexConfig( entityIndexConfig ).
+            parent( parentNodePath ).
+            name( content.getName() );
+    }
+
 
     public RootDataSet propertiesToRootDataSet( final Content content )
     {
@@ -143,16 +159,16 @@ public class ContentNodeTranslator
         if ( content.getForm() != null )
         {
             final DataSet form = new DataSet( FORM_PATH );
-        final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
-        form.add( formItems );
+            final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
+            form.add( formItems );
 
             final List<Data> dataList = SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems( content.getForm().getFormItems() );
 
-        for ( final Data data : dataList )
-        {
-            formItems.add( data );
-        }
-        rootDataSet.add( form );
+            for ( final Data data : dataList )
+            {
+                formItems.add( data );
+            }
+            rootDataSet.add( form );
         }
     }
 

@@ -1,8 +1,6 @@
 package com.enonic.wem.core.content.dao;
 
 
-import java.util.UUID;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -47,7 +45,7 @@ final class ContentDaoHandlerCreate
 
         final Content storedContent = storeAsContentInJcr( content );
 
-        storeContentAsNode( content );
+        //storeContentAsNode( content );
 
         return storedContent;
     }
@@ -150,14 +148,7 @@ final class ContentDaoHandlerCreate
 
     private String resolveNodeName( final Content content )
     {
-        if ( content.isDraft() )
-        {
-            return "__draft__" + UUID.randomUUID().toString();
-        }
-        else
-        {
-            return content.getName();
-        }
+        return content.getName();
     }
 
     private void storeContentAsNode( final Content content )
