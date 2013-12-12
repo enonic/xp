@@ -23,6 +23,8 @@ public class Entity
 
     protected final EntityIndexConfig entityIndexConfig;
 
+    protected final Attachments attachments;
+
     protected Entity( final BaseBuilder builder )
     {
         this.id = builder.id;
@@ -37,6 +39,8 @@ public class Entity
                 this.data.add( data.copy() );
             }
         }
+
+        this.attachments = builder.attachments;
 
         if ( builder.entityIndexConfig != null )
         {
@@ -69,6 +73,11 @@ public class Entity
         return this.data;
     }
 
+    public Attachments attachments()
+    {
+        return this.attachments;
+    }
+
     public DataSet dataSet( final String path )
     {
         return data.getDataSet( path );
@@ -93,6 +102,8 @@ public class Entity
         DateTime modifiedTime;
 
         RootDataSet data = new RootDataSet();
+
+        Attachments attachments;
 
         EntityIndexConfig entityIndexConfig;
 
@@ -182,6 +193,14 @@ public class Entity
         {
             this.data = value;
             changes.recordChange( newPossibleChange( "data" ).from( this.originalEntity.data() ).to( this.data ).build() );
+            return getThisBuilder();
+        }
+
+        public B attachments( final Attachments value )
+        {
+            this.attachments = value;
+            changes.recordChange(
+                newPossibleChange( "attachments" ).from( this.originalEntity.attachments() ).to( this.attachments ).build() );
             return getThisBuilder();
         }
 
@@ -307,6 +326,12 @@ public class Entity
         public B entityIndexConfig( final EntityIndexConfig entityIndexConfig )
         {
             this.entityIndexConfig = entityIndexConfig;
+            return getThisBuilder();
+        }
+
+        public B attachments( final Attachments value )
+        {
+            this.attachments = value;
             return getThisBuilder();
         }
 

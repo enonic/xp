@@ -1,4 +1,4 @@
-package com.enonic.wem.core.support.dao;
+package com.enonic.wem.core.entity.dao;
 
 import java.io.IOException;
 
@@ -7,14 +7,15 @@ import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.core.entity.EntityIndexConfigJson;
+import com.enonic.wem.core.support.dao.JsonHelper;
 
-public class IndexConfigJcrMapper
+class IndexConfigJcrMapper
 {
     private final static String INDEX_PROPERTY = "indexConfig";
 
     private final JsonHelper jsonHelper = new JsonHelper();
 
-    public void toJcr( final EntityIndexConfig indexConfig, final Node targetNode )
+    void toJcr( final EntityIndexConfig indexConfig, final Node targetNode )
         throws RepositoryException
     {
         if ( indexConfig != null )
@@ -24,7 +25,7 @@ public class IndexConfigJcrMapper
         }
     }
 
-    public EntityIndexConfig toEntityIndexConfig( final Node sourceNode )
+    EntityIndexConfig toEntityIndexConfig( final Node sourceNode )
         throws RepositoryException
     {
         if ( !sourceNode.hasProperty( INDEX_PROPERTY ) )

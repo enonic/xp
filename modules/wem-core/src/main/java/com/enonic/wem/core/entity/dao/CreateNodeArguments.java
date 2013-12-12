@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity.dao;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.NodePath;
 
@@ -16,6 +17,8 @@ public class CreateNodeArguments
 
     private final RootDataSet rootDataSet;
 
+    private final Attachments attachments;
+
     private final EntityIndexConfig entityIndexConfig;
 
     CreateNodeArguments( Builder builder )
@@ -24,6 +27,7 @@ public class CreateNodeArguments
         this.parent = builder.parent;
         this.name = builder.name;
         this.rootDataSet = builder.rootDataSet;
+        this.attachments = builder.attachments;
         this.entityIndexConfig = builder.entityIndexConfig;
     }
 
@@ -47,6 +51,11 @@ public class CreateNodeArguments
         return this.rootDataSet;
     }
 
+    Attachments attachments()
+    {
+        return attachments;
+    }
+
     EntityIndexConfig entityIndexConfig()
     {
         return this.entityIndexConfig;
@@ -66,6 +75,8 @@ public class CreateNodeArguments
         private String name;
 
         private RootDataSet rootDataSet;
+
+        private Attachments attachments = Attachments.empty();
 
         private EntityIndexConfig entityIndexConfig;
 
@@ -90,6 +101,12 @@ public class CreateNodeArguments
         public Builder rootDataSet( RootDataSet value )
         {
             this.rootDataSet = value;
+            return this;
+        }
+
+        public Builder attachments( Attachments value )
+        {
+            this.attachments = value;
             return this;
         }
 

@@ -14,7 +14,6 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.jcr.JcrHelper;
-import com.enonic.wem.core.support.dao.IndexConfigJcrMapper;
 
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 
@@ -34,6 +33,8 @@ class NodeJcrMapper
 
     private static final IndexConfigJcrMapper indexConfigJcrMapper = new IndexConfigJcrMapper();
 
+    private static final AttachmentsJcrMapper attachmentsJcrMapper = new AttachmentsJcrMapper();
+
     static void toJcr( final Node node, final javax.jcr.Node jcrNode )
         throws RepositoryException
     {
@@ -49,18 +50,24 @@ class NodeJcrMapper
         {
             indexConfigJcrMapper.toJcr( node.getEntityIndexConfig(), jcrNode );
         }
+
+        if ( node.attachments().isNotEmpty() )
+        {
+            attachmentsJcrMapper.toJcr( node.attachments(), jcrNode );
+        }
     }
 
-    static void updateNodeJcrNode( final UpdateNodeArgs updateNodeArgs, final javax.jcr.Node nodeNode )
+    static void updateNodeJcrNode( final UpdateNodeArgs updateNodeArgs, final javax.jcr.Node jcrNode )
         throws RepositoryException
     {
         final DateTime now = DateTime.now();
 
-        JcrHelper.setPropertyDateTime( nodeNode, MODIFIED_TIME, now );
-        JcrHelper.setPropertyUserKey( nodeNode, MODIFIER, updateNodeArgs.updater() );
+        JcrHelper.setPropertyDateTime( jcrNode, MODIFIED_TIME, now );
+        JcrHelper.setPropertyUserKey( jcrNode, MODIFIER, updateNodeArgs.updater() );
 
         final String rootDataSetAsJsonString = rootDataSetJsonSerializer.toString( updateNodeArgs.rootDataSet() );
-        nodeNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
+        jcrNode.setProperty( ROOT_DATA_SET, rootDataSetAsJsonString );
+        attachmentsJcrMapper.synchronizeJcr( updateNodeArgs.attachments(), jcrNode );
     }
 
     static Node.Builder toNode( final javax.jcr.Node jcrNode )
@@ -82,6 +89,7 @@ class NodeJcrMapper
             final String dataSetAsString = jcrNode.getProperty( ROOT_DATA_SET ).getString();
             final DataSet dataSet = rootDataSetJsonSerializer.toObject( dataSetAsString );
             builder.rootDataSet( dataSet.toRootDataSet() );
+            builder.attachments( attachmentsJcrMapper.toAttachments( jcrNode ) );
             return builder;
 
         }

@@ -271,6 +271,7 @@ public final class Node
             baseBuilder.createdTime = this.createdTime;
             baseBuilder.modifiedTime = this.modifiedTime;
             baseBuilder.data = this.data;
+            baseBuilder.attachments = this.attachments;
 
             baseBuilder.name = this.name;
             baseBuilder.parent = this.parent;

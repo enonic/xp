@@ -2,6 +2,7 @@ package com.enonic.wem.api.command.entity;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.NodePath;
 
@@ -14,6 +15,8 @@ public class CreateNode
     private String name;
 
     private RootDataSet data;
+
+    private Attachments attachments;
 
     private EntityIndexConfig entityIndexConfig;
 
@@ -41,6 +44,12 @@ public class CreateNode
         return this;
     }
 
+    public CreateNode attachments( final Attachments value )
+    {
+        this.attachments = value;
+        return this;
+    }
+
     public CreateNode entityIndexConfig( final EntityIndexConfig entityIndexConfig )
     {
         this.entityIndexConfig = entityIndexConfig;
@@ -60,6 +69,11 @@ public class CreateNode
     public RootDataSet getData()
     {
         return data;
+    }
+
+    public Attachments getAttachments()
+    {
+        return attachments;
     }
 
     public EntityIndexConfig getEntityIndexConfig()

@@ -27,6 +27,11 @@ public class Attachments
         return attachmentByName.get( name );
     }
 
+    public boolean hasAttachment( final String name )
+    {
+        return attachmentByName.containsKey( name );
+    }
+
     public static Attachments empty()
     {
         final ImmutableList<Attachment> list = ImmutableList.of();
@@ -67,9 +72,15 @@ public class Attachments
     {
         private ImmutableList.Builder<Attachment> builder = ImmutableList.builder();
 
-        public Builder add( Attachment content )
+        public Builder add( Attachment attachment )
         {
-            builder.add( content );
+            builder.add( attachment );
+            return this;
+        }
+
+        public Builder addAll( Attachments attachments )
+        {
+            builder.addAll( attachments );
             return this;
         }
 

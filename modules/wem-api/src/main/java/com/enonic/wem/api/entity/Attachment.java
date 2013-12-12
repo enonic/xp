@@ -41,7 +41,12 @@ public final class Attachment
         return blobKey;
     }
 
-    public final class Builder
+    public static Builder newAttachment()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
     {
         private String name;
 

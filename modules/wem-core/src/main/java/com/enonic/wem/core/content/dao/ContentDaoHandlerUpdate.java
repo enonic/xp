@@ -8,6 +8,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.content.ContentNodeTranslator;
@@ -81,6 +82,7 @@ final class ContentDaoHandlerUpdate
             nodeToUpdate( persisted.id() ).
             name( edited.name() ).
             rootDataSet( edited.data() ).
+            attachments( Attachments.empty() ).
             build();
 
         final com.enonic.wem.api.entity.Node updatedNode = nodeJcrDao.updateNode( updateNodeArgs );

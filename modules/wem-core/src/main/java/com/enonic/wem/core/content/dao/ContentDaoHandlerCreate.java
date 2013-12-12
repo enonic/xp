@@ -12,6 +12,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.core.content.ContentNodeTranslator;
 import com.enonic.wem.core.entity.dao.CreateNodeArguments;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
@@ -175,6 +176,7 @@ final class ContentDaoHandlerCreate
             rootDataSet( node.data() ).
             parent( node.parent().asAbsolute() ).
             entityIndexConfig( node.getEntityIndexConfig() ).
+            attachments( Attachments.empty() ).
             build();
 
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( this.session );

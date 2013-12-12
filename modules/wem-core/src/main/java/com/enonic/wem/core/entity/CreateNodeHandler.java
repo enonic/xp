@@ -7,12 +7,15 @@ import javax.jcr.Session;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.CreateNodeResult;
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.entity.dao.CreateNodeArguments;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
+
+import static com.enonic.wem.core.entity.dao.CreateNodeArguments.newCreateNodeArgs;
 
 public class CreateNodeHandler
     extends CommandHandler<CreateNode>
@@ -37,11 +40,12 @@ public class CreateNodeHandler
         final Session session = context.getJcrSession();
         final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
 
-        final CreateNodeArguments createNodeArguments = CreateNodeArguments.newCreateNodeArgs().
+        final CreateNodeArguments createNodeArguments = newCreateNodeArgs().
             creator( UserKey.superUser() ).
             parent( command.getParent() ).
             name( command.getName() ).
             rootDataSet( command.getData() ).
+            attachments( command.getAttachments() != null ? command.getAttachments() : Attachments.empty() ).
             entityIndexConfig( command.getEntityIndexConfig() ).
             build();
 

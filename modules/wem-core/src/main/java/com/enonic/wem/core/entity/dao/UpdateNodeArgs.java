@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity.dao;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.data.RootDataSet;
+import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NodeName;
 
@@ -16,12 +17,15 @@ public class UpdateNodeArgs
 
     private final RootDataSet rootDataSet;
 
+    private final Attachments attachments;
+
     UpdateNodeArgs( Builder builder )
     {
         this.updater = builder.updater;
         this.nodeToUpdate = builder.nodeToUpdate;
         this.name = builder.name;
         this.rootDataSet = builder.rootDataSet;
+        this.attachments = builder.attachments;
     }
 
     UserKey updater()
@@ -44,6 +48,11 @@ public class UpdateNodeArgs
         return rootDataSet;
     }
 
+    Attachments attachments()
+    {
+        return attachments;
+    }
+
     public static Builder newUpdateItemArgs()
     {
         return new Builder();
@@ -58,6 +67,8 @@ public class UpdateNodeArgs
         private NodeName name;
 
         private RootDataSet rootDataSet;
+
+        private Attachments attachments;
 
         public Builder updater( UserKey value )
         {
@@ -80,6 +91,12 @@ public class UpdateNodeArgs
         public Builder rootDataSet( RootDataSet value )
         {
             this.rootDataSet = value;
+            return this;
+        }
+
+        public Builder attachments( Attachments value )
+        {
+            this.attachments = value;
             return this;
         }
 
