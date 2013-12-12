@@ -1,10 +1,13 @@
 package com.enonic.wem.api.schema.content;
 
 
+import com.google.common.collect.ComparisonChain;
+
 import com.enonic.wem.api.schema.SchemaName;
 
 public final class ContentTypeName
     extends SchemaName
+    implements Comparable<ContentTypeName>
 {
     private static final ContentTypeName UNSTRUCTURED = new ContentTypeName( "unstructured" );
 
@@ -237,4 +240,9 @@ public final class ContentTypeName
         return new ContentTypeName( contentTypeName );
     }
 
+    @Override
+    public int compareTo( final ContentTypeName that )
+    {
+        return ComparisonChain.start().compare( this.getContentTypeName(), that.getContentTypeName() ).result();
+    }
 }

@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -15,7 +15,7 @@ import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 public final class ContentTypeNames
     extends AbstractImmutableEntitySet<ContentTypeName>
 {
-    private ContentTypeNames( final ImmutableSet<ContentTypeName> set )
+    private ContentTypeNames( final ImmutableSortedSet<ContentTypeName> set )
     {
         super( set );
     }
@@ -32,20 +32,20 @@ public final class ContentTypeNames
 
     public ContentTypeNames add( final ContentTypeName... contentTypeNames )
     {
-        return add( ImmutableSet.copyOf( contentTypeNames ) );
+        return add( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
     public ContentTypeNames add( final Iterable<ContentTypeName> contentTypeNames )
     {
-        return add( ImmutableSet.copyOf( contentTypeNames ) );
+        return add( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
-    private ContentTypeNames add( final ImmutableSet<ContentTypeName> contentTypeNames )
+    private ContentTypeNames add( final ImmutableSortedSet<ContentTypeName> contentTypeNames )
     {
         final HashSet<ContentTypeName> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
         tmp.addAll( contentTypeNames );
-        return new ContentTypeNames( ImmutableSet.copyOf( tmp ) );
+        return new ContentTypeNames( ImmutableSortedSet.copyOf( tmp ) );
     }
 
     public ContentTypeNames remove( final String... contentTypeNames )
@@ -55,25 +55,25 @@ public final class ContentTypeNames
 
     public ContentTypeNames remove( final ContentTypeName... contentTypeNames )
     {
-        return remove( ImmutableSet.copyOf( contentTypeNames ) );
+        return remove( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
     public ContentTypeNames remove( final Iterable<ContentTypeName> contentTypeNames )
     {
-        return remove( ImmutableSet.copyOf( contentTypeNames ) );
+        return remove( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
-    private ContentTypeNames remove( final ImmutableSet<ContentTypeName> contentTypeNames )
+    private ContentTypeNames remove( final ImmutableSortedSet<ContentTypeName> contentTypeNames )
     {
         final HashSet<ContentTypeName> tmp = Sets.newHashSet();
         tmp.addAll( this.set );
         tmp.removeAll( contentTypeNames );
-        return new ContentTypeNames( ImmutableSet.copyOf( tmp ) );
+        return new ContentTypeNames( ImmutableSortedSet.copyOf( tmp ) );
     }
 
     public static ContentTypeNames empty()
     {
-        final ImmutableSet<ContentTypeName> set = ImmutableSet.of();
+        final ImmutableSortedSet<ContentTypeName> set = ImmutableSortedSet.of();
         return new ContentTypeNames( set );
     }
 
@@ -89,19 +89,19 @@ public final class ContentTypeNames
 
     public static ContentTypeNames from( final ContentTypeName... contentTypeNames )
     {
-        return new ContentTypeNames( ImmutableSet.copyOf( contentTypeNames ) );
+        return new ContentTypeNames( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
     public static ContentTypeNames from( final Iterable<ContentTypeName> contentTypeNames )
     {
-        return new ContentTypeNames( ImmutableSet.copyOf( contentTypeNames ) );
+        return new ContentTypeNames( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
-    private static ImmutableSet<ContentTypeName> parseQualifiedNames( final String... contentTypeNames )
+    private static ImmutableSortedSet<ContentTypeName> parseQualifiedNames( final String... contentTypeNames )
     {
         final Collection<String> list = Lists.newArrayList( contentTypeNames );
         final Collection<ContentTypeName> contentTypeNameList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableSet.copyOf( contentTypeNameList );
+        return ImmutableSortedSet.copyOf( contentTypeNameList );
     }
 
     public Set<String> getAsStringSet()
@@ -133,7 +133,7 @@ public final class ContentTypeNames
 
     public static class Builder
     {
-        private ImmutableSet.Builder<ContentTypeName> set = ImmutableSet.builder();
+        private ImmutableSortedSet.Builder<ContentTypeName> set = ImmutableSortedSet.naturalOrder();
 
         public Builder add( final ContentTypeName value )
         {
