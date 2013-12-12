@@ -70,7 +70,7 @@ public class UpdateContentHandler
 
         final Session session = context.getJcrSession();
         final Content persistedContent = contentDao.selectById( command.getContentId(), session );
-        if ( persistedContent != null )
+        if ( persistedContent == null )
         {
             throw new ContentNotFoundException( command.getContentId() );
         }
