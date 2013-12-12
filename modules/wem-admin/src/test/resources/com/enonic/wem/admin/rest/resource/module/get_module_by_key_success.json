@@ -22,8 +22,8 @@
         }
       } ]
     },
-    "contentTypeDependencies" : [ "article", "ctype2", "ctype1", "ctype3" ],
-    "deletable" : true,
+      "contentTypeDependencies": [ "article", "ctype1", "ctype2", "ctype3" ],
+      "deletable" : true,
     "displayName" : "module display name",
     "editable" : true,
     "info" : "module-info",
