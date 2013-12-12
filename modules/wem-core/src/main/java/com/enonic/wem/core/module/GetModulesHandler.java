@@ -74,8 +74,11 @@ public class GetModulesHandler
             {
                 if ( Files.isDirectory( moduleDir ) )
                 {
-                    Module module = moduleExporter.importFromDirectory( moduleDir ).build();
-                    modules.add( module );
+                    final Module.Builder builder = moduleExporter.importFromDirectory( moduleDir );
+                    if ( builder != null )
+                    {
+                        modules.add( builder.build() );
+                    }
                 }
             }
         }

@@ -134,7 +134,9 @@
         </#if>
     </#list>
 </div>
-<#elseif exception??>
+</#if>
+
+<#if exception??>
 <h2>
     Here is the stack trace:
 </h2>

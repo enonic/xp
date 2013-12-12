@@ -42,9 +42,7 @@ final class JsControllerImpl
     public JsController context( final JsContext context )
     {
         this.context = context;
-        this.runner.property( "context", this.context );
-        this.runner.property( "request", this.context.getRequest() );
-        this.runner.property( "response", this.context.getResponse() );
+        this.runner.property( "__context", this.context );
         return this;
     }
 

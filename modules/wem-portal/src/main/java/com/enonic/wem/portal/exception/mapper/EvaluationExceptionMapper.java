@@ -4,6 +4,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import com.google.common.base.Throwables;
+
 import com.enonic.wem.portal.exception.renderer.ExceptionRenderer;
 import com.enonic.wem.portal.script.EvaluationException;
 
@@ -19,6 +21,7 @@ public final class EvaluationExceptionMapper
         renderer.description( e.getMessage() );
         renderer.title( "Script evaluation error" );
         renderer.source( e.getSource(), e.getLineNumber(), e.getColumnNumber() );
+        renderer.exception( Throwables.getRootCause( e ) );
         return renderer.render();
     }
 }

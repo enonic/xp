@@ -6,6 +6,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
@@ -14,15 +15,16 @@ import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
+import com.enonic.wem.portal.script.runtime.JsApiBridge;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
 {
-    private final Scriptable scope;
+    private Scriptable scope;
 
-    private final ScriptCompiler compiler;
+    protected ScriptCompiler compiler;
 
-    private final ScriptLoader scriptLoader;
+    protected ScriptLoader scriptLoader;
 
     private final Map<String, Object> objects;
 
@@ -30,11 +32,10 @@ final class ScriptRunnerImpl
 
     private ModuleKeyResolver moduleKeyResolver;
 
-    public ScriptRunnerImpl( final ScriptCompiler compiler, final ScriptLoader scriptLoader, final Scriptable scope )
+    protected JsApiBridge apiBridge;
+
+    public ScriptRunnerImpl()
     {
-        this.compiler = compiler;
-        this.scriptLoader = scriptLoader;
-        this.scope = scope;
         this.objects = Maps.newHashMap();
     }
 
@@ -72,6 +73,8 @@ final class ScriptRunnerImpl
 
         try
         {
+            initializeScope( context );
+            setupProperties();
             installRequire();
             setObjectsToScope();
 
@@ -111,5 +114,17 @@ final class ScriptRunnerImpl
         final String name = cause.sourceName();
         final ScriptSource source = this.scriptLoader.load( name );
         return new EvaluationException( source, cause );
+    }
+
+    private void initializeScope( final Context context )
+    {
+        this.scope = context.initStandardObjects();
+    }
+
+    private void setupProperties()
+    {
+        property( "__log", LoggerFactory.getLogger( getClass() ) );
+        property( "__api", this.apiBridge );
+        this.apiBridge.setScope( this.scope );
     }
 }
