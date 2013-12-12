@@ -53,7 +53,7 @@ public class SiteTemplateSummaryJson
         return siteTemplate.getUrl();
     }
 
-    public String getSiteContent()
+    public String getRootContentType()
     {
         return siteTemplate.getRootContentType().getContentTypeName();
     }

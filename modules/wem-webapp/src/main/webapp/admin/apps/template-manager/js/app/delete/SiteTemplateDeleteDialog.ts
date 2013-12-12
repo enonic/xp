@@ -10,7 +10,7 @@ module app_delete {
             this.setDeleteAction(new SiteTemplateDeleteDialogAction());
 
             this.getDeleteAction().addExecutionListener(() => {
-                var key = api_content_site_template.SiteTemplateKey.fromString(this.siteTemplateToDelete.getKey());
+                var key = this.siteTemplateToDelete.getKey();
                 var deleteRequest = new api_content_site_template.DeleteSiteTemplateRequest(key);
                 deleteRequest.send().done((resp: api_rest.JsonResponse) => {
                     var respJson = resp.getJson();

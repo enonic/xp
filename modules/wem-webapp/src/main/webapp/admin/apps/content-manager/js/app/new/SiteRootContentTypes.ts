@@ -15,7 +15,7 @@ module app_new {
                 var siteTemplates:api_content_site_template.SiteTemplateSummary[] = api_content_site_template.SiteTemplateSummary.fromJsonArray(responseJson.siteTemplates);
 
                 siteTemplates.forEach((siteTemplate:api_content_site_template.SiteTemplateSummary) => {
-                    contentTypeByName[siteTemplate.getSiteContent()] = true;
+                    contentTypeByName[siteTemplate.getRootContentType().toString()] = true;
                 });
 
                 callback(new SiteRootContentTypes(contentTypeByName));

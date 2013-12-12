@@ -12,13 +12,13 @@ module api_content_site_template {
 
         private supportedContentTypes: string[];
 
-        private siteContent: string;
+        private rootContentType: api_schema_content.ContentTypeName;
 
         private version: string;
 
         private url: string;
 
-        private key: string;
+        private key: SiteTemplateKey;
 
         private description: string;
 
@@ -31,10 +31,10 @@ module api_content_site_template {
                 this.modules.push(api_module.ModuleKey.fromString(json.modules[i]));
             }
             this.supportedContentTypes = json.supportedContentTypes;
-            this.siteContent = json.siteContent;
+            this.rootContentType = new api_schema_content.ContentTypeName(json.rootContentType);
             this.version = json.version;
             this.url = json.url;
-            this.key = json.key;
+            this.key = SiteTemplateKey.fromString(json.key);
             this.description = json.description;
         }
 
@@ -42,7 +42,7 @@ module api_content_site_template {
             return new SiteTemplateSummary(<api_content_site_template_json.SiteTemplateSummaryJson>model.raw);
         }
 
-        getKey(): string {
+        getKey(): SiteTemplateKey {
             return this.key;
         }
 
@@ -66,8 +66,8 @@ module api_content_site_template {
             return this.supportedContentTypes;
         }
 
-        getSiteContent(): string {
-            return this.siteContent;
+        getRootContentType(): api_schema_content.ContentTypeName {
+            return this.rootContentType;
         }
 
         getVersion(): string {

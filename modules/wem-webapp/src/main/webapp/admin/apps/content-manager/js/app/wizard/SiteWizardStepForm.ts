@@ -135,7 +135,7 @@ module app_wizard {
         }
 
         getSiteTemplateKey(): api_content_site_template.SiteTemplateKey {
-            return api_content_site_template.SiteTemplateKey.fromString(this.siteTemplate.getKey());
+            return this.siteTemplate.getKey();
         }
     }
 

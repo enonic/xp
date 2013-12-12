@@ -41,7 +41,7 @@ public final class SiteTemplateXml
     @XmlElement(name = "content-filter", required = false)
     private ContentFilterXml contentFilter = new ContentFilterXml();
 
-    @XmlElement(name = "site-content", required = true)
+    @XmlElement(name = "root-content-type", required = true)
     private String siteContent;
 
     @Override

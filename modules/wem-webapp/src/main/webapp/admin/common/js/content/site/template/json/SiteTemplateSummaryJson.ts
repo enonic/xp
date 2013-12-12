@@ -12,7 +12,7 @@ module api_content_site_template_json {
 
         supportedContentTypes:string[];
 
-        siteContent:string;
+        rootContentType:string;
 
         editable:boolean;
 
