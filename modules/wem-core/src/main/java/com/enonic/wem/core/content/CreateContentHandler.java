@@ -89,11 +89,8 @@ public class CreateContentHandler
 
             addRelationships( session, builtContent, storedContent );
 
-            // To command in translator
             final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent );
-            final CreateNodeResult result = createNode( createNodeCommand );
-
-            //final Node nodePersistedContent = result.getPersistedNode();
+            createNode( createNodeCommand );
 
             indexService.indexContent( storedContent );
 

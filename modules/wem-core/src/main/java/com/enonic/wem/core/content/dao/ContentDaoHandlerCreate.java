@@ -5,15 +5,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.entity.Attachments;
 import com.enonic.wem.core.content.ContentNodeTranslator;
-import com.enonic.wem.core.entity.dao.CreateNodeArguments;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.jcr.JcrConstants;
 import com.enonic.wem.core.jcr.JcrHelper;
@@ -44,8 +40,6 @@ final class ContentDaoHandlerCreate
         this.nodeName = content.getName().toString();
 
         final Content storedContent = storeAsContentInJcr( content );
-
-        //storeContentAsNode( content );
 
         return storedContent;
     }
@@ -144,31 +138,6 @@ final class ContentDaoHandlerCreate
         contentJcrMapper.toJcr( content, newContentNode );
 
         return newContentNode;
-    }
-
-    private void storeContentAsNode( final Content content )
-    {
-        final com.enonic.wem.api.entity.Node node = CONTENT_NODE_TRANSLATOR.toNode( content );
-
-        if ( node.name() == null || node.path() == null )
-        {
-            // Space, skip that shit
-            return;
-        }
-
-        final CreateNodeArguments createNodeArguments = CreateNodeArguments.newCreateNodeArgs().
-            creator( UserKey.superUser() ).
-            name( this.nodeName ).
-            rootDataSet( node.data() ).
-            parent( node.parent().asAbsolute() ).
-            entityIndexConfig( node.getEntityIndexConfig() ).
-            attachments( Attachments.empty() ).
-            build();
-
-        final NodeJcrDao nodeJcrDao = new NodeJcrDao( this.session );
-
-        final com.enonic.wem.api.entity.Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
-        indexService.indexNode( persistedNode );
     }
 
     private Node createContentVersionHistory( final Content content, final Node contentNode )
