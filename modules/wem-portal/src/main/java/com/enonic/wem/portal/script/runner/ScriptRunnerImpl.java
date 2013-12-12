@@ -14,7 +14,6 @@ import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
-import com.enonic.wem.portal.script.require.RequireFunction;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
@@ -81,7 +80,7 @@ final class ScriptRunnerImpl
         }
         catch ( final RhinoException e )
         {
-            throw new EvaluationException( this.source, e );
+            throw createError( e );
         }
         finally
         {
@@ -105,5 +104,12 @@ final class ScriptRunnerImpl
         function.setModuleKeyResolver( this.moduleKeyResolver );
         function.setSource( this.source );
         function.install( this.scope );
+    }
+
+    private EvaluationException createError( final RhinoException cause )
+    {
+        final String name = cause.sourceName();
+        final ScriptSource source = this.scriptLoader.load( name );
+        return new EvaluationException( source, cause );
     }
 }

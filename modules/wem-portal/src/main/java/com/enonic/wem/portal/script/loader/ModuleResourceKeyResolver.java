@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script.require;
+package com.enonic.wem.portal.script.loader;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleName;
@@ -73,6 +73,11 @@ final class ModuleResourceKeyResolver
 
     private ModuleResourceKey resolveWithoutVersion( final ModuleName module, final ResourcePath path )
     {
+        if ( this.resolver == null )
+        {
+            return null;
+        }
+
         final ModuleKey key = this.resolver.resolve( module );
         if ( key == null )
         {
