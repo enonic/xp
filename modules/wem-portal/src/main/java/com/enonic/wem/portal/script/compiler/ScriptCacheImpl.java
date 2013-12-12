@@ -1,4 +1,4 @@
-package com.enonic.wem.portal.script.cache;
+package com.enonic.wem.portal.script.compiler;
 
 import org.mozilla.javascript.Script;
 

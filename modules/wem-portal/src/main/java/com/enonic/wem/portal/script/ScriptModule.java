@@ -6,8 +6,8 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsControllerFactoryImpl;
-import com.enonic.wem.portal.script.cache.ScriptCache;
-import com.enonic.wem.portal.script.cache.ScriptCacheImpl;
+import com.enonic.wem.portal.script.compiler.ScriptCache;
+import com.enonic.wem.portal.script.compiler.ScriptCacheImpl;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.compiler.ScriptCompilerImpl;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
