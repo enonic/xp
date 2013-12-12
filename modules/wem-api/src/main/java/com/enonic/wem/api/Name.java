@@ -1,6 +1,8 @@
 package com.enonic.wem.api;
 
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 public class Name
@@ -20,13 +22,13 @@ public class Name
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof Name ) && ( (Name) o ).value.equals( this.value );
+        return ( o instanceof Name ) && Objects.equals( ( (Name) o ).value, this.value );
     }
 
     @Override
     public int hashCode()
     {
-        return value.hashCode();
+        return Objects.hash( value );
     }
 
     @Override

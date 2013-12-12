@@ -8,6 +8,7 @@ import javax.jcr.Session;
 import org.elasticsearch.common.Strings;
 
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
@@ -22,7 +23,7 @@ class ContentDaoHandlerRename
         super( session, indexService );
     }
 
-    boolean handle( ContentId content, String newName )
+    boolean handle( ContentId content, ContentName newName )
         throws RepositoryException
     {
         final Node contentNode = doGetContentNode( content );
@@ -32,7 +33,7 @@ class ContentDaoHandlerRename
         }
 
         final String srcPath = contentNode.getPath();
-        final String dstPath = contentNode.getParent().getPath() + "/" + newName;
+        final String dstPath = contentNode.getParent().getPath() + "/" + newName.toString();
 
         final boolean contentMoved = moveContentNode( srcPath, dstPath );
 

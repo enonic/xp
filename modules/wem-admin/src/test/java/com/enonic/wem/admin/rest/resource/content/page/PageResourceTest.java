@@ -47,7 +47,7 @@ public class PageResourceTest
     public void update_page_success()
         throws Exception
     {
-        Content content = createPage( "content-id", "Content Name", "content-type" );
+        Content content = createPage( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( UpdatePage.class ) ) ).thenReturn( content );
 
@@ -62,7 +62,7 @@ public class PageResourceTest
     public void update_page_failure()
         throws Exception
     {
-        Content content = createPage( "content-id", "Content Name", "content-type" );
+        Content content = createPage( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( UpdatePage.class ) ) ).thenThrow( new ContentNotFoundException( content.getId() ) );
 
@@ -77,7 +77,7 @@ public class PageResourceTest
     public void create_page_success()
         throws Exception
     {
-        Content content = createPage( "content-id", "Content Name", "content-type" );
+        Content content = createPage( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( CreatePage.class ) ) ).thenReturn( content );
 

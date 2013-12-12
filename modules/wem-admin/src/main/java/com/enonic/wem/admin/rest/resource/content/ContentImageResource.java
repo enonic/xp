@@ -116,7 +116,7 @@ public class ContentImageResource
         final ContentData contentData = content.getContentData();
 
         final Property imageProperty = contentData.getProperty( "image" );
-        return imageProperty == null ? content.getName() : imageProperty.getString();
+        return imageProperty == null ? content.getName().toString() : imageProperty.getString();
     }
 
     private Icon findRootContentTypeIcon( final ContentTypeName contentTypeName )

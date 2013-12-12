@@ -11,6 +11,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
@@ -108,7 +109,7 @@ public class ContentDaoImpl
     }
 
     @Override
-    public boolean renameContent( final ContentId contentId, final String newName, final Session session )
+    public boolean renameContent( final ContentId contentId, final ContentName newName, final Session session )
     {
         try
         {

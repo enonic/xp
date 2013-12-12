@@ -14,7 +14,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.content.Content;
@@ -120,7 +119,7 @@ public class CreateContentHandlerTest
         Mockito.verify( indexService, Mockito.times( 1 ) ).indexContent( Mockito.isA( Content.class ) );
         Mockito.verify( relationshipService, Mockito.times( 1 ) ).syncRelationships( Mockito.isA( SyncRelationshipsCommand.class ) );
 
-        final CreateContentResult result = command.getResult();
+        final Content result = command.getResult();
         assertNotNull( result );
     }
 
@@ -153,10 +152,9 @@ public class CreateContentHandlerTest
         Mockito.verify( indexService, Mockito.times( 1 ) ).indexContent( Mockito.isA( Content.class ) );
         Mockito.verify( relationshipService, Mockito.times( 1 ) ).syncRelationships( Mockito.isA( SyncRelationshipsCommand.class ) );
 
-        final CreateContentResult result = command.getResult();
+        final Content result = command.getResult();
         assertNotNull( result );
-        assertEquals( "/rootcontent/" + new ContentPathNameGenerator().generatePathName( displayName ),
-                      result.getContentPath().toString() );
+        assertEquals( "/rootcontent/" + new ContentPathNameGenerator().generatePathName( displayName ), result.getPath().toString() );
     }
 
 }

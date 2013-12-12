@@ -96,7 +96,7 @@ public class UpdateContentHandlerTest
 
         UpdateContent command = new UpdateContent().
             modifier( AccountKey.superUser() ).
-            contentId( ContentId.from( "myContent" ) ).
+            contentId( ContentId.from( "mycontent" ) ).
             editor( new ContentEditor()
             {
                 @Override
@@ -201,7 +201,7 @@ public class UpdateContentHandlerTest
         return newContent().
             id( ContentId.from( "1" ) ).
             parentPath( ContentPath.ROOT ).
-            name( "myContent" ).
+            name( "mycontent" ).
             createdTime( CREATED_TIME ).
             displayName( "MyContent" ).
             owner( UserKey.superUser() ).

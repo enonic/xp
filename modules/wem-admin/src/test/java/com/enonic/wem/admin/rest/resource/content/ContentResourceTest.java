@@ -19,7 +19,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
@@ -38,7 +37,6 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.content.CreateContentException;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.UpdateContentException;
 import com.enonic.wem.api.content.data.ContentData;
@@ -658,13 +656,8 @@ public class ContentResourceTest
         Mockito.when( client.execute( Mockito.isA( GetContentTypes.class ) ) ).thenReturn(
             ContentTypes.from( createContentType( "my-type" ) ) );
 
-        ContentId contentId = ContentId.from( "content-id" );
-        ContentPath parentPath = ContentPath.from( "parent-path" );
-        ContentPath contentPath = ContentPath.from( parentPath, "content-path" );
-        CreateContentResult result = new CreateContentResult( contentId, contentPath );
         Content content = createContent( "content-id", "content-path", "content-type" );
-        Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
-        Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenReturn( result );
+        Mockito.when( client.execute( Mockito.isA( CreateContent.class ) ) ).thenReturn( content );
 
         String jsonString = resource().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

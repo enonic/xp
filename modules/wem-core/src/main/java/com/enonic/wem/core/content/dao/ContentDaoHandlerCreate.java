@@ -41,7 +41,7 @@ final class ContentDaoHandlerCreate
     Content handle( final Content content )
         throws RepositoryException
     {
-        this.nodeName = this.resolveNodeName( content );
+        this.nodeName = content.getName().toString();
 
         final Content storedContent = storeAsContentInJcr( content );
 
@@ -144,11 +144,6 @@ final class ContentDaoHandlerCreate
         contentJcrMapper.toJcr( content, newContentNode );
 
         return newContentNode;
-    }
-
-    private String resolveNodeName( final Content content )
-    {
-        return content.getName();
     }
 
     private void storeContentAsNode( final Content content )

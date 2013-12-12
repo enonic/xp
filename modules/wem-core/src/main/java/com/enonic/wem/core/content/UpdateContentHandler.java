@@ -179,7 +179,7 @@ public class UpdateContentHandler
 
         if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
         {
-            Attachment mediaAttachment = command.getAttachment( content.getName() );
+            Attachment mediaAttachment = command.getAttachment( content.getName().toString() );
             if ( ( mediaAttachment == null ) && ( !command.getAttachments().isEmpty() ) )
             {
                 mediaAttachment = command.getAttachments().iterator().next();

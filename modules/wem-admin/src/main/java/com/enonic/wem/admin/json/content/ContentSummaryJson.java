@@ -46,7 +46,7 @@ public class ContentSummaryJson
 
     public String getName()
     {
-        return content.getName();
+        return content.getName().toString();
     }
 
     public String getType()

@@ -87,7 +87,7 @@ public class DemoImagesInitializer
             parent( parent ).
             contentData( dataSet ).
             attachments( attachment );
-        client.execute( createContent ).getContentId();
+        client.execute( createContent ).getId();
     }
 
     private ContentData createContentData( final String attachmentName )

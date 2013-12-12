@@ -41,7 +41,6 @@ import com.enonic.wem.admin.rest.resource.content.json.FacetedContentSummaryList
 import com.enonic.wem.admin.rest.resource.content.json.UpdateContentParams;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.DeleteContent;
 import com.enonic.wem.api.command.content.FindContent;
 import com.enonic.wem.api.command.content.GenerateContentName;
@@ -53,6 +52,7 @@ import com.enonic.wem.api.command.content.UpdateContentResult;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
@@ -377,11 +377,8 @@ public class ContentResource
     @Path("create")
     public ContentJson create( final CreateContentJson params )
     {
-        final CreateContentResult createContentResult = client.execute( params.getCreateContent() );
-
-        final Content content = client.execute( Commands.content().get().byId( createContentResult.getContentId() ) );
-
-        return new ContentJson( content );
+        final Content persistedContent = client.execute( params.getCreateContent() );
+        return new ContentJson( persistedContent );
     }
 
     @POST
@@ -415,7 +412,8 @@ public class ContentResource
                 !Strings.isNullOrEmpty( params.getContentName() ) )
             {
                 // rename if the the update was successful or null (meaning nothing was edited) only
-                client.execute( Commands.content().rename().contentId( params.getContentId() ).newName( params.getContentName() ) );
+                client.execute(
+                    Commands.content().rename().contentId( params.getContentId() ).newName( new ContentName( params.getContentName() ) ) );
             }
 
             if ( updateContentResult == UpdateContentResult.SUCCESS || updateContentResult == null )

@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
 
 public class ContentTest
 {
+    private static final ContentPath MY_CONTENT_PATH = ContentPath.from( "/mycontent" );
 
     private ContentType contentType;
 
@@ -36,8 +37,8 @@ public class ContentTest
             build();
     }
 
-    @Test
-    public void isRoot_given_path_isRoot_then_false_is_returned()
+    @Test(expected = IllegalArgumentException.class)
+    public void given_path_isRoot_then_IllegalArgumentException_is_thrown()
     {
         Content content = Content.newContent().path( ContentPath.ROOT ).build();
         assertEquals( false, content.isRoot() );
@@ -58,18 +59,9 @@ public class ContentTest
     }
 
     @Test
-    public void build_with_path_given_root_path()
-    {
-        Content content = Content.newContent().path( ContentPath.ROOT ).build();
-        assertEquals( null, content.getParentPath() );
-        assertEquals( "/", content.getPath().toString() );
-        assertEquals( "", content.getName() );
-    }
-
-    @Test
     public void isEmbedded()
     {
-        Content content = Content.newContent().embedded( true ).build();
+        Content content = Content.newContent().path( MY_CONTENT_PATH ).embedded( true ).build();
         assertEquals( true, content.isEmbedded() );
     }
 
@@ -268,7 +260,7 @@ public class ContentTest
         contentType.form().addFormItem( newInput().name( "myTags" ).inputType( InputTypes.TAGS ).build() );
 
         // TODO: Are'nt tags best stored as an array? A global mixin multiple textline?
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getContentData().setProperty( "myTags", new Value.String( "A line of text" ) );
 
         assertEquals( "A line of text", content.getContentData().getProperty( "myTags" ).getObject() );
@@ -279,7 +271,7 @@ public class ContentTest
     {
         contentType.form().addFormItem( newInput().name( "myPhone" ).inputType( InputTypes.PHONE ).required( true ).build() );
 
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getContentData().setProperty( "myPhone", new Value.String( "98327891" ) );
 
         assertEquals( "98327891", content.getContentData().getProperty( "myPhone" ).getObject() );
@@ -295,7 +287,7 @@ public class ContentTest
         formItemSet.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "name", new Value.String( "Ola Nordmann" ) );
         contentData.setProperty( "personalia.eyeColour", new Value.String( "Blue" ) );
@@ -318,7 +310,7 @@ public class ContentTest
         formItemSet.add( newInput().name( "eyeColour" ).inputType( InputTypes.TEXT_LINE ).build() );
         formItemSet.add( newInput().name( "hairColour" ).inputType( InputTypes.TEXT_LINE ).build() );
 
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "name", new Value.String( "Norske" ) );
         contentData.setProperty( "personalia[0].name", new Value.String( "Ola Nordmann" ) );
@@ -340,7 +332,7 @@ public class ContentTest
     @Test
     public void unstructured()
     {
-        Content content = newContent().build();
+        Content content = newContent().path( MY_CONTENT_PATH ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "firstName", new Value.String( "Thomas" ) );
         contentData.setProperty( "description", new Value.HtmlPart( "Grew up in Noetteveien" ) );
@@ -369,7 +361,7 @@ public class ContentTest
     @Test
     public void unstructured_getEntries()
     {
-        Content content = newContent().build();
+        Content content = newContent().path( MY_CONTENT_PATH ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "child[0].name", new Value.String( "Joachim" ) );
         contentData.setProperty( "child[0].age", new Value.String( "9" ) );
@@ -403,7 +395,7 @@ public class ContentTest
         child.add( features );
         contentType.form().addFormItem( child );
 
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "child[0].name", new Value.String( "Joachim" ) );
         contentData.setProperty( "child[0].age", new Value.String( "9" ) );
@@ -429,7 +421,7 @@ public class ContentTest
     public void given_unstructured_content_when_getting_values_then_they_are_returned()
     {
         // setup
-        Content content = newContent().build();
+        Content content = newContent().path( MY_CONTENT_PATH ).build();
         ContentData contentData = content.getContentData();
         contentData.setProperty( "name", new Value.String( "Thomas" ) );
         contentData.setProperty( "personalia.eyeColour", new Value.String( "Blue" ) );
@@ -454,7 +446,7 @@ public class ContentTest
         personalia.addFormItem( tatoos );
         contentType.form().addFormItem( personalia );
 
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
         ContentData contentData = content.getContentData();
@@ -478,7 +470,7 @@ public class ContentTest
     public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
     {
         // setup
-        Content content = newContent().build();
+        Content content = newContent().path( MY_CONTENT_PATH ).build();
         content.getContentData().setProperty( "myData", new Value.String( "Value 1" ) );
 
         // exercise

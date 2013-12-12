@@ -274,7 +274,7 @@ public class SitesInitializer
             contentType( ContentTypeName.page() ).
             form( Form.newForm().build() ).
             contentData( new ContentData() );
-        return client.execute( createContent ).getContentId();
+        return client.execute( createContent ).getId();
     }
 
     @Inject

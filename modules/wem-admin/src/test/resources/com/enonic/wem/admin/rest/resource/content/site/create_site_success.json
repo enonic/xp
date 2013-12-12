@@ -16,10 +16,10 @@
         "isSite": true,
         "modifiedTime": "2013-08-23T12:55:09.162Z",
         "modifier": "user:system:admin",
-        "name": "Content Name",
+        "name": "content-name",
         "owner": "user:myStore:me",
         "page": null,
-        "path": "/Content Name",
+        "path": "/content-name",
         "site": {
             "moduleConfigs": [
                 {

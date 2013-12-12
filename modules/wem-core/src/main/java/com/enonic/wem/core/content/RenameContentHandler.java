@@ -6,6 +6,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.RenameContentException;
 import com.enonic.wem.core.command.CommandHandler;
@@ -34,13 +35,13 @@ public class RenameContentHandler
                 throw new ContentNotFoundException( contentId );
             }
 
-            final String oldName = content.getName();
-            final String newName = command.getNewName();
+            final String oldName = content.getName().toString();
+            final ContentName newName = command.getNewName();
 
             final boolean renamed = contentDao.renameContent( contentId, newName, session );
             if ( renamed )
             {
-                renameAttachments( contentId, oldName, newName, session );
+                renameAttachments( contentId, oldName, newName.toString(), session );
             }
             command.setResult( renamed );
             session.save();

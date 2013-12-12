@@ -56,7 +56,7 @@ public class ContentNodeTranslator
 
         return Node.newNode().
             id( content.getId() != null ? EntityId.from( content.getId() ) : null ).
-            name( NodeName.from( ContentToNodeNameResolver.resolve( content ) ) ).
+            name( NodeName.from( content.getName().toString() ) ).
             parent( parentNodePath ).
             rootDataSet( rootDataSet ).
             entityIndexConfig( entityIndexConfig ).
@@ -74,7 +74,7 @@ public class ContentNodeTranslator
             data( rootDataSet ).
             entityIndexConfig( entityIndexConfig ).
             parent( parentNodePath ).
-            name( content.getName() );
+            name( content.getName().toString() );
     }
 
 
@@ -136,7 +136,7 @@ public class ContentNodeTranslator
             public Node.EditBuilder edit( final Node toBeEdited )
             {
                 return Node.editNode( toBeEdited ).
-                    name( NodeName.from( content.getName() ) ).
+                    name( NodeName.from( content.getName().toString() ) ).
                     rootDataSet( rootDataSet );
             }
         };

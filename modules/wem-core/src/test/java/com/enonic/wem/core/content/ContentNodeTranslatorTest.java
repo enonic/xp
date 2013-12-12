@@ -131,7 +131,7 @@ public class ContentNodeTranslatorTest
             id( ContentId.from( "myId" ) ).
             displayName( "myDisplayName" ).
             parentPath( ContentPath.ROOT ).
-            name( "myContent" ).
+            name( "mycontent" ).
             path( ContentPath.from( "/my_path" ) ).
             type( ContentTypeName.from( "my-content-type" ) ).
             form( form ).

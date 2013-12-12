@@ -38,7 +38,7 @@ public class GetNearestSiteByContentIdHandlerTest
     public void get_nearest_site_content_is_site()
         throws Exception
     {
-        final Content content = Content.newContent().id( ContentId.from( "aaa" ) ).site( createSite() ).build();
+        final Content content = Content.newContent().path( "/mycontent" ).id( ContentId.from( "aaa" ) ).site( createSite() ).build();
         Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
 
         final GetNearestSiteByContentId command = Commands.site().getNearestSite().content( ContentId.from( "aaa" ) );
@@ -52,10 +52,11 @@ public class GetNearestSiteByContentIdHandlerTest
     public void get_nearest_site_parent_is_site()
         throws Exception
     {
-        final Content content = Content.newContent().id( ContentId.from( "aaa" ) ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
+        final Content content =
+            Content.newContent().id( ContentId.from( "aaa" ) ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
         Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
 
-        final Content parent = Content.newContent().id( ContentId.from( "bbb" ) ).site( createSite() ).build();
+        final Content parent = Content.newContent().path( "/mycontent" ).id( ContentId.from( "bbb" ) ).site( createSite() ).build();
         Mockito.when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( parent );
 
         final GetNearestSiteByContentId command = Commands.site().getNearestSite().content( ContentId.from( "aaa" ) );
@@ -69,11 +70,13 @@ public class GetNearestSiteByContentIdHandlerTest
     public void get_nearest_site_parent_of_parent_is_site()
         throws Exception
     {
-        final Content content = Content.newContent().id( ContentId.from( "aaa" ) ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
+        final Content content =
+            Content.newContent().id( ContentId.from( "aaa" ) ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
         Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
 
-        final Content parent = Content.newContent().id( ContentId.from( "bbb" ) ).name( "renome" ).parentPath( ContentPath.from( "/bbb" ) ).build();
-        final Content parentOfParent = Content.newContent().id( ContentId.from( "ccc" ) ).site( createSite() ).build();
+        final Content parent =
+            Content.newContent().id( ContentId.from( "bbb" ) ).name( "renome" ).parentPath( ContentPath.from( "/bbb" ) ).build();
+        final Content parentOfParent = Content.newContent().path( "/mycontent" ).id( ContentId.from( "ccc" ) ).site( createSite() ).build();
         Mockito.when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( parent ).thenReturn( parentOfParent );
 
         final GetNearestSiteByContentId command = Commands.site().getNearestSite().content( ContentId.from( "aaa" ) );
@@ -87,10 +90,11 @@ public class GetNearestSiteByContentIdHandlerTest
     public void get_nearest_site_no_nearest_site()
         throws Exception
     {
-        final Content content = Content.newContent().id( ContentId.from( "aaa" ) ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
+        final Content content =
+            Content.newContent().id( ContentId.from( "aaa" ) ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
         Mockito.when( client.execute( Mockito.isA( GetContentById.class ) ) ).thenReturn( content );
 
-        final Content parent = Content.newContent().id( ContentId.from( "bbb" ) ).site( null ).build();
+        final Content parent = Content.newContent().path( "/mycontent" ).id( ContentId.from( "bbb" ) ).site( null ).build();
         Mockito.when( client.execute( Mockito.isA( GetContentByPath.class ) ) ).thenReturn( parent );
 
         final GetNearestSiteByContentId command = Commands.site().getNearestSite().content( ContentId.from( "aaa" ) );

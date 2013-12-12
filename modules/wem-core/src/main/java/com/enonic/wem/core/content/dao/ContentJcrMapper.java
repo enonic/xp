@@ -88,7 +88,7 @@ final class ContentJcrMapper
     void toJcr( final Content content, final Node contentNode )
         throws RepositoryException
     {
-        contentNode.setProperty( NAME, content.getName() );
+        contentNode.setProperty( NAME, content.getName().toString() );
         contentNode.setProperty( DRAFT, content.isDraft() );
         contentNode.setProperty( EMBEDDED, content.isEmbedded() );
         contentNode.setProperty( TYPE, content.getType() != null ? content.getType().toString() : null );

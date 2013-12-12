@@ -21,7 +21,6 @@ import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
-import com.enonic.wem.api.command.content.CreateContentResult;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.command.entity.CreateNode;
@@ -75,9 +74,7 @@ public class CreateContentHandler
 
             verifyParentAllowsChildren();
 
-            final ContentPath resolvedContentPath = resolveContentPath( command.getParentContentPath() );
-
-            final Content builtContent = buildContent( resolvedContentPath );
+            final Content builtContent = buildContent();
 
             if ( !command.isDraft() )
             {
@@ -99,7 +96,7 @@ public class CreateContentHandler
 
             indexService.indexContent( storedContent );
 
-            command.setResult( new CreateContentResult( storedContent.getId(), resolvedContentPath ) );
+            command.setResult( storedContent );
         }
 
         catch ( final Exception e )
@@ -157,13 +154,14 @@ public class CreateContentHandler
         }
     }
 
-    private Content buildContent( final ContentPath resolvedContentPath )
+    private Content buildContent()
     {
         final Content.Builder builder = Content.newContent();
 
         final String contentName = command.isDraft() ? createDraftName() : command.getName();
 
-        builder.path( resolvedContentPath );
+        builder.name( command.getName() );
+        builder.parentPath( command.getParentContentPath() );
         builder.embedded( command.isEmbed() );
         builder.displayName( command.getDisplayName() );
         builder.form( command.getForm() );
@@ -192,21 +190,6 @@ public class CreateContentHandler
         }
     }
 
-    private ContentPath resolveContentPath( final ContentPath parentContentPath )
-    {
-        final String name = command.getName();
-
-        if ( name == null )
-        {
-            LOG.info( "Content name is null in create content. ParentContentPath: " + parentContentPath + ", DisplayName: " +
-                          command.getDisplayName() );
-        }
-
-        return name == null
-            ? resolvePathForNewContent( parentContentPath, command.getDisplayName(), context.getJcrSession() )
-            : ContentPath.from( parentContentPath, name );
-    }
-
     private void verifyParentAllowsChildren()
     {
         if ( !command.isDraft() && !command.getParentContentPath().isRoot() )
@@ -223,7 +206,7 @@ public class CreateContentHandler
 
         if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
         {
-            Attachment mediaAttachment = command.getAttachment( content.getName() );
+            Attachment mediaAttachment = command.getAttachment( content.getName().toString() );
             if ( mediaAttachment == null )
             {
                 if ( !command.getAttachments().isEmpty() )
@@ -256,31 +239,6 @@ public class CreateContentHandler
                                            contentType.getName() );
             }
         }
-    }
-
-    private void createEmbeddedContent( final Content tempContent, final ContentPath pathToEmbeddedContent, final Session session )
-        throws RepositoryException
-    {
-        contentDao.moveContent( tempContent.getId(), pathToEmbeddedContent, session );
-        session.save();
-    }
-
-    private ContentPath resolvePathForNewContent( final ContentPath parentPath, final String displayName, final Session session )
-    {
-        ContentPath possibleNewPath = ContentPath.from( parentPath, CONTENT_PATH_NAME_GENERATOR.generatePathName( displayName ) );
-        int i = 1;
-        while ( contentExists( possibleNewPath, session ) )
-        {
-            i++;
-            possibleNewPath = ContentPath.from( parentPath, CONTENT_PATH_NAME_GENERATOR.generatePathName( displayName + "-" + i ) );
-        }
-        return possibleNewPath;
-    }
-
-    private boolean contentExists( final ContentPath contentPath, final Session session )
-    {
-        final Content content = contentDao.selectByPath( contentPath, session );
-        return content != null;
     }
 
 

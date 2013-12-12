@@ -8,6 +8,7 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
@@ -58,7 +59,7 @@ public interface ContentDao
 
     Contents selectByPaths( ContentPaths contentPaths, Session session );
 
-    boolean renameContent( ContentId contentId, String newName, Session session );
+    boolean renameContent( ContentId contentId, ContentName newName, Session session );
 
     void moveContent( ContentId contentId, ContentPath newPath, Session session );
 

@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
@@ -36,23 +37,6 @@ public class ContentDaoImplTest
         indexService = Mockito.mock( IndexService.class );
 
         ( (ContentDaoImpl) contentDao ).setIndexService( indexService );
-    }
-
-    @Test(expected = ContentAlreadyExistException.class)
-    public void createRootContent()
-        throws Exception
-    {
-        // setup
-        Content content = newContent().path( ContentPath.from( "/" ) ).build();
-        content.getContentData().setProperty( "myData", new Value.String( "myValue" ) );
-
-        // exercise
-        contentDao.create( content, session );
-        commit();
-
-        // verify
-        Node contentNode = session.getNode( "/" + ContentDao.CONTENTS_ROOT_PATH + "myspace/root" );
-        assertNotNull( contentNode );
     }
 
     @Test
@@ -430,7 +414,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        contentDao.renameContent( storedContent.getId(), "newContentName", session );
+        contentDao.renameContent( storedContent.getId(), new ContentName( "newContentName" ), session );
         commit();
 
         // verify
@@ -453,7 +437,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        contentDao.renameContent( storedContent.getId(), "my-existing-content", session );
+        contentDao.renameContent( storedContent.getId(), new ContentName( "my-existing-content" ), session );
         commit();
     }
 

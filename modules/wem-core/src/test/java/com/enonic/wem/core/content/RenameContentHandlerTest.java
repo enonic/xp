@@ -12,6 +12,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.RenameContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
@@ -59,24 +60,27 @@ public class RenameContentHandlerTest
         final Content content = Content.newContent().
             id( contentId ).
             parentPath( ContentPath.ROOT ).
-            name( "myContent" ).
+            name( "mycontent" ).
             displayName( "MyContent" ).
             owner( UserKey.superUser() ).
             contentData( new ContentData() ).
             build();
         Mockito.when( contentDao.selectById( isA( ContentId.class ), any( Session.class ) ) ).thenReturn( content );
-        Mockito.when( contentDao.renameContent( isA( ContentId.class ), eq( "newName" ), any( Session.class ) ) ).thenReturn( true );
-        Mockito.when( attachmentDao.renameAttachments( isA( ContentId.class ), eq( "myContent" ), eq( "newName" ),
+        Mockito.when(
+            contentDao.renameContent( isA( ContentId.class ), eq( new ContentName( "newname" ) ), any( Session.class ) ) ).thenReturn(
+            true );
+        Mockito.when( attachmentDao.renameAttachments( isA( ContentId.class ), eq( "myContent" ), eq( "newname" ),
                                                        any( Session.class ) ) ).thenReturn( true );
 
-        final RenameContent command = Commands.content().rename().contentId( contentId ).newName( "newName" );
+        final RenameContent command = Commands.content().rename().contentId( contentId ).newName( new ContentName( "newname" ) );
 
         // exercise
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        verify( contentDao, Mockito.atLeastOnce() ).renameContent( isA( ContentId.class ), eq( "newName" ), any( Session.class ) );
+        verify( contentDao, Mockito.atLeastOnce() ).renameContent( isA( ContentId.class ), eq( new ContentName( "newname" ) ),
+                                                                   any( Session.class ) );
         boolean renamed = command.getResult();
         assertTrue( renamed );
     }

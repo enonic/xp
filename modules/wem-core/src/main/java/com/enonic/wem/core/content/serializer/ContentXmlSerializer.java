@@ -50,7 +50,7 @@ public class ContentXmlSerializer
     {
         contentEl.addContent(
             new Element( "parentPath" ).setText( content.getParentPath() != null ? content.getParentPath().toString() : "" ) );
-        contentEl.addContent( new Element( "name" ).setText( content.getName() ) );
+        contentEl.addContent( new Element( "name" ).setText( content.getName().toString() ) );
 
         if ( content.getType() != null )
         {

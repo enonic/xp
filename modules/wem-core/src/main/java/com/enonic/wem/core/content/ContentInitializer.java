@@ -28,33 +28,33 @@ public class ContentInitializer
         ContentPath bildeArkivPath = client.execute( createFolder().
             name( "bildearkiv" ).
             parent( ContentPath.ROOT ).
-            displayName( "BildeArkiv" ) ).getContentPath();
+            displayName( "BildeArkiv" ) ).getPath();
 
         client.execute( createFolder().
             name( "misc" ).
             parent( bildeArkivPath ).
-            displayName( "Misc" ) ).getContentPath();
+            displayName( "Misc" ) ).getPath();
 
         client.execute( createFolder().
             name( "people" ).
             parent( bildeArkivPath ).
-            displayName( "People" ) ).getContentPath();
+            displayName( "People" ) ).getPath();
 
         ContentPath trampolinerPath = client.execute( createFolder().
             name( "trampoliner" ).
             parent( bildeArkivPath ).
-            displayName( "Trampoliner" ) ).getContentPath();
+            displayName( "Trampoliner" ) ).getPath();
 
         client.execute( createFolder().
             name( "jumping-jack-big-bounce" ).
             parent( trampolinerPath ).
-            displayName( "Jumping Jack - Big Bounce" ) ).getContentPath();
+            displayName( "Jumping Jack - Big Bounce" ) ).getPath();
 
         client.execute( createFolder().
             name( "jumping-jack-pop" ).
             parent( trampolinerPath ).
             displayName( "Jumping Jack - Pop" ).
-            contentType( ContentTypeName.folder() ) ).getContentPath();
+            contentType( ContentTypeName.folder() ) ).getPath();
     }
 
     private CreateContent createFolder()

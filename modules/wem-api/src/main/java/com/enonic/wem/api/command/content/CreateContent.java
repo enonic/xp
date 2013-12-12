@@ -10,6 +10,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
@@ -17,7 +18,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 public final class CreateContent
-    extends Command<CreateContentResult>
+    extends Command<Content>
 {
     public static final String THUMBNAIL_NAME = "_thumb.png";
 
@@ -156,6 +157,7 @@ public final class CreateContent
     {
         return draft;
     }
+
     public boolean isEmbed()
     {
         return embed;

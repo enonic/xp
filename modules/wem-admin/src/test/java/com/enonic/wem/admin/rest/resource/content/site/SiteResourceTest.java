@@ -51,7 +51,7 @@ public class SiteResourceTest
     public void create_site_failure()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "Content Name", "content-type" );
+        Content content = createSiteContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( CreateSite.class ) ) ).thenThrow( new ContentNotFoundException( content.getId() ) );
 
@@ -66,7 +66,7 @@ public class SiteResourceTest
     public void create_site_success()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "Content Name", "content-type" );
+        Content content = createSiteContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( CreateSite.class ) ) ).thenReturn( content );
 
@@ -81,7 +81,7 @@ public class SiteResourceTest
     public void update_site_failure()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "Content Name", "content-type" );
+        Content content = createSiteContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( UpdateSite.class ) ) ).thenThrow( new ContentNotFoundException( content.getId() ) );
 
@@ -96,7 +96,7 @@ public class SiteResourceTest
     public void update_site_success()
         throws Exception
     {
-        Content content = createSiteContent( "content-id", "Content Name", "content-type" );
+        Content content = createSiteContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( UpdateSite.class ) ) ).thenReturn( content );
 
@@ -111,7 +111,7 @@ public class SiteResourceTest
     public void delete_site_failure()
         throws Exception
     {
-        Content content = createContent( "content-id", "Content Name", "content-type" );
+        Content content = createContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( DeleteSite.class ) ) ).thenThrow( new ContentNotFoundException( content.getId() ) );
 
@@ -126,7 +126,7 @@ public class SiteResourceTest
     public void delete_site_success()
         throws Exception
     {
-        Content content = createContent( "content-id", "Content Name", "content-type" );
+        Content content = createContent( "content-id", "content-name", "content-type" );
 
         Mockito.when( client.execute( Mockito.isA( DeleteSite.class ) ) ).thenReturn( content );
 

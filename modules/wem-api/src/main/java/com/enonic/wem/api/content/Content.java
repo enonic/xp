@@ -34,7 +34,7 @@ public final class Content
 
     private final ContentPath parentPath;
 
-    private final String name;
+    private final ContentName name;
 
     private final ContentPath path;
 
@@ -64,10 +64,8 @@ public final class Content
 
     private Content( final BaseBuilder builder )
     {
-        if ( builder.parentPath != null && builder.name == null )
-        {
-            throw new IllegalArgumentException( "name cannot be null when parentPath is given" );
-        }
+        Preconditions.checkNotNull( builder.name, "name is required for a Content" );
+        Preconditions.checkNotNull( builder.parentPath, "parentPath is required for a Content" );
 
         if ( builder.type == null )
         {
@@ -84,7 +82,7 @@ public final class Content
         this.type = builder.type;
         this.name = builder.name;
         this.parentPath = builder.parentPath;
-        this.path = resolvePath( builder );
+        this.path = ContentPath.from( builder.parentPath, builder.name.toString() );
         this.id = builder.contentId;
         this.form = builder.form;
         this.contentData = builder.contentData;
@@ -99,24 +97,6 @@ public final class Content
         this.page = builder.page;
     }
 
-    private ContentPath resolvePath( final BaseBuilder builder )
-    {
-        if ( builder.parentPath == null && builder.name == null )
-        {
-            return null;
-        }
-        else if ( builder.parentPath == null )
-        {
-            Preconditions.checkArgument( builder.name.equals( "" ),
-                                         "Expected name to be blank when parentPath is null. Or if a name is wanted, then a parentPath is required" );
-            return ContentPath.ROOT;
-        }
-        else
-        {
-            return ContentPath.from( builder.parentPath, builder.name );
-        }
-    }
-
     public ContentPath getParentPath()
     {
         return parentPath;
@@ -129,10 +109,6 @@ public final class Content
 
     public boolean isRoot()
     {
-        if ( path == null )
-        {
-            return false;
-        }
         return this.path.elementCount() == 1;
     }
 
@@ -146,7 +122,7 @@ public final class Content
         return type;
     }
 
-    public String getName()
+    public ContentName getName()
     {
         return this.name;
     }
@@ -288,7 +264,7 @@ public final class Content
 
         ContentPath parentPath;
 
-        String name;
+        ContentName name;
 
         ContentId contentId;
 
@@ -320,7 +296,6 @@ public final class Content
 
         BaseBuilder()
         {
-            this.name = "";
             this.contentData = new ContentData();
             this.childrenIdsBuilder = ImmutableList.builder();
         }
@@ -440,6 +415,12 @@ public final class Content
 
         public Builder name( final String name )
         {
+            this.name = ContentName.from( name );
+            return this;
+        }
+
+        public Builder name( final ContentName name )
+        {
             this.name = name;
             return this;
         }
@@ -452,14 +433,8 @@ public final class Content
         public Builder path( final ContentPath path )
         {
             this.parentPath = path.getParentPath();
-            if ( path.elementCount() > 0 )
-            {
-                this.name = path.getElement( path.elementCount() - 1 );
-            }
-            else
-            {
-                this.name = "";
-            }
+            Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path.toString() );
+            this.name = new ContentName( path.getElement( path.elementCount() - 1 ) );
             return this;
         }
 

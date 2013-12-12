@@ -61,7 +61,7 @@ public class ValidateContentDataHandlerTest
 
         Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( contentType );
 
-        final Content content = Content.newContent().type( contentType.getName() ).build();
+        final Content content = Content.newContent().path( "/mycontent" ).type( contentType.getName() ).build();
 
         // exercise
         final ValidateContentData command =
@@ -92,7 +92,7 @@ public class ValidateContentDataHandlerTest
 
         Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( contentType );
 
-        final Content content = newContent().type( contentType.getName() ).build();
+        final Content content = newContent().path( "/mycontent" ).type( contentType.getName() ).build();
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "thing" ) );
 
         // exercise

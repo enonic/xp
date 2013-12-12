@@ -48,7 +48,7 @@ public class ContentJsonSerializer
 
         jsonContent.put( "id", content.getId() == null ? null : content.getId().toString() );
         jsonContent.put( "parentPath", content.getParentPath() != null ? content.getParentPath().toString() : null );
-        jsonContent.put( "name", content.getName() );
+        jsonContent.put( "name", content.getName().toString() );
         jsonContent.put( "type", content.getType() != null ? content.getType().toString() : null );
         jsonContent.put( "displayName", content.getDisplayName() );
         jsonContent.put( "owner", content.getOwner() != null ? content.getOwner().toString() : null );

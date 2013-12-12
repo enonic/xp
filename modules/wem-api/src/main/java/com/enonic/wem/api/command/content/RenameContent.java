@@ -6,13 +6,14 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
 
 public final class RenameContent
     extends Command<Boolean>
 {
     private ContentId contentId;
 
-    private String newName;
+    private ContentName newName;
 
     public RenameContent()
     {
@@ -24,7 +25,7 @@ public final class RenameContent
         return this;
     }
 
-    public RenameContent newName( final String newName )
+    public RenameContent newName( final ContentName newName )
     {
         this.newName = newName;
         return this;
@@ -35,7 +36,7 @@ public final class RenameContent
         return contentId;
     }
 
-    public String getNewName()
+    public ContentName getNewName()
     {
         return newName;
     }

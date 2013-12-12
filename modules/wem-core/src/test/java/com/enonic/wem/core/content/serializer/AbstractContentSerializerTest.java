@@ -36,6 +36,7 @@ import static org.junit.Assert.*;
 public abstract class AbstractContentSerializerTest
     extends AbstractSerializerTest
 {
+    private static final ContentPath MY_CONTENT_PATH = ContentPath.from( "/mycontent" );
 
     private ContentSerializer serializer;
 
@@ -52,7 +53,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void property()
     {
-        Content content = newContent().path( "/mycontent" ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).build();
         content.getContentData().setProperty( "myInput", new Value.String( "A value" ) );
 
         String serialized = toString( content );
@@ -72,7 +73,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void set()
     {
-        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet.myOtherInput", new Value.String( "2" ) );
 
@@ -96,7 +97,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_values()
     {
-        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "myArray[1]", new Value.String( "2" ) );
 
@@ -120,7 +121,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_set()
     {
-        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet.myArray[1]", new Value.String( "2" ) );
 
@@ -159,7 +160,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_of_set()
     {
-        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet[0].myInput", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet[0].myOtherInput", new Value.String( "a" ) );
         content.getContentData().setProperty( "mySet[1].myInput", new Value.String( "2" ) );
@@ -192,7 +193,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void insertion_order_of_entries_within_a_DataSet_is_preserved()
     {
-        Content content = newContent().type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet.myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet.myInput", new Value.String( "a" ) );
         content.getContentData().setProperty( "mySet.myArray[1]", new Value.String( "2" ) );
@@ -217,7 +218,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void array_within_array()
     {
-        Content content = newContent().path( "/mycontent" ).type( ContentTypeName.from( "my_type" ) ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( ContentTypeName.from( "my_type" ) ).build();
         content.getContentData().setProperty( "mySet[0].myArray[0]", new Value.String( "1" ) );
         content.getContentData().setProperty( "mySet[0].myArray[1]", new Value.String( "2" ) );
         content.getContentData().setProperty( "mySet[1].myArray[0]", new Value.String( "3" ) );
@@ -291,7 +292,7 @@ public abstract class AbstractContentSerializerTest
             build();
         //contentTypeFetcher.add( contentType );
 
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getContentData().setProperty( "myText", new Value.String( "A value" ) );
         content.getContentData().setProperty( "formItemSet.myText", new Value.String( "A another value" ) );
 
@@ -320,7 +321,7 @@ public abstract class AbstractContentSerializerTest
             build();
         //contentTypeFetcher.add( contentType );
 
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getContentData().setProperty( "formItemSet[0].myText", new Value.String( "Value 1" ) );
         content.getContentData().setProperty( "formItemSet[1].myText", new Value.String( "Value 2" ) );
 
@@ -349,7 +350,7 @@ public abstract class AbstractContentSerializerTest
             addFormItem( layout ).
             build();
 
-        Content content = newContent().type( contentType.getName() ).build();
+        Content content = newContent().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getContentData().setProperty( "myText", new Value.String( "A value" ) );
 
         String serialized = toString( content );
@@ -366,7 +367,7 @@ public abstract class AbstractContentSerializerTest
     @Test
     public void unstructured_with_arrays()
     {
-        Content content = newContent().build();
+        Content content = newContent().path( MY_CONTENT_PATH ).build();
         content.getContentData().setProperty( "names[0]", new Value.String( "Thomas" ) );
         content.getContentData().setProperty( "names[1]", new Value.String( "Sten Roger" ) );
         content.getContentData().setProperty( "names[2]", new Value.String( "Alex" ) );
