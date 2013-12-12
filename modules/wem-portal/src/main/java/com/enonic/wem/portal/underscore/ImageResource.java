@@ -13,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import com.google.common.base.Throwables;
+import com.google.common.primitives.Ints;
 
 import com.enonic.wem.api.blob.Blob;
 import com.enonic.wem.api.blob.BlobKey;
@@ -38,6 +39,8 @@ public final class ImageResource
 {
     private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
+    private final static int DEFAULT_QUALITY = 85;
+
     @PathParam("mode")
     protected String mode;
 
@@ -53,11 +56,15 @@ public final class ImageResource
     @QueryParam("background")
     protected String backgroundColor;
 
+    @QueryParam("quality")
+    protected String quality;
+
     @Inject
     protected ImageFilterBuilder imageFilterBuilder;
 
     @GET
     public Response getResource()
+        throws IOException
     {
         final ContentPath path = ContentPath.from( contentPath );
         final Content content = getContent( path );
@@ -69,7 +76,9 @@ public final class ImageResource
 
         final BufferedImage image = applyFilters( contentImage );
 
-        return Response.ok( image, attachment.getMimeType() ).build();
+        byte[] imageData = ImageHelper.writeImage( image, getFormat(), getQuality() );
+
+        return Response.ok( imageData, attachment.getMimeType() ).build();
     }
 
     private Content getContent( final ContentPath contentPath )
@@ -144,16 +153,17 @@ public final class ImageResource
 
     private int getBackgroundColor()
     {
-        if ( backgroundColor != null )
+        String value = backgroundColor;
+        if ( value != null )
         {
-            if ( backgroundColor.startsWith( "0x" ) )
+            if ( value.startsWith( "0x" ) )
             {
-                backgroundColor = backgroundColor.substring( 2 );
+                value = value.substring( 2 );
             }
 
             try
             {
-                return Integer.parseInt( backgroundColor, 16 );
+                return Integer.parseInt( value, 16 );
             }
             catch ( Exception e )
             {
@@ -161,5 +171,15 @@ public final class ImageResource
             }
         }
         return DEFAULT_BACKGROUND;
+    }
+
+    private int getQuality()
+    {
+        if ( this.quality == null )
+        {
+            return DEFAULT_QUALITY;
+        }
+        final Integer value = Ints.tryParse( this.quality );
+        return ( value >= 0 ) && ( value <= 100 ) ? value : DEFAULT_QUALITY;
     }
 }
