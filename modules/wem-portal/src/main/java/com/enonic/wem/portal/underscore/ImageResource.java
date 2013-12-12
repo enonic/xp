@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import com.google.common.base.Throwables;
@@ -18,16 +20,23 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
+import com.enonic.wem.core.image.ImageHelper;
+import com.enonic.wem.core.image.filter.BuilderContext;
+import com.enonic.wem.core.image.filter.ImageFilter;
+import com.enonic.wem.core.image.filter.ImageFilterBuilder;
 import com.enonic.wem.portal.exception.PortalWebException;
 
 import static com.enonic.wem.api.command.Commands.attachment;
 import static com.enonic.wem.api.command.Commands.blob;
 import static com.enonic.wem.api.command.Commands.content;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
 @Path("{mode}/{path:.+}/_/image/{fileName:.+}")
 public final class ImageResource
     extends UnderscoreResource
 {
+    private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
     @PathParam("mode")
     protected String mode;
@@ -37,6 +46,15 @@ public final class ImageResource
 
     @PathParam("fileName")
     protected String fileName;
+
+    @QueryParam("filter")
+    protected String filter;
+
+    @QueryParam("background")
+    protected String backgroundColor;
+
+    @Inject
+    protected ImageFilterBuilder imageFilterBuilder;
 
     @GET
     public Response getResource()
@@ -49,7 +67,9 @@ public final class ImageResource
         final Blob blob = getBlob( attachment.getBlobKey() );
         final BufferedImage contentImage = toBufferedImage( blob.getStream() );
 
-        return Response.ok( contentImage, attachment.getMimeType() ).build();
+        final BufferedImage image = applyFilters( contentImage );
+
+        return Response.ok( image, attachment.getMimeType() ).build();
     }
 
     private Content getContent( final ContentPath contentPath )
@@ -85,6 +105,26 @@ public final class ImageResource
         throw PortalWebException.notFound().message( "Image [{0}] not found for path [{1}].", fileName, contentPath ).build();
     }
 
+    private BufferedImage applyFilters( final BufferedImage sourceImage )
+    {
+        if ( isNullOrEmpty( filter ) )
+        {
+            return sourceImage;
+        }
+
+        final ImageFilter imageFilter = this.imageFilterBuilder.build( new BuilderContext(), filter );
+        final BufferedImage targetImage = imageFilter.filter( sourceImage );
+
+        if ( !ImageHelper.supportsAlphaChannel( getFormat() ) )
+        {
+            return ImageHelper.removeAlphaChannel( targetImage, getBackgroundColor() );
+        }
+        else
+        {
+            return targetImage;
+        }
+    }
+
     private BufferedImage toBufferedImage( final InputStream dataStream )
     {
         try
@@ -95,5 +135,31 @@ public final class ImageResource
         {
             throw Throwables.propagate( e );
         }
+    }
+
+    private String getFormat()
+    {
+        return substringAfterLast( this.fileName, "." ).toLowerCase();
+    }
+
+    private int getBackgroundColor()
+    {
+        if ( backgroundColor != null )
+        {
+            if ( backgroundColor.startsWith( "0x" ) )
+            {
+                backgroundColor = backgroundColor.substring( 2 );
+            }
+
+            try
+            {
+                return Integer.parseInt( backgroundColor, 16 );
+            }
+            catch ( Exception e )
+            {
+                // Do nothing
+            }
+        }
+        return DEFAULT_BACKGROUND;
     }
 }
