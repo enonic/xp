@@ -52,11 +52,11 @@ module app_wizard {
                 saveAction: actions.getSaveAction(),
                 duplicateAction: actions.getDuplicateAction(),
                 deleteAction: actions.getDeleteAction(),
-                closeAction: actions.getCloseAction()
+                closeAction: actions.getCloseAction(),
+                publishAction: actions.getPublishAction()
             });
 
             var stepToolbar = new api_ui_toolbar.Toolbar();
-            stepToolbar.addAction(actions.getPublishAction());
 
             var site: api_content.Content = null; // TODO: resolve nearest site content
             this.livePanel = new LiveFormPanel(site);

@@ -149,7 +149,6 @@ module api_app_wizard {
                 if (scrollTop == 0) {
                     this.mainToolbar.removeClass("scrolling");
                 }
-                console.log(scrollTop);
             });
         }
 
