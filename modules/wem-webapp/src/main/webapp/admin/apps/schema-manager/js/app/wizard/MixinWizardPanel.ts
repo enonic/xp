@@ -14,7 +14,7 @@ module app_wizard {
 
         private mixinForm: MixinForm;
 
-        constructor(tabId: api_app.AppBarTabId) {
+        constructor(tabId: api_app.AppBarTabId, persistedMixin:api_schema_mixin.Mixin) {
 
             this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(new api_schema_mixin.MixinIconUrlResolver().resolveDefault(),
@@ -46,6 +46,7 @@ module app_wizard {
 
             super({
                 tabId: tabId,
+                persistedItem:persistedMixin,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 actions: actions,

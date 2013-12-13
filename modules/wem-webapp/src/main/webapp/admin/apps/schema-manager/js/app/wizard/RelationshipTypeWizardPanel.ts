@@ -12,7 +12,7 @@ module app_wizard {
 
         private relationshipTypeForm: RelationshipTypeForm;
 
-        constructor(tabId: api_app.AppBarTabId) {
+        constructor(tabId: api_app.AppBarTabId, persistedRelationshipType: api_schema_relationshiptype.RelationshipType) {
             this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(new api_schema_relationshiptype.RelationshipTypeIconUrlResolver().resolveDefault(),
                 "Click to upload icon",
@@ -45,6 +45,7 @@ module app_wizard {
 
             super({
                 tabId: tabId,
+                persistedItem: persistedRelationshipType,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 actions: actions,

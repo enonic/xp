@@ -77,5 +77,11 @@ module api_form_inputtype_support {
             return values;
         }
 
+        giveFocus() {
+            if( this.getOccurrenceViews().length > 0 ) {
+                this.getOccurrenceViews()[0].giveFocus()
+            }
+        }
+
     }
 }

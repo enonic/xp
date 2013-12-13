@@ -14,7 +14,7 @@ module app_wizard {
 
         private contentTypeForm: app_wizard.ContentTypeForm;
 
-        constructor(tabId: api_app.AppBarTabId) {
+        constructor(tabId: api_app.AppBarTabId, persistedContentType: api_schema_content.ContentType) {
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon =
             new api_app_wizard.FormIcon(new api_schema_content.ContentTypeIconUrlResolver().resolveDefault(), "Click to upload icon",
@@ -45,6 +45,7 @@ module app_wizard {
 
             super({
                 tabId: tabId,
+                persistedItem:persistedContentType,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 actions: actions,

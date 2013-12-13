@@ -94,6 +94,10 @@ module api_ui_combobox {
             this.setupListeners();
         }
 
+        giveFocus() {
+            this.input.focus();
+        }
+
         countSelected():number {
             if( this.multipleSelections ) {
                 return this.selectedOptionsCtrl.count();

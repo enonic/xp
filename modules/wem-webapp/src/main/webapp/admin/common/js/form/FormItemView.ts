@@ -41,5 +41,9 @@ module api_form {
             // Default true to avoid having to implement method in Layout-s.
             return true;
         }
+
+        giveFocus() {
+
+        }
     }
 }

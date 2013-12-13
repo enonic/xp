@@ -10,12 +10,12 @@ module app_wizard {
 
         private siteWizardStepForm:SiteWizardStepForm;
 
-        constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content, siteContent:api_content.Content) {
+        constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content, persistedContent:api_content.Content, siteContent:api_content.Content) {
 
             this.site = siteContent.getSite();
             this.siteWizardStepForm = new SiteWizardStepForm();
 
-            super(tabId, contentType, parentContent, siteContent);
+            super(tabId, contentType, parentContent, persistedContent, siteContent);
         }
 
         createSteps(): api_app_wizard.WizardStep[] {

@@ -135,5 +135,11 @@ module api_form {
             });
             return contentData;
         }
+
+        giveFocus() {
+            if( this.formItemViews.length > 0 ) {
+                this.formItemViews[0].giveFocus();
+            }
+        }
     }
 }

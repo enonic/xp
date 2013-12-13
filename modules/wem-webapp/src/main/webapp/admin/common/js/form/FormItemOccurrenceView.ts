@@ -34,5 +34,9 @@ module api_form {
         refresh() {
             throw new Error("Must be implemented by inheritor");
         }
+
+        giveFocus() {
+
+        }
     }
 }

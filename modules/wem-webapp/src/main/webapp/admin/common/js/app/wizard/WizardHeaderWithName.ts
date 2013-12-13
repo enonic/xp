@@ -27,5 +27,9 @@ module api_app_wizard {
         setName(value:string) {
             this.nameEl.setValue(value);
         }
+
+        giveFocus() {
+            this.nameEl.getEl().focuse();
+        }
     }
 }

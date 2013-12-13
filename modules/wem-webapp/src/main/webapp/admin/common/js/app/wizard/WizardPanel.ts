@@ -4,6 +4,8 @@ module api_app_wizard {
 
         tabId:api_app.AppBarTabId;
 
+        persistedItem:any;
+
         formIcon:FormIcon;
 
         mainToolbar:api_ui_toolbar.Toolbar;
@@ -61,6 +63,7 @@ module api_app_wizard {
             super("WizardPanel");
 
             this.tabId = params.tabId;
+            this.persistedItem = params.persistedItem;
             this.header = params.header;
             this.mainToolbar = params.mainToolbar;
             this.stepToolbar = params.stepToolbar;
@@ -111,6 +114,14 @@ module api_app_wizard {
             });
 
             this.setSteps(params.steps);
+
+            if( this.persistedItem != null ) {
+                this.setPersistedItem(this.persistedItem);
+            }
+        }
+
+        giveInitialFocus() {
+            this.header.giveFocus();
         }
 
         getTabId():api_app.AppBarTabId {

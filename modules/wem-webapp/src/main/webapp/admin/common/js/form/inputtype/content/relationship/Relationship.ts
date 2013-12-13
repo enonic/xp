@@ -144,6 +144,10 @@ module api_form_inputtype_content_relationship {
             // TODO:
         }
 
+        giveFocus() {
+            this.comboBox.giveFocus()
+        }
+
         valueBreaksRequiredContract(value: api_data.Value): boolean {
             // TODO:
             return false;

@@ -60,5 +60,11 @@ module api_form_layout {
                 setParentElement(wrappingDiv).
                 layout(dataSet);
         }
+
+        giveFocus() {
+            if( this.formItemViews.length > 0 ) {
+                this.formItemViews[0].giveFocus();
+            }
+        }
     }
 }

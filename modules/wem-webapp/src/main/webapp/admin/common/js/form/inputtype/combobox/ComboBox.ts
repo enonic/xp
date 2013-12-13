@@ -106,6 +106,10 @@ module api_form_inputtype_combobox {
             // TODO:
         }
 
+        giveFocus() {
+            this.comboBox.giveFocus()
+        }
+
         valueBreaksRequiredContract(value:api_data.Value):boolean {
             // TODO:
             return false;

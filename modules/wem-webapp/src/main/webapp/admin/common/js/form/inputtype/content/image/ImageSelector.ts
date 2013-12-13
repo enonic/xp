@@ -137,6 +137,10 @@ module api_form_inputtype_content_image {
             // TODO:
         }
 
+        giveFocus() {
+            this.comboBox.giveFocus()
+        }
+
         createAndAddOccurrence() {
             throw new Error("ImageSelector manages occurrences self");
         }

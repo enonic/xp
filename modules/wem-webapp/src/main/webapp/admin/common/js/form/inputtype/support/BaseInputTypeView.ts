@@ -74,5 +74,11 @@ module api_form_inputtype_support {
         getValue(occurrence:api_dom.Element):api_data.Value {
             throw new Error("Must be implemented by inheritor");
         }
+
+        giveFocus() {
+            if( this.inputOccurrences ) {
+                this.inputOccurrences.giveFocus();
+            }
+        }
     }
 }

@@ -140,6 +140,10 @@ module api_dom {
             return this.el;
         }
 
+        focus() {
+            this.el.focuse();
+        }
+
         getHTMLElement():HTMLElement {
             return this.el.getHTMLElement();
         }

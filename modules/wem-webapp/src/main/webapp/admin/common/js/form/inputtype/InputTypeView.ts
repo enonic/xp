@@ -36,5 +36,7 @@ module api_form_inputtype {
          * Is only invoked if InputTypeView is not managing add.
          */
         removeFormItemOccurrencesListener(listener:api_form.FormItemOccurrencesListener);
+
+        giveFocus();
     }
 }

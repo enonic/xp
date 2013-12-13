@@ -25,7 +25,7 @@ module app_wizard {
         private persistAsDraft: boolean;
 
         constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content,
-                    site: api_content.Content) {
+                    persistedContent:api_content.Content, site: api_content.Content) {
 
             this.persistAsDraft = true;
             this.parentContent = parentContent;
@@ -75,8 +75,17 @@ module app_wizard {
             };
             this.pageWizardStepForm = new PageWizardStepForm(pageWizardStepFormConfig);
 
+            ShowContentLiveEvent.on((event) => {
+                this.toggleFormPanel(false);
+            });
+
+            ShowContentFormEvent.on((event) => {
+                this.toggleFormPanel(true);
+            });
+
             super({
                 tabId: tabId,
+                persistedItem: persistedContent,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 stepToolbar: stepToolbar,
@@ -86,26 +95,18 @@ module app_wizard {
                 steps: this.createSteps()
             });
 
-            ShowContentLiveEvent.on((event) => {
-                this.toggleFormPanel(false);
-            });
-
-            ShowContentFormEvent.on((event) => {
-                this.toggleFormPanel(true);
-            });
-
             this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
             if (contentType.getContentDisplayNameScript()) {
                 this.displayNameScriptExecutor.setScript(contentType.getContentDisplayNameScript());
+            }
+        }
 
-                this.getEl().addEventListener("keyup", (e) => {
-
-                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-
-                    var displayName = this.displayNameScriptExecutor.execute();
-
-                    this.contentWizardHeader.setDisplayName(displayName);
-                });
+        giveInitialFocus() {
+            if (!this.contentType.hasContentDisplayNameScript()) {
+                this.contentWizardHeader.giveFocus();
+            }
+            else {
+                this.contentWizardStepForm.giveFocus();
             }
         }
 
@@ -139,6 +140,19 @@ module app_wizard {
                 // TODO: GetPageTemplateRequest use descriptor config form
                 this.pageWizardStepForm.renderNew();
                 this.livePanel.renderNew();
+
+                this.giveInitialFocus();
+
+                this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+            });
+        }
+
+        private enableDisplayNameScriptExecution(formView:api_form.FormView) {
+
+            formView.getEl().addEventListener("keyup", (e) => {
+                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                var displayName = this.displayNameScriptExecutor.execute();
+                this.contentWizardHeader.setDisplayName(displayName);
             });
         }
 
@@ -158,6 +172,7 @@ module app_wizard {
                 setPersistedContent(content).
                 build();
             this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
+            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
             if (content.isPage()) {
                 var page = content.getPage();
@@ -238,7 +253,7 @@ module app_wizard {
                 });
         }
 
-        private resolveContentNameForUpdateReuest() : api_content.ContentName {
+        private resolveContentNameForUpdateReuest(): api_content.ContentName {
             if (api_util.isStringEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
                 return this.getPersistedItem().getName();
             }

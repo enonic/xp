@@ -47,6 +47,10 @@ module api_schema_content{
             return this.superType;
         }
 
+        hasContentDisplayNameScript(): boolean {
+            return this.contentDisplayNameScript != null;
+        }
+
         getContentDisplayNameScript():string {
             return this.contentDisplayNameScript;
         }

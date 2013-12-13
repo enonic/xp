@@ -29,5 +29,9 @@ module api_app_wizard {
                 }
             });
         }
+
+        giveFocus() {
+
+        }
     }
 }

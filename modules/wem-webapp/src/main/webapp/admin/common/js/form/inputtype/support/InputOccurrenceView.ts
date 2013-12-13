@@ -46,5 +46,9 @@ module api_form_inputtype_support {
         getInputElement():api_dom.Element {
             return this.inputElement;
         }
+
+        giveFocus() {
+            this.inputElement.focus();
+        }
     }
 }

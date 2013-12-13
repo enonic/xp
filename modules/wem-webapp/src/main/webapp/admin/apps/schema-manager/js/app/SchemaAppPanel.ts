@@ -55,15 +55,15 @@ module app {
                     switch (schemaKind) {
                         case api_schema.SchemaKind.CONTENT_TYPE:
                             tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
-                            schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(tabId);
+                            schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(tabId, null);
                             break;
                         case api_schema.SchemaKind.RELATIONSHIP_TYPE:
                             tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
-                            schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(tabId);
+                            schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(tabId, null);
                             break;
                         case api_schema.SchemaKind.MIXIN:
                             tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.MixinWizardPanel.NEW_WIZARD_HEADER, tabId, true);
-                            schemaWizardPanel = new app_wizard.MixinWizardPanel(tabId);
+                            schemaWizardPanel = new app_wizard.MixinWizardPanel(tabId, null);
                             break;
                     }
 
@@ -94,8 +94,7 @@ module app {
 
                                                 tabMenuItem = new api_app.AppBarTabMenuItem(contentType.getName(), tabId, true);
 
-                                                schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(tabId);
-                                                schemaWizardPanel.setPersistedItem(contentType);
+                                                schemaWizardPanel = new app_wizard.ContentTypeWizardPanel(tabId, contentType);
 
                                                 this.addWizardPanel(tabMenuItem, schemaWizardPanel);
                                             });
@@ -108,8 +107,7 @@ module app {
 
                                                 tabMenuItem = new api_app.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
 
-                                                schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(tabId);
-                                                schemaWizardPanel.setPersistedItem(relationshipType);
+                                                schemaWizardPanel = new app_wizard.RelationshipTypeWizardPanel(tabId, relationshipType);
 
                                                 this.addWizardPanel(tabMenuItem, schemaWizardPanel);
                                             });
@@ -121,8 +119,7 @@ module app {
                                                 var mixin:api_schema_mixin.Mixin = new api_schema_mixin.Mixin(jsonResponse.getResult());
                                                 tabMenuItem = new api_app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
 
-                                                schemaWizardPanel = new app_wizard.MixinWizardPanel(tabId);
-                                                schemaWizardPanel.setPersistedItem(mixin);
+                                                schemaWizardPanel = new app_wizard.MixinWizardPanel(tabId, mixin);
 
                                                 this.addWizardPanel(tabMenuItem, schemaWizardPanel);
                                             });

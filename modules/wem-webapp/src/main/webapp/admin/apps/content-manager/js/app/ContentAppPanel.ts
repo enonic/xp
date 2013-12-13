@@ -67,9 +67,9 @@ module app {
                                 tabMenuItem = new api_app.AppBarTabMenuItem("New " + contentTypeSummary.getDisplayName(), tabId);
                                 var wizardPanel;
                                 if (siteRoot) {
-                                    wizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType, parentContent, site);
+                                    wizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType, parentContent, null, site);
                                 } else {
-                                    wizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent, site);
+                                    wizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent, null, site);
                                 }
                                 wizardPanel.renderNew();
                                 this.addWizardPanel(tabMenuItem, wizardPanel);
@@ -160,13 +160,11 @@ module app {
                                          site: api_content.Content): app_wizard.ContentWizardPanel {
 
             if (contentToEdit.isSite()) {
-                var siteWizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType, parentContent, site);
-                siteWizardPanel.setPersistedItem(contentToEdit);
+                var siteWizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType, parentContent, contentToEdit, site);
                 return siteWizardPanel;
             }
             else {
-                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent, site);
-                contentWizardPanel.setPersistedItem(contentToEdit);
+                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent, contentToEdit, site);
                 return contentWizardPanel;
             }
         }
