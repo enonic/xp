@@ -190,6 +190,10 @@ module api_dom {
             return parseFloat(this.getComputedProperty('height'));
         }
 
+        getHeightWithMargin():number {
+            return $(this.el).outerHeight();
+        }
+
         setTop(value:string):ElementHelper {
             this.el.style.top = value;
             return this;

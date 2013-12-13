@@ -54,6 +54,8 @@ module api_app_wizard {
 
         private focusElement:JQuery;
 
+        private stepNavigatorAndToolbarContainer:api_dom.DivEl;
+
 
         constructor(params:WizardPanelParams) {
             super("WizardPanel");
@@ -83,13 +85,13 @@ module api_app_wizard {
 
             aboveStepPanels.appendChild(this.header);
 
-            var stepNavigatorAndToolbar = new api_dom.DivEl("WizardStepNavigatorAndToolbar", "wizard-step-navigator-and-toolbar");
+            this.stepNavigatorAndToolbarContainer = new api_dom.DivEl("WizardStepNavigatorAndToolbar", "wizard-step-navigator-and-toolbar");
             this.stepNavigator = new WizardStepNavigator();
             if (this.stepToolbar) {
-                stepNavigatorAndToolbar.appendChild(this.stepToolbar);
+                this.stepNavigatorAndToolbarContainer.appendChild(this.stepToolbar);
             }
-            stepNavigatorAndToolbar.appendChild(this.stepNavigator);
-            aboveStepPanels.appendChild(stepNavigatorAndToolbar);
+            this.stepNavigatorAndToolbarContainer.appendChild(this.stepNavigator);
+            aboveStepPanels.appendChild(this.stepNavigatorAndToolbarContainer);
 
             this.stepPanels = new WizardStepDeckPanel(this.stepNavigator);
             this.formPanel.appendChild(this.stepPanels);
@@ -133,6 +135,16 @@ module api_app_wizard {
             super.afterRender();
             this.stepPanels.afterRender();
             this.backPanel.afterRender();
+
+            $('.form-panel').scroll(() => {
+                var scrollTop = $('.form-panel').scrollTop();
+                var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTop();
+                if (scrollTop > wizardHeaderHeight) {
+                    this.stepNavigatorAndToolbarContainer.addClass("stick");
+                } else if (scrollTop < wizardHeaderHeight) {
+                    this.stepNavigatorAndToolbarContainer.removeClass("stick");
+                }
+            });
         }
 
         addListener(listener:WizardPanelListener) {
