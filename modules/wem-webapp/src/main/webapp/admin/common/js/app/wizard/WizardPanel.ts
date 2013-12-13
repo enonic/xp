@@ -145,9 +145,11 @@ module api_app_wizard {
                 } else if (scrollTop < wizardHeaderHeight) {
                     this.mainToolbar.addClass("scrolling");
                     this.stepNavigatorAndToolbarContainer.removeClass("scroll-stick");
-                } else if (scrollTop == 0) {
+                }
+                if (scrollTop == 0) {
                     this.mainToolbar.removeClass("scrolling");
                 }
+                console.log(scrollTop);
             });
         }
 
