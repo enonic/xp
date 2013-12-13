@@ -1,8 +1,4 @@
 {
-  "error" : null,
-  "result" : {
-    "templates" : [ ],
-    "total" : 0
-  }
+  "templates" : [ ],
+  "total" : 0
 }
-

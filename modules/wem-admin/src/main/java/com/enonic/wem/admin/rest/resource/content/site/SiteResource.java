@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.api.command.content.site.CreateSite;
 import com.enonic.wem.api.command.content.site.DeleteSite;
 import com.enonic.wem.api.command.content.site.GetNearestSiteByContentId;
@@ -23,55 +22,34 @@ public class SiteResource
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Result create( final CreateSiteJson createSiteJson )
+    public ContentJson create( final CreateSiteJson createSiteJson )
     {
-        try
-        {
-            final CreateSite createSiteCommand = createSiteJson.getCreateSite();
-            final Content updatedContent = client.execute( createSiteCommand );
+        final CreateSite createSiteCommand = createSiteJson.getCreateSite();
+        final Content updatedContent = client.execute( createSiteCommand );
 
-            return Result.result( new ContentJson( updatedContent ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        return new ContentJson( updatedContent );
     }
 
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Result update( final UpdateSiteJson updateSiteJson )
+    public ContentJson update( final UpdateSiteJson updateSiteJson )
     {
-        try
-        {
-            final UpdateSite updateSiteCommand = updateSiteJson.getUpdateSite();
-            final Content updatedContent = client.execute( updateSiteCommand );
+        final UpdateSite updateSiteCommand = updateSiteJson.getUpdateSite();
+        final Content updatedContent = client.execute( updateSiteCommand );
 
-            return Result.result( new ContentJson( updatedContent ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        return new ContentJson( updatedContent );
     }
 
     @POST
     @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Result delete( final DeleteSiteJson deleteSiteJson )
+    public ContentJson delete( final DeleteSiteJson deleteSiteJson )
     {
-        try
-        {
-            final DeleteSite deleteSiteCommand = deleteSiteJson.getDeleteSite();
-            final Content deletedContent = client.execute( deleteSiteCommand );
+        final DeleteSite deleteSiteCommand = deleteSiteJson.getDeleteSite();
+        final Content deletedContent = client.execute( deleteSiteCommand );
 
-            return Result.result( new ContentJson( deletedContent ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        return new ContentJson( deletedContent );
     }
 
     @POST

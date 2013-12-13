@@ -23,6 +23,7 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.command.module.GetModule;
+import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -71,7 +72,7 @@ public class ModuleResourceTest
         }
     }
 
-    @Test
+    @Test(expected = SystemException.class)
     public void install_module_exception()
         throws Exception
     {

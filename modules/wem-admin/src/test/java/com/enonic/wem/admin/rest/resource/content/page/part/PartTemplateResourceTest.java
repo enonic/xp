@@ -56,7 +56,7 @@ public class PartTemplateResourceTest
         assertJson( "part_template_empty_list.json", result );
     }
 
-    @Test
+    @Test(expected = SiteTemplateNotFoundException.class)
     public void test_list_of_part_templates_of_fake_site_template()
         throws Exception
     {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,7 +21,6 @@ import com.sun.jersey.multipart.FormDataParam;
 import com.enonic.wem.admin.json.content.site.SiteTemplateJson;
 import com.enonic.wem.admin.json.content.site.SiteTemplateSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.DeleteSiteTemplateJson;
 import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTemplateJson;
 import com.enonic.wem.api.command.Commands;
@@ -38,85 +38,59 @@ public final class SiteTemplateResource
 {
     @GET
     @javax.ws.rs.Path("list")
-    public Result listSiteTemplate()
+    public ListSiteTemplateJson listSiteTemplate()
     {
-        try
-        {
-            SiteTemplates siteTemplates = client.execute( Commands.site().template().get().all() );
-            return Result.result( new ListSiteTemplateJson( siteTemplates ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        SiteTemplates siteTemplates = client.execute( Commands.site().template().get().all() );
+        return new ListSiteTemplateJson( siteTemplates );
     }
 
     @POST
     @javax.ws.rs.Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Result deleteSiteTemplate( final DeleteSiteTemplateJson params )
+    public HashMap<String, String> deleteSiteTemplate( final DeleteSiteTemplateJson params )
     {
-        try
-        {
-            final DeleteSiteTemplate command = Commands.site().template().delete( params.getKey() );
+        final DeleteSiteTemplate command = Commands.site().template().delete( params.getKey() );
 
-            final SiteTemplateKey keyOfDeletedSiteTemplate = client.execute( command );
+        final SiteTemplateKey siteTemplateKey = client.execute( command );
 
-            return Result.result( keyOfDeletedSiteTemplate.toString() );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        final HashMap<String, String> map = new HashMap<>();
+        map.put( "result", siteTemplateKey.toString() );
+        return map;
     }
 
     @GET
-    public Result getSiteTemplate( @QueryParam("siteTemplateKey") final String siteTemplateKeyParam )
+    public SiteTemplateJson getSiteTemplate( @QueryParam("siteTemplateKey") final String siteTemplateKeyParam )
     {
-        try
-        {
-            final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyParam );
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyParam );
 
-            final SiteTemplate siteTemplate = client.execute( Commands.site().template().get().byKey( siteTemplateKey ) );
-            return Result.result( new SiteTemplateJson( siteTemplate ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        final SiteTemplate siteTemplate = client.execute( Commands.site().template().get().byKey( siteTemplateKey ) );
+        return new SiteTemplateJson( siteTemplate );
     }
 
     @POST
     @javax.ws.rs.Path("import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Result importSiteTemplate( @FormDataParam("file") InputStream uploadedInputStream,
-                                      @FormDataParam("file") FormDataContentDisposition formDataContentDisposition )
+    public SiteTemplateSummaryJson importSiteTemplate( @FormDataParam("file") InputStream uploadedInputStream,
+                                                       @FormDataParam("file") FormDataContentDisposition formDataContentDisposition )
         throws IOException
     {
 
         Path tempDirectory = null;
         try
         {
-            try
-            {
-                tempDirectory = Files.createTempDirectory( "modules" );
-                final String fileName = formDataContentDisposition.getFileName();
-                final Path tempZipFile = tempDirectory.resolve( fileName );
-                Files.copy( uploadedInputStream, tempZipFile );
-                final SiteTemplateExporter siteTemplateImporter = new SiteTemplateExporter();
-                final SiteTemplate importedSiteTemplate;
+            tempDirectory = Files.createTempDirectory( "modules" );
+            final String fileName = formDataContentDisposition.getFileName();
+            final Path tempZipFile = tempDirectory.resolve( fileName );
+            Files.copy( uploadedInputStream, tempZipFile );
+            final SiteTemplateExporter siteTemplateImporter = new SiteTemplateExporter();
+            final SiteTemplate importedSiteTemplate;
 
-                importedSiteTemplate = siteTemplateImporter.importFromZip( tempZipFile ).build();
+            importedSiteTemplate = siteTemplateImporter.importFromZip( tempZipFile ).build();
 
-                final CreateSiteTemplate createSiteTemplateCommand = CreateSiteTemplate.fromSiteTemplate( importedSiteTemplate );
-                final SiteTemplate createdSiteTemplate = client.execute( createSiteTemplateCommand );
+            final CreateSiteTemplate createSiteTemplateCommand = CreateSiteTemplate.fromSiteTemplate( importedSiteTemplate );
+            final SiteTemplate createdSiteTemplate = client.execute( createSiteTemplateCommand );
 
-                return Result.result( new SiteTemplateSummaryJson( createdSiteTemplate ) );
-            }
-            catch ( Exception e )
-            {
-                return Result.error( e.getMessage() );
-            }
+            return new SiteTemplateSummaryJson( createdSiteTemplate );
         }
         finally
         {
