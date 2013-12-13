@@ -10,7 +10,6 @@ import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
-import com.enonic.wem.core.module.ModuleKeyResolver;
 import com.enonic.wem.portal.exception.PortalWebException;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runner.ScriptRunner;
@@ -43,13 +42,6 @@ final class JsControllerImpl
     {
         this.context = context;
         this.runner.property( "__context", this.context );
-        return this;
-    }
-
-    @Override
-    public JsController moduleKeyResolver( final ModuleKeyResolver moduleKeyResolver )
-    {
-        this.runner.moduleKeyResolver( moduleKeyResolver );
         return this;
     }
 

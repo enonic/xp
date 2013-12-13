@@ -66,7 +66,6 @@ public final class ServicesResource
         context.setRequest( new JsHttpRequest( this.httpContext.getRequest() ) );
 
         final JsController controller = this.controllerFactory.newController();
-        controller.moduleKeyResolver( this.moduleKeyResolver );
 
         final ResourcePath localPath = ResourcePath.from( "service/" + this.serviceName );
         controller.scriptDir( new ModuleResourceKey( moduleKey, localPath ) );
