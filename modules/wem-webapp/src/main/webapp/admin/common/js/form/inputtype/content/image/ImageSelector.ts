@@ -261,7 +261,7 @@ module api_form_inputtype_content_image {
                         setDraft(false).
                         setParent(this.config.contentPath).
                         setEmbed(true).
-                        setName(attachmentName.toString()).
+                        setName(api_content.ContentName.fromString(attachmentName.toString())).
                         setContentType(contentType.getContentTypeName()).
                         setDisplayName(attachmentName.toString()).
                         setForm(contentType.getForm()).

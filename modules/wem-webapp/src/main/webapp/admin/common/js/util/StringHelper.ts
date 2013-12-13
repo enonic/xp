@@ -4,4 +4,12 @@ module api_util {
         str = str.substring(0, length) + ending;
         return str;
     }
+
+    export function isStringEmpty(str:string) {
+        if(!str) {
+            return null;
+        }
+
+        return str.length == 0;
+    }
 }

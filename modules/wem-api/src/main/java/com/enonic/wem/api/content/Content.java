@@ -434,7 +434,7 @@ public final class Content
         {
             this.parentPath = path.getParentPath();
             Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path.toString() );
-            this.name = new ContentName( path.getElement( path.elementCount() - 1 ) );
+            this.name = ContentName.from( path.getElement( path.elementCount() - 1 ) );
             return this;
         }
 

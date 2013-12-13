@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.wem.admin.json.data.DataJson;
 import com.enonic.wem.admin.json.form.FormJson;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -31,7 +32,7 @@ public class CreateContentJson
         this.createContent = new CreateContent();
         this.createContent.draft( Boolean.valueOf( draft ) );
         this.createContent.embed( embed );
-        this.createContent.name( name );
+        this.createContent.name( ContentName.from( name ) );
         this.createContent.displayName( displayName );
         this.createContent.parent( ContentPath.from( parent ) );
         this.createContent.contentType( ContentTypeName.from( contentType ) );

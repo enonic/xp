@@ -44,7 +44,7 @@ module api_form_inputtype_content_image {
         }
 
         private refreshUI(){
-            this.nameEl.getEl().setInnerHtml(this.content.getName());
+            this.nameEl.getEl().setInnerHtml(this.content.getName().toString());
             this.pathEl.getEl().setInnerHtml(this.content.getPath().toString());
         }
 

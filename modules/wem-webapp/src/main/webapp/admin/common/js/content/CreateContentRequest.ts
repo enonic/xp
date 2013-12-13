@@ -4,7 +4,7 @@ module api_content {
 
         private draft: boolean = false;
 
-        private name: string;
+        private name: ContentName;
 
         private parent: ContentPath;
 
@@ -30,7 +30,7 @@ module api_content {
             return this;
         }
 
-        setName(value: string): CreateContentRequest {
+        setName(value: ContentName): CreateContentRequest {
             this.name = value;
             return this;
         }
@@ -79,7 +79,7 @@ module api_content {
         getParams(): Object {
             return {
                 draft: this.draft,
-                name: this.name,
+                name: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.toString(),
                 parent: this.parent.toString(),
                 embed: this.embed,
                 contentType: this.contentType.toString(),

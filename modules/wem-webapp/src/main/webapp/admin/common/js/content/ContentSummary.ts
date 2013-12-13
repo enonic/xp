@@ -4,7 +4,7 @@ module api_content{
 
         private contentId:ContentId;
 
-        private name:string;
+        private name:ContentName;
 
         private displayName:string;
 
@@ -37,7 +37,7 @@ module api_content{
         constructor(json:api_content_json.ContentSummaryJson) {
             super(json);
             this.contentId = new ContentId( json.id );
-            this.name = json.name;
+            this.name = ContentName.fromString(json.name);
             this.displayName = json.displayName;
             this.path = ContentPath.fromString(json.path);
             this.root = json.isRoot;
@@ -54,7 +54,7 @@ module api_content{
             return this.contentId;
         }
 
-        getName():string {
+        getName():ContentName {
             return this.name;
         }
 

@@ -3,7 +3,6 @@ package com.enonic.wem.core.content;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
-import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -48,8 +47,6 @@ import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 public class CreateContentHandler
     extends CommandHandler<CreateContent>
 {
-    private static final ContentPathNameGenerator CONTENT_PATH_NAME_GENERATOR = new ContentPathNameGenerator();
-
     private static final int THUMBNAIL_SIZE = 512;
 
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
@@ -92,11 +89,6 @@ public class CreateContentHandler
         indexService.indexContent( storedContent );
 
         command.setResult( storedContent );
-    }
-
-    private ContentName createDraftName()
-    {
-        return new ContentName( "__draft__" + UUID.randomUUID().toString() );
     }
 
     private CreateNodeResult createNode( final CreateNode createNodeCommand )
@@ -146,9 +138,7 @@ public class CreateContentHandler
     {
         final Content.Builder builder = Content.newContent();
 
-        final ContentName contentName = command.isDraft() ? createDraftName() : command.getName();
-
-        builder.name( command.getName() );
+        builder.name( resolveName( command.getName() ) );
         builder.parentPath( command.getParentContentPath() );
         builder.embedded( command.isEmbed() );
         builder.displayName( command.getDisplayName() );
@@ -160,9 +150,21 @@ public class CreateContentHandler
         builder.owner( command.getOwner() );
         builder.modifier( command.getOwner() );
         builder.draft( command.isDraft() );
-        builder.name( contentName );
 
         return builder.build();
+    }
+
+    private ContentName resolveName( final ContentName name )
+    {
+        if ( name instanceof ContentName.Unnamed )
+        {
+            ContentName.Unnamed unnammed = (ContentName.Unnamed) name;
+            if ( !unnammed.hasUniqueness() )
+            {
+                return ContentName.Unnamed.withUniqueness();
+            }
+        }
+        return name;
     }
 
     private void addAttachments( final Content content, final Content storedContent )

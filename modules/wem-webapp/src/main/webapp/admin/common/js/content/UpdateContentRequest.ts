@@ -4,7 +4,7 @@ module api_content {
 
         private id:string;
 
-        private name:string;
+        private name:ContentName;
 
         private contentType:api_schema_content.ContentTypeName;
 
@@ -27,7 +27,7 @@ module api_content {
             return this;
         }
 
-        setContentName(value:string):UpdateContentRequest {
+        setContentName(value:ContentName):UpdateContentRequest {
             this.name = value;
             return this;
         }
@@ -66,7 +66,7 @@ module api_content {
         getParams():Object {
             return {
                 contentId: this.id,
-                contentName: this.name,
+                contentName: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 contentType: this.contentType.toString(),
                 form: this.form.toJson(),
                 contentData: this.contentData.toJson(),

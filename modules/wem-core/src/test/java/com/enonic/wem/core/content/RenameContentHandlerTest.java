@@ -68,19 +68,19 @@ public class RenameContentHandlerTest
             build();
         Mockito.when( contentDao.selectById( isA( ContentId.class ), any( Session.class ) ) ).thenReturn( content );
         Mockito.when(
-            contentDao.renameContent( isA( ContentId.class ), eq( new ContentName( "newname" ) ), any( Session.class ) ) ).thenReturn(
+            contentDao.renameContent( isA( ContentId.class ), eq( ContentName.from( "newname" ) ), any( Session.class ) ) ).thenReturn(
             true );
         Mockito.when( attachmentDao.renameAttachments( isA( ContentId.class ), eq( "myContent" ), eq( "newname" ),
                                                        any( Session.class ) ) ).thenReturn( true );
 
-        final RenameContent command = Commands.content().rename().contentId( contentId ).newName( new ContentName( "newname" ) );
+        final RenameContent command = Commands.content().rename().contentId( contentId ).newName( ContentName.from( "newname" ) );
 
         // exercise
         this.handler.setCommand( command );
         this.handler.handle();
 
         // verify
-        verify( contentDao, Mockito.atLeastOnce() ).renameContent( isA( ContentId.class ), eq( new ContentName( "newname" ) ),
+        verify( contentDao, Mockito.atLeastOnce() ).renameContent( isA( ContentId.class ), eq( ContentName.from( "newname" ) ),
                                                                    any( Session.class ) );
         Content renamed = command.getResult();
         assertNotNull( renamed );

@@ -22,7 +22,7 @@ module api_form_inputtype_content_image {
             this.getEl().setBackgroundImage("url(" + this.content.getIconUrl() + ")");
 
             var label = new api_dom.DivEl(null, "label");
-            label.getEl().setInnerHtml(this.content.getName());
+            label.getEl().setInnerHtml(this.content.getName().toString());
             this.appendChild(label);
         }
 

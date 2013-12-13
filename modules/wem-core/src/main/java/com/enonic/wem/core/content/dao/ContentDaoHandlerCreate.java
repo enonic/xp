@@ -27,8 +27,6 @@ final class ContentDaoHandlerCreate
 {
     private String nodeName;
 
-    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
-
     ContentDaoHandlerCreate( final Session session, final IndexService indexService )
     {
         super( session, indexService );

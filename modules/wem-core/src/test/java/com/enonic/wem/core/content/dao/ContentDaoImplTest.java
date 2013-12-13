@@ -414,13 +414,13 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        contentDao.renameContent( storedContent.getId(), new ContentName( "newContentName" ), session );
+        contentDao.renameContent( storedContent.getId(), ContentName.from( "newcontentname" ), session );
         commit();
 
         // verify
         storedContent = contentDao.selectById( storedContent.getId(), session );
         assertNotNull( storedContent );
-        assertEquals( ContentPath.from( "/newContentName" ), storedContent.getPath() );
+        assertEquals( ContentPath.from( "/newcontentname" ), storedContent.getPath() );
 
         Content contentNotFound = contentDao.selectByPath( ContentPath.from( "/my-content" ), session );
         assertNull( contentNotFound );
@@ -437,7 +437,7 @@ public class ContentDaoImplTest
         commit();
 
         // exercise
-        contentDao.renameContent( storedContent.getId(), new ContentName( "my-existing-content" ), session );
+        contentDao.renameContent( storedContent.getId(), ContentName.from( "my-existing-content" ), session );
         commit();
     }
 

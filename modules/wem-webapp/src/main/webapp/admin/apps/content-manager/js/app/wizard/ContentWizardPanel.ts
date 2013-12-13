@@ -61,7 +61,7 @@ module app_wizard {
             var site: api_content.Content = null; // TODO: resolve nearest site content
             this.livePanel = new LiveFormPanel(site);
 
-            this.contentWizardHeader.initNames("New " + this.contentType.getDisplayName(), null);
+            this.contentWizardHeader.initNames("", "");
             this.contentWizardHeader.setAutogenerateName(true);
 
             if (this.parentContent) {
@@ -145,7 +145,7 @@ module app_wizard {
         setPersistedItem(content: api_content.Content) {
             super.setPersistedItem(content);
 
-            this.contentWizardHeader.initNames(content.getDisplayName(), content.getName());
+            this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString());
             // setup displayName and name to be generated automatically
             // if corresponding values are empty
             this.contentWizardHeader.setAutogenerateName(!content.getName());
@@ -180,7 +180,7 @@ module app_wizard {
 
             var createRequest = new api_content.CreateContentRequest().
                 setDraft(this.persistAsDraft).
-                setName(this.contentWizardHeader.getName()).
+                setName(api_content.ContentUnnamed.newUnnamed()).
                 setParent(this.parentContent.getPath()).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
@@ -205,7 +205,7 @@ module app_wizard {
         updatePersistedItem(successCallback?: () => void) {
 
             var updateRequest = new api_content.UpdateContentRequest(this.getPersistedItem().getId()).
-                setContentName(this.contentWizardHeader.getName()).
+                setContentName(this.resolveContentNameForUpdateReuest()).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentWizardStepForm.getForm()).
@@ -238,13 +238,22 @@ module app_wizard {
                 });
         }
 
+        private resolveContentNameForUpdateReuest() : api_content.ContentName {
+            if (api_util.isStringEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
+                return this.getPersistedItem().getName();
+            }
+            else {
+                return api_content.ContentName.fromString(this.contentWizardHeader.getName());
+            }
+        }
+
         hasUnsavedChanges(): boolean {
             var persistedContent: api_content.Content = this.getPersistedItem();
             if (persistedContent == undefined) {
                 return true;
             } else {
                 return !this.stringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
-                           || !this.stringsEqual(persistedContent.getName(), this.contentWizardHeader.getName())
+                           || !this.stringsEqual(persistedContent.getName().toString(), this.contentWizardHeader.getName().toString())
                     || !persistedContent.getContentData().equals(this.contentWizardStepForm.getContentData());
             }
         }

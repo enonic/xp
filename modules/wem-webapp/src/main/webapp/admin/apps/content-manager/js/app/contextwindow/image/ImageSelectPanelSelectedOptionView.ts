@@ -19,7 +19,7 @@ module app_contextwindow_image {
             var container = new api_dom.DivEl(null, "container");
 
             var title = new api_dom.DivEl(null, "title");
-            title.getEl().setInnerHtml(this.content.getName());
+            title.getEl().setInnerHtml(this.content.getName().toString());
 
             var subtitle = new api_dom.DivEl(null, "subtitle");
             subtitle.getEl().setInnerHtml(api_util.limitString(this.content.getPath().toString(), 32));
