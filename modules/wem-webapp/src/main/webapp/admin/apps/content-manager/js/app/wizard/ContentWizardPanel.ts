@@ -64,6 +64,10 @@ module app_wizard {
             this.contentWizardHeader.initNames("New " + this.contentType.getDisplayName(), null);
             this.contentWizardHeader.setAutogenerateName(true);
 
+            if (this.parentContent) {
+                this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
+            }
+
             this.contentWizardStepForm = new ContentWizardStepForm();
             var pageWizardStepFormConfig: PageWizardStepFormConfig = {
                 parentContent: this.parentContent,

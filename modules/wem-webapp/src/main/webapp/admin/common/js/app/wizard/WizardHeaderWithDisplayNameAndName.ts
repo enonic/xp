@@ -6,6 +6,8 @@ module api_app_wizard {
 
         private displayNameEl:api_ui.TextInput;
 
+        private pathEl:api_dom.SpanEl;
+
         private nameEl:api_ui.TextInput;
 
         private autogenerateName:boolean = false;
@@ -24,6 +26,10 @@ module api_app_wizard {
                 }
             });
             this.appendChild(this.displayNameEl);
+
+            this.pathEl = new api_dom.SpanEl(null, 'path');
+            this.pathEl.hide();
+            this.appendChild(this.pathEl);
 
             this.nameEl = api_ui.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
             this.nameEl.addListener({
@@ -80,6 +86,16 @@ module api_app_wizard {
 
         setName(value:string) {
             this.nameEl.setValue(value);
+        }
+
+        setPath(value:string) {
+            this.pathEl.getEl().setInnerHtml(value);
+            this.pathEl.getEl().setAttribute('title', value);
+            if (value) {
+                this.pathEl.show();
+            } else {
+                this.pathEl.hide();
+            }
         }
 
         getName():string {
