@@ -26,21 +26,15 @@
 
       .text-input {
         min-width: 200px;
+        border:1px solid transparent;
+        margin:0;
+        padding:0 1px;
 
         &.large {
           min-width: 300px;
+          margin-bottom:5px;
         }
-
-        &:hover {
-          border: 1px solid @admin-input-blue;
-        }
-
-        &:focus {
-          color: @admin-black;
-          border: none;
-          border: 1px solid @admin-input-blue;
-          box-shadow: 0 0 3px @admin-input-blue;
-        }
+        .input-glow();
       }
 
       .path {

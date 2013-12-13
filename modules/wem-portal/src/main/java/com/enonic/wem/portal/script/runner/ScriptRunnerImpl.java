@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-import com.enonic.wem.core.module.ModuleKeyResolver;
 import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
@@ -30,9 +29,9 @@ final class ScriptRunnerImpl
 
     private ScriptSource source;
 
-    private ModuleKeyResolver moduleKeyResolver;
-
     protected JsApiBridge apiBridge;
+
+    protected Scriptable globalScope;
 
     public ScriptRunnerImpl()
     {
@@ -56,13 +55,6 @@ final class ScriptRunnerImpl
     public ScriptRunner property( final String name, final Object value )
     {
         this.objects.put( name, value );
-        return this;
-    }
-
-    @Override
-    public ScriptRunner moduleKeyResolver( final ModuleKeyResolver value )
-    {
-        this.moduleKeyResolver = value;
         return this;
     }
 
@@ -104,7 +96,6 @@ final class ScriptRunnerImpl
         final RequireFunction function = new RequireFunction();
         function.setScriptCompiler( this.compiler );
         function.setScriptLoader( this.scriptLoader );
-        function.setModuleKeyResolver( this.moduleKeyResolver );
         function.setSource( this.source );
         function.install( this.scope );
     }
@@ -118,7 +109,9 @@ final class ScriptRunnerImpl
 
     private void initializeScope( final Context context )
     {
-        this.scope = context.initStandardObjects();
+        this.scope = context.newObject( this.globalScope );
+        this.scope.setPrototype( this.globalScope );
+        this.scope.setParentScope( null );
     }
 
     private void setupProperties()

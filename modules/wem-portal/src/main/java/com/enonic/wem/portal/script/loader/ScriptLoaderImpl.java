@@ -6,9 +6,7 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.core.module.ModuleKeyResolver;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 
 public final class ScriptLoaderImpl
@@ -25,6 +23,19 @@ public final class ScriptLoaderImpl
     {
         this.classLoader = getClass().getClassLoader();
         this.pathResolver = pathResolver;
+    }
+
+    @Override
+    public ScriptSource load( final String name )
+    {
+        try
+        {
+            return loadFromModule( ModuleResourceKey.from( name ) );
+        }
+        catch ( final Exception e )
+        {
+            return loadFromSystem( name );
+        }
     }
 
     @Override
@@ -51,36 +62,5 @@ public final class ScriptLoaderImpl
         }
 
         return new ModuleScriptSource( key, file );
-    }
-
-    @Override
-    public ScriptSource load( final String name )
-    {
-        return load( null, null, name );
-    }
-
-    @Override
-    public ScriptSource load( final ModuleKeyResolver resolver, final ModuleKey defaultModule, final String name )
-    {
-        if ( name.contains( ":" ) )
-        {
-            return loadFromModule( resolver, defaultModule, name );
-        }
-        else
-        {
-            return loadFromSystem( name );
-        }
-    }
-
-    private ScriptSource loadFromModule( final ModuleKeyResolver resolver, final ModuleKey defaultModule, final String name )
-    {
-        final ModuleResourceKeyResolver resourceKeyResolver = new ModuleResourceKeyResolver( resolver, defaultModule );
-        final ModuleResourceKey key = resourceKeyResolver.resolve( name );
-        if ( key == null )
-        {
-            return null;
-        }
-
-        return loadFromModule( key );
     }
 }

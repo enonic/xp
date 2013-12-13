@@ -2,7 +2,6 @@ package com.enonic.wem.portal.script.runner;
 
 import java.text.MessageFormat;
 import java.util.Map;
-import java.util.Stack;
 
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;
@@ -17,7 +16,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.core.module.ModuleKeyResolver;
+import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
@@ -27,23 +26,20 @@ final class RequireFunction
 {
     private final Map<String, Scriptable> exportMap;
 
-    private final Stack<ScriptSource> scriptStack;
-
     private ScriptLoader scriptLoader;
 
     private ScriptCompiler scriptCompiler;
 
-    private ModuleKeyResolver moduleKeyResolver;
+    private ScriptSource mainSource;
 
     public RequireFunction()
     {
         this.exportMap = Maps.newHashMap();
-        this.scriptStack = new Stack<>();
     }
 
-    public void setSource( final ScriptSource source )
+    public void setSource( final ScriptSource mainSource )
     {
-        this.scriptStack.add( source );
+        this.mainSource = mainSource;
     }
 
     public void setScriptLoader( final ScriptLoader scriptLoader )
@@ -54,11 +50,6 @@ final class RequireFunction
     public void setScriptCompiler( final ScriptCompiler scriptCompiler )
     {
         this.scriptCompiler = scriptCompiler;
-    }
-
-    public void setModuleKeyResolver( final ModuleKeyResolver moduleKeyResolver )
-    {
-        this.moduleKeyResolver = moduleKeyResolver;
     }
 
     @Override
@@ -102,52 +93,32 @@ final class RequireFunction
             return exports;
         }
 
-        if ( hasCircularReferences( source ) )
-        {
-            throw error( cx, scope, "Failed to load [{0}]. Circular references.", name );
-        }
-
-        try
-        {
-            this.scriptStack.push( source );
-            return doCall( cx, scope );
-        }
-        finally
-        {
-            this.scriptStack.pop();
-        }
-    }
-
-    private boolean hasCircularReferences( final ScriptSource current )
-    {
-        for ( final ScriptSource element : this.scriptStack )
-        {
-            if ( element.getName().equals( current.getName() ) )
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return doCall( cx, scope, source );
     }
 
     private ScriptSource resolveSource( final Context cx, final Scriptable scope, final String name )
     {
-        final ModuleResourceKey currentResource = this.scriptStack.peek().getResourceKey();
-        final ModuleKey currentModule = currentResource != null ? currentResource.getModuleKey() : null;
+        if ( !name.endsWith( ".js" ) )
+        {
+            return resolveSource( cx, scope, name + ".js" );
+        }
 
-        final ScriptSource source = this.scriptLoader.load( this.moduleKeyResolver, currentModule, name );
+        final ModuleResourceKey currentResource = this.mainSource.getResourceKey();
+        final ModuleKey currentModule = currentResource.getModuleKey();
+        final ModuleResourceKey key = new ModuleResourceKey( currentModule, ResourcePath.from( name ) );
+
+        final ScriptSource source = this.scriptLoader.loadFromModule( key );
         if ( source != null )
         {
             return source;
         }
 
-        throw error( cx, scope, "Could not find resource [{0}].", name );
+        throw error( cx, scope, "Could not find resource [{0}].", key );
     }
 
-    private Object doCall( final Context cx, final Scriptable scope )
+    private Object doCall( final Context cx, final Scriptable scope, final ScriptSource source )
     {
-        final Script script = this.scriptCompiler.compile( cx, this.scriptStack.peek() );
+        final Script script = this.scriptCompiler.compile( cx, source );
 
         final Scriptable exports = cx.newObject( scope );
         final Scriptable moduleObject = cx.newObject( scope );
@@ -161,7 +132,7 @@ final class RequireFunction
         script.exec( cx, newScope );
 
         final Scriptable newExports = ScriptRuntime.toObject( scope, exports );
-        this.exportMap.put( this.scriptStack.peek().getName(), newExports );
+        this.exportMap.put( source.getName(), newExports );
         return newExports;
     }
 
