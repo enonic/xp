@@ -20,6 +20,8 @@ public class CreateNode
 
     private EntityIndexConfig entityIndexConfig;
 
+    private boolean embed;
+
     public CreateNode parent( final NodePath value )
     {
         this.parent = value;
@@ -56,6 +58,12 @@ public class CreateNode
         return this;
     }
 
+    public CreateNode embed( final boolean embed )
+    {
+        this.embed = embed;
+        return this;
+    }
+
     public String getName()
     {
         return name;
@@ -79,6 +87,11 @@ public class CreateNode
     public EntityIndexConfig getEntityIndexConfig()
     {
         return entityIndexConfig;
+    }
+
+    public boolean isEmbed()
+    {
+        return embed;
     }
 
     @Override

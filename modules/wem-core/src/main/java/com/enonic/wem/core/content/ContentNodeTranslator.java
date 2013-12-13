@@ -1,6 +1,7 @@
 package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
@@ -34,6 +35,8 @@ public class ContentNodeTranslator
 
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
+    private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
+
     public static final String DRAFT_PATH = "draft";
 
     public static final String DISPLAY_NAME_PATH = "displayName";
@@ -44,7 +47,7 @@ public class ContentNodeTranslator
 
     private static final NodePath CONTENTS_ROOT_PATH = NodePath.newPath( "/content" ).build();
 
-    public CreateNode toCreateNode( final Content content )
+    public CreateNode toCreateNode( final Content content, final CreateContent command )
     {
         final NodePath parentNodePath = NodePath.newPath( CONTENTS_ROOT_PATH ).elements( content.getParentPath().toString() ).build();
         final RootDataSet rootDataSet = propertiesToRootDataSet( content );
@@ -52,9 +55,11 @@ public class ContentNodeTranslator
         final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( rootDataSet );
 
         return new CreateNode().
+            attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( command.getAttachments() ) ).
             data( rootDataSet ).
             entityIndexConfig( entityIndexConfig ).
             parent( parentNodePath ).
+            embed( content.isEmbedded() ).
             name( content.getName().toString() );
     }
 

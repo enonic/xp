@@ -21,6 +21,8 @@ public class CreateNodeArguments
 
     private final EntityIndexConfig entityIndexConfig;
 
+    private final boolean embed;
+
     CreateNodeArguments( Builder builder )
     {
         this.creator = builder.creator;
@@ -29,6 +31,7 @@ public class CreateNodeArguments
         this.rootDataSet = builder.rootDataSet;
         this.attachments = builder.attachments;
         this.entityIndexConfig = builder.entityIndexConfig;
+        this.embed = builder.embed;
     }
 
     UserKey creator()
@@ -53,7 +56,12 @@ public class CreateNodeArguments
 
     Attachments attachments()
     {
-        return attachments;
+        return this.attachments;
+    }
+
+    boolean embed()
+    {
+        return this.embed;
     }
 
     EntityIndexConfig entityIndexConfig()
@@ -79,6 +87,9 @@ public class CreateNodeArguments
         private Attachments attachments = Attachments.empty();
 
         private EntityIndexConfig entityIndexConfig;
+
+        private boolean embed = false;
+
 
         public Builder creator( UserKey value )
         {
@@ -116,9 +127,16 @@ public class CreateNodeArguments
             return this;
         }
 
+        public Builder embed( final boolean embed )
+        {
+            this.embed = embed;
+            return this;
+        }
+
         public CreateNodeArguments build()
         {
             return new CreateNodeArguments( this );
         }
+
     }
 }

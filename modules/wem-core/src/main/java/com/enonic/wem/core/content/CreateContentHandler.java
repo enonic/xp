@@ -3,6 +3,7 @@ package com.enonic.wem.core.content;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -83,7 +84,7 @@ public class CreateContentHandler
 
         addRelationships( session, builtContent, storedContent );
 
-        final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent );
+        final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent, command );
         createNode( createNodeCommand );
 
         indexService.indexContent( storedContent );
@@ -138,8 +139,11 @@ public class CreateContentHandler
     {
         final Content.Builder builder = Content.newContent();
 
-        builder.name( resolveName( command.getName() ) );
-        builder.parentPath( command.getParentContentPath() );
+        final ContentName contentName = command.isDraft() ? createDraftName() : resolveName( command.getName() );
+
+        builder.name( command.getName() );
+
+        builder.parentPath( resolveParentContentPath() );
         builder.embedded( command.isEmbed() );
         builder.displayName( command.getDisplayName() );
         builder.form( command.getForm() );
@@ -154,6 +158,11 @@ public class CreateContentHandler
         return builder.build();
     }
 
+    private ContentName createDraftName()
+    {
+        return ContentName.from( "__draft__" + UUID.randomUUID().toString() );
+    }
+
     private ContentName resolveName( final ContentName name )
     {
         if ( name instanceof ContentName.Unnamed )
@@ -165,6 +174,19 @@ public class CreateContentHandler
             }
         }
         return name;
+    }
+
+    private ContentPath resolveParentContentPath()
+    {
+        if ( command.isEmbed() )
+        {
+            // How to ensure that this path exists?
+            final ContentPath embeddedContentPath = ContentPath.from( command.getParentContentPath(), "__embedded" );
+
+            return embeddedContentPath;
+        }
+
+        return command.getParentContentPath();
     }
 
     private void addAttachments( final Content content, final Content storedContent )

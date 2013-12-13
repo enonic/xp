@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import org.junit.Test;
 
+import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
@@ -40,7 +41,7 @@ public class ContentNodeTranslatorTest
             contentData( new ContentData( rootDataSet.toRootDataSet() ) ).
             build();
 
-        final CreateNode createNode = translator.toCreateNode( mycontent );
+        final CreateNode createNode = translator.toCreateNode( mycontent, new CreateContent() );
 
         final Property testProperty = createNode.getData().getProperty( "contentdata.test" );
 
@@ -61,7 +62,7 @@ public class ContentNodeTranslatorTest
             contentData( new ContentData( rootDataSet.toRootDataSet() ) ).
             build();
 
-        final CreateNode createNode = translator.toCreateNode( mycontent );
+        final CreateNode createNode = translator.toCreateNode( mycontent, new CreateContent() );
 
         final EntityIndexConfig entityIndexConfig = createNode.getEntityIndexConfig();
 
@@ -94,7 +95,7 @@ public class ContentNodeTranslatorTest
             form( form ).
             build();
 
-        final CreateNode createNode = translator.toCreateNode( mycontent );
+        final CreateNode createNode = translator.toCreateNode( mycontent, new CreateContent() );
 
         final EntityIndexConfig entityIndexConfig = createNode.getEntityIndexConfig();
 
