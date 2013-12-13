@@ -9,6 +9,7 @@ import org.mozilla.javascript.Scriptable;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.runtime.JsApiBridge;
+import com.enonic.wem.portal.script.runtime.RootRuntimeObject;
 
 public final class ScriptRunnerFactoryImpl
     implements ScriptRunnerFactory
@@ -20,6 +21,9 @@ public final class ScriptRunnerFactoryImpl
 
     @Inject
     protected ScriptLoader scriptLoader;
+
+    @Inject
+    protected Provider<RootRuntimeObject> rootRuntimeObjects;
 
     @Inject
     protected Provider<JsApiBridge> apiBridgeProvider;
@@ -38,6 +42,7 @@ public final class ScriptRunnerFactoryImpl
         runner.compiler = this.compiler;
         runner.apiBridge = this.apiBridgeProvider.get();
         runner.globalScope = this.globalScope;
+        runner.rootRuntimeObjects = this.rootRuntimeObjects;
         return runner;
     }
 }

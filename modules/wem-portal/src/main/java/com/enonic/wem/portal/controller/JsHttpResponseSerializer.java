@@ -52,6 +52,11 @@ final class JsHttpResponseSerializer
             return convertToJson( value );
         }
 
+        if ( value instanceof byte[] )
+        {
+            return value;
+        }
+
         return value.toString();
     }
 

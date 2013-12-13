@@ -2,6 +2,8 @@ package com.enonic.wem.portal.script.runner;
 
 import java.util.Map;
 
+import javax.inject.Provider;
+
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
@@ -15,6 +17,7 @@ import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 import com.enonic.wem.portal.script.runtime.JsApiBridge;
+import com.enonic.wem.portal.script.runtime.RootRuntimeObject;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
@@ -32,6 +35,8 @@ final class ScriptRunnerImpl
     protected JsApiBridge apiBridge;
 
     protected Scriptable globalScope;
+
+    protected Provider<RootRuntimeObject> rootRuntimeObjects;
 
     public ScriptRunnerImpl()
     {
@@ -112,6 +117,12 @@ final class ScriptRunnerImpl
         this.scope = context.newObject( this.globalScope );
         this.scope.setPrototype( this.globalScope );
         this.scope.setParentScope( null );
+
+        final RootRuntimeObject runtime = this.rootRuntimeObjects.get();
+        runtime.setModule( this.source.getModule() );
+        runtime.setScope( this.scope );
+
+        property( "__wem", runtime );
     }
 
     private void setupProperties()
