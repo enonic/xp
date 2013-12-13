@@ -23,6 +23,9 @@ import com.enonic.wem.api.entity.Nodes;
 public class NodeJcrDao
     implements NodeDao
 {
+
+    public static final String EMBEDDED_NODE_ROOT_PATH = "__embedded";
+
     private final Session session;
 
     private final NodeJcrHelper jcrHelper;
@@ -50,7 +53,7 @@ public class NodeJcrDao
         Preconditions.checkArgument( createNodeArguments.parent().isAbsolute(),
                                      "Path to parent Node must be absolute: " + createNodeArguments.parent() );
 
-        final javax.jcr.Node parentNodeNode = jcrHelper.getNodeByPath( createNodeArguments.parent() );
+        final javax.jcr.Node parentJcrNode = findJcrParentNode( createNodeArguments );
 
         final Node newNode = Node.newNode().
             createdTime( DateTime.now() ).
@@ -62,7 +65,28 @@ public class NodeJcrDao
             entityIndexConfig( createNodeArguments.entityIndexConfig() ).
             build();
 
-        return jcrHelper.persisteNewNode( newNode, parentNodeNode );
+        return jcrHelper.persisteNewNode( newNode, parentJcrNode );
+    }
+
+    private javax.jcr.Node findJcrParentNode( final CreateNodeArguments createNodeArguments )
+    {
+        final javax.jcr.Node parentJcrNode = jcrHelper.getNodeByPath( createNodeArguments.parent() );
+
+        if ( createNodeArguments.embed() )
+        {
+            return getEmbeddedNodePath( createNodeArguments );
+        }
+
+        return parentJcrNode;
+    }
+
+    private javax.jcr.Node getEmbeddedNodePath( final CreateNodeArguments createNodeArguments )
+    {
+        final NodePath embeddedNodePath = NodePath.newNodePath( createNodeArguments.parent(), EMBEDDED_NODE_ROOT_PATH ).build();
+
+        jcrHelper.ensurePath( embeddedNodePath );
+
+        return jcrHelper.getNodeByPath( embeddedNodePath );
     }
 
     @Override

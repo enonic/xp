@@ -119,4 +119,6 @@ public class NodePathTest
         NodePath removedFrom = nodePath.removeFromBeginning( new NodePath( "/one/two" ) );
         assertEquals( "/three/four", removedFrom.toString() );
     }
+
+
 }

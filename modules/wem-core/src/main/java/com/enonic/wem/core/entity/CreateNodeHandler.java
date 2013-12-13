@@ -47,6 +47,7 @@ public class CreateNodeHandler
             rootDataSet( command.getData() ).
             attachments( command.getAttachments() != null ? command.getAttachments() : Attachments.empty() ).
             entityIndexConfig( command.getEntityIndexConfig() ).
+            embed( command.isEmbed() ).
             build();
 
         final Node persistedNode = nodeJcrDao.createNode( createNodeArguments );
