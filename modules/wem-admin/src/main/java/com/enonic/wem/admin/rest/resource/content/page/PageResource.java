@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.enonic.wem.admin.json.content.ContentJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.api.command.content.page.CreatePage;
 import com.enonic.wem.api.command.content.page.UpdatePage;
 import com.enonic.wem.api.content.Content;
@@ -20,36 +19,22 @@ public class PageResource
 {
     @POST
     @Path("create")
-    public Result create( final CreatePageJson params )
+    public ContentJson create( final CreatePageJson params )
     {
-        try
-        {
-            final CreatePage command = params.getCreatePage();
-            final Content createdPage = client.execute( command );
+        final CreatePage command = params.getCreatePage();
+        final Content createdPage = client.execute( command );
 
-            return Result.result( new ContentJson( createdPage ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        return new ContentJson( createdPage );
     }
 
     @POST
     @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Result update( final UpdatePageJson params )
+    public ContentJson update( final UpdatePageJson params )
     {
-        try
-        {
-            final UpdatePage command = params.getUpdatePage();
-            final Content updatedPage = client.execute( command );
+        final UpdatePage command = params.getUpdatePage();
+        final Content updatedPage = client.execute( command );
 
-            return Result.result( new ContentJson( updatedPage ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        return new ContentJson( updatedPage );
     }
 }

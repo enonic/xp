@@ -12,7 +12,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.enonic.wem.admin.json.content.page.PageDescriptorJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.GetModuleResource;
@@ -27,19 +26,13 @@ public class PageDescriptorResource
     extends AbstractResource
 {
     @GET
-    public Result getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
+    public PageDescriptorJson getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
+        throws IOException
     {
-        try
-        {
-            final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
-            final PageDescriptor descriptor = getDescriptor( key, client );
-            final PageDescriptorJson json = new PageDescriptorJson( descriptor );
-            return Result.result( json );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
+        final PageDescriptor descriptor = getDescriptor( key, client );
+        final PageDescriptorJson json = new PageDescriptorJson( descriptor );
+        return json;
     }
 
     static PageDescriptor getDescriptor( final ModuleResourceKey key, final Client client )

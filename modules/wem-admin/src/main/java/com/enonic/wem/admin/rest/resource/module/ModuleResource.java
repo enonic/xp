@@ -21,7 +21,6 @@ import com.sun.jersey.multipart.FormDataParam;
 import com.enonic.wem.admin.json.module.ModuleJson;
 import com.enonic.wem.admin.json.module.ModuleSummaryJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.admin.rest.resource.module.json.ListModuleJson;
 import com.enonic.wem.admin.rest.resource.module.json.ModuleDeleteParams;
 import com.enonic.wem.api.command.Commands;
@@ -45,67 +44,46 @@ public class ModuleResource
 
     @GET
     @javax.ws.rs.Path("list")
-    public Result list()
+    public ListModuleJson list()
     {
-        try
-        {
-            final Modules modules = client.execute( Commands.module().list() );
-            return Result.result( new ListModuleJson( modules ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        final Modules modules = client.execute( Commands.module().list() );
+        return new ListModuleJson( modules );
     }
 
     @POST
     @javax.ws.rs.Path("delete")
-    public Result delete( ModuleDeleteParams params )
+    public ModuleJson delete( ModuleDeleteParams params )
     {
-        try
-        {
-            DeleteModule command = Commands.module().delete().module( params.getModuleKey() );
-            Module deleted = client.execute( command );
-            return Result.result( new ModuleJson( deleted ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        DeleteModule command = Commands.module().delete().module( params.getModuleKey() );
+        Module deleted = client.execute( command );
+        return new ModuleJson( deleted );
     }
 
     @POST
     @javax.ws.rs.Path("install")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Result install( @FormDataParam("file") InputStream uploadedInputStream,
-                           @FormDataParam("file") FormDataContentDisposition fileDetail )
+    public ModuleSummaryJson install( @FormDataParam("file") InputStream uploadedInputStream,
+                                      @FormDataParam("file") FormDataContentDisposition fileDetail )
         throws IOException
     {
         Path tempDirectory = null;
         try
         {
-            try
-            {
-                final String fileName = fileDetail.getFileName();
+            final String fileName = fileDetail.getFileName();
 
-                tempDirectory = Files.createTempDirectory( "modules" );
+            tempDirectory = Files.createTempDirectory( "modules" );
 
-                final Path tempZipFile = tempDirectory.resolve( fileName );
-                Files.copy( uploadedInputStream, tempZipFile );
-                final ModuleExporter moduleExporter = new ModuleExporter();
-                final Module importedModule;
+            final Path tempZipFile = tempDirectory.resolve( fileName );
+            Files.copy( uploadedInputStream, tempZipFile );
+            final ModuleExporter moduleExporter = new ModuleExporter();
+            final Module importedModule;
 
-                importedModule = moduleExporter.importFromZip( tempZipFile ).build();
+            importedModule = moduleExporter.importFromZip( tempZipFile ).build();
 
-                final CreateModule createModuleCommand = CreateModule.fromModule( importedModule );
-                final Module createdModule = client.execute( createModuleCommand );
+            final CreateModule createModuleCommand = CreateModule.fromModule( importedModule );
+            final Module createdModule = client.execute( createModuleCommand );
 
-                return Result.result( new ModuleSummaryJson( createdModule ) );
-            }
-            catch ( Exception e )
-            {
-                return Result.exception( e );
-            }
+            return new ModuleSummaryJson( createdModule );
         }
         finally
         {
@@ -159,18 +137,11 @@ public class ModuleResource
     }
 
     @GET
-    public Result getByKey( @QueryParam("moduleKey") String moduleKey )
+    public ModuleJson getByKey( @QueryParam("moduleKey") String moduleKey )
     {
-        try
-        {
-            final GetModule getModuleCommand = Commands.module().get().module( ModuleKey.from( moduleKey ) );
-            final Module module = client.execute( getModuleCommand );
+        final GetModule getModuleCommand = Commands.module().get().module( ModuleKey.from( moduleKey ) );
+        final Module module = client.execute( getModuleCommand );
 
-            return Result.result( new ModuleJson( module ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        return new ModuleJson( module );
     }
 }

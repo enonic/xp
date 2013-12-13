@@ -16,8 +16,8 @@ module app_browse_grid {
                     url: api_util.getAdminUri('rest/content/site/template/list'),
                     reader: {
                         type: 'json',
-                        root: 'result.siteTemplates',
-                        totalProperty: 'result.total'
+                        root: 'siteTemplates',
+                        totalProperty: 'total'
                     }
                 }
 

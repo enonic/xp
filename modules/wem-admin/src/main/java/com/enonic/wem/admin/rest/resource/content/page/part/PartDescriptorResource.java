@@ -12,7 +12,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.enonic.wem.admin.json.content.page.part.PartDescriptorJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.module.GetModuleResource;
@@ -27,19 +26,13 @@ public class PartDescriptorResource
     extends AbstractResource
 {
     @GET
-    public Result getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
+    public PartDescriptorJson getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
+        throws IOException
     {
-        try
-        {
-            final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
-            final PartDescriptor descriptor = getDescriptor( key, client );
-            final PartDescriptorJson json = new PartDescriptorJson( descriptor );
-            return Result.result( json );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
+        final PartDescriptor descriptor = getDescriptor( key, client );
+        final PartDescriptorJson json = new PartDescriptorJson( descriptor );
+        return json;
     }
 
     static PartDescriptor getDescriptor( final ModuleResourceKey key, final Client client )

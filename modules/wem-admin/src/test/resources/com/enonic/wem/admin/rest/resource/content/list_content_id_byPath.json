@@ -1,10 +1,7 @@
 {
-    "error" : null,
-    "result" : {
-        "contents" : [ {
-            "id" : "aaa"
-        }, {
-            "id" : "bbb"
-        } ]
-    }
+  "contents" : [ {
+    "id" : "aaa"
+  }, {
+    "id" : "bbb"
+  } ]
 }

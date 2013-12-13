@@ -1,15 +1,10 @@
 {
-    "error": null,
-    "result": {
-        "templates": [
-            {
-                "deletable": true,
-                "descriptorModuleResourceKey": "mainmodule-1.0.0:/components/landing-page.xml",
-                "displayName": "Main page template",
-                "editable": true,
-                "key": "mySiteTemplate-1.0.0|mymodule-1.0.0|my-page",
-                "name": "my-page"
-            }
-        ]
-    }
+  "templates" : [ {
+    "deletable" : true,
+    "descriptorModuleResourceKey" : "mainmodule-1.0.0:/components/landing-page.xml",
+    "displayName" : "Main page template",
+    "editable" : true,
+    "key" : "mySiteTemplate-1.0.0|mymodule-1.0.0|my-page",
+    "name" : "my-page"
+  } ]
 }
