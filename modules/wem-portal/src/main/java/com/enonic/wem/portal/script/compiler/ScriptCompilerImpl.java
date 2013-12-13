@@ -23,14 +23,15 @@ public final class ScriptCompilerImpl
     @Override
     public Script compile( final Context context, final ScriptSource source )
     {
-        final Script script = this.cache.get( source.getCacheKey() );
+        final String key = source.getName() + "_" + source.getTimestamp();
+        final Script script = this.cache.get( key );
         if ( script != null )
         {
             return script;
         }
 
         final Script compiled = doCompile( context, source );
-        this.cache.put( source.getCacheKey(), compiled );
+        this.cache.put( key, compiled );
         return compiled;
     }
 

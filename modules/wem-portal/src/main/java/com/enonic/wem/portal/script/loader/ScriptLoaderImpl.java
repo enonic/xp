@@ -6,13 +6,15 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Throwables;
+
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.core.module.ModuleResourcePathResolver;
 
 public final class ScriptLoaderImpl
     implements ScriptLoader
 {
-    private final static String BASE_CLASSPATH = "js/system/";
+    private final static String BASE_CLASSPATH = "js/lib";
 
     private final ClassLoader classLoader;
 
@@ -47,7 +49,14 @@ public final class ScriptLoaderImpl
             return null;
         }
 
-        return new UrlScriptSource( name, url );
+        try
+        {
+            return new ScriptSourceImpl( name, url.toURI(), null );
+        }
+        catch ( final Exception e )
+        {
+            throw Throwables.propagate( e );
+        }
     }
 
     @Override
@@ -61,6 +70,6 @@ public final class ScriptLoaderImpl
             return null;
         }
 
-        return new ModuleScriptSource( key, file );
+        return new ScriptSourceImpl( key.toString(), file.toURI(), key.getModuleKey() );
     }
 }

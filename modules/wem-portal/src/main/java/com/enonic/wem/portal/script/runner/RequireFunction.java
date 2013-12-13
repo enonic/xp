@@ -103,8 +103,7 @@ final class RequireFunction
             return resolveSource( cx, scope, name + ".js" );
         }
 
-        final ModuleResourceKey currentResource = this.mainSource.getResourceKey();
-        final ModuleKey currentModule = currentResource.getModuleKey();
+        final ModuleKey currentModule = this.mainSource.getModule();
         final ModuleResourceKey key = new ModuleResourceKey( currentModule, ResourcePath.from( name ) );
 
         final ScriptSource source = this.scriptLoader.loadFromModule( key );

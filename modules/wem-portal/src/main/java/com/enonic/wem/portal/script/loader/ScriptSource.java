@@ -1,18 +1,22 @@
 package com.enonic.wem.portal.script.loader;
 
-import com.enonic.wem.api.module.ModuleResourceKey;
+import java.net.URI;
+
+import com.enonic.wem.api.module.ModuleKey;
 
 public interface ScriptSource
 {
     public String getName();
 
-    public String getLocation();
-
-    public String getCacheKey();
+    public URI getUri();
 
     public String getScriptAsString();
 
-    public ModuleResourceKey getResourceKey();
-
     public long getTimestamp();
+
+    public ModuleKey getModule();
+
+    public boolean isFromSystem();
+
+    public boolean isFromModule();
 }
