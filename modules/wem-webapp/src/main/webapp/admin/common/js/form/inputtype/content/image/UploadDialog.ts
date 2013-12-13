@@ -23,7 +23,7 @@ module api_form_inputtype_content_image {
             var uploaderConfig = {
                 multiSelection: true,
                 buttonsVisible: false,
-                imageVisible: false
+                showImageAfterUpload: false
             };
             this.uploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
             this.uploader.addListener({

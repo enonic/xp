@@ -23,7 +23,7 @@ module api_form_inputtype_content_imageupload {
             var inputName = this.getInput().getName() + "-" + index;
 
             var imageUploaderConfig = <api_ui.ImageUploaderConfig> {
-                imageVisible: property != null,
+                showImageAfterUpload: true,
                 maximumOccurrences: 1
             };
             var uploadUrl = api_util.getRestUri("blob/upload");

@@ -3,7 +3,7 @@ module api_ui {
     export interface ImageUploaderConfig {
         multiSelection?: boolean;
         buttonsVisible?: boolean;
-        imageVisible?: boolean;
+        showImageAfterUpload?: boolean;
         maximumOccurrences?: number;
         textInput?: boolean;
         browseEnabled?: boolean;
@@ -25,7 +25,7 @@ module api_ui {
 
         private multiSelection:boolean;
         private buttonsVisible:boolean;
-        private imageVisible:boolean;
+        private showImageAfterUpload:boolean;
         private maximumOccurrences:number;
         private browseEnabled:boolean;
 
@@ -37,7 +37,7 @@ module api_ui {
             this.uploadUrl = uploadUrl;
             this.multiSelection = (config.multiSelection == undefined) ? false : config.multiSelection;
             this.buttonsVisible = (config.buttonsVisible == undefined) ? true : config.buttonsVisible;
-            this.imageVisible = (config.imageVisible == undefined) ? true : config.imageVisible;
+            this.showImageAfterUpload = (config.showImageAfterUpload == undefined) ? true : config.showImageAfterUpload;
             this.maximumOccurrences = (config.maximumOccurrences == undefined) ? 0 : config.maximumOccurrences;
             this.browseEnabled = (config.browseEnabled == undefined) ? true : config.browseEnabled;
 
@@ -79,8 +79,15 @@ module api_ui {
             if (!this.uploader && this.uploadUrl) {
                 this.uploader = this.initUploader(this.dropzone.getId());
             }
-            this.setProgressVisible(false);
-            this.setImageVisible(false);
+            if (this.value) {
+                this.setDropzoneVisible(false);
+                this.setProgressVisible(false);
+                this.setImageVisible(true);
+            } else {
+                this.setDropzoneVisible(true);
+                this.setProgressVisible(false);
+                this.setImageVisible(false);
+            }
         }
 
         getName():string {
@@ -94,14 +101,12 @@ module api_ui {
         setValue(value:string) {
             this.value = value;
             var src:string;
-            if( value.indexOf("http://") == -1 ) {
+            if( value && value.indexOf("http://") == -1 ) {
                 src = api_util.getAdminUri(value ? 'rest/blob/' + value : 'common/images/x-user-photo.png');
-            }
-            else {
+            } else {
                 src = value;
             }
             this.image.getEl().setSrc(src);
-
         }
 
         setMaximumOccurrences(value:number) {
@@ -228,7 +233,7 @@ module api_ui {
             uploader.bind('UploadComplete', (up, files) => {
                 console.log('uploader upload complete', up, files);
 
-                if (this.imageVisible) {
+                if (this.showImageAfterUpload) {
                     this.setProgressVisible(false);
                     this.setImageVisible(true);
                 }
