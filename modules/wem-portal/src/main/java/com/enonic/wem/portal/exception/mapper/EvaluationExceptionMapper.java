@@ -20,7 +20,7 @@ public final class EvaluationExceptionMapper
         renderer.status( Response.Status.INTERNAL_SERVER_ERROR );
         renderer.description( e.getMessage() );
         renderer.title( "Script evaluation error" );
-        renderer.source( e.getSource(), e.getLineNumber(), e.getColumnNumber() );
+        renderer.sourceError( e );
         renderer.exception( Throwables.getRootCause( e ) );
         return renderer.render();
     }
