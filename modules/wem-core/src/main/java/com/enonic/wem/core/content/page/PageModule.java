@@ -4,14 +4,17 @@ import com.google.inject.AbstractModule;
 
 import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.content.page.image.CreateImageDescriptorHandler;
+import com.enonic.wem.core.content.page.image.GetImageDescriptorHandler;
 import com.enonic.wem.core.content.page.image.GetImageTemplateByKeyHandler;
 import com.enonic.wem.core.content.page.image.GetImageTemplatesBySiteTemplateHandler;
 import com.enonic.wem.core.content.page.image.UpdateImageTemplateHandler;
 import com.enonic.wem.core.content.page.layout.CreateLayoutDescriptorHandler;
+import com.enonic.wem.core.content.page.layout.GetLayoutDescriptorHandler;
 import com.enonic.wem.core.content.page.layout.GetLayoutTemplateByKeyHandler;
 import com.enonic.wem.core.content.page.layout.GetLayoutTemplatesBySiteTemplateHandler;
 import com.enonic.wem.core.content.page.layout.UpdateLayoutTemplateHandler;
 import com.enonic.wem.core.content.page.part.CreatePartDescriptorHandler;
+import com.enonic.wem.core.content.page.part.GetPartDescriptorHandler;
 import com.enonic.wem.core.content.page.part.GetPartTemplateByKeyHandler;
 import com.enonic.wem.core.content.page.part.GetPartTemplatesBySiteTemplateHandler;
 import com.enonic.wem.core.content.page.part.UpdatePartTemplateHandler;
@@ -45,6 +48,10 @@ public class PageModule
         commands.add( CreatePageDescriptorHandler.class );
         commands.add( CreatePartDescriptorHandler.class );
         commands.add( CreateImageDescriptorHandler.class );
+        commands.add( GetImageDescriptorHandler.class );
+        commands.add( GetLayoutDescriptorHandler.class );
+        commands.add( GetPartDescriptorHandler.class );
+        commands.add( GetPageDescriptorHandler.class );
         commands.add( CreateLayoutDescriptorHandler.class );
     }
 }
