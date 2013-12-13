@@ -3,6 +3,9 @@
 
   .toolbar {
     margin-bottom: 13px;
+    &.scrolling {
+      .scroll-shadow();
+    }
   }
 
   .wizard-back-panel {
@@ -29,6 +32,7 @@
         border:1px solid transparent;
         margin:0;
         padding:0 1px;
+        background-color:transparent;
 
         &.large {
           min-width: 300px;
@@ -68,13 +72,17 @@
         }
       }
 
-      &.stick {
+      &.scroll-stick {
         position:fixed;
         top:84px;
         width:100%;
         z-index:100;
-        box-shadow: 0px 2px 6px -2px;
+        .scroll-shadow();
         //border-top:1px solid @admin-medium-gray-border;
+      }
+
+      .scroll-shadow {
+        box-shadow: 0px 2px 6px -2px #000;
       }
 
       .step-navigator {
@@ -181,4 +189,8 @@
     }
   }
 
+}
+
+.scroll-shadow() {
+  box-shadow: 0px 2px 6px -2px #000;
 }

@@ -140,9 +140,13 @@ module api_app_wizard {
                 var scrollTop = $('.form-panel').scrollTop();
                 var wizardHeaderHeight = this.header.getEl().getHeightWithMargin() + this.header.getEl().getOffsetTop();
                 if (scrollTop > wizardHeaderHeight) {
-                    this.stepNavigatorAndToolbarContainer.addClass("stick");
+                    this.mainToolbar.removeClass("scrolling");
+                    this.stepNavigatorAndToolbarContainer.addClass("scroll-stick");
                 } else if (scrollTop < wizardHeaderHeight) {
-                    this.stepNavigatorAndToolbarContainer.removeClass("stick");
+                    this.mainToolbar.addClass("scrolling");
+                    this.stepNavigatorAndToolbarContainer.removeClass("scroll-stick");
+                } else if (scrollTop == 0) {
+                    this.mainToolbar.removeClass("scrolling");
                 }
             });
         }
