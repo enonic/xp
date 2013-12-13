@@ -100,7 +100,8 @@ module api_ui {
             else {
                 src = value;
             }
-            this.image.getEl().setSrc(value);
+            this.image.getEl().setSrc(src);
+
         }
 
         setMaximumOccurrences(value:number) {
