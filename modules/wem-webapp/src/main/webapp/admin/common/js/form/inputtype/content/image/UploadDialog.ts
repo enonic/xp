@@ -25,7 +25,7 @@ module api_form_inputtype_content_image {
                 buttonsVisible: false,
                 showImageAfterUpload: false
             };
-            this.uploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("upload"), uploaderConfig);
+            this.uploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("blob/upload"), uploaderConfig);
             this.uploader.addListener({
                 onFileUploaded: (uploadItem:api_ui.UploadItem) => {
                     this.notifyImageUploaded(uploadItem);
