@@ -63,12 +63,15 @@
         margin: 0 40px;
 
         button {
-          background: #609e24;
+          background: @admin-green;
           color: white;
           font-weight: bolder;
           line-height: 20px;
           padding: 10px 15px 10px 15px;
           margin:0;
+          &:hover {
+            background-color: lighten(@admin-green, 5%);
+          }
         }
       }
 
@@ -84,6 +87,10 @@
 
           &.first {
             //padding-left: 0;
+          }
+
+          &:hover {
+            color: darken(@admin-medium-gray-font, 10%);
           }
 
           &.active {
