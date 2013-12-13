@@ -8,13 +8,17 @@
   .dropzone {
     height: 220px;
     width: 100%;
-    border: 3px dashed #a8c6fe !important;
+    border: 3px dashed #a8c6fe;
     background-color: #f1f5fe;
     font-size: 22px;
     line-height: 220px;
     font-weight: bold !important;
     color: #555;
     text-align: center;
+    &:hover {
+      border-color:darken(#a8c6fe, 10%);
+      box-shadow: 0px 0px 5px @admin-input-blue;
+    }
   }
 
   .progress {
