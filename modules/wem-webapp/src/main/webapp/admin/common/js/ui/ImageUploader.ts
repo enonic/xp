@@ -177,11 +177,11 @@ module api_ui {
             });
 
             uploader.bind('Init', (up, params) => {
-                console.log('uploader init', up, params);
+                //console.log('uploader init', up, params);
             });
 
             uploader.bind('FilesAdded', (up, files) => {
-                console.log('uploader files added', up, files);
+                //console.log('uploader files added', up, files);
 
                 if (this.maximumOccurrences > 0 && files.length > this.maximumOccurrences) {
                     files.splice(this.maximumOccurrences);
@@ -189,26 +189,26 @@ module api_ui {
             });
 
             uploader.bind('QueueChanged', (up) => {
-                console.log('uploader queue changed', up);
+                //console.log('uploader queue changed', up);
 
                 up.start();
             });
 
             uploader.bind('UploadFile', (up, file) => {
-                console.log('uploader upload file', up, file);
+                //console.log('uploader upload file', up, file);
 
                 this.setDropzoneVisible(false);
                 this.setProgressVisible(true);
             });
 
             uploader.bind('UploadProgress', (up, file) => {
-                console.log('uploader upload progress', up, file);
+                //console.log('uploader upload progress', up, file);
 
                 this.progress.setValue(file.percent);
             });
 
             uploader.bind('FileUploaded', (up, file, response) => {
-                console.log('uploader file uploaded', up, file, response);
+                //console.log('uploader file uploaded', up, file, response);
 
                 if (response && response.status === 200) {
                     var responseObj:any = Ext.decode(response.response);
@@ -231,7 +231,7 @@ module api_ui {
             });
 
             uploader.bind('UploadComplete', (up, files) => {
-                console.log('uploader upload complete', up, files);
+                //console.log('uploader upload complete', up, files);
 
                 if (this.showImageAfterUpload) {
                     this.setProgressVisible(false);

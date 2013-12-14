@@ -15,7 +15,6 @@ module api_ui {
             this.getEl().setAttribute('type', 'checkbox');
 
             jQuery(this.getHTMLElement()).change(() => {
-                console.log("checkbox changed");
                 var newValue = this.isChecked();
                 this.notifyValueChanged(this.oldValue, newValue);
                 this.oldValue = newValue;

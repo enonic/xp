@@ -82,7 +82,6 @@ module api_form_inputtype_content {
         private notifyLoaded(contentSummaries:api_content.ContentSummary[]) {
             this.listeners.forEach((listener:ContentSummaryLoaderListener) => {
                 if (listener.onLoaded) {
-                    console.log("notifiyng", contentSummaries);
                     listener.onLoaded(contentSummaries);
                 }
             });

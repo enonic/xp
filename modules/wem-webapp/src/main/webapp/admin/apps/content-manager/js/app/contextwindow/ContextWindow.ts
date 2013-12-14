@@ -126,7 +126,7 @@ module app_contextwindow {
 
         getLiveEditJQuery():JQueryStatic {
             if (!this.liveEditJQuery) {
-                console.log(this.getLiveEditWindow());
+                //console.log(this.getLiveEditWindow());
                 this.liveEditJQuery = <JQueryStatic>this.getLiveEditWindow().$liveEdit;
             }
             return this.liveEditJQuery;

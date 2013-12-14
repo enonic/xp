@@ -72,7 +72,6 @@ module LiveEdit.component.mouseevent {
         }
 
         setSelectMode(event:JQueryEventObject):void {
-            console.log('Paragraph select mode');
 
             this.selectedParagraph.getElement().css('cursor', 'url(../../admin/live-edit/images/pencil.png) 0 40, text');
             this.currentMode = this.modes.SELECTED;
@@ -90,7 +89,6 @@ module LiveEdit.component.mouseevent {
         }
 
         setEditMode():void {
-            console.log('Paragraph edit mode');
 
             var paragraphComponent = this.selectedParagraph;
 
@@ -108,7 +106,6 @@ module LiveEdit.component.mouseevent {
                 return;
             }
 
-            console.log('Paragraph leave edit mode');
 
             $(window).trigger('leaveParagraphComponent.liveEdit', [this.selectedParagraph]);
 

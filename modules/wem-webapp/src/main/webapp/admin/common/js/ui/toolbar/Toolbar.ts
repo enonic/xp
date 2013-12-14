@@ -13,7 +13,6 @@ module api_ui_toolbar {
         }
 
         afterRender() {
-            console.log("afterrender toolbar");
             super.afterRender();
         }
 

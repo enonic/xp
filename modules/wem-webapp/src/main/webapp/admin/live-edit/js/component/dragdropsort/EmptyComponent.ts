@@ -45,7 +45,6 @@ module LiveEdit.component.dragdropsort {
         public static restoreEmptyComponent():api_dom.Element {
             var currentComponent = LiveEdit.component.Selection.getSelectedComponent();
             if (currentComponent) {
-                console.log("restoring to empty component");
                 var emptyElement:JQuery = $(LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(currentComponent).getHTMLElement());
                 var emptyComponent = LiveEdit.component.dragdropsort.EmptyComponent.createEmptyComponentHtml(currentComponent);//new LiveEdit.component.Component(emptyElement);
 
@@ -81,7 +80,6 @@ module LiveEdit.component.dragdropsort {
 
                     //TODO: HACKY!!
                     if (imageUrl) {
-                        console.log(imageUrl);
                         newComponent.element.find("img").attr("src", imageUrl);
                         newComponent.element.find("img").css("width", "100%");
                     }

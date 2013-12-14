@@ -60,7 +60,7 @@ module app_browse_grid {
 
         private initData(contents:api_content.ContentSummary[]) {
 
-            console.log("initData", contents);
+            //console.log("initData", contents);
             this.gridData.setItems(contents, "id")
         }
     }

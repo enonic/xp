@@ -91,7 +91,6 @@ module api_content {
         }
 
         getRequestPath():api_rest.Path {
-    console.log(super.getResourcePath());
             return api_rest.Path.fromParent(super.getResourcePath(), "find");
         }
 

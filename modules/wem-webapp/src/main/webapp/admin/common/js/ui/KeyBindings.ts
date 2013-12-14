@@ -22,7 +22,7 @@ module api_ui {
 
         static unbindKeys(bindings:KeyBinding[]) {
 
-            console.log("KeyBindings.unbindKeys");
+            //console.log("KeyBindings.unbindKeys");
 
             bindings.forEach((binding:KeyBinding) => {
                 KeyBindings.unbindKey(binding);
@@ -31,7 +31,7 @@ module api_ui {
 
         static unbindKey(binding:KeyBinding) {
 
-            console.log("KeyBindings.unbindKey");
+            //console.log("KeyBindings.unbindKey");
 
             Mousetrap.unbind(binding.getCombination());
             delete KeyBindings.mousetraps[binding.getCombination()];
@@ -44,7 +44,7 @@ module api_ui {
 
         static reset() {
 
-            console.log("KeyBindings.reset");
+            //console.log("KeyBindings.reset");
             Mousetrap.reset();
             KeyBindings.mousetraps = {};
         }
@@ -54,10 +54,10 @@ module api_ui {
          */
         static shelveBindings() {
 
-            console.log("shelveBindings() {");
-            console.log("  resetting current");
+            //console.log("shelveBindings() {");
+           // console.log("  resetting current");
             for (var key in KeyBindings.mousetraps) {
-                console.log("  shelving: " + <KeyBinding> KeyBindings.mousetraps[key].getCombination());
+                //console.log("  shelving: " + <KeyBinding> KeyBindings.mousetraps[key].getCombination());
             }
 
 
@@ -65,7 +65,7 @@ module api_ui {
             KeyBindings.shelves.push(KeyBindings.mousetraps);
             KeyBindings.mousetraps = {};
 
-            console.log("}");
+            //console.log("}");
         }
 
         /*
@@ -73,21 +73,21 @@ module api_ui {
          */
         static unshelveBindings() {
 
-            console.log("unshelveBindings() {");
-            console.log(" resetting current");
-            console.log(" removing last shelf");
+            //console.log("unshelveBindings() {");
+            //console.log(" resetting current");
+            //console.log(" removing last shelf");
 
             Mousetrap.reset();
 
             var previousMousetraps = KeyBindings.shelves.pop();
             for (var key in previousMousetraps) {
                 var mousetrap:KeyBinding = <KeyBinding> previousMousetraps[key];
-                console.log("  binding: " + mousetrap.getCombination());
+                //console.log("  binding: " + mousetrap.getCombination());
                 Mousetrap.bind(mousetrap.getCombination(), mousetrap.getCallback(), mousetrap.getAction());
             }
             KeyBindings.mousetraps = previousMousetraps;
 
-            console.log("}");
+            //console.log("}");
         }
 
     }
