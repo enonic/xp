@@ -80,7 +80,7 @@ final class ScriptRunnerImpl
         }
         catch ( final RhinoException e )
         {
-            throw createError( e );
+            throw new EvaluationException( this.source, e );
         }
         finally
         {
@@ -103,13 +103,6 @@ final class ScriptRunnerImpl
         function.setScriptLoader( this.scriptLoader );
         function.setSource( this.source );
         function.install( this.scope );
-    }
-
-    private EvaluationException createError( final RhinoException cause )
-    {
-        final String name = cause.sourceName();
-        final ScriptSource source = this.scriptLoader.load( name );
-        return new EvaluationException( source, cause );
     }
 
     private void initializeScope( final Context context )

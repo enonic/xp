@@ -6,6 +6,7 @@ import java.util.Map;
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.JavaScriptException;
+import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptRuntime;
 import org.mozilla.javascript.Scriptable;
@@ -17,6 +18,7 @@ import com.google.common.collect.Maps;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
+import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
@@ -93,7 +95,14 @@ final class RequireFunction
             return exports;
         }
 
-        return doCall( cx, scope, source );
+        try
+        {
+            return doCall( cx, scope, source );
+        }
+        catch ( final RhinoException e )
+        {
+            throw new EvaluationException( source, e );
+        }
     }
 
     private ScriptSource resolveSource( final Context cx, final Scriptable scope, final String name )
