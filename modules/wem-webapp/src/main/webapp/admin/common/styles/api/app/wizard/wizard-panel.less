@@ -16,7 +16,7 @@
 
     .form-icon {
       float: left;
-      margin-top: 0px;
+      margin-top: 5px;
       margin-left: 25px;
       margin-right: 25px;
       margin-bottom: 0px;
@@ -31,12 +31,17 @@
         min-width: 200px;
         border:1px solid transparent;
         margin:0;
-        padding:0 1px;
+        padding:0;
         background-color:transparent;
+        min-height:0;
 
         &.large {
           min-width: 300px;
-          margin-bottom:5px;
+          font-size:32px;
+          margin-top:-5px;
+        }
+        &.middle {
+          margin-top:2px;
         }
         .input-glow();
       }
@@ -45,9 +50,9 @@
         float: left;
         height: 28px;
         line-height: 28px;
-        margin: 4px;
+        margin: 0 0 0 4px;
         max-width: 300px;
-        font-size: 18px;
+        font-size: 16px;
         color: @admin-light-gray-font;
         .ellipsis();
       }
