@@ -12,10 +12,14 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.support.tree.Tree;
 import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
 
@@ -29,6 +33,7 @@ public class ReindexService
 
     private ContentDao contentDao;
 
+
     private final static Logger LOG = LoggerFactory.getLogger( ReindexService.class );
 
     public void reindexContent()
@@ -36,6 +41,12 @@ public class ReindexService
     {
         Session session = jcrSessionProvider.login();
 
+        reindexContentWEM( session );
+        reindexContentNODB( session );
+    }
+
+    private void reindexContentWEM( final Session session )
+    {
         final Tree<Content> contentTree = contentDao.getContentTree( session );
 
         final Iterator<TreeNode<Content>> rootElementsIterator = contentTree.iterator();
@@ -53,9 +64,34 @@ public class ReindexService
         }
     }
 
-    public void reindexChildren( final TreeNode<Content> node )
+    private void reindexContentNODB( final Session session )
     {
-        final Iterator<TreeNode<Content>> iterator = node.getChildren().iterator();
+        final NodeJcrDao nodeJcrDao = new NodeJcrDao( session );
+
+        final Nodes allNodes = nodeJcrDao.getNodesByParentPath( NodePath.ROOT );
+
+        reindexNodes( allNodes, nodeJcrDao );
+    }
+
+    private void reindexNodes( final Nodes nodes, final NodeJcrDao nodeJcrDao )
+    {
+        final Iterator<Node> iterator = nodes.iterator();
+
+        while ( iterator.hasNext() )
+        {
+            final Node node = iterator.next();
+
+            LOG.info( "Reindex Node: " + node.name() );
+
+            indexService.indexNode( node );
+
+            reindexNodes( nodeJcrDao.getNodesByParentPath( node.path() ), nodeJcrDao );
+        }
+    }
+
+    private void reindexChildren( final TreeNode<Content> childContent )
+    {
+        final Iterator<TreeNode<Content>> iterator = childContent.getChildren().iterator();
 
         while ( iterator.hasNext() )
         {
@@ -122,4 +158,6 @@ public class ReindexService
     {
         this.indexService = indexService;
     }
+
+
 }

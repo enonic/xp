@@ -6,6 +6,7 @@ import javax.jcr.RepositoryException;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.serializer.RootDataSetJsonSerializer;
@@ -16,6 +17,7 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
+import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 
 class NodeJcrMapper
 {
@@ -86,9 +88,13 @@ class NodeJcrMapper
             builder.modifiedTime( getPropertyDateTime( jcrNode, MODIFIED_TIME ) );
             builder.entityIndexConfig( indexConfigJcrMapper.toEntityIndexConfig( jcrNode ) );
 
-            final String dataSetAsString = jcrNode.getProperty( ROOT_DATA_SET ).getString();
-            final DataSet dataSet = rootDataSetJsonSerializer.toObject( dataSetAsString );
-            builder.rootDataSet( dataSet.toRootDataSet() );
+            final String dataSetAsString = getPropertyString( jcrNode, ROOT_DATA_SET );
+            if ( !Strings.isNullOrEmpty( dataSetAsString ) )
+            {
+                final DataSet dataSet = rootDataSetJsonSerializer.toObject( dataSetAsString );
+                builder.rootDataSet( dataSet.toRootDataSet() );
+            }
+
             builder.attachments( attachmentsJcrMapper.toAttachments( jcrNode ) );
             return builder;
 
