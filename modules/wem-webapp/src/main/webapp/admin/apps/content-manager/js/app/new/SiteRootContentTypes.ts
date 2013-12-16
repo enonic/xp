@@ -7,12 +7,8 @@ module app_new {
         public static load(callback:(siteRootContentTypes:SiteRootContentTypes) => void) {
             var contentTypeByName:boolean[] = [];
 
-            new api_content_site_template.GetAllSiteTemplatesRequest().send()
-                .done( (response:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryListJson>) => {
-
-                //TODO: use getResult() after it is modified to return result
-                var responseJson:api_content_site_template_json.SiteTemplateSummaryListJson = response.getJson().result;
-                var siteTemplates:api_content_site_template.SiteTemplateSummary[] = api_content_site_template.SiteTemplateSummary.fromJsonArray(responseJson.siteTemplates);
+            new api_content_site_template.GetAllSiteTemplatesRequest().sendAndParse()
+                .done( (siteTemplates:api_content_site_template.SiteTemplateSummary[]) => {
 
                 siteTemplates.forEach((siteTemplate:api_content_site_template.SiteTemplateSummary) => {
                     contentTypeByName[siteTemplate.getRootContentType().toString()] = true;
