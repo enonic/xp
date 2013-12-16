@@ -8,6 +8,7 @@ import com.enonic.wem.portal.content.ContentResource;
 import com.enonic.wem.portal.exception.mapper.DefaultExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.EvaluationExceptionMapper;
 import com.enonic.wem.portal.exception.mapper.PortalWebExceptionMapper;
+import com.enonic.wem.portal.exception.mapper.WebApplicationExceptionMapper;
 import com.enonic.wem.portal.underscore.ImageResource;
 import com.enonic.wem.portal.underscore.PublicResource;
 import com.enonic.wem.portal.underscore.ServicesResource;
@@ -30,5 +31,6 @@ public final class PortalServlet
         addClass( EvaluationExceptionMapper.class );
         addClass( PortalWebExceptionMapper.class );
         addClass( DefaultExceptionMapper.class );
+        addClass( WebApplicationExceptionMapper.class );
     }
 }
