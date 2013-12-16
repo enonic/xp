@@ -72,7 +72,9 @@ public final class ContentResource
 
         final JsContext context = new JsContext();
         context.setContent( new JsContextContent( content ) );
-        context.setRequest( new JsHttpRequest( this.httpContext.getRequest() ) );
+        final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
+        request.setMode( this.mode );
+        context.setRequest( request );
 
         final JsController controller = this.controllerFactory.newController();
         controller.scriptDir( jsModuleResource );

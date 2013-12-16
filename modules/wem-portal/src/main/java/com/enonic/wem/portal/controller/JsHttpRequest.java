@@ -10,6 +10,8 @@ public final class JsHttpRequest
 
     private final MultivaluedMap<String, String> queryParameters;
 
+    private String mode;
+
     public JsHttpRequest( final HttpRequestContext raw )
     {
         this.raw = raw;
@@ -24,5 +26,15 @@ public final class JsHttpRequest
     public String param( final String name )
     {
         return queryParameters.getFirst( name );
+    }
+
+    public String getMode()
+    {
+        return mode;
+    }
+
+    public void setMode( final String mode )
+    {
+        this.mode = mode;
     }
 }
