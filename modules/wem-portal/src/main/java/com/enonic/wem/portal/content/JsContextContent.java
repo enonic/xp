@@ -15,4 +15,15 @@ public final class JsContextContent
     {
         return this.content.getDisplayName();
     }
+
+    public String getPath()
+    {
+        return this.content.getPath().toString();
+    }
+
+    public String getName()
+    {
+        return this.content.getName().toString();
+    }
+
 }
