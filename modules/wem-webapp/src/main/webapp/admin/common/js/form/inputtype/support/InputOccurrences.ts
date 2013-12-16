@@ -18,7 +18,7 @@ module api_form_inputtype_support {
             this.input = input;
             this.properties = properties;
 
-            if (properties != null) {
+            if (properties != null && properties.length > 0) {
                 this.constructOccurrencesForData();
             }
             else {
