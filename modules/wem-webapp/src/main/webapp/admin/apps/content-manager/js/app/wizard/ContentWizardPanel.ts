@@ -146,7 +146,6 @@ module app_wizard {
 
         renderExisting(content: api_content.Content) {
             super.renderExisting(content);
-            this.giveInitialFocus();
         }
 
         private enableDisplayNameScriptExecution(formView: api_form.FormView) {
