@@ -2725,7 +2725,7 @@ interface Ext_toolbar_Item extends Ext_Component {
 
     enable(silent?:boolean): void;
 
-    focus(selectText?:boolean, delay?:number): Ext_Component;
+    //focus(selectText?:boolean, delay?:number): Ext_Component;
 
 }
 

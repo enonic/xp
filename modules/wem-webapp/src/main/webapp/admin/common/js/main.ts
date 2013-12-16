@@ -2,8 +2,8 @@
  * Main file for all admin API classes and methods.
  */
 
-declare var Mousetrap;
-declare var Ext;
+declare var Mousetrap:MousetrapStatic;
+declare var Ext:Ext_Packages;
 declare var Admin;
 
 Ext.Loader.setConfig({

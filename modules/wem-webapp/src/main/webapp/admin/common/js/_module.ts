@@ -9,11 +9,13 @@
 ///<reference path='lib/Mousetrap.d.ts' />
 ///<reference path='lib/jquery.d.ts' />
 ///<reference path='lib/jqueryui.d.ts' />
+///<reference path='lib/jquery.simulate.d.ts' />
 ///<reference path='lib/codemirror.d.ts' />
 ///<reference path='lib/slickgrid.d.ts' />
 ///<reference path='lib/slickgrid-plugins.d.ts' />
 ///<reference path='lib/hasher.d.ts' />
 ///<reference path='lib/crossroads.d.ts' />
+
 
 ///<reference path='util/_module.ts' />
 

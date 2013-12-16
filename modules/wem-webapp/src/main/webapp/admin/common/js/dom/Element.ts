@@ -254,7 +254,7 @@ module api_dom {
         private mouseEnterLeave(elem:HTMLElement, type:string, handler:(e:MouseEvent)=>any) {
             var mouseEnter = type === 'mouseenter',
                 ie = mouseEnter ? 'fromElement' : 'toElement',
-                mouseEventHandler = (e:MouseEvent) => {
+                mouseEventHandler = (e:any) => { //Had use any since window.event isn't of type MouseEvent and caused compiler to bug
                     e = e || window.event;
                     var target:HTMLElement = <HTMLElement> (e.target || e.srcElement),
                         related:HTMLElement = <HTMLElement> (e.relatedTarget || e[ie]);

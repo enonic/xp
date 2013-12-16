@@ -22,7 +22,7 @@ module app_contextwindow_image {
         }
 
         private buildRow(row, cell, data, columnDef, dataContext):api_dom.DivEl {
-            var row = new api_dom.DivEl();
+            var rowEl = new api_dom.DivEl();
 
             var image = new api_dom.ImgEl(dataContext.getIconUrl());
 
@@ -32,11 +32,11 @@ module app_contextwindow_image {
             var subtitle = new api_dom.H6El();
             subtitle.getEl().setInnerHtml(api_util.limitString(dataContext.path.refString, 43));
 
-            row.appendChild(image);
-            row.appendChild(title);
-            row.appendChild(subtitle);
+            rowEl.appendChild(image);
+            rowEl.appendChild(title);
+            rowEl.appendChild(subtitle);
 
-            return row;
+            return rowEl;
         }
 
     }

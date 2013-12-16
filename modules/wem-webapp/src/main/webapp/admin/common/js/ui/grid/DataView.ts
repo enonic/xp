@@ -5,7 +5,7 @@ module api_ui_grid {
         private slickDataView:Slick.Data.DataView<T>;
 
         constructor() {
-            this.slickDataView = new Slick.Data.DataView({ inlineFilters: true });
+            this.slickDataView = new Slick.Data.DataView<T>({ inlineFilters: true });
         }
 
         slick():Slick.Data.DataView<T> {

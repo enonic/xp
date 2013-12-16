@@ -27,7 +27,7 @@ module app_view {
                         new api_content.DeleteContentRequest()
                             .addContentPath(contentToDelete.getPath())
                             .send()
-                            .done((jsonResponse:api_rest.JsonResponse) => {
+                            .done((jsonResponse:api_rest.JsonResponse<any>) => {
                                 var json = jsonResponse.getJson();
 
                                 if (json.successes && json.successes.length > 0) {

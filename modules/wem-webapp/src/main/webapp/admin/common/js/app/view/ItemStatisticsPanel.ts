@@ -27,7 +27,7 @@ module api_app_view {
 
             this.actionMenu = itemStatisticsPanelParams.actionMenu;
 
-            this.header = new ItemStatisticsHeader(itemStatisticsPanelParams.actionMenu);
+            this.header = new ItemStatisticsHeader<M>(itemStatisticsPanelParams.actionMenu);
             this.appendChild(this.header);
 
             this.addNavigation();

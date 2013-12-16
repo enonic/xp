@@ -29,10 +29,10 @@ module api_form_formitemset {
             new FormItemSetOccurrences(this.getContext(), this.occurrenceViewsContainer, formItemSet, dataSets);
             this.formItemSetOccurrences.layout();
             this.formItemSetOccurrences.addListener(<api_form.FormItemOccurrencesListener>{
-                onOccurrenceAdded: (occurrenceAdded: api_form.FormItemOccurrence) => {
+                onOccurrenceAdded: (occurrenceAdded: api_form.FormItemOccurrence<any>) => {
                     this.refresh();
                 },
-                onOccurrenceRemoved: (occurrenceRemoved: api_form.FormItemOccurrence) => {
+                onOccurrenceRemoved: (occurrenceRemoved: api_form.FormItemOccurrence<any>) => {
                     this.refresh();
                 }
             });

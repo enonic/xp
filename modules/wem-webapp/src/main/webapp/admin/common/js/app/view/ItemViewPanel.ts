@@ -8,7 +8,7 @@ module api_app_view {
 
         private browseItem:ViewItem<M>;
 
-        private listeners:ItemViewPanelListener[] = [];
+        private listeners:ItemViewPanelListener<M>[] = [];
 
         constructor(toolbar:api_ui_toolbar.Toolbar, panel:api_ui.Panel) {
             super("ItemViewPanel");
