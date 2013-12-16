@@ -28,9 +28,9 @@ module api_schema_content {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_content_page.PageTemplate> {
+        sendAndParse(): JQueryPromise<api_schema_content.ContentType> {
 
-            var deferred = jQuery.Deferred<api_schema_content_json.ContentTypeJson>();
+            var deferred = jQuery.Deferred<api_schema_content.ContentType>();
 
             this.send().done((response: api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
                 deferred.resolve(this.fromJsonToContentType(response.getResult()));
