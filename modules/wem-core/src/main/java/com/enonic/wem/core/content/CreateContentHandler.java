@@ -139,10 +139,7 @@ public class CreateContentHandler
     {
         final Content.Builder builder = Content.newContent();
 
-        final ContentName contentName = command.isDraft() ? createDraftName() : resolveName( command.getName() );
-
-        builder.name( command.getName() );
-
+        builder.name( resolveName( command.getName() ) );
         builder.parentPath( resolveParentContentPath() );
         builder.embedded( command.isEmbed() );
         builder.displayName( command.getDisplayName() );
@@ -156,11 +153,6 @@ public class CreateContentHandler
         builder.draft( command.isDraft() );
 
         return builder.build();
-    }
-
-    private ContentName createDraftName()
-    {
-        return ContentName.from( "__draft__" + UUID.randomUUID().toString() );
     }
 
     private ContentName resolveName( final ContentName name )
