@@ -3,7 +3,6 @@ package com.enonic.wem.core.content;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
-import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -170,14 +169,6 @@ public class CreateContentHandler
 
     private ContentPath resolveParentContentPath()
     {
-        if ( command.isEmbed() )
-        {
-            // How to ensure that this path exists?
-            final ContentPath embeddedContentPath = ContentPath.from( command.getParentContentPath(), "__embedded" );
-
-            return embeddedContentPath;
-        }
-
         return command.getParentContentPath();
     }
 

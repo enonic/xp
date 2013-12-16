@@ -25,7 +25,7 @@ public class UpdateNodeArgs
         this.nodeToUpdate = builder.nodeToUpdate;
         this.name = builder.name;
         this.rootDataSet = builder.rootDataSet;
-        this.attachments = builder.attachments;
+        this.attachments = builder.attachments != null ? builder.attachments : Attachments.empty();
     }
 
     UserKey updater()

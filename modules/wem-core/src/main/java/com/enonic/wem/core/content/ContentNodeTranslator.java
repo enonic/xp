@@ -2,6 +2,7 @@ package com.enonic.wem.core.content;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
+import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
@@ -100,7 +101,7 @@ public class ContentNodeTranslator
             editor( editor );
     }
 
-    public NodeEditor toNodeEditor( final Content content )
+    public NodeEditor toNodeEditor( final Content content, final UpdateContent updateContentCommand )
     {
         final RootDataSet rootDataSet = createRootDataSetForEditor( content );
 
@@ -111,6 +112,7 @@ public class ContentNodeTranslator
             {
                 return Node.editNode( toBeEdited ).
                     name( NodeName.from( content.getName().toString() ) ).
+                    attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( updateContentCommand.getAttachments() ) ).
                     rootDataSet( rootDataSet );
             }
         };

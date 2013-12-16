@@ -70,12 +70,12 @@ public class NodeJcrDao
 
     private javax.jcr.Node findJcrParentNode( final CreateNodeArguments createNodeArguments )
     {
-        final javax.jcr.Node parentJcrNode = jcrHelper.getNodeByPath( createNodeArguments.parent() );
-
         if ( createNodeArguments.embed() )
         {
             return getEmbeddedNodePath( createNodeArguments );
         }
+
+        final javax.jcr.Node parentJcrNode = jcrHelper.getNodeByPath( createNodeArguments.parent() );
 
         return parentJcrNode;
     }
