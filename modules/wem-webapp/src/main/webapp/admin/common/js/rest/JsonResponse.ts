@@ -21,8 +21,20 @@ module api_rest {
             return this.json;
         }
 
+        hasResult():boolean {
+            if( this.json == undefined || this.json == null ) {
+                return false;
+            }
+            return true;
+        }
+
         getResult():T {
-            return <T>this.json;
+            if( this.json.result ) {
+                return <T>this.json.result;
+            }
+            else {
+                return <T>this.json;
+            }
         }
     }
 }
