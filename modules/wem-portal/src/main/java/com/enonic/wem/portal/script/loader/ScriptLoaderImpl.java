@@ -5,6 +5,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 import com.google.common.base.Throwables;
 
@@ -14,16 +15,16 @@ import com.enonic.wem.core.module.ModuleResourcePathResolver;
 public final class ScriptLoaderImpl
     implements ScriptLoader
 {
-    private final static String BASE_CLASSPATH = "js/lib";
+    private final static String BASE_CLASSPATH = "WEB-INF/js/lib/";
 
-    private final ClassLoader classLoader;
+    private final ServletContext context;
 
     private final ModuleResourcePathResolver pathResolver;
 
     @Inject
-    public ScriptLoaderImpl( final ModuleResourcePathResolver pathResolver )
+    public ScriptLoaderImpl( final ServletContext context, final ModuleResourcePathResolver pathResolver )
     {
-        this.classLoader = getClass().getClassLoader();
+        this.context = context;
         this.pathResolver = pathResolver;
     }
 
@@ -43,14 +44,14 @@ public final class ScriptLoaderImpl
     @Override
     public ScriptSource loadFromSystem( final String name )
     {
-        final URL url = this.classLoader.getResource( BASE_CLASSPATH + name );
-        if ( url == null )
-        {
-            return null;
-        }
-
         try
         {
+            final URL url = this.context.getResource( BASE_CLASSPATH + name );
+            if ( url == null )
+            {
+                return null;
+            }
+
             return new ScriptSourceImpl( name, url.toURI(), null );
         }
         catch ( final Exception e )

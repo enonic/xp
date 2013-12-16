@@ -34,8 +34,6 @@ final class ScriptRunnerImpl
 
     protected JsApiBridge apiBridge;
 
-    protected Scriptable globalScope;
-
     protected Provider<RootRuntimeObject> rootRuntimeObjects;
 
     public ScriptRunnerImpl()
@@ -107,10 +105,7 @@ final class ScriptRunnerImpl
 
     private void initializeScope( final Context context )
     {
-        this.scope = context.newObject( this.globalScope );
-        this.scope.setPrototype( this.globalScope );
-        this.scope.setParentScope( null );
-
+        this.scope = context.initStandardObjects();
         final RootRuntimeObject runtime = this.rootRuntimeObjects.get();
         runtime.setModule( this.source.getModule() );
         runtime.setScope( this.scope );

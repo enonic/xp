@@ -1,7 +1,6 @@
 package com.enonic.wem.portal.script.runtime;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 
 import javax.inject.Inject;
@@ -21,8 +20,6 @@ public final class RootRuntimeObject
     private Scriptable scope;
 
     private ModuleKey moduleKey;
-
-    private Path modulePath;
 
     @Inject
     protected ModuleResourcePathResolver moduleResourcePathResolver;
