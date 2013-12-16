@@ -27,6 +27,8 @@ module app_wizard {
         constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content,
                     persistedContent: api_content.Content, site: api_content.Content) {
 
+            console.log("ContentWizardPanel.constructor started");
+
             this.persistAsDraft = true;
             this.parentContent = parentContent;
             // TODO: getNearestSite nearest site:
@@ -96,13 +98,16 @@ module app_wizard {
             });
 
             this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
-            if (contentType.getContentDisplayNameScript()) {
+            if (contentType.hasContentDisplayNameScript()) {
                 this.displayNameScriptExecutor.setScript(contentType.getContentDisplayNameScript());
             }
+
+            console.log("ContentWizardPanel.constructor finished");
         }
 
         giveInitialFocus() {
-            if (!this.contentType.hasContentDisplayNameScript()) {
+            console.log("ContentWizardPanel.giveInitialFocus");
+            if (this.contentType.hasContentDisplayNameScript() || this.isRenderingNew()) {
                 this.contentWizardHeader.giveFocus();
             }
             else {
@@ -127,29 +132,19 @@ module app_wizard {
         }
 
         renderNew() {
+            console.log("ContentWizardPanel.renderNew");
+            super.renderNew();
 
             this.persistNewItem((createdContent: api_content.Content) => {
 
-                super.renderNew();
-                var formContext = new api_form.FormContextBuilder().
-                    setParentContent(this.parentContent).
-                    setPersistedContent(createdContent).
-                    build();
-
-                this.contentWizardStepForm.renderNew(formContext, this.contentType.getForm());
-                // TODO: GetPageTemplateRequest use descriptor config form
-                this.pageWizardStepForm.renderNew();
-                this.livePanel.renderNew();
-
-                this.giveInitialFocus();
-
                 this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+                this.giveInitialFocus();
             });
         }
 
-        private enableDisplayNameScriptExecution(formView: api_form.FormView) {
+        private enableDisplayNameScriptExecution(formView:api_form.FormView) {
 
-            if (this.contentType.hasContentDisplayNameScript()) {
+            if( this.contentType.hasContentDisplayNameScript() ) {
                 formView.getEl().addEventListener("keyup", (e) => {
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                     var displayName = this.displayNameScriptExecutor.execute();
@@ -174,7 +169,6 @@ module app_wizard {
                 setPersistedContent(content).
                 build();
             this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
-            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
             if (content.isPage()) {
                 var page = content.getPage();
