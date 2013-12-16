@@ -146,6 +146,7 @@ module app_wizard {
 
         renderExisting(content: api_content.Content) {
             super.renderExisting(content);
+            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
         }
 
         private enableDisplayNameScriptExecution(formView: api_form.FormView) {
@@ -163,9 +164,6 @@ module app_wizard {
             super.setPersistedItem(content);
 
             this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString());
-            // setup displayName and name to be generated automatically
-            // if corresponding values are empty
-            this.contentWizardHeader.setAutogenerateName(!content.getName());
 
             this.formIcon.setSrc(content.getIconUrl());
             var contentData: api_content.ContentData = content.getContentData();

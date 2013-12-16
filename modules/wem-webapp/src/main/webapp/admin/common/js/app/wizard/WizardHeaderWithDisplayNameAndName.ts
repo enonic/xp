@@ -63,6 +63,10 @@ module api_app_wizard {
 
         initNames(displayName:string,name:string) {
 
+            if( displayName == name || name == this.generateName(displayName)) {
+                this.autogenerateName = true;
+            }
+
             this.displayNameEl.setValue(displayName);
             if( name != null ) {
                 this.nameEl.setValue(name);
