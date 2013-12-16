@@ -79,7 +79,7 @@ module api_content {
         getParams(): Object {
             return {
                 draft: this.draft,
-                name: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.toString(),
+                name: this.name.isUnnamed() ? this.name.toUnnamed().toStringIncludingHidden() : this.name.toString(),
                 parent: this.parent.toString(),
                 embed: this.embed,
                 contentType: this.contentType.toString(),
