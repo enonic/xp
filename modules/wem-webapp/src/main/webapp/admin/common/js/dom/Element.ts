@@ -148,7 +148,8 @@ module api_dom {
                 return false;
             }
             this.el.focuse();
-            return true;
+            var gotFocus:boolean = document.activeElement == this.el.getHTMLElement();
+            return gotFocus;
         }
 
         getHTMLElement():HTMLElement {
