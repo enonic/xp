@@ -58,7 +58,7 @@ public class PageResourceTest
         assertJson( "update_page_success.json", jsonString );
     }
 
-    @Test
+    @Test(expected = ContentNotFoundException.class)
     public void update_page_failure()
         throws Exception
     {

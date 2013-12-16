@@ -1,72 +1,52 @@
 {
-    "error": null,
-    "result": {
-        "contents": [
-            {
-                "id": "aaa"
-            },
-            {
-                "id": "bbb"
-            }
-        ],
-        "facets": [
-            {
-                "_type": "terms",
-                "entries": [
-                    {
-                        "count": 5,
-                        "displayName": "folder",
-                        "name": "folder"
-                    },
-                    {
-                        "count": 24,
-                        "displayName": "image",
-                        "name": "image"
-                    },
-                    {
-                        "count": 4,
-                        "displayName": "space",
-                        "name": "space"
-                    }
-                ],
-                "name": "contentType"
-            },
-            {
-                "_type": "terms",
-                "entries": [
-                    {
-                        "count": 30,
-                        "displayName": "bildearkiv",
-                        "name": "bildearkiv"
-                    },
-                    {
-                        "count": 1,
-                        "displayName": "bluman trampoliner",
-                        "name": "bluman trampoliner"
-                    },
-                    {
-                        "count": 1,
-                        "displayName": "bluman intranett",
-                        "name": "bluman intranett"
-                    }
-                ],
-                "name": "space"
-            },
-            {
-                "_type": "query",
-                "count": 0,
-                "name": "< 1 hour"
-            },
-            {
-                "_type": "query",
-                "count": 0,
-                "name": "< 1 week"
-            },
-            {
-                "_type": "query",
-                "count": 0,
-                "name": "< 1 day"
-            }
-        ]
-    }
+  "contents" : [ {
+    "id" : "aaa"
+  }, {
+    "id" : "bbb"
+  } ],
+  "facets" : [ {
+    "_type" : "terms",
+    "entries" : [ {
+      "count" : 5,
+      "displayName" : "folder",
+      "name" : "folder"
+    }, {
+      "count" : 24,
+      "displayName" : "image",
+      "name" : "image"
+    }, {
+      "count" : 4,
+      "displayName" : "space",
+      "name" : "space"
+    } ],
+    "name" : "contentType"
+  }, {
+    "_type" : "terms",
+    "entries" : [ {
+      "count" : 30,
+      "displayName" : "bildearkiv",
+      "name" : "bildearkiv"
+    }, {
+      "count" : 1,
+      "displayName" : "bluman trampoliner",
+      "name" : "bluman trampoliner"
+    }, {
+      "count" : 1,
+      "displayName" : "bluman intranett",
+      "name" : "bluman intranett"
+    } ],
+    "name" : "space"
+  }, {
+    "_type" : "query",
+    "count" : 0,
+    "name" : "< 1 hour"
+  }, {
+    "_type" : "query",
+    "count" : 0,
+    "name" : "< 1 week"
+  }, {
+    "_type" : "query",
+    "count" : 0,
+    "name" : "< 1 day"
+  } ]
 }

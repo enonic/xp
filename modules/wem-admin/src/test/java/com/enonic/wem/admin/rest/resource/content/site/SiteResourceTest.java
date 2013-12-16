@@ -47,7 +47,7 @@ public class SiteResourceTest
         DateTimeUtils.setCurrentMillisSystem();
     }
 
-    @Test
+    @Test(expected = ContentNotFoundException.class)
     public void create_site_failure()
         throws Exception
     {
@@ -55,11 +55,9 @@ public class SiteResourceTest
 
         Mockito.when( client.execute( Mockito.isA( CreateSite.class ) ) ).thenThrow( new ContentNotFoundException( content.getId() ) );
 
-        String jsonString = resource().path( "content/site/create" ).
+        resource().path( "content/site/create" ).
             entity( readFromFile( "create_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
-
-        assertJson( "create_site_failure.json", jsonString );
     }
 
     @Test
@@ -77,7 +75,7 @@ public class SiteResourceTest
         assertJson( "create_site_success.json", jsonString );
     }
 
-    @Test
+    @Test(expected = ContentNotFoundException.class)
     public void update_site_failure()
         throws Exception
     {
@@ -107,7 +105,7 @@ public class SiteResourceTest
         assertJson( "update_site_success.json", jsonString );
     }
 
-    @Test
+    @Test(expected = ContentNotFoundException.class)
     public void delete_site_failure()
         throws Exception
     {
@@ -115,11 +113,9 @@ public class SiteResourceTest
 
         Mockito.when( client.execute( Mockito.isA( DeleteSite.class ) ) ).thenThrow( new ContentNotFoundException( content.getId() ) );
 
-        String jsonString = resource().path( "content/site/delete" ).
+        resource().path( "content/site/delete" ).
             entity( readFromFile( "delete_site_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post( String.class );
-
-        assertJson( "delete_site_failure.json", jsonString );
     }
 
     @Test

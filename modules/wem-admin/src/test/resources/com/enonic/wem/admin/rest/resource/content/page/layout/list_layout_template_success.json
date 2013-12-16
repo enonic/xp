@@ -1,24 +1,18 @@
 {
-    "error": null,
-    "result": {
-        "templates": [
-            {
-                "deletable": true,
-                "descriptorModuleResourceKey": "module1-1.0.0:/components/layout1-template.xml",
-                "displayName": "Layout1 template",
-                "editable": true,
-                "key": "sitetemplate-1.0.0|module1-1.0.0|layout1",
-                "name": "layout1"
-            },
-            {
-                "deletable": true,
-                "descriptorModuleResourceKey": "module2-1.0.0:/components/layout2-template.xml",
-                "displayName": "Layout2 template",
-                "editable": true,
-                "key": "sitetemplate-1.0.0|module2-1.0.0|layout2",
-                "name": "layout2"
-            }
-        ],
-        "total": 2
-    }
+  "templates" : [ {
+    "deletable" : true,
+    "descriptorModuleResourceKey" : "module1-1.0.0:/components/layout1-template.xml",
+    "displayName" : "Layout1 template",
+    "editable" : true,
+    "key" : "sitetemplate-1.0.0|module1-1.0.0|layout1",
+    "name" : "layout1"
+  }, {
+    "deletable" : true,
+    "descriptorModuleResourceKey" : "module2-1.0.0:/components/layout2-template.xml",
+    "displayName" : "Layout2 template",
+    "editable" : true,
+    "key" : "sitetemplate-1.0.0|module2-1.0.0|layout2",
+    "name" : "layout2"
+  } ],
+  "total" : 2
 }

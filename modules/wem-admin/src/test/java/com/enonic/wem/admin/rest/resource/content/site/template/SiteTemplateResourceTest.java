@@ -38,6 +38,7 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.api.content.site.Vendor;
+import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleResourceKey;
@@ -118,7 +119,7 @@ public class SiteTemplateResourceTest
         assertJson( "delete_site_template_success.json", response );
     }
 
-    @Test
+    @Test(expected = NoSiteTemplateExistsException.class)
     public void testDeleteNonExistingSiteTemplate()
         throws Exception
     {
@@ -184,21 +185,20 @@ public class SiteTemplateResourceTest
         assertJson( "get_site_template_by_key_success.json", response );
     }
 
-    @Test
+    @Test(expected = SiteTemplateNotFoundException.class)
     public void testGetSiteTemplateMissing()
         throws Exception
     {
         final SiteTemplateKey siteTemplate = SiteTemplateKey.from( "blueman-1.0.0" );
         Mockito.when( client.execute( Mockito.isA( GetSiteTemplateByKey.class ) ) ).thenThrow(
             new SiteTemplateNotFoundException( siteTemplate ) );
-        String response = resource().
+        resource().
             path( "content/site/template" ).
             queryParam( "siteTemplateKey", siteTemplate.toString() ).
             get( String.class );
-        assertJson( "get_site_template_by_key_failure.json", response );
     }
 
-    @Test
+    @Test(expected = SystemException.class)
     public void import_site_template_exception()
         throws Exception
     {

@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.rest.resource.content.page.image;
 
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -10,7 +12,6 @@ import com.enonic.wem.admin.json.content.page.image.ImageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.image.ImageTemplateJson;
 import com.enonic.wem.admin.json.content.page.image.ImageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
-import com.enonic.wem.admin.rest.resource.Result;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplateByKey;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
@@ -27,39 +28,26 @@ public class ImageTemplateResource
     extends AbstractResource
 {
     @GET
-    public Result getByKey( @QueryParam("key") final String imageTemplateKeyAsString )
+    public ImageTemplateJson getByKey( @QueryParam("key") final String imageTemplateKeyAsString )
+        throws IOException
     {
-        try
-        {
-            final ImageTemplateKey imageTemplateKey = ImageTemplateKey.from( imageTemplateKeyAsString );
-            final GetImageTemplateByKey command = page().template().image().getByKey().
-                key( imageTemplateKey );
+        final ImageTemplateKey imageTemplateKey = ImageTemplateKey.from( imageTemplateKeyAsString );
+        final GetImageTemplateByKey command = page().template().image().getByKey().
+            key( imageTemplateKey );
 
-            final ImageTemplate imageTemplate = client.execute( command );
-            final ImageDescriptor descriptor = ImageDescriptorResource.getDescriptor( imageTemplate.getDescriptor(), client );
-            return Result.result( new ImageTemplateJson( imageTemplate, new ImageDescriptorJson( descriptor ) ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        final ImageTemplate imageTemplate = client.execute( command );
+        final ImageDescriptor descriptor = ImageDescriptorResource.getDescriptor( imageTemplate.getDescriptor(), client );
+        return new ImageTemplateJson( imageTemplate, new ImageDescriptorJson( descriptor ) );
     }
 
     @GET
     @Path("list")
-    public Result listImageTemplatesBySiteTemplate( @QueryParam("key") final String siteTemplateKeyAsString )
+    public ImageTemplateListJson listImageTemplatesBySiteTemplate( @QueryParam("key") final String siteTemplateKeyAsString )
     {
-        try
-        {
-            final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
-            final GetImageTemplatesBySiteTemplate listCommand = page().template().image().getBySiteTemplate().
-                siteTemplate( siteTemplateKey );
-            final ImageTemplates imageTemplates = client.execute( listCommand );
-            return Result.result( new ImageTemplateListJson( imageTemplates ) );
-        }
-        catch ( Exception e )
-        {
-            return Result.exception( e );
-        }
+        final SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
+        final GetImageTemplatesBySiteTemplate listCommand = page().template().image().getBySiteTemplate().
+            siteTemplate( siteTemplateKey );
+        final ImageTemplates imageTemplates = client.execute( listCommand );
+        return new ImageTemplateListJson( imageTemplates );
     }
 }

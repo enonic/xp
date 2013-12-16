@@ -14,12 +14,8 @@ module app_delete {
                 var deleteRequest = new api_content_site_template.DeleteSiteTemplateRequest(key);
                 deleteRequest.send().done((resp: api_rest.JsonResponse) => {
                     var respJson = resp.getJson();
-                    if (respJson.error) {
-                        api_notify.showError('The Site Template was not deleted: ' + respJson.error.message);
-                    } else {
-                        api_notify.showFeedback('Site Template \'' + respJson.result + '\' was deleted');
-                        new api_content_site_template.SiteTemplateDeletedEvent(api_content_site_template.SiteTemplateKey.fromString(respJson.result)).fire();
-                    }
+                    api_notify.showFeedback('Site Template \'' + respJson.result + '\' was deleted');
+                    new api_content_site_template.SiteTemplateDeletedEvent(api_content_site_template.SiteTemplateKey.fromString(respJson.result)).fire();
                     this.close();
                 }).fail(() => {
                         this.close();
