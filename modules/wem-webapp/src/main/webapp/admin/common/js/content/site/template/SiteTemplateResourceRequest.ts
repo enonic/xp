@@ -13,5 +13,14 @@ module api_content_site_template {
         getResourcePath():api_rest.Path {
             return this.resourcePath;
         }
+
+        fromJsonArrayToSiteTemplateSummaryArray(jsonArray:api_content_site_template_json.SiteTemplateSummaryJson[]) : api_content_site_template.SiteTemplateSummary[] {
+
+            var summaryArray: api_content_site_template.SiteTemplateSummary[] = [];
+            jsonArray.forEach((summaryJson:api_content_site_template_json.SiteTemplateSummaryJson) => {
+                summaryArray.push(new api_content_site_template.SiteTemplateSummary(summaryJson));
+            });
+            return summaryArray;
+        }
     }
 }
