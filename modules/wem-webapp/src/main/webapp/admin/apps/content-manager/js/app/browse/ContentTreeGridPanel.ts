@@ -78,16 +78,18 @@ module app_browse {
         }
 
         private nameRenderer(value, metaData, record, rowIndex, colIndex, store, view) {
+            var content = record.data;
             // typescript swears when extracting this as the class field
-            var nameTemplate = '<div class="admin-{0}-thumbnail">' +
+            var nameTemplate = '<div class="admin-{0}-thumbnail' + (content.isSite ? ' site' : '') +  '">' +
                                '<img src="{1}"/>' +
+                               '<span class="overlay"></span>' +
                                '</div>' +
                                '<div class="admin-{0}-description">' +
                                '<h6>{2}</h6>' +
                                '<p>{3}</p>' +
                                '</div>';
 
-            var content = record.data;
+            console.log(content);
             var activeListType = this.getActiveList().getItemId();
             return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.path);
         }

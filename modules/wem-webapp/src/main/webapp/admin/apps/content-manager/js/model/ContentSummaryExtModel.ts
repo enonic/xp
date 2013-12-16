@@ -9,6 +9,7 @@ Ext.define('Admin.model.contentManager.ContentSummaryModel', {
         { name: 'deletable', type: 'boolean' },
         { name: 'hasChildren', type: 'boolean', defaultValue: false },
         { name: 'isRoot', type: 'boolean', defaultValue: false },
+        { name: 'isSite', type: 'boolean', defaultValue: false },
         {
             name: 'leaf', // property needed for ContentTreeStore
             type: 'boolean',
