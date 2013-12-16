@@ -25,7 +25,7 @@ module app_wizard {
         private persistAsDraft: boolean;
 
         constructor(tabId: api_app.AppBarTabId, contentType: api_schema_content.ContentType, parentContent: api_content.Content,
-                    persistedContent:api_content.Content, site: api_content.Content) {
+                    persistedContent: api_content.Content, site: api_content.Content) {
 
             this.persistAsDraft = true;
             this.parentContent = parentContent;
@@ -147,13 +147,15 @@ module app_wizard {
             });
         }
 
-        private enableDisplayNameScriptExecution(formView:api_form.FormView) {
+        private enableDisplayNameScriptExecution(formView: api_form.FormView) {
 
-            formView.getEl().addEventListener("keyup", (e) => {
-                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-                var displayName = this.displayNameScriptExecutor.execute();
-                this.contentWizardHeader.setDisplayName(displayName);
-            });
+            if (this.contentType.hasContentDisplayNameScript()) {
+                formView.getEl().addEventListener("keyup", (e) => {
+                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                    var displayName = this.displayNameScriptExecutor.execute();
+                    this.contentWizardHeader.setDisplayName(displayName);
+                });
+            }
         }
 
         setPersistedItem(content: api_content.Content) {
