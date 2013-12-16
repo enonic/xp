@@ -27,12 +27,13 @@ module app_view {
                         new api_content.DeleteContentRequest()
                             .addContentPath(contentToDelete.getPath())
                             .send()
-                            .done((jsonResponse:api_rest.JsonResponse) => {
-                                var json = jsonResponse.getJson();
+                            .done((jsonResponse:api_rest.JsonResponse<api_content.DeleteContentResult>) => {
+                                var result = jsonResponse.getResult();
 
-                                if (json.successes && json.successes.length > 0) {
-                                    var path = json.successes[0].path;
+                                if (result.successes && result.successes.length > 0) {
+                                    var path = result.successes[0].path;
                                     api_notify.showFeedback('Content [' + path + '] deleted!');
+
                                     new api_content.ContentDeletedEvent([contentToDelete]).fire();
                                 }
                                 });
