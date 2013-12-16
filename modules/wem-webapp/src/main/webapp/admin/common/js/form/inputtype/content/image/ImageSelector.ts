@@ -137,8 +137,11 @@ module api_form_inputtype_content_image {
             // TODO:
         }
 
-        giveFocus() {
-            this.comboBox.giveFocus()
+        giveFocus(): boolean {
+            if (this.comboBox.maximumOccurrencesReached()) {
+                return false;
+            }
+            return this.comboBox.giveFocus();
         }
 
         createAndAddOccurrence() {

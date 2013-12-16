@@ -61,10 +61,19 @@ module api_form_layout {
                 layout(dataSet);
         }
 
-        giveFocus() {
+        giveFocus(): boolean {
+
+            var focusGiven = false;
             if( this.formItemViews.length > 0 ) {
-                this.formItemViews[0].giveFocus();
+                for (var i = 0; i < this.formItemViews.length; i++) {
+                    if(this.formItemViews[i].giveFocus() ) {
+                        focusGiven = true;
+                        break;
+                    }
+                }
+
             }
+            return focusGiven;
         }
     }
 }

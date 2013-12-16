@@ -140,8 +140,15 @@ module api_dom {
             return this.el;
         }
 
-        focus() {
+        giveFocus() : boolean  {
+            if( !this.isVisible() ) {
+                return false;
+            }
+            if( this.el.isDisabled() ) {
+                return false;
+            }
             this.el.focuse();
+            return true;
         }
 
         getHTMLElement():HTMLElement {

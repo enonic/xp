@@ -214,6 +214,7 @@ module api_app_wizard {
             console.log("        - > setPersistedItem");
             this.renderingNew = false;
             this.setPersistedItem(item);
+            this.giveInitialFocus();
         }
 
         setPersistedItem(item: T) {

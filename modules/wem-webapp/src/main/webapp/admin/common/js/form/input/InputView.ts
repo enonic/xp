@@ -113,8 +113,8 @@ module api_form_input {
             return this.getData().length >= this.input.getOccurrences().getMaximum();
         }
 
-        giveFocus() {
-            this.inputTypeView.giveFocus();
+        giveFocus(): boolean {
+            return this.inputTypeView.giveFocus();
         }
     }
 }

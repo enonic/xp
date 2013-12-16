@@ -2,15 +2,15 @@ module api_form {
 
     export class FormView extends api_ui.Panel {
 
-        private context:FormContext;
+        private context: FormContext;
 
-        private form:Form;
+        private form: Form;
 
-        private contentData:api_content.ContentData;
+        private contentData: api_content.ContentData;
 
-        private formItemViews:FormItemView[] = [];
+        private formItemViews: FormItemView[] = [];
 
-        constructor(context:FormContext, form:Form, contentData?:api_content.ContentData) {
+        constructor(context: FormContext, form: Form, contentData?: api_content.ContentData) {
             super("FormView");
             this.setClass("form-view");
             this.context = context;
@@ -20,22 +20,22 @@ module api_form {
         }
 
         private doLayout() {
-            this.formItemViews =  new FormItemLayer().
+            this.formItemViews = new FormItemLayer().
                 setFormContext(this.context).
                 setFormItems(this.form.getFormItems()).
                 setParentElement(this).
                 layout(this.contentData);
         }
 
-        public getValueAtPath(path:api_data.DataPath):api_data.Value {
-            if( path == null ) {
+        public getValueAtPath(path: api_data.DataPath): api_data.Value {
+            if (path == null) {
                 throw new Error("To get a value, a path is required");
             }
-            if( path.elementCount() == 0 ) {
+            if (path.elementCount() == 0) {
                 throw new Error("Cannot get value from empty path: " + path.toString());
             }
 
-            if( path.elementCount() == 1 ){
+            if (path.elementCount() == 1) {
                 return this.getValue(path.getFirstElement().toDataId());
             }
             else {
@@ -43,67 +43,67 @@ module api_form {
             }
         }
 
-        public getValue(dataId:api_data.DataId):api_data.Value{
+        public getValue(dataId: api_data.DataId): api_data.Value {
 
-            var inputView = this.getInputView( dataId.getName() );
-            if( inputView == null ) {
+            var inputView = this.getInputView(dataId.getName());
+            if (inputView == null) {
                 return null;
             }
             return inputView.getValue(dataId.getArrayIndex());
         }
 
-        private forwardGetValueAtPath(path:api_data.DataPath):api_data.Value{
+        private forwardGetValueAtPath(path: api_data.DataPath): api_data.Value {
 
-            var dataId:api_data.DataId = path.getFirstElement().toDataId();
-            var formItemSetView = this.getFormItemSetView( dataId.getName() );
-            if( formItemSetView == null ) {
+            var dataId: api_data.DataId = path.getFirstElement().toDataId();
+            var formItemSetView = this.getFormItemSetView(dataId.getName());
+            if (formItemSetView == null) {
                 return null;
             }
             var formItemSetOccurrenceView = formItemSetView.getFormItemSetOccurrenceView(dataId.getArrayIndex());
             return formItemSetOccurrenceView.getValueAtPath(path.newWithoutFirstElement());
         }
 
-        public getInputView(name:string):api_form_input.InputView {
+        public getInputView(name: string): api_form_input.InputView {
 
             var formItemView = this.getFormItemView(name);
-            if( formItemView == null ) {
+            if (formItemView == null) {
                 return null;
             }
-            if( !(formItemView instanceof api_form_input.InputView) ) {
-                throw new Error( "Found a FormItemView with name [" + name + "], but it was not an InputView" );
+            if (!(formItemView instanceof api_form_input.InputView)) {
+                throw new Error("Found a FormItemView with name [" + name + "], but it was not an InputView");
             }
             return <api_form_input.InputView>formItemView;
         }
 
-        public getFormItemSetView(name:string):api_form_formitemset.FormItemSetView {
+        public getFormItemSetView(name: string): api_form_formitemset.FormItemSetView {
 
             var formItemView = this.getFormItemView(name);
-            if( formItemView == null ) {
+            if (formItemView == null) {
                 return null;
             }
-            if( !(formItemView instanceof api_form_formitemset.FormItemSetView) ) {
-                throw new Error( "Found a FormItemView with name [" + name + "], but it was not an FormItemSetView" );
+            if (!(formItemView instanceof api_form_formitemset.FormItemSetView)) {
+                throw new Error("Found a FormItemView with name [" + name + "], but it was not an FormItemSetView");
             }
             return <api_form_formitemset.FormItemSetView>formItemView;
         }
 
-        public getFormItemView(name:string):FormItemView {
+        public getFormItemView(name: string): FormItemView {
 
             // TODO: Performance could be improved if the views where accessible by name from a map
 
-            for(var i = 0; i < this.formItemViews.length; i++) {
+            for (var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
-                if(name == curr.getFormItem().getName()) {
+                if (name == curr.getFormItem().getName()) {
                     return curr;
                 }
             }
 
             // FormItemView not found - look inside FieldSet-s
-            for(var i = 0; i < this.formItemViews.length; i++) {
+            for (var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
-                if(curr instanceof api_form_layout.FieldSetView) {
-                    var view = (<api_form_layout.FieldSetView>curr).getFormItemView( name );
-                    if( view != null ) {
+                if (curr instanceof api_form_layout.FieldSetView) {
+                    var view = (<api_form_layout.FieldSetView>curr).getFormItemView(name);
+                    if (view != null) {
                         return view;
                     }
                 }
@@ -112,23 +112,23 @@ module api_form {
             return null;
         }
 
-        getContentData():api_content.ContentData {
+        getContentData(): api_content.ContentData {
             return this.contentData;
         }
 
         getAttachments(): api_content.Attachment[] {
-            var attachments:api_content.Attachment[] = [];
-            this.formItemViews.forEach( (formItemView:FormItemView) => {
-                attachments = attachments.concat( formItemView.getAttachments() );
+            var attachments: api_content.Attachment[] = [];
+            this.formItemViews.forEach((formItemView: FormItemView) => {
+                attachments = attachments.concat(formItemView.getAttachments());
             });
             return attachments;
         }
 
-        rebuildContentData():api_content.ContentData {
-            var contentData:api_content.ContentData = new api_content.ContentData();
-            this.formItemViews.forEach((formItemView:FormItemView) => {
+        rebuildContentData(): api_content.ContentData {
+            var contentData: api_content.ContentData = new api_content.ContentData();
+            this.formItemViews.forEach((formItemView: FormItemView) => {
 
-                formItemView.getData().forEach((data:api_data.Data) => {
+                formItemView.getData().forEach((data: api_data.Data) => {
                     contentData.addData(data)
                 });
 
@@ -136,10 +136,17 @@ module api_form {
             return contentData;
         }
 
-        giveFocus() {
-            if( this.formItemViews.length > 0 ) {
-                this.formItemViews[0].giveFocus();
+        giveFocus(): boolean {
+            var focusGiven = false;
+            if (this.formItemViews.length > 0) {
+                for (var i = 0; i < this.formItemViews.length; i++) {
+                    if (this.formItemViews[i].giveFocus()) {
+                        focusGiven = true;
+                        break;
+                    }
+                }
             }
+            return focusGiven;
         }
     }
 }

@@ -99,10 +99,19 @@ module api_form_formitemset {
             // TODO:
         }
 
-        giveFocus() {
+        giveFocus(): boolean {
+
+            var focusGiven = false;
             if (this.formItemSetOccurrences.getOccurrenceViews().length > 0) {
-                this.formItemSetOccurrences.getOccurrenceViews()[0].giveFocus();
+                var views:api_form.FormItemOccurrenceView[] = this.formItemSetOccurrences.getOccurrenceViews();
+                for (var i = 0; i < views.length; i++) {
+                    if (views[i].giveFocus()) {
+                        focusGiven = true;
+                        break;
+                    }
+                }
             }
+            return focusGiven;
         }
     }
 }

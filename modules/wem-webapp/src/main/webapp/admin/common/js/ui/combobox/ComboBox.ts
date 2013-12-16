@@ -94,8 +94,8 @@ module api_ui_combobox {
             this.setupListeners();
         }
 
-        giveFocus() {
-            this.input.focus();
+        giveFocus(): boolean {
+            return this.input.giveFocus();
         }
 
         countSelected():number {
