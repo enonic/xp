@@ -52,6 +52,7 @@ import static com.enonic.wem.api.content.page.image.ImageTemplate.newImageTempla
 import static com.enonic.wem.api.content.page.layout.LayoutTemplate.newLayoutTemplate;
 import static com.enonic.wem.api.content.page.part.PartTemplate.newPartTemplate;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
+import static org.junit.Assert.*;
 
 public class SiteTemplateResourceTest
     extends AbstractResourceTest
@@ -234,13 +235,39 @@ public class SiteTemplateResourceTest
         assertJson( "import_site_template_success.json", jsonString );
     }
 
-    private SiteTemplate createSiteTemplate()
+    @Test
+    public void export_site_template_success()
+        throws Exception
     {
-        return SiteTemplate.newSiteTemplate().key( SiteTemplateKey.from( "name-1.0.0" ) ).displayName( "displayName" ).description(
-            "info" ).url( "url" ).vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() ).modules(
-            ModuleKeys.from( "module1-1.0.0" ) ).contentTypeFilter(
-            ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.imageMedia() ).denyContentType(
-                ContentTypeName.shortcut() ).build() ).rootContentType( ContentTypeName.folder() ).build();
+        final SiteTemplate siteTemplate = createSiteTemplate();
+        Mockito.when( client.execute( Mockito.isA( GetSiteTemplateByKey.class ) ) ).thenReturn( siteTemplate );
+
+        final WebResource webResource = resource().
+            path( "content/site/template/export" ).
+            queryParam( "siteTemplateKey", "name-1.0.0" );
+        final byte[] response = webResource.get( byte[].class );
+
+        final SiteTemplateExporter exporter = new SiteTemplateExporter();
+        final Path zipFilePath = Files.write( tempDir.resolve( "name-1.0.0.zip" ), response );
+        final SiteTemplate exportedTemplate = exporter.importFromZip( zipFilePath ).build();
+
+        assertEquals( "displayName", exportedTemplate.getDisplayName() );
+        assertEquals( "name-1.0.0", exportedTemplate.getKey().toString() );
     }
 
+    private SiteTemplate createSiteTemplate()
+    {
+        return SiteTemplate
+            .newSiteTemplate()
+            .key( SiteTemplateKey.from( "name-1.0.0" ) )
+            .displayName( "displayName" )
+            .description( "info" )
+            .url( "url" )
+            .vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() )
+            .modules( ModuleKeys.from( "module1-1.0.0" ) )
+            .contentTypeFilter( ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.imageMedia() ).denyContentType(
+                ContentTypeName.shortcut() ).build() )
+            .rootContentType( ContentTypeName.folder() )
+            .build();
+    }
 }

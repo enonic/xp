@@ -12,6 +12,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 
@@ -26,8 +27,10 @@ import com.enonic.wem.admin.rest.resource.content.site.template.json.ListSiteTem
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
+import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
@@ -36,6 +39,8 @@ import com.enonic.wem.core.exporters.SiteTemplateExporter;
 public final class SiteTemplateResource
     extends AbstractResource
 {
+    private static final String ZIP_MIME_TYPE = "application/zip";
+
     @GET
     @javax.ws.rs.Path("list")
     public ListSiteTemplateJson listSiteTemplate()
@@ -101,4 +106,45 @@ public final class SiteTemplateResource
         }
     }
 
+    @GET
+    @javax.ws.rs.Path("export")
+    public javax.ws.rs.core.Response export( @QueryParam("siteTemplateKey") final String siteTemplateKeyParam )
+        throws IOException
+    {
+        final SiteTemplateKey siteTemplateKey;
+        try
+        {
+            siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyParam );
+        }
+        catch ( Exception e )
+        {
+            return Response.status( Response.Status.BAD_REQUEST ).build();
+        }
+
+        final GetSiteTemplateByKey getSiteTemplate = Commands.site().template().get().byKey( siteTemplateKey );
+        final SiteTemplate siteTemplate;
+        try
+        {
+            siteTemplate = client.execute( getSiteTemplate );
+        }
+        catch ( SiteTemplateNotFoundException e )
+        {
+            return Response.status( Response.Status.NOT_FOUND ).build();
+        }
+
+        final Path tempDirectory = Files.createTempDirectory( "modules" );
+        try
+        {
+            final SiteTemplateExporter exporter = new SiteTemplateExporter();
+            final Path path = exporter.exportToZip( siteTemplate, tempDirectory );
+            final byte[] zipContents = Files.readAllBytes( path );
+
+            final String fileName = path.getFileName().toString();
+            return Response.ok( zipContents, ZIP_MIME_TYPE ).header( "Content-Disposition", "attachment; filename=" + fileName ).build();
+        }
+        finally
+        {
+            FileUtils.deleteDirectory( tempDirectory.toFile() );
+        }
+    }
 }
