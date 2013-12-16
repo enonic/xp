@@ -10,6 +10,7 @@ final class RhinoContextFactory
     protected Context makeContext()
     {
         final Context context = super.makeContext();
+        context.setLanguageVersion( Context.VERSION_1_8 );
         context.setOptimizationLevel( 9 );
         return context;
     }

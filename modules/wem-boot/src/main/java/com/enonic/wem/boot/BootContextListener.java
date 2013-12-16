@@ -10,10 +10,12 @@ import javax.servlet.ServletContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Throwables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 
+import com.enonic.wem.core.home.HomeDir;
 import com.enonic.wem.core.lifecycle.LifecycleService;
 import com.enonic.wem.web.WebInitializer;
 
@@ -44,14 +46,15 @@ public final class BootContextListener
             this.env = new BootEnvironment();
             this.env.initialize();
 
+            copyHomeDir( event.getServletContext() );
             createInjector( event.getServletContext() );
             configure( event.getServletContext() );
             this.lifecycleService.startAll();
         }
-        catch ( final RuntimeException e )
+        catch ( final Exception e )
         {
             LOG.error( "Failed to start server", e );
-            throw e;
+            throw Throwables.propagate( e );
         }
     }
 
@@ -67,11 +70,18 @@ public final class BootContextListener
     }
 
     private void configure( final ServletContext context )
+        throws Exception
     {
         for ( final WebInitializer initializer : this.initializers )
         {
             initializer.initialize( context );
         }
+    }
+
+    private void copyHomeDir( final ServletContext context )
+        throws Exception
+    {
+        new HomeDirInitializer( context, HomeDir.get() ).initialize();
     }
 
     @Inject
