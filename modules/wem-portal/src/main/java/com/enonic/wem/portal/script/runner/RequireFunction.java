@@ -24,6 +24,8 @@ import com.enonic.wem.portal.script.loader.ScriptSource;
 final class RequireFunction
     extends BaseFunction
 {
+    private final static String MODULE_PREFIX = ":";
+
     private final Map<String, Scriptable> exportMap;
 
     private ScriptLoader scriptLoader;
@@ -103,6 +105,16 @@ final class RequireFunction
             return resolveSource( cx, scope, name + ".js" );
         }
 
+        if ( name.startsWith( MODULE_PREFIX ) )
+        {
+            return resolveFromModule( cx, scope, name.substring( MODULE_PREFIX.length() ) );
+        }
+
+        return resolveFromSystem( cx, scope, name );
+    }
+
+    private ScriptSource resolveFromModule( final Context cx, final Scriptable scope, final String name )
+    {
         final ModuleKey currentModule = this.mainSource.getModule();
         final ModuleResourceKey key = new ModuleResourceKey( currentModule, ResourcePath.from( name ) );
 
@@ -113,6 +125,17 @@ final class RequireFunction
         }
 
         throw error( cx, scope, "Could not find resource [{0}].", key );
+    }
+
+    private ScriptSource resolveFromSystem( final Context cx, final Scriptable scope, final String name )
+    {
+        final ScriptSource source = this.scriptLoader.loadFromSystem( name );
+        if ( source != null )
+        {
+            return source;
+        }
+
+        throw error( cx, scope, "Could not find resource [{0}] from system.", name );
     }
 
     private Object doCall( final Context cx, final Scriptable scope, final ScriptSource source )
