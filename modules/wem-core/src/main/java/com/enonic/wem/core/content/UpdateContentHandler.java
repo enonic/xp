@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.joda.time.DateTime;
@@ -24,21 +25,29 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.blob.CreateBlob;
+import com.enonic.wem.api.command.entity.GetNodeByPath;
+import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeEditor;
+import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.entity.GetNodeByPathHandler;
+import com.enonic.wem.core.entity.UpdateNodeHandler;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
@@ -63,89 +72,185 @@ public class UpdateContentHandler
 
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
+    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
+
     @Override
     public void handle()
         throws Exception
     {
-
         final Session session = context.getJcrSession();
-        final Content persistedContent = contentDao.selectById( command.getContentId(), session );
-        if ( persistedContent == null )
-        {
-            throw new ContentNotFoundException( command.getContentId() );
-        }
-
         final Client client = context.getClient();
-        final ContentId contentId = persistedContent.getId();
-        final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent.getContentData() );
+
+        // TODO: Fetch Node, use path or id?
+        final Content persistedContent = getPersistedContent( session );
 
         //TODO: the result is null if nothing was edited, but should be SUCCESS ?
         Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
+        if ( !editBuilder.isChanges() )
+        {
+            command.setResult( null );
+            return;
+        }
 
         //TODO: Attachments have no editor and thus need to be checked separately, but probably should have one ?
         if ( !command.getAttachments().isEmpty() )
         {
-            addAttachments( client, contentId, command.getAttachments() );
-            addMediaThumbnail( client, session, command, persistedContent, contentId );
+            final ContentId contentId = persistedContent.getId();
+            addAttachments( contentId, command.getAttachments() );
+            addMediaThumbnail( persistedContent, contentId );
         }
 
-        if ( editBuilder.isChanges() )
+        final Content tempEditedContent = editBuilder.build();
+        validateEditedContent( persistedContent, tempEditedContent );
+
+        syncRelationships( persistedContent, tempEditedContent );
+
+        final Content editedContent = newContent( tempEditedContent ).
+            modifiedTime( DateTime.now() ).
+            modifier( command.getModifier() ).build();
+
+        final boolean createNewVersion = true;
+        final Content updatedContent = contentDao.update( editedContent, createNewVersion, session );
+        session.save();
+
+        deleteRemovedEmbeddedContent( session, persistedContent, editedContent );
+
+        indexService.indexContent( tempEditedContent );
+
+        updateContentAsNode( persistedContent.getPath() );
+
+        command.setResult( updatedContent );
+    }
+
+    private void updateContentAsNode( final ContentPath contentPath )
+    {
+
+        final NodePath nodePathToContent = new NodePath( "/content" + contentPath.toString() );
+
+        final Node persistedNode = getPersistedNode( contentPath, nodePathToContent );
+
+        final Content persistedNodeAsContent = CONTENT_NODE_TRANSLATOR.fromNode( persistedNode );
+
+        Content.EditBuilder editBuilder = command.getEditor().edit( persistedNodeAsContent );
+
+        if ( !editBuilder.isChanges() )
         {
-            Content edited = editBuilder.build();
-            persistedContent.checkIllegalEdit( edited );
+            return;
+        }
 
-            if ( !edited.isDraft() )
+        // TODO: Embedded stuff
+
+        final Content tempEditedContent = editBuilder.build();
+
+        final Content editedContent = newContent( tempEditedContent ).
+            modifiedTime( DateTime.now() ).
+            modifier( command.getModifier() ).build();
+
+        final NodeEditor nodeEditor = CONTENT_NODE_TRANSLATOR.toNodeEditor( editedContent, this.command );
+        final UpdateNode updateNodeCommand = CONTENT_NODE_TRANSLATOR.toUpdateNodeCommand( persistedNodeAsContent.getId(), nodeEditor );
+
+        final UpdateNodeHandler updateNodeHandler = UpdateNodeHandler.create().
+            context( this.context ).
+            command( updateNodeCommand ).
+            indexService( this.indexService ).
+            build();
+
+        try
+        {
+            updateNodeHandler.handle();
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Failed to update content as node", e );
+        }
+
+    }
+
+    private Node getPersistedNode( final ContentPath contentPath, final NodePath nodePathToContent )
+    {
+        GetNodeByPath getNodeByPathCommand = new GetNodeByPath( nodePathToContent );
+
+        GetNodeByPathHandler getNodeByPathHandler = GetNodeByPathHandler.create().
+            command( getNodeByPathCommand ).
+            context( this.context ).
+            build();
+
+        getNodeByPathHandler.handle();
+
+        // TODO: This should be fetched from GetContentByPathHandler
+        final Node persistedNode = getNodeByPathCommand.getResult();
+
+        if ( persistedNode == null )
+        {
+            LOG.info( "Node to update node found: " + contentPath.toString() );
+        }
+        return persistedNode;
+    }
+
+
+    private void syncRelationships( final Content persistedContent, final Content temporaryContent )
+    {
+        final Session session = context.getJcrSession();
+        final Client client = context.getClient();
+
+        final ContentId contentId = persistedContent.getId();
+
+        relationshipService.syncRelationships( new SyncRelationshipsCommand().
+            client( client ).
+            jcrSession( session ).
+            contentType( persistedContent.getType() ).
+            contentToUpdate( contentId ).
+            contentBeforeEditing( persistedContent.getContentData() ).
+            contentAfterEditing( temporaryContent.getContentData() ) );
+    }
+
+    private void deleteRemovedEmbeddedContent( final Session session, final Content persistedContent, final Content editedContent )
+        throws RepositoryException
+    {
+        final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent.getContentData() );
+
+        final Map<ContentId, Content> embeddedContentsToKeep = resolveEmbeddedContent( session, editedContent.getContentData() );
+        // delete embedded contents not longer to keep
+
+        for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit.values() )
+        {
+            if ( !embeddedContentsToKeep.containsKey( embeddedContentBeforeEdit.getId() ) )
             {
-                validateContentData( context, edited );
+                contentDao.deleteById( embeddedContentBeforeEdit.getId(), session );
+                session.save();
             }
-
-            final Map<ContentId, Content> embeddedContentsToKeep = resolveEmbeddedContent( session, edited.getContentData() );
-
-            relationshipService.syncRelationships( new SyncRelationshipsCommand().
-                client( client ).
-                jcrSession( session ).
-                contentType( persistedContent.getType() ).
-                contentToUpdate( contentId ).
-                contentBeforeEditing( persistedContent.getContentData() ).
-                contentAfterEditing( edited.getContentData() ) );
-
-            edited = newContent( edited ).
-                modifiedTime( DateTime.now() ).
-                modifier( command.getModifier() ).build();
-
-            final boolean createNewVersion = true;
-            final Content updatedContent = contentDao.update( edited, createNewVersion, session );
-            session.save();
-
-            // delete embedded contents not longer to keep
-            for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit.values() )
-            {
-                if ( !embeddedContentsToKeep.containsKey( embeddedContentBeforeEdit.getId() ) )
-                {
-                    contentDao.deleteById( embeddedContentBeforeEdit.getId(), session );
-                    session.save();
-                }
-            }
-
-            try
-            {
-                // TODO: Temporary easy solution. The index logic should eventually not be here anyway
-                indexService.indexContent( edited );
-            }
-            catch ( Exception e )
-            {
-                LOG.error( "Index content failed", e );
-            }
-            command.setResult( updatedContent );
         }
     }
 
-    private void addMediaThumbnail( final Client client, final Session session, final UpdateContent command, final Content content,
-                                    final ContentId contentId )
+    private void validateEditedContent( final Content persistedContent, final Content edited )
+    {
+        persistedContent.checkIllegalEdit( edited );
+
+        if ( !edited.isDraft() )
+        {
+            validateContentData( context, edited );
+        }
+    }
+
+    private Content getPersistedContent( final Session session )
+    {
+        final Content persistedContent = contentDao.selectById( command.getContentId(), session );
+
+        if ( persistedContent == null )
+        {
+            throw new ContentNotFoundException( command.getContentId() );
+        }
+        return persistedContent;
+    }
+
+    private void addMediaThumbnail( final Content content, final ContentId contentId )
         throws Exception
     {
-        final ContentType contentType =
-            context.getClient().execute( Commands.contentType().get().byName().contentTypeName( content.getType() ) );
+
+        final Client client = context.getClient();
+
+        // TODO: Fetch through Node-handler instead?
+        final ContentType contentType = client.execute( Commands.contentType().get().byName().contentTypeName( content.getType() ) );
 
         if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
         {
@@ -163,6 +268,8 @@ public class UpdateContentHandler
 
     private ImmutableMap<ContentId, Content> resolveEmbeddedContent( final Session session, final ContentData contentData )
     {
+        // TODO: Use node
+
         final ImmutableMap.Builder<ContentId, Content> embeddedContent = new ImmutableMap.Builder<>();
         new PropertyVisitor()
         {
@@ -198,8 +305,10 @@ public class UpdateContentHandler
         }
     }
 
-    private void addAttachments( final Client client, final ContentId contentId, final Collection<Attachment> attachments )
+    private void addAttachments( final ContentId contentId, final Collection<Attachment> attachments )
     {
+        final Client client = context.getClient();
+
         for ( Attachment attachment : attachments )
         {
             client.execute( Commands.attachment().create().contentId( contentId ).attachment( attachment ) );
