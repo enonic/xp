@@ -1,22 +1,40 @@
 .live-edit-empty-component {
-    clear: both;
-    background-color: #e6f1fe;
-    padding: 15px;
-    font-size: 75px;
-    color: #d4e1f1;
-    text-align: center;
-    margin: 1px 0 10px 0;
-    position:relative;
+  clear: both;
+  background-color: #e6f1fe;
+  padding: 15px;
+  font-size: 75px;
+  color: #d4e1f1;
+  text-align: center;
+  margin: 1px 0 10px 0;
+  position: relative;
+
   &[data-live-edit-type="image"] {
-    padding:0;
+    padding: 0;
+
+    .live-edit-font-icon-image {
+      display:none;
+    }
+
     .dropzone {
       box-sizing: border-box;
       background-color: transparent;
+      border: none;
+      font-weight: normal !important;
+      z-index:10;
+      height:140px;
+      background: url('../../../images/live-edit-empty-component-image-icon.png') no-repeat center center;
+    }
+  }
+
+  &:not([data-live-edit-selected="true"]) {
+    height:140px;
+    .dropzone {
+      display:none !important;
     }
   }
 }
 
 .live-edit-font-icon-spinner {
-    animation: live-edit-spinner .5s infinite linear;
-    -webkit-animation: live-edit-spinner .5s infinite linear;
+  animation: live-edit-spinner .5s infinite linear;
+  -webkit-animation: live-edit-spinner .5s infinite linear;
 }
