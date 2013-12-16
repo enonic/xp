@@ -41,7 +41,6 @@ module api_form_inputtype_singleselector {
         }
 
         private createComboBoxElement(name:string, property:api_data.Property):api_dom.Element {
-            var inputEl = new api_dom.DivEl();
 
             var selectedOptionsView = new api_ui_combobox.SelectedOptionsView<string>();
             var comboBox = new api_ui_combobox.ComboBox<string>(name, {
@@ -71,10 +70,7 @@ module api_form_inputtype_singleselector {
                 comboBox.setValue(property.getString());
             }
 
-            inputEl.appendChild(comboBox);
-            inputEl.appendChild(selectedOptionsView);
-
-            return inputEl;
+            return comboBox;
         }
 
         private createDropdownElement(name:string, property:api_data.Property):api_dom.Element {

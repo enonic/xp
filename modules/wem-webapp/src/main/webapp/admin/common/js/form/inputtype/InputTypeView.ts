@@ -37,6 +37,9 @@ module api_form_inputtype {
          */
         removeFormItemOccurrencesListener(listener:api_form.FormItemOccurrencesListener);
 
-        giveFocus();
+        /*
+         * Returns true if focus was successfully given.
+         */
+        giveFocus(): boolean;
     }
 }

@@ -44,8 +44,8 @@ module app_wizard {
             return this.formView.rebuildContentData();
         }
 
-        giveFocus() {
-            this.formView.giveFocus();
+        giveFocus(): boolean  {
+            return this.formView.giveFocus();
         }
     }
 }

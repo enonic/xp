@@ -107,11 +107,13 @@ module app_wizard {
 
         giveInitialFocus() {
             console.log("ContentWizardPanel.giveInitialFocus");
-            if (this.contentType.hasContentDisplayNameScript() || this.isRenderingNew()) {
+            if (this.isRenderingNew() && !this.contentType.hasContentDisplayNameScript()) {
                 this.contentWizardHeader.giveFocus();
             }
             else {
-                this.contentWizardStepForm.giveFocus();
+                if (!this.contentWizardStepForm.giveFocus()) {
+                    this.contentWizardHeader.giveFocus();
+                }
             }
         }
 
@@ -142,9 +144,14 @@ module app_wizard {
             });
         }
 
-        private enableDisplayNameScriptExecution(formView:api_form.FormView) {
+        renderExisting(content: api_content.Content) {
+            super.renderExisting(content);
+            this.giveInitialFocus();
+        }
 
-            if( this.contentType.hasContentDisplayNameScript() ) {
+        private enableDisplayNameScriptExecution(formView: api_form.FormView) {
+
+            if (this.contentType.hasContentDisplayNameScript()) {
                 formView.getEl().addEventListener("keyup", (e) => {
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                     var displayName = this.displayNameScriptExecutor.execute();

@@ -47,8 +47,8 @@ module api_form_inputtype_support {
             return this.inputElement;
         }
 
-        giveFocus() {
-            this.inputElement.focus();
+        giveFocus() : boolean {
+            return this.inputElement.giveFocus();
         }
     }
 }

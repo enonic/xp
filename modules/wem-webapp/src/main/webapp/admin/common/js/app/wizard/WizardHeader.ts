@@ -30,8 +30,8 @@ module api_app_wizard {
             });
         }
 
-        giveFocus() {
-
+        giveFocus(): boolean {
+            return false;
         }
     }
 }

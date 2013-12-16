@@ -28,8 +28,8 @@ module api_app_wizard {
             this.nameEl.setValue(value);
         }
 
-        giveFocus() {
-            this.nameEl.getEl().focuse();
+        giveFocus() : boolean  {
+            return this.nameEl.giveFocus();
         }
     }
 }

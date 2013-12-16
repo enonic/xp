@@ -106,8 +106,8 @@ module api_app_wizard {
             return this.displayNameEl.getValue();
         }
 
-        giveFocus() {
-            this.displayNameEl.focus();
+        giveFocus(): boolean  {
+            return this.displayNameEl.giveFocus();
         }
 
         private generateName(value:string):string {

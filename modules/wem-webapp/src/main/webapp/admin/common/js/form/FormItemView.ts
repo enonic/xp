@@ -42,8 +42,8 @@ module api_form {
             return true;
         }
 
-        giveFocus() {
-
+        giveFocus(): boolean{
+            return false;
         }
     }
 }

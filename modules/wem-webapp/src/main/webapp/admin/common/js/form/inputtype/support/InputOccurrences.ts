@@ -77,10 +77,19 @@ module api_form_inputtype_support {
             return values;
         }
 
-        giveFocus() {
-            if( this.getOccurrenceViews().length > 0 ) {
-                this.getOccurrenceViews()[0].giveFocus()
+        giveFocus(): boolean {
+
+            var focusGiven = false;
+            var occurrenceViews = this.getOccurrenceViews();
+            if( occurrenceViews.length > 0 ) {
+                for( var i  = 0; i < occurrenceViews.length; i++ ) {
+                    if(occurrenceViews[i].giveFocus() ) {
+                        focusGiven = true;
+                        break;
+                    }
+                }
             }
+            return focusGiven;
         }
 
     }

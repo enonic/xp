@@ -75,10 +75,11 @@ module api_form_inputtype_support {
             throw new Error("Must be implemented by inheritor");
         }
 
-        giveFocus() {
+        giveFocus(): boolean {
             if( this.inputOccurrences ) {
-                this.inputOccurrences.giveFocus();
+                return this.inputOccurrences.giveFocus();
             }
+            return false;
         }
     }
 }
