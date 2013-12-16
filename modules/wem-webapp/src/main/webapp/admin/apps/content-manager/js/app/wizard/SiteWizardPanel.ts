@@ -2,13 +2,13 @@ module app_wizard {
 
     export class SiteWizardPanel extends ContentWizardPanel {
 
-        private site:api_content_site.Site;
+        private site: api_content_site.Site;
 
-        private siteModule:api_module.Module;
+        private siteModule: api_module.Module;
 
-        private siteTemplate:api_content_site_template.SiteTemplateSummary;
+        private siteTemplate: api_content_site_template.SiteTemplateSummary;
 
-        private siteWizardStepForm:SiteWizardStepForm;
+        private siteWizardStepForm: SiteWizardStepForm;
 
         constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content, persistedContent:api_content.Content, siteContent:api_content.Content) {
 
@@ -38,7 +38,7 @@ module app_wizard {
                 setPersistedContent(content).
                 build();
 
-            this.siteWizardStepForm.renderExisting(formContext, content.getSite());
+            this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.getContentType());
         }
 
         persistNewItem(successCallback?: () => void) {

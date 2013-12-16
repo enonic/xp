@@ -4,6 +4,8 @@ module app_wizard {
 
         private formContext: api_form.FormContext;
 
+        private contentType: api_schema_content.ContentType;
+
         private moduleConfigsByKey: api_content_site.ModuleConfig[];
 
         private moduleViewsCtr: api_dom.DivEl;
@@ -23,8 +25,9 @@ module app_wizard {
             //TODO
         }
 
-        public renderExisting(context: api_form.FormContext, site: api_content_site.Site) {
+        public renderExisting(context: api_form.FormContext, site: api_content_site.Site, contentType: api_schema_content.ContentType) {
             this.formContext = context;
+            this.contentType = contentType;
 
             this.moduleConfigsByKey = [];
             var moduleConfigs: api_content_site.ModuleConfig[] = site.getModuleConfigs();
@@ -76,7 +79,8 @@ module app_wizard {
         private layoutModules(modules: api_module.Module[]) {
             this.moduleViewsCtr.removeChildren();
             modules.forEach((theModule: api_module.Module) => {
-                var moduleView = new ModuleView(this.formContext, theModule, this.moduleConfigsByKey[theModule.getModuleKey().toString()]);
+                var moduleView = new app_wizard.ModuleView(this.formContext, theModule,
+                    this.moduleConfigsByKey[theModule.getModuleKey().toString()]);
                 this.moduleViewsCtr.appendChild(moduleView)
             });
         }
@@ -92,51 +96,9 @@ module app_wizard {
 
         private layoutSiteTemplate(template: api_content_site_template.SiteTemplate) {
             this.templateViewCtr.removeChildren();
-            this.templateViewCtr.appendChild(new TemplateView(template))
+            this.templateViewCtr.appendChild(new app_wizard.TemplateView(template, this.contentType))
         }
 
-    }
-
-    export class ModuleView extends api_form.FormView {
-
-        private siteModule: api_module.Module;
-
-        private moduleConfig: api_content_site.ModuleConfig;
-
-        constructor(context: api_form.FormContext, theModule: api_module.Module, moduleConfig?: api_content_site.ModuleConfig) {
-            super(context, theModule.getForm(), moduleConfig ? moduleConfig.getConfig() : undefined);
-            this.siteModule = theModule;
-            this.moduleConfig = moduleConfig;
-            var h4 = new api_dom.H4El();
-            h4.getEl().setInnerHtml(theModule.getDisplayName());
-            this.prependChild(h4);
-        }
-
-        getModuleConfig(): api_content_site.ModuleConfig {
-            var config = this.rebuildContentData();
-            this.moduleConfig.setConfig(config);
-            return this.moduleConfig;
-        }
-    }
-
-    export class TemplateView extends api_dom.DivEl {
-
-        private siteTemplate: api_content_site_template.SiteTemplate;
-
-        constructor(template: api_content_site_template.SiteTemplate) {
-            super("TemplateView");
-            this.siteTemplate = template;
-            var h4 = new api_dom.H4El();
-            var p = new api_dom.PEl();
-            h4.getEl().setInnerHtml(template.getDisplayName());
-            p.getEl().setInnerHtml(template.getDescription());
-            this.appendChild(h4);
-            this.appendChild(p);
-        }
-
-        getSiteTemplateKey(): api_content_site_template.SiteTemplateKey {
-            return this.siteTemplate.getKey();
-        }
     }
 
 }
