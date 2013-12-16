@@ -10,9 +10,13 @@ public class ContentAttachmentNodeTranslator
 
     public Attachments toNodeAttachments( final Collection<Attachment> contentAttachments )
     {
-        if ( contentAttachments == null || contentAttachments.isEmpty() )
+        if ( contentAttachments == null )
         {
             return null;
+        }
+        else if ( contentAttachments.isEmpty() )
+        {
+            return Attachments.empty();
         }
 
         final Attachments.Builder attachmentsBuilder = Attachments.builder();

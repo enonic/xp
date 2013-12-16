@@ -84,14 +84,14 @@ public class CreateContentHandler
         addRelationships( session, builtContent, storedContent );
 
         final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent, command );
-        createNode( createNodeCommand );
+        createAsNode( createNodeCommand );
 
         indexService.indexContent( storedContent );
 
         command.setResult( storedContent );
     }
 
-    private CreateNodeResult createNode( final CreateNode createNodeCommand )
+    private CreateNodeResult createAsNode( final CreateNode createNodeCommand )
         throws Exception
     {
         CreateNodeHandler createNodeHandler = CreateNodeHandler.create().
@@ -103,7 +103,6 @@ public class CreateContentHandler
 
         return createNodeCommand.getResult();
     }
-
 
     private void addRelationships( final Session session, final Content content, final Content storedContent )
         throws RepositoryException

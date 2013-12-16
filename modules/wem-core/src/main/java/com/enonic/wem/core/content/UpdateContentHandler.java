@@ -25,6 +25,7 @@ import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.blob.CreateBlob;
+import com.enonic.wem.api.command.entity.DeleteNodeByPath;
 import com.enonic.wem.api.command.entity.GetNodeByPath;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
@@ -46,8 +47,10 @@ import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
-import com.enonic.wem.core.entity.GetNodeByPathHandler;
+import com.enonic.wem.core.entity.DeleteNodeByPathHandler;
+import com.enonic.wem.core.entity.GetNodeByPathService;
 import com.enonic.wem.core.entity.UpdateNodeHandler;
+import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
@@ -113,23 +116,24 @@ public class UpdateContentHandler
         final Content updatedContent = contentDao.update( editedContent, createNewVersion, session );
         session.save();
 
+        // This must be placed before the deleteRemoveEmbedded since we use persisted and edited both for node and content for now
+        // Hackyhackyhacky
+        updateContentAsNode( persistedContent.getPath() );
+
         deleteRemovedEmbeddedContent( session, persistedContent, editedContent );
 
         indexService.indexContent( tempEditedContent );
-
-        updateContentAsNode( persistedContent.getPath() );
 
         command.setResult( updatedContent );
     }
 
     private void updateContentAsNode( final ContentPath contentPath )
     {
+        final NodePath nodePathToContent = translateContentPathToNodePath( contentPath );
 
-        final NodePath nodePathToContent = new NodePath( "/content" + contentPath.toString() );
+        final Node oldPersistedNode = getNodeByPath( nodePathToContent );
 
-        final Node persistedNode = getPersistedNode( contentPath, nodePathToContent );
-
-        final Content persistedNodeAsContent = CONTENT_NODE_TRANSLATOR.fromNode( persistedNode );
+        final Content persistedNodeAsContent = CONTENT_NODE_TRANSLATOR.fromNode( oldPersistedNode );
 
         Content.EditBuilder editBuilder = command.getEditor().edit( persistedNodeAsContent );
 
@@ -137,8 +141,6 @@ public class UpdateContentHandler
         {
             return;
         }
-
-        // TODO: Embedded stuff
 
         final Content tempEditedContent = editBuilder.build();
 
@@ -154,39 +156,62 @@ public class UpdateContentHandler
             command( updateNodeCommand ).
             indexService( this.indexService ).
             build();
-
         try
         {
             updateNodeHandler.handle();
+
+            final Node editedNode = updateNodeCommand.getResult().getPersistedNode();
+            final Content editedNodeAsContent = CONTENT_NODE_TRANSLATOR.fromNode( editedNode );
+
+            deleteRemovedEmbeddedContentAsNode( persistedNodeAsContent, editedNodeAsContent );
         }
         catch ( Exception e )
         {
-            LOG.error( "Failed to update content as node", e );
+            throw new RuntimeException( "Failed to store content as node", e );
         }
-
     }
 
-    private Node getPersistedNode( final ContentPath contentPath, final NodePath nodePathToContent )
+    private NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {
-        GetNodeByPath getNodeByPathCommand = new GetNodeByPath( nodePathToContent );
-
-        GetNodeByPathHandler getNodeByPathHandler = GetNodeByPathHandler.create().
-            command( getNodeByPathCommand ).
-            context( this.context ).
-            build();
-
-        getNodeByPathHandler.handle();
-
-        // TODO: This should be fetched from GetContentByPathHandler
-        final Node persistedNode = getNodeByPathCommand.getResult();
-
-        if ( persistedNode == null )
-        {
-            LOG.info( "Node to update node found: " + contentPath.toString() );
-        }
-        return persistedNode;
+        return new NodePath( NodeJcrDao.CONTENT_NODE_ROOT + "/" + contentPath.toString() ).asAbsolute();
     }
 
+    private void deleteRemovedEmbeddedContentAsNode( final Content persistedContent, final Content editedContent )
+        throws Exception
+    {
+        final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( persistedContent.getContentData() );
+
+        final Map<ContentId, Content> embeddedContentsToKeep = resolveEmbeddedContent( editedContent.getContentData() );
+
+        // delete embedded contents not longer to keep
+        for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit.values() )
+        {
+            if ( !embeddedContentsToKeep.containsKey( embeddedContentBeforeEdit.getId() ) )
+            {
+                NodePath nodePathToEmbeddedContentNode =
+                    EmbeddedNodePathFactory.create( embeddedContentBeforeEdit.getParentPath(), embeddedContentBeforeEdit.getName() );
+
+                DeleteNodeByPath deleteNodeByPathCommand = new DeleteNodeByPath( nodePathToEmbeddedContentNode );
+
+                deleteNodeByPath( deleteNodeByPathCommand );
+            }
+        }
+    }
+
+    private Node getNodeByPath( final NodePath nodePathToContent )
+    {
+        return new GetNodeByPathService( this.context.getJcrSession(), new GetNodeByPath( nodePathToContent ) ).execute();
+    }
+
+    private void deleteNodeByPath( final DeleteNodeByPath deleteNodeByPathCommand )
+        throws Exception
+    {
+        final DeleteNodeByPathHandler deleteNodeByPathHandler =
+            DeleteNodeByPathHandler.create().indexService( this.indexService ).context( this.context ).command(
+                deleteNodeByPathCommand ).build();
+
+        deleteNodeByPathHandler.handle();
+    }
 
     private void syncRelationships( final Content persistedContent, final Content temporaryContent )
     {
@@ -207,9 +232,9 @@ public class UpdateContentHandler
     private void deleteRemovedEmbeddedContent( final Session session, final Content persistedContent, final Content editedContent )
         throws RepositoryException
     {
-        final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( session, persistedContent.getContentData() );
+        final Map<ContentId, Content> embeddedContentsBeforeEdit = resolveEmbeddedContent( persistedContent.getContentData() );
 
-        final Map<ContentId, Content> embeddedContentsToKeep = resolveEmbeddedContent( session, editedContent.getContentData() );
+        final Map<ContentId, Content> embeddedContentsToKeep = resolveEmbeddedContent( editedContent.getContentData() );
         // delete embedded contents not longer to keep
 
         for ( Content embeddedContentBeforeEdit : embeddedContentsBeforeEdit.values() )
@@ -266,9 +291,10 @@ public class UpdateContentHandler
         }
     }
 
-    private ImmutableMap<ContentId, Content> resolveEmbeddedContent( final Session session, final ContentData contentData )
+    private ImmutableMap<ContentId, Content> resolveEmbeddedContent( final ContentData contentData )
     {
-        // TODO: Use node
+
+        final Session session = this.context.getJcrSession();
 
         final ImmutableMap.Builder<ContentId, Content> embeddedContent = new ImmutableMap.Builder<>();
         new PropertyVisitor()
@@ -286,6 +312,7 @@ public class UpdateContentHandler
                 }
             }
         }.restrictType( ValueTypes.CONTENT_ID ).traverse( contentData );
+
         return embeddedContent.build();
     }
 

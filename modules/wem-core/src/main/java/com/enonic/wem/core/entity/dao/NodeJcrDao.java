@@ -26,6 +26,8 @@ public class NodeJcrDao
 
     public static final String EMBEDDED_NODE_ROOT_PATH = "__embedded";
 
+    public static final String CONTENT_NODE_ROOT = "content";
+
     private final Session session;
 
     private final NodeJcrHelper jcrHelper;
@@ -38,7 +40,7 @@ public class NodeJcrDao
         // TODO: A temporary hack to ensure that paths to root containers of different types of nodes already exists
         ensurePath( new NodePath( "mixins" ) );
         ensurePath( new NodePath( "content-types" ) );
-        ensurePath( new NodePath( "content" ) );
+        ensurePath( new NodePath( CONTENT_NODE_ROOT ) );
     }
 
     private void ensurePath( final NodePath path )

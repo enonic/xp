@@ -7,7 +7,7 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.entity.GetNodeByPathHandler;
+import com.enonic.wem.core.entity.GetNodeByPathService;
 
 public class GetContentTypeHandler
     extends AbstractContentTypeHandler<GetContentType>
@@ -51,11 +51,6 @@ public class GetContentTypeHandler
 
     private Node getNodeByPath( final GetNodeByPath getNodeByPathCommand )
     {
-        final GetNodeByPathHandler getNodeByPathHandler =
-            GetNodeByPathHandler.create().command( getNodeByPathCommand ).context( this.context ).build();
-
-        getNodeByPathHandler.handle();
-
-        return getNodeByPathCommand.getResult();
+        return new GetNodeByPathService( this.context.getJcrSession(), getNodeByPathCommand ).execute();
     }
 }
