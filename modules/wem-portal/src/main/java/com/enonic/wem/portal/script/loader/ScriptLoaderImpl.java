@@ -28,6 +28,19 @@ public final class ScriptLoaderImpl
     }
 
     @Override
+    public ScriptSource load( final String name )
+    {
+        try
+        {
+            return loadFromModule( ModuleResourceKey.from( name ) );
+        }
+        catch ( final Exception e )
+        {
+            return loadFromSystem( name );
+        }
+    }
+
+    @Override
     public ScriptSource loadFromSystem( final String name )
     {
         final URL url = this.classLoader.getResource( BASE_CLASSPATH + name );

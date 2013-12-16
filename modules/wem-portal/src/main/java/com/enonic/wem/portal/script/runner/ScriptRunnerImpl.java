@@ -80,7 +80,7 @@ final class ScriptRunnerImpl
         }
         catch ( final RhinoException e )
         {
-            throw new EvaluationException( this.source, e );
+            throw createError( e );
         }
         finally
         {
@@ -123,5 +123,12 @@ final class ScriptRunnerImpl
         property( "__log", LoggerFactory.getLogger( getClass() ) );
         property( "__api", this.apiBridge );
         this.apiBridge.setScope( this.scope );
+    }
+
+    private EvaluationException createError( final RhinoException cause )
+    {
+        final String name = cause.sourceName();
+        final ScriptSource source = this.scriptLoader.load( name );
+        return new EvaluationException( source, cause );
     }
 }
