@@ -89,7 +89,6 @@ module app_browse {
                                '<p>{3}</p>' +
                                '</div>';
 
-            console.log(content);
             var activeListType = this.getActiveList().getItemId();
             return Ext.String.format(nameTemplate, activeListType, content.iconUrl, value, content.path);
         }
