@@ -65,6 +65,11 @@ public class AttachmentsJcrMapper
     void synchronizeJcr( final Attachments attachments, final Node jcrNode )
         throws RepositoryException
     {
+        if ( attachments == null )
+        {
+            return;
+        }
+
         if ( attachments.isEmpty() && !jcrNode.hasNode( ATTACHMENTS_NODE_NAME ) )
         {
             return;
