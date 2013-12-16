@@ -6,5 +6,6 @@
 ///<reference path='ContentWizardToolbar.ts' />
 ///<reference path='DisplayNameScriptExecutor.ts' />
 ///<reference path='ContentWizardPanel.ts' />
+///<reference path='ContentWizardPanelFactory.ts' />
 ///<reference path='SiteWizardPanel.ts' />
 ///<reference path='LiveFormPanel.ts' />

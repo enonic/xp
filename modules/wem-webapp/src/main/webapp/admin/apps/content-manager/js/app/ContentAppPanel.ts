@@ -57,24 +57,15 @@ module app {
 
             } else {
 
-                new api_schema_content.GetContentTypeByNameRequest(contentTypeSummary.getContentTypeName()).
-                    sendAndParse().done((contentType: api_schema_content.ContentType) => {
+                tabMenuItem = new api_app.AppBarTabMenuItem("New " + contentTypeSummary.getDisplayName(), tabId);
 
-                        new api_content_site.GetNearestSiteRequest(parentContent.getContentId()).
-                            sendAndParse().
-                            done((site: api_content.Content)=> {
-
-                                tabMenuItem = new api_app.AppBarTabMenuItem("New " + contentTypeSummary.getDisplayName(), tabId);
-                                var wizardPanel;
-                                if (siteRoot) {
-                                    wizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType, parentContent, null, site);
-                                } else {
-                                    wizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent, null, site);
-                                }
-                                wizardPanel.renderNew();
-                                this.addWizardPanel(tabMenuItem, wizardPanel);
-                                wizardPanel.reRender();
-                            });
+                new app_wizard.ContentWizardPanelFactory().
+                    setAppBarTabId(tabId).
+                    setParentContent(parentContent).
+                    setContentTypeName(contentTypeSummary.getContentTypeName()).
+                    createForNew().then((wizard:app_wizard.ContentWizardPanel) => {
+                        this.addWizardPanel(tabMenuItem, wizard);
+                        wizard.reRender();
                     });
             }
         }
@@ -120,53 +111,18 @@ module app {
 
                 } else {
 
-                    var getContentByIdPromise = new api_content.GetContentByIdRequest(content.getContentId()).sendAndParse();
-                    var getContentTypeByNamePromise = new api_schema_content.GetContentTypeByNameRequest(content.getType()).sendAndParse();
-                    jQuery.
-                        when(getContentByIdPromise, getContentTypeByNamePromise).
-                        then((contentToEdit: api_content.Content, contentType: api_schema_content.ContentType) => {
+                    new app_wizard.ContentWizardPanelFactory().
+                        setAppBarTabId(tabId).
+                        setContentToEdit(content.getContentId()).
+                        createForEdit().then((wizard:app_wizard.ContentWizardPanel) => {
 
-                            new api_content_site.GetNearestSiteRequest(contentToEdit.getContentId()).
-                                sendAndParse().
-                                done((site: api_content.Content)=> {
-
-                                    tabMenuItem = new api_app.AppBarTabMenuItem(contentToEdit.getDisplayName(), tabId, true);
-
-                                    if (contentToEdit.hasParent()) {
-                                        new api_content.GetContentByPathRequest(contentToEdit.getPath().getParentPath()).
-                                            sendAndParse().
-                                            done((parentContent: api_content.Content) => {
-                                                var contentWizardPanel = this.createContentWizardPanel(tabId, contentToEdit, contentType,
-                                                    parentContent, site);
-
-                                                this.addWizardPanel(tabMenuItem, contentWizardPanel);
-                                            });
-                                    }
-                                    else {
-                                        var contentWizardPanel = this.createContentWizardPanel(tabId, contentToEdit, contentType, null,
-                                            site);
-                                        this.addWizardPanel(tabMenuItem, contentWizardPanel);
-                                    }
-                                });
-
+                            tabMenuItem = new api_app.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
+                            this.addWizardPanel(tabMenuItem, wizard);
+                            wizard.reRender();
                         });
 
                 }
             });
-        }
-
-        private createContentWizardPanel(tabId: api_app.AppBarTabId, contentToEdit: api_content.Content,
-                                         contentType: api_schema_content.ContentType, parentContent: api_content.Content,
-                                         site: api_content.Content): app_wizard.ContentWizardPanel {
-
-            if (contentToEdit.isSite()) {
-                var siteWizardPanel = new app_wizard.SiteWizardPanel(tabId, contentType, parentContent, contentToEdit, site);
-                return siteWizardPanel;
-            }
-            else {
-                var contentWizardPanel = new app_wizard.ContentWizardPanel(tabId, contentType, parentContent, contentToEdit, site);
-                return contentWizardPanel;
-            }
         }
     }
 

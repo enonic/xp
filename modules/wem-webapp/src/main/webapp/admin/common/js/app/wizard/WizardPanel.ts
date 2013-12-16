@@ -23,44 +23,46 @@ module api_app_wizard {
 
     export class WizardPanel<T> extends api_ui.Panel implements api_ui.Closeable, api_event.Observable, api_ui.ActionContainer {
 
-        private tabId:api_app.AppBarTabId;
+        private tabId: api_app.AppBarTabId;
 
-        private persistedItem:T;
+        private persistedItem: T;
 
-        private mainToolbar:api_ui_toolbar.Toolbar;
+        private mainToolbar: api_ui_toolbar.Toolbar;
 
-        private stepToolbar:api_ui_toolbar.Toolbar;
+        private stepToolbar: api_ui_toolbar.Toolbar;
 
-        private actions:WizardActions<T>;
+        private actions: WizardActions<T>;
 
-        private header:WizardHeader;
+        private header: WizardHeader;
 
-        private stepNavigator:WizardStepNavigator;
+        private stepNavigator: WizardStepNavigator;
 
-        private stepPanels:api_app_wizard.WizardStepDeckPanel;
+        private stepPanels: api_app_wizard.WizardStepDeckPanel;
 
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
-        private isChanged:boolean = true;
+        private isChanged: boolean = true;
 
-        private renderingNew:boolean;
+        private renderingNew: boolean;
 
-        private previous:WizardStepNavigationArrow;
+        private previous: WizardStepNavigationArrow;
 
-        private next:WizardStepNavigationArrow;
+        private next: WizardStepNavigationArrow;
 
-        private listeners:WizardPanelListener[] = [];
+        private listeners: WizardPanelListener[] = [];
 
-        private backPanel:api_ui.DeckPanel;
+        private backPanel: api_ui.DeckPanel;
 
-        private formPanel:api_ui.Panel;
+        private formPanel: api_ui.Panel;
 
-        private focusElement:JQuery;
+        private focusElement: JQuery;
 
-        private stepNavigatorAndToolbarContainer:api_dom.DivEl;
+        private stepNavigatorAndToolbarContainer: api_dom.DivEl;
 
 
-        constructor(params:WizardPanelParams) {
+        constructor(params: WizardPanelParams) {
             super("WizardPanel");
+
+            console.log("WizardPanel.constructor started");
 
             this.tabId = params.tabId;
             this.persistedItem = params.persistedItem;
@@ -115,16 +117,22 @@ module api_app_wizard {
 
             this.setSteps(params.steps);
 
-            if( this.persistedItem != null ) {
-                this.setPersistedItem(this.persistedItem);
+            if (this.persistedItem != null) {
+                this.renderExisting(this.persistedItem);
             }
+            else {
+                this.renderNew();
+            }
+
+            console.log("WizardPanel.constructor finished");
         }
 
         giveInitialFocus() {
+            console.log("WizardPanel.giveInitialFocus");
             this.header.giveFocus();
         }
 
-        getTabId():api_app.AppBarTabId {
+        getTabId(): api_app.AppBarTabId {
             return this.tabId;
         }
 
@@ -134,7 +142,7 @@ module api_app_wizard {
             }
         }
 
-        toggleFormPanel(toggle:boolean) {
+        toggleFormPanel(toggle: boolean) {
             if (toggle) {
                 this.backPanel.showPanel(0)
             } else {
@@ -163,26 +171,26 @@ module api_app_wizard {
             });
         }
 
-        addListener(listener:WizardPanelListener) {
+        addListener(listener: WizardPanelListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:WizardPanelListener) {
+        removeListener(listener: WizardPanelListener) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        getHeader():WizardHeader {
+        getHeader(): WizardHeader {
             return this.header;
         }
 
-        getActions():api_ui.Action[] {
+        getActions(): api_ui.Action[] {
             return this.mainToolbar.getActions();
         }
 
         private notifyClosed() {
-            this.listeners.forEach((listener:WizardPanelListener) => {
+            this.listeners.forEach((listener: WizardPanelListener) => {
                 if (listener.onClosed) {
                     listener.onClosed(this);
                 }
@@ -190,46 +198,55 @@ module api_app_wizard {
         }
 
         renderNew() {
+            console.log("WizardPanel.renderNew");
+
             this.renderingNew = true;
 
             this.actions.enableActionsForNew();
         }
 
-        isRenderingNew():boolean {
+        isRenderingNew(): boolean {
             return this.renderingNew;
         }
 
-        setPersistedItem(item:T) {
+        renderExisting(item: T) {
+            console.log("WizardPanel.renderExisting");
+            console.log("        - > setPersistedItem");
             this.renderingNew = false;
+            this.setPersistedItem(item);
+        }
+
+        setPersistedItem(item: T) {
+            console.log("WizardPanel.setPersistedItem");
 
             this.persistedItem = item;
             this.actions.enableActionsForExisting(item);
         }
 
-        getPersistedItem():T {
+        getPersistedItem(): T {
             return this.persistedItem;
         }
 
-        isItemPersisted():boolean {
+        isItemPersisted(): boolean {
             return this.persistedItem != null;
         }
 
-        getIconUrl():string {
+        getIconUrl(): string {
             return null; // TODO:
         }
 
-        private setSteps(steps:api_app_wizard.WizardStep[]) {
+        private setSteps(steps: api_app_wizard.WizardStep[]) {
 
-            steps.forEach( (step:api_app_wizard.WizardStep, index:number) => {
+            steps.forEach((step: api_app_wizard.WizardStep, index: number) => {
                 this.stepPanels.addNavigablePanelToBack(step.getTabBarItem(), step.getPanel());
                 // Ensure first step is shown
-                if( index == 0 ) {
-                    this.stepPanels.showPanel( 0 );
+                if (index == 0) {
+                    this.stepPanels.showPanel(0);
                 }
-            } );
+            });
         }
 
-        close(checkCanClose:boolean = false) {
+        close(checkCanClose: boolean = false) {
 
             if (checkCanClose) {
                 if (this.canClose()) {
@@ -241,7 +258,7 @@ module api_app_wizard {
             }
         }
 
-        canClose():boolean {
+        canClose(): boolean {
 
             if (this.hasUnsavedChanges()) {
                 this.askUserForSaveChangesBeforeClosing();
@@ -259,7 +276,7 @@ module api_app_wizard {
         /*
          * Override this method in specific wizard to do proper check.
          */
-        hasUnsavedChanges():boolean {
+        hasUnsavedChanges(): boolean {
             return this.isChanged;
         }
 
@@ -267,7 +284,7 @@ module api_app_wizard {
             new api_app_wizard.SaveBeforeCloseDialog(this).open();
         }
 
-        saveChanges(successCallback?:() => void) {
+        saveChanges(successCallback?: () => void) {
 
             if (this.isItemPersisted()) {
                 this.updatePersistedItem(successCallback);
@@ -282,14 +299,14 @@ module api_app_wizard {
         /*
          * Override this method in specific wizard to do actual persisting of new item.
          */
-        persistNewItem(successCallback?:() => void) {
+        persistNewItem(successCallback?: () => void) {
 
         }
 
         /*
          * Override this method in specific wizard to do actual update of item.
          */
-        updatePersistedItem(successCallback?:() => void) {
+        updatePersistedItem(successCallback?: () => void) {
 
         }
     }
