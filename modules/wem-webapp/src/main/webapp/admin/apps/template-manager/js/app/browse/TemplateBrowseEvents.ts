@@ -15,8 +15,8 @@ module app_browse {
 
     export class DeleteSiteTemplatePromptEvent extends BaseSiteTemplateModelEvent {
 
-        constructor(sitetemplateModel: api_content_site_template.SiteTemplateSummary) {
-            super('deleteSitetemplatePrompt', [sitetemplateModel]);
+        constructor(siteTemplateModel: api_content_site_template.SiteTemplateSummary) {
+            super('deleteSitetemplatePrompt', [siteTemplateModel]);
         }
 
         getSiteTemplate(): api_content_site_template.SiteTemplateSummary {
@@ -37,6 +37,20 @@ module app_browse {
         static on(handler:(event:ImportTemplateEvent) => void) {
             api_event.onEvent('importTemplate', handler);
         }
+    }
 
+    export class ExportTemplateEvent extends BaseSiteTemplateModelEvent {
+
+        constructor(siteTemplate: api_content_site_template.SiteTemplateSummary) {
+            super('exportTemplate', [siteTemplate]);
+        }
+
+        static on(handler:(event:ExportTemplateEvent) => void) {
+            api_event.onEvent('exportTemplate', handler);
+        }
+
+        getSiteTemplate(): api_content_site_template.SiteTemplateSummary {
+            return this.getSiteTemplates()[0];
+        }
     }
 }
