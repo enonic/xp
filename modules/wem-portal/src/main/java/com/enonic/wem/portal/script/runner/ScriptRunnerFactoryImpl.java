@@ -3,12 +3,15 @@ package com.enonic.wem.portal.script.runner;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
+import org.mozilla.javascript.ScriptableObject;
 
+import com.enonic.wem.core.module.ModuleResourcePathResolver;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
+import com.enonic.wem.portal.script.lib.ContextScriptBean;
+import com.enonic.wem.portal.script.lib.GlobalScriptBean;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
-import com.enonic.wem.portal.script.runtime.JsApiBridge;
-import com.enonic.wem.portal.script.runtime.RootRuntimeObject;
 
 public final class ScriptRunnerFactoryImpl
     implements ScriptRunnerFactory
@@ -20,24 +23,55 @@ public final class ScriptRunnerFactoryImpl
     protected ScriptLoader scriptLoader;
 
     @Inject
-    protected Provider<RootRuntimeObject> rootRuntimeObjects;
+    protected GlobalScriptBean globalScriptBean;
 
     @Inject
-    protected Provider<JsApiBridge> apiBridgeProvider;
+    protected ModuleResourcePathResolver moduleResourcePathResolver;
+
+    @Inject
+    protected Provider<ContextScriptBean> contextServiceBeans;
+
+    protected ScriptableObject rootScope;
 
     public ScriptRunnerFactoryImpl()
     {
         ContextFactory.initGlobal( new RhinoContextFactory() );
     }
 
+    private void initRootScope()
+    {
+        if ( this.rootScope == null )
+        {
+            this.rootScope = createRootScope();
+        }
+    }
+
     @Override
     public ScriptRunner newRunner()
     {
+        initRootScope();
+
         final ScriptRunnerImpl runner = new ScriptRunnerImpl();
         runner.scriptLoader = this.scriptLoader;
         runner.compiler = this.compiler;
-        runner.apiBridge = this.apiBridgeProvider.get();
-        runner.rootRuntimeObjects = this.rootRuntimeObjects;
+        runner.rootScope = this.rootScope;
+        runner.contextServiceBean = this.contextServiceBeans.get();
         return runner;
+    }
+
+    private ScriptableObject createRootScope()
+    {
+        final Context cx = Context.enter();
+
+        try
+        {
+            final ScriptableObject scope = cx.initStandardObjects( this.globalScriptBean, true );
+            this.globalScriptBean.initialize();
+            return scope;
+        }
+        finally
+        {
+            Context.exit();
+        }
     }
 }

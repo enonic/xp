@@ -2,22 +2,19 @@ package com.enonic.wem.portal.script.runner;
 
 import java.util.Map;
 
-import javax.inject.Provider;
-
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.RhinoException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
-import org.slf4j.LoggerFactory;
+import org.mozilla.javascript.ScriptableObject;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.wem.portal.script.EvaluationException;
 import com.enonic.wem.portal.script.compiler.ScriptCompiler;
+import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
-import com.enonic.wem.portal.script.runtime.JsApiBridge;
-import com.enonic.wem.portal.script.runtime.RootRuntimeObject;
 
 final class ScriptRunnerImpl
     implements ScriptRunner
@@ -32,9 +29,9 @@ final class ScriptRunnerImpl
 
     private ScriptSource source;
 
-    protected JsApiBridge apiBridge;
+    protected ScriptableObject rootScope;
 
-    protected Provider<RootRuntimeObject> rootRuntimeObjects;
+    protected ContextScriptBean contextServiceBean;
 
     public ScriptRunnerImpl()
     {
@@ -66,10 +63,12 @@ final class ScriptRunnerImpl
     {
         final Context context = Context.enter();
 
+        this.contextServiceBean.setModule( this.source.getModule() );
+        this.contextServiceBean.install( context );
+
         try
         {
-            initializeScope( context );
-            setupProperties();
+            initializeScope();
             installRequire();
             setObjectsToScope();
 
@@ -82,6 +81,7 @@ final class ScriptRunnerImpl
         }
         finally
         {
+            ContextScriptBean.remove( context );
             Context.exit();
         }
     }
@@ -103,21 +103,10 @@ final class ScriptRunnerImpl
         function.install( this.scope );
     }
 
-    private void initializeScope( final Context context )
+    private void initializeScope()
     {
-        this.scope = context.initStandardObjects();
-        final RootRuntimeObject runtime = this.rootRuntimeObjects.get();
-        runtime.setModule( this.source.getModule() );
-        runtime.setScope( this.scope );
-
-        property( "__wem", runtime );
-    }
-
-    private void setupProperties()
-    {
-        property( "__log", LoggerFactory.getLogger( getClass() ) );
-        property( "__api", this.apiBridge );
-        this.apiBridge.setScope( this.scope );
+        final Context context = Context.getCurrentContext();
+        this.scope = context.initStandardObjects( this.rootScope );
     }
 
     private EvaluationException createError( final RhinoException cause )

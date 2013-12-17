@@ -41,7 +41,7 @@ final class JsControllerImpl
     public JsController context( final JsContext context )
     {
         this.context = context;
-        this.runner.property( "__context", this.context );
+        this.runner.property( "portal", this.context );
         return this;
     }
 
