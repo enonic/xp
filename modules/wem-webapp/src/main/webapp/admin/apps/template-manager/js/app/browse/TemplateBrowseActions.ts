@@ -71,8 +71,11 @@ module app_browse {
 
         constructor() {
             super("Export");
+            this.setEnabled(false);
             this.addExecutionListener(() => {
-                console.log("export template action");
+                var selection = components.gridPanel.getSelection()[0];
+                var siteTemplateModel = api_content_site_template.SiteTemplateSummary.fromExtModel(selection);
+                new ExportTemplateEvent(siteTemplateModel).fire();
             });
         }
 

@@ -41,6 +41,15 @@ module app {
                 dialog.open();
             });
 
+            app_browse.ExportTemplateEvent.on((event:app_browse.ExportTemplateEvent) => {
+                var siteTemplate:api_content_site_template.SiteTemplateSummary = event.getSiteTemplate();
+
+                var exportTemplate = new api_content_site_template.ExportSiteTemplateRequest(siteTemplate.getKey());
+                var templateExportUrl = exportTemplate.getRequestPath().toString() + '?siteTemplateKey=' + siteTemplate.getKey().toString();
+                console.log('Download Site Template file from: ' + templateExportUrl);
+
+                window.location.href = templateExportUrl;
+            });
         }
     }
 }
