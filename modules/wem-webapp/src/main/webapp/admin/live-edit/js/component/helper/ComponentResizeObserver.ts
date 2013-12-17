@@ -19,17 +19,17 @@ module LiveEdit.component.helper {
             }
 
             this.component = component;
-            this.component.getElement().on('resize', () => {
+            this.component.getElement().on('resize', (event) => {
                 if (this.component.isSelected()) {
                     $(window).on('selectComponent.liveEdit', [component])
                 }
-            }, false);
+            });
 
         }
 
         private disconnect():void {
             if (this.component != null) {
-                this.component.getElement().off('resize', false);
+                this.component.getElement().off('resize');
             }
             this.component = null;
 

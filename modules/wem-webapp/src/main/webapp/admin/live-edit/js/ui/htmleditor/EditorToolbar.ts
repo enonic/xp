@@ -54,7 +54,8 @@ module LiveEdit.ui {
                 event.stopPropagation();
 
                 // Simple editor command implementation ;)
-                var tag = event.target.getAttribute('live-edit-data-tag');
+                //TODO: this doesnt work with typescript 0.9.5
+                var tag; //= event.target.getAttribute('live-edit-data-tag');
                 if (tag) {
                     $(window).trigger('editorToolbarButtonClick.liveEdit', [tag]);
                 }
