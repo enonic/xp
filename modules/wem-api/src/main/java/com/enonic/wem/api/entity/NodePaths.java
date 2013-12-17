@@ -1,11 +1,13 @@
 package com.enonic.wem.api.entity;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.support.AbstractImmutableEntitySet;
 
@@ -15,6 +17,11 @@ public class NodePaths
     private NodePaths( final ImmutableSet<NodePath> set )
     {
         super( set );
+    }
+
+    private NodePaths( final Builder builder )
+    {
+        super( ImmutableSet.copyOf( builder.nodePaths ) );
     }
 
     public static NodePaths empty()
@@ -38,6 +45,11 @@ public class NodePaths
         return new NodePaths( ImmutableSet.copyOf( paths ) );
     }
 
+    public static Builder newNodePaths()
+    {
+        return new Builder();
+    }
+
     private static ImmutableSet<NodePath> parsePaths( final String... paths )
     {
         final Collection<String> list = Lists.newArrayList( paths );
@@ -54,4 +66,21 @@ public class NodePaths
             return new NodePath( value );
         }
     }
+
+    public static class Builder
+    {
+        private Set<NodePath> nodePaths = Sets.newHashSet();
+
+        public Builder addNodePath( final NodePath nodePath )
+        {
+            this.nodePaths.add( nodePath );
+            return this;
+        }
+
+        public NodePaths build()
+        {
+            return new NodePaths( this );
+        }
+    }
+
 }

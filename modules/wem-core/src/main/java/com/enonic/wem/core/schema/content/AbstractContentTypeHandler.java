@@ -11,7 +11,7 @@ import com.enonic.wem.api.form.MixinReferencesToFormItemsTransformer;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypes;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.GetNodesByParentHandler;
+import com.enonic.wem.core.entity.GetNodesByParentService;
 
 public abstract class AbstractContentTypeHandler<T extends Command>
     extends CommandHandler<T>
@@ -29,12 +29,7 @@ public abstract class AbstractContentTypeHandler<T extends Command>
 
     private Nodes getNodesByParent( final GetNodesByParent getNodesByParentCommand )
     {
-        final GetNodesByParentHandler getNodesByParentHandler =
-            GetNodesByParentHandler.create().context( this.context ).command( getNodesByParentCommand ).build();
-
-        getNodesByParentHandler.handle();
-
-        return getNodesByParentCommand.getResult();
+        return new GetNodesByParentService( this.context.getJcrSession(), getNodesByParentCommand ).execute();
     }
 
     ContentType transformMixinReferences( final ContentType contentType )

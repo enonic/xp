@@ -20,7 +20,7 @@ public class EntityQueryTranslator
     {
         ElasticsearchQuery elasticsearchQuery = ElasticsearchQuery.newQuery().
             index( Index.NODB ).
-            indexType( IndexType.ENTITY ).
+            indexType( IndexType.NODE ).
             query( queryBuilderFactory.create( entityQuery.getQuery(), entityQuery.getQueryFilters() ) ).
             filter( filterBuilderFactory.create( entityQuery.getFilters() ) ).
             addFacets( facetBuilderFactory.create( entityQuery.getFacetQueries() ) ).

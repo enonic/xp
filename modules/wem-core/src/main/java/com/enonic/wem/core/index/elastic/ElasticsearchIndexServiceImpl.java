@@ -193,7 +193,7 @@ public class ElasticsearchIndexServiceImpl
     {
         final SearchRequest searchRequest = Requests.
             searchRequest( elasticsearchQuery.getIndex().getName() ).
-            types( elasticsearchQuery.getIndexType().name() ).
+            types( elasticsearchQuery.getIndexType().getIndexTypeName() ).
             source( elasticsearchQuery.toSearchSourceBuilder() );
 
         final SearchResponse searchResponse = doSearchRequest( searchRequest );

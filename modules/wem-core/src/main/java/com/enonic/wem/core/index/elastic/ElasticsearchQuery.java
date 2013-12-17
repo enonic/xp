@@ -106,10 +106,14 @@ public class ElasticsearchQuery
     {
         SearchSourceBuilder builder = new SearchSourceBuilder().
             query( this.getQuery() ).
-            filter( this.getFilter() ).
             from( this.getFrom() ).
             size( this.getSize() ).
             explain( this.doExplain() );
+
+        if ( this.getFilter() != null )
+        {
+            builder.filter( this.getFilter() );
+        }
 
         if ( this.getFacetBuilders() != null && !this.getFacetBuilders().isEmpty() )
         {

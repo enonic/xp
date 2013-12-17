@@ -1,5 +1,7 @@
 package com.enonic.wem.core.content;
 
+import java.util.Iterator;
+
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContent;
@@ -8,6 +10,7 @@ import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
@@ -19,6 +22,7 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
+import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -64,7 +68,26 @@ public class ContentNodeTranslator
             name( content.getName().toString() );
     }
 
+    public Contents fromNodes( final Nodes nodes )
+    {
+        final Iterator<Node> iterator = nodes.iterator();
+
+        Contents.Builder contents = Contents.builder();
+
+        for ( final Node node : nodes )
+        {
+            contents.add( doGetFromNode( node ) );
+        }
+
+        return contents.build();
+    }
+
     public Content fromNode( final Node node )
+    {
+        return doGetFromNode( node );
+    }
+
+    private Content doGetFromNode( final Node node )
     {
         final DataSet formItemsAsDataSet = node.dataSet( FORMITEMS_FULL_PATH );
         final FormItems formItems = SERIALIZER_FOR_FORM_ITEM_TO_DATA.deserializeFormItems( formItemsAsDataSet );

@@ -15,7 +15,7 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
-import com.enonic.wem.core.entity.GetNodesByPathsHandler;
+import com.enonic.wem.core.entity.GetNodesByPathsService;
 
 
 public final class GetContentTypesHandler
@@ -59,14 +59,7 @@ public final class GetContentTypesHandler
 
     private Nodes getNodes( final GetNodesByPaths getNodesByPathsCommand )
     {
-        final GetNodesByPathsHandler getNodesByPathsHandler = GetNodesByPathsHandler.create().
-            context( this.context ).
-            command( getNodesByPathsCommand ).
-            build();
-
-        getNodesByPathsHandler.handle();
-
-        return getNodesByPathsCommand.getResult();
+        return new GetNodesByPathsService( this.context.getJcrSession(), getNodesByPathsCommand ).execute();
     }
 
     private Set<NodePath> createNodePaths( final ContentTypeNames contentTypeNames )

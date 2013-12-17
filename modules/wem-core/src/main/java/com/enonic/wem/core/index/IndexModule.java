@@ -10,6 +10,8 @@ import com.enonic.wem.core.index.elastic.ElasticClientProvider;
 import com.enonic.wem.core.index.elastic.ElasticNodeProvider;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexService;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
+import com.enonic.wem.core.index.entity.EntitySearchService;
+import com.enonic.wem.core.index.entity.EntitySearchServiceImpl;
 import com.enonic.wem.core.index.search.SearchService;
 
 public final class IndexModule
@@ -23,5 +25,6 @@ public final class IndexModule
         bind( SearchService.class ).in( Scopes.SINGLETON );
         bind( IndexService.class ).in( Scopes.SINGLETON );
         bind( ElasticsearchIndexService.class ).to( ElasticsearchIndexServiceImpl.class ).in( Scopes.SINGLETON );
+        bind( EntitySearchService.class ).to( EntitySearchServiceImpl.class ).in( Scopes.SINGLETON );
     }
 }

@@ -24,7 +24,8 @@ public class GetAttachmentHandler
         if ( command.getContentId() != null )
         {
             attachment = attachmentDao.getAttachmentById( command.getContentId(), command.getAttachmentName(), session );
-        } else
+        }
+        else
         {
             attachment = attachmentDao.getAttachmentByPath( command.getContentPath(), command.getAttachmentName(), session );
         }

@@ -11,4 +11,14 @@ public class EntitySearchResultEntry
         this.score = score;
         this.id = id;
     }
+
+    public float getScore()
+    {
+        return score;
+    }
+
+    public String getId()
+    {
+        return id;
+    }
 }

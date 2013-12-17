@@ -8,7 +8,7 @@ public class ContentNodeHelper
 {
     public static NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {
-        return new NodePath( NodeJcrDao.CONTENT_NODE_ROOT + "/" + contentPath.toString() ).asAbsolute();
+        return new NodePath( NodeJcrDao.CONTENT_ROOT_NODE_NAME + "/" + contentPath.toString() ).asAbsolute();
     }
 }
 

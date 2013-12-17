@@ -11,7 +11,7 @@ public class EmbeddedNodePathFactory
     {
         return NodePath.
             newNodePath( NodePath.
-                newNodePath( new NodePath( NodeJcrDao.CONTENT_NODE_ROOT ), parentPath.getRelativePath().toString() ).build() ).
+                newNodePath( new NodePath( NodeJcrDao.CONTENT_ROOT_NODE_NAME ), parentPath.getRelativePath().toString() ).build() ).
             addElement( NodeJcrDao.EMBEDDED_NODE_ROOT_PATH ).
             addElement( name.toString() ).build().asAbsolute();
     }

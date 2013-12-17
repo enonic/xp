@@ -26,7 +26,9 @@ public class NodeJcrDao
 
     public static final String EMBEDDED_NODE_ROOT_PATH = "__embedded";
 
-    public static final String CONTENT_NODE_ROOT = "content";
+    public static final String CONTENT_ROOT_NODE_NAME = "content";
+
+    public static final NodePath CONTENT_ROOT_NODE = NodePath.newNodePath( NodePath.ROOT, CONTENT_ROOT_NODE_NAME ).build();
 
     private final Session session;
 
@@ -40,7 +42,7 @@ public class NodeJcrDao
         // TODO: A temporary hack to ensure that paths to root containers of different types of nodes already exists
         ensurePath( new NodePath( "mixins" ) );
         ensurePath( new NodePath( "content-types" ) );
-        ensurePath( new NodePath( CONTENT_NODE_ROOT ) );
+        ensurePath( new NodePath( CONTENT_ROOT_NODE_NAME ) );
     }
 
     private void ensurePath( final NodePath path )
