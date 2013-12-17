@@ -3,12 +3,12 @@ module api_content {
     export class ContentIconUrlResolver extends api_icon.IconUrlResolver<ContentIconUrlResolver,ContentSummary> {
 
         public getResourcePath(): api_rest.Path {
-            return api_rest.Path.fromParent(this.getRestPath(), "content", "image" );
+            return api_rest.Path.fromString("content/image");
         }
 
         public resolve(icon: api_icon.Icon): string {
 
-            return this.getResourcePath().toString() + "/" + icon.getBlobKey() + "?" + this.resolveQueryParams();
+            return this.toRestUrl(this.getResourcePath()) + "/" + icon.getBlobKey() + "?" + this.resolveQueryParams();
         }
 
         static default(): string {

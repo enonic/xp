@@ -2,8 +2,6 @@ module api_icon {
 
     export class IconUrlResolver<T,SUBJECT> {
 
-        private restPath: api_rest.Path;
-
         private size: number;
 
         private thumbnail: boolean;
@@ -11,7 +9,6 @@ module api_icon {
         constructor() {
             this.size = null;
             this.thumbnail = false;
-            this.restPath = api_rest.Path.fromString(api_util.getRestUri(""));
         }
 
         public setSize(value: number): IconUrlResolver<T,SUBJECT> {
@@ -40,12 +37,12 @@ module api_icon {
             return str;
         }
 
-        public getRestPath(): api_rest.Path {
-            return this.restPath;
-        }
-
         public getResourcePath(): api_rest.Path {
             throw Error("Function getResourcePath must be overridden by inheritor" + api_util.getClassName(this));
+        }
+
+        public toRestUrl(path:api_rest.Path):string {
+            return api_util.getRestUri(path.toString());
         }
     }
 
