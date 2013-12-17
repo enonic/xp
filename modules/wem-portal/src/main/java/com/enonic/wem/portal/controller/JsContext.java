@@ -1,6 +1,6 @@
 package com.enonic.wem.portal.controller;
 
-import com.enonic.wem.portal.content.JsContextContent;
+import com.enonic.wem.api.content.Content;
 
 public final class JsContext
 {
@@ -8,7 +8,7 @@ public final class JsContext
 
     private JsHttpResponse response;
 
-    private JsContextContent content;
+    private Content content;
 
     public JsContext()
     {
@@ -35,12 +35,12 @@ public final class JsContext
         this.response = response;
     }
 
-    public JsContextContent getContent()
+    public Content getContent()
     {
         return content;
     }
 
-    public void setContent( final JsContextContent content )
+    public void setContent( final Content content )
     {
         this.content = content;
     }

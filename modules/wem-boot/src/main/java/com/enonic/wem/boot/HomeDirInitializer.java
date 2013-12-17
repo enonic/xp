@@ -50,6 +50,7 @@ final class HomeDirInitializer
             return;
         }
 
+        Files.createDirectories( to.toPath().getParent() );
         Files.copy( in, to.toPath() );
     }
 

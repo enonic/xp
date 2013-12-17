@@ -50,7 +50,6 @@ import static com.enonic.wem.api.content.page.region.Region.newRegion;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
-import static com.google.common.io.ByteStreams.asByteSource;
 
 
 public class SitesInitializer
@@ -181,20 +180,11 @@ public class SitesInitializer
     private Module createDemoModule( final PageDescriptor pageDescriptor )
     {
         final ModuleFileEntry.Builder componentsDir = newModuleDirectory( "components" );
-        final ModuleFileEntry.Builder descriptorDir = newModuleDirectory( pageDescriptor.getName().toString() ).
-            addFile( "get.js", asByteSource( "__context.response.body = 'Hello world!';".getBytes() ) );
+        final ModuleFileEntry.Builder descriptorDir = newModuleDirectory( pageDescriptor.getName().toString() );
         componentsDir.addEntry( descriptorDir );
-
-        final ModuleFileEntry.Builder publicDir = newModuleDirectory( "public" );
-        final ModuleFileEntry.Builder cssDir = newModuleDirectory( "css" ).
-            addFile( "main.css", asByteSource( "body { \r\n\tbackground: blue; \r\n}".getBytes() ) );
-        final ModuleFileEntry.Builder jsDir = newModuleDirectory( "js" ).
-            addFile( "lib.js", asByteSource( "alert('Hello world!');".getBytes() ) );
-        publicDir.addEntry( cssDir ).addEntry( jsDir );
 
         final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
             addEntry( componentsDir ).
-            addEntry( publicDir ).
             build();
 
         final CreateModule createModule = Commands.module().create().

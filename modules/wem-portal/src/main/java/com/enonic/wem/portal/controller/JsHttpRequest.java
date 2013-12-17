@@ -23,9 +23,9 @@ public final class JsHttpRequest
         return this.raw.getMethod();
     }
 
-    public String param( final String name )
+    public MultivaluedMap<String, String> getParams()
     {
-        return queryParameters.getFirst( name );
+        return queryParameters;
     }
 
     public String getMode()

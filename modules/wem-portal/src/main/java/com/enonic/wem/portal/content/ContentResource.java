@@ -71,7 +71,7 @@ public final class ContentResource
         final ModuleResourceKey jsModuleResource = getJsModuleResource( content );
 
         final JsContext context = new JsContext();
-        context.setContent( new JsContextContent( content ) );
+        context.setContent( content );
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
         request.setMode( this.mode );
         context.setRequest( request );
