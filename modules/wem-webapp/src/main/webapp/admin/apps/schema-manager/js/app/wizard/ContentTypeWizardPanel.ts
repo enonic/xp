@@ -16,8 +16,8 @@ module app_wizard {
 
         constructor(tabId: api_app.AppBarTabId, persistedContentType: api_schema_content.ContentType) {
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
-            this.formIcon =
-            new api_app_wizard.FormIcon(new api_schema_content.ContentTypeIconUrlResolver().resolveDefault(), "Click to upload icon",
+            var defaultFormIconUrl = new api_schema_content.ContentTypeIconUrlResolver().resolveDefault();
+            this.formIcon = new api_app_wizard.FormIcon(defaultFormIconUrl, "Click to upload icon",
                 api_util.getRestUri("blob/upload"));
             this.formIcon.addListener({
                 onUploadStarted: null,
