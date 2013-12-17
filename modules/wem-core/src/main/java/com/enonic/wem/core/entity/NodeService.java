@@ -8,8 +8,11 @@ public abstract class NodeService
 {
     NodeJcrDao nodeJcrDao;
 
+    Session session;
+
     public NodeService( final Session session )
     {
+        this.session = session;
         this.nodeJcrDao = new NodeJcrDao( session );
     }
 

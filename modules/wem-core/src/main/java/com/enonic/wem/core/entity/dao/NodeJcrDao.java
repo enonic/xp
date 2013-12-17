@@ -112,7 +112,10 @@ public class NodeJcrDao
 
         try
         {
-            session.move( originalPath.toString(), newPath.toString() );
+            final String jcrOriginalPath = NodeJcrHelper.toJcrPath( originalPath );
+            final String jcrDestinationPath = NodeJcrHelper.toJcrPath( newPath );
+
+            session.move( jcrOriginalPath, jcrDestinationPath );
             return true;
         }
         catch ( ItemExistsException e )

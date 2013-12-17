@@ -1,16 +1,18 @@
 package com.enonic.wem.core.content;
 
 import javax.inject.Inject;
-import javax.jcr.Session;
 
 import com.enonic.wem.api.command.content.RenameContent;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentName;
-import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.command.entity.GetNodeById;
+import com.enonic.wem.api.command.entity.RenameNode;
+import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.content.dao.ContentDao;
+import com.enonic.wem.core.entity.GetNodeByIdService;
+import com.enonic.wem.core.entity.RenameNodeService;
 
 
 public class RenameContentHandler
@@ -20,35 +22,23 @@ public class RenameContentHandler
 
     private AttachmentDao attachmentDao;
 
+    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
+
     @Override
     public void handle()
         throws Exception
     {
-        final Session session = context.getJcrSession();
-        final ContentId contentId = command.getContentId();
-        final Content content = contentDao.selectById( contentId, session );
-        if ( content == null )
-        {
-            throw new ContentNotFoundException( contentId );
-        }
 
-        final String oldName = content.getName().toString();
-        final ContentName newName = command.getNewName();
+        final EntityId entityId = EntityId.from( command.getContentId() );
+        final RenameNode renameNodeCommand = new RenameNode( entityId, NodeName.from( command.getNewName().toString() ) );
 
-        final boolean renamed = contentDao.renameContent( contentId, newName, session );
-        if ( renamed )
-        {
-            renameAttachments( contentId, oldName, newName.toString(), session );
-        }
-        session.save();
+        new RenameNodeService( this.context.getJcrSession(), renameNodeCommand ).execute();
+        this.context.getJcrSession().save();
 
-        final Content updatedContent = contentDao.selectById( contentId, session );
-        command.setResult( updatedContent );
-    }
+        final GetNodeById getNodeByIdCommand = new GetNodeById( entityId );
+        final Node renamedNode = new GetNodeByIdService( this.context.getJcrSession(), getNodeByIdCommand ).execute();
 
-    private void renameAttachments( final ContentId contentId, final String oldName, final String newName, final Session session )
-    {
-        attachmentDao.renameAttachments( contentId, oldName, newName, session );
+        command.setResult( CONTENT_NODE_TRANSLATOR.fromNode( renamedNode ) );
     }
 
     @Inject

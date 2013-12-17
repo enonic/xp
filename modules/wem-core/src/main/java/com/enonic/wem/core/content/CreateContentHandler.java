@@ -76,17 +76,18 @@ public class CreateContentHandler
             validateContentData( context.getClient(), builtContent );
         }
 
-        final Content storedContent = contentDao.create( builtContent, session );
-        session.save();
+        //final Content storedContent = contentDao.create( builtContent, session );
+        //session.save();
 
-        addAttachments( builtContent, storedContent );
-
-        addRelationships( session, builtContent, storedContent );
+        //addAttachments( builtContent, storedContent );
 
         final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent, command );
-        createAsNode( createNodeCommand );
+        final CreateNodeResult createdNode = createAsNode( createNodeCommand );
 
-        indexService.indexContent( storedContent );
+        //indexService.indexContent( storedContent );
+
+        final Content storedContent = CONTENT_NODE_TRANSLATOR.fromNode( createdNode.getPersistedNode() );
+        addRelationships( session, builtContent, storedContent );
 
         command.setResult( storedContent );
     }
@@ -223,6 +224,7 @@ public class CreateContentHandler
 
     private void checkParentContentAllowsChildren( final ContentPath parentContentPath, final Session session )
     {
+        //TODO: Rewrite this to NODE
         final Content content = contentDao.selectByPath( parentContentPath, session );
         if ( content != null )
         {

@@ -26,18 +26,18 @@ import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
 import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.command.entity.DeleteNodeByPath;
-import com.enonic.wem.api.command.entity.GetNodeByPath;
+import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.data.type.ValueTypes;
+import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
@@ -48,7 +48,7 @@ import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.entity.DeleteNodeByPathHandler;
-import com.enonic.wem.core.entity.GetNodeByPathService;
+import com.enonic.wem.core.entity.GetNodeByIdService;
 import com.enonic.wem.core.entity.UpdateNodeHandler;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
@@ -80,55 +80,51 @@ public class UpdateContentHandler
     public void handle()
         throws Exception
     {
-        final Session session = context.getJcrSession();
 
-        // TODO: Fetch Node, use path or id?
-        final Content persistedContent = getPersistedContent( session );
+//        final Content persistedContent = getPersistedContent( session );
 
-        Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
-        if ( !editBuilder.isChanges() )
-        {
-            command.setResult( persistedContent );
-            return;
-        }
+        //TODO: the result is null if nothing was edited, but should be SUCCESS ?
+//        Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
+//        if ( !editBuilder.isChanges() )
+//       {
+//            command.setResult( null );
+//            return;
+//        }
 
-        //TODO: Attachments have no editor and thus need to be checked separately, but probably should have one ?
-        if ( !command.getAttachments().isEmpty() )
-        {
-            final ContentId contentId = persistedContent.getId();
-            addAttachments( contentId, command.getAttachments() );
-            addMediaThumbnail( persistedContent, contentId );
-        }
+//        //TODO: Attachments have no editor and thus need to be checked separately, but probably should have one ?
+//        if ( !command.getAttachments().isEmpty() )
+//        {
+//           final ContentId contentId = persistedContent.getId();
+//            addAttachments( contentId, command.getAttachments() );
+//            addMediaThumbnail( persistedContent, contentId );
+//        }
 
-        final Content tempEditedContent = editBuilder.build();
-        validateEditedContent( persistedContent, tempEditedContent );
+//        final Content tempEditedContent = editBuilder.build();
+//        validateEditedContent( persistedContent, tempEditedContent );
 
-        syncRelationships( persistedContent, tempEditedContent );
+//        syncRelationships( persistedContent, tempEditedContent );
 
-        final Content editedContent = newContent( tempEditedContent ).
-            modifiedTime( DateTime.now() ).
-            modifier( command.getModifier() ).build();
+//        final Content editedContent = newContent( tempEditedContent ).
+//            modifiedTime( DateTime.now() ).
+//            modifier( command.getModifier() ).build();
 
-        final boolean createNewVersion = true;
-        final Content updatedContent = contentDao.update( editedContent, createNewVersion, session );
-        session.save();
+//        final boolean createNewVersion = true;
+//        final Content updatedContent = contentDao.update( editedContent, createNewVersion, session );
+//        session.save();
 
         // This must be placed before the deleteRemoveEmbedded since we use persisted and edited both for node and content for now
         // Hackyhackyhacky
-        updateContentAsNode( persistedContent.getPath() );
+//        deleteRemovedEmbeddedContent( session, persistedContent, editedContent );
 
-        deleteRemovedEmbeddedContent( session, persistedContent, editedContent );
+        //       indexService.indexContent( tempEditedContent );
 
-        indexService.indexContent( tempEditedContent );
-
-        command.setResult( updatedContent );
+        command.setResult( updateContentAsNode() );
     }
 
-    private void updateContentAsNode( final ContentPath contentPath )
+    private Content updateContentAsNode()
     {
-        final NodePath nodePathToContent = ContentNodeHelper.translateContentPathToNodePath( contentPath );
-
-        final Node oldPersistedNode = getNodeByPath( nodePathToContent );
+        final GetNodeById getNodeByIdCommand = new GetNodeById( EntityId.from( command.getContentId() ) );
+        final Node oldPersistedNode = new GetNodeByIdService( this.context.getJcrSession(), getNodeByIdCommand ).execute();
 
         final Content persistedNodeAsContent = CONTENT_NODE_TRANSLATOR.fromNode( oldPersistedNode );
 
@@ -136,7 +132,7 @@ public class UpdateContentHandler
 
         if ( !editBuilder.isChanges() )
         {
-            return;
+            return null;
         }
 
         final Content tempEditedContent = editBuilder.build();
@@ -161,13 +157,14 @@ public class UpdateContentHandler
             final Content editedNodeAsContent = CONTENT_NODE_TRANSLATOR.fromNode( editedNode );
 
             deleteRemovedEmbeddedContentAsNode( persistedNodeAsContent, editedNodeAsContent );
+
+            return editedNodeAsContent;
         }
         catch ( Exception e )
         {
             throw new RuntimeException( "Failed to store content as node", e );
         }
     }
-
 
     private void deleteRemovedEmbeddedContentAsNode( final Content persistedContent, final Content editedContent )
         throws Exception
@@ -189,11 +186,6 @@ public class UpdateContentHandler
                 deleteNodeByPath( deleteNodeByPathCommand );
             }
         }
-    }
-
-    private Node getNodeByPath( final NodePath nodePathToContent )
-    {
-        return new GetNodeByPathService( this.context.getJcrSession(), new GetNodeByPath( nodePathToContent ) ).execute();
     }
 
     private void deleteNodeByPath( final DeleteNodeByPath deleteNodeByPathCommand )
