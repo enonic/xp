@@ -21,10 +21,10 @@ module app_contextwindow {
         }
 
         private buildRow(row, cell, data):api_dom.DivEl {
-            var row = new api_dom.DivEl();
-            row.getEl().setData('width', data.width);
-            row.getEl().setData('height', data.height);
-            row.getEl().setData('type', data.device_type);
+            var rowEl = new api_dom.DivEl();
+            rowEl.getEl().setData('width', data.width);
+            rowEl.getEl().setData('height', data.height);
+            rowEl.getEl().setData('type', data.device_type);
 
             var icon = new api_dom.DivEl();
             icon.setClass('icon-' + data.device_type);
@@ -36,18 +36,18 @@ module app_contextwindow {
             var subtitle = new api_dom.H6El();
             subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device_type);
 
-            row.appendChild(icon);
-            row.appendChild(title);
-            row.appendChild(subtitle);
+            rowEl.appendChild(icon);
+            rowEl.appendChild(title);
+            rowEl.appendChild(subtitle);
 
             if (data.rotatable == true) {
                 var rotator = new api_dom.DivEl();
                 rotator.addClass('rotate');
                 rotator.addClass('icon-loop');
-                row.appendChild(rotator);
+                rowEl.appendChild(rotator);
             }
 
-            return row;
+            return rowEl;
         }
 
         static toSlickData(data:any[]):any[] {

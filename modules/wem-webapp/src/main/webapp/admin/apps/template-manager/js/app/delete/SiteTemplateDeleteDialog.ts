@@ -12,7 +12,7 @@ module app_delete {
             this.getDeleteAction().addExecutionListener(() => {
                 var key = this.siteTemplateToDelete.getKey();
                 var deleteRequest = new api_content_site_template.DeleteSiteTemplateRequest(key);
-                deleteRequest.send().done((resp: api_rest.JsonResponse) => {
+                deleteRequest.send().done((resp: api_rest.JsonResponse<any>) => {
                     var respJson = resp.getJson();
                     api_notify.showFeedback('Site Template \'' + respJson.result + '\' was deleted');
                     new api_content_site_template.SiteTemplateDeletedEvent(api_content_site_template.SiteTemplateKey.fromString(respJson.result)).fire();

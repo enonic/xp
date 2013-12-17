@@ -14,7 +14,7 @@ module api_ui_combobox {
 
         private optionFormatter:(row:number, cell:number, value:T, columnDef:any, dataContext:Option<T>) => string;
 
-        private filter:(item:T, args:any) => boolean;
+        private filter:(item:api_ui_combobox.Option<T>, args:any) => boolean;
 
         private multipleSelections:boolean = false;
 
@@ -347,7 +347,7 @@ module api_ui_combobox {
         }
 
         private updateDropdownStyles() {
-            var stylesHash = {};
+            var stylesHash:Slick.CellCssStylesHash = {};
             this.selectedOptionsCtrl.getOptions().forEach((option:Option<T>) => {
                 var row = this.dropdownData.getRowById(option.value);
                 stylesHash[row] = {option: "selected"};

@@ -11,7 +11,7 @@ module app_delete {
 
             this.getDeleteAction().addExecutionListener(() => {
                 var deleteRequest = new api_module.DeleteModuleRequest(this.moduleToDelete.getModuleKey().toString());
-                deleteRequest.send().done((resp:api_rest.JsonResponse) => {
+                deleteRequest.send().done((resp:api_rest.JsonResponse<any>) => {
                     var respJson = resp.getJson();
                     if (respJson.error) {
                         api_notify.showError('The Module was not deleted: ' + respJson.error.message);

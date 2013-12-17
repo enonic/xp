@@ -68,7 +68,7 @@ module app_wizard {
             jQuery.when.apply(jQuery, moduleRequests).then((moduleResponses: api_rest.JsonResponse<api_module_json.ModuleJson>[]) => {
                 var modules = [];
                 // Make array in case there's only one response
-                moduleResponses = [].concat(moduleResponses);
+                //moduleResponses = [].concat(moduleResponses);
                 for (var i = 0; i < moduleResponses.length; i++) {
                     modules.push(new api_module.Module(moduleResponses[i].getResult()));
                 }

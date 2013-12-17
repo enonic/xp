@@ -22,7 +22,7 @@ module api_ui_grid {
     export interface GridOnClickData {
         row:number;
         cell:number;
-        grid:any;
+        grid?:any;
     }
 
     export class Grid<T extends Slick.SlickData> extends api_dom.DivEl {

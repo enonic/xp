@@ -94,7 +94,7 @@ module app_contextwindow {
 
         private liveEditListen() {
             this.getLiveEditJQuery()(this.getLiveEditWindow()).on('selectComponent.liveEdit',
-                (event, component, mouseClickPagePosition) => {
+                (event, component?, mouseClickPagePosition?) => {
                     new ComponentSelectEvent(<Component>component).fire();
                     this.selectedComponent = component;
                 });

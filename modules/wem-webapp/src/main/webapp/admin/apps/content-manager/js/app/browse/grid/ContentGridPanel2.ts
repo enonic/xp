@@ -13,13 +13,13 @@ module app_browse_grid {
         constructor() {
             super();
 
-            var column1 = <api_ui_grid.GridColumn> {
+            var column1 = <api_ui_grid.GridColumn<any>> {
                 name: "Name",
                 id: "displayName",
                 field: "displayName",
                 formatter: this.getNameFormatter()
             };
-            var column2 = <api_ui_grid.GridColumn> {
+            var column2 = <api_ui_grid.GridColumn<any>> {
                 name: "ModifiedTime",
                 id: "modifiedTime",
                 field: "modifiedTime",

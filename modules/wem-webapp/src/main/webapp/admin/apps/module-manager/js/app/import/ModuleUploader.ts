@@ -49,7 +49,7 @@ module app_import {
             this.uploader.done(fn);
         }
 
-        onError(fn:(resp:api_rest.JsonResponse)=>void) {
+        onError(fn:(resp:api_rest.JsonResponse<any>)=>void) {
             this.uploader.fail(fn);
         }
     }

@@ -98,7 +98,7 @@ module api_form {
                 return curr != occurrenceViewToRemove;
             });
             var occurrenceToRemove = this.occurrences[indexToRemove];
-            this.occurrences = this.occurrences.filter((curr:FormItemOccurrence) => {
+            this.occurrences = this.occurrences.filter((curr:FormItemOccurrence<V>) => {
                 return curr.getIndex() != indexToRemove;
             });
 
@@ -148,7 +148,7 @@ module api_form {
         }
 
         resetOccurrenceIndexes() {
-            this.occurrences.forEach((currOccurrence:FormItemOccurrence, index:number) => {
+            this.occurrences.forEach((currOccurrence:FormItemOccurrence<V>, index:number) => {
                 currOccurrence.setIndex(index);
             });
         }

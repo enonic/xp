@@ -18,9 +18,9 @@ module api_app_browse {
             this.getEl().addClass("browse-item-panel");
 
             this.actionMenu = new api_ui_menu.ActionMenu(params.actionMenuActions);
-            this.itemsSelectionPanel = new ItemsSelectionPanel();
+            this.itemsSelectionPanel = new ItemsSelectionPanel<M>();
 
-            this.itemStatisticsPanel = new api_app_view.ItemStatisticsPanel({actionMenu: this.actionMenu});
+            this.itemStatisticsPanel = new api_app_view.ItemStatisticsPanel<M>({actionMenu: this.actionMenu});
 
             this.addPanel(this.itemsSelectionPanel);
             this.addPanel(this.itemStatisticsPanel);

@@ -30,7 +30,7 @@ module api_form_input {
 
             if (InputTypeManager.isRegistered(inputType.getName())) {
                 var inputTypeConfig = this.input.getInputTypeConfig();
-                var inputTypeViewConfig = <api_form_inputtype.InputTypeViewConfig> {
+                var inputTypeViewConfig = <api_form_inputtype.InputTypeViewConfig<any>> {
                     contentId: this.getContext().getContentId(),
                     contentPath: this.getContext().getContentPath(),
                     parentContentPath: this.getContext().getParentContentPath(),
@@ -56,10 +56,10 @@ module api_form_input {
             if (!this.inputTypeView.isManagingAdd()) {
 
                 this.inputTypeView.addFormItemOccurrencesListener(<api_form.FormItemOccurrencesListener>{
-                    onOccurrenceAdded: (occurrenceAdded: api_form.FormItemOccurrence) => {
+                    onOccurrenceAdded: (occurrenceAdded: api_form.FormItemOccurrence<any>) => {
                         this.refresh();
                     },
-                    onOccurrenceRemoved: (occurrenceRemoved: api_form.FormItemOccurrence) => {
+                    onOccurrenceRemoved: (occurrenceRemoved: api_form.FormItemOccurrence<any>) => {
                         this.refresh();
                     }
                 });

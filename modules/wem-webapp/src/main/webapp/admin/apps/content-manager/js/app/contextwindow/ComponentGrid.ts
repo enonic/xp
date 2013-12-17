@@ -58,15 +58,15 @@ module app_contextwindow {
         }
 
         private buildRow(row, cell, data):api_dom.DivEl {
-            var row = new api_dom.DivEl();
-            row.getEl().setData('live-edit-key', data.key);
-            row.getEl().setData('live-edit-name', data.name);
-            row.getEl().setData('live-edit-type', data.typeName);
+            var rowEl = new api_dom.DivEl();
+            rowEl.getEl().setData('live-edit-key', data.key);
+            rowEl.getEl().setData('live-edit-name', data.name);
+            rowEl.getEl().setData('live-edit-type', data.typeName);
             if (this.componentGridOptions.draggableRows) {
-                row.getEl().setData('context-window-draggable', 'true');
+                rowEl.getEl().setData('context-window-draggable', 'true');
             }
             if (this.componentGridOptions.rowClass) {
-                row.addClass(this.componentGridOptions.rowClass)
+                rowEl.addClass(this.componentGridOptions.rowClass)
             }
 
             var icon = new api_dom.DivEl();
@@ -79,11 +79,11 @@ module app_contextwindow {
             var subtitle = new api_dom.H6El();
             subtitle.getEl().setInnerHtml(data.subtitle);
 
-            row.appendChild(icon);
-            row.appendChild(title);
-            row.appendChild(subtitle);
+            rowEl.appendChild(icon);
+            rowEl.appendChild(title);
+            rowEl.appendChild(subtitle);
 
-            return row;
+            return rowEl;
         }
 
         static toSlickData(data:any[]):any[] {
