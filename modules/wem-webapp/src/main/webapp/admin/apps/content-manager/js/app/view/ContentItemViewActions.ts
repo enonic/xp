@@ -32,6 +32,7 @@ module app_view {
                                 if (result.successes && result.successes.length > 0) {
                                     var path = result.successes[0].path;
                                     api_notify.showFeedback('Content [' + path + '] deleted!');
+
                                     new api_content.ContentDeletedEvent([contentToDelete]).fire();
                                 }
                             });
