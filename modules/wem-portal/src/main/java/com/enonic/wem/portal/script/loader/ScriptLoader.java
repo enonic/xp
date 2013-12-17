@@ -6,7 +6,5 @@ public interface ScriptLoader
 {
     public ScriptSource load( String name );
 
-    public ScriptSource loadFromSystem( String name );
-
-    public ScriptSource loadFromModule( ModuleResourceKey key );
+    public ScriptSource load( ModuleResourceKey key );
 }

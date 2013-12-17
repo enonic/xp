@@ -1,14 +1,15 @@
 package com.enonic.wem.portal.script.loader;
 
-import java.net.URI;
+import java.nio.file.Path;
 
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 public interface ScriptSource
 {
     public String getName();
 
-    public URI getUri();
+    public Path getPath();
 
     public String getScriptAsString();
 
@@ -16,7 +17,5 @@ public interface ScriptSource
 
     public ModuleKey getModule();
 
-    public boolean isFromSystem();
-
-    public boolean isFromModule();
+    public ModuleResourceKey getResource();
 }

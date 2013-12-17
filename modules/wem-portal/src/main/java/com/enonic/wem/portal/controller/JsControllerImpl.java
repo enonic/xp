@@ -64,7 +64,7 @@ final class JsControllerImpl
     {
         final ResourcePath path = this.scriptDir.getPath().resolve( method.toLowerCase() + ".js" );
         final ModuleResourceKey key = new ModuleResourceKey( this.scriptDir.getModuleKey(), path );
-        return this.runner.getLoader().loadFromModule( key );
+        return this.runner.getLoader().load( key );
     }
 
     private boolean hasScript( final String method )

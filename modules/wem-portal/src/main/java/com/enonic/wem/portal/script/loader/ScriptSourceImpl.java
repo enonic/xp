@@ -1,41 +1,38 @@
 package com.enonic.wem.portal.script.loader;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URLConnection;
+import java.nio.file.Path;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
-import com.google.common.io.Resources;
+import com.google.common.io.Files;
 
 import com.enonic.wem.api.module.ModuleKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 final class ScriptSourceImpl
     implements ScriptSource
 {
-    private final String name;
+    private final Path path;
 
-    private final URI uri;
+    private final ModuleResourceKey key;
 
-    private final ModuleKey moduleKey;
-
-    public ScriptSourceImpl( final String name, final URI uri, final ModuleKey moduleKey )
+    public ScriptSourceImpl( final ModuleResourceKey key, final Path path )
     {
-        this.name = name;
-        this.uri = uri;
-        this.moduleKey = moduleKey;
+        this.path = path;
+        this.key = key;
     }
 
     @Override
     public String getName()
     {
-        return this.name;
+        return this.key.toString();
     }
 
     @Override
-    public URI getUri()
+    public Path getPath()
     {
-        return this.uri;
+        return this.path;
     }
 
     @Override
@@ -43,7 +40,7 @@ final class ScriptSourceImpl
     {
         try
         {
-            return Resources.toString( this.uri.toURL(), Charsets.UTF_8 );
+            return Files.toString( this.path.toFile(), Charsets.UTF_8 );
         }
         catch ( final IOException e )
         {
@@ -54,38 +51,24 @@ final class ScriptSourceImpl
     @Override
     public long getTimestamp()
     {
-        try
-        {
-            final URLConnection conn = this.uri.toURL().openConnection();
-            return conn.getLastModified();
-        }
-        catch ( final Exception e )
-        {
-            return 0;
-        }
+        return this.path.toFile().lastModified();
     }
 
     @Override
     public ModuleKey getModule()
     {
-        return this.moduleKey;
+        return this.key.getModuleKey();
     }
 
     @Override
-    public boolean isFromSystem()
+    public ModuleResourceKey getResource()
     {
-        return this.moduleKey == null;
-    }
-
-    @Override
-    public boolean isFromModule()
-    {
-        return this.moduleKey != null;
+        return this.key;
     }
 
     @Override
     public String toString()
     {
-        return this.name;
+        return getName();
     }
 }
