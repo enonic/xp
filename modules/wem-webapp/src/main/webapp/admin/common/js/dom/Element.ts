@@ -47,10 +47,18 @@ module api_dom {
         }
 
         reRender() {
-            this.afterRender();
+
+            //this.afterRender();
+            //this.children.forEach((child) => {
+            //    child.afterRender();
+            ///});
+
+            /** TODO: Should this function be like this instead?**/
             this.children.forEach((child) => {
-                child.afterRender();
-            })
+                child.reRender();
+            });
+
+            this.afterRender();
         }
 
         afterRender() {
@@ -66,21 +74,21 @@ module api_dom {
             return this;
         }
 
-        showCallback() {
-
+        onElementShown() {
+            // To be overridden by inheritors interested in when it's shown
         }
 
-        private doShowCallback() {
-            this.showCallback();
+        private broadcastElementShown() {
+            this.onElementShown();
             this.children.forEach((child) => {
-                child.doShowCallback();
+                child.onElementShown();
             })
         }
 
         show() {
             // Using jQuery to show, since it seems to contain some smartness
             jQuery(this.el.getHTMLElement()).show();
-            this.doShowCallback();
+            this.broadcastElementShown();
         }
 
         hide() {
@@ -149,6 +157,9 @@ module api_dom {
             }
             this.el.focuse();
             var gotFocus:boolean = document.activeElement == this.el.getHTMLElement();
+            if( !gotFocus )  {
+                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api_util.getClassName(this) + ", id = " + this.getId());
+            }
             return gotFocus;
         }
 
@@ -156,9 +167,19 @@ module api_dom {
             return this.el.getHTMLElement();
         }
 
+        onElementAddedToParent(parent:Element) {
+            // To be overridden by inheritors interested in when it's shown
+        }
+
+        private broadcastElementAddedToParent(child:Element) {
+            child.onElementAddedToParent(this);
+        }
+
         appendChild<T extends api_dom.Element>(child:T) {
             this.el.appendChild(child.getEl().getHTMLElement());
             this.insert(child, this, this.children.length);
+
+            this.broadcastElementAddedToParent(child);
         }
 
         prependChild(child:api_dom.Element) {

@@ -8,10 +8,12 @@ module app_wizard {
             var fieldset = new api_ui_form.Fieldset(this, "Config");
             this.fieldset(fieldset);
 
-            var xmlTextArea = new api_ui.CodeArea("xml", "xml");
-            xmlTextArea.setSize(api_ui.TextAreaSize.LARGE);
-            xmlTextArea.setLineNumbers(true);
-
+            var xmlTextArea:api_ui.CodeArea = new api_ui.CodeAreaBuilder().
+                setName("xml").
+                setMode("xml").
+                setLineNumbers(true).
+                setSize(api_ui.TextAreaSize.LARGE).
+                build();
 
             fieldset.add(new api_ui_form.FormItem("XML", xmlTextArea));
         }

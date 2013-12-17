@@ -7,15 +7,17 @@ module app_wizard {
 
             var fieldset = new api_ui_form.Fieldset(this, "Config");
 
-
-            var textArea = new api_ui.CodeArea("xml", "xml");
-            textArea.setSize(api_ui.TextAreaSize.LARGE);
-            textArea.setLineNumbers(true);
+            var xmlTextArea:api_ui.CodeArea = new api_ui.CodeAreaBuilder().
+                setName("xml").
+                setMode("xml").
+                setLineNumbers(true).
+                setSize(api_ui.TextAreaSize.LARGE).
+                build();
 
             var text = api_ui.TextInput.middle();
             text.setName("test");
 
-            fieldset.add(new api_ui_form.FormItem("XML", textArea));
+            fieldset.add(new api_ui_form.FormItem("XML", xmlTextArea));
 
             this.fieldset(fieldset);
 

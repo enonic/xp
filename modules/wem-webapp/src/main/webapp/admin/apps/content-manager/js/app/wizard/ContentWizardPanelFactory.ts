@@ -50,7 +50,9 @@ module app_wizard {
                     return this.loadSite(loadedParentContent.getContentId()).then((loadedSite: api_content.Content) => {
                         this.site = loadedSite;
 
-                        deferred.resolve(this.newContentWizardPanelForNew());
+                        this.newContentWizardPanelForNew().done((wizardPanel: ContentWizardPanel)=> {
+                            deferred.resolve(wizardPanel);
+                        });
                     });
                 });
             })
@@ -74,7 +76,9 @@ module app_wizard {
                         return this.loadParentContent().then((loadedParentContent: api_content.Content) => {
                             this.parentContent = loadedParentContent;
 
-                            deferred.resolve(this.newContentWizardPanelForEdit());
+                            this.newContentWizardPanelForEdit().done((wizardPanel: ContentWizardPanel)=> {
+                                deferred.resolve(wizardPanel);
+                            });
                         });
                     });
                 });
@@ -93,7 +97,7 @@ module app_wizard {
             return deferred.promise;
         }
 
-        private loadContentType(name:api_schema_content.ContentTypeName): Q.Promise<api_schema_content.ContentType> {
+        private loadContentType(name: api_schema_content.ContentTypeName): Q.Promise<api_schema_content.ContentType> {
 
             var deferred = Q.defer<api_schema_content.ContentType>();
             new api_schema_content.GetContentTypeByNameRequest(name).
@@ -103,7 +107,7 @@ module app_wizard {
             return deferred.promise;
         }
 
-        private loadSite(contentId:api_content.ContentId): Q.Promise<api_content.Content> {
+        private loadSite(contentId: api_content.ContentId): Q.Promise<api_content.Content> {
             var deferred = Q.defer<api_content.Content>();
 
             new api_content_site.GetNearestSiteRequest(contentId).
@@ -137,33 +141,69 @@ module app_wizard {
             return deferred.promise;
         }
 
-        private newContentWizardPanelForNew(): app_wizard.ContentWizardPanel {
+        private newContentWizardPanelForNew(): Q.Promise<app_wizard.ContentWizardPanel> {
+
+            var deferred = Q.defer<app_wizard.ContentWizardPanel>();
 
             var newSite: boolean = false;
             if (newSite) {
-                var siteWizardPanel = new app_wizard.SiteWizardPanel(this.appBarTabId, this.contentType, this.parentContent,
-                    null, this.site);
-                return siteWizardPanel;
+
+                var wizardParams = new app_wizard.SiteWizardPanelParams().
+                    setAppBarTabId(this.appBarTabId).
+                    setContentType(this.contentType).
+                    setParentContent(this.parentContent).
+                    setSite(this.site);
+
+                new app_wizard.SiteWizardPanel(wizardParams, (wizard:SiteWizardPanel) => {
+                    deferred.resolve(wizard);
+                });
             }
             else {
-                var contentWizardPanel = new app_wizard.ContentWizardPanel(this.appBarTabId, this.contentType, this.parentContent,
-                    null, this.site);
-                return contentWizardPanel;
+
+                var wizardParams = new app_wizard.ContentWizardPanelParams().
+                    setAppBarTabId(this.appBarTabId).
+                    setContentType(this.contentType).
+                    setParentContent(this.parentContent).
+                    setSite(this.site);
+
+                new app_wizard.ContentWizardPanel(wizardParams, (wizard:ContentWizardPanel) => {
+                    deferred.resolve(wizard);
+                });
             }
+            return deferred.promise;
         }
 
-        private newContentWizardPanelForEdit(): app_wizard.ContentWizardPanel {
+        private newContentWizardPanelForEdit(): Q.Promise<app_wizard.ContentWizardPanel> {
+
+            var deferred = Q.defer<app_wizard.ContentWizardPanel>();
 
             if (this.contentToEdit.isSite()) {
-                var siteWizardPanel = new app_wizard.SiteWizardPanel(this.appBarTabId, this.contentType, this.parentContent,
-                    this.contentToEdit, this.site);
-                return siteWizardPanel;
+
+                var wizardParams = new app_wizard.SiteWizardPanelParams().
+                    setAppBarTabId(this.appBarTabId).
+                    setContentType(this.contentType).
+                    setParentContent(this.parentContent).
+                    setPersistedContent(this.contentToEdit).
+                    setSite(this.site);
+
+                new app_wizard.SiteWizardPanel(wizardParams, (wizard:SiteWizardPanel) => {
+                    deferred.resolve(wizard);
+                });
             }
             else {
-                var contentWizardPanel = new app_wizard.ContentWizardPanel(this.appBarTabId, this.contentType, this.parentContent,
-                    this.contentToEdit, this.site);
-                return contentWizardPanel;
+
+                var wizardParams = new app_wizard.ContentWizardPanelParams().
+                    setAppBarTabId(this.appBarTabId).
+                    setContentType(this.contentType).
+                    setParentContent(this.parentContent).
+                    setPersistedContent(this.contentToEdit).
+                    setSite(this.site);
+
+                new app_wizard.ContentWizardPanel(wizardParams, (wizard:ContentWizardPanel) => {
+                    deferred.resolve(wizard);
+                });
             }
+            return deferred.promise;
         }
     }
 }

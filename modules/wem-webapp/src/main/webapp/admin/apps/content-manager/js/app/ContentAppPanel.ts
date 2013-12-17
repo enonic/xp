@@ -65,6 +65,7 @@ module app {
                     setContentTypeName(contentTypeSummary.getContentTypeName()).
                     createForNew().then((wizard:app_wizard.ContentWizardPanel) => {
                         this.addWizardPanel(tabMenuItem, wizard);
+                        wizard.initWizardPanel();
                         wizard.reRender();
                     });
             }
@@ -118,6 +119,7 @@ module app {
 
                             tabMenuItem = new api_app.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
                             this.addWizardPanel(tabMenuItem, wizard);
+                            wizard.initWizardPanel();
                             wizard.reRender();
                         });
 

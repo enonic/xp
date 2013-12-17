@@ -14,7 +14,7 @@ module app_wizard {
 
         private contentTypeForm: app_wizard.ContentTypeForm;
 
-        constructor(tabId: api_app.AppBarTabId, persistedContentType: api_schema_content.ContentType) {
+        constructor(tabId: api_app.AppBarTabId, persistedContentType: api_schema_content.ContentType, callback: (wizard:ContentTypeWizardPanel) => void) {
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             var defaultFormIconUrl = new api_schema_content.ContentTypeIconUrlResolver().resolveDefault();
             this.formIcon = new api_app_wizard.FormIcon(defaultFormIconUrl, "Click to upload icon",
@@ -45,27 +45,30 @@ module app_wizard {
 
             super({
                 tabId: tabId,
-                persistedItem:persistedContentType,
+                persistedItem: persistedContentType,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 actions: actions,
                 header: this.contentTypeWizardHeader,
                 steps: steps
+            }, () => {
+                callback(this);
             });
         }
 
-        setPersistedItem(contentType: api_schema_content.ContentType) {
-            super.setPersistedItem(contentType);
+        setPersistedItem(contentType: api_schema_content.ContentType, callback: Function) {
+            super.setPersistedItem(contentType, () => {
+                this.contentTypeWizardHeader.setName(contentType.getName());
+                this.formIcon.setSrc(contentType.getIconUrl());
 
-            this.contentTypeWizardHeader.setName(contentType.getName());
-            this.formIcon.setSrc(contentType.getIconUrl());
+                this.persistedContentType = contentType;
 
-            this.persistedContentType = contentType;
-
-            new api_schema_content.GetContentTypeConfigByNameRequest(contentType.getContentTypeName()).send().
-                done((response: api_rest.JsonResponse <api_schema_content.GetContentTypeConfigResult>) => {
-                    this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
-                });
+                new api_schema_content.GetContentTypeConfigByNameRequest(contentType.getContentTypeName()).send().
+                    done((response: api_rest.JsonResponse <api_schema_content.GetContentTypeConfigResult>) => {
+                        this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
+                        callback();
+                    });
+            });
         }
 
         persistNewItem(successCallback ?: () => void) {
@@ -77,17 +80,18 @@ module app_wizard {
                 sendAndParse().
                 done((contentType: api_schema_content.ContentType) => {
 
-                    this.setPersistedItem(contentType);
-                    this.getTabId().changeToEditMode(contentType.getKey());
-                    new app_wizard.ContentTypeCreatedEvent().fire();
-                    api_notify.showFeedback('Content type was created!');
+                    this.setPersistedItem(contentType, () => {
 
-                    new api_schema.SchemaCreatedEvent(contentType).fire();
+                        this.getTabId().changeToEditMode(contentType.getKey());
+                        new app_wizard.ContentTypeCreatedEvent().fire();
+                        api_notify.showFeedback('Content type was created!');
 
-                    if (successCallback) {
-                        successCallback.call(this);
-                    }
+                        new api_schema.SchemaCreatedEvent(contentType).fire();
 
+                        if (successCallback) {
+                            successCallback.call(this);
+                        }
+                    });
                 });
         }
 
@@ -108,10 +112,11 @@ module app_wizard {
                     api_notify.showFeedback('Content type was saved!');
 
                     new api_schema.SchemaUpdatedEvent(contentType).fire();
-                    this.setPersistedItem(contentType);
-                    if (successCallback) {
-                        successCallback.call(this);
-                    }
+                    this.setPersistedItem(contentType, () => {
+                        if (successCallback) {
+                            successCallback.call(this);
+                        }
+                    });
                 });
         }
     }

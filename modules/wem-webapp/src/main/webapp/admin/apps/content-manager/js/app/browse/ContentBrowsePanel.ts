@@ -79,7 +79,7 @@ module app_browse {
             });
         }
 
-        showCallback() {
+        onElementShown() {
             app.Router.setHash("browse");
         }
 

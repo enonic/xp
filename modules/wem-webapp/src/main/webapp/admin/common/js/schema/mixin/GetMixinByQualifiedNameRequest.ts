@@ -19,5 +19,18 @@ module api_schema_mixin {
         getRequestPath():api_rest.Path {
             return super.getResourcePath();
         }
+
+        sendAndParse(): JQueryPromise<api_schema_mixin.Mixin> {
+
+            var deferred = jQuery.Deferred<api_schema_mixin.Mixin>();
+
+            this.send().done((response: api_rest.JsonResponse<api_schema_mixin_json.MixinJson>) => {
+                deferred.resolve(this.fromJsonToMixin(response.getResult()));
+            }).fail((response: api_rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
+        }
     }
 }

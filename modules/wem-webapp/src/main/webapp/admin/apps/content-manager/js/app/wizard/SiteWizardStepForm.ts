@@ -25,7 +25,7 @@ module app_wizard {
             //TODO
         }
 
-        public renderExisting(context: api_form.FormContext, site: api_content_site.Site, contentType: api_schema_content.ContentType) {
+        public renderExisting(context: api_form.FormContext, site: api_content_site.Site, contentType: api_schema_content.ContentType, callback:Function) {
             this.formContext = context;
             this.contentType = contentType;
 
@@ -37,10 +37,11 @@ module app_wizard {
 
             this.loadModules(site, (modules: api_module.Module[]) => {
                 this.layoutModules(modules);
-            });
 
-            this.loadSiteTemplate(site, (template: api_content_site_template.SiteTemplate) => {
-                this.layoutSiteTemplate(template);
+                this.loadSiteTemplate(site, (template: api_content_site_template.SiteTemplate) => {
+                    this.layoutSiteTemplate(template);
+                    callback();
+                });
             });
         }
 

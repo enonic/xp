@@ -14,7 +14,7 @@ module app_wizard {
 
         private mixinForm: MixinForm;
 
-        constructor(tabId: api_app.AppBarTabId, persistedMixin:api_schema_mixin.Mixin) {
+        constructor(tabId: api_app.AppBarTabId, persistedMixin:api_schema_mixin.Mixin, callback: (wizard:MixinWizardPanel) => void) {
 
             this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(new api_schema_mixin.MixinIconUrlResolver().resolveDefault(),
@@ -52,21 +52,31 @@ module app_wizard {
                 actions: actions,
                 header: this.mixinWizardHeader,
                 steps: steps
+            }, () => {
+                callback(this);
             });
         }
 
-        setPersistedItem(mixin: api_schema_mixin.Mixin) {
-            super.setPersistedItem(mixin);
+        initWizardPanel() {
+            super.initWizardPanel();
+            this.mixinForm.reRender();
+        }
 
-            this.mixinWizardHeader.setName(mixin.getName());
-            this.formIcon.setSrc(mixin.getIconUrl());
+        setPersistedItem(mixin: api_schema_mixin.Mixin, callback:Function) {
 
-            this.persistedMixin = mixin;
+            super.setPersistedItem(mixin, () => {
+                this.mixinWizardHeader.setName(mixin.getName());
+                this.formIcon.setSrc(mixin.getIconUrl());
 
-            new api_schema_mixin.GetMixinConfigByNameRequest(mixin.getMixinName()).send().
-                done((response: api_rest.JsonResponse<api_schema_mixin.GetMixinConfigResult>) => {
-                    this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
-                });
+                this.persistedMixin = mixin;
+
+                new api_schema_mixin.GetMixinConfigByNameRequest(mixin.getMixinName()).send().
+                    done((response: api_rest.JsonResponse<api_schema_mixin.GetMixinConfigResult>) => {
+                        this.mixinForm.reRender();
+                        this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
+                        callback();
+                    });
+            });
 
         }
 
@@ -82,15 +92,16 @@ module app_wizard {
                 sendAndParse().
                 done((mixin: api_schema_mixin.Mixin) => {
 
-                    this.setPersistedItem(mixin);
-                    this.getTabId().changeToEditMode(mixin.getKey());
-                    api_notify.showFeedback('Mixin was created!');
+                    this.setPersistedItem(mixin, () => {
+                        this.getTabId().changeToEditMode(mixin.getKey());
+                        api_notify.showFeedback('Mixin was created!');
 
-                    new api_schema.SchemaCreatedEvent(mixin).fire();
+                        new api_schema.SchemaCreatedEvent(mixin).fire();
 
-                    if (successCallback) {
-                        successCallback.call(this);
-                    }
+                        if (successCallback) {
+                            successCallback.call(this);
+                        }
+                    });
                 });
         }
 
@@ -108,12 +119,13 @@ module app_wizard {
                 done((mixin: api_schema_mixin.Mixin) => {
 
                     api_notify.showFeedback('Mixin was updated!');
-                    this.setPersistedItem(mixin);
-                    new api_schema.SchemaUpdatedEvent(mixin).fire();
+                    this.setPersistedItem(mixin, () => {
+                        new api_schema.SchemaUpdatedEvent(mixin).fire();
 
-                    if (successCallback) {
-                        successCallback.call(this);
-                    }
+                        if (successCallback) {
+                            successCallback.call(this);
+                        }
+                    });
                 });
         }
     }

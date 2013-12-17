@@ -9,7 +9,7 @@ module api_ui {
             this.doOffset = true;
         }
 
-        showCallback() {
+        onElementShown() {
             if(this.doOffset) {
                 this.calculateOffset();
             }

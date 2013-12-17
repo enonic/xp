@@ -1,8 +1,12 @@
 module app_wizard {
 
+    export class SiteWizardPanelParams extends ContentWizardPanelParams {
+
+    }
+
     export class SiteWizardPanel extends ContentWizardPanel {
 
-        private site: api_content_site.Site;
+        private persistedSite: api_content_site.Site;
 
         private siteModule: api_module.Module;
 
@@ -10,12 +14,14 @@ module app_wizard {
 
         private siteWizardStepForm: SiteWizardStepForm;
 
-        constructor(tabId:api_app.AppBarTabId, contentType:api_schema_content.ContentType, parentContent:api_content.Content, persistedContent:api_content.Content, siteContent:api_content.Content) {
+        constructor(params: SiteWizardPanelParams, callback:(wizard:SiteWizardPanel) => void) {
 
-            this.site = siteContent.getSite();
+            this.persistedSite = params.persistedContent.getSite();
             this.siteWizardStepForm = new SiteWizardStepForm();
 
-            super(tabId, contentType, parentContent, persistedContent, siteContent);
+            super(params, () => {
+                callback(this);
+            });
         }
 
         createSteps(): api_app_wizard.WizardStep[] {
@@ -24,21 +30,24 @@ module app_wizard {
             return steps;
         }
 
-        renderNew() {
-            super.renderNew();
-
-            this.siteWizardStepForm.renderNew();
+        postRenderNew(callBack:Function) {
+            super.postRenderNew(() => {
+                this.siteWizardStepForm.renderNew();
+                callBack();
+            });
         }
 
-        setPersistedItem(content: api_content.Content) {
-            super.setPersistedItem(content);
+        setPersistedItem(content: api_content.Content, callback:Function) {
+            super.setPersistedItem(content, () => {
+                var formContext = new api_form.FormContextBuilder().
+                    setParentContent(this.getParentContent()).
+                    setPersistedContent(content).
+                    build();
 
-            var formContext = new api_form.FormContextBuilder().
-                setParentContent(this.getParentContent()).
-                setPersistedContent(content).
-                build();
-
-            this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.getContentType());
+                this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.getContentType(), () => {
+                    callback();
+                });
+            });
         }
 
         persistNewItem(successCallback?: () => void) {

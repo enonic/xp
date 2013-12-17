@@ -7,7 +7,7 @@ module api_util {
 
     export function isStringEmpty(str:string) {
         if(!str) {
-            return null;
+            return true;
         }
 
         return str.length == 0;
