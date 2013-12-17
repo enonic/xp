@@ -45,7 +45,7 @@ public class IndexService
 
     public IndexService()
     {
-        super( RunLevel.L2 );
+        super( RunLevel.L3 );
     }
 
     @Override

@@ -21,7 +21,7 @@ public final class StartupInitializer
 
     public StartupInitializer()
     {
-        super( RunLevel.L5 );
+        super( RunLevel.L2 );
     }
 
     @Inject
