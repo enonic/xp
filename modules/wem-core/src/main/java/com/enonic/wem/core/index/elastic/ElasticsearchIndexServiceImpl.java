@@ -211,8 +211,6 @@ public class ElasticsearchIndexServiceImpl
             types( IndexType.CONTENT.getIndexTypeName() ).
             source( searchSourceBuilder );
 
-        System.out.println( searchSourceBuilder.toString() );
-
         final SearchResponse searchResponse = doSearchRequest( searchRequest );
 
         final SearchHits hits = searchResponse.getHits();
