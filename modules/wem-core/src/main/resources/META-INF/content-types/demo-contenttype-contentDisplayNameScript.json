@@ -5,7 +5,7 @@
     "superType": "structured",
     "isAbstract": false,
     "isFinal": true,
-    "contentDisplayNameScript": "$('firstName') + ' ' + $('middleName') + ' ' + $('lastName')",
+    "contentDisplayNameScript": "$('firstName', 'middleName', 'lastName')",
     "form": [
         {
             "Input": {

@@ -12,4 +12,9 @@ module api_util {
 
         return str.length == 0;
     }
+
+    export function isStringBlank(str:string) {
+
+        return (!str || /^\s*$/.test(str));
+    }
 }
