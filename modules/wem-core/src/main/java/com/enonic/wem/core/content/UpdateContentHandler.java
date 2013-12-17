@@ -50,7 +50,6 @@ import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.entity.DeleteNodeByPathHandler;
 import com.enonic.wem.core.entity.GetNodeByPathService;
 import com.enonic.wem.core.entity.UpdateNodeHandler;
-import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
@@ -129,7 +128,7 @@ public class UpdateContentHandler
 
     private void updateContentAsNode( final ContentPath contentPath )
     {
-        final NodePath nodePathToContent = translateContentPathToNodePath( contentPath );
+        final NodePath nodePathToContent = ContentNodeHelper.translateContentPathToNodePath( contentPath );
 
         final Node oldPersistedNode = getNodeByPath( nodePathToContent );
 
@@ -171,10 +170,6 @@ public class UpdateContentHandler
         }
     }
 
-    private NodePath translateContentPathToNodePath( final ContentPath contentPath )
-    {
-        return new NodePath( NodeJcrDao.CONTENT_NODE_ROOT + "/" + contentPath.toString() ).asAbsolute();
-    }
 
     private void deleteRemovedEmbeddedContentAsNode( final Content persistedContent, final Content editedContent )
         throws Exception
