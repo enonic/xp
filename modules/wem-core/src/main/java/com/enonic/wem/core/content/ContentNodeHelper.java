@@ -10,6 +10,7 @@ public class ContentNodeHelper
     {
         return new NodePath( NodeJcrDao.CONTENT_ROOT_NODE_NAME + "/" + contentPath.toString() ).asAbsolute();
     }
+
 }
 
 

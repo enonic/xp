@@ -161,6 +161,7 @@ public class ContentNodeTranslator
         addPropertyIfNotNull( rootDataSet, CONTENT_TYPE_PATH, content.getType().getContentTypeName() );
         addPropertyIfNotNull( rootDataSet, PARENT_CONTENT_PATH_PATH,
                               content.getPath().getParentPath() != null ? content.getPath().getParentPath().getRelativePath() : null );
+
     }
 
     private void addContentData( final ContentData contentData, final RootDataSet rootDataSet )
