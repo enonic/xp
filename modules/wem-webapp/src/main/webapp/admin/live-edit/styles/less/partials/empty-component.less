@@ -1,4 +1,4 @@
-@dropzoneHeight: 140px;
+@dropzoneHeight: 105px;
 
 .live-edit-empty-component {
   clear: both;
@@ -15,7 +15,7 @@
     background: url("@{resourcePath}images/live-edit-empty-component-image-icon.png") @componentDefaultBackground no-repeat center center;
 
     .live-edit-font-icon-image {
-      display:none;
+      display: none;
     }
 
     .dropzone {
@@ -23,18 +23,19 @@
       background-color: transparent;
       border: none;
       font-weight: normal !important;
-      z-index:10;
-      height:@dropzoneHeight;
+      z-index: 10;
+      height: @dropzoneHeight;
       line-height: @dropzoneHeight;
+    }
+
+    &:not([data-live-edit-selected="true"]) {
+      height: @dropzoneHeight;
+      .dropzone {
+        display: none !important;
+      }
     }
   }
 
-  &:not([data-live-edit-selected="true"]) {
-    height:@dropzoneHeight;
-    .dropzone {
-      display:none !important;
-    }
-  }
 }
 
 .live-edit-font-icon-spinner {
