@@ -150,10 +150,6 @@ module api_app_wizard {
             });
         }
 
-        getTabId(): api_app.AppBarTabId {
-            return this.tabId;
-        }
-
         onElementShown() {
             console.log("WizardPanel.onElementShown");
             if (this.lastFocusedElement) {
@@ -199,6 +195,10 @@ module api_app_wizard {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
+        }
+
+        getTabId(): api_app.AppBarTabId {
+            return this.tabId;
         }
 
         getHeader(): WizardHeader {
