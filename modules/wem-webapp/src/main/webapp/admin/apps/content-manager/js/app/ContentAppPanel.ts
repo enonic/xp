@@ -67,7 +67,7 @@ module app {
                         this.addWizardPanel(tabMenuItem, wizard);
                         wizard.initWizardPanel();
                         wizard.reRender();
-                    });
+                    }).done();
             }
         }
 
@@ -121,7 +121,8 @@ module app {
                             this.addWizardPanel(tabMenuItem, wizard);
                             wizard.initWizardPanel();
                             wizard.reRender();
-                        });
+                        }).
+                        done();
 
                 }
             });
