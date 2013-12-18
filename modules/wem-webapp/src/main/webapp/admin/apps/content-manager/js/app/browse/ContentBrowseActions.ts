@@ -2,12 +2,12 @@ module app_browse {
 
     export class BaseContentBrowseAction extends api_ui.Action {
 
-        constructor(label:string, shortcut?:string) {
+        constructor(label: string, shortcut?: string) {
             super(label, shortcut);
         }
 
-        extModelsToContentSummaries(models:Ext_data_Model[]):api_content.ContentSummary[] {
-            var summaries:api_content.ContentSummary[] = [];
+        extModelsToContentSummaries(models: Ext_data_Model[]): api_content.ContentSummary[] {
+            var summaries: api_content.ContentSummary[] = [];
             for (var i = 0; i < models.length; i++) {
                 summaries.push(new api_content.ContentSummary(<api_content_json.ContentSummaryJson>models[i].data))
             }
@@ -18,18 +18,19 @@ module app_browse {
 
     export class ShowNewContentDialogAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
             super("New", "mod+alt+n");
-            this.setEnabled(false);
+            this.setEnabled(true);
             this.addExecutionListener(() => {
-                new ShowNewContentDialogEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())[0]).fire();
+                var extModelsToContentSummaries: api_content.ContentSummary[] = this.extModelsToContentSummaries(treeGridPanel.getSelection());
+                new ShowNewContentDialogEvent(extModelsToContentSummaries.length > 0 ? extModelsToContentSummaries[0] : null).fire();
             });
         }
     }
 
     export class OpenContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
             super("Open", "mod+o");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -40,7 +41,7 @@ module app_browse {
 
     export class EditContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
             super("Edit", "f4");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -52,7 +53,7 @@ module app_browse {
 
     export class DeleteContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -63,7 +64,7 @@ module app_browse {
 
     export class DuplicateContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
             super("Duplicate");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -74,7 +75,7 @@ module app_browse {
 
     export class MoveContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
             super("Move");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -85,7 +86,7 @@ module app_browse {
 
     export class ShowPreviewAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
             super("PREVIEW");
 
             this.setEnabled(true);
@@ -97,7 +98,7 @@ module app_browse {
 
     export class ShowDetailsAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
             super("DETAILS");
 
             this.setEnabled(true);
@@ -120,30 +121,30 @@ module app_browse {
 
     export class ContentBrowseActions {
 
-        public SHOW_NEW_CONTENT_DIALOG_ACTION:api_ui.Action;
-        public OPEN_CONTENT:api_ui.Action;
-        public EDIT_CONTENT:api_ui.Action;
-        public DELETE_CONTENT:api_ui.Action;
-        public DUPLICATE_CONTENT:api_ui.Action;
-        public MOVE_CONTENT:api_ui.Action;
-        public SHOW_PREVIEW:api_ui.Action;
-        public SHOW_DETAILS:api_ui.Action;
-        public SHOW_NEW_CONTENT_GRID:api_ui.Action;
+        public SHOW_NEW_CONTENT_DIALOG_ACTION: api_ui.Action;
+        public OPEN_CONTENT: api_ui.Action;
+        public EDIT_CONTENT: api_ui.Action;
+        public DELETE_CONTENT: api_ui.Action;
+        public DUPLICATE_CONTENT: api_ui.Action;
+        public MOVE_CONTENT: api_ui.Action;
+        public SHOW_PREVIEW: api_ui.Action;
+        public SHOW_DETAILS: api_ui.Action;
+        public SHOW_NEW_CONTENT_GRID: api_ui.Action;
 
-        private allActions:api_ui.Action[] = [];
+        private allActions: api_ui.Action[] = [];
 
-        private static INSTANCE:ContentBrowseActions;
+        private static INSTANCE: ContentBrowseActions;
 
-        static init(treeGridPanel:api_app_browse_grid.TreeGridPanel):ContentBrowseActions {
+        static init(treeGridPanel: api_app_browse_grid.TreeGridPanel): ContentBrowseActions {
             new ContentBrowseActions(treeGridPanel);
             return ContentBrowseActions.INSTANCE;
         }
 
-        static get():ContentBrowseActions {
+        static get(): ContentBrowseActions {
             return ContentBrowseActions.INSTANCE;
         }
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
 
             this.SHOW_NEW_CONTENT_DIALOG_ACTION = new app_browse.ShowNewContentDialogAction(treeGridPanel);
             this.OPEN_CONTENT = new OpenContentAction(treeGridPanel);
@@ -162,14 +163,14 @@ module app_browse {
             ContentBrowseActions.INSTANCE = this;
         }
 
-        getAllActions():api_ui.Action[] {
+        getAllActions(): api_ui.Action[] {
             return this.allActions;
         }
 
-        updateActionsEnabledState(models:api_content.ContentSummary[]) {
+        updateActionsEnabledState(models: api_content.ContentSummary[]) {
 
             if (models.length <= 0) {
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
                 this.OPEN_CONTENT.setEnabled(false);
                 this.EDIT_CONTENT.setEnabled(false);
                 this.DELETE_CONTENT.setEnabled(false);
@@ -195,9 +196,9 @@ module app_browse {
 
         }
 
-        private anyEditable(contents:api_content.ContentSummary[]):boolean {
+        private anyEditable(contents: api_content.ContentSummary[]): boolean {
             for (var i in contents) {
-                var content:api_content.ContentSummary = contents[i];
+                var content: api_content.ContentSummary = contents[i];
                 if (content.isEditable()) {
                     return true;
                 }
@@ -205,9 +206,9 @@ module app_browse {
             return false;
         }
 
-        private anyDeletable(contents:api_content.ContentSummary[]):boolean {
+        private anyDeletable(contents: api_content.ContentSummary[]): boolean {
             for (var i in contents) {
-                var content:api_content.ContentSummary = contents[i];
+                var content: api_content.ContentSummary = contents[i];
                 if (content.isDeletable()) {
                     return true;
                 }

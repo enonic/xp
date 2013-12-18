@@ -2,6 +2,8 @@ module app_wizard {
 
     export class ContentWizardPanelFactory {
 
+        private creatingForNew: boolean;
+
         private contentId: api_content.ContentId;
 
         private appBarTabId: api_app.AppBarTabId;
@@ -38,6 +40,8 @@ module app_wizard {
 
         createForNew(): Q.Promise<ContentWizardPanel> {
 
+            this.creatingForNew = true;
+
             var deferred = Q.defer<ContentWizardPanel>();
 
 
@@ -47,7 +51,9 @@ module app_wizard {
                 return this.loadParentContent().then((loadedParentContent: api_content.Content) => {
                     this.parentContent = loadedParentContent;
 
-                    return this.loadSite(loadedParentContent.getContentId()).then((loadedSite: api_content.Content) => {
+                    var parentContentId = loadedParentContent != null ? loadedParentContent.getContentId() : null;
+
+                    return this.loadSite(parentContentId).then((loadedSite: api_content.Content) => {
                         this.site = loadedSite;
 
                         this.newContentWizardPanelForNew().done((wizardPanel: ContentWizardPanel)=> {
@@ -61,6 +67,8 @@ module app_wizard {
         }
 
         createForEdit(): Q.Promise<ContentWizardPanel> {
+
+            this.creatingForNew = false;
 
             var deferred = Q.defer<ContentWizardPanel>();
 
@@ -110,6 +118,11 @@ module app_wizard {
         private loadSite(contentId: api_content.ContentId): Q.Promise<api_content.Content> {
             var deferred = Q.defer<api_content.Content>();
 
+            if (contentId == null) {
+                deferred.resolve(null);
+                return deferred.promise;
+            }
+
             new api_content_site.GetNearestSiteRequest(contentId).
                 sendAndParse().done((site: api_content.Content)=> {
                     deferred.resolve(site);
@@ -126,7 +139,12 @@ module app_wizard {
                 deferred.resolve(this.parentContent);
                 return deferred.promise;
             }
-            if (!this.contentToEdit.hasParent()) {
+            else if (!this.creatingForNew && !this.contentToEdit.hasParent()) {
+
+                deferred.resolve(null);
+                return deferred.promise;
+            }
+            else if (this.creatingForNew && this.parentContent == null) {
 
                 deferred.resolve(null);
                 return deferred.promise;
@@ -154,7 +172,7 @@ module app_wizard {
                     setParentContent(this.parentContent).
                     setSite(this.site);
 
-                new app_wizard.SiteWizardPanel(wizardParams, (wizard:SiteWizardPanel) => {
+                new app_wizard.SiteWizardPanel(wizardParams, (wizard: SiteWizardPanel) => {
                     deferred.resolve(wizard);
                 });
             }
@@ -166,7 +184,7 @@ module app_wizard {
                     setParentContent(this.parentContent).
                     setSite(this.site);
 
-                new app_wizard.ContentWizardPanel(wizardParams, (wizard:ContentWizardPanel) => {
+                new app_wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                     deferred.resolve(wizard);
                 });
             }
@@ -186,7 +204,7 @@ module app_wizard {
                     setPersistedContent(this.contentToEdit).
                     setSite(this.site);
 
-                new app_wizard.SiteWizardPanel(wizardParams, (wizard:SiteWizardPanel) => {
+                new app_wizard.SiteWizardPanel(wizardParams, (wizard: SiteWizardPanel) => {
                     deferred.resolve(wizard);
                 });
             }
@@ -199,7 +217,7 @@ module app_wizard {
                     setPersistedContent(this.contentToEdit).
                     setSite(this.site);
 
-                new app_wizard.ContentWizardPanel(wizardParams, (wizard:ContentWizardPanel) => {
+                new app_wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                     deferred.resolve(wizard);
                 });
             }

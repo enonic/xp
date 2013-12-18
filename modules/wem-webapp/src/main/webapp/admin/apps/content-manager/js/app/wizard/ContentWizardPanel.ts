@@ -253,10 +253,12 @@ module app_wizard {
 
             var contentData = new api_content.ContentData();
 
+            var parentPath = this.parentContent != null ? this.parentContent.getPath() : api_content.ContentPath.ROOT;
+
             var createRequest = new api_content.CreateContentRequest().
                 setDraft(this.persistAsDraft).
                 setName(api_content.ContentUnnamed.newUnnamed()).
-                setParent(this.parentContent.getPath()).
+                setParent(parentPath).
                 setContentType(this.contentType.getContentTypeName()).
                 setDisplayName(this.contentWizardHeader.getDisplayName()).
                 setForm(this.contentType.getForm()).
