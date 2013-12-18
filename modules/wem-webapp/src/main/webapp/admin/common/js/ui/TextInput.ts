@@ -9,6 +9,11 @@ module api_ui {
          * Specifies RegExp for characters that will be removed during input.
          */
         private stripCharsRe:RegExp;
+        /**
+        * Forbidden chars filters out keyCodes for delete, backspace and arrow buttons in Firefox, so we need to
+         * allow these to pass the filter (8=backspace, 46=delete, 39=right arrow, 47=left arrow)
+        */
+        private allowedKeyCodes:number[] = [8, 46, 39, 37];
 
         /**
          * Input value before it was changed by last input event.
@@ -25,17 +30,19 @@ module api_ui {
                 this.addClass('text-input').addClass(size);
             }
 
-            this.getEl().addEventListener('keypress', (event) => {
+            this.getEl().addEventListener('keypress', (event:KeyboardEvent) => {
                 if (!this.stripCharsRe) {
                     return;
                 }
 
                 var symbol = String.fromCharCode((<any> event).charCode);
-
                 // prevent input of forbidden symbols
                 if (this.containsForbiddenChars(symbol)) {
-                    event.preventDefault();
-                    return false;
+                    if (!this.keyCodeAllowed(event.keyCode)) {
+                        event.preventDefault();
+                        return false;
+                    }
+
                 }
             });
 
@@ -110,6 +117,13 @@ module api_ui {
             // create new RegExp object in order not to mess RegExp.lastIndex
             var forbidden = new RegExp(<any> this.stripCharsRe);
             return forbidden.test(value);
+        }
+
+        private keyCodeAllowed(keyCode:number):boolean {
+            for (var i = 0; i < this.allowedKeyCodes.length; i++) {
+                if (keyCode == this.allowedKeyCodes[i]) return true;
+            }
+            return false;
         }
     }
 }
