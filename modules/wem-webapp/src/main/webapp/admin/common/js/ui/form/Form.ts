@@ -1,12 +1,13 @@
 module api_ui_form {
+
     export class Form extends api_ui.Panel {
 
         private formEl:api_dom.FormEl;
 
         private inputs:api_dom.FormInputEl[];
 
-        constructor(id?:string) {
-            super(id);
+        constructor(idPrefix?:string) {
+            super(idPrefix);
             this.inputs = [];
             this.formEl = new api_dom.FormEl();
             this.formEl.getEl().addClass("form");
@@ -19,7 +20,7 @@ module api_ui_form {
             return this;
         }
 
-        addInput(input:api_dom.FormInputEl) {
+        registerInput(input:api_dom.FormInputEl) {
             this.inputs.push(input);
         }
 

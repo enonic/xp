@@ -16,7 +16,7 @@ module api_ui_form {
 
         add(formItem:FormItem) {
             formItem.appendTo(this);
-            this.form.addInput(formItem.getItem());
+            this.form.registerInput(formItem.getItem());
         }
     }
 }
