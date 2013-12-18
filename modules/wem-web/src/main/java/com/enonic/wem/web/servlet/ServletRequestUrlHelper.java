@@ -6,6 +6,10 @@ import com.google.common.base.Strings;
 
 public final class ServletRequestUrlHelper
 {
+    private ServletRequestUrlHelper()
+    {
+    }
+
     public static String createUrl( final String path )
     {
         return createUrl( ServletRequestHolder.getRequest(), path );

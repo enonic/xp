@@ -1,6 +1,7 @@
 package com.enonic.wem.portal.controller;
 
 import com.enonic.wem.api.content.Content;
+import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 public final class JsContext
 {
@@ -9,6 +10,8 @@ public final class JsContext
     private JsHttpResponse response;
 
     private Content content;
+
+    private PortalUrlScriptBean portalUrlScriptBean;
 
     public JsContext()
     {
@@ -43,5 +46,15 @@ public final class JsContext
     public void setContent( final Content content )
     {
         this.content = content;
+    }
+
+    public PortalUrlScriptBean getUrl()
+    {
+        return this.portalUrlScriptBean;
+    }
+
+    public void setPortalUrlScriptBean( final PortalUrlScriptBean portalUrlScriptBean )
+    {
+        this.portalUrlScriptBean = portalUrlScriptBean;
     }
 }

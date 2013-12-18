@@ -5,7 +5,8 @@ var body = system.mustache.render('views/frogger.html', {
     title: content.displayName,
     path: content.path,
     name: content.name,
-    editable: editMode
+    editable: editMode,
+    resourcesPath: portal.url.createResourceUrl('')
 });
 
 portal.response.body = body;

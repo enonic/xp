@@ -24,6 +24,7 @@ import com.enonic.wem.portal.controller.JsController;
 import com.enonic.wem.portal.controller.JsControllerFactory;
 import com.enonic.wem.portal.controller.JsHttpRequest;
 import com.enonic.wem.portal.exception.PortalWebException;
+import com.enonic.wem.portal.script.lib.PortalUrlScriptBean;
 
 import static com.enonic.wem.api.command.Commands.content;
 import static com.enonic.wem.api.command.Commands.page;
@@ -75,6 +76,9 @@ public final class ContentResource
         final JsHttpRequest request = new JsHttpRequest( this.httpContext.getRequest() );
         request.setMode( this.mode );
         context.setRequest( request );
+        final PortalUrlScriptBean portalUrlScriptBean = new PortalUrlScriptBean();
+        portalUrlScriptBean.setContentPath( path.toString() );
+        context.setPortalUrlScriptBean( portalUrlScriptBean );
 
         final JsController controller = this.controllerFactory.newController();
         controller.scriptDir( jsModuleResource );
