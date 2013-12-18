@@ -33,7 +33,6 @@ public class FindContentHandlerTest
 
         handler = new FindContentHandler();
         handler.setContext( this.context );
-        handler.setSearchService( searchService );
     }
 
     @Test
@@ -47,7 +46,6 @@ public class FindContentHandlerTest
         Mockito.when( searchService.search( Mockito.isA( ContentIndexQuery.class ) ) ).thenReturn( contentSearchResults );
 
         FindContentHandler findContentHandler = new FindContentHandler();
-        findContentHandler.setSearchService( searchService );
 
         ContentIndexQuery contentIndexQuery = new ContentIndexQuery();
         contentIndexQuery.setFullTextSearchString( "testing" );

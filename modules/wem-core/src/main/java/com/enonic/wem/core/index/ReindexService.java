@@ -11,14 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.wem.api.account.Account;
 import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.api.support.tree.Tree;
-import com.enonic.wem.api.support.tree.TreeNode;
 import com.enonic.wem.core.account.dao.AccountDao;
-import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
@@ -31,9 +27,6 @@ public class ReindexService
 
     private AccountDao accountDao;
 
-    private ContentDao contentDao;
-
-
     private final static Logger LOG = LoggerFactory.getLogger( ReindexService.class );
 
     public void reindexContent()
@@ -41,27 +34,7 @@ public class ReindexService
     {
         Session session = jcrSessionProvider.login();
 
-        reindexContentWEM( session );
         reindexContentNODB( session );
-    }
-
-    private void reindexContentWEM( final Session session )
-    {
-        final Tree<Content> contentTree = contentDao.getContentTree( session );
-
-        final Iterator<TreeNode<Content>> rootElementsIterator = contentTree.iterator();
-        while ( rootElementsIterator.hasNext() )
-        {
-            final TreeNode<Content> rootNode = rootElementsIterator.next();
-
-            final Content content = rootNode.getObject();
-
-            LOG.info( "Reindex root-content: " + content.getDisplayName() );
-
-            indexService.indexContent( content );
-
-            reindexChildren( rootNode );
-        }
     }
 
     private void reindexContentNODB( final Session session )
@@ -86,22 +59,6 @@ public class ReindexService
             indexService.indexNode( node );
 
             reindexNodes( nodeJcrDao.getNodesByParentPath( node.path() ), nodeJcrDao );
-        }
-    }
-
-    private void reindexChildren( final TreeNode<Content> childContent )
-    {
-        final Iterator<TreeNode<Content>> iterator = childContent.getChildren().iterator();
-
-        while ( iterator.hasNext() )
-        {
-            final TreeNode<Content> childContentNode = iterator.next();
-
-            final Content childeContent = childContentNode.getObject();
-            LOG.info( "Reindex content: " + childeContent.getDisplayName() );
-            indexService.indexContent( childeContent );
-
-            reindexChildren( childContentNode );
         }
     }
 
@@ -139,12 +96,6 @@ public class ReindexService
     public void setAccountDao( final AccountDao accountDao )
     {
         this.accountDao = accountDao;
-    }
-
-    @Inject
-    public void setContentDao( final ContentDao contentDao )
-    {
-        this.contentDao = contentDao;
     }
 
     @Inject

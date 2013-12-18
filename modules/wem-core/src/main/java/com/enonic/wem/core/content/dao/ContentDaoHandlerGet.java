@@ -10,14 +10,11 @@ import com.enonic.wem.api.content.ContentIds;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.core.content.ContentNodeTranslator;
 import com.enonic.wem.core.index.IndexService;
 
 final class ContentDaoHandlerGet
     extends AbstractContentDaoHandler
 {
-    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
-
     ContentDaoHandlerGet( final Session session, final IndexService indexService )
     {
         super( session, indexService );

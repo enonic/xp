@@ -9,7 +9,6 @@ import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.entity.DeleteNodeByPathHandler;
 import com.enonic.wem.core.index.IndexService;
 
@@ -17,8 +16,6 @@ import com.enonic.wem.core.index.IndexService;
 public final class DeleteContentTypeHandler
     extends AbstractContentTypeHandler<DeleteContentType>
 {
-    private ContentDao contentDao;
-
     private IndexService indexService;
 
     @Override
@@ -26,11 +23,13 @@ public final class DeleteContentTypeHandler
         throws Exception
     {
         final ContentTypeName contentTypeName = command.getName();
-        if ( contentDao.countContentTypeUsage( contentTypeName, context.getJcrSession() ) > 0 )
-        {
-            command.setResult( DeleteContentTypeResult.UNABLE_TO_DELETE );
-        }
-        else
+
+        // TODO: Fix this, use new node API
+        //if ( contentDao.countContentTypeUsage( contentTypeName, context.getJcrSession() ) > 0 )
+        //{
+        //    command.setResult( DeleteContentTypeResult.UNABLE_TO_DELETE );
+        // }
+        //else
         {
             final DeleteNodeByPath deleteNodeByPathCommand =
                 Commands.node().delete().byPath( new NodePath( "/content-types/" + command.getName().toString() ) );
@@ -63,12 +62,6 @@ public final class DeleteContentTypeHandler
         deleteNodeByPathHandler.handle();
 
         return deleteNodeByPathCommand.getResult();
-    }
-
-    @Inject
-    public void setContentDao( final ContentDao contentDao )
-    {
-        this.contentDao = contentDao;
     }
 
     @Inject

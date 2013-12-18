@@ -30,12 +30,10 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.entity.CreateNodeHandler;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
@@ -51,8 +49,6 @@ public class CreateContentHandler
 
     private static final String THUMBNAIL_MIME_TYPE = "image/png";
 
-    private ContentDao contentDao;
-
     private RelationshipService relationshipService;
 
     private IndexService indexService;
@@ -65,9 +61,8 @@ public class CreateContentHandler
     public void handle()
         throws Exception
     {
-        final Session session = context.getJcrSession();
-
-        verifyParentAllowsChildren();
+        // TODO: Add later
+        //verifyParentAllowsChildren();
 
         final Content builtContent = buildContent();
 
@@ -76,18 +71,13 @@ public class CreateContentHandler
             validateContentData( context.getClient(), builtContent );
         }
 
-        //final Content storedContent = contentDao.create( builtContent, session );
-        //session.save();
-
-        //addAttachments( builtContent, storedContent );
-
         final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent, command );
         final CreateNodeResult createdNode = createAsNode( createNodeCommand );
 
-        //indexService.indexContent( storedContent );
-
         final Content storedContent = CONTENT_NODE_TRANSLATOR.fromNode( createdNode.getPersistedNode() );
-        addRelationships( session, builtContent, storedContent );
+
+        //addAttachments( builtContent, storedContent );
+        // addRelationships( session, builtContent, storedContent );
 
         command.setResult( storedContent );
     }
@@ -128,7 +118,7 @@ public class CreateContentHandler
         catch ( Exception e )
         {
             // Temporary way of rollback: try delete content if any failure
-            contentDao.forceDelete( storedContent.getId(), session );
+            //contentDao.forceDelete( storedContent.getId(), session );
             session.save();
             throw e;
         }
@@ -224,7 +214,7 @@ public class CreateContentHandler
 
     private void checkParentContentAllowsChildren( final ContentPath parentContentPath, final Session session )
     {
-        //TODO: Rewrite this to NODE
+     /*   //TODO: Rewrite this to NODE
         final Content content = contentDao.selectByPath( parentContentPath, session );
         if ( content != null )
         {
@@ -235,8 +225,8 @@ public class CreateContentHandler
                                            contentType.getName() );
             }
         }
+        */
     }
-
 
     private void validateContentData( final Client client, final Content content )
     {
@@ -286,12 +276,6 @@ public class CreateContentHandler
         CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( outputStream.toByteArray() ).getInput() );
 
         return context.getClient().execute( createBlob );
-    }
-
-    @Inject
-    public void setContentDao( final ContentDao contentDao )
-    {
-        this.contentDao = contentDao;
     }
 
     @Inject

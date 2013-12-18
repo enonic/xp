@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content;
 
-import java.util.Iterator;
-
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContent;
@@ -70,8 +68,6 @@ public class ContentNodeTranslator
 
     public Contents fromNodes( final Nodes nodes )
     {
-        final Iterator<Node> iterator = nodes.iterator();
-
         Contents.Builder contents = Contents.builder();
 
         for ( final Node node : nodes )
@@ -107,7 +103,10 @@ public class ContentNodeTranslator
             builder.displayName( node.property( DISPLAY_NAME_PATH ).getString() );
         }
 
-        builder.type( ContentTypeName.from( node.property( CONTENT_TYPE_PATH ).getString() ) );
+        if ( node.property( CONTENT_TYPE_PATH ) != null )
+        {
+            builder.type( ContentTypeName.from( node.property( CONTENT_TYPE_PATH ).getString() ) );
+        }
 
         if ( node.dataSet( CONTENT_DATA_PATH ) != null )
         {

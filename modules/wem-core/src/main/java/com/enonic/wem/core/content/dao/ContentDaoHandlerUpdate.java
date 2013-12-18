@@ -8,7 +8,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
-import com.enonic.wem.core.content.ContentNodeTranslator;
 import com.enonic.wem.core.index.IndexService;
 
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_NEXT_VERSION_PROPERTY;
@@ -17,8 +16,6 @@ import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 final class ContentDaoHandlerUpdate
     extends AbstractContentDaoHandler
 {
-    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
-
     ContentDaoHandlerUpdate( final Session session, final IndexService indexService )
     {
         super( session, indexService );

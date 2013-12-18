@@ -216,7 +216,8 @@ public class IndexService
             }
         }
 
+        // TODO: Old stuff, put new reindexing here
         this.reindexService.reindexContent();
-        this.reindexService.reindexAccounts();
+        // this.reindexService.reindexAccounts();
     }
 }

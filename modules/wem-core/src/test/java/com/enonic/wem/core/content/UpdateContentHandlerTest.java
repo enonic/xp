@@ -1,8 +1,6 @@
 package com.enonic.wem.core.content;
 
 
-import javax.jcr.Session;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
@@ -27,14 +25,12 @@ import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 
 import static com.enonic.wem.api.content.Content.editContent;
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.api.schema.content.ContentType.newContentType;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 
 public class UpdateContentHandlerTest
@@ -46,7 +42,6 @@ public class UpdateContentHandlerTest
 
     private UpdateContentHandler handler;
 
-    private ContentDao contentDao;
 
     private RelationshipService relationshipService;
 
@@ -57,13 +52,11 @@ public class UpdateContentHandlerTest
         super.client = Mockito.mock( Client.class );
         super.initialize();
 
-        contentDao = Mockito.mock( ContentDao.class );
         relationshipService = Mockito.mock( RelationshipService.class );
         IndexService indexService = Mockito.mock( IndexService.class );
 
         handler = new UpdateContentHandler();
         handler.setContext( this.context );
-        handler.setContentDao( contentDao );
         handler.setRelationshipService( relationshipService );
         handler.setIndexService( indexService );
 
@@ -88,8 +81,6 @@ public class UpdateContentHandlerTest
 
         ContentData existingContentData = new ContentData();
         existingContentData.add( new Property.String( "myData", "aaa" ) );
-
-        Mockito.when( contentDao.selectById( eq( ContentId.from( "myContent" ) ), Mockito.any( Session.class ) ) ).thenReturn( null );
 
         final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( new Property.String( "myData", "aaa" ) );
@@ -123,8 +114,6 @@ public class UpdateContentHandlerTest
 
         Content existingContent = createContent( existingContentData );
 
-        Mockito.when( contentDao.selectById( eq( existingContent.getId() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
-
         final ContentData unchangedContentData = new ContentData();
         unchangedContentData.add( new Property.String( "myData", "aaa" ) );
 
@@ -145,7 +134,6 @@ public class UpdateContentHandlerTest
         handler.handle();
 
         // verify
-        Mockito.verify( contentDao, Mockito.times( 0 ) ).update( Mockito.any( Content.class ), eq( true ), Mockito.any( Session.class ) );
     }
 
     @Ignore // Rewriting content stuff to node
@@ -160,8 +148,6 @@ public class UpdateContentHandlerTest
         existingContentData.add( new Property.String( "myData", "aaa" ) );
 
         Content existingContent = createContent( existingContentData );
-
-        Mockito.when( contentDao.selectById( eq( existingContent.getId() ), Mockito.any( Session.class ) ) ).thenReturn( existingContent );
 
         final ContentData changedContentData = new ContentData();
         changedContentData.add( new Property.String( "myData", "bbb" ) );
@@ -188,8 +174,6 @@ public class UpdateContentHandlerTest
             modifier( AccountKey.superUser() ).
             contentData( changedContentData ).
             build();
-
-        Mockito.verify( contentDao, Mockito.times( 1 ) ).update( Mockito.refEq( storedContent ), eq( true ), Mockito.any( Session.class ) );
     }
 
     private Content createContent( final ContentData contentData )

@@ -9,7 +9,6 @@ import com.enonic.wem.api.command.entity.UpdateNodeResult;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.dao.EntityDao;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.entity.dao.UpdateNodeArgs;
 import com.enonic.wem.core.index.IndexService;
@@ -69,13 +68,6 @@ public class UpdateNodeHandler
         session.save();
 
         indexService.indexNode( persistedNode );
-
-        final EntityDao.UpdateEntityArgs updateEntityArgs = new EntityDao.UpdateEntityArgs.Builder().
-            entityToUpdate( persisted.id() ).
-            data( edited.data() ).
-            build();
-        //Commented out because of problems with mixin update
-        //entityDao.update( updateEntityArgs );
 
         command.setResult( new UpdateNodeResult( persistedNode ) );
     }

@@ -60,7 +60,7 @@ public final class BlobResource
         MediaType mediaType;
         try
         {
-            mediaType = MediaType.valueOf( "png" );
+            mediaType = MediaType.valueOf( "image/png" );
         }
         catch ( IllegalArgumentException e )
         {

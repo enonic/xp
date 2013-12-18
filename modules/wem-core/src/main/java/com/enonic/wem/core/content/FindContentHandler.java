@@ -13,13 +13,10 @@ import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.entity.EntityQueryResult;
 import com.enonic.wem.core.index.entity.EntitySearchResultEntry;
 import com.enonic.wem.core.index.entity.EntitySearchService;
-import com.enonic.wem.core.index.search.SearchService;
 
 public class FindContentHandler
     extends CommandHandler<FindContent>
 {
-    private SearchService searchService;
-
     private EntitySearchService entitySearchService;
 
     @Override
@@ -49,12 +46,6 @@ public class FindContentHandler
         return contentIndexQueryResult;
     }
 
-
-    @Inject
-    public void setSearchService( final SearchService searchService )
-    {
-        this.searchService = searchService;
-    }
 
     @Inject
     public void setEntitySearchService( final EntitySearchService entitySearchService )
