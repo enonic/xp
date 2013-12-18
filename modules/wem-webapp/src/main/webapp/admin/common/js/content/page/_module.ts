@@ -13,6 +13,7 @@
 
 ///<reference path='PageTemplateName.ts' />
 ///<reference path='PageTemplateKey.ts' />
+///<reference path='PageTemplateSummary.ts' />
 ///<reference path='PageTemplate.ts' />
 ///<reference path='PageTemplateResourceRequest.ts' />
 ///<reference path='GetPageTemplateByKeyRequest.ts' />

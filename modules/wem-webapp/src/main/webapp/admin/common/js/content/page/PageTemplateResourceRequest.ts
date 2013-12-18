@@ -17,5 +17,10 @@ module api_content_page {
             return new PageTemplateBuilder().
                 fromJson(json).build();
         }
+
+        fromJsonToPageTemplateSummary(json:api_content_page_json.PageTemplateSummaryJson):api_content_page.PageTemplateSummary {
+            return new PageTemplateSummaryBuilder().
+                fromJson(json).build();
+        }
     }
 }

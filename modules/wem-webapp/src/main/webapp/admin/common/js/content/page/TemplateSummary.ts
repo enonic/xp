@@ -11,6 +11,7 @@ module api_content_page{
         private descriptorModuleResourceKey:api_module.ModuleResourceKey;
 
         constructor(builder:TemplateSummaryBuilder<KEY,NAME>) {
+            this.key = builder.key;
             this.name = builder.name;
             this.displayName = builder.displayName;
             this.descriptorModuleResourceKey = builder.descriptorModuleResourceKey;

@@ -20,15 +20,15 @@ module api_content_page {
             return api_rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): JQueryPromise<api_content_page.PageTemplate[]> {
+        sendAndParse(): JQueryPromise<api_content_page.PageTemplateSummary[]> {
 
-            var deferred = jQuery.Deferred<api_content_page.PageTemplate>();
+            var deferred = jQuery.Deferred<api_content_page.PageTemplateSummary[]>();
 
             this.send().
                 done((response: api_rest.JsonResponse<api_content_page_json.PageTemplateSummaryListJson>) => {
-                var array:api_content_page.PageTemplate[] = [];
-                response.getResult().templates.forEach((templateJson:api_content_page_json.PageTemplateJson) => {
-                    array.push(this.fromJsonToPageTemplate(templateJson));
+                var array:api_content_page.PageTemplateSummary[] = [];
+                response.getResult().templates.forEach((templateJson:api_content_page_json.PageTemplateSummaryJson) => {
+                    array.push(this.fromJsonToPageTemplateSummary(templateJson));
                 });
 
                 deferred.resolve(array);
