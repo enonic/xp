@@ -4,11 +4,9 @@ import com.enonic.wem.web.servlet.ServletRequestUrlHelper;
 
 public final class PortalUrlScriptBean
 {
-    private static final String PUBLIC_URL = "public";
+    private static final String PUBLIC_RESOURCE_TYPE = "public";
 
-    private static final String IMAGE_URL = "image";
-
-    private static final String SERVICE_URL = "service";
+    private static final String SERVICE_RESOURCE_TYPE = "service";
 
     private String mode;
 
@@ -33,16 +31,15 @@ public final class PortalUrlScriptBean
         return PortalUrlBuilder.createUrl( this.baseUrl ).
             mode( this.mode ).
             contentPath( contentPath ).
-            service( PUBLIC_URL ).
+            resourceType( PUBLIC_RESOURCE_TYPE ).
             resourcePath( resourcePath );
     }
 
-    public PortalUrlBuilder createImageUrl( final String name )
+    public PortalImageUrlBuilder createImageUrl( final String name )
     {
-        return PortalUrlBuilder.createUrl( this.baseUrl ).
+        return PortalImageUrlBuilder.createImageUrl( this.baseUrl ).
             mode( this.mode ).
             contentPath( contentPath ).
-            service( IMAGE_URL ).
             resourcePath( name );
     }
 
@@ -51,7 +48,7 @@ public final class PortalUrlScriptBean
         return PortalUrlBuilder.createUrl( this.baseUrl ).
             mode( this.mode ).
             contentPath( contentPath ).
-            service( SERVICE_URL ).
+            resourceType( SERVICE_RESOURCE_TYPE ).
             resourcePath( name );
     }
 

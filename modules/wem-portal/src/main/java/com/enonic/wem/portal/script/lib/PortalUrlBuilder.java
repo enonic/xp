@@ -14,7 +14,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang.StringUtils.removeEnd;
 import static org.apache.commons.lang.StringUtils.removeStart;
 
-public final class PortalUrlBuilder
+public class PortalUrlBuilder<T extends PortalUrlBuilder>
 {
     private static final String PORTAL = "portal";
 
@@ -28,58 +28,58 @@ public final class PortalUrlBuilder
 
     private String mode;
 
-    private String service; // "public", "service", "image"
+    private String resourceType; // "public", "service", "image"
 
     private final Map<String, String> params;
 
-    private PortalUrlBuilder( final String baseUrl )
+    protected PortalUrlBuilder( final String baseUrl )
     {
         this.baseUrl = removeEnd( baseUrl, "/" );
         this.resourcePath = "";
         this.contentPath = "";
-        this.service = "";
+        this.resourceType = "";
         this.mode = DEFAULT_MODE;
         this.params = Maps.newLinkedHashMap();
     }
 
-    public PortalUrlBuilder mode( final String mode )
+    public T mode( final String mode )
     {
         this.mode = mode == null ? DEFAULT_MODE : mode;
-        return this;
+        return (T) this;
     }
 
-    public PortalUrlBuilder resourcePath( final String path )
+    public T resourcePath( final String path )
     {
         this.resourcePath = nullToEmpty( path );
-        return this;
+        return (T) this;
     }
 
-    public PortalUrlBuilder service( final String service )
+    public T resourceType( final String resourceType )
     {
-        this.service = nullToEmpty( service );
-        return this;
+        this.resourceType = nullToEmpty( resourceType );
+        return (T) this;
     }
 
-    public PortalUrlBuilder params( final Map<String, Object> params )
+    public T params( final Map<String, Object> params )
     {
         for ( final String name : params.keySet() )
         {
             param( name, params.get( name ) );
         }
-        return this;
+        return (T) this;
     }
 
-    public PortalUrlBuilder param( final String name, final Object value )
+    public T param( final String name, final Object value )
     {
         final String valueString = value == null ? null : urlEncode( value.toString() );
         this.params.put( urlEncode( name ), valueString );
-        return this;
+        return (T) this;
     }
 
-    public PortalUrlBuilder contentPath( final String contentPath )
+    public T contentPath( final String contentPath )
     {
         this.contentPath = nullToEmpty( contentPath );
-        return this;
+        return (T) this;
     }
 
     private String urlEncode( final String value )
@@ -104,14 +104,18 @@ public final class PortalUrlBuilder
         return "?" + joiner.join( params );
     }
 
+    protected void preBuildUrl()
+    {
+    }
+
     private String buildUrl()
     {
         final StringBuilder str = new StringBuilder( this.baseUrl ).append( "/" ).append( PORTAL ).
             append( "/" ).append( this.mode ).append( "/" );
         append( str, contentPath );
-        if ( !service.isEmpty() )
+        if ( !resourceType.isEmpty() )
         {
-            append( str, "/_/" + service );
+            append( str, "/_/" + resourceType );
         }
         append( str, resourcePath );
         str.append( serializeParams( this.params ) );
@@ -143,6 +147,7 @@ public final class PortalUrlBuilder
     @Override
     public String toString()
     {
+        preBuildUrl();
         return this.buildUrl();
     }
 

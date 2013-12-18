@@ -32,7 +32,7 @@ public class PortalUrlBuilderTest
     }
 
     @Test
-    public void createUrl()
+    public void createUrlResource()
     {
         final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).resourcePath( "some/path" );
 
@@ -43,25 +43,51 @@ public class PortalUrlBuilderTest
     public void createUrlWithParams()
     {
         final Map<String, Object> params = Maps.newLinkedHashMap();
-        params.put( "a", "one" );
+        params.put( "a", "some thing" );
         params.put( "b", 2 );
         params.put( "c", null );
 
         final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).resourcePath( "some/path" );
         assertEquals( "http://localhost:8080/portal/live/some/path", urlBuilder.toString() );
 
-        urlBuilder.params( params );
-        assertEquals( "http://localhost:8080/portal/live/some/path?a=one&b=2&c=", urlBuilder.toString() );
+        urlBuilder.params( params ).param( "d", true );
+        assertEquals( "http://localhost:8080/portal/live/some/path?a=some+thing&b=2&c=&d=true", urlBuilder.toString() );
     }
 
     @Test
     public void createUrlWithMode()
     {
-        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).resourcePath( "some/path" );
+        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).contentPath( "some/path" );
         assertEquals( "http://localhost:8080/portal/live/some/path", urlBuilder.toString() );
 
         urlBuilder.mode( "edit" );
         assertEquals( "http://localhost:8080/portal/edit/some/path", urlBuilder.toString() );
+    }
+
+    @Test
+    public void createUrlWithService()
+    {
+        final PortalUrlBuilder urlBuilder =
+            PortalUrlBuilder.createUrl( baseUrl ).contentPath( "some/content/path" ).resourceType( "public" ).resourcePath(
+                "resource/path" );
+        assertEquals( "http://localhost:8080/portal/live/some/content/path/_/public/resource/path", urlBuilder.toString() );
+    }
+
+    @Test
+    public void createUrlComplex()
+    {
+        final Map<String, Object> params = Maps.newLinkedHashMap();
+        params.put( "two", 2 );
+        params.put( "three", 3 );
+        final PortalUrlBuilder urlBuilder = PortalUrlBuilder.createUrl( baseUrl ).
+            mode( "edit" ).
+            contentPath( "some/content/path" ).
+            resourceType( "public" ).
+            resourcePath( "resource/path" ).
+            param( "one", 1 ).
+            params( params );
+        assertEquals( "http://localhost:8080/portal/edit/some/content/path/_/public/resource/path?one=1&two=2&three=3",
+                      urlBuilder.toString() );
     }
 
     private void setupRequest( final String scheme, final String host, final int port, final String contextPath )

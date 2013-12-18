@@ -31,6 +31,7 @@ import static com.enonic.wem.api.command.Commands.attachment;
 import static com.enonic.wem.api.command.Commands.blob;
 import static com.enonic.wem.api.command.Commands.content;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
 @Path("{mode}/{path:.+}/_/image/{fileName:.+}")
@@ -154,7 +155,7 @@ public final class ImageResource
     private int getBackgroundColor()
     {
         String value = backgroundColor;
-        if ( value != null )
+        if ( isNotEmpty( value ) )
         {
             if ( value.startsWith( "0x" ) )
             {
@@ -175,7 +176,7 @@ public final class ImageResource
 
     private int getQuality()
     {
-        if ( this.quality == null )
+        if ( isNullOrEmpty( this.quality ) )
         {
             return DEFAULT_QUALITY;
         }
