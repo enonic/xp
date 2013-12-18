@@ -20,6 +20,7 @@ module api_app_wizard {
             super();
 
             this.displayNameEl = api_ui.AutosizeTextInput.large().setName('displayName');
+            this.displayNameEl.setPlaceholder("Display Name");
             this.displayNameEl.addListener({
                 onValueChanged: (oldValue, newValue) => {
                     this.notifyPropertyChanged("displayName", oldValue, newValue);
@@ -32,6 +33,7 @@ module api_app_wizard {
             this.appendChild(this.pathEl);
 
             this.nameEl = api_ui.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
+            this.nameEl.setPlaceholder("name");
             this.nameEl.addListener({
                 onValueChanged: (oldValue, newValue) => {
                     this.notifyPropertyChanged("name", oldValue, newValue);
