@@ -23,8 +23,15 @@
 
 .clearfix() {
   zoom: 1;
-  &:before { content: ''; display: block; }
-  &:after { content: ''; display: table; clear: both; }
+  &:before {
+    content: '';
+    display: block;
+  }
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
 }
 
 .noSelect() {
@@ -74,4 +81,23 @@
   overflow: hidden;
   white-space: pre;
   text-overflow: ellipsis;
+}
+
+.placeholderColor(@color) {
+  &::-webkit-input-placeholder {
+    /* WebKit browsers */
+    color: @color;
+  }
+  &:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: @color;
+  }
+  &::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: @color;
+  }
+  &:-ms-input-placeholder {
+    /* Internet Explorer 10+ */
+    color: @color;
+  }
 }
