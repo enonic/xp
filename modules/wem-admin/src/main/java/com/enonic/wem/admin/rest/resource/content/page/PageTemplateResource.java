@@ -12,12 +12,15 @@ import com.enonic.wem.admin.json.content.page.PageTemplateJson;
 import com.enonic.wem.admin.json.content.page.PageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.command.content.page.GetPageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -32,7 +35,7 @@ public final class PageTemplateResource
     {
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
         final PageTemplate pageTemplate = client.execute( page().template().page().getByKey().key( pageTemplateKey ) );
-        final PageDescriptor descriptor = PageDescriptorResource.getDescriptor( pageTemplate.getDescriptor(), client );
+        final PageDescriptor descriptor = getDescriptor( pageTemplate.getDescriptor() );
         return new PageTemplateJson( pageTemplate, new PageDescriptorJson( descriptor ) );
     }
 
@@ -45,5 +48,12 @@ public final class PageTemplateResource
         final PageTemplates pageTemplates = client.execute( command );
 
         return new PageTemplateListJson( pageTemplates );
+    }
+
+    private PageDescriptor getDescriptor( final ModuleResourceKey key )
+    {
+        final PageDescriptorKey pageDescriptorKey = PageDescriptorKey.from( key.getModuleKey(), key.getPath() );
+        final GetPageDescriptor getPageDescriptor = page().descriptor().page().getByKey( pageDescriptorKey );
+        return client.execute( getPageDescriptor );
     }
 }

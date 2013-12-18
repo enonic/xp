@@ -12,13 +12,16 @@ import com.enonic.wem.admin.json.content.page.image.ImageDescriptorJson;
 import com.enonic.wem.admin.json.content.page.image.ImageTemplateJson;
 import com.enonic.wem.admin.json.content.page.image.ImageTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
+import com.enonic.wem.api.command.content.page.image.GetImageDescriptor;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplateByKey;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplatesBySiteTemplate;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -36,7 +39,7 @@ public class ImageTemplateResource
             key( imageTemplateKey );
 
         final ImageTemplate imageTemplate = client.execute( command );
-        final ImageDescriptor descriptor = ImageDescriptorResource.getDescriptor( imageTemplate.getDescriptor(), client );
+        final ImageDescriptor descriptor = getDescriptor( imageTemplate.getDescriptor() );
         return new ImageTemplateJson( imageTemplate, new ImageDescriptorJson( descriptor ) );
     }
 
@@ -49,5 +52,12 @@ public class ImageTemplateResource
             siteTemplate( siteTemplateKey );
         final ImageTemplates imageTemplates = client.execute( listCommand );
         return new ImageTemplateListJson( imageTemplates );
+    }
+
+    private ImageDescriptor getDescriptor( final ModuleResourceKey key )
+    {
+        final ImageDescriptorKey imageDescriptorKey = ImageDescriptorKey.from( key.getModuleKey(), key.getPath() );
+        final GetImageDescriptor getImageDescriptor = page().descriptor().image().getByKey( imageDescriptorKey );
+        return client.execute( getImageDescriptor );
     }
 }

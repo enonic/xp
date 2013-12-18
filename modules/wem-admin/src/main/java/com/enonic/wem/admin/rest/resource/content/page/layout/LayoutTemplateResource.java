@@ -13,12 +13,15 @@ import com.enonic.wem.admin.json.content.page.layout.LayoutTemplateJson;
 import com.enonic.wem.admin.json.content.page.layout.LayoutTemplateListJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.page.layout.GetLayoutDescriptor;
 import com.enonic.wem.api.command.content.page.layout.GetLayoutTemplateByKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -35,20 +38,26 @@ public class LayoutTemplateResource
         final GetLayoutTemplateByKey command = page().template().layout().getByKey().key( layoutTemplateKey );
 
         final LayoutTemplate layoutTemplate = client.execute( command );
-        final LayoutDescriptor descriptor = LayoutDescriptorResource.getDescriptor( layoutTemplate.getDescriptor(), client );
+        final LayoutDescriptor descriptor = getDescriptor( layoutTemplate.getDescriptor() );
         return new LayoutTemplateJson( layoutTemplate, new LayoutDescriptorJson( descriptor ) );
     }
 
     @GET
-    @Path( "list" )
+    @Path("list")
     public LayoutTemplateListJson listLayoutTemplates( @QueryParam("key") final String siteTemplateKeyAsString )
     {
         SiteTemplateKey siteTemplateKey = SiteTemplateKey.from( siteTemplateKeyAsString );
 
-        LayoutTemplates layoutTemplates = client.execute(
-            Commands.page().template().layout().getBySiteTemplate().siteTemplate( siteTemplateKey ) );
+        LayoutTemplates layoutTemplates =
+            client.execute( Commands.page().template().layout().getBySiteTemplate().siteTemplate( siteTemplateKey ) );
 
         return new LayoutTemplateListJson( layoutTemplates );
     }
 
+    private LayoutDescriptor getDescriptor( final ModuleResourceKey key )
+    {
+        final LayoutDescriptorKey layoutDescriptorKey = LayoutDescriptorKey.from( key.getModuleKey(), key.getPath() );
+        final GetLayoutDescriptor getLayoutDescriptor = page().descriptor().layout().getByKey( layoutDescriptorKey );
+        return client.execute( getLayoutDescriptor );
+    }
 }
