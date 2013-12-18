@@ -1,7 +1,5 @@
 package com.enonic.wem.admin.rest.resource.content.page;
 
-import java.io.IOException;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,7 +23,6 @@ public class PageDescriptorResource
 {
     @GET
     public PageDescriptorJson getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
-        throws IOException
     {
         final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
         final PageDescriptor descriptor = getDescriptor( key, client );
@@ -33,8 +30,7 @@ public class PageDescriptorResource
         return json;
     }
 
-    static PageDescriptor getDescriptor( final ModuleResourceKey key, final Client client )
-        throws IOException
+    private PageDescriptor getDescriptor( final ModuleResourceKey key, final Client client )
     {
         final PageDescriptorKey pageDescriptorKey = PageDescriptorKey.from( key.getModuleKey(), key.getPath() );
         final GetPageDescriptor getPageDescriptor = page().descriptor().page().getByKey( pageDescriptorKey );
