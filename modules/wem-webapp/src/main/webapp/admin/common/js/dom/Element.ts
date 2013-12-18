@@ -48,12 +48,6 @@ module api_dom {
 
         reRender() {
 
-            //this.afterRender();
-            //this.children.forEach((child) => {
-            //    child.afterRender();
-            ///});
-
-            /** TODO: Should this function be like this instead?**/
             this.children.forEach((child) => {
                 child.reRender();
             });
