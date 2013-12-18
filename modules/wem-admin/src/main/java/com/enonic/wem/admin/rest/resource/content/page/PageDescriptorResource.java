@@ -8,17 +8,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.FilenameUtils;
-
 import com.enonic.wem.admin.json.content.page.PageDescriptorJson;
 import com.enonic.wem.admin.rest.resource.AbstractResource;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.module.GetModuleResource;
+import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.resource.Resource;
-import com.enonic.wem.xml.XmlSerializers;
+
+import static com.enonic.wem.api.command.Commands.page;
 
 @Path("content/page/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,13 +36,8 @@ public class PageDescriptorResource
     static PageDescriptor getDescriptor( final ModuleResourceKey key, final Client client )
         throws IOException
     {
-        final GetModuleResource command = Commands.module().getResource().resourceKey( key );
-        final Resource descriptorResource = client.execute( command );
-        final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
-        XmlSerializers.pageDescriptor().parse( descriptorResource.readAsString() ).to( builder );
-
-        final String descriptorName = FilenameUtils.removeExtension( key.getPath().getName() );
-        builder.name( descriptorName );
-        return builder.build();
+        final PageDescriptorKey pageDescriptorKey = PageDescriptorKey.from( key.getModuleKey(), key.getPath() );
+        final GetPageDescriptor getPageDescriptor = page().descriptor().page().getByKey( pageDescriptorKey );
+        return client.execute( getPageDescriptor );
     }
 }
