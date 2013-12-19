@@ -14,6 +14,7 @@ import com.enonic.wem.core.index.IndexService;
 import static com.enonic.wem.api.content.Content.newContent;
 import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 
+@Deprecated
 final class ContentDaoHandlerGetVersion
     extends AbstractContentDaoHandler
 {

@@ -22,6 +22,7 @@ import static com.enonic.wem.core.jcr.JcrHelper.getPropertyDateTime;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyLong;
 import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 
+@Deprecated
 final class ContentDaoHandlerGetContentVersionHistory
     extends AbstractContentDaoHandler
 {

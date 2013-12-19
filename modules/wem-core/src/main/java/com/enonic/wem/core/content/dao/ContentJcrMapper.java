@@ -33,6 +33,7 @@ import static com.enonic.wem.core.jcr.JcrHelper.getPropertyString;
 import static com.enonic.wem.core.jcr.JcrHelper.setPropertyDateTime;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
+@Deprecated
 final class ContentJcrMapper
 {
     static final String DRAFT = "draft";

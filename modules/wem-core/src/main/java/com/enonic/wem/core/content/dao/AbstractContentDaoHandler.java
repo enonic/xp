@@ -24,6 +24,7 @@ import static com.enonic.wem.core.content.dao.ContentDao.CONTENT_VERSION_PREFIX;
 import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
+@Deprecated
 public abstract class AbstractContentDaoHandler
 {
     protected final Session session;

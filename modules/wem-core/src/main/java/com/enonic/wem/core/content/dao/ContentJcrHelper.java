@@ -17,6 +17,7 @@ import static com.enonic.wem.core.jcr.JcrHelper.getNodeOrNull;
 import static org.apache.commons.lang.StringUtils.removeStart;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
+@Deprecated
 public class ContentJcrHelper
 {
     public static boolean moveContentNode( final String srcPath, final String dstPath, final Session session )

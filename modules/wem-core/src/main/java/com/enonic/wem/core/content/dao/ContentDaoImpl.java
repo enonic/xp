@@ -20,6 +20,7 @@ import com.enonic.wem.core.index.IndexService;
  * TODO: Figure out how to handle the thrown RepositoryException from JCR.
  */
 
+@Deprecated
 @Singleton
 public class ContentDaoImpl
     implements ContentDao

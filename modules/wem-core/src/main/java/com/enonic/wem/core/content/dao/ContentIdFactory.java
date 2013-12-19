@@ -5,6 +5,7 @@ import javax.jcr.RepositoryException;
 
 import com.enonic.wem.api.content.ContentId;
 
+@Deprecated
 public final class ContentIdFactory
 {
     static ContentId from( final Node node )
