@@ -12,6 +12,7 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
+import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.command.CommandHandler;
 
@@ -21,20 +22,32 @@ public final class GetMixinsHandler
 {
     private final static MixinNodeTranslator MIXIN_NODE_TRANSLATOR = new MixinNodeTranslator();
 
+    private final List<MixinName> noFoundList = new ArrayList<>();
+
     @Override
     public void handle()
         throws Exception
     {
+        final MixinNames mixinNames = command.getNames();
         final Mixins mixins;
 
         if ( command.isGetAll() )
         {
             mixins = getAllMixins();
+
+            if ( mixins.isEmpty() )
+            {
+                throw new MixinNotFoundException( mixinNames );
+            }
         }
         else
         {
-            final MixinNames mixinNames = command.getNames();
             mixins = getMixins( mixinNames );
+
+            if ( !noFoundList.isEmpty() )
+            {
+                throw new MixinNotFoundException( MixinNames.from( noFoundList ) );
+            }
         }
 
         command.setResult( mixins );
@@ -48,13 +61,18 @@ public final class GetMixinsHandler
 
     private Mixins getMixins( final MixinNames mixinNames )
     {
-        final List<Mixin> mixinList = new ArrayList<>( mixinNames.getSize() );
+        final List<Mixin> mixinList = new ArrayList<>();
+
         for ( MixinName mixinName : mixinNames )
         {
             final Mixin mixin = getMixin( mixinName );
             if ( mixin != null )
             {
                 mixinList.add( mixin );
+            }
+            else
+            {
+                noFoundList.add( mixinName );
             }
         }
         return Mixins.from( mixinList );
@@ -67,13 +85,6 @@ public final class GetMixinsHandler
 
         final Node node = context.getClient().execute( getNodeByPathCommand );
 
-        if ( node != null )
-        {
-            return MIXIN_NODE_TRANSLATOR.fromNode( node );
-        }
-        else
-        {
-            return null;
-        }
+        return ( node != null ) ? MIXIN_NODE_TRANSLATOR.fromNode( node ) : null;
     }
 }

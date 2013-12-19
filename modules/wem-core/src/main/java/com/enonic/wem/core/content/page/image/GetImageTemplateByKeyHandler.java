@@ -5,7 +5,11 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.page.image.GetImageTemplateByKey;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
+import com.enonic.wem.api.content.page.image.ImageTemplateKey;
+import com.enonic.wem.api.content.page.image.ImageTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplate;
+import com.enonic.wem.api.content.site.SiteTemplateKey;
+import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
 
 public class GetImageTemplateByKeyHandler
@@ -15,9 +19,22 @@ public class GetImageTemplateByKeyHandler
     public void handle()
         throws Exception
     {
-        final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( command.getKey().getSiteTemplateKey() );
+        final ImageTemplateKey imageTemplateKey = command.getKey();
+        final SiteTemplateKey siteTemplateKey = imageTemplateKey.getSiteTemplateKey();
+        final GetSiteTemplateByKey getSiteTemplateCommand = Commands.site().template().get().byKey( siteTemplateKey );
         final SiteTemplate siteTemplate = context.getClient().execute( getSiteTemplateCommand );
-        final ImageTemplate imageTemplate = siteTemplate.getImageTemplates().getTemplate( command.getKey() );
+
+        if ( siteTemplate == null )
+        {
+            throw new SiteTemplateNotFoundException( siteTemplateKey );
+        }
+
+        final ImageTemplate imageTemplate = siteTemplate.getImageTemplates().getTemplate( imageTemplateKey );
+
+        if ( imageTemplate == null )
+        {
+            throw new ImageTemplateNotFoundException( imageTemplateKey );
+        }
         command.setResult( imageTemplate );
     }
 }
