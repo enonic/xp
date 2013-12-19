@@ -83,16 +83,19 @@ public class UpdateContentHandler
 
         if ( !editBuilder.isChanges() )
         {
-            return null;
+            return persistedContent;
         }
 
         final Content tempEditedContent = editBuilder.build();
+
+        // TODO: Fix this
+        //validateEditedContent( persistedContent, tempEditedContent );
 
         final Content editedContent = newContent( tempEditedContent ).
             modifiedTime( DateTime.now() ).
             modifier( command.getModifier() ).build();
 
-        // TODO: Rewrite to use service instead
+        // TODO: Rewrite to use service instead?
         final NodeEditor nodeEditor = CONTENT_NODE_TRANSLATOR.toNodeEditor( editedContent, this.command );
         final UpdateNode updateNodeCommand = CONTENT_NODE_TRANSLATOR.toUpdateNodeCommand( persistedContent.getId(), nodeEditor );
 
@@ -116,46 +119,6 @@ public class UpdateContentHandler
         {
             throw new RuntimeException( "Failed to update content as node", e );
         }
-    }
-
-    private void oldUpdate()
-    {
-        /*
-        final Content persistedContent = getPersistedContent( session );
-
-        //TODO: the result is null if nothing was edited, but should be SUCCESS ?
-        Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
-        if ( !editBuilder.isChanges() )
-        {
-            command.setResult( null );
-            return;
-        }
-
-        //TODO: Attachments have no editor and thus need to be checked separately, but probably should have one ?
-        if ( !command.getAttachments().isEmpty() )
-        {
-            final ContentId contentId = persistedContent.getId();
-            addAttachments( contentId, command.getAttachments() );
-            addMediaThumbnail( persistedContent, contentId );
-        }
-
-        final Content tempEditedContent = editBuilder.build();
-        validateEditedContent( persistedContent, tempEditedContent );
-
-        syncRelationships( persistedContent, tempEditedContent );
-
-        final Content editedContent = newContent( tempEditedContent ).
-            modifiedTime( DateTime.now() ).
-            modifier( command.getModifier() ).build();
-
-        final boolean createNewVersion = true;
-        final Content updatedContent = contentDao.update( editedContent, createNewVersion, session );
-        session.save();
-
-        deleteRemovedEmbeddedContent( session, persistedContent, editedContent );
-
-        indexService.indexContent( tempEditedContent );
-        */
     }
 
     private void deleteRemovedEmbeddedContentAsNode( final Content persistedContent, final Content editedContent )
@@ -267,12 +230,15 @@ public class UpdateContentHandler
         return embeddedContent.build();
     }
 
+    //TODO: Rewrite after mocing attachment
     private void validateContentData( final CommandContext context, final Content modifiedContent )
     {
         final ValidateContentData validateContentData = Commands.content().validate();
         validateContentData.contentType( modifiedContent.getType() );
         validateContentData.contentData( modifiedContent.getContentData() );
+
         final DataValidationErrors dataValidationErrors = context.getClient().execute( validateContentData );
+
         for ( DataValidationError error : dataValidationErrors )
         {
             LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
