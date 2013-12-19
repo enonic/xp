@@ -81,16 +81,14 @@ public class UpdateContentHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
-        final Client client = context.getClient();
 
         // TODO: Fetch Node, use path or id?
         final Content persistedContent = getPersistedContent( session );
 
-        //TODO: the result is null if nothing was edited, but should be SUCCESS ?
         Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
         if ( !editBuilder.isChanges() )
         {
-            command.setResult( null );
+            command.setResult( persistedContent );
             return;
         }
 
