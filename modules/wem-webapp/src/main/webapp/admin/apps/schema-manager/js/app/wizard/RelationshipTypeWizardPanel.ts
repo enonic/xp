@@ -12,7 +12,8 @@ module app_wizard {
 
         private relationshipTypeForm: RelationshipTypeForm;
 
-        constructor(tabId: api_app.AppBarTabId, persistedRelationshipType: api_schema_relationshiptype.RelationshipType, callback: (wizard:RelationshipTypeWizardPanel) => void) {
+        constructor(tabId: api_app.AppBarTabId, persistedRelationshipType: api_schema_relationshiptype.RelationshipType,
+                    callback: (wizard: RelationshipTypeWizardPanel) => void) {
             this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(new api_schema_relationshiptype.RelationshipTypeIconUrlResolver().resolveDefault(),
                 "Click to upload icon",
@@ -56,7 +57,7 @@ module app_wizard {
             });
         }
 
-        setPersistedItem(relationshipType: api_schema_relationshiptype.RelationshipType, callback:Function) {
+        setPersistedItem(relationshipType: api_schema_relationshiptype.RelationshipType, callback: Function) {
             super.setPersistedItem(relationshipType, () => {
                 this.relationShipTypeWizardHeader.setName(relationshipType.getName());
                 this.formIcon.setSrc(relationshipType.getIconUrl());
@@ -69,7 +70,7 @@ module app_wizard {
             });
         }
 
-        persistNewItem(successCallback ?: () => void) {
+        persistNewItem(callback: (persistedRelationshipType: api_schema_relationshiptype.RelationshipType) => void) {
             var formData = this.relationshipTypeForm.getFormData();
             var newName = new api_schema_relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
             var request = new api_schema_relationshiptype.CreateRelationshipTypeRequest(newName, formData.xml, this.relationshipTypeIcon);
@@ -84,14 +85,12 @@ module app_wizard {
 
                         new api_schema.SchemaCreatedEvent(relationshipType).fire();
 
-                        if (successCallback) {
-                            successCallback.call(this);
-                        }
+                        callback(relationshipType);
                     });
                 });
         }
 
-        updatePersistedItem(successCallback ?: () => void) {
+        updatePersistedItem(callback: (persistedRelationshipType: api_schema_relationshiptype.RelationshipType) => void) {
             var formData = this.relationshipTypeForm.getFormData();
             var newName = new api_schema_relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
             var request = new api_schema_relationshiptype.UpdateRelationshipTypeRequest(this.getPersistedItem().getRelationshiptypeName(),
@@ -106,9 +105,7 @@ module app_wizard {
 
                         new api_schema.SchemaUpdatedEvent(relationshipType).fire();
 
-                        if (successCallback) {
-                            successCallback.call(this);
-                        }
+                        callback(relationshipType);
                     });
                 });
         }

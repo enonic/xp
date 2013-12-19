@@ -323,13 +323,17 @@ module api_app_wizard {
             new api_app_wizard.SaveBeforeCloseDialog(this).open();
         }
 
-        saveChanges(successCallback?: () => void) {
+        saveChanges(callback: () => void) {
 
             if (this.isItemPersisted()) {
-                this.updatePersistedItem(successCallback);
+                this.updatePersistedItem(() => {
+                    callback();
+                });
             }
             else {
-                this.persistNewItem(successCallback);
+                this.persistNewItem(()=> {
+                    callback();
+                });
             }
 
             this.isChanged = false;
@@ -338,14 +342,14 @@ module api_app_wizard {
         /*
          * Override this method in specific wizard to do actual persisting of new item.
          */
-        persistNewItem(successCallback?: () => void) {
+        persistNewItem(callback: (persistedItem:T) => void) {
 
         }
 
         /*
          * Override this method in specific wizard to do actual update of item.
          */
-        updatePersistedItem(successCallback?: () => void) {
+        updatePersistedItem(callback: (persistedItem:T) => void) {
 
         }
     }

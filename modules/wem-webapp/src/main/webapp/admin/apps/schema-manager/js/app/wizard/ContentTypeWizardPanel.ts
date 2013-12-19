@@ -14,7 +14,8 @@ module app_wizard {
 
         private contentTypeForm: app_wizard.ContentTypeForm;
 
-        constructor(tabId: api_app.AppBarTabId, persistedContentType: api_schema_content.ContentType, callback: (wizard:ContentTypeWizardPanel) => void) {
+        constructor(tabId: api_app.AppBarTabId, persistedContentType: api_schema_content.ContentType,
+                    callback: (wizard: ContentTypeWizardPanel) => void) {
             this.contentTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
             var defaultFormIconUrl = new api_schema_content.ContentTypeIconUrlResolver().resolveDefault();
             this.formIcon = new api_app_wizard.FormIcon(defaultFormIconUrl, "Click to upload icon",
@@ -56,7 +57,7 @@ module app_wizard {
             });
         }
 
-        setPersistedItem(contentType: api_schema_content.ContentType, callback: Function) {
+        setPersistedItem(contentType: api_schema_content.ContentType, callback: () => void) {
             super.setPersistedItem(contentType, () => {
                 this.contentTypeWizardHeader.setName(contentType.getName());
                 this.formIcon.setSrc(contentType.getIconUrl());
@@ -71,7 +72,7 @@ module app_wizard {
             });
         }
 
-        persistNewItem(successCallback ?: () => void) {
+        persistNewItem(callback: (persistedContentType: api_schema_content.ContentType) => void) {
             var formData = this.contentTypeForm.getFormData();
             var createContentTypeRequest = new api_schema_content.CreateContentTypeRequest(this.contentTypeWizardHeader.getName(),
                 formData.xml,
@@ -88,14 +89,12 @@ module app_wizard {
 
                         new api_schema.SchemaCreatedEvent(contentType).fire();
 
-                        if (successCallback) {
-                            successCallback.call(this);
-                        }
+                        callback(contentType);
                     });
                 });
         }
 
-        updatePersistedItem(successCallback ?: () => void) {
+        updatePersistedItem(callback: (persistedContentType: api_schema_content.ContentType) => void) {
 
             var formData = this.contentTypeForm.getFormData();
             var newName = new api_schema_content.ContentTypeName(this.contentTypeWizardHeader.getName());
@@ -113,9 +112,7 @@ module app_wizard {
 
                     new api_schema.SchemaUpdatedEvent(contentType).fire();
                     this.setPersistedItem(contentType, () => {
-                        if (successCallback) {
-                            successCallback.call(this);
-                        }
+                        callback(contentType);
                     });
                 });
         }

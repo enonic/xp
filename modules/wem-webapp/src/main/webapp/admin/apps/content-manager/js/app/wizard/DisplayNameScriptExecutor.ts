@@ -21,6 +21,9 @@ module app_wizard {
         }
 
         execute(): string {
+            api_util.assertNotNull(this.formView, "formView not set");
+            api_util.assertNotNull(this.script, "script not set");
+
             return this.safeEval(this.script, this.formView);
         }
 
@@ -59,7 +62,7 @@ module app_wizard {
                               'var window; var parent; var self; var top; ' +
                               script);
             } catch (e) {
-                console.error('cannot evaluate [' + script + '] function.');
+                console.error('Cannot evaluate script [' + script + '].', e);
             }
 
             return result;

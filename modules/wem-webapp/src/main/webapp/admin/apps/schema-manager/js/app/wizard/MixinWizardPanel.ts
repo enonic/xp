@@ -14,7 +14,7 @@ module app_wizard {
 
         private mixinForm: MixinForm;
 
-        constructor(tabId: api_app.AppBarTabId, persistedMixin:api_schema_mixin.Mixin, callback: (wizard:MixinWizardPanel) => void) {
+        constructor(tabId: api_app.AppBarTabId, persistedMixin: api_schema_mixin.Mixin, callback: (wizard: MixinWizardPanel) => void) {
 
             this.mixinWizardHeader = new api_app_wizard.WizardHeaderWithName();
             this.formIcon = new api_app_wizard.FormIcon(new api_schema_mixin.MixinIconUrlResolver().resolveDefault(),
@@ -46,7 +46,7 @@ module app_wizard {
 
             super({
                 tabId: tabId,
-                persistedItem:persistedMixin,
+                persistedItem: persistedMixin,
                 formIcon: this.formIcon,
                 mainToolbar: mainToolbar,
                 actions: actions,
@@ -62,7 +62,7 @@ module app_wizard {
             this.mixinForm.reRender();
         }
 
-        setPersistedItem(mixin: api_schema_mixin.Mixin, callback:Function) {
+        setPersistedItem(mixin: api_schema_mixin.Mixin, callback: Function) {
 
             super.setPersistedItem(mixin, () => {
                 this.mixinWizardHeader.setName(mixin.getName());
@@ -80,7 +80,7 @@ module app_wizard {
 
         }
 
-        persistNewItem(successCallback?: () => void) {
+        persistNewItem(callback: (persistedMixin: api_schema_mixin.Mixin) => void) {
             var formData = this.mixinForm.getFormData();
 
             var createRequest = new api_schema_mixin.CreateMixinRequest().
@@ -98,14 +98,12 @@ module app_wizard {
 
                         new api_schema.SchemaCreatedEvent(mixin).fire();
 
-                        if (successCallback) {
-                            successCallback.call(this);
-                        }
+                        callback(mixin);
                     });
                 });
         }
 
-        updatePersistedItem(successCallback?: () => void) {
+        updatePersistedItem(callback: (mixin: api_schema_mixin.Mixin) => void) {
             var formData = this.mixinForm.getFormData();
 
             var updateRequest = new api_schema_mixin.UpdateMixinRequest().
@@ -122,9 +120,7 @@ module app_wizard {
                     this.setPersistedItem(mixin, () => {
                         new api_schema.SchemaUpdatedEvent(mixin).fire();
 
-                        if (successCallback) {
-                            successCallback.call(this);
-                        }
+                        callback(mixin);
                     });
                 });
         }

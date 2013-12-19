@@ -64,9 +64,17 @@ module api_app_wizard {
 
             this.displayNameEl.getEl().addEventListener('input', () => {
 
-                var generatedDisplayName = this.displayNameGenerator.execute();
                 var actualDisplayName = this.displayNameEl.getValue();
-                this.displayNameProgrammaticallySet = generatedDisplayName == actualDisplayName;
+
+                if (this.displayNameGenerator.hasScript()) {
+                    var generatedDisplayName = this.displayNameGenerator.execute();
+
+                    this.displayNameProgrammaticallySet =
+                    generatedDisplayName == actualDisplayName || api_util.isStringEmpty(actualDisplayName);
+                    console.log("*** DisplayName manually changed to [" + actualDisplayName + "] - generated is [" + generatedDisplayName +
+                                "], this.displayNameProgrammaticallySet = " +
+                                this.displayNameProgrammaticallySet);
+                }
                 this.doAutoGenerateName(actualDisplayName);
             });
 
@@ -82,7 +90,7 @@ module api_app_wizard {
             new api_ui.Tooltip(this.displayNameEl, "Display name", 1000, 1000, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT);
         }
 
-        initNames(displayName: string, name: string) {
+        initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean) {
 
             if (displayName == name || name == this.generateName(displayName)) {
                 this.autoGenerateName = true;
@@ -96,8 +104,19 @@ module api_app_wizard {
                 this.nameEl.setValue(this.generateName(displayName));
             }
 
-            var generatedDisplayName = this.displayNameGenerator.execute();
-            this.displayNameProgrammaticallySet = generatedDisplayName == displayName;
+            if (this.displayNameGenerator.hasScript()) {
+                if (!forceDisplayNameProgrammaticallySet) {
+                    var generatedDisplayName = this.displayNameGenerator.execute();
+                    this.displayNameProgrammaticallySet = generatedDisplayName == displayName;
+                    console.log("*** initNames(" + displayName + ", " + name + ") - generated is [" + generatedDisplayName +
+                                "]: displayNameProgrammaticallySet to: " +
+                                this.displayNameProgrammaticallySet);
+                }
+                else {
+                    this.displayNameProgrammaticallySet = true;
+                    console.log("*** initNames(" + displayName + ", " + name + "): Forced displayNameProgrammaticallySet to true");
+                }
+            }
         }
 
         private doAutoGenerateName(value: string) {
@@ -108,12 +127,12 @@ module api_app_wizard {
 
         setDisplayName(value: string) {
 
-            if( this.displayNameProgrammaticallySet ) {
+            if (this.displayNameProgrammaticallySet) {
                 this.displayNameEl.setValue(value);
                 this.doAutoGenerateName(value);
             }
             else {
-                console.log("setDisplayName ignored: " + value);
+                console.log("*** setDisplayName ignored: " + value);
             }
         }
 

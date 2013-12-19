@@ -12,27 +12,27 @@ module app_wizard {
 
         site: api_content.Content;
 
-        setAppBarTabId(value:api_app.AppBarTabId): ContentWizardPanelParams {
+        setAppBarTabId(value: api_app.AppBarTabId): ContentWizardPanelParams {
             this.tabId = value;
             return this;
         }
 
-        setContentType(value:api_schema_content.ContentType): ContentWizardPanelParams {
+        setContentType(value: api_schema_content.ContentType): ContentWizardPanelParams {
             this.contentType = value;
             return this;
         }
 
-        setParentContent(value:api_content.Content): ContentWizardPanelParams {
+        setParentContent(value: api_content.Content): ContentWizardPanelParams {
             this.parentContent = value;
             return this;
         }
 
-        setPersistedContent(value:api_content.Content): ContentWizardPanelParams {
+        setPersistedContent(value: api_content.Content): ContentWizardPanelParams {
             this.persistedContent = value;
             return this;
         }
 
-        setSite(value:api_content.Content): ContentWizardPanelParams {
+        setSite(value: api_content.Content): ContentWizardPanelParams {
             this.site = value;
             return this;
         }
@@ -63,7 +63,7 @@ module app_wizard {
 
         private persistAsDraft: boolean;
 
-        constructor(params: ContentWizardPanelParams, callback: (wizard:ContentWizardPanel) => void) {
+        constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
             console.log("ContentWizardPanel.constructor started");
 
@@ -103,8 +103,6 @@ module app_wizard {
 
             var site: api_content.Content = null; // TODO: resolve nearest site content
             this.livePanel = new LiveFormPanel(this.siteContent);
-
-            this.contentWizardHeader.initNames("", "");
 
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
@@ -193,12 +191,17 @@ module app_wizard {
             console.log("ContentWizardPanel.postRenderNew");
 
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+            this.contentWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getName().toString(),
+                true);
+
             callBack();
         }
 
         postRenderExisting(callBack: Function) {
             console.log("ContentWizardPanel.postRenderExisting");
 
+            this.contentWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getName().toString(),
+                false);
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
             callBack();
         }
@@ -208,9 +211,7 @@ module app_wizard {
             if (this.displayNameScriptExecutor.hasScript()) {
 
                 formView.getEl().addEventListener("keyup", (e) => {
-
                     this.contentWizardHeader.getDisplayName();
-                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                     this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
                 });
             }
@@ -220,7 +221,6 @@ module app_wizard {
             console.log("ContentWizardPanel.setPersistedItem");
 
             super.setPersistedItem(content, () => {
-                this.contentWizardHeader.initNames(content.getDisplayName(), content.getName().toString());
 
                 this.formIcon.setSrc(content.getIconUrl());
                 var contentData: api_content.ContentData = content.getContentData();
@@ -231,6 +231,8 @@ module app_wizard {
                     build();
 
                 this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
+                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
                 if (content.isPage()) {
                     var page = content.getPage();
@@ -252,7 +254,7 @@ module app_wizard {
             });
         }
 
-        persistNewItem(successCallback?: (createdContent: api_content.Content) => void) {
+        persistNewItem(callback: (createdContent: api_content.Content) => void) {
 
             console.log("ContentWizardPanel.persistNewItem");
 
@@ -278,15 +280,13 @@ module app_wizard {
 
                         this.getTabId().changeToEditMode(createdContent.getId());
 
-                        if (successCallback) {
-                            successCallback.call(this, createdContent);
-                        }
+                        callback(createdContent);
                     });
 
                 });
         }
 
-        updatePersistedItem(successCallback?: () => void) {
+        updatePersistedItem(callback: (persistedContent: api_content.Content) => void) {
             console.log("ContentWizardPanel.updatePersistedItem");
 
             var updateRequest = new api_content.UpdateContentRequest(this.getPersistedItem().getId()).
@@ -315,10 +315,11 @@ module app_wizard {
                     api_notify.showFeedback('Content was updated!');
                     new api_content.ContentUpdatedEvent(updatedContent).fire();
 
-                    this.setPersistedItem(updatedContent, () => {
-                        if (successCallback) {
-                            successCallback.call(this, updatedContent);
-                        }
+                    this.renderExisting(updatedContent, () => {
+                        this.postRenderExisting(() => {
+
+                            callback(updatedContent);
+                        });
                     });
                 });
         }

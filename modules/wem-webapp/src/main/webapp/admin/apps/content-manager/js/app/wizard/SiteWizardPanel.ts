@@ -50,7 +50,7 @@ module app_wizard {
             });
         }
 
-        persistNewItem(successCallback?: () => void) {
+        persistNewItem(callback: (persistedContent:api_content.Content) => void) {
             var content: api_content.Content = this.getPersistedItem();
             if (content) {
                 new api_content_site.CreateSiteRequest(content.getId())
@@ -59,11 +59,12 @@ module app_wizard {
                     .send().done((createResponse: api_rest.JsonResponse<api_content_json.ContentJson>) => {
 
                         api_notify.showFeedback('Site was created!');
+                        callback(null);
                     });
             }
         }
 
-        updatePersistedItem(successCallback?: () => void) {
+        updatePersistedItem(callback: (persistedContent:api_content.Content) => void) {
             var content: api_content.Content = this.getPersistedItem();
             new api_content_site.UpdateSiteRequest(content.getId())
                 .setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey())
@@ -71,6 +72,7 @@ module app_wizard {
                 .send().done((upateResponse: api_rest.JsonResponse<api_content_json.ContentJson>) => {
 
                     api_notify.showFeedback('Site was updated!');
+                    callback(null);
                 });
         }
     }
