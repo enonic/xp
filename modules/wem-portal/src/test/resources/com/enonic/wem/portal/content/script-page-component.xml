@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page-component>
+  <display-name>Landing page</display-name>
+  <controller>mainmodule-1.0.0:/controller/landing-page.js</controller>
+  <config>
+    <input name="pause" type="DecimalNumber">
+      <label>Pause parameter</label>
+      <immutable>false</immutable>
+      <indexed>false</indexed>
+    </input>
+    <form-item-set name="myFormItemSet">
+      <label>My form item set</label>
+      <items>
+        <input name="myTextLine" type="TextLine">
+          <label>My text line</label>
+          <immutable>false</immutable>
+          <indexed>false</indexed>
+        </input>
+        <input name="myCustomInput" type="TextLine">
+          <label>My custom input</label>
+          <immutable>false</immutable>
+          <indexed>false</indexed>
+        </input>
+        <field-set name="myFieldSet">
+          <label>My field set</label>
+          <items>
+            <input name="fieldSetItem" type="TextLine">
+              <label>Field set Item</label>
+              <immutable>false</immutable>
+              <indexed>false</indexed>
+            </input>
+          </items>
+        </field-set>
+      </items>
+      <immutable>false</immutable>
+    </form-item-set>
+  </config>
+</page-component>

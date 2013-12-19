@@ -13,7 +13,7 @@ import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.lib.GlobalScriptBean;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 
-public final class ScriptRunnerFactoryImpl
+public class ScriptRunnerFactoryImpl
     implements ScriptRunnerFactory
 {
     @Inject
@@ -33,9 +33,12 @@ public final class ScriptRunnerFactoryImpl
 
     protected ScriptableObject rootScope;
 
+    static {
+        ContextFactory.initGlobal( new RhinoContextFactory() );
+    }
+
     public ScriptRunnerFactoryImpl()
     {
-        ContextFactory.initGlobal( new RhinoContextFactory() );
     }
 
     private void initRootScope()
@@ -73,5 +76,15 @@ public final class ScriptRunnerFactoryImpl
         {
             Context.exit();
         }
+    }
+
+    public void setGlobalScriptBean( final GlobalScriptBean globalScriptBean )
+    {
+        this.globalScriptBean = globalScriptBean;
+    }
+
+    public void setContextServiceBeans( final Provider<ContextScriptBean> contextServiceBeans )
+    {
+        this.contextServiceBeans = contextServiceBeans;
     }
 }
