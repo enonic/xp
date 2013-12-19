@@ -2,6 +2,8 @@ module app_wizard {
 
     export class ContentWizardPanelParams {
 
+        createSite: boolean = false;
+
         tabId: api_app.AppBarTabId;
 
         contentType: api_schema_content.ContentType;
@@ -50,6 +52,8 @@ module app_wizard {
         private formIcon: api_app_wizard.FormIcon;
 
         private contentWizardHeader: api_app_wizard.WizardHeaderWithDisplayNameAndName;
+
+        private siteWizardStepForm: SiteWizardStepForm;
 
         private contentWizardStepForm: ContentWizardStepForm;
 
@@ -101,13 +105,18 @@ module app_wizard {
 
             var stepToolbar = new api_ui_toolbar.Toolbar();
 
-            var site: api_content.Content = null; // TODO: resolve nearest site content
             this.livePanel = new LiveFormPanel(this.siteContent);
 
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
             }
 
+            if (params.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
+                this.siteWizardStepForm = new SiteWizardStepForm();
+            }
+            else {
+                this.siteWizardStepForm = null;
+            }
             this.contentWizardStepForm = new ContentWizardStepForm();
             var pageWizardStepFormConfig: PageWizardStepFormConfig = {
                 parentContent: this.parentContent,
@@ -137,7 +146,7 @@ module app_wizard {
                 header: this.contentWizardHeader,
                 actions: actions,
                 livePanel: this.livePanel,
-                steps: this.createSteps()
+                steps: this.createSteps(params.persistedContent)
             }, () => {
                 console.log("ContentWizardPanel.constructor finished");
                 callback(this);
@@ -163,8 +172,13 @@ module app_wizard {
             this.startRememberFocus();
         }
 
-        createSteps(): api_app_wizard.WizardStep[] {
+        createSteps(content: api_content.Content): api_app_wizard.WizardStep[] {
+
             var steps: api_app_wizard.WizardStep[] = [];
+
+            if (this.siteWizardStepForm != null) {
+                steps.push(new api_app_wizard.WizardStep("Site", this.siteWizardStepForm));
+            }
             steps.push(new api_app_wizard.WizardStep(this.contentType.getDisplayName(), this.contentWizardStepForm));
             steps.push(new api_app_wizard.WizardStep("Page", this.pageWizardStepForm));
             return steps;
@@ -242,19 +256,33 @@ module app_wizard {
                         done((pageTemplate: api_content_page.PageTemplate) => {
 
                             this.pageWizardStepForm.renderExisting(content, pageTemplate);
-
-
                             this.livePanel.renderExisting(content, pageTemplate);
-                            callback();
+
+                            if (this.siteWizardStepForm != null && content.getSite()) {
+                                this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
+                                    callback();
+                                });
+                            }
+                            else {
+                                callback();
+                            }
                         });
                 }
                 else {
-                    callback();
+
+                    if (this.siteWizardStepForm != null && content.isSite()) {
+                        this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
+                            callback();
+                        });
+                    }
+                    else {
+                        callback();
+                    }
                 }
             });
         }
 
-        persistNewItem(callback: (createdContent: api_content.Content) => void) {
+        persistNewItem(callback: (persistedContent: api_content.Content) => void) {
 
             console.log("ContentWizardPanel.persistNewItem");
 
@@ -274,15 +302,33 @@ module app_wizard {
             createRequest.sendAndParse().
                 done((createdContent: api_content.Content) => {
 
-                    // api_notify.showFeedback('Content autosaved!');
-                    new api_content.ContentCreatedEvent(createdContent).fire();
-                    this.setPersistedItem(createdContent, () => {
+                    this.getTabId().changeToEditMode(createdContent.getId());
 
-                        this.getTabId().changeToEditMode(createdContent.getId());
+                    var createSite = false;
+                    if (createSite) {
+                        new api_content_site.CreateSiteRequest(createdContent.getId())
+                            .setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey())
+                            .setModuleConfigs(this.siteWizardStepForm.getModuleConfigs())
+                            .sendAndParse().done((updatedContent: api_content.Content) => {
 
-                        callback(createdContent);
-                    });
+                                new api_content.ContentCreatedEvent(updatedContent).fire();
 
+                                this.setPersistedItem(updatedContent, () => {
+
+                                    callback(updatedContent);
+                                });
+
+                            });
+                    }
+                    else {
+
+                        new api_content.ContentCreatedEvent(createdContent).fire();
+
+                        this.setPersistedItem(createdContent, () => {
+
+                            callback(createdContent);
+                        });
+                    }
                 });
         }
 
@@ -312,15 +358,35 @@ module app_wizard {
                 sendAndParse().
                 done((updatedContent: api_content.Content) => {
 
-                    api_notify.showFeedback('Content was updated!');
                     new api_content.ContentUpdatedEvent(updatedContent).fire();
 
-                    this.renderExisting(updatedContent, () => {
-                        this.postRenderExisting(() => {
+                    if (this.siteWizardStepForm != null) {
+                        new api_content_site.UpdateSiteRequest(updatedContent.getId())
+                            .setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey())
+                            .setModuleConfigs(this.siteWizardStepForm.getModuleConfigs())
+                            .sendAndParse().done((updatedSite: api_content.Content) => {
 
-                            callback(updatedContent);
+                                api_notify.showFeedback('Content was updated!');
+
+                                this.renderExisting(updatedSite, () => {
+                                    this.postRenderExisting(() => {
+
+                                        callback(updatedSite);
+                                    });
+                                });
+                            });
+                    }
+                    else {
+
+                        api_notify.showFeedback('Content was updated!');
+
+                        this.renderExisting(updatedContent, () => {
+                            this.postRenderExisting(() => {
+
+                                callback(updatedContent);
+                            });
                         });
-                    });
+                    }
                 });
         }
 

@@ -163,31 +163,22 @@ module app_wizard {
 
             var deferred = Q.defer<app_wizard.ContentWizardPanel>();
 
-            var newSite: boolean = false;
+            var wizardParams = new app_wizard.ContentWizardPanelParams().
+                setAppBarTabId(this.appBarTabId).
+                setContentType(this.contentType).
+                setParentContent(this.parentContent).
+                setSite(this.site);
+
+            // TODO: Configure ContentWizardPanel to open up support for editing site data
+            var newSite = false;
             if (newSite) {
 
-                var wizardParams = new app_wizard.SiteWizardPanelParams().
-                    setAppBarTabId(this.appBarTabId).
-                    setContentType(this.contentType).
-                    setParentContent(this.parentContent).
-                    setSite(this.site);
-
-                new app_wizard.SiteWizardPanel(wizardParams, (wizard: SiteWizardPanel) => {
-                    deferred.resolve(wizard);
-                });
             }
-            else {
 
-                var wizardParams = new app_wizard.ContentWizardPanelParams().
-                    setAppBarTabId(this.appBarTabId).
-                    setContentType(this.contentType).
-                    setParentContent(this.parentContent).
-                    setSite(this.site);
+            new app_wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
+                deferred.resolve(wizard);
+            });
 
-                new app_wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
-                    deferred.resolve(wizard);
-                });
-            }
             return deferred.promise;
         }
 
@@ -195,32 +186,17 @@ module app_wizard {
 
             var deferred = Q.defer<app_wizard.ContentWizardPanel>();
 
-            if (this.contentToEdit.isSite()) {
+            var wizardParams = new app_wizard.ContentWizardPanelParams().
+                setAppBarTabId(this.appBarTabId).
+                setContentType(this.contentType).
+                setParentContent(this.parentContent).
+                setPersistedContent(this.contentToEdit).
+                setSite(this.site);
 
-                var wizardParams = new app_wizard.SiteWizardPanelParams().
-                    setAppBarTabId(this.appBarTabId).
-                    setContentType(this.contentType).
-                    setParentContent(this.parentContent).
-                    setPersistedContent(this.contentToEdit).
-                    setSite(this.site);
+            new app_wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
+                deferred.resolve(wizard);
+            });
 
-                new app_wizard.SiteWizardPanel(wizardParams, (wizard: SiteWizardPanel) => {
-                    deferred.resolve(wizard);
-                });
-            }
-            else {
-
-                var wizardParams = new app_wizard.ContentWizardPanelParams().
-                    setAppBarTabId(this.appBarTabId).
-                    setContentType(this.contentType).
-                    setParentContent(this.parentContent).
-                    setPersistedContent(this.contentToEdit).
-                    setSite(this.site);
-
-                new app_wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
-                    deferred.resolve(wizard);
-                });
-            }
             return deferred.promise;
         }
     }
