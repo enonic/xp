@@ -65,8 +65,7 @@ public class ContentPathTest
         throws Exception
     {
         assertEquals( ContentPath.from( "/parent" ), ContentPath.from( "/parent/__embedded/myEmbedded" ).getParentPath() );
-        assertEquals( ContentPath.from( "/parent/parent" ),
-                      ContentPath.from( "/parent/parent/__embedded/myEmbedded" ).getParentPath() );
+        assertEquals( ContentPath.from( "/parent/parent" ), ContentPath.from( "/parent/parent/__embedded/myEmbedded" ).getParentPath() );
     }
 
     @Test
@@ -127,13 +126,6 @@ public class ContentPathTest
         throws Exception
     {
         ContentPath.from( "/parent/__embedded/" ).isPathToEmbeddedContent();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void isPathToEmbeddedContent_given_more_than_one_element_after_embedded_marker_then_exception_is_thrown()
-        throws Exception
-    {
-        ContentPath.from( "/parent/__embedded/one/two" );
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -10,6 +10,8 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.page.Page;
+import com.enonic.wem.api.content.site.Site;
 import com.enonic.wem.api.data.Data;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
@@ -24,6 +26,8 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItems;
 import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.core.content.page.PageSerializer;
+import com.enonic.wem.core.content.site.SiteSerializer;
 import com.enonic.wem.core.support.SerializerForFormItemToData;
 
 public class ContentNodeTranslator
@@ -36,9 +40,15 @@ public class ContentNodeTranslator
 
     public static final String CONTENT_DATA_PATH = "contentdata";
 
+    private static final String PAGE_CONFIG_PATH = "page";
+
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
     private static final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
+
+    private static final PageSerializer PAGE_SERIALIZER = new PageSerializer();
+
+    private static final SiteSerializer SITE_SERIALIZER = new SiteSerializer();
 
     public static final String DRAFT_PATH = "draft";
 
@@ -46,9 +56,9 @@ public class ContentNodeTranslator
 
     public static final String CONTENT_TYPE_PATH = "contentType";
 
-    public static final String PARENT_CONTENT_PATH_PATH = "parentContentPath";
-
     private static final NodePath CONTENTS_ROOT_PATH = NodePath.newPath( "/content" ).build();
+
+    public static final String SITE_CONFIG_PATH = "site";
 
     public CreateNode toCreateNode( final Content content, final CreateContent command )
     {
@@ -64,6 +74,72 @@ public class ContentNodeTranslator
             parent( parentNodePath ).
             embed( content.isEmbedded() ).
             name( content.getName().toString() );
+    }
+
+
+    public RootDataSet propertiesToRootDataSet( final Content content )
+    {
+        final RootDataSet rootDataSet = new RootDataSet();
+
+        addContentMetaData( content, rootDataSet );
+        addContentData( content.getContentData(), rootDataSet );
+        addForm( content.getForm(), rootDataSet );
+        addPage( content.getPage(), rootDataSet );
+        addSite( content.getSite(), rootDataSet );
+
+        return rootDataSet;
+    }
+
+    private void addPage( final Page page, final RootDataSet rootDataSet )
+    {
+        final DataSet pageData = PAGE_SERIALIZER.toData( page, PAGE_CONFIG_PATH );
+
+        if ( pageData != null )
+        {
+            rootDataSet.add( pageData );
+        }
+    }
+
+    private void addSite( final Site site, final RootDataSet rootDataSet )
+    {
+        final DataSet siteData = SITE_SERIALIZER.toData( site, SITE_CONFIG_PATH );
+
+        if ( siteData != null )
+        {
+            rootDataSet.add( siteData );
+        }
+    }
+
+    private void addContentMetaData( final Content content, final RootDataSet rootDataSet )
+    {
+        addPropertyIfNotNull( rootDataSet, DRAFT_PATH, content.isDraft() );
+        addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PATH, content.getDisplayName() );
+        addPropertyIfNotNull( rootDataSet, CONTENT_TYPE_PATH, content.getType().getContentTypeName() );
+    }
+
+    private void addContentData( final ContentData contentData, final RootDataSet rootDataSet )
+    {
+        if ( contentData != null )
+        {
+            rootDataSet.add( contentData.toDataSet( CONTENT_DATA_PATH ) );
+        }
+    }
+
+    private void addForm( final Form form, final RootDataSet rootDataSet )
+    {
+        if ( form != null )
+        {
+            final DataSet formDataSet = new DataSet( FORM_PATH );
+            final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
+            formDataSet.add( formItems );
+
+            for ( Data formData : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems(
+                form != null ? form.getFormItems() : Form.newForm().build().getFormItems() ) )
+            {
+                formItems.add( formData );
+            }
+            rootDataSet.add( formDataSet );
+        }
     }
 
     public Contents fromNodes( final Nodes nodes )
@@ -113,6 +189,16 @@ public class ContentNodeTranslator
             builder.contentData( new ContentData( node.dataSet( CONTENT_DATA_PATH ).toRootDataSet() ) );
         }
 
+        if ( node.dataSet( PAGE_CONFIG_PATH ) != null )
+        {
+            builder.page( PAGE_SERIALIZER.toPage( node.dataSet( PAGE_CONFIG_PATH ) ) );
+        }
+
+        if ( node.dataSet( SITE_CONFIG_PATH ) != null )
+        {
+            builder.site( SITE_SERIALIZER.toSite( node.dataSet( SITE_CONFIG_PATH ) ) );
+        }
+
         return builder.build();
     }
 
@@ -125,7 +211,7 @@ public class ContentNodeTranslator
 
     public NodeEditor toNodeEditor( final Content content, final UpdateContent updateContentCommand )
     {
-        final RootDataSet rootDataSet = createRootDataSetForEditor( content );
+        final RootDataSet rootDataSet = propertiesToRootDataSet( content );
 
         return new NodeEditor()
         {
@@ -139,68 +225,6 @@ public class ContentNodeTranslator
             }
         };
     }
-
-    public RootDataSet propertiesToRootDataSet( final Content content )
-    {
-        //final Collection<Attachment> attachments = command.getAttachments();
-
-        final RootDataSet rootDataSet = new RootDataSet();
-
-        addContentProperties( content, rootDataSet );
-        addContentData( content.getContentData(), rootDataSet );
-        addForm( content, rootDataSet );
-
-        return rootDataSet;
-    }
-
-    private void addContentProperties( final Content content, final RootDataSet rootDataSet )
-    {
-        addPropertyIfNotNull( rootDataSet, DRAFT_PATH, content.isDraft() );
-        addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PATH, content.getDisplayName() );
-        addPropertyIfNotNull( rootDataSet, CONTENT_TYPE_PATH, content.getType().getContentTypeName() );
-        addPropertyIfNotNull( rootDataSet, PARENT_CONTENT_PATH_PATH,
-                              content.getPath().getParentPath() != null ? content.getPath().getParentPath().getRelativePath() : null );
-
-    }
-
-    private void addContentData( final ContentData contentData, final RootDataSet rootDataSet )
-    {
-        if ( contentData != null )
-        {
-            rootDataSet.add( contentData.toDataSet( CONTENT_DATA_PATH ) );
-        }
-    }
-
-    private void addForm( final Content content, final RootDataSet rootDataSet )
-    {
-        if ( content.getForm() != null )
-        {
-            final DataSet form = new DataSet( FORM_PATH );
-            final DataSet formItems = new DataSet( FORMITEMS_DATA_PATH );
-            form.add( formItems );
-
-            for ( Data formData : SERIALIZER_FOR_FORM_ITEM_TO_DATA.serializeFormItems(
-                content.getForm() != null ? content.getForm().getFormItems() : Form.newForm().build().getFormItems() ) )
-            {
-                formItems.add( formData );
-            }
-            rootDataSet.add( form );
-        }
-    }
-
-    private RootDataSet createRootDataSetForEditor( final Content content )
-    {
-        final RootDataSet rootDataSet = new RootDataSet();
-
-        addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PATH, content.getDisplayName() );
-        addPropertyIfNotNull( rootDataSet, CONTENT_TYPE_PATH, content.getType().getContentTypeName() );
-        addPropertyIfNotNull( rootDataSet, PARENT_CONTENT_PATH_PATH, content.getPath().getParentPath().toString() );
-        addForm( content, rootDataSet );
-        addContentData( content.getContentData(), rootDataSet );
-
-        return rootDataSet;
-    }
-
 
     private void addPropertyIfNotNull( final RootDataSet rootDataSet, final String propertyName, final Object value )
     {

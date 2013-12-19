@@ -113,6 +113,11 @@ public final class CreateContent
     {
         for ( Attachment attachment : attachments )
         {
+            if ( attachment == null )
+            {
+                continue;
+            }
+
             Preconditions.checkArgument( !this.attachments.containsKey( attachment.getName() ), "attachment with duplicated name: %s",
                                          attachment.getName() );
             this.attachments.put( attachment.getName(), attachment );

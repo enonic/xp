@@ -30,7 +30,7 @@ class EntityQueryTranslatorTest
         translatedQuery.getQuery() != null
         translatedQuery.getQuery() instanceof RangeQueryBuilder
         translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB )
-        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY )
+        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.NODE )
         translatedQuery.getFilter() == null
         translatedQuery.getFacetBuilders().isEmpty()
     }
@@ -54,7 +54,7 @@ class EntityQueryTranslatorTest
         then:
         translatedQuery.getQuery() instanceof MatchAllQueryBuilder
         translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB )
-        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY )
+        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.NODE )
         translatedQuery.getFilter() != null
         translatedQuery.getFilter() instanceof TermsFilterBuilder
         translatedQuery.getFacetBuilders().isEmpty()
@@ -71,7 +71,7 @@ class EntityQueryTranslatorTest
 
         then:
         translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB );
-        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY );
+        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.NODE );
         translatedQuery.getSortBuilders() != null;
         translatedQuery.getSortBuilders().size() == 1;
         translatedQuery.getSortBuilders().iterator().next() instanceof FieldSortBuilder
@@ -90,7 +90,7 @@ class EntityQueryTranslatorTest
 
         then:
         translatedQuery.getIndex() != null && translatedQuery.getIndex().equals( Index.NODB );
-        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.ENTITY );
+        translatedQuery.getIndexType() != null && translatedQuery.getIndexType().equals( IndexType.NODE );
         translatedQuery.getSortBuilders() != null;
         translatedQuery.getSortBuilders().size() == 1;
         translatedQuery.getSortBuilders().iterator().next() instanceof GeoDistanceSortBuilder

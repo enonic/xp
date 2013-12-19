@@ -12,6 +12,8 @@ import com.enonic.wem.api.content.versioning.ContentVersion;
 import com.enonic.wem.api.content.versioning.ContentVersionId;
 import com.enonic.wem.core.jcr.JcrConstants;
 
+
+@Deprecated
 public interface ContentDao
 {
     public static final String CONTENTS_NODE = "contents";

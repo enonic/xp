@@ -71,15 +71,28 @@ public class CreateContentHandler
             validateContentData( context.getClient(), builtContent );
         }
 
+        addAttachments( builtContent );
+
         final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent, command );
         final CreateNodeResult createdNode = createAsNode( createNodeCommand );
 
         final Content storedContent = CONTENT_NODE_TRANSLATOR.fromNode( createdNode.getPersistedNode() );
 
-        //addAttachments( builtContent, storedContent );
-        // addRelationships( session, builtContent, storedContent );
+        // addAttachments( builtContent, storedContent );
+        //// addRelationships( session, builtContent, storedContent );
 
         command.setResult( storedContent );
+    }
+
+    private void addAttachments( final Content builtContent )
+        throws Exception
+    {
+        final Attachment thumbnail = resolveThumbnailAttachment( builtContent );
+
+        if ( thumbnail != null )
+        {
+            command.attachments( thumbnail );
+        }
     }
 
     private CreateNodeResult createAsNode( final CreateNode createNodeCommand )
@@ -261,6 +274,7 @@ public class CreateContentHandler
             blobKey( thumbnailBlob.getKey() ).
             name( CreateContent.THUMBNAIL_NAME ).
             mimeType( THUMBNAIL_MIME_TYPE ).
+            size( thumbnailBlob.getLength() ).
             build();
     }
 

@@ -56,11 +56,13 @@ public final class ContentPath
                 {
                     throw new IllegalArgumentException( "Expected a path to a Content before the embedded marker: " + refString );
                 }
-                final boolean moreThanOneElementAfterEmbeddedMarker = this.elements.size() - i > 2;
-                if ( moreThanOneElementAfterEmbeddedMarker )
-                {
-                    throw new IllegalArgumentException( "Expected only one element after the embedded marker: " + refString );
-                }
+
+                // TODO: Verify remove this check with jørund
+                //final boolean moreThanOneElementAfterEmbeddedMarker = this.elements.size() - i > 2;
+                // if ( moreThanOneElementAfterEmbeddedMarker )
+                //  {
+                //      throw new IllegalArgumentException( "Expected only one element after the embedded marker: " + refString );
+                //  }
                 return true;
             }
         }

@@ -52,7 +52,8 @@ public class ContentAttachmentNodeTranslator
 
     private Attachment doTranslateToContentAttachment( final com.enonic.wem.api.entity.Attachment nodeAttachment )
     {
-        return Attachment.newAttachment().blobKey( nodeAttachment.blobKey() ).
+        return Attachment.newAttachment().
+            blobKey( nodeAttachment.blobKey() ).
             mimeType( nodeAttachment.mimeType() ).
             name( nodeAttachment.name() ).
             size( nodeAttachment.size() ).

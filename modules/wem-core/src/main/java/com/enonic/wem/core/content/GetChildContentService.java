@@ -31,7 +31,7 @@ public class GetChildContentService
 
         final Contents contents = CONTENT_TO_NODE_TRANSLATOR.fromNodes( nodes );
 
-        return CONTENT_HAS_CHILD_POPULATOR.populateHasChild( session, contents );
+        return CONTENT_HAS_CHILD_POPULATOR.populateHasChild( session, filterHiddenContents( contents ) );
     }
 
 }

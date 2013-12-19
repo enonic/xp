@@ -15,7 +15,14 @@ import static com.enonic.wem.api.entity.Attachment.newAttachment;
 
 public class AttachmentsJcrMapper
 {
+
     private final static String ATTACHMENTS_NODE_NAME = "__att";
+
+    public static final String BLOB_KEY_PROPERTY = "blobKey";
+
+    public static final String MIME_TYPE_PROPERTY = "mimeType";
+
+    public static final String SIZE_PROPERTY = "size";
 
 
     void toJcr( final Attachments attachments, final Node jcrNode )
@@ -32,9 +39,9 @@ public class AttachmentsJcrMapper
         throws RepositoryException
     {
         final Node attachmentNode = attachmentsNode.addNode( attachment.name() );
-        attachmentNode.setProperty( "size", attachment.size() );
-        attachmentNode.setProperty( "mimeType", attachment.mimeType() );
-        attachmentNode.setProperty( "blobKey", attachment.blobKey().toString() );
+        attachmentNode.setProperty( SIZE_PROPERTY, attachment.size() );
+        attachmentNode.setProperty( MIME_TYPE_PROPERTY, attachment.mimeType() );
+        attachmentNode.setProperty( BLOB_KEY_PROPERTY, attachment.blobKey().toString() );
     }
 
     public Attachments toAttachments( final Node jcrNode )
@@ -53,9 +60,9 @@ public class AttachmentsJcrMapper
             final Node attachmentNode = nodeIterator.nextNode();
             final Attachment attachment = newAttachment().
                 name( attachmentNode.getName() ).
-                size( attachmentNode.getProperty( "size" ).getLong() ).
-                mimeType( attachmentNode.getProperty( "mimeType" ).getString() ).
-                blobKey( new BlobKey( attachmentNode.getProperty( "mimeType" ).getString() ) ).
+                size( attachmentNode.getProperty( SIZE_PROPERTY ).getLong() ).
+                mimeType( attachmentNode.getProperty( MIME_TYPE_PROPERTY ).getString() ).
+                blobKey( new BlobKey( attachmentNode.getProperty( BLOB_KEY_PROPERTY ).getString() ) ).
                 build();
             attachmentsBuilder.add( attachment );
         }

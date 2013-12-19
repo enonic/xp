@@ -6,7 +6,6 @@ import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.core.content.dao.ContentDao;
 
 public class ContentHasChildPopulator
 {
@@ -38,7 +37,7 @@ public class ContentHasChildPopulator
     {
         for ( final Content child : children )
         {
-            if ( !child.getName().toString().startsWith( ContentDao.NON_CONTENT_NODE_PREFIX ) )
+            if ( !child.getName().toString().startsWith( ContentService.NON_CONTENT_NODE_PREFIX ) )
             {
                 return true;
             }
