@@ -48,13 +48,15 @@ module api_ui {
                 // Then insert attendant element after input for further size updates.
                 api_dom.Body.get().appendChild(this.attendant);
                 this.updateSize();
-                this.attendant.insertAfterEl(this);
+                this.getParent().appendChild(this.attendant);
+                console.log("adding attendant opt1", this);
             }
             else {
                 // If input is visible then insert attendant element after it
                 // and calculate initial size according to text width.
-                this.attendant.insertAfterEl(this);
+                this.getParent().appendChild(this.attendant);
                 this.updateSize();
+                console.log("adding attendant opt2", this);
             }
         }
 
@@ -65,11 +67,12 @@ module api_ui {
         }
 
         private updateSize() {
+
             var attendantEl = this.attendant.getEl();
             var cloneEl = this.clone.getEl();
 
             cloneEl.setInnerHtml(this.getValue());
-
+            //console.log("updating size", this, cloneEl, cloneEl.getWidth(), attendantEl, attendantEl.getWidth());
             // Set input width to text length from the clone <div>
             // or to maximum possible width corresponding to attendant width.
             this.getEl().setWidth(Math.min(cloneEl.getWidth(), attendantEl.getWidth()) + 'px');
