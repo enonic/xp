@@ -1,6 +1,6 @@
 module app_wizard {
 
-    export class DisplayNameScriptExecutor {
+    export class DisplayNameScriptExecutor implements api_app_wizard.DisplayNameGenerator {
 
         private formView: api_form.FormView;
 
@@ -14,6 +14,10 @@ module app_wizard {
         setScript(value: string): DisplayNameScriptExecutor {
             this.script = value;
             return this;
+        }
+
+        hasScript(): boolean {
+            return this.script != null;
         }
 
         execute(): string {

@@ -71,7 +71,11 @@ module app_wizard {
             this.parentContent = params.parentContent;
             this.siteContent = params.site;
             this.contentType = params.contentType;
-            this.contentWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndName();
+            this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
+            this.contentWizardHeader = new api_app_wizard.WizardHeaderWithDisplayNameAndNameBuilder().
+                setDisplayNameGenerator(this.displayNameScriptExecutor).
+                build();
+
             var iconUrl = api_content.ContentIconUrlResolver.default();
             this.formIcon = new api_app_wizard.FormIcon(iconUrl, "Click to upload icon",
                 api_util.getRestUri("blob/upload"));
@@ -101,7 +105,6 @@ module app_wizard {
             this.livePanel = new LiveFormPanel(this.siteContent);
 
             this.contentWizardHeader.initNames("", "");
-            this.contentWizardHeader.setAutogenerateName(true);
 
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
@@ -123,7 +126,7 @@ module app_wizard {
             });
 
             if (this.contentType.hasContentDisplayNameScript()) {
-                this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
+
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
             }
 
@@ -202,11 +205,13 @@ module app_wizard {
 
         private enableDisplayNameScriptExecution(formView: api_form.FormView) {
 
-            if (this.contentType.hasContentDisplayNameScript()) {
+            if (this.displayNameScriptExecutor.hasScript()) {
+
                 formView.getEl().addEventListener("keyup", (e) => {
+
+                    this.contentWizardHeader.getDisplayName();
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-                    var displayName = this.displayNameScriptExecutor.execute();
-                    this.contentWizardHeader.setDisplayName(displayName);
+                    this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
                 });
             }
         }

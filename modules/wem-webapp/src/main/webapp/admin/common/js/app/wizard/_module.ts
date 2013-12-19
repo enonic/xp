@@ -1,3 +1,4 @@
+///<reference path='DisplayNameGenerator.ts' />
 ///<reference path='SaveAction.ts' />
 ///<reference path='CloseAction.ts' />
 ///<reference path='WizardActions.ts' />
