@@ -37,5 +37,22 @@ module api_content_site {
         getRequestPath(): api_rest.Path {
             return api_rest.Path.fromParent(super.getResourcePath(), "create");
         }
+
+        sendAndParse(): JQueryPromise<api_content.Content> {
+
+            var deferred = jQuery.Deferred<api_content.Content>();
+
+            this.send().done((response: api_rest.JsonResponse<api_content_json.ContentJson>) => {
+                var siteContent = null;
+                if( !response.isBlank() ) {
+                    siteContent = this.fromJsonToContent(response.getResult());
+                }
+                deferred.resolve(siteContent);
+            }).fail((response: api_rest.RequestError) => {
+                    deferred.reject(null);
+                });
+
+            return deferred;
+        }
     }
 }
