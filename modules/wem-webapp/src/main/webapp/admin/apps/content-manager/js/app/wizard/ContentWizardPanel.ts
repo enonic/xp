@@ -274,7 +274,7 @@ module app_wizard {
             createRequest.sendAndParse().
                 done((createdContent: api_content.Content) => {
 
-                    api_notify.showFeedback('Content was created!');
+                    // api_notify.showFeedback('Content autosaved!');
                     new api_content.ContentCreatedEvent(createdContent).fire();
                     this.setPersistedItem(createdContent, () => {
 
