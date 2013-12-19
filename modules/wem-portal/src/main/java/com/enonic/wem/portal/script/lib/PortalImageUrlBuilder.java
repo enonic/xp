@@ -7,16 +7,17 @@ import java.util.List;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class PortalImageUrlBuilder
-    extends PortalUrlBuilder<PortalImageUrlBuilder>
+public final class PortalImageUrlBuilder
+    extends BasePortalUrlBuilder<PortalImageUrlBuilder>
 {
     private static final String IMAGE_RESOURCE_TYPE = "image";
 
     private String background;
 
-    private String quality;
+    private Integer quality;
 
     private List<String> filters;
 
@@ -24,41 +25,37 @@ public class PortalImageUrlBuilder
     {
         super( baseUrl );
         background = "";
-        quality = "";
+        quality = null;
         this.filters = Lists.newArrayList();
     }
 
-    public PortalImageUrlBuilder filter( final String filter )
-    {
-        this.filters.add( filter );
-        return this;
-    }
-
-    public PortalImageUrlBuilder filters( final List<String> filter )
+    public PortalImageUrlBuilder filter( final List<String> filter )
     {
         this.filters.addAll( filter );
         return this;
     }
 
-    public PortalImageUrlBuilder filters( final String... filters )
+    public PortalImageUrlBuilder filter( final String... filters )
     {
         Collections.addAll( this.filters, filters );
         return this;
     }
 
-    public PortalImageUrlBuilder background( final String background )
+    public PortalImageUrlBuilder background( final String backgroundColor )
     {
-        this.background = nullToEmpty( background );
+        this.background = nullToEmpty( backgroundColor );
         return this;
     }
 
-    public PortalImageUrlBuilder quality( final String quality )
+    public PortalImageUrlBuilder quality( final int quality )
     {
-        this.quality = nullToEmpty( quality );
+        checkArgument( quality > 0, "Image Quality must be between 1 and 100. Value: %s", quality );
+        checkArgument( quality <= 100, "Image Quality must be between 1 and 100. Value: %s", quality );
+        this.quality = quality;
         return this;
     }
 
-    protected void preBuildUrl()
+    protected void beforeBuildUrl()
     {
         resourceType( IMAGE_RESOURCE_TYPE );
 
@@ -71,7 +68,7 @@ public class PortalImageUrlBuilder
         {
             param( "background", background );
         }
-        if ( !quality.isEmpty() )
+        if ( quality != null )
         {
             param( "quality", quality );
         }
