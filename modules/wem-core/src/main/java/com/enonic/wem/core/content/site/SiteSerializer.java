@@ -8,19 +8,18 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.core.content.ContentService;
 
 public class SiteSerializer
 {
     static final String SITE_TEMPLATE = "template";
 
-    static final String SITE_MODULE_CONFIG = ContentService.NON_CONTENT_NODE_PREFIX + "moduleConfig";
+    static final String SITE_MODULE_CONFIG = "moduleConfig";
 
     static final String SITE_MODULE = "module";
 
     static final String SITE_CONFIG = "config";
 
-    static final String SITE_MODULE_CONFIGS = ContentService.NON_CONTENT_NODE_PREFIX + "moduleConfigs";
+    static final String SITE_MODULE_CONFIGS = "moduleConfigs";
 
 
     public DataSet toData( final Site site, final String dataSetName )
