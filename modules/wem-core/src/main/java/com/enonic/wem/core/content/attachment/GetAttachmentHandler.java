@@ -6,7 +6,6 @@ import javax.jcr.Session;
 import com.enonic.wem.api.command.content.attachment.GetAttachment;
 import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.command.entity.GetNodeByPath;
-import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
@@ -37,20 +36,12 @@ public class GetAttachmentHandler
         {
             GetNodeById getNodeByIdCommand = new GetNodeById( EntityId.from( command.getContentId().toString() ) );
             node = new GetNodeByIdService( session, getNodeByIdCommand ).execute();
-            if ( node == null )
-            {
-                throw new ContentNotFoundException( command.getContentId() );
-            }
         }
         else
         {
             GetNodeByPath getNodeByPathCommand =
                 new GetNodeByPath( ContentNodeHelper.translateContentPathToNodePath( command.getContentPath() ) );
             node = new GetNodeByPathService( session, getNodeByPathCommand ).execute();
-            if ( node == null )
-            {
-                throw new ContentNotFoundException( command.getContentPath() );
-            }
         }
 
         final com.enonic.wem.api.entity.Attachment nodeAttachment = getAttachmentByName( node );

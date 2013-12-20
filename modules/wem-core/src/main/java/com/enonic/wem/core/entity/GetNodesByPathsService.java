@@ -3,6 +3,7 @@ package com.enonic.wem.core.entity;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.entity.GetNodesByPaths;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
@@ -32,7 +33,7 @@ public class GetNodesByPathsService
             }
             catch ( NoNodeAtPathFound noNodeAtPathFound )
             {
-                // Node not found, just continue for now
+                throw new ContentNotFoundException( path );
             }
         }
 

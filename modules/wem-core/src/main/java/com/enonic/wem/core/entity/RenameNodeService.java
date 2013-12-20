@@ -25,11 +25,6 @@ public class RenameNodeService
         final GetNodeById getNodeByIdCommand = new GetNodeById( command.getId() );
         final Node existingNode = new GetNodeByIdService( session, getNodeByIdCommand ).execute();
 
-        if ( existingNode == null )
-        {
-            throw new RuntimeException( "Node to rename not found, id: " + command.getId() );
-        }
-
         final boolean moved = nodeJcrDao.moveNode( existingNode.path().asAbsolute(),
                                                    new NodePath( existingNode.parent().asAbsolute(), command.getNodeName() ) );
 
