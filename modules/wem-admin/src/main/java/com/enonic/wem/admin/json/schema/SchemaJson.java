@@ -81,14 +81,14 @@ public class SchemaJson
         return displayName;
     }
 
-    public String getCreatedTime()
+    public DateTime getCreatedTime()
     {
-        return DateTimeFormatter.format( createdTime );
+        return createdTime;
     }
 
-    public String getModifiedTime()
+    public DateTime getModifiedTime()
     {
-        return DateTimeFormatter.format( modifiedTime );
+        return modifiedTime;
     }
 
     public String getIconUrl()
