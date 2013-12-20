@@ -1,5 +1,7 @@
 package com.enonic.wem.admin.json.content;
 
+import org.joda.time.DateTime;
+
 import com.enonic.wem.admin.json.ChangeTraceableJson;
 import com.enonic.wem.admin.json.DateTimeFormatter;
 import com.enonic.wem.admin.json.ItemJson;
@@ -69,9 +71,9 @@ public class ContentSummaryJson
         return content.isRoot();
     }
 
-    public String getCreatedTime()
+    public DateTime getCreatedTime()
     {
-        return DateTimeFormatter.format( content.getCreatedTime() );
+        return content.getCreatedTime();
     }
 
     public String getCreator()
@@ -79,9 +81,9 @@ public class ContentSummaryJson
         return content.getCreator() != null ? content.getCreator().toString() : null;
     }
 
-    public String getModifiedTime()
+    public DateTime getModifiedTime()
     {
-        return DateTimeFormatter.format( content.getModifiedTime() );
+        return content.getModifiedTime();
     }
 
     public String getModifier()
