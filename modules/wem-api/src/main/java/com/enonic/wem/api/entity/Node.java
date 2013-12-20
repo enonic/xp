@@ -193,6 +193,7 @@ public final class Node
         {
             Node.BaseBuilder baseBuilder = new BaseBuilder( this.originalNode );
             baseBuilder.data = this.data;
+            baseBuilder.attachments = this.attachments;
             baseBuilder.entityIndexConfig = this.entityIndexConfig;
 
             baseBuilder.name = this.name;
