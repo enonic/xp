@@ -109,6 +109,8 @@ module app_wizard {
 
             if (this.parentContent) {
                 this.contentWizardHeader.setPath(this.parentContent.getPath().toString() + "/");
+            } else {
+                this.contentWizardHeader.setPath("/");
             }
 
             if (params.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
