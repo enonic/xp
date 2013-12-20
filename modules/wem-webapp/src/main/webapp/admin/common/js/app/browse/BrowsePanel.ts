@@ -83,16 +83,9 @@ module api_app_browse{
             }
 
             this.treeGridPanel.addListener({
-                onSelectionChanged: null,
-                onSelect: (event:api_app_browse_grid.TreeGridSelectEvent) => {
-
-                    var browseItems:api_app_browse.BrowseItem<M>[] = this.extModelsToBrowseItems([event.selectedModel]);
-                    this.browseItemPanel.addItem(browseItems[0]);
-                },
-                onDeselect: (event:api_app_browse_grid.TreeGridDeselectEvent) => {
-
-                    var browseItems:api_app_browse.BrowseItem<M>[] = this.extModelsToBrowseItems([event.deselectedModel]);
-                    this.browseItemPanel.removeItem(browseItems[0]);
+                onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
+                    var browseItems:api_app_browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.selectedModels);
+                    this.browseItemPanel.setItems(browseItems);
                 },
                 onItemDoubleClicked: null
             });

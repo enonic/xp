@@ -59,12 +59,17 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
 
         if (me.toolbar.gridPanel) {
             me.toolbar.gridPanel.getSelectionModel().on('selectionchange', function (model, selected, eOpts) {
-                me.updateSelectAll(selected);
-                me.updateClearSelection(selected);
+                var selection = me.getSelectionPlugin().getSelection();
+                me.updateSelectAll(selection);
+                me.updateClearSelection(selection);
             });
 
             // TODO: Listen for other grid changes
         }
+    },
+
+    getSelectionPlugin: function () {
+        return this.toolbar.gridPanel.getPlugin('persistentGridSelection');
     },
 
     createSelectAllButton: function () {
@@ -81,9 +86,9 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
                     cmp.el.on('click', function () {
                         // don't update text here, it will be done on selectionchange
                         if (cmp.el.hasCls('admin-grid-toolbar-btn-none-selected')) {
-                            me.toolbar.gridPanel.getSelectionModel().selectAll();
+                            me.getSelectionPlugin().selectAll();
                         } else {
-                            me.toolbar.gridPanel.getSelectionModel().deselectAll();
+                            me.getSelectionPlugin().clearSelection();
                         }
                     });
                 }
@@ -105,7 +110,7 @@ Ext.define('Admin.plugin.GridToolbarPlugin', {
                     cmp.el.on('click', function () {
                         // don't update text here, it will be done on selectionchange
                         if (cmp.el.hasCls('admin-grid-toolbar-btn-clear-selection')) {
-                            me.toolbar.gridPanel.getSelectionModel().deselectAll();
+                            me.getSelectionPlugin().clearSelection();
                         }
                     });
                 }

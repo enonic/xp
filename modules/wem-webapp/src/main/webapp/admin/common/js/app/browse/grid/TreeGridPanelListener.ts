@@ -4,10 +4,6 @@ module api_app_browse_grid {
 
         onSelectionChanged(event:TreeGridSelectionChangedEvent);
 
-        onSelect(event:TreeGridSelectEvent);
-
-        onDeselect(event:TreeGridDeselectEvent);
-
         onItemDoubleClicked(event:TreeGridItemDoubleClickedEvent);
     }
 
@@ -16,16 +12,6 @@ module api_app_browse_grid {
         selectionCount:number;
 
         selectedModels:Ext_data_Model[];
-    }
-
-    export interface TreeGridSelectEvent {
-
-        selectedModel:Ext_data_Model;
-    }
-
-    export interface TreeGridDeselectEvent {
-
-        deselectedModel:Ext_data_Model;
     }
 
     export interface TreeGridItemDoubleClickedEvent {
