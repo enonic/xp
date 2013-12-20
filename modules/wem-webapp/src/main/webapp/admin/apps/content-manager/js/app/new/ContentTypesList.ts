@@ -1,95 +1,53 @@
 module app_new {
 
-    export class ContentTypesList extends api_dom.DivEl implements api_event.Observable {
+    export class ContentTypesList extends api_ui_list.ListView<api_schema_content.ContentTypeSummary> implements api_event.Observable {
 
-        private ul:api_dom.UlEl;
+        private markRoots: boolean;
 
-        private contentTypes:ContentTypes;
+        private siteRootContentTypes: SiteRootContentTypes;
 
-        private siteRootContentTypes:SiteRootContentTypes;
+        private listeners: ContentTypesListListener[] = [];
 
-        private listeners:ContentTypesListListener[] = [];
+        constructor(className?: string, title?: string, markRoots?: boolean) {
+            super("ContentTypesList", className, title);
 
-        constructor(idPrefix:string, title:string, className?:string) {
-            super(idPrefix, className);
-
-            this.createHeader(title);
-
-            this.ul = new api_dom.UlEl();
-            this.ul.setClass('content-type-list');
-            this.appendChild(this.ul);
+            this.markRoots = markRoots;
         }
 
-        createHeader(title:string) {
-            var h4 = new api_dom.H4El();
-            h4.getEl().setInnerHtml(title);
-            this.appendChild(h4);
-        }
-
-        addListener(listener:ContentTypesListListener) {
+        addListener(listener: ContentTypesListListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:ContentTypesListListener) {
+        removeListener(listener: ContentTypesListListener) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifySelected(contentTypeListItem:ContentTypeListItem) {
-            this.listeners.forEach((listener:ContentTypesListListener) => {
+        private notifySelected(contentTypeListItem: ContentTypeListItem) {
+            this.listeners.forEach((listener: ContentTypesListListener) => {
                 listener.onSelected(contentTypeListItem);
             });
         }
 
-        setContentTypes(contentTypes:ContentTypes, siteRootContentTypes:SiteRootContentTypes) {
-            this.contentTypes = contentTypes;
+        setContentTypes(contentTypes: ContentTypes, siteRootContentTypes: SiteRootContentTypes) {
+            // should be set first, cuz super depends on it
             this.siteRootContentTypes = siteRootContentTypes;
-            this.layoutList(this.contentTypes.get());
+            super.setItems(contentTypes.get());
         }
 
-        filter(property:string, value:string) {
-            if (!value || value.length == 0) {
-                this.clearFilter();
+        createListItem(contentType: api_schema_content.ContentTypeSummary): ContentTypeListItem {
+
+            var isSiteRoot = false;
+            if(this.siteRootContentTypes) {
+                isSiteRoot = this.siteRootContentTypes.isSiteRoot(contentType.getName());
             }
-            var filteredContentTypes:api_schema_content.ContentTypeSummary[] = [];
-            var regexp = new RegExp(value, 'i');
+            var listItem = new ContentTypeListItem(contentType, isSiteRoot, this.markRoots);
 
-            var contentTypes = this.contentTypes.get();
-            for (var i = 0; i < contentTypes.length; i++) {
-                var contentType = contentTypes[i];
-                if (regexp.test(contentType[property])) {
-                    filteredContentTypes.push(contentType);
-                }
-            }
-            this.layoutList(filteredContentTypes);
-        }
-
-        clearFilter():ContentTypesList {
-            this.layoutList(this.contentTypes.get());
-            return this;
-        }
-
-        private layoutList(contentTypes:api_schema_content.ContentTypeSummary[]) {
-            this.ul.removeChildren();
-
-            for (var i = 0; i < contentTypes.length; i++) {
-                var contentType = contentTypes[i];
-                var listItemEl = this.createListItem(contentType);
-                this.ul.appendChild(listItemEl);
-            }
-        }
-
-        private createListItem(contentType:api_schema_content.ContentTypeSummary):ContentTypeListItemView {
-
-            var isSiteRoot = this.siteRootContentTypes.isSiteRoot(contentType.getName());
-            var listItem = new ContentTypeListItem(contentType, isSiteRoot);
-            var listItemView = new ContentTypeListItemView(listItem);
-
-            listItemView.getEl().addEventListener("click", () => {
+            listItem.getEl().addEventListener("click", () => {
                 this.notifySelected(listItem);
             });
-            return listItemView;
+            return listItem;
         }
     }
 

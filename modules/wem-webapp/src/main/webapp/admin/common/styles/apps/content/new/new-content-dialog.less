@@ -19,16 +19,89 @@
   flex: @flex;
 }
 
-
 .new-content-dialog {
 
+  .panel {
+    position: static;
+    height: 100%;
+  }
+
+  .list-filter {
+    width: 100%;
+  }
+
+  .tab-bar {
+    margin: 10px 0;
+
+    .tab-bar-item {
+      cursor: pointer;
+      color: #ccc;
+      padding: 10px;
+      font-size: 22px !important;
+      line-height: 20px;
+      display: inline-block;
+
+      &.active {
+        color: orangered;
+      }
+    }
+  }
+
+  .deck-panel {
+    height: 268px;
+  }
+
+  .drop-zone {
+    height: 100px;
+    width: 100%;
+    border: 3px dashed #a8c6fe;
+    background-color: #f1f5fe;
+    font-size: 22px;
+    line-height: 100px;
+    font-weight: bold !important;
+    color: #555;
+    text-align: center;
+    overflow: hidden;
+
+    &:before {
+      content: "Drag here to upload",
+    }
+
+    &:hover {
+      border-color:darken(#a8c6fe, 10%);
+      box-shadow:inset 0px 0px 30px @admin-input-blue;
+    }
+  }
+
+  .site-template-list,
   .content-type-list {
     overflow-y: auto;
     overflow-x: hidden;
 
+    h4 {
+      color: #ccc;
+      margin: 20px 10px;
+    }
+
+    .site-template-list-item,
     .content-type-list-item {
+      position: relative;
       cursor: pointer;
       padding: 5px;
+
+      .overlay {
+        color: black;
+        background-color: orangered;
+        position: absolute;
+        top: 5px;
+        left: 34px;
+        line-height: 12px;
+        padding: 3px;
+
+        &:before {
+          content: "S";
+        }
+      }
 
       img {
         height: 32px;
@@ -39,7 +112,7 @@
       }
 
       h6 {
-        height: 1.14em;  // 16px for 14px default text size
+        height: 1.14em; // 16px for 14px default text size
       }
 
       h6, p {
@@ -57,73 +130,22 @@
     }
   }
 
+
   .column {
     height: 100%;
     float: left;
 
     &.column-left {
-      width: 38%;
-    }
-
-    &.column-right {
-      margin-left: 2%;
       width: 60%;
     }
 
-  }
-
-  .block {
-
-    &.recommended,
-    &.recent {
-
-      padding: 10px;
-      background-color: #ebebeb;
-
-      h4 {
-        margin-bottom: 10px;
-      }
+    &.column-right {
+      margin-left: 4%;
+      width: 36%;
 
       .content-type-list {
-
-        .content-type-list-item:hover {
-          background-color: #fff;
-        }
-
+        height: 270px;
       }
-
-    }
-
-    &.recommended {
-
-      margin-bottom: 20px;
-
-      .content-type-list {
-        height: 44px;
-      }
-
-    }
-
-    &.recent {
-
-      .content-type-list {
-        height: 216px;
-      }
-
-    }
-
-    &.all {
-
-      input {
-        width: 100%;
-        margin-bottom: 20px;
-        padding: 4px 9px;
-      }
-
-      .content-type-list {
-        height: 332px;
-      }
-
     }
 
   }

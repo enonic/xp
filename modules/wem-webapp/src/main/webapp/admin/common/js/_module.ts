@@ -46,6 +46,8 @@
 ///<reference path='ui/tab/_module.ts' />
 ///<reference path='ui/toolbar/_module.ts' />
 
+///<reference path='ui/list/_module.ts' />
+
 ///<reference path='blob/_module.ts' />
 ///<reference path='icon/_module.ts' />
 
