@@ -16,7 +16,7 @@ import com.enonic.wem.portal.script.lib.ContextScriptBean;
 import com.enonic.wem.portal.script.loader.ScriptLoader;
 import com.enonic.wem.portal.script.loader.ScriptSource;
 
-final class ScriptRunnerImpl
+public final class ScriptRunnerImpl
     implements ScriptRunner
 {
     private Scriptable scope;
@@ -114,5 +114,20 @@ final class ScriptRunnerImpl
         final String name = cause.sourceName();
         final ScriptSource source = this.scriptLoader.load( name );
         return new EvaluationException( source, cause );
+    }
+
+    public void setScriptLoader(final ScriptLoader scriptLoader)
+    {
+        this.scriptLoader = scriptLoader;
+    }
+
+    public void setCompiler( final ScriptCompiler compiler )
+    {
+        this.compiler = compiler;
+    }
+
+    public void setContextServiceBean( final ContextScriptBean contextServiceBean )
+    {
+        this.contextServiceBean = contextServiceBean;
     }
 }

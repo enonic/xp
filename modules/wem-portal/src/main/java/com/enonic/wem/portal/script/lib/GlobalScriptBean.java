@@ -20,4 +20,9 @@ public final class GlobalScriptBean
     {
         put( name, this, Context.toObject( value, this ) );
     }
+
+    public void setSystem( final SystemScriptBean system )
+    {
+        this.system = system;
+    }
 }

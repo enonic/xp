@@ -10,7 +10,7 @@ import com.google.common.io.Files;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 
-final class ScriptSourceImpl
+public class ScriptSourceImpl
     implements ScriptSource
 {
     private final Path path;

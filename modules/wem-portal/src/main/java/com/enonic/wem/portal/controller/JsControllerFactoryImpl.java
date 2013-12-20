@@ -15,4 +15,9 @@ public final class JsControllerFactoryImpl
     {
         return new JsControllerImpl( this.scriptRunnerFactory.newRunner() );
     }
+
+    public void setScriptRunnerFactory( final ScriptRunnerFactory scriptRunnerFactory )
+    {
+        this.scriptRunnerFactory = scriptRunnerFactory;
+    }
 }
