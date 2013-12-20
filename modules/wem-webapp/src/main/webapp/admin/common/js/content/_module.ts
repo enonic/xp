@@ -25,3 +25,4 @@
 ///<reference path='ContentCreatedEvent.ts' />
 ///<reference path='ContentUpdatedEvent.ts' />
 ///<reference path='ContentDeletedEvent.ts' />
+///<reference path='ContentComboBox.ts' />

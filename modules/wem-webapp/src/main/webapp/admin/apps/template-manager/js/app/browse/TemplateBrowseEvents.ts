@@ -53,4 +53,14 @@ module app_browse {
             return this.getSiteTemplates()[0];
         }
     }
+
+    export class NewTemplateEvent extends api_event.Event {
+        constructor() {
+            super('newTemplate');
+        }
+
+        static on(handler:(event:NewTemplateEvent) => void) {
+            api_event.onEvent('newTemplate', handler);
+        }
+    }
 }

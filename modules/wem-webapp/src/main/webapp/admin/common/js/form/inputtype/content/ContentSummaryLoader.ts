@@ -1,12 +1,8 @@
 module api_form_inputtype_content {
 
-    export class ContentSummaryLoader implements api_event.Observable {
+    export class ContentSummaryLoader implements api_rest.Loader {
 
         private findContentRequest:api_content.FindContentRequest<api_content_json.ContentSummaryJson>;
-
-        private delay:number;
-
-        private timerId:number;
 
         private isLoading:boolean;
 
@@ -14,10 +10,12 @@ module api_form_inputtype_content {
 
         private listeners:ContentSummaryLoaderListener[] = [];
 
+        private loaderHelper:api_rest.LoaderHelper;
+
         constructor(delay:number = 500) {
-            this.delay = delay;
             this.isLoading = false;
             this.findContentRequest = new api_content.FindContentRequest().setExpand("summary").setCount(100);
+            this.loaderHelper = new api_rest.LoaderHelper(this.doRequest, this, delay);
         }
 
         setCount(count:number) {
@@ -34,13 +32,7 @@ module api_form_inputtype_content {
                 return;
             }
 
-            if (this.timerId) {
-                window.clearTimeout(this.timerId);
-            }
-            this.timerId = window.setTimeout(() => {
-                this.doRequest(searchString);
-                this.timerId = null;
-            }, this.delay);
+            this.loaderHelper.search(searchString);
         }
 
         private doRequest(searchString:string) {
@@ -57,8 +49,7 @@ module api_form_inputtype_content {
                     this.search(this.preservedSearchString);
                     this.preservedSearchString = null;
                 }
-            })
-            ;
+            });
         }
 
         addListener(listener:ContentSummaryLoaderListener) {

@@ -6,3 +6,4 @@
 ///<reference path='Animation.ts'/>
 ///<reference path='CookieHelper.ts'/>
 ///<reference path='ClassHelper.ts'/>
+///<reference path='DateHelper.ts' />

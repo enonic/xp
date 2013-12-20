@@ -15,7 +15,7 @@ module app_browse {
         constructor() {
             super("New");
             this.addExecutionListener(() => {
-                console.log("new template action");
+                new NewTemplateEvent().fire();
             });
         }
 

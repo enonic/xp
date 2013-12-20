@@ -11,3 +11,8 @@
 ///<reference path='GetModuleRequest.ts' />
 ///<reference path='ModuleDeletedEvent.ts' />
 ///<reference path='ModuleImportedEvent.ts' />
+///<reference path='ListModuleRequest.ts' />
+///<reference path='ModuleListResult.ts' />
+///<reference path='ModuleLoader.ts' />
+///<reference path='ModuleLoaderListener.ts' />
+///<reference path='ModuleComboBox.ts' />
