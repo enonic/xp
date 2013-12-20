@@ -5,7 +5,7 @@ module app_wizard {
 
         private url: string;
 
-        constructor(site: api_content.Content, url: string = api_util.getUri("dev/live-edit-page/bootstrap.jsp?edit=true")) {
+        constructor(site: api_content.Content, url: string = api_util.getUri("portal/edit/bluman-intranett")) {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
 
