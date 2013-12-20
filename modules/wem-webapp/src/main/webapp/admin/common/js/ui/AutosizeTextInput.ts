@@ -49,14 +49,12 @@ module api_ui {
                 api_dom.Body.get().appendChild(this.attendant);
                 this.updateSize();
                 this.getParent().appendChild(this.attendant);
-                console.log("adding attendant opt1", this);
             }
             else {
                 // If input is visible then insert attendant element after it
                 // and calculate initial size according to text width.
                 this.getParent().appendChild(this.attendant);
                 this.updateSize();
-                console.log("adding attendant opt2", this);
             }
         }
 
