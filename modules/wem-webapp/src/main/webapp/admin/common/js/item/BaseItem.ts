@@ -12,8 +12,8 @@ module api_item{
 
         private editable:boolean;
 
-        constructor(json:ItemJson) {
-            this.id = json.id;
+        constructor(json:ItemJson, idProperty:string = 'id') {
+            this.id = json[idProperty];
             this.createdTime = new Date(json.createdTime);
             this.modifiedTime = new Date(json.modifiedTime);
             this.deletable = json.deletable;

@@ -12,6 +12,7 @@ module app {
             });
 
             this.handleGlobalEvents();
+
         }
 
         private handleGlobalEvents() {
@@ -49,6 +50,12 @@ module app {
                 console.log('Download Site Template file from: ' + templateExportUrl);
 
                 window.location.href = templateExportUrl;
+            });
+            app_browse.NewTemplateEvent.on((event:app_browse.NewTemplateEvent) => {
+                var tabId = api_app.AppBarTabId.forNew('new-site-template-wizard');
+                var tabMenuItem =new api_app.AppBarTabMenuItem("New Site Template ", tabId);
+                var wizard = new app_wizard.SiteTemplateWizardPanel(tabId);
+                this.addWizardPanel(tabMenuItem, wizard);
             });
         }
     }

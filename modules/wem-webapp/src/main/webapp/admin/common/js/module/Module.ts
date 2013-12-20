@@ -18,6 +18,14 @@ module api_module {
             return new api_module.Module(<api_module_json.ModuleJson>model.raw);
         }
 
+        static fromJsonArray(jsonArray:api_module_json.ModuleJson[]):Module[] {
+            var array:Module[] = [];
+            jsonArray.forEach((json:api_module_json.ModuleJson) => {
+                array.push(new Module(json));
+            });
+            return array;
+        }
+
         constructor(json:api_module_json.ModuleJson){
             super(json);
 

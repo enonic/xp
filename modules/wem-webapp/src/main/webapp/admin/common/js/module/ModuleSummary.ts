@@ -16,9 +16,18 @@ module api_module {
             return new api_module.ModuleSummary(<api_module_json.ModuleSummaryJson>model.raw);
         }
 
+        static fromJsonArray(jsonArray:api_module_json.ModuleSummaryJson[]):ModuleSummary[] {
+            var array:ModuleSummary[] = [];
+            jsonArray.forEach((json:api_module_json.ModuleSummaryJson) => {
+                array.push(new ModuleSummary(json));
+            });
+            return array;
+        }
+
         constructor(json:api_module_json.ModuleSummaryJson){
-            super(json);
+            super(json, 'key');
             this.moduleKey = ModuleKey.fromString(json.key);
+
             this.displayName = json.displayName;
             this.vendorName = json.vendorName;
             this.vendorUrl = json.vendorUrl;
