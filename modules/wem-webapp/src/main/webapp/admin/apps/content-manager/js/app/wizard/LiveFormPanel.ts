@@ -1,11 +1,11 @@
 module app_wizard {
     export class LiveFormPanel extends api_ui.Panel {
 
-        private frame: api_dom.IFrameEl;
+        private frame:api_dom.IFrameEl;
 
-        private url: string;
+        private url:string;
 
-        constructor(site: api_content.Content, url: string = api_util.getUri("portal/edit/bluman-intranett")) {
+        constructor(site:api_content.Content, url:string = api_util.getUri("portal/edit/bluman-intranett")) {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
 
@@ -25,6 +25,11 @@ module app_wizard {
                         var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame, site: site});
                         this.appendChild(contextWindow);
                         clearInterval(intervalId);
+                    } else {
+                        iterations++;
+                        if (iterations >= maxIterations) {
+                            clearInterval(intervalId);
+                        }
                     }
                 } else {
                     iterations++;
@@ -33,14 +38,13 @@ module app_wizard {
                     }
                 }
             }, 200);
-
         }
 
         renderNew() {
 
         }
 
-        renderExisting(content: api_content.Content, pageTemplate: api_content_page.PageTemplate) {
+        renderExisting(content:api_content.Content, pageTemplate:api_content_page.PageTemplate) {
 
             var page = content.getPage();
             var config = pageTemplate.getConfig();
