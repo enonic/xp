@@ -17,11 +17,20 @@ module app_wizard {
             this.appendChild(this.frame);
 
             // Wait for iframe to be loaded before adding context window!
+            var maxIterations = 10;
+            var iterations = 0;
             var intervalId = setInterval(() => {
                 if (this.frame.isLoaded()) {
-                    var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame, site: site});
-                    this.appendChild(contextWindow);
-                    clearInterval(intervalId);
+                    if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
+                        var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame, site: site});
+                        this.appendChild(contextWindow);
+                        clearInterval(intervalId);
+                    }
+                } else {
+                    iterations++;
+                    if (iterations >= maxIterations) {
+                        clearInterval(intervalId);
+                    }
                 }
             }, 200);
 
