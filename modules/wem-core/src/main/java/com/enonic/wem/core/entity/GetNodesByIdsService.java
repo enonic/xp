@@ -34,7 +34,7 @@ public class GetNodesByIdsService
             }
             catch ( NoEntityWithIdFound noEntityWithIdFound )
             {
-                // Not found
+                throw new NoEntityWithIdFound( id );
             }
         }
 

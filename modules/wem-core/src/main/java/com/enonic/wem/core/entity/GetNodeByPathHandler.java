@@ -4,6 +4,8 @@ package com.enonic.wem.core.entity;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.entity.GetNodeByPath;
+import com.enonic.wem.api.content.ContentNotFoundException;
+import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandHandler;
@@ -25,7 +27,8 @@ public class GetNodeByPathHandler
         }
         catch ( NoNodeAtPathFound noNodeAtPathFound )
         {
-            command.setResult( null );
+            final ContentPath contentPath = ContentPath.from( command.getPath().toString() );
+            throw new ContentNotFoundException( contentPath );
         }
 
     }

@@ -11,4 +11,9 @@ public class NoEntityWithIdFound
         super( "No item with id " + id + " found" );
         this.id = id;
     }
+
+    public EntityId getId()
+    {
+        return id;
+    }
 }

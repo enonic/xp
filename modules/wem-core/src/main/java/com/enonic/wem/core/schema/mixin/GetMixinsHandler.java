@@ -12,6 +12,7 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
+import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.Mixins;
 import com.enonic.wem.core.command.CommandHandler;
 
@@ -20,6 +21,8 @@ public final class GetMixinsHandler
     extends CommandHandler<GetMixins>
 {
     private final static MixinNodeTranslator MIXIN_NODE_TRANSLATOR = new MixinNodeTranslator();
+
+    private final List<MixinName> noFoundList = new ArrayList<>();
 
     @Override
     public void handle()
@@ -33,8 +36,12 @@ public final class GetMixinsHandler
         }
         else
         {
-            final MixinNames mixinNames = command.getNames();
-            mixins = getMixins( mixinNames );
+            mixins = getMixins( command.getNames() );
+
+            if ( !noFoundList.isEmpty() )
+            {
+                throw new MixinNotFoundException( MixinNames.from( noFoundList ) );
+            }
         }
 
         command.setResult( mixins );
@@ -48,13 +55,18 @@ public final class GetMixinsHandler
 
     private Mixins getMixins( final MixinNames mixinNames )
     {
-        final List<Mixin> mixinList = new ArrayList<>( mixinNames.getSize() );
+        final List<Mixin> mixinList = new ArrayList<>();
+
         for ( MixinName mixinName : mixinNames )
         {
             final Mixin mixin = getMixin( mixinName );
             if ( mixin != null )
             {
                 mixinList.add( mixin );
+            }
+            else
+            {
+                noFoundList.add( mixinName );
             }
         }
         return Mixins.from( mixinList );
