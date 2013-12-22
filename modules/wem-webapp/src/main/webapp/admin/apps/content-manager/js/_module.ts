@@ -15,6 +15,9 @@
 ///<reference path='app/new/_module.ts' />
 ///<reference path='app/view/_module.ts' />
 
+///<reference path='app/wizard/action/_module.ts' />
+///<reference path='app/wizard/event/_module.ts' />
+///<reference path='app/wizard/site/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />
 ///<reference path='store/_module.ts' />
 ///<reference path='lib/_module.ts' />

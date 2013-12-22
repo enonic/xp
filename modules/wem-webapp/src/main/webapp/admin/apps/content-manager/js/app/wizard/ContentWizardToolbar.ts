@@ -18,8 +18,8 @@ module app_wizard {
             super.addAction(params.publishAction);
             super.addGreedySpacer();
             var displayModeToggle = new api_ui.ToggleSlide({
-                turnOnAction: new app_wizard.ShowLiveFormAction(),
-                turnOffAction: new app_wizard.ShowFormAction()
+                turnOnAction: new app_wizard_action.ShowLiveFormAction(),
+                turnOffAction: new app_wizard_action.ShowFormAction()
             }, false);
             super.addElement(displayModeToggle);
             super.addAction(params.closeAction);

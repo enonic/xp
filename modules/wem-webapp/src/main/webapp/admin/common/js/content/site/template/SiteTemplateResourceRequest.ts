@@ -22,5 +22,10 @@ module api_content_site_template {
             });
             return summaryArray;
         }
+
+        fromJsonToSiteTemplate(json:api_content_site_template_json.SiteTemplateJson) : api_content_site_template.SiteTemplate {
+
+            return new api_content_site_template.SiteTemplate(json);
+        }
     }
 }

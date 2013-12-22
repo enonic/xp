@@ -16,6 +16,10 @@ module app_wizard {
 
         private contentType: api_schema_content.ContentType;
 
+        private siteTemplateKey: api_content_site_template.SiteTemplateKey;
+
+        private siteTemplate: api_content_site_template.SiteTemplate;
+
         private site: api_content.Content;
 
         setContentToEdit(value: api_content.ContentId): ContentWizardPanelFactory {
@@ -30,6 +34,11 @@ module app_wizard {
 
         setParentContent(value: api_content.Content): ContentWizardPanelFactory {
             this.parentContent = value;
+            return this;
+        }
+
+        setSiteTemplate(value: api_content_site_template.SiteTemplateKey): ContentWizardPanelFactory {
+            this.siteTemplateKey = value;
             return this;
         }
 
@@ -56,8 +65,12 @@ module app_wizard {
                     return this.loadSite(parentContentId).then((loadedSite: api_content.Content) => {
                         this.site = loadedSite;
 
-                        this.newContentWizardPanelForNew().done((wizardPanel: ContentWizardPanel)=> {
-                            deferred.resolve(wizardPanel);
+                        return this.loadSiteTemplate(this.siteTemplateKey).then((loadedSiteTemplate: api_content_site_template.SiteTemplate) => {
+                            this.siteTemplate = loadedSiteTemplate;
+
+                            this.newContentWizardPanelForNew().done((wizardPanel: ContentWizardPanel)=> {
+                                deferred.resolve(wizardPanel);
+                            });
                         });
                     });
                 });
@@ -131,6 +144,22 @@ module app_wizard {
             return deferred.promise;
         }
 
+        private loadSiteTemplate(key: api_content_site_template.SiteTemplateKey): Q.Promise<api_content_site_template.SiteTemplate> {
+            var deferred = Q.defer<api_content_site_template.SiteTemplate>();
+
+            if (key == null) {
+                deferred.resolve(null);
+                return deferred.promise;
+            }
+
+            new api_content_site_template.GetSiteTemplateRequest(key).
+                sendAndParse().done((siteTemplate: api_content_site_template.SiteTemplate)=> {
+                    deferred.resolve(siteTemplate);
+                });
+
+            return deferred.promise;
+        }
+
         private loadParentContent(): Q.Promise<api_content.Content> {
 
             var deferred = Q.defer<api_content.Content>();
@@ -167,6 +196,7 @@ module app_wizard {
                 setAppBarTabId(this.appBarTabId).
                 setContentType(this.contentType).
                 setParentContent(this.parentContent).
+                setCreateSite(this.siteTemplate).
                 setSite(this.site);
 
             // TODO: Configure ContentWizardPanel to open up support for editing site data

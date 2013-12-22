@@ -1,4 +1,4 @@
-module app_wizard {
+module app_wizard_site {
 
     export class ModuleView extends api_dom.DivEl {
 

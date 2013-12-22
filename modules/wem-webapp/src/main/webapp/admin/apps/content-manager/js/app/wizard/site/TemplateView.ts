@@ -1,4 +1,4 @@
-module app_wizard {
+module app_wizard_site {
 
     export class TemplateView extends api_dom.DivEl {
 

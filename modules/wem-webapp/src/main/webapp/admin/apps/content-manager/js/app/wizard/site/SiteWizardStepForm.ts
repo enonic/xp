@@ -1,4 +1,4 @@
-module app_wizard {
+module app_wizard_site {
 
     export class SiteWizardStepForm extends api_app_wizard.WizardStepForm {
 
@@ -80,7 +80,7 @@ module app_wizard {
         private layoutModules(modules: api_module.Module[]) {
             this.moduleViewsCtr.removeChildren();
             modules.forEach((theModule: api_module.Module) => {
-                var moduleView = new app_wizard.ModuleView(this.formContext, theModule,
+                var moduleView = new ModuleView(this.formContext, theModule,
                     this.moduleConfigsByKey[theModule.getModuleKey().toString()]);
                 this.moduleViewsCtr.appendChild(moduleView)
             });
@@ -97,7 +97,7 @@ module app_wizard {
 
         private layoutSiteTemplate(template: api_content_site_template.SiteTemplate) {
             this.templateViewCtr.removeChildren();
-            this.templateViewCtr.appendChild(new app_wizard.TemplateView(template, this.contentType))
+            this.templateViewCtr.appendChild(new TemplateView(template, this.contentType))
         }
 
     }

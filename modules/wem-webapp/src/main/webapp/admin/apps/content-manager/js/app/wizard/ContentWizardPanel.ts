@@ -14,6 +14,8 @@ module app_wizard {
 
         site: api_content.Content;
 
+        siteTemplate: api_content_site_template.SiteTemplate;
+
         setAppBarTabId(value: api_app.AppBarTabId): ContentWizardPanelParams {
             this.tabId = value;
             return this;
@@ -39,6 +41,12 @@ module app_wizard {
             return this;
         }
 
+        setCreateSite(value: api_content_site_template.SiteTemplate): ContentWizardPanelParams {
+            this.siteTemplate = value;
+            this.createSite = this.siteTemplate != null;
+            return this;
+        }
+
     }
 
     export class ContentWizardPanel extends api_app_wizard.WizardPanel<api_content.Content> {
@@ -53,7 +61,7 @@ module app_wizard {
 
         private contentWizardHeader: api_app_wizard.WizardHeaderWithDisplayNameAndName;
 
-        private siteWizardStepForm: SiteWizardStepForm;
+        private siteWizardStepForm: app_wizard_site.SiteWizardStepForm;
 
         private contentWizardStepForm: ContentWizardStepForm;
 
@@ -66,6 +74,10 @@ module app_wizard {
         private livePanel: LiveFormPanel;
 
         private persistAsDraft: boolean;
+
+        private createSite: boolean;
+
+        private siteTemplate: api_content_site_template.SiteTemplate;
 
         constructor(params: ContentWizardPanelParams, callback: (wizard: ContentWizardPanel) => void) {
 
@@ -93,7 +105,7 @@ module app_wizard {
                 }
             });
 
-            var actions = new ContentWizardActions(this);
+            var actions = new app_wizard_action.ContentWizardActions(this);
 
             var mainToolbar = new ContentWizardToolbar({
                 saveAction: actions.getSaveAction(),
@@ -113,8 +125,11 @@ module app_wizard {
                 this.contentWizardHeader.setPath("/");
             }
 
-            if (params.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
-                this.siteWizardStepForm = new SiteWizardStepForm();
+            this.createSite = params.createSite;
+            this.siteTemplate = params.siteTemplate;
+            if (this.createSite || params.persistedContent != null && params.persistedContent.isSite()) {
+                this.siteWizardStepForm = new app_wizard_site.SiteWizardStepForm();
+
             }
             else {
                 this.siteWizardStepForm = null;
@@ -126,11 +141,11 @@ module app_wizard {
             };
             this.pageWizardStepForm = new PageWizardStepForm(pageWizardStepFormConfig);
 
-            ShowContentLiveEvent.on((event) => {
+            app_wizard_event.ShowContentLiveEvent.on((event) => {
                 this.toggleFormPanel(false);
             });
 
-            ShowContentFormEvent.on((event) => {
+            app_wizard_event.ShowContentFormEvent.on((event) => {
                 this.toggleFormPanel(true);
             });
 
@@ -306,11 +321,19 @@ module app_wizard {
 
                     this.getTabId().changeToEditMode(createdContent.getId());
 
-                    var createSite = false;
-                    if (createSite) {
+                    if (this.createSite) {
+
+                        var moduleConfigs: api_content_site.ModuleConfig[] = [];
+                        this.siteTemplate.getModules().forEach((moduleKey: api_module.ModuleKey) => {
+                            var moduleConfig = new api_content_site.ModuleConfigBuilder().
+                                setModuleKey(moduleKey).
+                                setConfig(new api_data.RootDataSet()).
+                                build();
+                            moduleConfigs.push(moduleConfig);
+                        });
                         new api_content_site.CreateSiteRequest(createdContent.getId())
-                            .setSiteTemplateKey(this.siteWizardStepForm.getTemplateKey())
-                            .setModuleConfigs(this.siteWizardStepForm.getModuleConfigs())
+                            .setSiteTemplateKey(this.siteTemplate.getKey())
+                            .setModuleConfigs(moduleConfigs)
                             .sendAndParse().done((updatedContent: api_content.Content) => {
 
                                 new api_content.ContentCreatedEvent(updatedContent).fire();

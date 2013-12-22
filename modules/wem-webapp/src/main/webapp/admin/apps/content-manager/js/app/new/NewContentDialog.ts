@@ -90,12 +90,12 @@ module app_new {
 
         private closeAndFireEventFromContentType(item: ContentTypeListItem) {
             this.close();
-            new NewContentEvent(item.getContentType(), this.parentContent, item.isSiteRoot()).fire();
+            new NewContentEvent(item.getContentType(), this.parentContent, null).fire();
         }
 
         private closeAndFireEventFromSiteTemplate(item: SiteTemplateListItem) {
             this.close();
-            new NewContentEvent(item.getContentType(), this.parentContent, true).fire();
+            new NewContentEvent(item.getContentType(), this.parentContent, item.getSiteTemplate()).fire();
         }
 
         private filterList(value: string) {

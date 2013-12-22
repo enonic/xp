@@ -53,13 +53,13 @@ module app_browse {
         }
     }
 
-    export class OpenContentEvent extends BaseContentModelEvent {
+    export class ViewContentEvent extends BaseContentModelEvent {
 
         constructor(model:api_content.ContentSummary[]) {
             super('openContent', model);
         }
 
-        static on(handler:(event:OpenContentEvent) => void) {
+        static on(handler:(event:ViewContentEvent) => void) {
             api_event.onEvent('openContent', handler);
         }
     }

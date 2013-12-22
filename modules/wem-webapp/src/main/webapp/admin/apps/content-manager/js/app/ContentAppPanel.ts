@@ -12,15 +12,15 @@ module app {
             });
 
             app_new.NewContentEvent.on((event) => {
-                this.handleNew(event.getContentType(), event.getParentContent(), event.isSiteRoot());
+                this.handleNew(event);
             });
 
-            app_browse.OpenContentEvent.on((event) => {
-                this.handleOpen(event.getModels());
+            app_browse.ViewContentEvent.on((event) => {
+                this.handleView(event);
             });
 
             app_browse.EditContentEvent.on((event) => {
-                this.handleEdit(event.getModels());
+                this.handleEdit(event);
             });
 
             api_app.ShowAppBrowsePanelEvent.on((event) => {
@@ -46,9 +46,10 @@ module app {
                 });
         }
 
-        private handleNew(contentTypeSummary: api_schema_content.ContentTypeSummary, parentContent: api_content.Content,
-                          siteRoot: boolean) {
+        private handleNew(newContentEvent: app_new.NewContentEvent) {
 
+            var contentTypeSummary = newContentEvent.getContentType();
+            var parentContent = newContentEvent.getParentContent();
             var tabId = api_app.AppBarTabId.forNew(contentTypeSummary.getName());
             var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
@@ -63,7 +64,9 @@ module app {
                     setAppBarTabId(tabId).
                     setParentContent(parentContent).
                     setContentTypeName(contentTypeSummary.getContentTypeName()).
-                    createForNew().then((wizard:app_wizard.ContentWizardPanel) => {
+                    setSiteTemplate(newContentEvent.getSiteTemplate() != null ? newContentEvent.getSiteTemplate().getKey()
+                        : null).
+                    createForNew().then((wizard: app_wizard.ContentWizardPanel) => {
                         this.addWizardPanel(tabMenuItem, wizard);
                         wizard.initWizardPanel();
                         wizard.reRender();
@@ -71,8 +74,9 @@ module app {
             }
         }
 
-        private handleOpen(contents: api_content.ContentSummary[]) {
+        private handleView(event: app_browse.ViewContentEvent) {
 
+            var contents: api_content.ContentSummary[] = event.getModels();
             contents.forEach((content: api_content.ContentSummary) => {
 
                 var tabId = api_app.AppBarTabId.forView(content.getId());
@@ -100,8 +104,9 @@ module app {
             });
         }
 
-        private handleEdit(contents: api_content.ContentSummary[]) {
+        private handleEdit(event: app_browse.EditContentEvent) {
 
+            var contents: api_content.ContentSummary[] = event.getModels();
             contents.forEach((content: api_content.ContentSummary) => {
 
                 var tabId = api_app.AppBarTabId.forEdit(content.getId());
@@ -115,7 +120,7 @@ module app {
                     new app_wizard.ContentWizardPanelFactory().
                         setAppBarTabId(tabId).
                         setContentToEdit(content.getContentId()).
-                        createForEdit().then((wizard:app_wizard.ContentWizardPanel) => {
+                        createForEdit().then((wizard: app_wizard.ContentWizardPanel) => {
 
                             tabMenuItem = new api_app.AppBarTabMenuItem(content.getDisplayName(), tabId, true);
                             this.addWizardPanel(tabMenuItem, wizard);

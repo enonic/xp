@@ -69,7 +69,7 @@ function route(path: api_rest.Path) {
         if (id) {
             var getContentByIdPromise = new api_content.GetContentByIdRequest(new api_content.ContentId(id)).send();
             jQuery.when(getContentByIdPromise).then((contentResponse: api_rest.JsonResponse<api_content_json.ContentJson>) => {
-                new app_browse.OpenContentEvent([new api_content.Content(contentResponse.getResult())]).fire();
+                new app_browse.ViewContentEvent([new api_content.Content(contentResponse.getResult())]).fire();
             });
         }
         break;

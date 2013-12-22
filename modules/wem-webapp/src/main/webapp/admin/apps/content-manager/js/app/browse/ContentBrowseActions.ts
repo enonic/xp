@@ -34,7 +34,7 @@ module app_browse {
             super("Open", "mod+o");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                new OpenContentEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
+                new ViewContentEvent(this.extModelsToContentSummaries(treeGridPanel.getSelection())).fire();
             });
         }
     }
