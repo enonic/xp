@@ -1,14 +1,14 @@
 package com.enonic.wem.xml;
 
+import com.enonic.wem.api.content.page.PageTemplateXml;
+import com.enonic.wem.api.content.page.image.ImageTemplateXml;
+import com.enonic.wem.api.content.page.layout.LayoutTemplateXml;
+import com.enonic.wem.api.content.page.part.PartTemplateXml;
+import com.enonic.wem.api.content.site.SiteTemplateXml;
 import com.enonic.wem.xml.content.page.ImageDescriptorXml;
 import com.enonic.wem.xml.content.page.LayoutDescriptorXml;
 import com.enonic.wem.xml.content.page.PageDescriptorXml;
 import com.enonic.wem.xml.content.page.PartDescriptorXml;
-import com.enonic.wem.xml.template.ImageTemplateXml;
-import com.enonic.wem.xml.template.LayoutTemplateXml;
-import com.enonic.wem.xml.template.PageTemplateXml;
-import com.enonic.wem.xml.template.PartTemplateXml;
-import com.enonic.wem.xml.template.SiteTemplateXml;
 
 public final class XmlSerializers
 {

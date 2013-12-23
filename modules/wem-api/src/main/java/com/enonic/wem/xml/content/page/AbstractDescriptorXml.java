@@ -4,9 +4,9 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.enonic.wem.api.content.page.BaseDescriptor;
 import com.enonic.wem.api.form.Form;
+import com.enonic.wem.api.form.FormXml;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.XmlObject;
-import com.enonic.wem.xml.form.FormXml;
 
 abstract class AbstractDescriptorXml<I, O>
     implements XmlObject<I, O>

@@ -3,10 +3,10 @@ package com.enonic.wem.xml.template;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.data.DataSetXml;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.XmlObject;
-import com.enonic.wem.xml.data.DataSetXml;
 
 public abstract class AbstractTemplateXml<I, O>
     implements XmlObject<I, O>

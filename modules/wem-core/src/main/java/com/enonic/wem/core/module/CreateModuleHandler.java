@@ -11,7 +11,6 @@ import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class CreateModuleHandler
     extends CommandHandler<CreateModule>

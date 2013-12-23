@@ -11,7 +11,6 @@ import com.enonic.wem.api.command.module.DeleteModule;
 import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class DeleteModuleHandler
     extends CommandHandler<DeleteModule>

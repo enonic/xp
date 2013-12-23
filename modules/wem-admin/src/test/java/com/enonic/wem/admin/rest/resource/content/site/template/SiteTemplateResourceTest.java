@@ -45,7 +45,7 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.core.exporters.SiteTemplateExporter;
+import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
 import static com.enonic.wem.api.content.page.image.ImageTemplate.newImageTemplate;
@@ -257,20 +257,10 @@ public class SiteTemplateResourceTest
 
     private SiteTemplate createSiteTemplate()
     {
-        return SiteTemplate
-            .newSiteTemplate()
-            .key( SiteTemplateKey.from( "name-1.0.0" ) )
-            .displayName( "displayName" )
-            .description( "info" )
-            .url( "url" )
-            .vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() )
-            .modules( ModuleKeys.from( "module1-1.0.0" ) )
-            .contentTypeFilter(
-                ContentTypeFilter
-                    .newContentFilter()
-                    .allowContentType( ContentTypeName.imageMedia() )
-                    .denyContentType( ContentTypeName.shortcut() ).build() )
-            .rootContentType( ContentTypeName.folder() )
-            .build();
+        return SiteTemplate.newSiteTemplate().key( SiteTemplateKey.from( "name-1.0.0" ) ).displayName( "displayName" ).description(
+            "info" ).url( "url" ).vendor( Vendor.newVendor().name( "vendorName" ).url( "vendorUrl" ).build() ).modules(
+            ModuleKeys.from( "module1-1.0.0" ) ).contentTypeFilter(
+            ContentTypeFilter.newContentFilter().allowContentType( ContentTypeName.imageMedia() ).denyContentType(
+                ContentTypeName.shortcut() ).build() ).rootContentType( ContentTypeName.folder() ).build();
     }
 }

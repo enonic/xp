@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
 public class CreateSiteTemplateHandler
     extends CommandHandler<CreateSiteTemplate>

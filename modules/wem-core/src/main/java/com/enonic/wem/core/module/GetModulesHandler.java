@@ -16,7 +16,6 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class GetModulesHandler
     extends CommandHandler<GetModules>

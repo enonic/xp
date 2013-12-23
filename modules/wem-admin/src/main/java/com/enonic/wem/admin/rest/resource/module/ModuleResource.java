@@ -31,7 +31,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.Modules;
-import com.enonic.wem.core.exporters.ModuleExporter;
+import com.enonic.wem.core.module.ModuleExporter;
 
 import static com.enonic.wem.api.command.Commands.module;
 
