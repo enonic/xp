@@ -17,6 +17,8 @@ public final class JsHttpResponse
 
     private final Map<String, String> headers;
 
+    private boolean postProcess = false;
+
     public JsHttpResponse()
     {
         this.headers = Maps.newHashMap();
@@ -60,5 +62,15 @@ public final class JsHttpResponse
     public void header( final String name, final String value )
     {
         this.headers.put( name, value );
+    }
+
+    public boolean isPostProcess()
+    {
+        return postProcess;
+    }
+
+    public void setPostProcess( final boolean postProcess )
+    {
+        this.postProcess = postProcess;
     }
 }
