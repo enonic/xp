@@ -10,18 +10,14 @@ public class GetNodeByIdService
 {
     private final GetNodeById getNodeById;
 
-
-    public GetNodeByIdService( final Session session, final GetNodeById getNodeByPathCommand )
+    public GetNodeByIdService( final Session session, final GetNodeById command )
     {
         super( session );
-        this.getNodeById = getNodeByPathCommand;
-
+        this.getNodeById = command;
     }
 
     public Node execute()
     {
         return nodeJcrDao.getNodeById( getNodeById.getId() );
     }
-
-
 }

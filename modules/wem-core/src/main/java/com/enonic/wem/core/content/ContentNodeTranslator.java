@@ -165,7 +165,7 @@ public class ContentNodeTranslator
         final FormItems formItems = SERIALIZER_FOR_FORM_ITEM_TO_DATA.deserializeFormItems( formItemsAsDataSet );
 
         final Content.Builder builder = Content.newContent().
-            id( ContentId.from( node.id().toString() ) ).
+            id( ContentId.from( node.id() ) ).
             parentPath( ContentPath.from( node.path().getParentPath().removeFromBeginning( CONTENTS_ROOT_PATH ).toString() ) ).
             name( node.name().toString() ).
             form( Form.newForm().addFormItems( formItems ).build() ).

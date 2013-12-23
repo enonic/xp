@@ -18,9 +18,7 @@ public class GetNodeByPathService
 
     public Node execute()
     {
-        final Node nodeByPath = nodeJcrDao.getNodeByPath( getNodeByPath.getPath() );
-
-        return nodeByPath;
+        return nodeJcrDao.getNodeByPath( getNodeByPath.getPath() );
     }
 
 }
