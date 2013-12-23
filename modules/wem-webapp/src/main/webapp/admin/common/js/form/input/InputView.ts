@@ -23,8 +23,12 @@ module api_form_input {
 
         private doLayout() {
 
-            var label = new InputLabel(this.input);
-            this.appendChild(label);
+            if (this.input.getLabel()) {
+                var label = new InputLabel(this.input);
+                this.appendChild(label);
+            } else {
+                this.addClass("no-label")
+            }
 
             var inputType: api_form.InputTypeName = this.input.getInputType();
 
@@ -41,7 +45,7 @@ module api_form_input {
                 this.inputTypeView = InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
             }
             else {
-                console.log("Input type [" + inputType.getName() + "] need to be registered first.");
+                console.log("Input type [" + inputType.getName() + "] needs to be registered first.");
                 this.inputTypeView = InputTypeManager.createView("NoInputTypeFound");
             }
 
