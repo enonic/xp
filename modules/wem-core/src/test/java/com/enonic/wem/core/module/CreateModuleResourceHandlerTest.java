@@ -26,7 +26,6 @@ import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static com.enonic.wem.api.resource.Resource.newResource;

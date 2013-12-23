@@ -16,7 +16,6 @@ import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static junit.framework.Assert.assertEquals;

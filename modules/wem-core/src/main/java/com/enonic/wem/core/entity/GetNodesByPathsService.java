@@ -12,13 +12,20 @@ import static com.enonic.wem.api.entity.Nodes.newNodes;
 public class GetNodesByPathsService
     extends NodeService
 {
-
     private final GetNodesByPaths command;
+
+    private boolean failWithExceptionAtNoNodeFound = true;
 
     public GetNodesByPathsService( final Session session, final GetNodesByPaths command )
     {
         super( session );
         this.command = command;
+    }
+
+    public GetNodesByPathsService failWithExceptionAtNoNodeFound( final boolean value )
+    {
+        this.failWithExceptionAtNoNodeFound = value;
+        return this;
     }
 
     public Nodes execute()
@@ -32,7 +39,10 @@ public class GetNodesByPathsService
             }
             catch ( NoNodeAtPathFound noNodeAtPathFound )
             {
-                throw new NoNodeAtPathFound( path );
+                if ( failWithExceptionAtNoNodeFound )
+                {
+                    throw new NoNodeAtPathFound( path );
+                }
             }
         }
 

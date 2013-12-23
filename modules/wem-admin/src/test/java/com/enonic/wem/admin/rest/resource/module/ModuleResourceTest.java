@@ -35,7 +35,7 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.core.exporters.ModuleExporter;
+import com.enonic.wem.core.module.ModuleExporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
 import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;

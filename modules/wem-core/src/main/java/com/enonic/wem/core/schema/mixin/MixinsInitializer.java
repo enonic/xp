@@ -41,7 +41,7 @@ public class MixinsInitializer
 
     private void storeMixin( final Mixin mixin )
     {
-        final GetMixin getMixin = Commands.mixin().get().byName( mixin.getName() );
+        final GetMixin getMixin = Commands.mixin().get().byName( mixin.getName() ).notFoundAsNull();
 
         final Mixin existingMixin = client.execute( getMixin );
         if ( existingMixin == null )

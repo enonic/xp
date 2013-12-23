@@ -10,7 +10,6 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.ModuleExporter;
 
 public class UpdateModuleHandler
     extends CommandHandler<UpdateModule>

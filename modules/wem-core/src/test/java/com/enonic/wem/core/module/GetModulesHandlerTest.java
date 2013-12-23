@@ -16,7 +16,6 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.module.Modules;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static junit.framework.Assert.assertEquals;
 

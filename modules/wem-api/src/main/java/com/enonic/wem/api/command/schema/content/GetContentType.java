@@ -13,6 +13,8 @@ public class GetContentType
 
     private boolean mixinReferencesToFormItems = false;
 
+    private boolean notFoundAsException = false;
+
     public ContentTypeName getContentTypeName()
     {
         return this.contentTypeName;
@@ -21,6 +23,18 @@ public class GetContentType
     public GetContentType contentTypeName( final ContentTypeName contentTypeName )
     {
         this.contentTypeName = contentTypeName;
+        return this;
+    }
+
+    public GetContentType notFoundAsException()
+    {
+        notFoundAsException = true;
+        return this;
+    }
+
+    public GetContentType notFoundAsNull()
+    {
+        notFoundAsException = false;
         return this;
     }
 
@@ -39,5 +53,10 @@ public class GetContentType
     public void validate()
     {
         Preconditions.checkNotNull( this.contentTypeName, "contentTypeName cannot be null" );
+    }
+
+    public boolean isNotFoundAsException()
+    {
+        return notFoundAsException;
     }
 }

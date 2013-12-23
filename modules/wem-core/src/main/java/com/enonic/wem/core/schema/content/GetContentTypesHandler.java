@@ -5,7 +5,6 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.entity.GetNodesByPaths;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
@@ -26,12 +25,7 @@ public final class GetContentTypesHandler
         throws Exception
     {
         final ContentTypes contentTypes = getContentTypes( command.getContentTypeNames() );
-
-        if ( contentTypes == null )
-        {
-            command.setResult( ContentTypes.empty() );
-        }
-        else if ( !command.isMixinReferencesToFormItems() )
+        if ( !command.isMixinReferencesToFormItems() )
         {
             command.setResult( contentTypes );
         }
@@ -45,32 +39,11 @@ public final class GetContentTypesHandler
     {
         final Set<NodePath> nodePaths = createNodePaths( contentTypeNames );
 
-        final GetNodesByPaths getNodesByPathsCommand = Commands.node().get().byPaths( NodePaths.from( nodePaths ) );
-
-        final Nodes nodes = getNodes( getNodesByPathsCommand );
-
-        if ( nodes == null )
-        {
-            return null;
-        }
+        final Nodes nodes =
+            new GetNodesByPathsService( this.context.getJcrSession(), Commands.node().get().byPaths( NodePaths.from( nodePaths ) ) ).
+                failWithExceptionAtNoNodeFound( false ).execute();
 
         return nodesToContentTypes( nodes );
-    }
-
-    private Nodes getNodes( final GetNodesByPaths getNodesByPathsCommand )
-    {
-        return new GetNodesByPathsService( this.context.getJcrSession(), getNodesByPathsCommand ).execute();
-    }
-
-    private Set<NodePath> createNodePaths( final ContentTypeNames contentTypeNames )
-    {
-        final Set<NodePath> nodePaths = Sets.newHashSet();
-
-        for ( ContentTypeName contentTypeName : contentTypeNames.getSet() )
-        {
-            nodePaths.add( NodePath.newPath( "/content-types/" + contentTypeName ).build() );
-        }
-        return nodePaths;
     }
 
     private ContentTypes nodesToContentTypes( final Nodes nodes )
@@ -88,5 +61,14 @@ public final class GetContentTypesHandler
         return builder.build();
     }
 
+    private Set<NodePath> createNodePaths( final ContentTypeNames contentTypeNames )
+    {
+        final Set<NodePath> nodePaths = Sets.newHashSet();
 
+        for ( ContentTypeName contentTypeName : contentTypeNames.getSet() )
+        {
+            nodePaths.add( NodePath.newPath( "/content-types/" + contentTypeName ).build() );
+        }
+        return nodePaths;
+    }
 }

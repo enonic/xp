@@ -32,7 +32,7 @@ import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplates;
-import com.enonic.wem.core.exporters.SiteTemplateExporter;
+import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 @javax.ws.rs.Path("content/site/template")
 @Produces(MediaType.APPLICATION_JSON)

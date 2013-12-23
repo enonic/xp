@@ -14,7 +14,6 @@ import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.ModuleExporter;
 
 import static org.junit.Assert.*;
 

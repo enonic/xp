@@ -10,7 +10,6 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.config.SystemConfig;
-import com.enonic.wem.core.exporters.SiteTemplateExporter;
 
 public class GetSiteTemplateByKeyHandler
     extends CommandHandler<GetSiteTemplateByKey>

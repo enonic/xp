@@ -12,14 +12,23 @@ public final class GetMixin
 {
     private MixinName name;
 
-    public MixinName getName()
-    {
-        return this.name;
-    }
+    private boolean notFoundAsException = false;
 
     public GetMixin name( final MixinName value )
     {
         this.name = value;
+        return this;
+    }
+
+    public GetMixin notFoundAsException()
+    {
+        notFoundAsException = true;
+        return this;
+    }
+
+    public GetMixin notFoundAsNull()
+    {
+        notFoundAsException = false;
         return this;
     }
 
@@ -52,4 +61,13 @@ public final class GetMixin
         Preconditions.checkNotNull( this.name, "name cannot be null" );
     }
 
+    public MixinName getName()
+    {
+        return this.name;
+    }
+
+    public boolean isNotFoundAsException()
+    {
+        return notFoundAsException;
+    }
 }

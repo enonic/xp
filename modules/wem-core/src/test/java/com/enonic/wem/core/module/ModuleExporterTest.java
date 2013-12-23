@@ -21,10 +21,9 @@ import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
-import com.enonic.wem.core.exporters.ModuleExporter;
 
-import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
+import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 

@@ -8,7 +8,6 @@ import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.editor.ContentTypeEditor;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeJsonSerializer;
 import com.enonic.wem.core.support.BaseInitializer;
@@ -83,10 +82,10 @@ public class ContentTypesInitializer
             MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE};
 
     private static final String[] DEMO_CONTENT_TYPES =
-        {"demo-contenttype-textline.json", "demo-contenttype-textarea.json", "demo-contenttype-htmlarea.json", "demo-contenttype-fieldset.json",
-            "demo-contenttype-formItemset.json", "demo-contenttype-blog.json", "demo-contenttype-article1.json",
-            "demo-contenttype-article2.json", "demo-contenttype-relation.json", "demo-contenttype-occurrences.json",
-            "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin-address.json",
+        {"demo-contenttype-textline.json", "demo-contenttype-textarea.json", "demo-contenttype-htmlarea.json",
+            "demo-contenttype-fieldset.json", "demo-contenttype-formItemset.json", "demo-contenttype-blog.json",
+            "demo-contenttype-article1.json", "demo-contenttype-article2.json", "demo-contenttype-relation.json",
+            "demo-contenttype-occurrences.json", "demo-contenttype-contentDisplayNameScript.json", "demo-contenttype-mixin-address.json",
             "demo-contenttype-mixin-norwegian-counties.json", "demo-contenttype-relation-article.json", "demo-contenttype-layout.json",
             "demo-contenttype-trampoline.json", "demo-contenttype-formItemset-min-occurrences.json",
             "demo-contenttype-singleSelectors.json", "demo-contenttype-comboBox.json", "demo-contenttype-all-input-types.json",
@@ -129,8 +128,8 @@ public class ContentTypesInitializer
 
     private void createOrUpdate( final ContentType contentType )
     {
-        final ContentTypeNames contentTypeNames = ContentTypeNames.from( contentType.getName() );
-        final boolean contentTypeExists = !client.execute( contentType().get().byNames().contentTypeNames( contentTypeNames ) ).isEmpty();
+        final boolean contentTypeExists =
+            client.execute( contentType().get().byName().contentTypeName( contentType.getName() ).notFoundAsNull() ) != null;
         if ( !contentTypeExists )
         {
             final CreateContentType createCommand = contentType().create().
