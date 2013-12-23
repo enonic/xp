@@ -4,6 +4,8 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.relationship.GetRelationships;
+import com.enonic.wem.api.relationship.RelationshipNotFoundException;
+import com.enonic.wem.api.relationship.Relationships;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.relationship.dao.RelationshipDao;
 
@@ -18,8 +20,14 @@ public final class GetRelationshipsHandler
         throws Exception
     {
         final Session session = context.getJcrSession();
+        final Relationships relationships = relationshipDao.selectFromContent( command.getFromContent(), session );
 
-        command.setResult( relationshipDao.selectFromContent( command.getFromContent(), session ) );
+        if ( relationships == null )
+        {
+            throw new RelationshipNotFoundException( relationships );
+        }
+
+        command.setResult( relationships );
     }
 
     @Inject

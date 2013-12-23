@@ -32,7 +32,7 @@ public class GetNodesByPathsService
             }
             catch ( NoNodeAtPathFound noNodeAtPathFound )
             {
-                // Node not found, just continue for now
+                throw new NoNodeAtPathFound( path );
             }
         }
 

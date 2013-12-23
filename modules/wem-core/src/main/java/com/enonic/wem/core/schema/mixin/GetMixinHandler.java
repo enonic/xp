@@ -6,6 +6,7 @@ import com.enonic.wem.api.command.schema.mixin.GetMixin;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.mixin.Mixin;
+import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -23,14 +24,12 @@ public final class GetMixinHandler
 
         final Node node = context.getClient().execute( getNodeByPathCommand );
 
-        if ( node != null )
+        if ( node == null )
         {
-            final Mixin mixin = MIXIN_NODE_TRANSLATOR.fromNode( node );
-            command.setResult( mixin );
+            throw new MixinNotFoundException( command.getName() );
         }
-        else
-        {
-            command.setResult( null );
-        }
+
+        final Mixin mixin = MIXIN_NODE_TRANSLATOR.fromNode( node );
+        command.setResult( mixin );
     }
 }

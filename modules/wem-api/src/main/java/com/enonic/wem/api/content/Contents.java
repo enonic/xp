@@ -18,8 +18,14 @@ public final class Contents
 
     public ContentPaths getPaths()
     {
-        final Collection<ContentPath> paths = Collections2.transform( this.list, new ToKeyFunction() );
+        final Collection<ContentPath> paths = Collections2.transform( this.list, new ToPathFunction() );
         return ContentPaths.from( paths );
+    }
+
+    public ContentIds getIds()
+    {
+        final Collection<ContentId> ids = Collections2.transform( this.list, new ToIdFunction() );
+        return ContentIds.from( ids );
     }
 
     public static Contents empty()
@@ -43,13 +49,23 @@ public final class Contents
         return new Contents( ImmutableList.copyOf( contents ) );
     }
 
-    private final static class ToKeyFunction
+    private final static class ToPathFunction
         implements Function<Content, ContentPath>
     {
         @Override
         public ContentPath apply( final Content value )
         {
             return value.getPath();
+        }
+    }
+
+    private final static class ToIdFunction
+        implements Function<Content, ContentId>
+    {
+        @Override
+        public ContentId apply( final Content value )
+        {
+            return value.getId();
         }
     }
 

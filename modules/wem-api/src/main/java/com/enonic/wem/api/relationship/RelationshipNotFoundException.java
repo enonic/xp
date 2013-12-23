@@ -2,6 +2,8 @@ package com.enonic.wem.api.relationship;
 
 import java.text.MessageFormat;
 
+import com.google.common.base.Joiner;
+
 import com.enonic.wem.api.NotFoundException;
 
 public final class RelationshipNotFoundException
@@ -15,5 +17,10 @@ public final class RelationshipNotFoundException
     public RelationshipNotFoundException( final RelationshipKey key )
     {
         super( MessageFormat.format( "Relationship [{0}] was not found", key ) );
+    }
+
+    public RelationshipNotFoundException( final Relationships relationships )
+    {
+        super( MessageFormat.format( "Relationships [{0}] were not found", Joiner.on( ", " ).join( relationships ) ) );
     }
 }
