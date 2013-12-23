@@ -3,29 +3,44 @@ package com.enonic.wem.core.content.page.part;
 import org.apache.commons.io.FilenameUtils;
 
 import com.enonic.wem.api.command.content.page.part.GetPartDescriptor;
+import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.core.content.page.AbstractGetDescriptorHandler;
+import com.enonic.wem.api.content.page.part.PartDescriptorNotFoundException;
+import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.resource.Resource;
+import com.enonic.wem.api.resource.ResourceNotFoundException;
+import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.xml.XmlSerializers;
 
 public class GetPartDescriptorHandler
-    extends AbstractGetDescriptorHandler<GetPartDescriptor>
+    extends CommandHandler<GetPartDescriptor>
 {
     @Override
     public void handle()
         throws Exception
     {
-        final PartDescriptorKey key = this.command.getKey();
+        try
+        {
+            final PartDescriptorKey key = this.command.getKey();
 
-        final String descriptorXml = readDescriptorXml( key );
-        final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
-        XmlSerializers.partDescriptor().parse( descriptorXml ).to( builder );
+            final ModuleResourceKey moduleResourceKey = new ModuleResourceKey( key.getModuleKey(), key.getPath() );
+            final Resource resource = context.getClient().execute( new GetModuleResource().resourceKey( moduleResourceKey ) );
 
-        final String descriptorName = FilenameUtils.removeExtension( key.getPath().getName() );
-        builder.name( descriptorName );
+            final String descriptorXml = resource.readAsString();
+            final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
+            XmlSerializers.partDescriptor().parse( descriptorXml ).to( builder );
 
-        final PartDescriptor partDescriptor = builder.build();
+            final String descriptorName = FilenameUtils.removeExtension( key.getPath().getName() );
+            builder.name( descriptorName );
 
-        command.setResult( partDescriptor );
+            final PartDescriptor partDescriptor = builder.build();
+
+            command.setResult( partDescriptor );
+        }
+        catch ( ResourceNotFoundException e )
+        {
+            throw new PartDescriptorNotFoundException( command.getKey(), e );
+        }
     }
 }
