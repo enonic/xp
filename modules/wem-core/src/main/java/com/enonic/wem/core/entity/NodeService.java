@@ -15,6 +15,4 @@ public abstract class NodeService
         this.session = session;
         this.nodeJcrDao = new NodeJcrDao( session );
     }
-
-
 }

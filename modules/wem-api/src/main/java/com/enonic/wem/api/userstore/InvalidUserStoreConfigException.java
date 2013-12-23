@@ -1,4 +1,6 @@
-package com.enonic.wem.api.exception;
+package com.enonic.wem.api.userstore;
+
+import com.enonic.wem.api.exception.BaseException;
 
 public class InvalidUserStoreConfigException
     extends BaseException

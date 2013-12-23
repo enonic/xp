@@ -1,7 +1,14 @@
 package com.enonic.wem.api.command.schema.mixin;
 
 
-public enum DeleteMixinResult
+import com.enonic.wem.api.schema.mixin.Mixin;
+
+public class DeleteMixinResult
 {
-    SUCCESS, NOT_FOUND, UNABLE_TO_DELETE
+    public final Mixin deletedMixin;
+
+    public DeleteMixinResult( final Mixin deletedMixin )
+    {
+        this.deletedMixin = deletedMixin;
+    }
 }

@@ -3,10 +3,11 @@ package com.enonic.wem.api.command.entity;
 import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 
 public class DeleteNodeByPath
-    extends Command<DeleteNodeResult>
+    extends Command<Node>
 {
     private final NodePath path;
 

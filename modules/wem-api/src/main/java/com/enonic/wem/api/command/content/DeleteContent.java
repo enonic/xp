@@ -42,4 +42,32 @@ public final class DeleteContent
     {
         Preconditions.checkNotNull( this.contentPath, "ContentPath cannot be null" );
     }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof DeleteContent ) )
+        {
+            return false;
+        }
+
+        final DeleteContent that = (DeleteContent) o;
+
+        if ( !contentPath.equals( that.contentPath ) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return contentPath.hashCode();
+    }
 }

@@ -11,12 +11,12 @@ import com.enonic.wem.api.entity.NoEntityWithIdFound;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.GetNodeByIdService;
 
-class GetContentByIdService
-extends ContentService
+public class GetContentByIdService
+    extends ContentService
 {
     private final GetContentById command;
 
-    GetContentByIdService( final Session session, final GetContentById command )
+    public GetContentByIdService( final Session session, final GetContentById command )
     {
         super( session );
         this.command = command;

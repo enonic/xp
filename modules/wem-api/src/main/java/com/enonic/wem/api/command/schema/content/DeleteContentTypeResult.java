@@ -1,7 +1,14 @@
 package com.enonic.wem.api.command.schema.content;
 
 
-public enum DeleteContentTypeResult
+import com.enonic.wem.api.schema.content.ContentType;
+
+public class DeleteContentTypeResult
 {
-    SUCCESS, NOT_FOUND, UNABLE_TO_DELETE
+    public final ContentType deletedContentType;
+
+    public DeleteContentTypeResult( final ContentType deletedContentType )
+    {
+        this.deletedContentType = deletedContentType;
+    }
 }

@@ -1,6 +1,6 @@
-package com.enonic.wem.api.exception;
+package com.enonic.wem.api.schema.mixin;
 
-import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.exception.BaseException;
 
 public final class UnableToDeleteMixinException
     extends BaseException

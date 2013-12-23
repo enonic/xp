@@ -10,18 +10,18 @@ import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.core.entity.GetNodeByPathService;
 
 
-class GetContentByPathService
+public class GetContentByPathService
     extends ContentService
 {
     private final GetContentByPath command;
 
-    GetContentByPathService( final Session session, final GetContentByPath command )
+    public GetContentByPathService( final Session session, final GetContentByPath command )
     {
         super( session );
         this.command = command;
     }
 
-    Content execute()
+    public Content execute()
         throws Exception
     {
         final GetNodeByPath getNodeByPathCommand =

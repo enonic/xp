@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
-import com.enonic.wem.api.exception.RelationshipTypeNotFoundException;
+import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
@@ -20,16 +20,10 @@ public final class DeleteRelationshipTypeHandler
         throws Exception
     {
         final RelationshipTypeName relationshipTypeName = command.getName();
-        try
-        {
-            relationshipTypeDao.delete( relationshipTypeName, context.getJcrSession() );
-            context.getJcrSession().save();
-            command.setResult( DeleteRelationshipTypeResult.SUCCESS );
-        }
-        catch ( RelationshipTypeNotFoundException e )
-        {
-            command.setResult( DeleteRelationshipTypeResult.NOT_FOUND );
-        }
+
+        final RelationshipType deletedRelationshipType = relationshipTypeDao.delete( relationshipTypeName, context.getJcrSession() );
+        context.getJcrSession().save();
+        command.setResult( new DeleteRelationshipTypeResult( deletedRelationshipType ) );
     }
 
     @Inject

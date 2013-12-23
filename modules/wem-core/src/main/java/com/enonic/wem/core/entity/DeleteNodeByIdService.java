@@ -3,8 +3,6 @@ package com.enonic.wem.core.entity;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.entity.DeleteNodeById;
-import com.enonic.wem.api.command.entity.DeleteNodeResult;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
 import com.enonic.wem.core.index.IndexService;
 
 public class DeleteNodeByIdService
@@ -21,21 +19,12 @@ public class DeleteNodeByIdService
         this.command = command;
     }
 
-    public DeleteNodeResult execute()
+    public void execute()
         throws Exception
     {
-        try
-        {
-            nodeJcrDao.deleteNodeById( command.getId() );
-            session.save();
-            indexService.deleteEntity( command.getId() );
-            return DeleteNodeResult.SUCCESS;
+        nodeJcrDao.deleteNodeById( command.getId() );
+        session.save();
 
-        }
-        catch ( NoNodeAtPathFound e )
-        {
-            return DeleteNodeResult.NOT_FOUND;
-        }
+        indexService.deleteEntity( command.getId() );
     }
-
 }

@@ -1,8 +1,11 @@
 {
-  "failures" : [ ],
-  "successes" : [ {
-    "path" : "/2"
-  }, {
-    "path" : "/1"
-  } ]
+    "failures": [ ],
+    "successes": [
+        {
+            "path": "/two"
+        },
+        {
+            "path": "/one"
+        }
+    ]
 }

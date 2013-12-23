@@ -3,7 +3,8 @@ package com.enonic.wem.core.entity;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.command.entity.DeleteNodeById;
-import com.enonic.wem.api.command.entity.DeleteNodeResult;
+import com.enonic.wem.api.command.entity.GetNodeById;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.index.IndexService;
 
@@ -22,10 +23,11 @@ public class DeleteNodeByIdHandler
     public void handle()
         throws Exception
     {
-        final DeleteNodeResult result =
-            new DeleteNodeByIdService( this.context.getJcrSession(), this.indexService, this.command ).execute();
+        final Node nodeToDelete = new GetNodeByIdService( this.context.getJcrSession(), new GetNodeById( this.command.getId() ) ).execute();
 
-        command.setResult( result );
+        new DeleteNodeByIdService( this.context.getJcrSession(), this.indexService, this.command ).execute();
+
+        command.setResult( nodeToDelete );
 
     }
 

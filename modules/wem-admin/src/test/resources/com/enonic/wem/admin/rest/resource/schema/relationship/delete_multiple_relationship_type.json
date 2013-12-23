@@ -2,7 +2,7 @@
     "failures": [
         {
             "name": "client",
-            "reason": "Mixin [client] was not found"
+            "reason": "RelationshipType [client] was not found"
         }
     ],
     "success": false,

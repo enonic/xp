@@ -4,9 +4,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.exception.RelationshipTypeNotFoundException;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNotFoundException;
 
 final class RelationshipTypeDaoHandlerUpdate
     extends AbstractRelationshipTypeDaoHandler

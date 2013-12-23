@@ -23,6 +23,7 @@ import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNotFoundException;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 import static com.enonic.wem.api.schema.relationship.RelationshipType.newRelationshipType;
@@ -130,10 +131,9 @@ public class RelationshipTypeResourceTest
     public void deleteSingleRelationshipType()
         throws Exception
     {
-        RelationshipTypeName.from( "partner" );
-
         Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).thenReturn(
-            DeleteRelationshipTypeResult.SUCCESS );
+            new DeleteRelationshipTypeResult(
+                RelationshipType.newRelationshipType().name( RelationshipTypeName.from( "partner" ) ).build() ) );
 
         String result =
             resource().path( "schema/relationship/delete" ).entity( readFromFile( "delete_single_relationship_type_params.json" ),
@@ -148,11 +148,14 @@ public class RelationshipTypeResourceTest
     public void deleteMultipleRelationshipTypes()
         throws Exception
     {
-        RelationshipTypeName.from( "partner" );
+        RelationshipTypeName partnerRel = RelationshipTypeName.from( "partner" );
+        RelationshipTypeName clientRel = RelationshipTypeName.from( "client" );
 
-        Mockito.when( client.execute( Mockito.any( Commands.relationshipType().delete().getClass() ) ) ).
-            thenReturn( DeleteRelationshipTypeResult.SUCCESS ).
-            thenReturn( DeleteRelationshipTypeResult.NOT_FOUND );
+        Mockito.when( client.execute( Mockito.eq( new DeleteRelationshipType().name( partnerRel ) ) ) ).thenReturn(
+            new DeleteRelationshipTypeResult( RelationshipType.newRelationshipType().name( partnerRel ).build() ) );
+
+        Mockito.when( client.execute( Mockito.eq( new DeleteRelationshipType().name( clientRel ) ) ) ).thenThrow(
+            new RelationshipTypeNotFoundException( clientRel ) );
 
         String result =
             resource().path( "schema/relationship/delete" ).entity( readFromFile( "delete_multiple_relationship_type_params.json" ),

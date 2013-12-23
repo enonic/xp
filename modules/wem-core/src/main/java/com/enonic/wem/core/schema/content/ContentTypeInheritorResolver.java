@@ -6,6 +6,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.schema.content.ContentTypes;
 
@@ -21,12 +22,12 @@ public class ContentTypeInheritorResolver
         this.allContentTypes = CONTENT_TYPE_NODE_TRANSLATOR.fromNodes( nodes );
     }
 
-    protected ContentTypeNames resolveInheritors( final ContentType contentType )
+    protected ContentTypeNames resolveInheritors( final ContentTypeName contentType )
     {
         final ContentTypeNames.Builder builder = ContentTypeNames.newContentTypeNames();
         for ( final ContentType potentialInheritor : this.allContentTypes )
         {
-            if ( potentialInheritor.inherit( contentType.getName() ) )
+            if ( potentialInheritor.inherit( contentType ) )
             {
                 builder.add( potentialInheritor.getName() );
             }

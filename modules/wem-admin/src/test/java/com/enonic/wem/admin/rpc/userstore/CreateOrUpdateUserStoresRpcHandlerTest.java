@@ -16,9 +16,9 @@ import com.enonic.wem.api.command.UpdateResult;
 import com.enonic.wem.api.command.userstore.CreateUserStore;
 import com.enonic.wem.api.command.userstore.GetUserStores;
 import com.enonic.wem.api.command.userstore.UpdateUserStore;
-import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
+import com.enonic.wem.api.userstore.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStores;
 
 public class CreateOrUpdateUserStoresRpcHandlerTest

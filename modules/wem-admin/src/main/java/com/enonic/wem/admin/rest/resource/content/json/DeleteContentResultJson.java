@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.content.DeleteContentResult;
 
 public class DeleteContentResultJson
 {
@@ -23,16 +22,14 @@ public class DeleteContentResultJson
         return failures;
     }
 
-    public void addResult( ContentPath contentPath, DeleteContentResult result )
+    public void addSuccess( final ContentPath contentPath )
     {
-        if ( result == DeleteContentResult.SUCCESS )
-        {
-            successes.add( new Success( contentPath ) );
-        }
-        else
-        {
-            failures.add( new Failure( contentPath, result ) );
-        }
+        successes.add( new Success( contentPath ) );
+    }
+
+    public void addFailure( final ContentPath contentPath, final String reason )
+    {
+        failures.add( new Failure( contentPath, reason ) );
     }
 
     public class Success
@@ -57,10 +54,10 @@ public class DeleteContentResultJson
 
         private String reason;
 
-        public Failure( final ContentPath contentPath, final DeleteContentResult result )
+        public Failure( final ContentPath contentPath, final String reason )
         {
             super( contentPath );
-            this.reason = result.toString();
+            this.reason = reason;
         }
 
         public String getReason()

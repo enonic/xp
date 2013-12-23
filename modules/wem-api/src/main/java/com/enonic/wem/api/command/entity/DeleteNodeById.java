@@ -4,9 +4,10 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.entity.EntityId;
+import com.enonic.wem.api.entity.Node;
 
 public class DeleteNodeById
-    extends Command<DeleteNodeResult>
+    extends Command<Node>
 {
     private final EntityId id;
 

@@ -2,9 +2,10 @@ package com.enonic.wem.api.exception;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.AccountNotFoundException;
+
+import static org.junit.Assert.*;
 
 public class AccountNotFoundExceptionTest
 {

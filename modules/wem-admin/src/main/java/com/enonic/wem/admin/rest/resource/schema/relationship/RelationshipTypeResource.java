@@ -20,12 +20,12 @@ import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.relationship.CreateRelationshipType;
 import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipType;
-import com.enonic.wem.api.command.schema.relationship.DeleteRelationshipTypeResult;
 import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeNotFoundException;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
@@ -88,28 +88,24 @@ public class RelationshipTypeResource
     @POST
     @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
-    public SchemaDeleteJson delete( SchemaDeleteParams param )
+    public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
         final RelationshipTypeNames relationshipTypeNames =
-            RelationshipTypeNames.from( param.getNames().toArray( new String[param.getNames().size()] ) );
+            RelationshipTypeNames.from( params.getNames().toArray( new String[params.getNames().size()] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( RelationshipTypeName relationshipTypeName : relationshipTypeNames )
         {
             final DeleteRelationshipType deleteCommand = Commands.relationshipType().delete().name( relationshipTypeName );
-            final DeleteRelationshipTypeResult result = client.execute( deleteCommand );
 
-            switch ( result )
+            try
             {
-                case SUCCESS:
-                    deletionResult.success( relationshipTypeName );
-                    break;
-
-                case NOT_FOUND:
-                    deletionResult.failure( relationshipTypeName,
-                                            String.format( "Mixin [%s] was not found", relationshipTypeName.toString() ) );
-                    break;
-
+                client.execute( deleteCommand );
+                deletionResult.success( relationshipTypeName );
+            }
+            catch ( RelationshipTypeNotFoundException e )
+            {
+                deletionResult.failure( relationshipTypeName, e.getMessage() );
             }
         }
 

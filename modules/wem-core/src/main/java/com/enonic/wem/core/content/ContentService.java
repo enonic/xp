@@ -4,18 +4,12 @@ import javax.jcr.Session;
 
 import org.elasticsearch.common.Strings;
 
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.api.entity.Nodes;
 
 abstract class ContentService
 {
-    public static final String CONTENTS_NODE = "contents";
-
     public static final String NON_CONTENT_NODE_PREFIX = "__";
-
-    public static final String CONTENT_EMBEDDED_NODE = NON_CONTENT_NODE_PREFIX + "embedded";
-
-    public static final String CONTENT_ATTACHMENTS_NODE = NON_CONTENT_NODE_PREFIX + "attachments";
 
     public static final ContentNodeTranslator CONTENT_TO_NODE_TRANSLATOR = new ContentNodeTranslator();
 
@@ -26,15 +20,15 @@ abstract class ContentService
         this.session = session;
     }
 
-    Contents filterHiddenContents( final Contents contents )
+    Nodes removeNonContentNodes( final Nodes nodes )
     {
-        Contents.Builder filtered = Contents.builder();
+        Nodes.Builder filtered = new Nodes.Builder();
 
-        for ( final Content content : contents )
+        for ( final Node node : nodes )
         {
-            if ( !Strings.startsWithIgnoreCase( content.getName().toString(), ContentService.NON_CONTENT_NODE_PREFIX ) )
+            if ( !Strings.startsWithIgnoreCase( node.name().toString(), ContentService.NON_CONTENT_NODE_PREFIX ) )
             {
-                filtered.add( content );
+                filtered.add( node );
             }
         }
 

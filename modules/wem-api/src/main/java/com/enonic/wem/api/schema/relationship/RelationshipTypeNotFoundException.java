@@ -1,12 +1,10 @@
-package com.enonic.wem.api.exception;
+package com.enonic.wem.api.schema.relationship;
 
 import java.text.MessageFormat;
 
 import com.google.common.base.Joiner;
 
 import com.enonic.wem.api.NotFoundException;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
 
 public final class RelationshipTypeNotFoundException
     extends NotFoundException

@@ -8,7 +8,7 @@ import org.jdom.input.SAXBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.enonic.wem.api.exception.InvalidUserStoreConfigException;
+import com.enonic.wem.api.userstore.InvalidUserStoreConfigException;
 
 import static org.junit.Assert.*;
 

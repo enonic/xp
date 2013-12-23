@@ -9,17 +9,23 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.entity.GetNodesByParentService;
 
 
-class GetChildContentService
-extends ContentService
+public class GetChildContentService
+    extends ContentService
 {
-    private final static ContentHasChildPopulator CONTENT_HAS_CHILD_POPULATOR = new ContentHasChildPopulator();
-
     private final GetChildContent command;
+
+    private boolean populateChildIds = false;
 
     public GetChildContentService( final Session session, final GetChildContent command )
     {
         super( session );
         this.command = command;
+    }
+
+    GetChildContentService populateChildIds( boolean value )
+    {
+        this.populateChildIds = value;
+        return this;
     }
 
     public Contents execute()
@@ -28,10 +34,16 @@ extends ContentService
             new GetNodesByParent( ContentNodeHelper.translateContentPathToNodePath( command.getParentPath() ) );
 
         final Nodes nodes = new GetNodesByParentService( session, getNodesByParentCommand ).execute();
+        final Contents contents = CONTENT_TO_NODE_TRANSLATOR.fromNodes( removeNonContentNodes( nodes ) );
 
-        final Contents contents = CONTENT_TO_NODE_TRANSLATOR.fromNodes( nodes );
-
-        return CONTENT_HAS_CHILD_POPULATOR.populateHasChild( session, filterHiddenContents( contents ) );
+        if ( populateChildIds )
+        {
+            return new ChildContentIdsResolver( session ).resolve( contents );
+        }
+        else
+        {
+            return contents;
+        }
     }
 
 }

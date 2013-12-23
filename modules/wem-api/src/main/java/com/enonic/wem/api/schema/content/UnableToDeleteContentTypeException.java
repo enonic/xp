@@ -1,6 +1,6 @@
-package com.enonic.wem.api.exception;
+package com.enonic.wem.api.schema.content;
 
-import com.enonic.wem.api.schema.content.ContentTypeName;
+import com.enonic.wem.api.exception.BaseException;
 
 public final class UnableToDeleteContentTypeException
     extends BaseException

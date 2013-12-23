@@ -1,12 +1,14 @@
 package com.enonic.wem.api.command.schema.relationship;
 
 
-public enum DeleteRelationshipTypeResult
-{
-    SUCCESS, NOT_FOUND;
+import com.enonic.wem.api.schema.relationship.RelationshipType;
 
-    public boolean isNotFound()
+public class DeleteRelationshipTypeResult
+{
+    public final RelationshipType deletedRelationshipType;
+
+    public DeleteRelationshipTypeResult( final RelationshipType deletedRelationshipType )
     {
-        return equals( NOT_FOUND );
+        this.deletedRelationshipType = deletedRelationshipType;
     }
 }

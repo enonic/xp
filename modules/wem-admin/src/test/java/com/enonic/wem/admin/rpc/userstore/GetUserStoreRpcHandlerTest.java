@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.wem.admin.jsonrpc.JsonRpcHandler;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.userstore.GetUserStores;
-import com.enonic.wem.api.exception.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStore;
 import com.enonic.wem.api.userstore.UserStoreName;
+import com.enonic.wem.api.userstore.UserStoreNotFoundException;
 import com.enonic.wem.api.userstore.UserStores;
 
 public class GetUserStoreRpcHandlerTest

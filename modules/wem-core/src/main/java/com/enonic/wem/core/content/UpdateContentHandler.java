@@ -42,7 +42,7 @@ import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.entity.DeleteNodeByPathHandler;
+import com.enonic.wem.core.entity.DeleteNodeByPathService;
 import com.enonic.wem.core.entity.UpdateNodeHandler;
 import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
@@ -133,25 +133,14 @@ public class UpdateContentHandler
         {
             if ( !embeddedContentsToKeep.containsKey( embeddedContentBeforeEdit.getId() ) )
             {
-                NodePath nodePathToEmbeddedContentNode =
+                final NodePath nodePathToEmbeddedContentNode =
                     EmbeddedNodePathFactory.create( embeddedContentBeforeEdit.getParentPath(), embeddedContentBeforeEdit.getName() );
-
-                DeleteNodeByPath deleteNodeByPathCommand = new DeleteNodeByPath( nodePathToEmbeddedContentNode );
-
-                deleteNodeByPath( deleteNodeByPathCommand );
+                final DeleteNodeByPath deleteNodeByPathCommand = new DeleteNodeByPath( nodePathToEmbeddedContentNode );
+                new DeleteNodeByPathService( this.context.getJcrSession(), indexService, deleteNodeByPathCommand ).execute();
             }
         }
     }
 
-    private void deleteNodeByPath( final DeleteNodeByPath deleteNodeByPathCommand )
-        throws Exception
-    {
-        final DeleteNodeByPathHandler deleteNodeByPathHandler =
-            DeleteNodeByPathHandler.create().indexService( this.indexService ).context( this.context ).command(
-                deleteNodeByPathCommand ).build();
-
-        deleteNodeByPathHandler.handle();
-    }
 
     private void syncRelationships( final Content persistedContent, final Content temporaryContent )
     {

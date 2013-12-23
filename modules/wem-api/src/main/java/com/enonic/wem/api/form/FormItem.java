@@ -73,6 +73,16 @@ public abstract class FormItem
         return (Input) this;
     }
 
+    public MixinReference toMixinReference()
+    {
+        if ( !( this instanceof MixinReference ) )
+        {
+            throw new IllegalArgumentException(
+                "This FormItem [" + getName() + "] is not an MixinReference: " + this.getClass().getSimpleName() );
+        }
+        return (MixinReference) this;
+    }
+
     public FormItemSet toFormItemSet()
     {
         if ( !( this instanceof FormItemSet ) )

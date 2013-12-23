@@ -4,12 +4,14 @@ import javax.inject.Inject;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.entity.DeleteNodeByPath;
-import com.enonic.wem.api.command.entity.DeleteNodeResult;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
 import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
+import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.core.entity.DeleteNodeByPathHandler;
+import com.enonic.wem.api.schema.content.ContentType;
+import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.content.UnableToDeleteContentTypeException;
+import com.enonic.wem.core.entity.DeleteNodeByPathService;
 import com.enonic.wem.core.index.IndexService;
 
 
@@ -22,46 +24,20 @@ public final class DeleteContentTypeHandler
     public void handle()
         throws Exception
     {
-        final ContentTypeName contentTypeName = command.getName();
+        final DeleteNodeByPath deleteNodeByPathCommand =
+            Commands.node().delete().byPath( new NodePath( "/content-types/" + command.getName().toString() ) );
 
-        // TODO: Fix this, use new node API
-        //if ( contentDao.countContentTypeUsage( contentTypeName, context.getJcrSession() ) > 0 )
-        //{
-        //    command.setResult( DeleteContentTypeResult.UNABLE_TO_DELETE );
-        // }
-        //else
+        final Node deletedNode = new DeleteNodeByPathService( context.getJcrSession(), indexService, deleteNodeByPathCommand ).execute();
+
+        final ContentTypeInheritorResolver contentTypeInheritorResolver = new ContentTypeInheritorResolver( this.context.getClient() );
+        final ContentTypeNames inheritors = contentTypeInheritorResolver.resolveInheritors( command.getName() );
+        if ( inheritors.isNotEmpty() )
         {
-            final DeleteNodeByPath deleteNodeByPathCommand =
-                Commands.node().delete().byPath( new NodePath( "/content-types/" + command.getName().toString() ) );
-
-            final DeleteNodeResult result = deleteNode( deleteNodeByPathCommand );
-
-            switch ( result )
-            {
-                case SUCCESS:
-                    command.setResult( DeleteContentTypeResult.SUCCESS );
-                    break;
-                case NOT_FOUND:
-                    command.setResult( DeleteContentTypeResult.NOT_FOUND );
-                    break;
-                default:
-                    command.setResult( DeleteContentTypeResult.UNABLE_TO_DELETE );
-            }
+            throw new UnableToDeleteContentTypeException( command.getName(), "Inheritors found: " + inheritors.toString() );
         }
-    }
 
-    private DeleteNodeResult deleteNode( final DeleteNodeByPath deleteNodeByPathCommand )
-        throws Exception
-    {
-        final DeleteNodeByPathHandler deleteNodeByPathHandler = DeleteNodeByPathHandler.create().
-            command( deleteNodeByPathCommand ).
-            context( this.context ).
-            indexService( this.indexService ).
-            build();
-
-        deleteNodeByPathHandler.handle();
-
-        return deleteNodeByPathCommand.getResult();
+        final ContentType deletedContentType = this.nodeToContentType( deletedNode, contentTypeInheritorResolver );
+        command.setResult( new DeleteContentTypeResult( deletedContentType ) );
     }
 
     @Inject

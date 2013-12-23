@@ -2,9 +2,9 @@ package com.enonic.wem.core.schema.relationship.dao;
 
 import javax.jcr.Session;
 
+import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 
 
@@ -25,9 +25,11 @@ public final class RelationshipTypeDaoImpl
     }
 
     @Override
-    public void delete( final RelationshipTypeName relationshipTypeName, final Session session )
+    public RelationshipType delete( final RelationshipTypeName relationshipTypeName, final Session session )
     {
-        new RelationshipTypeDaoHandlerDelete( session ).relationshipTypeName( relationshipTypeName ).handle();
+        final RelationshipTypeDaoHandlerDelete handler = new RelationshipTypeDaoHandlerDelete( session );
+        handler.relationshipTypeName( relationshipTypeName ).handle();
+        return handler.getResult();
     }
 
     @Override

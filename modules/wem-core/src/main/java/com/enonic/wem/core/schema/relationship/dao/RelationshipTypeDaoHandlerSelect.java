@@ -9,9 +9,9 @@ import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
-import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypes;
 import com.enonic.wem.core.jcr.JcrHelper;
 
@@ -76,7 +76,7 @@ final class RelationshipTypeDaoHandlerSelect
         return RelationshipTypes.from( relationshipTypeList );
     }
 
-    private RelationshipType getRelationshipType( final RelationshipTypeName name )
+    public RelationshipType getRelationshipType( final RelationshipTypeName name )
         throws RepositoryException
     {
         final Node relationshipTypeNode = getRelationshipTypeNode( name );

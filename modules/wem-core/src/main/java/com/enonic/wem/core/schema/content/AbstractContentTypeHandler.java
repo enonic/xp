@@ -75,7 +75,7 @@ public abstract class AbstractContentTypeHandler<T extends Command>
     ContentType populateInheritors( final ContentTypeInheritorResolver contentTypeInheritorResolver, ContentType contentType )
     {
         contentType = ContentType.newContentType( contentType ).
-            inheritors( contentTypeInheritorResolver.resolveInheritors( contentType ).isNotEmpty() ).
+            inheritors( contentTypeInheritorResolver.resolveInheritors( contentType.getName() ).isNotEmpty() ).
             build();
         return contentType;
     }

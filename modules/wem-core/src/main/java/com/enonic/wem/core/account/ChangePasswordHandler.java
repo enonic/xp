@@ -3,8 +3,8 @@ package com.enonic.wem.core.account;
 import javax.inject.Inject;
 
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.AccountNotFoundException;
 import com.enonic.wem.api.command.account.ChangePassword;
-import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandHandler;
 

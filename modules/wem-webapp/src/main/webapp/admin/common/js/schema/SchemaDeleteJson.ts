@@ -2,6 +2,8 @@ module api_schema {
 
     export interface SchemaDeleteJson {
 
+        success: boolean;
+
         successes?: SuccessJson[];
 
         failures?: FailureJson[];
@@ -17,6 +19,8 @@ module api_schema {
     export interface FailureJson {
 
         name: string;
+
+        reason: string;
 
     }
 

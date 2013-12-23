@@ -1,6 +1,6 @@
 package com.enonic.wem.api.command.schema.content;
 
-import com.enonic.wem.api.exception.ContentTypeNotFoundException;
+import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
 
 public enum UpdateContentTypeResult
 {

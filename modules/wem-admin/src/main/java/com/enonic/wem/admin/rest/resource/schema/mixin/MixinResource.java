@@ -20,13 +20,14 @@ import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
-import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixin;
 import com.enonic.wem.api.command.schema.mixin.UpdateMixinResult;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
 import com.enonic.wem.api.schema.mixin.MixinNames;
+import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.wem.api.schema.mixin.UnableToDeleteMixinException;
 import com.enonic.wem.api.schema.mixin.editor.MixinEditor;
 import com.enonic.wem.core.schema.mixin.MixinXmlSerializer;
 
@@ -154,26 +155,20 @@ public class MixinResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
-        final MixinNames mixinNames = MixinNames.from( params.getNames().toArray( new String[0] ) );
+        final MixinNames mixinNames = MixinNames.from( params.getNames().toArray( new String[params.getNames().size()] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( MixinName mixinName : mixinNames )
         {
             final DeleteMixin deleteMixin = Commands.mixin().delete().name( mixinName );
-            final DeleteMixinResult result = client.execute( deleteMixin );
-            switch ( result )
+            try
             {
-                case SUCCESS:
-                    deletionResult.success( mixinName );
-                    break;
-
-                case NOT_FOUND:
-                    deletionResult.failure( mixinName, String.format( "Mixin [%s] was not found", mixinName.toString() ) );
-                    break;
-
-                case UNABLE_TO_DELETE:
-                    deletionResult.failure( mixinName, String.format( "Unable to delete Mixin [%s]", mixinName.toString() ) );
-                    break;
+                client.execute( deleteMixin );
+                deletionResult.success( mixinName );
+            }
+            catch ( MixinNotFoundException | UnableToDeleteMixinException e )
+            {
+                deletionResult.failure( mixinName, e.getMessage() );
             }
         }
 

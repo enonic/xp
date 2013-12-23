@@ -7,7 +7,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
-import com.enonic.wem.api.exception.InvalidUserStoreConfigException;
+import com.enonic.wem.api.userstore.InvalidUserStoreConfigException;
 
 public final class UserStoreConfigParser
 {

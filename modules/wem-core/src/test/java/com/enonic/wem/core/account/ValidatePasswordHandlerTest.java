@@ -6,11 +6,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.account.AccountNotFoundException;
 import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.ValidatePassword;
-import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 

@@ -1,12 +1,10 @@
-package com.enonic.wem.api.exception;
+package com.enonic.wem.api.schema.content;
 
 import java.text.MessageFormat;
 
 import com.google.common.base.Joiner;
 
 import com.enonic.wem.api.NotFoundException;
-import com.enonic.wem.api.schema.content.ContentTypeName;
-import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public final class ContentTypeNotFoundException
     extends NotFoundException

@@ -48,9 +48,12 @@ import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentIds;
+import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.ContentPaths;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.DeleteContentResult;
+import com.enonic.wem.api.content.UnableToDeleteContentException;
 import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.editor.ContentEditor;
@@ -322,7 +325,16 @@ public class ContentResource
             final DeleteContent deleteContent = Commands.content().delete();
             deleteContent.deleter( AccountKey.anonymous() );
             deleteContent.contentPath( contentToDelete );
-            jsonResult.addResult( contentToDelete, client.execute( deleteContent ) );
+
+            try
+            {
+                final DeleteContentResult deleteResult = client.execute( deleteContent );
+                jsonResult.addSuccess( contentToDelete );
+            }
+            catch ( ContentNotFoundException | UnableToDeleteContentException e )
+            {
+                jsonResult.addFailure( deleteContent.getContentPath(), e.getMessage() );
+            }
         }
 
         return jsonResult;

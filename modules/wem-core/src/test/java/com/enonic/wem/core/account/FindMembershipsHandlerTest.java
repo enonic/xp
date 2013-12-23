@@ -7,12 +7,12 @@ import org.mockito.Mockito;
 
 import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.account.AccountKeys;
+import com.enonic.wem.api.account.AccountNotFoundException;
 import com.enonic.wem.api.account.GroupKey;
 import com.enonic.wem.api.account.RoleKey;
 import com.enonic.wem.api.account.UserKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.FindMemberships;
-import com.enonic.wem.api.exception.AccountNotFoundException;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.index.account.AccountSearchHit;

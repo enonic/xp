@@ -1,13 +1,7 @@
 package com.enonic.wem.core.entity;
 
 
-import javax.jcr.Session;
-
 import com.enonic.wem.api.command.entity.GetNodeByPath;
-import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.content.ContentPath;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
-import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandHandler;
 
 public class GetNodeByPathHandler
@@ -17,19 +11,6 @@ public class GetNodeByPathHandler
     @Override
     public void handle()
     {
-        final Session session = context.getJcrSession();
-
-        final Node persistedNode;
-        try
-        {
-            persistedNode = new GetNodeByPathService( session, command ).execute();
-            command.setResult( persistedNode );
-        }
-        catch ( NoNodeAtPathFound noNodeAtPathFound )
-        {
-            final ContentPath contentPath = ContentPath.from( command.getPath().toString() );
-            throw new ContentNotFoundException( contentPath );
-        }
-
+        command.setResult( new GetNodeByPathService( context.getJcrSession(), command ).execute() );
     }
 }

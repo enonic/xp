@@ -1,6 +1,6 @@
-package com.enonic.wem.api.exception;
+package com.enonic.wem.api.account;
 
-import com.enonic.wem.api.account.AccountKey;
+import com.enonic.wem.api.exception.BaseException;
 
 public final class AccountNotFoundException
     extends BaseException
@@ -10,3 +10,4 @@ public final class AccountNotFoundException
         super( "Account [{0}] was not found", key );
     }
 }
+

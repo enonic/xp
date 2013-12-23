@@ -144,7 +144,7 @@ public class ContentNodeTranslator
 
     public Contents fromNodes( final Nodes nodes )
     {
-        Contents.Builder contents = Contents.builder();
+        final Contents.Builder contents = Contents.builder();
 
         for ( final Node node : nodes )
         {

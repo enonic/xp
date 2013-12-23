@@ -1,9 +1,5 @@
 package com.enonic.wem.admin.rest.resource.schema.mixin;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
-
 import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
@@ -13,14 +9,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.google.common.io.Files;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 import junit.framework.Assert;
 
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.mixin.CreateMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
@@ -33,7 +27,9 @@ import com.enonic.wem.api.form.inputtype.TextAreaConfig;
 import com.enonic.wem.api.schema.SchemaId;
 import com.enonic.wem.api.schema.mixin.Mixin;
 import com.enonic.wem.api.schema.mixin.MixinName;
+import com.enonic.wem.api.schema.mixin.MixinNotFoundException;
 import com.enonic.wem.api.schema.mixin.Mixins;
+import com.enonic.wem.api.schema.mixin.UnableToDeleteMixinException;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static com.enonic.wem.api.form.inputtype.InputTypes.TEXT_AREA;
@@ -98,8 +94,8 @@ public class MixinResourceTest
 
         Mockito.when( client.execute( Mockito.isA( GetMixin.class ) ) ).thenReturn( mixin );
 
-        String result = resource().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
-            String.class );
+        String result =
+            resource().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
 
         assertJson( "get_mixin_config.json", result );
     }
@@ -128,8 +124,7 @@ public class MixinResourceTest
         Mockito.when( client.execute( Mockito.any( GetMixin.class ) ) ).thenReturn( null );
         try
         {
-            resource().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get(
-                String.class );
+            resource().path( "schema/mixin/config" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get( String.class );
 
             Assert.assertFalse( "Exception should've been thrown already", true );
         }
@@ -242,7 +237,8 @@ public class MixinResourceTest
     public void test_delete_single_mixin()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.isA( DeleteMixin.class ) ) ).thenReturn( DeleteMixinResult.SUCCESS );
+        Mockito.when( client.execute( Mockito.isA( DeleteMixin.class ) ) ).thenReturn(
+            new DeleteMixinResult( Mixin.newMixin().name( "existing_mixin" ).build() ) );
 
         String result = resource().path( "schema/mixin/delete" ).entity( readFromFile( "delete_single_mixin_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );
@@ -253,10 +249,14 @@ public class MixinResourceTest
     public void test_delete_multiple_mixins()
         throws Exception
     {
-        Mockito.when( client.execute( Mockito.any( Commands.mixin().delete().getClass() ) ) ).
-            thenReturn( DeleteMixinResult.SUCCESS ).
-            thenReturn( DeleteMixinResult.NOT_FOUND ).
-            thenReturn( DeleteMixinResult.UNABLE_TO_DELETE );
+        Mockito.when( client.execute( Mockito.eq( new DeleteMixin().name( MixinName.from( "existing_mixin" ) ) ) ) ).thenReturn(
+            new DeleteMixinResult( Mixin.newMixin().name( MixinName.from( "existing_mixin" ) ).build() ) );
+
+        Mockito.when( client.execute( Mockito.eq( new DeleteMixin().name( MixinName.from( "being_used_mixin" ) ) ) ) ).thenThrow(
+            new UnableToDeleteMixinException( MixinName.from( "not_existing_mixin" ), "Being used" ) );
+
+        Mockito.when( client.execute( Mockito.eq( new DeleteMixin().name( MixinName.from( "not_existing_mixin" ) ) ) ) ).thenThrow(
+            new MixinNotFoundException( MixinName.from( "being_used_mixin" ) ) );
 
         String result = resource().path( "schema/mixin/delete" ).entity( readFromFile( "delete_multiple_mixins_params.json" ),
                                                                          MediaType.APPLICATION_JSON_TYPE ).post( String.class );

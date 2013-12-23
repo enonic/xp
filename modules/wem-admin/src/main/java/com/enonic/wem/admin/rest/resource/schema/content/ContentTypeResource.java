@@ -21,14 +21,15 @@ import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteJson;
 import com.enonic.wem.admin.rest.resource.schema.json.SchemaDeleteParams;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.schema.content.DeleteContentType;
-import com.enonic.wem.api.command.schema.content.DeleteContentTypeResult;
 import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.schema.content.ContentTypeNotFoundException;
 import com.enonic.wem.api.schema.content.ContentTypes;
+import com.enonic.wem.api.schema.content.UnableToDeleteContentTypeException;
 import com.enonic.wem.api.schema.content.validator.ContentTypeValidationResult;
 import com.enonic.wem.api.support.serializer.XmlParsingException;
 import com.enonic.wem.core.schema.content.serializer.ContentTypeXmlSerializer;
@@ -92,29 +93,21 @@ public class ContentTypeResource
     @Consumes(MediaType.APPLICATION_JSON)
     public SchemaDeleteJson delete( SchemaDeleteParams params )
     {
-        final ContentTypeNames contentTypeNames = ContentTypeNames.from( params.getNames().toArray( new String[0] ) );
+        final ContentTypeNames contentTypeNames =
+            ContentTypeNames.from( params.getNames().toArray( new String[params.getNames().size()] ) );
 
         final SchemaDeleteJson deletionResult = new SchemaDeleteJson();
         for ( ContentTypeName contentTypeName : contentTypeNames )
         {
             final DeleteContentType deleteContentType = Commands.contentType().delete().name( contentTypeName );
-            final DeleteContentTypeResult result = client.execute( deleteContentType );
-            switch ( result )
+            try
             {
-                case SUCCESS:
-                    deletionResult.success( contentTypeName );
-                    break;
-
-                case NOT_FOUND:
-                    deletionResult.failure( contentTypeName,
-                                            String.format( "ContentType [%s] was not found", contentTypeName.toString() ) );
-
-                    break;
-
-                case UNABLE_TO_DELETE:
-                    deletionResult.failure( contentTypeName,
-                                            String.format( "Unable to delete ContentType [%s]", contentTypeName.toString() ) );
-                    break;
+                client.execute( deleteContentType );
+                deletionResult.success( contentTypeName );
+            }
+            catch ( ContentTypeNotFoundException | UnableToDeleteContentTypeException e )
+            {
+                deletionResult.failure( contentTypeName, e.getMessage() );
             }
         }
 

@@ -9,19 +9,19 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.entity.GetNodesByPathsService;
 
 
-class GetContentByPathsService
-extends ContentService
+public class GetContentByPathsService
+    extends ContentService
 {
     private GetContentByPaths command;
 
-    GetContentByPathsService( final Session session, final GetContentByPaths command )
+    public GetContentByPathsService( final Session session, final GetContentByPaths command )
     {
         super( session );
         this.command = command;
     }
 
-    Contents execute()
-    throws Exception
+    public Contents execute()
+        throws Exception
     {
         final GetNodesByPaths getNodesByPathsCommand =
             new GetNodesByPaths( ContentNodeHelper.translateContentPathsToNodePaths( command.getPaths() ) );
