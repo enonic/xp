@@ -7,7 +7,7 @@ import org.elasticsearch.common.Strings;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
 
-public abstract class ContentService
+abstract class ContentService
 {
     public static final String CONTENTS_NODE = "contents";
 

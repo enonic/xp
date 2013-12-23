@@ -9,21 +9,21 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.entity.GetNodesByParentService;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 
-public class GetRootContentService
-    extends ContentService
+class GetRootContentService
+extends ContentService
 {
     private final static ContentHasChildPopulator CONTENT_HAS_CHILD_POPULATOR = new ContentHasChildPopulator();
 
     private final GetRootContent command;
 
-    public GetRootContentService( final Session session, final GetRootContent command )
+    GetRootContentService( final Session session, final GetRootContent command )
     {
         super( session );
         this.command = command;
     }
 
-    public Contents execute()
-        throws Exception
+    Contents execute()
+    throws Exception
     {
         final GetNodesByParent getNodesByParentCommand = new GetNodesByParent( NodeJcrDao.CONTENT_ROOT_NODE.asAbsolute() );
 

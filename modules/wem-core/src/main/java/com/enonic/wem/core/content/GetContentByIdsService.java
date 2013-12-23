@@ -18,18 +18,18 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.entity.GetNodesByIdsService;
 
 
-public class GetContentByIdsService
-    extends ContentService
+class GetContentByIdsService
+extends ContentService
 {
     private final GetContentByIds command;
 
-    public GetContentByIdsService( final Session session, final GetContentByIds command )
+    GetContentByIdsService( final Session session, final GetContentByIds command )
     {
         super( session );
         this.command = command;
     }
 
-    public Contents execute()
+    Contents execute()
     {
         final GetNodesByIds getNodesByIdsCommand = new GetNodesByIds( getAsEntityIds( command.getIds() ) );
 

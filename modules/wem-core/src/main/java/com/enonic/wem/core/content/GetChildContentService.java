@@ -9,8 +9,8 @@ import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.entity.GetNodesByParentService;
 
 
-public class GetChildContentService
-    extends ContentService
+class GetChildContentService
+extends ContentService
 {
     private final static ContentHasChildPopulator CONTENT_HAS_CHILD_POPULATOR = new ContentHasChildPopulator();
 

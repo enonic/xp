@@ -11,14 +11,14 @@ import com.enonic.wem.core.entity.DeleteNodeByPathService;
 import com.enonic.wem.core.index.IndexService;
 
 
-public class DeleteContentService
-    extends ContentService
+class DeleteContentService
+extends ContentService
 {
     private final DeleteContent command;
 
     private final IndexService indexService;
 
-    public DeleteContentService( final Session session, final DeleteContent command, final IndexService indexService )
+    DeleteContentService( final Session session, final DeleteContent command, final IndexService indexService )
     {
         super( session );
         this.command = command;
