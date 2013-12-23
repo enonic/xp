@@ -11,6 +11,24 @@ module api_app_browse {
             this.getEl().setInnerHtml("Nothing selected");
         }
 
+        setItems(items:BrowseItem<M>[]) {
+            var itemsToRemove = this.items.filter((item:BrowseItem<M>) => {
+                for (var i = 0 ; i < items.length ; i++) {
+                    if (item.getPath() == items[i].getPath()) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            itemsToRemove.forEach((item:BrowseItem<M>) => {
+                this.removeItem(item);
+            });
+
+            items.forEach((item:BrowseItem<M>) => {
+                this.addItem(item);
+            });
+        }
+
         addItem(item:BrowseItem<M>) {
             if (this.indexOf(item) >= 0) {
                 return;

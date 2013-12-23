@@ -40,8 +40,6 @@ module api_app_browse_grid {
             }));
 
             this.extGridPanel.on("selectionchange", this.notifySelectionChanged, this, {buffer: 10});
-            this.extGridPanel.on("select", this.notifySelect, this);
-            this.extGridPanel.on("deselect", this.notifyDeselect, this);
             this.extGridPanel.on("itemdblclick", this.notifyItemDoubleClicked, this);
             this.extGridPanel.on("itemcontextmenu", this.handleItemContextMenuEvent, this);
         }
@@ -54,31 +52,10 @@ module api_app_browse_grid {
 
             this.listeners.forEach((listener:GridPanelListener)=> {
                 if (listener.onSelectionChanged != null) {
+                    var selectionPlugin = <any>this.extGridPanel.getPlugin('persistentGridSelection');
                     listener.onSelectionChanged({
-                        selectionCount: selectionModel.getCount(),
-                        selectedModels: models
-                    });
-                }
-            });
-        }
-
-        private notifySelect(rowModel:Ext_selection_RowModel, model:Ext_data_Model) {
-
-            this.listeners.forEach((listener:GridPanelListener) => {
-                if (listener.onSelect) {
-                    listener.onSelect({
-                        selectedModel: model
-                    });
-                }
-            });
-        }
-
-        private notifyDeselect(rowModel:Ext_selection_RowModel, model:Ext_data_Model) {
-
-            this.listeners.forEach((listener:GridPanelListener) => {
-                if (listener.onDeselect) {
-                    listener.onDeselect({
-                        deselectedModel: model
+                        selectionCount: selectionPlugin.getSelectionCount(),
+                        selectedModels: selectionPlugin.getSelection()
                     });
                 }
             });

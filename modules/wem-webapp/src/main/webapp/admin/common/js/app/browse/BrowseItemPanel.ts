@@ -28,13 +28,8 @@ module api_app_browse {
 
         }
 
-        addItem(item:BrowseItem<M>) {
-            this.itemsSelectionPanel.addItem(item);
-            this.updateDisplayedPanel();
-        }
-
-        removeItem(item:BrowseItem<M>) {
-            this.itemsSelectionPanel.removeItem(item);
+        setItems(items:any) {
+            this.itemsSelectionPanel.setItems(items);
             this.updateDisplayedPanel();
         }
 

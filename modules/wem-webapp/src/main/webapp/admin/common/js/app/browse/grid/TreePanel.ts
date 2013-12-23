@@ -52,8 +52,6 @@ module api_app_browse_grid {
 
 
             this.extTreePanel.on("selectionchange", this.notifySelectionChanged, this, {buffer: 10});
-            this.extTreePanel.on("select", this.notifySelect, this);
-            this.extTreePanel.on("deselect", this.notifyDeselect, this);
             this.extTreePanel.on("itemdblclick", this.notifyItemDoubleClicked, this);
             this.extTreePanel.on("itemcontextmenu", this.handleItemContextMenuEvent, this);
             this.extTreePanel.on("itemexpand", this.handleItemExpand, this);
@@ -70,31 +68,10 @@ module api_app_browse_grid {
 
             this.listeners.forEach((listener:TreePanelListener)=> {
                 if (listener.onSelectionChanged != null) {
+                    var selectionPlugin = <any>this.extTreePanel.getPlugin('persistentGridSelection');
                     listener.onSelectionChanged({
-                        selectionCount: selectionModel.getCount(),
-                        selectedModels: models
-                    });
-                }
-            });
-        }
-
-        private notifySelect(rowModel:Ext_selection_RowModel, model:Ext_data_Model) {
-
-            this.listeners.forEach((listener:TreePanelListener) => {
-                if (listener.onSelect) {
-                    listener.onSelect({
-                        selectedModel: model
-                    });
-                }
-            });
-        }
-
-        private notifyDeselect(rowModel:Ext_selection_RowModel, model:Ext_data_Model) {
-
-            this.listeners.forEach((listener:TreePanelListener) => {
-                if (listener.onDeselect) {
-                    listener.onDeselect({
-                        deselectedModel: model
+                        selectionCount: selectionPlugin.getSelectionCount(),
+                        selectedModels: selectionPlugin.getSelection()
                     });
                 }
             });

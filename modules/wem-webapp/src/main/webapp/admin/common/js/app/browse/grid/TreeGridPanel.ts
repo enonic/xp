@@ -82,16 +82,6 @@ module api_app_browse_grid {
                         selectedModels: event.selectedModels
                     });
                 },
-                onSelect: (event:TreeSelectEvent) => {
-                    this.notifyTreeGridSelect({
-                        selectedModel: event.selectedModel
-                    });
-                },
-                onDeselect: (event:TreeDeselectEvent) => {
-                    this.notifyTreeGridDeselect({
-                        deselectedModel: event.deselectedModel
-                    });
-                },
                 onItemDoubleClicked: (event:TreeItemDoubleClickedEvent) => {
 
                     console.log("TreeGridPanel onItemDoubleClicked from tree", event);
@@ -116,16 +106,6 @@ module api_app_browse_grid {
                     this.notifyTreeGridSelectionChanged({
                         selectionCount: event.selectionCount,
                         selectedModels: event.selectedModels
-                    });
-                },
-                onSelect: (event:TreeSelectEvent) => {
-                    this.notifyTreeGridSelect({
-                        selectedModel: event.selectedModel
-                    });
-                },
-                onDeselect: (event:TreeDeselectEvent) => {
-                    this.notifyTreeGridDeselect({
-                        deselectedModel: event.deselectedModel
                     });
                 },
                 onItemDoubleClicked: (event:GridItemDoubleClickedEvent) => {
@@ -156,24 +136,6 @@ module api_app_browse_grid {
             this.listeners.forEach((listener:TreeGridPanelListener)=> {
                 if (listener.onSelectionChanged) {
                     listener.onSelectionChanged(event);
-                }
-            });
-        }
-
-        private notifyTreeGridSelect(event:TreeGridSelectEvent) {
-
-            this.listeners.forEach((listener:TreeGridPanelListener) => {
-                if (listener.onSelect) {
-                    listener.onSelect(event);
-                }
-            });
-        }
-
-        private notifyTreeGridDeselect(event:TreeGridDeselectEvent) {
-
-            this.listeners.forEach((listener:TreeGridPanelListener) => {
-                if (listener.onDeselect) {
-                    listener.onDeselect(event);
                 }
             });
         }
