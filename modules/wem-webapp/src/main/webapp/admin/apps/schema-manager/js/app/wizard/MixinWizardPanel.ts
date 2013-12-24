@@ -10,7 +10,7 @@ module app_wizard {
 
         private mixinWizardHeader: api_app_wizard.WizardHeaderWithName;
 
-        private persistedMixin: api_schema_mixin.Mixin;
+        private persistedConfig: string;
 
         private mixinForm: MixinForm;
 
@@ -68,12 +68,11 @@ module app_wizard {
                 this.mixinWizardHeader.setName(mixin.getName());
                 this.formIcon.setSrc(mixin.getIconUrl());
 
-                this.persistedMixin = mixin;
-
                 new api_schema_mixin.GetMixinConfigByNameRequest(mixin.getMixinName()).send().
                     done((response: api_rest.JsonResponse<api_schema_mixin.GetMixinConfigResult>) => {
                         this.mixinForm.reRender();
                         this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
+                        this.persistedConfig = response.getResult().mixinXml || "";
                         callback();
                     });
             });
@@ -107,7 +106,7 @@ module app_wizard {
             var formData = this.mixinForm.getFormData();
 
             var updateRequest = new api_schema_mixin.UpdateMixinRequest().
-                setMixinToUpdate(this.persistedMixin.getName()).
+                setMixinToUpdate(this.getPersistedItem().getName()).
                 setName(this.mixinWizardHeader.getName()).
                 setConfig(formData.xml).
                 setIcon(this.mixinIcon);
@@ -123,6 +122,21 @@ module app_wizard {
                         callback(mixin);
                     });
                 });
+        }
+
+        hasUnsavedChanges(): boolean {
+            var persistedMixin: api_schema_mixin.Mixin = this.getPersistedItem();
+            if (persistedMixin == undefined) {
+                return true;
+            } else {
+                return !this.stringsEqual(persistedMixin.getName(), this.mixinWizardHeader.getName())
+                    || !this.stringsEqual(this.persistedConfig, this.mixinForm.getFormData().xml);
+            }
+        }
+
+        private stringsEqual(str1: string, str2: string): boolean {
+            // strings are equal if both of them are empty or not specified or they are identical
+            return (!str1 && !str2) || (str1 == str2) || str1.replace(/[\t\r\n]/g, "") == str2.replace(/[\t\r\n]/g, "");
         }
     }
 }

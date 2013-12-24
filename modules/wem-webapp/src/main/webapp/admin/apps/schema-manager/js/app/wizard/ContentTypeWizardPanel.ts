@@ -10,7 +10,7 @@ module app_wizard {
 
         private contentTypeWizardHeader: api_app_wizard.WizardHeaderWithName;
 
-        private persistedContentType: api_schema_content.ContentType;
+        private persistedConfig: string;
 
         private contentTypeForm: app_wizard.ContentTypeForm;
 
@@ -62,11 +62,10 @@ module app_wizard {
                 this.contentTypeWizardHeader.setName(contentType.getName());
                 this.formIcon.setSrc(contentType.getIconUrl());
 
-                this.persistedContentType = contentType;
-
                 new api_schema_content.GetContentTypeConfigByNameRequest(contentType.getContentTypeName()).send().
                     done((response: api_rest.JsonResponse <api_schema_content.GetContentTypeConfigResult>) => {
                         this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
+                        this.persistedConfig = response.getResult().contentTypeXml || "";
                         callback();
                     });
             });
@@ -98,7 +97,7 @@ module app_wizard {
 
             var formData = this.contentTypeForm.getFormData();
             var newName = new api_schema_content.ContentTypeName(this.contentTypeWizardHeader.getName());
-            var updateContentTypeRequest = new api_schema_content.UpdateContentTypeRequest(this.persistedContentType.getContentTypeName(),
+            var updateContentTypeRequest = new api_schema_content.UpdateContentTypeRequest(this.getPersistedItem().getContentTypeName(),
                 newName,
                 formData.xml,
                 this.contentTypeIcon);
@@ -115,6 +114,21 @@ module app_wizard {
                         callback(contentType);
                     });
                 });
+        }
+
+        hasUnsavedChanges(): boolean {
+            var persistedContentType: api_schema_content.ContentType = this.getPersistedItem();
+            if (persistedContentType == undefined) {
+                return true;
+            } else {
+                return !this.stringsEqual(persistedContentType.getName(), this.contentTypeWizardHeader.getName())
+                    || !this.stringsEqual(this.persistedConfig, this.contentTypeForm.getFormData().xml);
+            }
+        }
+
+        private stringsEqual(str1: string, str2: string): boolean {
+            // strings are equal if both of them are empty or not specified or they are identical
+            return (!str1 && !str2) || (str1 == str2) || str1.replace(/[\t\r\n]/g, "") == str2.replace(/[\t\r\n]/g, "");
         }
     }
 }
