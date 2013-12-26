@@ -20,11 +20,11 @@ public final class DefaultExceptionMapper
     // protected HttpHeaders headers;
 
     @Override
-    public Response toResponse( final Throwable cause )
+    public Response toResponse( final Throwable throwable )
     {
-        LOG.warn( cause.getMessage(), cause );
-        cause.printStackTrace();
+        LOG.warn( throwable.getMessage(), throwable );
+        throwable.printStackTrace();
         return Response.status( Response.Status.INTERNAL_SERVER_ERROR ).type( MediaType.APPLICATION_JSON_TYPE ).entity(
-            new ErrorJson( cause.getMessage() ) ).build();
+            new ErrorJson( throwable.getCause().getMessage() ) ).build();
     }
 }
