@@ -20,26 +20,26 @@ public final class UpdateMixinHandler
     public void handle()
         throws Exception
     {
-        final Mixin mixin = context.getClient().execute( Commands.mixin().get().byName( command.getName() ) );
-        if ( mixin == null )
+        final Mixin original = context.getClient().execute( Commands.mixin().get().byName( command.getName() ) );
+        if ( original == null )
         {
             throw new MixinNotFoundException( command.getName() );
         }
 
-        final Mixin modifiedMixin = command.getEditor().edit( mixin );
+        final Mixin modifiedMixin = command.getEditor().edit( original );
         if ( modifiedMixin != null )
         {
             final NodeEditor nodeEditor = MIXIN_TO_ITEM_TRANSLATOR.toNodeEditor( modifiedMixin );
 
-            UpdateNode updateNode = MIXIN_TO_ITEM_TRANSLATOR.toUpdateNodeCommand( mixin.getId(), nodeEditor );
+            UpdateNode updateNode = MIXIN_TO_ITEM_TRANSLATOR.toUpdateNodeCommand( original.getId(), nodeEditor );
 
             final UpdateNodeResult updateNodeResult = context.getClient().execute( updateNode );
-            final Mixin updatedMixin = MIXIN_TO_ITEM_TRANSLATOR.fromNode( updateNodeResult.getPersistedNode() );
-            command.setResult( new UpdateMixinResult( updatedMixin ) );
+            final Mixin changed = MIXIN_TO_ITEM_TRANSLATOR.fromNode( updateNodeResult.getPersistedNode() );
+            command.setResult( new UpdateMixinResult( changed ) );
         }
         else
         {
-            command.setResult( new UpdateMixinResult( mixin ) );
+            command.setResult( new UpdateMixinResult( original ) );
         }
     }
 }

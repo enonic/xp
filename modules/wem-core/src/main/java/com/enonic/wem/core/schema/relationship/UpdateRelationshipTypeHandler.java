@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
+import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipTypeResult;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 import com.enonic.wem.core.command.CommandHandler;
@@ -11,7 +12,7 @@ import com.enonic.wem.core.schema.relationship.dao.RelationshipTypeDao;
 
 
 public final class UpdateRelationshipTypeHandler
-extends CommandHandler<UpdateRelationshipType>
+    extends CommandHandler<UpdateRelationshipType>
 {
     private RelationshipTypeDao relationshipTypeDao;
 
@@ -23,19 +24,19 @@ extends CommandHandler<UpdateRelationshipType>
 
         final RelationshipTypeEditor editor = command.getEditor();
 
-        final RelationshipType existing = relationshipTypeDao.select( command.getName(), session );
+        final RelationshipType original = relationshipTypeDao.select( command.getName(), session );
 
-        final RelationshipType changed = editor.edit( existing );
+        final RelationshipType changed = editor.edit( original );
         if ( changed != null )
         {
-            existing.checkIllegalEdit( changed );
+            original.checkIllegalEdit( changed );
             relationshipTypeDao.update( changed, session );
             session.save();
-            command.setResult( Boolean.TRUE );
+            command.setResult( new UpdateRelationshipTypeResult( changed ) );
         }
         else
         {
-            command.setResult( Boolean.FALSE );
+            command.setResult( new UpdateRelationshipTypeResult( original ) );
         }
 
     }
