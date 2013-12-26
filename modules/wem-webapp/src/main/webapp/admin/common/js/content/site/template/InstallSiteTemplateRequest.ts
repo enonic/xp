@@ -1,18 +1,19 @@
 module api_content_site_template {
 
-    export class InstallSiteTemplateRequest
-        extends SiteTemplateResourceRequest<api_content_site_template_json.SiteTemplateSummaryJson>
-    {
+    export class InstallSiteTemplateRequest extends SiteTemplateResourceRequest<api_content_site_template_json.SiteTemplateSummaryJson> {
 
-        private uploader:any;
-        private triggerElement:api_dom.Element;
-        private isExternalTriggerElement:boolean = false;
+        private uploader: any;
+        private triggerElement: api_dom.Element;
+        private isExternalTriggerElement: boolean = false;
 
-        private multiSelection:boolean = true;
+        private multiSelection: boolean = true;
 
-        private deferred:JQueryDeferred<api_rest.Response>;
+        private deferred: JQueryDeferred<api_rest.Response>;
 
-        constructor(triggerEl?:api_dom.Element) {
+        private doneCallback: (response: InstallSiteTemplateResponse) => void;
+        private failCallback: (response: api_rest.Response) => void;
+
+        constructor(triggerEl?: api_dom.Element) {
             super();
             if (triggerEl) {
                 this.triggerElement = triggerEl;
@@ -22,41 +23,54 @@ module api_content_site_template {
                 this.triggerElement.hide();
                 api_dom.Body.get().appendChild(this.triggerElement);
             }
-            this.deferred = jQuery.Deferred<api_rest.Response>();
 
             this.uploader = this.createUploader(this.triggerElement);
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath(): api_rest.Path {
             return api_rest.Path.fromParent(super.getResourcePath(), "import");
         }
 
-        setMultiSelection(value:boolean):InstallSiteTemplateRequest {
+        setMultiSelection(value: boolean): InstallSiteTemplateRequest {
             this.multiSelection = value;
             return this;
         }
 
-        send():JQueryPromise<api_rest.Response> {
+        send(): JQueryPromise<api_rest.Response> {
+            this.deferred = jQuery.Deferred<api_rest.Response>();
+            if (this.doneCallback) {
+                this.deferred.done(this.doneCallback);
+            }
+            if (this.failCallback) {
+                this.deferred.fail(this.failCallback);
+            }
             if (!this.isExternalTriggerElement) {
                 this.triggerElement.getHTMLElement().click();
                 this.triggerElement.remove();
             }
+            this.uploader.start();
             return this.deferred;
         }
 
-        done(fn:(resp:InstallSiteTemplateResponse)=>void) {
-            this.deferred.done(fn);
+        done(fn: (resp: InstallSiteTemplateResponse)=>void) {
+            if (this.deferred) {
+                this.deferred.done(fn);
+            }
+            this.doneCallback = fn;
         }
 
-        fail(fn:(resp:api_rest.Response)=>void) {
-            this.deferred.fail(fn);
+        fail(fn: (resp: api_rest.Response)=>void) {
+            if (this.deferred) {
+                this.deferred.fail(fn);
+            }
+            this.failCallback = fn;
         }
 
         stop() {
             this.uploader.stop();
         }
 
-        private createUploader(triggerElement:api_dom.Element):any {
+        private createUploader(triggerElement: api_dom.Element): any {
             if (!plupload) {
                 throw new Error("InstallSiteTemplateRequest: plupload not found, check if it is included in page.");
             }
@@ -75,26 +89,34 @@ module api_content_site_template {
                 ]
             });
 
+            var results: api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>[] = [];
             this.uploader.bind('QueueChanged', (up) => {
-                up.start();
+                this.send();
+                results.length = 0;
             });
 
-            var results:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>[] = [];
             this.uploader.bind('FileUploaded', (up, file, response) => {
                 if (response && response.status === 200) {
                     results.push(new api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>(response.response));
-                } else {
+                } else if (this.deferred) {
                     this.deferred.reject(new api_rest.RequestError(response.status, response.statusText, response.responseText, null));
+                    this.deferred = undefined;
                 }
 
             });
 
             this.uploader.bind('UploadComplete', (up, files) => {
-                this.deferred.resolve(new InstallSiteTemplateResponse(results));
+                if (this.deferred) {
+                    this.deferred.resolve(new InstallSiteTemplateResponse(results));
+                    this.deferred = undefined;
+                }
             });
 
             this.uploader.bind('Error', (up, files) => {
-                this.deferred.reject(new api_rest.RequestError(null, files.code, files.message, null));
+                if (this.deferred) {
+                    this.deferred.reject(new api_rest.RequestError(null, files.code, files.message, null));
+                    this.deferred = undefined;
+                }
             });
 
             this.uploader.init();
@@ -106,27 +128,21 @@ module api_content_site_template {
 
     export class InstallSiteTemplateResponse extends api_rest.Response {
 
-        private templates:SiteTemplateSummary[] = [];
-        private errors:string[] = [];
+        private templates: SiteTemplateSummary[] = [];
 
-        constructor (templateResponses:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>[]) {
+        constructor(templateResponses: api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>[]) {
             super();
-            templateResponses.forEach((response:api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>) => {
+            templateResponses.forEach((response: api_rest.JsonResponse<api_content_site_template_json.SiteTemplateSummaryJson>) => {
                 var responseJson = response.getJson();
-                if (responseJson.result) {
-                    this.templates.push(new SiteTemplateSummary(responseJson.result));
-                } else {
-                    this.errors.push(responseJson.error.message);
+                if (responseJson) {
+                    this.templates.push(new SiteTemplateSummary(responseJson));
                 }
             });
         }
 
-        getSiteTemplates():SiteTemplateSummary[] {
+        getSiteTemplates(): SiteTemplateSummary[] {
             return this.templates;
         }
 
-        getErrors():string[] {
-            return this.errors;
-        }
     }
 }

@@ -26,10 +26,6 @@ module app {
                 if (templates.length > 0) {
                     api_notify.showFeedback('Template \'' + templates.map((template:api_content_site_template.SiteTemplateSummary) => {console.log(template); return template.getDisplayName()} ).join(', ') + '\' was installed');
                 }
-                var errors = response.getErrors();
-                if (errors.length > 0) {
-                    api_notify.showError('Import errors: [' + errors.join('], [') + ']');
-                }
                 new api_content_site_template.SiteTemplateImportedEvent().fire();
                 dialog.close();
             });
