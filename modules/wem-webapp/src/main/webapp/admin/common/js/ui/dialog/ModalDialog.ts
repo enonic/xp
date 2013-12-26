@@ -85,18 +85,18 @@ module api_ui_dialog{
 
             this.hide();
 
-            api_ui.KeyBindings.unshelveBindings();
+            api_ui.KeyBindings.get().unshelveBindings();
         }
 
         open() {
 
             api_ui.BodyMask.get().activate();
 
-            api_ui.KeyBindings.shelveBindings();
+            api_ui.KeyBindings.get().shelveBindings();
 
             this.show();
 
-            api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(this.actions));
+            api_ui.KeyBindings.get().bindKeys(api_ui.Action.getKeyBindings(this.actions));
         }
     }
 

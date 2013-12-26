@@ -2,137 +2,103 @@ module api_ui {
 
     export class KeyBindings {
 
-        private static mousetraps:any = {};
+        private static instanceCount: number = 0;
 
-        private static shelves:Object[] = [];
+        private static INSTANCE: KeyBindings = new KeyBindings();
 
-        static bindKeys(bindings:KeyBinding[]) {
+        private instance: number;
 
-            bindings.forEach((binding:KeyBinding) => {
-                KeyBindings.bindKey(binding);
-            })
+        private activeBindings: {[s:string] : KeyBinding;} = {};
+
+        private shelves: {[s:string] : KeyBinding;}[] = [];
+
+        public static get(): KeyBindings {
+            return KeyBindings.INSTANCE;
         }
 
-        static bindKey(binding:KeyBinding) {
+        constructor() {
+            KeyBindings.instanceCount++;
+            this.instance = KeyBindings.instanceCount;
+            console.log("KeyBindings constructed instance #" + this.instance);
+        }
 
-            //console.log("KeyBindings.bindKey", binding);
+        public bindKeys(bindings: KeyBinding[]) {
+
+            var logMessage = "Binded keys: [";
+            bindings.forEach((binding: KeyBinding) => {
+                this.bindKey(binding);
+                logMessage += "'" + binding.getCombination() + "' ,";
+            });
+            logMessage += "]";
+
+            console.log("KeyBindings[#" + this.instance + "].bindKeys(): " + logMessage);
+        }
+
+        private bindKey(binding: KeyBinding) {
+
             Mousetrap.bind(binding.getCombination(), binding.getCallback(), binding.getAction());
-            KeyBindings.mousetraps[binding.getCombination()] = binding;
+            this.activeBindings[binding.getCombination()] = binding;
         }
 
-        static unbindKeys(bindings:KeyBinding[]) {
+        public unbindKeys(bindings: KeyBinding[]) {
 
-            //console.log("KeyBindings.unbindKeys");
+            var logMessage = "Binded keys: [";
 
-            bindings.forEach((binding:KeyBinding) => {
-                KeyBindings.unbindKey(binding);
+            bindings.forEach((binding: KeyBinding) => {
+                this.unbindKey(binding);
+                logMessage += "'" + binding.getCombination() + "' ,";
             })
+
+            console.log("KeyBindings[#" + this.instance + "].unbindKeys(): " + logMessage);
         }
 
-        static unbindKey(binding:KeyBinding) {
-
-            //console.log("KeyBindings.unbindKey");
+        private unbindKey(binding: KeyBinding) {
 
             Mousetrap.unbind(binding.getCombination());
-            delete KeyBindings.mousetraps[binding.getCombination()];
+            delete this.activeBindings[binding.getCombination()];
         }
 
-        static trigger(combination:string, action?:string) {
+        public trigger(combination: string, action?: string) {
 
             Mousetrap.trigger(combination, action);
         }
 
-        static reset() {
+        public reset() {
+            console.log("KeyBindings[#" + this.instance + "].reset()");
 
-            //console.log("KeyBindings.reset");
             Mousetrap.reset();
-            KeyBindings.mousetraps = {};
+            this.activeBindings = {};
+            this.shelves = [];
         }
 
         /*
          * Stores the current bindings on a new shelf and resets.
          */
-        static shelveBindings() {
-
-            //console.log("shelveBindings() {");
-           // console.log("  resetting current");
-            for (var key in KeyBindings.mousetraps) {
-                //console.log("  shelving: " + <KeyBinding> KeyBindings.mousetraps[key].getCombination());
-            }
-
-
+        public shelveBindings() {
+            console.log("KeyBindings[#" + this.instance + "].shelveBindings(): ");
             Mousetrap.reset();
-            KeyBindings.shelves.push(KeyBindings.mousetraps);
-            KeyBindings.mousetraps = {};
-
-            //console.log("}");
+            this.shelves.push(this.activeBindings);
+            this.activeBindings = {};
         }
 
         /*
          * Resets current bindings and re-binds those from the last shelf.
          */
-        static unshelveBindings() {
-
-            //console.log("unshelveBindings() {");
-            //console.log(" resetting current");
-            //console.log(" removing last shelf");
+        public unshelveBindings() {
 
             Mousetrap.reset();
+            var previousMousetraps: {[s:string] : KeyBinding;} = this.shelves.pop();
+            if (previousMousetraps == undefined) {
+                console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): nothing to unshelve");
+                return;
+            }
 
-            var previousMousetraps = KeyBindings.shelves.pop();
+            console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): unshelving... ");
             for (var key in previousMousetraps) {
-                var mousetrap:KeyBinding = <KeyBinding> previousMousetraps[key];
-                //console.log("  binding: " + mousetrap.getCombination());
+                var mousetrap: KeyBinding = <KeyBinding> previousMousetraps[key];
                 Mousetrap.bind(mousetrap.getCombination(), mousetrap.getCallback(), mousetrap.getAction());
             }
-            KeyBindings.mousetraps = previousMousetraps;
-
-            //console.log("}");
-        }
-
-    }
-
-    export class KeyBinding {
-
-        private combination:string;
-
-        private callback:(e:ExtendedKeyboardEvent, combo:string) => boolean;
-
-        private action:string;
-
-        constructor(combination:string, callback?:(e:ExtendedKeyboardEvent, combo:string) => any, action?:string) {
-
-            this.combination = combination;
-            this.callback = callback;
-            this.action = action;
-        }
-
-        setCallback(func:(e:ExtendedKeyboardEvent, combo:string) => boolean):KeyBinding {
-            this.callback = func;
-            return this;
-        }
-
-        setAction(value:string):KeyBinding {
-            this.action = value;
-            return this;
-        }
-
-        getCombination():string {
-            return this.combination;
-        }
-
-        getCallback():(e:ExtendedKeyboardEvent, combo:string) => boolean {
-            return this.callback;
-        }
-
-        getAction():string {
-            return this.action;
-        }
-
-        static newKeyBinding(combination:string):KeyBinding {
-            return new KeyBinding(combination);
+            this.activeBindings = previousMousetraps;
         }
     }
-
-
 }

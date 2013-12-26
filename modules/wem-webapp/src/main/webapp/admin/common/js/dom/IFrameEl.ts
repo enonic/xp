@@ -2,29 +2,30 @@ module api_dom {
 
     export class IFrameEl extends Element {
 
-        private loaded:boolean = false;
+        private loaded: boolean = false;
 
-        constructor(idPrefix?:string, className?:string, el?:ElementHelper) {
+        constructor(idPrefix?: string, className?: string, el?: ElementHelper) {
             super("iframe", idPrefix, className, el);
             this.getHTMLElement().onload = (event) => {
-                this.setLoaded(true);
+                this.loaded = true;
             }
         }
 
-        static fromHtmlElement(element:HTMLIFrameElement):IFrameEl  {
+        static fromHtmlElement(element: HTMLIFrameElement): IFrameEl {
             return new IFrameEl(null, null, new ElementHelper(element));
         }
 
-        public setSrc(src:string) {
+        public setSrc(src: string) {
             this.getEl().setAttribute("src", src);
-        }
-
-        setLoaded(value:boolean) {
-            this.loaded = value;
         }
 
         isLoaded() {
             return this.loaded;
+        }
+
+        postMessage(data: {}, targetOrigin: string = "*") {
+            var thisIFrameElement: HTMLIFrameElement = <HTMLIFrameElement>this.getHTMLElement();
+            thisIFrameElement.contentWindow.postMessage(data, targetOrigin)
         }
     }
 }

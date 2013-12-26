@@ -1,3 +1,5 @@
+///<reference path='AppLauncherEventType.ts' />
+///<reference path='AppLauncherEvent.ts' />
 ///<reference path='AppBarTabId' />
 ///<reference path='AppBar.ts' />
 ///<reference path='UserInfoPopup.ts' />

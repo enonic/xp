@@ -15,6 +15,11 @@ module app_home {
             this.version = new VersionInfo(version);
             this.appendChild(this.installation);
             this.appendChild(this.version);
+
+            api_remote_util.RemoteSystemService.system_getSystemInfo({}, (result: api_remote_util.SystemGetSystemInfoResult) => {
+                this.setInstallation(result.installationName);
+                this.setVersion(result.version);
+            });
         }
 
         getInstallation():string {

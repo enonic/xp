@@ -2,14 +2,20 @@ module app_launcher {
 
     export class AppLauncher {
 
-        private mainContainer:api_dom.DivEl;
-        private adminApplicationFrames:api_dom.DivEl;
-        private appIframes:{[name: string]: api_dom.IFrameEl;};
-        private lostConnectionDetector:app_launcher.LostConnectionDetector;
-        private router:AppRouter;
+        private appManager: api_app.AppManager;
 
-        constructor(mainContainer:api_dom.DivEl) {
-            this.mainContainer = mainContainer;
+        private homeMainContainer: app_home.HomeMainContainer;
+
+        private adminApplicationFrames: api_dom.DivEl;
+
+        private appIframes: {[name: string]: api_dom.IFrameEl;};
+
+        private lostConnectionDetector: app_launcher.LostConnectionDetector;
+
+        private router: AppRouter;
+
+        constructor(mainContainer: app_home.HomeMainContainer) {
+            this.homeMainContainer = mainContainer;
             this.appIframes = {};
 
 
@@ -17,8 +23,8 @@ module app_launcher {
             this.adminApplicationFrames.getEl().setAttribute("style", "overflow-y: hidden;");
             this.adminApplicationFrames.getEl().setHeight('100%').setWidth('100%');
 
-            var appManager = new api_app.AppManager();
-            appManager.addListener({
+            this.appManager = new api_app.AppManager();
+            this.appManager.addListener({
                 onShowLauncher: ()=> {
                     this.showLauncherScreen();
                 },
@@ -33,32 +39,40 @@ module app_launcher {
             api_dom.Body.get().appendChild(this.adminApplicationFrames);
         }
 
-        loadApplication(app:Application) {
+        loadApplication(app: Application) {
             if (!app.getAppUrl()) {
                 console.warn('Missing URL for app "' + app.getName() + '". Cannot be opened.');
                 return;
             }
 
-            this.mainContainer.hide();
-            Applications.getAllApps().forEach((currentApp:Application) => {
+            api_ui.KeyBindings.get().reset();
+            this.homeMainContainer.hide();
+            Applications.getAllApps().forEach((currentApp: Application) => {
                 if (currentApp != app) {
                     currentApp.hide();
                 }
             });
 
-            if (app.hasAppFrame()) {
-                app.getAppFrame().show();
-            } else {
-                this.adminApplicationFrames.appendChild(app.getAppFrame());
+            var initial = !app.hasAppFrame();
+            var appFrame: api_dom.IFrameEl = app.getAppFrame();
+            if (!initial) {
+                appFrame.show();
+            }
+            else {
+                this.adminApplicationFrames.appendChild(appFrame);
                 this.showLoadMask();
             }
+            var type = api_app.AppLauncherEventType.Show;
+            appFrame.postMessage(<api_app.AppLauncherEvent>{appLauncherEvent: api_app.AppLauncherEventType[type]});
         }
 
         showLauncherScreen() {
-            Applications.getAllApps().forEach((app:Application) => {
+            Applications.getAllApps().forEach((app: Application) => {
                 app.hide();
             });
-            this.mainContainer.show();
+            api_ui.KeyBindings.get().reset();
+            this.homeMainContainer.show();
+            this.homeMainContainer.giveFocus();
             hasher.setHash(AppRouter.HOME_HASH_ID);
         }
 
@@ -66,7 +80,7 @@ module app_launcher {
             // TODO implement loadMask
         }
 
-        setRouter(router:AppRouter) {
+        setRouter(router: AppRouter) {
             this.router = router;
         }
     }

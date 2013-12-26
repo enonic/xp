@@ -13,14 +13,16 @@ module api_app {
 
         private appBarTabMenu:api_app.AppBarTabMenu;
 
+        private currentKeyBindings:api_ui.KeyBinding[];
+
         constructor(config:BrowseBasedAppPanelConfig<M>) {
             super(config.appBar.getTabMenu(), config.browsePanel);
 
             this.browsePanel = config.browsePanel;
             this.appBarTabMenu = config.appBar.getTabMenu();
 
-            // TODO: Hack to ensure that we get the key bindings for the browsePanel activated
-            api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(this.resolveActions(this.browsePanel)));
+            this.currentKeyBindings = api_ui.Action.getKeyBindings(this.resolveActions(this.browsePanel));
+            this.activateCurrentKeyBindings();
 
             this.addListener({
                 onPanelShown: (event:api_ui.PanelShownEvent) => {
@@ -29,12 +31,20 @@ module api_app {
                     }
 
                     var previousActions = this.resolveActions(event.previousPanel);
-                    api_ui.KeyBindings.unbindKeys(api_ui.Action.getKeyBindings(previousActions));
+                    api_ui.KeyBindings.get().unbindKeys(api_ui.Action.getKeyBindings(previousActions));
 
                     var nextActions = this.resolveActions(event.panel);
-                    api_ui.KeyBindings.bindKeys(api_ui.Action.getKeyBindings(nextActions));
+                    this.currentKeyBindings = api_ui.Action.getKeyBindings(nextActions);
+                    api_ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
                 }
             });
+        }
+
+        activateCurrentKeyBindings() {
+
+            if( this.currentKeyBindings ) {
+                api_ui.KeyBindings.get().bindKeys(this.currentKeyBindings);
+            }
         }
 
         getAppBarTabMenu():api_app.AppBarTabMenu {

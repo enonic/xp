@@ -5,8 +5,11 @@ module app_launcher {
         private apps:Application[];
         private appTiles:{[name: string]: AppTile;};
         private listeners:AppSelectorListener[] = [];
+        private applicationSearchInput: api_ui.TextInput;
         private emptyMessagePlaceholder:api_dom.DivEl;
         private homeAppSelector:api_dom.DivEl;
+
+        private keyBindings:api_ui.KeyBinding[] =  [];
 
         constructor(applications:Application[]) {
             super();
@@ -17,14 +20,14 @@ module app_launcher {
             this.homeAppSelector = new api_dom.DivEl(null, 'app-selector');
 
             var searchInputContainer = new api_dom.DivEl(null, 'search-input-container');
-            var searchInput = new api_ui.TextInput();
-            searchInput.setPlaceholder('Application Filter');
-            searchInput.addListener({
+            this.applicationSearchInput = new api_ui.TextInput();
+            this.applicationSearchInput.setPlaceholder('Application Filter');
+            this.applicationSearchInput.addListener({
                 onValueChanged: (oldValue, newValue) => {
                     this.filterTiles(newValue);
                 }
             });
-            searchInputContainer.appendChild(searchInput);
+            searchInputContainer.appendChild(this.applicationSearchInput);
 
             this.homeAppSelector.appendChild(searchInputContainer);
 
@@ -39,22 +42,31 @@ module app_launcher {
 
             this.appendChild(this.homeAppSelector);
 
-            api_ui.KeyBindings.bindKey(new api_ui.KeyBinding('tab', (e:ExtendedKeyboardEvent, combo:string)=> {
+            this.keyBindings.push(new api_ui.KeyBinding('tab', (e:ExtendedKeyboardEvent, combo:string)=> {
                 this.highlightNextAppTile();
                 return false;
             }));
-            api_ui.KeyBindings.bindKey(new api_ui.KeyBinding('shift+tab', (e:ExtendedKeyboardEvent, combo:string)=> {
+            this.keyBindings.push(new api_ui.KeyBinding('shift+tab', (e:ExtendedKeyboardEvent, combo:string)=> {
                 this.highlightPreviousAppTile();
                 return false;
             }));
-            api_ui.KeyBindings.bindKey(new api_ui.KeyBinding('return', (e:ExtendedKeyboardEvent, combo:string)=> {
-                var app:Application;
+            this.keyBindings.push(new api_ui.KeyBinding('return', (e:ExtendedKeyboardEvent, combo:string)=> {
                 if (this.selectedAppIndex >= 0) {
-                    app = this.apps[this.selectedAppIndex];
+                    var app:Application = this.apps[this.selectedAppIndex];
                     this.notifyAppSelected(app);
                 }
                 return false;
             }));
+
+            this.activateKeyBindings();
+        }
+
+        activateKeyBindings() {
+            api_ui.KeyBindings.get().bindKeys(this.keyBindings);
+        }
+
+        giveFocus() : boolean {
+            return this.applicationSearchInput.giveFocus();
         }
 
         addListener(listener:AppSelectorListener) {

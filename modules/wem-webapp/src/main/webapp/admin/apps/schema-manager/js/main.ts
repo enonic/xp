@@ -23,4 +23,13 @@ window.onload = () => {
     api_dom.Body.get().appendChild(appPanel);
 
     appPanel.init();
+
+    window.onmessage = (e:MessageEvent) => {
+        if( e.data.appLauncherEvent ) {
+            var eventType:api_app.AppLauncherEventType = api_app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            if( eventType ==  api_app.AppLauncherEventType.Show ) {
+                appPanel.activateCurrentKeyBindings();
+            }
+        }
+    }
 };
