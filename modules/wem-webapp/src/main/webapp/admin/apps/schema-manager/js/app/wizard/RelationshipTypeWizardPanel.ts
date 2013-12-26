@@ -2,7 +2,7 @@ module app_wizard {
 
     export class RelationshipTypeWizardPanel extends api_app_wizard.WizardPanel<api_schema_relationshiptype.RelationshipType> {
 
-        public static NEW_WIZARD_HEADER = "New Relationship Type";
+        public static NEW_WIZARD_HEADER = "new relationship type";
 
         private formIcon: api_app_wizard.FormIcon;
 

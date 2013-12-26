@@ -5,12 +5,14 @@ import com.google.inject.Singleton;
 import com.enonic.wem.admin.jsonrpc.controller.JsonRpcController;
 import com.enonic.wem.admin.rest.exception.DefaultExceptionMapper;
 import com.enonic.wem.admin.rest.exception.IllegalArgumentExceptionMapper;
+import com.enonic.wem.admin.rest.exception.JsonMappingExceptionMapper;
 import com.enonic.wem.admin.rest.exception.NotFoundExceptionMapper;
 import com.enonic.wem.admin.rest.provider.JsonObjectProvider;
 import com.enonic.wem.admin.rest.provider.JsonSerializableProvider;
 import com.enonic.wem.admin.rest.resource.account.AccountExportResource;
 import com.enonic.wem.admin.rest.resource.account.AccountImageResource;
 import com.enonic.wem.admin.rest.resource.auth.AuthResource;
+import com.enonic.wem.admin.rest.resource.blob.BlobResource;
 import com.enonic.wem.admin.rest.resource.content.ContentAttachmentResource;
 import com.enonic.wem.admin.rest.resource.content.ContentImageResource;
 import com.enonic.wem.admin.rest.resource.content.ContentResource;
@@ -32,7 +34,6 @@ import com.enonic.wem.admin.rest.resource.schema.relationship.RelationshipTypeRe
 import com.enonic.wem.admin.rest.resource.status.StatusResource;
 import com.enonic.wem.admin.rest.resource.tools.ToolsResource;
 import com.enonic.wem.admin.rest.resource.ui.BackgroundImageResource;
-import com.enonic.wem.admin.rest.resource.blob.BlobResource;
 import com.enonic.wem.admin.rest.resource.util.CountryResource;
 import com.enonic.wem.admin.rest.resource.util.LocaleResource;
 import com.enonic.wem.admin.rest.resource.util.TimeZoneResource;
@@ -89,6 +90,7 @@ public final class RestServlet
 
         addClass( DefaultExceptionMapper.class );
         addClass( IllegalArgumentExceptionMapper.class );
+        addClass( JsonMappingExceptionMapper.class );
         addClass( NotFoundExceptionMapper.class );
     }
 }

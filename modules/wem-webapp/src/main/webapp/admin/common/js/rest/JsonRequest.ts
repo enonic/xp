@@ -55,7 +55,7 @@ module api_rest {
                         var errorJson:any = JSON.parse(request.response);
                         var notifyMessage:string = "HTTP Status " + request.status + " - " + request.statusText + ": " + errorJson.message;
 
-                        if( request.status == 404 ) {
+                        if (request.status >= 400 && request.status < 500) {
                             api_notify.showWarning(notifyMessage);
                         }
                         else {
