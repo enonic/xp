@@ -2,7 +2,6 @@ package com.enonic.wem.core.content;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.util.Collection;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -26,7 +25,6 @@ import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.CreateNodeResult;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
@@ -175,19 +173,6 @@ public class CreateContentHandler
         return command.getParentContentPath();
     }
 
-    private void addAttachments( final Content content, final Content storedContent )
-        throws Exception
-    {
-        addAttachments( context.getClient(), storedContent.getId(), command.getAttachments() );
-
-        final Attachment thumbnailAttachment = resolveThumbnailAttachment( content );
-        if ( thumbnailAttachment != null )
-        {
-            context.getClient().execute(
-                Commands.attachment().create().contentId( storedContent.getId() ).attachment( thumbnailAttachment ) );
-        }
-    }
-
     private void verifyParentAllowsChildren()
     {
         if ( !command.isDraft() && !command.getParentContentPath().isRoot() )
@@ -255,14 +240,6 @@ public class CreateContentHandler
         if ( dataValidationErrors.hasErrors() )
         {
             throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
-        }
-    }
-
-    private void addAttachments( final Client client, final ContentId contentId, final Collection<Attachment> attachments )
-    {
-        for ( Attachment attachment : attachments )
-        {
-            client.execute( Commands.attachment().create().contentId( contentId ).attachment( attachment ) );
         }
     }
 

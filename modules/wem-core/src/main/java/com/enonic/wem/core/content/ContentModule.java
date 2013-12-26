@@ -4,12 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
 import com.enonic.wem.core.command.CommandBinder;
-import com.enonic.wem.core.content.attachment.CreateAttachmentHandler;
-import com.enonic.wem.core.content.attachment.DeleteAttachmentHandler;
 import com.enonic.wem.core.content.attachment.GetAttachmentHandler;
 import com.enonic.wem.core.content.attachment.GetAttachmentsHandler;
-import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
-import com.enonic.wem.core.content.attachment.dao.AttachmentDaoImpl;
 import com.enonic.wem.core.content.dao.ContentDao;
 import com.enonic.wem.core.content.dao.ContentDaoImpl;
 import com.enonic.wem.core.initializer.InitializerTaskBinder;
@@ -21,7 +17,6 @@ public final class ContentModule
     protected void configure()
     {
         bind( ContentDao.class ).to( ContentDaoImpl.class ).in( Scopes.SINGLETON );
-        bind( AttachmentDao.class ).to( AttachmentDaoImpl.class ).in( Scopes.SINGLETON );
 
         final InitializerTaskBinder tasks = InitializerTaskBinder.from( binder() );
         tasks.add( ContentInitializer.class );
@@ -43,8 +38,6 @@ public final class ContentModule
         commands.add( UpdateContentHandler.class );
         commands.add( ValidateContentDataHandler.class );
 
-        commands.add( CreateAttachmentHandler.class );
-        commands.add( DeleteAttachmentHandler.class );
         commands.add( GetAttachmentHandler.class );
         commands.add( GetAttachmentsHandler.class );
     }

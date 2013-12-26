@@ -1,10 +1,7 @@
 package com.enonic.wem.core.content;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.jcr.Session;
 
@@ -13,23 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.ByteStreams;
 
 import com.enonic.wem.api.Client;
-import com.enonic.wem.api.blob.Blob;
-import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.Commands;
-import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.content.UpdateContent;
 import com.enonic.wem.api.command.content.ValidateContentData;
-import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.command.entity.DeleteNodeByPath;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentDataValidationException;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
@@ -37,20 +28,17 @@ import com.enonic.wem.api.data.type.ValueTypes;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeEditor;
 import com.enonic.wem.api.entity.NodePath;
-import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.validator.DataValidationError;
 import com.enonic.wem.api.schema.content.validator.DataValidationErrors;
 import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.entity.DeleteNodeByPathService;
 import com.enonic.wem.core.entity.UpdateNodeHandler;
-import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.index.IndexService;
 import com.enonic.wem.core.relationship.RelationshipService;
 import com.enonic.wem.core.relationship.SyncRelationshipsCommand;
 
 import static com.enonic.wem.api.content.Content.newContent;
-import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
 public class UpdateContentHandler
     extends CommandHandler<UpdateContent>
@@ -168,28 +156,7 @@ public class UpdateContentHandler
         }
     }
 
-    private void addMediaThumbnail( final Content content, final ContentId contentId )
-        throws Exception
-    {
 
-        final Client client = context.getClient();
-
-        // TODO: Fetch through Node-handler instead?
-        final ContentType contentType = client.execute( Commands.contentType().get().byName().contentTypeName( content.getType() ) );
-
-        if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
-        {
-            Attachment mediaAttachment = command.getAttachment( content.getName().toString() );
-            if ( ( mediaAttachment == null ) && ( !command.getAttachments().isEmpty() ) )
-            {
-                mediaAttachment = command.getAttachments().iterator().next();
-            }
-            if ( mediaAttachment != null )
-            {
-                addThumbnail( client, contentId, mediaAttachment );
-            }
-        }
-    }
 
     private ImmutableMap<ContentId, Content> resolveEmbeddedContent( final ContentData contentData )
     {
@@ -238,7 +205,7 @@ public class UpdateContentHandler
         }
     }
 
-    private void addThumbnail( final Client client, final ContentId contentId, final Attachment attachment )
+    /*private void addThumbnail( final Client client, final ContentId contentId, final Attachment attachment )
         throws Exception
     {
         final Blob thumbnailBlob = createImageThumbnail( attachment.getBlobKey(), THUMBNAIL_SIZE );
@@ -248,9 +215,9 @@ public class UpdateContentHandler
             mimeType( THUMBNAIL_MIME_TYPE ).
             build();
         client.execute( Commands.attachment().create().contentId( contentId ).attachment( thumbnailAttachment ) );
-    }
+    }*/
 
-    public Blob createImageThumbnail( final BlobKey originalImageBlobKey, final int size )
+    /*public Blob createImageThumbnail( final BlobKey originalImageBlobKey, final int size )
         throws Exception
     {
         final Blob originalImage = context.getClient().execute( Commands.blob().get( originalImageBlobKey ) );
@@ -260,7 +227,7 @@ public class UpdateContentHandler
         ImageIO.write( scaledImage, "png", outputStream );
         CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( outputStream.toByteArray() ).getInput() );
         return context.getClient().execute( createBlob );
-    }
+    }*/
 
     @Inject
     public void setRelationshipService( final RelationshipService relationshipService )

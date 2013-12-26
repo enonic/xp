@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.attachment;
 
-import javax.jcr.Session;
-
 import com.enonic.wem.api.command.content.attachment.GetAttachments;
 import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.content.ContentNotFoundException;
@@ -23,11 +21,10 @@ public class GetAttachmentsHandler
     public void handle()
         throws Exception
     {
-        final Session session = context.getJcrSession();
-
         try
         {
-            final Node node = new GetNodeByIdService( session, new GetNodeById( EntityId.from( command.getContentId() ) ) ).execute();
+            final Node node =
+                new GetNodeByIdService( context.getJcrSession(), new GetNodeById( EntityId.from( command.getContentId() ) ) ).execute();
             final Attachments.Builder attachmentsBuilder = Attachments.newAttachments();
 
             for ( com.enonic.wem.api.entity.Attachment entityAttachment : node.attachments() )

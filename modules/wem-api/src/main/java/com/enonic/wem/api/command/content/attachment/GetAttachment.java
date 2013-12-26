@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.command.Command;
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.attachment.Attachment;
 
 public final class GetAttachment
@@ -14,8 +13,6 @@ public final class GetAttachment
     private String attachmentName;
 
     private ContentId contentId;
-
-    private ContentPath contentPath;
 
     public GetAttachment attachmentName( final String attachmentName )
     {
@@ -29,11 +26,6 @@ public final class GetAttachment
         return this;
     }
 
-    public GetAttachment contentPath( final ContentPath contentPath )
-    {
-        this.contentPath = contentPath;
-        return this;
-    }
 
     public String getAttachmentName()
     {
@@ -43,11 +35,6 @@ public final class GetAttachment
     public ContentId getContentId()
     {
         return contentId;
-    }
-
-    public ContentPath getContentPath()
-    {
-        return contentPath;
     }
 
     @Override
@@ -72,10 +59,6 @@ public final class GetAttachment
         {
             return false;
         }
-        if ( contentPath != null ? !contentPath.equals( that.contentPath ) : that.contentPath != null )
-        {
-            return false;
-        }
 
         return true;
     }
@@ -85,17 +68,13 @@ public final class GetAttachment
     {
         int result = attachmentName != null ? attachmentName.hashCode() : 0;
         result = 31 * result + ( contentId != null ? contentId.hashCode() : 0 );
-        result = 31 * result + ( contentPath != null ? contentPath.hashCode() : 0 );
         return result;
     }
 
     @Override
     public void validate()
     {
-        if ( this.contentId == null )
-        {
-            Preconditions.checkNotNull( this.contentPath, "contentId/contentPath cannot be null" );
-        }
+        Preconditions.checkNotNull( this.contentId, "contentId cannot be null" );
         Preconditions.checkNotNull( this.attachmentName, "attachmentName cannot be null" );
     }
 }
