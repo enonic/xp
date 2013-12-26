@@ -2,11 +2,11 @@ module api_content_image{
 
     export class ImageContentDataFactory {
 
-        private image:api_content.AttachmentName;
+        private image:api_content_attachment.AttachmentName;
 
         private mimeType:string;
 
-        public setImage(value:api_content.AttachmentName):ImageContentDataFactory {
+        public setImage(value:api_content_attachment.AttachmentName):ImageContentDataFactory {
             this.image = value;
             return this;
         }

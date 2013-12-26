@@ -8,7 +8,7 @@ module api_form_inputtype {
 
         getValues(): api_data.Value[];
 
-        getAttachments(): api_content.Attachment[];
+        getAttachments(): api_content_attachment.Attachment[];
 
         validate(validationRecorder:api_form.ValidationRecorder);
 

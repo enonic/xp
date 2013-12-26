@@ -6,9 +6,12 @@ module api_form {
 
         private persistedContent: api_content.Content;
 
+        private attachments: api_content_attachment.Attachments;
+
         constructor(builder: FormContextBuilder) {
             this.parentContent = builder.parentContent;
             this.persistedContent = builder.persistedContent;
+            this.attachments = builder.attachments;
         }
 
         getContentId(): api_content.ContentId {
@@ -27,6 +30,10 @@ module api_form {
 
             return this.parentContent.getPath();
         }
+
+        getAttachments() : api_content_attachment.Attachments{
+            return this.attachments;
+        }
     }
 
     export class FormContextBuilder {
@@ -35,6 +42,8 @@ module api_form {
 
         persistedContent: api_content.Content;
 
+        attachments: api_content_attachment.Attachments;
+
         public setParentContent(value: api_content.Content): FormContextBuilder {
             this.parentContent = value;
             return this;
@@ -42,6 +51,11 @@ module api_form {
 
         public setPersistedContent(value: api_content.Content): FormContextBuilder {
             this.persistedContent = value;
+            return this;
+        }
+
+        public setAttachments(value: api_content_attachment.Attachments): FormContextBuilder {
+            this.attachments = value;
             return this;
         }
 

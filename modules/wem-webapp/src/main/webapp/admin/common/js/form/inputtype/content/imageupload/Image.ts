@@ -8,14 +8,15 @@ module api_form_inputtype_content_imageupload {
 
         private imageUploaders: api_ui.ImageUploader[] = [];
 
-        private uploadItem:api_ui.UploadItem;
+        private attachmentName: string;
 
-        private attachmentName:string;
+        private attachments:api_content_attachment.Attachments;
 
         constructor(config: api_form_inputtype.InputTypeViewConfig<any>) {
             super("Image");
             this.addClass("image");
             this.config = config;
+            this.attachments = config.attachments;
         }
 
         createInputOccurrenceElement(index: number, property: api_data.Property): api_dom.Element {
@@ -30,7 +31,9 @@ module api_form_inputtype_content_imageupload {
             var imageUploader = new api_ui.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
             imageUploader.addListener({
                 onFileUploaded: (uploadItem: api_ui.UploadItem) => {
-                    this.uploadItem = uploadItem;
+                    this.attachments = new api_content_attachment.AttachmentsBuilder().
+                        addAll(this.attachments.getAttachments()).
+                        add(this.uploadItemToAttachment(uploadItem)).build();
                     this.attachmentName = uploadItem.getName();
                 },
                 onUploadComplete: null
@@ -51,24 +54,23 @@ module api_form_inputtype_content_imageupload {
             return new api_data.Value(this.attachmentName, api_data.ValueTypes.STRING);
         }
 
-        getAttachments(): api_content.Attachment[] {
+        getAttachments(): api_content_attachment.Attachment[] {
 
-            var attachments: api_content.Attachment[] = [];
-
-            var attachment = new api_content.AttachmentBuilder().
-                setBlobKey(this.uploadItem.getBlobKey()).
-                setAttachmentName(new api_content.AttachmentName(this.uploadItem.getName())).
-                setMimeType(this.uploadItem.getMimeType()).
-                setSize(this.uploadItem.getSize()).
-                build();
-            attachments.push(attachment);
-
-            return attachments;
+            return this.attachments.getAttachments();
         }
 
         valueBreaksRequiredContract(value: api_data.Value): boolean {
             // TODO:
             return false;
+        }
+
+        private uploadItemToAttachment(uploadItem:api_ui.UploadItem) : api_content_attachment.Attachment {
+             return new api_content_attachment.AttachmentBuilder().
+                setBlobKey(uploadItem.getBlobKey()).
+                setAttachmentName(new api_content_attachment.AttachmentName(uploadItem.getName())).
+                setMimeType(uploadItem.getMimeType()).
+                setSize(uploadItem.getSize()).
+                build();
         }
 
     }

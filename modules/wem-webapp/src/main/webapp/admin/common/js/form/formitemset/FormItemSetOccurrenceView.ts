@@ -166,10 +166,10 @@ module api_form_formitemset {
             return dataSet;
         }
 
-        getAttachments(): api_content.Attachment[] {
-            var attachments:api_content.Attachment[] = [];
+        getAttachments(): api_content_attachment.Attachment[] {
+            var attachments:api_content_attachment.Attachment[] = [];
             this.formItemViews.forEach((formItemView:api_form.FormItemView) => {
-                formItemView.getAttachments().forEach( (attachment:api_content.Attachment) => {
+                formItemView.getAttachments().forEach( (attachment:api_content_attachment.Attachment) => {
                     attachments.push( attachment );
                 } );
             });

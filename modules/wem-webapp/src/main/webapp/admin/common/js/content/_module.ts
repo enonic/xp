@@ -1,5 +1,3 @@
-///<reference path='AttachmentName.ts' />
-///<reference path='Attachment.ts' />
 ///<reference path='ContentId.ts' />
 ///<reference path='ContentName.ts' />
 ///<reference path='ContentUnnamed.ts' />

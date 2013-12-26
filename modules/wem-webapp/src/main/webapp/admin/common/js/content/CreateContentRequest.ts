@@ -18,7 +18,7 @@ module api_content {
 
         private displayName: string;
 
-        private attachments: api_content.Attachment[] = [];
+        private attachments: api_content_attachment.Attachment[] = [];
 
         constructor() {
             super();
@@ -65,12 +65,12 @@ module api_content {
             return this;
         }
 
-        addAttachment(attachment: api_content.Attachment): CreateContentRequest {
+        addAttachment(attachment: api_content_attachment.Attachment): CreateContentRequest {
             this.attachments.push(attachment);
             return this;
         }
 
-        addAttachments(attachments: api_content.Attachment[]): CreateContentRequest {
+        addAttachments(attachments: api_content_attachment.Attachment[]): CreateContentRequest {
             this.attachments = this.attachments.concat(attachments);
             return this;
         }
@@ -90,10 +90,10 @@ module api_content {
             };
         }
 
-        private attachmentsToJson(): api_content_json.AttachmentJson[] {
-            var array: api_content_json.AttachmentJson[] = [];
-            this.attachments.forEach((attachment: api_content.Attachment)=> {
-                var attachmentJsonbj:api_content_json.AttachmentJson = {
+        private attachmentsToJson(): api_content_attachment.AttachmentJson[] {
+            var array: api_content_attachment.AttachmentJson[] = [];
+            this.attachments.forEach((attachment: api_content_attachment.Attachment)=> {
+                var attachmentJsonbj:api_content_attachment.AttachmentJson = {
                     "blobKey": attachment.getBlobKey().toString(),
                     "attachmentName": attachment.getAttachmentName().toString(),
                     "mimeType": attachment.getMimeType(),

@@ -12,6 +12,11 @@ public final class AttachmentCommands
         return new GetAttachment();
     }
 
+    public GetAttachments getAll()
+    {
+        return new GetAttachments();
+    }
+
     public DeleteAttachment delete()
     {
         return new DeleteAttachment();

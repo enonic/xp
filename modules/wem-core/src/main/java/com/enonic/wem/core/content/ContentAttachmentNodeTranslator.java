@@ -40,14 +40,14 @@ public class ContentAttachmentNodeTranslator
     }
 
 
-    public Attachment toContentAttachment( final com.enonic.wem.api.entity.Attachment nodeAttachment )
+    public Attachment toContentAttachment( final com.enonic.wem.api.entity.Attachment entityAttachment )
     {
-        if ( nodeAttachment == null )
+        if ( entityAttachment == null )
         {
             return null;
         }
 
-        return doTranslateToContentAttachment( nodeAttachment );
+        return doTranslateToContentAttachment( entityAttachment );
     }
 
     private Attachment doTranslateToContentAttachment( final com.enonic.wem.api.entity.Attachment nodeAttachment )

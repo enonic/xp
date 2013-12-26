@@ -83,10 +83,10 @@ module api_form_formitemset {
             return dataSets;
         }
 
-        getAttachments(): api_content.Attachment[] {
-            var attachments:api_content.Attachment[] = [];
+        getAttachments(): api_content_attachment.Attachment[] {
+            var attachments:api_content_attachment.Attachment[] = [];
             this.getOccurrenceViews().forEach((occurrenceView:FormItemSetOccurrenceView) => {
-                occurrenceView.getAttachments().forEach( (attachment:api_content.Attachment) => {
+                occurrenceView.getAttachments().forEach( (attachment:api_content_attachment.Attachment) => {
                     attachments.push( attachment );
                 } );
             });

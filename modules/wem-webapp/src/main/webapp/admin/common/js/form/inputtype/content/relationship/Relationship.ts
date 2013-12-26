@@ -135,7 +135,7 @@ module api_form_inputtype_content_relationship {
             return values;
         }
 
-        getAttachments(): api_content.Attachment[] {
+        getAttachments(): api_content_attachment.Attachment[] {
             return [];
         }
 

@@ -46,7 +46,7 @@ module api_form_inputtype_support {
             return this.inputOccurrences.getValues();
         }
 
-        getAttachments():api_content.Attachment[] {
+        getAttachments():api_content_attachment.Attachment[] {
             return [];
         }
 

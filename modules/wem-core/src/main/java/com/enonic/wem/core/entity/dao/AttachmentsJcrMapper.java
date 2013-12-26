@@ -76,21 +76,25 @@ public class AttachmentsJcrMapper
         {
             return;
         }
-
-        if ( attachments.isEmpty() && !jcrNode.hasNode( ATTACHMENTS_NODE_NAME ) )
+        else if ( attachments.isEmpty() && !jcrNode.hasNode( ATTACHMENTS_NODE_NAME ) )
         {
             return;
         }
-        else if ( attachments.isEmpty() && jcrNode.hasNode( ATTACHMENTS_NODE_NAME ) )
+
+        if ( attachments.isEmpty() && jcrNode.hasNode( ATTACHMENTS_NODE_NAME ) )
         {
             jcrNode.getNode( ATTACHMENTS_NODE_NAME ).remove();
-            return;
         }
-
-        final Node attachmentsNode = jcrNode.getNode( ATTACHMENTS_NODE_NAME );
-
-        removeNodes( attachments, attachmentsNode );
-        addNodes( attachments, attachmentsNode );
+        else if ( attachments.isNotEmpty() && !jcrNode.hasNode( ATTACHMENTS_NODE_NAME ) )
+        {
+            addNodes( attachments, jcrNode.addNode( ATTACHMENTS_NODE_NAME ) );
+        }
+        else
+        {
+            final Node attachmentsNode = jcrNode.getNode( ATTACHMENTS_NODE_NAME );
+            removeNodes( attachments, attachmentsNode );
+            addNodes( attachments, attachmentsNode );
+        }
     }
 
     private void addNodes( final Attachments attachments, final Node attachmentsNode )

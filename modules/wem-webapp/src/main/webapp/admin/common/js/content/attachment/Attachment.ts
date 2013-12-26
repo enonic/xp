@@ -1,4 +1,4 @@
-module api_content {
+module api_content_attachment {
 
     export class Attachment {
 

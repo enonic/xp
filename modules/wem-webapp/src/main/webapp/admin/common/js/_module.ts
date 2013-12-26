@@ -78,6 +78,7 @@
 ///<reference path='module/json/_module.ts' />
 ///<reference path='module/_module.ts' />
 
+///<reference path='content/attachment/_module.ts' />
 ///<reference path='content/image/_module.ts' />
 ///<reference path='content/site/json/_module.ts' />
 ///<reference path='content/site/_module.ts' />

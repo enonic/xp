@@ -39,7 +39,8 @@ module api_form_input {
                     contentPath: this.getContext().getContentPath(),
                     parentContentPath: this.getContext().getParentContentPath(),
                     dataPath: api_data.DataPath.fromString(this.input.getPath().toString()),
-                    inputConfig: inputTypeConfig
+                    inputConfig: inputTypeConfig,
+                    attachments: this.getContext().getAttachments()
                 };
 
                 this.inputTypeView = InputTypeManager.createView(inputType.getName(), inputTypeViewConfig);
@@ -103,7 +104,7 @@ module api_form_input {
             return properties;
         }
 
-        getAttachments(): api_content.Attachment[] {
+        getAttachments(): api_content_attachment.Attachment[] {
             return this.inputTypeView.getAttachments();
         }
 

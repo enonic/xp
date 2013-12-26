@@ -125,7 +125,7 @@ module api_form_inputtype_content_image {
             return values;
         }
 
-        getAttachments(): api_content.Attachment[] {
+        getAttachments(): api_content_attachment.Attachment[] {
             return [];
         }
 
@@ -247,8 +247,8 @@ module api_form_inputtype_content_image {
 
         private createTemporaryImageContent(uploadItem: api_ui.UploadItem) {
 
-            var attachmentName = new api_content.AttachmentName(uploadItem.getName());
-            var attachment = new api_content.AttachmentBuilder().
+            var attachmentName = new api_content_attachment.AttachmentName(uploadItem.getName());
+            var attachment = new api_content_attachment.AttachmentBuilder().
                 setBlobKey(uploadItem.getBlobKey()).
                 setAttachmentName(attachmentName).
                 setMimeType(uploadItem.getMimeType()).

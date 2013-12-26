@@ -116,8 +116,8 @@ module api_form {
             return this.contentData;
         }
 
-        getAttachments(): api_content.Attachment[] {
-            var attachments: api_content.Attachment[] = [];
+        getAttachments(): api_content_attachment.Attachment[] {
+            var attachments: api_content_attachment.Attachment[] = [];
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 attachments = attachments.concat(formItemView.getAttachments());
             });

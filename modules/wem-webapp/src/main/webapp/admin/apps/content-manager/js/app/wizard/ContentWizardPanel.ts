@@ -256,46 +256,54 @@ module app_wizard {
                 this.formIcon.setSrc(content.getIconUrl());
                 var contentData: api_content.ContentData = content.getContentData();
 
-                var formContext = new api_form.FormContextBuilder().
-                    setParentContent(this.parentContent).
-                    setPersistedContent(content).
-                    build();
+                this.loadAttachments(content.getContentId(), (attachmentsArray: api_content_attachment.Attachment[])=> {
 
-                this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
-                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
-                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                    var attachments = new api_content_attachment.AttachmentsBuilder().
+                        addAll(attachmentsArray).
+                        build();
 
-                if (content.isPage()) {
-                    var page = content.getPage();
+                    var formContext = new api_form.FormContextBuilder().
+                        setParentContent(this.parentContent).
+                        setPersistedContent(content).
+                        setAttachments(attachments).
+                        build();
 
-                    new api_content_page.GetPageTemplateByKeyRequest(page.getTemplate()).
-                        sendAndParse().
-                        done((pageTemplate: api_content_page.PageTemplate) => {
+                    this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
+                    // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
-                            this.pageWizardStepForm.renderExisting(content, pageTemplate);
-                            this.livePanel.renderExisting(content, pageTemplate);
+                    if (content.isPage()) {
+                        var page = content.getPage();
 
-                            if (this.siteWizardStepForm != null && content.getSite()) {
-                                this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
+                        new api_content_page.GetPageTemplateByKeyRequest(page.getTemplate()).
+                            sendAndParse().
+                            done((pageTemplate: api_content_page.PageTemplate) => {
+
+                                this.pageWizardStepForm.renderExisting(content, pageTemplate);
+                                this.livePanel.renderExisting(content, pageTemplate);
+
+                                if (this.siteWizardStepForm != null && content.getSite()) {
+                                    this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
+                                        callback();
+                                    });
+                                }
+                                else {
                                     callback();
-                                });
-                            }
-                            else {
-                                callback();
-                            }
-                        });
-                }
-                else {
-
-                    if (this.siteWizardStepForm != null && content.isSite()) {
-                        this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
-                            callback();
-                        });
+                                }
+                            });
                     }
                     else {
-                        callback();
+
+                        if (this.siteWizardStepForm != null && content.isSite()) {
+                            this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
+                                callback();
+                            });
+                        }
+                        else {
+                            callback();
+                        }
                     }
-                }
+                });
             });
         }
 
@@ -370,9 +378,9 @@ module app_wizard {
             updateRequest.addAttachments(this.contentWizardStepForm.getFormView().getAttachments());
 
             if (this.iconUploadItem) {
-                var attachment = new api_content.AttachmentBuilder().
+                var attachment = new api_content_attachment.AttachmentBuilder().
                     setBlobKey(this.iconUploadItem.getBlobKey()).
-                    setAttachmentName(new api_content.AttachmentName('_thumb.png')).
+                    setAttachmentName(new api_content_attachment.AttachmentName('_thumb.png')).
                     setMimeType(this.iconUploadItem.getMimeType()).
                     setSize(this.iconUploadItem.getSize()).
                     build();
@@ -414,6 +422,15 @@ module app_wizard {
                     }
                 });
         }
+
+        private loadAttachments(content: api_content.ContentId, callback: { (attachments: api_content_attachment.Attachment[]) }) {
+            new api_content_attachment.GetAttachmentsRequest(content).
+                sendAndParse().
+                done((attachments: api_content_attachment.Attachment[]) => {
+                    callback(attachments);
+                });
+        }
+
 
         private resolveContentNameForUpdateReuest(): api_content.ContentName {
             if (api_util.isStringEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {

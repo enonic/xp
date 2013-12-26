@@ -85,7 +85,7 @@ module api_form_formitemset {
             return this.formItemSetOccurrences.getDataSets();
         }
 
-        getAttachments(): api_content.Attachment[] {
+        getAttachments(): api_content_attachment.Attachment[] {
             return this.formItemSetOccurrences.getAttachments();
         }
 

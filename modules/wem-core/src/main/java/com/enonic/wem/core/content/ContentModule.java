@@ -7,6 +7,7 @@ import com.enonic.wem.core.command.CommandBinder;
 import com.enonic.wem.core.content.attachment.CreateAttachmentHandler;
 import com.enonic.wem.core.content.attachment.DeleteAttachmentHandler;
 import com.enonic.wem.core.content.attachment.GetAttachmentHandler;
+import com.enonic.wem.core.content.attachment.GetAttachmentsHandler;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.content.attachment.dao.AttachmentDaoImpl;
 import com.enonic.wem.core.content.dao.ContentDao;
@@ -45,5 +46,6 @@ public final class ContentModule
         commands.add( CreateAttachmentHandler.class );
         commands.add( DeleteAttachmentHandler.class );
         commands.add( GetAttachmentHandler.class );
+        commands.add( GetAttachmentsHandler.class );
     }
 }

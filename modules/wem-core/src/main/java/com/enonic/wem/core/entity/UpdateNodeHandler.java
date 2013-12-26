@@ -62,6 +62,7 @@ public class UpdateNodeHandler
             nodeToUpdate( command.getNode() ).
             name( edited.name() ).
             rootDataSet( edited.data() ).
+            attachments( edited.attachments() ).
             build();
 
         final Node persistedNode = nodeJcrDao.updateNode( updateNodeArgs );

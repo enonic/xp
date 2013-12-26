@@ -98,9 +98,9 @@ public final class Attachment
         return new Builder();
     }
 
-    public static Builder newAttachment( final Attachment space )
+    public static Builder newAttachment( final Attachment source )
     {
-        return new Builder( space );
+        return new Builder( source );
     }
 
     public static class Builder

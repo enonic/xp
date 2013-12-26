@@ -1,6 +1,5 @@
 package com.enonic.wem.core.content.attachment;
 
-import javax.inject.Inject;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.content.attachment.GetAttachment;
@@ -13,7 +12,6 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
 import com.enonic.wem.core.content.ContentNodeHelper;
-import com.enonic.wem.core.content.attachment.dao.AttachmentDao;
 import com.enonic.wem.core.entity.GetNodeByIdService;
 import com.enonic.wem.core.entity.GetNodeByPathService;
 
@@ -21,8 +19,6 @@ import com.enonic.wem.core.entity.GetNodeByPathService;
 public class GetAttachmentHandler
     extends CommandHandler<GetAttachment>
 {
-    private AttachmentDao attachmentDao;
-
     final ContentAttachmentNodeTranslator CONTENT_ATTACHMENT_NODE_TRANSLATOR = new ContentAttachmentNodeTranslator();
 
     @Override
@@ -35,7 +31,7 @@ public class GetAttachmentHandler
 
         if ( command.getContentId() != null )
         {
-            GetNodeById getNodeByIdCommand = new GetNodeById( EntityId.from( command.getContentId().toString() ) );
+            GetNodeById getNodeByIdCommand = new GetNodeById( EntityId.from( command.getContentId() ) );
             node = new GetNodeByIdService( session, getNodeByIdCommand ).execute();
             if ( node == null )
             {
@@ -77,9 +73,4 @@ public class GetAttachmentHandler
         return node.attachments().getAttachment( command.getAttachmentName() );
     }
 
-    @Inject
-    public void setAttachmentDao( final AttachmentDao attachmentDao )
-    {
-        this.attachmentDao = attachmentDao;
-    }
 }

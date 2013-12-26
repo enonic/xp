@@ -97,7 +97,7 @@ module api_form_inputtype_combobox {
             return values;
         }
 
-        getAttachments(): api_content.Attachment[] {
+        getAttachments(): api_content_attachment.Attachment[] {
             return [];
         }
 

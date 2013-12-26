@@ -1,4 +1,4 @@
-package com.enonic.wem.admin.rest.resource.content.json;
+package com.enonic.wem.admin.json.content.attachment;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +23,11 @@ public class AttachmentJson
             name( attachmentNameAsString ).
             mimeType( mimeType ).
             build();
+    }
+
+    public AttachmentJson( final Attachment attachment )
+    {
+        this.attachment = attachment;
     }
 
     @JsonIgnore

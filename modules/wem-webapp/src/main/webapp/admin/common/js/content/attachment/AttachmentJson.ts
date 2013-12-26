@@ -1,4 +1,4 @@
-module api_content_json {
+module api_content_attachment {
 
     export interface AttachmentJson {
 

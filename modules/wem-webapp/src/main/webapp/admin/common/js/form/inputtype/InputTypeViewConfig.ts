@@ -11,5 +11,7 @@ module api_form_inputtype {
         dataPath:api_data.DataPath;
 
         inputConfig:C;
+
+        attachments:api_content_attachment.Attachments;
     }
 }

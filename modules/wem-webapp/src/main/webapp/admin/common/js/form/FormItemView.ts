@@ -27,7 +27,7 @@ module api_form {
         /*
          *  Override if inheriting FormItemView can provide attachments.
          */
-        getAttachments(): api_content.Attachment[] {
+        getAttachments(): api_content_attachment.Attachment[] {
             return [];
         }
 
