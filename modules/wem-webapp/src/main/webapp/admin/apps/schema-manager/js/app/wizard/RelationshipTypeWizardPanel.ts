@@ -12,6 +12,10 @@ module app_wizard {
 
         private relationshipTypeForm: RelationshipTypeForm;
 
+        private persistedRelationshipType: api_schema_relationshiptype.RelationshipType;
+
+        private persistedConfig: string;
+
         constructor(tabId: api_app.AppBarTabId, persistedRelationshipType: api_schema_relationshiptype.RelationshipType,
                     callback: (wizard: RelationshipTypeWizardPanel) => void) {
             this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
@@ -61,10 +65,12 @@ module app_wizard {
             super.setPersistedItem(relationshipType, () => {
                 this.relationShipTypeWizardHeader.setName(relationshipType.getName());
                 this.formIcon.setSrc(relationshipType.getIconUrl());
+                this.persistedRelationshipType = relationshipType;
 
                 new api_schema_relationshiptype.GetRelationshipTypeConfigByNameRequest(relationshipType.getRelationshiptypeName()).send().
                     done((response: api_rest.JsonResponse <api_schema_relationshiptype.GetRelationshipTypeConfigResult>) => {
                         this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
+                        this.persistedConfig = response.getResult().relationshipTypeXml || "";
                         callback();
                     });
             });
@@ -108,6 +114,21 @@ module app_wizard {
                         callback(relationshipType);
                     });
                 });
+        }
+
+        hasUnsavedChanges(): boolean {
+            var persistedRelationshipType: api_schema_relationshiptype.RelationshipType = this.getPersistedItem();
+            if (persistedRelationshipType == undefined) {
+                return true;
+            } else {
+                return !this.stringsEqual(persistedRelationshipType.getName(), this.relationShipTypeWizardHeader.getName())
+                    || !this.stringsEqual(this.persistedConfig, this.relationshipTypeForm.getFormData().xml);
+            }
+        }
+
+        private stringsEqual(str1: string, str2: string): boolean {
+            // strings are equal if both of them are empty or not specified or they are identical
+            return (!str1 && !str2) || (str1 == str2) || str1.replace(/[\t\r\n]/g, "") == str2.replace(/[\t\r\n]/g, "");
         }
     }
 }
