@@ -8,7 +8,7 @@ import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.editor.RelationshipTypeEditor;
 
 public final class UpdateRelationshipType
-    extends Command<Boolean>
+    extends Command<UpdateRelationshipTypeResult>
 {
     private RelationshipTypeName name;
 

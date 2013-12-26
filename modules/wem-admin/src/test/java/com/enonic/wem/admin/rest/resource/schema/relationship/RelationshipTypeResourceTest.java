@@ -20,6 +20,7 @@ import com.enonic.wem.api.command.schema.relationship.GetRelationshipTypes;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExists;
 import com.enonic.wem.api.command.schema.relationship.RelationshipTypesExistsResult;
 import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipType;
+import com.enonic.wem.api.command.schema.relationship.UpdateRelationshipTypeResult;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipTypeNames;
@@ -183,11 +184,14 @@ public class RelationshipTypeResourceTest
     public void testUpdate()
         throws Exception
     {
-        RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( RelationshipTypeName.from( "love" ) );
+        final RelationshipTypeNames relationshipTypeNames = RelationshipTypeNames.from( RelationshipTypeName.from( "love" ) );
+        final RelationshipType relationshipType = newRelationshipType().name( "like" ).build();
+
+        final UpdateRelationshipTypeResult result = new UpdateRelationshipTypeResult( relationshipType );
 
         Mockito.when( client.execute( isA( RelationshipTypesExists.class ) ) ).thenReturn(
             RelationshipTypesExistsResult.from( relationshipTypeNames ) );
-        Mockito.when( client.execute( isA( UpdateRelationshipType.class ) ) ).thenReturn( Boolean.TRUE );
+        Mockito.when( client.execute( isA( UpdateRelationshipType.class ) ) ).thenReturn( result );
 
         resource().path( "schema/relationship/update" ).entity( readFromFile( "update_relationship_type_params.json" ),
                                                                 MediaType.APPLICATION_JSON_TYPE ).post();
