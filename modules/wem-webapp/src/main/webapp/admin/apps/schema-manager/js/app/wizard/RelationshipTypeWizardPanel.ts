@@ -121,14 +121,10 @@ module app_wizard {
             if (persistedRelationshipType == undefined) {
                 return true;
             } else {
-                return !this.stringsEqual(persistedRelationshipType.getName(), this.relationShipTypeWizardHeader.getName())
-                    || !this.stringsEqual(this.persistedConfig, this.relationshipTypeForm.getFormData().xml);
+                return !api_util.isStringsEqual(persistedRelationshipType.getName(), this.relationShipTypeWizardHeader.getName())
+                    || !api_util.isStringsEqual(api_util.removeCarriageChars(this.persistedConfig),
+                                                api_util.removeCarriageChars(this.relationshipTypeForm.getFormData().xml));
             }
-        }
-
-        private stringsEqual(str1: string, str2: string): boolean {
-            // strings are equal if both of them are empty or not specified or they are identical
-            return (!str1 && !str2) || (str1 == str2) || str1.replace(/[\t\r\n]/g, "") == str2.replace(/[\t\r\n]/g, "");
         }
     }
 }

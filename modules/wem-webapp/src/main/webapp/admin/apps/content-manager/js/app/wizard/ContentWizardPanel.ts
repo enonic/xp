@@ -429,8 +429,8 @@ module app_wizard {
             if (persistedContent == undefined) {
                 return true;
             } else {
-                return !this.stringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
-                           || !this.stringsEqual(persistedContent.getName().toString(), this.contentWizardHeader.getName().toString())
+                return !api_util.isStringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
+                           || !api_util.isStringsEqual(persistedContent.getName().toString(), this.contentWizardHeader.getName().toString())
                     || !persistedContent.getContentData().equals(this.contentWizardStepForm.getContentData());
             }
         }
@@ -441,11 +441,6 @@ module app_wizard {
 
         getContentType(): api_schema_content.ContentType {
             return this.contentType;
-        }
-
-        private stringsEqual(str1: string, str2: string): boolean {
-            // strings are equal if both of them are empty or not specified or they are identical
-            return (!str1 && !str2) || (str1 == str2);
         }
     }
 
