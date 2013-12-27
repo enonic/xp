@@ -20,23 +20,23 @@ module api_app_browse_grid {
         static GRID = "grid";
         static TREE = "tree";
 
-        ext:Ext_panel_Panel;
+        ext: Ext_panel_Panel;
 
 
-        private gridStore:Ext_data_Store;
-        private gridConfig:Object;
-        private columns:any[];
-        private treeStore:Ext_data_TreeStore;
-        private treeConfig:Object;
-        private keyField:string = 'name';
-        private activeList:string = "grid";
-        private itemId:string;
+        private gridStore: Ext_data_Store;
+        private gridConfig: Object;
+        private columns: any[];
+        private treeStore: Ext_data_TreeStore;
+        private treeConfig: Object;
+        private keyField: string = 'name';
+        private activeList: string = "grid";
+        private itemId: string;
 
-        private contextMenu:api_ui_menu.ContextMenu;
+        private contextMenu: api_ui_menu.ContextMenu;
 
-        private listeners:TreeGridPanelListener[] = [];
+        private listeners: TreeGridPanelListener[] = [];
 
-        constructor(params:TreeGridPanelParams) {
+        constructor(params: TreeGridPanelParams) {
 
             this.gridStore = params.gridStore;
             this.treeStore = params.treeStore;
@@ -47,7 +47,7 @@ module api_app_browse_grid {
         }
 
         //TODO: move to constructor after ext has been dropped
-        create(region?:string, renderTo?:string) {
+        create(region?: string, renderTo?: string) {
 
             this.ext = <any> new Ext.panel.Panel({
                 cls: 'tree-grid-panel',
@@ -73,7 +73,7 @@ module api_app_browse_grid {
             this.treeStore.on('datachanged', this.fireUpdateEvent, this);
 
             treePanel.addListener(<TreePanelListener>{
-                onSelectionChanged: (event:TreeSelectionChangedEvent) => {
+                onSelectionChanged: (event: TreeSelectionChangedEvent) => {
 
                     //console.log("TreeGridPanel onSelectionChanged from tree", event);
 
@@ -82,7 +82,7 @@ module api_app_browse_grid {
                         selectedModels: event.selectedModels
                     });
                 },
-                onItemDoubleClicked: (event:TreeItemDoubleClickedEvent) => {
+                onItemDoubleClicked: (event: TreeItemDoubleClickedEvent) => {
 
                     //console.log("TreeGridPanel onItemDoubleClicked from tree", event);
 
@@ -90,7 +90,7 @@ module api_app_browse_grid {
                         clickedModel: event.clickedModel
                     });
                 },
-                onShowContextMenu: (event:TreeShowContextMenuEvent) => {
+                onShowContextMenu: (event: TreeShowContextMenuEvent) => {
 
                     //console.log("TreeGridPanel onShowContextMenu from tree", event);
 
@@ -99,7 +99,7 @@ module api_app_browse_grid {
             });
 
             gridPanel.addListener(<GridPanelListener>{
-                onSelectionChanged: (event:GridSelectionChangedEvent) => {
+                onSelectionChanged: (event: GridSelectionChangedEvent) => {
 
                     //console.log("TreeGridPanel onSelectionChanged from grid", event);
 
@@ -108,7 +108,7 @@ module api_app_browse_grid {
                         selectedModels: event.selectedModels
                     });
                 },
-                onItemDoubleClicked: (event:GridItemDoubleClickedEvent) => {
+                onItemDoubleClicked: (event: GridItemDoubleClickedEvent) => {
 
                     //console.log("TreeGridPanel onItemDoubleClicked from grid", event);
 
@@ -116,7 +116,7 @@ module api_app_browse_grid {
                         clickedModel: event.clickedModel
                     });
                 },
-                onShowContextMenu: (event:GridShowContextMenuEvent) => {
+                onShowContextMenu: (event: GridShowContextMenuEvent) => {
 
                     //console.log("TreeGridPanel onShowContextMenu from grid", event);
 
@@ -127,22 +127,22 @@ module api_app_browse_grid {
             return this;
         }
 
-        addListener(listener:TreeGridPanelListener) {
+        addListener(listener: TreeGridPanelListener) {
             this.listeners.push(listener);
         }
 
-        private notifyTreeGridSelectionChanged(event:TreeGridSelectionChangedEvent) {
+        private notifyTreeGridSelectionChanged(event: TreeGridSelectionChangedEvent) {
 
-            this.listeners.forEach((listener:TreeGridPanelListener)=> {
+            this.listeners.forEach((listener: TreeGridPanelListener)=> {
                 if (listener.onSelectionChanged) {
                     listener.onSelectionChanged(event);
                 }
             });
         }
 
-        private notifyItemDoubleClicked(event:TreeGridItemDoubleClickedEvent) {
+        private notifyItemDoubleClicked(event: TreeGridItemDoubleClickedEvent) {
 
-            this.listeners.forEach((listener:TreeGridPanelListener)=> {
+            this.listeners.forEach((listener: TreeGridPanelListener)=> {
                 if (listener.onItemDoubleClicked) {
                     listener.onItemDoubleClicked(event);
                 }
@@ -154,7 +154,7 @@ module api_app_browse_grid {
             this.ext.fireEvent('datachanged', values);
         }
 
-        getActiveList():Ext_panel_Table {
+        getActiveList(): Ext_panel_Table {
             // returns either grid or tree that both extend table
             return <Ext_panel_Table> (<Ext_layout_container_Card> this.ext.getLayout()).getActiveItem();
         }
@@ -170,7 +170,7 @@ module api_app_browse_grid {
             }
         }
 
-        setKeyField(keyField:string) {
+        setKeyField(keyField: string) {
             this.keyField = keyField;
         }
 
@@ -178,7 +178,7 @@ module api_app_browse_grid {
             return this.keyField;
         }
 
-        setItemId(itemId:string) {
+        setItemId(itemId: string) {
             this.itemId = itemId;
         }
 
@@ -195,7 +195,7 @@ module api_app_browse_grid {
             }
         }
 
-        loadData(data:Object[], append?:boolean) {
+        loadData(data: Object[], append?: boolean) {
             var activeList = this.getActiveList();
             if (this.activeList == TreeGridPanel.GRID) {
                 activeList.getStore().loadData(data, append);
@@ -220,7 +220,7 @@ module api_app_browse_grid {
             }
         }
 
-        remove(keyFieldValue:any) {
+        remove(keyFieldValue: any) {
             this.deselect(keyFieldValue);
             var activeList = this.getActiveList();
             if (this.activeList == TreeGridPanel.GRID) {
@@ -231,17 +231,20 @@ module api_app_browse_grid {
                 }
             } else {
                 var root = (<Ext_tree_Panel>activeList).getRootNode();
-                var nodesToRemove = [];
+                var nodesToRemoveParents = [];
                 root.cascadeBy((childNode) => {
                     if (childNode.get(this.keyField) == keyFieldValue) {
-                        nodesToRemove.push(childNode);
+                        if (nodesToRemoveParents.indexOf(childNode.parentNode) < 0) {
+                            nodesToRemoveParents.push(childNode.parentNode);
+                        }
                         return false;
                     }
                     return true;
                 }, this);
-                for (var i = 0; i < nodesToRemove.length; i++) {
-                    // passing false to prevent store syncing
-                    nodesToRemove[i].remove(false);
+                for (var i = 0; i < nodesToRemoveParents.length; i++) {
+                    this.treeStore.load({
+                        node: nodesToRemoveParents[i]
+                    });
                 }
             }
         }
@@ -250,7 +253,7 @@ module api_app_browse_grid {
             this.getActiveList().getSelectionModel().deselectAll();
         }
 
-        deselect(keyFieldValue:any) {
+        deselect(keyFieldValue: any) {
             var selModel = this.getActiveList().getSelectionModel(),
                 selNodes = selModel.getSelection(),
                 i;
@@ -298,9 +301,9 @@ module api_app_browse_grid {
 
     interface GridToolbarPlugin extends Ext_AbstractPlugin {
 
-        setResultCountVisible(visible:boolean): void;
+        setResultCountVisible(visible: boolean): void;
 
-        updateResultCount(count:number): void;
+        updateResultCount(count: number): void;
     }
 
 
