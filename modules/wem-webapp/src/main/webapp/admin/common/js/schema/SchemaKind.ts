@@ -39,6 +39,10 @@ module api_schema {
         toString():string {
             return this.name;
         }
+
+        equals(obj:any):boolean {
+            return (obj instanceof SchemaKind) && (this.nameEquals((<SchemaKind> obj).name));
+        }
     }
 
 }
