@@ -31,23 +31,23 @@ module app_delete {
                 });
 
                 if ( contentTypesToDelete.length > 0 ) {
-                    new api_schema_content.DeleteContentTypeRequest(contentTypesToDelete).send()
-                        .done((response:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
-                            this.processSchemaDeleteResponse(response);
+                    new api_schema_content.DeleteContentTypeRequest(contentTypesToDelete).sendAndParse()
+                        .done((result:api_schema.SchemaDeleteResult) => {
+                            this.processSchemaDeleteResponse(result);
                         });
                 }
 
                 if ( mixinsToDelete.length > 0 ) {
-                    new api_schema_mixin.DeleteMixinRequest(mixinsToDelete).send()
-                        .done((response:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
-                            this.processSchemaDeleteResponse(response);
+                    new api_schema_mixin.DeleteMixinRequest(mixinsToDelete).sendAndParse()
+                        .done((result:api_schema.SchemaDeleteResult) => {
+                            this.processSchemaDeleteResponse(result);
                         });
                 }
 
                 if ( relationshipTypesToDelete.length > 0 ) {
-                    new api_schema_relationshiptype.DeleteRelationshipTypeRequest(relationshipTypesToDelete).send()
-                        .done((response:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
-                            this.processSchemaDeleteResponse(response);
+                    new api_schema_relationshiptype.DeleteRelationshipTypeRequest(relationshipTypesToDelete).sendAndParse()
+                        .done((result:api_schema.SchemaDeleteResult) => {
+                            this.processSchemaDeleteResponse(result);
                         });
                 }
             });
@@ -65,16 +65,14 @@ module app_delete {
             return this;
         }
 
-        private processSchemaDeleteResponse(response:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) {
-            var result:api_schema.SchemaDeleteJson = response.getResult();
-
-            if ( result.successes ) {
+        private processSchemaDeleteResponse(result:api_schema.SchemaDeleteResult) {
+            if ( result.getSuccesses().length > 0 ) {
                 var deletedSchemas:api_schema.Schema[] = [];
                 var names:string[] = [];
 
-                result.successes.forEach((successJson:api_schema.SuccessJson) => {
-                    names.push(successJson.name);
-                    var schema = this.nameToSchemaMap[successJson.name];
+                result.getSuccesses().forEach((success:api_schema.SuccessResult) => {
+                    names.push(success.getName());
+                    var schema = this.nameToSchemaMap[success.getName()];
                     if ( schema ) {
                         deletedSchemas.push(schema);
                     }
@@ -88,9 +86,9 @@ module app_delete {
 
             }
 
-            if ( result.failures ) {
-                result.failures.forEach((failureJson:api_schema.FailureJson) => {
-                    api_notify.showWarning(failureJson.reason);
+            if ( result.getFailures().length > 0) {
+                result.getFailures().forEach((failure:api_schema.FailureResult) => {
+                    api_notify.showWarning(failure.getReason());
                 });
             }
 
