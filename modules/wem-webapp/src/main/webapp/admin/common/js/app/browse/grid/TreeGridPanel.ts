@@ -71,6 +71,12 @@ module api_app_browse_grid {
             this.ext.add(treePanel.getExt());
 
             this.treeStore.on('datachanged', this.fireUpdateEvent, this);
+            this.treeStore.on('load', (store, node, records, success, opts) => {
+                // update the parent node deletable flag if no records were loaded
+                if (!records || records.length == 0) {
+                    node.set('deletable', true);
+                }
+            });
 
             treePanel.addListener(<TreePanelListener>{
                 onSelectionChanged: (event: TreeSelectionChangedEvent) => {
