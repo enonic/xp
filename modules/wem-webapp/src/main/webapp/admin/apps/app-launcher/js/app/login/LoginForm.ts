@@ -2,17 +2,17 @@ module app_login {
 
     export class LoginForm extends api_dom.DivEl {
 
-        private licensedTo:api_dom.DivEl;
-        private userStoresDropdown:api_ui.Dropdown;
-        private userIdInput:api_ui.TextInput;
-        private passwordInput:api_ui.PasswordInput;
-        private loginButton:api_ui.Button;
+        private licensedTo: api_dom.DivEl;
+        private userStoresDropdown: api_ui.Dropdown;
+        private userIdInput: api_ui.TextInput;
+        private passwordInput: api_ui.PasswordInput;
+        private loginButton: api_ui.Button;
 
-        private authenticator:Authenticator;
-        private userStores:{[userStoreId: string]: UserStore;};
-        private onUserAuthenticatedHandler:(userName:string, userStore:UserStore) => void;
+        private authenticator: Authenticator;
+        private userStores: {[userStoreId: string]: UserStore;};
+        private onUserAuthenticatedHandler: (userName: string, userStore: UserStore) => void;
 
-        constructor(authenticator:Authenticator) {
+        constructor(authenticator: Authenticator) {
             super(null, 'login-form');
             this.authenticator = authenticator;
             this.userStores = {};
@@ -27,11 +27,11 @@ module app_login {
             this.userIdInput.setPlaceholder('userid or e-mail');
             this.passwordInput = new api_ui.PasswordInput(null, 'form-item');
             this.passwordInput.setPlaceholder('password');
-            this.userIdInput.getEl().addEventListener('keyup', (event) => {
-                this.onInputTyped();
+            this.userIdInput.getEl().addEventListener('keyup', (event:KeyboardEvent) => {
+                this.onInputTyped(event);
             });
-            this.passwordInput.getEl().addEventListener('keyup', (event) => {
-                this.onInputTyped();
+            this.passwordInput.getEl().addEventListener('keyup', (event:KeyboardEvent) => {
+                this.onInputTyped(event);
             });
 
             this.loginButton = new api_ui.Button('Log in');
@@ -51,12 +51,12 @@ module app_login {
             this.appendChild(this.licensedTo);
         }
 
-        setLicensedTo(value:string) {
+        setLicensedTo(value: string) {
             this.licensedTo.getEl().setInnerHtml(value);
         }
 
-        setUserStores(userStores:UserStore[], defaultUserStore?:UserStore) {
-            userStores.forEach((userStore:UserStore) => {
+        setUserStores(userStores: UserStore[], defaultUserStore?: UserStore) {
+            userStores.forEach((userStore: UserStore) => {
                 this.userStoresDropdown.addOption(userStore.getId(), userStore.getName());
                 this.userStores[userStore.getId()] = userStore;
             });
@@ -65,7 +65,7 @@ module app_login {
             }
         }
 
-        onUserAuthenticated(handler:(userName:string, userStore:UserStore) => void) {
+        onUserAuthenticated(handler: (userName: string, userStore: UserStore) => void) {
             this.onUserAuthenticatedHandler = handler;
         }
 
@@ -84,14 +84,17 @@ module app_login {
             }
         }
 
-        private onInputTyped() {
-            var fieldsNotEmpty:boolean = (this.userIdInput.getValue() !== '') && (this.passwordInput.getValue() !== '');
+        private onInputTyped(event: KeyboardEvent) {
+            var fieldsNotEmpty: boolean = (this.userIdInput.getValue() !== '') && (this.passwordInput.getValue() !== '');
             if (fieldsNotEmpty) {
                 this.loginButton.removeClass('disabled');
             } else {
                 this.loginButton.addClass('disabled');
             }
             this.loginButton.setEnabled(fieldsNotEmpty);
+            if (fieldsNotEmpty && event.keyCode == 13) {
+                this.loginButtonClick();
+            }
         }
     }
 

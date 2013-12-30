@@ -41,11 +41,6 @@ module app_home {
             this.appendChild(this.centerPanel);
         }
 
-        show() {
-            super.show();
-            this.appSelector.activateKeyBindings();
-        }
-
         giveFocus() : boolean {
             return this.appSelector.giveFocus();
         }

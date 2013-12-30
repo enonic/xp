@@ -1,17 +1,17 @@
 module app_launcher {
 
     export class AppSelector extends api_dom.DivEl {
-        private selectedAppIndex:number;
-        private apps:Application[];
-        private appTiles:{[name: string]: AppTile;};
-        private listeners:AppSelectorListener[] = [];
+        private selectedAppIndex: number;
+        private apps: Application[];
+        private appTiles: {[name: string]: AppTile;};
+        private listeners: AppSelectorListener[] = [];
         private applicationSearchInput: api_ui.TextInput;
-        private emptyMessagePlaceholder:api_dom.DivEl;
-        private homeAppSelector:api_dom.DivEl;
+        private emptyMessagePlaceholder: api_dom.DivEl;
+        private homeAppSelector: api_dom.DivEl;
 
-        private keyBindings:api_ui.KeyBinding[] =  [];
+        private keyBindings: api_ui.KeyBinding[] = [];
 
-        constructor(applications:Application[]) {
+        constructor(applications: Application[]) {
             super();
             this.apps = applications;
             this.appTiles = {};
@@ -42,39 +42,59 @@ module app_launcher {
 
             this.appendChild(this.homeAppSelector);
 
-            this.keyBindings.push(new api_ui.KeyBinding('tab', (e:ExtendedKeyboardEvent, combo:string)=> {
-                this.highlightNextAppTile();
+            this.keyBindings.push(new api_ui.KeyBinding('tab', (e: ExtendedKeyboardEvent, combo: string)=> {
+                if (this.isVisible()) {
+                    this.highlightNextAppTile();
+                }
                 return false;
             }));
-            this.keyBindings.push(new api_ui.KeyBinding('shift+tab', (e:ExtendedKeyboardEvent, combo:string)=> {
-                this.highlightPreviousAppTile();
+            this.keyBindings.push(new api_ui.KeyBinding('shift+tab', (e: ExtendedKeyboardEvent, combo: string)=> {
+                if (this.isVisible()) {
+                    this.highlightPreviousAppTile();
+                }
                 return false;
             }));
-            this.keyBindings.push(new api_ui.KeyBinding('return', (e:ExtendedKeyboardEvent, combo:string)=> {
+            this.keyBindings.push(new api_ui.KeyBinding('return', (e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.selectedAppIndex >= 0) {
-                    var app:Application = this.apps[this.selectedAppIndex];
+                    var app: Application = this.apps[this.selectedAppIndex];
                     this.notifyAppSelected(app);
                 }
                 return false;
             }));
 
+        }
+
+        show() {
+            super.show();
             this.activateKeyBindings();
+        }
+
+        hide() {
+            super.hide();
+            this.deactivateKeyBindings();
         }
 
         activateKeyBindings() {
             api_ui.KeyBindings.get().bindKeys(this.keyBindings);
         }
 
-        giveFocus() : boolean {
+        deactivateKeyBindings() {
+            api_ui.KeyBindings.get().unbindKeys(this.keyBindings);
+        }
+
+        giveFocus(): boolean {
             return this.applicationSearchInput.giveFocus();
         }
 
-        addListener(listener:AppSelectorListener) {
+        addListener(listener: AppSelectorListener) {
             this.listeners.push(listener);
         }
 
         afterRender() {
             super.afterRender();
+
+            this.activateKeyBindings();
+
             setTimeout(() => {
                 this.homeAppSelector.addClass('fade-in-and-scale-up');
             }, 200);
@@ -102,17 +122,17 @@ module app_launcher {
             this.highlightAppTile(this.apps[idx], idx);
         }
 
-        private addAppTiles(applications:Application[], tilesPlaceholder:api_dom.DivEl) {
-            applications.forEach((application:Application, idx:number) => {
+        private addAppTiles(applications: Application[], tilesPlaceholder: api_dom.DivEl) {
+            applications.forEach((application: Application, idx: number) => {
                 var appTile = new AppTile(application);
 
-                appTile.onMouseEnter((event:MouseEvent) => {
+                appTile.onMouseEnter((event: MouseEvent) => {
                     this.highlightAppTile(application, idx, appTile);
                 });
-                appTile.onMouseLeave((event:MouseEvent) => {
+                appTile.onMouseLeave((event: MouseEvent) => {
                     this.unhighlightAppTile(application, idx, appTile);
                 });
-                appTile.getEl().addEventListener("click", (evt:Event) => {
+                appTile.getEl().addEventListener("click", (evt: Event) => {
                     this.notifyAppSelected(application);
                 });
 
@@ -121,7 +141,7 @@ module app_launcher {
             });
         }
 
-        private highlightAppTile(application:Application, index:number, appTile?:AppTile) {
+        private highlightAppTile(application: Application, index: number, appTile?: AppTile) {
             if (!appTile) {
                 appTile = this.appTiles[application.getName()];
             }
@@ -135,7 +155,7 @@ module app_launcher {
             this.notifyAppHighlighted(application);
         }
 
-        private unhighlightAppTile(application:Application, index:number, appTile?:AppTile) {
+        private unhighlightAppTile(application: Application, index: number, appTile?: AppTile) {
             if (!appTile) {
                 appTile = this.appTiles[application.getName()];
             }
@@ -146,10 +166,10 @@ module app_launcher {
             this.notifyAppUnhighlighted(application);
         }
 
-        private filterTiles(value:string) {
+        private filterTiles(value: string) {
             var valueLowerCased = value.toLowerCase();
             var anyMatch = false;
-            this.apps.forEach((app:Application) => {
+            this.apps.forEach((app: Application) => {
                 var isMatch = app.getName().toLowerCase().indexOf(valueLowerCased) > -1;
                 if (isMatch) {
                     this.showAppTile(app.getName());
@@ -166,34 +186,34 @@ module app_launcher {
             }
         }
 
-        private showAppTile(appName:string) {
-            var appTile:AppTile = this.appTiles[appName];
+        private showAppTile(appName: string) {
+            var appTile: AppTile = this.appTiles[appName];
             appTile.show();
         }
 
-        private hideAppTile(appName:string) {
-            var appTile:AppTile = this.appTiles[appName];
+        private hideAppTile(appName: string) {
+            var appTile: AppTile = this.appTiles[appName];
             appTile.hide();
         }
 
-        private isAppTileVisible(appIndex:number):boolean {
+        private isAppTileVisible(appIndex: number): boolean {
             return this.appTiles[this.apps[appIndex].getName()].isVisible();
         }
 
-        private notifyAppHighlighted(app:Application) {
-            this.listeners.forEach((listener:AppSelectorListener)=> {
+        private notifyAppHighlighted(app: Application) {
+            this.listeners.forEach((listener: AppSelectorListener)=> {
                 listener.onAppHighlighted(app);
             });
         }
 
-        private notifyAppUnhighlighted(app:Application) {
-            this.listeners.forEach((listener:AppSelectorListener)=> {
+        private notifyAppUnhighlighted(app: Application) {
+            this.listeners.forEach((listener: AppSelectorListener)=> {
                 listener.onAppUnhighlighted(app);
             });
         }
 
-        private notifyAppSelected(app:Application) {
-            this.listeners.forEach((listener:AppSelectorListener)=> {
+        private notifyAppSelected(app: Application) {
+            this.listeners.forEach((listener: AppSelectorListener)=> {
                 listener.onAppSelected(app);
             });
         }
