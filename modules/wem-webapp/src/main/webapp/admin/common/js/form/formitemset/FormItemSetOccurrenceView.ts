@@ -34,9 +34,6 @@ module api_form_formitemset {
 
         private doLayout() {
 
-            var label = new FormItemSetLabel(this.formItemSet);
-            this.appendChild(label);
-
             this.removeButton = new api_dom.AEl(null, "remove-button");
             this.appendChild(this.removeButton);
             this.removeButton.setClickListener(() => {
@@ -46,6 +43,9 @@ module api_form_formitemset {
             this.occurrenceCountEl = new api_dom.SpanEl(null, "occurrence-count");
             this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.getIndex() + 1));
             this.appendChild(this.occurrenceCountEl);
+
+            var label = new FormItemSetLabel(this.formItemSet);
+            this.appendChild(label);
 
             this.formItemSetOccurrencesContainer = new api_dom.DivEl(null, "form-item-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);
