@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export class CheckboxInput extends api_dom.InputEl implements api_event.Observable {
+    export class CheckboxInput extends api.dom.InputEl implements api.event.Observable {
 
         /**
          * Input value before it was changed by last input event.

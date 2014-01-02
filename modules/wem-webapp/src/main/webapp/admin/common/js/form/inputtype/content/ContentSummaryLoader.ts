@@ -1,8 +1,8 @@
-module api_form_inputtype_content {
+module api.form.inputtype.content {
 
-    export class ContentSummaryLoader implements api_rest.Loader {
+    export class ContentSummaryLoader implements api.rest.Loader {
 
-        private findContentRequest:api_content.FindContentRequest<api_content_json.ContentSummaryJson>;
+        private findContentRequest:api.content.FindContentRequest<api.content.json.ContentSummaryJson>;
 
         private isLoading:boolean;
 
@@ -10,12 +10,12 @@ module api_form_inputtype_content {
 
         private listeners:ContentSummaryLoaderListener[] = [];
 
-        private loaderHelper:api_rest.LoaderHelper;
+        private loaderHelper:api.rest.LoaderHelper;
 
         constructor(delay:number = 500) {
             this.isLoading = false;
-            this.findContentRequest = new api_content.FindContentRequest().setExpand("summary").setCount(100);
-            this.loaderHelper = new api_rest.LoaderHelper(this.doRequest, this, delay);
+            this.findContentRequest = new api.content.FindContentRequest().setExpand("summary").setCount(100);
+            this.loaderHelper = new api.rest.LoaderHelper(this.doRequest, this, delay);
         }
 
         setCount(count:number) {
@@ -40,11 +40,11 @@ module api_form_inputtype_content {
             this.notifyLoading();
 
             this.findContentRequest.setFulltext(searchString).send()
-                .done((jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
+                .done((jsonResponse:api.rest.JsonResponse<api.content.FindContentResult<api.content.json.ContentSummaryJson>>) => {
                 var result = jsonResponse.getResult();
 
                 this.isLoading = false;
-                this.notifyLoaded(api_content.ContentSummary.fromJsonArray(result.contents));
+                this.notifyLoaded(api.content.ContentSummary.fromJsonArray(result.contents));
                 if (this.preservedSearchString) {
                     this.search(this.preservedSearchString);
                     this.preservedSearchString = null;
@@ -70,7 +70,7 @@ module api_form_inputtype_content {
             });
         }
 
-        private notifyLoaded(contentSummaries:api_content.ContentSummary[]) {
+        private notifyLoaded(contentSummaries:api.content.ContentSummary[]) {
             this.listeners.forEach((listener:ContentSummaryLoaderListener) => {
                 if (listener.onLoaded) {
                     listener.onLoaded(contentSummaries);

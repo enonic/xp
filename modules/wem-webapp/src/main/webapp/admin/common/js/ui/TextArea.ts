@@ -1,4 +1,4 @@
-module api_ui {
+module api.ui {
 
     export enum TextAreaSize {
         LARGE,
@@ -6,7 +6,7 @@ module api_ui {
         SMALL
     }
 
-    export class TextArea extends api_dom.FormInputEl {
+    export class TextArea extends api.dom.FormInputEl {
 
         constructor(name:string) {
             super("textarea");

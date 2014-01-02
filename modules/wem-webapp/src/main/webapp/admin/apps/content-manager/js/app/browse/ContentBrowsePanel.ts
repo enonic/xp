@@ -1,22 +1,22 @@
-module app_browse {
+module app.browse {
 
-    export class ContentBrowsePanel extends api_app_browse.BrowsePanel<api_content.ContentSummary> {
+    export class ContentBrowsePanel extends api.app.browse.BrowsePanel<api.content.ContentSummary> {
 
-        private browseActions:app_browse.ContentBrowseActions;
+        private browseActions:app.browse.ContentBrowseActions;
 
         private toolbar:ContentBrowseToolbar;
 
-        private contentTreeGridPanel:app_browse.ContentTreeGridPanel;
+        private contentTreeGridPanel:app.browse.ContentTreeGridPanel;
 
-        private contentTreeGridPanel2:app_browse_grid.ContentGridPanel2;
+        private contentTreeGridPanel2:app.browse.grid.ContentGridPanel2;
 
-        private contentFilterPanel:app_browse_filter.ContentBrowseFilterPanel;
+        private contentFilterPanel:app.browse.filter.ContentBrowseFilterPanel;
 
         private contentBrowseItemPanel:ContentBrowseItemPanel;
 
         constructor() {
             var treeGridContextMenu = new ContentTreeGridContextMenu();
-            this.contentTreeGridPanel = components.gridPanel = new app_browse.ContentTreeGridPanel({
+            this.contentTreeGridPanel = components.gridPanel = new app.browse.ContentTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
 
@@ -33,9 +33,9 @@ module app_browse {
                 this.browseActions.DUPLICATE_CONTENT,
                 this.browseActions.MOVE_CONTENT]});
 
-            this.contentFilterPanel = new app_browse_filter.ContentBrowseFilterPanel();
+            this.contentFilterPanel = new app.browse.filter.ContentBrowseFilterPanel();
 
-            this.contentTreeGridPanel2 = new app_browse_grid.ContentGridPanel2();
+            this.contentTreeGridPanel2 = new app.browse.grid.ContentGridPanel2();
 
             super({
                 browseToolbar: this.toolbar,
@@ -52,23 +52,23 @@ module app_browse {
                 this.contentBrowseItemPanel.setPreviewMode(false);
             });
 
-            api_content.ContentDeletedEvent.on((event) => {
-                var contents:api_content.ContentSummary[] = event.getContents();
+            api.content.ContentDeletedEvent.on((event) => {
+                var contents:api.content.ContentSummary[] = event.getContents();
                 for (var i = 0; i < contents.length; i++) {
                     this.contentTreeGridPanel.remove(contents[i].getPath().toString());
                 }
             });
 
-            api_content.ContentCreatedEvent.on((event) => {
+            api.content.ContentCreatedEvent.on((event) => {
                 this.setRefreshNeeded(true);
             });
 
-            api_content.ContentUpdatedEvent.on((event) => {
+            api.content.ContentUpdatedEvent.on((event) => {
                 this.setRefreshNeeded(true);
             });
 
-            this.contentTreeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
-                onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
+            this.contentTreeGridPanel.addListener(<api.app.browse.grid.TreeGridPanelListener>{
+                onSelectionChanged: (event:api.app.browse.grid.TreeGridSelectionChangedEvent) => {
                     var contentSummaries = this.extModelsToContentSummaries(event.selectedModels);
                     this.browseActions.updateActionsEnabledState(contentSummaries);
                 }
@@ -83,28 +83,28 @@ module app_browse {
             app.Router.setHash("browse");
         }
 
-        getActions():api_ui.Action[] {
+        getActions():api.ui.Action[] {
             var actions = super.getActions();
             // TODO: Ensures shortcut for showing new experimental content grid without having the action in the toolbar
-            actions.push(app_browse.ContentBrowseActions.get().SHOW_NEW_CONTENT_GRID);
+            actions.push(app.browse.ContentBrowseActions.get().SHOW_NEW_CONTENT_GRID);
             return actions;
         }
 
-        extModelsToContentSummaries(models:Ext_data_Model[]):api_content.ContentSummary[] {
+        extModelsToContentSummaries(models:Ext_data_Model[]):api.content.ContentSummary[] {
 
-            var summaries:api_content.ContentSummary[] = [];
+            var summaries:api.content.ContentSummary[] = [];
             for (var i = 0; i < models.length; i++) {
-                summaries.push(new api_content.ContentSummary(<api_content_json.ContentSummaryJson>models[i].data))
+                summaries.push(new api.content.ContentSummary(<api.content.json.ContentSummaryJson>models[i].data))
             }
             return summaries;
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem<api_content.ContentSummary>[] {
+        extModelsToBrowseItems(models:Ext_data_Model[]):api.app.browse.BrowseItem<api.content.ContentSummary>[] {
 
-            var browseItems:api_app_browse.BrowseItem<api_content.ContentSummary>[] = [];
+            var browseItems:api.app.browse.BrowseItem<api.content.ContentSummary>[] = [];
             models.forEach((model:Ext_data_Model) => {
-                var content = new api_content.ContentSummary(<api_content_json.ContentSummaryJson>model.data);
-                var item = new api_app_browse.BrowseItem<api_content.ContentSummary>(content).
+                var content = new api.content.ContentSummary(<api.content.json.ContentSummaryJson>model.data);
+                var item = new api.app.browse.BrowseItem<api.content.ContentSummary>(content).
                     setDisplayName(model.data['displayName']).
                     setPath(model.data['path']).
                     setIconUrl(model.data['iconUrl']);

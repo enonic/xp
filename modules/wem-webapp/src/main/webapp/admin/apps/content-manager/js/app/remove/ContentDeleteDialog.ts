@@ -1,8 +1,8 @@
-module app_delete {
+module app.remove {
 
-    export class ContentDeleteDialog extends api_app_delete.DeleteDialog {
+    export class ContentDeleteDialog extends api.app.remove.DeleteDialog {
 
-        private contentToDelete:api_content.ContentSummary[];
+        private contentToDelete:api.content.ContentSummary[];
 
         constructor() {
             super("Content");
@@ -11,22 +11,22 @@ module app_delete {
 
             this.getDeleteAction().addExecutionListener(() => {
 
-                var deleteRequest = new api_content.DeleteContentRequest();
+                var deleteRequest = new api.content.DeleteContentRequest();
                 for (var i = 0; i < this.contentToDelete.length; i++) {
                     deleteRequest.addContentPath(this.contentToDelete[i].getPath());
                 }
 
-                deleteRequest.send().done((jsonResponse:api_rest.JsonResponse<api_content.DeleteContentResult>) => {
+                deleteRequest.send().done((jsonResponse:api.rest.JsonResponse<api.content.DeleteContentResult>) => {
 
                     var result = jsonResponse.getResult(),
                         paths = [],
-                        deletedContents:api_content.ContentSummary[] = [];
+                        deletedContents:api.content.ContentSummary[] = [];
 
                     for (var i = 0; i < result.successes.length; i++) {
                         var path = result.successes[i].path;
                         paths.push(path);
 
-                        this.contentToDelete.forEach((content:api_content.ContentSummary) => {
+                        this.contentToDelete.forEach((content:api.content.ContentSummary) => {
                             if(path == content.getPath().toString()) {
                                 deletedContents.push(content);
                             }
@@ -35,27 +35,27 @@ module app_delete {
 
                     this.close();
 
-                    api_notify.showFeedback('Content [' + paths.join(', ') + '] deleted!');
+                    api.notify.showFeedback('Content [' + paths.join(', ') + '] deleted!');
 
-                    new api_content.ContentDeletedEvent(deletedContents).fire();
+                    new api.content.ContentDeletedEvent(deletedContents).fire();
                 });
             });
         }
 
-        setContentToDelete(contentModels:api_content.ContentSummary[]) {
+        setContentToDelete(contentModels:api.content.ContentSummary[]) {
             this.contentToDelete = contentModels;
 
-            var deleteItems:api_app_delete.DeleteItem[] = [];
+            var deleteItems:api.app.remove.DeleteItem[] = [];
             for (var i in contentModels) {
                 var content = contentModels[i];
-                var deleteItem = new api_app_delete.DeleteItem(content.getIconUrl(), content.getDisplayName());
+                var deleteItem = new api.app.remove.DeleteItem(content.getIconUrl(), content.getDisplayName());
                 deleteItems.push(deleteItem);
             }
             this.setDeleteItems(deleteItems);
         }
     }
 
-    export class ContentDeleteDialogAction extends api_ui.Action {
+    export class ContentDeleteDialogAction extends api.ui.Action {
 
         constructor() {
             super("Delete", "enter");

@@ -1,20 +1,20 @@
-module api_schema_relationshiptype {
+module api.schema.relationshiptype {
 
-    export class RelationshipTypeResourceRequest<T> extends api_rest.ResourceRequest<T> {
+    export class RelationshipTypeResourceRequest<T> extends api.rest.ResourceRequest<T> {
 
-        private resourceUrl:api_rest.Path;
+        private resourceUrl:api.rest.Path;
 
         constructor() {
             super();
-            this.resourceUrl = api_rest.Path.fromParent(super.getRestPath(), "schema/relationship");
+            this.resourceUrl = api.rest.Path.fromParent(super.getRestPath(), "schema/relationship");
         }
 
-        getResourcePath():api_rest.Path {
+        getResourcePath():api.rest.Path {
             return this.resourceUrl;
         }
 
-        fromJsonToReleationshipType(json:api_schema_relationshiptype_json.RelationshipTypeJson): api_schema_relationshiptype.RelationshipType {
-            return new api_schema_relationshiptype.RelationshipType(json);
+        fromJsonToReleationshipType(json:api.schema.relationshiptype.json.RelationshipTypeJson): api.schema.relationshiptype.RelationshipType {
+            return new api.schema.relationshiptype.RelationshipType(json);
         }
     }
 }

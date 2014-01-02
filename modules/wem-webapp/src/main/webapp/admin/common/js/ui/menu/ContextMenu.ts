@@ -1,14 +1,14 @@
-module api_ui_menu{
+module api.ui.menu{
 
-    export class ContextMenu extends api_dom.UlEl {
+    export class ContextMenu extends api.dom.UlEl {
         private menuItems:MenuItem[] = [];
 
-        constructor(...actions:api_ui.Action[]) {
+        constructor(...actions:api.ui.Action[]) {
             super("ContextMenu", "context-menu");
 
             this.hide();
 
-            api_dom.Body.get().prependChild(this);
+            api.dom.Body.get().prependChild(this);
 
             for (var i = 0; i < actions.length; i++) {
                 this.addAction(actions[i]);
@@ -19,12 +19,12 @@ module api_ui_menu{
             });
         }
 
-        addAction(action:api_ui.Action) {
+        addAction(action:api.ui.Action) {
             var menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
         }
 
-        private createMenuItem(action:api_ui.Action):MenuItem {
+        private createMenuItem(action:api.ui.Action):MenuItem {
             var menuItem = new MenuItem(action);
             menuItem.getEl().addEventListener('click', (evt:Event) => {
                 this.hide();

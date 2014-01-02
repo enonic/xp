@@ -1,6 +1,6 @@
-module api_module {
+module api.module {
 
-    export class ModuleSummary extends api_item.BaseItem {
+    export class ModuleSummary extends api.item.BaseItem {
 
         private moduleKey:ModuleKey;
 
@@ -13,18 +13,18 @@ module api_module {
         private url:string;
 
         static fromExtModel(model:Ext_data_Model):ModuleSummary {
-            return new api_module.ModuleSummary(<api_module_json.ModuleSummaryJson>model.raw);
+            return new api.module.ModuleSummary(<api.module.json.ModuleSummaryJson>model.raw);
         }
 
-        static fromJsonArray(jsonArray:api_module_json.ModuleSummaryJson[]):ModuleSummary[] {
+        static fromJsonArray(jsonArray:api.module.json.ModuleSummaryJson[]):ModuleSummary[] {
             var array:ModuleSummary[] = [];
-            jsonArray.forEach((json:api_module_json.ModuleSummaryJson) => {
+            jsonArray.forEach((json:api.module.json.ModuleSummaryJson) => {
                 array.push(new ModuleSummary(json));
             });
             return array;
         }
 
-        constructor(json:api_module_json.ModuleSummaryJson){
+        constructor(json:api.module.json.ModuleSummaryJson){
             super(json, 'key');
             this.moduleKey = ModuleKey.fromString(json.key);
 

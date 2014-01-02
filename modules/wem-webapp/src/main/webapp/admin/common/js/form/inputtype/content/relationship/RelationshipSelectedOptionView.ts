@@ -1,36 +1,36 @@
-module api_form_inputtype_content_relationship {
+module api.form.inputtype.content.relationship {
 
-    export class RelationshipSelectedOptionView extends api_ui_combobox.SelectedOptionView<api_content.ContentSummary> {
+    export class RelationshipSelectedOptionView extends api.ui.combobox.SelectedOptionView<api.content.ContentSummary> {
 
-        private content:api_content.ContentSummary;
+        private content:api.content.ContentSummary;
 
-        constructor(option:api_ui_combobox.Option<api_content.ContentSummary>) {
+        constructor(option:api.ui.combobox.Option<api.content.ContentSummary>) {
             this.content = option.displayValue;
             super(option);
         }
 
         layout() {
 
-            var removeButtonEl = new api_dom.AEl(null, "remove");
-            var optionValueEl = new api_dom.DivEl(null, 'option-value');
+            var removeButtonEl = new api.dom.AEl(null, "remove");
+            var optionValueEl = new api.dom.DivEl(null, 'option-value');
 
             this.appendChild(removeButtonEl);
             this.appendChild(optionValueEl);
 
-            var imgEl = new api_dom.ImgEl();
+            var imgEl = new api.dom.ImgEl();
             imgEl.setClass("icon");
             imgEl.getEl().setSrc(this.content.getIconUrl());
             optionValueEl.appendChild(imgEl);
 
-            var contentSummaryEl = new api_dom.DivEl();
+            var contentSummaryEl = new api.dom.DivEl();
             contentSummaryEl.setClass("content-summary");
 
-            var displayNameEl = new api_dom.DivEl();
+            var displayNameEl = new api.dom.DivEl();
             displayNameEl.setClass("display-name");
             displayNameEl.getEl().setAttribute("title", this.content.getDisplayName());
             displayNameEl.getEl().setInnerHtml(this.content.getDisplayName());
 
-            var path = new api_dom.DivEl();
+            var path = new api.dom.DivEl();
             path.addClass("path");
             path.getEl().setAttribute("title", this.content.getPath().toString());
             path.getEl().setInnerHtml(this.content.getPath().toString());

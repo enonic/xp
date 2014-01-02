@@ -1,4 +1,4 @@
-module api_util {
+module api.util {
     /**
      * Creates an URI from supplied path.
      *
@@ -16,7 +16,7 @@ module api_util {
      * @returns {string} the URI to a admin path.
      */
     export function getAdminUri(path:string):string {
-        return api_util.getUri('admin/' + path);
+        return api.util.getUri('admin/' + path);
     }
 
     /**
@@ -26,6 +26,6 @@ module api_util {
      * @returns {string} the URI to a rest service.
      */
     export function getRestUri(path:string):string {
-        return api_util.getAdminUri('rest/' + path);
+        return api.util.getAdminUri('rest/' + path);
     }
 }

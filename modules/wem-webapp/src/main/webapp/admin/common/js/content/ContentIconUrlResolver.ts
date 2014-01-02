@@ -1,19 +1,19 @@
-module api_content {
+module api.content {
 
-    export class ContentIconUrlResolver extends api_icon.IconUrlResolver<ContentIconUrlResolver,ContentSummary> {
+    export class ContentIconUrlResolver extends api.icon.IconUrlResolver<ContentIconUrlResolver,ContentSummary> {
 
-        public getResourcePath(): api_rest.Path {
-            return api_rest.Path.fromString("content/image");
+        public getResourcePath(): api.rest.Path {
+            return api.rest.Path.fromString("content/image");
         }
 
-        public resolve(icon: api_icon.Icon): string {
+        public resolve(icon: api.icon.Icon): string {
 
             return this.toRestUrl(this.getResourcePath()) + "/" + icon.getBlobKey() + "?" + this.resolveQueryParams();
         }
 
         static default(): string {
 
-            return api_util.getAdminUri("common/images/default_content.png");
+            return api.util.getAdminUri("common/images/default.content.png");
         }
     }
 }

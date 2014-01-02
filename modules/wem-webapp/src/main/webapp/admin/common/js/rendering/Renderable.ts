@@ -1,4 +1,4 @@
-module api_rendering {
+module api.rendering {
 
     export class Renderable {
 

@@ -1,4 +1,4 @@
-module api_content_page_image_json {
+module api.content.page.image.json {
 
     export interface ImageTemplateSummaryListJson {
 

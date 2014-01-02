@@ -1,4 +1,4 @@
-module api_remote {
+module api.remote {
 
     export class BaseRemoteService {
         private methods:string[];
@@ -10,8 +10,8 @@ module api_remote {
         }
 
         public init() {
-            var url:string = api_util.getRestUri("jsonrpc");
-            var jsonRpcProvider = new api_remote.JsonRpcProvider(url, this.methods, this.namespace);
+            var url:string = api.util.getRestUri("jsonrpc");
+            var jsonRpcProvider = new api.remote.JsonRpcProvider(url, this.methods, this.namespace);
             Ext.Direct.addProvider(jsonRpcProvider.ext);
         }
     }

@@ -1,4 +1,4 @@
-module app_browse_grid {
+module app.browse.grid {
 
     export class ModuleGridStore {
 
@@ -13,7 +13,7 @@ module app_browse_grid {
 
                 proxy: {
                     type: 'ajax',
-                    url: api_util.getAdminUri('rest/module/list'),
+                    url: api.util.getAdminUri('rest/module/list'),
                     reader: {
                         type: 'json',
                         root: 'modules',

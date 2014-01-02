@@ -1,18 +1,18 @@
-module api_content_page{
+module api.content.page{
 
     export class TemplateKey {
 
         public static SEPARATOR:string = "|";
 
-        private siteTemplateKey:api_content_site_template.SiteTemplateKey;
+        private siteTemplateKey:api.content.site.template.SiteTemplateKey;
 
-        private moduleKey:api_module.ModuleKey;
+        private moduleKey:api.module.ModuleKey;
 
         private templateName:TemplateName;
 
         private refString:string;
 
-        constructor(siteTemplateKey:api_content_site_template.SiteTemplateKey, moduleKey:api_module.ModuleKey, templateName:TemplateName) {
+        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey, moduleKey:api.module.ModuleKey, templateName:TemplateName) {
             if( name == null ) {
                 throw new Error("name cannot be null");
             }
@@ -22,11 +22,11 @@ module api_content_page{
             this.refString = siteTemplateKey.toString() + TemplateKey.SEPARATOR + moduleKey + TemplateKey.SEPARATOR +  templateName;
         }
 
-        getSiteTemplateKey():api_content_site_template.SiteTemplateKey {
+        getSiteTemplateKey():api.content.site.template.SiteTemplateKey {
             return this.siteTemplateKey;
         }
 
-        getModuleKey():api_module.ModuleKey {
+        getModuleKey():api.module.ModuleKey {
             return this.moduleKey;
         }
 

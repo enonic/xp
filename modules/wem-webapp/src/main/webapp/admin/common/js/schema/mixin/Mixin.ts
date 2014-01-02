@@ -1,16 +1,16 @@
-module api_schema_mixin {
+module api.schema.mixin {
 
-    export class Mixin extends api_schema.Schema {
+    export class Mixin extends api.schema.Schema {
 
         private schemaKey:string;
 
-        private formItems:api_form.FormItem[];
+        private formItems:api.form.FormItem[];
 
-        constructor(mixinJson:api_schema_mixin_json.MixinJson) {
+        constructor(mixinJson:api.schema.mixin.json.MixinJson) {
             super(mixinJson);
             this.formItems = [];
-            mixinJson.items.forEach((formItemJson:api_form_json.FormItemJson) => {
-                this.formItems.push(api_form.FormItemFactory.createFormItem(formItemJson));
+            mixinJson.items.forEach((formItemJson:api.form.json.FormItemJson) => {
+                this.formItems.push(api.form.FormItemFactory.createFormItem(formItemJson));
             });
             this.schemaKey = "mixin:" + this.getName();
         }
@@ -19,7 +19,7 @@ module api_schema_mixin {
             return new MixinName(this.getName());
         }
 
-        getFormItems():api_form.FormItem[] {
+        getFormItems():api.form.FormItem[] {
             return this.formItems;
         }
 

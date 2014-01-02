@@ -1,4 +1,4 @@
-module api_util {
+module api.util {
 
     export function assert(expression:boolean, message?:string) {
         console.assert(expression, message);

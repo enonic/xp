@@ -1,27 +1,27 @@
-module api_form_formitemset {
+module api.form.formitemset {
 
-    export class FormItemSetOccurrenceView extends api_form.FormItemOccurrenceView {
+    export class FormItemSetOccurrenceView extends api.form.FormItemOccurrenceView {
 
-        private context: api_form.FormContext;
+        private context: api.form.FormContext;
 
         private formItemSetOccurrence:FormItemSetOccurrence;
 
-        private formItemSet:api_form.FormItemSet;
+        private formItemSet:api.form.FormItemSet;
 
-        private occurrenceCountEl:api_dom.SpanEl;
+        private occurrenceCountEl:api.dom.SpanEl;
 
-        private removeButton:api_dom.AEl;
+        private removeButton:api.dom.AEl;
 
         private constructedWithData:boolean;
 
-        private dataSet:api_data.DataSet;
+        private dataSet:api.data.DataSet;
 
-        private formItemViews:api_form.FormItemView[] = [];
+        private formItemViews:api.form.FormItemView[] = [];
 
-        private formItemSetOccurrencesContainer:api_dom.DivEl;
+        private formItemSetOccurrencesContainer:api.dom.DivEl;
 
-        constructor(context: api_form.FormContext, formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api_form.FormItemSet,
-                    dataSet:api_data.DataSet) {
+        constructor(context: api.form.FormContext, formItemSetOccurrence:FormItemSetOccurrence, formItemSet:api.form.FormItemSet,
+                    dataSet:api.data.DataSet) {
             super("FormItemSetOccurrenceView", "form-item-set-occurrence-view", formItemSetOccurrence);
             this.context = context;
             this.formItemSetOccurrence = formItemSetOccurrence;
@@ -33,32 +33,31 @@ module api_form_formitemset {
         }
 
         private doLayout() {
-
-            this.removeButton = new api_dom.AEl(null, "remove-button");
+            this.removeButton = new api.dom.AEl(null, "remove-button");
             this.appendChild(this.removeButton);
             this.removeButton.setClickListener(() => {
                 this.notifyRemoveButtonClicked();
             });
 
-            this.occurrenceCountEl = new api_dom.SpanEl(null, "occurrence-count");
+            this.occurrenceCountEl = new api.dom.SpanEl(null, "occurrence-count");
             this.occurrenceCountEl.getEl().setInnerHtml("#" + (this.getIndex() + 1));
             this.appendChild(this.occurrenceCountEl);
 
             var label = new FormItemSetLabel(this.formItemSet);
             this.appendChild(label);
 
-            this.formItemSetOccurrencesContainer = new api_dom.DivEl(null, "form-item-set-occurrences-container");
+            this.formItemSetOccurrencesContainer = new api.dom.DivEl(null, "form-item-set-occurrences-container");
             this.appendChild(this.formItemSetOccurrencesContainer);
 
 
-            this.formItemViews =  new api_form.FormItemLayer().
+            this.formItemViews =  new api.form.FormItemLayer().
                 setFormContext(this.context).
                 setFormItems(this.formItemSet.getFormItems()).
                 setParentElement(this.formItemSetOccurrencesContainer).
                 layout(this.dataSet);
         }
 
-        getFormItemViews():api_form.FormItemView[] {
+        getFormItemViews():api.form.FormItemView[] {
             return this.formItemViews;
         }
 
@@ -70,7 +69,7 @@ module api_form_formitemset {
             this.removeButton.setVisible(this.formItemSetOccurrence.showRemoveButton());
         }
 
-        public getValueAtPath(path:api_data.DataPath):api_data.Value {
+        public getValueAtPath(path:api.data.DataPath):api.data.Value {
             if( path == null ) {
                 throw new Error("To get a value, a path is required");
             }
@@ -86,7 +85,7 @@ module api_form_formitemset {
             }
         }
 
-        public getValue(dataId:api_data.DataId):api_data.Value{
+        public getValue(dataId:api.data.DataId):api.data.Value{
 
             var inputView = this.getInputView( dataId.getName() );
             if( inputView == null ) {
@@ -95,9 +94,9 @@ module api_form_formitemset {
             return inputView.getValue(dataId.getArrayIndex());
         }
 
-        private forwardGetValueAtPath(path:api_data.DataPath):api_data.Value{
+        private forwardGetValueAtPath(path:api.data.DataPath):api.data.Value{
 
-            var dataId:api_data.DataId = path.getFirstElement().toDataId();
+            var dataId:api.data.DataId = path.getFirstElement().toDataId();
             var formItemSetView = this.getFormItemSetView( dataId.getName() );
             if( formItemSetView == null ) {
                 return null;
@@ -106,16 +105,16 @@ module api_form_formitemset {
             return formItemSetOccurrenceView.getValueAtPath(path.newWithoutFirstElement());
         }
 
-        public getInputView(name:string):api_form_input.InputView {
+        public getInputView(name:string):api.form.input.InputView {
 
             var formItemView = this.getFormItemView(name);
             if( formItemView == null ) {
                 return null;
             }
-            if( !(formItemView instanceof api_form_input.InputView) ) {
+            if( !(formItemView instanceof api.form.input.InputView) ) {
                 throw new Error( "Found a FormItemView with name [" + name + "], but it was not an InputView" );
             }
-            return <api_form_input.InputView>formItemView;
+            return <api.form.input.InputView>formItemView;
         }
 
         public getFormItemSetView(name:string):FormItemSetView {
@@ -130,7 +129,7 @@ module api_form_formitemset {
             return <FormItemSetView>formItemView;
         }
 
-        public getFormItemView(name:string):api_form.FormItemView {
+        public getFormItemView(name:string):api.form.FormItemView {
 
             // TODO: Performance could be improved if the views where accessible by name from a map
 
@@ -144,8 +143,8 @@ module api_form_formitemset {
             // FormItemView not found - look inside FieldSet-s
             for(var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
-                if(curr instanceof api_form_layout.FieldSetView) {
-                    var view = (<api_form_layout.FieldSetView>curr).getFormItemView( name );
+                if(curr instanceof api.form.layout.FieldSetView) {
+                    var view = (<api.form.layout.FieldSetView>curr).getFormItemView( name );
                     if( view != null ) {
                         return view;
                     }
@@ -155,21 +154,21 @@ module api_form_formitemset {
             return null;
         }
 
-        getDataSet():api_data.DataSet {
+        getDataSet():api.data.DataSet {
 
-            var dataSet = new api_data.DataSet(this.formItemSet.getName());
-            this.formItemViews.forEach((formItemView:api_form.FormItemView) => {
-                formItemView.getData().forEach((data:api_data.Data) => {
+            var dataSet = new api.data.DataSet(this.formItemSet.getName());
+            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+                formItemView.getData().forEach((data:api.data.Data) => {
                     dataSet.addData(data);
                 });
             });
             return dataSet;
         }
 
-        getAttachments(): api_content_attachment.Attachment[] {
-            var attachments:api_content_attachment.Attachment[] = [];
-            this.formItemViews.forEach((formItemView:api_form.FormItemView) => {
-                formItemView.getAttachments().forEach( (attachment:api_content_attachment.Attachment) => {
+        getAttachments(): api.content.attachment.Attachment[] {
+            var attachments:api.content.attachment.Attachment[] = [];
+            this.formItemViews.forEach((formItemView:api.form.FormItemView) => {
+                formItemView.getAttachments().forEach( (attachment:api.content.attachment.Attachment) => {
                     attachments.push( attachment );
                 } );
             });

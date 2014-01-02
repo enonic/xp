@@ -1,6 +1,6 @@
-module app_contextwindow {
-    export class EmulatorPanel extends api_ui.Panel {
-        private dataView:api_ui_grid.DataView<any>;
+module app.contextwindow {
+    export class EmulatorPanel extends api.ui.Panel {
+        private dataView:api.ui.grid.DataView<any>;
         private grid:EmulatorGrid;
         private contextWindow:ContextWindow;
 
@@ -10,11 +10,11 @@ module app_contextwindow {
 
             this.contextWindow = contextWindow;
 
-            var text = new api_dom.PEl();
+            var text = new api.dom.PEl();
             text.getEl().setInnerHtml("Emulate different client's physical sizes");
             this.appendChild(text);
 
-            this.dataView = new api_ui_grid.DataView<any>();
+            this.dataView = new api.ui.grid.DataView<any>();
             this.grid = new EmulatorGrid(this.dataView);
             this.appendChild(this.grid);
 
@@ -24,7 +24,7 @@ module app_contextwindow {
             jQuery(this.getHTMLElement()).on("click", ".grid-row", (event:JQueryEventObject) => {
                 var width = jQuery(event.currentTarget).children('div').data("width");
                 var height = jQuery(event.currentTarget).children('div').data("height");
-                var type = jQuery(event.currentTarget).children('div').data("device_type");
+                var type = jQuery(event.currentTarget).children('div').data("device.type");
                 this.contextWindow.getLiveEditEl().getEl().setWidth(width);
                 this.contextWindow.getLiveEditEl().getEl().setHeight(height);
             });
@@ -41,7 +41,7 @@ module app_contextwindow {
 
         private getData():void {
             jQuery.ajax({
-                url: api_util.getAdminUri("apps/content-manager/js/data/context-window/devices.json"),
+                url: api.util.getAdminUri("apps/content-manager/js/data/context-window/devices.json"),
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
                     this.dataView.setItems(EmulatorGrid.toSlickData(data));
                 }

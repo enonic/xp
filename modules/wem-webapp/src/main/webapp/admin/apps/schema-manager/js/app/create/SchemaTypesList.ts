@@ -1,21 +1,21 @@
-module app_new {
+module app.create {
 
     export interface SchemaTypeListItem {
-        type: api_schema.SchemaKind;
+        type: api.schema.SchemaKind;
         displayName: string;
         iconUrl: string;
     }
 
-    export class SchemaTypesList extends api_dom.DivEl implements api_event.Observable {
+    export class SchemaTypesList extends api.dom.DivEl implements api.event.Observable {
 
-        private ul:api_dom.UlEl;
+        private ul:api.dom.UlEl;
 
         private listeners:SchemaTypesListListener[] = [];
 
         constructor(items:SchemaTypeListItem[]) {
             super("SchemaTypeList", "schema-type-list");
 
-            this.ul = new api_dom.UlEl("SchemaTypeList");
+            this.ul = new api.dom.UlEl("SchemaTypeList");
             this.appendChild(this.ul);
 
             this.layoutItems(items);
@@ -45,10 +45,10 @@ module app_new {
             return this;
         }
 
-        private renderListItem(item:SchemaTypeListItem):api_dom.LiEl {
-            var li = new api_dom.LiEl("SchemaTypeListItem", "schema-type-list-item");
-            var img = new api_dom.ImgEl(item.iconUrl);
-            var h6 = new api_dom.H6El();
+        private renderListItem(item:SchemaTypeListItem):api.dom.LiEl {
+            var li = new api.dom.LiEl("SchemaTypeListItem", "schema-type-list-item");
+            var img = new api.dom.ImgEl(item.iconUrl);
+            var h6 = new api.dom.H6El();
             h6.getEl().setInnerHtml(item.displayName);
 
             li.appendChild(img);

@@ -1,6 +1,6 @@
-module api_schema_relationshiptype {
+module api.schema.relationshiptype {
 
-    export class GetRelationshipTypeByNameRequest extends RelationshipTypeResourceRequest<api_schema_relationshiptype_json.RelationshipTypeJson> {
+    export class GetRelationshipTypeByNameRequest extends RelationshipTypeResourceRequest<api.schema.relationshiptype.json.RelationshipTypeJson> {
 
         private name:RelationshipTypeName;
 
@@ -16,17 +16,17 @@ module api_schema_relationshiptype {
             };
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath():api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_schema_relationshiptype.RelationshipType> {
+        sendAndParse(): JQueryPromise<api.schema.relationshiptype.RelationshipType> {
 
-            var deferred = jQuery.Deferred<api_schema_relationshiptype_json.RelationshipTypeJson>();
+            var deferred = jQuery.Deferred<api.schema.relationshiptype.json.RelationshipTypeJson>();
 
-            this.send().done((response: api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
                 deferred.resolve(this.fromJsonToReleationshipType(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

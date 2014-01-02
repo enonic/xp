@@ -1,4 +1,4 @@
-module api_schema_mixin {
+module api.schema.mixin {
 
     export class GetMixinConfigByNameRequest extends MixinResourceRequest<GetMixinConfigResult> {
 
@@ -16,8 +16,8 @@ module api_schema_mixin {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "config");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "config");
         }
     }
 }

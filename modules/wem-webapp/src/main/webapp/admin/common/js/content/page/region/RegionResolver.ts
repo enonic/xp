@@ -1,18 +1,18 @@
-module api_content_page_region {
+module api.content.page.region {
 
-    export class RegionResolver extends api_data.PropertyVisitor {
+    export class RegionResolver extends api.data.PropertyVisitor {
 
-        private data: api_data.RootDataSet;
+        private data: api.data.RootDataSet;
 
-        private regionProperties: api_data.Property[] = [];
+        private regionProperties: api.data.Property[] = [];
 
-        constructor(data: api_data.RootDataSet) {
+        constructor(data: api.data.RootDataSet) {
             super();
             this.data = data;
-            this.restrictType(api_data.ValueTypes.DATA);
+            this.restrictType(api.data.ValueTypes.DATA);
         }
 
-        public visit(property: api_data.Property) {
+        public visit(property: api.data.Property) {
             this.regionProperties.push(property);
         }
 
@@ -20,9 +20,9 @@ module api_content_page_region {
 
             this.traverse(this.data.getDataArray());
             var regions: Region[] = [];
-            this.regionProperties.forEach((property: api_data.Property) => {
+            this.regionProperties.forEach((property: api.data.Property) => {
 
-                var value: api_data.RootDataSet = property.getValue().asRootDataSet();
+                var value: api.data.RootDataSet = property.getValue().asRootDataSet();
                 var region: Region = new RegionBuilder().fromRootDataSet(value).build();
                 regions.push(region);
             });

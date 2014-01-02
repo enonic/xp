@@ -1,6 +1,6 @@
-module api_app_wizard {
+module api.app.wizard {
 
-    export class WizardHeader extends api_dom.DivEl implements api_event.Observable {
+    export class WizardHeader extends api.dom.DivEl implements api.event.Observable {
 
         private listeners:WizardHeaderListener[] = [];
 

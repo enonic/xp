@@ -1,4 +1,4 @@
-module api_form{
+module api.form{
 
     export class Form {
 
@@ -6,10 +6,10 @@ module api_form{
 
         private formItemByName:{[name:string] : FormItem; } = {};
 
-        constructor(formJson:api_form_json.FormJson) {
+        constructor(formJson:api.form.json.FormJson) {
 
             //TODO: this breaks "edit", cause formJson is empty. Commented out.
-            formJson.formItems.forEach((formItemJson:api_form_json.FormItemJson) => {
+            formJson.formItems.forEach((formItemJson:api.form.json.FormItemJson) => {
                 this.addFormItem(FormItemFactory.createFormItem(formItemJson));
             });
         }
@@ -34,9 +34,9 @@ module api_form{
             return <Input>this.formItemByName[name];
         }
 
-        toJson():api_form_json.FormJson {
+        toJson():api.form.json.FormJson {
 
-            return <api_form_json.FormJson>{
+            return <api.form.json.FormJson>{
                 formItems: FormItem.formItemsToJson(this.getFormItems())
             }
         }

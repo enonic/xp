@@ -1,6 +1,6 @@
-module app_browse {
+module app.browse {
 
-    export class ImportTemplateAction extends api_ui.Action {
+    export class ImportTemplateAction extends api.ui.Action {
 
         constructor() {
             super("Import");
@@ -10,7 +10,7 @@ module app_browse {
         }
     }
 
-    export class NewTemplateAction extends api_ui.Action {
+    export class NewTemplateAction extends api.ui.Action {
 
         constructor() {
             super("New");
@@ -21,7 +21,7 @@ module app_browse {
 
     }
 
-    export class EditTemplateAction extends api_ui.Action {
+    export class EditTemplateAction extends api.ui.Action {
 
         constructor() {
             super("Edit");
@@ -32,7 +32,7 @@ module app_browse {
 
     }
 
-    export class OpenTemplateAction extends api_ui.Action {
+    export class OpenTemplateAction extends api.ui.Action {
 
         constructor() {
             super("Open");
@@ -43,20 +43,20 @@ module app_browse {
 
     }
 
-    export class DeleteTemplateAction extends api_ui.Action {
+    export class DeleteTemplateAction extends api.ui.Action {
 
         constructor() {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 var selection = components.gridPanel.getSelection()[0];
-                var siteTemplateModel = api_content_site_template.SiteTemplateSummary.fromExtModel(selection);
+                var siteTemplateModel = api.content.site.template.SiteTemplateSummary.fromExtModel(selection);
                 new DeleteSiteTemplatePromptEvent(siteTemplateModel).fire();
             });
         }
     }
 
-    export class DuplicateTemplateAction extends api_ui.Action {
+    export class DuplicateTemplateAction extends api.ui.Action {
 
         constructor() {
             super("Duplicate");
@@ -67,14 +67,14 @@ module app_browse {
 
     }
 
-    export class ExportTemplateAction extends api_ui.Action {
+    export class ExportTemplateAction extends api.ui.Action {
 
         constructor() {
             super("Export");
             this.setEnabled(false);
             this.addExecutionListener(() => {
                 var selection = components.gridPanel.getSelection()[0];
-                var siteTemplateModel = api_content_site_template.SiteTemplateSummary.fromExtModel(selection);
+                var siteTemplateModel = api.content.site.template.SiteTemplateSummary.fromExtModel(selection);
                 new ExportTemplateEvent(siteTemplateModel).fire();
             });
         }
@@ -83,15 +83,15 @@ module app_browse {
 
     export class TemplateBrowseActions {
 
-        public IMPORT_TEMPLATE:api_ui.Action;
-        public NEW_TEMPLATE: api_ui.Action;
-        public EDIT_TEMPLATE: api_ui.Action;
-        public OPEN_TEMPLATE: api_ui.Action;
-        public DELETE_TEMPLATE: api_ui.Action;
-        public DUPLICATE_TEMPLATE: api_ui.Action;
-        public EXPORT_TEMPLATE: api_ui.Action;
+        public IMPORT_TEMPLATE:api.ui.Action;
+        public NEW_TEMPLATE: api.ui.Action;
+        public EDIT_TEMPLATE: api.ui.Action;
+        public OPEN_TEMPLATE: api.ui.Action;
+        public DELETE_TEMPLATE: api.ui.Action;
+        public DUPLICATE_TEMPLATE: api.ui.Action;
+        public EXPORT_TEMPLATE: api.ui.Action;
 
-        private allActions: api_ui.Action[] = [];
+        private allActions: api.ui.Action[] = [];
 
         private static INSTANCE: TemplateBrowseActions;
 

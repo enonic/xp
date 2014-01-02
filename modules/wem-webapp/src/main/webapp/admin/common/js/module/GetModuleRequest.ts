@@ -1,10 +1,10 @@
-module api_module {
+module api.module {
 
-    export class GetModuleRequest extends ModuleResourceRequest<api_module_json.ModuleJson> {
+    export class GetModuleRequest extends ModuleResourceRequest<api.module.json.ModuleJson> {
 
-        private moduleKey:api_module.ModuleKey;
+        private moduleKey:api.module.ModuleKey;
 
-        constructor(moduleKey:api_module.ModuleKey) {
+        constructor(moduleKey:api.module.ModuleKey) {
             super();
             super.setMethod("GET");
             this.moduleKey = moduleKey;
@@ -16,8 +16,8 @@ module api_module {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath());
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath());
         }
     }
 }

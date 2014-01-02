@@ -1,4 +1,4 @@
-module api_ui_combobox {
+module api.ui.combobox {
 
     export class SelectedOptions<T>{
 

@@ -1,6 +1,6 @@
-module api_app_wizard {
+module api.app.wizard {
 
-    export interface WizardHeaderListener extends api_event.Listener {
+    export interface WizardHeaderListener extends api.event.Listener {
 
         onPropertyChanged(event:WizardHeaderPropertyChangedEvent);
 

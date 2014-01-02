@@ -1,4 +1,4 @@
-module api_form{
+module api.form{
 
     export class Input extends FormItem {
 
@@ -24,13 +24,13 @@ module api_form{
             super(name);
         }
 
-        static fromJson(json:api_form_json.InputJson):Input {
+        static fromJson(json:api.form.json.InputJson):Input {
             var input = new Input(json.name);
             input.setFromJson(json);
             return input;
         }
 
-        private setFromJson(json:api_form_json.InputJson) {
+        private setFromJson(json:api.form.json.InputJson) {
             this.inputType = InputTypeName.parseInputTypeName(json.inputType.name);
             this.label = json.label;
             this.immutable = json.immutable;
@@ -86,9 +86,9 @@ module api_form{
             this.occurrences = new Occurrences({"maximum": maximum, "minimum": minimum})
         }
 
-        public toInputJson():api_form_json.FormItemTypeWrapperJson {
+        public toInputJson():api.form.json.FormItemTypeWrapperJson {
 
-            return <api_form_json.FormItemTypeWrapperJson>{Input: <api_form_json.InputJson>{
+            return <api.form.json.FormItemTypeWrapperJson>{Input: <api.form.json.InputJson>{
                 name: this.getName(),
                 customText : this.getCustomText(),
                 helpText : this.getHelpText(),

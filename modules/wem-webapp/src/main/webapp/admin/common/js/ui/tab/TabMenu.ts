@@ -1,10 +1,10 @@
-module api_ui_tab {
+module api.ui.tab {
 
-    export class TabMenu extends api_dom.DivEl implements api_ui.DeckPanelNavigator {
+    export class TabMenu extends api.dom.DivEl implements api.ui.DeckPanelNavigator {
 
         private tabMenuButton:TabMenuButton;
 
-        private menuEl:api_dom.UlEl;
+        private menuEl:api.dom.UlEl;
 
         private showingMenuItems:boolean = false;
 
@@ -12,7 +12,7 @@ module api_ui_tab {
 
         private selectedTab:number;
 
-        private listeners:api_ui.DeckPanelNavigatorListener[] = [];
+        private listeners:api.ui.DeckPanelNavigatorListener[] = [];
 
         constructor(idPrefix?:string) {
             super(idPrefix || "TabMenu");
@@ -44,12 +44,12 @@ module api_ui_tab {
             this.tabMenuButton.addClass(cls);
         }
 
-        getMenuEl(): api_dom.UlEl {
+        getMenuEl(): api.dom.UlEl {
             return this.menuEl;
         }
 
-        createMenu():api_dom.UlEl {
-            var ulEl = new api_dom.UlEl();
+        createMenu():api.dom.UlEl {
+            var ulEl = new api.dom.UlEl();
             ulEl.getEl().setZindex(19001);
             ulEl.getEl().setPosition("absolute");
             ulEl.hide();
@@ -191,18 +191,18 @@ module api_ui_tab {
             this.selectedTab = -1;
         }
 
-        addListener(listener:api_ui.DeckPanelNavigatorListener) {
+        addListener(listener:api.ui.DeckPanelNavigatorListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:api_ui.DeckPanelNavigatorListener) {
+        removeListener(listener:api.ui.DeckPanelNavigatorListener) {
             this.listeners = this.listeners.filter((elem) => {
                 return elem != listener;
             });
         }
 
         private notifyTabAddedListeners(tab:TabMenuItem) {
-            this.listeners.forEach((listener:api_ui.DeckPanelNavigatorListener) => {
+            this.listeners.forEach((listener:api.ui.DeckPanelNavigatorListener) => {
                 if (listener.onNavigationItemAdded) {
                     listener.onNavigationItemAdded(tab);
                 }
@@ -210,7 +210,7 @@ module api_ui_tab {
         }
 
         private notifyTabSelectedListeners(tab:TabMenuItem) {
-            this.listeners.forEach((listener:api_ui.DeckPanelNavigatorListener) => {
+            this.listeners.forEach((listener:api.ui.DeckPanelNavigatorListener) => {
                 if (listener.onNavigationItemSelected) {
                     listener.onNavigationItemSelected(tab);
                 }

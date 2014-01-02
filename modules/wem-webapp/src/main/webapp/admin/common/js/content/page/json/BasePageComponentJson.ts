@@ -1,4 +1,4 @@
-module api_content_page_json{
+module api.content.page.json{
 
     export interface BasePageComponentJson{
 

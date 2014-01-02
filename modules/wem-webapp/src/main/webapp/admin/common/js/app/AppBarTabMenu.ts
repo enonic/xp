@@ -1,6 +1,6 @@
-module api_app{
+module api.app{
 
-    export class AppBarTabMenu extends api_ui_tab.TabMenu {
+    export class AppBarTabMenu extends api.ui.tab.TabMenu {
 
         private appBarTabMenuButton:AppBarTabMenuButton;
 
@@ -45,7 +45,7 @@ module api_app{
         }
 
         getNavigationItemById(tabId:AppBarTabId):AppBarTabMenuItem {
-            var items:api_ui_tab.TabMenuItem[] = this.getNavigationItems();
+            var items:api.ui.tab.TabMenuItem[] = this.getNavigationItems();
             var item;
             for (var i = 0; i < items.length; i++) {
                 item = <AppBarTabMenuItem>items[i];

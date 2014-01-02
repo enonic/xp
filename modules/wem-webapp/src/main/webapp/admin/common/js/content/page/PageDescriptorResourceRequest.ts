@@ -1,20 +1,20 @@
-module api_content_page {
+module api.content.page {
 
-    export class PageDescriptorResourceRequest<JSON> extends api_rest.ResourceRequest<JSON>{
+    export class PageDescriptorResourceRequest<JSON> extends api.rest.ResourceRequest<JSON>{
 
-        private resourcePath:api_rest.Path;
+        private resourcePath:api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "content", "page", "descriptor");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "descriptor");
         }
 
-        getResourcePath():api_rest.Path {
+        getResourcePath():api.rest.Path {
             return this.resourcePath;
         }
 
-        fromJsonToPageDescriptor(json:api_content_page_json.PageDescriptorJson):api_content_page.PageDescriptor {
-            return new api_content_page.PageDescriptorBuilder().fromJson(json).build();
+        fromJsonToPageDescriptor(json:api.content.page.json.PageDescriptorJson):api.content.page.PageDescriptor {
+            return new api.content.page.PageDescriptorBuilder().fromJson(json).build();
         }
     }
 }

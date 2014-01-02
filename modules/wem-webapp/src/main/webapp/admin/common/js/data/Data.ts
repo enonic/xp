@@ -1,4 +1,4 @@
-module api_data{
+module api.data{
 
     export class Data {
 
@@ -9,7 +9,7 @@ module api_data{
         private parent:DataSet;
 
         constructor(name:string) {
-            api_util.assertNotNull( name, "name of a Data cannot be null" );
+            api.util.assertNotNull( name, "name of a Data cannot be null" );
             this.name = name;
         }
 
@@ -38,16 +38,16 @@ module api_data{
         }
 
         toDataSet():DataSet {
-            api_util.assert(this instanceof DataSet, "Expected Data to be a DataSet: " + api_util.getClassName(this));
+            api.util.assert(this instanceof DataSet, "Expected Data to be a DataSet: " + api.util.getClassName(this));
             return <DataSet>this;
         }
 
         toProperty():Property {
-            api_util.assert(this instanceof Property, "Expected Data to be a Property: " + api_util.getClassName(this));
+            api.util.assert(this instanceof Property, "Expected Data to be a Property: " + api.util.getClassName(this));
             return <Property>this;
         }
 
-        toDataJson():api_data_json.DataTypeWrapperJson {
+        toDataJson():api.data.json.DataTypeWrapperJson {
 
             if (this instanceof Property) {
                 return (<Property>this).toPropertyJson();
@@ -60,8 +60,8 @@ module api_data{
             }
         }
 
-        static datasToJson(datas:Data[]):api_data_json.DataTypeWrapperJson[] {
-            var array:api_data_json.DataTypeWrapperJson[] = [];
+        static datasToJson(datas:Data[]):api.data.json.DataTypeWrapperJson[] {
+            var array:api.data.json.DataTypeWrapperJson[] = [];
             datas.forEach( (data:Data) => {
                 array.push( data.toDataJson() );
             } );

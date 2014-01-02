@@ -1,4 +1,4 @@
-module api_data {
+module api.data {
 
     export class DataPath {
 
@@ -109,7 +109,7 @@ module api_data {
         }
 
         asNewWithoutFirstPathElement(): DataPath {
-            api_util.assert(this.elementCount() > 1,
+            api.util.assert(this.elementCount() > 1,
                 "Cannot create new path without first path element when path does not contain more than one element");
             var elements: DataPathElement[] = [];
             this.elements.forEach((element: DataPathElement, index: number) => {
@@ -140,8 +140,8 @@ module api_data {
             return this.index;
         }
 
-        toDataId(): api_data.DataId {
-            return new api_data.DataId(this.name, this.index);
+        toDataId(): api.data.DataId {
+            return new api.data.DataId(this.name, this.index);
         }
 
         toString(): string {

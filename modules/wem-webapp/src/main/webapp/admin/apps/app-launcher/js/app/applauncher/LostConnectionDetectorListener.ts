@@ -1,4 +1,4 @@
-module app_launcher {
+module app.launcher {
 
     export interface LostConnectionDetectorListener {
 

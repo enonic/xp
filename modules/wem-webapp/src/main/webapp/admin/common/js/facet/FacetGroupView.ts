@@ -1,6 +1,6 @@
-module api_facet {
+module api.facet {
 
-    export class FacetGroupView extends api_dom.DivEl {
+    export class FacetGroupView extends api.dom.DivEl {
 
         private name:string;
 
@@ -8,7 +8,7 @@ module api_facet {
 
         private facetViews:FacetView[] = [];
 
-        private titleEl = new api_dom.H2El();
+        private titleEl = new api.dom.H2El();
 
         private facetEntrySelectionChangedListeners:Function[] = [];
 

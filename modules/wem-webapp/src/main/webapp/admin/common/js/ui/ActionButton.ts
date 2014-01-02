@@ -1,6 +1,6 @@
-module api_ui{
+module api.ui{
 
-    export class ActionButton extends api_dom.ButtonEl {
+    export class ActionButton extends api.dom.ButtonEl {
 
         private action:Action;
         private tooltip:Tooltip;
@@ -32,7 +32,7 @@ module api_ui{
                 this.action.execute();
             });
 
-            this.action.addPropertyChangeListener((action:api_ui.Action) => {
+            this.action.addPropertyChangeListener((action:api.ui.Action) => {
                 this.setEnabled(action.isEnabled());
             });
         }

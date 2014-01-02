@@ -1,30 +1,30 @@
-module api_content_page_layout {
+module api.content.page.layout {
 
-    export class LayoutComponent extends api_content_page.BasePageComponent<LayoutTemplateKey> {
+    export class LayoutComponent extends api.content.page.BasePageComponent<LayoutTemplateKey> {
 
-        private config: api_data.RootDataSet;
+        private config: api.data.RootDataSet;
 
         constructor(builder: LayoutComponentBuilder) {
             super(builder);
             this.config = builder.config;
         }
 
-        getConfig(): api_data.RootDataSet {
+        getConfig(): api.data.RootDataSet {
             return this.config;
         }
     }
 
-    export class LayoutComponentBuilder extends api_content_page.BaseComponentBuilder<LayoutTemplateKey> {
+    export class LayoutComponentBuilder extends api.content.page.BaseComponentBuilder<LayoutTemplateKey> {
 
-        config: api_data.RootDataSet;
+        config: api.data.RootDataSet;
 
-        public fromDataSet(dataSet: api_data.DataSet): LayoutComponentBuilder {
+        public fromDataSet(dataSet: api.data.DataSet): LayoutComponentBuilder {
             this.setTemplate(LayoutTemplateKey.fromString(dataSet.getProperty("template").getString()));
             this.config = dataSet.getProperty("config").getValue().asRootDataSet();
             return this;
         }
 
-        public setConfig(value: api_data.RootDataSet): LayoutComponentBuilder {
+        public setConfig(value: api.data.RootDataSet): LayoutComponentBuilder {
             this.config = value;
             return this;
         }

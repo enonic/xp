@@ -1,9 +1,9 @@
-module api_ui {
+module api.ui {
 
     export class AutosizeTextInput extends TextInput {
 
-        private attendant: api_dom.Element;
-        private clone: api_dom.Element;
+        private attendant: api.dom.Element;
+        private clone: api.dom.Element;
 
         constructor(idPrefix?:string, className?:string, size:string = TextInput.MIDDLE) {
             super(idPrefix, className, size);
@@ -13,13 +13,13 @@ module api_ui {
             // Create <div> element with the same styles as this text input.
             // This clone <div> is displayed as inline element so its width matches to its text length.
             // Then input width will be updated according to text length from the div.
-            this.clone = new api_dom.DivEl().addClass('autosize-clone').addClass(this.getEl().getAttribute('class'));
+            this.clone = new api.dom.DivEl().addClass('autosize-clone').addClass(this.getEl().getAttribute('class'));
             // In order to have styles of clone div calculated it has to be in DOM.
             // Attendant element wraps the clone and has zero height
             // so it has calculated styles but isn't shown on a page.
             // Much more the attendant is displayed as block element and will be placed after this input.
             // Therefore it will have the maximum possible length.
-            this.attendant = new api_dom.DivEl().addClass('autosize-attendant');
+            this.attendant = new api.dom.DivEl().addClass('autosize-attendant');
             this.attendant.appendChild(this.clone);
 
             // Update input width according to current text length.
@@ -46,7 +46,7 @@ module api_ui {
                 // If input isn't visible then append attendant element to body
                 // in order to update input size according to initial text width.
                 // Then insert attendant element after input for further size updates.
-                api_dom.Body.get().appendChild(this.attendant);
+                api.dom.Body.get().appendChild(this.attendant);
                 this.updateSize();
                 this.getParent().appendChild(this.attendant);
             }

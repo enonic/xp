@@ -1,10 +1,10 @@
-module api_form_input {
+module api.form.input {
 
-    export class InputLabel extends api_dom.DivEl {
+    export class InputLabel extends api.dom.DivEl {
 
-        private input:api_form.Input;
+        private input:api.form.Input;
 
-        constructor(input:api_form.Input) {
+        constructor(input:api.form.Input) {
             super("InputLabel", "input-label");
 
             this.input = input;
@@ -14,7 +14,7 @@ module api_form_input {
 
             if( input.getOccurrences().required() ) {
                 nodes.push( document.createTextNode(" ") );
-                var requiredMarker = new api_dom.SpanEl(null, "required");
+                var requiredMarker = new api.dom.SpanEl(null, "required");
                 nodes.push( requiredMarker.getHTMLElement() );
             }
             this.getEl().appendChildren(nodes);

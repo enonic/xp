@@ -1,24 +1,24 @@
-module app_new {
+module app.create {
 
-    export class NewSchemaDialog extends api_ui_dialog.ModalDialog {
+    export class NewSchemaDialog extends api.ui.dialog.ModalDialog {
 
         private schemaTypesList:SchemaTypesList;
 
         private schemaTypeListItems:SchemaTypeListItem[] = [
             {
-                type: api_schema.SchemaKind.CONTENT_TYPE,
+                type: api.schema.SchemaKind.CONTENT_TYPE,
                 displayName: 'Content Type',
-                iconUrl: api_util.getRestUri('schema/image/ContentType:structured')
+                iconUrl: api.util.getRestUri('schema/image/ContentType:structured')
             },
             {
-                type: api_schema.SchemaKind.RELATIONSHIP_TYPE,
+                type: api.schema.SchemaKind.RELATIONSHIP_TYPE,
                 displayName: 'Relationship Type',
-                iconUrl: api_util.getRestUri('schema/image/RelationshipType:_') // default icon for RelationshipType
+                iconUrl: api.util.getRestUri('schema/image/RelationshipType:_') // default icon for RelationshipType
             },
             {
-                type: api_schema.SchemaKind.MIXIN,
+                type: api.schema.SchemaKind.MIXIN,
                 displayName: 'Mixin',
-                iconUrl: api_util.getRestUri('schema/image/Mixin:_') // default icon for Mixin
+                iconUrl: api.util.getRestUri('schema/image/Mixin:_') // default icon for Mixin
             }
         ];
 
@@ -46,12 +46,12 @@ module app_new {
                 }
             });
 
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
         }
 
     }
 
-    export class CancelNewDialogAction extends api_ui.Action {
+    export class CancelNewDialogAction extends api.ui.Action {
 
         constructor() {
             super("Cancel", "esc");

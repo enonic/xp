@@ -1,4 +1,4 @@
-module api_dom {
+module api.dom {
 
     export class ElementHelper {
 
@@ -29,7 +29,7 @@ module api_dom {
         }
 
         /*
-         * @returns {api_dom.ElementHelper} ElementHelper for previous node of this element.
+         * @returns {api.dom.ElementHelper} ElementHelper for previous node of this element.
          */
         getPrevious():ElementHelper {
             var previous = this.el.previousSibling;

@@ -1,12 +1,12 @@
-module api_app_wizard {
+module api.app.wizard {
 
-    export class WizardStepNavigator extends api_ui_tab.TabBar {
+    export class WizardStepNavigator extends api.ui.tab.TabBar {
 
         constructor() {
             super("WizardStepNavigator", "step-navigator");
         }
 
-        addNavigationItem(step:api_ui_tab.TabBarItem) {
+        addNavigationItem(step:api.ui.tab.TabBarItem) {
             super.addNavigationItem(step);
 
             if (this.getSize() == 1) {

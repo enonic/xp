@@ -1,6 +1,6 @@
-module api_content_site {
+module api.content.site {
 
-    export class DeleteSiteRequest extends SiteResourceRequest<api_content_json.ContentJson> {
+    export class DeleteSiteRequest extends SiteResourceRequest<api.content.json.ContentJson> {
 
         private contentId: string;
 
@@ -16,8 +16,8 @@ module api_content_site {
             };
         }
 
-        getRequestPath(): api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "delete");
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
     }
 }

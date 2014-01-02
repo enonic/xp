@@ -1,6 +1,6 @@
-module api_schema_relationshiptype {
+module api.schema.relationshiptype {
 
-    export class UpdateRelationshipTypeRequest extends RelationshipTypeResourceRequest<api_schema_relationshiptype_json.RelationshipTypeJson> {
+    export class UpdateRelationshipTypeRequest extends RelationshipTypeResourceRequest<api.schema.relationshiptype.json.RelationshipTypeJson> {
 
         private relationshipTypeToUpdate:RelationshipTypeName
 
@@ -8,10 +8,10 @@ module api_schema_relationshiptype {
 
         private config:string;
 
-        private icon:api_icon.Icon;
+        private icon:api.icon.Icon;
 
         constructor(relationshipTypeToUpdate:RelationshipTypeName, name:RelationshipTypeName, config:string,
-                    icon:api_icon.Icon) {
+                    icon:api.icon.Icon) {
             super();
             super.setMethod("POST");
             this.relationshipTypeToUpdate = relationshipTypeToUpdate;
@@ -29,17 +29,17 @@ module api_schema_relationshiptype {
             }
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), 'update');
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), 'update');
         }
 
         sendAndParse(): JQueryPromise<RelationshipType> {
 
             var deferred = jQuery.Deferred<RelationshipType>();
 
-            this.send().done((response: api_rest.JsonResponse<api_schema_relationshiptype_json.RelationshipTypeJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
                 deferred.resolve(this.fromJsonToReleationshipType(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

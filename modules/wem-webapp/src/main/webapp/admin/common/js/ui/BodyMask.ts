@@ -1,9 +1,9 @@
-module api_ui{
+module api.ui{
 
     /**
      * A statically accessible object for masking the whole body.
      */
-    export class BodyMask extends api_dom.DivEl {
+    export class BodyMask extends api.dom.DivEl {
 
         private static instance:BodyMask = new BodyMask();
 
@@ -17,7 +17,7 @@ module api_ui{
             this.getEl().addClass("body-mask")
             this.getEl().setZindex(30000);
 
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
         }
 
         activate() {

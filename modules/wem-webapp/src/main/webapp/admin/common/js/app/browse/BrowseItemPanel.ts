@@ -1,15 +1,15 @@
-module api_app_browse {
+module api.app.browse {
 
     export interface BrowseItemPanelParams {
 
-        actionMenuActions:api_ui.Action[];
+        actionMenuActions:api.ui.Action[];
     }
 
-    export class BrowseItemPanel<M> extends api_ui.DeckPanel {
+    export class BrowseItemPanel<M> extends api.ui.DeckPanel {
 
-        private actionMenu:api_ui_menu.ActionMenu;
+        private actionMenu:api.ui.menu.ActionMenu;
 
-        private itemStatisticsPanel:api_app_view.ItemStatisticsPanel<M>;
+        private itemStatisticsPanel:api.app.view.ItemStatisticsPanel<M>;
 
         private itemsSelectionPanel:ItemsSelectionPanel<M>;
 
@@ -17,10 +17,10 @@ module api_app_browse {
             super("BrowseItemPanel");
             this.getEl().addClass("browse-item-panel");
 
-            this.actionMenu = new api_ui_menu.ActionMenu(params.actionMenuActions);
+            this.actionMenu = new api.ui.menu.ActionMenu(params.actionMenuActions);
             this.itemsSelectionPanel = new ItemsSelectionPanel<M>();
 
-            this.itemStatisticsPanel = new api_app_view.ItemStatisticsPanel<M>({actionMenu: this.actionMenu});
+            this.itemStatisticsPanel = new api.app.view.ItemStatisticsPanel<M>({actionMenu: this.actionMenu});
 
             this.addPanel(this.itemsSelectionPanel);
             this.addPanel(this.itemStatisticsPanel);

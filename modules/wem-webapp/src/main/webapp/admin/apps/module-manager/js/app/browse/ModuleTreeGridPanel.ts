@@ -1,25 +1,25 @@
-module app_browse {
+module app.browse {
 
     export interface ModuleTreeGridPanelParams {
 
-        contextMenu:api_ui_menu.ContextMenu;
+        contextMenu:api.ui.menu.ContextMenu;
     }
 
-    export class ModuleTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
+    export class ModuleTreeGridPanel extends api.app.browse.grid.TreeGridPanel {
 
         constructor(params:ModuleTreeGridPanelParams) {
 
             super({
                 columns: this.createColumns(),
-                gridStore: new app_browse_grid.ModuleGridStore().getExtDataStore(),
-                treeStore: new app_browse_grid.ModuleTreeStore().getExtDataStore(),
+                gridStore: new app.browse.grid.ModuleGridStore().getExtDataStore(),
+                treeStore: new app.browse.grid.ModuleTreeStore().getExtDataStore(),
                 gridConfig: this.createGridConfig(),
                 treeConfig: this.createTreeConfig(),
                 contextMenu: params.contextMenu});
 
             this.setItemId("ModuleTreeGridPanel");
 
-            this.setActiveList(api_app_browse_grid.TreeGridPanel.GRID);
+            this.setActiveList(api.app.browse.grid.TreeGridPanel.GRID);
             this.setKeyField("key");
 
         }
@@ -77,7 +77,7 @@ module app_browse {
 
             var moduleData = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format( nameTemplate, activeListType, api_util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), value, moduleData.key);
+            return Ext.String.format( nameTemplate, activeListType, api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), value, moduleData.key);
         }
 
     }

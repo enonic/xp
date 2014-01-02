@@ -1,13 +1,13 @@
-module app_wizard_event {
+module app.wizard.event {
 
-    export class ShowContentLiveEvent extends api_event.Event {
+    export class ShowContentLiveEvent extends api.event.Event {
 
         constructor() {
             super('showContentLive');
         }
 
         static on(handler:(event:ShowContentLiveEvent) => void) {
-            api_event.onEvent('showContentLive', handler);
+            api.event.onEvent('showContentLive', handler);
         }
 
     }

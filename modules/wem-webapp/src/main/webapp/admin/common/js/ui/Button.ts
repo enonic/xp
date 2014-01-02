@@ -1,15 +1,15 @@
-module api_ui{
+module api.ui{
 
-    export class Button extends api_dom.ButtonEl {
+    export class Button extends api.dom.ButtonEl {
 
-        private labelEl:api_dom.SpanEl;
+        private labelEl:api.dom.SpanEl;
 
         constructor(label:string) {
             super("Button");
 
             this.setEnabled(true);
 
-            this.labelEl = new api_dom.SpanEl(null, "label");
+            this.labelEl = new api.dom.SpanEl(null, "label");
             this.labelEl.getEl().setInnerHtml(label);
             this.appendChild(this.labelEl);
         }

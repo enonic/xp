@@ -1,6 +1,6 @@
-module app_home {
+module app.home {
 
-    export class VersionInfo extends api_dom.DivEl {
+    export class VersionInfo extends api.dom.DivEl {
 
         private version:string;
 

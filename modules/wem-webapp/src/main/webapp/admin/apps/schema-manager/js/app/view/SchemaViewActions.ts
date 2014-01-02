@@ -1,22 +1,22 @@
-module app_view {
+module app.view {
 
-    export class EditSchemaAction extends api_ui.Action {
+    export class EditSchemaAction extends api.ui.Action {
 
-        constructor(panel:api_app_view.ItemViewPanel<api_schema.Schema>) {
+        constructor(panel:api.app.view.ItemViewPanel<api.schema.Schema>) {
             super("Edit");
 
             this.addExecutionListener(() => {
-                new app_browse.EditSchemaEvent([panel.getItem().getModel()]).fire();
+                new app.browse.EditSchemaEvent([panel.getItem().getModel()]).fire();
             });
         }
     }
 
-    export class DeleteSchemaAction extends api_ui.Action {
+    export class DeleteSchemaAction extends api.ui.Action {
 
-        constructor(panel:api_app_view.ItemViewPanel<api_schema.Schema>) {
+        constructor(panel:api.app.view.ItemViewPanel<api.schema.Schema>) {
             super("Delete", "mod+del");
             this.addExecutionListener(() => {
-                api_ui_dialog.ConfirmationDialog.get()
+                api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this schema?")
                     .setNoCallback(null)
                     .setYesCallback(() => {
@@ -25,21 +25,21 @@ module app_view {
                         var schema = panel.getItem().getModel();
 
                         var request;
-                        if (schema.getSchemaKind() == api_schema.SchemaKind.CONTENT_TYPE) {
-                            request = new api_schema_content.DeleteContentTypeRequest([schema.getName()]);
-                        } else if (schema.getSchemaKind() == api_schema.SchemaKind.RELATIONSHIP_TYPE) {
-                            request = new api_schema_relationshiptype.DeleteRelationshipTypeRequest([schema.getName()]);
-                        } else if (schema.getSchemaKind() == api_schema.SchemaKind.MIXIN) {
-                            request = new api_schema_mixin.DeleteMixinRequest([schema.getName()]);
+                        if (schema.getSchemaKind() == api.schema.SchemaKind.CONTENT_TYPE) {
+                            request = new api.schema.content.DeleteContentTypeRequest([schema.getName()]);
+                        } else if (schema.getSchemaKind() == api.schema.SchemaKind.RELATIONSHIP_TYPE) {
+                            request = new api.schema.relationshiptype.DeleteRelationshipTypeRequest([schema.getName()]);
+                        } else if (schema.getSchemaKind() == api.schema.SchemaKind.MIXIN) {
+                            request = new api.schema.mixin.DeleteMixinRequest([schema.getName()]);
                         }
 
                         if (request) {
-                            request.send().done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+                            request.send().done((jsonResponse:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();
 
                                 if (json.successes.length > 0) {
-                                    api_notify.showFeedback('Content [' + json.successes[0].name + '] deleted!');
-                                    new api_schema.SchemaDeletedEvent([schema]).fire();
+                                    api.notify.showFeedback('Content [' + json.successes[0].name + '] deleted!');
+                                    new api.schema.SchemaDeletedEvent([schema]).fire();
                                 }
                             });
                         }
@@ -49,13 +49,13 @@ module app_view {
         }
     }
 
-    export class CloseSchemaAction extends api_ui.Action {
+    export class CloseSchemaAction extends api.ui.Action {
 
-        constructor(panel:api_ui.Panel, checkCanRemovePanel:boolean = true) {
+        constructor(panel:api.ui.Panel, checkCanRemovePanel:boolean = true) {
             super("Close");
 
             this.addExecutionListener(() => {
-                new app_browse.CloseSchemaEvent(panel, checkCanRemovePanel).fire();
+                new app.browse.CloseSchemaEvent(panel, checkCanRemovePanel).fire();
             });
         }
     }

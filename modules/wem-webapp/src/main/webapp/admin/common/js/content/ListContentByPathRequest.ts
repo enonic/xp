@@ -1,10 +1,10 @@
-module api_content {
+module api.content {
 
     export class ListContentByPathRequest<T> extends ContentResourceRequest<ListContentResult<T>> {
 
         private parentPath:ContentPath;
 
-        private expand:api_rest.Expand = api_rest.Expand.SUMMARY;
+        private expand:api.rest.Expand = api.rest.Expand.SUMMARY;
 
         constructor(parentPath:ContentPath) {
             super();
@@ -12,7 +12,7 @@ module api_content {
             this.parentPath = parentPath;
         }
 
-        setExpand(value:api_rest.Expand) {
+        setExpand(value:api.rest.Expand) {
             this.expand = value;
         }
 
@@ -23,8 +23,8 @@ module api_content {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "list", "bypath");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "list", "bypath");
         }
     }
 }

@@ -1,30 +1,30 @@
-module api_form_inputtype_text {
+module api.form.inputtype.text {
 
-    export class HtmlArea extends api_form_inputtype_support.BaseInputTypeView {
+    export class HtmlArea extends api.form.inputtype.support.BaseInputTypeView {
 
         constructor() {
             super("HtmlArea");
         }
 
-        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
 
-            var textAreaEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
+            var textAreaEl = new api.ui.TextArea(this.getInput().getName() + "-" + index);
             if (property != null) {
                 textAreaEl.setValue(property.getString());
             }
             return textAreaEl;
         }
 
-        getValue(occurrence:api_dom.Element):api_data.Value {
-            var inputEl = <api_ui.TextArea>occurrence;
-            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
+        getValue(occurrence:api.dom.Element):api.data.Value {
+            var inputEl = <api.ui.TextArea>occurrence;
+            return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
         }
 
-        valueBreaksRequiredContract(value:api_data.Value):boolean {
+        valueBreaksRequiredContract(value:api.data.Value):boolean {
             // TODO:
             return false;
         }
     }
 
-    api_form_input.InputTypeManager.register("HtmlArea", HtmlArea);
+    api.form.input.InputTypeManager.register("HtmlArea", HtmlArea);
 }

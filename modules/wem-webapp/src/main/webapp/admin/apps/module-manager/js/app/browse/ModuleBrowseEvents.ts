@@ -1,14 +1,14 @@
-module app_browse {
+module app.browse {
 
-    export class BaseModuleModelEvent extends api_event.Event {
-        private model:api_module.ModuleSummary[];
+    export class BaseModuleModelEvent extends api.event.Event {
+        private model:api.module.ModuleSummary[];
 
-        constructor(name:string, model:api_module.ModuleSummary[]) {
+        constructor(name:string, model:api.module.ModuleSummary[]) {
             this.model = model;
             super(name);
         }
 
-        getModules():api_module.ModuleSummary[] {
+        getModules():api.module.ModuleSummary[] {
             return this.model;
         }
     }
@@ -20,7 +20,7 @@ module app_browse {
         }
 
         static on(handler:(event:ImportModuleEvent) => void) {
-            api_event.onEvent('importModule', handler);
+            api.event.onEvent('importModule', handler);
         }
     }
 
@@ -30,22 +30,22 @@ module app_browse {
         }
 
         static on(handler:(event:ExportModuleEvent) => void) {
-            api_event.onEvent('exportModule', handler);
+            api.event.onEvent('exportModule', handler);
         }
     }
 
     export class DeleteModulePromptEvent extends BaseModuleModelEvent {
 
-        constructor(moduleModel:api_module.ModuleSummary) {
+        constructor(moduleModel:api.module.ModuleSummary) {
             super('deleteModulePrompt', [moduleModel]);
         }
 
-        getModule():api_module.ModuleSummary {
+        getModule():api.module.ModuleSummary {
             return this.getModules()[0];
         }
 
         static on(handler:(event:DeleteModulePromptEvent) => void) {
-            api_event.onEvent('deleteModulePrompt', handler);
+            api.event.onEvent('deleteModulePrompt', handler);
         }
     }
 

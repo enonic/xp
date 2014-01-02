@@ -1,9 +1,9 @@
-module api_content_site_json{
+module api.content.site.json{
 
     export interface ModuleConfigJson {
 
         moduleKey:string;
 
-        config:api_data_json.DataJson[];
+        config:api.data.json.DataJson[];
     }
 }

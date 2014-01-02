@@ -1,14 +1,14 @@
-module api_ui {
+module api.ui {
 
     export enum SplitPanelAlignment {
         HORIZONTAL,
         VERTICAL
     }
 
-    export class SplitPanel extends api_ui.Panel {
-        private panelA:api_ui.Panel;
+    export class SplitPanel extends api.ui.Panel {
+        private panelA:api.ui.Panel;
 
-        private panelB:api_ui.Panel;
+        private panelB:api.ui.Panel;
 
         private panelASpace:number;
 
@@ -18,7 +18,7 @@ module api_ui {
 
         private alignment:SplitPanelAlignment;
 
-        constructor(panelA:api_ui.Panel, panelB:api_ui.Panel) {
+        constructor(panelA:api.ui.Panel, panelB:api.ui.Panel) {
             super();
             this.getEl().addClass("split-panel");
             this.splitter = new SplitPanelSplitter(this);
@@ -68,11 +68,11 @@ module api_ui {
             this.distribute();
         }
 
-        getPanelA():api_ui.Panel {
+        getPanelA():api.ui.Panel {
             return this.panelA;
         }
 
-        getPanelB():api_ui.Panel {
+        getPanelB():api.ui.Panel {
             return this.panelB;
         }
 
@@ -97,13 +97,13 @@ module api_ui {
         }
     }
 
-    export class SplitPanelSplitter extends api_dom.DivEl {
+    export class SplitPanelSplitter extends api.dom.DivEl {
 
         private draggable:boolean;
 
         private splitPanel:SplitPanel;
 
-        private ghostDragger:api_dom.DivEl;
+        private ghostDragger:api.dom.DivEl;
 
         private dragListener:(e:MouseEvent) => void;
 
@@ -117,9 +117,9 @@ module api_ui {
 
         private alignment:SplitPanelAlignment;
 
-        private maskA:api_ui.DraggingMask;
+        private maskA:api.ui.DraggingMask;
 
-        private maskB:api_ui.DraggingMask;
+        private maskB:api.ui.DraggingMask;
 
 
         constructor(splitPanel:SplitPanel) {
@@ -193,16 +193,16 @@ module api_ui {
         }
 
         private createGhostDragger() {
-            this.ghostDragger = new api_dom.DivEl();
+            this.ghostDragger = new api.dom.DivEl();
             this.ghostDragger.getEl().addClass("ghost-dragger");
         }
 
         private addPanelMask() {
             if (!this.maskA) {
-                this.maskA = new api_ui.DraggingMask(this.splitPanel.getPanelA());
+                this.maskA = new api.ui.DraggingMask(this.splitPanel.getPanelA());
             }
             if (!this.maskB) {
-                this.maskB = new api_ui.DraggingMask(this.splitPanel.getPanelB());
+                this.maskB = new api.ui.DraggingMask(this.splitPanel.getPanelB());
             }
 
             this.maskA.show();

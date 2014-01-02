@@ -1,10 +1,10 @@
-module api_form_inputtype_content {
+module api.form.inputtype.content {
 
-    export interface ContentSummaryLoaderListener extends api_event.Listener {
+    export interface ContentSummaryLoaderListener extends api.event.Listener {
 
         onLoading: () => void;
 
-        onLoaded: (contentSummaries:api_content.ContentSummary[]) => void;
+        onLoaded: (contentSummaries:api.content.ContentSummary[]) => void;
 
     }
 

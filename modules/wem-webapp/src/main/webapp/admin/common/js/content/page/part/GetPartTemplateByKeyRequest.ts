@@ -1,10 +1,10 @@
-module api_content_page_part{
+module api.content.page.part{
 
-    export class GetPartTemplateByKeyRequest extends PartTemplateResourceRequest<api_content_page_part_json.PartTemplateJson> {
+    export class GetPartTemplateByKeyRequest extends PartTemplateResourceRequest<api.content.page.part.json.PartTemplateJson> {
 
-        private partTemplateKey:api_content_page_part.PartTemplateKey;
+        private partTemplateKey:api.content.page.part.PartTemplateKey;
 
-        constructor(partTemplateKey:api_content_page_part.PartTemplateKey) {
+        constructor(partTemplateKey:api.content.page.part.PartTemplateKey) {
             super();
             super.setMethod("GET");
             this.partTemplateKey = partTemplateKey;
@@ -16,18 +16,18 @@ module api_content_page_part{
             };
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath():api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_content_page_part.PartTemplate> {
+        sendAndParse(): JQueryPromise<api.content.page.part.PartTemplate> {
 
-            var deferred = jQuery.Deferred<api_content_page_part.PartTemplate>();
+            var deferred = jQuery.Deferred<api.content.page.part.PartTemplate>();
 
             this.send().
-                done((response: api_rest.JsonResponse<api_content_page_part_json.PartTemplateJson>) => {
+                done((response: api.rest.JsonResponse<api.content.page.part.json.PartTemplateJson>) => {
                     deferred.resolve(this.fromJsonToPartTemplate(response.getResult()));
-                }).fail((response: api_rest.RequestError) => {
+                }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

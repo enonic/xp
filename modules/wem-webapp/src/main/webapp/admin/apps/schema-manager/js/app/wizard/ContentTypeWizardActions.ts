@@ -1,6 +1,6 @@
-module app_wizard {
+module app.wizard {
 
-    export class DuplicateContentTypeAction extends api_ui.Action {
+    export class DuplicateContentTypeAction extends api.ui.Action {
 
         constructor() {
             super("Duplicate");
@@ -10,28 +10,28 @@ module app_wizard {
         }
     }
 
-    export class DeleteContentTypeAction extends api_ui.Action {
+    export class DeleteContentTypeAction extends api.ui.Action {
 
-        constructor(wizardPanel:api_app_wizard.WizardPanel<api_schema_content.ContentType>) {
+        constructor(wizardPanel:api.app.wizard.WizardPanel<api.schema.content.ContentType>) {
             super("Delete", "mod+del");
             this.addExecutionListener(() => {
-                api_ui_dialog.ConfirmationDialog.get()
+                api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this content type?")
                     .setNoCallback(null)
                     .setYesCallback(() => {
                         wizardPanel.close();
-                        new api_schema_content.DeleteContentTypeRequest()
+                        new api.schema.content.DeleteContentTypeRequest()
                             .addName(wizardPanel.getPersistedItem().getContentTypeName())
                             .send()
-                            .done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+                            .done((jsonResponse:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();
 
                                 if (json.successes && json.successes.length > 0) {
                                     var name = json.successes[0].name;
                                     var deletedContentType = wizardPanel.getPersistedItem();
 
-                                    api_notify.showFeedback('Content [' + name + '] deleted!');
-                                    new api_schema.SchemaDeletedEvent([deletedContentType]).fire();
+                                    api.notify.showFeedback('Content [' + name + '] deleted!');
+                                    new api.schema.SchemaDeletedEvent([deletedContentType]).fire();
                                 }
                             });
                     }).open();
@@ -39,22 +39,22 @@ module app_wizard {
         }
     }
 
-    export class ContentTypeWizardActions implements api_app_wizard.WizardActions<api_schema_content.ContentType> {
+    export class ContentTypeWizardActions implements api.app.wizard.WizardActions<api.schema.content.ContentType> {
 
-        private save:api_ui.Action;
+        private save:api.ui.Action;
 
-        private close:api_ui.Action;
+        private close:api.ui.Action;
 
-        private delete:api_ui.Action;
+        private delete:api.ui.Action;
 
-        private duplicate:api_ui.Action;
+        private duplicate:api.ui.Action;
 
 
-        constructor(wizardPanel:api_app_wizard.WizardPanel<api_schema_content.ContentType>) {
-            this.save = new api_app_wizard.SaveAction(wizardPanel);
+        constructor(wizardPanel:api.app.wizard.WizardPanel<api.schema.content.ContentType>) {
+            this.save = new api.app.wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateContentTypeAction();
             this.delete = new DeleteContentTypeAction(wizardPanel);
-            this.close = new api_app_wizard.CloseAction(wizardPanel);
+            this.close = new api.app.wizard.CloseAction(wizardPanel);
         }
 
         enableActionsForNew() {
@@ -63,7 +63,7 @@ module app_wizard {
             this.delete.setEnabled( false )
         }
 
-        enableActionsForExisting(existing:api_schema_content.ContentType) {
+        enableActionsForExisting(existing:api.schema.content.ContentType) {
             this.save.setEnabled( existing.isEditable() );
             this.duplicate.setEnabled( true );
             this.delete.setEnabled( existing.isDeletable() );

@@ -1,6 +1,6 @@
-module api_schema_relationshiptype_json {
+module api.schema.relationshiptype.json {
 
-    export interface RelationshipTypeJson extends api_schema.SchemaJson {
+    export interface RelationshipTypeJson extends api.schema.SchemaJson {
 
         fromSemantic:string;
 

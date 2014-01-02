@@ -1,4 +1,4 @@
-module api_data {
+module api.data {
 
     export class DataSet extends Data {
 
@@ -146,9 +146,9 @@ module api_data {
             return matches;
         }
 
-        toDataSetJson(): api_data_json.DataTypeWrapperJson {
+        toDataSetJson(): api.data.json.DataTypeWrapperJson {
 
-            return <api_data_json.DataTypeWrapperJson>{ DataSet: <api_data_json.DataSetJson>{
+            return <api.data.json.DataTypeWrapperJson>{ DataSet: <api.data.json.DataSetJson>{
                 name: this.getName(),
                 set: Data.datasToJson(this.getDataArray())
             }};

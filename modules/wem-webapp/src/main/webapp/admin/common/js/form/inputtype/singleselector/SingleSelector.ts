@@ -1,4 +1,4 @@
-module api_form_inputtype_singleselector {
+module api.form.inputtype.singleselector {
 
     export interface SingleSelectorConfig {
         selectorType: string;
@@ -8,7 +8,7 @@ module api_form_inputtype_singleselector {
         }[]
     }
 
-    export class SingleSelector extends api_form_inputtype_support.BaseInputTypeView {
+    export class SingleSelector extends api.form.inputtype.support.BaseInputTypeView {
 
         public static TYPE_DROPDOWN = "DROPDOWN";
         public static TYPE_RADIO = "RADIO";
@@ -16,13 +16,13 @@ module api_form_inputtype_singleselector {
 
         private config:SingleSelectorConfig;
 
-        constructor(config:api_form_inputtype.InputTypeViewConfig<SingleSelectorConfig>) {
+        constructor(config:api.form.inputtype.InputTypeViewConfig<SingleSelectorConfig>) {
             super("SingleSelector");
             this.addClass("single-selector");
             this.config = config.inputConfig;
         }
 
-        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
 
             var type = this.config && this.config.selectorType && this.config.selectorType.toUpperCase();
             var name = this.getInput().getName() + "-" + index;
@@ -40,10 +40,10 @@ module api_form_inputtype_singleselector {
             }
         }
 
-        private createComboBoxElement(name:string, property:api_data.Property):api_dom.Element {
+        private createComboBoxElement(name:string, property:api.data.Property):api.dom.Element {
 
-            var selectedOptionsView = new api_ui_combobox.SelectedOptionsView<string>();
-            var comboBox = new api_ui_combobox.ComboBox<string>(name, {
+            var selectedOptionsView = new api.ui.combobox.SelectedOptionsView<string>();
+            var comboBox = new api.ui.combobox.ComboBox<string>(name, {
                 rowHeight: 24,
                 filter: this.comboboxFilter,
                 selectedOptionsView: selectedOptionsView,
@@ -73,28 +73,9 @@ module api_form_inputtype_singleselector {
             return comboBox;
         }
 
-        private createDropdownElement(name:string, property:api_data.Property):api_dom.Element {
+        private createDropdownElement(name:string, property:api.data.Property):api.dom.Element {
 
-            var inputEl = new api_ui.Dropdown(name);
-
-            if (this.config) {
-                for (var i = 0; i < this.config.options.length; i++) {
-                    var option = this.config.options[i];
-                    inputEl.addOption(option.value, option.label);
-                }
-            }
-
-            if (property) {
-                inputEl.setValue(property.getString());
-            }
-
-            return inputEl;
-        }
-
-
-        private createRadioElement(name:string, property:api_data.Property):api_dom.Element {
-
-            var inputEl = new api_ui.RadioGroup(name);
+            var inputEl = new api.ui.Dropdown(name);
 
             if (this.config) {
                 for (var i = 0; i < this.config.options.length; i++) {
@@ -110,20 +91,39 @@ module api_form_inputtype_singleselector {
             return inputEl;
         }
 
-        getValue(occurrence:api_dom.Element):api_data.Value {
-            var inputEl = <api_dom.FormInputEl>occurrence;
-            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
+
+        private createRadioElement(name:string, property:api.data.Property):api.dom.Element {
+
+            var inputEl = new api.ui.RadioGroup(name);
+
+            if (this.config) {
+                for (var i = 0; i < this.config.options.length; i++) {
+                    var option = this.config.options[i];
+                    inputEl.addOption(option.value, option.label);
+                }
+            }
+
+            if (property) {
+                inputEl.setValue(property.getString());
+            }
+
+            return inputEl;
         }
 
-        valueBreaksRequiredContract(value:api_data.Value):boolean {
+        getValue(occurrence:api.dom.Element):api.data.Value {
+            var inputEl = <api.dom.FormInputEl>occurrence;
+            return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
+        }
+
+        valueBreaksRequiredContract(value:api.data.Value):boolean {
             // TODO:
             return false;
         }
 
-        private comboboxFilter(item:api_ui_combobox.Option<string>, args) {
+        private comboboxFilter(item:api.ui.combobox.Option<string>, args) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
     }
 
-    api_form_input.InputTypeManager.register("SingleSelector", SingleSelector);
+    api.form.input.InputTypeManager.register("SingleSelector", SingleSelector);
 }

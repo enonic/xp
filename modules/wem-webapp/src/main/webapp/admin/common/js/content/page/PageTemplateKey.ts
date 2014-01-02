@@ -1,8 +1,8 @@
-module api_content_page{
+module api.content.page{
 
-    export class PageTemplateKey extends api_content_page.TemplateKey{
+    export class PageTemplateKey extends api.content.page.TemplateKey{
 
-        constructor(siteTemplateKey:api_content_site_template.SiteTemplateKey, moduleKey:api_module.ModuleKey, templateName:PageTemplateName) {
+        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey, moduleKey:api.module.ModuleKey, templateName:PageTemplateName) {
             super(siteTemplateKey, moduleKey, templateName);
         }
 
@@ -12,9 +12,9 @@ module api_content_page{
 
         public static fromString(str:string):PageTemplateKey {
 
-            var elements:string[] = str.split(api_content_page.TemplateKey.SEPARATOR);
-            var siteTemplateKey = api_content_site_template.SiteTemplateKey.fromString(elements[0]);
-            var moduleKey = api_module.ModuleKey.fromString(elements[1]);
+            var elements:string[] = str.split(api.content.page.TemplateKey.SEPARATOR);
+            var siteTemplateKey = api.content.site.template.SiteTemplateKey.fromString(elements[0]);
+            var moduleKey = api.module.ModuleKey.fromString(elements[1]);
             var templateName = new PageTemplateName(elements[2]);
             return new PageTemplateKey(siteTemplateKey, moduleKey, templateName);
         }

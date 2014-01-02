@@ -1,10 +1,10 @@
-module api_content_page_layout{
+module api.content.page.layout{
 
-    export class GetLayoutTemplateByKeyRequest extends LayoutTemplateResourceRequest<api_content_page_layout_json.LayoutTemplateJson> {
+    export class GetLayoutTemplateByKeyRequest extends LayoutTemplateResourceRequest<api.content.page.layout.json.LayoutTemplateJson> {
 
-        private layoutTemplateKey:api_content_page_layout.LayoutTemplateKey;
+        private layoutTemplateKey:api.content.page.layout.LayoutTemplateKey;
 
-        constructor(layoutTemplateKey:api_content_page_layout.LayoutTemplateKey) {
+        constructor(layoutTemplateKey:api.content.page.layout.LayoutTemplateKey) {
             super();
             super.setMethod("GET");
             this.layoutTemplateKey = layoutTemplateKey;
@@ -16,18 +16,18 @@ module api_content_page_layout{
             };
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath():api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_content_page_layout.LayoutTemplate> {
+        sendAndParse(): JQueryPromise<api.content.page.layout.LayoutTemplate> {
 
-            var deferred = jQuery.Deferred<api_content_page_layout.LayoutTemplate>();
+            var deferred = jQuery.Deferred<api.content.page.layout.LayoutTemplate>();
 
             this.send().
-                done((response: api_rest.JsonResponse<api_content_page_layout_json.LayoutTemplateJson>) => {
+                done((response: api.rest.JsonResponse<api.content.page.layout.json.LayoutTemplateJson>) => {
                     deferred.resolve(this.fromJsonToLayoutTemplate(response.getResult()));
-                }).fail((response: api_rest.RequestError) => {
+                }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

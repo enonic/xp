@@ -1,21 +1,21 @@
-module api_content_page_layout {
+module api.content.page.layout {
 
-    export class LayoutDescriptor extends api_content_page.ComponentDescriptor {
+    export class LayoutDescriptor extends api.content.page.ComponentDescriptor {
 
     }
 
-    export class LayoutDescriptorBuilder extends api_content_page.ComponentDescriptorBuilder {
+    export class LayoutDescriptorBuilder extends api.content.page.ComponentDescriptorBuilder {
 
-        public fromJson(json: api_content_page_layout_json.LayoutDescriptorJson): LayoutDescriptorBuilder {
+        public fromJson(json: api.content.page.layout.json.LayoutDescriptorJson): LayoutDescriptorBuilder {
 
-            this.setName(new api_content_page.ComponentDescriptorName(json.name));
+            this.setName(new api.content.page.ComponentDescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setControllerResource(api_module.ModuleResourceKey.fromString(json.controller));
-            this.setForm(json.configForm != null ? new api_form.Form(json.configForm) : null);
+            this.setControllerResource(api.module.ModuleResourceKey.fromString(json.controller));
+            this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
             return this;
         }
 
-        public setName(value: api_content_page.ComponentDescriptorName): LayoutDescriptorBuilder {
+        public setName(value: api.content.page.ComponentDescriptorName): LayoutDescriptorBuilder {
             this.name = value;
             return this;
         }
@@ -25,12 +25,12 @@ module api_content_page_layout {
             return this;
         }
 
-        public setForm(value: api_form.Form): LayoutDescriptorBuilder {
+        public setForm(value: api.form.Form): LayoutDescriptorBuilder {
             this.form = value;
             return this;
         }
 
-        public setControllerResource(value: api_module.ModuleResourceKey): LayoutDescriptorBuilder {
+        public setControllerResource(value: api.module.ModuleResourceKey): LayoutDescriptorBuilder {
             this.controllerResource = value;
             return this;
         }

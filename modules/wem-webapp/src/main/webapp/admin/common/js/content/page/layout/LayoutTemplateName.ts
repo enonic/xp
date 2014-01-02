@@ -1,6 +1,6 @@
-module api_content_page_layout{
+module api.content.page.layout{
 
-    export class LayoutTemplateName extends api_content_page.TemplateName{
+    export class LayoutTemplateName extends api.content.page.TemplateName{
 
         constructor(name:string) {
             super(name);

@@ -1,10 +1,10 @@
-module api_ui_menu {
+module api.ui.menu {
 
-    export class MenuItem extends api_dom.LiEl {
+    export class MenuItem extends api.dom.LiEl {
 
-        private action:api_ui.Action;
+        private action:api.ui.Action;
 
-        constructor(action:api_ui.Action) {
+        constructor(action:api.ui.Action) {
             super("menu-item");
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
@@ -15,7 +15,7 @@ module api_ui_menu {
             });
             this.setEnable(action.isEnabled());
 
-            action.addPropertyChangeListener((action:api_ui.Action) => {
+            action.addPropertyChangeListener((action:api.ui.Action) => {
                 this.setEnable(action.isEnabled());
             });
         }

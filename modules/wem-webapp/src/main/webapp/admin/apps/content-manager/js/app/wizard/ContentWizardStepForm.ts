@@ -1,42 +1,42 @@
-module app_wizard {
+module app.wizard {
 
-    export class ContentWizardStepForm extends api_app_wizard.WizardStepForm {
+    export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private formContext: api_form.FormContext;
+        private formContext: api.form.FormContext;
 
-        private form: api_form.Form;
+        private form: api.form.Form;
 
-        private formView: api_form.FormView;
+        private formView: api.form.FormView;
 
         constructor() {
             super("ContentWizardStepForm");
         }
 
-        renderNew(formContext: api_form.FormContext, form: api_form.Form) {
+        renderNew(formContext: api.form.FormContext, form: api.form.Form) {
             this.removeChildren();
             this.formContext = formContext;
             this.form = form;
             this.layout(form, null);
         }
 
-        renderExisting(formContext: api_form.FormContext, contentData: api_content.ContentData, form: api_form.Form) {
+        renderExisting(formContext: api.form.FormContext, contentData: api.content.ContentData, form: api.form.Form) {
             this.removeChildren();
             this.formContext = formContext;
             this.form = form;
             this.layout(form, contentData);
         }
 
-        private layout(form: api_form.Form, contentData?: api_content.ContentData) {
+        private layout(form: api.form.Form, contentData?: api.content.ContentData) {
 
-            this.formView = new api_form.FormView(this.formContext, form, contentData);
+            this.formView = new api.form.FormView(this.formContext, form, contentData);
             this.appendChild(this.formView)
         }
 
-        getForm(): api_form.Form {
+        getForm(): api.form.Form {
             return this.form;
         }
 
-        getFormView(): api_form.FormView {
+        getFormView(): api.form.FormView {
             return this.formView;
         }
 

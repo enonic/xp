@@ -1,4 +1,4 @@
-module api_schema_relationshiptype {
+module api.schema.relationshiptype {
 
     export class GetRelationshipTypeConfigByNameRequest extends RelationshipTypeResourceRequest<GetRelationshipTypeConfigResult> {
 
@@ -16,8 +16,8 @@ module api_schema_relationshiptype {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "config");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "config");
         }
     }
 }

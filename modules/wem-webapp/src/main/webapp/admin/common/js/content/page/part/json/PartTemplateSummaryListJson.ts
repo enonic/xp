@@ -1,4 +1,4 @@
-module api_content_page_part_json {
+module api.content.page.part.json {
 
     export interface PartTemplateSummaryListJson {
 

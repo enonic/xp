@@ -1,11 +1,11 @@
-module app_contextwindow {
-    export class EmulatorGrid extends api_ui_grid.Grid<any> {
+module app.contextwindow {
+    export class EmulatorGrid extends api.ui.grid.Grid<any> {
 
-        constructor(dataView:api_ui_grid.DataView<any>) {
+        constructor(dataView:api.ui.grid.DataView<any>) {
             super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
         }
 
-        private createColumns():api_ui_grid.GridColumn<any>[] {
+        private createColumns():api.ui.grid.GridColumn<any>[] {
             return [
                 {
                     name: "device",
@@ -20,28 +20,28 @@ module app_contextwindow {
             ];
         }
 
-        private buildRow(row, cell, data):api_dom.DivEl {
-            var rowEl = new api_dom.DivEl();
+        private buildRow(row, cell, data):api.dom.DivEl {
+            var rowEl = new api.dom.DivEl();
             rowEl.getEl().setData('width', data.width);
             rowEl.getEl().setData('height', data.height);
-            rowEl.getEl().setData('type', data.device_type);
+            rowEl.getEl().setData('type', data.device.type);
 
-            var icon = new api_dom.DivEl();
-            icon.setClass('icon-' + data.device_type);
+            var icon = new api.dom.DivEl();
+            icon.setClass('icon-' + data.device.type);
             icon.addClass('icon');
 
-            var title = new api_dom.H5El();
+            var title = new api.dom.H5El();
             title.getEl().setInnerHtml(data.name);
 
-            var subtitle = new api_dom.H6El();
-            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device_type);
+            var subtitle = new api.dom.H6El();
+            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device.type);
 
             rowEl.appendChild(icon);
             rowEl.appendChild(title);
             rowEl.appendChild(subtitle);
 
             if (data.rotatable == true) {
-                var rotator = new api_dom.DivEl();
+                var rotator = new api.dom.DivEl();
                 rotator.addClass('rotate');
                 rotator.addClass('icon-loop');
                 rowEl.appendChild(rotator);

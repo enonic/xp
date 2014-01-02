@@ -1,6 +1,6 @@
-module api_app {
+module api.app {
 
-    export class ShowAppLauncherAction extends api_ui.Action {
+    export class ShowAppLauncherAction extends api.ui.Action {
 
         constructor() {
             super('Start');
@@ -11,7 +11,7 @@ module api_app {
         }
     }
 
-    export class ShowAppBrowsePanelAction extends api_ui.Action {
+    export class ShowAppBrowsePanelAction extends api.ui.Action {
 
         constructor() {
             super('Browse');
@@ -24,9 +24,9 @@ module api_app {
 
     export class AppBarActions {
 
-        public static SHOW_APP_LAUNCHER:api_ui.Action = new ShowAppLauncherAction();
+        public static SHOW_APP_LAUNCHER:api.ui.Action = new ShowAppLauncherAction();
 
-        public static SHOW_APP_BROWSE_PANEL:api_ui.Action = new ShowAppBrowsePanelAction();
+        public static SHOW_APP_BROWSE_PANEL:api.ui.Action = new ShowAppBrowsePanelAction();
     }
 
 }

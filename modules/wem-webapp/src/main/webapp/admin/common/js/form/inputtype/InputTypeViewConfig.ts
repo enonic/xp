@@ -1,17 +1,17 @@
-module api_form_inputtype {
+module api.form.inputtype {
 
     export interface InputTypeViewConfig<C> {
 
-        contentId: api_content.ContentId;
+        contentId: api.content.ContentId;
 
-        contentPath: api_content.ContentPath;
+        contentPath: api.content.ContentPath;
 
-        parentContentPath: api_content.ContentPath;
+        parentContentPath: api.content.ContentPath;
 
-        dataPath:api_data.DataPath;
+        dataPath:api.data.DataPath;
 
         inputConfig:C;
 
-        attachments:api_content_attachment.Attachments;
+        attachments:api.content.attachment.Attachments;
     }
 }

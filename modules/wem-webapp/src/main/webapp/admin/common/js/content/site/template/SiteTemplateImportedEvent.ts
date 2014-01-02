@@ -1,13 +1,13 @@
-module api_content_site_template {
+module api.content.site.template {
 
-    export class SiteTemplateImportedEvent extends api_event.Event {
+    export class SiteTemplateImportedEvent extends api.event.Event {
 
         constructor() {
             super("SiteTemplateImportedEvent");
         }
 
         static on( handler: () => void ) {
-            api_event.onEvent( "SiteTemplateImportedEvent", handler );
+            api.event.onEvent( "SiteTemplateImportedEvent", handler );
         }
 
     }

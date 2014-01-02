@@ -1,10 +1,10 @@
-module api_content_page_json{
+module api.content.page.json{
 
     export interface PageTemplateJson extends PageTemplateSummaryJson {
 
         descriptor:PageDescriptorJson;
 
-        config: api_data_json.DataTypeWrapperJson[];
+        config: api.data.json.DataTypeWrapperJson[];
 
         canRender: string[];
 

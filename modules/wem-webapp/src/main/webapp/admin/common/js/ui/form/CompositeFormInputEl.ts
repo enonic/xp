@@ -1,12 +1,12 @@
-module api_ui_form {
+module api.ui.form {
 
-    export class CompositeFormInputEl extends api_dom.FormInputEl {
+    export class CompositeFormInputEl extends api.dom.FormInputEl {
 
-        private wrappedInput: api_dom.FormInputEl;
+        private wrappedInput: api.dom.FormInputEl;
 
-        private additionalElements: api_dom.Element[] = [];
+        private additionalElements: api.dom.Element[] = [];
 
-        constructor(wrappedInput: api_dom.FormInputEl, ...additionalElements: api_dom.Element[]) {
+        constructor(wrappedInput: api.dom.FormInputEl, ...additionalElements: api.dom.Element[]) {
             super("div");
             this.wrappedInput = wrappedInput;
             this.additionalElements = additionalElements;
@@ -14,7 +14,7 @@ module api_ui_form {
             this.appendChild(this.wrappedInput);
 
             if (this.additionalElements != null) {
-                this.additionalElements.forEach((element: api_dom.Element) => {
+                this.additionalElements.forEach((element: api.dom.Element) => {
                     this.appendChild(element);
                 });
             }

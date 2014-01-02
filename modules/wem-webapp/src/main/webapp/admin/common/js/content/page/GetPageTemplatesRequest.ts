@@ -1,10 +1,10 @@
-module api_content_page {
+module api.content.page {
 
-    export class GetPageTemplatesRequest extends PageTemplateResourceRequest<api_content_page_json.PageTemplateSummaryListJson> {
+    export class GetPageTemplatesRequest extends PageTemplateResourceRequest<api.content.page.json.PageTemplateSummaryListJson> {
 
-        private siteTemplateKey: api_content_site_template.SiteTemplateKey;
+        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        constructor(siteTemplateKey: api_content_site_template.SiteTemplateKey) {
+        constructor(siteTemplateKey: api.content.site.template.SiteTemplateKey) {
             super();
             super.setMethod("GET");
             this.siteTemplateKey = siteTemplateKey;
@@ -16,23 +16,23 @@ module api_content_page {
             };
         }
 
-        getRequestPath(): api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "list");
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
 
-        sendAndParse(): JQueryPromise<api_content_page.PageTemplateSummary[]> {
+        sendAndParse(): JQueryPromise<api.content.page.PageTemplateSummary[]> {
 
-            var deferred = jQuery.Deferred<api_content_page.PageTemplateSummary[]>();
+            var deferred = jQuery.Deferred<api.content.page.PageTemplateSummary[]>();
 
             this.send().
-                done((response: api_rest.JsonResponse<api_content_page_json.PageTemplateSummaryListJson>) => {
-                var array:api_content_page.PageTemplateSummary[] = [];
-                response.getResult().templates.forEach((templateJson:api_content_page_json.PageTemplateSummaryJson) => {
+                done((response: api.rest.JsonResponse<api.content.page.json.PageTemplateSummaryListJson>) => {
+                var array:api.content.page.PageTemplateSummary[] = [];
+                response.getResult().templates.forEach((templateJson:api.content.page.json.PageTemplateSummaryJson) => {
                     array.push(this.fromJsonToPageTemplateSummary(templateJson));
                 });
 
                 deferred.resolve(array);
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

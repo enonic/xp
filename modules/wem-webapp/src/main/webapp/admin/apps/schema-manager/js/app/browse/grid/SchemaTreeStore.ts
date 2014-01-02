@@ -1,4 +1,4 @@
-module app_browse_grid {
+module app.browse.grid {
 
     export class SchemaTreeStore {
 
@@ -20,7 +20,7 @@ module app_browse_grid {
 
                 proxy: {
                     type: 'rest',
-                    url: api_util.getUri('admin/rest/schema/list'),
+                    url: api.util.getUri('admin/rest/schema/list'),
                     reader: {
                         type: 'json',
                         root: '',

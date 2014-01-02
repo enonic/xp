@@ -1,4 +1,4 @@
-module api_form_json{
+module api.form.json{
 
     export class FieldSetJson extends LayoutJson {
 

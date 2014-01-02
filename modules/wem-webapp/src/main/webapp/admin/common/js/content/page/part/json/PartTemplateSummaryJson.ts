@@ -1,6 +1,6 @@
-module api_content_page_part_json
+module api.content.page.part.json
 {
-    export interface PartTemplateSummaryJson extends api_content_page_json.TemplateSummaryJson
+    export interface PartTemplateSummaryJson extends api.content.page.json.TemplateSummaryJson
     {
 
     }

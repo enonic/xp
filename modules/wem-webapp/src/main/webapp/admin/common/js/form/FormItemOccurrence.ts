@@ -1,4 +1,4 @@
-module api_form {
+module api.form {
 
     export class FormItemOccurrence<V extends FormItemOccurrenceView> {
 
@@ -25,8 +25,8 @@ module api_form {
             return this.index;
         }
 
-        getDataId():api_data.DataId {
-            return new api_data.DataId(this.formItem.getName(), this.index);
+        getDataId():api.data.DataId {
+            return new api.data.DataId(this.formItem.getName(), this.index);
         }
 
         showRemoveButton():boolean {

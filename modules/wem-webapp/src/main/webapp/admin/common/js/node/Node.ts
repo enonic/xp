@@ -1,6 +1,6 @@
-module api_node{
+module api.node{
 
-    export interface Node extends api_item.Item {
+    export interface Node extends api.item.Item {
 
         hasChildren():boolean;
     }

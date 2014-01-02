@@ -1,4 +1,4 @@
-module api_content_page{
+module api.content.page{
 
     export class TemplateSummary<KEY extends TemplateKey,NAME extends TemplateName> {
 
@@ -8,7 +8,7 @@ module api_content_page{
 
         private displayName:string;
 
-        private descriptorModuleResourceKey:api_module.ModuleResourceKey;
+        private descriptorModuleResourceKey:api.module.ModuleResourceKey;
 
         constructor(builder:TemplateSummaryBuilder<KEY,NAME>) {
             this.key = builder.key;
@@ -29,7 +29,7 @@ module api_content_page{
             return this.displayName;
         }
 
-        getDescriptorModuleResourceKey():api_module.ModuleResourceKey {
+        getDescriptorModuleResourceKey():api.module.ModuleResourceKey {
             return this.descriptorModuleResourceKey;
         }
     }
@@ -42,7 +42,7 @@ module api_content_page{
 
         displayName:string;
 
-        descriptorModuleResourceKey:api_module.ModuleResourceKey;
+        descriptorModuleResourceKey:api.module.ModuleResourceKey;
 
         public setKey(value:KEY):TemplateSummaryBuilder<KEY,NAME> {
             this.key = value;
@@ -59,7 +59,7 @@ module api_content_page{
             return this;
         }
 
-        public setDescriptorModuleResourceKey(value:api_module.ModuleResourceKey):TemplateSummaryBuilder<KEY,NAME> {
+        public setDescriptorModuleResourceKey(value:api.module.ModuleResourceKey):TemplateSummaryBuilder<KEY,NAME> {
             this.descriptorModuleResourceKey = value;
             return this;
         }

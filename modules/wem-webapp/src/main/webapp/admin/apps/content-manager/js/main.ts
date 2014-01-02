@@ -3,36 +3,36 @@ declare var Admin;
 declare var CONFIG;
 
 module components {
-    export var browseToolbar: app_browse.ContentBrowseToolbar;
-    export var contextMenu: app_browse.ContentTreeGridContextMenu;
-    export var gridPanel: app_browse.ContentTreeGridPanel;
-    export var detailPanel: app_browse.ContentBrowseItemPanel;
+    export var browseToolbar: app.browse.ContentBrowseToolbar;
+    export var contextMenu: app.browse.ContentTreeGridContextMenu;
+    export var gridPanel: app.browse.ContentTreeGridPanel;
+    export var detailPanel: app.browse.ContentBrowseItemPanel;
 }
 
 window.onload = () => {
-    var appBar = new api_app.AppBar("Content Manager", new api_app.AppBarTabMenu("ContentAppBarTabMenu"));
+    var appBar = new api.app.AppBar("Content Manager", new api.app.AppBarTabMenu("ContentAppBarTabMenu"));
     var appPanel = new app.ContentAppPanel(appBar);
 
-    api_dom.Body.get().appendChild(appBar);
-    api_dom.Body.get().appendChild(appPanel);
+    api.dom.Body.get().appendChild(appBar);
+    api.dom.Body.get().appendChild(appPanel);
 
     appPanel.init();
 
-    var contentDeleteDialog = new app_delete.ContentDeleteDialog();
-    app_browse.ContentDeletePromptEvent.on((event) => {
+    var contentDeleteDialog = new app.remove.ContentDeleteDialog();
+    app.browse.ContentDeletePromptEvent.on((event) => {
         contentDeleteDialog.setContentToDelete(event.getModels());
         contentDeleteDialog.open();
     });
 
-    var newContentDialog = new app_new.NewContentDialog();
-    app_browse.ShowNewContentDialogEvent.on((event) => {
+    var newContentDialog = new app.create.NewContentDialog();
+    app.browse.ShowNewContentDialogEvent.on((event) => {
 
-        var parentContent: api_content.ContentSummary = event.getParentContent();
+        var parentContent: api.content.ContentSummary = event.getParentContent();
 
         if (parentContent != null) {
-            new api_content.GetContentByIdRequest(parentContent.getContentId()).send().
-                done((jsonResponse: api_rest.JsonResponse<api_content_json.ContentJson>) => {
-                    var newParentContent = new api_content.Content(jsonResponse.getResult());
+            new api.content.GetContentByIdRequest(parentContent.getContentId()).send().
+                done((jsonResponse: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+                    var newParentContent = new api.content.Content(jsonResponse.getResult());
                     newContentDialog.setParentContent(newParentContent);
                     newContentDialog.open();
                 });
@@ -48,8 +48,8 @@ window.onload = () => {
 
     window.onmessage = (e:MessageEvent) => {
         if( e.data.appLauncherEvent ) {
-            var eventType:api_app.AppLauncherEventType = api_app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if( eventType ==  api_app.AppLauncherEventType.Show ) {
+            var eventType:api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            if( eventType ==  api.app.AppLauncherEventType.Show ) {
                 appPanel.activateCurrentKeyBindings();
             }
         }
@@ -60,30 +60,30 @@ function getAppName(): string {
     return jQuery(window.frameElement).data("wem-app");
 }
 
-function route(path: api_rest.Path) {
+function route(path: api.rest.Path) {
     var action = path.getElement(0);
 
     switch (action) {
     case 'edit':
         var id = path.getElement(1);
         if (id) {
-            var getContentByIdPromise = new api_content.GetContentByIdRequest(new api_content.ContentId(id)).send();
-            jQuery.when(getContentByIdPromise).then((contentResponse: api_rest.JsonResponse<api_content_json.ContentJson>) => {
-                new app_browse.EditContentEvent([new api_content.Content(contentResponse.getResult())]).fire();
+            var getContentByIdPromise = new api.content.GetContentByIdRequest(new api.content.ContentId(id)).send();
+            jQuery.when(getContentByIdPromise).then((contentResponse: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+                new app.browse.EditContentEvent([new api.content.Content(contentResponse.getResult())]).fire();
             });
         }
         break;
     case 'view' :
         var id = path.getElement(1);
         if (id) {
-            var getContentByIdPromise = new api_content.GetContentByIdRequest(new api_content.ContentId(id)).send();
-            jQuery.when(getContentByIdPromise).then((contentResponse: api_rest.JsonResponse<api_content_json.ContentJson>) => {
-                new app_browse.ViewContentEvent([new api_content.Content(contentResponse.getResult())]).fire();
+            var getContentByIdPromise = new api.content.GetContentByIdRequest(new api.content.ContentId(id)).send();
+            jQuery.when(getContentByIdPromise).then((contentResponse: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+                new app.browse.ViewContentEvent([new api.content.Content(contentResponse.getResult())]).fire();
             });
         }
         break;
     default:
-        new api_app.ShowAppBrowsePanelEvent().fire();
+        new api.app.ShowAppBrowsePanelEvent().fire();
         break;
     }
 }

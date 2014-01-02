@@ -1,4 +1,4 @@
-module api_schema {
+module api.schema {
 
     export class SchemaKind {
 

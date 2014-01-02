@@ -1,20 +1,20 @@
 declare var plupload;
 
-module api_app_wizard {
+module api.app.wizard {
 
-    export interface FormIconListener extends api_event.Listener {
+    export interface FormIconListener extends api.event.Listener {
 
         onUploadStarted?();
 
-        onUploadFinished?(uploadItem:api_ui.UploadItem);
+        onUploadFinished?(uploadItem:api.ui.UploadItem);
     }
 
-    export class FormIcon extends api_dom.ButtonEl implements api_event.Observable {
+    export class FormIcon extends api.dom.ButtonEl implements api.event.Observable {
 
         private uploader;
-        private img:api_dom.ImgEl;
-        private progress:api_ui.ProgressBar;
-        private tooltip:api_ui.Tooltip;
+        private img:api.dom.ImgEl;
+        private progress:api.ui.ProgressBar;
+        private tooltip:api.ui.Tooltip;
 
         private listeners:FormIconListener[] = [];
 
@@ -28,9 +28,9 @@ module api_app_wizard {
             super("FormIcon", "form-icon");
             var el = this.getEl();
 
-            this.tooltip = new api_ui.Tooltip(this, iconTitle, 0, 0);
+            this.tooltip = new api.ui.Tooltip(this, iconTitle, 0, 0);
 
-            var img = this.img = new api_dom.ImgEl(this.iconUrl, "FormIcon");
+            var img = this.img = new api.dom.ImgEl(this.iconUrl, "FormIcon");
             img.getEl().addEventListener("load", () => {
                 if (img.isVisible()) {
                     this.tooltip.showFor(10000);
@@ -39,7 +39,7 @@ module api_app_wizard {
             el.appendChild(img.getHTMLElement());
 
             if (this.uploadUrl) {
-                this.progress = new api_ui.ProgressBar();
+                this.progress = new api.ui.ProgressBar();
                 el.appendChild(this.progress.getHTMLElement());
             }
 
@@ -79,8 +79,8 @@ module api_app_wizard {
                 url: this.uploadUrl,
                 multipart: true,
                 drop_element: elId,
-                flash_swf_url: api_util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
-                silverlight_xap_url: api_util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
+                flash_swf_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
+                silverlight_xap_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
                 filters: [
                     {title: 'Image files', extensions: 'jpg,gif,png'}
                 ]
@@ -125,7 +125,7 @@ module api_app_wizard {
                     if (responseObj.items && responseObj.items.length > 0) {
                         var file = responseObj.items[0];
 
-                        var uploadItem:api_ui.UploadItem = new api_ui.UploadItemBuilder().
+                        var uploadItem:api.ui.UploadItem = new api.ui.UploadItemBuilder().
                             setId(file.id).
                             setName(file.name).
                             setMimeType(file.mimeType).
@@ -160,7 +160,7 @@ module api_app_wizard {
             });
         }
 
-        private notifyUploadFinished(uploadItem:api_ui.UploadItem) {
+        private notifyUploadFinished(uploadItem:api.ui.UploadItem) {
             this.listeners.forEach((listener:FormIconListener) => {
                 if (listener.onUploadFinished) {
                     listener.onUploadFinished(uploadItem);

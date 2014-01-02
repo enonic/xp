@@ -1,9 +1,9 @@
-module api_content_site_template_json {
+module api.content.site.template.json {
 
     export class SiteTemplateSummaryListJson {
 
         total:number;
 
-        siteTemplates:api_content_site_template_json.SiteTemplateSummaryJson[];
+        siteTemplates:api.content.site.template.json.SiteTemplateSummaryJson[];
     }
 }

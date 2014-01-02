@@ -1,4 +1,4 @@
-module api_ui {
+module api.ui {
 
     export class Action {
 
@@ -134,7 +134,7 @@ module api_ui {
             return bindings;
         }
 
-        static getKeyBindings(actions:api_ui.Action[]):KeyBinding[] {
+        static getKeyBindings(actions:api.ui.Action[]):KeyBinding[] {
 
             var bindings:KeyBinding[] = [];
             actions.forEach((action:Action) => {

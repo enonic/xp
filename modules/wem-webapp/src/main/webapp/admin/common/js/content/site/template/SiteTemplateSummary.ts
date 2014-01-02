@@ -1,18 +1,18 @@
-module api_content_site_template {
+module api.content.site.template {
 
-    export class SiteTemplateSummary extends api_item.BaseItem {
+    export class SiteTemplateSummary extends api.item.BaseItem {
 
         private name: string;
 
         private displayName: string;
 
-        private vendor: api_content_site.Vendor;
+        private vendor: api.content.site.Vendor;
 
-        private modules: api_module.ModuleKey[] = [];
+        private modules: api.module.ModuleKey[] = [];
 
         private supportedContentTypes: string[];
 
-        private rootContentType: api_schema_content.ContentTypeName;
+        private rootContentType: api.schema.content.ContentTypeName;
 
         private version: string;
 
@@ -22,16 +22,16 @@ module api_content_site_template {
 
         private description: string;
 
-        constructor(json: api_content_site_template_json.SiteTemplateSummaryJson) {
+        constructor(json: api.content.site.template.json.SiteTemplateSummaryJson) {
             super(json);
             this.name = json.name;
             this.displayName = json.name;
-            this.vendor = new api_content_site.Vendor(json.vendor);
+            this.vendor = new api.content.site.Vendor(json.vendor);
             for (var i = 0; i < json.modules.length; i++) {
-                this.modules.push(api_module.ModuleKey.fromString(json.modules[i]));
+                this.modules.push(api.module.ModuleKey.fromString(json.modules[i]));
             }
             this.supportedContentTypes = json.supportedContentTypes;
-            this.rootContentType = new api_schema_content.ContentTypeName(json.rootContentType);
+            this.rootContentType = new api.schema.content.ContentTypeName(json.rootContentType);
             this.version = json.version;
             this.url = json.url;
             this.key = SiteTemplateKey.fromString(json.key);
@@ -39,7 +39,7 @@ module api_content_site_template {
         }
 
         static fromExtModel(model: Ext_data_Model): SiteTemplateSummary {
-            return new SiteTemplateSummary(<api_content_site_template_json.SiteTemplateSummaryJson>model.raw);
+            return new SiteTemplateSummary(<api.content.site.template.json.SiteTemplateSummaryJson>model.raw);
         }
 
         getKey(): SiteTemplateKey {
@@ -54,11 +54,11 @@ module api_content_site_template {
             return this.displayName;
         }
 
-        getVendor(): api_content_site.Vendor {
+        getVendor(): api.content.site.Vendor {
             return this.vendor;
         }
 
-        getModules(): api_module.ModuleKey[] {
+        getModules(): api.module.ModuleKey[] {
             return this.modules;
         }
 
@@ -66,7 +66,7 @@ module api_content_site_template {
             return this.supportedContentTypes;
         }
 
-        getRootContentType(): api_schema_content.ContentTypeName {
+        getRootContentType(): api.schema.content.ContentTypeName {
             return this.rootContentType;
         }
 
@@ -82,10 +82,10 @@ module api_content_site_template {
             return this.description;
         }
 
-        static fromJsonArray(jsonArray: api_content_site_template_json.SiteTemplateSummaryJson[]): SiteTemplateSummary[] {
+        static fromJsonArray(jsonArray: api.content.site.template.json.SiteTemplateSummaryJson[]): SiteTemplateSummary[] {
             var array: SiteTemplateSummary[] = [];
 
-            jsonArray.forEach((json: api_content_site_template_json.SiteTemplateSummaryJson) => {
+            jsonArray.forEach((json: api.content.site.template.json.SiteTemplateSummaryJson) => {
                 array.push(new SiteTemplateSummary(json));
             });
             return array;

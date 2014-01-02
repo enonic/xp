@@ -1,8 +1,8 @@
-module api_ui {
+module api.ui {
 
     export class UploadItem {
 
-        private blobKey: api_blob.BlobKey;
+        private blobKey: api.blob.BlobKey;
 
         private name: string;
 
@@ -17,7 +17,7 @@ module api_ui {
             this.size = builder.size;
         }
 
-        getBlobKey(): api_blob.BlobKey {
+        getBlobKey(): api.blob.BlobKey {
             return this.blobKey;
         }
 
@@ -37,7 +37,7 @@ module api_ui {
 
     export class UploadItemBuilder {
 
-        blobKey: api_blob.BlobKey;
+        blobKey: api.blob.BlobKey;
 
         name: string;
 
@@ -45,7 +45,7 @@ module api_ui {
 
         size: number;
 
-        public setId(value: api_blob.BlobKey): UploadItemBuilder {
+        public setId(value: api.blob.BlobKey): UploadItemBuilder {
             this.blobKey = value;
             return this;
         }

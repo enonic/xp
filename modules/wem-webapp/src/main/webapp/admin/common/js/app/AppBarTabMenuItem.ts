@@ -1,6 +1,6 @@
-module api_app{
+module api.app{
 
-    export class AppBarTabMenuItem extends api_ui_tab.TabMenuItem {
+    export class AppBarTabMenuItem extends api.ui.tab.TabMenuItem {
 
         private tabId:AppBarTabId;
 
@@ -12,7 +12,7 @@ module api_app{
             this.tabId = tabId;
 
             if (editing) {
-                var iconEl = new api_dom.ImgEl();
+                var iconEl = new api.dom.ImgEl();
                 this.prependChild(iconEl);
             }
         }

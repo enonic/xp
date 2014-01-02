@@ -1,35 +1,35 @@
-module api_app_wizard {
+module api.app.wizard {
 
     export interface WizardPanelParams {
 
-        tabId:api_app.AppBarTabId;
+        tabId:api.app.AppBarTabId;
 
         persistedItem:any;
 
         formIcon:FormIcon;
 
-        mainToolbar:api_ui_toolbar.Toolbar;
+        mainToolbar:api.ui.toolbar.Toolbar;
 
-        stepToolbar?:api_ui_toolbar.Toolbar;
+        stepToolbar?:api.ui.toolbar.Toolbar;
 
         header:WizardHeader;
 
         actions:WizardActions<any>;
 
-        livePanel?:api_ui.Panel;
+        livePanel?:api.ui.Panel;
 
-        steps:api_app_wizard.WizardStep[];
+        steps:api.app.wizard.WizardStep[];
     }
 
-    export class WizardPanel<T> extends api_ui.Panel implements api_ui.Closeable, api_event.Observable, api_ui.ActionContainer {
+    export class WizardPanel<T> extends api.ui.Panel implements api.ui.Closeable, api.event.Observable, api.ui.ActionContainer {
 
-        private tabId: api_app.AppBarTabId;
+        private tabId: api.app.AppBarTabId;
 
         private persistedItem: T;
 
-        private mainToolbar: api_ui_toolbar.Toolbar;
+        private mainToolbar: api.ui.toolbar.Toolbar;
 
-        private stepToolbar: api_ui_toolbar.Toolbar;
+        private stepToolbar: api.ui.toolbar.Toolbar;
 
         private actions: WizardActions<T>;
 
@@ -37,7 +37,7 @@ module api_app_wizard {
 
         private stepNavigator: WizardStepNavigator;
 
-        private stepPanels: api_app_wizard.WizardStepDeckPanel;
+        private stepPanels: api.app.wizard.WizardStepDeckPanel;
 
         // TODO: @alb - Value is set to 'changed' by default to see SaveChangesBeforeCloseDialog behavior.
         private isChanged: boolean = true;
@@ -50,13 +50,13 @@ module api_app_wizard {
 
         private listeners: WizardPanelListener[] = [];
 
-        private backPanel: api_ui.DeckPanel;
+        private backPanel: api.ui.DeckPanel;
 
-        private formPanel: api_ui.Panel;
+        private formPanel: api.ui.Panel;
 
         private lastFocusedElement: JQuery;
 
-        private stepNavigatorAndToolbarContainer: api_dom.DivEl;
+        private stepNavigatorAndToolbarContainer: api.dom.DivEl;
 
         constructor(params: WizardPanelParams, callback:Function) {
             super("WizardPanel");
@@ -71,9 +71,9 @@ module api_app_wizard {
             this.actions = params.actions;
 
             this.getEl().addClass("wizard-panel");
-            this.backPanel = new api_ui.DeckPanel("WizardBackPanel");
+            this.backPanel = new api.ui.DeckPanel("WizardBackPanel");
             this.backPanel.addClass("wizard-back-panel");
-            this.formPanel = new api_ui.Panel("FormPanel");
+            this.formPanel = new api.ui.Panel("FormPanel");
             this.formPanel.addClass("form-panel");
 
             this.backPanel.addPanel(this.formPanel);
@@ -82,14 +82,14 @@ module api_app_wizard {
             this.appendChild(this.mainToolbar);
             this.appendChild(this.backPanel);
 
-            var aboveStepPanels = new api_dom.DivEl();
+            var aboveStepPanels = new api.dom.DivEl();
             this.formPanel.appendChild(aboveStepPanels);
 
             aboveStepPanels.appendChild(params.formIcon);
 
             aboveStepPanels.appendChild(this.header);
 
-            this.stepNavigatorAndToolbarContainer = new api_dom.DivEl("WizardStepNavigatorAndToolbar", "wizard-step-navigator-and-toolbar");
+            this.stepNavigatorAndToolbarContainer = new api.dom.DivEl("WizardStepNavigatorAndToolbar", "wizard-step-navigator-and-toolbar");
             this.stepNavigator = new WizardStepNavigator();
             if (this.stepToolbar) {
                 this.stepNavigatorAndToolbarContainer.appendChild(this.stepToolbar);
@@ -197,7 +197,7 @@ module api_app_wizard {
             });
         }
 
-        getTabId(): api_app.AppBarTabId {
+        getTabId(): api.app.AppBarTabId {
             return this.tabId;
         }
 
@@ -205,7 +205,7 @@ module api_app_wizard {
             return this.header;
         }
 
-        getActions(): api_ui.Action[] {
+        getActions(): api.ui.Action[] {
             return this.mainToolbar.getActions();
         }
 
@@ -274,9 +274,9 @@ module api_app_wizard {
             return null; // TODO:
         }
 
-        private setSteps(steps: api_app_wizard.WizardStep[]) {
+        private setSteps(steps: api.app.wizard.WizardStep[]) {
 
-            steps.forEach((step: api_app_wizard.WizardStep, index: number) => {
+            steps.forEach((step: api.app.wizard.WizardStep, index: number) => {
                 this.stepPanels.addNavigablePanelToBack(step.getTabBarItem(), step.getPanel());
                 // Ensure first step is shown
                 if (index == 0) {
@@ -320,7 +320,7 @@ module api_app_wizard {
         }
 
         askUserForSaveChangesBeforeClosing() {
-            new api_app_wizard.SaveBeforeCloseDialog(this).open();
+            new api.app.wizard.SaveBeforeCloseDialog(this).open();
         }
 
         saveChanges(callback: () => void) {

@@ -1,38 +1,38 @@
-module app_browse {
+module app.browse {
 
     export interface ContentTreeGridPanelParams {
 
-        contextMenu:api_ui_menu.ContextMenu;
+        contextMenu:api.ui.menu.ContextMenu;
     }
 
-    export class ContentTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
+    export class ContentTreeGridPanel extends api.app.browse.grid.TreeGridPanel {
 
         constructor(params:ContentTreeGridPanelParams) {
 
             super({
                 columns: this.createColumns(),
-                gridStore: new app_browse_grid.ContentGridStore().getExtDataStore(),
-                treeStore: new app_browse_grid.ContentTreeStore().getExtDataStore(),
+                gridStore: new app.browse.grid.ContentGridStore().getExtDataStore(),
+                treeStore: new app.browse.grid.ContentTreeStore().getExtDataStore(),
                 gridConfig: this.createGridConfig(),
                 treeConfig: this.createTreeConfig(),
                 contextMenu: params.contextMenu});
 
-            this.setActiveList(api_app_browse_grid.TreeGridPanel.TREE);
+            this.setActiveList(api.app.browse.grid.TreeGridPanel.TREE);
             this.setKeyField("path");
             this.setItemId("ContentTreeGridPanel");
 
-            app_browse_filter.ContentBrowseSearchEvent.on((event) => {
+            app.browse.filter.ContentBrowseSearchEvent.on((event) => {
                 this.loadData(event.getJsonModels());
             });
 
-            app_browse_filter.ContentBrowseResetEvent.on((event) => {
+            app.browse.filter.ContentBrowseResetEvent.on((event) => {
                 this.removeAll();
                 this.refresh();
             });
 
             this.addListener({
-                onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
-                    new app_browse.EditContentEvent([<any>event.clickedModel]).fire();
+                onItemDoubleClicked: (event:api.app.browse.grid.TreeItemDoubleClickedEvent) => {
+                    new app.browse.EditContentEvent([<any>event.clickedModel]).fire();
                 },
                 onSelectionChanged: null,
                 onSelect: null,
@@ -99,8 +99,8 @@ module app_browse {
 
         private prettyDateRenderer(value, metaData, record, rowIndex, colIndex, store, view) {
             try {
-                if (parent && Ext.isFunction(parent['humane_date'])) {
-                    return parent['humane_date'](value);
+                if (parent && Ext.isFunction(parent['humane.date'])) {
+                    return parent['humane.date'](value);
                 } else {
                     return value;
                 }

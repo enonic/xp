@@ -1,6 +1,6 @@
-module api_form {
+module api.form {
 
-    export class FormItemOccurrenceView extends api_dom.DivEl {
+    export class FormItemOccurrenceView extends api.dom.DivEl {
 
         private formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>;
 

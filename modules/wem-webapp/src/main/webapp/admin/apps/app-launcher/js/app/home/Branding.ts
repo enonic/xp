@@ -1,6 +1,6 @@
-module app_home {
+module app.home {
 
-    export class Branding extends api_dom.DivEl {
+    export class Branding extends api.dom.DivEl {
 
         private installation:InstallationInfo;
         private version:VersionInfo;
@@ -16,7 +16,7 @@ module app_home {
             this.appendChild(this.installation);
             this.appendChild(this.version);
 
-            api_remote_util.RemoteSystemService.system_getSystemInfo({}, (result: api_remote_util.SystemGetSystemInfoResult) => {
+            api.remote.util.RemoteSystemService.system_getSystemInfo({}, (result: api.remote.util.SystemGetSystemInfoResult) => {
                 this.setInstallation(result.installationName);
                 this.setVersion(result.version);
             });

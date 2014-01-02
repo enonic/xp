@@ -1,6 +1,6 @@
-module app_browse {
+module app.browse {
 
-    export class ModuleTreeGridContextMenu extends api_ui_menu.ContextMenu {
+    export class ModuleTreeGridContextMenu extends api.ui.menu.ContextMenu {
 
         constructor() {
             super();

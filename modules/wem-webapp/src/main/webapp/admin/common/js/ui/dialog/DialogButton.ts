@@ -1,8 +1,8 @@
-module api_ui_dialog{
+module api.ui.dialog{
 
-    export class DialogButton extends api_ui.ActionButton {
+    export class DialogButton extends api.ui.ActionButton {
 
-        constructor(action:api_ui.Action) {
+        constructor(action:api.ui.Action) {
             super("DialogButton", action, false);
         }
     }

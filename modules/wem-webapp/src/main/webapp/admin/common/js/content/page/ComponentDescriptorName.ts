@@ -1,4 +1,4 @@
-module api_content_page{
+module api.content.page{
 
     export class ComponentDescriptorName{
 

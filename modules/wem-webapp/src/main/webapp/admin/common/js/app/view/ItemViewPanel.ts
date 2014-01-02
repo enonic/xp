@@ -1,16 +1,16 @@
-module api_app_view {
+module api.app.view {
 
-    export class ItemViewPanel<M> extends api_ui.Panel implements api_ui.Closeable, api_event.Observable {
+    export class ItemViewPanel<M> extends api.ui.Panel implements api.ui.Closeable, api.event.Observable {
 
-        private toolbar:api_ui_toolbar.Toolbar;
+        private toolbar:api.ui.toolbar.Toolbar;
 
-        private panel:api_ui.Panel;
+        private panel:api.ui.Panel;
 
         private browseItem:ViewItem<M>;
 
         private listeners:ItemViewPanelListener<M>[] = [];
 
-        constructor(toolbar:api_ui_toolbar.Toolbar, panel:api_ui.Panel) {
+        constructor(toolbar:api.ui.toolbar.Toolbar, panel:api.ui.Panel) {
             super("ItemViewPanel");
             this.getEl().addClass("item-view-panel");
             this.toolbar = toolbar;

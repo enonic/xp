@@ -1,17 +1,17 @@
-module app_new {
+module app.create {
 
-    export class NewContentDialog extends api_ui_dialog.ModalDialog {
+    export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
-        private parentContent: api_content.Content;
+        private parentContent: api.content.Content;
 
         private recentList: RecentContentTypesList;
         private contentList: ContentTypesList;
         private templatesList: TemplatesList;
 
-        private deckPanel: api_ui.NavigatedDeckPanel;
-        private templatesTab: api_ui_tab.TabBarItem;
-        private contentTab: api_ui_tab.TabBarItem;
-        private input: api_dom.InputEl;
+        private deckPanel: api.ui.NavigatedDeckPanel;
+        private templatesTab: api.ui.tab.TabBarItem;
+        private contentTab: api.ui.tab.TabBarItem;
+        private input: api.dom.InputEl;
 
         constructor() {
             super({
@@ -22,10 +22,10 @@ module app_new {
 
             this.getEl().addClass("new-content-dialog");
 
-            var leftColumn = new api_dom.DivEl().setClass("column column-left");
+            var leftColumn = new api.dom.DivEl().setClass("column column-left");
             this.appendChildToContentPanel(leftColumn);
 
-            this.input = api_ui.TextInput.large().setPlaceholder("Search");
+            this.input = api.ui.TextInput.large().setPlaceholder("Search");
             this.input.addClass("list-filter");
             this.input.getEl().addEventListener("keyup", (event: Event) => {
                 var value = (<HTMLInputElement> event.target).value;
@@ -33,11 +33,11 @@ module app_new {
             });
             leftColumn.appendChild(this.input);
 
-            var tabBar = new api_ui_tab.TabBar();
-            this.deckPanel = new api_ui.NavigatedDeckPanel(tabBar);
+            var tabBar = new api.ui.tab.TabBar();
+            this.deckPanel = new api.ui.NavigatedDeckPanel(tabBar);
             this.deckPanel.setClass("deck-panel");
             this.deckPanel.addListener({
-                onPanelShown: (event: api_ui.PanelShownEvent) => {
+                onPanelShown: (event: api.ui.PanelShownEvent) => {
                     var value = this.input.getValue();
                     this.filterList(value);
                 }
@@ -45,8 +45,8 @@ module app_new {
             leftColumn.appendChild(tabBar);
             leftColumn.appendChild(this.deckPanel);
 
-            this.contentTab = new api_ui_tab.TabBarItem("Content (0)");
-            this.contentList = new app_new.ContentTypesList("content-type-list");
+            this.contentTab = new api.ui.tab.TabBarItem("Content (0)");
+            this.contentList = new app.create.ContentTypesList("content-type-list");
             this.contentList.addListener({
                 onSelected: (contentTypeListItem: ContentTypeListItem) => {
                     this.closeAndFireEventFromContentType(contentTypeListItem);
@@ -54,8 +54,8 @@ module app_new {
             });
             this.deckPanel.addNavigablePanelToBack(this.contentTab, this.contentList);
 
-            this.templatesTab = new api_ui_tab.TabBarItem("Sites (0)");
-            this.templatesList = new app_new.TemplatesList("site-template-list");
+            this.templatesTab = new api.ui.tab.TabBarItem("Sites (0)");
+            this.templatesList = new app.create.TemplatesList("site-template-list");
             this.templatesList.addListener({
                 onSelected: (item: SiteTemplateListItem) => {
                     this.closeAndFireEventFromSiteTemplate(item);
@@ -65,12 +65,12 @@ module app_new {
             this.deckPanel.showPanel(0);
             tabBar.selectNavigationItem(0);
 
-            var rightColumn = new api_dom.DivEl().setClass("column column-right");
+            var rightColumn = new api.dom.DivEl().setClass("column column-right");
             this.appendChildToContentPanel(rightColumn);
 
             this.recentList = new RecentContentTypesList("content-type-list");
 
-            var dropZone = new api_dom.DivEl("DropZone", "drop-zone");
+            var dropZone = new api.dom.DivEl("DropZone", "drop-zone");
             rightColumn.appendChild(dropZone);
 
             this.recentList.addListener({
@@ -85,7 +85,7 @@ module app_new {
                 this.close();
             });
 
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
         }
 
         private closeAndFireEventFromContentType(item: ContentTypeListItem) {
@@ -107,7 +107,7 @@ module app_new {
         }
 
 
-        setParentContent(value: api_content.Content) {
+        setParentContent(value: api.content.Content) {
             this.parentContent = value;
         }
 
@@ -133,7 +133,7 @@ module app_new {
         }
     }
 
-    export class CancelNewContentDialog extends api_ui.Action {
+    export class CancelNewContentDialog extends api.ui.Action {
 
         constructor() {
             super("Cancel", "esc");

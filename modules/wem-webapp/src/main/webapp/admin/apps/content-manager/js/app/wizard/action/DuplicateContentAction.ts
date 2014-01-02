@@ -1,6 +1,6 @@
-module app_wizard_action {
+module app.wizard.action {
 
-    export class DuplicateContentAction extends api_ui.Action {
+    export class DuplicateContentAction extends api.ui.Action {
 
         constructor() {
             super("Duplicate");

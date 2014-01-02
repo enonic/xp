@@ -1,4 +1,4 @@
-module api_icon {
+module api.icon {
 
     export class IconUrlResolver<T,SUBJECT> {
 
@@ -21,8 +21,8 @@ module api_icon {
             return <IconUrlResolver<T,SUBJECT>>this;
         }
 
-        public resolve(icon: api_icon.Icon): string {
-            throw Error("Function resolve must be overridden by inheritor" + api_util.getClassName(this));
+        public resolve(icon: api.icon.Icon): string {
+            throw Error("Function resolve must be overridden by inheritor" + api.util.getClassName(this));
         }
 
         public resolveQueryParams(): string {
@@ -37,12 +37,12 @@ module api_icon {
             return str;
         }
 
-        public getResourcePath(): api_rest.Path {
-            throw Error("Function getResourcePath must be overridden by inheritor" + api_util.getClassName(this));
+        public getResourcePath(): api.rest.Path {
+            throw Error("Function getResourcePath must be overridden by inheritor" + api.util.getClassName(this));
         }
 
-        public toRestUrl(path:api_rest.Path):string {
-            return api_util.getRestUri(path.toString());
+        public toRestUrl(path:api.rest.Path):string {
+            return api.util.getRestUri(path.toString());
         }
     }
 

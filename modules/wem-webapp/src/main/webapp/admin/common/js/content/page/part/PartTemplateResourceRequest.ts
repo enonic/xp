@@ -1,19 +1,19 @@
-module api_content_page_part {
+module api.content.page.part {
 
-    export class PartTemplateResourceRequest<T> extends api_rest.ResourceRequest<T> {
+    export class PartTemplateResourceRequest<T> extends api.rest.ResourceRequest<T> {
 
-        private resourcePath:api_rest.Path;
+        private resourcePath:api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "content", "page", "part", "template");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "part", "template");
         }
 
-        getResourcePath():api_rest.Path {
+        getResourcePath():api.rest.Path {
             return this.resourcePath;
         }
 
-        fromJsonToPartTemplate(json:api_content_page_part_json.PartTemplateJson): api_content_page_part.PartTemplate {
+        fromJsonToPartTemplate(json:api.content.page.part.json.PartTemplateJson): api.content.page.part.PartTemplate {
             return new PartTemplateBuilder().fromJson(json).build();
         }
     }

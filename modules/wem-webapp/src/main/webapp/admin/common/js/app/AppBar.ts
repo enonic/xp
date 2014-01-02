@@ -1,6 +1,6 @@
-module api_app {
+module api.app {
 
-    export class AppBar extends api_dom.DivEl {
+    export class AppBar extends api.dom.DivEl {
 
         ext;
 
@@ -8,9 +8,9 @@ module api_app {
 
         private actions:AppBarActionsConfig;
 
-        private launcherButton:api_dom.ButtonEl;
+        private launcherButton:api.dom.ButtonEl;
 
-        private homeButton:api_dom.ButtonEl;
+        private homeButton:api.dom.ButtonEl;
 
         private tabMenu:AppBarTabMenu;
 
@@ -48,12 +48,12 @@ module api_app {
                 this.userInfoPopup.toggle();
             });
 
-            var appManager:api_app.AppManager = api_app.AppManager.instance();
+            var appManager:api.app.AppManager = api.app.AppManager.instance();
             this.launcherButton.setClickListener((event) => {
                 appManager.showLauncher();
             });
 
-            this.setBackgroundImgUrl(api_util.getRestUri('ui/background.jpg'));
+            this.setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg'));
         }
 
         getTabMenu():AppBarTabMenu {
@@ -63,14 +63,14 @@ module api_app {
 
     export interface AppBarActionsConfig {
 
-        showAppLauncherAction?:api_ui.Action;
+        showAppLauncherAction?:api.ui.Action;
 
-        showAppBrowsePanelAction?:api_ui.Action;
+        showAppBrowsePanelAction?:api.ui.Action;
     }
 
-    export class LauncherButton extends api_dom.ButtonEl {
+    export class LauncherButton extends api.dom.ButtonEl {
 
-        constructor(action:api_ui.Action) {
+        constructor(action:api.ui.Action) {
             super('LauncherButton', 'launcher-button');
 
             this.getEl().addEventListener('click', (event:Event) => {
@@ -80,7 +80,7 @@ module api_app {
 
     }
 
-    export class Separator extends api_dom.SpanEl {
+    export class Separator extends api.dom.SpanEl {
 
         constructor() {
             super('AppBarSeparator', 'appbar-separator');
@@ -88,9 +88,9 @@ module api_app {
 
     }
 
-    export class HomeButton extends api_dom.ButtonEl {
+    export class HomeButton extends api.dom.ButtonEl {
 
-        constructor(text:string, action:api_ui.Action) {
+        constructor(text:string, action:api.ui.Action) {
             super('HomeButton', 'home-button');
 
             this.getEl().setInnerHtml(text);
@@ -102,12 +102,12 @@ module api_app {
 
     }
 
-    export class UserButton extends api_dom.ButtonEl {
+    export class UserButton extends api.dom.ButtonEl {
 
         constructor() {
             super('UserButton', 'user-button');
 
-            var photoUrl = api_util.getAdminUri('common/images/tsi-profil.jpg');
+            var photoUrl = api.util.getAdminUri('common/images/tsi-profil.jpg');
             this.setIcon(photoUrl);
         }
 

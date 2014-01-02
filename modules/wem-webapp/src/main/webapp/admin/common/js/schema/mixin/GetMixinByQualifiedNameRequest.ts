@@ -1,6 +1,6 @@
-module api_schema_mixin {
+module api.schema.mixin {
 
-    export class GetMixinByQualifiedNameRequest extends MixinResourceRequest<api_schema_mixin_json.MixinJson> {
+    export class GetMixinByQualifiedNameRequest extends MixinResourceRequest<api.schema.mixin.json.MixinJson> {
 
         private name:MixinName;
 
@@ -16,17 +16,17 @@ module api_schema_mixin {
             };
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath():api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_schema_mixin.Mixin> {
+        sendAndParse(): JQueryPromise<api.schema.mixin.Mixin> {
 
-            var deferred = jQuery.Deferred<api_schema_mixin.Mixin>();
+            var deferred = jQuery.Deferred<api.schema.mixin.Mixin>();
 
-            this.send().done((response: api_rest.JsonResponse<api_schema_mixin_json.MixinJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
                 deferred.resolve(this.fromJsonToMixin(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

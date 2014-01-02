@@ -1,4 +1,4 @@
-module api_ui_dialog {
+module api.ui.dialog {
 
     export interface UploadDialogUploaderEl {
 
@@ -6,9 +6,9 @@ module api_ui_dialog {
 
         reset: () => void;
 
-        onFinishUpload: (fn:(resp:api_rest.Response) => void) => void;
+        onFinishUpload: (fn:(resp:api.rest.Response) => void) => void;
 
-        onError: (fn:(resp:api_rest.Response) => void) => void;
+        onError: (fn:(resp:api.rest.Response) => void) => void;
 
     }
 

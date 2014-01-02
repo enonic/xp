@@ -1,13 +1,13 @@
-module app_wizard_action {
+module app.wizard.action {
 
-    export class ShowFormAction extends api_ui.Action {
+    export class ShowFormAction extends api.ui.Action {
 
         constructor() {
             super("FORM");
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new app_wizard_event.ShowContentFormEvent().fire();
+                new app.wizard.event.ShowContentFormEvent().fire();
             })
         }
     }

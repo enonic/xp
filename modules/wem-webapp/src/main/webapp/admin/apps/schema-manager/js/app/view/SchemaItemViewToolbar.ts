@@ -1,12 +1,12 @@
-module app_view {
+module app.view {
 
     export interface SchemaItemViewToolbarParams {
-        editAction: api_ui.Action;
-        deleteAction: api_ui.Action;
-        closeAction: api_ui.Action;
+        editAction: api.ui.Action;
+        deleteAction: api.ui.Action;
+        closeAction: api.ui.Action;
     }
 
-    export class SchemaItemViewToolbar extends api_ui_toolbar.Toolbar {
+    export class SchemaItemViewToolbar extends api.ui.toolbar.Toolbar {
 
         constructor(params:SchemaItemViewToolbarParams) {
             super();

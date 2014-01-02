@@ -1,4 +1,4 @@
-module api_module{
+module api.module{
 
     export class ModuleKey {
 

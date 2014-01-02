@@ -1,15 +1,15 @@
-module app_browse_filter {
+module app.browse.filter {
 
-    export class SchemaBrowseFilterPanel extends api_app_browse_filter.BrowseFilterPanel {
+    export class SchemaBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
         constructor() {
 
             // dummy data
-            var facet1Entries:api_facet.TermsFacetEntry[] = [];
-            facet1Entries.push(new api_facet.TermsFacetEntry("ContentType", "Content Type", 6));
-            facet1Entries.push(new api_facet.TermsFacetEntry("RelationshipType", "Relationship Type", 2));
-            facet1Entries.push(new api_facet.TermsFacetEntry("Mixin", "Mixin", 5));
-            var facet1 = new api_facet.TermsFacet("Type", "Type", facet1Entries);
+            var facet1Entries:api.facet.TermsFacetEntry[] = [];
+            facet1Entries.push(new api.facet.TermsFacetEntry("ContentType", "Content Type", 6));
+            facet1Entries.push(new api.facet.TermsFacetEntry("RelationshipType", "Relationship Type", 2));
+            facet1Entries.push(new api.facet.TermsFacetEntry("Mixin", "Mixin", 5));
+            var facet1 = new api.facet.TermsFacet("Type", "Type", facet1Entries);
 
             super([facet1]);
 

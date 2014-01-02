@@ -1,4 +1,4 @@
-module api_content_page {
+module api.content.page {
 
     export class PageTemplateSummary extends TemplateSummary<PageTemplateKey,PageTemplateName> {
 
@@ -9,12 +9,12 @@ module api_content_page {
 
     export class PageTemplateSummaryBuilder extends TemplateSummaryBuilder<PageTemplateKey,PageTemplateName> {
 
-        fromJson(json: api_content_page_json.PageTemplateSummaryJson): PageTemplateSummaryBuilder {
+        fromJson(json: api.content.page.json.PageTemplateSummaryJson): PageTemplateSummaryBuilder {
 
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setName(new PageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorModuleResourceKey(api_module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
+            this.setDescriptorModuleResourceKey(api.module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
             return this;
         }
 

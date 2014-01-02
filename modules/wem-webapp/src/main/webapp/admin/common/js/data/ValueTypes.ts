@@ -1,4 +1,4 @@
-module api_data {
+module api.data {
 
     /*
      * Types need to be named as in ValueTypes.java
@@ -52,7 +52,7 @@ module api_data {
                 }
             });
 
-            api_util.assertNotNull(match, "Uknown ValueType: " + name);
+            api.util.assertNotNull(match, "Uknown ValueType: " + name);
             return match;
         }
     }

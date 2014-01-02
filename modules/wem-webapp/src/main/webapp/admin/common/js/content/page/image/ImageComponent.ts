@@ -1,10 +1,10 @@
-module api_content_page_image {
+module api.content.page.image {
 
-    export class ImageComponent extends api_content_page.BasePageComponent<ImageTemplateKey> {
+    export class ImageComponent extends api.content.page.BasePageComponent<ImageTemplateKey> {
 
-        private config: api_data.RootDataSet;
+        private config: api.data.RootDataSet;
 
-        private imageContent: api_content.ContentId;
+        private imageContent: api.content.ContentId;
 
         constructor(builder?: ImageComponentBuilder) {
             super(builder);
@@ -14,34 +14,34 @@ module api_content_page_image {
             }
         }
 
-        getConfig(): api_data.RootDataSet {
+        getConfig(): api.data.RootDataSet {
             return this.config;
         }
 
-        getImageContentId(): api_content.ContentId {
+        getImageContentId(): api.content.ContentId {
             return this.imageContent;
         }
 
-        setConfig(value: api_data.RootDataSet) {
+        setConfig(value: api.data.RootDataSet) {
             this.config = value;
         }
 
-        setImageContent(value: api_content.ContentId) {
+        setImageContent(value: api.content.ContentId) {
             this.imageContent = value;
         }
     }
 
-    export class ImageComponentBuilder extends api_content_page.BaseComponentBuilder<ImageTemplateKey> {
+    export class ImageComponentBuilder extends api.content.page.BaseComponentBuilder<ImageTemplateKey> {
 
-        config: api_data.RootDataSet;
+        config: api.data.RootDataSet;
 
-        imageContent: api_content.ContentId;
+        imageContent: api.content.ContentId;
 
-        public fromDataSet(dataSet: api_data.DataSet): ImageComponentBuilder {
+        public fromDataSet(dataSet: api.data.DataSet): ImageComponentBuilder {
             this.setTemplate(ImageTemplateKey.fromString(dataSet.getProperty("template").getString()));
             var imageContentProperty = dataSet.getProperty("image");
             if (imageContentProperty != null) {
-                this.imageContent = new api_content.ContentId(imageContentProperty.getString());
+                this.imageContent = new api.content.ContentId(imageContentProperty.getString());
             }
             var configProperty = dataSet.getProperty("config");
             if (configProperty != null) {
@@ -50,12 +50,12 @@ module api_content_page_image {
             return this;
         }
 
-        public setConfig(value: api_data.RootDataSet): ImageComponentBuilder {
+        public setConfig(value: api.data.RootDataSet): ImageComponentBuilder {
             this.config = value;
             return this;
         }
 
-        public setImageContent(value: api_content.ContentId): ImageComponentBuilder {
+        public setImageContent(value: api.content.ContentId): ImageComponentBuilder {
             this.imageContent = value;
             return this;
         }

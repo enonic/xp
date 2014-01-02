@@ -1,15 +1,15 @@
-module app_browse {
+module app.browse {
 
-    export class BaseContentBrowseAction extends api_ui.Action {
+    export class BaseContentBrowseAction extends api.ui.Action {
 
         constructor(label: string, shortcut?: string) {
             super(label, shortcut);
         }
 
-        extModelsToContentSummaries(models: Ext_data_Model[]): api_content.ContentSummary[] {
-            var summaries: api_content.ContentSummary[] = [];
+        extModelsToContentSummaries(models: Ext_data_Model[]): api.content.ContentSummary[] {
+            var summaries: api.content.ContentSummary[] = [];
             for (var i = 0; i < models.length; i++) {
-                summaries.push(new api_content.ContentSummary(<api_content_json.ContentSummaryJson>models[i].data))
+                summaries.push(new api.content.ContentSummary(<api.content.json.ContentSummaryJson>models[i].data))
             }
             return summaries;
         }
@@ -18,11 +18,11 @@ module app_browse {
 
     export class ShowNewContentDialogAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("New", "mod+alt+n");
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                var extModelsToContentSummaries: api_content.ContentSummary[] = this.extModelsToContentSummaries(treeGridPanel.getSelection());
+                var extModelsToContentSummaries: api.content.ContentSummary[] = this.extModelsToContentSummaries(treeGridPanel.getSelection());
                 new ShowNewContentDialogEvent(extModelsToContentSummaries.length > 0 ? extModelsToContentSummaries[0] : null).fire();
             });
         }
@@ -30,7 +30,7 @@ module app_browse {
 
     export class OpenContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Open", "mod+o");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -41,7 +41,7 @@ module app_browse {
 
     export class EditContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Edit", "f4");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -53,7 +53,7 @@ module app_browse {
 
     export class DeleteContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -64,7 +64,7 @@ module app_browse {
 
     export class DuplicateContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Duplicate");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -75,7 +75,7 @@ module app_browse {
 
     export class MoveContentAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("Move");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -86,7 +86,7 @@ module app_browse {
 
     export class ShowPreviewAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("PREVIEW");
 
             this.setEnabled(true);
@@ -98,7 +98,7 @@ module app_browse {
 
     export class ShowDetailsAction extends BaseContentBrowseAction {
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
             super("DETAILS");
 
             this.setEnabled(true);
@@ -108,7 +108,7 @@ module app_browse {
         }
     }
 
-    export class ShowNewGridAction extends api_ui.Action {
+    export class ShowNewGridAction extends api.ui.Action {
 
         constructor() {
             super("NG", "mod+i");
@@ -121,21 +121,21 @@ module app_browse {
 
     export class ContentBrowseActions {
 
-        public SHOW_NEW_CONTENT_DIALOG_ACTION: api_ui.Action;
-        public OPEN_CONTENT: api_ui.Action;
-        public EDIT_CONTENT: api_ui.Action;
-        public DELETE_CONTENT: api_ui.Action;
-        public DUPLICATE_CONTENT: api_ui.Action;
-        public MOVE_CONTENT: api_ui.Action;
-        public SHOW_PREVIEW: api_ui.Action;
-        public SHOW_DETAILS: api_ui.Action;
-        public SHOW_NEW_CONTENT_GRID: api_ui.Action;
+        public SHOW_NEW_CONTENT_DIALOG_ACTION: api.ui.Action;
+        public OPEN_CONTENT: api.ui.Action;
+        public EDIT_CONTENT: api.ui.Action;
+        public DELETE_CONTENT: api.ui.Action;
+        public DUPLICATE_CONTENT: api.ui.Action;
+        public MOVE_CONTENT: api.ui.Action;
+        public SHOW_PREVIEW: api.ui.Action;
+        public SHOW_DETAILS: api.ui.Action;
+        public SHOW_NEW_CONTENT_GRID: api.ui.Action;
 
-        private allActions: api_ui.Action[] = [];
+        private allActions: api.ui.Action[] = [];
 
         private static INSTANCE: ContentBrowseActions;
 
-        static init(treeGridPanel: api_app_browse_grid.TreeGridPanel): ContentBrowseActions {
+        static init(treeGridPanel: api.app.browse.grid.TreeGridPanel): ContentBrowseActions {
             new ContentBrowseActions(treeGridPanel);
             return ContentBrowseActions.INSTANCE;
         }
@@ -144,9 +144,9 @@ module app_browse {
             return ContentBrowseActions.INSTANCE;
         }
 
-        constructor(treeGridPanel: api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel: api.app.browse.grid.TreeGridPanel) {
 
-            this.SHOW_NEW_CONTENT_DIALOG_ACTION = new app_browse.ShowNewContentDialogAction(treeGridPanel);
+            this.SHOW_NEW_CONTENT_DIALOG_ACTION = new app.browse.ShowNewContentDialogAction(treeGridPanel);
             this.OPEN_CONTENT = new OpenContentAction(treeGridPanel);
             this.EDIT_CONTENT = new EditContentAction(treeGridPanel);
             this.DELETE_CONTENT = new DeleteContentAction(treeGridPanel);
@@ -163,11 +163,11 @@ module app_browse {
             ContentBrowseActions.INSTANCE = this;
         }
 
-        getAllActions(): api_ui.Action[] {
+        getAllActions(): api.ui.Action[] {
             return this.allActions;
         }
 
-        updateActionsEnabledState(models: api_content.ContentSummary[]) {
+        updateActionsEnabledState(models: api.content.ContentSummary[]) {
 
             if (models.length <= 0) {
                 this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
@@ -196,9 +196,9 @@ module app_browse {
 
         }
 
-        private anyEditable(contents: api_content.ContentSummary[]): boolean {
+        private anyEditable(contents: api.content.ContentSummary[]): boolean {
             for (var i in contents) {
-                var content: api_content.ContentSummary = contents[i];
+                var content: api.content.ContentSummary = contents[i];
                 if (content.isEditable()) {
                     return true;
                 }
@@ -206,9 +206,9 @@ module app_browse {
             return false;
         }
 
-        private anyDeletable(contents: api_content.ContentSummary[]): boolean {
+        private anyDeletable(contents: api.content.ContentSummary[]): boolean {
             for (var i in contents) {
-                var content: api_content.ContentSummary = contents[i];
+                var content: api.content.ContentSummary = contents[i];
                 if (content.isDeletable()) {
                     return true;
                 }

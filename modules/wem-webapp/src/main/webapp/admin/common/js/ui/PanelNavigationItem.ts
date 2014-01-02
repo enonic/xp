@@ -1,4 +1,4 @@
-module api_ui {
+module api.ui {
 
     export interface PanelNavigationItem {
 

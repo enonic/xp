@@ -1,6 +1,6 @@
-module api_content {
+module api.content {
 
-    export class GetContentByIdRequest extends ContentResourceRequest<api_content_json.ContentJson> {
+    export class GetContentByIdRequest extends ContentResourceRequest<api.content.json.ContentJson> {
 
         private id:ContentId;
 
@@ -24,17 +24,17 @@ module api_content {
             };
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath():api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_content.Content> {
+        sendAndParse(): JQueryPromise<api.content.Content> {
 
-            var deferred = jQuery.Deferred<api_content.Content>();
+            var deferred = jQuery.Deferred<api.content.Content>();
 
-            this.send().done((response: api_rest.JsonResponse<api_content_json.ContentJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 deferred.resolve(this.fromJsonToContent(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

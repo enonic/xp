@@ -1,6 +1,6 @@
-module api_ui_combobox {
+module api.ui.combobox {
 
-    export class SelectedOptionsView<T> extends api_dom.DivEl {
+    export class SelectedOptionsView<T> extends api.dom.DivEl {
 
         private selectedOptions:SelectedOptions<T>;
 

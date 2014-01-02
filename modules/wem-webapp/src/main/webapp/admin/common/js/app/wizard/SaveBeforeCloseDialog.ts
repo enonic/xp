@@ -1,15 +1,15 @@
-module api_app_wizard {
+module api.app.wizard {
 
 
-    export class SaveBeforeCloseDialog extends api_ui_dialog.ModalDialog {
+    export class SaveBeforeCloseDialog extends api.ui.dialog.ModalDialog {
 
-        private wizardPanel:api_app_wizard.WizardPanel<any>;
+        private wizardPanel:api.app.wizard.WizardPanel<any>;
 
-        private yesAction = new api_ui.Action('Yes');
+        private yesAction = new api.ui.Action('Yes');
 
-        private noAction = new api_ui.Action('No');
+        private noAction = new api.ui.Action('No');
 
-        constructor(wizardPanel:api_app_wizard.WizardPanel<any>) {
+        constructor(wizardPanel:api.app.wizard.WizardPanel<any>) {
             super({
                 idPrefix: "SaveBeforeCloseDialog",
                 title: "Close wizard",
@@ -17,7 +17,7 @@ module api_app_wizard {
                 height: 180
             });
 
-            this.setCancelAction(new api_ui.Action('Cancel', 'esc'));
+            this.setCancelAction(new api.ui.Action('Cancel', 'esc'));
 
             this.wizardPanel = wizardPanel;
 
@@ -37,7 +37,7 @@ module api_app_wizard {
             });
 
 
-            var message = new api_dom.H6El();
+            var message = new api.dom.H6El();
             message.getEl().setInnerHtml("There are unsaved changes, do you want to save them before closing?");
             this.appendChildToContentPanel(message);
 
@@ -46,7 +46,7 @@ module api_app_wizard {
         }
 
         show() {
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
             super.show();
         }
 

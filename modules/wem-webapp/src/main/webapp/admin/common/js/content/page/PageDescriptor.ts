@@ -1,4 +1,4 @@
-module api_content_page {
+module api.content.page {
 
     export class PageDescriptor extends ComponentDescriptor {
 
@@ -6,12 +6,12 @@ module api_content_page {
 
     export class PageDescriptorBuilder extends ComponentDescriptorBuilder {
 
-        public fromJson(json: api_content_page_json.PageDescriptorJson): PageDescriptorBuilder {
+        public fromJson(json: api.content.page.json.PageDescriptorJson): PageDescriptorBuilder {
 
             this.setName(new ComponentDescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setControllerResource(api_module.ModuleResourceKey.fromString(json.controller));
-            this.setForm(json.configForm != null ? new api_form.Form(json.configForm) : null);
+            this.setControllerResource(api.module.ModuleResourceKey.fromString(json.controller));
+            this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
             return this;
         }
 
@@ -25,12 +25,12 @@ module api_content_page {
             return this;
         }
 
-        public setForm(value: api_form.Form): PageDescriptorBuilder {
+        public setForm(value: api.form.Form): PageDescriptorBuilder {
             this.form = value;
             return this;
         }
 
-        public setControllerResource(value: api_module.ModuleResourceKey): PageDescriptorBuilder {
+        public setControllerResource(value: api.module.ModuleResourceKey): PageDescriptorBuilder {
             this.controllerResource = value;
             return this;
         }

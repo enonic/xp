@@ -1,21 +1,21 @@
-module api_content_page_image {
+module api.content.page.image {
 
-    export class ImageDescriptor extends api_content_page.ComponentDescriptor {
+    export class ImageDescriptor extends api.content.page.ComponentDescriptor {
 
     }
 
-    export class ImageDescriptorBuilder extends api_content_page.ComponentDescriptorBuilder {
+    export class ImageDescriptorBuilder extends api.content.page.ComponentDescriptorBuilder {
 
-        public fromJson(json: api_content_page_image_json.ImageDescriptorJson): ImageDescriptorBuilder {
+        public fromJson(json: api.content.page.image.json.ImageDescriptorJson): ImageDescriptorBuilder {
 
-            this.setName(new api_content_page.ComponentDescriptorName(json.name));
+            this.setName(new api.content.page.ComponentDescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setControllerResource(api_module.ModuleResourceKey.fromString(json.controller));
-            this.setForm(json.configForm != null ? new api_form.Form(json.configForm) : null);
+            this.setControllerResource(api.module.ModuleResourceKey.fromString(json.controller));
+            this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
             return this;
         }
 
-        public setName(value: api_content_page.ComponentDescriptorName): ImageDescriptorBuilder {
+        public setName(value: api.content.page.ComponentDescriptorName): ImageDescriptorBuilder {
             this.name = value;
             return this;
         }
@@ -25,12 +25,12 @@ module api_content_page_image {
             return this;
         }
 
-        public setForm(value: api_form.Form): ImageDescriptorBuilder {
+        public setForm(value: api.form.Form): ImageDescriptorBuilder {
             this.form = value;
             return this;
         }
 
-        public setControllerResource(value: api_module.ModuleResourceKey): ImageDescriptorBuilder {
+        public setControllerResource(value: api.module.ModuleResourceKey): ImageDescriptorBuilder {
             this.controllerResource = value;
             return this;
         }

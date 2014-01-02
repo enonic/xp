@@ -1,6 +1,6 @@
-module api_app_browse_filter {
+module api.app.browse.filter {
 
-    export class TextSearchField extends api_dom.InputEl {
+    export class TextSearchField extends api.dom.InputEl {
 
         private timerId:number;
 

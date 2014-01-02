@@ -1,10 +1,10 @@
-module app_view {
+module app.view {
 
-    export class SchemaItemViewPanel extends api_app_view.ItemViewPanel<api_schema.Schema> {
+    export class SchemaItemViewPanel extends api.app.view.ItemViewPanel<api.schema.Schema> {
 
-        private editAction:api_ui.Action;
-        private deleteAction:api_ui.Action;
-        private closeAction:api_ui.Action;
+        private editAction:api.ui.Action;
+        private deleteAction:api.ui.Action;
+        private closeAction:api.ui.Action;
         private statisticsPanel:SchemaItemStatisticsPanel;
 
         constructor() {
@@ -28,7 +28,7 @@ module app_view {
 
         }
 
-        setItem(item:api_app_view.ViewItem<api_schema.Schema>) {
+        setItem(item:api.app.view.ViewItem<api.schema.Schema>) {
             super.setItem(item);
             this.statisticsPanel.setItem(item);
         }

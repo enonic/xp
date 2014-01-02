@@ -1,8 +1,8 @@
-module api_ui {
-    export class DraggingMask extends api_dom.DivEl {
-        private maskedItem:api_dom.Element;
+module api.ui {
+    export class DraggingMask extends api.dom.DivEl {
+        private maskedItem:api.dom.Element;
 
-        constructor(itemToMask:api_dom.Element) {
+        constructor(itemToMask:api.dom.Element) {
             super("DraggingMask");
             this.addClass("dragging-mask");
             this.maskedItem = itemToMask;

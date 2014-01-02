@@ -1,4 +1,4 @@
-module api_app {
+module api.app {
 
     export interface AppLauncherEvent {
 

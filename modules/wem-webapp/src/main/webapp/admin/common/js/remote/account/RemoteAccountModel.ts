@@ -1,4 +1,4 @@
-module api_remote_account {
+module api.remote.account {
 
     export interface Account {
         key: string;

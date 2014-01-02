@@ -1,4 +1,4 @@
-module api_form{
+module api.form{
 
     export class FieldSet extends Layout {
 
@@ -6,12 +6,12 @@ module api_form{
 
         private formItems:FormItem[] = [];
 
-        constructor(fieldSetJson:api_form_json.FieldSetJson) {
+        constructor(fieldSetJson:api.form.json.FieldSetJson) {
             super(fieldSetJson.name);
             this.label = fieldSetJson.label;
 
             if (fieldSetJson.items != null) {
-                fieldSetJson.items.forEach((formItemJson:api_form_json.FormItemJson) => {
+                fieldSetJson.items.forEach((formItemJson:api.form.json.FormItemJson) => {
                     this.addFormItem(FormItemFactory.createFormItem(formItemJson));
                 });
             }
@@ -29,9 +29,9 @@ module api_form{
             return this.formItems;
         }
 
-        public toFieldSetJson():api_form_json.FormItemTypeWrapperJson {
+        public toFieldSetJson():api.form.json.FormItemTypeWrapperJson {
 
-            return <api_form_json.FormItemTypeWrapperJson>{ FieldSet: <api_form_json.FieldSetJson>{
+            return <api.form.json.FormItemTypeWrapperJson>{ FieldSet: <api.form.json.FieldSetJson>{
                 name: this.getName(),
                 items : FormItem.formItemsToJson(this.getFormItems()),
                 label : this.getLabel()

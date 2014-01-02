@@ -1,6 +1,6 @@
-module app_wizard_action {
+module app.wizard.action {
 
-    export class PublishAction extends api_ui.Action {
+    export class PublishAction extends api.ui.Action {
 
         constructor() {
             super("Publish");

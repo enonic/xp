@@ -1,4 +1,4 @@
-module api_data{
+module api.data{
 
     export class ValueType {
 

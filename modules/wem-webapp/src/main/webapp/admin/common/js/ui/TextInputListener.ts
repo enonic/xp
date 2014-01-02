@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export interface TextInputListener extends api_event.Listener {
+    export interface TextInputListener extends api.event.Listener {
 
         onValueChanged(oldValue:string, newValue:string);
 

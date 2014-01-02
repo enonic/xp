@@ -1,21 +1,21 @@
-module api_app_wizard {
+module api.app.wizard {
 
     export class WizardStep {
 
-        private tabBarItem:api_ui_tab.TabBarItem;
+        private tabBarItem:api.ui.tab.TabBarItem;
 
-        private panel:api_ui.Panel;
+        private panel:api.ui.Panel;
 
-        constructor(label:string, panel:api_ui.Panel) {
-            this.tabBarItem = new api_ui_tab.TabBarItem(label, {removable: false});
+        constructor(label:string, panel:api.ui.Panel) {
+            this.tabBarItem = new api.ui.tab.TabBarItem(label, {removable: false});
             this.panel = panel;
         }
 
-        getTabBarItem():api_ui_tab.TabBarItem {
+        getTabBarItem():api.ui.tab.TabBarItem {
             return this.tabBarItem;
         }
 
-        getPanel():api_ui.Panel {
+        getPanel():api.ui.Panel {
             return this.panel;
         }
 

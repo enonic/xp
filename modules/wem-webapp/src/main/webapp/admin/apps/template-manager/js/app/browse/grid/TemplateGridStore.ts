@@ -1,4 +1,4 @@
-module app_browse_grid {
+module app.browse.grid {
 
     export class TemplateGridStore {
 
@@ -13,7 +13,7 @@ module app_browse_grid {
 
                 proxy: {
                     type: 'ajax',
-                    url: api_util.getAdminUri('rest/content/site/template/list'),
+                    url: api.util.getAdminUri('rest/content/site/template/list'),
                     reader: {
                         type: 'json',
                         root: 'siteTemplates',

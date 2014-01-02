@@ -1,31 +1,31 @@
-module app_contextwindow_image {
-    export class ImageSelectPanel extends api_ui.Panel {
+module app.contextwindow.image {
+    export class ImageSelectPanel extends api.ui.Panel {
 
-        private image:api_content_page_image.ImageComponent;
+        private image:api.content.page.image.ImageComponent;
 
-        private contextWindow:app_contextwindow.ContextWindow;
+        private contextWindow:app.contextwindow.ContextWindow;
 
-        private comboBox:api_ui_combobox.ComboBox<api_content.ContentSummary>;
+        private comboBox:api.ui.combobox.ComboBox<api.content.ContentSummary>;
 
         private selectedOptionsView:ImageSelectPanelSelectedOptionsView;
 
-        private templatePanel:api_ui.Panel;
+        private templatePanel:api.ui.Panel;
 
         private recentPanel:RecentPanel;
 
-        private deck:api_ui.DeckPanel;
+        private deck:api.ui.DeckPanel;
 
-        private selectedOption:api_ui_combobox.Option<api_content.ContentSummary>;
+        private selectedOption:api.ui.combobox.Option<api.content.ContentSummary>;
 
-        private liveEditItems:{[key: number]: api_content.ContentSummary
+        private liveEditItems:{[key: number]: api.content.ContentSummary
         };
 
         private liveEditIndex:number = 1;
 
-        constructor(contextWindow:app_contextwindow.ContextWindow) {
+        constructor(contextWindow:app.contextwindow.ContextWindow) {
             super("ImageSelectPanel");
             this.addClass("select-panel");
-            var comboBoxWrapper = new api_dom.DivEl();
+            var comboBoxWrapper = new api.dom.DivEl();
             this.contextWindow = contextWindow;
 
             this.liveEditItems = {};
@@ -39,11 +39,11 @@ module app_contextwindow_image {
             });
 
 
-            this.deck = new api_ui.DeckPanel();
+            this.deck = new api.ui.DeckPanel();
 
             this.recentPanel = new RecentPanel();
 
-            this.templatePanel = new api_ui.Panel("TemplatePanel", "template-panel");
+            this.templatePanel = new api.ui.Panel("TemplatePanel", "template-panel");
             this.templatePanel.getEl().setInnerHtml("Template goes here");
 
             this.deck.addPanel(this.recentPanel);
@@ -57,10 +57,10 @@ module app_contextwindow_image {
             this.appendChild(comboBoxWrapper);
             this.appendChild(this.deck);
 
-            app_contextwindow.ComponentSelectEvent.on((event) => {
+            app.contextwindow.ComponentSelectEvent.on((event) => {
                 //TODO: set image here
                 if (!event.getComponent().isEmpty()) {
-                    this.image = new api_content_page_image.ImageComponent();
+                    this.image = new api.content.page.image.ImageComponent();
                     this.itemSelected();
                     if (event.getComponent().getItemId()) {
                         console.log("itemId:", event.getComponent().getItemId());
@@ -74,11 +74,11 @@ module app_contextwindow_image {
 
             });
 
-            app_contextwindow.ComponentDeselectEvent.on((event) => {
+            app.contextwindow.ComponentDeselectEvent.on((event) => {
                 this.itemRemoved();
             });
 
-            app_contextwindow.ComponentRemovedEvent.on((event) => {
+            app.contextwindow.ComponentRemovedEvent.on((event) => {
                 if (this.selectedOption != null) {
                     this.comboBox.removeSelectedItem(this.selectedOption);
                     this.itemRemoved();
@@ -89,8 +89,8 @@ module app_contextwindow_image {
         }
 
         private addGridListeners() {
-            this.recentPanel.getGrid().setOnClick((event, data:api_ui_grid.GridOnClickData) => {
-                var option = <api_ui_combobox.Option<api_content.ContentSummary>> {
+            this.recentPanel.getGrid().setOnClick((event, data:api.ui.grid.GridOnClickData) => {
+                var option = <api.ui.combobox.Option<api.content.ContentSummary>> {
                     //TODO: what is value used for??
                     value: "test",
                     displayValue: this.recentPanel.getDataView().getItem(data.row)
@@ -110,9 +110,9 @@ module app_contextwindow_image {
             this.deck.showPanel(0);
         }
 
-        private createComboBox():api_ui_combobox.ComboBox<api_content.ContentSummary> {
+        private createComboBox():api.ui.combobox.ComboBox<api.content.ContentSummary> {
 
-            var comboBoxConfig = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>> {
+            var comboBoxConfig = <api.ui.combobox.ComboBoxConfig<api.content.ContentSummary>> {
                 rowHeight: 50,
                 maximumOccurrences: 1,
                 optionFormatter: this.optionFormatter,
@@ -120,7 +120,7 @@ module app_contextwindow_image {
                 hideComboBoxWhenMaxReached: true
             };
 
-            var comboBox = new api_ui_combobox.ComboBox("imagePicker", comboBoxConfig);
+            var comboBox = new api.ui.combobox.ComboBox("imagePicker", comboBoxConfig);
 
             comboBox.addSelectedOptionRemovedListener(()=> {
                 this.selectedOption = null;
@@ -130,7 +130,7 @@ module app_contextwindow_image {
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     contentSummaryLoader.search(newValue);
                 },
-                onOptionSelected: (item:api_ui_combobox.Option<api_content.ContentSummary>) => {
+                onOptionSelected: (item:api.ui.combobox.Option<api.content.ContentSummary>) => {
                     console.log("On option selected");
                     //TODO: Mocked live use of image
                     var iconUrl = item.displayValue.getIconUrl();
@@ -142,13 +142,13 @@ module app_contextwindow_image {
                 }
             });
 
-            var contentSummaryLoader = new api_form_inputtype_content.ContentSummaryLoader();
+            var contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             contentSummaryLoader.setAllowedContentTypes(["image"]);
             contentSummaryLoader.addListener({
                 onLoading: () => {
                     comboBox.setLabel("Searching...");
                 },
-                onLoaded: (contentSummaries:api_content.ContentSummary[]) => {
+                onLoaded: (contentSummaries:api.content.ContentSummary[]) => {
                     var options = this.createOptions(contentSummaries);
                     comboBox.setOptions(options);
                 }
@@ -159,9 +159,9 @@ module app_contextwindow_image {
             return comboBox;
         }
 
-        private createOptions(contents:api_content.ContentSummary[]):api_ui_combobox.Option<api_content.ContentSummary>[] {
+        private createOptions(contents:api.content.ContentSummary[]):api.ui.combobox.Option<api.content.ContentSummary>[] {
             var options = [];
-            contents.forEach((content:api_content.ContentSummary) => {
+            contents.forEach((content:api.content.ContentSummary) => {
                 options.push({
                     value: content.getId(),
                     displayValue: content
@@ -170,20 +170,20 @@ module app_contextwindow_image {
             return options;
         }
 
-        private optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.Option<api_content.ContentSummary>):string {
-            var img = new api_dom.ImgEl();
+        private optionFormatter(row:number, cell:number, content:api.content.ContentSummary, columnDef:any, dataContext:api.ui.combobox.Option<api.content.ContentSummary>):string {
+            var img = new api.dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());
 
-            var contentSummary = new api_dom.DivEl();
+            var contentSummary = new api.dom.DivEl();
             contentSummary.setClass("content-summary");
 
-            var displayName = new api_dom.DivEl();
+            var displayName = new api.dom.DivEl();
             displayName.setClass("display-name");
             displayName.getEl().setAttribute("title", content.getDisplayName());
             displayName.getEl().setInnerHtml(content.getDisplayName());
 
-            var path = new api_dom.DivEl();
+            var path = new api.dom.DivEl();
             path.setClass("path");
             path.getEl().setAttribute("title", content.getPath().toString());
             path.getEl().setInnerHtml(content.getPath().toString());
@@ -194,9 +194,9 @@ module app_contextwindow_image {
             return img.toString() + contentSummary.toString();
         }
 
-        private setSelectedContent(content:api_content.ContentSummary, removeCurrent:boolean = true) {
-            api_util.assertNotNull(content, "Cannot set content null");
-            var option:api_ui_combobox.Option<api_content.ContentSummary> = {
+        private setSelectedContent(content:api.content.ContentSummary, removeCurrent:boolean = true) {
+            api.util.assertNotNull(content, "Cannot set content null");
+            var option:api.ui.combobox.Option<api.content.ContentSummary> = {
                 value: content.getId(),
                 displayValue: content
             };
@@ -208,16 +208,16 @@ module app_contextwindow_image {
             this.comboBox.selectOption(this.selectedOption, true);
         }
 
-        setImage(image:api_content_page_image.ImageComponent) {
+        setImage(image:api.content.page.image.ImageComponent) {
             this.image = image;
             this.refreshUI();
         }
 
         private refreshUI() {
-            new api_content.GetContentByIdRequest(this.image.getImageContentId())
+            new api.content.GetContentByIdRequest(this.image.getImageContentId())
                 .send()
-                .done((jsonResponse:api_rest.JsonResponse<api_content_json.ContentSummaryJson>) => {
-                    this.setSelectedContent(new api_content.ContentSummary(jsonResponse.getResult()))
+                .done((jsonResponse:api.rest.JsonResponse<api.content.json.ContentSummaryJson>) => {
+                    this.setSelectedContent(new api.content.ContentSummary(jsonResponse.getResult()))
                 });
         }
     }

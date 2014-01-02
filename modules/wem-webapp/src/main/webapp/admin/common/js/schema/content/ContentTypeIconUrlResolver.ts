@@ -1,9 +1,9 @@
-module api_schema_content {
+module api.schema.content {
 
-    export class ContentTypeIconUrlResolver extends api_schema.SchemaIconUrlResolver {
+    export class ContentTypeIconUrlResolver extends api.schema.SchemaIconUrlResolver {
 
         public resolveDefault(): string {
-            return this.toRestUrl(api_rest.Path.fromParent(this.getResourcePath(), "ContentType:structured"));
+            return this.toRestUrl(api.rest.Path.fromParent(this.getResourcePath(), "ContentType:structured"));
         }
     }
 }

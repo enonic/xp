@@ -1,8 +1,8 @@
-module api_form_inputtype_content_image {
+module api.form.inputtype.content.image {
 
-    export interface UploadDialogListener extends api_event.Listener {
+    export interface UploadDialogListener extends api.event.Listener {
 
-        onImageUploaded: (uploadItem:api_ui.UploadItem) => void;
+        onImageUploaded: (uploadItem:api.ui.UploadItem) => void;
 
     }
 

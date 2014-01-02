@@ -1,6 +1,6 @@
-module api_content_site_template {
+module api.content.site.template {
 
-    export class SiteTemplateDeletedEvent extends api_event.Event {
+    export class SiteTemplateDeletedEvent extends api.event.Event {
 
         private siteTemplateKey: SiteTemplateKey;
 
@@ -14,7 +14,7 @@ module api_content_site_template {
         }
 
         static on(handler: (event: SiteTemplateDeletedEvent) => void) {
-            api_event.onEvent('SiteTemplateDeletedEvent', handler);
+            api.event.onEvent('SiteTemplateDeletedEvent', handler);
         }
 
     }

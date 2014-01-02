@@ -1,4 +1,4 @@
-module api_rest {
+module api.rest {
 
     export class JsonRequest<T> {
 
@@ -27,14 +27,14 @@ module api_rest {
 
         private prepareGETRequest(request:XMLHttpRequest) {
             var paramString = JsonRequest.serializeParams(this.params);
-            request.open(this.method, api_util.getUri(this.path.toString()) + "?" + paramString, true);
+            request.open(this.method, api.util.getUri(this.path.toString()) + "?" + paramString, true);
             request.setRequestHeader("Accept", "application/json");
             return request;
         }
 
         private preparePOSTRequest(request:XMLHttpRequest) {
             var paramString = JSON.stringify(this.params);
-            request.open(this.method, api_util.getUri(this.path.toString()), true);
+            request.open(this.method, api.util.getUri(this.path.toString()), true);
             request.setRequestHeader("Accept", "application/json");
             request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             request.send(paramString);
@@ -56,10 +56,10 @@ module api_rest {
                         var notifyMessage:string = "HTTP Status " + request.status + " - " + request.statusText + ": " + errorJson.message;
 
                         if (request.status >= 400 && request.status < 500) {
-                            api_notify.showWarning(notifyMessage);
+                            api.notify.showWarning(notifyMessage);
                         }
                         else {
-                            api_notify.showError(notifyMessage);
+                            api.notify.showError(notifyMessage);
                         }
 
 

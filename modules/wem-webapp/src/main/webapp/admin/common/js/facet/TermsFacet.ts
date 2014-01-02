@@ -1,4 +1,4 @@
-module api_facet {
+module api.facet {
 
     export class TermsFacet extends Facet {
 

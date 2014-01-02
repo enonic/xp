@@ -1,6 +1,6 @@
-    module app_wizard {
+    module app.wizard {
 
-    export class DuplicateMixinAction extends api_ui.Action {
+    export class DuplicateMixinAction extends api.ui.Action {
 
         constructor() {
             super("Duplicate");
@@ -10,28 +10,28 @@
         }
     }
 
-    export class DeleteMixinAction extends api_ui.Action {
+    export class DeleteMixinAction extends api.ui.Action {
 
-        constructor(wizardPanel:api_app_wizard.WizardPanel<api_schema_mixin.Mixin>) {
+        constructor(wizardPanel:api.app.wizard.WizardPanel<api.schema.mixin.Mixin>) {
             super("Delete", "mod+del");
             this.addExecutionListener(() => {
-                api_ui_dialog.ConfirmationDialog.get()
+                api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this mixin?")
                     .setNoCallback(null)
                     .setYesCallback(() => {
                         wizardPanel.close();
-                        new api_schema_mixin.DeleteMixinRequest()
+                        new api.schema.mixin.DeleteMixinRequest()
                             .addName(wizardPanel.getPersistedItem().getMixinName())
                             .send()
-                            .done((jsonResponse:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+                            .done((jsonResponse:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                                 var json = jsonResponse.getResult();
 
                                 if (json.successes && json.successes.length > 0) {
                                     var name = json.successes[0].name;
                                     var deletedMixin = wizardPanel.getPersistedItem();
 
-                                    api_notify.showFeedback('Content [' + name + '] deleted!');
-                                    new api_schema.SchemaDeletedEvent([deletedMixin]).fire();
+                                    api.notify.showFeedback('Content [' + name + '] deleted!');
+                                    new api.schema.SchemaDeletedEvent([deletedMixin]).fire();
                                 }
                             });
                     }).open();
@@ -39,22 +39,22 @@
         }
     }
 
-    export class MixinWizardActions implements api_app_wizard.WizardActions<api_schema_mixin.Mixin> {
+    export class MixinWizardActions implements api.app.wizard.WizardActions<api.schema.mixin.Mixin> {
 
-        private save:api_ui.Action;
+        private save:api.ui.Action;
 
-        private close:api_ui.Action;
+        private close:api.ui.Action;
 
-        private delete:api_ui.Action;
+        private delete:api.ui.Action;
 
-        private duplicate:api_ui.Action;
+        private duplicate:api.ui.Action;
 
 
-        constructor(wizardPanel:api_app_wizard.WizardPanel<api_schema_mixin.Mixin>) {
-            this.save = new api_app_wizard.SaveAction(wizardPanel);
+        constructor(wizardPanel:api.app.wizard.WizardPanel<api.schema.mixin.Mixin>) {
+            this.save = new api.app.wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateMixinAction();
             this.delete = new DeleteMixinAction(wizardPanel);
-            this.close = new api_app_wizard.CloseAction(wizardPanel);
+            this.close = new api.app.wizard.CloseAction(wizardPanel);
         }
 
         enableActionsForNew() {
@@ -63,7 +63,7 @@
             this.delete.setEnabled( false )
         }
 
-        enableActionsForExisting(existing:api_schema_mixin.Mixin) {
+        enableActionsForExisting(existing:api.schema.mixin.Mixin) {
             this.save.setEnabled( existing.isEditable() );
             this.duplicate.setEnabled( true );
             this.delete.setEnabled( existing.isDeletable() );

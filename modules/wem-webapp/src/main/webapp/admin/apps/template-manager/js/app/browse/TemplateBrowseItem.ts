@@ -1,6 +1,6 @@
-module app_browse {
+module app.browse {
 
-    export class TemplateBrowseItem extends api_item.BaseItem {
+    export class TemplateBrowseItem extends api.item.BaseItem {
 
     }
 

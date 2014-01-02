@@ -1,6 +1,6 @@
-module api_schema_content {
+module api.schema.content {
 
-    export class GetContentTypeByNameRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeJson> {
+    export class GetContentTypeByNameRequest extends ContentTypeResourceRequest<api.schema.content.json.ContentTypeJson> {
 
         private name:ContentTypeName;
 
@@ -24,17 +24,17 @@ module api_schema_content {
             };
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath():api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_schema_content.ContentType> {
+        sendAndParse(): JQueryPromise<api.schema.content.ContentType> {
 
-            var deferred = jQuery.Deferred<api_schema_content.ContentType>();
+            var deferred = jQuery.Deferred<api.schema.content.ContentType>();
 
-            this.send().done((response: api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
                 deferred.resolve(this.fromJsonToContentType(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

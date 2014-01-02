@@ -1,33 +1,33 @@
-module api_module {
+module api.module {
 
-    export class InstallModuleRequest extends ModuleResourceRequest<api_module_json.ModuleSummaryJson> {
+    export class InstallModuleRequest extends ModuleResourceRequest<api.module.json.ModuleSummaryJson> {
 
         private uploader:any;
-        private triggerElement:api_dom.Element;
+        private triggerElement:api.dom.Element;
         private isExternalTriggerElement:boolean = false;
 
-        private deferred:JQueryDeferred<api_rest.Response>;
+        private deferred:JQueryDeferred<api.rest.Response>;
 
-        constructor(triggerEl?:api_dom.Element) {
+        constructor(triggerEl?:api.dom.Element) {
             super();
             if (triggerEl) {
                 this.triggerElement = triggerEl;
                 this.isExternalTriggerElement = true;
             } else {
-                this.triggerElement = new api_dom.ButtonEl("trigger-el");
+                this.triggerElement = new api.dom.ButtonEl("trigger-el");
                 this.triggerElement.hide();
-                api_dom.Body.get().appendChild(this.triggerElement);
+                api.dom.Body.get().appendChild(this.triggerElement);
             }
-            this.deferred = jQuery.Deferred<api_rest.Response>();
+            this.deferred = jQuery.Deferred<api.rest.Response>();
 
             this.uploader = this.createUploader(this.triggerElement);
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "install");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "install");
         }
 
-        send():JQueryPromise<api_rest.Response> {
+        send():JQueryPromise<api.rest.Response> {
             if (!this.isExternalTriggerElement) {
                 this.triggerElement.getHTMLElement().click();
                 this.triggerElement.remove();
@@ -35,11 +35,11 @@ module api_module {
             return this.deferred;
         }
 
-        done(fn:(resp:api_rest.JsonResponse<api_module_json.ModuleSummaryJson>[])=>void) {
+        done(fn:(resp:api.rest.JsonResponse<api.module.json.ModuleSummaryJson>[])=>void) {
             this.deferred.done(fn);
         }
 
-        fail(fn:(resp:api_rest.Response)=>void) {
+        fail(fn:(resp:api.rest.Response)=>void) {
             this.deferred.fail(fn);
         }
 
@@ -47,7 +47,7 @@ module api_module {
             this.uploader.stop();
         }
 
-        private createUploader(triggerElement:api_dom.Element):any {
+        private createUploader(triggerElement:api.dom.Element):any {
             if (!plupload) {
                 throw new Error("ImageUploader: plupload not found, check if it is included in page.");
             }
@@ -58,8 +58,8 @@ module api_module {
                 url: this.getRequestPath(),
                 multipart: true,
                 drop_element: triggerElement.getId(),
-                flash_swf_url: api_util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
-                silverlight_xap_url: api_util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
+                flash_swf_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
+                silverlight_xap_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
                 filters: [
                     {title: 'Zip Archive', extensions: 'zip'}
                 ]
@@ -69,12 +69,12 @@ module api_module {
                 up.start();
             });
 
-            var results:api_rest.JsonResponse<api_module_json.ModuleSummaryJson>[] = [];
+            var results:api.rest.JsonResponse<api.module.json.ModuleSummaryJson>[] = [];
             this.uploader.bind('FileUploaded', (up, file, response) => {
                 if (response && response.status === 200) {
-                    results.push(new api_rest.JsonResponse<api_module_json.ModuleSummaryJson>(response.response));
+                    results.push(new api.rest.JsonResponse<api.module.json.ModuleSummaryJson>(response.response));
                 } else {
-                    this.deferred.reject(new api_rest.RequestError(response.status, response.statusText, response.responseText, null));
+                    this.deferred.reject(new api.rest.RequestError(response.status, response.statusText, response.responseText, null));
                 }
 
             });
@@ -84,7 +84,7 @@ module api_module {
             });
 
             this.uploader.bind('Error', (up, files) => {
-                this.deferred.reject(new api_rest.RequestError(null, files.code, files.message, null));
+                this.deferred.reject(new api.rest.RequestError(null, files.code, files.message, null));
             });
 
             this.uploader.init();
@@ -94,14 +94,14 @@ module api_module {
 
     }
 
-    export class InstallModuleResponse extends api_rest.Response {
+    export class InstallModuleResponse extends api.rest.Response {
 
         private modules:ModuleSummary[] = [];
         private errors:string[] = [];
 
-        constructor (moduleResponses:api_rest.JsonResponse<api_module_json.ModuleSummaryJson>[]) {
+        constructor (moduleResponses:api.rest.JsonResponse<api.module.json.ModuleSummaryJson>[]) {
             super();
-            moduleResponses.forEach((response:api_rest.JsonResponse<api_module_json.ModuleSummaryJson>) => {
+            moduleResponses.forEach((response:api.rest.JsonResponse<api.module.json.ModuleSummaryJson>) => {
                 var responseJson = response.getJson();
                 if (responseJson.result) {
                     this.modules.push(new ModuleSummary(responseJson.result));

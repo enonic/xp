@@ -1,8 +1,8 @@
-module api_content_page {
+module api.content.page {
 
     export class PageTemplate extends Template<PageTemplateKey,PageTemplateName> {
 
-        private canRender: api_schema_content.ContentTypeName[];
+        private canRender: api.schema.content.ContentTypeName[];
 
         private descriptor:PageDescriptor;
 
@@ -12,7 +12,7 @@ module api_content_page {
             this.descriptor = builder.descriptor;
         }
 
-        getCanRender(): api_schema_content.ContentTypeName[] {
+        getCanRender(): api.schema.content.ContentTypeName[] {
             return this.canRender;
         }
 
@@ -23,25 +23,25 @@ module api_content_page {
 
     export class PageTemplateBuilder extends TemplateBuilder<PageTemplateKey,PageTemplateName> {
 
-        canRender: api_schema_content.ContentTypeName[] = [];
+        canRender: api.schema.content.ContentTypeName[] = [];
 
         descriptor:PageDescriptor;
 
-        fromJson(json: api_content_page_json.PageTemplateJson): PageTemplateBuilder {
+        fromJson(json: api.content.page.json.PageTemplateJson): PageTemplateBuilder {
 
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setName(new PageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorModuleResourceKey(api_module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
+            this.setDescriptorModuleResourceKey(api.module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
             this.descriptor = new PageDescriptorBuilder().fromJson(json.descriptor).build();
-            this.setConfig(api_data.DataFactory.createRootDataSet(json.config));
+            this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             json.canRender.forEach((name: string)=> {
-                this.canRender.push(new api_schema_content.ContentTypeName(name))
+                this.canRender.push(new api.schema.content.ContentTypeName(name))
             });
             return this;
         }
 
-        setCanRender(value: api_schema_content.ContentTypeName[]): PageTemplateBuilder {
+        setCanRender(value: api.schema.content.ContentTypeName[]): PageTemplateBuilder {
             this.canRender = value;
             return this;
         }

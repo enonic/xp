@@ -3,16 +3,16 @@ declare var Admin;
 declare var CONFIG;
 
 window.onload = () => {
-    var appBar = new api_app.AppBar("Module Manager", new api_app.AppBarTabMenu("ModuleAppBarTabMenu"));
+    var appBar = new api.app.AppBar("Module Manager", new api.app.AppBarTabMenu("ModuleAppBarTabMenu"));
     var appPanel = new app.ModuleAppPanel(appBar);
 
-    api_dom.Body.get().appendChild(appBar);
-    api_dom.Body.get().appendChild(appPanel);
+    api.dom.Body.get().appendChild(appBar);
+    api.dom.Body.get().appendChild(appPanel);
 
     appPanel.init();
 
-    var moduleDeleteDialog:app_delete.ModuleDeleteDialog = new app_delete.ModuleDeleteDialog();
-    app_browse.DeleteModulePromptEvent.on((event:app_browse.DeleteModulePromptEvent) => {
+    var moduleDeleteDialog:app.remove.ModuleDeleteDialog = new app.remove.ModuleDeleteDialog();
+    app.browse.DeleteModulePromptEvent.on((event:app.browse.DeleteModulePromptEvent) => {
         moduleDeleteDialog.setModuleToDelete(event.getModule());
         moduleDeleteDialog.open();
     });
@@ -23,8 +23,8 @@ window.onload = () => {
 
     window.onmessage = (e:MessageEvent) => {
         if( e.data.appLauncherEvent ) {
-            var eventType:api_app.AppLauncherEventType = api_app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if( eventType ==  api_app.AppLauncherEventType.Show ) {
+            var eventType:api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            if( eventType ==  api.app.AppLauncherEventType.Show ) {
                 appPanel.activateCurrentKeyBindings();
             }
         }
@@ -32,15 +32,15 @@ window.onload = () => {
 };
 
 module components {
-    export var detailPanel:app_browse.ModuleBrowseItemPanel;
-    export var gridPanel:app_browse.ModuleTreeGridPanel;
+    export var detailPanel:app.browse.ModuleBrowseItemPanel;
+    export var gridPanel:app.browse.ModuleTreeGridPanel;
 }
 
 function getAppName():string {
     return jQuery(window.frameElement).data("wem-app");
 }
 
-function route(path:api_rest.Path) {
+function route(path:api.rest.Path) {
     var action = path.getElement(0);
 
     switch (action) {
@@ -51,7 +51,7 @@ function route(path:api_rest.Path) {
         console.log("view");
         break;
     default:
-        new api_app.ShowAppBrowsePanelEvent().fire();
+        new api.app.ShowAppBrowsePanelEvent().fire();
         break;
     }
 }

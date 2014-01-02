@@ -1,4 +1,4 @@
-module api_app_delete{
+module api.app.remove{
 
     export class DeleteItem {
 

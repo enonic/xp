@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export interface DeckPanelNavigator extends api_event.Observable {
+    export interface DeckPanelNavigator extends api.event.Observable {
 
         addNavigationItem(item:PanelNavigationItem);
 

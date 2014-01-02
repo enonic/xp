@@ -1,10 +1,10 @@
-module api_content_page_image{
+module api.content.page.image{
 
-    export class GetImageTemplateByKeyRequest extends ImageTemplateResource<api_content_page_image_json.ImageTemplateJson> {
+    export class GetImageTemplateByKeyRequest extends ImageTemplateResource<api.content.page.image.json.ImageTemplateJson> {
 
-        private imageTemplateKey:api_content_page_image.ImageTemplateKey;
+        private imageTemplateKey:api.content.page.image.ImageTemplateKey;
 
-        constructor(imageTemplateKey:api_content_page_image.ImageTemplateKey) {
+        constructor(imageTemplateKey:api.content.page.image.ImageTemplateKey) {
             super();
             super.setMethod("GET");
             this.imageTemplateKey = imageTemplateKey;
@@ -16,18 +16,18 @@ module api_content_page_image{
             };
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath():api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_content_page_image.ImageTemplate> {
+        sendAndParse(): JQueryPromise<api.content.page.image.ImageTemplate> {
 
-            var deferred = jQuery.Deferred<api_content_page_image.ImageTemplate>();
+            var deferred = jQuery.Deferred<api.content.page.image.ImageTemplate>();
 
             this.send().
-                done((response: api_rest.JsonResponse<api_content_page_image_json.ImageTemplateJson>) => {
+                done((response: api.rest.JsonResponse<api.content.page.image.json.ImageTemplateJson>) => {
                     deferred.resolve(this.fromJsonToImageTemplate(response.getResult()));
-                }).fail((response: api_rest.RequestError) => {
+                }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

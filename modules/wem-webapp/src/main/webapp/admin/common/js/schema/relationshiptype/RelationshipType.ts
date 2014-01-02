@@ -1,6 +1,6 @@
-module api_schema_relationshiptype {
+module api.schema.relationshiptype {
 
-    export class RelationshipType extends api_schema.Schema {
+    export class RelationshipType extends api.schema.Schema {
 
         private fromSemantic:string;
 
@@ -10,7 +10,7 @@ module api_schema_relationshiptype {
 
         private allowedToTypes:string[];
 
-        constructor(relationshipTypeJson:api_schema_relationshiptype_json.RelationshipTypeJson) {
+        constructor(relationshipTypeJson:api.schema.relationshiptype.json.RelationshipTypeJson) {
             super(relationshipTypeJson);
             this.fromSemantic = relationshipTypeJson.fromSemantic;
             this.toSemantic = relationshipTypeJson.toSemantic;

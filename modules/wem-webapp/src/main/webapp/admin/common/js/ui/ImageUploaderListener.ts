@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export interface ImageUploaderListener extends api_event.Listener {
+    export interface ImageUploaderListener extends api.event.Listener {
 
         onFileUploaded:(uploadItem:UploadItem) => void;
 

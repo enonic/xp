@@ -1,18 +1,18 @@
-module app_new {
+module app.create {
 
     export class SiteRootContentTypes {
 
         private contentTypeByName: boolean[];
 
-        private siteTemplates: api_content_site_template.SiteTemplateSummary[];
+        private siteTemplates: api.content.site.template.SiteTemplateSummary[];
 
         public static load(callback: (siteRootContentTypes: SiteRootContentTypes) => void) {
             var contentTypeByName: boolean[] = [];
 
-            new api_content_site_template.GetAllSiteTemplatesRequest().sendAndParse()
-                .done((siteTemplates: api_content_site_template.SiteTemplateSummary[]) => {
+            new api.content.site.template.GetAllSiteTemplatesRequest().sendAndParse()
+                .done((siteTemplates: api.content.site.template.SiteTemplateSummary[]) => {
 
-                    siteTemplates.forEach((siteTemplate: api_content_site_template.SiteTemplateSummary) => {
+                    siteTemplates.forEach((siteTemplate: api.content.site.template.SiteTemplateSummary) => {
                         contentTypeByName[siteTemplate.getRootContentType().toString()] = true;
                     });
 
@@ -20,7 +20,7 @@ module app_new {
                 });
         }
 
-        constructor(contentTypeByName: boolean[], siteTemplates:api_content_site_template.SiteTemplateSummary[]) {
+        constructor(contentTypeByName: boolean[], siteTemplates:api.content.site.template.SiteTemplateSummary[]) {
             this.contentTypeByName = contentTypeByName;
             this.siteTemplates = siteTemplates;
         }
@@ -29,7 +29,7 @@ module app_new {
             return this.contentTypeByName[name] == true;
         }
 
-        getSiteTemplates(): api_content_site_template.SiteTemplateSummary[] {
+        getSiteTemplates(): api.content.site.template.SiteTemplateSummary[] {
             return this.siteTemplates;
         }
     }

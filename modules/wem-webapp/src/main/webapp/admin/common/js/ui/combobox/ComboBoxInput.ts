@@ -1,6 +1,6 @@
-module api_ui_combobox {
+module api.ui.combobox {
 
-    export class ComboBoxInput extends api_ui.TextInput {
+    export class ComboBoxInput extends api.ui.TextInput {
 
         constructor() {
             super();

@@ -1,21 +1,21 @@
-module api_content_page_part {
+module api.content.page.part {
 
-    export class PartDescriptor extends api_content_page.ComponentDescriptor {
+    export class PartDescriptor extends api.content.page.ComponentDescriptor {
 
     }
 
-    export class PartDescriptorBuilder extends api_content_page.ComponentDescriptorBuilder {
+    export class PartDescriptorBuilder extends api.content.page.ComponentDescriptorBuilder {
 
-        public fromJson(json: api_content_page_part_json.PartDescriptorJson): PartDescriptorBuilder {
+        public fromJson(json: api.content.page.part.json.PartDescriptorJson): PartDescriptorBuilder {
 
-            this.setName(new api_content_page.ComponentDescriptorName(json.name));
+            this.setName(new api.content.page.ComponentDescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setControllerResource(api_module.ModuleResourceKey.fromString(json.controller));
-            this.setForm(json.configForm != null ? new api_form.Form(json.configForm) : null);
+            this.setControllerResource(api.module.ModuleResourceKey.fromString(json.controller));
+            this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
             return this;
         }
 
-        public setName(value:api_content_page.ComponentDescriptorName):PartDescriptorBuilder {
+        public setName(value:api.content.page.ComponentDescriptorName):PartDescriptorBuilder {
             this.name = value;
             return this;
         }
@@ -25,12 +25,12 @@ module api_content_page_part {
             return this;
         }
 
-        public setForm(value:api_form.Form):PartDescriptorBuilder {
+        public setForm(value:api.form.Form):PartDescriptorBuilder {
             this.form = value;
             return this;
         }
 
-        public setControllerResource(value:api_module.ModuleResourceKey):PartDescriptorBuilder {
+        public setControllerResource(value:api.module.ModuleResourceKey):PartDescriptorBuilder {
             this.controllerResource = value;
             return this;
         }

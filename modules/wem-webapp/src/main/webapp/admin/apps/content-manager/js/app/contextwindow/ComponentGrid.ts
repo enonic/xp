@@ -1,17 +1,17 @@
-module app_contextwindow {
+module app.contextwindow {
     export interface ComponentGridOptions {
         draggableRows?:boolean;
         rowClass?:string;
         onClick?:(el) => void;
     }
 
-    export class ComponentGrid extends api_ui_grid.Grid<ComponentData> {
+    export class ComponentGrid extends api.ui.grid.Grid<ComponentData> {
 
         private componentGridOptions:ComponentGridOptions;
 
-        private componentDataView:api_ui_grid.DataView<ComponentData>;
+        private componentDataView:api.ui.grid.DataView<ComponentData>;
 
-        constructor(dataView:api_ui_grid.DataView<ComponentData>, options:ComponentGridOptions = {}) {
+        constructor(dataView:api.ui.grid.DataView<ComponentData>, options:ComponentGridOptions = {}) {
             super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
             this.componentDataView = dataView;
             this.componentGridOptions = options;
@@ -42,7 +42,7 @@ module app_contextwindow {
             this.componentDataView.refresh();
         }
 
-        private createColumns():api_ui_grid.GridColumn<ComponentData>[] {
+        private createColumns():api.ui.grid.GridColumn<ComponentData>[] {
             return [
                 {
                     name: "component",
@@ -57,8 +57,8 @@ module app_contextwindow {
             ];
         }
 
-        private buildRow(row, cell, data):api_dom.DivEl {
-            var rowEl = new api_dom.DivEl();
+        private buildRow(row, cell, data):api.dom.DivEl {
+            var rowEl = new api.dom.DivEl();
             rowEl.getEl().setData('live-edit-key', data.key);
             rowEl.getEl().setData('live-edit-name', data.name);
             rowEl.getEl().setData('live-edit-type', data.typeName);
@@ -69,14 +69,14 @@ module app_contextwindow {
                 rowEl.addClass(this.componentGridOptions.rowClass)
             }
 
-            var icon = new api_dom.DivEl();
+            var icon = new api.dom.DivEl();
             icon.setClass('live-edit-font-icon-' + data.typeName);
             icon.addClass('icon');
 
-            var title = new api_dom.H5El();
+            var title = new api.dom.H5El();
             title.getEl().setInnerHtml(data.name);
 
-            var subtitle = new api_dom.H6El();
+            var subtitle = new api.dom.H6El();
             subtitle.getEl().setInnerHtml(data.subtitle);
 
             rowEl.appendChild(icon);

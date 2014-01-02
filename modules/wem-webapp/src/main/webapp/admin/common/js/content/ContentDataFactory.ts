@@ -1,18 +1,18 @@
-module api_content {
+module api.content {
 
     export class ContentDataFactory {
 
-        public static createContentData(dataArray:api_data_json.DataTypeWrapperJson[]):api_content.ContentData {
+        public static createContentData(dataArray:api.data.json.DataTypeWrapperJson[]):api.content.ContentData {
 
-            var contentData = new api_content.ContentData();
+            var contentData = new api.content.ContentData();
 
             if (dataArray != null) {
-                dataArray.forEach((dataJson:api_data_json.DataTypeWrapperJson) => {
+                dataArray.forEach((dataJson:api.data.json.DataTypeWrapperJson) => {
                     if (dataJson.DataSet) {
-                        contentData.addData(api_data.DataFactory.createDataSet(dataJson.DataSet));
+                        contentData.addData(api.data.DataFactory.createDataSet(dataJson.DataSet));
                     }
                     else {
-                        contentData.addData(api_data.DataFactory.createProperty(dataJson.Property));
+                        contentData.addData(api.data.DataFactory.createProperty(dataJson.Property));
                     }
                 });
             }

@@ -1,6 +1,6 @@
-module api_schema {
+module api.schema {
 
-    export interface SchemaJson extends api_item.ItemJson {
+    export interface SchemaJson extends api.item.ItemJson {
 
         key:string;
 

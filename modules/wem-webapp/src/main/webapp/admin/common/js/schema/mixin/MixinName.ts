@@ -1,4 +1,4 @@
-module api_schema_mixin{
+module api.schema.mixin{
 
     export class MixinName {
 

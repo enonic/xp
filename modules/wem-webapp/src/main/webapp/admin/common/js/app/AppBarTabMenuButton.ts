@@ -1,8 +1,8 @@
-module api_app{
+module api.app{
 
-    export class AppBarTabMenuButton extends api_ui_tab.TabMenuButton {
+    export class AppBarTabMenuButton extends api.ui.tab.TabMenuButton {
 
-        private iconEl:api_dom.ImgEl;
+        private iconEl:api.dom.ImgEl;
 
         private tabCountEl:AppBarTabCount;
 
@@ -10,7 +10,7 @@ module api_app{
             super(idPrefix || "AppBarTabMenuButton");
             this.getEl().addClass("appbar-tabmenu-button");
 
-            this.iconEl = new api_dom.ImgEl();
+            this.iconEl = new api.dom.ImgEl();
             this.iconEl.hide();
             this.prependChild(this.iconEl);
 
@@ -27,7 +27,7 @@ module api_app{
         }
     }
 
-    export class AppBarTabCount extends api_dom.SpanEl {
+    export class AppBarTabCount extends api.dom.SpanEl {
 
         constructor() {
             super();

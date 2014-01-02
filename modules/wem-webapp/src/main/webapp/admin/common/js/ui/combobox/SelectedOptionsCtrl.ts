@@ -1,4 +1,4 @@
-module api_ui_combobox {
+module api.ui.combobox {
 
     export class SelectedOptionsCtrl<T>{
 
@@ -59,16 +59,16 @@ module api_ui_combobox {
 
         //TODO: Theese block contextwindows stuff. Probably because the OptionData.value is faked
         removeOption(optionToRemove:Option<T>, silent:boolean = false) {
-            api_util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             var selectedOption = this.selectedOptions.getByOption( optionToRemove );
-            api_util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
+            api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
 
             this.removeSelectedOption(selectedOption, silent);
         }
 
         private removeSelectedOption(optionToBeRemoved:SelectedOption<T>, silent:boolean = false) {
-            api_util.assertNotNull(optionToBeRemoved, "optionToBeRemoved cannot be null");
+            api.util.assertNotNull(optionToBeRemoved, "optionToBeRemoved cannot be null");
 
             this.selectedOptions.remove( optionToBeRemoved );
             for( var i:number = optionToBeRemoved.getIndex(); i < this.count(); i++ ) {

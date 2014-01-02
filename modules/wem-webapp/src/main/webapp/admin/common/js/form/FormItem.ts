@@ -1,4 +1,4 @@
-module api_form{
+module api.form{
 
     export class FormItem {
 
@@ -42,7 +42,7 @@ module api_form{
             }
         }
 
-        public toFormItemJson():api_form_json.FormItemTypeWrapperJson {
+        public toFormItemJson():api.form.json.FormItemTypeWrapperJson {
 
             if (this instanceof Input) {
                 return (<Input>this).toInputJson();
@@ -58,9 +58,9 @@ module api_form{
             }
         }
 
-        public static formItemsToJson(formItems:FormItem[]):api_form_json.FormItemTypeWrapperJson[] {
+        public static formItemsToJson(formItems:FormItem[]):api.form.json.FormItemTypeWrapperJson[] {
 
-            var formItemArray:api_form_json.FormItemTypeWrapperJson[] = [];
+            var formItemArray:api.form.json.FormItemTypeWrapperJson[] = [];
             formItems.forEach((formItem:FormItem) => {
                 formItemArray.push(formItem.toFormItemJson());
             });

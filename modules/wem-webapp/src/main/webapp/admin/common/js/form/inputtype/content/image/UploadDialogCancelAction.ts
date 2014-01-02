@@ -1,6 +1,6 @@
-module api_form_inputtype_content_image {
+module api.form.inputtype.content.image {
 
-    export class UploadDialogCancelAction extends api_ui.Action {
+    export class UploadDialogCancelAction extends api.ui.Action {
 
         constructor() {
             super("Cancel", "esc");

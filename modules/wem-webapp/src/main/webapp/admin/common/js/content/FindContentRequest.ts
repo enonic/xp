@@ -1,4 +1,4 @@
-module api_content {
+module api.content {
 
     export class FindContentRequest<T> extends ContentResourceRequest<FindContentResult<T>> {
 
@@ -90,8 +90,8 @@ module api_content {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "find");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "find");
         }
 
         private getDefaultFacets():Object {
@@ -108,7 +108,7 @@ module api_content {
                     "terms": {
                         "field": "space",
                         "size": 10,
-                        "all_terms": true,
+                        "all.terms": true,
                         "order": "term"
                     }
                 },
@@ -116,7 +116,7 @@ module api_content {
                     "terms": {
                         "field": "contentType",
                         "size": 10,
-                        "all_terms": true,
+                        "all.terms": true,
                         "order": "term"
                     }
                 },
@@ -125,7 +125,7 @@ module api_content {
                         "range": {
                             "lastModified.date": {
                                 "from": oneDayAgo.toISOString(),
-                                "include_lower": true
+                                "include.lower": true
                             }
                         }
                     }
@@ -135,7 +135,7 @@ module api_content {
                         "range": {
                             "lastModified.date": {
                                 "from": oneHourAgo.toISOString(),
-                                "include_lower": true
+                                "include.lower": true
                             }
                         }
                     }
@@ -145,7 +145,7 @@ module api_content {
                         "range": {
                             "lastModified.date": {
                                 "from": oneWeekAgo.toISOString(),
-                                "include_lower": true
+                                "include.lower": true
                             }
                         }
                     }

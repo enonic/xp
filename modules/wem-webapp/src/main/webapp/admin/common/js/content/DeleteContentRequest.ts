@@ -1,4 +1,4 @@
-module api_content {
+module api.content {
 
     export class DeleteContentRequest extends ContentResourceRequest<DeleteContentResult> {
 
@@ -31,8 +31,8 @@ module api_content {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "delete");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
     }
 }

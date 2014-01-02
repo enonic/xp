@@ -1,6 +1,6 @@
-module api_schema_relationshiptype {
+module api.schema.relationshiptype {
 
-    export class DeleteRelationshipTypeRequest extends RelationshipTypeResourceRequest<api_schema.SchemaDeleteJson> {
+    export class DeleteRelationshipTypeRequest extends RelationshipTypeResourceRequest<api.schema.SchemaDeleteJson> {
 
         private names: string[] = [];
 
@@ -28,24 +28,24 @@ module api_schema_relationshiptype {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "delete");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
 
-        sendAndParse(): JQueryPromise<api_schema.SchemaDeleteResult> {
-            var deferred = jQuery.Deferred<api_schema.SchemaDeleteResult>();
+        sendAndParse(): JQueryPromise<api.schema.SchemaDeleteResult> {
+            var deferred = jQuery.Deferred<api.schema.SchemaDeleteResult>();
 
-            this.send().done((response:api_rest.JsonResponse<api_schema.SchemaDeleteJson>) => {
+            this.send().done((response:api.rest.JsonResponse<api.schema.SchemaDeleteJson>) => {
                 deferred.resolve(this.fromJsonToDeleteResult(response.getResult()));
-            }).fail((response:api_rest.RequestError) => {
+            }).fail((response:api.rest.RequestError) => {
                 deferred.reject(null);
             });
 
             return deferred;
         }
 
-        fromJsonToDeleteResult(json:api_schema.SchemaDeleteJson): api_schema.SchemaDeleteResult {
-            return new api_schema.SchemaDeleteResult(json);
+        fromJsonToDeleteResult(json:api.schema.SchemaDeleteJson): api.schema.SchemaDeleteResult {
+            return new api.schema.SchemaDeleteResult(json);
         }
     }
 }

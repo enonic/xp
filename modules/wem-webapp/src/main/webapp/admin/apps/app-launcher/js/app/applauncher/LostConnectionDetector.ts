@@ -1,6 +1,6 @@
-module app_launcher {
+module app.launcher {
 
-    export class LostConnectionDetector implements api_event.Observable {
+    export class LostConnectionDetector implements api.event.Observable {
 
         private intervalId:number = -1;
         private pollIntervalMs:number;
@@ -12,7 +12,7 @@ module app_launcher {
         constructor(pollIntervalMs:number = 5000000) {
             this.pollIntervalMs = pollIntervalMs;
 
-            this.addListener(api_app.AppManager.instance());
+            this.addListener(api.app.AppManager.instance());
         }
 
         startPolling() {
@@ -30,7 +30,7 @@ module app_launcher {
 
         doPoll() {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', api_util.getRestUri('status'));
+            xhr.open('GET', api.util.getRestUri('status'));
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {

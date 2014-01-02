@@ -1,27 +1,27 @@
-module api_form_layout {
+module api.form.layout {
 
     export class FieldSetView extends LayoutView {
 
-        private fieldSet:api_form.FieldSet;
+        private fieldSet:api.form.FieldSet;
 
-        private formItemViews:api_form.FormItemView[] = [];
+        private formItemViews:api.form.FormItemView[] = [];
 
-         constructor(context:api_form.FormContext, fieldSet:api_form.FieldSet, dataSet?:api_data.DataSet) {
+         constructor(context:api.form.FormContext, fieldSet:api.form.FieldSet, dataSet?:api.data.DataSet) {
             super(context, fieldSet, "FieldSetView", "field-set-view");
 
             this.fieldSet = fieldSet;
             this.doLayout(dataSet);
         }
 
-        getData():api_data.Data[] {
-            var dataArray:api_data.Data[] = [];
-            this.formItemViews.forEach( (formItemView:api_form.FormItemView) => {
+        getData():api.data.Data[] {
+            var dataArray:api.data.Data[] = [];
+            this.formItemViews.forEach( (formItemView:api.form.FormItemView) => {
                 dataArray = dataArray.concat(formItemView.getData());
             } );
             return dataArray;
         }
 
-        public getFormItemView(name:string):api_form.FormItemView {
+        public getFormItemView(name:string):api.form.FormItemView {
 
             // TODO: Performance could be improved if the views where accessible by name from a map
 
@@ -46,15 +46,15 @@ module api_form_layout {
             return null;
         }
 
-        private doLayout(dataSet:api_data.DataSet) {
+        private doLayout(dataSet:api.data.DataSet) {
 
             var label = new FieldSetLabel(this.fieldSet);
             this.appendChild(label);
 
-            var wrappingDiv = new api_dom.DivEl(null, "field-set-container");
+            var wrappingDiv = new api.dom.DivEl(null, "field-set-container");
             this.appendChild(wrappingDiv);
 
-            this.formItemViews =  new api_form.FormItemLayer().
+            this.formItemViews =  new api.form.FormItemLayer().
                 setFormContext(this.getContext()).
                 setFormItems(this.fieldSet.getFormItems()).
                 setParentElement(wrappingDiv).

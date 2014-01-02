@@ -1,4 +1,4 @@
-module app_launcher {
+module app.launcher {
 
     export class AppRouter {
         static HOME_HASH_ID = 'home';
@@ -45,7 +45,7 @@ module app_launcher {
                     this.appLauncher.loadApplication(application);
 
 
-                    var path:api_rest.Path = new api_rest.Path(<string[]>this.arrayWithoutNulls(Array.prototype.slice.call(arguments)));
+                    var path:api.rest.Path = new api.rest.Path(<string[]>this.arrayWithoutNulls(Array.prototype.slice.call(arguments)));
 
                     var intervalId = setInterval(() => {
                         if (this.runAction(application, path)) {
@@ -56,7 +56,7 @@ module app_launcher {
             });
         }
 
-        private runAction(app:Application, path:api_rest.Path):boolean {
+        private runAction(app:Application, path:api.rest.Path):boolean {
             if (app.isLoaded()) {
                 if (app.getWindow().route) {
                     app.getWindow().route(path);

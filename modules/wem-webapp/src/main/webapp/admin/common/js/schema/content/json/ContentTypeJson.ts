@@ -1,7 +1,7 @@
-module api_schema_content_json{
+module api.schema.content.json{
 
     export interface ContentTypeJson extends ContentTypeSummaryJson {
 
-        form: api_form_json.FormJson;
+        form: api.form.json.FormJson;
     }
 }

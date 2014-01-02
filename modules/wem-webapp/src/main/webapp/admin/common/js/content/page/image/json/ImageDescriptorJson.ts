@@ -1,6 +1,6 @@
-module api_content_page_image_json{
+module api.content.page.image.json{
 
-    export interface ImageDescriptorJson extends api_content_page_json.BaseDescriptorJson{
+    export interface ImageDescriptorJson extends api.content.page.json.BaseDescriptorJson{
 
     }
 }

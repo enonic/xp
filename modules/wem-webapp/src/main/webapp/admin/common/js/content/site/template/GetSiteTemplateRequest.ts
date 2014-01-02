@@ -1,6 +1,6 @@
-module api_content_site_template {
+module api.content.site.template {
 
-    export class GetSiteTemplateRequest extends SiteTemplateResourceRequest<api_content_site_template_json.SiteTemplateJson> {
+    export class GetSiteTemplateRequest extends SiteTemplateResourceRequest<api.content.site.template.json.SiteTemplateJson> {
 
         private key: SiteTemplateKey;
 
@@ -16,18 +16,18 @@ module api_content_site_template {
             };
         }
 
-        getRequestPath(): api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath());
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath());
         }
 
-        sendAndParse(): JQueryPromise<api_content_site_template.SiteTemplate> {
+        sendAndParse(): JQueryPromise<api.content.site.template.SiteTemplate> {
 
-            var deferred = jQuery.Deferred<api_content_site_template.SiteTemplate>();
+            var deferred = jQuery.Deferred<api.content.site.template.SiteTemplate>();
 
             this.send().
-                done((response: api_rest.JsonResponse<api_content_site_template_json.SiteTemplateJson>) => {
+                done((response: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateJson>) => {
                     deferred.resolve(this.fromJsonToSiteTemplate(response.getResult()));
-                }).fail((response: api_rest.RequestError) => {
+                }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

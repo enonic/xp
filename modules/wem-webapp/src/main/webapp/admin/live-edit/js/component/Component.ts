@@ -30,7 +30,7 @@ module LiveEdit.component {
             }
         }
 
-        public static fromElement(element:api_dom.Element):Component {
+        public static fromElement(element:api.dom.Element):Component {
             return new Component($(element.getHTMLElement()));
         }
 

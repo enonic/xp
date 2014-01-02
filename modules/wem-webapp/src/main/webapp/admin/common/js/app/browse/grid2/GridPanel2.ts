@@ -1,6 +1,6 @@
-module api_app_browse_grid2 {
+module api.app.browse.grid2 {
 
-    export class GridPanel2 extends api_ui.Panel {
+    export class GridPanel2 extends api.ui.Panel {
 
         private nameFormatter: (row: number, cell: number, value: any, columnDef: any, dataContext: Slick.SlickData) => string;
 
@@ -8,21 +8,21 @@ module api_app_browse_grid2 {
             super("GridPanel2");
             this.addClass("grid-panel2");
 
-            this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: api_content.ContentSummary) => {
-                var rowEl = new api_dom.DivEl();
+            this.nameFormatter = (row: number, cell: number, value: any, columnDef: any, item: api.content.ContentSummary) => {
+                var rowEl = new api.dom.DivEl();
 
-                var icon = new api_dom.ImgEl();
+                var icon = new api.dom.ImgEl();
                 icon.getEl().setSrc(item.getIconUrl());
                 icon.getEl().setWidth("32px");
                 icon.getEl().setHeight("32px");
 
-                var displayName = new api_dom.H6El();
+                var displayName = new api.dom.H6El();
                 displayName.getEl().setInnerHtml(item.getDisplayName());
 
-                var path = new api_dom.PEl();
+                var path = new api.dom.PEl();
                 path.getEl().setInnerHtml(item.getPath().toString());
 
-                var textContainer = new api_dom.DivEl();
+                var textContainer = new api.dom.DivEl();
                 textContainer.addClass("text");
                 textContainer.appendChild(displayName);
                 textContainer.appendChild(path);

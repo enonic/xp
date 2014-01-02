@@ -1,4 +1,4 @@
-module api_relationship_json {
+module api.relationship.json {
 
     export class RelationshipJson {
 

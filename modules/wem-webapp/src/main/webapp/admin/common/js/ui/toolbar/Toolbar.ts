@@ -1,12 +1,12 @@
-module api_ui_toolbar {
+module api.ui.toolbar {
 
-    export class Toolbar extends api_dom.DivEl implements api_ui.ActionContainer {
+    export class Toolbar extends api.dom.DivEl implements api.ui.ActionContainer {
 
         private components:any[] = [];
 
         private greedySpacerInsertPoint;
 
-        private actions:api_ui.Action[] = [];
+        private actions:api.ui.Action[] = [];
 
         constructor() {
             super("Toolbar", "toolbar");
@@ -16,23 +16,23 @@ module api_ui_toolbar {
             super.afterRender();
         }
 
-        addAction(action:api_ui.Action) {
+        addAction(action:api.ui.Action) {
             var button:ToolbarButton = this.addActionButton(action);
             this.actions.push(action);
             this.addElement(button);
         }
 
-        addActions(actions:api_ui.Action[]) {
-            actions.forEach((action:api_ui.Action) => {
+        addActions(actions:api.ui.Action[]) {
+            actions.forEach((action:api.ui.Action) => {
                 this.addAction(action);
             });
         }
 
-        getActions():api_ui.Action[] {
+        getActions():api.ui.Action[] {
             return this.actions;
         }
 
-        addElement(element:api_dom.Element) {
+        addElement(element:api.dom.Element) {
             if (this.hasGreedySpacer()) {
                 element.getEl().addClass('pull-right');
                 element.insertAfterEl(this.greedySpacerInsertPoint);
@@ -47,7 +47,7 @@ module api_ui_toolbar {
             this.greedySpacerInsertPoint = this.getLastChild();
         }
 
-        private addActionButton(action:api_ui.Action):api_ui_toolbar.ToolbarButton {
+        private addActionButton(action:api.ui.Action):api.ui.toolbar.ToolbarButton {
             var button:ToolbarButton = new ToolbarButton(action);
             this.components.push(button);
             return button;
@@ -64,9 +64,9 @@ module api_ui_toolbar {
 
     }
 
-    export class ToolbarButton extends api_ui.ActionButton {
+    export class ToolbarButton extends api.ui.ActionButton {
 
-        constructor(action:api_ui.Action) {
+        constructor(action:api.ui.Action) {
             super("ToolbarButton", action, true);
         }
 

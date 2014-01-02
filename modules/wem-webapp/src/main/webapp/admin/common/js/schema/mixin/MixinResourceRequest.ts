@@ -1,18 +1,18 @@
-module api_schema_mixin {
+module api.schema.mixin {
 
-    export class MixinResourceRequest<T> extends api_rest.ResourceRequest<T> {
-        private resourceUrl:api_rest.Path;
+    export class MixinResourceRequest<T> extends api.rest.ResourceRequest<T> {
+        private resourceUrl:api.rest.Path;
 
         constructor() {
             super();
-            this.resourceUrl = api_rest.Path.fromParent(super.getRestPath(), "schema/mixin");
+            this.resourceUrl = api.rest.Path.fromParent(super.getRestPath(), "schema/mixin");
         }
 
-        getResourcePath():api_rest.Path {
+        getResourcePath():api.rest.Path {
             return this.resourceUrl;
         }
 
-        fromJsonToMixin(json:api_schema_mixin_json.MixinJson) {
+        fromJsonToMixin(json:api.schema.mixin.json.MixinJson) {
             return new Mixin(json);
         }
     }

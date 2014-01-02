@@ -1,14 +1,14 @@
-module app_view {
+module app.view {
 
     export interface ContentItemViewToolbarParams {
-        editAction: api_ui.Action;
-        deleteAction: api_ui.Action;
-        closeAction: api_ui.Action;
-        showPreviewAction: api_ui.Action;
-        showDetailsAction: api_ui.Action;
+        editAction: api.ui.Action;
+        deleteAction: api.ui.Action;
+        closeAction: api.ui.Action;
+        showPreviewAction: api.ui.Action;
+        showDetailsAction: api.ui.Action;
     }
 
-    export class ContentItemViewToolbar extends api_ui_toolbar.Toolbar {
+    export class ContentItemViewToolbar extends api.ui.toolbar.Toolbar {
 
         constructor(params:ContentItemViewToolbarParams) {
             super();
@@ -17,7 +17,7 @@ module app_view {
             super.addGreedySpacer();
 
 
-            var displayModeToggle = new api_ui.ToggleSlide({
+            var displayModeToggle = new api.ui.ToggleSlide({
                 turnOnAction: params.showPreviewAction,
                 turnOffAction: params.showDetailsAction
             }, false);

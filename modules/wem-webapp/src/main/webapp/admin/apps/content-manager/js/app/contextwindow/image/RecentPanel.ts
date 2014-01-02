@@ -1,29 +1,29 @@
-module app_contextwindow_image {
-    export class RecentPanel extends api_ui.Panel {
+module app.contextwindow.image {
+    export class RecentPanel extends api.ui.Panel {
 
         private recentGrid:RecentGrid;
 
-        private dataView:api_ui_grid.DataView<api_content.ContentSummary>;
+        private dataView:api.ui.grid.DataView<api.content.ContentSummary>;
 
         constructor() {
             super("RecentPanel");
             this.addClass("recent-panel");
-            this.dataView = new api_ui_grid.DataView<api_content.ContentSummary>();
+            this.dataView = new api.ui.grid.DataView<api.content.ContentSummary>();
             this.recentGrid = new RecentGrid(this.dataView);
 
-            var contentSummaryLoader = new api_form_inputtype_content.ContentSummaryLoader();
+            var contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             contentSummaryLoader.setCount(7);
             contentSummaryLoader.setAllowedContentTypes(["image"]);
             contentSummaryLoader.addListener({
                 onLoading: () => {
                 },
-                onLoaded: (contentSummaries:api_content.ContentSummary[]) => {
+                onLoaded: (contentSummaries:api.content.ContentSummary[]) => {
                     this.dataView.setItems(contentSummaries);
                 }
             });
             contentSummaryLoader.search("");
 
-            var title = new api_dom.H3El();
+            var title = new api.dom.H3El();
             title.getEl().setInnerHtml("Recent...");
 
             this.appendChild(title);
@@ -34,7 +34,7 @@ module app_contextwindow_image {
             return this.recentGrid;
         }
 
-        getDataView():api_ui_grid.DataView<api_content.ContentSummary> {
+        getDataView():api.ui.grid.DataView<api.content.ContentSummary> {
             return this.dataView;
         }
     }

@@ -1,6 +1,6 @@
-module api_module {
+module api.module {
 
-    export class DeleteModuleRequest extends ModuleResourceRequest<api_module_json.ModuleJson> {
+    export class DeleteModuleRequest extends ModuleResourceRequest<api.module.json.ModuleJson> {
 
         private key:string;
 
@@ -10,8 +10,8 @@ module api_module {
             this.key = key;
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "delete");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
 
         getParams():Object {

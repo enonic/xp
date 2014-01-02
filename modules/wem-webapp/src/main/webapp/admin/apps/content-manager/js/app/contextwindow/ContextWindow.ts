@@ -1,20 +1,20 @@
-module app_contextwindow {
+module app.contextwindow {
     export interface ContextWindowOptions {
-        liveEditEl?:api_dom.IFrameEl;
+        liveEditEl?:api.dom.IFrameEl;
         liveEditId?:string;
-        site:api_content.Content;
+        site:api.content.Content;
     }
 
-    export class ContextWindow extends api_ui.NavigableFloatingWindow {
+    export class ContextWindow extends api.ui.NavigableFloatingWindow {
 
-        private site:api_content.Content;
+        private site:api.content.Content;
 
         private componentTypesPanel:ComponentTypesPanel;
         private inspectorPanel:InspectorPanel;
         private emulatorPanel:EmulatorPanel;
 
-        private draggingMask:api_ui.DraggingMask;
-        private liveEditEl:api_dom.IFrameEl;
+        private draggingMask:api.ui.DraggingMask;
+        private liveEditEl:api.dom.IFrameEl;
         private liveEditJQuery:JQueryStatic;
         private contextWindowOptions:ContextWindowOptions;
         private selectedComponent:Component;
@@ -72,7 +72,7 @@ module app_contextwindow {
             }
         }
 
-        getSite():api_content.Content {
+        getSite():api.content.Content {
             return this.site;
         }
 
@@ -80,10 +80,10 @@ module app_contextwindow {
             if (this.contextWindowOptions.liveEditId) {
                 var el = <HTMLIFrameElement>document.querySelector("#" + this.contextWindowOptions.liveEditId);
                 if (el.tagName.toLowerCase() == "iframe") {
-                    this.liveEditEl = <api_dom.IFrameEl> api_dom.IFrameEl.fromHtmlElement(el);
+                    this.liveEditEl = <api.dom.IFrameEl> api.dom.IFrameEl.fromHtmlElement(el);
                 }
             }
-            this.draggingMask = new api_ui.DraggingMask(this.liveEditEl);
+            this.draggingMask = new api.ui.DraggingMask(this.liveEditEl);
             document.body.appendChild(this.draggingMask.getHTMLElement());
             this.liveEditListen();
         }
@@ -133,7 +133,7 @@ module app_contextwindow {
 
         }
 
-        getLiveEditEl():api_dom.IFrameEl {
+        getLiveEditEl():api.dom.IFrameEl {
             return this.liveEditEl;
         }
 
@@ -154,7 +154,7 @@ module app_contextwindow {
 
     }
 
-    class Minimizer extends api_dom.DivEl {
+    class Minimizer extends api.dom.DivEl {
 
         private minimized:boolean;
 

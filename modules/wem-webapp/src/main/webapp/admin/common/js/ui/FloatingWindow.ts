@@ -1,4 +1,4 @@
-module api_ui {
+module api.ui {
 
     export interface FloatingWindowOptions {
         draggable?:boolean;
@@ -6,7 +6,7 @@ module api_ui {
         draggableOptions?:JQueryUI.DraggableOptions;
     }
 
-    export class FloatingWindow extends api_dom.DivEl {
+    export class FloatingWindow extends api.dom.DivEl {
         private draggable:boolean;
         private resizable:boolean;
         private options:FloatingWindowOptions;

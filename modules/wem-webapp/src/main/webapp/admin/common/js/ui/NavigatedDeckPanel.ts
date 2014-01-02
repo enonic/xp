@@ -1,18 +1,18 @@
-module api_ui {
+module api.ui {
 
     /**
      * A DeckPanel with PanelNavigationItem-s.
      */
     export class NavigatedDeckPanel extends DeckPanel {
 
-        private navigator:api_ui.DeckPanelNavigator;
+        private navigator:api.ui.DeckPanelNavigator;
 
         constructor(navigator:DeckPanelNavigator, idPrefix?:string) {
             super(idPrefix);
             this.navigator = navigator;
 
             navigator.addListener({
-                onNavigationItemSelected: (item:api_ui.PanelNavigationItem) => {
+                onNavigationItemSelected: (item:api.ui.PanelNavigationItem) => {
                     this.showPanel(item.getIndex());
                 }
             });
@@ -46,7 +46,7 @@ module api_ui {
         removePanel(panel:Panel, checkCanRemovePanel:boolean = true):number {
 
             var panelIndex:number = this.getPanelIndex(panel);
-            var navigationItem:api_ui.PanelNavigationItem = this.navigator.getNavigationItem(panelIndex);
+            var navigationItem:api.ui.PanelNavigationItem = this.navigator.getNavigationItem(panelIndex);
             var removedPanelAtIndex = super.removePanel(panel, checkCanRemovePanel);
             var removed:boolean = removedPanelAtIndex !== -1;
 

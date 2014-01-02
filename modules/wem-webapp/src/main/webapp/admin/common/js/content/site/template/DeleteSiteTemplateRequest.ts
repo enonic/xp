@@ -1,4 +1,4 @@
-module api_content_site_template {
+module api.content.site.template {
 
     export class DeleteSiteTemplateRequest extends SiteTemplateResourceRequest<SiteTemplateKey> {
 
@@ -16,8 +16,8 @@ module api_content_site_template {
             };
         }
 
-        getRequestPath(): api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "delete");
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "delete");
         }
     }
 }

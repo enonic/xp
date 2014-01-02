@@ -1,13 +1,13 @@
-module api_content_json{
+module api.content.json{
 
     export interface ContentJson  extends ContentSummaryJson {
 
-        data: api_data_json.DataTypeWrapperJson[];
+        data: api.data.json.DataTypeWrapperJson[];
 
-        form: api_form_json.FormJson;
+        form: api.form.json.FormJson;
 
-        site: api_content_site_json.SiteJson;
+        site: api.content.site.json.SiteJson;
 
-        page: api_content_page_json.PageJson;
+        page: api.content.page.json.PageJson;
     }
 }

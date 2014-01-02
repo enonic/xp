@@ -1,12 +1,12 @@
-module app_login {
+module app.login {
 
-    export class LoginForm extends api_dom.DivEl {
+    export class LoginForm extends api.dom.DivEl {
 
-        private licensedTo: api_dom.DivEl;
-        private userStoresDropdown: api_ui.Dropdown;
-        private userIdInput: api_ui.TextInput;
-        private passwordInput: api_ui.PasswordInput;
-        private loginButton: api_ui.Button;
+        private licensedTo: api.dom.DivEl;
+        private userStoresDropdown: api.ui.Dropdown;
+        private userIdInput: api.ui.TextInput;
+        private passwordInput: api.ui.PasswordInput;
+        private loginButton: api.ui.Button;
 
         private authenticator: Authenticator;
         private userStores: {[userStoreId: string]: UserStore;};
@@ -18,14 +18,14 @@ module app_login {
             this.userStores = {};
             this.onUserAuthenticatedHandler = null;
 
-            var formContainer = new api_dom.DivEl();
-            var title = new api_dom.H3El();
+            var formContainer = new api.dom.DivEl();
+            var title = new api.dom.H3El();
             title.setText('Login');
-            this.userStoresDropdown = new api_ui.Dropdown('userstore');
+            this.userStoresDropdown = new api.ui.Dropdown('userstore');
             this.userStoresDropdown.addClass('form-item');
-            this.userIdInput = new api_ui.TextInput(null, 'form-item');
+            this.userIdInput = new api.ui.TextInput(null, 'form-item');
             this.userIdInput.setPlaceholder('userid or e-mail');
-            this.passwordInput = new api_ui.PasswordInput(null, 'form-item');
+            this.passwordInput = new api.ui.PasswordInput(null, 'form-item');
             this.passwordInput.setPlaceholder('password');
             this.userIdInput.getEl().addEventListener('keyup', (event:KeyboardEvent) => {
                 this.onInputTyped(event);
@@ -34,7 +34,7 @@ module app_login {
                 this.onInputTyped(event);
             });
 
-            this.loginButton = new api_ui.Button('Log in');
+            this.loginButton = new api.ui.Button('Log in');
             this.loginButton.addClass('login-button').addClass('disabled');
             this.loginButton.setClickListener((event) => {
                 this.loginButtonClick();
@@ -47,7 +47,7 @@ module app_login {
             formContainer.appendChild(this.loginButton);
             this.appendChild(formContainer);
 
-            this.licensedTo = new api_dom.DivEl(null, 'login-licensed-to');
+            this.licensedTo = new api.dom.DivEl(null, 'login-licensed-to');
             this.appendChild(this.licensedTo);
         }
 

@@ -1,14 +1,14 @@
-module api_ui_menu {
+module api.ui.menu {
 
-    export class ActionMenu extends api_dom.DivEl {
+    export class ActionMenu extends api.dom.DivEl {
 
-        private button:api_ui.Button;
+        private button:api.ui.Button;
         private list:ActionList;
 
-        constructor(actions:api_ui.Action[]) {
+        constructor(actions:api.ui.Action[]) {
             super("ActionMenu", "action-menu");
 
-            this.button = new api_ui.Button("Actions");
+            this.button = new api.ui.Button("Actions");
             this.button.getEl().addEventListener("click", (evt:Event) => {
                 this.showMenuOnButtonClick(evt);
             });
@@ -24,7 +24,7 @@ module api_ui_menu {
 
         }
 
-        addAction(action:api_ui.Action) {
+        addAction(action:api.ui.Action) {
             this.list.addAction(action);
         }
 
@@ -71,12 +71,12 @@ module api_ui_menu {
 
     }
 
-    export class ActionList extends api_dom.UlEl {
+    export class ActionList extends api.dom.UlEl {
 
         private menu:ActionMenu;
-        private menuItems:api_ui_menu.MenuItem[] = [];
+        private menuItems:api.ui.menu.MenuItem[] = [];
 
-        constructor(menu:ActionMenu, actions:api_ui.Action[]) {
+        constructor(menu:ActionMenu, actions:api.ui.Action[]) {
             super("ActionList");
             this.menu = menu;
 
@@ -85,14 +85,14 @@ module api_ui_menu {
             }
         }
 
-        addAction(action:api_ui.Action) {
+        addAction(action:api.ui.Action) {
             var menuItem = this.createMenuItem(action);
             this.menuItems.push(menuItem);
             this.appendChild(menuItem);
         }
 
-        private createMenuItem(action:api_ui.Action):MenuItem {
-            var menuItem = new api_ui_menu.MenuItem(action);
+        private createMenuItem(action:api.ui.Action):MenuItem {
+            var menuItem = new api.ui.menu.MenuItem(action);
             menuItem.getEl().addEventListener("click", (evt:Event) => {
                 this.menu.hide();
             });

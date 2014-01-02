@@ -1,4 +1,4 @@
-module api_module {
+module api.module {
 
     export class ExportModuleRequest extends ModuleResourceRequest<any> {
 
@@ -16,8 +16,8 @@ module api_module {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "export");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "export");
         }
     }
 }

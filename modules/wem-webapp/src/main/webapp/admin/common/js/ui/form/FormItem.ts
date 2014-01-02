@@ -1,25 +1,25 @@
-module api_ui_form {
-    export class FormItem extends api_dom.DivEl {
-        private label:api_dom.LabelEl;
-        private item:api_dom.FormInputEl;
+module api.ui.form {
+    export class FormItem extends api.dom.DivEl {
+        private label:api.dom.LabelEl;
+        private item:api.dom.FormInputEl;
 
-        constructor(label:string, item:api_dom.FormInputEl) {
+        constructor(label:string, item:api.dom.FormInputEl) {
             super(null, "form-item");
-            this.label = new api_dom.LabelEl(label, item);
+            this.label = new api.dom.LabelEl(label, item);
             this.item = item;
             this.appendChild(this.label);
             this.appendChild(item);
         }
 
-        getLabel():api_dom.LabelEl {
+        getLabel():api.dom.LabelEl {
             return this.label;
         }
 
-        getItem():api_dom.FormInputEl {
+        getItem():api.dom.FormInputEl {
             return this.item;
         }
 
-        appendTo(el:api_dom.Element) {
+        appendTo(el:api.dom.Element) {
             el.appendChild(this);
             //el.appendChild(this.label);
             //el.appendChild(this.item);

@@ -1,13 +1,13 @@
-module app_wizard {
+module app.wizard {
 
     export interface MixinWizardToolbarParams {
-        saveAction: api_ui.Action;
-        duplicateAction: api_ui.Action;
-        deleteAction: api_ui.Action;
-        closeAction: api_ui.Action;
+        saveAction: api.ui.Action;
+        duplicateAction: api.ui.Action;
+        deleteAction: api.ui.Action;
+        closeAction: api.ui.Action;
     }
 
-    export class MixinWizardToolbar extends api_ui_toolbar.Toolbar {
+    export class MixinWizardToolbar extends api.ui.toolbar.Toolbar {
 
         constructor(params: MixinWizardToolbarParams) {
             super();

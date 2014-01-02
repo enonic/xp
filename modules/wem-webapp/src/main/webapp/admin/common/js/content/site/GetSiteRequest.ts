@@ -1,6 +1,6 @@
-module api_content_site {
+module api.content.site {
 
-    export class GetSiteRequest extends SiteResourceRequest<api_content_site_json.SiteJson> {
+    export class GetSiteRequest extends SiteResourceRequest<api.content.site.json.SiteJson> {
 
         private siteId:string;
 
@@ -16,8 +16,8 @@ module api_content_site {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "create");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "create");
         }
     }
 }

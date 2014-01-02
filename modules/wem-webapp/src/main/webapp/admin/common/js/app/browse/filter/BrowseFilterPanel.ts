@@ -1,16 +1,16 @@
-module api_app_browse_filter {
+module api.app.browse.filter {
 
-    export class BrowseFilterPanel extends api_ui.Panel implements api_event.Observable {
+    export class BrowseFilterPanel extends api.ui.Panel implements api.event.Observable {
 
         private listeners:BrowseFilterPanelListener[] = [];
 
-        private facetContainer:api_facet.FacetContainer;
+        private facetContainer:api.facet.FacetContainer;
 
-        private searchField:api_app_browse_filter.TextSearchField;
+        private searchField:api.app.browse.filter.TextSearchField;
 
-        private clearFilter:api_app_browse_filter.ClearFilterButton;
+        private clearFilter:api.app.browse.filter.ClearFilterButton;
 
-        constructor(facets?:api_facet.Facet[], groupViews?:api_facet.FacetGroupView[]) {
+        constructor(facets?:api.facet.Facet[], groupViews?:api.facet.FacetGroupView[]) {
             super('BrowseFilterPanel');
             this.addClass('filter-panel');
 
@@ -24,13 +24,13 @@ module api_app_browse_filter {
                 this.reset();
             });
 
-            this.facetContainer = new api_facet.FacetContainer();
+            this.facetContainer = new api.facet.FacetContainer();
             this.appendChild(this.facetContainer);
 
             if (groupViews != null) {
-                groupViews.forEach((facetGroupView:api_facet.FacetGroupView) => {
+                groupViews.forEach((facetGroupView:api.facet.FacetGroupView) => {
 
-                        facetGroupView.addFacetEntrySelectionChangeListener((event:api_facet.FacetEntryViewSelectionChangedEvent) => {
+                        facetGroupView.addFacetEntrySelectionChangeListener((event:api.facet.FacetEntryViewSelectionChangedEvent) => {
 
                             this.search();
                         });
@@ -47,7 +47,7 @@ module api_app_browse_filter {
             this.appendChild(this.facetContainer);
         }
 
-        updateFacets(facets:api_facet.Facet[]) {
+        updateFacets(facets:api.facet.Facet[]) {
             this.facetContainer.updateFacets(facets)
         }
 

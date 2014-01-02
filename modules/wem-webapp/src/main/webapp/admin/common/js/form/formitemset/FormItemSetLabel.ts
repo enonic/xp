@@ -1,10 +1,10 @@
-module api_form_formitemset {
+module api.form.formitemset {
 
-    export class FormItemSetLabel extends api_dom.DivEl {
+    export class FormItemSetLabel extends api.dom.DivEl {
 
-        private formItemSet:api_form.FormItemSet;
+        private formItemSet:api.form.FormItemSet;
 
-        constructor(formItemSet:api_form.FormItemSet) {
+        constructor(formItemSet:api.form.FormItemSet) {
             super("FormItemSetLabel", "form-item-set-label");
 
             this.formItemSet = formItemSet;
@@ -14,7 +14,7 @@ module api_form_formitemset {
 
             if( formItemSet.getOccurrences().required() ) {
                 nodes.push( document.createTextNode(" ") );
-                var requiredMarker = new api_dom.SpanEl(null, "required");
+                var requiredMarker = new api.dom.SpanEl(null, "required");
                 nodes.push( requiredMarker.getHTMLElement() );
             }
             nodes.push( document.createTextNode(":") );

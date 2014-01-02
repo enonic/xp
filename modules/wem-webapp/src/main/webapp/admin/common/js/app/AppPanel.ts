@@ -1,10 +1,10 @@
-module api_app {
+module api.app {
 
-    export class AppPanel extends api_ui.NavigatedDeckPanel {
+    export class AppPanel extends api.ui.NavigatedDeckPanel {
 
-        private homePanel: api_ui.Panel;
+        private homePanel: api.ui.Panel;
 
-        constructor(tabNavigator: AppBarTabMenu, homePanel: api_ui.Panel) {
+        constructor(tabNavigator: AppBarTabMenu, homePanel: api.ui.Panel) {
             super(tabNavigator);
 
             this.homePanel = homePanel;
@@ -14,7 +14,7 @@ module api_app {
             this.addNavigablePanelToFront(homePanelMenuItem, this.homePanel);
 
             this.addListener({
-                onPanelShown: (event: api_ui.PanelShownEvent) => {
+                onPanelShown: (event: api.ui.PanelShownEvent) => {
                     if (!this.isHomePanel(event.index)) {
                         // do panel afterRender to calculate offsets for each but home panel cuz they were created hidden
                         event.panel.afterRender();
@@ -29,7 +29,7 @@ module api_app {
             }
         }
 
-        removePanelByIndex(index: number): api_ui.Panel {
+        removePanelByIndex(index: number): api.ui.Panel {
             var panelRemoved = super.removePanelByIndex(index);
             if (this.getSize() == 0) {
                 this.showHomePanel();

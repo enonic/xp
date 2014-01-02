@@ -1,19 +1,19 @@
-module api_form_inputtype_text {
+module api.form.inputtype.text {
 
-    export class TextArea extends api_form_inputtype_support.BaseInputTypeView {
+    export class TextArea extends api.form.inputtype.support.BaseInputTypeView {
 
         private rows:number;
         private columns:number;
 
-        constructor(config:api_form_inputtype.InputTypeViewConfig<TextAreaConfig>) {
+        constructor(config:api.form.inputtype.InputTypeViewConfig<TextAreaConfig>) {
             super("TextArea");
             this.rows = config.inputConfig.rows;
             this.columns = config.inputConfig.columns;
         }
 
-        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
 
-            var inputEl = new api_ui.TextArea(this.getInput().getName() + "-" + index);
+            var inputEl = new api.ui.TextArea(this.getInput().getName() + "-" + index);
             if (this.rows) {
                 inputEl.setRows(this.rows);
             }
@@ -26,16 +26,16 @@ module api_form_inputtype_text {
             return inputEl;
         }
 
-        getValue(occurrence:api_dom.Element):api_data.Value {
-            var inputEl = <api_ui.TextArea>occurrence;
-            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
+        getValue(occurrence:api.dom.Element):api.data.Value {
+            var inputEl = <api.ui.TextArea>occurrence;
+            return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
         }
 
-        valueBreaksRequiredContract(value:api_data.Value):boolean {
+        valueBreaksRequiredContract(value:api.data.Value):boolean {
             // TODO:
             return false;
         }
     }
 
-    api_form_input.InputTypeManager.register("TextArea", TextArea);
+    api.form.input.InputTypeManager.register("TextArea", TextArea);
 }

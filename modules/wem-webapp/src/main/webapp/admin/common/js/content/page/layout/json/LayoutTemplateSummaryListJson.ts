@@ -1,4 +1,4 @@
-module api_content_page_layout_json
+module api.content.page.layout.json
 {
     export interface LayoutTemplateSummaryListJson
     {

@@ -1,6 +1,6 @@
-module api_module {
+module api.module {
 
-    export class ModuleDeletedEvent extends api_event.Event {
+    export class ModuleDeletedEvent extends api.event.Event {
 
         private moduleKey: ModuleKey;
 
@@ -14,7 +14,7 @@ module api_module {
         }
 
         static on( handler: (event: ModuleDeletedEvent ) => void ) {
-            api_event.onEvent( 'ModuleDeletedEvent', handler );
+            api.event.onEvent( 'ModuleDeletedEvent', handler );
         }
 
     }

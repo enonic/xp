@@ -2,55 +2,55 @@ declare var Ext: Ext_Packages;
 declare var Admin;
 declare var CONFIG;
 
-var USERSTORES: app_login.UserStore[] = [
-    new app_login.UserStore('ABC', '1'),
-    new app_login.UserStore('LDAP', '2'),
-    new app_login.UserStore('Local', '3'),
-    new app_login.UserStore('Some very long value', '4')
+var USERSTORES: app.login.UserStore[] = [
+    new app.login.UserStore('ABC', '1'),
+    new app.login.UserStore('LDAP', '2'),
+    new app.login.UserStore('Local', '3'),
+    new app.login.UserStore('Some very long value', '4')
 ];
 
 function isUserLoggedIn(): boolean {
-    var dummyCookie = api_util.CookieHelper.getCookie('dummy_userIsLoggedIn');
+    var dummyCookie = api.util.CookieHelper.getCookie('dummy.userIsLoggedIn');
     return dummyCookie === 'true';
 }
 
 window.onload = () => {
     var userLoggedIn = isUserLoggedIn();
 
-    var appInfoPanel = new app_launcher.AppInfo();
+    var appInfoPanel = new app.launcher.AppInfo();
 
-    var applications = app_launcher.Applications.getAllApps();
-    var appSelector = new app_launcher.AppSelector(applications);
+    var applications = app.launcher.Applications.getAllApps();
+    var appSelector = new app.launcher.AppSelector(applications);
     appSelector.addListener({
-        onAppHighlighted: (app: app_launcher.Application) => {
+        onAppHighlighted: (app: app.launcher.Application) => {
             appInfoPanel.showAppInfo(app);
         },
-        onAppUnhighlighted: (app: app_launcher.Application) => {
+        onAppUnhighlighted: (app: app.launcher.Application) => {
             appInfoPanel.hideAppInfo();
         },
-        onAppSelected: (app: app_launcher.Application) => {
+        onAppSelected: (app: app.launcher.Application) => {
             appLauncher.loadApplication(app);
         }
     });
 
-    var linksContainer = new app_home.LinksContainer().
+    var linksContainer = new app.home.LinksContainer().
         addLink('Community', 'http://www.enonic.com/community').
         addLink('Documentation', 'http://www.enonic.com/docs').
         addLink('About', 'https://enonic.com/en/home/enonic-cms');
 
-    var loginForm = new app_login.LoginForm(new app_login.AuthenticatorImpl());
+    var loginForm = new app.login.LoginForm(new app.login.AuthenticatorImpl());
     loginForm.setLicensedTo('Licensed to Enonic');
     loginForm.setUserStores(USERSTORES, USERSTORES[1]);
-    loginForm.onUserAuthenticated((userName: string, userStore: app_login.UserStore) => {
+    loginForm.onUserAuthenticated((userName: string, userStore: app.login.UserStore) => {
         console.log('User logged in', userName, userStore);
-        api_util.CookieHelper.setCookie('dummy_userIsLoggedIn', 'true');
+        api.util.CookieHelper.setCookie('dummy.userIsLoggedIn', 'true');
         loginForm.hide();
         appSelector.show();
         appSelector.afterRender();
     });
 
-    var homeMainContainer = new app_home.HomeMainContainerBuilder().
-        setBackgroundImgUrl(api_util.getRestUri('ui/background.jpg')).
+    var homeMainContainer = new app.home.HomeMainContainerBuilder().
+        setBackgroundImgUrl(api.util.getRestUri('ui/background.jpg')).
         setAppSelector(appSelector).
         setAppInfo(appInfoPanel).
         setLinksContainer(linksContainer).
@@ -65,16 +65,16 @@ window.onload = () => {
         appSelector.hide();
     }
 
-    var appLauncher = new app_launcher.AppLauncher(homeMainContainer);
-    api_dom.Body.get().appendChild(homeMainContainer);
-    var router = new app_launcher.AppRouter(applications, appLauncher);
+    var appLauncher = new app.launcher.AppLauncher(homeMainContainer);
+    api.dom.Body.get().appendChild(homeMainContainer);
+    var router = new app.launcher.AppRouter(applications, appLauncher);
     appLauncher.setRouter(router);
 };
 
 
 function appLoaded(appName: string) {
-    var app = app_launcher.Applications.getAppById(appName);
-    app.setLoaded(true);
+    var loadedApp = app.launcher.Applications.getAppById(appName);
+    loadedApp.setLoaded(true);
 }
 
 function setHash(path: string) {

@@ -1,4 +1,4 @@
-module api_remote_userstore {
+module api.remote.userstore {
 
     export interface UserStore {
         name: string;

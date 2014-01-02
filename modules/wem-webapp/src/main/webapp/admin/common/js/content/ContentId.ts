@@ -1,4 +1,4 @@
-module api_content{
+module api.content{
 
     export class ContentId {
 

@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export class Panel extends api_dom.DivEl {
+    export class Panel extends api.dom.DivEl {
 
         private doOffset:boolean;
 

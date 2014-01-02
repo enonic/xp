@@ -1,12 +1,12 @@
-module api_ui_tab {
+module api.ui.tab {
 
-    export class TabBar extends api_dom.UlEl implements api_ui.DeckPanelNavigator {
+    export class TabBar extends api.dom.UlEl implements api.ui.DeckPanelNavigator {
 
         private tabs: TabBarItem[] = [];
 
         private selectedIndex: number = -1;
 
-        private listeners: api_ui.DeckPanelNavigatorListener[] = [];
+        private listeners: api.ui.DeckPanelNavigatorListener[] = [];
 
         constructor(idPrefix?:string, className?:string) {
             super(idPrefix || "TabBar", className || "tab-bar");
@@ -98,18 +98,18 @@ module api_ui_tab {
             return this.tabs;
         }
 
-        addListener(listener:api_ui.DeckPanelNavigatorListener) {
+        addListener(listener:api.ui.DeckPanelNavigatorListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:api_ui.DeckPanelNavigatorListener) {
+        removeListener(listener:api.ui.DeckPanelNavigatorListener) {
             this.listeners = this.listeners.filter((elem) => {
                 return elem != listener;
             });
         }
 
         private notifyTabAddedListeners(tab:TabBarItem) {
-            this.listeners.forEach((listener:api_ui.DeckPanelNavigatorListener) => {
+            this.listeners.forEach((listener:api.ui.DeckPanelNavigatorListener) => {
                 if (listener.onNavigationItemAdded) {
                     listener.onNavigationItemAdded(tab);
                 }
@@ -117,7 +117,7 @@ module api_ui_tab {
         }
 
         private notifyTabShownListeners(tab:TabBarItem) {
-            this.listeners.forEach((listener:api_ui.DeckPanelNavigatorListener) => {
+            this.listeners.forEach((listener:api.ui.DeckPanelNavigatorListener) => {
                 if (listener.onNavigationItemSelected) {
                     listener.onNavigationItemSelected(tab);
                 }

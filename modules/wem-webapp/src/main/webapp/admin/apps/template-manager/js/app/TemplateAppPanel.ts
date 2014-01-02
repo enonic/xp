@@ -1,10 +1,10 @@
 module app {
 
-    export class TemplateAppPanel extends api_app.BrowseAndWizardBasedAppPanel<app_browse.TemplateBrowseItem> {
+    export class TemplateAppPanel extends api.app.BrowseAndWizardBasedAppPanel<app.browse.TemplateBrowseItem> {
 
-        constructor(appBar:api_app.AppBar) {
+        constructor(appBar:api.app.AppBar) {
 
-            var browsePanel = new app_browse.TemplateBrowsePanel();
+            var browsePanel = new app.browse.TemplateBrowsePanel();
 
             super({
                 appBar: appBar,
@@ -17,40 +17,40 @@ module app {
 
         private handleGlobalEvents() {
 
-            var templateUploader = new app_import.TemplateUploader();
-            var dialog = new api_ui_dialog.UploadDialog(
+            var templateUploader = new app.imp.TemplateUploader();
+            var dialog = new api.ui.dialog.UploadDialog(
                 "Template Importer", "Templates will be imported in application", templateUploader
             );
-            templateUploader.onFinishUpload((response:api_content_site_template.InstallSiteTemplateResponse) => {
+            templateUploader.onFinishUpload((response:api.content.site.template.InstallSiteTemplateResponse) => {
                 var templates = response.getSiteTemplates();
                 if (templates.length > 0) {
-                    api_notify.showFeedback('Template \'' + templates.map((template:api_content_site_template.SiteTemplateSummary) => {console.log(template); return template.getDisplayName()} ).join(', ') + '\' was installed');
+                    api.notify.showFeedback('Template \'' + templates.map((template:api.content.site.template.SiteTemplateSummary) => {console.log(template); return template.getDisplayName()} ).join(', ') + '\' was installed');
                 }
-                new api_content_site_template.SiteTemplateImportedEvent().fire();
+                new api.content.site.template.SiteTemplateImportedEvent().fire();
                 dialog.close();
             });
-            templateUploader.onError((resp:api_rest.JsonResponse<any>) => {
-                api_notify.showError("Invalid Template file");
+            templateUploader.onError((resp:api.rest.JsonResponse<any>) => {
+                api.notify.showError("Invalid Template file");
                 dialog.close();
             });
 
-            app_browse.ImportTemplateEvent.on(() => {
+            app.browse.ImportTemplateEvent.on(() => {
                 dialog.open();
             });
 
-            app_browse.ExportTemplateEvent.on((event:app_browse.ExportTemplateEvent) => {
-                var siteTemplate:api_content_site_template.SiteTemplateSummary = event.getSiteTemplate();
+            app.browse.ExportTemplateEvent.on((event:app.browse.ExportTemplateEvent) => {
+                var siteTemplate:api.content.site.template.SiteTemplateSummary = event.getSiteTemplate();
 
-                var exportTemplate = new api_content_site_template.ExportSiteTemplateRequest(siteTemplate.getKey());
+                var exportTemplate = new api.content.site.template.ExportSiteTemplateRequest(siteTemplate.getKey());
                 var templateExportUrl = exportTemplate.getRequestPath().toString() + '?siteTemplateKey=' + siteTemplate.getKey().toString();
                 console.log('Download Site Template file from: ' + templateExportUrl);
 
                 window.location.href = templateExportUrl;
             });
-            app_browse.NewTemplateEvent.on((event:app_browse.NewTemplateEvent) => {
-                var tabId = api_app.AppBarTabId.forNew('new-site-template-wizard');
-                var tabMenuItem =new api_app.AppBarTabMenuItem("New Site Template ", tabId);
-                var wizard = new app_wizard.SiteTemplateWizardPanel(tabId);
+            app.browse.NewTemplateEvent.on((event:app.browse.NewTemplateEvent) => {
+                var tabId = api.app.AppBarTabId.forNew('new-site-template-wizard');
+                var tabMenuItem =new api.app.AppBarTabMenuItem("New Site Template ", tabId);
+                var wizard = new app.wizard.SiteTemplateWizardPanel(tabId);
                 this.addWizardPanel(tabMenuItem, wizard);
             });
         }

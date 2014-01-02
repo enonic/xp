@@ -1,15 +1,15 @@
-module api_module {
+module api.module {
 
-    export class ModuleResourceRequest<T> extends api_rest.ResourceRequest<T>{
+    export class ModuleResourceRequest<T> extends api.rest.ResourceRequest<T>{
 
-        private resourcePath:api_rest.Path;
+        private resourcePath:api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "module");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "module");
         }
 
-        getResourcePath():api_rest.Path {
+        getResourcePath():api.rest.Path {
             return this.resourcePath;
         }
     }

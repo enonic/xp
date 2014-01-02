@@ -1,54 +1,54 @@
-module api_module {
+module api.module {
 
-    export class Module extends api_module.ModuleSummary {
+    export class Module extends api.module.ModuleSummary {
 
-        private config:api_form.Form;
+        private config:api.form.Form;
 
-        private moduleDependencies: api_module.ModuleKey[] = [];
+        private moduleDependencies: api.module.ModuleKey[] = [];
 
-        private contentTypeDependencies: api_schema_content.ContentTypeName[] = [];
+        private contentTypeDependencies: api.schema.content.ContentTypeName[] = [];
 
-        private moduleDirectoryEntry: api_module.ModuleFileEntry;
+        private moduleDirectoryEntry: api.module.ModuleFileEntry;
 
         private minSystemVersion: string;
 
         private maxSystemVersion: string;
 
         static fromExtModel(model:Ext_data_Model):Module {
-            return new api_module.Module(<api_module_json.ModuleJson>model.raw);
+            return new api.module.Module(<api.module.json.ModuleJson>model.raw);
         }
 
-        static fromJsonArray(jsonArray:api_module_json.ModuleJson[]):Module[] {
+        static fromJsonArray(jsonArray:api.module.json.ModuleJson[]):Module[] {
             var array:Module[] = [];
-            jsonArray.forEach((json:api_module_json.ModuleJson) => {
+            jsonArray.forEach((json:api.module.json.ModuleJson) => {
                 array.push(new Module(json));
             });
             return array;
         }
 
-        constructor(json:api_module_json.ModuleJson){
+        constructor(json:api.module.json.ModuleJson){
             super(json);
 
-            this.config = json.config != null ? new api_form.Form(json.config) : null;
+            this.config = json.config != null ? new api.form.Form(json.config) : null;
             this.minSystemVersion = json.minSystemVersion;
             this.maxSystemVersion = json.maxSystemVersion;
 
             if (json.moduleDependencies != null) {
                 json.moduleDependencies.forEach((dependency:string) => {
-                    this.moduleDependencies.push(api_module.ModuleKey.fromString(dependency));
+                    this.moduleDependencies.push(api.module.ModuleKey.fromString(dependency));
                 });
             }
 
             if (json.contentTypeDependencies != null) {
                 json.contentTypeDependencies.forEach((dependency:string) => {
-                    this.contentTypeDependencies.push(new api_schema_content.ContentTypeName(dependency));
+                    this.contentTypeDependencies.push(new api.schema.content.ContentTypeName(dependency));
                 });
             }
 
-            this.moduleDirectoryEntry = new api_module.ModuleFileEntry(json.moduleDirectoryEntry);
+            this.moduleDirectoryEntry = new api.module.ModuleFileEntry(json.moduleDirectoryEntry);
         }
 
-        getForm():api_form.Form {
+        getForm():api.form.Form {
             return this.config;
         }
 
@@ -60,15 +60,15 @@ module api_module {
             return this.maxSystemVersion;
         }
 
-        getModuleDependencies(): api_module.ModuleKey[] {
+        getModuleDependencies(): api.module.ModuleKey[] {
             return this.moduleDependencies;
         }
 
-        getContentTypeDependencies(): api_schema_content.ContentTypeName[] {
+        getContentTypeDependencies(): api.schema.content.ContentTypeName[] {
             return this.contentTypeDependencies;
         }
 
-        getModuleDirectoryEntry(): api_module.ModuleFileEntry {
+        getModuleDirectoryEntry(): api.module.ModuleFileEntry {
             return this.moduleDirectoryEntry;
         }
     }

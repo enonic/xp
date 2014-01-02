@@ -1,19 +1,19 @@
-module api_content_page_image {
+module api.content.page.image {
 
-    export class ImageTemplateResource<T> extends api_rest.ResourceRequest<T> {
+    export class ImageTemplateResource<T> extends api.rest.ResourceRequest<T> {
 
-        private resourcePath: api_rest.Path;
+        private resourcePath: api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "content", "page", "image", "template");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "image", "template");
         }
 
-        getResourcePath(): api_rest.Path {
+        getResourcePath(): api.rest.Path {
             return this.resourcePath;
         }
 
-        fromJsonToImageTemplate(json: api_content_page_image_json.ImageTemplateJson): api_content_page_image.ImageTemplate {
+        fromJsonToImageTemplate(json: api.content.page.image.json.ImageTemplateJson): api.content.page.image.ImageTemplate {
             return new ImageTemplateBuilder().fromJson(json).build();
         }
     }

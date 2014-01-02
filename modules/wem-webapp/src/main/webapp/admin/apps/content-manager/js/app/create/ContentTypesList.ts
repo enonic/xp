@@ -1,6 +1,6 @@
-module app_new {
+module app.create {
 
-    export class ContentTypesList extends api_ui_list.ListView<api_schema_content.ContentTypeSummary> implements api_event.Observable {
+    export class ContentTypesList extends api.ui.list.ListView<api.schema.content.ContentTypeSummary> implements api.event.Observable {
 
         private markRoots: boolean;
 
@@ -36,7 +36,7 @@ module app_new {
             super.setItems(contentTypes.get());
         }
 
-        createListItem(contentType: api_schema_content.ContentTypeSummary): ContentTypeListItem {
+        createListItem(contentType: api.schema.content.ContentTypeSummary): ContentTypeListItem {
 
             var isSiteRoot = false;
             if(this.siteRootContentTypes) {

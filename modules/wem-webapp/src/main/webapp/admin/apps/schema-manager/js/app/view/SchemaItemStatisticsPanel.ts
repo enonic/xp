@@ -1,15 +1,15 @@
-module app_view {
+module app.view {
 
     export interface SchemaItemStatisticsPanelParams {
-        editAction: api_ui.Action;
-        deleteAction: api_ui.Action;
+        editAction: api.ui.Action;
+        deleteAction: api.ui.Action;
     }
 
-    export class SchemaItemStatisticsPanel extends api_app_view.ItemStatisticsPanel<api_schema.Schema> {
+    export class SchemaItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.schema.Schema> {
 
         constructor(params:SchemaItemStatisticsPanelParams) {
             super({
-                actionMenu: new api_ui_menu.ActionMenu([
+                actionMenu: new api.ui.menu.ActionMenu([
                     params.editAction,
                     params.deleteAction]
                 )

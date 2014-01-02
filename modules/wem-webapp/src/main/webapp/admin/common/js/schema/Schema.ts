@@ -1,6 +1,6 @@
-module api_schema {
+module api.schema {
 
-    export class Schema extends api_item.BaseItem {
+    export class Schema extends api.item.BaseItem {
 
         private key:string;
 
@@ -13,26 +13,26 @@ module api_schema {
         private kind:SchemaKind;
 
         static fromExtModel(model:Ext_data_Model):Schema {
-            var schema:api_schema.Schema;
+            var schema:api.schema.Schema;
             var schemaKind = SchemaKind.fromString((<any>model.raw).schemaKind);
 
             if( schemaKind == SchemaKind.CONTENT_TYPE) {
-                schema = new api_schema_content.ContentTypeSummary(<api_schema_content_json.ContentTypeSummaryJson>model.raw);
+                schema = new api.schema.content.ContentTypeSummary(<api.schema.content.json.ContentTypeSummaryJson>model.raw);
             }
             else if( schemaKind == SchemaKind.RELATIONSHIP_TYPE) {
-                schema = new api_schema_relationshiptype.RelationshipType(<api_schema_relationshiptype_json.RelationshipTypeJson>model.raw);
+                schema = new api.schema.relationshiptype.RelationshipType(<api.schema.relationshiptype.json.RelationshipTypeJson>model.raw);
             }
             else if( schemaKind == SchemaKind.MIXIN) {
-                schema = new api_schema_mixin.Mixin(<api_schema_mixin_json.MixinJson>model.raw);
+                schema = new api.schema.mixin.Mixin(<api.schema.mixin.json.MixinJson>model.raw);
             }
             else {
-                console.log("Unknown Ext_data_Model for Schema: ", model );
+                console.log("Unknown Ext.data_Model for Schema: ", model );
                 throw new Error("Unknown Schema kind: " + schemaKind );
             }
             return schema;
         }
 
-        constructor(json:api_schema.SchemaJson) {
+        constructor(json:api.schema.SchemaJson) {
             super(json);
             this.key = json.key;
             this.name = json.name;

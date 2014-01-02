@@ -1,6 +1,6 @@
-module api_content_json{
+module api.content.json{
 
-    export interface ContentSummaryJson extends api_item.ItemJson{
+    export interface ContentSummaryJson extends api.item.ItemJson{
 
         name:string;
 

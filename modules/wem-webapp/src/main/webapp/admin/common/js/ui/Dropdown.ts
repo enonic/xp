@@ -1,5 +1,5 @@
-module api_ui {
-    export class Dropdown extends api_dom.SelectEl {
+module api.ui {
+    export class Dropdown extends api.dom.SelectEl {
 
         constructor(name:string) {
             super();
@@ -13,7 +13,7 @@ module api_ui {
     }
 
 
-    export class DropdownOption extends api_dom.OptionEl {
+    export class DropdownOption extends api.dom.OptionEl {
         constructor(value:string, displayName:string) {
             super(value, displayName);
         }

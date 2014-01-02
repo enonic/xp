@@ -1,4 +1,4 @@
-module api_data_json{
+module api.data.json{
 
     export interface PropertyJson extends DataJson  {
 

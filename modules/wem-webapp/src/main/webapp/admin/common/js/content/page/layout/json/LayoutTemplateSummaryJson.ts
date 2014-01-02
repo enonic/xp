@@ -1,6 +1,6 @@
-module api_content_page_layout_json
+module api.content.page.layout.json
 {
-    export interface LayoutTemplateSummaryJson extends api_content_page_json.TemplateSummaryJson
+    export interface LayoutTemplateSummaryJson extends api.content.page.json.TemplateSummaryJson
     {
 
     }

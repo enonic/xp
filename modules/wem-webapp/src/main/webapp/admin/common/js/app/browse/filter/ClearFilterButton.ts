@@ -1,6 +1,6 @@
-module api_app_browse_filter {
+module api.app.browse.filter {
 
-    export class ClearFilterButton extends api_dom.AEl {
+    export class ClearFilterButton extends api.dom.AEl {
 
         constructor() {
             super('ClearFilterButton', 'clear-filter-button');

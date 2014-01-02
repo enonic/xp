@@ -1,39 +1,39 @@
-module app_view {
+module app.view {
 
-    export class EditContentAction extends api_ui.Action {
+    export class EditContentAction extends api.ui.Action {
 
-        constructor(panel:api_app_view.ItemViewPanel<api_content.ContentSummary>) {
+        constructor(panel:api.app.view.ItemViewPanel<api.content.ContentSummary>) {
             super("Edit");
             this.addExecutionListener(() => {
-                new app_browse.EditContentEvent([panel.getItem().getModel()]).fire();
+                new app.browse.EditContentEvent([panel.getItem().getModel()]).fire();
             });
         }
     }
 
-    export class DeleteContentAction extends api_ui.Action {
+    export class DeleteContentAction extends api.ui.Action {
 
-        constructor(itemViewPanel:api_app_view.ItemViewPanel<api_content.ContentSummary>) {
+        constructor(itemViewPanel:api.app.view.ItemViewPanel<api.content.ContentSummary>) {
             super("Delete", "mod+del");
 
             this.addExecutionListener(() => {
 
                 var contentToDelete = itemViewPanel.getItem().getModel();
 
-                api_ui_dialog.ConfirmationDialog.get()
+                api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this content?")
                     .setNoCallback(null)
                     .setYesCallback(() => {
                         itemViewPanel.close();
-                        new api_content.DeleteContentRequest()
+                        new api.content.DeleteContentRequest()
                             .addContentPath(contentToDelete.getPath())
                             .send()
-                            .done((jsonResponse:api_rest.JsonResponse<api_content.DeleteContentResult>) => {
+                            .done((jsonResponse:api.rest.JsonResponse<api.content.DeleteContentResult>) => {
                                 var result = jsonResponse.getResult();
                                 if (result.successes && result.successes.length > 0) {
                                     var path = result.successes[0].path;
-                                    api_notify.showFeedback('Content [' + path + '] deleted!');
+                                    api.notify.showFeedback('Content [' + path + '] deleted!');
 
-                                    new api_content.ContentDeletedEvent([contentToDelete]).fire();
+                                    new api.content.ContentDeletedEvent([contentToDelete]).fire();
                                 }
                             });
                     }).open();
@@ -42,13 +42,13 @@ module app_view {
 
     }
 
-    export class CloseContentAction extends api_ui.Action {
+    export class CloseContentAction extends api.ui.Action {
 
-        constructor(panel:api_ui.Panel, checkCanRemovePanel:boolean = true) {
+        constructor(panel:api.ui.Panel, checkCanRemovePanel:boolean = true) {
             super("Close", "mod+f4");
 
             this.addExecutionListener(() => {
-                new app_browse.CloseContentEvent(panel, checkCanRemovePanel).fire();
+                new app.browse.CloseContentEvent(panel, checkCanRemovePanel).fire();
             });
         }
     }

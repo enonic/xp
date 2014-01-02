@@ -1,4 +1,4 @@
-module api_ui {
+module api.ui {
 
     export class CodeAreaBuilder {
 
@@ -8,7 +8,7 @@ module api_ui {
 
         lineNumbers:boolean;
 
-        size:api_ui.TextAreaSize;
+        size:api.ui.TextAreaSize;
 
         public setName(value:string) : CodeAreaBuilder {
             this.name = value;
@@ -25,7 +25,7 @@ module api_ui {
             return this;
         }
 
-        public setSize(value:api_ui.TextAreaSize) : CodeAreaBuilder {
+        public setSize(value:api.ui.TextAreaSize) : CodeAreaBuilder {
             this.size = value;
             return this;
         }
@@ -48,10 +48,10 @@ module api_ui {
             this.setSize(builder.size);
             this.mode = builder.mode;
             this.options.lineNumbers = builder.lineNumbers;
-            CodeMirror.modeURL = api_util.getUri('admin/common/lib/codemirror/mode/%N.js');
+            CodeMirror.modeURL = api.util.getUri('admin/common/lib/codemirror/mode/%N.js');
         }
 
-        onElementAddedToParent(parent: api_dom.Element) {
+        onElementAddedToParent(parent: api.dom.Element) {
 
             this.codeMirror = CodeMirror.fromTextArea(<HTMLTextAreaElement>this.getHTMLElement(), this.options);
             this.codeMirror.setSize("550px", "350px");

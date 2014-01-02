@@ -1,10 +1,10 @@
-module api_module {
+module api.module {
 
-    export class ModuleLoader implements api_rest.Loader
+    export class ModuleLoader implements api.rest.Loader
     {
         private findModuleRequest:ModuleResourceRequest<ModuleListResult>;
 
-        private loaderHelper:api_rest.LoaderHelper;
+        private loaderHelper:api.rest.LoaderHelper;
 
         private isLoading:boolean;
 
@@ -16,7 +16,7 @@ module api_module {
         constructor(delay:number = 500, findModuleRequest:ModuleResourceRequest<ModuleListResult> = new ListModuleRequest()) {
             this.isLoading = false;
             this.findModuleRequest = findModuleRequest;
-            this.loaderHelper = new api_rest.LoaderHelper(this.doRequest, this, delay);
+            this.loaderHelper = new api.rest.LoaderHelper(this.doRequest, this, delay);
         }
 
         search(searchString:string) {
@@ -33,11 +33,11 @@ module api_module {
             this.notifyLoading();
 
             this.findModuleRequest.send()
-                .done((jsonResponse:api_rest.JsonResponse<api_module.ModuleListResult>) => {
+                .done((jsonResponse:api.rest.JsonResponse<api.module.ModuleListResult>) => {
                           var result = jsonResponse.getResult();
 
                           this.isLoading = false;
-                          this.notifyLoaded(api_module.ModuleSummary.fromJsonArray(result.modules));
+                          this.notifyLoaded(api.module.ModuleSummary.fromJsonArray(result.modules));
                           if (this.preservedSearchString) {
                               this.search(this.preservedSearchString);
                               this.preservedSearchString = null;
@@ -63,7 +63,7 @@ module api_module {
             });
         }
 
-        private notifyLoaded(modules:api_module.ModuleSummary[]) {
+        private notifyLoaded(modules:api.module.ModuleSummary[]) {
             this.listeners.forEach((listener:ModuleLoaderListener) => {
                 if (listener.onLoaded) {
                     console.log("notifiyng", modules);

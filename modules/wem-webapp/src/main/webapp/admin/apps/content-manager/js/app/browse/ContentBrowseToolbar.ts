@@ -1,6 +1,6 @@
-module app_browse {
+module app.browse {
 
-    export class ContentBrowseToolbar extends api_ui_toolbar.Toolbar {
+    export class ContentBrowseToolbar extends api.ui.toolbar.Toolbar {
 
         constructor(actions:ContentBrowseActions) {
             super();
@@ -13,7 +13,7 @@ module app_browse {
             this.addAction(actions.MOVE_CONTENT);
             this.addGreedySpacer();
 
-            var previewDetailsToggler = new api_ui.ToggleSlide({
+            var previewDetailsToggler = new api.ui.ToggleSlide({
                 turnOnAction: actions.SHOW_PREVIEW,
                 turnOffAction: actions.SHOW_DETAILS
             }, false);

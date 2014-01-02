@@ -1,6 +1,6 @@
-module app_home {
+module app.home {
 
-    export class LinksContainer extends api_dom.DivEl {
+    export class LinksContainer extends api.dom.DivEl {
         private links:{text:string; url:string;}[];
 
         constructor() {
@@ -13,7 +13,7 @@ module app_home {
                 this.addSeparator();
             }
 
-            var linkEl = new api_dom.AEl();
+            var linkEl = new api.dom.AEl();
             linkEl.setText(linkText);
             linkEl.setUrl(linkUrl);
             this.appendChild(linkEl);

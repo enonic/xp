@@ -1,4 +1,4 @@
-module api_form{
+module api.form{
 
     export class InputTypeName {
 
@@ -43,9 +43,9 @@ module api_form{
             return this.refString;
         }
 
-        public toJson():api_form_json.InputTypeJson {
+        public toJson():api.form.json.InputTypeJson {
 
-            return <api_form_json.InputTypeJson>{
+            return <api.form.json.InputTypeJson>{
                 name: this.toString()
             };
         }

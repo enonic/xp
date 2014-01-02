@@ -1,16 +1,16 @@
-module api_form_inputtype {
+module api.form.inputtype {
 
     export interface InputTypeView {
 
         getHTMLElement():HTMLElement;
 
-        layout(input:api_form.Input, properties:api_data.Property[]);
+        layout(input:api.form.Input, properties:api.data.Property[]);
 
-        getValues(): api_data.Value[];
+        getValues(): api.data.Value[];
 
-        getAttachments(): api_content_attachment.Attachment[];
+        getAttachments(): api.content.attachment.Attachment[];
 
-        validate(validationRecorder:api_form.ValidationRecorder);
+        validate(validationRecorder:api.form.ValidationRecorder);
 
         /*
          * Whether the InputTypeView it self is managing adding new occurrences or not.
@@ -30,12 +30,12 @@ module api_form_inputtype {
         /*
          * Is only invoked if InputTypeView is not managing add.
          */
-        addFormItemOccurrencesListener(listener:api_form.FormItemOccurrencesListener);
+        addFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener);
 
         /*
          * Is only invoked if InputTypeView is not managing add.
          */
-        removeFormItemOccurrencesListener(listener:api_form.FormItemOccurrencesListener);
+        removeFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener);
 
         /*
          * Returns true if focus was successfully given.

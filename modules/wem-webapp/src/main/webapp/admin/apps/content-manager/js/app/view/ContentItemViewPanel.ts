@@ -1,13 +1,13 @@
-module app_view {
+module app.view {
 
     export interface ContentItemViewPanelParams {
-        showPreviewAction:api_ui.Action;
-        showDetailsAction:api_ui.Action;
+        showPreviewAction:api.ui.Action;
+        showDetailsAction:api.ui.Action;
     }
 
-    export class ContentItemViewPanel extends api_app_view.ItemViewPanel<api_content.ContentSummary> {
+    export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummary> {
 
-        private statisticsPanel:api_app_view.ItemStatisticsPanel<api_content.ContentSummary>;
+        private statisticsPanel:api.app.view.ItemStatisticsPanel<api.content.ContentSummary>;
 
         private statisticsPanelIndex:number;
 
@@ -17,17 +17,17 @@ module app_view {
 
         private previewPanelIndex:number;
 
-        private deckPanel:api_ui.DeckPanel;
+        private deckPanel:api.ui.DeckPanel;
 
-        private editAction:api_ui.Action;
+        private editAction:api.ui.Action;
 
-        private deleteAction:api_ui.Action;
+        private deleteAction:api.ui.Action;
 
-        private closeAction:api_ui.Action;
+        private closeAction:api.ui.Action;
 
         constructor(params:ContentItemViewPanelParams) {
 
-            this.deckPanel = new api_ui.DeckPanel();
+            this.deckPanel = new api.ui.DeckPanel();
 
             this.editAction = new EditContentAction(this);
             this.deleteAction = new DeleteContentAction(this);
@@ -47,23 +47,23 @@ module app_view {
                 editAction: this.editAction,
                 deleteAction: this.deleteAction
             });
-            this.previewPanel = new app_browse.ContentItemPreviewPanel();
+            this.previewPanel = new app.browse.ContentItemPreviewPanel();
 
             this.statisticsPanelIndex = this.deckPanel.addPanel(this.statisticsPanel);
             this.previewPanelIndex = this.deckPanel.addPanel(this.previewPanel);
 
             this.showPreview(false);
 
-            app_browse.ShowPreviewEvent.on((event) => {
+            app.browse.ShowPreviewEvent.on((event) => {
                 this.showPreview(true);
             });
 
-            app_browse.ShowDetailsEvent.on((event) => {
+            app.browse.ShowDetailsEvent.on((event) => {
                 this.showPreview(false);
             });
         }
 
-        setItem(item:api_app_view.ViewItem<api_content.ContentSummary>) {
+        setItem(item:api.app.view.ViewItem<api.content.ContentSummary>) {
             super.setItem(item);
             this.statisticsPanel.setItem(item);
             this.previewPanel.setItem(item);

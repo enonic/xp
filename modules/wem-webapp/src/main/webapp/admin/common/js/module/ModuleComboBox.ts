@@ -1,27 +1,27 @@
-module api_module {
+module api.module {
 
-    export class ModuleComboBox extends api_ui_combobox.RichComboBox<api_module.ModuleSummary>
+    export class ModuleComboBox extends api.ui.combobox.RichComboBox<api.module.ModuleSummary>
     {
         constructor()
         {
-            super(new api_module.ModuleLoader(), new ModuleSelectedOptionsView());
+            super(new api.module.ModuleLoader(), new ModuleSelectedOptionsView());
 
         }
 
-        optionFormatter(row:number, cell:number, moduleInst:api_module.ModuleSummary, columnDef:any, dataContext:api_ui_combobox.Option<api_module.ModuleSummary>):string {
-            var img = new api_dom.ImgEl();
+        optionFormatter(row:number, cell:number, moduleInst:api.module.ModuleSummary, columnDef:any, dataContext:api.ui.combobox.Option<api.module.ModuleSummary>):string {
+            var img = new api.dom.ImgEl();
             img.setClass("icon");
-            img.getEl().setSrc(api_util.getAdminUri("common/images/default_content.png"));
+            img.getEl().setSrc(api.util.getAdminUri("common/images/default.content.png"));
 
-            var contentSummary = new api_dom.DivEl();
+            var contentSummary = new api.dom.DivEl();
             contentSummary.setClass("item-summary");
 
-            var displayName = new api_dom.DivEl();
+            var displayName = new api.dom.DivEl();
             displayName.setClass("display-name");
             displayName.getEl().setAttribute("title", moduleInst.getDisplayName());
             displayName.getEl().setInnerHtml(moduleInst.getDisplayName());
 
-            var path = new api_dom.DivEl();
+            var path = new api.dom.DivEl();
             path.setClass("path");
             path.getEl().setAttribute("title", moduleInst.getUrl());
             path.getEl().setInnerHtml(moduleInst.getUrl());
@@ -33,32 +33,32 @@ module api_module {
         }
     }
 
-    export class ModuleSelectedOptionsView extends api_ui_combobox.SelectedOptionsView<api_module.ModuleSummary> {
+    export class ModuleSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<api.module.ModuleSummary> {
 
-        createSelectedOption(option:api_ui_combobox.Option<api_module.ModuleSummary>, index:number):api_ui_combobox.SelectedOption<api_module.ModuleSummary> {
+        createSelectedOption(option:api.ui.combobox.Option<api.module.ModuleSummary>, index:number):api.ui.combobox.SelectedOption<api.module.ModuleSummary> {
             var optionView = new ModuleSelectedOptionView( option );
-            return new api_ui_combobox.SelectedOption<api_module.ModuleSummary>( optionView, option, index);
+            return new api.ui.combobox.SelectedOption<api.module.ModuleSummary>( optionView, option, index);
         }
     }
 
-    export class ModuleSelectedOptionView extends api_ui_combobox.RichSelectedOptionView<api_module.ModuleSummary> {
+    export class ModuleSelectedOptionView extends api.ui.combobox.RichSelectedOptionView<api.module.ModuleSummary> {
 
 
-        constructor(option:api_ui_combobox.Option<api_module.ModuleSummary>) {
+        constructor(option:api.ui.combobox.Option<api.module.ModuleSummary>) {
             super(option);
         }
 
-        resolveIconUrl(content:api_module.ModuleSummary):string
+        resolveIconUrl(content:api.module.ModuleSummary):string
         {
-            return api_util.getAdminUri("common/images/default_content.png");
+            return api.util.getAdminUri("common/images/default.content.png");
         }
 
-        resolveTitle(content:api_module.ModuleSummary):string
+        resolveTitle(content:api.module.ModuleSummary):string
         {
             return content.getDisplayName().toString();
         }
 
-        resolveSubTitle(content:api_module.ModuleSummary):string
+        resolveSubTitle(content:api.module.ModuleSummary):string
         {
             return content.getModuleKey().toString();
         }

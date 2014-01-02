@@ -1,14 +1,14 @@
-module app_browse {
+module app.browse {
 
     export interface ModuleBrowseItemPanelParams {
 
-        actionMenuActions:api_ui.Action[];
+        actionMenuActions:api.ui.Action[];
     }
 
-    export class ModuleBrowseItemPanel extends api_app_browse.BrowseItemPanel<api_module.ModuleSummary> {
+    export class ModuleBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.module.ModuleSummary> {
 
         constructor(params:ModuleBrowseItemPanelParams) {
-            super(<api_app_browse.BrowseItemPanelParams>{
+            super(<api.app.browse.BrowseItemPanelParams>{
                 actionMenuActions: params.actionMenuActions
             });
         }

@@ -1,15 +1,15 @@
-module api_ui_dialog {
+module api.ui.dialog {
 
     export class ConfirmationDialog extends ModalDialog {
 
         private static instance:ConfirmationDialog = new ConfirmationDialog();
 
-        private questionEl:api_dom.DivEl;
+        private questionEl:api.dom.DivEl;
         private yesCallback: () => void;
         private noCallback: () => void;
 
-        private yesAction:api_ui.Action;
-        private noAction:api_ui.Action;
+        private yesAction:api.ui.Action;
+        private noAction:api.ui.Action;
 
         constructor() {
             super({
@@ -20,11 +20,11 @@ module api_ui_dialog {
 
             this.addClass("confirmation-dialog");
 
-            this.questionEl = new api_dom.DivEl(null, "question");
+            this.questionEl = new api.dom.DivEl(null, "question");
             this.appendChildToContentPanel(this.questionEl);
 
-            this.noAction = new api_ui.Action("No", "esc");
-            this.noAction.addExecutionListener((action:api_ui.Action) => {
+            this.noAction = new api.ui.Action("No", "esc");
+            this.noAction.addExecutionListener((action:api.ui.Action) => {
                 this.close();
                 if (this.noCallback) {
                     this.noCallback();
@@ -32,8 +32,8 @@ module api_ui_dialog {
             });
             this.addAction(this.noAction);
 
-            this.yesAction = new api_ui.Action("Yes", "enter");
-            this.yesAction.addExecutionListener((action:api_ui.Action) => {
+            this.yesAction = new api.ui.Action("Yes", "enter");
+            this.yesAction.addExecutionListener((action:api.ui.Action) => {
                 this.close();
                 if (this.yesCallback) {
                     this.yesCallback();
@@ -41,7 +41,7 @@ module api_ui_dialog {
             });
             this.addAction(this.yesAction);
 
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
         }
 
         static get():ConfirmationDialog {

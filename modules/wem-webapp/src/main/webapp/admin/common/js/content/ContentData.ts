@@ -1,6 +1,6 @@
-module api_content{
+module api.content{
 
-    export class ContentData extends api_data.RootDataSet {
+    export class ContentData extends api.data.RootDataSet {
 
         constructor() {
             super();
