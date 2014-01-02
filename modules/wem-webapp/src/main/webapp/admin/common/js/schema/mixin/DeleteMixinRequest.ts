@@ -1,6 +1,6 @@
 module api_schema_mixin {
 
-    export class DeleteMixinRequest extends MixinResourceRequest<api_schema_mixin_json.MixinJson> {
+    export class DeleteMixinRequest extends MixinResourceRequest<api_schema.SchemaDeleteJson> {
 
         private names: string[] = [];
 
