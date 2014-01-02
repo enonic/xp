@@ -23,7 +23,6 @@ import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.command.module.GetModule;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
@@ -35,6 +34,7 @@ import com.enonic.wem.api.module.ModuleNotFoundException;
 import com.enonic.wem.api.module.ModuleVersion;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.support.export.InvalidZipFileException;
 import com.enonic.wem.core.module.ModuleExporter;
 
 import static com.enonic.wem.api.module.ModuleFileEntry.newFileEntry;
@@ -72,7 +72,7 @@ public class ModuleResourceTest
         }
     }
 
-    @Test(expected = SystemException.class)
+    @Test(expected = InvalidZipFileException.class)
     public void install_module_exception()
         throws Exception
     {

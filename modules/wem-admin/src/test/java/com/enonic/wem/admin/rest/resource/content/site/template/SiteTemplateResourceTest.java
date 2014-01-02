@@ -38,13 +38,13 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
 import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.api.content.site.Vendor;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
+import com.enonic.wem.api.support.export.InvalidZipFileException;
 import com.enonic.wem.core.content.site.SiteTemplateExporter;
 
 import static com.enonic.wem.api.content.page.PageTemplate.newPageTemplate;
@@ -199,7 +199,7 @@ public class SiteTemplateResourceTest
             get( String.class );
     }
 
-    @Test(expected = SystemException.class)
+    @Test(expected = InvalidZipFileException.class)
     public void import_site_template_exception()
         throws Exception
     {

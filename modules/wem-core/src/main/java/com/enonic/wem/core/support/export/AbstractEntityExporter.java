@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.wem.api.Identity;
-import com.enonic.wem.api.exception.SystemException;
+import com.enonic.wem.api.support.export.InvalidZipFileException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang.StringUtils.stripEnd;
@@ -115,10 +115,7 @@ public abstract class AbstractEntityExporter<I, O>
 
         Preconditions.checkArgument( Files.isRegularFile( zipFile ), "Module file is not a file: " + zipFile );
 
-        if ( !isValidZipFile( zipFile ) )
-        {
-            throw new SystemException( "Invalid zip file [{0}]", zipFile.getFileName() );
-        }
+        checkValidZipFile( zipFile );
 
         try (final FileSystem zipFs = FileSystems.newFileSystem( zipFile, null ))
         {
@@ -195,15 +192,15 @@ public abstract class AbstractEntityExporter<I, O>
         Files.write( xmlFile, xml.getBytes( Charset.forName( "UTF-8" ) ) );
     }
 
-    private boolean isValidZipFile( final Path zipFilePath )
+    private void checkValidZipFile( final Path zipFilePath )
     {
         try (final ZipFile ignored = new ZipFile( zipFilePath.toFile() ))
         {
-            return true;
+            // Everything OK!
         }
         catch ( IOException e )
         {
-            return false;
+            throw new InvalidZipFileException( zipFilePath, e );
         }
     }
 
