@@ -20,7 +20,6 @@ import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplate;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateXml;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.core.support.export.AbstractEntityExporter;
 import com.enonic.wem.core.support.export.EntityExporters;
@@ -133,7 +132,7 @@ public final class SiteTemplateExporter
         }
         else
         {
-            throw new SystemException( "Template [{0}] not supported", template.getClass().getSimpleName() );
+            throw new UnsupportedOperationException( "Template [" + template.getClass().getName() + "] not supported" );
         }
     }
 }

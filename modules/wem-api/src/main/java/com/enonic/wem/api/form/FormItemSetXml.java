@@ -47,7 +47,7 @@ public final class FormItemSetXml
         this.customText = input.getCustomText();
         this.helpText = input.getHelpText();
 
-        FormItemsHelper.fromFormItems( this.formItems, input );
+        FormItemXmlHelper.fromFormItem( this.formItems, input );
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class FormItemSetXml
 
         for ( FormItemXml formItemXml : formItems )
         {
-            final FormItem formItem = FormItemsHelper.toFormItem( formItemXml );
+            final FormItem formItem = FormItemXmlHelper.toFormItem( formItemXml );
             output.addFormItem( formItem );
         }
     }

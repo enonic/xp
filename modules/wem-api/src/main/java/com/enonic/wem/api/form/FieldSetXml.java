@@ -32,7 +32,7 @@ public final class FieldSetXml
         this.label = input.getLabel();
         this.name = input.getName();
 
-        FormItemsHelper.fromFormItems( this.formItems, input );
+        FormItemXmlHelper.fromFormItem( this.formItems, input );
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class FieldSetXml
 
         for ( FormItemXml formItemXml : formItems )
         {
-            final FormItem formItem = FormItemsHelper.toFormItem( formItemXml );
+            final FormItem formItem = FormItemXmlHelper.toFormItem( formItemXml );
             output.addFormItem( formItem );
         }
     }

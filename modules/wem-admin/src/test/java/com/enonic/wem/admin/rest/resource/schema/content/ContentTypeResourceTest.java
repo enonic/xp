@@ -20,7 +20,6 @@ import com.enonic.wem.api.command.schema.content.GetAllContentTypes;
 import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.command.schema.content.GetContentTypes;
 import com.enonic.wem.api.command.schema.content.UpdateContentType;
-import com.enonic.wem.api.exception.SystemException;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
@@ -276,7 +275,7 @@ public class ContentTypeResourceTest
     {
         Mockito.when( client.execute( Mockito.any( GetContentTypes.class ) ) ).thenReturn( ContentTypes.empty() );
         Mockito.when( client.execute( Mockito.any( CreateContentType.class ) ) ).thenThrow(
-            new SystemException( "Content type creation failed" ) );
+            new RuntimeException( "Content type creation failed" ) );
         String result = resource().path( "schema/content/create" ).entity( readFromFile( "create_content_type.json" ),
                                                                            MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "fail_to_create_new_content_type.json", result );
@@ -313,7 +312,7 @@ public class ContentTypeResourceTest
         throws Exception
     {
         Mockito.when( client.execute( Mockito.any( UpdateContentType.class ) ) ).thenThrow(
-            new SystemException( "Content type update failed" ) );
+            new RuntimeException( "Content type update failed" ) );
         String result = resource().path( "schema/content/update" ).entity( readFromFile( "update_content_type.json" ),
                                                                            MediaType.APPLICATION_JSON_TYPE ).post( String.class );
         assertJson( "fail_to_update_content_type.json", result );
