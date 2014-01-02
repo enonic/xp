@@ -7,7 +7,7 @@ import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.GetNodeByIdService;
 
@@ -31,7 +31,7 @@ public class GetContentByIdService
             final Node node = new GetNodeByIdService( session, getNodeByIdCommand ).execute();
             return CONTENT_TO_NODE_TRANSLATOR.fromNode( node );
         }
-        catch ( NoEntityWithIdFound e )
+        catch ( NoEntityWithIdFoundException e )
         {
             throw new ContentNotFoundException( command.getId() );
         }

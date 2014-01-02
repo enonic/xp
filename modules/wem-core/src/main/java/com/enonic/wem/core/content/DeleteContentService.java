@@ -10,7 +10,7 @@ import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.DeleteContentResult;
 import com.enonic.wem.api.content.UnableToDeleteContentException;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.DeleteNodeByPathService;
 import com.enonic.wem.core.entity.GetNodeByPathService;
@@ -54,7 +54,7 @@ public class DeleteContentService
 
             return new DeleteContentResult( deletedContent );
         }
-        catch ( NoNodeAtPathFound e )
+        catch ( NoNodeAtPathFoundException e )
         {
             throw new ContentNotFoundException( command.getContentPath() );
         }

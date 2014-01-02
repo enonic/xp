@@ -4,7 +4,7 @@ import com.enonic.wem.api.command.content.GetContentByPaths;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -21,7 +21,7 @@ public class GetContentByPathsHandler
         {
             contents = new GetContentByPathsService( this.context.getJcrSession(), this.command ).execute();
         }
-        catch ( NoNodeAtPathFound ex )
+        catch ( NoNodeAtPathFoundException ex )
         {
             throw new ContentNotFoundException( ContentPath.from( ex.getPath().toString() ) );
         }

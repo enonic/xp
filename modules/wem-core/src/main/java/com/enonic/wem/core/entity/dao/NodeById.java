@@ -3,7 +3,7 @@ package com.enonic.wem.core.entity.dao;
 import java.util.Map;
 
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
 
 class NodeById
@@ -24,7 +24,7 @@ class NodeById
     {
         if ( !nodeByNodeId.containsKey( node.id() ) )
         {
-            throw new NoEntityWithIdFound( node.id() );
+            throw new NoEntityWithIdFoundException( node.id() );
         }
 
         nodeByNodeId.put( node.id(), node );
@@ -40,7 +40,7 @@ class NodeById
         final Node node = nodeByNodeId.get( id );
         if ( node == null )
         {
-            throw new NoEntityWithIdFound( id );
+            throw new NoEntityWithIdFoundException( id );
         }
         return node;
     }

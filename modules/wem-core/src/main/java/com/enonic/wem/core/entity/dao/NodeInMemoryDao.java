@@ -9,9 +9,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityFoundException;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeAlreadyExist;
+import com.enonic.wem.api.entity.NodeAlreadyExistException;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
@@ -38,7 +38,7 @@ public class NodeInMemoryDao
                                      "Path to parent Node must be absolute: " + createNodeArguments.parent().toString() );
         if ( !nodeIdByPath.pathHasItem( createNodeArguments.parent() ) )
         {
-            throw new NoNodeAtPathFound( createNodeArguments.parent() );
+            throw new NoNodeAtPathFoundException( createNodeArguments.parent() );
         }
 
         final Node newNode = Node.newNode().
@@ -52,7 +52,7 @@ public class NodeInMemoryDao
 
         if ( nodeIdByPath.pathHasItem( newNode.path() ) )
         {
-            throw new NodeAlreadyExist( newNode.path() );
+            throw new NodeAlreadyExistException( newNode.path() );
         }
 
         nodeById.storeNew( newNode );

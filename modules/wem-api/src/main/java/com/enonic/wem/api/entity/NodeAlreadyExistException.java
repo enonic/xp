@@ -1,12 +1,12 @@
 package com.enonic.wem.api.entity;
 
 
-public class NodeAlreadyExist
+public class NodeAlreadyExistException
     extends RuntimeException
 {
     private NodePath node;
 
-    public NodeAlreadyExist( final NodePath node )
+    public NodeAlreadyExistException( final NodePath node )
     {
         super( "Node already exist: " + node );
         this.node = node;

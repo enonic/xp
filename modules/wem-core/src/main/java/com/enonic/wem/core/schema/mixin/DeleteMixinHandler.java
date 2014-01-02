@@ -6,7 +6,7 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.entity.DeleteNodeByPath;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixin;
 import com.enonic.wem.api.command.schema.mixin.DeleteMixinResult;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.schema.content.ContentTypes;
@@ -42,7 +42,7 @@ public final class DeleteMixinHandler
             final Mixin mixin = MIXIN_NODE_TRANSLATOR.fromNode( deletedNode );
             command.setResult( new DeleteMixinResult( mixin ) );
         }
-        catch ( NoNodeAtPathFound e )
+        catch ( NoNodeAtPathFoundException e )
         {
             throw new MixinNotFoundException( command.getName() );
         }

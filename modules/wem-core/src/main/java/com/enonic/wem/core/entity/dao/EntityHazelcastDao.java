@@ -10,7 +10,7 @@ import com.hazelcast.core.IMap;
 
 import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 
 public class EntityHazelcastDao
     implements EntityDao
@@ -52,7 +52,7 @@ public class EntityHazelcastDao
         final Entity persisted = entityMap.get( args.entityToUpdate );
         if ( persisted == null )
         {
-            throw new NoEntityWithIdFound( args.entityToUpdate );
+            throw new NoEntityWithIdFoundException( args.entityToUpdate );
         }
 
         final Entity.Builder entityBuilder = new Entity.Builder( persisted );
@@ -70,7 +70,7 @@ public class EntityHazelcastDao
         final Entity entity = entityMap.get( id );
         if ( entity == null )
         {
-            throw new NoEntityWithIdFound( id );
+            throw new NoEntityWithIdFoundException( id );
         }
         return entity;
     }

@@ -4,7 +4,7 @@ import javax.jcr.Session;
 
 import com.enonic.wem.api.command.entity.GetNodesByIds;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Nodes;
 
 import static com.enonic.wem.api.entity.Nodes.newNodes;
@@ -32,9 +32,9 @@ public class GetNodesByIdsService
             {
                 nodes.add( nodeJcrDao.getNodeById( id ) );
             }
-            catch ( NoEntityWithIdFound noEntityWithIdFound )
+            catch ( NoEntityWithIdFoundException noEntityWithIdFoundException )
             {
-                throw new NoEntityWithIdFound( id );
+                throw new NoEntityWithIdFoundException( id );
             }
         }
 

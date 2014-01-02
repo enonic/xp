@@ -6,7 +6,7 @@ import com.enonic.wem.api.command.content.GetContentByPath;
 import com.enonic.wem.api.command.entity.GetNodeByPath;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentNotFoundException;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.core.entity.GetNodeByPathService;
 
 
@@ -31,7 +31,7 @@ public class GetContentByPathService
         {
             return CONTENT_TO_NODE_TRANSLATOR.fromNode( new GetNodeByPathService( session, getNodeByPathCommand ).execute() );
         }
-        catch ( NoNodeAtPathFound e )
+        catch ( NoNodeAtPathFoundException e )
         {
             throw new ContentNotFoundException( command.getPath() );
 

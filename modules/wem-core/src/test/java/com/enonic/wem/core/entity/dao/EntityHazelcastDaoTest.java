@@ -20,7 +20,7 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.entity.Entity;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIndexConfig;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -113,7 +113,7 @@ public class EntityHazelcastDaoTest
         assertEquals( "A", entity.property( "myProperty" ).getString() );
     }
 
-    @Test(expected = NoEntityWithIdFound.class)
+    @Test(expected = NoEntityWithIdFoundException.class)
     public void deleteById()
     {
         RootDataSet data = new RootDataSet();

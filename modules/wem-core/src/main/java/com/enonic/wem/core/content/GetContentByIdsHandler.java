@@ -4,7 +4,7 @@ import com.enonic.wem.api.command.content.GetContentByIds;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.Contents;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.core.command.CommandHandler;
 
 
@@ -21,7 +21,7 @@ public class GetContentByIdsHandler
         {
             contents = new GetContentByIdsService( this.context.getJcrSession(), this.command ).execute();
         }
-        catch ( NoEntityWithIdFound ex )
+        catch ( NoEntityWithIdFoundException ex )
         {
             final ContentId contentId = ContentId.from( ex.getId().toString() );
             throw new ContentNotFoundException( contentId );

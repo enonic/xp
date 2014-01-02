@@ -5,7 +5,7 @@ import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.content.attachment.Attachments;
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.ContentAttachmentNodeTranslator;
@@ -34,7 +34,7 @@ public class GetAttachmentsHandler
 
             command.setResult( attachmentsBuilder.build() );
         }
-        catch ( NoEntityWithIdFound e )
+        catch ( NoEntityWithIdFoundException e )
         {
             throw new ContentNotFoundException( command.getContentId() );
         }

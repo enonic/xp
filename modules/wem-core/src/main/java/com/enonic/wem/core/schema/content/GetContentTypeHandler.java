@@ -3,7 +3,7 @@ package com.enonic.wem.core.schema.content;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.entity.GetNodeByPath;
 import com.enonic.wem.api.command.schema.content.GetContentType;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
@@ -46,7 +46,7 @@ public class GetContentTypeHandler
             return nodeToContentType( contentTypeNode, contentTypeInheritorResolver );
 
         }
-        catch ( NoNodeAtPathFound e )
+        catch ( NoNodeAtPathFoundException e )
         {
             if ( command.isNotFoundAsException() )
             {

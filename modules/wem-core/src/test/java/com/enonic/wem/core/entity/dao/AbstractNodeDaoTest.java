@@ -11,9 +11,9 @@ import com.google.common.base.Stopwatch;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeAlreadyExist;
+import com.enonic.wem.api.entity.NodeAlreadyExistException;
 import com.enonic.wem.api.entity.NodePath;
 
 import static com.enonic.wem.core.entity.dao.CreateNodeArguments.newCreateNodeArgs;
@@ -162,9 +162,9 @@ public abstract class AbstractNodeDaoTest
         catch ( Exception e )
         {
             e.printStackTrace();
-            assertTrue( e instanceof NoNodeAtPathFound );
-            NoNodeAtPathFound noNodeAtPathFound = (NoNodeAtPathFound) e;
-            assertEquals( "/does-not-exist", noNodeAtPathFound.getPath().toString() );
+            assertTrue( e instanceof NoNodeAtPathFoundException );
+            NoNodeAtPathFoundException noNodeAtPathFoundException = (NoNodeAtPathFoundException) e;
+            assertEquals( "/does-not-exist", noNodeAtPathFoundException.getPath().toString() );
         }
     }
 
@@ -189,7 +189,7 @@ public abstract class AbstractNodeDaoTest
         }
         catch ( Exception e )
         {
-            assertTrue( e instanceof NodeAlreadyExist );
+            assertTrue( e instanceof NodeAlreadyExistException );
             assertEquals( "Node already exist: /my-item", e.getMessage() );
         }
     }

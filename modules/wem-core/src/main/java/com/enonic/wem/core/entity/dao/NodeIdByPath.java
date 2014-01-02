@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.NodePath;
 
 class NodeIdByPath
@@ -41,7 +41,7 @@ class NodeIdByPath
         final EntityId id = itemIdByPath.get( path );
         if ( id == null )
         {
-            throw new NoNodeAtPathFound( path );
+            throw new NoNodeAtPathFoundException( path );
         }
         return id;
     }

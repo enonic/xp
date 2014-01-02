@@ -13,8 +13,8 @@ import com.enonic.wem.api.content.ContentAlreadyExistException;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityFoundException;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodeName;
 import com.enonic.wem.api.entity.NodePath;
@@ -158,13 +158,13 @@ public class NodeJcrDao
     }
 
     public Node getNodeById( final EntityId id )
-        throws NoEntityWithIdFound
+        throws NoEntityWithIdFoundException
     {
         return this.jcrHelper.getItemById( id );
     }
 
     public Node getNodeByPath( final NodePath path )
-        throws NoNodeAtPathFound
+        throws NoNodeAtPathFoundException
     {
         Preconditions.checkArgument( path.isAbsolute(), "path must be absolute: " + path.toString() );
 

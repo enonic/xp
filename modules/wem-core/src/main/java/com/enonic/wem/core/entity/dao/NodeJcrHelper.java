@@ -9,10 +9,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.entity.EntityId;
-import com.enonic.wem.api.entity.NoEntityWithIdFound;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.Node;
-import com.enonic.wem.api.entity.NodeAlreadyExist;
+import com.enonic.wem.api.entity.NodeAlreadyExistException;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.core.jcr.JcrConstants;
@@ -82,7 +82,7 @@ public class NodeJcrHelper
             {
                 final javax.jcr.Node existingNodeNode = parentJcrNode.getNode( node.name().toString() );
                 final Node existingNode = NodeJcrMapper.toNode( existingNodeNode ).build();
-                throw new NodeAlreadyExist( existingNode.path() );
+                throw new NodeAlreadyExistException( existingNode.path() );
             }
             catch ( RepositoryException e1 )
             {
@@ -96,7 +96,7 @@ public class NodeJcrHelper
     }
 
     javax.jcr.Node getNodeByPath( final NodePath path )
-        throws NoNodeAtPathFound
+        throws NoNodeAtPathFoundException
     {
         try
         {
@@ -104,7 +104,7 @@ public class NodeJcrHelper
         }
         catch ( PathNotFoundException e )
         {
-            throw new NoNodeAtPathFound( path );
+            throw new NoNodeAtPathFoundException( path );
         }
         catch ( RepositoryException e )
         {
@@ -153,7 +153,7 @@ public class NodeJcrHelper
     }
 
     javax.jcr.Node getItemNodeById( final EntityId id )
-        throws NoEntityWithIdFound
+        throws NoEntityWithIdFoundException
     {
         try
         {
@@ -161,7 +161,7 @@ public class NodeJcrHelper
         }
         catch ( ItemNotFoundException e )
         {
-            throw new NoEntityWithIdFound( id );
+            throw new NoEntityWithIdFoundException( id );
         }
         catch ( RepositoryException e )
         {
@@ -170,7 +170,7 @@ public class NodeJcrHelper
     }
 
     Node getItemById( final EntityId id )
-        throws NoEntityWithIdFound
+        throws NoEntityWithIdFoundException
     {
         try
         {
@@ -179,7 +179,7 @@ public class NodeJcrHelper
         }
         catch ( ItemNotFoundException e )
         {
-            throw new NoEntityWithIdFound( id );
+            throw new NoEntityWithIdFoundException( id );
         }
         catch ( RepositoryException e )
         {
@@ -188,14 +188,14 @@ public class NodeJcrHelper
     }
 
     Node getItemByPath( final NodePath path )
-        throws NoNodeAtPathFound
+        throws NoNodeAtPathFoundException
     {
         final javax.jcr.Node nodeNode = getNodeByPath( path );
         return NodeJcrMapper.toNode( nodeNode ).build();
     }
 
     Nodes getNodesByParentPath( final NodePath parent )
-        throws NoNodeAtPathFound
+        throws NoNodeAtPathFoundException
     {
         Nodes.Builder childNodes = Nodes.newNodes();
 

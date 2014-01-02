@@ -3,7 +3,7 @@ package com.enonic.wem.core.entity;
 import javax.jcr.Session;
 
 import com.enonic.wem.api.command.entity.GetNodesByPaths;
-import com.enonic.wem.api.entity.NoNodeAtPathFound;
+import com.enonic.wem.api.entity.NoNodeAtPathFoundException;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 
@@ -37,11 +37,11 @@ public class GetNodesByPathsService
             {
                 nodes.add( nodeJcrDao.getNodeByPath( path ) );
             }
-            catch ( NoNodeAtPathFound noNodeAtPathFound )
+            catch ( NoNodeAtPathFoundException noNodeAtPathFoundException )
             {
                 if ( failWithExceptionAtNoNodeFound )
                 {
-                    throw new NoNodeAtPathFound( path );
+                    throw new NoNodeAtPathFoundException( path );
                 }
             }
         }
