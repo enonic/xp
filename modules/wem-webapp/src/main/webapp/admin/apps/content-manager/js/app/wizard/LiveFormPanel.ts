@@ -5,43 +5,54 @@ module app_wizard {
 
         private url:string;
 
+        private site:api_content.Content;
+
         constructor(site:api_content.Content, url:string = api_util.getUri("portal/edit/bluman-intranett")) {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
-
             this.url = url;
+            this.site = site;
+        }
 
-            this.frame = new api_dom.IFrameEl();
-            this.frame.addClass("live-edit-frame");
-            this.frame.setSrc(this.url);
-            this.appendChild(this.frame);
+        onElementShown() {
+            super.onElementShown();
+            this.doLoad();
+        }
 
-            // Wait for iframe to be loaded before adding context window!
-            var maxIterations = 10;
-            var iterations = 0;
-            var intervalId = setInterval(() => {
-                if (this.frame.isLoaded()) {
-                    if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
-                        var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame, site: site});
-                        this.appendChild(contextWindow);
-                        clearInterval(intervalId);
+        renderNew() {
+
+        }
+
+        private doLoad() {
+            if (!this.frame) {
+                this.frame = new api_dom.IFrameEl();
+                this.frame.addClass("live-edit-frame");
+                this.frame.setSrc(this.url);
+                this.appendChild(this.frame);
+
+                // Wait for iframe to be loaded before adding context window!
+                var maxIterations = 10;
+                var iterations = 0;
+                var intervalId = setInterval(() => {
+                    if (this.frame.isLoaded()) {
+                        if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
+                            var contextWindow = new app_contextwindow.ContextWindow({liveEditEl: this.frame, site: this.site});
+                            this.appendChild(contextWindow);
+                            clearInterval(intervalId);
+                        } else {
+                            iterations++;
+                            if (iterations >= maxIterations) {
+                                clearInterval(intervalId);
+                            }
+                        }
                     } else {
                         iterations++;
                         if (iterations >= maxIterations) {
                             clearInterval(intervalId);
                         }
                     }
-                } else {
-                    iterations++;
-                    if (iterations >= maxIterations) {
-                        clearInterval(intervalId);
-                    }
-                }
-            }, 200);
-        }
-
-        renderNew() {
-
+                }, 200);
+            }
         }
 
         renderExisting(content:api_content.Content, pageTemplate:api_content_page.PageTemplate) {
