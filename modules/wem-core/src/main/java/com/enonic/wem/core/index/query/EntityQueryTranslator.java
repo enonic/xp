@@ -1,6 +1,6 @@
 package com.enonic.wem.core.index.query;
 
-import com.enonic.wem.api.query.EntityQuery;
+import com.enonic.wem.api.entity.EntityQuery;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.elastic.ElasticsearchQuery;

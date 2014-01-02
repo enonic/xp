@@ -26,7 +26,7 @@ public class FunctionQueryBuilderFactory
 
         final String baseFieldName = arguments.getFieldName();
 
-        final String queryFieldName = IndexQueryFieldNameResolver.resolveStringFieldName( baseFieldName );
+        final String queryFieldName = IndexQueryFieldNameResolver.resolveAnalyzedFieldName( baseFieldName );
 
         MatchQueryBuilder builder = new MatchQueryBuilder( queryFieldName, arguments.getSearchString() );
         builder.operator( arguments.getOperator() );

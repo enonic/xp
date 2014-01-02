@@ -191,10 +191,14 @@ public class ElasticsearchIndexServiceImpl
     @Override
     public EntityQueryResult search( final ElasticsearchQuery elasticsearchQuery )
     {
+        final SearchSourceBuilder searchSource = elasticsearchQuery.toSearchSourceBuilder();
+
+        System.out.println( searchSource.toString() );
+
         final SearchRequest searchRequest = Requests.
             searchRequest( elasticsearchQuery.getIndex().getName() ).
             types( elasticsearchQuery.getIndexType().getIndexTypeName() ).
-            source( elasticsearchQuery.toSearchSourceBuilder() );
+            source( searchSource );
 
         final SearchResponse searchResponse = doSearchRequest( searchRequest );
 

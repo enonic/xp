@@ -2,7 +2,7 @@ package com.enonic.wem.core.index.entity;
 
 import javax.inject.Inject;
 
-import com.enonic.wem.api.query.EntityQuery;
+import com.enonic.wem.api.entity.EntityQuery;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexService;
 import com.enonic.wem.core.index.elastic.ElasticsearchQuery;
 import com.enonic.wem.core.index.query.EntityQueryTranslator;
