@@ -43,7 +43,7 @@ public class IndexQueryFieldNameResolver
 
     public static String resolveAnalyzedFieldName( final String queryFieldName )
     {
-        return appendIndexValueType( queryFieldName, IndexValueType.ANALYZED );
+        return appendIndexValueType( IndexFieldNameNormalizer.normalize( queryFieldName ), IndexValueType.ANALYZED );
     }
 
     public static String resolveOrderByFieldName( final String queryFieldName )
