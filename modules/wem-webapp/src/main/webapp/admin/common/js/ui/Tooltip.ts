@@ -1,4 +1,4 @@
-module api_ui {
+module api.ui {
 
     export class Tooltip {
 
@@ -10,10 +10,10 @@ module api_ui {
         static TRIGGER_MOUSE = "mouse";
         static TRIGGER_FOCUS = "focus";
 
-        private tooltipEl:api_dom.DivEl;
+        private tooltipEl:api.dom.DivEl;
         private timeoutTimer:number;
 
-        private target:api_dom.Element;
+        private target:api.dom.Element;
         private text:string;
         private showDelay:number;
         private hideTimeout:number;
@@ -31,7 +31,7 @@ module api_ui {
          * @param trigger Event type to hook on (mouse,focus)
          * @param side Side of the target where tooltip should be shown (top,left,right,bottom)
          */
-        constructor(target:api_dom.Element, text:string, showDelay:number = 0, hideTimeout:number = 1000,
+        constructor(target:api.dom.Element, text:string, showDelay:number = 0, hideTimeout:number = 1000,
                     trigger:string = Tooltip.TRIGGER_MOUSE, side:string = Tooltip.SIDE_BOTTOM) {
 
             this.target = target;
@@ -53,7 +53,7 @@ module api_ui {
 
         show() {
             if (!this.tooltipEl) {
-                this.tooltipEl = new api_dom.DivEl("Tooltip", "tooltip " + this.side);
+                this.tooltipEl = new api.dom.DivEl("Tooltip", "tooltip " + this.side);
                 this.tooltipEl.getEl().setInnerHtml(this.text).setClass("tooltip " + this.side);
                 this.target.getParent().appendChild(this.tooltipEl);
                 this.tooltipEl.show();

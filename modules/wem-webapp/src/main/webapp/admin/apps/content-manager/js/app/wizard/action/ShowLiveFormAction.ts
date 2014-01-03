@@ -1,13 +1,13 @@
-module app_wizard_action {
+module app.wizard.action {
 
-    export class ShowLiveFormAction extends api_ui.Action {
+    export class ShowLiveFormAction extends api.ui.Action {
 
         constructor() {
             super("LIVE");
 
             this.setEnabled(true);
             this.addExecutionListener(() => {
-                new app_wizard_event.ShowContentLiveEvent().fire();
+                new app.wizard.event.ShowContentLiveEvent().fire();
             });
         }
     }

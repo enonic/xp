@@ -1,15 +1,15 @@
-module api_app_wizard {
+module api.app.wizard {
 
     export class WizardHeaderWithName extends WizardHeader {
 
-        private nameEl:api_ui.TextInput;
+        private nameEl:api.ui.TextInput;
 
-        private nameTooltip:api_ui.Tooltip;
+        private nameTooltip:api.ui.Tooltip;
 
         constructor() {
             super();
 
-            this.nameEl = api_ui.AutosizeTextInput.large().setName('name').setForbiddenCharsRe(/[^a-z0-9\-]+/ig);
+            this.nameEl = api.ui.AutosizeTextInput.large().setName('name').setForbiddenCharsRe(/[^a-z0-9\-]+/ig);
             this.nameEl.addListener({
                 onValueChanged: (oldValue, newValue) => {
                     this.notifyPropertyChanged("name", oldValue, newValue);
@@ -17,7 +17,7 @@ module api_app_wizard {
             });
             this.appendChild(this.nameEl);
 
-            this.nameTooltip = new api_ui.Tooltip(this.nameEl, "Name", 1000, 1000, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT);
+            this.nameTooltip = new api.ui.Tooltip(this.nameEl, "Name", 1000, 1000, api.ui.Tooltip.TRIGGER_FOCUS, api.ui.Tooltip.SIDE_RIGHT);
         }
 
         getName():string {

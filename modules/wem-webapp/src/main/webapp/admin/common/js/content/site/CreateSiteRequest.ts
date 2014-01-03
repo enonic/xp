@@ -1,9 +1,9 @@
-module api_content_site {
+module api.content.site {
 
-    export class CreateSiteRequest extends SiteResourceRequest<api_content_json.ContentJson> {
+    export class CreateSiteRequest extends SiteResourceRequest<api.content.json.ContentJson> {
 
         private contentId: string;
-        private siteTemplateKey: api_content_site_template.SiteTemplateKey;
+        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
         private moduleConfigs: ModuleConfig[];
 
         constructor(contentId: string) {
@@ -12,7 +12,7 @@ module api_content_site {
             this.contentId = contentId;
         }
 
-        setSiteTemplateKey(siteTemplateKey: api_content_site_template.SiteTemplateKey): CreateSiteRequest {
+        setSiteTemplateKey(siteTemplateKey: api.content.site.template.SiteTemplateKey): CreateSiteRequest {
             this.siteTemplateKey = siteTemplateKey;
             return this;
         }
@@ -34,21 +34,21 @@ module api_content_site {
             };
         }
 
-        getRequestPath(): api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "create");
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "create");
         }
 
-        sendAndParse(): JQueryPromise<api_content.Content> {
+        sendAndParse(): JQueryPromise<api.content.Content> {
 
-            var deferred = jQuery.Deferred<api_content.Content>();
+            var deferred = jQuery.Deferred<api.content.Content>();
 
-            this.send().done((response: api_rest.JsonResponse<api_content_json.ContentJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 var siteContent = null;
                 if( !response.isBlank() ) {
                     siteContent = this.fromJsonToContent(response.getResult());
                 }
                 deferred.resolve(siteContent);
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

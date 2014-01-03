@@ -1,26 +1,26 @@
-module api_ui {
+module api.ui {
     export class NavigableFloatingWindow extends FloatingWindow {
 
-        private deck:api_ui.NavigatedDeckPanel;
-        private navigator:api_ui_tab.TabBar;
+        private deck:api.ui.NavigatedDeckPanel;
+        private navigator:api.ui.tab.TabBar;
         private items:any[] = [];
 
 
         constructor(options:FloatingWindowOptions = {}) {
             super(jQuery.extend({draggable: true, draggableOptions: { handle: ".tab-menu"} }, options));
 
-            this.navigator = new api_ui_tab.TabBar();
-            this.deck = new api_ui.NavigatedDeckPanel(this.navigator);
+            this.navigator = new api.ui.tab.TabBar();
+            this.deck = new api.ui.NavigatedDeckPanel(this.navigator);
             this.deck.addClass("deck-panel");
 
             this.appendChild(this.navigator);
             this.appendChild(this.deck);
         }
 
-        addItem<T extends api_ui.Panel>(label:string, panel:T, hidden?:boolean):number {
+        addItem<T extends api.ui.Panel>(label:string, panel:T, hidden?:boolean):number {
 
 
-            var item = new api_ui_tab.TabBarItem(label);
+            var item = new api.ui.tab.TabBarItem(label);
             this.addItemArray(item);
 
             (this.items.length == 1)
@@ -30,15 +30,15 @@ module api_ui {
             return this.deck.getPanelIndex(panel);
         }
 
-        selectPanel<T extends api_ui.Panel>(panel:T) {
+        selectPanel<T extends api.ui.Panel>(panel:T) {
             this.deck.selectPanelFromIndex(this.deck.getPanelIndex(panel));
         }
 
-        getNavigator():api_ui_tab.TabBar {
+        getNavigator():api.ui.tab.TabBar {
             return this.navigator;
         }
 
-        getDeck():api_ui.DeckPanel {
+        getDeck():api.ui.DeckPanel {
             return this.deck;
         }
 

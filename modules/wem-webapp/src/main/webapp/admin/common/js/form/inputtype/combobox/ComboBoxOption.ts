@@ -1,4 +1,4 @@
-module api_form_inputtype_combobox {
+module api.form.inputtype.combobox {
 
     export interface ComboBoxOption {
         label: string;

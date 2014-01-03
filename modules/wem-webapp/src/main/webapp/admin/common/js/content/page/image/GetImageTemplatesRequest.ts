@@ -1,10 +1,10 @@
-module api_content_page_image {
+module api.content.page.image {
 
-    export class GetImageTemplatesRequest extends ImageTemplateResource<api_content_page_image_json.ImageTemplateSummaryListJson> {
+    export class GetImageTemplatesRequest extends ImageTemplateResource<api.content.page.image.json.ImageTemplateSummaryListJson> {
 
-        private siteTemplateKey: api_content_site_template.SiteTemplateKey;
+        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        constructor(siteTemplateKey: api_content_site_template.SiteTemplateKey) {
+        constructor(siteTemplateKey: api.content.site.template.SiteTemplateKey) {
             super();
             super.setMethod("GET");
             this.siteTemplateKey = siteTemplateKey;
@@ -16,8 +16,8 @@ module api_content_page_image {
             };
         }
 
-        getRequestPath(): api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "list");
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
     }
 }

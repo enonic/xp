@@ -1,13 +1,13 @@
-module api_ui_tab {
+module api.ui.tab {
 
-    export class TabMenuButton extends api_dom.DivEl {
+    export class TabMenuButton extends api.dom.DivEl {
 
-        private labelEl:api_dom.SpanEl;
+        private labelEl:api.dom.SpanEl;
 
         constructor(idPrefix?:string) {
             super(idPrefix || "TabMenuButton", "tab-menu-button");
 
-            this.labelEl = new api_dom.SpanEl(null, 'label');
+            this.labelEl = new api.dom.SpanEl(null, 'label');
             this.appendChild(this.labelEl);
         }
 

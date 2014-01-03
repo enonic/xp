@@ -1,40 +1,40 @@
-module api_data {
+module api.data {
 
     export class DataFactory {
 
-        public static createRootDataSet( dataArray:api_data_json.DataTypeWrapperJson[] ):api_data.RootDataSet {
+        public static createRootDataSet( dataArray:api.data.json.DataTypeWrapperJson[] ):api.data.RootDataSet {
 
-            var rootDataSet = new api_data.RootDataSet();
+            var rootDataSet = new api.data.RootDataSet();
 
             if ( dataArray != null ) {
-                dataArray.forEach( ( dataJson:api_data_json.DataTypeWrapperJson ) => {
+                dataArray.forEach( ( dataJson:api.data.json.DataTypeWrapperJson ) => {
                                        if ( dataJson.DataSet ) {
-                                           rootDataSet.addData( api_data.DataFactory.createDataSet( dataJson.DataSet ) );
+                                           rootDataSet.addData( api.data.DataFactory.createDataSet( dataJson.DataSet ) );
                                        }
                                        else {
-                                           rootDataSet.addData( api_data.DataFactory.createProperty( dataJson.Property ) );
+                                           rootDataSet.addData( api.data.DataFactory.createProperty( dataJson.Property ) );
                                        }
                                    } );
             }
             return rootDataSet;
         }
 
-        public static createDataSet( dataSetJson:api_data_json.DataSetJson ):DataSet {
+        public static createDataSet( dataSetJson:api.data.json.DataSetJson ):DataSet {
 
             var dataSet = new DataSet( dataSetJson.name );
-            dataSetJson.set.forEach( ( dataJson:api_data_json.DataTypeWrapperJson ) => {
+            dataSetJson.set.forEach( ( dataJson:api.data.json.DataTypeWrapperJson ) => {
 
                                          if ( dataJson.DataSet ) {
-                                             dataSet.addData( api_data.DataFactory.createDataSet( dataJson.DataSet ) );
+                                             dataSet.addData( api.data.DataFactory.createDataSet( dataJson.DataSet ) );
                                          }
                                          else {
-                                             dataSet.addData( api_data.DataFactory.createProperty( dataJson.Property ) );
+                                             dataSet.addData( api.data.DataFactory.createProperty( dataJson.Property ) );
                                          }
                                      } );
             return dataSet;
         }
 
-        public static createProperty( propertyJson:api_data_json.PropertyJson ):Property {
+        public static createProperty( propertyJson:api.data.json.PropertyJson ):Property {
 
             return Property.fromJson( propertyJson );
         }

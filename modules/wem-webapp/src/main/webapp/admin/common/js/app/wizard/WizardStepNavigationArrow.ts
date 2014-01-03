@@ -1,6 +1,6 @@
-module api_app_wizard {
+module api.app.wizard {
 
-    export class WizardStepNavigationArrow extends api_dom.DivEl {
+    export class WizardStepNavigationArrow extends api.dom.DivEl {
         static NEXT = "next";
         static PREVIOUS = "prev";
 
@@ -20,10 +20,10 @@ module api_app_wizard {
             this.update();
 
             this.navigator.addListener({
-                onNavigationItemAdded: (step:api_ui.PanelNavigationItem) => {
+                onNavigationItemAdded: (step:api.ui.PanelNavigationItem) => {
                     this.update();
                 },
-                onNavigationItemSelected: (step:api_ui.PanelNavigationItem) => {
+                onNavigationItemSelected: (step:api.ui.PanelNavigationItem) => {
                     this.update();
                 }
             });

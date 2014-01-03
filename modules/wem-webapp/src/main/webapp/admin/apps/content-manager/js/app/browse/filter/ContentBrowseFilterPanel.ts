@@ -1,12 +1,12 @@
-module app_browse_filter {
+module app.browse.filter {
 
-    export class ContentBrowseFilterPanel extends api_app_browse_filter.BrowseFilterPanel {
+    export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
         constructor() {
 
-            var contentTypeFacets = new api_facet.FacetGroupView("contentType", "Content Type");
-            var spaceFacets = new api_facet.FacetGroupView("space", "Space");
-            var lastModifiedFacets = new api_facet.FacetGroupView("lastModified", "Last modified", null, this.lastModifiedGroupFacetFilter);
+            var contentTypeFacets = new api.facet.FacetGroupView("contentType", "Content Type");
+            var spaceFacets = new api.facet.FacetGroupView("space", "Space");
+            var lastModifiedFacets = new api.facet.FacetGroupView("lastModified", "Last modified", null, this.lastModifiedGroupFacetFilter);
 
             super(null, [contentTypeFacets, spaceFacets, lastModifiedFacets]);
 
@@ -30,14 +30,14 @@ module app_browse_filter {
                         // but should all go under one facet name, i.e values['ranges']
                         var ranges = this.extractRangesFromFilterValues(values);
 
-                        new api_content.FindContentRequest<api_content.FindContentResult<api_content_json.ContentSummaryJson>>(values['query'] ? values['query'][0] : undefined).
+                        new api.content.FindContentRequest<api.content.FindContentResult<api.content.json.ContentSummaryJson>>(values['query'] ? values['query'][0] : undefined).
                             setContentTypes(values['contentType']).
                             setSpaces(values['space']).
                             setRanges(ranges).
-                            setExpand(api_content.FindContentRequest.EXPAND_SUMMARY).
-                            send().done((jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
+                            setExpand(api.content.FindContentRequest.EXPAND_SUMMARY).
+                            send().done((jsonResponse:api.rest.JsonResponse<api.content.FindContentResult<api.content.json.ContentSummaryJson>>) => {
                                 var result = jsonResponse.getResult();
-                                this.updateFacets(api_facet.FacetFactory.createFacets(result.facets));
+                                this.updateFacets(api.facet.FacetFactory.createFacets(result.facets));
                                 new ContentBrowseSearchEvent(result.contents).fire();
                             })
                         ;
@@ -48,9 +48,9 @@ module app_browse_filter {
         }
 
         private resetFacets(supressEvent?:boolean) {
-            new api_content.FindContentRequest<api_content.FindContentResult<api_content_json.ContentSummaryJson>>().setCount(0).send().done(
-                (jsonResponse:api_rest.JsonResponse<api_content.FindContentResult<api_content_json.ContentSummaryJson>>) => {
-                    var termsFacets:api_facet.Facet[] = api_facet.FacetFactory.createFacets(jsonResponse.getResult().facets);
+            new api.content.FindContentRequest<api.content.FindContentResult<api.content.json.ContentSummaryJson>>().setCount(0).send().done(
+                (jsonResponse:api.rest.JsonResponse<api.content.FindContentResult<api.content.json.ContentSummaryJson>>) => {
+                    var termsFacets:api.facet.Facet[] = api.facet.FacetFactory.createFacets(jsonResponse.getResult().facets);
                     this.updateFacets(termsFacets);
                     if (!supressEvent) {
                         new ContentBrowseResetEvent().fire();
@@ -99,8 +99,8 @@ module app_browse_filter {
             return ranges;
         }
 
-        private lastModifiedGroupFacetFilter(facet:api_facet.Facet) {
-            return facet instanceof api_facet.QueryFacet;
+        private lastModifiedGroupFacetFilter(facet:api.facet.Facet) {
+            return facet instanceof api.facet.QueryFacet;
         }
     }
 

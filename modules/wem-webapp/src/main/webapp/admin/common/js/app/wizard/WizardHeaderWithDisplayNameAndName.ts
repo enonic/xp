@@ -1,4 +1,4 @@
-module api_app_wizard {
+module api.app.wizard {
 
     export class WizardHeaderWithDisplayNameAndNameBuilder {
 
@@ -15,32 +15,32 @@ module api_app_wizard {
 
     }
 
-    export class WizardHeaderWithDisplayNameAndName extends WizardHeader implements api_event.Observable {
+    export class WizardHeaderWithDisplayNameAndName extends WizardHeader implements api.event.Observable {
 
         private displayNameGenerator: DisplayNameGenerator;
 
         private forbiddenChars: RegExp = /[^a-z0-9\-]+/ig;
 
-        private displayNameEl: api_ui.TextInput;
+        private displayNameEl: api.ui.TextInput;
 
         private displayNameProgrammaticallySet: boolean;
 
-        private pathEl: api_dom.SpanEl;
+        private pathEl: api.dom.SpanEl;
 
-        private nameEl: api_ui.TextInput;
+        private nameEl: api.ui.TextInput;
 
         private autoGenerateName: boolean = false;
 
-        private nameTooltip: api_ui.Tooltip;
+        private nameTooltip: api.ui.Tooltip;
 
-        private displayNameTooltip: api_ui.Tooltip;
+        private displayNameTooltip: api.ui.Tooltip;
 
         constructor(builder: WizardHeaderWithDisplayNameAndNameBuilder) {
             super();
             this.displayNameGenerator = builder.displayNameGenerator;
             this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
 
-            this.displayNameEl = api_ui.AutosizeTextInput.large().setName('displayName');
+            this.displayNameEl = api.ui.AutosizeTextInput.large().setName('displayName');
             this.displayNameEl.setPlaceholder("Display Name");
             this.displayNameEl.addListener({
                 onValueChanged: (oldValue, newValue) => {
@@ -49,11 +49,11 @@ module api_app_wizard {
             });
             this.appendChild(this.displayNameEl);
 
-            this.pathEl = new api_dom.SpanEl(null, 'path');
+            this.pathEl = new api.dom.SpanEl(null, 'path');
             this.pathEl.hide();
             this.appendChild(this.pathEl);
 
-            this.nameEl = api_ui.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
+            this.nameEl = api.ui.AutosizeTextInput.middle().setName('name').setForbiddenCharsRe(this.forbiddenChars);
             this.nameEl.setPlaceholder("name");
             this.nameEl.addListener({
                 onValueChanged: (oldValue, newValue) => {
@@ -70,7 +70,7 @@ module api_app_wizard {
                     var generatedDisplayName = this.displayNameGenerator.execute();
 
                     this.displayNameProgrammaticallySet =
-                    generatedDisplayName == actualDisplayName || api_util.isStringEmpty(actualDisplayName);
+                    generatedDisplayName == actualDisplayName || api.util.isStringEmpty(actualDisplayName);
                     console.log("*** DisplayName manually changed to [" + actualDisplayName + "] - generated is [" + generatedDisplayName +
                                 "], this.displayNameProgrammaticallySet = " +
                                 this.displayNameProgrammaticallySet);
@@ -85,9 +85,9 @@ module api_app_wizard {
                 this.autoGenerateName = currentName == generatedName;
             });
 
-            this.nameTooltip = new api_ui.Tooltip(this.nameEl, "Name", 1000, 1000, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT);
+            this.nameTooltip = new api.ui.Tooltip(this.nameEl, "Name", 1000, 1000, api.ui.Tooltip.TRIGGER_FOCUS, api.ui.Tooltip.SIDE_RIGHT);
             this.displayNameTooltip =
-            new api_ui.Tooltip(this.displayNameEl, "Display name", 1000, 1000, api_ui.Tooltip.TRIGGER_FOCUS, api_ui.Tooltip.SIDE_RIGHT);
+            new api.ui.Tooltip(this.displayNameEl, "Display name", 1000, 1000, api.ui.Tooltip.TRIGGER_FOCUS, api.ui.Tooltip.SIDE_RIGHT);
         }
 
         initNames(displayName: string, name: string, forceDisplayNameProgrammaticallySet: boolean) {

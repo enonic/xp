@@ -1,6 +1,6 @@
-module api_content_page_part{
+module api.content.page.part{
 
-    export class PartTemplateName extends api_content_page.TemplateName{
+    export class PartTemplateName extends api.content.page.TemplateName{
 
         constructor(name:string) {
             super(name);

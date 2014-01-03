@@ -1,4 +1,4 @@
-module api_ui_dialog{
+module api.ui.dialog{
 
     export interface ModalDialogConfig {
 
@@ -8,7 +8,7 @@ module api_ui_dialog{
         idPrefix?:string;
     }
 
-    export class ModalDialog extends api_dom.DivEl {
+    export class ModalDialog extends api.dom.DivEl {
 
         private config:ModalDialogConfig;
 
@@ -18,9 +18,9 @@ module api_ui_dialog{
 
         private buttonRow:ModalDialogButtonRow;
 
-        private cancelAction:api_ui.Action;
+        private cancelAction:api.ui.Action;
 
-        private actions:api_ui.Action[] = [];
+        private actions:api.ui.Action[] = [];
 
         constructor(config:ModalDialogConfig) {
             super(config.idPrefix != null ? config.idPrefix : "ModalDialog", "modal-dialog");
@@ -47,12 +47,12 @@ module api_ui_dialog{
             this.appendChild(this.buttonRow);
         }
 
-        setCancelAction(action:api_ui.Action) {
+        setCancelAction(action:api.ui.Action) {
             this.cancelAction = action;
             this.addAction(action);
         }
 
-        getCancelAction():api_ui.Action {
+        getCancelAction():api.ui.Action {
             return this.cancelAction;
         }
 
@@ -60,11 +60,11 @@ module api_ui_dialog{
             this.title.setTitle(value);
         }
 
-        appendChildToContentPanel(child:api_dom.Element) {
+        appendChildToContentPanel(child:api.dom.Element) {
             this.contentPanel.appendChild(child);
         }
 
-        addAction(action:api_ui.Action) {
+        addAction(action:api.ui.Action) {
             this.actions.push(action);
             this.buttonRow.addAction(action);
         }
@@ -81,26 +81,26 @@ module api_ui_dialog{
 
         close() {
 
-            api_ui.BodyMask.get().deActivate();
+            api.ui.BodyMask.get().deActivate();
 
             this.hide();
 
-            api_ui.KeyBindings.get().unshelveBindings();
+            api.ui.KeyBindings.get().unshelveBindings();
         }
 
         open() {
 
-            api_ui.BodyMask.get().activate();
+            api.ui.BodyMask.get().activate();
 
-            api_ui.KeyBindings.get().shelveBindings();
+            api.ui.KeyBindings.get().shelveBindings();
 
             this.show();
 
-            api_ui.KeyBindings.get().bindKeys(api_ui.Action.getKeyBindings(this.actions));
+            api.ui.KeyBindings.get().bindKeys(api.ui.Action.getKeyBindings(this.actions));
         }
     }
 
-    export class ModalDialogTitle extends api_dom.H2El {
+    export class ModalDialogTitle extends api.dom.H2El {
 
         constructor(title:string) {
             super("ModalDialogTitle");
@@ -112,20 +112,20 @@ module api_ui_dialog{
         }
     }
 
-    export class ModalDialogContentPanel extends api_dom.DivEl {
+    export class ModalDialogContentPanel extends api.dom.DivEl {
 
         constructor() {
             super("ModalDialogContentPanel", "content-panel");
         }
     }
 
-    export class ModalDialogButtonRow extends api_dom.DivEl {
+    export class ModalDialogButtonRow extends api.dom.DivEl {
 
         constructor() {
             super("ModalDialogButtonRow", "button-row");
         }
 
-        addAction(action:api_ui.Action) {
+        addAction(action:api.ui.Action) {
 
             var button = new DialogButton(action);
             this.appendChild(button);

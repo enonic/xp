@@ -1,10 +1,10 @@
-module api_content_page_json{
+module api.content.page.json{
 
     export interface PageJson{
 
         template:string;
 
-        config: api_data_json.DataTypeWrapperJson[];
+        config: api.data.json.DataTypeWrapperJson[];
 
     }
 }

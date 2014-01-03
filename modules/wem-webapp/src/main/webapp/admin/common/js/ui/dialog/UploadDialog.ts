@@ -1,6 +1,6 @@
-module api_ui_dialog {
+module api.ui.dialog {
 
-    export class UploadDialog extends api_ui_dialog.ModalDialog {
+    export class UploadDialog extends api.ui.dialog.ModalDialog {
 
         private uploader:UploadDialogUploaderEl;
 
@@ -14,7 +14,7 @@ module api_ui_dialog {
 
             this.getEl().addClass("upload-dialog");
 
-            var descriptionEl = new api_dom.PEl();
+            var descriptionEl = new api.dom.PEl();
             descriptionEl.getEl().setInnerHtml(description);
             this.appendChildToContentPanel(descriptionEl);
 
@@ -28,7 +28,7 @@ module api_ui_dialog {
                 this.close();
             });
 
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
 
         }
 

@@ -1,6 +1,6 @@
-module api_ui_tab {
+module api.ui.tab {
 
-    export interface TabBarItemListener extends api_event.Listener {
+    export interface TabBarItemListener extends api.event.Listener {
 
         onSelected?: (tab:TabBarItem) => void;
 

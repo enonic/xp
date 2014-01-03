@@ -1,129 +1,129 @@
-module app_browse {
+module app.browse {
 
-    export class BaseContentModelEvent extends api_event.Event {
+    export class BaseContentModelEvent extends api.event.Event {
 
-        private model:api_content.ContentSummary[];
+        private model:api.content.ContentSummary[];
 
-        constructor(name:string, model:api_content.ContentSummary[]) {
+        constructor(name:string, model:api.content.ContentSummary[]) {
             this.model = model;
             super(name);
         }
 
-        getModels():api_content.ContentSummary[] {
+        getModels():api.content.ContentSummary[] {
             return this.model;
         }
     }
 
     export class GridSelectionChangeEvent extends BaseContentModelEvent {
 
-        constructor(model:api_content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             super('gridChange', model);
         }
 
         static on(handler:(event:GridSelectionChangeEvent) => void) {
-            api_event.onEvent('gridChange', handler);
+            api.event.onEvent('gridChange', handler);
         }
     }
 
     export class ShowNewContentDialogEvent extends BaseContentModelEvent {
 
-        private parentContent:api_content.ContentSummary;
+        private parentContent:api.content.ContentSummary;
 
-        constructor(parentContent:api_content.ContentSummary) {
+        constructor(parentContent:api.content.ContentSummary) {
             super('showNewContentDialog', [parentContent]);
             this.parentContent = parentContent;
         }
 
-        getParentContent():api_content.ContentSummary {
+        getParentContent():api.content.ContentSummary {
             return this.parentContent;
         }
 
         static on(handler:(event:ShowNewContentDialogEvent) => void) {
-            api_event.onEvent('showNewContentDialog', handler);
+            api.event.onEvent('showNewContentDialog', handler);
         }
     }
 
     export class EditContentEvent extends BaseContentModelEvent {
-        constructor(model:api_content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             super('editContent', model);
         }
 
         static on(handler:(event:EditContentEvent) => void) {
-            api_event.onEvent('editContent', handler);
+            api.event.onEvent('editContent', handler);
         }
     }
 
     export class ViewContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             super('openContent', model);
         }
 
         static on(handler:(event:ViewContentEvent) => void) {
-            api_event.onEvent('openContent', handler);
+            api.event.onEvent('openContent', handler);
         }
     }
 
     export class ShowDetailsEvent extends BaseContentModelEvent {
 
-        constructor(model:api_content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             super('showDetails', model);
         }
 
         static on(handler:(event:ShowDetailsEvent) => void) {
-            api_event.onEvent('ShowDetails', handler);
+            api.event.onEvent('ShowDetails', handler);
         }
 
     }
 
     export class ShowPreviewEvent extends BaseContentModelEvent {
 
-        constructor(model:api_content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             super('showPreview', model);
         }
 
         static on(handler:(event:ShowPreviewEvent) => void) {
-            api_event.onEvent('ShowPreview', handler);
+            api.event.onEvent('ShowPreview', handler);
         }
 
     }
 
     export class DuplicateContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             super('duplicateContent', model);
         }
 
         static on(handler:(event:DuplicateContentEvent) => void) {
-            api_event.onEvent('duplicateContent', handler);
+            api.event.onEvent('duplicateContent', handler);
         }
 
     }
 
     export class ContentDeletePromptEvent extends BaseContentModelEvent {
 
-        constructor(model:api_content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             super('deleteContent', model);
         }
 
         static on(handler:(event:ContentDeletePromptEvent) => void) {
-            api_event.onEvent('deleteContent', handler);
+            api.event.onEvent('deleteContent', handler);
         }
     }
 
     export class MoveContentEvent extends BaseContentModelEvent {
 
-        constructor(model:api_content.ContentSummary[]) {
+        constructor(model:api.content.ContentSummary[]) {
             super('moveContent', model);
         }
 
         static on(handler:(event:MoveContentEvent) => void) {
-            api_event.onEvent('moveContent', handler);
+            api.event.onEvent('moveContent', handler);
         }
 
     }
 
-    export class ShowContextMenuEvent extends api_event.Event {
+    export class ShowContextMenuEvent extends api.event.Event {
 
         private x:number;
 
@@ -144,23 +144,23 @@ module app_browse {
         }
 
         static on(handler:(event:ShowContextMenuEvent) => void) {
-            api_event.onEvent('showContextMenu', handler);
+            api.event.onEvent('showContextMenu', handler);
         }
     }
 
-    export class CloseContentEvent extends api_event.Event {
+    export class CloseContentEvent extends api.event.Event {
 
-        private panel:api_ui.Panel;
+        private panel:api.ui.Panel;
 
         private checkCanRemovePanel:boolean;
 
-        constructor(panel:api_ui.Panel, checkCanRemovePanel:boolean = true) {
+        constructor(panel:api.ui.Panel, checkCanRemovePanel:boolean = true) {
             super('closeContentEvent');
             this.panel = panel;
             this.checkCanRemovePanel = checkCanRemovePanel;
         }
 
-        getPanel():api_ui.Panel {
+        getPanel():api.ui.Panel {
             return this.panel;
         }
 
@@ -169,18 +169,18 @@ module app_browse {
         }
 
         static on(handler:(event:CloseContentEvent) => void) {
-            api_event.onEvent('closeContentEvent', handler);
+            api.event.onEvent('closeContentEvent', handler);
         }
     }
 
-    export class ShowNewContentGridEvent extends api_event.Event {
+    export class ShowNewContentGridEvent extends api.event.Event {
 
         constructor() {
             super('showNewContentGridEvent');
         }
 
         static on(handler:(event:ShowNewContentGridEvent) => void) {
-            api_event.onEvent('showNewContentGridEvent', handler);
+            api.event.onEvent('showNewContentGridEvent', handler);
         }
     }
 

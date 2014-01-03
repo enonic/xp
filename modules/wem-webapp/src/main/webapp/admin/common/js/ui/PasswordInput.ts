@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export class PasswordInput extends api_dom.InputEl {
+    export class PasswordInput extends api.dom.InputEl {
 
         constructor(idPrefix?:string, className?:string) {
             super(idPrefix, className);

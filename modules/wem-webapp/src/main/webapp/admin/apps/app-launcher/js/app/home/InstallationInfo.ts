@@ -1,6 +1,6 @@
-module app_home {
+module app.home {
 
-    export class InstallationInfo extends api_dom.DivEl {
+    export class InstallationInfo extends api.dom.DivEl {
 
         private installation:string;
 

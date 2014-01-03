@@ -1,6 +1,6 @@
-module api_content{
+module api.content{
 
-    export class ContentSummary extends api_item.BaseItem implements api_node.Node {
+    export class ContentSummary extends api.item.BaseItem implements api.node.Node {
 
         private contentId:ContentId;
 
@@ -14,7 +14,7 @@ module api_content{
 
         private children:boolean;
 
-        private type:api_schema_content.ContentTypeName;
+        private type:api.schema.content.ContentTypeName;
 
         private iconUrl:string;
 
@@ -26,15 +26,15 @@ module api_content{
 
         private page:boolean;
 
-        static fromJsonArray(jsonArray:api_content_json.ContentSummaryJson[]):ContentSummary[] {
+        static fromJsonArray(jsonArray:api.content.json.ContentSummaryJson[]):ContentSummary[] {
             var array:ContentSummary[] = [];
-            jsonArray.forEach((json:api_content_json.ContentSummaryJson) => {
+            jsonArray.forEach((json:api.content.json.ContentSummaryJson) => {
                 array.push(new ContentSummary(json));
             });
             return array;
         }
 
-        constructor(json:api_content_json.ContentSummaryJson) {
+        constructor(json:api.content.json.ContentSummaryJson) {
             super(json);
             this.contentId = new ContentId( json.id );
             this.name = ContentName.fromString(json.name);
@@ -42,7 +42,7 @@ module api_content{
             this.path = ContentPath.fromString(json.path);
             this.root = json.isRoot;
             this.children = json.hasChildren;
-            this.type = new api_schema_content.ContentTypeName(json.type);
+            this.type = new api.schema.content.ContentTypeName(json.type);
             this.iconUrl = json.iconUrl;
             this.modifier = json.modifier;
             this.owner = json.owner;
@@ -78,7 +78,7 @@ module api_content{
             return this.children;
         }
 
-        getType():api_schema_content.ContentTypeName {
+        getType():api.schema.content.ContentTypeName {
             return this.type;
         }
 

@@ -1,4 +1,4 @@
-module api_remote {
+module api.remote {
 
     export interface Item {
         editable:boolean;

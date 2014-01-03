@@ -1,4 +1,4 @@
-module api_util {
+module api.util {
 
     // TODO: Add module name to classname
     export function getClassName(instance) {

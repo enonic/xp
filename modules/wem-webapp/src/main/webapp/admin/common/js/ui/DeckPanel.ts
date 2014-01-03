@@ -1,9 +1,9 @@
-module api_ui {
+module api.ui {
 
     /**
      * A panel having multiple child panels, but showing only one at a time - like a deck of cards.
      */
-    export class DeckPanel extends Panel implements api_event.Observable {
+    export class DeckPanel extends Panel implements api.event.Observable {
 
         private panels:Panel[] = [];
 
@@ -28,7 +28,7 @@ module api_ui {
          * @param panel
          * @returns {number} The index for the added Panel.
          */
-        addPanel<T extends api_ui.Panel>(panel:T):number {
+        addPanel<T extends api.ui.Panel>(panel:T):number {
             panel.hide();
             panel.setDoOffset(false);
             this.appendChild(panel);
@@ -51,7 +51,7 @@ module api_ui {
             return this.getPanelIndex(this.panelShown);
         }
 
-        getPanelIndex<T extends api_ui.Panel>(panel:T):number {
+        getPanelIndex<T extends api.ui.Panel>(panel:T):number {
             var size = this.getSize();
             for (var i = 0; i < size; i++) {
                 if (this.panels[i] === panel) {

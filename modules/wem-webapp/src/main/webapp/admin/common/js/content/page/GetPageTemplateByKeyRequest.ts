@@ -1,10 +1,10 @@
-module api_content_page {
+module api.content.page {
 
-    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<api_content_page_json.PageTemplateJson> {
+    export class GetPageTemplateByKeyRequest extends PageTemplateResourceRequest<api.content.page.json.PageTemplateJson> {
 
-        private pageTemplateKey:api_content_page.PageTemplateKey;
+        private pageTemplateKey:api.content.page.PageTemplateKey;
 
-        constructor(pageTemplateKey:api_content_page.PageTemplateKey) {
+        constructor(pageTemplateKey:api.content.page.PageTemplateKey) {
             super();
             super.setMethod("GET");
             this.pageTemplateKey = pageTemplateKey;
@@ -16,17 +16,17 @@ module api_content_page {
             };
         }
 
-        getRequestPath():api_rest.Path {
+        getRequestPath():api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_content_page.PageTemplate> {
+        sendAndParse(): JQueryPromise<api.content.page.PageTemplate> {
 
-            var deferred = jQuery.Deferred<api_content_page.PageTemplate>();
+            var deferred = jQuery.Deferred<api.content.page.PageTemplate>();
 
-            this.send().done((response: api_rest.JsonResponse<api_content_page_json.PageTemplateJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.content.page.json.PageTemplateJson>) => {
                 deferred.resolve(this.fromJsonToPageTemplate(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

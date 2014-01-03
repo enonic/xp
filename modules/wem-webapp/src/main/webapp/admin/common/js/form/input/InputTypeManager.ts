@@ -1,4 +1,4 @@
-module api_form_input {
+module api.form.input {
 
     /**
      *      Class to manage input types and their visual representation
@@ -33,7 +33,7 @@ module api_form_input {
             }
         }
 
-        static createView(inputTypeName:string, config?:api_form_inputtype.InputTypeViewConfig<any>):api_form_inputtype.InputTypeView {
+        static createView(inputTypeName:string, config?:api.form.inputtype.InputTypeViewConfig<any>):api.form.inputtype.InputTypeView {
 
             if (InputTypeManager.isRegistered(inputTypeName)) {
                 var inputType = Object.create(InputTypeManager.inputTypes[inputTypeName].prototype);
@@ -55,6 +55,6 @@ module api_form_input {
  */
 module wem {
 
-    export var inputTypes = api_form_input.InputTypeManager;
+    export var inputTypes = api.form.input.InputTypeManager;
 
 }

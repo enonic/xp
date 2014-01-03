@@ -1,14 +1,14 @@
-module api_form_inputtype_content_image {
+module api.form.inputtype.content.image {
 
-    export class SelectedOptionsView extends api_ui_combobox.SelectedOptionsView<api_content.ContentSummary> {
+    export class SelectedOptionsView extends api.ui.combobox.SelectedOptionsView<api.content.ContentSummary> {
 
         private numberOfOptionsPerRow:number = 3;
 
         private optionCount:number = 0;
 
-        private clearer:api_dom.DivEl;
+        private clearer:api.dom.DivEl;
 
-        private editedSelectedOptionView:api_ui_combobox.SelectedOptionView<api_content.ContentSummary>;
+        private editedSelectedOptionView:api.ui.combobox.SelectedOptionView<api.content.ContentSummary>;
 
         private dialog:ImageSelectorDialog;
 
@@ -22,16 +22,16 @@ module api_form_inputtype_content_image {
                 this.editedSelectedOptionView.notifySelectedOptionToBeRemoved();
             });
 
-            this.clearer = new api_dom.DivEl(null, "clearer");
+            this.clearer = new api.dom.DivEl(null, "clearer");
             this.appendChild(this.clearer);
         }
 
-        createSelectedOption(option:api_ui_combobox.Option<api_content.ContentSummary>, index:number):api_ui_combobox.SelectedOption<api_content.ContentSummary> {
+        createSelectedOption(option:api.ui.combobox.Option<api.content.ContentSummary>, index:number):api.ui.combobox.SelectedOption<api.content.ContentSummary> {
 
-            return new api_ui_combobox.SelectedOption<api_content.ContentSummary>(new SelectedOptionView(option), option, index);
+            return new api.ui.combobox.SelectedOption<api.content.ContentSummary>(new SelectedOptionView(option), option, index);
         }
 
-        addOptionView(selectedOption:api_ui_combobox.SelectedOption<api_content.ContentSummary>) {
+        addOptionView(selectedOption:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
 
             this.dialog.hide();
             var optionView:SelectedOptionView = <SelectedOptionView>selectedOption.getOptionView();
@@ -47,7 +47,7 @@ module api_form_inputtype_content_image {
             this.refreshStyles();
         }
 
-        removeOptionView(selectedOption:api_ui_combobox.SelectedOption<api_content.ContentSummary>) {
+        removeOptionView(selectedOption:api.ui.combobox.SelectedOption<api.content.ContentSummary>) {
             super.removeOptionView(selectedOption);
 
             this.optionCount--;
@@ -55,7 +55,7 @@ module api_form_inputtype_content_image {
             this.refreshStyles();
         }
 
-        showImageSelectorDialog(selectedOption:api_ui_combobox.Option<api_content.ContentSummary>, selectedOptionIndex:number) {
+        showImageSelectorDialog(selectedOption:api.ui.combobox.Option<api.content.ContentSummary>, selectedOptionIndex:number) {
 
             var content = selectedOption.displayValue;
 

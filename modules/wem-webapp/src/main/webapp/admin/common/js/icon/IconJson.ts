@@ -1,4 +1,4 @@
-module api_icon {
+module api.icon {
 
     export interface IconJson {
 

@@ -1,8 +1,8 @@
-module api_form_inputtype_support {
+module api.form.inputtype.support {
 
-    export class BaseInputTypeView extends api_dom.DivEl implements api_form_inputtype.InputTypeView {
+    export class BaseInputTypeView extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private input:api_form.Input;
+        private input:api.form.Input;
 
         private inputOccurrences:InputOccurrences;
 
@@ -18,11 +18,11 @@ module api_form_inputtype_support {
             return false;
         }
 
-        addFormItemOccurrencesListener(listener:api_form.FormItemOccurrencesListener) {
+        addFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener) {
             this.inputOccurrences.addListener(listener);
         }
 
-        removeFormItemOccurrencesListener(listener:api_form.FormItemOccurrencesListener) {
+        removeFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener) {
             this.inputOccurrences.removeListener(listener);
         }
 
@@ -34,44 +34,44 @@ module api_form_inputtype_support {
             this.inputOccurrences.createAndAddOccurrence();
         }
 
-        layout(input:api_form.Input, properties:api_data.Property[]) {
+        layout(input:api.form.Input, properties:api.data.Property[]) {
 
             this.input = input;
             this.inputOccurrences = new InputOccurrences(this, this.input, properties);
             this.inputOccurrences.layout();
         }
 
-        getValues():api_data.Value[] {
+        getValues():api.data.Value[] {
 
             return this.inputOccurrences.getValues();
         }
 
-        getAttachments():api_content_attachment.Attachment[] {
+        getAttachments():api.content.attachment.Attachment[] {
             return [];
         }
 
-        validate(validationRecorder:api_form.ValidationRecorder) {
+        validate(validationRecorder:api.form.ValidationRecorder) {
 
-            this.getValues().forEach((value:api_data.Value, index:number) => {
+            this.getValues().forEach((value:api.data.Value, index:number) => {
                 if (this.valueBreaksRequiredContract(value)) {
-                    validationRecorder.registerBreaksRequiredContract(new api_data.DataId(this.input.getName(), index))
+                    validationRecorder.registerBreaksRequiredContract(new api.data.DataId(this.input.getName(), index))
                 }
             });
         }
 
-        getInput():api_form.Input {
+        getInput():api.form.Input {
             return this.input;
         }
 
-        valueBreaksRequiredContract(value:api_data.Value):boolean {
+        valueBreaksRequiredContract(value:api.data.Value):boolean {
             throw new Error("Must be implemented by inheritor");
         }
 
-        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
             throw new Error("Must be implemented by inheritor");
         }
 
-        getValue(occurrence:api_dom.Element):api_data.Value {
+        getValue(occurrence:api.dom.Element):api.data.Value {
             throw new Error("Must be implemented by inheritor");
         }
 

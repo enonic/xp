@@ -1,7 +1,7 @@
-module api_module
+module api.module
 {
     export class ModuleListResult {
 
-        modules: api_module_json.ModuleJson[];
+        modules: api.module.json.ModuleJson[];
     }
 }

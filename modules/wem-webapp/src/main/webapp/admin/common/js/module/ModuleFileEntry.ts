@@ -1,4 +1,4 @@
-module api_module{
+module api.module{
 
     export class ModuleFileEntry {
 
@@ -6,15 +6,15 @@ module api_module{
 
         private resource: string;
 
-        private entries: api_module.ModuleFileEntry[] = [];
+        private entries: api.module.ModuleFileEntry[] = [];
 
-        constructor(json:api_module_json.ModuleFileEntryJson) {
+        constructor(json:api.module.json.ModuleFileEntryJson) {
             this.name = json.name;
             this.resource = json.resource;
 
             if (json.entries != null) {
-                json.entries.forEach((entryJson:api_module_json.ModuleFileEntryJson) => {
-                    this.entries.push(new api_module.ModuleFileEntry(entryJson));
+                json.entries.forEach((entryJson:api.module.json.ModuleFileEntryJson) => {
+                    this.entries.push(new api.module.ModuleFileEntry(entryJson));
                 });
             }
         }
@@ -27,7 +27,7 @@ module api_module{
             return this.resource;
         }
 
-        getEntries():api_module.ModuleFileEntry[] {
+        getEntries():api.module.ModuleFileEntry[] {
             return this.entries;
         }
     }

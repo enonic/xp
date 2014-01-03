@@ -1,10 +1,10 @@
-module api_ui_tab {
+module api.ui.tab {
 
     export interface TabBarItemOptions {
         removable?:boolean;
     }
 
-    export class TabBarItem extends api_dom.LiEl implements api_ui.PanelNavigationItem, api_event.Observable {
+    export class TabBarItem extends api.dom.LiEl implements api.ui.PanelNavigationItem, api.event.Observable {
 
         private label: string;
 

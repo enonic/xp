@@ -1,10 +1,10 @@
-module api_content_site_template {
+module api.content.site.template {
 
     export class ExportSiteTemplateRequest extends SiteTemplateResourceRequest<any> {
 
-        private siteTemplateKey: api_content_site_template.SiteTemplateKey;
+        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        constructor(siteTemplateKey:api_content_site_template.SiteTemplateKey) {
+        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey) {
             super();
             super.setMethod("GET");
             this.siteTemplateKey = siteTemplateKey;
@@ -16,8 +16,8 @@ module api_content_site_template {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "export");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "export");
         }
     }
 }

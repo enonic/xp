@@ -1,4 +1,4 @@
-module api_ui {
+module api.ui {
 
     export interface ImageUploaderConfig {
         multiSelection?: boolean;
@@ -9,19 +9,19 @@ module api_ui {
         browseEnabled?: boolean;
     }
 
-    export class ImageUploader extends api_dom.FormInputEl implements api_event.Observable {
+    export class ImageUploader extends api.dom.FormInputEl implements api.event.Observable {
 
         private name:string;
         private value:string;
         private uploadUrl:string;
         private uploader;
 
-        private input:api_ui.TextInput;
-        private dropzone:api_dom.DivEl;
-        private progress:api_ui.ProgressBar;
-        private cancelBtn:api_ui.Button;
-        private image:api_dom.ImgEl;
-        private resetBtn:api_ui.Button;
+        private input:api.ui.TextInput;
+        private dropzone:api.dom.DivEl;
+        private progress:api.ui.ProgressBar;
+        private cancelBtn:api.ui.Button;
+        private image:api.dom.ImgEl;
+        private resetBtn:api.ui.Button;
 
         private multiSelection:boolean;
         private buttonsVisible:boolean;
@@ -42,23 +42,23 @@ module api_ui {
             this.browseEnabled = (config.browseEnabled == undefined) ? true : config.browseEnabled;
 
             if (config.textInput) {
-                this.input = api_ui.TextInput.middle();
+                this.input = api.ui.TextInput.middle();
                 this.input.setPlaceholder("Paste URL to image here");
                 this.appendChild(this.input);
             }
 
-            this.dropzone = new api_dom.DivEl("DropZone", "dropzone");
+            this.dropzone = new api.dom.DivEl("DropZone", "dropzone");
             this.refreshDropzoneLabel();
             this.appendChild(this.dropzone);
 
-            this.progress = new api_ui.ProgressBar();
+            this.progress = new api.ui.ProgressBar();
             this.progress.setClass("progress");
             this.appendChild(this.progress);
 
-            this.image = new api_dom.ImgEl();
+            this.image = new api.dom.ImgEl();
             this.appendChild(this.image);
 
-            this.cancelBtn = new api_ui.Button("Cancel");
+            this.cancelBtn = new api.ui.Button("Cancel");
             this.cancelBtn.setVisible(this.buttonsVisible);
             this.cancelBtn.setClickListener(() => {
                 this.stop();
@@ -66,7 +66,7 @@ module api_ui {
             });
             this.appendChild(this.cancelBtn);
 
-            this.resetBtn = new api_ui.Button("Reset");
+            this.resetBtn = new api.ui.Button("Reset");
             this.resetBtn.setVisible(this.buttonsVisible);
             this.resetBtn.setClickListener(() => {
                 this.reset();
@@ -102,7 +102,7 @@ module api_ui {
             this.value = value;
             var src:string;
             if( value && value.indexOf("http://") == -1 ) {
-                src = api_util.getAdminUri(value ? 'rest/blob/' + value : 'common/images/x-user-photo.png');
+                src = api.util.getAdminUri(value ? 'rest/blob/' + value : 'common/images/x-user-photo.png');
             } else {
                 src = value;
             }
@@ -169,8 +169,8 @@ module api_ui {
                 url: this.uploadUrl,
                 multipart: true,
                 drop_element: elId,
-                flash_swf_url: api_util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
-                silverlight_xap_url: api_util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
+                flash_swf_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.flash.swf'),
+                silverlight_xap_url: api.util.getUri('common/js/fileupload/plupload/js/plupload.silverlight.xap'),
                 filters: [
                     {title: 'Image files', extensions: 'jpg,gif,png'}
                 ]

@@ -1,24 +1,24 @@
-module app_wizard {
+module app.wizard {
 
-    export class MixinCreatedEvent extends api_event.Event {
+    export class MixinCreatedEvent extends api.event.Event {
 
         constructor() {
             super('mixinCreated');
         }
 
-        static on(handler:(event:app_wizard.MixinCreatedEvent) => void) {
-            api_event.onEvent('mixinCreated', handler);
+        static on(handler:(event:app.wizard.MixinCreatedEvent) => void) {
+            api.event.onEvent('mixinCreated', handler);
         }
     }
 
-    export class MixinUpdatedEvent extends api_event.Event {
+    export class MixinUpdatedEvent extends api.event.Event {
 
         constructor() {
             super('mixinUpdated');
         }
 
-        static on(handler:(event:app_wizard.MixinUpdatedEvent) => void) {
-            api_event.onEvent('mixinUpdated', handler);
+        static on(handler:(event:app.wizard.MixinUpdatedEvent) => void) {
+            api.event.onEvent('mixinUpdated', handler);
         }
     }
 

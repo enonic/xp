@@ -1,29 +1,29 @@
-module api_content {
-    export class ContentComboBox extends api_ui_combobox.RichComboBox<api_content.ContentSummary> {
+module api.content {
+    export class ContentComboBox extends api.ui.combobox.RichComboBox<api.content.ContentSummary> {
 
         private multipleSelection:boolean;
 
         constructor(multiple:boolean = true)
         {
-            super(new api_form_inputtype_content.ContentSummaryLoader(), new RootContentSelectedOptionsView());
+            super(new api.form.inputtype.content.ContentSummaryLoader(), new RootContentSelectedOptionsView());
             this.multipleSelection = multiple;
         }
 
 
-        optionFormatter(row:number, cell:number, content:api_content.ContentSummary, columnDef:any, dataContext:api_ui_combobox.Option<api_content.ContentSummary>):string {
-            var img = new api_dom.ImgEl();
+        optionFormatter(row:number, cell:number, content:api.content.ContentSummary, columnDef:any, dataContext:api.ui.combobox.Option<api.content.ContentSummary>):string {
+            var img = new api.dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());
 
-            var contentSummary = new api_dom.DivEl();
+            var contentSummary = new api.dom.DivEl();
             contentSummary.setClass("item-summary");
 
-            var displayName = new api_dom.DivEl();
+            var displayName = new api.dom.DivEl();
             displayName.setClass("display-name");
             displayName.getEl().setAttribute("title", content.getDisplayName());
             displayName.getEl().setInnerHtml(content.getDisplayName());
 
-            var path = new api_dom.DivEl();
+            var path = new api.dom.DivEl();
             path.setClass("path");
             path.getEl().setAttribute("title", content.getPath().toString());
             path.getEl().setInnerHtml(content.getPath().toString());
@@ -34,39 +34,39 @@ module api_content {
             return img.toString() + contentSummary.toString();
         }
 
-        createConfig():api_ui_combobox.ComboBoxConfig<api_content.ContentSummary> {
-            var config:api_ui_combobox.ComboBoxConfig<api_content.ContentSummary> = super.createConfig();
+        createConfig():api.ui.combobox.ComboBoxConfig<api.content.ContentSummary> {
+            var config:api.ui.combobox.ComboBoxConfig<api.content.ContentSummary> = super.createConfig();
             config.maximumOccurrences = this.multipleSelection ? 0 : 1;
             return config;
         }
     }
 
-    export class RootContentSelectedOptionsView extends api_ui_combobox.SelectedOptionsView<api_content.ContentSummary> {
+    export class RootContentSelectedOptionsView extends api.ui.combobox.SelectedOptionsView<api.content.ContentSummary> {
 
-        createSelectedOption(option:api_ui_combobox.Option<api_content.ContentSummary>, index:number):api_ui_combobox.SelectedOption<api_content.ContentSummary> {
+        createSelectedOption(option:api.ui.combobox.Option<api.content.ContentSummary>, index:number):api.ui.combobox.SelectedOption<api.content.ContentSummary> {
             var optionView = new RootContentSelectedOptionView( option );
-            return new api_ui_combobox.SelectedOption<api_content.ContentSummary>( optionView, option, index);
+            return new api.ui.combobox.SelectedOption<api.content.ContentSummary>( optionView, option, index);
         }
     }
 
-    export class RootContentSelectedOptionView extends api_ui_combobox.RichSelectedOptionView<api_content.ContentSummary> {
+    export class RootContentSelectedOptionView extends api.ui.combobox.RichSelectedOptionView<api.content.ContentSummary> {
 
 
-        constructor(option:api_ui_combobox.Option<api_content.ContentSummary>) {
+        constructor(option:api.ui.combobox.Option<api.content.ContentSummary>) {
             super(option);
         }
 
-        resolveIconUrl(content:api_content.ContentSummary):string
+        resolveIconUrl(content:api.content.ContentSummary):string
         {
             return content.getIconUrl();
         }
 
-        resolveTitle(content:api_content.ContentSummary):string
+        resolveTitle(content:api.content.ContentSummary):string
         {
             return content.getDisplayName().toString();
         }
 
-        resolveSubTitle(content:api_content.ContentSummary):string
+        resolveSubTitle(content:api.content.ContentSummary):string
         {
             return content.getPath().toString();
         }

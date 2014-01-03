@@ -1,15 +1,15 @@
-module app_browse {
+module app.browse {
 
-    export class ModuleBrowsePanel extends api_app_browse.BrowsePanel<api_module.ModuleSummary> {
+    export class ModuleBrowsePanel extends api.app.browse.BrowsePanel<api.module.ModuleSummary> {
 
-        private browseActions:app_browse.ModuleBrowseActions;
+        private browseActions:app.browse.ModuleBrowseActions;
 
         private moduleTreeGridPanel:ModuleTreeGridPanel;
 
         private toolbar:ModuleBrowseToolbar;
 
         constructor() {
-            var treeGridContextMenu = new app_browse.ModuleTreeGridContextMenu();
+            var treeGridContextMenu = new app.browse.ModuleTreeGridContextMenu();
             this.moduleTreeGridPanel = components.gridPanel = new ModuleTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
@@ -30,35 +30,35 @@ module app_browse {
                 filterPanel: undefined
             });
 
-            api_module.ModuleImportedEvent.on((event:api_module.ModuleImportedEvent) => {
+            api.module.ModuleImportedEvent.on((event:api.module.ModuleImportedEvent) => {
                 this.setRefreshNeeded(true);
                 this.refreshFilterAndGrid();
             });
 
-            api_module.ModuleDeletedEvent.on((event:api_module.ModuleDeletedEvent) => {
+            api.module.ModuleDeletedEvent.on((event:api.module.ModuleDeletedEvent) => {
                 var moduleKey = event.getModuleKey();
                 this.moduleTreeGridPanel.remove(moduleKey.toString());
             });
 
-            this.moduleTreeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
-                onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
+            this.moduleTreeGridPanel.addListener(<api.app.browse.grid.TreeGridPanelListener>{
+                onSelectionChanged: (event:api.app.browse.grid.TreeGridSelectionChangedEvent) => {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }
             });
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem<api_module.ModuleSummary>[] {
+        extModelsToBrowseItems(models:Ext_data_Model[]):api.app.browse.BrowseItem<api.module.ModuleSummary>[] {
 
-            var browseItems:api_app_browse.BrowseItem<api_module.ModuleSummary>[] = [];
+            var browseItems:api.app.browse.BrowseItem<api.module.ModuleSummary>[] = [];
 
             models.forEach((model:Ext_data_Model, index:number) => {
 
-                var moduleModel:api_module.ModuleSummary = api_module.ModuleSummary.fromExtModel(model);
+                var moduleModel:api.module.ModuleSummary = api.module.ModuleSummary.fromExtModel(model);
 
-                var item = new api_app_browse.BrowseItem<api_module.ModuleSummary>(moduleModel ).
+                var item = new api.app.browse.BrowseItem<api.module.ModuleSummary>(moduleModel ).
                     setDisplayName(moduleModel.getDisplayName()).
                     setPath(moduleModel.getName()).
-                    setIconUrl(api_util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'));
+                    setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'));
 
                 browseItems.push(item);
             });

@@ -1,12 +1,12 @@
-module api_content_site_template_json {
+module api.content.site.template.json {
 
-    export interface SiteTemplateSummaryJson extends api_item.ItemJson {
+    export interface SiteTemplateSummaryJson extends api.item.ItemJson {
 
         name:string;
 
         displayName:string;
 
-        vendor:api_content_site_json.VendorJson;
+        vendor:api.content.site.json.VendorJson;
 
         modules:string[];
 

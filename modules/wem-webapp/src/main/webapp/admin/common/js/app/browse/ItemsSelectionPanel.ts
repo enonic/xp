@@ -1,6 +1,6 @@
-module api_app_browse {
+module api.app.browse {
 
-    export class ItemsSelectionPanel<M> extends api_ui.Panel implements api_event.Observable {
+    export class ItemsSelectionPanel<M> extends api.ui.Panel implements api.event.Observable {
 
         private listeners:ItemsSelectionPanelListener<M>[] = [];
         private items:BrowseItem<M>[] = [];
@@ -98,9 +98,9 @@ module api_app_browse {
 
     }
 
-    export class SelectionItem<M> extends api_dom.DivEl {
+    export class SelectionItem<M> extends api.dom.DivEl {
 
-        private browseItem:api_app_browse.BrowseItem<M>;
+        private browseItem:api.app.browse.BrowseItem<M>;
 
         constructor(browseItem:BrowseItem<M>, removeCallback?:() => void) {
             super("SelectionItem", "browse-selection-item");
@@ -123,7 +123,7 @@ module api_app_browse {
         }
 
         private setIcon(iconUrl:string, size:number) {
-            this.getEl().appendChild(api_util.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
+            this.getEl().appendChild(api.util.ImageLoader.get(iconUrl + "?size=" + size, 32, 32));
         }
 
         private setData(title:string, subtitle:string) {

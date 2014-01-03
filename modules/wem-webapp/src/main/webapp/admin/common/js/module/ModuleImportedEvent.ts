@@ -1,13 +1,13 @@
-module api_module {
+module api.module {
 
-    export class ModuleImportedEvent extends api_event.Event {
+    export class ModuleImportedEvent extends api.event.Event {
 
         constructor() {
             super( 'ModuleImportedEvent' );
         }
 
         static on( handler: (event: ModuleImportedEvent ) => void ) {
-            api_event.onEvent( 'ModuleImportedEvent', handler );
+            api.event.onEvent( 'ModuleImportedEvent', handler );
         }
 
     }

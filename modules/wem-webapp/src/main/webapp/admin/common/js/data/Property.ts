@@ -1,4 +1,4 @@
-module api_data{
+module api.data{
 
     export class Property extends Data {
 
@@ -10,7 +10,7 @@ module api_data{
             var value;
             if ( valueType == ValueTypes.DATA )
             {
-                var rootDataSet = DataFactory.createRootDataSet( <api_data_json.DataJson[]>json.set );
+                var rootDataSet = DataFactory.createRootDataSet( <api.data.json.DataJson[]>json.set );
                 value = new Value( rootDataSet, valueType );
             }
             else
@@ -30,7 +30,7 @@ module api_data{
         }
 
         constructor(name:string, value:Value) {
-            api_util.assertNotNull( value, "value of a Property cannot be null" );
+            api.util.assertNotNull( value, "value of a Property cannot be null" );
             super(name);
             this.value = value;
         }
@@ -47,9 +47,9 @@ module api_data{
             return this.value.getType();
         }
 
-        toPropertyJson():api_data_json.DataTypeWrapperJson {
+        toPropertyJson():api.data.json.DataTypeWrapperJson {
 
-            return <api_data_json.DataTypeWrapperJson>{ Property:{
+            return <api.data.json.DataTypeWrapperJson>{ Property:{
                 name: this.getName(),
                 type: this.getType().toString(),
                 value: this.getString()

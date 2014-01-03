@@ -1,6 +1,6 @@
-module api_facet {
+module api.facet {
 
-    export class FacetView extends api_dom.DivEl {
+    export class FacetView extends api.dom.DivEl {
 
         private parentGroupView:FacetGroupView;
 

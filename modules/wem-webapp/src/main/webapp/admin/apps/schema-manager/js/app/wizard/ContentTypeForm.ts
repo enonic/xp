@@ -1,23 +1,23 @@
-module app_wizard {
+module app.wizard {
 
-    export class ContentTypeForm extends api_ui_form.Form {
+    export class ContentTypeForm extends api.ui.form.Form {
 
         constructor() {
             super("ContentTypeForm");
 
-            var fieldset = new api_ui_form.Fieldset(this, "Config");
+            var fieldset = new api.ui.form.Fieldset(this, "Config");
 
-            var xmlTextArea:api_ui.CodeArea = new api_ui.CodeAreaBuilder().
+            var xmlTextArea:api.ui.CodeArea = new api.ui.CodeAreaBuilder().
                 setName("xml").
                 setMode("xml").
                 setLineNumbers(true).
-                setSize(api_ui.TextAreaSize.LARGE).
+                setSize(api.ui.TextAreaSize.LARGE).
                 build();
 
-            var text = api_ui.TextInput.middle();
+            var text = api.ui.TextInput.middle();
             text.setName("test");
 
-            fieldset.add(new api_ui_form.FormItem("XML", xmlTextArea));
+            fieldset.add(new api.ui.form.FormItem("XML", xmlTextArea));
 
             this.fieldset(fieldset);
 

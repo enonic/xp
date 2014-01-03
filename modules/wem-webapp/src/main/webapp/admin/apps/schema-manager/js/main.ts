@@ -9,25 +9,25 @@ module app {
 }
 
 module components {
-    export var detailPanel:app_browse.SchemaBrowseItemPanel;
-    export var gridPanel:app_browse.SchemaTreeGridPanel;
-    export var newSchemaDialog:app_new.NewSchemaDialog;
-    export var schemaDeleteDialog:app_delete.SchemaDeleteDialog;
+    export var detailPanel:app.browse.SchemaBrowseItemPanel;
+    export var gridPanel:app.browse.SchemaTreeGridPanel;
+    export var newSchemaDialog:app.create.NewSchemaDialog;
+    export var schemaDeleteDialog:app.remove.SchemaDeleteDialog;
 }
 
 window.onload = () => {
-    var appBar = new api_app.AppBar("Schema Manager", new api_app.AppBarTabMenu("SchemaAppBarTabMenu"));
+    var appBar = new api.app.AppBar("Schema Manager", new api.app.AppBarTabMenu("SchemaAppBarTabMenu"));
     var appPanel = new app.SchemaAppPanel(appBar);
 
-    api_dom.Body.get().appendChild(appBar);
-    api_dom.Body.get().appendChild(appPanel);
+    api.dom.Body.get().appendChild(appBar);
+    api.dom.Body.get().appendChild(appPanel);
 
     appPanel.init();
 
     window.onmessage = (e:MessageEvent) => {
         if( e.data.appLauncherEvent ) {
-            var eventType:api_app.AppLauncherEventType = api_app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if( eventType ==  api_app.AppLauncherEventType.Show ) {
+            var eventType:api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            if( eventType ==  api.app.AppLauncherEventType.Show ) {
                 appPanel.activateCurrentKeyBindings();
             }
         }

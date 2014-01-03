@@ -1,4 +1,4 @@
-module api_notify {
+module api.notify {
 
     export class NotifyOpts {
         message:string;
@@ -32,7 +32,7 @@ module api_notify {
         for (var i = 0; i < actions.length; i++) {
             opts.listeners.push({
                 fn: actions[i].getHandler(),
-                delegate: 'notify_action_' + i,
+                delegate: 'notify.action_' + i,
                 stopEvent: true
             });
         }
@@ -52,7 +52,7 @@ module api_notify {
                     linkHtml += ', ';
                 }
 
-                linkHtml += '<a href="#" class="notify_action_"' + i + '">';
+                linkHtml += '<a href="#" class="notify.action_"' + i + '">';
                 linkHtml += actions[i].getName() + "</a>";
             }
 

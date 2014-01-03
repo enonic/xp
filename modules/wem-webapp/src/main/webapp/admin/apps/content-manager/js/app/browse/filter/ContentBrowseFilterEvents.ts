@@ -1,31 +1,31 @@
-module app_browse_filter {
+module app.browse.filter {
 
-    export class ContentBrowseSearchEvent extends api_event.Event {
+    export class ContentBrowseSearchEvent extends api.event.Event {
 
-        private model:api_content_json.ContentSummaryJson[];
+        private model:api.content.json.ContentSummaryJson[];
 
-        constructor(model?:api_content_json.ContentSummaryJson[]) {
+        constructor(model?:api.content.json.ContentSummaryJson[]) {
             super('contentBrowseSearchEvent');
             this.model = model || [];
         }
 
-        getJsonModels():api_content_json.ContentSummaryJson[] {
+        getJsonModels():api.content.json.ContentSummaryJson[] {
             return this.model;
         }
 
         static on(handler:(event:ContentBrowseSearchEvent) => void) {
-            api_event.onEvent('contentBrowseSearchEvent', handler);
+            api.event.onEvent('contentBrowseSearchEvent', handler);
         }
     }
 
-    export class ContentBrowseResetEvent extends api_event.Event {
+    export class ContentBrowseResetEvent extends api.event.Event {
 
         constructor() {
             super('contentBrowseResetEvent');
         }
 
         static on(handler:(event:ContentBrowseResetEvent) => void) {
-            api_event.onEvent('contentBrowseResetEvent', handler);
+            api.event.onEvent('contentBrowseResetEvent', handler);
         }
     }
 

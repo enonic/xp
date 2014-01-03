@@ -1,35 +1,35 @@
-module app_wizard_site {
+module app.wizard.site {
 
-    export class TemplateView extends api_dom.DivEl {
+    export class TemplateView extends api.dom.DivEl {
 
-        private contentType: api_schema_content.ContentType;
+        private contentType: api.schema.content.ContentType;
 
-        private siteTemplate: api_content_site_template.SiteTemplate;
+        private siteTemplate: api.content.site.template.SiteTemplate;
 
-        constructor(template: api_content_site_template.SiteTemplate, contentType: api_schema_content.ContentType) {
+        constructor(template: api.content.site.template.SiteTemplate, contentType: api.schema.content.ContentType) {
             super("TemplateView", "input-view template-view");
             this.contentType = contentType;
             this.siteTemplate = template;
 
-            var label = new api_dom.DivEl("TemplateLabel", "input-label");
+            var label = new api.dom.DivEl("TemplateLabel", "input-label");
             label.getEl().setInnerHtml("Site Template");
             this.appendChild(label);
 
-            var input = new api_dom.DivEl("TemplateInput", "input-type-view");
+            var input = new api.dom.DivEl("TemplateInput", "input-type-view");
             this.appendChild(input);
 
-            var imgEl = new api_dom.ImgEl(this.contentType.getIconUrl());
+            var imgEl = new api.dom.ImgEl(this.contentType.getIconUrl());
             input.appendChild(imgEl);
 
-            var h4 = new api_dom.H4El();
-            var p = new api_dom.PEl();
+            var h4 = new api.dom.H4El();
+            var p = new api.dom.PEl();
             h4.getEl().setInnerHtml(template.getDisplayName());
             p.getEl().setInnerHtml(template.getDescription());
             input.appendChild(h4);
             input.appendChild(p);
         }
 
-        getSiteTemplateKey(): api_content_site_template.SiteTemplateKey {
+        getSiteTemplateKey(): api.content.site.template.SiteTemplateKey {
             return this.siteTemplate.getKey();
         }
     }

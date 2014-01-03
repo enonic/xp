@@ -1,4 +1,4 @@
-module api_form_inputtype_text {
+module api.form.inputtype.text {
 
     export interface TextAreaConfig {
 

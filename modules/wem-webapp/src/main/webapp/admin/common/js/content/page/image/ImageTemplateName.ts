@@ -1,6 +1,6 @@
-module api_content_page_image{
+module api.content.page.image{
 
-    export class ImageTemplateName extends api_content_page.TemplateName{
+    export class ImageTemplateName extends api.content.page.TemplateName{
 
         constructor(name:string) {
             super(name);

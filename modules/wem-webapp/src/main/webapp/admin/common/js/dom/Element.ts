@@ -1,4 +1,4 @@
-module api_dom {
+module api.dom {
 
     export class Element {
 
@@ -110,12 +110,12 @@ module api_dom {
             this.el.setInnerHtml("");
         }
 
-        setClass(className:string):api_dom.Element {
+        setClass(className:string):api.dom.Element {
             this.el.setClass(className);
             return this;
         }
 
-        addClass(className:string):api_dom.Element {
+        addClass(className:string):api.dom.Element {
             this.el.addClass(className);
             return this;
         }
@@ -124,12 +124,12 @@ module api_dom {
             return this.el.hasClass(className);
         }
 
-        removeClass(className:string):api_dom.Element {
+        removeClass(className:string):api.dom.Element {
             this.el.removeClass(className);
             return this;
         }
 
-        removeAllClasses(exceptions:string = ""):api_dom.Element {
+        removeAllClasses(exceptions:string = ""):api.dom.Element {
             this.el.getHTMLElement().className = exceptions;
             return this;
         }
@@ -152,7 +152,7 @@ module api_dom {
             this.el.focuse();
             var gotFocus:boolean = document.activeElement == this.el.getHTMLElement();
             if( !gotFocus )  {
-                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api_util.getClassName(this) + ", id = " + this.getId());
+                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.util.getClassName(this) + ", id = " + this.getId());
             }
             return gotFocus;
         }
@@ -169,19 +169,19 @@ module api_dom {
             child.onElementAddedToParent(this);
         }
 
-        appendChild<T extends api_dom.Element>(child:T) {
+        appendChild<T extends api.dom.Element>(child:T) {
             this.el.appendChild(child.getEl().getHTMLElement());
             this.insert(child, this, this.children.length);
 
             this.broadcastElementAddedToParent(child);
         }
 
-        prependChild(child:api_dom.Element) {
+        prependChild(child:api.dom.Element) {
             this.el.getHTMLElement().insertBefore(child.getHTMLElement(), this.el.getHTMLElement().firstChild);
             this.insert(child, this, 0);
         }
 
-        removeChild(child:api_dom.Element) {
+        removeChild(child:api.dom.Element) {
             if (this.getHTMLElement().contains(child.getHTMLElement())) {
                 this.getHTMLElement().removeChild(child.getHTMLElement());
                 this.children = this.children.filter((element) => {

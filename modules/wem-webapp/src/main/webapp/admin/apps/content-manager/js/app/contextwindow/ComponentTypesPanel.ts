@@ -1,13 +1,13 @@
-module app_contextwindow {
+module app.contextwindow {
     export interface ComponentData {
         title:string;
         subtitle:string;
         iconUrl:string;
     }
 
-    export class ComponentTypesPanel extends api_ui.Panel {
+    export class ComponentTypesPanel extends api.ui.Panel {
         private searchBox;
-        private dataView:api_ui_grid.DataView<ComponentData>;
+        private dataView:api.ui.grid.DataView<ComponentData>;
         private data:ComponentData[];
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
@@ -17,11 +17,11 @@ module app_contextwindow {
             this.addClass('component-types-panel');
 
             this.contextWindow = contextWindow;
-            this.dataView = new api_ui_grid.DataView<ComponentData>();
+            this.dataView = new api.ui.grid.DataView<ComponentData>();
 
             this.grid = new ComponentGrid(this.dataView, {draggableRows: true, rowClass: "comp"});
 
-            this.searchBox = new api_ui.TextInput();
+            this.searchBox = new api.ui.TextInput();
             this.searchBox.addClass("search");
             this.searchBox.setPlaceholder("Search");
             this.searchBox.getEl().addEventListener("keyup", (e) => {
@@ -115,7 +115,7 @@ module app_contextwindow {
 
         private getData():void {
             jQuery.ajax({
-                url: api_util.getAdminUri("apps/content-manager/js/data/context-window/mock-component-types.json"),
+                url: api.util.getAdminUri("apps/content-manager/js/data/context-window/mock-component-types.json"),
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
                     this.dataView.setItems(ComponentGrid.toSlickData(data));
                 }

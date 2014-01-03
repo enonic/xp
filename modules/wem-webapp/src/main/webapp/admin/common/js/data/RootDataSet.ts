@@ -1,16 +1,16 @@
-module api_data{
+module api.data{
 
-    export class RootDataSet extends api_data.DataSet {
+    export class RootDataSet extends api.data.DataSet {
 
         constructor() {
             super("");
         }
 
-        toJson():api_data_json.DataTypeWrapperJson[] {
+        toJson():api.data.json.DataTypeWrapperJson[] {
 
-            var dataArray:api_data_json.DataTypeWrapperJson[] = [];
+            var dataArray:api.data.json.DataTypeWrapperJson[] = [];
 
-            this.getDataArray().forEach((data:api_data.Data) => {
+            this.getDataArray().forEach((data:api.data.Data) => {
                 dataArray.push(data.toDataJson());
             });
             return dataArray;

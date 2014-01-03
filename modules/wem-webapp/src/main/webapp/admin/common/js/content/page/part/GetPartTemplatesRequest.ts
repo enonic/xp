@@ -1,10 +1,10 @@
-module api_content_page_part {
+module api.content.page.part {
 
-    export class GetPartTemplatesRequest extends PartTemplateResourceRequest<api_content_page_part_json.PartTemplateSummaryListJson> {
+    export class GetPartTemplatesRequest extends PartTemplateResourceRequest<api.content.page.part.json.PartTemplateSummaryListJson> {
 
-        private siteTemplateKey:api_content_site_template.SiteTemplateKey;
+        private siteTemplateKey:api.content.site.template.SiteTemplateKey;
 
-        constructor(siteTemplateKey:api_content_site_template.SiteTemplateKey) {
+        constructor(siteTemplateKey:api.content.site.template.SiteTemplateKey) {
             super();
             super.setMethod("GET");
             this.siteTemplateKey = siteTemplateKey;
@@ -16,8 +16,8 @@ module api_content_page_part {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "list");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
     }
 }

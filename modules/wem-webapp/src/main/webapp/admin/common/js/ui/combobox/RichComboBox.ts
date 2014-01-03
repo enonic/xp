@@ -1,18 +1,18 @@
-module api_ui_combobox {
+module api.ui.combobox {
 
-    export class RichComboBox<T extends api_item.BaseItem> extends api_ui_form.CompositeFormInputEl {
+    export class RichComboBox<T extends api.item.BaseItem> extends api.ui.form.CompositeFormInputEl {
 
-        loader:api_rest.Loader;
-        comboBoxView:api_dom.DivEl;
+        loader:api.rest.Loader;
+        comboBoxView:api.dom.DivEl;
 
         selectedOptionsView:any;
-        comboBox:api_ui_combobox.ComboBox<T>;
+        comboBox:api.ui.combobox.ComboBox<T>;
 
-        constructor(loader:api_rest.Loader, selectedOptionsView:SelectedOptionsView<T>)
+        constructor(loader:api.rest.Loader, selectedOptionsView:SelectedOptionsView<T>)
         {
             this.loader = loader;
 
-            this.comboBoxView = new api_dom.DivEl();
+            this.comboBoxView = new api.dom.DivEl();
 
             this.selectedOptionsView = selectedOptionsView;
             this.selectedOptionsView.hide();
@@ -24,11 +24,11 @@ module api_ui_combobox {
         }
 
 
-        private createComboBox():api_ui_combobox.ComboBox<T> {
+        private createComboBox():api.ui.combobox.ComboBox<T> {
 
             var comboBoxConfig = this.createConfig();
 
-            var comboBox = new api_ui_combobox.ComboBox("itemSelector", comboBoxConfig);
+            var comboBox = new api.ui.combobox.ComboBox("itemSelector", comboBoxConfig);
 
             comboBox.addSelectedOptionRemovedListener(()=> {
                 console.log("On selected option removed");
@@ -37,7 +37,7 @@ module api_ui_combobox {
                                      onInputValueChanged: (oldValue, newValue, grid) => {
                                          this.loader.search(newValue);
                                      },
-                                     onOptionSelected: (item:api_ui_combobox.Option<T>) => {
+                                     onOptionSelected: (item:api.ui.combobox.Option<T>) => {
                                          this.selectedOptionsView.show();
                                      }
                                  });
@@ -57,7 +57,7 @@ module api_ui_combobox {
             return comboBox;
         }
 
-        private createOptions(contents:T[]):api_ui_combobox.Option<T>[] {
+        private createOptions(contents:T[]):api.ui.combobox.Option<T>[] {
             var options = [];
             contents.forEach((moduleInst:T) => {
                 options.push({
@@ -68,12 +68,12 @@ module api_ui_combobox {
             return options;
         }
 
-        optionFormatter(row:number, cell:number, moduleInst:T, columnDef:any, dataContext:api_ui_combobox.Option<T>):string {
+        optionFormatter(row:number, cell:number, moduleInst:T, columnDef:any, dataContext:api.ui.combobox.Option<T>):string {
 
             return "";
         }
 
-        createConfig():api_ui_combobox.ComboBoxConfig<T> {
+        createConfig():api.ui.combobox.ComboBoxConfig<T> {
             return  {
                 rowHeight: 50,
                 maximumOccurrences: 0,
@@ -84,11 +84,11 @@ module api_ui_combobox {
         }
     }
 
-    export class RichSelectedOptionView<T extends api_item.BaseItem> extends api_ui_combobox.SelectedOptionView<T> {
+    export class RichSelectedOptionView<T extends api.item.BaseItem> extends api.ui.combobox.SelectedOptionView<T> {
 
         private content:T;
 
-        constructor(option:api_ui_combobox.Option<T>) {
+        constructor(option:api.ui.combobox.Option<T>) {
             this.content = option.displayValue;
             super(option);
         }
@@ -110,24 +110,24 @@ module api_ui_combobox {
 
         layout() {
 
-            var image = new api_dom.ImgEl();
+            var image = new api.dom.ImgEl();
             image.getEl().setSrc(this.resolveIconUrl(this.content));
             image.getEl().setHeight("48px");
             image.getEl().setWidth("48px");
 
-            var container = new api_dom.DivEl(null, "container");
+            var container = new api.dom.DivEl(null, "container");
 
-            var title = new api_dom.DivEl(null, "title");
+            var title = new api.dom.DivEl(null, "title");
             title.getEl().setInnerHtml(this.resolveTitle(this.content));
 
-            var subtitle = new api_dom.DivEl(null, "subtitle");
-            subtitle.getEl().setInnerHtml(api_util.limitString(this.resolveSubTitle(this.content), 16));
+            var subtitle = new api.dom.DivEl(null, "subtitle");
+            subtitle.getEl().setInnerHtml(api.util.limitString(this.resolveSubTitle(this.content), 16));
 
             container.appendChild(title);
             container.appendChild(subtitle);
 
 
-            var removeButton = new api_dom.AEl(null, "remove");
+            var removeButton = new api.dom.AEl(null, "remove");
             removeButton.getEl().addEventListener('click', (event:Event) => {
                 this.notifySelectedOptionToBeRemoved();
 

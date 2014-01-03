@@ -1,6 +1,6 @@
-module app_wizard {
+module app.wizard {
 
-    export class ContentWizardStepForm extends api_app_wizard.WizardStepForm {
+    export class ContentWizardStepForm extends api.app.wizard.WizardStepForm {
 
         constructor() {
             super("content-step-form");

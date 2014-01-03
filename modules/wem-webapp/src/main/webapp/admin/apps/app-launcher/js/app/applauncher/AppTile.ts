@@ -1,6 +1,6 @@
-module app_launcher {
+module app.launcher {
 
-    export class AppTile extends api_dom.DivEl {
+    export class AppTile extends api.dom.DivEl {
         private app:Application;
 
         constructor(application:Application) {
@@ -10,18 +10,18 @@ module app_launcher {
                 this.addClass("fullsize");
             }
 
-            var link = new api_dom.AEl();
+            var link = new api.dom.AEl();
             link.setUrl('#/' + application.getName());
 
-            var imgContainer = new api_dom.DivEl(null, 'img-container');
+            var imgContainer = new api.dom.DivEl(null, 'img-container');
 
-            var img = new api_dom.ImgEl(application.getIconUrl());
+            var img = new api.dom.ImgEl(application.getIconUrl());
             imgContainer.appendChild(img);
 
-            var nameContainer = new api_dom.DivEl(null, 'name-container');
+            var nameContainer = new api.dom.DivEl(null, 'name-container');
             nameContainer.getEl().setInnerHtml(application.getName());
 
-            var countContainer = new api_dom.DivEl(null, 'tab-count-container');
+            var countContainer = new api.dom.DivEl(null, 'tab-count-container');
             countContainer.getEl().setInnerHtml('' + application.getOpenTabs());
             countContainer.hide();
 

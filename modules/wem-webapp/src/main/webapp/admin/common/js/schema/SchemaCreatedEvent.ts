@@ -1,10 +1,10 @@
-module api_schema {
+module api.schema {
 
-    export class SchemaCreatedEvent extends api_event.Event {
+    export class SchemaCreatedEvent extends api.event.Event {
 
-        private schema:api_schema.Schema;
+        private schema:api.schema.Schema;
 
-        constructor( schema:api_schema.Schema ) {
+        constructor( schema:api.schema.Schema ) {
             super( 'SchemaCreatedEvent' );
             this.schema = schema;
         }
@@ -14,7 +14,7 @@ module api_schema {
         }
 
         static on( handler:( event:SchemaCreatedEvent ) => void ) {
-            api_event.onEvent( 'SchemaCreatedEvent', handler );
+            api.event.onEvent( 'SchemaCreatedEvent', handler );
         }
     }
 

@@ -1,9 +1,9 @@
-module app_contextwindow {
-    export class DetailPanel extends api_ui.Panel {
-        private header:api_dom.H3El;
-        private subtitle:api_dom.DivEl;
-        private iconEl:api_dom.DivEl;
-        private infoEl:api_dom.DivEl;
+module app.contextwindow {
+    export class DetailPanel extends api.ui.Panel {
+        private header:api.dom.H3El;
+        private subtitle:api.dom.DivEl;
+        private iconEl:api.dom.DivEl;
+        private infoEl:api.dom.DivEl;
 
         constructor(contextWindow:ContextWindow) {
             super("DetailPanel");
@@ -25,10 +25,10 @@ module app_contextwindow {
         }
 
         private initElements() {
-            this.header = new api_dom.H3El();
-            this.subtitle = new api_dom.DivEl();
-            this.iconEl = new api_dom.DivEl();
-            this.infoEl = new api_dom.DivEl();
+            this.header = new api.dom.H3El();
+            this.subtitle = new api.dom.DivEl();
+            this.iconEl = new api.dom.DivEl();
+            this.infoEl = new api.dom.DivEl();
 
             this.iconEl.addClass("icon");
 

@@ -1,16 +1,16 @@
-module api_form_layout {
+module api.form.layout {
 
-    export class LayoutView extends api_form.FormItemView {
+    export class LayoutView extends api.form.FormItemView {
 
-        private layout:api_form.Layout;
+        private layout:api.form.Layout;
 
-        constructor(context: api_form.FormContext, layout:api_form.Layout, idPrefix:string, className:string) {
+        constructor(context: api.form.FormContext, layout:api.form.Layout, idPrefix:string, className:string) {
             super(idPrefix, className, context, layout);
 
             this.layout = layout;
         }
 
-        getData():api_data.Data[] {
+        getData():api.data.Data[] {
             return null;
         }
 

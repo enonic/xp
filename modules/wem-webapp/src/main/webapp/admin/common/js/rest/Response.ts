@@ -1,4 +1,4 @@
-module api_rest {
+module api.rest {
 
     export class Response {
 

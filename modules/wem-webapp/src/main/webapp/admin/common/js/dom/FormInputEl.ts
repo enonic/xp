@@ -1,4 +1,4 @@
-module api_dom {
+module api.dom {
     export class FormInputEl extends Element {
 
         constructor(elementName:string, idPrefix?:string, className?:string, elHelper?:ElementHelper) {

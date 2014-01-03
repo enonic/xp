@@ -1,4 +1,4 @@
-module api_app_browse_grid {
+module api.app.browse.grid {
 
     export interface GridPanelListener {
 

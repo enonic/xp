@@ -1,5 +1,5 @@
-module app_contextwindow {
-    export class ComponentSelectEvent extends api_event.Event {
+module app.contextwindow {
+    export class ComponentSelectEvent extends api.event.Event {
         private component:Component;
 
         constructor(component:Component) {
@@ -12,47 +12,47 @@ module app_contextwindow {
         }
 
         static on(handler:(event:ComponentSelectEvent) => void) {
-            api_event.onEvent('componentSelect', handler);
+            api.event.onEvent('componentSelect', handler);
         }
     }
 
-    export class ComponentDeselectEvent extends api_event.Event {
+    export class ComponentDeselectEvent extends api.event.Event {
         constructor() {
             super('componentDeselect');
         }
 
         static on(handler:(event:ComponentDeselectEvent) => void) {
-            api_event.onEvent('componentDeselect', handler);
+            api.event.onEvent('componentDeselect', handler);
         }
     }
 
-    export class ComponentRemovedEvent extends api_event.Event {
+    export class ComponentRemovedEvent extends api.event.Event {
         constructor() {
             super('componentRemoved');
         }
 
         static on(handler:(event:ComponentRemovedEvent) => void) {
-            api_event.onEvent('componentRemoved', handler);
+            api.event.onEvent('componentRemoved', handler);
         }
     }
 
-    export class LiveEditDragStartEvent extends api_event.Event {
+    export class LiveEditDragStartEvent extends api.event.Event {
         constructor() {
             super('liveEditDragStart');
         }
 
         static on(handler:(event:LiveEditDragStartEvent) => void) {
-            api_event.onEvent('liveEditDragStart', handler);
+            api.event.onEvent('liveEditDragStart', handler);
         }
     }
 
-    export class LiveEditDragStopEvent extends api_event.Event {
+    export class LiveEditDragStopEvent extends api.event.Event {
         constructor() {
             super('liveEditDragStop');
         }
 
         static on(handler:(event:LiveEditDragStopEvent) => void) {
-            api_event.onEvent('liveEditDragStop', handler);
+            api.event.onEvent('liveEditDragStop', handler);
         }
     }
 }

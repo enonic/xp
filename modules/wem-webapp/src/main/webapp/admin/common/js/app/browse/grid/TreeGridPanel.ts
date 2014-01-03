@@ -1,4 +1,4 @@
-module api_app_browse_grid {
+module api.app.browse.grid {
 
     export interface TreeGridPanelParams {
 
@@ -12,7 +12,7 @@ module api_app_browse_grid {
 
         treeConfig?:Object;
 
-        contextMenu:api_ui_menu.ContextMenu;
+        contextMenu:api.ui.menu.ContextMenu;
     }
 
     export class TreeGridPanel {
@@ -32,7 +32,7 @@ module api_app_browse_grid {
         private activeList: string = "grid";
         private itemId: string;
 
-        private contextMenu: api_ui_menu.ContextMenu;
+        private contextMenu: api.ui.menu.ContextMenu;
 
         private listeners: TreeGridPanelListener[] = [];
 
@@ -315,7 +315,7 @@ module api_app_browse_grid {
 
     interface PersistentGridSelectionPlugin extends Ext_AbstractPlugin {
 
-        getSelection():api_model.SpaceExtModel[];
+        getSelection():api.model.SpaceExtModel[];
 
         clearSelection():void;
     }

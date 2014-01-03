@@ -1,6 +1,6 @@
-module api_form {
+module api.form {
 
-    export interface FormItemOccurrenceViewListener extends api_event.Listener{
+    export interface FormItemOccurrenceViewListener extends api.event.Listener{
 
         onRemoveButtonClicked(toBeRemoved:FormItemOccurrenceView, index:number);
     }

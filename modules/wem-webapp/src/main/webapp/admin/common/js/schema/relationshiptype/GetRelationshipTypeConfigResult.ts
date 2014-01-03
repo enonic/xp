@@ -1,4 +1,4 @@
-module api_schema_relationshiptype {
+module api.schema.relationshiptype {
 
     export interface GetRelationshipTypeConfigResult {
 

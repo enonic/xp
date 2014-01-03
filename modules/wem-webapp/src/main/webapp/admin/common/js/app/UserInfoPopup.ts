@@ -1,6 +1,6 @@
-module api_app {
+module api.app {
 
-    export class UserInfoPopup extends api_dom.DivEl {
+    export class UserInfoPopup extends api.dom.DivEl {
 
         private isShown:boolean = false;
 
@@ -13,7 +13,7 @@ module api_app {
 
         private createContent() {
             var userName = 'Thomas Lund Sigdestad',
-                photoUrl = api_util.getAdminUri('common/images/tsi-profil.jpg'),
+                photoUrl = api.util.getAdminUri('common/images/tsi-profil.jpg'),
                 qName = 'system/tsi';
 
             var content = '<div class="title">User</div>' +
@@ -37,7 +37,7 @@ module api_app {
         private render() {
             this.hide();
             this.isShown = false;
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
         }
 
         toggle() {

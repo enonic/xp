@@ -1,4 +1,4 @@
-module api_content_page_image {
+module api.content.page.image {
 
     export class ImageTemplate extends ImageTemplateSummary {
 
@@ -14,15 +14,15 @@ module api_content_page_image {
         }
     }
 
-    export class ImageTemplateBuilder extends api_content_page.TemplateSummaryBuilder<ImageTemplateKey,ImageTemplateName> {
+    export class ImageTemplateBuilder extends api.content.page.TemplateSummaryBuilder<ImageTemplateKey,ImageTemplateName> {
 
         descriptor:ImageDescriptor;
 
-        public fromJson(json: api_content_page_image_json.ImageTemplateJson): ImageTemplateBuilder {
+        public fromJson(json: api.content.page.image.json.ImageTemplateJson): ImageTemplateBuilder {
             this.setKey(ImageTemplateKey.fromString(json.key));
             this.setName(new ImageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorModuleResourceKey(api_module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
+            this.setDescriptorModuleResourceKey(api.module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
             this.descriptor = new ImageDescriptorBuilder().fromJson(json.descriptor).build();
             return this;
         }

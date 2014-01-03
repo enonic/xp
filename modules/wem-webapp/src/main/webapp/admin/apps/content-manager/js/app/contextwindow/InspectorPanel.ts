@@ -1,15 +1,15 @@
-module app_contextwindow {
-    export class InspectorPanel extends api_ui.DeckPanel {
+module app.contextwindow {
+    export class InspectorPanel extends api.ui.DeckPanel {
         private detailPanel:DetailPanel;
         private selectPanel:SelectPanel;
-        private imageSelectPanel:app_contextwindow_image.ImageSelectPanel;
+        private imageSelectPanel:app.contextwindow.image.ImageSelectPanel;
 
         constructor(contextWindow:ContextWindow) {
             super();
 
             this.detailPanel = new DetailPanel(contextWindow);
             this.selectPanel = new SelectPanel(contextWindow);
-            this.imageSelectPanel = new app_contextwindow_image.ImageSelectPanel(contextWindow);
+            this.imageSelectPanel = new app.contextwindow.image.ImageSelectPanel(contextWindow);
 
 
             this.addPanel(this.detailPanel);

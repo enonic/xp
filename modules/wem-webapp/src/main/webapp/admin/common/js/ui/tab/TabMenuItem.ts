@@ -1,17 +1,17 @@
-module api_ui_tab {
+module api.ui.tab {
 
     export interface TabMenuItemOptions {
         removable?:boolean;
         removeText?:string;
     }
 
-    export class TabMenuItem extends api_dom.LiEl implements api_ui.PanelNavigationItem, api_event.Observable {
+    export class TabMenuItem extends api.dom.LiEl implements api.ui.PanelNavigationItem, api.event.Observable {
 
         private tabIndex:number;
 
         private label:string;
 
-        private labelEl:api_dom.SpanEl;
+        private labelEl:api.dom.SpanEl;
 
         private visibleInMenu:boolean = true;
 
@@ -27,7 +27,7 @@ module api_ui_tab {
                 options = {};
             }
 
-            this.labelEl = new api_dom.SpanEl(null, 'label');
+            this.labelEl = new api.dom.SpanEl(null, 'label');
             this.appendChild(this.labelEl);
             this.setLabel(label);
             this.labelEl.getEl().addEventListener("click", () => {
@@ -36,7 +36,7 @@ module api_ui_tab {
 
             this.removable = options.removable;
             if (options.removable) {
-                var removeButton = new api_dom.ButtonEl();
+                var removeButton = new api.dom.ButtonEl();
                 removeButton.getEl().setInnerHtml(options.removeText ? options.removeText : "&times;");
                 this.prependChild(removeButton);
                 removeButton.getEl().addEventListener("click", () => {

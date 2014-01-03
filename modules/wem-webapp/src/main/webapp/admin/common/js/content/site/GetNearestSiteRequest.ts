@@ -1,10 +1,10 @@
-module api_content_site {
+module api.content.site {
 
-    export class GetNearestSiteRequest extends SiteResourceRequest<api_content_json.ContentJson> {
+    export class GetNearestSiteRequest extends SiteResourceRequest<api.content.json.ContentJson> {
 
-        private contentId: api_content.ContentId;
+        private contentId: api.content.ContentId;
 
-        constructor(contentId: api_content.ContentId) {
+        constructor(contentId: api.content.ContentId) {
             super();
             super.setMethod("POST");
             this.contentId = contentId;
@@ -16,21 +16,21 @@ module api_content_site {
             };
         }
 
-        getRequestPath(): api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "nearest");
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "nearest");
         }
 
-        sendAndParse(): JQueryPromise<api_content.Content> {
+        sendAndParse(): JQueryPromise<api.content.Content> {
 
-            var deferred = jQuery.Deferred<api_content.Content>();
+            var deferred = jQuery.Deferred<api.content.Content>();
 
-            this.send().done((response: api_rest.JsonResponse<api_content_json.ContentJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 var siteContent = null;
                 if( !response.isBlank() ) {
                     siteContent = this.fromJsonToContent(response.getResult());
                 }
                 deferred.resolve(siteContent);
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

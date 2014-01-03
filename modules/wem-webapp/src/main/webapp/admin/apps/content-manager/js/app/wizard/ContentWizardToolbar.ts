@@ -1,14 +1,14 @@
-module app_wizard {
+module app.wizard {
 
     export interface ContentWizardToolbarParams {
-        saveAction:api_ui.Action;
-        duplicateAction:api_ui.Action;
-        deleteAction:api_ui.Action;
-        closeAction:api_ui.Action;
-        publishAction:api_ui.Action;
+        saveAction:api.ui.Action;
+        duplicateAction:api.ui.Action;
+        deleteAction:api.ui.Action;
+        closeAction:api.ui.Action;
+        publishAction:api.ui.Action;
     }
 
-    export class ContentWizardToolbar extends api_ui_toolbar.Toolbar {
+    export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
         constructor(params:ContentWizardToolbarParams) {
             super();
@@ -17,9 +17,9 @@ module app_wizard {
             super.addAction(params.deleteAction);
             super.addAction(params.publishAction);
             super.addGreedySpacer();
-            var displayModeToggle = new api_ui.ToggleSlide({
-                turnOnAction: new app_wizard_action.ShowLiveFormAction(),
-                turnOffAction: new app_wizard_action.ShowFormAction()
+            var displayModeToggle = new api.ui.ToggleSlide({
+                turnOnAction: new app.wizard.action.ShowLiveFormAction(),
+                turnOffAction: new app.wizard.action.ShowFormAction()
             }, false);
             super.addElement(displayModeToggle);
             super.addAction(params.closeAction);

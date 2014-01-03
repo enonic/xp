@@ -1,20 +1,20 @@
-module api_app_browse_grid2 {
+module api.app.browse.grid2 {
 
     export class NameFormatter<T> {
 
         static createHtml(mainName:string, subName:string, iconUrl:string):string {
-            var rowEl = new api_dom.DivEl();
+            var rowEl = new api.dom.DivEl();
 
-            var iconEl = new api_dom.ImgEl();
+            var iconEl = new api.dom.ImgEl();
             iconEl.getEl().setSrc(iconUrl);
             iconEl.getEl().setWidth("32px");
             iconEl.getEl().setHeight("32px");
 
 
-            var displayNameEl = new api_dom.H6El();
+            var displayNameEl = new api.dom.H6El();
             displayNameEl.getEl().setInnerHtml(mainName);
 
-            var subNameEl = new api_dom.PEl();
+            var subNameEl = new api.dom.PEl();
             subNameEl.getEl().setInnerHtml(subName);
 
             rowEl.appendChild(iconEl);

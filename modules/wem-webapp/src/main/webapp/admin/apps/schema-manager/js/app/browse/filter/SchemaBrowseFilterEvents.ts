@@ -1,31 +1,31 @@
-module app_browse_filter {
+module app.browse.filter {
 
-    export class SchemaBrowseSearchEvent extends api_event.Event {
+    export class SchemaBrowseSearchEvent extends api.event.Event {
 
-        private model:api_schema.SchemaJson[];
+        private model:api.schema.SchemaJson[];
 
-        constructor(model?:api_schema.SchemaJson[]) {
+        constructor(model?:api.schema.SchemaJson[]) {
             super('schemaBrowseSearch');
             this.model = model;
         }
 
-        getJsonModels():api_schema.SchemaJson[] {
+        getJsonModels():api.schema.SchemaJson[] {
             return this.model;
         }
 
         static on(handler:(event:SchemaBrowseSearchEvent)=>void) {
-            api_event.onEvent('schemaBrowseSearch', handler);
+            api.event.onEvent('schemaBrowseSearch', handler);
         }
     }
 
-    export class SchemaBrowseResetEvent extends api_event.Event {
+    export class SchemaBrowseResetEvent extends api.event.Event {
 
         constructor() {
             super('schemaBrowseReset');
         }
 
         static on(handler:(event:SchemaBrowseResetEvent)=>void) {
-            api_event.onEvent('schemaBrowseReset', handler);
+            api.event.onEvent('schemaBrowseReset', handler);
         }
     }
 

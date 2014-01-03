@@ -1,4 +1,4 @@
-module api_app_browse {
+module api.app.browse {
 
     export class BrowseItem<M> {
 
@@ -14,17 +14,17 @@ module api_app_browse {
             this.model = model;
         }
 
-        setDisplayName(value:string):api_app_browse.BrowseItem<M> {
+        setDisplayName(value:string):api.app.browse.BrowseItem<M> {
             this.displayName = value;
             return this;
         }
 
-        setPath(value:string):api_app_browse.BrowseItem<M> {
+        setPath(value:string):api.app.browse.BrowseItem<M> {
             this.path = value;
             return this;
         }
 
-        setIconUrl(value:string):api_app_browse.BrowseItem<M> {
+        setIconUrl(value:string):api.app.browse.BrowseItem<M> {
             this.iconUrl = value;
             return this;
         }
@@ -45,8 +45,8 @@ module api_app_browse {
             return this.iconUrl;
         }
 
-        toViewItem():api_app_view.ViewItem<M> {
-            return new api_app_view.ViewItem<M>(this.model)
+        toViewItem():api.app.view.ViewItem<M> {
+            return new api.app.view.ViewItem<M>(this.model)
                 .setIconUrl(this.iconUrl)
                 .setDisplayName(this.displayName)
                 .setPath(this.path);

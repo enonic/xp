@@ -1,15 +1,15 @@
-module app_browse {
+module app.browse {
 
     export interface TemplateBrowseItemPanelParams {
 
-        actionMenuActions: api_ui.Action[];
+        actionMenuActions: api.ui.Action[];
 
     }
 
-    export class TemplateBrowseItemPanel extends api_app_browse.BrowseItemPanel<app_browse.TemplateBrowseItem> {
+    export class TemplateBrowseItemPanel extends api.app.browse.BrowseItemPanel<app.browse.TemplateBrowseItem> {
 
         constructor(params:TemplateBrowseItemPanelParams) {
-            super(<api_app_browse.BrowseItemPanelParams>{
+            super(<api.app.browse.BrowseItemPanelParams>{
                 actionMenuActions: params.actionMenuActions
             });
         }

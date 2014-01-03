@@ -1,6 +1,6 @@
-module app_browse {
+module app.browse {
 
-    export class ModuleBrowseToolbar extends api_ui_toolbar.Toolbar {
+    export class ModuleBrowseToolbar extends api.ui.toolbar.Toolbar {
 
         constructor(actions:ModuleBrowseActions) {
             super();

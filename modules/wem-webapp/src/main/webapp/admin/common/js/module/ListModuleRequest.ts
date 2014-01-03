@@ -1,4 +1,4 @@
-module api_module {
+module api.module {
 
     export class ListModuleRequest extends ModuleResourceRequest<ModuleListResult> {
 
@@ -12,8 +12,8 @@ module api_module {
             return {};
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "list");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "list");
         }
     }
 }

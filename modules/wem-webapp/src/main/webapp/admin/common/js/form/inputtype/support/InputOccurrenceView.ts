@@ -1,26 +1,26 @@
-module api_form_inputtype_support {
+module api.form.inputtype.support {
 
-    export class InputOccurrenceView extends api_form.FormItemOccurrenceView implements api_event.Observable {
+    export class InputOccurrenceView extends api.form.FormItemOccurrenceView implements api.event.Observable {
 
         private inputOccurrence:InputOccurrence;
 
-        private inputElement:api_dom.Element;
+        private inputElement:api.dom.Element;
 
-        private removeButtonEl:api_dom.AEl;
+        private removeButtonEl:api.dom.AEl;
 
-        private occurrenceCountEl:api_dom.SpanEl;
+        private occurrenceCountEl:api.dom.SpanEl;
 
-        constructor(inputOccurrence:InputOccurrence, inputElement:api_dom.Element) {
+        constructor(inputOccurrence:InputOccurrence, inputElement:api.dom.Element) {
             super("InputOccurrenceView", "input-occurrence-view", inputOccurrence);
             this.inputOccurrence = inputOccurrence;
 
             this.inputElement = inputElement;
             this.appendChild(this.inputElement);
 
-            this.occurrenceCountEl = new api_dom.SpanEl(null, "occurrence-count");
+            this.occurrenceCountEl = new api.dom.SpanEl(null, "occurrence-count");
             this.appendChild(this.occurrenceCountEl);
 
-            this.removeButtonEl = new api_dom.AEl(null, "remove-button");
+            this.removeButtonEl = new api.dom.AEl(null, "remove-button");
 
             this.removeButtonEl.hide();
             this.appendChild(this.removeButtonEl);
@@ -43,7 +43,7 @@ module api_form_inputtype_support {
             return this.inputOccurrence.getIndex();
         }
 
-        getInputElement():api_dom.Element {
+        getInputElement():api.dom.Element {
             return this.inputElement;
         }
 

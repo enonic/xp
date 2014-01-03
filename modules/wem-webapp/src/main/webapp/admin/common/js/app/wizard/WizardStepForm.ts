@@ -1,6 +1,6 @@
-module api_app_wizard {
+module api.app.wizard {
 
-    export class WizardStepForm extends api_ui_form.Form {
+    export class WizardStepForm extends api.ui.form.Form {
 
         constructor(idPrefix:string) {
             super(idPrefix);

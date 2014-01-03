@@ -1,23 +1,23 @@
-module app_wizard_site {
+module app.wizard.site {
 
-    export class SiteWizardStepForm extends api_app_wizard.WizardStepForm {
+    export class SiteWizardStepForm extends api.app.wizard.WizardStepForm {
 
-        private formContext: api_form.FormContext;
+        private formContext: api.form.FormContext;
 
-        private contentType: api_schema_content.ContentType;
+        private contentType: api.schema.content.ContentType;
 
-        private moduleConfigsByKey: api_content_site.ModuleConfig[];
+        private moduleConfigsByKey: api.content.site.ModuleConfig[];
 
-        private moduleViewsCtr: api_dom.DivEl;
+        private moduleViewsCtr: api.dom.DivEl;
 
-        private templateViewCtr: api_dom.DivEl;
+        private templateViewCtr: api.dom.DivEl;
 
         constructor() {
             super("SiteWizardStepForm");
 
-            this.templateViewCtr = new api_dom.DivEl();
+            this.templateViewCtr = new api.dom.DivEl();
             this.appendChild(this.templateViewCtr);
-            this.moduleViewsCtr = new api_dom.DivEl();
+            this.moduleViewsCtr = new api.dom.DivEl();
             this.appendChild(this.moduleViewsCtr);
         }
 
@@ -25,32 +25,32 @@ module app_wizard_site {
             //TODO
         }
 
-        public renderExisting(context: api_form.FormContext, site: api_content_site.Site, contentType: api_schema_content.ContentType, callback:Function) {
+        public renderExisting(context: api.form.FormContext, site: api.content.site.Site, contentType: api.schema.content.ContentType, callback:Function) {
             this.formContext = context;
             this.contentType = contentType;
 
             this.moduleConfigsByKey = [];
-            var moduleConfigs: api_content_site.ModuleConfig[] = site.getModuleConfigs();
+            var moduleConfigs: api.content.site.ModuleConfig[] = site.getModuleConfigs();
             for (var i = 0; i < moduleConfigs.length; i++) {
                 this.moduleConfigsByKey[moduleConfigs[i].getModuleKey().toString()] = moduleConfigs[i];
             }
 
-            this.loadModules(site, (modules: api_module.Module[]) => {
+            this.loadModules(site, (modules: api.module.Module[]) => {
                 this.layoutModules(modules);
 
-                this.loadSiteTemplate(site, (template: api_content_site_template.SiteTemplate) => {
+                this.loadSiteTemplate(site, (template: api.content.site.template.SiteTemplate) => {
                     this.layoutSiteTemplate(template);
                     callback();
                 });
             });
         }
 
-        public getTemplateKey(): api_content_site_template.SiteTemplateKey {
+        public getTemplateKey(): api.content.site.template.SiteTemplateKey {
             return (<TemplateView>this.templateViewCtr.getFirstChild()).getSiteTemplateKey();
         }
 
-        public getModuleConfigs(): api_content_site.ModuleConfig[] {
-            var moduleConfigs: api_content_site.ModuleConfig[] = [];
+        public getModuleConfigs(): api.content.site.ModuleConfig[] {
+            var moduleConfigs: api.content.site.ModuleConfig[] = [];
             var moduleViews = this.moduleViewsCtr.getChildren();
             for (var i = 0; i < moduleViews.length; i++) {
                 moduleConfigs.push((<ModuleView>moduleViews[i]).getModuleConfig());
@@ -58,44 +58,44 @@ module app_wizard_site {
             return moduleConfigs;
         }
 
-        private loadModules(site: api_content_site.Site, callback: (siteModules: api_module.Module[]) => void) {
-            var moduleConfigs: api_content_site.ModuleConfig[] = site.getModuleConfigs();
+        private loadModules(site: api.content.site.Site, callback: (siteModules: api.module.Module[]) => void) {
+            var moduleConfigs: api.content.site.ModuleConfig[] = site.getModuleConfigs();
             var moduleRequests = [];
             for (var i = 0; i < moduleConfigs.length; i++) {
-                var request = new api_module.GetModuleRequest(moduleConfigs[i].getModuleKey()).send();
+                var request = new api.module.GetModuleRequest(moduleConfigs[i].getModuleKey()).send();
                 moduleRequests.push(request);
             }
             // Using .apply() here to pass array of requests as arguments enum
-            jQuery.when.apply(jQuery, moduleRequests).then((moduleResponses: api_rest.JsonResponse<api_module_json.ModuleJson>[]) => {
+            jQuery.when.apply(jQuery, moduleRequests).then((moduleResponses: api.rest.JsonResponse<api.module.json.ModuleJson>[]) => {
                 var modules = [];
                 // Make array in case there's only one response
-                moduleResponses = new Array<api_rest.JsonResponse<api_module_json.ModuleJson>>().concat(moduleResponses);
+                moduleResponses = new Array<api.rest.JsonResponse<api.module.json.ModuleJson>>().concat(moduleResponses);
                 for (var i = 0; i < moduleResponses.length; i++) {
-                    modules.push(new api_module.Module(moduleResponses[i].getResult()));
+                    modules.push(new api.module.Module(moduleResponses[i].getResult()));
                 }
                 callback(modules);
             })
         }
 
-        private layoutModules(modules: api_module.Module[]) {
+        private layoutModules(modules: api.module.Module[]) {
             this.moduleViewsCtr.removeChildren();
-            modules.forEach((theModule: api_module.Module) => {
+            modules.forEach((theModule: api.module.Module) => {
                 var moduleView = new ModuleView(this.formContext, theModule,
                     this.moduleConfigsByKey[theModule.getModuleKey().toString()]);
                 this.moduleViewsCtr.appendChild(moduleView)
             });
         }
 
-        private loadSiteTemplate(site: api_content_site.Site, callback: (siteTemplate: api_content_site_template.SiteTemplate) => void) {
-            new api_content_site_template.GetSiteTemplateRequest(site.getTemplateKey()).send()
-                .done((templateResponse: api_rest.JsonResponse<api_content_site_template_json.SiteTemplateJson>) => {
-                    var template = new api_content_site_template.SiteTemplate(templateResponse.getResult());
+        private loadSiteTemplate(site: api.content.site.Site, callback: (siteTemplate: api.content.site.template.SiteTemplate) => void) {
+            new api.content.site.template.GetSiteTemplateRequest(site.getTemplateKey()).send()
+                .done((templateResponse: api.rest.JsonResponse<api.content.site.template.json.SiteTemplateJson>) => {
+                    var template = new api.content.site.template.SiteTemplate(templateResponse.getResult());
                     callback(template);
                 }
             );
         }
 
-        private layoutSiteTemplate(template: api_content_site_template.SiteTemplate) {
+        private layoutSiteTemplate(template: api.content.site.template.SiteTemplate) {
             this.templateViewCtr.removeChildren();
             this.templateViewCtr.appendChild(new TemplateView(template, this.contentType))
         }

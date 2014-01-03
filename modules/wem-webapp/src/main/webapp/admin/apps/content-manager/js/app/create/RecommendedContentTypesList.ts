@@ -1,6 +1,6 @@
-module app_new {
+module app.create {
 
-    export class RecommendedContentTypesList extends ContentTypesList implements api_event.Observable {
+    export class RecommendedContentTypesList extends ContentTypesList implements api.event.Observable {
 
         constructor(className?: string, markRoots?: boolean) {
             super(className, "Recommended", markRoots);

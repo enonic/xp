@@ -1,13 +1,13 @@
-module app_wizard_event {
+module app.wizard.event {
 
-    export class ShowContentFormEvent extends api_event.Event {
+    export class ShowContentFormEvent extends api.event.Event {
 
         constructor() {
             super('showContentForm');
         }
 
         static on(handler:(event:ShowContentFormEvent) => void) {
-            api_event.onEvent('showContentForm', handler);
+            api.event.onEvent('showContentForm', handler);
         }
 
     }

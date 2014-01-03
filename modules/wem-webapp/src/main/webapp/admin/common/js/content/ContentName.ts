@@ -1,4 +1,4 @@
-module api_content {
+module api.content {
 
     export class ContentName {
 
@@ -7,7 +7,7 @@ module api_content {
         private value: string;
 
         constructor(name: string) {
-            api_util.assert( name != null, "name cannot be null" );
+            api.util.assert( name != null, "name cannot be null" );
             this.value = name;
         }
 
@@ -20,13 +20,13 @@ module api_content {
         }
 
         toUnnamed():ContentUnnamed {
-            api_util.assert( this instanceof ContentUnnamed, "this is not a ContentUnnamed" );
+            api.util.assert( this instanceof ContentUnnamed, "this is not a ContentUnnamed" );
             return <ContentUnnamed>this;
         }
 
         public static fromString(str: string) {
 
-            api_util.assert( str != null, "name cannot be null" );
+            api.util.assert( str != null, "name cannot be null" );
 
             if (str.indexOf(ContentName.UNNAMED_PREFIX) == 0) {
                 return new ContentUnnamed(str);

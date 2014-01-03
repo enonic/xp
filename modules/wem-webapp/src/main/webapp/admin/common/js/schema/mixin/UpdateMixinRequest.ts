@@ -1,6 +1,6 @@
-module api_schema_mixin {
+module api.schema.mixin {
 
-    export class UpdateMixinRequest extends MixinResourceRequest<api_schema_mixin_json.MixinJson> {
+    export class UpdateMixinRequest extends MixinResourceRequest<api.schema.mixin.json.MixinJson> {
 
         private mixinToUpdate:string;
 
@@ -8,7 +8,7 @@ module api_schema_mixin {
 
         private config:string;
 
-        private icon:api_icon.Icon;
+        private icon:api.icon.Icon;
 
         constructor() {
             super();
@@ -30,7 +30,7 @@ module api_schema_mixin {
             return this;
         }
 
-        setIcon( value:api_icon.Icon ):UpdateMixinRequest{
+        setIcon( value:api.icon.Icon ):UpdateMixinRequest{
             this.icon = value;
             return this;
         }
@@ -44,8 +44,8 @@ module api_schema_mixin {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent( super.getResourcePath(), "update" );
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent( super.getResourcePath(), "update" );
         }
 
 
@@ -53,9 +53,9 @@ module api_schema_mixin {
 
             var deferred = jQuery.Deferred<Mixin>();
 
-            this.send().done((response: api_rest.JsonResponse<api_schema_mixin_json.MixinJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.schema.mixin.json.MixinJson>) => {
                 deferred.resolve(this.fromJsonToMixin(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

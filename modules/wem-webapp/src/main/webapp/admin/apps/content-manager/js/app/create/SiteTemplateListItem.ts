@@ -1,24 +1,24 @@
-module app_new {
+module app.create {
 
-    export class SiteTemplateListItem extends api_dom.LiEl {
+    export class SiteTemplateListItem extends api.dom.LiEl {
 
-        private siteTemplate: api_content_site_template.SiteTemplateSummary;
+        private siteTemplate: api.content.site.template.SiteTemplateSummary;
 
-        private contentType: api_schema_content.ContentTypeSummary;
+        private contentType: api.schema.content.ContentTypeSummary;
 
-        constructor(item: api_content_site_template.SiteTemplateSummary, contentType: api_schema_content.ContentTypeSummary) {
+        constructor(item: api.content.site.template.SiteTemplateSummary, contentType: api.schema.content.ContentTypeSummary) {
             super("SiteTemplateListItem", "site-template-list-item site");
 
             this.siteTemplate = item;
             this.contentType = contentType;
 
-            var img = new api_dom.ImgEl(contentType.getIconUrl());
+            var img = new api.dom.ImgEl(contentType.getIconUrl());
 
-            var h6 = new api_dom.H6El();
+            var h6 = new api.dom.H6El();
             h6.getEl().setInnerHtml(item.getDisplayName());
             h6.getEl().setAttribute("title", item.getDisplayName());
 
-            var p = new api_dom.PEl();
+            var p = new api.dom.PEl();
             p.getEl().setInnerHtml(item.getName());
             p.getEl().setAttribute("title", item.getName());
 
@@ -26,7 +26,7 @@ module app_new {
             this.appendChild(h6);
             this.appendChild(p);
 
-            var span = new api_dom.SpanEl();
+            var span = new api.dom.SpanEl();
             span.setClass('overlay');
             this.appendChild(span);
         }
@@ -43,11 +43,11 @@ module app_new {
             return this.contentType.getIconUrl();
         }
 
-        getSiteTemplate(): api_content_site_template.SiteTemplateSummary {
+        getSiteTemplate(): api.content.site.template.SiteTemplateSummary {
             return this.siteTemplate;
         }
 
-        getContentType(): api_schema_content.ContentTypeSummary {
+        getContentType(): api.schema.content.ContentTypeSummary {
             return this.contentType;
         }
 

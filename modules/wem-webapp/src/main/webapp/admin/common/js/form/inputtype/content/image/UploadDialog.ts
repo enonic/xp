@@ -1,8 +1,8 @@
-module api_form_inputtype_content_image {
+module api.form.inputtype.content.image {
 
-    export class UploadDialog extends api_ui_dialog.ModalDialog implements api_event.Observable {
+    export class UploadDialog extends api.ui.dialog.ModalDialog implements api.event.Observable {
 
-        private uploader:api_ui.ImageUploader;
+        private uploader:api.ui.ImageUploader;
 
         private listeners:UploadDialogListener[] = [];
 
@@ -16,7 +16,7 @@ module api_form_inputtype_content_image {
 
             this.getEl().addClass("image-selector-upload-dialog");
 
-            var description = new api_dom.PEl();
+            var description = new api.dom.PEl();
             description.getEl().setInnerHtml("Images uploaded will be embedded directly in this content, you may move them to the library later if desired");
             this.appendChildToContentPanel(description);
 
@@ -25,9 +25,9 @@ module api_form_inputtype_content_image {
                 buttonsVisible: false,
                 showImageAfterUpload: false
             };
-            this.uploader = new api_ui.ImageUploader("image-selector-upload-dialog", api_util.getRestUri("blob/upload"), uploaderConfig);
+            this.uploader = new api.ui.ImageUploader("image-selector-upload-dialog", api.util.getRestUri("blob/upload"), uploaderConfig);
             this.uploader.addListener({
-                onFileUploaded: (uploadItem:api_ui.UploadItem) => {
+                onFileUploaded: (uploadItem:api.ui.UploadItem) => {
                     this.notifyImageUploaded(uploadItem);
                 },
                 onUploadComplete: () => {
@@ -43,7 +43,7 @@ module api_form_inputtype_content_image {
                 this.close();
             });
 
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
 
         }
 
@@ -66,7 +66,7 @@ module api_form_inputtype_content_image {
             });
         }
 
-        private notifyImageUploaded(uploadItem:api_ui.UploadItem) {
+        private notifyImageUploaded(uploadItem:api.ui.UploadItem) {
             this.listeners.forEach((listener:UploadDialogListener) => {
                 listener.onImageUploaded(uploadItem);
             });

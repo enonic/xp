@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export interface DeckPanelNavigatorListener extends api_event.Listener {
+    export interface DeckPanelNavigatorListener extends api.event.Listener {
 
         onNavigationItemAdded?: (tab:PanelNavigationItem) => void;
 

@@ -1,12 +1,12 @@
-module api_form {
+module api.form {
 
     export class FormContext {
 
-        private parentContent: api_content.Content;
+        private parentContent: api.content.Content;
 
-        private persistedContent: api_content.Content;
+        private persistedContent: api.content.Content;
 
-        private attachments: api_content_attachment.Attachments;
+        private attachments: api.content.attachment.Attachments;
 
         constructor(builder: FormContextBuilder) {
             this.parentContent = builder.parentContent;
@@ -14,47 +14,47 @@ module api_form {
             this.attachments = builder.attachments;
         }
 
-        getContentId(): api_content.ContentId {
+        getContentId(): api.content.ContentId {
             return this.persistedContent.getContentId();
         }
 
-        getContentPath(): api_content.ContentPath {
+        getContentPath(): api.content.ContentPath {
             return this.persistedContent.getPath();
         }
 
-        getParentContentPath(): api_content.ContentPath {
+        getParentContentPath(): api.content.ContentPath {
 
             if (this.parentContent == null) {
-                return api_content.ContentPath.ROOT;
+                return api.content.ContentPath.ROOT;
             }
 
             return this.parentContent.getPath();
         }
 
-        getAttachments() : api_content_attachment.Attachments{
+        getAttachments() : api.content.attachment.Attachments{
             return this.attachments;
         }
     }
 
     export class FormContextBuilder {
 
-        parentContent: api_content.Content;
+        parentContent: api.content.Content;
 
-        persistedContent: api_content.Content;
+        persistedContent: api.content.Content;
 
-        attachments: api_content_attachment.Attachments;
+        attachments: api.content.attachment.Attachments;
 
-        public setParentContent(value: api_content.Content): FormContextBuilder {
+        public setParentContent(value: api.content.Content): FormContextBuilder {
             this.parentContent = value;
             return this;
         }
 
-        public setPersistedContent(value: api_content.Content): FormContextBuilder {
+        public setPersistedContent(value: api.content.Content): FormContextBuilder {
             this.persistedContent = value;
             return this;
         }
 
-        public setAttachments(value: api_content_attachment.Attachments): FormContextBuilder {
+        public setAttachments(value: api.content.attachment.Attachments): FormContextBuilder {
             this.attachments = value;
             return this;
         }

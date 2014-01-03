@@ -1,10 +1,10 @@
-module api_content_page {
+module api.content.page {
 
-    export class GetPageDescriptorByKeyRequest extends PageDescriptorResourceRequest<api_content_page_json.PageDescriptorJson> {
+    export class GetPageDescriptorByKeyRequest extends PageDescriptorResourceRequest<api.content.page.json.PageDescriptorJson> {
 
-        private key: api_module.ModuleResourceKey;
+        private key: api.module.ModuleResourceKey;
 
-        constructor(key: api_module.ModuleResourceKey) {
+        constructor(key: api.module.ModuleResourceKey) {
             super();
             super.setMethod("GET");
             this.key = key;
@@ -16,17 +16,17 @@ module api_content_page {
             };
         }
 
-        getRequestPath(): api_rest.Path {
+        getRequestPath(): api.rest.Path {
             return super.getResourcePath();
         }
 
-        sendAndParse(): JQueryPromise<api_content_page.PageDescriptor> {
+        sendAndParse(): JQueryPromise<api.content.page.PageDescriptor> {
 
-            var deferred: JQueryDeferred<api_content_page.PageDescriptor> = jQuery.Deferred<api_content_page.PageDescriptor>();
+            var deferred: JQueryDeferred<api.content.page.PageDescriptor> = jQuery.Deferred<api.content.page.PageDescriptor>();
 
-            this.send().done((response: api_rest.JsonResponse<api_content_page_json.PageDescriptorJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.content.page.json.PageDescriptorJson>) => {
                 deferred.resolve(this.fromJsonToPageDescriptor(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

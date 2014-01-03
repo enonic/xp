@@ -1,22 +1,22 @@
-module api_content_site {
+module api.content.site {
 
     export class Site {
 
-        private templateKey: api_content_site_template.SiteTemplateKey;
+        private templateKey: api.content.site.template.SiteTemplateKey;
 
         private moduleConfigs: ModuleConfig[] = [];
 
-        constructor(siteJson: api_content_site_json.SiteJson) {
-            this.templateKey = api_content_site_template.SiteTemplateKey.fromString(siteJson.templateName);
+        constructor(siteJson: api.content.site.json.SiteJson) {
+            this.templateKey = api.content.site.template.SiteTemplateKey.fromString(siteJson.templateName);
 
             if (siteJson.moduleConfigs != null) {
-                siteJson.moduleConfigs.forEach((moduleConfigJson: api_content_site_json.ModuleConfigJson) => {
+                siteJson.moduleConfigs.forEach((moduleConfigJson: api.content.site.json.ModuleConfigJson) => {
                     this.moduleConfigs.push(new ModuleConfigBuilder().setFromJson(moduleConfigJson).build());
                 });
             }
         }
 
-        getTemplateKey(): api_content_site_template.SiteTemplateKey {
+        getTemplateKey(): api.content.site.template.SiteTemplateKey {
             return this.templateKey;
         }
 

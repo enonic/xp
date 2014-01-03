@@ -1,6 +1,6 @@
-module api_content {
+module api.content {
 
-    export class ContentDeletedEvent extends api_event.Event {
+    export class ContentDeletedEvent extends api.event.Event {
 
         private contents:ContentSummary[];
 
@@ -14,7 +14,7 @@ module api_content {
         }
 
         static on( handler:( event:ContentDeletedEvent ) => void ) {
-            api_event.onEvent( 'ContentDeletedEvent', handler );
+            api.event.onEvent( 'ContentDeletedEvent', handler );
         }
 
     }

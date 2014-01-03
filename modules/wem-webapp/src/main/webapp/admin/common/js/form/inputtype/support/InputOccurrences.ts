@@ -1,17 +1,17 @@
-module api_form_inputtype_support {
+module api.form.inputtype.support {
 
     /*
      * A kind of a controller, which add/remove InputOccurrenceView-s to the BaseInputTypeView
      */
-    export class InputOccurrences extends api_form.FormItemOccurrences<InputOccurrenceView> {
+    export class InputOccurrences extends api.form.FormItemOccurrences<InputOccurrenceView> {
 
         private baseInputTypeView:BaseInputTypeView;
 
-        private input:api_form.Input;
+        private input:api.form.Input;
 
-        private properties:api_data.Property[];
+        private properties:api.data.Property[];
 
-        constructor(baseInputTypeView:BaseInputTypeView, input:api_form.Input, properties:api_data.Property[]) {
+        constructor(baseInputTypeView:BaseInputTypeView, input:api.form.Input, properties:api.data.Property[]) {
             super(input, baseInputTypeView, input.getOccurrences());
 
             this.baseInputTypeView = baseInputTypeView;
@@ -26,16 +26,16 @@ module api_form_inputtype_support {
             }
         }
 
-        getInput():api_form.Input {
+        getInput():api.form.Input {
             return this.input;
         }
 
-        getAllowedOccurrences():api_form.Occurrences {
+        getAllowedOccurrences():api.form.Occurrences {
             return this.input.getOccurrences();
         }
 
         private constructOccurrencesForData() {
-            this.properties.forEach((property:api_data.Property, index:number) => {
+            this.properties.forEach((property:api.data.Property, index:number) => {
                 this.addOccurrence(new InputOccurrence(this, index));
             });
 
@@ -47,20 +47,20 @@ module api_form_inputtype_support {
             }
         }
 
-        createNewOccurrence(formItemOccurrences:api_form.FormItemOccurrences<InputOccurrenceView>,
-                            insertAtIndex:number):api_form.FormItemOccurrence<InputOccurrenceView> {
+        createNewOccurrence(formItemOccurrences:api.form.FormItemOccurrences<InputOccurrenceView>,
+                            insertAtIndex:number):api.form.FormItemOccurrence<InputOccurrenceView> {
             return new InputOccurrence(<InputOccurrences>formItemOccurrences, insertAtIndex)
         }
 
         createNewOccurrenceView(occurrence:InputOccurrence):InputOccurrenceView {
 
-            var property:api_data.Property = this.properties != null ? this.properties[occurrence.getIndex()] : null;
+            var property:api.data.Property = this.properties != null ? this.properties[occurrence.getIndex()] : null;
             var inputElement = this.baseInputTypeView.createInputOccurrenceElement(occurrence.getIndex(), property);
 
             var inputOccurrenceView:InputOccurrenceView = new InputOccurrenceView(occurrence, inputElement);
 
             var inputOccurrences:InputOccurrences = this;
-            inputOccurrenceView.addListener(<api_form.FormItemOccurrenceViewListener>{
+            inputOccurrenceView.addListener(<api.form.FormItemOccurrenceViewListener>{
                 onRemoveButtonClicked: (toBeRemoved:InputOccurrenceView, index:number) => {
                     inputOccurrences.doRemoveOccurrence(toBeRemoved, index);
                 }
@@ -68,9 +68,9 @@ module api_form_inputtype_support {
             return inputOccurrenceView;
         }
 
-        getValues():api_data.Value[] {
+        getValues():api.data.Value[] {
 
-            var values:api_data.Value[] = [];
+            var values:api.data.Value[] = [];
             this.getOccurrenceViews().forEach((occurrenceView:InputOccurrenceView) => {
                 values.push(this.baseInputTypeView.getValue(occurrenceView.getInputElement()));
             });

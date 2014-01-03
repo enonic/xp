@@ -1,4 +1,4 @@
-module api_module_json{
+module api.module.json{
 
     export interface ModuleFileEntryJson {
 

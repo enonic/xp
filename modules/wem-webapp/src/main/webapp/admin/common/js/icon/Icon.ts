@@ -1,19 +1,19 @@
-module api_icon {
+module api.icon {
 
     export class Icon {
 
-        private blobKey: api_blob.BlobKey;
+        private blobKey: api.blob.BlobKey;
 
         private mimeType: string;
 
         constructor(builder: IconBuilder) {
-            api_util.assertNotNull(builder.blobKey, "blobKey cannot be null");
-            api_util.assertNotNull(builder.mimeType, "mimeType cannot be null");
+            api.util.assertNotNull(builder.blobKey, "blobKey cannot be null");
+            api.util.assertNotNull(builder.mimeType, "mimeType cannot be null");
             this.blobKey = builder.blobKey;
             this.mimeType = builder.mimeType;
         }
 
-        public getBlobKey(): api_blob.BlobKey {
+        public getBlobKey(): api.blob.BlobKey {
             return this.blobKey;
         }
 
@@ -31,17 +31,17 @@ module api_icon {
 
     export class IconBuilder {
 
-        blobKey: api_blob.BlobKey;
+        blobKey: api.blob.BlobKey;
 
         mimeType: string;
 
         public fromJson(json:IconJson): IconBuilder {
-            this.blobKey = new api_blob.BlobKey(json.blobKey);
+            this.blobKey = new api.blob.BlobKey(json.blobKey);
             this.mimeType = json.mimeType;
             return this;
         }
 
-        public setBlobKey(value: api_blob.BlobKey): IconBuilder {
+        public setBlobKey(value: api.blob.BlobKey): IconBuilder {
             this.blobKey = value;
             return this;
         }

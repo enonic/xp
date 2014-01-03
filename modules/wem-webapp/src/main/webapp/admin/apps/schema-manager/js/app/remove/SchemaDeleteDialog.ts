@@ -1,8 +1,8 @@
-module app_delete {
+module app.remove {
 
-    export class SchemaDeleteDialog extends api_app_delete.DeleteDialog {
+    export class SchemaDeleteDialog extends api.app.remove.DeleteDialog {
 
-        private schemaToDelete:api_schema.Schema[];
+        private schemaToDelete:api.schema.Schema[];
 
         private nameToSchemaMap:Object = [];
 
@@ -17,60 +17,60 @@ module app_delete {
                     mixinsToDelete:string[] = [],
                     relationshipTypesToDelete:string[] = [];
 
-                this.schemaToDelete.forEach((schema:api_schema.Schema) => {
+                this.schemaToDelete.forEach((schema:api.schema.Schema) => {
                     this.nameToSchemaMap[schema.getName()] = schema;
-                    if( api_schema.SchemaKind.CONTENT_TYPE.equals(schema.getSchemaKind()) ) {
+                    if( api.schema.SchemaKind.CONTENT_TYPE.equals(schema.getSchemaKind()) ) {
                         contentTypesToDelete.push(schema.getName());
                     }
-                    else if( api_schema.SchemaKind.MIXIN.equals(schema.getSchemaKind()) ) {
+                    else if( api.schema.SchemaKind.MIXIN.equals(schema.getSchemaKind()) ) {
                         mixinsToDelete.push(schema.getName());
                     }
-                    else if( api_schema.SchemaKind.RELATIONSHIP_TYPE.equals(schema.getSchemaKind()) ) {
+                    else if( api.schema.SchemaKind.RELATIONSHIP_TYPE.equals(schema.getSchemaKind()) ) {
                         relationshipTypesToDelete.push(schema.getName());
                     }
                 });
 
                 if ( contentTypesToDelete.length > 0 ) {
-                    new api_schema_content.DeleteContentTypeRequest(contentTypesToDelete).sendAndParse()
-                        .done((result:api_schema.SchemaDeleteResult) => {
+                    new api.schema.content.DeleteContentTypeRequest(contentTypesToDelete).sendAndParse()
+                        .done((result:api.schema.SchemaDeleteResult) => {
                             this.processSchemaDeleteResponse(result);
                         });
                 }
 
                 if ( mixinsToDelete.length > 0 ) {
-                    new api_schema_mixin.DeleteMixinRequest(mixinsToDelete).sendAndParse()
-                        .done((result:api_schema.SchemaDeleteResult) => {
+                    new api.schema.mixin.DeleteMixinRequest(mixinsToDelete).sendAndParse()
+                        .done((result:api.schema.SchemaDeleteResult) => {
                             this.processSchemaDeleteResponse(result);
                         });
                 }
 
                 if ( relationshipTypesToDelete.length > 0 ) {
-                    new api_schema_relationshiptype.DeleteRelationshipTypeRequest(relationshipTypesToDelete).sendAndParse()
-                        .done((result:api_schema.SchemaDeleteResult) => {
+                    new api.schema.relationshiptype.DeleteRelationshipTypeRequest(relationshipTypesToDelete).sendAndParse()
+                        .done((result:api.schema.SchemaDeleteResult) => {
                             this.processSchemaDeleteResponse(result);
                         });
                 }
             });
         }
 
-        setSchemaToDelete(schemas:api_schema.Schema[]):SchemaDeleteDialog {
+        setSchemaToDelete(schemas:api.schema.Schema[]):SchemaDeleteDialog {
             this.schemaToDelete = schemas;
 
-            var deleteItems:api_app_delete.DeleteItem[] = [];
+            var deleteItems:api.app.remove.DeleteItem[] = [];
             for (var i = 0; i < schemas.length; i++) {
                 var schema = schemas[i];
-                deleteItems.push(new api_app_delete.DeleteItem(schema.getIconUrl(), schema.getDisplayName()));
+                deleteItems.push(new api.app.remove.DeleteItem(schema.getIconUrl(), schema.getDisplayName()));
             }
             this.setDeleteItems(deleteItems);
             return this;
         }
 
-        private processSchemaDeleteResponse(result:api_schema.SchemaDeleteResult) {
+        private processSchemaDeleteResponse(result:api.schema.SchemaDeleteResult) {
             if ( result.getSuccesses().length > 0 ) {
-                var deletedSchemas:api_schema.Schema[] = [];
+                var deletedSchemas:api.schema.Schema[] = [];
                 var names:string[] = [];
 
-                result.getSuccesses().forEach((success:api_schema.SuccessResult) => {
+                result.getSuccesses().forEach((success:api.schema.SuccessResult) => {
                     names.push(success.getName());
                     var schema = this.nameToSchemaMap[success.getName()];
                     if ( schema ) {
@@ -79,16 +79,16 @@ module app_delete {
                 });
 
                 if (deletedSchemas.length > 0) {
-                    api_notify.showFeedback(deletedSchemas[0].getSchemaKind().toString()
+                    api.notify.showFeedback(deletedSchemas[0].getSchemaKind().toString()
                                                 + (deletedSchemas.length > 1 ? "s" : "") + " ['" + names.join(', ') + "'] deleted!");
-                    new api_schema.SchemaDeletedEvent(deletedSchemas).fire();
+                    new api.schema.SchemaDeletedEvent(deletedSchemas).fire();
                 }
 
             }
 
             if ( result.getFailures().length > 0) {
-                result.getFailures().forEach((failure:api_schema.FailureResult) => {
-                    api_notify.showWarning(failure.getReason());
+                result.getFailures().forEach((failure:api.schema.FailureResult) => {
+                    api.notify.showWarning(failure.getReason());
                 });
             }
 
@@ -96,7 +96,7 @@ module app_delete {
         }
     }
 
-    export class SchemaDeleteDialogAction extends api_ui.Action {
+    export class SchemaDeleteDialogAction extends api.ui.Action {
 
         constructor() {
             super("Delete", "enter");

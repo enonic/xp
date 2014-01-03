@@ -1,20 +1,20 @@
-module api_content {
+module api.content {
 
-    export class ContentUpdatedEvent extends api_event.Event {
+    export class ContentUpdatedEvent extends api.event.Event {
 
-        private model:api_content.ContentSummary;
+        private model:api.content.ContentSummary;
 
-        constructor( model:api_content.ContentSummary ) {
+        constructor( model:api.content.ContentSummary ) {
             super( 'ContentUpdatedEvent' );
             this.model = model;
         }
 
-        public getModel():api_content.ContentSummary {
+        public getModel():api.content.ContentSummary {
             return this.model;
         }
 
-        static on( handler:( event:api_content.ContentUpdatedEvent ) => void ) {
-            api_event.onEvent( 'ContentUpdatedEvent', handler );
+        static on( handler:( event:api.content.ContentUpdatedEvent ) => void ) {
+            api.event.onEvent( 'ContentUpdatedEvent', handler );
         }
     }
 

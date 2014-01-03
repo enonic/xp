@@ -3,21 +3,21 @@ declare var Admin;
 declare var CONFIG;
 
 module components {
-    export var detailPanel: app_browse.TemplateBrowseItemPanel;
-    export var gridPanel: app_browse.TemplateTreeGridPanel;
+    export var detailPanel: app.browse.TemplateBrowseItemPanel;
+    export var gridPanel: app.browse.TemplateTreeGridPanel;
 }
 
 window.onload = () => {
-    var appBar = new api_app.AppBar("Template Manager", new api_app.AppBarTabMenu("TemplateAppBarTabMenu"));
+    var appBar = new api.app.AppBar("Template Manager", new api.app.AppBarTabMenu("TemplateAppBarTabMenu"));
     var appPanel = new app.TemplateAppPanel(appBar);
 
-    api_dom.Body.get().appendChild(appBar);
-    api_dom.Body.get().appendChild(appPanel);
+    api.dom.Body.get().appendChild(appBar);
+    api.dom.Body.get().appendChild(appPanel);
 
     appPanel.init();
 
-    var siteTemplateDeleteDialog: app_delete.SiteTemplateDeleteDialog = new app_delete.SiteTemplateDeleteDialog();
-    app_browse.DeleteSiteTemplatePromptEvent.on((event: app_browse.DeleteSiteTemplatePromptEvent) => {
+    var siteTemplateDeleteDialog: app.remove.SiteTemplateDeleteDialog = new app.remove.SiteTemplateDeleteDialog();
+    app.browse.DeleteSiteTemplatePromptEvent.on((event: app.browse.DeleteSiteTemplatePromptEvent) => {
         siteTemplateDeleteDialog.setSiteTemplateToDelete(event.getSiteTemplate());
         siteTemplateDeleteDialog.open();
     });
@@ -29,8 +29,8 @@ window.onload = () => {
 
     window.onmessage = (e:MessageEvent) => {
         if( e.data.appLauncherEvent ) {
-            var eventType:api_app.AppLauncherEventType = api_app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-            if( eventType ==  api_app.AppLauncherEventType.Show ) {
+            var eventType:api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
+            if( eventType ==  api.app.AppLauncherEventType.Show ) {
                 appPanel.activateCurrentKeyBindings();
             }
         }

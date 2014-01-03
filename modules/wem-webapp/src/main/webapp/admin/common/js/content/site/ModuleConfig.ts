@@ -1,25 +1,25 @@
-module api_content_site {
+module api.content.site {
 
     export class ModuleConfig {
 
-        private moduleKey: api_module.ModuleKey;
+        private moduleKey: api.module.ModuleKey;
 
-        private config: api_data.RootDataSet;
+        private config: api.data.RootDataSet;
 
         constructor(builder: ModuleConfigBuilder) {
             this.moduleKey = builder.moduleKey;
             this.config = builder.config;
         }
 
-        getModuleKey(): api_module.ModuleKey {
+        getModuleKey(): api.module.ModuleKey {
             return this.moduleKey;
         }
 
-        getConfig(): api_data.RootDataSet {
+        getConfig(): api.data.RootDataSet {
             return this.config;
         }
 
-        setConfig(config: api_data.RootDataSet) {
+        setConfig(config: api.data.RootDataSet) {
             this.config = config;
         }
 
@@ -33,22 +33,22 @@ module api_content_site {
 
     export class ModuleConfigBuilder{
 
-        moduleKey: api_module.ModuleKey;
+        moduleKey: api.module.ModuleKey;
 
-        config: api_data.RootDataSet;
+        config: api.data.RootDataSet;
 
-        setFromJson(moduleConfigJson: api_content_site_json.ModuleConfigJson):ModuleConfigBuilder {
-            this.moduleKey = api_module.ModuleKey.fromString(moduleConfigJson.moduleKey);
-            this.config = api_data.DataFactory.createRootDataSet(moduleConfigJson.config);
+        setFromJson(moduleConfigJson: api.content.site.json.ModuleConfigJson):ModuleConfigBuilder {
+            this.moduleKey = api.module.ModuleKey.fromString(moduleConfigJson.moduleKey);
+            this.config = api.data.DataFactory.createRootDataSet(moduleConfigJson.config);
             return this;
         }
 
-        setModuleKey(value:api_module.ModuleKey):ModuleConfigBuilder {
+        setModuleKey(value:api.module.ModuleKey):ModuleConfigBuilder {
             this.moduleKey = value;
             return this;
         }
 
-        setConfig(value:api_data.RootDataSet):ModuleConfigBuilder {
+        setConfig(value:api.data.RootDataSet):ModuleConfigBuilder {
             this.config = value;
             return this;
         }

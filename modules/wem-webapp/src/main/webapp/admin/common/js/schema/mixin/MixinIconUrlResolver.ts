@@ -1,9 +1,9 @@
-module api_schema_mixin {
+module api.schema.mixin {
 
-    export class MixinIconUrlResolver extends api_schema.SchemaIconUrlResolver {
+    export class MixinIconUrlResolver extends api.schema.SchemaIconUrlResolver {
 
         public resolveDefault(): string {
-            return this.toRestUrl(api_rest.Path.fromParent(this.getResourcePath(), "Mixin:_"));
+            return this.toRestUrl(api.rest.Path.fromParent(this.getResourcePath(), "Mixin:_"));
         }
     }
 }

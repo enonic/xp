@@ -1,4 +1,4 @@
-module api_form_inputtype_content_relationship {
+module api.form.inputtype.content.relationship {
 
     export interface RelationshipConfig {
 
@@ -7,29 +7,29 @@ module api_form_inputtype_content_relationship {
         };
     }
 
-    export class Relationship extends api_dom.DivEl implements api_form_inputtype.InputTypeView {
+    export class Relationship extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private config: api_form_inputtype.InputTypeViewConfig<RelationshipConfig>;
+        private config: api.form.inputtype.InputTypeViewConfig<RelationshipConfig>;
 
-        private input: api_form.Input;
+        private input: api.form.Input;
 
-        private comboBox: api_ui_combobox.ComboBox<api_content.ContentSummary>;
+        private comboBox: api.ui.combobox.ComboBox<api.content.ContentSummary>;
 
         private selectedOptionsView: RelationshipSelectedOptionsView;
 
-        private contentSummaryLoader: api_form_inputtype_content.ContentSummaryLoader;
+        private contentSummaryLoader: api.form.inputtype.content.ContentSummaryLoader;
 
         private contentRequestsAllowed: boolean;
 
-        constructor(config?: api_form_inputtype.InputTypeViewConfig<RelationshipConfig>) {
+        constructor(config?: api.form.inputtype.InputTypeViewConfig<RelationshipConfig>) {
             super("Relationship", "relationship");
             this.config = config;
-            this.contentSummaryLoader = new api_form_inputtype_content.ContentSummaryLoader();
+            this.contentSummaryLoader = new api.form.inputtype.content.ContentSummaryLoader();
             this.contentSummaryLoader.addListener({
                 onLoading: () => {
                     this.comboBox.setLabel("Searching...");
                 },
-                onLoaded: (contentSummaries: api_content.ContentSummary[]) => {
+                onLoaded: (contentSummaries: api.content.ContentSummary[]) => {
                     var options = this.createOptions(contentSummaries);
                     this.comboBox.setOptions(options);
                 }
@@ -38,13 +38,13 @@ module api_form_inputtype_content_relationship {
             // requests aren't allowed until allowed contentTypes are specified
             this.contentRequestsAllowed = false;
 
-            var name = new api_schema_relationshiptype.RelationshipTypeName("default");
+            var name = new api.schema.relationshiptype.RelationshipTypeName("default");
             if (config.inputConfig.relationshipType.name != null) {
-                name = new api_schema_relationshiptype.RelationshipTypeName(config.inputConfig.relationshipType.name);
+                name = new api.schema.relationshiptype.RelationshipTypeName(config.inputConfig.relationshipType.name);
             }
-            new api_schema_relationshiptype.GetRelationshipTypeByNameRequest(name).
+            new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(name).
                 sendAndParse()
-                .done((relationshipType: api_schema_relationshiptype.RelationshipType) => {
+                .done((relationshipType: api.schema.relationshiptype.RelationshipType) => {
                     this.updateInputIcon(relationshipType);
                     this.contentSummaryLoader.setAllowedContentTypes(relationshipType.getAllowedToTypes());
                     this.contentRequestsAllowed = true;
@@ -61,11 +61,11 @@ module api_form_inputtype_content_relationship {
             return true;
         }
 
-        addFormItemOccurrencesListener(listener: api_form.FormItemOccurrencesListener) {
+        addFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
             throw new Error("Relationship manages occurrences self");
         }
 
-        removeFormItemOccurrencesListener(listener: api_form.FormItemOccurrencesListener) {
+        removeFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
             throw new Error("Relationship manages occurrences self");
         }
 
@@ -77,7 +77,7 @@ module api_form_inputtype_content_relationship {
             throw new Error("Relationship manages occurrences self");
         }
 
-        layout(input: api_form.Input, properties: api_data.Property[]) {
+        layout(input: api.form.Input, properties: api.data.Property[]) {
 
             this.input = input;
 
@@ -85,12 +85,12 @@ module api_form_inputtype_content_relationship {
             this.comboBox = this.createComboBox(input);
 
             if (properties != null) {
-                properties.forEach((property: api_data.Property) => {
-                    new api_content.GetContentByIdRequest(new api_content.ContentId(property.getString()))
-                        .setExpand(api_content.ContentResourceRequest.EXPAND_SUMMARY)
+                properties.forEach((property: api.data.Property) => {
+                    new api.content.GetContentByIdRequest(new api.content.ContentId(property.getString()))
+                        .setExpand(api.content.ContentResourceRequest.EXPAND_SUMMARY)
                         .send()
-                        .done((jsonResponse: api_rest.JsonResponse<api_content_json.ContentSummaryJson>) => {
-                            var contentSummary = new api_content.ContentSummary(jsonResponse.getResult());
+                        .done((jsonResponse: api.rest.JsonResponse<api.content.json.ContentSummaryJson>) => {
+                            var contentSummary = new api.content.ContentSummary(jsonResponse.getResult());
                             this.comboBox.selectOption({
                                 value: contentSummary.getId(),
                                 displayValue: contentSummary
@@ -103,15 +103,15 @@ module api_form_inputtype_content_relationship {
             this.appendChild(this.selectedOptionsView);
         }
 
-        private createComboBox(input: api_form.Input): api_ui_combobox.ComboBox<api_content.ContentSummary> {
-            var comboboxConfig = <api_ui_combobox.ComboBoxConfig<api_content.ContentSummary>>{
+        private createComboBox(input: api.form.Input): api.ui.combobox.ComboBox<api.content.ContentSummary> {
+            var comboboxConfig = <api.ui.combobox.ComboBoxConfig<api.content.ContentSummary>>{
                 rowHeight: 50,
                 optionFormatter: this.optionFormatter,
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum(),
                 hideComboBoxWhenMaxReached: true
             };
-            var comboBox = new api_ui_combobox.ComboBox<api_content.ContentSummary>(input.getName(), comboboxConfig);
+            var comboBox = new api.ui.combobox.ComboBox<api.content.ContentSummary>(input.getName(), comboboxConfig);
 
             this.loadOptions("");
 
@@ -125,21 +125,21 @@ module api_form_inputtype_content_relationship {
             return comboBox;
         }
 
-        getValues(): api_data.Value[] {
+        getValues(): api.data.Value[] {
 
-            var values: api_data.Value[] = [];
-            this.comboBox.getSelectedData().forEach((option: api_ui_combobox.Option<api_content.ContentSummary>) => {
-                var value = new api_data.Value(option.value, api_data.ValueTypes.STRING);
+            var values: api.data.Value[] = [];
+            this.comboBox.getSelectedData().forEach((option: api.ui.combobox.Option<api.content.ContentSummary>) => {
+                var value = new api.data.Value(option.value, api.data.ValueTypes.STRING);
                 values.push(value);
             });
             return values;
         }
 
-        getAttachments(): api_content_attachment.Attachment[] {
+        getAttachments(): api.content.attachment.Attachment[] {
             return [];
         }
 
-        validate(validationRecorder: api_form.ValidationRecorder) {
+        validate(validationRecorder: api.form.ValidationRecorder) {
 
             // TODO:
         }
@@ -151,12 +151,12 @@ module api_form_inputtype_content_relationship {
             return this.comboBox.giveFocus();
         }
 
-        valueBreaksRequiredContract(value: api_data.Value): boolean {
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
             // TODO:
             return false;
         }
 
-        private updateInputIcon(relationshipType: api_schema_relationshiptype.RelationshipType) {
+        private updateInputIcon(relationshipType: api.schema.relationshiptype.RelationshipType) {
 
             this.comboBox.setInputIconUrl(relationshipType.getIconUrl());
         }
@@ -169,9 +169,9 @@ module api_form_inputtype_content_relationship {
             this.contentSummaryLoader.search(searchString);
         }
 
-        private createOptions(contents: api_content.ContentSummary[]): api_ui_combobox.Option<api_content.ContentSummary>[] {
+        private createOptions(contents: api.content.ContentSummary[]): api.ui.combobox.Option<api.content.ContentSummary>[] {
             var options = [];
-            contents.forEach((content: api_content.ContentSummary) => {
+            contents.forEach((content: api.content.ContentSummary) => {
                 options.push({
                     value: content.getId(),
                     displayValue: content
@@ -180,21 +180,21 @@ module api_form_inputtype_content_relationship {
             return options;
         }
 
-        private optionFormatter(row: number, cell: number, content: api_content.ContentSummary, columnDef: any,
-                                dataContext: api_ui_combobox.Option<api_content.ContentSummary>): string {
-            var img = new api_dom.ImgEl();
+        private optionFormatter(row: number, cell: number, content: api.content.ContentSummary, columnDef: any,
+                                dataContext: api.ui.combobox.Option<api.content.ContentSummary>): string {
+            var img = new api.dom.ImgEl();
             img.setClass("icon");
             img.getEl().setSrc(content.getIconUrl());
 
-            var contentSummary = new api_dom.DivEl();
+            var contentSummary = new api.dom.DivEl();
             contentSummary.setClass("content-summary");
 
-            var displayName = new api_dom.DivEl();
+            var displayName = new api.dom.DivEl();
             displayName.setClass("display-name");
             displayName.getEl().setAttribute("title", content.getDisplayName());
             displayName.getEl().setInnerHtml(content.getDisplayName());
 
-            var path = new api_dom.DivEl();
+            var path = new api.dom.DivEl();
             path.setClass("path");
             path.getEl().setAttribute("title", content.getPath().toString());
             path.getEl().setInnerHtml(content.getPath().toString());
@@ -207,5 +207,5 @@ module api_form_inputtype_content_relationship {
 
     }
 
-    api_form_input.InputTypeManager.register("Relationship", Relationship);
+    api.form.input.InputTypeManager.register("Relationship", Relationship);
 }

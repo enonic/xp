@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export class RadioGroup extends api_dom.FormInputEl {
+    export class RadioGroup extends api.dom.FormInputEl {
 
         public static ORIENTATION_VERTICAL = "vertical";
         public static ORIENTATION_HORIZONTAL = "horizontal";
@@ -47,20 +47,20 @@ module api_ui {
     }
 
 
-    export class RadioButton extends api_dom.FormInputEl {
+    export class RadioButton extends api.dom.FormInputEl {
 
-        private radio:api_dom.InputEl;
-        private label:api_dom.LabelEl;
+        private radio:api.dom.InputEl;
+        private label:api.dom.LabelEl;
 
         constructor(label:string, value:string, name:string, checked?:boolean) {
             super("span", "RadioButton", "radio-button");
 
-            this.radio = new api_dom.InputEl();
+            this.radio = new api.dom.InputEl();
             this.radio.getEl().setAttribute('type', 'radio');
             this.radio.setName(name).setValue(value);
             this.appendChild(this.radio);
 
-            this.label = new api_dom.LabelEl(label, this.radio);
+            this.label = new api.dom.LabelEl(label, this.radio);
             this.appendChild(this.label);
 
             this.setChecked(checked);

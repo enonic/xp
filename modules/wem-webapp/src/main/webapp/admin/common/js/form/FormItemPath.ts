@@ -1,4 +1,4 @@
-module api_form{
+module api.form{
 
     export class FormItemPath {
 

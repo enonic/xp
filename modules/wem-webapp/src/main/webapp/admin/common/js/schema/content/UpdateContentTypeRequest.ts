@@ -1,6 +1,6 @@
-module api_schema_content {
+module api.schema.content {
 
-    export class UpdateContentTypeRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeJson> {
+    export class UpdateContentTypeRequest extends ContentTypeResourceRequest<api.schema.content.json.ContentTypeJson> {
 
         private contentTypeToUpdate:ContentTypeName;
 
@@ -8,9 +8,9 @@ module api_schema_content {
 
         private config:string;
 
-        private icon: api_icon.Icon;
+        private icon: api.icon.Icon;
 
-        constructor(contentTypeToUpdate:ContentTypeName, name:ContentTypeName, config:string, icon: api_icon.Icon) {
+        constructor(contentTypeToUpdate:ContentTypeName, name:ContentTypeName, config:string, icon: api.icon.Icon) {
             super();
             super.setMethod('POST');
             this.contentTypeToUpdate = contentTypeToUpdate;
@@ -28,17 +28,17 @@ module api_schema_content {
             }
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "update");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "update");
         }
 
         sendAndParse(): JQueryPromise<ContentType> {
 
             var deferred = jQuery.Deferred<ContentType>();
 
-            this.send().done((response: api_rest.JsonResponse<api_schema_content_json.ContentTypeJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.schema.content.json.ContentTypeJson>) => {
                 deferred.resolve(this.fromJsonToContentType(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

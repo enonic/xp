@@ -1,4 +1,4 @@
-module api_form {
+module api.form {
 
     export class FormItemOccurrences<V extends FormItemOccurrenceView> {
 
@@ -6,7 +6,7 @@ module api_form {
 
         private occurrenceViews:V[] = [];
 
-        private occurrenceViewContainer:api_dom.Element;
+        private occurrenceViewContainer:api.dom.Element;
 
         private formItem:FormItem;
 
@@ -14,7 +14,7 @@ module api_form {
 
         private listeners:FormItemOccurrencesListener[] = [];
 
-        constructor(formItem:FormItem, occurrenceViewContainer:api_dom.Element,
+        constructor(formItem:FormItem, occurrenceViewContainer:api.dom.Element,
                     allowedOccurrences?:Occurrences) {
             this.formItem = formItem;
             this.occurrenceViewContainer = occurrenceViewContainer;
@@ -132,7 +132,7 @@ module api_form {
             var insertAtIndex = occurrence.getIndex();
             this.occurrences.splice(insertAtIndex, 0, occurrence);
 
-            var occurrenceViewBefore:api_dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
+            var occurrenceViewBefore:api.dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
             if (occurrenceViewBefore != null) {
                 occurrenceView.insertAfterEl(occurrenceViewBefore);
             }

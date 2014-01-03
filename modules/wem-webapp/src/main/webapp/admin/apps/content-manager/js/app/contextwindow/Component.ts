@@ -1,4 +1,4 @@
-module app_contextwindow {
+module app.contextwindow {
     export interface Component {
         name:string;
         key:number;

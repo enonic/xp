@@ -1,10 +1,10 @@
-module api_content_page_region {
+module api.content.page.region {
 
     export class Region {
 
         private name: string;
 
-        private pageComponents: api_content_page.BasePageComponent<api_content_page.TemplateKey>[] = [];
+        private pageComponents: api.content.page.BasePageComponent<api.content.page.TemplateKey>[] = [];
 
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
@@ -17,13 +17,13 @@ module api_content_page_region {
 
         name: string;
 
-        pageComponents: api_content_page.BasePageComponent<api_content_page.TemplateKey>[] = [];
+        pageComponents: api.content.page.BasePageComponent<api.content.page.TemplateKey>[] = [];
 
-        public fromRootDataSet(data: api_data.RootDataSet): RegionBuilder {
+        public fromRootDataSet(data: api.data.RootDataSet): RegionBuilder {
 
             this.name = data.getProperty("name").getString();
 
-            data.getDataSets().forEach((dataSet: api_data.DataSet) => {
+            data.getDataSets().forEach((dataSet: api.data.DataSet) => {
                 var component = RegionPlaceableComponentFactory.create(dataSet);
                 this.pageComponents.push(component);
             });

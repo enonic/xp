@@ -1,4 +1,4 @@
-module api_content_page{
+module api.content.page{
 
     export class ComponentDescriptor{
 
@@ -6,9 +6,9 @@ module api_content_page{
 
         private displayName:string;
 
-        private form:api_form.Form;
+        private form:api.form.Form;
 
-        private controllerResource:api_module.ModuleResourceKey;
+        private controllerResource:api.module.ModuleResourceKey;
 
         constructor(builder:ComponentDescriptorBuilder) {
             this.name = builder.name;
@@ -25,11 +25,11 @@ module api_content_page{
             return this.displayName;
         }
 
-        getForm():api_form.Form {
+        getForm():api.form.Form {
             return this.form;
         }
 
-        getControllerResource():api_module.ModuleResourceKey {
+        getControllerResource():api.module.ModuleResourceKey {
             return this.controllerResource;
         }
     }
@@ -40,9 +40,9 @@ module api_content_page{
 
         displayName:string;
 
-        form:api_form.Form;
+        form:api.form.Form;
 
-        controllerResource:api_module.ModuleResourceKey;
+        controllerResource:api.module.ModuleResourceKey;
 
     }
 }

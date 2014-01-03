@@ -1,4 +1,4 @@
-module api_notify {
+module api.notify {
 
     export enum Type {
         INFO,

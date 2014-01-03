@@ -1,6 +1,6 @@
-module api_schema_content {
+module api.schema.content {
 
-    export class GetAllContentTypesRequest extends ContentTypeResourceRequest<api_schema_content_json.ContentTypeSummaryListJson> {
+    export class GetAllContentTypesRequest extends ContentTypeResourceRequest<api.schema.content.json.ContentTypeSummaryListJson> {
 
         private mixinReferencesToFormItems:boolean = true;
 
@@ -20,8 +20,8 @@ module api_schema_content {
             };
         }
 
-        getRequestPath():api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "all");
+        getRequestPath():api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "all");
         }
     }
 }

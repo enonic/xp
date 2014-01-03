@@ -1,12 +1,12 @@
-module app_wizard {
+module app.wizard {
 
-    export class DisplayNameScriptExecutor implements api_app_wizard.DisplayNameGenerator {
+    export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGenerator {
 
-        private formView: api_form.FormView;
+        private formView: api.form.FormView;
 
         private script: string;
 
-        setFormView(value: api_form.FormView): DisplayNameScriptExecutor {
+        setFormView(value: api.form.FormView): DisplayNameScriptExecutor {
             this.formView = value;
             return this;
         }
@@ -21,23 +21,23 @@ module app_wizard {
         }
 
         execute(): string {
-            api_util.assertNotNull(this.formView, "formView not set");
-            api_util.assertNotNull(this.script, "script not set");
+            api.util.assertNotNull(this.formView, "formView not set");
+            api.util.assertNotNull(this.script, "script not set");
 
             return this.safeEval(this.script, this.formView);
         }
 
-        private safeEval(script: string, formView: api_form.FormView): string {
+        private safeEval(script: string, formView: api.form.FormView): string {
 
             function $(...paths: string[]) {
 
                 var strValues: string [] = [];
                 paths.forEach((path: string) => {
 
-                    var value = formView.getValueAtPath(api_data.DataPath.fromString(path));
+                    var value = formView.getValueAtPath(api.data.DataPath.fromString(path));
                     if (value != null) {
                         var strValue = value.asString();
-                        if (!api_util.isStringBlank(strValue)) {
+                        if (!api.util.isStringBlank(strValue)) {
                             strValues.push(strValue);
                         }
                     }

@@ -1,6 +1,6 @@
-module api_schema_mixin_json {
+module api.schema.mixin.json {
 
-    export class MixinReferenceJson extends api_form_json.FormItemJson {
+    export class MixinReferenceJson extends api.form.json.FormItemJson {
 
         type:string;
         reference:string;

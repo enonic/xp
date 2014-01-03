@@ -1,6 +1,6 @@
-module app_browse {
+module app.browse {
 
-    export class BaseModuleBrowseAction extends api_ui.Action {
+    export class BaseModuleBrowseAction extends api.ui.Action {
 
         constructor(label:string, shortcut?:string) {
             super(label, shortcut);
@@ -8,7 +8,7 @@ module app_browse {
 
     }
 
-    export class ImportModuleAction extends api_ui.Action {
+    export class ImportModuleAction extends api.ui.Action {
 
         constructor() {
             super("Import");
@@ -35,7 +35,7 @@ module app_browse {
             super("Delete");
             this.setEnabled(false);
             this.addExecutionListener(() => {
-                var moduleModel:api_module.ModuleSummary = api_module.ModuleSummary.fromExtModel(components.gridPanel.getSelection()[0]);
+                var moduleModel:api.module.ModuleSummary = api.module.ModuleSummary.fromExtModel(components.gridPanel.getSelection()[0]);
                 new DeleteModulePromptEvent(moduleModel).fire();
             });
         }
@@ -43,11 +43,11 @@ module app_browse {
 
     export class ModuleBrowseActions {
 
-        public IMPORT_MODULE:api_ui.Action;
-        public EXPORT_MODULE:api_ui.Action;
-        public DELETE_MODULE:api_ui.Action;
+        public IMPORT_MODULE:api.ui.Action;
+        public EXPORT_MODULE:api.ui.Action;
+        public DELETE_MODULE:api.ui.Action;
 
-        private allActions:api_ui.Action[] = [];
+        private allActions:api.ui.Action[] = [];
 
         private static INSTANCE:ModuleBrowseActions;
 
@@ -71,7 +71,7 @@ module app_browse {
             ModuleBrowseActions.INSTANCE = this;
         }
 
-        getAllActions():api_ui.Action[] {
+        getAllActions():api.ui.Action[] {
             return this.allActions;
         }
 

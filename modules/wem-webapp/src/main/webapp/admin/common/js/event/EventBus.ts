@@ -1,4 +1,4 @@
-module api_event {
+module api.event {
 
     var bus = new Ext.util.Observable({});
 

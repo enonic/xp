@@ -1,6 +1,6 @@
-module api_module_json{
+module api.module.json{
 
-    export interface ModuleSummaryJson extends api_item.ItemJson{
+    export interface ModuleSummaryJson extends api.item.ItemJson{
 
         key:string;
 

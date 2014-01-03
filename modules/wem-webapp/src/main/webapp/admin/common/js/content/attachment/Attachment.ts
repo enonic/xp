@@ -1,8 +1,8 @@
-module api_content_attachment {
+module api.content.attachment {
 
     export class Attachment {
 
-        private blobKey: api_blob.BlobKey;
+        private blobKey: api.blob.BlobKey;
 
         private attachmentName: AttachmentName;
 
@@ -17,7 +17,7 @@ module api_content_attachment {
             this.size = builder.size;
         }
 
-        getBlobKey(): api_blob.BlobKey {
+        getBlobKey(): api.blob.BlobKey {
             return this.blobKey;
         }
 
@@ -36,7 +36,7 @@ module api_content_attachment {
 
     export class AttachmentBuilder {
 
-        blobKey: api_blob.BlobKey;
+        blobKey: api.blob.BlobKey;
 
         attachmentName: AttachmentName;
 
@@ -44,7 +44,7 @@ module api_content_attachment {
 
         size: number;
 
-        public setBlobKey(value: api_blob.BlobKey): AttachmentBuilder {
+        public setBlobKey(value: api.blob.BlobKey): AttachmentBuilder {
             this.blobKey = value;
             return this;
         }

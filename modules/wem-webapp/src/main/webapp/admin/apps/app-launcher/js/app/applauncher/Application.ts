@@ -1,4 +1,4 @@
-module app_launcher {
+module app.launcher {
 
     export class Application {
         private id:string;
@@ -7,10 +7,10 @@ module app_launcher {
         private iconUrl:string;
         private fullSizeIcon:boolean;
         private openTabs:number;
-        private appFrame:api_dom.IFrameEl;
+        private appFrame:api.dom.IFrameEl;
         private loaded:boolean;
 
-        constructor(id: string, name:string, iconUrl:string, description?:string, appFrame:api_dom.IFrameEl = null, fullSizeIcon:boolean = false) {
+        constructor(id: string, name:string, iconUrl:string, description?:string, appFrame:api.dom.IFrameEl = null, fullSizeIcon:boolean = false) {
             this.id = id;
             this.name = name;
             this.iconUrl = iconUrl;
@@ -40,16 +40,16 @@ module app_launcher {
         }
 
         getAppUrl():string {
-            return api_util.getUri('admin?app=' + this.id);
+            return api.util.getUri('admin?app=' + this.id);
         }
 
         getOpenTabs():number {
             return this.openTabs;
         }
 
-        getAppFrame():api_dom.IFrameEl {
+        getAppFrame():api.dom.IFrameEl {
             if (!this.appFrame) {
-                this.appFrame = new api_dom.IFrameEl();
+                this.appFrame = new api.dom.IFrameEl();
                 this.appFrame.getEl().setHeight('100%').setWidth('100%').getHTMLElement().style.border = '0';
                 this.appFrame.setSrc(this.getAppUrl());
                 this.appFrame.getEl().setAttribute('data-wem-app', this.id);

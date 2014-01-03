@@ -1,6 +1,6 @@
-module app_wizard {
+module app.wizard {
 
-    export class DuplicateSiteTemplateAction extends api_ui.Action {
+    export class DuplicateSiteTemplateAction extends api.ui.Action {
 
         constructor() {
             super("Duplicate");
@@ -10,28 +10,28 @@ module app_wizard {
         }
     }
 
-    export class DeleteSiteTemplateAction extends api_ui.Action {
+    export class DeleteSiteTemplateAction extends api.ui.Action {
 
-        constructor(wizardPanel:api_app_wizard.WizardPanel<any>) {
+        constructor(wizardPanel:api.app.wizard.WizardPanel<any>) {
             super("Delete", "mod+del");
             /*this.addExecutionListener(() => {
-                api_ui_dialog.ConfirmationDialog.get()
+                api.ui.dialog.ConfirmationDialog.get()
                     .setQuestion("Are you sure you want to delete this content?")
                     .setNoCallback(null)
                     .setYesCallback(() => {
                         wizardPanel.close();
-                        new api_content.DeleteContentRequest()
+                        new api.content.DeleteContentRequest()
                             .addContentPath(wizardPanel.getPersistedItem().getPath())
                             .send()
-                            .done((jsonResponse:api_rest.JsonResponse) => {
+                            .done((jsonResponse:api.rest.JsonResponse) => {
                                 var json = jsonResponse.getJson();
 
                                 if (json.successes && json.successes.length > 0) {
                                     var path = json.successes[0].path;
                                     var deletedContent = wizardPanel.getPersistedItem();
 
-                                    api_notify.showFeedback('Content [' + path + '] deleted!');
-                                    new api_content.ContentDeletedEvent([deletedContent]).fire();
+                                    api.notify.showFeedback('Content [' + path + '] deleted!');
+                                    new api.content.ContentDeletedEvent([deletedContent]).fire();
                                 }
                             });
                     }).open();
@@ -40,7 +40,7 @@ module app_wizard {
     }
 
 
-    export class MoveSiteTemplateAction extends api_ui.Action {
+    export class MoveSiteTemplateAction extends api.ui.Action {
 
         constructor() {
             super("Move");
@@ -49,23 +49,23 @@ module app_wizard {
         }
     }
 
-    export class SiteTemplateWizardActions implements api_app_wizard.WizardActions<any> {
+    export class SiteTemplateWizardActions implements api.app.wizard.WizardActions<any> {
 
-        private save:api_ui.Action;
+        private save:api.ui.Action;
 
-        private close:api_ui.Action;
+        private close:api.ui.Action;
 
-        private delete:api_ui.Action;
+        private delete:api.ui.Action;
 
-        private duplicate:api_ui.Action;
+        private duplicate:api.ui.Action;
 
-        private move:api_ui.Action;
+        private move:api.ui.Action;
 
-        constructor(wizardPanel:api_app_wizard.WizardPanel<api_content.Content>) {
-            this.save = new api_app_wizard.SaveAction(wizardPanel);
+        constructor(wizardPanel:api.app.wizard.WizardPanel<api.content.Content>) {
+            this.save = new api.app.wizard.SaveAction(wizardPanel);
             this.duplicate = new DuplicateSiteTemplateAction();
             this.delete = new DeleteSiteTemplateAction(wizardPanel);
-            this.close = new api_app_wizard.CloseAction(wizardPanel);
+            this.close = new api.app.wizard.CloseAction(wizardPanel);
             this.move = new MoveSiteTemplateAction();
         }
 
@@ -97,7 +97,7 @@ module app_wizard {
             return this.close;
         }
 
-        getMoveAction():api_ui.Action {
+        getMoveAction():api.ui.Action {
             return this.move;
         }
 

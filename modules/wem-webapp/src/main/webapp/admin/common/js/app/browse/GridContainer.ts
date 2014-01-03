@@ -1,10 +1,10 @@
-module api_app_browse {
+module api.app.browse {
 
-    export class GridContainer extends api_ui.Panel {
+    export class GridContainer extends api.ui.Panel {
 
-        private grid:api_app_browse_grid.TreeGridPanel;
+        private grid:api.app.browse.grid.TreeGridPanel;
 
-        constructor(grid:api_app_browse_grid.TreeGridPanel) {
+        constructor(grid:api.app.browse.grid.TreeGridPanel) {
             super("GridContainer");
             this.setScrollY();
             this.addClass("grid-container");

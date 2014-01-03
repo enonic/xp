@@ -1,6 +1,6 @@
-module api_form {
+module api.form {
 
-    export interface FormItemOccurrencesListener extends api_event.Listener{
+    export interface FormItemOccurrencesListener extends api.event.Listener{
 
         onOccurrenceAdded(occurrence:FormItemOccurrence<FormItemOccurrenceView>);
 

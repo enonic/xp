@@ -1,18 +1,18 @@
-module app_browse {
+module app.browse {
 
     export interface ContentBrowseItemPanelParams {
 
-        actionMenuActions:api_ui.Action[];
+        actionMenuActions:api.ui.Action[];
     }
 
-    export class ContentBrowseItemPanel extends api_app_browse.BrowseItemPanel<api_content.ContentSummary> {
+    export class ContentBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.content.ContentSummary> {
 
         private previewPanel;
 
         private previewMode:boolean;
 
         constructor(params:ContentBrowseItemPanelParams) {
-            super(<api_app_browse.BrowseItemPanelParams>{
+            super(<api.app.browse.BrowseItemPanelParams>{
                 actionMenuActions: params.actionMenuActions
             });
 
@@ -40,20 +40,20 @@ module app_browse {
         }
     }
 
-    export class ContentItemPreviewPanel extends api_ui.Panel {
+    export class ContentItemPreviewPanel extends api.ui.Panel {
 
-        private frame:api_dom.IFrameEl;
+        private frame:api.dom.IFrameEl;
 
         constructor() {
             super("ItemPreviewPanel");
             this.addClass("item-preview-panel");
-            this.frame = new api_dom.IFrameEl();
+            this.frame = new api.dom.IFrameEl();
             this.appendChild(this.frame);
         }
 
-        public setItem(item:api_app_browse.BrowseItem<api_content.ContentSummary>) {
+        public setItem(item:api.app.browse.BrowseItem<api.content.ContentSummary>) {
             //TODO: use real item path here
-            this.frame.setSrc(api_util.getUri("portal/live/" + item.getPath()));
+            this.frame.setSrc(api.util.getUri("portal/live/" + item.getPath()));
         }
 
     }

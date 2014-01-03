@@ -1,4 +1,4 @@
-module api_blob{
+module api.blob{
 
     export class BlobKey {
 

@@ -1,27 +1,27 @@
-module api_ui{
+module api.ui{
 
     export interface ToggleSlideActions {
 
-        turnOnAction: api_ui.Action;
-        turnOffAction: api_ui.Action;
+        turnOnAction: api.ui.Action;
+        turnOffAction: api.ui.Action;
 
     }
 
-    export class ToggleSlide extends api_dom.DivEl {
+    export class ToggleSlide extends api.dom.DivEl {
 
         private actions:ToggleSlideActions;
 
         private isOn:boolean;
 
-        private slider:api_dom.Element;
-        private holder:api_dom.Element;
-        private onLabel:api_dom.Element;
-        private offLabel:api_dom.Element;
+        private slider:api.dom.Element;
+        private holder:api.dom.Element;
+        private onLabel:api.dom.Element;
+        private offLabel:api.dom.Element;
 
         private animationDuration:number = 300;
         private sliderOffset:number;
-        private slideLeft:api_util.Animation;
-        private slideRight:api_util.Animation;
+        private slideLeft:api.util.Animation;
+        private slideRight:api.util.Animation;
 
         constructor(actions:ToggleSlideActions, initOn:boolean) {
             super('ToogleSlide', 'toggle-slide');
@@ -80,10 +80,10 @@ module api_ui{
         }
 
         private createMarkup() {
-            this.slider = new api_dom.DivEl(null, 'slider');
-            this.holder = new api_dom.DivEl(null, 'holder');
-            this.onLabel = new api_dom.DivEl(null, 'on');
-            this.offLabel = new api_dom.DivEl(null, 'off');
+            this.slider = new api.dom.DivEl(null, 'slider');
+            this.holder = new api.dom.DivEl(null, 'holder');
+            this.onLabel = new api.dom.DivEl(null, 'on');
+            this.offLabel = new api.dom.DivEl(null, 'off');
 
             this.appendChild(this.slider);
             this.appendChild(this.holder);
@@ -103,7 +103,7 @@ module api_ui{
             // To have labels width calculated by browser they should be rendered into dom.
             // Therefore append ToggleSlide to body.
             // It will be removed from here when it is inserted in another place.
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
 
             var labelWidth = Math.max(onLabelEl.getWidth(), offLabelEl.getWidth());
 
@@ -119,12 +119,12 @@ module api_ui{
         }
 
         private setupAnimation() {
-            this.slideLeft = new api_util.Animation(this.animationDuration);
+            this.slideLeft = new api.util.Animation(this.animationDuration);
             this.slideLeft.onStep((progress) => {
                 this.slider.getEl().setLeft(this.sliderOffset * (1 - progress) + 'px');
             });
 
-            this.slideRight = new api_util.Animation(this.animationDuration);
+            this.slideRight = new api.util.Animation(this.animationDuration);
             this.slideRight.onStep((progress) => {
                 this.slider.getEl().setLeft(this.sliderOffset * progress + 'px');
             });

@@ -1,8 +1,8 @@
-module api_content_page{
+module api.content.page{
 
     export class Page extends BasePageComponent<PageTemplateKey> {
 
-        private config:api_data.RootDataSet;
+        private config:api.data.RootDataSet;
 
         constructor(builder:PageBuilder) {
             super(builder);
@@ -13,22 +13,22 @@ module api_content_page{
             return this.config != null;
         }
 
-        getConfig():api_data.RootDataSet {
+        getConfig():api.data.RootDataSet {
             return this.config;
         }
     }
 
     export class PageBuilder extends BaseComponentBuilder<PageTemplateKey>{
 
-        config:api_data.RootDataSet;
+        config:api.data.RootDataSet;
 
-        public fromJson(json:api_content_page_json.PageJson):PageBuilder {
+        public fromJson(json:api.content.page.json.PageJson):PageBuilder {
             this.setTemplate(PageTemplateKey.fromString(json.template));
-            this.setConfig(api_data.DataFactory.createRootDataSet(json.config));
+            this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             return this;
         }
 
-        public setConfig(value:api_data.RootDataSet):PageBuilder {
+        public setConfig(value:api.data.RootDataSet):PageBuilder {
             this.config = value;
             return this;
         }

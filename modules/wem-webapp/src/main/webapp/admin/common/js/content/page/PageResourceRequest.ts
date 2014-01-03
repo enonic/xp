@@ -1,15 +1,15 @@
-module api_content_page {
+module api.content.page {
 
-    export class PageResourceRequest<T> extends api_rest.ResourceRequest<T>{
+    export class PageResourceRequest<T> extends api.rest.ResourceRequest<T>{
 
-        private resourcePath:api_rest.Path;
+        private resourcePath:api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "content", "page");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page");
         }
 
-        getResourcePath():api_rest.Path {
+        getResourcePath():api.rest.Path {
             return this.resourcePath;
         }
     }

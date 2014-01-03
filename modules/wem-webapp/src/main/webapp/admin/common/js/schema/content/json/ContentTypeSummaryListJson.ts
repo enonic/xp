@@ -1,6 +1,6 @@
-module api_schema_content_json{
+module api.schema.content.json{
 
-    export interface ContentTypeSummaryListJson extends api_schema.SchemaJson {
+    export interface ContentTypeSummaryListJson extends api.schema.SchemaJson {
 
         total:number;
 

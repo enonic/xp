@@ -1,10 +1,10 @@
-module api_form_layout {
+module api.form.layout {
 
-    export class FieldSetLabel extends api_dom.DivEl {
+    export class FieldSetLabel extends api.dom.DivEl {
 
-        private fieldSet:api_form.FieldSet;
+        private fieldSet:api.form.FieldSet;
 
-        constructor(fieldSet:api_form.FieldSet) {
+        constructor(fieldSet:api.form.FieldSet) {
             super("FieldSetLabel", "field-set-label");
 
             this.fieldSet = fieldSet;

@@ -1,28 +1,28 @@
-module app_import {
+module app.imp {
 
-    export class ModuleUploader extends api_dom.Element
-        implements api_ui_dialog.UploadDialogUploaderEl
+    export class ModuleUploader extends api.dom.Element
+        implements api.ui.dialog.UploadDialogUploaderEl
     {
         private uploader;
 
-        private dropzone:api_dom.DivEl;
-        private progress:api_ui.ProgressBar;
+        private dropzone:api.dom.DivEl;
+        private progress:api.ui.ProgressBar;
 
         constructor() {
             super("div", "ModuleUploader", "image-uploader");
 
-            this.dropzone = new api_dom.DivEl("DropZone", "dropzone");
+            this.dropzone = new api.dom.DivEl("DropZone", "dropzone");
             this.dropzone.getEl().setInnerHtml("Drop files here or click to select");
             this.appendChild(this.dropzone);
 
-            this.progress = new api_ui.ProgressBar();
+            this.progress = new api.ui.ProgressBar();
             this.progress.setClass("progress");
             this.appendChild(this.progress);
         }
 
         afterRender() {
             super.afterRender();
-            this.uploader = new api_module.InstallModuleRequest(this.dropzone);
+            this.uploader = new api.module.InstallModuleRequest(this.dropzone);
             this.setProgressVisible(false);
         }
 
@@ -45,11 +45,11 @@ module app_import {
             this.progress.setVisible(visible);
         }
 
-        onFinishUpload(fn:(resp:api_module.InstallModuleResponse)=>void) {
+        onFinishUpload(fn:(resp:api.module.InstallModuleResponse)=>void) {
             this.uploader.done(fn);
         }
 
-        onError(fn:(resp:api_rest.JsonResponse<any>)=>void) {
+        onError(fn:(resp:api.rest.JsonResponse<any>)=>void) {
             this.uploader.fail(fn);
         }
     }

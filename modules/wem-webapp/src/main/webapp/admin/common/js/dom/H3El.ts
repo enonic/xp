@@ -1,4 +1,4 @@
-module api_dom {
+module api.dom {
 
     export class H3El extends Element {
 

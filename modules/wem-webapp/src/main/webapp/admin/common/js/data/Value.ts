@@ -1,4 +1,4 @@
-module api_data {
+module api.data {
 
     export class Value {
 
@@ -7,8 +7,8 @@ module api_data {
         private type: ValueType;
 
         constructor(value: Object, type: ValueType) {
-            api_util.assertNotNull(value, "value of a Value cannot be null");
-            api_util.assertNotNull(type, "type of a Value cannot be null");
+            api.util.assertNotNull(value, "value of a Value cannot be null");
+            api.util.assertNotNull(type, "type of a Value cannot be null");
             this.value = value;
             this.type = type;
         }
@@ -22,7 +22,7 @@ module api_data {
         }
 
         asRootDataSet(): RootDataSet {
-            api_util.assert(this.value instanceof RootDataSet, "Expected value to be a RootDataSet: " + api_util.getClassName(this.value));
+            api.util.assert(this.value instanceof RootDataSet, "Expected value to be a RootDataSet: " + api.util.getClassName(this.value));
             return <RootDataSet>this.value;
         }
 

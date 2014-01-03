@@ -1,6 +1,6 @@
-module api_rest {
+module api.rest {
 
-    export interface Loader extends api_event.Observable {
+    export interface Loader extends api.event.Observable {
 
         search(searchString:string);
     }

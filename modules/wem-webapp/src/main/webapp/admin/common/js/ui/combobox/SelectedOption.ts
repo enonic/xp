@@ -1,4 +1,4 @@
-module api_ui_combobox {
+module api.ui.combobox {
 
     export class SelectedOption<T> {
 
@@ -9,8 +9,8 @@ module api_ui_combobox {
         private index:number;
 
         constructor(optionView:SelectedOptionView<T>, option:Option<T>, index:number) {
-            api_util.assertNotNull(optionView, "optionView cannot be null");
-            api_util.assertNotNull(option, "option cannot be null");
+            api.util.assertNotNull(optionView, "optionView cannot be null");
+            api.util.assertNotNull(option, "option cannot be null");
 
             this.optionView = optionView;
             this.item = option;

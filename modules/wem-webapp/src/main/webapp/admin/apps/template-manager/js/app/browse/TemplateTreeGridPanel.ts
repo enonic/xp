@@ -1,18 +1,18 @@
-module app_browse {
+module app.browse {
 
     export interface TemplateTreeGridParams {
 
-        contextMenu: api_ui_menu.ContextMenu;
+        contextMenu: api.ui.menu.ContextMenu;
 
     }
 
-    export class TemplateTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
+    export class TemplateTreeGridPanel extends api.app.browse.grid.TreeGridPanel {
 
         constructor(params:TemplateTreeGridParams) {
             super({
                 columns: this.createColumns(),
-                gridStore: new app_browse_grid.TemplateGridStore().getExtDataStore(),
-                treeStore: new app_browse_grid.TemplateTreeStore().getExtDataStore(),
+                gridStore: new app.browse.grid.TemplateGridStore().getExtDataStore(),
+                treeStore: new app.browse.grid.TemplateTreeStore().getExtDataStore(),
                 gridConfig: this.createGridConfig(),
                 treeConfig: this.createTreeConfig(),
                 contextMenu: params.contextMenu
@@ -20,7 +20,7 @@ module app_browse {
 
             this.setItemId("TemplateTreeGridPanel");
 
-            this.setActiveList(api_app_browse_grid.TreeGridPanel.GRID);
+            this.setActiveList(api.app.browse.grid.TreeGridPanel.GRID);
             this.setKeyField("key");
         }
 
@@ -67,7 +67,7 @@ module app_browse {
 
             var template = record.data;
             var activeListType = this.getActiveList().getItemId();
-            return Ext.String.format(nameTemplate, activeListType, api_util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), value, template.name);
+            return Ext.String.format(nameTemplate, activeListType, api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'), value, template.name);
         }
     }
 

@@ -1,20 +1,20 @@
-module api_content_site {
+module api.content.site {
 
-    export class SiteResourceRequest<T> extends api_rest.ResourceRequest<T>{
+    export class SiteResourceRequest<T> extends api.rest.ResourceRequest<T>{
 
-        private resourcePath:api_rest.Path;
+        private resourcePath:api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "content", "site");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "site");
         }
 
-        getResourcePath():api_rest.Path {
+        getResourcePath():api.rest.Path {
             return this.resourcePath;
         }
 
-        fromJsonToContent(json:api_content_json.ContentJson):api_content.Content {
-            return new api_content.Content(json);
+        fromJsonToContent(json:api.content.json.ContentJson):api.content.Content {
+            return new api.content.Content(json);
         }
     }
 }

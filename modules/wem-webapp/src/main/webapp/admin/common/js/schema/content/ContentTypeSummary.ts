@@ -1,6 +1,6 @@
-module api_schema_content{
+module api.schema.content{
 
-    export class ContentTypeSummary extends api_schema.Schema {
+    export class ContentTypeSummary extends api.schema.Schema {
 
         private allowChildContent:boolean;
 
@@ -8,7 +8,7 @@ module api_schema_content{
 
         private final:boolean;
 
-        private superType:api_schema_content.ContentTypeName;
+        private superType:api.schema.content.ContentTypeName;
 
         private contentDisplayNameScript:string;
 
@@ -16,19 +16,19 @@ module api_schema_content{
 
         private owner:string;
 
-        constructor(json:api_schema_content_json.ContentTypeSummaryJson) {
+        constructor(json:api.schema.content.json.ContentTypeSummaryJson) {
             super(json);
             this.allowChildContent = json.allowChildContent;
             this.final = json.final;
             this.abstract = json.abstract;
-            this.superType = new api_schema_content.ContentTypeName(json.superType);
+            this.superType = new api.schema.content.ContentTypeName(json.superType);
             this.contentDisplayNameScript = json.contentDisplayNameScript;
             this.owner = json.owner;
             this.modifier = json.modifier;
         }
 
-        getContentTypeName(): api_schema_content.ContentTypeName {
-            return new api_schema_content.ContentTypeName(this.getName());
+        getContentTypeName(): api.schema.content.ContentTypeName {
+            return new api.schema.content.ContentTypeName(this.getName());
         }
 
         isFinal():boolean {
@@ -43,7 +43,7 @@ module api_schema_content{
             return this.allowChildContent;
         }
 
-        getSuperType():api_schema_content.ContentTypeName {
+        getSuperType():api.schema.content.ContentTypeName {
             return this.superType;
         }
 
@@ -63,10 +63,10 @@ module api_schema_content{
             return this.modifier;
         }
 
-        static fromJsonArray(jsonArray:api_schema_content_json.ContentTypeSummaryJson[]):ContentTypeSummary[] {
+        static fromJsonArray(jsonArray:api.schema.content.json.ContentTypeSummaryJson[]):ContentTypeSummary[] {
             var array:ContentTypeSummary[] = [];
 
-            jsonArray.forEach( (summaryJson:api_schema_content_json.ContentTypeSummaryJson) => {
+            jsonArray.forEach( (summaryJson:api.schema.content.json.ContentTypeSummaryJson) => {
                 array.push(new ContentTypeSummary(summaryJson));
             } );
             return array;

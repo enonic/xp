@@ -1,7 +1,7 @@
-module app_wizard
+module app.wizard
 {
 
-    export class SummaryWizardStepForm extends api_app_wizard.WizardStepForm
+    export class SummaryWizardStepForm extends api.app.wizard.WizardStepForm
     {
 
         constructor()

@@ -1,6 +1,6 @@
-module api_content {
+module api.content {
 
-    export class CreateContentRequest extends ContentResourceRequest<api_content_json.ContentJson> {
+    export class CreateContentRequest extends ContentResourceRequest<api.content.json.ContentJson> {
 
         private draft: boolean = false;
 
@@ -10,15 +10,15 @@ module api_content {
 
         private embed: boolean = false;
 
-        private contentType: api_schema_content.ContentTypeName;
+        private contentType: api.schema.content.ContentTypeName;
 
-        private form: api_form.Form;
+        private form: api.form.Form;
 
         private contentData: ContentData;
 
         private displayName: string;
 
-        private attachments: api_content_attachment.Attachment[] = [];
+        private attachments: api.content.attachment.Attachment[] = [];
 
         constructor() {
             super();
@@ -45,17 +45,17 @@ module api_content {
             return this;
         }
 
-        setContentType(value: api_schema_content.ContentTypeName): CreateContentRequest {
+        setContentType(value: api.schema.content.ContentTypeName): CreateContentRequest {
             this.contentType = value;
             return this;
         }
 
-        setForm(form: api_form.Form): CreateContentRequest {
+        setForm(form: api.form.Form): CreateContentRequest {
             this.form = form;
             return this;
         }
 
-        setContentData(contentData: api_content.ContentData): CreateContentRequest {
+        setContentData(contentData: api.content.ContentData): CreateContentRequest {
             this.contentData = contentData;
             return this;
         }
@@ -65,12 +65,12 @@ module api_content {
             return this;
         }
 
-        addAttachment(attachment: api_content_attachment.Attachment): CreateContentRequest {
+        addAttachment(attachment: api.content.attachment.Attachment): CreateContentRequest {
             this.attachments.push(attachment);
             return this;
         }
 
-        addAttachments(attachments: api_content_attachment.Attachment[]): CreateContentRequest {
+        addAttachments(attachments: api.content.attachment.Attachment[]): CreateContentRequest {
             this.attachments = this.attachments.concat(attachments);
             return this;
         }
@@ -90,10 +90,10 @@ module api_content {
             };
         }
 
-        private attachmentsToJson(): api_content_attachment.AttachmentJson[] {
-            var array: api_content_attachment.AttachmentJson[] = [];
-            this.attachments.forEach((attachment: api_content_attachment.Attachment)=> {
-                var attachmentJsonbj:api_content_attachment.AttachmentJson = {
+        private attachmentsToJson(): api.content.attachment.AttachmentJson[] {
+            var array: api.content.attachment.AttachmentJson[] = [];
+            this.attachments.forEach((attachment: api.content.attachment.Attachment)=> {
+                var attachmentJsonbj:api.content.attachment.AttachmentJson = {
                     "blobKey": attachment.getBlobKey().toString(),
                     "attachmentName": attachment.getAttachmentName().toString(),
                     "mimeType": attachment.getMimeType(),
@@ -104,17 +104,17 @@ module api_content {
             return array;
         }
 
-        getRequestPath(): api_rest.Path {
-            return api_rest.Path.fromParent(super.getResourcePath(), "create");
+        getRequestPath(): api.rest.Path {
+            return api.rest.Path.fromParent(super.getResourcePath(), "create");
         }
 
         sendAndParse(): JQueryPromise<Content> {
 
             var deferred = jQuery.Deferred<Content>();
 
-            this.send().done((response: api_rest.JsonResponse<api_content_json.ContentJson>) => {
+            this.send().done((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 deferred.resolve(this.fromJsonToContent(response.getResult()));
-            }).fail((response: api_rest.RequestError) => {
+            }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

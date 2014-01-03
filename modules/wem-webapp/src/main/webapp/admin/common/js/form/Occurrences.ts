@@ -1,4 +1,4 @@
-module api_form{
+module api.form{
 
 
     export class Occurrences {
@@ -34,9 +34,9 @@ module api_form{
             return occurrenceCount >= this.maximum;
         }
 
-        public toJson():api_form_json.OccurrencesJson {
+        public toJson():api.form.json.OccurrencesJson {
 
-            return <api_form_json.OccurrencesJson>{
+            return <api.form.json.OccurrencesJson>{
                 maximum : this.getMaximum(),
                 minimum : this.getMinimum()
             };

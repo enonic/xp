@@ -1,6 +1,6 @@
-module api_content_page_json
+module api.content.page.json
 {
-    export interface TemplateSummaryJson  extends api_item.ItemJson
+    export interface TemplateSummaryJson  extends api.item.ItemJson
     {
         key: string;
 

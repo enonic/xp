@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export interface DeckPanelListener extends api_event.Listener {
+    export interface DeckPanelListener extends api.event.Listener {
 
         onPanelShown(event:PanelShownEvent);
 

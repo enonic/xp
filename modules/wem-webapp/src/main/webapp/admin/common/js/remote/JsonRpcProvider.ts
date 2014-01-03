@@ -1,4 +1,4 @@
-module api_remote {
+module api.remote {
 
     export class JsonRpcProvider {
         ext:Ext_direct_RemotingProvider;
@@ -93,7 +93,7 @@ module api_remote {
                 if (failureCallback) {
                     failureCallback(failureResult, event)
                 } else {
-                    api_notify.showError(failureResult.error);
+                    api.notify.showError(failureResult.error);
                 }
             }
         }

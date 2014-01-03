@@ -1,24 +1,24 @@
-module app_wizard {
+module app.wizard {
 
-    export class ContentTypeCreatedEvent extends api_event.Event {
+    export class ContentTypeCreatedEvent extends api.event.Event {
 
         constructor() {
             super('contentTypeCreated');
         }
 
-        static on(handler:(event:app_wizard.ContentTypeCreatedEvent) => void) {
-            api_event.onEvent('contentTypeCreated', handler);
+        static on(handler:(event:app.wizard.ContentTypeCreatedEvent) => void) {
+            api.event.onEvent('contentTypeCreated', handler);
         }
     }
 
-    export class ContentTypeUpdatedEvent extends api_event.Event {
+    export class ContentTypeUpdatedEvent extends api.event.Event {
 
         constructor() {
             super('contentTypeUpdated');
         }
 
-        static on(handler:(event:app_wizard.ContentTypeUpdatedEvent) => void) {
-            api_event.onEvent('contentTypeUpdated', handler);
+        static on(handler:(event:app.wizard.ContentTypeUpdatedEvent) => void) {
+            api.event.onEvent('contentTypeUpdated', handler);
         }
     }
 

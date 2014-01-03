@@ -1,4 +1,4 @@
-module api_form{
+module api.form{
 
     export class Layout extends FormItem {
 
@@ -6,7 +6,7 @@ module api_form{
             super(name);
         }
 
-        public toLayoutJson():api_form_json.FormItemTypeWrapperJson {
+        public toLayoutJson():api.form.json.FormItemTypeWrapperJson {
 
             if (this instanceof FieldSet) {
                 return (<FieldSet>this).toFieldSetJson();

@@ -1,37 +1,37 @@
 declare var plupload;
 
-module api_form_inputtype_content_imageupload {
+module api.form.inputtype.content.imageupload {
 
-    export class Image extends api_form_inputtype_support.BaseInputTypeView {
+    export class Image extends api.form.inputtype.support.BaseInputTypeView {
 
-        private config: api_form_inputtype.InputTypeViewConfig<any>;
+        private config: api.form.inputtype.InputTypeViewConfig<any>;
 
-        private imageUploaders: api_ui.ImageUploader[] = [];
+        private imageUploaders: api.ui.ImageUploader[] = [];
 
         private attachmentName: string;
 
-        private attachments:api_content_attachment.Attachments;
+        private attachments:api.content.attachment.Attachments;
 
-        constructor(config: api_form_inputtype.InputTypeViewConfig<any>) {
+        constructor(config: api.form.inputtype.InputTypeViewConfig<any>) {
             super("Image");
             this.addClass("image");
             this.config = config;
             this.attachments = config.attachments;
         }
 
-        createInputOccurrenceElement(index: number, property: api_data.Property): api_dom.Element {
+        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
 
             var inputName = this.getInput().getName() + "-" + index;
 
-            var imageUploaderConfig = <api_ui.ImageUploaderConfig> {
+            var imageUploaderConfig = <api.ui.ImageUploaderConfig> {
                 showImageAfterUpload: true,
                 maximumOccurrences: 1
             };
-            var uploadUrl = api_util.getRestUri("blob/upload");
-            var imageUploader = new api_ui.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
+            var uploadUrl = api.util.getRestUri("blob/upload");
+            var imageUploader = new api.ui.ImageUploader(inputName, uploadUrl, imageUploaderConfig);
             imageUploader.addListener({
-                onFileUploaded: (uploadItem: api_ui.UploadItem) => {
-                    this.attachments = new api_content_attachment.AttachmentsBuilder().
+                onFileUploaded: (uploadItem: api.ui.UploadItem) => {
+                    this.attachments = new api.content.attachment.AttachmentsBuilder().
                         addAll(this.attachments.getAttachments()).
                         add(this.uploadItemToAttachment(uploadItem)).build();
                     this.attachmentName = uploadItem.getName();
@@ -41,7 +41,7 @@ module api_form_inputtype_content_imageupload {
 
             if (property != null) {
                 this.attachmentName = property.getString();
-                var imageUrl = api_util.getRestUri("content/image/") + this.config.contentId;
+                var imageUrl = api.util.getRestUri("content/image/") + this.config.contentId;
                 imageUrl += "?thumbnail=false&size=494"; // TODO: size is hack
                 imageUploader.setValue(imageUrl);
             }
@@ -49,25 +49,25 @@ module api_form_inputtype_content_imageupload {
             return imageUploader;
         }
 
-        getValue(occurrence: api_dom.Element): api_data.Value {
+        getValue(occurrence: api.dom.Element): api.data.Value {
 
-            return new api_data.Value(this.attachmentName, api_data.ValueTypes.STRING);
+            return new api.data.Value(this.attachmentName, api.data.ValueTypes.STRING);
         }
 
-        getAttachments(): api_content_attachment.Attachment[] {
+        getAttachments(): api.content.attachment.Attachment[] {
 
             return this.attachments.getAttachments();
         }
 
-        valueBreaksRequiredContract(value: api_data.Value): boolean {
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
             // TODO:
             return false;
         }
 
-        private uploadItemToAttachment(uploadItem:api_ui.UploadItem) : api_content_attachment.Attachment {
-             return new api_content_attachment.AttachmentBuilder().
+        private uploadItemToAttachment(uploadItem:api.ui.UploadItem) : api.content.attachment.Attachment {
+             return new api.content.attachment.AttachmentBuilder().
                 setBlobKey(uploadItem.getBlobKey()).
-                setAttachmentName(new api_content_attachment.AttachmentName(uploadItem.getName())).
+                setAttachmentName(new api.content.attachment.AttachmentName(uploadItem.getName())).
                 setMimeType(uploadItem.getMimeType()).
                 setSize(uploadItem.getSize()).
                 build();
@@ -75,6 +75,6 @@ module api_form_inputtype_content_imageupload {
 
     }
 
-    api_form_input.InputTypeManager.register("Image", Image);
+    api.form.input.InputTypeManager.register("Image", Image);
 
 }

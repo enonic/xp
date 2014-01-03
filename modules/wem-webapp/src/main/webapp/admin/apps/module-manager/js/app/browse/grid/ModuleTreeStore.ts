@@ -1,4 +1,4 @@
-module app_browse_grid {
+module app.browse.grid {
 
     export class ModuleTreeStore {
 
@@ -21,7 +21,7 @@ module app_browse_grid {
                 proxy: {
                     type: 'rest',
                     //TODO: add real url
-                    url: api_util.getUri('/'),
+                    url: api.util.getUri('/'),
                     reader: {
                         type: 'json',
                         root: '',

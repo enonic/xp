@@ -1,32 +1,32 @@
-module api_form_inputtype_content_image {
+module api.form.inputtype.content.image {
 
-    export class ImageSelectorDialog extends api_dom.DivEl {
+    export class ImageSelectorDialog extends api.dom.DivEl {
 
-        private content:api_content.ContentSummary;
+        private content:api.content.ContentSummary;
 
-        private nameEl:api_dom.H1El;
+        private nameEl:api.dom.H1El;
 
-        private pathEl:api_dom.PEl;
+        private pathEl:api.dom.PEl;
 
-        private removeButton:api_ui.Button;
+        private removeButton:api.ui.Button;
 
         private removeButtonClickedListeners:{(): void;}[] = [];
 
         constructor() {
             super("ImageSelectorDialog", "dialog");
 
-            this.nameEl = new api_dom.H1El();
+            this.nameEl = new api.dom.H1El();
             this.appendChild(this.nameEl);
 
-            this.pathEl = new api_dom.PEl();
+            this.pathEl = new api.dom.PEl();
             this.appendChild(this.pathEl);
 
-            var buttonsBar = new api_dom.DivEl().addClass("buttons-bar");
+            var buttonsBar = new api.dom.DivEl().addClass("buttons-bar");
 
-            var editButton = new api_ui.Button("Edit").addClass("edit");
+            var editButton = new api.ui.Button("Edit").addClass("edit");
             buttonsBar.appendChild(editButton);
 
-            this.removeButton = new api_ui.Button("Remove");
+            this.removeButton = new api.ui.Button("Remove");
             this.removeButton.addClass("remove");
             buttonsBar.appendChild(this.removeButton);
             this.removeButton.getEl().addEventListener("click", (event) => {
@@ -38,7 +38,7 @@ module api_form_inputtype_content_image {
 
         }
 
-        setContent(value:api_content.ContentSummary) {
+        setContent(value:api.content.ContentSummary) {
             this.content = value;
             this.refreshUI();
         }

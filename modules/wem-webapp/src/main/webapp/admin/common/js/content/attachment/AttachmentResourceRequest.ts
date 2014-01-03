@@ -1,15 +1,15 @@
-module api_content_attachment {
+module api.content.attachment {
 
-    export class AttachmentResourceRequest<T> extends api_rest.ResourceRequest<T> {
+    export class AttachmentResourceRequest<T> extends api.rest.ResourceRequest<T> {
 
-        private resourcePath: api_rest.Path;
+        private resourcePath: api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "content", "attachment");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "attachment");
         }
 
-        getResourcePath(): api_rest.Path {
+        getResourcePath(): api.rest.Path {
             return this.resourcePath;
         }
 
@@ -23,7 +23,7 @@ module api_content_attachment {
 
         fromJsonToAttachment(json: AttachmentJson): Attachment {
             return new AttachmentBuilder().
-                setBlobKey(new api_blob.BlobKey(json.blobKey)).
+                setBlobKey(new api.blob.BlobKey(json.blobKey)).
                 setAttachmentName(new AttachmentName(json.attachmentName)).
                 setSize(json.size).
                 setMimeType(json.mimeType).

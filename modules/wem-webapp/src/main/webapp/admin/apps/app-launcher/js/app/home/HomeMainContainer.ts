@@ -1,14 +1,14 @@
-module app_home {
+module app.home {
 
-    export class HomeMainContainer extends api_dom.DivEl {
+    export class HomeMainContainer extends api.dom.DivEl {
 
         private brandingPanel: Branding;
 
-        private appSelector: app_launcher.AppSelector;
+        private appSelector: app.launcher.AppSelector;
 
-        private loginForm: app_login.LoginForm;
+        private loginForm: app.login.LoginForm;
 
-        private appInfo: app_launcher.AppInfo;
+        private appInfo: app.launcher.AppInfo;
 
         private linksContainer: LinksContainer;
 
@@ -50,30 +50,30 @@ module app_home {
 
         backgroundImgUrl: string;
 
-        appSelector: app_launcher.AppSelector;
+        appSelector: app.launcher.AppSelector;
 
-        loginForm: app_login.LoginForm;
+        loginForm: app.login.LoginForm;
 
-        appInfo: app_launcher.AppInfo;
+        appInfo: app.launcher.AppInfo;
 
-        linksContainer: app_home.LinksContainer;
+        linksContainer: app.home.LinksContainer;
 
         setBackgroundImgUrl(value: string): HomeMainContainerBuilder {
             this.backgroundImgUrl = value;
             return this;
         }
 
-        setAppSelector(value: app_launcher.AppSelector): HomeMainContainerBuilder {
+        setAppSelector(value: app.launcher.AppSelector): HomeMainContainerBuilder {
             this.appSelector = value;
             return this;
         }
 
-        setLoginForm(value: app_login.LoginForm): HomeMainContainerBuilder {
+        setLoginForm(value: app.login.LoginForm): HomeMainContainerBuilder {
             this.loginForm = value;
             return this;
         }
 
-        setAppInfo(value: app_launcher.AppInfo): HomeMainContainerBuilder {
+        setAppInfo(value: app.launcher.AppInfo): HomeMainContainerBuilder {
             this.appInfo = value;
             return this;
         }

@@ -1,10 +1,10 @@
-module api_app_delete{
+module api.app.remove{
 
-    export class DeleteDialog extends api_ui_dialog.ModalDialog {
+    export class DeleteDialog extends api.ui.dialog.ModalDialog {
 
         private modelName:string;
 
-        private deleteAction:api_ui.Action;
+        private deleteAction:api.ui.Action;
 
         private deleteItems:DeleteItem[];
 
@@ -30,7 +30,7 @@ module api_app_delete{
         }
 
         show() {
-            api_dom.Body.get().appendChild(this);
+            api.dom.Body.get().appendChild(this);
             super.show();
         }
 
@@ -39,12 +39,12 @@ module api_app_delete{
             this.remove();
         }
 
-        setDeleteAction(action:api_ui.Action) {
+        setDeleteAction(action:api.ui.Action) {
             this.deleteAction = action;
             this.addAction(action);
         }
 
-        getDeleteAction():api_ui.Action {
+        getDeleteAction():api.ui.Action {
             return this.deleteAction;
         }
 
@@ -68,14 +68,14 @@ module api_app_delete{
         }
     }
 
-    export class CancelDeleteDialogAction extends api_ui.Action {
+    export class CancelDeleteDialogAction extends api.ui.Action {
 
         constructor() {
             super("Cancel", "esc");
         }
     }
 
-    export class DeleteDialogItemList extends api_dom.DivEl {
+    export class DeleteDialogItemList extends api.dom.DivEl {
         constructor() {
             super("DeleteDialogItemList");
             this.getEl().addClass("item-list");
@@ -86,15 +86,15 @@ module api_app_delete{
         }
     }
 
-    class DeleteDialogItemComponent extends api_dom.DivEl {
+    class DeleteDialogItemComponent extends api.dom.DivEl {
         constructor(deleteItem:DeleteItem) {
             super("DeleteDialogItem");
             this.getEl().addClass("item");
 
-            var icon = new api_dom.ImgEl(deleteItem.getIconUrl());
+            var icon = new api.dom.ImgEl(deleteItem.getIconUrl());
             this.appendChild(icon);
 
-            var displayName = new api_dom.H4El();
+            var displayName = new api.dom.H4El();
             displayName.getEl().setInnerHtml(deleteItem.getDisplayName());
             this.appendChild(displayName);
         }

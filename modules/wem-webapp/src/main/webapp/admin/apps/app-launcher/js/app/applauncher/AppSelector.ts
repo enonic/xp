@@ -1,15 +1,15 @@
-module app_launcher {
+module app.launcher {
 
-    export class AppSelector extends api_dom.DivEl {
+    export class AppSelector extends api.dom.DivEl {
         private selectedAppIndex: number;
         private apps: Application[];
         private appTiles: {[name: string]: AppTile;};
         private listeners: AppSelectorListener[] = [];
-        private applicationSearchInput: api_ui.TextInput;
-        private emptyMessagePlaceholder: api_dom.DivEl;
-        private homeAppSelector: api_dom.DivEl;
+        private applicationSearchInput: api.ui.TextInput;
+        private emptyMessagePlaceholder: api.dom.DivEl;
+        private homeAppSelector: api.dom.DivEl;
 
-        private keyBindings: api_ui.KeyBinding[] = [];
+        private keyBindings: api.ui.KeyBinding[] = [];
 
         constructor(applications: Application[]) {
             super();
@@ -17,10 +17,10 @@ module app_launcher {
             this.appTiles = {};
             this.selectedAppIndex = -1;
 
-            this.homeAppSelector = new api_dom.DivEl(null, 'app-selector');
+            this.homeAppSelector = new api.dom.DivEl(null, 'app-selector');
 
-            var searchInputContainer = new api_dom.DivEl(null, 'search-input-container');
-            this.applicationSearchInput = new api_ui.TextInput();
+            var searchInputContainer = new api.dom.DivEl(null, 'search-input-container');
+            this.applicationSearchInput = new api.ui.TextInput();
             this.applicationSearchInput.setPlaceholder('Application Filter');
             this.applicationSearchInput.addListener({
                 onValueChanged: (oldValue, newValue) => {
@@ -31,8 +31,8 @@ module app_launcher {
 
             this.homeAppSelector.appendChild(searchInputContainer);
 
-            var tilesPlaceholder = new api_dom.DivEl(null, 'app-tiles-placeholder');
-            this.emptyMessagePlaceholder = new api_dom.DivEl();
+            var tilesPlaceholder = new api.dom.DivEl(null, 'app-tiles-placeholder');
+            this.emptyMessagePlaceholder = new api.dom.DivEl();
             this.emptyMessagePlaceholder.getEl().setInnerHtml('No applications found');
             this.emptyMessagePlaceholder.hide();
             tilesPlaceholder.appendChild(this.emptyMessagePlaceholder);
@@ -42,19 +42,19 @@ module app_launcher {
 
             this.appendChild(this.homeAppSelector);
 
-            this.keyBindings.push(new api_ui.KeyBinding('tab', (e: ExtendedKeyboardEvent, combo: string)=> {
+            this.keyBindings.push(new api.ui.KeyBinding('tab', (e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.isVisible()) {
                     this.highlightNextAppTile();
                 }
                 return false;
             }));
-            this.keyBindings.push(new api_ui.KeyBinding('shift+tab', (e: ExtendedKeyboardEvent, combo: string)=> {
+            this.keyBindings.push(new api.ui.KeyBinding('shift+tab', (e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.isVisible()) {
                     this.highlightPreviousAppTile();
                 }
                 return false;
             }));
-            this.keyBindings.push(new api_ui.KeyBinding('return', (e: ExtendedKeyboardEvent, combo: string)=> {
+            this.keyBindings.push(new api.ui.KeyBinding('return', (e: ExtendedKeyboardEvent, combo: string)=> {
                 if (this.selectedAppIndex >= 0) {
                     var app: Application = this.apps[this.selectedAppIndex];
                     this.notifyAppSelected(app);
@@ -75,11 +75,11 @@ module app_launcher {
         }
 
         activateKeyBindings() {
-            api_ui.KeyBindings.get().bindKeys(this.keyBindings);
+            api.ui.KeyBindings.get().bindKeys(this.keyBindings);
         }
 
         deactivateKeyBindings() {
-            api_ui.KeyBindings.get().unbindKeys(this.keyBindings);
+            api.ui.KeyBindings.get().unbindKeys(this.keyBindings);
         }
 
         giveFocus(): boolean {
@@ -122,7 +122,7 @@ module app_launcher {
             this.highlightAppTile(this.apps[idx], idx);
         }
 
-        private addAppTiles(applications: Application[], tilesPlaceholder: api_dom.DivEl) {
+        private addAppTiles(applications: Application[], tilesPlaceholder: api.dom.DivEl) {
             applications.forEach((application: Application, idx: number) => {
                 var appTile = new AppTile(application);
 

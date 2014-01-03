@@ -1,9 +1,9 @@
-module api_ui_list {
+module api.ui.list {
 
-    export class ListView<T> extends api_ui.Panel {
+    export class ListView<T> extends api.ui.Panel {
 
-        private h4: api_dom.H4El;
-        private ul: api_dom.UlEl;
+        private h4: api.dom.H4El;
+        private ul: api.dom.UlEl;
 
         private items: T[] = [];
 
@@ -12,7 +12,7 @@ module api_ui_list {
 
             this.setTitle(title);
 
-            this.ul = new api_dom.UlEl();
+            this.ul = new api.dom.UlEl();
             this.appendChild(this.ul);
         }
 
@@ -71,7 +71,7 @@ module api_ui_list {
         setTitle(title: string) {
             if (title) {
                 if (!this.h4) {
-                    this.h4 = new api_dom.H4El();
+                    this.h4 = new api.dom.H4El();
                     this.appendChild(this.h4);
                 }
                 this.h4.getEl().setInnerHtml(title);
@@ -81,7 +81,7 @@ module api_ui_list {
             }
         }
 
-        createListItem(item: T): api_dom.Element {
+        createListItem(item: T): api.dom.Element {
             throw new Error("You must override createListItem to create views for list items");
         }
 

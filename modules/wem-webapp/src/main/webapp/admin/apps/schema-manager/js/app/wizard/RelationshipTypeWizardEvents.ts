@@ -1,24 +1,24 @@
-module app_wizard {
+module app.wizard {
 
-    export class RelationshipTypeCreatedEvent extends api_event.Event {
+    export class RelationshipTypeCreatedEvent extends api.event.Event {
 
         constructor() {
             super('relationshipTypeCreated');
         }
 
-        static on(handler:(event:app_wizard.RelationshipTypeCreatedEvent) => void) {
-            api_event.onEvent('relationshipTypeCreated', handler);
+        static on(handler:(event:app.wizard.RelationshipTypeCreatedEvent) => void) {
+            api.event.onEvent('relationshipTypeCreated', handler);
         }
     }
 
-    export class RelationshipTypeUpdatedEvent extends api_event.Event {
+    export class RelationshipTypeUpdatedEvent extends api.event.Event {
 
         constructor() {
             super('relationshipTypeUpdated');
         }
 
-        static on(handler:(event:app_wizard.RelationshipTypeUpdatedEvent) => void) {
-            api_event.onEvent('relationshipTypeUpdated', handler);
+        static on(handler:(event:app.wizard.RelationshipTypeUpdatedEvent) => void) {
+            api.event.onEvent('relationshipTypeUpdated', handler);
         }
     }
 

@@ -1,13 +1,13 @@
-module app_browse {
+module app.browse {
 
-    export class SchemaBrowsePanel extends api_app_browse.BrowsePanel<api_schema.Schema> {
+    export class SchemaBrowsePanel extends api.app.browse.BrowsePanel<api.schema.Schema> {
 
-        private browseActions:app_browse.SchemaBrowseActions;
+        private browseActions:app.browse.SchemaBrowseActions;
 
         private toolbar:SchemaBrowseToolbar;
 
         constructor() {
-            var treeGridContextMenu = new app_browse.SchemaTreeGridContextMenu();
+            var treeGridContextMenu = new app.browse.SchemaTreeGridContextMenu();
             var treeGridPanel = components.gridPanel = new SchemaTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
@@ -24,7 +24,7 @@ module app_browse {
                 this.browseActions.REINDEX_SCHEMA,
                 this.browseActions.EXPORT_SCHEMA]});
 
-            var filterPanel = new app_browse_filter.SchemaBrowseFilterPanel();
+            var filterPanel = new app.browse.filter.SchemaBrowseFilterPanel();
 
             super({
                 browseToolbar: this.toolbar,
@@ -33,42 +33,42 @@ module app_browse {
                 filterPanel: filterPanel
             });
 
-            api_schema.SchemaDeletedEvent.on((event) => {
-                var schemas:api_schema.Schema[] = event.getSchemas();
+            api.schema.SchemaDeletedEvent.on((event) => {
+                var schemas:api.schema.Schema[] = event.getSchemas();
                 console.log('On schema deleted', event.getSchemas());
                 for (var i = 0; i < schemas.length; i++) {
-                    var schema:api_schema.Schema = schemas[i];
+                    var schema:api.schema.Schema = schemas[i];
                     // make up schema key
                     treeGridPanel.remove(schema.getSchemaKind().toString() + ":" + schema.getName());
                 }
             });
 
-            api_schema.SchemaCreatedEvent.on((event) => {
+            api.schema.SchemaCreatedEvent.on((event) => {
                 console.log('On schema created', event.getSchema());
                 this.setRefreshNeeded(true);
             });
 
-            api_schema.SchemaUpdatedEvent.on((event) => {
+            api.schema.SchemaUpdatedEvent.on((event) => {
                 console.log('On schema updated', event.getSchema());
                 this.setRefreshNeeded(true);
             });
 
-            treeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
-                onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
+            treeGridPanel.addListener(<api.app.browse.grid.TreeGridPanelListener>{
+                onSelectionChanged: (event:api.app.browse.grid.TreeGridSelectionChangedEvent) => {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }
             });
         }
 
-        extModelsToBrowseItems(models:Ext_data_Model[]):api_app_browse.BrowseItem<api_schema.Schema>[] {
+        extModelsToBrowseItems(models:Ext_data_Model[]):api.app.browse.BrowseItem<api.schema.Schema>[] {
 
-            var browseItems:api_app_browse.BrowseItem<api_schema.Schema>[] = [];
+            var browseItems:api.app.browse.BrowseItem<api.schema.Schema>[] = [];
 
             models.forEach((model:Ext_data_Model, index:number) => {
 
-                var schema:api_schema.Schema = api_schema.Schema.fromExtModel(model);
+                var schema:api.schema.Schema = api.schema.Schema.fromExtModel(model);
 
-                var item = new api_app_browse.BrowseItem<api_schema.Schema>(schema).
+                var item = new api.app.browse.BrowseItem<api.schema.Schema>(schema).
                     setDisplayName(model.data['displayName']).
                     setPath(model.data['name']).
                     setIconUrl(model.data['iconUrl']);

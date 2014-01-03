@@ -1,46 +1,46 @@
-module api_form_formitemset {
+module api.form.formitemset {
 
-    export class FormItemSetView extends api_form.FormItemView {
+    export class FormItemSetView extends api.form.FormItemView {
 
-        private formItemSet: api_form.FormItemSet;
+        private formItemSet: api.form.FormItemSet;
 
-        private dataSets: api_data.DataSet[];
+        private dataSets: api.data.DataSet[];
 
-        private occurrenceViewsContainer: api_dom.DivEl;
+        private occurrenceViewsContainer: api.dom.DivEl;
 
         private formItemSetOccurrences: FormItemSetOccurrences;
 
-        private bottomButtonRow: api_dom.DivEl;
+        private bottomButtonRow: api.dom.DivEl;
 
-        private addButton: api_ui.Button;
+        private addButton: api.ui.Button;
 
-        private collapseButton: api_ui.Button;
+        private collapseButton: api.ui.Button;
 
-        constructor(context: api_form.FormContext, formItemSet: api_form.FormItemSet, dataSets?: api_data.DataSet[]) {
+        constructor(context: api.form.FormContext, formItemSet: api.form.FormItemSet, dataSets?: api.data.DataSet[]) {
             super("FormItemSetView", "form-item-set-view", context, formItemSet);
 
             this.formItemSet = formItemSet;
             this.dataSets = dataSets != null ? dataSets : [];
 
-            this.occurrenceViewsContainer = new api_dom.DivEl(null, "occurrence-views-container");
+            this.occurrenceViewsContainer = new api.dom.DivEl(null, "occurrence-views-container");
             this.appendChild(this.occurrenceViewsContainer);
 
             this.formItemSetOccurrences =
             new FormItemSetOccurrences(this.getContext(), this.occurrenceViewsContainer, formItemSet, dataSets);
             this.formItemSetOccurrences.layout();
-            this.formItemSetOccurrences.addListener(<api_form.FormItemOccurrencesListener>{
-                onOccurrenceAdded: (occurrenceAdded: api_form.FormItemOccurrence<any>) => {
+            this.formItemSetOccurrences.addListener(<api.form.FormItemOccurrencesListener>{
+                onOccurrenceAdded: (occurrenceAdded: api.form.FormItemOccurrence<any>) => {
                     this.refresh();
                 },
-                onOccurrenceRemoved: (occurrenceRemoved: api_form.FormItemOccurrence<any>) => {
+                onOccurrenceRemoved: (occurrenceRemoved: api.form.FormItemOccurrence<any>) => {
                     this.refresh();
                 }
             });
 
-            this.bottomButtonRow = new api_dom.DivEl(null, "bottom-button-row");
+            this.bottomButtonRow = new api.dom.DivEl(null, "bottom-button-row");
             this.appendChild(this.bottomButtonRow);
 
-            this.addButton = new api_ui.Button("Add " + this.formItemSet.getLabel());
+            this.addButton = new api.ui.Button("Add " + this.formItemSet.getLabel());
             this.addButton.setClass("add-button");
             this.addButton.setClickListener(() => {
                 this.formItemSetOccurrences.createAndAddOccurrence();
@@ -49,7 +49,7 @@ module api_form_formitemset {
                 }
 
             });
-            this.collapseButton = new api_ui.Button("Collapse");
+            this.collapseButton = new api.ui.Button("Collapse");
             this.collapseButton.setClass("collapse-button");
             this.collapseButton.setClickListener(() => {
                 if (this.formItemSetOccurrences.isCollapsed()) {
@@ -76,16 +76,16 @@ module api_form_formitemset {
             return this.formItemSetOccurrences.getFormItemSetOccurrenceView(index);
         }
 
-        getData(): api_data.Data[] {
+        getData(): api.data.Data[] {
             return this.getDataSets();
         }
 
-        getDataSets(): api_data.DataSet[] {
+        getDataSets(): api.data.DataSet[] {
 
             return this.formItemSetOccurrences.getDataSets();
         }
 
-        getAttachments(): api_content_attachment.Attachment[] {
+        getAttachments(): api.content.attachment.Attachment[] {
             return this.formItemSetOccurrences.getAttachments();
         }
 
@@ -94,7 +94,7 @@ module api_form_formitemset {
             return this.getData().length >= this.formItemSet.getOccurrences().getMaximum();
         }
 
-        validate(validationRecorder: api_form.ValidationRecorder) {
+        validate(validationRecorder: api.form.ValidationRecorder) {
 
             // TODO:
         }
@@ -103,7 +103,7 @@ module api_form_formitemset {
 
             var focusGiven = false;
             if (this.formItemSetOccurrences.getOccurrenceViews().length > 0) {
-                var views:api_form.FormItemOccurrenceView[] = this.formItemSetOccurrences.getOccurrenceViews();
+                var views:api.form.FormItemOccurrenceView[] = this.formItemSetOccurrences.getOccurrenceViews();
                 for (var i = 0; i < views.length; i++) {
                     if (views[i].giveFocus()) {
                         focusGiven = true;

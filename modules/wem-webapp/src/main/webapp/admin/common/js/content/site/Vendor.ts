@@ -1,4 +1,4 @@
-module api_content_site{
+module api.content.site{
 
     export class Vendor {
 
@@ -6,7 +6,7 @@ module api_content_site{
 
         private url:string;
 
-        constructor( json:api_content_site_json.VendorJson ){
+        constructor( json:api.content.site.json.VendorJson ){
             this.name = json.name;
             this.url = json.url;
         }

@@ -1,19 +1,19 @@
-module api_content_page_layout {
+module api.content.page.layout {
 
-    export class LayoutTemplateResourceRequest<T> extends api_rest.ResourceRequest<T> {
+    export class LayoutTemplateResourceRequest<T> extends api.rest.ResourceRequest<T> {
 
-        private resourcePath:api_rest.Path;
+        private resourcePath:api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api_rest.Path.fromParent(super.getRestPath(), "content", "page", "layout", "template");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "layout", "template");
         }
 
-        getResourcePath():api_rest.Path {
+        getResourcePath():api.rest.Path {
             return this.resourcePath;
         }
 
-        fromJsonToLayoutTemplate(json: api_content_page_layout_json.LayoutTemplateJson): api_content_page_layout.LayoutTemplate {
+        fromJsonToLayoutTemplate(json: api.content.page.layout.json.LayoutTemplateJson): api.content.page.layout.LayoutTemplate {
             return new LayoutTemplateBuilder().fromJson(json).build();
         }
     }

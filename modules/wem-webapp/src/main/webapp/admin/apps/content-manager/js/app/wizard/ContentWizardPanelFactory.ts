@@ -1,48 +1,48 @@
-module app_wizard {
+module app.wizard {
 
     export class ContentWizardPanelFactory {
 
         private creatingForNew: boolean;
 
-        private contentId: api_content.ContentId;
+        private contentId: api.content.ContentId;
 
-        private appBarTabId: api_app.AppBarTabId;
+        private appBarTabId: api.app.AppBarTabId;
 
-        private contentTypeName: api_schema_content.ContentTypeName;
+        private contentTypeName: api.schema.content.ContentTypeName;
 
-        private contentToEdit: api_content.Content;
+        private contentToEdit: api.content.Content;
 
-        private parentContent: api_content.Content;
+        private parentContent: api.content.Content;
 
-        private contentType: api_schema_content.ContentType;
+        private contentType: api.schema.content.ContentType;
 
-        private siteTemplateKey: api_content_site_template.SiteTemplateKey;
+        private siteTemplateKey: api.content.site.template.SiteTemplateKey;
 
-        private siteTemplate: api_content_site_template.SiteTemplate;
+        private siteTemplate: api.content.site.template.SiteTemplate;
 
-        private site: api_content.Content;
+        private site: api.content.Content;
 
-        setContentToEdit(value: api_content.ContentId): ContentWizardPanelFactory {
+        setContentToEdit(value: api.content.ContentId): ContentWizardPanelFactory {
             this.contentId = value;
             return this;
         }
 
-        setContentTypeName(value: api_schema_content.ContentTypeName): ContentWizardPanelFactory {
+        setContentTypeName(value: api.schema.content.ContentTypeName): ContentWizardPanelFactory {
             this.contentTypeName = value;
             return this;
         }
 
-        setParentContent(value: api_content.Content): ContentWizardPanelFactory {
+        setParentContent(value: api.content.Content): ContentWizardPanelFactory {
             this.parentContent = value;
             return this;
         }
 
-        setSiteTemplate(value: api_content_site_template.SiteTemplateKey): ContentWizardPanelFactory {
+        setSiteTemplate(value: api.content.site.template.SiteTemplateKey): ContentWizardPanelFactory {
             this.siteTemplateKey = value;
             return this;
         }
 
-        setAppBarTabId(value: api_app.AppBarTabId): ContentWizardPanelFactory {
+        setAppBarTabId(value: api.app.AppBarTabId): ContentWizardPanelFactory {
             this.appBarTabId = value;
             return this;
         }
@@ -54,18 +54,18 @@ module app_wizard {
             var deferred = Q.defer<ContentWizardPanel>();
 
 
-            this.loadContentType(this.contentTypeName).then((loadedContentType: api_schema_content.ContentType) => {
+            this.loadContentType(this.contentTypeName).then((loadedContentType: api.schema.content.ContentType) => {
                 this.contentType = loadedContentType;
 
-                return this.loadParentContent().then((loadedParentContent: api_content.Content) => {
+                return this.loadParentContent().then((loadedParentContent: api.content.Content) => {
                     this.parentContent = loadedParentContent;
 
                     var parentContentId = loadedParentContent != null ? loadedParentContent.getContentId() : null;
 
-                    return this.loadSite(parentContentId).then((loadedSite: api_content.Content) => {
+                    return this.loadSite(parentContentId).then((loadedSite: api.content.Content) => {
                         this.site = loadedSite;
 
-                        return this.loadSiteTemplate(this.siteTemplateKey).then((loadedSiteTemplate: api_content_site_template.SiteTemplate) => {
+                        return this.loadSiteTemplate(this.siteTemplateKey).then((loadedSiteTemplate: api.content.site.template.SiteTemplate) => {
                             this.siteTemplate = loadedSiteTemplate;
 
                             this.newContentWizardPanelForNew().done((wizardPanel: ContentWizardPanel)=> {
@@ -85,16 +85,16 @@ module app_wizard {
 
             var deferred = Q.defer<ContentWizardPanel>();
 
-            this.loadContentToEdit().then((loadedContentToEdit: api_content.Content) => {
+            this.loadContentToEdit().then((loadedContentToEdit: api.content.Content) => {
                 this.contentToEdit = loadedContentToEdit;
 
-                return this.loadContentType(this.contentToEdit.getType()).then((loadedContentType: api_schema_content.ContentType) => {
+                return this.loadContentType(this.contentToEdit.getType()).then((loadedContentType: api.schema.content.ContentType) => {
                     this.contentType = loadedContentType;
 
-                    return this.loadSite(this.contentId).then((loadedSite: api_content.Content) => {
+                    return this.loadSite(this.contentId).then((loadedSite: api.content.Content) => {
                         this.site = loadedSite;
 
-                        return this.loadParentContent().then((loadedParentContent: api_content.Content) => {
+                        return this.loadParentContent().then((loadedParentContent: api.content.Content) => {
                             this.parentContent = loadedParentContent;
 
                             this.newContentWizardPanelForEdit().done((wizardPanel: ContentWizardPanel)=> {
@@ -108,61 +108,61 @@ module app_wizard {
             return deferred.promise;
         }
 
-        private loadContentToEdit(): Q.Promise<api_content.Content> {
+        private loadContentToEdit(): Q.Promise<api.content.Content> {
 
-            var deferred = Q.defer<api_content.Content>();
-            new api_content.GetContentByIdRequest(this.contentId).
-                sendAndParse().done((content: api_content.Content) => {
+            var deferred = Q.defer<api.content.Content>();
+            new api.content.GetContentByIdRequest(this.contentId).
+                sendAndParse().done((content: api.content.Content) => {
                     deferred.resolve(content);
                 });
             return deferred.promise;
         }
 
-        private loadContentType(name: api_schema_content.ContentTypeName): Q.Promise<api_schema_content.ContentType> {
+        private loadContentType(name: api.schema.content.ContentTypeName): Q.Promise<api.schema.content.ContentType> {
 
-            var deferred = Q.defer<api_schema_content.ContentType>();
-            new api_schema_content.GetContentTypeByNameRequest(name).
-                sendAndParse().done((contentType: api_schema_content.ContentType)=> {
+            var deferred = Q.defer<api.schema.content.ContentType>();
+            new api.schema.content.GetContentTypeByNameRequest(name).
+                sendAndParse().done((contentType: api.schema.content.ContentType)=> {
                     deferred.resolve(contentType);
                 });
             return deferred.promise;
         }
 
-        private loadSite(contentId: api_content.ContentId): Q.Promise<api_content.Content> {
-            var deferred = Q.defer<api_content.Content>();
+        private loadSite(contentId: api.content.ContentId): Q.Promise<api.content.Content> {
+            var deferred = Q.defer<api.content.Content>();
 
             if (contentId == null) {
                 deferred.resolve(null);
                 return deferred.promise;
             }
 
-            new api_content_site.GetNearestSiteRequest(contentId).
-                sendAndParse().done((site: api_content.Content)=> {
+            new api.content.site.GetNearestSiteRequest(contentId).
+                sendAndParse().done((site: api.content.Content)=> {
                     deferred.resolve(site);
                 });
 
             return deferred.promise;
         }
 
-        private loadSiteTemplate(key: api_content_site_template.SiteTemplateKey): Q.Promise<api_content_site_template.SiteTemplate> {
-            var deferred = Q.defer<api_content_site_template.SiteTemplate>();
+        private loadSiteTemplate(key: api.content.site.template.SiteTemplateKey): Q.Promise<api.content.site.template.SiteTemplate> {
+            var deferred = Q.defer<api.content.site.template.SiteTemplate>();
 
             if (key == null) {
                 deferred.resolve(null);
                 return deferred.promise;
             }
 
-            new api_content_site_template.GetSiteTemplateRequest(key).
-                sendAndParse().done((siteTemplate: api_content_site_template.SiteTemplate)=> {
+            new api.content.site.template.GetSiteTemplateRequest(key).
+                sendAndParse().done((siteTemplate: api.content.site.template.SiteTemplate)=> {
                     deferred.resolve(siteTemplate);
                 });
 
             return deferred.promise;
         }
 
-        private loadParentContent(): Q.Promise<api_content.Content> {
+        private loadParentContent(): Q.Promise<api.content.Content> {
 
-            var deferred = Q.defer<api_content.Content>();
+            var deferred = Q.defer<api.content.Content>();
 
             if (this.parentContent != null) {
                 deferred.resolve(this.parentContent);
@@ -179,20 +179,20 @@ module app_wizard {
                 return deferred.promise;
             }
 
-            new api_content.GetContentByPathRequest(this.contentToEdit.getPath().getParentPath()).
+            new api.content.GetContentByPathRequest(this.contentToEdit.getPath().getParentPath()).
                 sendAndParse().
-                done((content: api_content.Content)=> {
+                done((content: api.content.Content)=> {
                     deferred.resolve(content);
                 });
 
             return deferred.promise;
         }
 
-        private newContentWizardPanelForNew(): Q.Promise<app_wizard.ContentWizardPanel> {
+        private newContentWizardPanelForNew(): Q.Promise<app.wizard.ContentWizardPanel> {
 
-            var deferred = Q.defer<app_wizard.ContentWizardPanel>();
+            var deferred = Q.defer<app.wizard.ContentWizardPanel>();
 
-            var wizardParams = new app_wizard.ContentWizardPanelParams().
+            var wizardParams = new app.wizard.ContentWizardPanelParams().
                 setAppBarTabId(this.appBarTabId).
                 setContentType(this.contentType).
                 setParentContent(this.parentContent).
@@ -205,25 +205,25 @@ module app_wizard {
 
             }
 
-            new app_wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
+            new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                 deferred.resolve(wizard);
             });
 
             return deferred.promise;
         }
 
-        private newContentWizardPanelForEdit(): Q.Promise<app_wizard.ContentWizardPanel> {
+        private newContentWizardPanelForEdit(): Q.Promise<app.wizard.ContentWizardPanel> {
 
-            var deferred = Q.defer<app_wizard.ContentWizardPanel>();
+            var deferred = Q.defer<app.wizard.ContentWizardPanel>();
 
-            var wizardParams = new app_wizard.ContentWizardPanelParams().
+            var wizardParams = new app.wizard.ContentWizardPanelParams().
                 setAppBarTabId(this.appBarTabId).
                 setContentType(this.contentType).
                 setParentContent(this.parentContent).
                 setPersistedContent(this.contentToEdit).
                 setSite(this.site);
 
-            new app_wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
+            new app.wizard.ContentWizardPanel(wizardParams, (wizard: ContentWizardPanel) => {
                 deferred.resolve(wizard);
             });
 

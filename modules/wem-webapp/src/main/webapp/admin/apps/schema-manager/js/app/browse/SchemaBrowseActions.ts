@@ -1,21 +1,21 @@
-module app_browse {
+module app.browse {
 
-    export class BaseSchemaBrowseAction extends api_ui.Action {
+    export class BaseSchemaBrowseAction extends api.ui.Action {
 
         constructor(label:string, shortcut?:string) {
             super(label, shortcut);
         }
 
         extModelsToSchemas(models:Ext_data_Model[]) {
-            var schemas:api_schema.Schema[] = [];
+            var schemas:api.schema.Schema[] = [];
             models.forEach((model:Ext_data_Model) => {
-                schemas.push(api_schema.Schema.fromExtModel(model));
+                schemas.push(api.schema.Schema.fromExtModel(model));
             });
             return schemas;
         }
     }
 
-    export class NewSchemaAction extends api_ui.Action {
+    export class NewSchemaAction extends api.ui.Action {
 
         constructor() {
             super("New");
@@ -27,7 +27,7 @@ module app_browse {
 
     export class EditSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel:api.app.browse.grid.TreeGridPanel) {
             super("Edit");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -38,7 +38,7 @@ module app_browse {
 
     export class OpenSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel:api.app.browse.grid.TreeGridPanel) {
             super("Open");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -49,7 +49,7 @@ module app_browse {
 
     export class DeleteSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel:api.app.browse.grid.TreeGridPanel) {
             super("Delete", "mod+del");
             this.setEnabled(false);
             this.addExecutionListener(() => {
@@ -60,7 +60,7 @@ module app_browse {
 
     export class ReindexSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel:api.app.browse.grid.TreeGridPanel) {
             super("Re-index");
             this.addExecutionListener(() => {
                 new ReindexSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
@@ -70,7 +70,7 @@ module app_browse {
 
     export class ExportSchemaAction extends BaseSchemaBrowseAction {
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel:api.app.browse.grid.TreeGridPanel) {
             super("Export");
             this.addExecutionListener(() => {
                 new ExportSchemaEvent(this.extModelsToSchemas(treeGridPanel.getSelection())).fire();
@@ -80,18 +80,18 @@ module app_browse {
 
     export class SchemaBrowseActions {
 
-        public NEW_SCHEMA:api_ui.Action;
-        public EDIT_SCHEMA:api_ui.Action;
-        public OPEN_SCHEMA:api_ui.Action;
-        public DELETE_SCHEMA:api_ui.Action;
-        public REINDEX_SCHEMA:api_ui.Action;
-        public EXPORT_SCHEMA:api_ui.Action;
+        public NEW_SCHEMA:api.ui.Action;
+        public EDIT_SCHEMA:api.ui.Action;
+        public OPEN_SCHEMA:api.ui.Action;
+        public DELETE_SCHEMA:api.ui.Action;
+        public REINDEX_SCHEMA:api.ui.Action;
+        public EXPORT_SCHEMA:api.ui.Action;
 
-        private allActions:api_ui.Action[] = [];
+        private allActions:api.ui.Action[] = [];
 
         private static INSTANCE:SchemaBrowseActions;
 
-        static init(treeGridPanel:api_app_browse_grid.TreeGridPanel):SchemaBrowseActions {
+        static init(treeGridPanel:api.app.browse.grid.TreeGridPanel):SchemaBrowseActions {
             new SchemaBrowseActions(treeGridPanel);
             return SchemaBrowseActions.INSTANCE;
         }
@@ -100,7 +100,7 @@ module app_browse {
             return SchemaBrowseActions.INSTANCE;
         }
 
-        constructor(treeGridPanel:api_app_browse_grid.TreeGridPanel) {
+        constructor(treeGridPanel:api.app.browse.grid.TreeGridPanel) {
 
             this.NEW_SCHEMA = new NewSchemaAction();
             this.EDIT_SCHEMA = new EditSchemaAction(treeGridPanel);
@@ -115,11 +115,11 @@ module app_browse {
             SchemaBrowseActions.INSTANCE = this;
         }
 
-        getAllActions():api_ui.Action[] {
+        getAllActions():api.ui.Action[] {
             return this.allActions;
         }
 
-        updateActionsEnabledState(schemas:api_schema.Schema[]) {
+        updateActionsEnabledState(schemas:api.schema.Schema[]) {
 
             if (schemas.length <= 0) {
                 this.NEW_SCHEMA.setEnabled(true);

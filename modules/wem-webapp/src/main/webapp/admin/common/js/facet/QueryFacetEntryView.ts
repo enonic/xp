@@ -1,18 +1,18 @@
-module api_facet {
+module api.facet {
 
     export class QueryFacetEntryView extends FacetEntryView {
 
         private queryFacet:QueryFacet;
 
-        private checkbox:api_ui.CheckboxInput;
+        private checkbox:api.ui.CheckboxInput;
 
-        private label:api_dom.LabelEl;
+        private label:api.dom.LabelEl;
 
         constructor(queryFacet:QueryFacet, parentFacetView:QueryFacetView) {
             super(parentFacetView);
             this.queryFacet = queryFacet;
 
-            this.checkbox = new api_ui.CheckboxInput();
+            this.checkbox = new api.ui.CheckboxInput();
             this.checkbox.addListener({
                 onValueChanged: (oldValue:boolean, newValue:boolean) => {
                     this.notifySelectionChanged(oldValue, newValue);
@@ -20,7 +20,7 @@ module api_facet {
             });
             this.appendChild(this.checkbox);
 
-            this.label = new api_dom.LabelEl(this.resolveLabelValue(), this.checkbox);
+            this.label = new api.dom.LabelEl(this.resolveLabelValue(), this.checkbox);
             this.appendChild(this.label);
             this.label.getEl().addEventListener('click', () => {
                 this.checkbox.setChecked(!this.checkbox.isChecked());

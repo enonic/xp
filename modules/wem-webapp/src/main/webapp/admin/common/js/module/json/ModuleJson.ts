@@ -1,14 +1,14 @@
-module api_module_json{
+module api.module.json{
 
     export interface ModuleJson extends ModuleSummaryJson {
 
-        config: api_form_json.FormJson;
+        config: api.form.json.FormJson;
 
         moduleDependencies: string[];
 
         contentTypeDependencies: string[];
 
-        moduleDirectoryEntry: api_module_json.ModuleFileEntryJson;
+        moduleDirectoryEntry: api.module.json.ModuleFileEntryJson;
 
         minSystemVersion: string;
 

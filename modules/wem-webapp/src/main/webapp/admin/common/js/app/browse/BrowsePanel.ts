@@ -1,39 +1,39 @@
-module api_app_browse{
+module api.app.browse{
 
     export interface BrowsePanelParams<M> {
 
-        browseToolbar:api_ui_toolbar.Toolbar;
+        browseToolbar:api.ui.toolbar.Toolbar;
 
-        treeGridPanel:api_app_browse_grid.TreeGridPanel;
+        treeGridPanel:api.app.browse.grid.TreeGridPanel;
 
-        treeGridPanel2?:api_app_browse_grid2.GridPanel2;
+        treeGridPanel2?:api.app.browse.grid2.GridPanel2;
 
         browseItemPanel:BrowseItemPanel<M>;
 
-        filterPanel:api_app_browse_filter.BrowseFilterPanel;
+        filterPanel:api.app.browse.filter.BrowseFilterPanel;
     }
 
-    export class BrowsePanel<M> extends api_ui.Panel implements api_ui.ActionContainer {
+    export class BrowsePanel<M> extends api.ui.Panel implements api.ui.ActionContainer {
 
-        private browseToolbar:api_ui_toolbar.Toolbar;
+        private browseToolbar:api.ui.toolbar.Toolbar;
 
-        private treeGridPanel:api_app_browse_grid.TreeGridPanel;
+        private treeGridPanel:api.app.browse.grid.TreeGridPanel;
 
-        private gridPanel2:api_app_browse_grid2.GridPanel2;
+        private gridPanel2:api.app.browse.grid2.GridPanel2;
 
-        private treeSwapperDeckPanel:api_ui.DeckPanel;
+        private treeSwapperDeckPanel:api.ui.DeckPanel;
 
         private browseItemPanel:BrowseItemPanel<M>;
 
-        private gridAndDetailSplitPanel:api_ui.SplitPanel;
+        private gridAndDetailSplitPanel:api.ui.SplitPanel;
 
-        private filterPanel:api_app_browse_filter.BrowseFilterPanel;
+        private filterPanel:api.app.browse.filter.BrowseFilterPanel;
 
-        private gridContainer:api_app_browse.GridContainer;
+        private gridContainer:api.app.browse.GridContainer;
 
         private gridAndFilterAndDetailSplitPanel;
 
-        private gridAndToolbarContainer:api_ui.Panel;
+        private gridAndToolbarContainer:api.ui.Panel;
 
         private refreshNeeded:boolean = false;
 
@@ -54,44 +54,44 @@ module api_app_browse{
                 }
             });
 
-            this.gridContainer = new api_app_browse.GridContainer(this.treeGridPanel);
+            this.gridContainer = new api.app.browse.GridContainer(this.treeGridPanel);
 
-            this.gridAndToolbarContainer = new api_ui.Panel("GridAndToolbar");
+            this.gridAndToolbarContainer = new api.ui.Panel("GridAndToolbar");
             this.gridAndToolbarContainer.appendChild(this.browseToolbar);
             this.gridAndToolbarContainer.appendChild(this.gridContainer);
 
-            // this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
+            // this.gridAndDetailSplitPanel = new api.ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
             if (this.gridPanel2 != null) {
-                this.treeSwapperDeckPanel = new api_ui.DeckPanel();
+                this.treeSwapperDeckPanel = new api.ui.DeckPanel();
                 this.treeSwapperDeckPanel.addPanel(this.browseItemPanel);
                 this.treeSwapperDeckPanel.addPanel(this.gridPanel2);
                 this.treeSwapperDeckPanel.showPanel(0);
 
 
-                this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.treeSwapperDeckPanel);
+                this.gridAndDetailSplitPanel = new api.ui.SplitPanel(this.gridAndToolbarContainer, this.treeSwapperDeckPanel);
             }
             else {
-                this.gridAndDetailSplitPanel = new api_ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
+                this.gridAndDetailSplitPanel = new api.ui.SplitPanel(this.gridAndToolbarContainer, this.browseItemPanel);
             }
 
             if (this.filterPanel) {
-                this.gridAndFilterAndDetailSplitPanel = new api_ui.SplitPanel(this.filterPanel, this.gridAndDetailSplitPanel);
+                this.gridAndFilterAndDetailSplitPanel = new api.ui.SplitPanel(this.filterPanel, this.gridAndDetailSplitPanel);
                 this.gridAndFilterAndDetailSplitPanel.setDistribution(15, 85);
-                this.gridAndFilterAndDetailSplitPanel.setAlignment(api_ui.SplitPanelAlignment.VERTICAL);
+                this.gridAndFilterAndDetailSplitPanel.setAlignment(api.ui.SplitPanelAlignment.VERTICAL);
             } else {
                 this.gridAndFilterAndDetailSplitPanel = this.gridAndDetailSplitPanel;
             }
 
             this.treeGridPanel.addListener({
-                onSelectionChanged: (event:api_app_browse_grid.TreeGridSelectionChangedEvent) => {
-                    var browseItems:api_app_browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.selectedModels);
+                onSelectionChanged: (event:api.app.browse.grid.TreeGridSelectionChangedEvent) => {
+                    var browseItems:api.app.browse.BrowseItem<M>[] = this.extModelsToBrowseItems(event.selectedModels);
                     this.browseItemPanel.setItems(browseItems);
                 },
                 onItemDoubleClicked: null
             });
         }
 
-        getActions():api_ui.Action[] {
+        getActions():api.ui.Action[] {
             return this.browseToolbar.getActions();
         }
 

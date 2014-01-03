@@ -1,9 +1,9 @@
-module app_contextwindow {
-    export class SelectPanel extends api_ui.Panel {
+module app.contextwindow {
+    export class SelectPanel extends api.ui.Panel {
 
         private searchBox;
         private data:ComponentData[];
-        private dataView:api_ui_grid.DataView<ComponentData>;
+        private dataView:api.ui.grid.DataView<ComponentData>;
         private grid:ComponentGrid;
         private contextWindow:ContextWindow;
 
@@ -12,10 +12,10 @@ module app_contextwindow {
             this.addClass("select-panel");
             this.contextWindow = contextWindow;
 
-            this.dataView = new api_ui_grid.DataView<ComponentData>();
+            this.dataView = new api.ui.grid.DataView<ComponentData>();
             this.grid = new ComponentGrid(this.dataView);
 
-            this.searchBox = new api_ui.TextInput();
+            this.searchBox = new api.ui.TextInput();
             this.searchBox.addClass("search");
             this.searchBox.setPlaceholder("Search");
             this.searchBox.getEl().addEventListener("keyup", (e) => {
@@ -38,7 +38,7 @@ module app_contextwindow {
 
         private getData(componentType:number):void {
             jQuery.ajax({
-                url: api_util.getAdminUri("apps/content-manager/js/data/context-window/mock-components.jsp?componentType=" +
+                url: api.util.getAdminUri("apps/content-manager/js/data/context-window/mock-components.jsp?componentType=" +
                      componentType),
                 success: (data:any, textStatus:string, jqXHR:JQueryXHR) => {
                     this.dataView.setItems(ComponentGrid.toSlickData(data));

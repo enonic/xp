@@ -1,12 +1,12 @@
-module api_form {
+module api.form {
 
-    export class FormItemView extends api_dom.DivEl {
+    export class FormItemView extends api.dom.DivEl {
 
-        private context:api_form.FormContext;
+        private context:api.form.FormContext;
 
         private formItem:FormItem;
 
-        constructor(idPrefix:string, className:string, context:api_form.FormContext, formItem:FormItem) {
+        constructor(idPrefix:string, className:string, context:api.form.FormContext, formItem:FormItem) {
             super(idPrefix, className);
             this.context = context;
             this.formItem = formItem;
@@ -20,14 +20,14 @@ module api_form {
             return this.formItem;
         }
 
-        getData():api_data.Data[] {
+        getData():api.data.Data[] {
             throw new Error("Method needs to be implemented in inheritor");
         }
 
         /*
          *  Override if inheriting FormItemView can provide attachments.
          */
-        getAttachments(): api_content_attachment.Attachment[] {
+        getAttachments(): api.content.attachment.Attachment[] {
             return [];
         }
 

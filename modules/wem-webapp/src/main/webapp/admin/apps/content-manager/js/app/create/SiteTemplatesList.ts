@@ -1,6 +1,6 @@
-module app_new {
+module app.create {
 
-    export class TemplatesList extends api_ui_list.ListView<api_content_site_template.SiteTemplateSummary> implements api_event.Observable {
+    export class TemplatesList extends api.ui.list.ListView<api.content.site.template.SiteTemplateSummary> implements api.event.Observable {
 
         private listeners: SiteTemplatesListListener[] = [];
 
@@ -26,12 +26,12 @@ module app_new {
             });
         }
 
-        setSiteTemplates(siteTemplates: api_content_site_template.SiteTemplateSummary[], contentTypes: ContentTypes) {
+        setSiteTemplates(siteTemplates: api.content.site.template.SiteTemplateSummary[], contentTypes: ContentTypes) {
             this.contentTypes = contentTypes;
             super.setItems(siteTemplates);
         }
 
-        createListItem(item: api_content_site_template.SiteTemplateSummary): SiteTemplateListItem {
+        createListItem(item: api.content.site.template.SiteTemplateSummary): SiteTemplateListItem {
 
             var contentType = this.contentTypes.getByName(item.getRootContentType());
             var listItem = new SiteTemplateListItem(item, contentType);

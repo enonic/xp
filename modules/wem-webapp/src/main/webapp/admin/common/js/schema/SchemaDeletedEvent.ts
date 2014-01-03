@@ -1,20 +1,20 @@
-module api_schema {
+module api.schema {
 
-    export class SchemaDeletedEvent extends api_event.Event {
+    export class SchemaDeletedEvent extends api.event.Event {
 
-        private schemas:api_schema.Schema[];
+        private schemas:api.schema.Schema[];
 
-        constructor(schemas:api_schema.Schema[]) {
+        constructor(schemas:api.schema.Schema[]) {
             super("SchemaDeletedEvent");
             this.schemas = schemas;
         }
 
-        public getSchemas():api_schema.Schema[] {
+        public getSchemas():api.schema.Schema[] {
             return this.schemas;
         }
 
         static on(handler:(event:SchemaDeletedEvent) => void) {
-            api_event.onEvent('SchemaDeletedEvent', handler);
+            api.event.onEvent('SchemaDeletedEvent', handler);
         }
 
     }

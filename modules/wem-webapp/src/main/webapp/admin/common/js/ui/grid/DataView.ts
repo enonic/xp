@@ -1,4 +1,4 @@
-module api_ui_grid {
+module api.ui.grid {
 
     export class DataView<T extends Slick.SlickData> {
 

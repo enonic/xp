@@ -1,4 +1,4 @@
-module api_remote_util {
+module api.remote.util {
 
     export interface CallingCode {
         callingCodeId: string;

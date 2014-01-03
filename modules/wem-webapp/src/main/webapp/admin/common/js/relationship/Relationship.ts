@@ -1,4 +1,4 @@
-module api_relationship {
+module api.relationship {
 
     export class Relationship {
 
@@ -12,7 +12,7 @@ module api_relationship {
         private toContent:string;
         private properties:any;
 
-        constructor(json:api_relationship_json.RelationshipJson) {
+        constructor(json:api.relationship.json.RelationshipJson) {
             this.createdTime = new Date(json.createdTime);
             this.modifiedTime = new Date(json.modifiedTime);
             this.type = json.type;

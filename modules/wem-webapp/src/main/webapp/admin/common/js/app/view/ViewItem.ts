@@ -1,4 +1,4 @@
-module api_app_view {
+module api.app.view {
 
     export class ViewItem<M> {
 

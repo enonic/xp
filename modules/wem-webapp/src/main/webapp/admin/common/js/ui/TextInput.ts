@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export class TextInput extends api_dom.InputEl implements api_event.Observable {
+    export class TextInput extends api.dom.InputEl implements api.event.Observable {
 
         static MIDDLE:string = 'middle';
         static LARGE:string = 'large';

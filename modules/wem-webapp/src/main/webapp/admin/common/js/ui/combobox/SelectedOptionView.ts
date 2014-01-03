@@ -1,6 +1,6 @@
-module api_ui_combobox {
+module api.ui.combobox {
 
-    export class SelectedOptionView<T> extends api_dom.DivEl{
+    export class SelectedOptionView<T> extends api.dom.DivEl{
 
         private option:Option<T>;
 
@@ -17,8 +17,8 @@ module api_ui_combobox {
         }
 
         layout() {
-            var removeButtonEl = new api_dom.AEl(null, "remove");
-            var optionValueEl = new api_dom.DivEl(null, 'option-value');
+            var removeButtonEl = new api.dom.AEl(null, "remove");
+            var optionValueEl = new api.dom.DivEl(null, 'option-value');
             optionValueEl.getEl().setInnerHtml(this.option.displayValue.toString());
 
             removeButtonEl.getEl().addEventListener('click', (event:Event) => {

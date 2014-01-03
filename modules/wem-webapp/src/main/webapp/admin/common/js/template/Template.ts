@@ -1,9 +1,9 @@
-module api_template {
+module api.template {
 
-    export class Template extends api_item.BaseItem {
+    export class Template extends api.item.BaseItem {
 
-        static fromExtModel(model:Ext_data_Model):Template {
-            return new api_template.Template(model.raw);
+        static fromExtModel(model:Ext.data_Model):Template {
+            return new api.template.Template(model.raw);
         }
 
         constructor(json:any) {

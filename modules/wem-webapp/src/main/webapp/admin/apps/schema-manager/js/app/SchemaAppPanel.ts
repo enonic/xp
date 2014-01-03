@@ -1,9 +1,9 @@
 module app {
 
-    export class SchemaAppPanel extends api_app.BrowseAndWizardBasedAppPanel<api_schema.Schema> {
+    export class SchemaAppPanel extends api.app.BrowseAndWizardBasedAppPanel<api.schema.Schema> {
 
-        constructor(appBar: api_app.AppBar) {
-            var browsePanel = new app_browse.SchemaBrowsePanel();
+        constructor(appBar: api.app.AppBar) {
+            var browsePanel = new app.browse.SchemaBrowsePanel();
 
             super({
                 appBar: appBar,
@@ -13,12 +13,12 @@ module app {
             this.handleGlobalEvents();
         }
 
-        addWizardPanel(tabMenuItem: api_app.AppBarTabMenuItem, wizardPanel: api_app_wizard.WizardPanel<any>) {
+        addWizardPanel(tabMenuItem: api.app.AppBarTabMenuItem, wizardPanel: api.app.wizard.WizardPanel<any>) {
             super.addWizardPanel(tabMenuItem, wizardPanel);
 
             wizardPanel.getHeader().addListener(
                 {
-                    onPropertyChanged: (event: api_app_wizard.WizardHeaderPropertyChangedEvent) => {
+                    onPropertyChanged: (event: api.app.wizard.WizardHeaderPropertyChangedEvent) => {
                         if (event.property == "name") {
                             tabMenuItem.setLabel(event.newValue);
                         }
@@ -28,22 +28,22 @@ module app {
 
         private handleGlobalEvents() {
 
-            api_app.ShowAppBrowsePanelEvent.on((event) => {
+            api.app.ShowAppBrowsePanelEvent.on((event) => {
                 this.showHomePanel();
                 this.getAppBarTabMenu().deselectNavigationItem();
             });
 
-            app_browse.ShowNewSchemaDialogEvent.on((event) => {
+            app.browse.ShowNewSchemaDialogEvent.on((event) => {
                 if (!components.newSchemaDialog) {
-                    components.newSchemaDialog = new app_new.NewSchemaDialog();
+                    components.newSchemaDialog = new app.create.NewSchemaDialog();
                 }
                 components.newSchemaDialog.open();
             });
 
-            app_new.NewSchemaEvent.on((event) => {
+            app.create.NewSchemaEvent.on((event) => {
 
-                var schemaKind: api_schema.SchemaKind = event.getSchemaKind();
-                var tabId = api_app.AppBarTabId.forNew(schemaKind.toString());
+                var schemaKind: api.schema.SchemaKind = event.getSchemaKind();
+                var tabId = api.app.AppBarTabId.forNew(schemaKind.toString());
                 var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                 if (tabMenuItem != null) {
@@ -51,25 +51,25 @@ module app {
 
                 } else {
                     switch (schemaKind) {
-                    case api_schema.SchemaKind.CONTENT_TYPE:
-                        tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
-                        new app_wizard.ContentTypeWizardPanel(tabId, null, (wizard:app_wizard.ContentTypeWizardPanel) => {
+                    case api.schema.SchemaKind.CONTENT_TYPE:
+                        tabMenuItem = new api.app.AppBarTabMenuItem(app.wizard.ContentTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
+                        new app.wizard.ContentTypeWizardPanel(tabId, null, (wizard:app.wizard.ContentTypeWizardPanel) => {
                             this.addWizardPanel(tabMenuItem, wizard);
                             wizard.initWizardPanel();
                             wizard.reRender();
                         });
                         break;
-                    case api_schema.SchemaKind.RELATIONSHIP_TYPE:
-                        tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
-                        new app_wizard.RelationshipTypeWizardPanel(tabId, null, (wizard:app_wizard.RelationshipTypeWizardPanel) => {
+                    case api.schema.SchemaKind.RELATIONSHIP_TYPE:
+                        tabMenuItem = new api.app.AppBarTabMenuItem(app.wizard.RelationshipTypeWizardPanel.NEW_WIZARD_HEADER, tabId, true);
+                        new app.wizard.RelationshipTypeWizardPanel(tabId, null, (wizard:app.wizard.RelationshipTypeWizardPanel) => {
                             this.addWizardPanel(tabMenuItem, wizard);
                             wizard.initWizardPanel();
                             wizard.reRender();
                         });
                         break;
-                    case api_schema.SchemaKind.MIXIN:
-                        tabMenuItem = new api_app.AppBarTabMenuItem(app_wizard.MixinWizardPanel.NEW_WIZARD_HEADER, tabId, true);
-                        new app_wizard.MixinWizardPanel(tabId, null, (wizard:app_wizard.MixinWizardPanel) => {
+                    case api.schema.SchemaKind.MIXIN:
+                        tabMenuItem = new api.app.AppBarTabMenuItem(app.wizard.MixinWizardPanel.NEW_WIZARD_HEADER, tabId, true);
+                        new app.wizard.MixinWizardPanel(tabId, null, (wizard:app.wizard.MixinWizardPanel) => {
                             this.addWizardPanel(tabMenuItem, wizard);
                             wizard.initWizardPanel();
                             wizard.reRender();
@@ -79,53 +79,53 @@ module app {
                 }
             });
 
-            app_browse.EditSchemaEvent.on((event) => {
+            app.browse.EditSchemaEvent.on((event) => {
 
-                event.getSchemas().forEach((schema: api_schema.Schema) => {
+                event.getSchemas().forEach((schema: api.schema.Schema) => {
 
-                    var tabId = api_app.AppBarTabId.forEdit(schema.getKey());
+                    var tabId = api.app.AppBarTabId.forEdit(schema.getKey());
                     var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                     if (tabMenuItem != null) {
                         this.selectPanel(tabMenuItem);
 
                     } else {
-                        if (schema.getSchemaKind() == api_schema.SchemaKind.CONTENT_TYPE) {
-                            var contentType = <api_schema_content.ContentType>schema;
-                            new api_schema_content.GetContentTypeByNameRequest(contentType.getContentTypeName()).
-                                sendAndParse().done((contentType: api_schema_content.ContentType) => {
+                        if (schema.getSchemaKind() == api.schema.SchemaKind.CONTENT_TYPE) {
+                            var contentType = <api.schema.content.ContentType>schema;
+                            new api.schema.content.GetContentTypeByNameRequest(contentType.getContentTypeName()).
+                                sendAndParse().done((contentType: api.schema.content.ContentType) => {
 
-                                    tabMenuItem = new api_app.AppBarTabMenuItem(contentType.getName(), tabId, true);
+                                    tabMenuItem = new api.app.AppBarTabMenuItem(contentType.getName(), tabId, true);
 
-                                    new app_wizard.ContentTypeWizardPanel(tabId, contentType, (wizard:app_wizard.ContentTypeWizardPanel) => {
+                                    new app.wizard.ContentTypeWizardPanel(tabId, contentType, (wizard:app.wizard.ContentTypeWizardPanel) => {
                                         this.addWizardPanel(tabMenuItem, wizard);
                                         wizard.initWizardPanel();
                                         wizard.reRender();
                                     });
                                 });
                         }
-                        else if (schema.getSchemaKind() == api_schema.SchemaKind.RELATIONSHIP_TYPE) {
-                            var relationhipType = <api_schema_relationshiptype.RelationshipType>schema;
-                            new api_schema_relationshiptype.GetRelationshipTypeByNameRequest(relationhipType.getRelationshiptypeName()).
-                                sendAndParse().done((relationshipType: api_schema_relationshiptype.RelationshipType) => {
+                        else if (schema.getSchemaKind() == api.schema.SchemaKind.RELATIONSHIP_TYPE) {
+                            var relationhipType = <api.schema.relationshiptype.RelationshipType>schema;
+                            new api.schema.relationshiptype.GetRelationshipTypeByNameRequest(relationhipType.getRelationshiptypeName()).
+                                sendAndParse().done((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
-                                    tabMenuItem = new api_app.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
+                                    tabMenuItem = new api.app.AppBarTabMenuItem(relationshipType.getDisplayName(), tabId, true);
 
-                                    new app_wizard.RelationshipTypeWizardPanel(tabId, relationshipType, (wizard:app_wizard.RelationshipTypeWizardPanel) => {
+                                    new app.wizard.RelationshipTypeWizardPanel(tabId, relationshipType, (wizard:app.wizard.RelationshipTypeWizardPanel) => {
                                         this.addWizardPanel(tabMenuItem, wizard);
                                         wizard.initWizardPanel();
                                         wizard.reRender();
                                     });
                                 });
                         }
-                        else if (schema.getSchemaKind() == api_schema.SchemaKind.MIXIN) {
-                            var mixin = <api_schema_mixin.Mixin>schema;
-                            new api_schema_mixin.GetMixinByQualifiedNameRequest(mixin.getMixinName()).
-                                sendAndParse().done((mixin: api_schema_mixin.Mixin)=> {
+                        else if (schema.getSchemaKind() == api.schema.SchemaKind.MIXIN) {
+                            var mixin = <api.schema.mixin.Mixin>schema;
+                            new api.schema.mixin.GetMixinByQualifiedNameRequest(mixin.getMixinName()).
+                                sendAndParse().done((mixin: api.schema.mixin.Mixin)=> {
 
-                                    tabMenuItem = new api_app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
+                                    tabMenuItem = new api.app.AppBarTabMenuItem(mixin.getDisplayName(), tabId, true);
 
-                                    new app_wizard.MixinWizardPanel(tabId, mixin, (wizard:app_wizard.MixinWizardPanel) => {
+                                    new app.wizard.MixinWizardPanel(tabId, mixin, (wizard:app.wizard.MixinWizardPanel) => {
                                         this.addWizardPanel(tabMenuItem, wizard);
                                         wizard.initWizardPanel();
                                         wizard.reRender();
@@ -139,19 +139,19 @@ module app {
                 });
             });
 
-            app_browse.OpenSchemaEvent.on((event) => {
-                event.getSchemas().forEach((schema: api_schema.Schema) => {
+            app.browse.OpenSchemaEvent.on((event) => {
+                event.getSchemas().forEach((schema: api.schema.Schema) => {
 
-                        var tabId = api_app.AppBarTabId.forView(schema.getKey());
+                        var tabId = api.app.AppBarTabId.forView(schema.getKey());
                         var tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
                         if (tabMenuItem != null) {
                             this.selectPanel(tabMenuItem);
 
                         } else {
-                            tabMenuItem = new api_app.AppBarTabMenuItem(schema.getName(), tabId);
-                            var schemaItemViewPanel = new app_view.SchemaItemViewPanel();
-                            var schemaViewItem = new api_app_view.ViewItem<api_schema.Schema>(schema)
+                            tabMenuItem = new api.app.AppBarTabMenuItem(schema.getName(), tabId);
+                            var schemaItemViewPanel = new app.view.SchemaItemViewPanel();
+                            var schemaViewItem = new api.app.view.ViewItem<api.schema.Schema>(schema)
                                 .setDisplayName(schema.getDisplayName())
                                 .setPath(schema.getName())
                                 .setIconUrl(schema.getIconUrl());
@@ -164,22 +164,22 @@ module app {
                 );
             });
 
-            app_browse.DeleteSchemaPromptEvent.on((event) => {
+            app.browse.DeleteSchemaPromptEvent.on((event) => {
                 if (!components.schemaDeleteDialog) {
-                    components.schemaDeleteDialog = new app_delete.SchemaDeleteDialog();
+                    components.schemaDeleteDialog = new app.remove.SchemaDeleteDialog();
                 }
                 components.schemaDeleteDialog.setSchemaToDelete(event.getSchemas()).open();
             });
 
-            app_browse.ReindexSchemaEvent.on(() => {
+            app.browse.ReindexSchemaEvent.on(() => {
                 console.log('TODO: implement handler for ReindexSchemaEvent');
             });
 
-            app_browse.ExportSchemaEvent.on(() => {
+            app.browse.ExportSchemaEvent.on(() => {
                 console.log('TODO: implement handler for ExportSchemaEvent');
             });
 
-            app_browse.CloseSchemaEvent.on((event) => {
+            app.browse.CloseSchemaEvent.on((event) => {
                 this.removePanel(event.getPanel(), event.isCheckCanRemovePanel());
             });
         }

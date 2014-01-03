@@ -1,35 +1,35 @@
-module app_wizard {
+module app.wizard {
 
-    export class RelationshipTypeWizardPanel extends api_app_wizard.WizardPanel<api_schema_relationshiptype.RelationshipType> {
+    export class RelationshipTypeWizardPanel extends api.app.wizard.WizardPanel<api.schema.relationshiptype.RelationshipType> {
 
         public static NEW_WIZARD_HEADER = "new relationship type";
 
-        private formIcon: api_app_wizard.FormIcon;
+        private formIcon: api.app.wizard.FormIcon;
 
-        private relationshipTypeIcon: api_icon.Icon;
+        private relationshipTypeIcon: api.icon.Icon;
 
-        private relationShipTypeWizardHeader: api_app_wizard.WizardHeaderWithName;
+        private relationShipTypeWizardHeader: api.app.wizard.WizardHeaderWithName;
 
         private relationshipTypeForm: RelationshipTypeForm;
 
-        private persistedRelationshipType: api_schema_relationshiptype.RelationshipType;
+        private persistedRelationshipType: api.schema.relationshiptype.RelationshipType;
 
         private persistedConfig: string;
 
-        constructor(tabId: api_app.AppBarTabId, persistedRelationshipType: api_schema_relationshiptype.RelationshipType,
+        constructor(tabId: api.app.AppBarTabId, persistedRelationshipType: api.schema.relationshiptype.RelationshipType,
                     callback: (wizard: RelationshipTypeWizardPanel) => void) {
-            this.relationShipTypeWizardHeader = new api_app_wizard.WizardHeaderWithName();
-            this.formIcon = new api_app_wizard.FormIcon(new api_schema_relationshiptype.RelationshipTypeIconUrlResolver().resolveDefault(),
+            this.relationShipTypeWizardHeader = new api.app.wizard.WizardHeaderWithName();
+            this.formIcon = new api.app.wizard.FormIcon(new api.schema.relationshiptype.RelationshipTypeIconUrlResolver().resolveDefault(),
                 "Click to upload icon",
-                api_util.getRestUri("blob/upload"));
+                api.util.getRestUri("blob/upload"));
 
             this.formIcon.addListener({
                 onUploadStarted: null,
-                onUploadFinished: (uploadItem: api_ui.UploadItem) => {
-                    this.relationshipTypeIcon = new api_icon.IconBuilder().
+                onUploadFinished: (uploadItem: api.ui.UploadItem) => {
+                    this.relationshipTypeIcon = new api.icon.IconBuilder().
                         setBlobKey(uploadItem.getBlobKey()).setMimeType(uploadItem.getMimeType()).build();
 
-                    this.formIcon.setSrc(api_util.getRestUri('blob/' + this.relationshipTypeIcon.getBlobKey()));
+                    this.formIcon.setSrc(api.util.getRestUri('blob/' + this.relationshipTypeIcon.getBlobKey()));
                 }
             });
 
@@ -45,8 +45,8 @@ module app_wizard {
             this.relationShipTypeWizardHeader.setName(RelationshipTypeWizardPanel.NEW_WIZARD_HEADER);
             this.relationshipTypeForm = new RelationshipTypeForm();
 
-            var steps: api_app_wizard.WizardStep[] = [];
-            steps.push(new api_app_wizard.WizardStep("Relationship Type", this.relationshipTypeForm));
+            var steps: api.app.wizard.WizardStep[] = [];
+            steps.push(new api.app.wizard.WizardStep("Relationship Type", this.relationshipTypeForm));
 
             super({
                 tabId: tabId,
@@ -61,14 +61,14 @@ module app_wizard {
             });
         }
 
-        setPersistedItem(relationshipType: api_schema_relationshiptype.RelationshipType, callback: Function) {
+        setPersistedItem(relationshipType: api.schema.relationshiptype.RelationshipType, callback: Function) {
             super.setPersistedItem(relationshipType, () => {
                 this.relationShipTypeWizardHeader.setName(relationshipType.getName());
                 this.formIcon.setSrc(relationshipType.getIconUrl());
                 this.persistedRelationshipType = relationshipType;
 
-                new api_schema_relationshiptype.GetRelationshipTypeConfigByNameRequest(relationshipType.getRelationshiptypeName()).send().
-                    done((response: api_rest.JsonResponse <api_schema_relationshiptype.GetRelationshipTypeConfigResult>) => {
+                new api.schema.relationshiptype.GetRelationshipTypeConfigByNameRequest(relationshipType.getRelationshiptypeName()).send().
+                    done((response: api.rest.JsonResponse <api.schema.relationshiptype.GetRelationshipTypeConfigResult>) => {
                         this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
                         this.persistedConfig = response.getResult().relationshipTypeXml || "";
                         callback();
@@ -76,40 +76,40 @@ module app_wizard {
             });
         }
 
-        persistNewItem(callback: (persistedRelationshipType: api_schema_relationshiptype.RelationshipType) => void) {
+        persistNewItem(callback: (persistedRelationshipType: api.schema.relationshiptype.RelationshipType) => void) {
             var formData = this.relationshipTypeForm.getFormData();
-            var newName = new api_schema_relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
-            var request = new api_schema_relationshiptype.CreateRelationshipTypeRequest(newName, formData.xml, this.relationshipTypeIcon);
+            var newName = new api.schema.relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
+            var request = new api.schema.relationshiptype.CreateRelationshipTypeRequest(newName, formData.xml, this.relationshipTypeIcon);
             request.sendAndParse().
-                done((relationshipType: api_schema_relationshiptype.RelationshipType)=> {
+                done((relationshipType: api.schema.relationshiptype.RelationshipType)=> {
 
                     this.setPersistedItem(relationshipType, () => {
 
                         this.getTabId().changeToEditMode(relationshipType.getKey());
-                        new app_wizard.RelationshipTypeCreatedEvent().fire();
-                        api_notify.showFeedback('Relationship type was created!');
+                        new app.wizard.RelationshipTypeCreatedEvent().fire();
+                        api.notify.showFeedback('Relationship type was created!');
 
-                        new api_schema.SchemaCreatedEvent(relationshipType).fire();
+                        new api.schema.SchemaCreatedEvent(relationshipType).fire();
 
                         callback(relationshipType);
                     });
                 });
         }
 
-        updatePersistedItem(callback: (persistedRelationshipType: api_schema_relationshiptype.RelationshipType) => void) {
+        updatePersistedItem(callback: (persistedRelationshipType: api.schema.relationshiptype.RelationshipType) => void) {
             var formData = this.relationshipTypeForm.getFormData();
-            var newName = new api_schema_relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
-            var request = new api_schema_relationshiptype.UpdateRelationshipTypeRequest(this.getPersistedItem().getRelationshiptypeName(),
+            var newName = new api.schema.relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
+            var request = new api.schema.relationshiptype.UpdateRelationshipTypeRequest(this.getPersistedItem().getRelationshiptypeName(),
                 newName, formData.xml, this.relationshipTypeIcon);
             request.sendAndParse().
-                done((relationshipType: api_schema_relationshiptype.RelationshipType)=> {
+                done((relationshipType: api.schema.relationshiptype.RelationshipType)=> {
 
                     this.setPersistedItem(relationshipType, () => {
 
-                        new app_wizard.RelationshipTypeUpdatedEvent().fire();
-                        api_notify.showFeedback('Relationship type was saved!');
+                        new app.wizard.RelationshipTypeUpdatedEvent().fire();
+                        api.notify.showFeedback('Relationship type was saved!');
 
-                        new api_schema.SchemaUpdatedEvent(relationshipType).fire();
+                        new api.schema.SchemaUpdatedEvent(relationshipType).fire();
 
                         callback(relationshipType);
                     });
@@ -117,13 +117,13 @@ module app_wizard {
         }
 
         hasUnsavedChanges(): boolean {
-            var persistedRelationshipType: api_schema_relationshiptype.RelationshipType = this.getPersistedItem();
+            var persistedRelationshipType: api.schema.relationshiptype.RelationshipType = this.getPersistedItem();
             if (persistedRelationshipType == undefined) {
                 return true;
             } else {
-                return !api_util.isStringsEqual(persistedRelationshipType.getName(), this.relationShipTypeWizardHeader.getName())
-                    || !api_util.isStringsEqual(api_util.removeCarriageChars(this.persistedConfig),
-                                                api_util.removeCarriageChars(this.relationshipTypeForm.getFormData().xml));
+                return !api.util.isStringsEqual(persistedRelationshipType.getName(), this.relationShipTypeWizardHeader.getName())
+                    || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
+                                                api.util.removeCarriageChars(this.relationshipTypeForm.getFormData().xml));
             }
         }
     }

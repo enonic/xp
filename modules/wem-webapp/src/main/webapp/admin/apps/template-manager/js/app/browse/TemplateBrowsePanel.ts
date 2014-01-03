@@ -1,15 +1,15 @@
-module app_browse {
+module app.browse {
 
-    export class TemplateBrowsePanel extends api_app_browse.BrowsePanel<app_browse.TemplateBrowseItem> {
+    export class TemplateBrowsePanel extends api.app.browse.BrowsePanel<app.browse.TemplateBrowseItem> {
 
-        private browseActions:app_browse.TemplateBrowseActions;
+        private browseActions:app.browse.TemplateBrowseActions;
 
-        private templateTreeGridPanel: app_browse.TemplateTreeGridPanel;
+        private templateTreeGridPanel: app.browse.TemplateTreeGridPanel;
 
         private toolbar:TemplateBrowseToolbar;
 
         constructor() {
-            var treeGridContextMenu = new app_browse.TemplateTreeGridContextMenu();
+            var treeGridContextMenu = new app.browse.TemplateTreeGridContextMenu();
             this.templateTreeGridPanel = components.gridPanel = new TemplateTreeGridPanel({
                 contextMenu: treeGridContextMenu
             });
@@ -36,36 +36,36 @@ module app_browse {
                 filterPanel: undefined
             });
 
-            api_content_site_template.SiteTemplateDeletedEvent.on((event: api_content_site_template.SiteTemplateDeletedEvent) => {
+            api.content.site.template.SiteTemplateDeletedEvent.on((event: api.content.site.template.SiteTemplateDeletedEvent) => {
                 var siteTemplateKey = event.getSiteTemplateKey();
                 this.templateTreeGridPanel.remove(siteTemplateKey.toString());
                 console.log(siteTemplateKey);
             });
 
-            this.templateTreeGridPanel.addListener(<api_app_browse_grid.TreeGridPanelListener>{
-                onSelectionChanged: (event: api_app_browse_grid.TreeGridSelectionChangedEvent) => {
+            this.templateTreeGridPanel.addListener(<api.app.browse.grid.TreeGridPanelListener>{
+                onSelectionChanged: (event: api.app.browse.grid.TreeGridSelectionChangedEvent) => {
                     this.browseActions.updateActionsEnabledState(<any[]>event.selectedModels);
                 }
             });
 
-            api_content_site_template.SiteTemplateImportedEvent.on(() => {
+            api.content.site.template.SiteTemplateImportedEvent.on(() => {
                 this.setRefreshNeeded(true);
                 this.refreshFilterAndGrid();
             });
         }
 
-        extModelsToBrowseItems(models: Ext_data_Model[]): api_app_browse.BrowseItem<api_content_site_template.SiteTemplateSummary>[] {
+        extModelsToBrowseItems(models: Ext_data_Model[]): api.app.browse.BrowseItem<api.content.site.template.SiteTemplateSummary>[] {
 
-            var browseItems: api_app_browse.BrowseItem<api_content_site_template.SiteTemplateSummary>[] = [];
+            var browseItems: api.app.browse.BrowseItem<api.content.site.template.SiteTemplateSummary>[] = [];
 
             models.forEach((model: Ext_data_Model, index: number) => {
 
-                var siteTemplateSummary: api_content_site_template.SiteTemplateSummary = api_content_site_template.SiteTemplateSummary.fromExtModel(model);
+                var siteTemplateSummary: api.content.site.template.SiteTemplateSummary = api.content.site.template.SiteTemplateSummary.fromExtModel(model);
 
-                var item = new api_app_browse.BrowseItem<api_content_site_template.SiteTemplateSummary>(siteTemplateSummary).
+                var item = new api.app.browse.BrowseItem<api.content.site.template.SiteTemplateSummary>(siteTemplateSummary).
                     setDisplayName(siteTemplateSummary.getDisplayName()).
                     setPath(siteTemplateSummary.getName()).
-                    setIconUrl(api_util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'));
+                    setIconUrl(api.util.getAdminUri('common/images/icons/icoMoon/32x32/folder.png'));
 
                 browseItems.push(item);
             });

@@ -1,8 +1,8 @@
-module api_content{
+module api.content{
 
     export interface FindContentResult<T>{
 
-        facets:api_facet.FacetJson[];
+        facets:api.facet.FacetJson[];
 
         contents:T[];
 

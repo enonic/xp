@@ -1,14 +1,14 @@
-module api_form_inputtype_text {
+module api.form.inputtype.text {
 
-    export class TextLine extends api_form_inputtype_support.BaseInputTypeView {
+    export class TextLine extends api.form.inputtype.support.BaseInputTypeView {
 
         constructor() {
             super("TextLine");
         }
 
-        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
 
-            var inputEl = api_ui.TextInput.middle(this.getInput().getName() + "-" + index);
+            var inputEl = api.ui.TextInput.middle(this.getInput().getName() + "-" + index);
             inputEl.setName(this.getInput().getName());
             if (property != null) {
                 inputEl.setValue(property.getString());
@@ -16,16 +16,16 @@ module api_form_inputtype_text {
             return inputEl;
         }
 
-        getValue(occurrence:api_dom.Element):api_data.Value {
-            var inputEl = <api_ui.TextInput>occurrence;
-            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
+        getValue(occurrence:api.dom.Element):api.data.Value {
+            var inputEl = <api.ui.TextInput>occurrence;
+            return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
         }
 
-        valueBreaksRequiredContract(value:api_data.Value):boolean {
+        valueBreaksRequiredContract(value:api.data.Value):boolean {
             // TODO:
             return true;
         }
     }
 
-    api_form_input.InputTypeManager.register("TextLine", TextLine);
+    api.form.input.InputTypeManager.register("TextLine", TextLine);
 }

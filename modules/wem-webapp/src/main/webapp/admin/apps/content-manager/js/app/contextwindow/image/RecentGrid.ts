@@ -1,12 +1,12 @@
-module app_contextwindow_image {
-    export class RecentGrid extends api_ui_grid.Grid<api_content.ContentSummary> {
+module app.contextwindow.image {
+    export class RecentGrid extends api.ui.grid.Grid<api.content.ContentSummary> {
 
 
-        constructor(dataView:api_ui_grid.DataView<api_content.ContentSummary>) {
+        constructor(dataView:api.ui.grid.DataView<api.content.ContentSummary>) {
             super(dataView, this.createColumns(), {hideColumnHeaders: true, rowHeight: 50, height: 400, width: 320});
         }
 
-        private createColumns():api_ui_grid.GridColumn<api_content.ContentSummary>[] {
+        private createColumns():api.ui.grid.GridColumn<api.content.ContentSummary>[] {
             return [
                 {
                     name: "component",
@@ -21,16 +21,16 @@ module app_contextwindow_image {
             ];
         }
 
-        private buildRow(row, cell, data, columnDef, dataContext):api_dom.DivEl {
-            var rowEl = new api_dom.DivEl();
+        private buildRow(row, cell, data, columnDef, dataContext):api.dom.DivEl {
+            var rowEl = new api.dom.DivEl();
 
-            var image = new api_dom.ImgEl(dataContext.getIconUrl());
+            var image = new api.dom.ImgEl(dataContext.getIconUrl());
 
-            var title = new api_dom.H5El();
+            var title = new api.dom.H5El();
             title.getEl().setInnerHtml(dataContext.getDisplayName());
 
-            var subtitle = new api_dom.H6El();
-            subtitle.getEl().setInnerHtml(api_util.limitString(dataContext.path.refString, 43));
+            var subtitle = new api.dom.H6El();
+            subtitle.getEl().setInnerHtml(api.util.limitString(dataContext.path.refString, 43));
 
             rowEl.appendChild(image);
             rowEl.appendChild(title);

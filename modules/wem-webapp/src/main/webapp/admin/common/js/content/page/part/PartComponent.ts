@@ -1,30 +1,30 @@
-module api_content_page_part{
+module api.content.page.part{
 
-    export class PartComponent extends api_content_page.BasePageComponent<PartTemplateKey> {
+    export class PartComponent extends api.content.page.BasePageComponent<PartTemplateKey> {
 
-        private config:api_data.RootDataSet;
+        private config:api.data.RootDataSet;
 
         constructor(builder:PartComponentBuilder) {
             super(builder);
             this.config = builder.config;
         }
 
-        getConfig():api_data.RootDataSet {
+        getConfig():api.data.RootDataSet {
             return this.config;
         }
     }
 
-    export class PartComponentBuilder extends api_content_page.BaseComponentBuilder<PartTemplateKey>{
+    export class PartComponentBuilder extends api.content.page.BaseComponentBuilder<PartTemplateKey>{
 
-        config:api_data.RootDataSet;
+        config:api.data.RootDataSet;
 
-        public fromDataSet(dataSet:api_data.DataSet):PartComponentBuilder {
+        public fromDataSet(dataSet:api.data.DataSet):PartComponentBuilder {
             this.setTemplate( PartTemplateKey.fromString(dataSet.getProperty("template").getString()) );
             this.config = dataSet.getProperty("config").getValue().asRootDataSet();
             return this;
         }
 
-        public setConfig(value:api_data.RootDataSet):PartComponentBuilder {
+        public setConfig(value:api.data.RootDataSet):PartComponentBuilder {
             this.config = value;
             return this;
         }

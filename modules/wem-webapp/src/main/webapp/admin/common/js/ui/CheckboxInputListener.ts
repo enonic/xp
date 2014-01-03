@@ -1,6 +1,6 @@
-module api_ui {
+module api.ui {
 
-    export interface CheckboxInputListener extends api_event.Listener {
+    export interface CheckboxInputListener extends api.event.Listener {
 
         onValueChanged(oldValue:boolean, newValue:boolean);
 

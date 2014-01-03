@@ -1,42 +1,42 @@
-module app_browse {
+module app.browse {
 
     export interface SchemaTreeGridPanelParams {
 
-        contextMenu:api_ui_menu.ContextMenu;
+        contextMenu:api.ui.menu.ContextMenu;
     }
 
-    export class SchemaTreeGridPanel extends api_app_browse_grid.TreeGridPanel {
+    export class SchemaTreeGridPanel extends api.app.browse.grid.TreeGridPanel {
 
         constructor(params:SchemaTreeGridPanelParams) {
 
             super({
                 columns: this.createColumns(),
-                gridStore: new app_browse_grid.SchemaGridStore().getExtDataStore(),
-                treeStore: new app_browse_grid.SchemaTreeStore().getExtDataStore(),
+                gridStore: new app.browse.grid.SchemaGridStore().getExtDataStore(),
+                treeStore: new app.browse.grid.SchemaTreeStore().getExtDataStore(),
                 gridConfig: this.createGridConfig(),
                 treeConfig: this.createTreeConfig(),
                 contextMenu: params.contextMenu});
 
             this.setItemId("SchemaTreeGridPanel");
 
-            this.setActiveList(api_app_browse_grid.TreeGridPanel.TREE);
+            this.setActiveList(api.app.browse.grid.TreeGridPanel.TREE);
             this.setKeyField("key");
 
-            app_browse_filter.SchemaBrowseSearchEvent.on((event) => {
+            app.browse.filter.SchemaBrowseSearchEvent.on((event) => {
                 // TODO: use schemas from event when filter is implemented
                 // this.loadData(event.getJsonModels())
 
                 this.refresh();
             });
 
-            app_browse_filter.SchemaBrowseResetEvent.on((event) => {
+            app.browse.filter.SchemaBrowseResetEvent.on((event) => {
                 this.removeAll();
                 this.refresh();
             });
 
             this.addListener({
-                onItemDoubleClicked: (event:api_app_browse_grid.TreeItemDoubleClickedEvent) => {
-                    new app_browse.EditSchemaEvent([<any>event.clickedModel]).fire();
+                onItemDoubleClicked: (event:api.app.browse.grid.TreeItemDoubleClickedEvent) => {
+                    new app.browse.EditSchemaEvent([<any>event.clickedModel]).fire();
                 },
                 onSelectionChanged: null,
                 onSelect: null,
@@ -105,8 +105,8 @@ module app_browse {
 
         private prettyDateRenderer(value) {
             try {
-                if (parent && Ext.isFunction(parent['humane_date'])) {
-                    return parent['humane_date'](value);
+                if (parent && Ext.isFunction(parent['humane.date'])) {
+                    return parent['humane.date'](value);
                 } else {
                     return value;
                 }

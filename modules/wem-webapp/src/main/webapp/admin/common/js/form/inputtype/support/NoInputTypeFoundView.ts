@@ -1,22 +1,22 @@
-module api_form_input {
+module api.form.input {
 
-    export class NoInputTypeFoundView extends api_form_inputtype_support.BaseInputTypeView {
+    export class NoInputTypeFoundView extends api.form.inputtype.support.BaseInputTypeView {
 
         constructor() {
             super("NoInputTypeFound");
         }
 
-        layout(input:api_form.Input, properties?:api_data.Property[]) {
+        layout(input:api.form.Input, properties?:api.data.Property[]) {
 
-            var divEl = new api_dom.DivEl();
+            var divEl = new api.dom.DivEl();
             divEl.getEl().setInnerHtml("Warning: no input type found: " + input.getInputType().toString());
 
             super.layout(input, properties);
         }
 
-        createInputOccurrenceElement(index:number, property:api_data.Property):api_dom.Element {
+        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
 
-            var inputEl = api_ui.TextInput.middle(this.getInput().getName() + "-" + index);
+            var inputEl = api.ui.TextInput.middle(this.getInput().getName() + "-" + index);
             inputEl.setName(this.getInput().getName());
             if (property != null) {
                 inputEl.setValue(property.getString());
@@ -24,16 +24,16 @@ module api_form_input {
             return inputEl;
         }
 
-        getValue(occurrence:api_dom.Element):api_data.Value {
-            var inputEl = <api_ui.TextInput>occurrence;
-            return new api_data.Value(inputEl.getValue(), api_data.ValueTypes.STRING);
+        getValue(occurrence:api.dom.Element):api.data.Value {
+            var inputEl = <api.ui.TextInput>occurrence;
+            return new api.data.Value(inputEl.getValue(), api.data.ValueTypes.STRING);
         }
 
-        valueBreaksRequiredContract(value:api_data.Value):boolean {
+        valueBreaksRequiredContract(value:api.data.Value):boolean {
             // TODO:
             return false;
         }
     }
 
-    api_form_input.InputTypeManager.register("NoInputTypeFound", NoInputTypeFoundView);
+    api.form.input.InputTypeManager.register("NoInputTypeFound", NoInputTypeFoundView);
 }

@@ -1,4 +1,4 @@
-module api_ui_grid {
+module api.ui.grid {
 
     export interface GridOptions extends Slick.GridOptions<any> {
 
@@ -25,7 +25,7 @@ module api_ui_grid {
         grid?:any;
     }
 
-    export class Grid<T extends Slick.SlickData> extends api_dom.DivEl {
+    export class Grid<T extends Slick.SlickData> extends api.dom.DivEl {
 
         private defaultHeight = 400;
 

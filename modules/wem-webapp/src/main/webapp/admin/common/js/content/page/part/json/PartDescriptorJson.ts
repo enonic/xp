@@ -1,6 +1,6 @@
-module api_content_page_part_json{
+module api.content.page.part.json{
 
-    export interface PartDescriptorJson extends api_content_page_json.BaseDescriptorJson{
+    export interface PartDescriptorJson extends api.content.page.json.BaseDescriptorJson{
 
     }
 }

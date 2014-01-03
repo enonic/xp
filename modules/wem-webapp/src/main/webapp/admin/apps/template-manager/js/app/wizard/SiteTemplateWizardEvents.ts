@@ -1,26 +1,26 @@
-module app_wizard {
-    export class BaseSiteTemplateModelEvent extends api_event.Event {
+module app.wizard {
+    export class BaseSiteTemplateModelEvent extends api.event.Event {
 
-        private model:api_content_site_template.SiteTemplateSummary[];
+        private model:api.content.site.template.SiteTemplateSummary[];
 
-        constructor(name:string, model:api_content_site_template.SiteTemplateSummary[]) {
+        constructor(name:string, model:api.content.site.template.SiteTemplateSummary[]) {
             this.model = model;
             super(name);
         }
 
-        getModels():api_content_site_template.SiteTemplateSummary[] {
+        getModels():api.content.site.template.SiteTemplateSummary[] {
             return this.model;
         }
     }
 
-    export class ShowSiteTemplateFormEvent extends api_event.Event {
+    export class ShowSiteTemplateFormEvent extends api.event.Event {
 
         constructor() {
             super('showSiteTemplateForm');
         }
 
         static on(handler:(event:ShowSiteTemplateFormEvent) => void) {
-            api_event.onEvent('showSiteTemplateForm', handler);
+            api.event.onEvent('showSiteTemplateForm', handler);
         }
 
     }

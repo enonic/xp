@@ -1,4 +1,4 @@
-module api_content_page_json{
+module api.content.page.json{
 
     export interface BaseDescriptorJson{
 
@@ -8,6 +8,6 @@ module api_content_page_json{
 
         controller:string;
 
-        configForm: api_form_json.FormJson;
+        configForm: api.form.json.FormJson;
     }
 }

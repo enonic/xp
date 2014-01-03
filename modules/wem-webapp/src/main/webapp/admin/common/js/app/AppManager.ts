@@ -1,23 +1,23 @@
-module api_app {
+module api.app {
 
-    export class AppManager implements api_event.Observable {
-        private static _instance: api_app.AppManager = null;
+    export class AppManager implements api.event.Observable {
+        private static _instance: api.app.AppManager = null;
 
-        private listeners: api_app.AppManagerListener[] = [];
+        private listeners: api.app.AppManagerListener[] = [];
 
         constructor() {
-            api_app.AppManager._instance = this;
+            api.app.AppManager._instance = this;
         }
 
         showLauncher(): void {
             this.notifyShowLauncher();
         }
 
-        addListener(listener: api_app.AppManagerListener) {
+        addListener(listener: api.app.AppManagerListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener: api_app.AppManagerListener) {
+        removeListener(listener: api.app.AppManagerListener) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr !== listener;
             });
@@ -32,37 +32,37 @@ module api_app {
         }
 
         private notifyConnectionLost() {
-            this.listeners.forEach((listener: api_app.AppManagerListener) => {
+            this.listeners.forEach((listener: api.app.AppManagerListener) => {
                 listener.onConnectionLost();
             });
         }
 
         private notifyConnectionRestored() {
-            this.listeners.forEach((listener: api_app.AppManagerListener) => {
+            this.listeners.forEach((listener: api.app.AppManagerListener) => {
                 listener.onConnectionRestored();
             });
         }
 
         private notifyShowLauncher() {
-            this.listeners.forEach((listener: api_app.AppManagerListener) => {
+            this.listeners.forEach((listener: api.app.AppManagerListener) => {
                 listener.onShowLauncher();
             });
         }
 
-        static instance(): api_app.AppManager {
-            if (api_app.AppManager._instance) {
-                return api_app.AppManager._instance;
+        static instance(): api.app.AppManager {
+            if (api.app.AppManager._instance) {
+                return api.app.AppManager._instance;
             } else if (window !== window.parent) {
                 // look for instance in parent frame
-                var apiAppModule = (<any> window.parent).api_app;
+                var apiAppModule = (<any> window.parent).api.app;
                 if (apiAppModule && apiAppModule.AppManager) {
-                    var parentAppManager = <api_app.AppManager> apiAppModule.AppManager._instance;
+                    var parentAppManager = <api.app.AppManager> apiAppModule.AppManager._instance;
                     if (parentAppManager) {
-                        api_app.AppManager._instance = parentAppManager;
+                        api.app.AppManager._instance = parentAppManager;
                     }
                 }
             }
-            return api_app.AppManager._instance;
+            return api.app.AppManager._instance;
         }
     }
 }

@@ -1,4 +1,4 @@
-module api_content_site_json{
+module api.content.site.json{
 
     export interface VendorJson {
 

@@ -1,13 +1,13 @@
-module app_wizard {
+module app.wizard {
 
     export interface RelationshipTypeWizardToolbarParams {
-        saveAction: api_ui.Action;
-        duplicateAction: api_ui.Action;
-        deleteAction: api_ui.Action;
-        closeAction: api_ui.Action;
+        saveAction: api.ui.Action;
+        duplicateAction: api.ui.Action;
+        deleteAction: api.ui.Action;
+        closeAction: api.ui.Action;
     }
 
-    export class RelationshipTypeWizardToolbar extends api_ui_toolbar.Toolbar {
+    export class RelationshipTypeWizardToolbar extends api.ui.toolbar.Toolbar {
 
         constructor(params: RelationshipTypeWizardToolbarParams) {
             super();

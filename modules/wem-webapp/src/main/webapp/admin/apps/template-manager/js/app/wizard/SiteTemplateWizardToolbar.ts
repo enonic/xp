@@ -1,14 +1,14 @@
-module app_wizard {
+module app.wizard {
 
     export interface ContentWizardToolbarParams {
-        saveAction:api_ui.Action;
-        duplicateAction:api_ui.Action;
-        moveAction: api_ui.Action;
-        deleteAction:api_ui.Action;
-        closeAction:api_ui.Action;
+        saveAction:api.ui.Action;
+        duplicateAction:api.ui.Action;
+        moveAction: api.ui.Action;
+        deleteAction:api.ui.Action;
+        closeAction:api.ui.Action;
     }
 
-    export class SiteTemplateWizardToolbar extends api_ui_toolbar.Toolbar {
+    export class SiteTemplateWizardToolbar extends api.ui.toolbar.Toolbar {
 
         constructor(params:ContentWizardToolbarParams) {
             super();

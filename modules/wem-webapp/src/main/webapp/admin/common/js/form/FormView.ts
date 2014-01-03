@@ -1,16 +1,16 @@
-module api_form {
+module api.form {
 
-    export class FormView extends api_ui.Panel {
+    export class FormView extends api.ui.Panel {
 
         private context: FormContext;
 
         private form: Form;
 
-        private contentData: api_content.ContentData;
+        private contentData: api.content.ContentData;
 
         private formItemViews: FormItemView[] = [];
 
-        constructor(context: FormContext, form: Form, contentData?: api_content.ContentData) {
+        constructor(context: FormContext, form: Form, contentData?: api.content.ContentData) {
             super("FormView");
             this.setClass("form-view");
             this.context = context;
@@ -27,7 +27,7 @@ module api_form {
                 layout(this.contentData);
         }
 
-        public getValueAtPath(path: api_data.DataPath): api_data.Value {
+        public getValueAtPath(path: api.data.DataPath): api.data.Value {
             if (path == null) {
                 throw new Error("To get a value, a path is required");
             }
@@ -43,7 +43,7 @@ module api_form {
             }
         }
 
-        public getValue(dataId: api_data.DataId): api_data.Value {
+        public getValue(dataId: api.data.DataId): api.data.Value {
 
             var inputView = this.getInputView(dataId.getName());
             if (inputView == null) {
@@ -52,9 +52,9 @@ module api_form {
             return inputView.getValue(dataId.getArrayIndex());
         }
 
-        private forwardGetValueAtPath(path: api_data.DataPath): api_data.Value {
+        private forwardGetValueAtPath(path: api.data.DataPath): api.data.Value {
 
-            var dataId: api_data.DataId = path.getFirstElement().toDataId();
+            var dataId: api.data.DataId = path.getFirstElement().toDataId();
             var formItemSetView = this.getFormItemSetView(dataId.getName());
             if (formItemSetView == null) {
                 return null;
@@ -63,28 +63,28 @@ module api_form {
             return formItemSetOccurrenceView.getValueAtPath(path.newWithoutFirstElement());
         }
 
-        public getInputView(name: string): api_form_input.InputView {
+        public getInputView(name: string): api.form.input.InputView {
 
             var formItemView = this.getFormItemView(name);
             if (formItemView == null) {
                 return null;
             }
-            if (!(formItemView instanceof api_form_input.InputView)) {
+            if (!(formItemView instanceof api.form.input.InputView)) {
                 throw new Error("Found a FormItemView with name [" + name + "], but it was not an InputView");
             }
-            return <api_form_input.InputView>formItemView;
+            return <api.form.input.InputView>formItemView;
         }
 
-        public getFormItemSetView(name: string): api_form_formitemset.FormItemSetView {
+        public getFormItemSetView(name: string): api.form.formitemset.FormItemSetView {
 
             var formItemView = this.getFormItemView(name);
             if (formItemView == null) {
                 return null;
             }
-            if (!(formItemView instanceof api_form_formitemset.FormItemSetView)) {
+            if (!(formItemView instanceof api.form.formitemset.FormItemSetView)) {
                 throw new Error("Found a FormItemView with name [" + name + "], but it was not an FormItemSetView");
             }
-            return <api_form_formitemset.FormItemSetView>formItemView;
+            return <api.form.formitemset.FormItemSetView>formItemView;
         }
 
         public getFormItemView(name: string): FormItemView {
@@ -101,8 +101,8 @@ module api_form {
             // FormItemView not found - look inside FieldSet-s
             for (var i = 0; i < this.formItemViews.length; i++) {
                 var curr = this.formItemViews[i];
-                if (curr instanceof api_form_layout.FieldSetView) {
-                    var view = (<api_form_layout.FieldSetView>curr).getFormItemView(name);
+                if (curr instanceof api.form.layout.FieldSetView) {
+                    var view = (<api.form.layout.FieldSetView>curr).getFormItemView(name);
                     if (view != null) {
                         return view;
                     }
@@ -112,23 +112,23 @@ module api_form {
             return null;
         }
 
-        getContentData(): api_content.ContentData {
+        getContentData(): api.content.ContentData {
             return this.contentData;
         }
 
-        getAttachments(): api_content_attachment.Attachment[] {
-            var attachments: api_content_attachment.Attachment[] = [];
+        getAttachments(): api.content.attachment.Attachment[] {
+            var attachments: api.content.attachment.Attachment[] = [];
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 attachments = attachments.concat(formItemView.getAttachments());
             });
             return attachments;
         }
 
-        rebuildContentData(): api_content.ContentData {
-            var contentData: api_content.ContentData = new api_content.ContentData();
+        rebuildContentData(): api.content.ContentData {
+            var contentData: api.content.ContentData = new api.content.ContentData();
             this.formItemViews.forEach((formItemView: FormItemView) => {
 
-                formItemView.getData().forEach((data: api_data.Data) => {
+                formItemView.getData().forEach((data: api.data.Data) => {
                     contentData.addData(data)
                 });
 

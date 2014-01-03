@@ -1,20 +1,20 @@
-module api_ui_combobox {
+module api.ui.combobox {
 
-    export class ComboBox<T> extends api_dom.FormInputEl implements api_event.Observable {
+    export class ComboBox<T> extends api.dom.FormInputEl implements api.event.Observable {
 
-        private icon:api_dom.ImgEl;
+        private icon:api.dom.ImgEl;
 
         private input:ComboBoxInput;
 
-        private dropdownData:api_ui_grid.DataView<Option<T>>;
+        private dropdownData:api.ui.grid.DataView<Option<T>>;
 
-        private dropdown:api_ui_grid.Grid<Option<T>>;
+        private dropdown:api.ui.grid.Grid<Option<T>>;
 
-        private emptyDropdown:api_dom.DivEl;
+        private emptyDropdown:api.dom.DivEl;
 
         private optionFormatter:(row:number, cell:number, value:T, columnDef:any, dataContext:Option<T>) => string;
 
-        private filter:(item:api_ui_combobox.Option<T>, args:any) => boolean;
+        private filter:(item:api.ui.combobox.Option<T>, args:any) => boolean;
 
         private multipleSelections:boolean = false;
 
@@ -49,26 +49,26 @@ module api_ui_combobox {
             this.rowHeight = config.rowHeight || 24;
 
             if (config.iconUrl) {
-                this.icon = new api_dom.ImgEl(config.iconUrl, null, "input-icon");
+                this.icon = new api.dom.ImgEl(config.iconUrl, null, "input-icon");
                 this.appendChild(this.icon);
             }
 
             this.input = new ComboBoxInput();
             this.appendChild(this.input);
 
-            this.emptyDropdown = new api_dom.DivEl(null, "empty-options");
+            this.emptyDropdown = new api.dom.DivEl(null, "empty-options");
             this.emptyDropdown.getEl().setInnerHtml("No matching items");
             this.emptyDropdown.hide();
             this.appendChild(this.emptyDropdown);
 
-            var columns:api_ui_grid.GridColumn<Option<T>>[] = [
+            var columns:api.ui.grid.GridColumn<Option<T>>[] = [
                 {
                     id: "option",
                     name: "Options",
                     field: "displayValue",
                     formatter: this.optionFormatter}
             ];
-            var options:api_ui_grid.GridOptions = {
+            var options:api.ui.grid.GridOptions = {
                 width: this.input.getEl().getWidth(),
                 height: this.maxHeight,
                 hideColumnHeaders: true,
@@ -79,8 +79,8 @@ module api_ui_combobox {
                 dataIdProperty: "value"
             };
 
-            this.dropdownData = new api_ui_grid.DataView<Option<T>>();
-            this.dropdown = new api_ui_grid.Grid<Option<T>>(this.dropdownData, columns, options);
+            this.dropdownData = new api.ui.grid.DataView<Option<T>>();
+            this.dropdown = new api.ui.grid.Grid<Option<T>>(this.dropdownData, columns, options);
             this.dropdown.addClass("options-container");
             this.dropdown.getEl().setPosition("absolute");
             this.dropdown.hide();
@@ -189,7 +189,7 @@ module api_ui_combobox {
 
         setInputIconUrl(iconUrl:string) {
             if (!this.icon) {
-                this.icon = new api_dom.ImgEl();
+                this.icon = new api.dom.ImgEl();
                 this.icon.addClass("input-icon");
                 this.icon.insertBeforeEl(this.input);
             }
@@ -255,8 +255,8 @@ module api_ui_combobox {
             this.dropdown.subscribeOnClick((e, args) => {
                 this.selectRow(args.row);
 
-                event.preventDefault();
-                event.stopPropagation();
+                e.preventDefault();
+                e.stopPropagation();
                 return false;
             });
 
@@ -332,7 +332,7 @@ module api_ui_combobox {
 
             // set focus to the next visible input
             for (var i = index + 1 ; i < focusableElements.length ; i++) {
-                var nextFocusable = api_dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(i));
+                var nextFocusable = api.dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(i));
                 if (nextFocusable.isVisible()) {
                     nextFocusable.getEl().focuse();
                     return;
@@ -341,7 +341,7 @@ module api_ui_combobox {
         }
 
         maximumOccurrencesReached():boolean {
-            api_util.assert(this.multipleSelections, "No point of calling maximumOccurrencesReached when no multiple selections are enabled");
+            api.util.assert(this.multipleSelections, "No point of calling maximumOccurrencesReached when no multiple selections are enabled");
 
             return this.selectedOptionsCtrl.maximumOccurrencesReached();
         }
@@ -378,18 +378,18 @@ module api_ui_combobox {
                 // if combobox lost focus then hide dropdown options and remove unnecessary listener
                 combobox.hideDropdown();
                 combobox.active = false;
-                api_dom.Body.get().getEl().removeEventListener('click', hideDropdownOnBlur);
+                api.dom.Body.get().getEl().removeEventListener('click', hideDropdownOnBlur);
             }
 
             // set callback function on document body if combobox wasn't marked as active
             if (!this.active) {
                 this.active = true;
-                api_dom.Body.get().getEl().addEventListener('click', hideDropdownOnBlur);
+                api.dom.Body.get().getEl().addEventListener('click', hideDropdownOnBlur);
             }
         }
 
         removeSelectedItem(optionToRemove:Option<T>, silent:boolean = false) {
-            api_util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
 
             this.selectedOptionsCtrl.removeOption(optionToRemove, silent);
 

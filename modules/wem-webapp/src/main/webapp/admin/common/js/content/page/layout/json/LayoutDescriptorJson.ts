@@ -1,6 +1,6 @@
-module api_content_page_layout_json{
+module api.content.page.layout.json{
 
-    export interface LayoutDescriptorJson extends api_content_page_json.BaseDescriptorJson{
+    export interface LayoutDescriptorJson extends api.content.page.json.BaseDescriptorJson{
 
     }
 }

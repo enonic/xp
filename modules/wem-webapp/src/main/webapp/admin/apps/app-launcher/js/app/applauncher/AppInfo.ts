@@ -1,14 +1,14 @@
-module app_launcher {
+module app.launcher {
 
-    export class AppInfo extends api_dom.DivEl {
-        private appInfoName:api_dom.H3El;
-        private appInfoDescription:api_dom.DivEl;
+    export class AppInfo extends api.dom.DivEl {
+        private appInfoName:api.dom.H3El;
+        private appInfoDescription:api.dom.DivEl;
 
         constructor() {
             super(null, 'app-info');
 
-            this.appInfoName = new api_dom.H3El(null, 'app-info-name');
-            this.appInfoDescription = new api_dom.DivEl(null, 'app-info-description');
+            this.appInfoName = new api.dom.H3El(null, 'app-info-name');
+            this.appInfoDescription = new api.dom.DivEl(null, 'app-info-description');
 
             this.appendChild(this.appInfoName);
             this.appendChild(this.appInfoDescription);
