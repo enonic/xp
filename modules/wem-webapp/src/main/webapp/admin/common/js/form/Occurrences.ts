@@ -1,6 +1,5 @@
 module api.form{
 
-
     export class Occurrences {
 
         private minimum:number;
@@ -21,6 +20,10 @@ module api.form{
 
         required():boolean {
             return this.minimum > 0;
+        }
+
+        multiple(): boolean {
+            return this.maximum > 1 || this.maximum == 0;
         }
 
         minimumReached(occurrenceCount:number) {

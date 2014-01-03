@@ -48,7 +48,11 @@ module api.form {
             return this.lessOccurrencesThanMaximumAllowed();
         }
 
-        private oneAndOnly() {
+        public isMultiple():boolean {
+            return this.allowedOccurrences.multiple();
+        }
+
+        public oneAndOnly() {
             return this.index == 0 && this.occurrences.countOccurrences() == 1;
         }
 

@@ -10,11 +10,16 @@ module api.form.inputtype.support {
 
         private occurrenceCountEl:api.dom.SpanEl;
 
+        private dragControl:api.dom.DivEl;
+
         constructor(inputOccurrence:InputOccurrence, inputElement:api.dom.Element) {
             super("InputOccurrenceView", "input-occurrence-view", inputOccurrence);
+
+            this.dragControl = new api.dom.DivEl();
+
+            this.appendChild(this.dragControl);
+
             this.inputOccurrence = inputOccurrence;
-
-
 
             this.inputElement = inputElement;
             this.appendChild(this.inputElement);
@@ -31,11 +36,17 @@ module api.form.inputtype.support {
             });
 
             this.refresh();
-
-
         }
 
         refresh() {
+
+            if( !this.inputOccurrence.oneAndOnly() ){
+                this.dragControl.addClass("drag-control");
+            }
+            else {
+                this.dragControl.removeClass("drag-control");
+            }
+
             this.occurrenceCountEl.setHtml("#" + (this.inputOccurrence.getIndex() + 1));
             this.getEl().setData("dataId", this.inputOccurrence.getDataId().toString());
 
