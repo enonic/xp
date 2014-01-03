@@ -23,12 +23,17 @@ import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.command.content.site.DeleteSiteTemplate;
 import com.enonic.wem.api.command.content.site.GetAllSiteTemplates;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.site.ContentTypeFilter;
@@ -40,8 +45,6 @@ import com.enonic.wem.api.content.site.SiteTemplates;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.export.InvalidZipFileException;
@@ -138,22 +141,22 @@ public class SiteTemplateResourceTest
         final PageTemplate pageTemplate = newPageTemplate().
             key( PageTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainpage" ) ).
             displayName( "Main Page" ).
-            descriptor( new ModuleResourceKey( ModuleKey.from( "mod-1.0.0" ), ResourcePath.from( "components/page-descr.xml" ) ) ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "page-descr" ) ) ).
             build();
         final PartTemplate partTemplate = newPartTemplate().
             key( PartTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainpart" ) ).
             displayName( "Main Part" ).
-            descriptor( new ModuleResourceKey( ModuleKey.from( "mod-1.0.0" ), ResourcePath.from( "components/part-descr.xml" ) ) ).
+            descriptor( PartDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "part-descr" ) ) ).
             build();
         final ImageTemplate imageTemplate = newImageTemplate().
             key( ImageTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainimage" ) ).
             displayName( "Main Image" ).
-            descriptor( new ModuleResourceKey( ModuleKey.from( "mod-1.0.0" ), ResourcePath.from( "components/image-descr.xml" ) ) ).
+            descriptor( ImageDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "image-descr" ) ) ).
             build();
         final LayoutTemplate layoutTemplate = newLayoutTemplate().
             key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mod-1.0.0|mainlayout" ) ).
             displayName( "Main Layout" ).
-            descriptor( new ModuleResourceKey( ModuleKey.from( "mod-1.0.0" ), ResourcePath.from( "components/layout-descr.xml" ) ) ).
+            descriptor( LayoutDescriptorKey.from( ModuleKey.from( "mod-1.0.0" ), new ComponentDescriptorName( "layout-descr" ) ) ).
             build();
 
         final ContentTypeFilter filter = ContentTypeFilter.newContentFilter().

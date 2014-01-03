@@ -2,7 +2,7 @@
 <page-template>
   <name>main-page</name>
   <display-name>Main page template</display-name>
-  <descriptor>mainmodule-1.0.0:/components/landing-page.xml</descriptor>
+  <descriptor>mainmodule-1.0.0:landing-page</descriptor>
   <config>
     <property name="pause" type="Long">10000</property>
     <data-set name="thing">

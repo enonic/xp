@@ -13,6 +13,7 @@ import com.enonic.wem.api.command.module.CreateModule;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
@@ -30,7 +31,6 @@ import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.Module;
-import com.enonic.wem.api.module.ModuleFileEntry;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleNotFoundException;
@@ -49,7 +49,6 @@ import static com.enonic.wem.api.content.page.image.ImageComponent.newImageCompo
 import static com.enonic.wem.api.content.page.region.Region.newRegion;
 import static com.enonic.wem.api.content.site.Vendor.newVendor;
 import static com.enonic.wem.api.form.Input.newInput;
-import static com.enonic.wem.api.module.ModuleFileEntry.newModuleDirectory;
 
 
 public class SitesInitializer
@@ -78,11 +77,11 @@ public class SitesInitializer
     {
         final String pageDescriptorName = "main-page";
         final ModuleResourceKey controllerResourceKey =
-            new ModuleResourceKey( DEMO_MODULE_KEY, ResourcePath.from( "/components/" + pageDescriptorName ) );
+            new ModuleResourceKey( DEMO_MODULE_KEY, ResourcePath.from( "/component/" + pageDescriptorName ) );
 
         final PageDescriptor pageDescriptor = newPageDescriptor().
             name( pageDescriptorName ).
-            key( PageDescriptorKey.from( DEMO_MODULE_KEY, ResourcePath.from( "components/" + pageDescriptorName + ".xml" ) ) ).
+            key( PageDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( pageDescriptorName ) ) ).
             displayName( "Landing page" ).
             config( createPageDescriptorForm() ).
             controllerResource( controllerResourceKey ).
@@ -132,14 +131,11 @@ public class SitesInitializer
 
     private PageTemplate createPageTemplate( final Module module, final PageDescriptorKey pageDescriptorKey )
     {
-        final ModuleResourceKey descriptorModuleResourceKey =
-            new ModuleResourceKey( pageDescriptorKey.getModuleKey(), pageDescriptorKey.getPath() );
-
         return newPageTemplate().
             key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "mainpage" ) ) ).
             displayName( "Main Page" ).
             config( createPageTemplateConfig( "blue", createRegion() ) ).
-            descriptor( descriptorModuleResourceKey ).
+            descriptor( pageDescriptorKey ).
             build();
     }
 
@@ -179,14 +175,6 @@ public class SitesInitializer
 
     private Module createDemoModule( final PageDescriptor pageDescriptor )
     {
-        final ModuleFileEntry.Builder componentsDir = newModuleDirectory( "components" );
-        final ModuleFileEntry.Builder descriptorDir = newModuleDirectory( pageDescriptor.getName().toString() );
-        componentsDir.addEntry( descriptorDir );
-
-        final ModuleFileEntry moduleDirectoryEntry = ModuleFileEntry.newModuleDirectory( "" ).
-            addEntry( componentsDir ).
-            build();
-
         final CreateModule createModule = Commands.module().create().
             name( DEMO_MODULE_KEY.getName().toString() ).
             version( DEMO_MODULE_KEY.getVersion() ).
@@ -199,8 +187,7 @@ public class SitesInitializer
             maxSystemVersion( ModuleVersion.from( 6, 0, 0 ) ).
             moduleDependencies( ModuleKeys.empty() ).
             contentTypeDependencies( ContentTypeNames.empty() ).
-            config( createDemoModuleForm() ).
-            moduleDirectoryEntry( moduleDirectoryEntry );
+            config( createDemoModuleForm() );
 
         try
         {
@@ -211,16 +198,6 @@ public class SitesInitializer
             // IGNORE IF NOT FOUND
         }
         final Module module = client.execute( createModule );
-
-        final ResourcePath pageDescriptorPath = ResourcePath.from( "/components/" + pageDescriptor.getName().toString() + ".xml" );
-        final PageDescriptorKey pageDescriptorKey = PageDescriptorKey.from( module.getKey(), pageDescriptorPath );
-        final CreatePageDescriptor createPageDescriptor = Commands.page().descriptor().page().create().
-            key( pageDescriptorKey ).
-            name( pageDescriptor.getName() ).
-            config( pageDescriptor.getConfigForm() ).
-            controllerResource( pageDescriptor.getControllerResource() ).
-            displayName( pageDescriptor.getDisplayName() );
-        client.execute( createPageDescriptor );
 
         return module;
     }

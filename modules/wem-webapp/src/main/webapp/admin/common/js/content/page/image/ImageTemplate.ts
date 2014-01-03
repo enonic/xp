@@ -2,27 +2,27 @@ module api.content.page.image {
 
     export class ImageTemplate extends ImageTemplateSummary {
 
-        private descriptor:ImageDescriptor;
+        private descriptor: ImageDescriptor;
 
         constructor(builder: ImageTemplateBuilder) {
             super(builder);
             this.descriptor = builder.descriptor;
         }
 
-        getDescriptor():ImageDescriptor {
+        getDescriptor(): ImageDescriptor {
             return this.descriptor;
         }
     }
 
     export class ImageTemplateBuilder extends api.content.page.TemplateSummaryBuilder<ImageTemplateKey,ImageTemplateName> {
 
-        descriptor:ImageDescriptor;
+        descriptor: ImageDescriptor;
 
         public fromJson(json: api.content.page.image.json.ImageTemplateJson): ImageTemplateBuilder {
             this.setKey(ImageTemplateKey.fromString(json.key));
             this.setName(new ImageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorModuleResourceKey(api.module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
+            this.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
             this.descriptor = new ImageDescriptorBuilder().fromJson(json.descriptor).build();
             return this;
         }

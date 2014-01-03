@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.CreateSiteTemplate;
 import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
@@ -20,7 +21,6 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.Vendor;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.config.SystemConfig;
@@ -77,7 +77,7 @@ public class CreateSiteTemplateHandlerTest
         PartTemplate.Builder templateBuilder = PartTemplate.newPartTemplate();
         templateBuilder.key( PartTemplateKey.from( SITE_TEMPLATE, MODULE_KEY, new PartTemplateName( "template-name" ) ) );
         templateBuilder.displayName( "display-name" );
-        templateBuilder.descriptor( ModuleResourceKey.from( "resource-1.0.0" ) );
+        templateBuilder.descriptor( PartDescriptorKey.from( "resource-1.0.0:part-descr" ) );
         PartTemplate template = templateBuilder.build();
 
         command.addTemplate( ResourcePath.from( "path" ), template );

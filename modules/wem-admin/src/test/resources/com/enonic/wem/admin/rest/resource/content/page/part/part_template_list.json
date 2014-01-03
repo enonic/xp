@@ -1,15 +1,15 @@
 {
   "templates" : [ {
     "deletable" : true,
-    "descriptorModuleResourceKey" : "module-1.0.0:/tpl.xml",
-    "displayName" : "partTemplate1",
+      "descriptorKey": "module-1.0.0:tpl",
+      "displayName" : "partTemplate1",
     "editable" : true,
     "key" : "sitetemplate-1.0.0|module-1.0.0|partTemplate1",
     "name" : "partTemplate1"
   }, {
     "deletable" : true,
-    "descriptorModuleResourceKey" : "module-1.0.0:/tpl.xml",
-    "displayName" : "partTemplate2",
+      "descriptorKey": "module-1.0.0:tpl",
+      "displayName" : "partTemplate2",
     "editable" : true,
     "key" : "sitetemplate-1.0.0|module-1.0.0|partTemplate2",
     "name" : "partTemplate2"

@@ -3,14 +3,13 @@ package com.enonic.wem.api.content.page.layout;
 
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public class LayoutTemplate
-    extends Template<LayoutTemplateName, LayoutTemplateKey>
+    extends Template<LayoutTemplateName, LayoutTemplateKey, LayoutDescriptorKey>
 {
     private LayoutTemplate( final Builder builder )
     {
@@ -28,7 +27,7 @@ public class LayoutTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, LayoutTemplate, LayoutTemplateName, LayoutTemplateKey>
+        extends BaseTemplateBuilder<Builder, LayoutTemplate, LayoutTemplateName, LayoutTemplateKey, LayoutDescriptorKey>
     {
         private Builder()
         {
@@ -71,7 +70,7 @@ public class LayoutTemplate
             return this;
         }
 
-        public LayoutTemplateEditBuilder descriptor( final ModuleResourceKey value )
+        public LayoutTemplateEditBuilder descriptor( final LayoutDescriptorKey value )
         {
             changes.recordChange( newPossibleChange( "descriptor" ).from( this.original.getDescriptor() ).to( value ).build() );
             this.descriptor = value;

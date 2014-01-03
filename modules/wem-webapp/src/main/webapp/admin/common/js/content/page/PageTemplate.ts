@@ -4,7 +4,7 @@ module api.content.page {
 
         private canRender: api.schema.content.ContentTypeName[];
 
-        private descriptor:PageDescriptor;
+        private descriptor: PageDescriptor;
 
         constructor(builder: PageTemplateBuilder) {
             super(builder);
@@ -16,7 +16,7 @@ module api.content.page {
             return this.canRender;
         }
 
-        getDescriptor():PageDescriptor {
+        getDescriptor(): PageDescriptor {
             return this.descriptor;
         }
     }
@@ -25,14 +25,14 @@ module api.content.page {
 
         canRender: api.schema.content.ContentTypeName[] = [];
 
-        descriptor:PageDescriptor;
+        descriptor: PageDescriptor;
 
         fromJson(json: api.content.page.json.PageTemplateJson): PageTemplateBuilder {
 
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setName(new PageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorModuleResourceKey(api.module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
+            this.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
             this.descriptor = new PageDescriptorBuilder().fromJson(json.descriptor).build();
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             json.canRender.forEach((name: string)=> {

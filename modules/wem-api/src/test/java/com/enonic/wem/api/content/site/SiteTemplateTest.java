@@ -4,17 +4,19 @@ import org.junit.Test;
 
 import com.google.common.collect.Iterators;
 
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
@@ -65,7 +67,7 @@ public class SiteTemplateTest
             key( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|news-part" ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ) ).
+            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).
             build();
         final RootDataSet layoutTemplateConfig = new RootDataSet();
         layoutTemplateConfig.addProperty( "columns", new Value.Long( 3 ) );
@@ -74,7 +76,7 @@ public class SiteTemplateTest
             key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|my-layout" ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-layout.xml" ) ).
+            descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
             build();
 
         final RootDataSet pageTemplateConfig = new RootDataSet();
@@ -85,7 +87,7 @@ public class SiteTemplateTest
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             build();
 
         final SiteTemplate siteTemplate = SiteTemplate.newSiteTemplate().

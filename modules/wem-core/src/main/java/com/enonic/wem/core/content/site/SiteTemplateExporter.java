@@ -28,7 +28,7 @@ import com.enonic.wem.xml.XmlSerializers;
 
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
-@XMLFilename("site-template.xml")
+@XMLFilename("site.xml")
 public final class SiteTemplateExporter
     extends AbstractEntityExporter<SiteTemplate, SiteTemplate.Builder>
 {

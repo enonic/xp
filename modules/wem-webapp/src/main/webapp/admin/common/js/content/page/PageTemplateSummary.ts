@@ -14,7 +14,7 @@ module api.content.page {
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setName(new PageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorModuleResourceKey(api.module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
+            this.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
             return this;
         }
 

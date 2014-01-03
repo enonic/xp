@@ -23,7 +23,6 @@ import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -56,10 +55,9 @@ public class PartTemplateResource
         return new PartTemplateListJson( partTemplates );
     }
 
-    private PartDescriptor getDescriptor( final ModuleResourceKey key )
+    private PartDescriptor getDescriptor( final PartDescriptorKey key )
     {
-        final PartDescriptorKey partDescriptorKey = PartDescriptorKey.from( key.getModuleKey(), key.getPath() );
-        final GetPartDescriptor getPartDescriptor = page().descriptor().part().getByKey( partDescriptorKey );
+        final GetPartDescriptor getPartDescriptor = page().descriptor().part().getByKey( key );
         return client.execute( getPartDescriptor );
     }
 }

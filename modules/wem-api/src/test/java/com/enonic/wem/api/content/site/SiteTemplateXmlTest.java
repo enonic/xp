@@ -38,14 +38,14 @@ public class SiteTemplateXmlTest
         siteTemplateXml.from( siteTemplate );
         final String result = XmlSerializers.siteTemplate().serialize( siteTemplateXml );
 
-        assertXml( "site-template.xml", result );
+        assertXml( "site.xml", result );
     }
 
     @Test
     public void testTo()
         throws Exception
     {
-        final String xml = readFromFile( "site-template.xml" );
+        final String xml = readFromFile( "site.xml" );
         final SiteTemplate.Builder builder = SiteTemplate.newSiteTemplate();
 
         XmlSerializers.siteTemplate().parse( xml ).to( builder );

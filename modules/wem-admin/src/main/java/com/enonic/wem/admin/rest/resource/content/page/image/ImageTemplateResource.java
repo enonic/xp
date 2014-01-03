@@ -21,7 +21,6 @@ import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -54,10 +53,9 @@ public class ImageTemplateResource
         return new ImageTemplateListJson( imageTemplates );
     }
 
-    private ImageDescriptor getDescriptor( final ModuleResourceKey key )
+    private ImageDescriptor getDescriptor( final ImageDescriptorKey key )
     {
-        final ImageDescriptorKey imageDescriptorKey = ImageDescriptorKey.from( key.getModuleKey(), key.getPath() );
-        final GetImageDescriptor getImageDescriptor = page().descriptor().image().getByKey( imageDescriptorKey );
+        final GetImageDescriptor getImageDescriptor = page().descriptor().image().getByKey( key );
         return client.execute( getImageDescriptor );
     }
 }

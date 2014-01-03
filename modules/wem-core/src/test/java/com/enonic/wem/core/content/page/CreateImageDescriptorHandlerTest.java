@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.page.image.CreateImageDescriptorHandler;
@@ -47,11 +46,11 @@ public class CreateImageDescriptorHandlerTest
             build();
 
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
-        final ResourcePath path = ResourcePath.from( "components/image.xml" );
-        final ImageDescriptorKey key = ImageDescriptorKey.from( module, path );
+        final ComponentDescriptorName descriptorName = new ComponentDescriptorName( "image" );
+        final ImageDescriptorKey key = ImageDescriptorKey.from( module, descriptorName );
         final CreateImageDescriptor command = new CreateImageDescriptor().
             key( key ).
-            name( new ComponentDescriptorName( "image" ) ).
+            name( descriptorName ).
             displayName( "Image" ).
             config( imageForm );
 

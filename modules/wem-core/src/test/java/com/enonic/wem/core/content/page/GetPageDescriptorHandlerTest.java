@@ -17,11 +17,11 @@ import com.google.common.io.Resources;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.command.module.GetModuleResource;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.xml.XmlSerializers;
@@ -51,10 +51,6 @@ public class GetPageDescriptorHandlerTest
     public void testGetPageDescriptor()
         throws Exception
     {
-        final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
-        final ResourcePath path = ResourcePath.from( "components/landing-page.xml" );
-        final PageDescriptorKey key = PageDescriptorKey.from( module, path );
-
         final PageDescriptor descriptor = createDescriptor();
         final GetPageDescriptor command = new GetPageDescriptor( descriptor.getKey() );
 
@@ -62,7 +58,7 @@ public class GetPageDescriptorHandlerTest
         final Path tempDir = java.nio.file.Files.createTempDirectory( "tempo" );
         final File tempFile = tempDir.toFile();
         // 2. Create temp file.
-        final File resourceFile = File.createTempFile("pattern", ".suffix", tempFile );
+        final File resourceFile = File.createTempFile( "pattern", ".suffix", tempFile );
         // 3. Delete temp file when program exits.
         resourceFile.deleteOnExit();
         // 4. Write into file.
@@ -90,8 +86,7 @@ public class GetPageDescriptorHandlerTest
         throws Exception
     {
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
-        final ResourcePath path = ResourcePath.from( "components/landing-page.xml" );
-        final PageDescriptorKey key = PageDescriptorKey.from( module, path );
+        final PageDescriptorKey key = PageDescriptorKey.from( module, new ComponentDescriptorName( "landing-page" ) );
 
         final String xml = readFromFile( "page-component.xml" );
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();

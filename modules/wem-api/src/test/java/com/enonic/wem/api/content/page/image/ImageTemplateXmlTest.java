@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -26,7 +25,7 @@ public class ImageTemplateXmlTest
             key( ImageTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|image" ) ).
             displayName( "Image template" ).
             config( imageTemplateConfig ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/image-temp.xml" ) ).
+            descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:image-temp" ) ).
             build();
 
         final ImageTemplateXml imageTemplateXml = new ImageTemplateXml();
@@ -48,7 +47,7 @@ public class ImageTemplateXmlTest
         final ImageTemplate imageTemplate = builder.build();
 
         assertEquals( "Image template", imageTemplate.getDisplayName() );
-        assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/components/image-temp.xml" ), imageTemplate.getDescriptor() );
+        assertEquals( ImageDescriptorKey.from( "mainmodule-1.0.0:image-temp" ), imageTemplate.getDescriptor() );
 
         assertEquals( 200L, imageTemplate.getConfig().getProperty( "width" ).getLong().longValue() );
     }

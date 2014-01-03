@@ -3,23 +3,33 @@ package com.enonic.wem.api.content.page;
 import java.util.Objects;
 
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ResourcePath;
 
 public abstract class DescriptorKey
 {
+    public enum DescriptorType
+    {
+        IMAGE,
+        LAYOUT,
+        PAGE,
+        PART
+    }
+
     protected static final String SEPARATOR = ":";
 
     private final ModuleKey moduleKey;
 
-    private final ResourcePath path;
+    private final ComponentDescriptorName name;
 
     private final String refString;
 
-    protected DescriptorKey( final ModuleKey moduleKey, final ResourcePath path )
+    private final DescriptorType descriptorType;
+
+    protected DescriptorKey( final ModuleKey moduleKey, final ComponentDescriptorName name, final DescriptorType descriptorType )
     {
+        this.descriptorType = descriptorType;
         this.moduleKey = moduleKey;
-        this.path = path;
-        this.refString = moduleKey.toString() + SEPARATOR + path.toString();
+        this.name = name;
+        this.refString = moduleKey.toString() + SEPARATOR + name.toString();
     }
 
     public ModuleKey getModuleKey()
@@ -27,9 +37,14 @@ public abstract class DescriptorKey
         return moduleKey;
     }
 
-    public ResourcePath getPath()
+    public ComponentDescriptorName getName()
     {
-        return path;
+        return name;
+    }
+
+    public DescriptorType getDescriptorType()
+    {
+        return descriptorType;
     }
 
     @Override

@@ -13,7 +13,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.page.part.CreatePartDescriptorHandler;
@@ -48,11 +47,11 @@ public class CreatePartDescriptorHandlerTest
             build();
 
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
-        final ResourcePath path = ResourcePath.from( "components/news-part.xml" );
-        final PartDescriptorKey key = PartDescriptorKey.from( module, path );
+        final ComponentDescriptorName descriptorName = new ComponentDescriptorName( "news-part" );
+        final PartDescriptorKey key = PartDescriptorKey.from( module, descriptorName );
         final CreatePartDescriptor command = new CreatePartDescriptor().
             key( key ).
-            name( new ComponentDescriptorName( "news-part" ) ).
+            name( descriptorName ).
             displayName( "News part" ).
             config( partForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/news-part.js" ) );

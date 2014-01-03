@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -26,7 +25,7 @@ public class PartTemplateXmlTest
             key( PartTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|news-part" ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ) ).
+            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).
             build();
 
         final PartTemplateXml partTemplateXml = new PartTemplateXml();
@@ -48,7 +47,7 @@ public class PartTemplateXmlTest
         final PartTemplate partTemplate = builder.build();
 
         assertEquals( "News part template", partTemplate.getDisplayName() );
-        assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ), partTemplate.getDescriptor() );
+        assertEquals( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ), partTemplate.getDescriptor() );
 
         assertEquals( 200L, partTemplate.getConfig().getProperty( "width" ).getLong().longValue() );
     }

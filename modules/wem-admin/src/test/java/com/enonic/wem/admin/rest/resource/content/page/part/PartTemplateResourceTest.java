@@ -7,13 +7,13 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.part.GetPartTemplatesBySiteTemplate;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
 import com.enonic.wem.api.content.page.part.PartTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.content.site.SiteTemplateNotFoundException;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 
 public class PartTemplateResourceTest
@@ -73,8 +73,12 @@ public class PartTemplateResourceTest
 
     private PartTemplate createTemplate( String key )
     {
-        return PartTemplate.newPartTemplate().key( PartTemplateKey.from( "sitetemplate-1.0.0|module-1.0.0|" + key ) ).displayName(
-            key ).name( new PartTemplateName( key ) ).parentPath( ResourcePath.root() ).descriptor(
-            ModuleResourceKey.from( "module-1.0.0:/tpl.xml" ) ).build();
+        return PartTemplate.newPartTemplate().
+            key( PartTemplateKey.from( "sitetemplate-1.0.0|module-1.0.0|" + key ) ).
+            displayName( key ).
+            name( new PartTemplateName( key ) ).
+            parentPath( ResourcePath.root() ).
+            descriptor( PartDescriptorKey.from( "module-1.0.0:tpl" ) ).
+            build();
     }
 }

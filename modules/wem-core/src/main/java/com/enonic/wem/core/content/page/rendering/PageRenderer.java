@@ -1,26 +1,23 @@
 package com.enonic.wem.core.content.page.rendering;
 
 
-import java.io.IOException;
-
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.Commands;
+import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.command.content.page.GetPageTemplateByKey;
-import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.region.PageRegions;
 import com.enonic.wem.api.content.page.region.Region;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.rendering.BaseRenderer;
 import com.enonic.wem.core.rendering.Context;
 import com.enonic.wem.core.rendering.Renderer;
 import com.enonic.wem.core.rendering.RenderingResult;
-import com.enonic.wem.xml.XmlSerializers;
 
 import static com.enonic.wem.api.command.Commands.page;
 import static com.enonic.wem.core.rendering.RenderingResult.newRenderingResult;
@@ -70,20 +67,9 @@ public final class PageRenderer
         return client.execute( command );
     }
 
-    private PageDescriptor getPageDescriptor( final ModuleResourceKey key, final Client client )
+    private PageDescriptor getPageDescriptor( final PageDescriptorKey key, final Client client )
     {
-        final GetModuleResource command = Commands.module().getResource().resourceKey( key );
-        final Resource descriptorResource = client.execute( command );
-        try
-        {
-            final String resourceAsString = descriptorResource.readAsString();
-            final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
-            XmlSerializers.pageDescriptor().parse( resourceAsString ).to( builder );
-            return builder.build();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Unable to retrieve page descriptor: " + key.toString(), e );
-        }
+        final GetPageDescriptor command = Commands.page().descriptor().page().getByKey( key );
+        return client.execute( command );
     }
 }

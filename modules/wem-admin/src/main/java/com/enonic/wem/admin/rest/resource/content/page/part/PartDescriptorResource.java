@@ -12,7 +12,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.part.GetPartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -22,18 +21,17 @@ public class PartDescriptorResource
     extends AbstractResource
 {
     @GET
-    public PartDescriptorJson getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
+    public PartDescriptorJson getByKey( @QueryParam("key") final String partDescriptorKey )
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
+        final PartDescriptorKey key = PartDescriptorKey.from( partDescriptorKey );
         final PartDescriptor descriptor = getDescriptor( key, client );
         final PartDescriptorJson json = new PartDescriptorJson( descriptor );
         return json;
     }
 
-    private PartDescriptor getDescriptor( final ModuleResourceKey key, final Client client )
+    private PartDescriptor getDescriptor( final PartDescriptorKey key, final Client client )
     {
-        final PartDescriptorKey partDescriptorKey = PartDescriptorKey.from( key.getModuleKey(), key.getPath() );
-        final GetPartDescriptor getPartDescriptor = page().descriptor().part().getByKey( partDescriptorKey );
+        final GetPartDescriptor getPartDescriptor = page().descriptor().part().getByKey( key );
         return client.execute( getPartDescriptor );
     }
 }

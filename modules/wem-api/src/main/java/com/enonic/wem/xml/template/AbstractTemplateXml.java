@@ -2,10 +2,17 @@ package com.enonic.wem.xml.template;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.Template;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
+import com.enonic.wem.api.content.page.image.ImageTemplate;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
+import com.enonic.wem.api.content.page.layout.LayoutTemplate;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
+import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.data.DataSetXml;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.XmlObject;
 
 public abstract class AbstractTemplateXml<I, O>
@@ -39,7 +46,22 @@ public abstract class AbstractTemplateXml<I, O>
     protected void toTemplate( final Template.BaseTemplateBuilder builder )
     {
         builder.displayName( this.displayName );
-        builder.descriptor( ModuleResourceKey.from( this.descriptor ) );
+        if ( builder instanceof PartTemplate.Builder )
+        {
+            builder.descriptor( PartDescriptorKey.from( this.descriptor ) );
+        }
+        else if ( builder instanceof PageTemplate.Builder )
+        {
+            builder.descriptor( PageDescriptorKey.from( this.descriptor ) );
+        }
+        else if ( builder instanceof ImageTemplate.Builder )
+        {
+            builder.descriptor( ImageDescriptorKey.from( this.descriptor ) );
+        }
+        else if ( builder instanceof LayoutTemplate.Builder )
+        {
+            builder.descriptor( LayoutDescriptorKey.from( this.descriptor ) );
+        }
         final RootDataSet dataSet = new RootDataSet();
         this.config.to( dataSet );
         builder.config( dataSet );

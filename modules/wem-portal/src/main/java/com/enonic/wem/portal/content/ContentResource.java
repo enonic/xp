@@ -108,8 +108,7 @@ public final class ContentResource
 
     private PageDescriptor getPageDescriptor( final PageTemplate pageTemplate )
     {
-        final ModuleResourceKey resourceKey = pageTemplate.getDescriptor();
-        final PageDescriptorKey descriptorKey = PageDescriptorKey.from( resourceKey.getModuleKey(), resourceKey.getPath() );
+        final PageDescriptorKey descriptorKey = pageTemplate.getDescriptor();
         final PageDescriptor pageDescriptor = this.client.execute( page().descriptor().page().getByKey( descriptorKey ) );
         if ( pageDescriptor == null )
         {

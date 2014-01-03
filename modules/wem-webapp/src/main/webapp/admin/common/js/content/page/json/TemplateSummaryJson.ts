@@ -1,13 +1,11 @@
-module api.content.page.json
-{
-    export interface TemplateSummaryJson  extends api.item.ItemJson
-    {
+module api.content.page.json {
+    export interface TemplateSummaryJson extends api.item.ItemJson {
         key: string;
 
         name:string;
 
         displayName:string;
 
-        descriptorModuleResourceKey:string;
+        descriptorKey:string;
     }
 }

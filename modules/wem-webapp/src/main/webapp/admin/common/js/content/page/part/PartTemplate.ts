@@ -1,21 +1,21 @@
-module api.content.page.part{
+module api.content.page.part {
 
     export class PartTemplate extends api.content.page.Template<PartTemplateKey,PartTemplateName> {
 
-        constructor(builder:PartTemplateBuilder) {
+        constructor(builder: PartTemplateBuilder) {
             super(builder);
         }
     }
 
     export class PartTemplateBuilder extends api.content.page.TemplateBuilder<PartTemplateKey,PartTemplateName> {
 
-        descriptor:PartDescriptor;
+        descriptor: PartDescriptor;
 
         public fromJson(json: api.content.page.part.json.PartTemplateJson): PartTemplateBuilder {
             this.setKey(PartTemplateKey.fromString(json.key));
             this.setName(new PartTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorModuleResourceKey(api.module.ModuleResourceKey.fromString(json.descriptorModuleResourceKey));
+            this.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
             this.descriptor = new PartDescriptorBuilder().fromJson(json.descriptor).build();
             return this;
         }

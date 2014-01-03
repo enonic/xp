@@ -12,15 +12,19 @@ import junit.framework.Assert;
 
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.site.GetSiteTemplateByKey;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.image.ImageTemplate;
 import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.image.ImageTemplateName;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateName;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartTemplate;
 import com.enonic.wem.api.content.page.part.PartTemplateKey;
 import com.enonic.wem.api.content.page.part.PartTemplateName;
@@ -32,7 +36,6 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.config.SystemConfig;
@@ -138,7 +141,7 @@ public class GetSiteTemplateByKeyHandlerTest
             key( PartTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new PartTemplateName( "my-part" ) ) ).
             displayName( "News part template" ).
             config( partTemplateConfig ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/news-part.xml" ) ).
+            descriptor( PartDescriptorKey.from( "mainmodule-1.0.0:news-part" ) ).
             build();
 
         final RootDataSet pageTemplateConfig = new RootDataSet();
@@ -149,7 +152,7 @@ public class GetSiteTemplateByKeyHandlerTest
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             build();
 
         final RootDataSet layoutTemplateConfig = new RootDataSet();
@@ -159,7 +162,7 @@ public class GetSiteTemplateByKeyHandlerTest
             key( LayoutTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new LayoutTemplateName( "my-layout" ) ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-layout.xml" ) ).
+            descriptor( LayoutDescriptorKey.from( "mainmodule-1.0.0:some-layout" ) ).
             build();
 
         final RootDataSet imageTemplateConfig = new RootDataSet();
@@ -169,7 +172,7 @@ public class GetSiteTemplateByKeyHandlerTest
             key( ImageTemplateKey.from( TEMPLATE_KEY, MODULE_KEY, new ImageTemplateName( "my-image" ) ) ).
             displayName( "Image template" ).
             config( imageTemplateConfig ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/some-image.xml" ) ).
+            descriptor( ImageDescriptorKey.from( "mainmodule-1.0.0:some-image" ) ).
             build();
 
         final ContentTypeFilter contentTypeFilter =

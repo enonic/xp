@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
@@ -34,7 +34,7 @@ public class PageTemplateXmlTest
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "com.enonic.sometype", "some.other.type" ) ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ) ).
+            descriptor( PageDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "landing-page" ) ) ).
             build();
 
         final PageTemplateXml pageTemplateXml = new PageTemplateXml();
@@ -56,7 +56,7 @@ public class PageTemplateXmlTest
         final PageTemplate pageTemplate = builder.build();
 
         assertEquals( "Main page template", pageTemplate.getDisplayName() );
-        assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ), pageTemplate.getDescriptor() );
+        assertEquals( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ), pageTemplate.getDescriptor() );
         assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "com.enonic.sometype" ) ) );
         assertTrue( pageTemplate.getCanRender().contains( ContentTypeName.from( "some.other.type" ) ) );
 

@@ -20,7 +20,6 @@ import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -50,10 +49,9 @@ public final class PageTemplateResource
         return new PageTemplateListJson( pageTemplates );
     }
 
-    private PageDescriptor getDescriptor( final ModuleResourceKey key )
+    private PageDescriptor getDescriptor( final PageDescriptorKey key )
     {
-        final PageDescriptorKey pageDescriptorKey = PageDescriptorKey.from( key.getModuleKey(), key.getPath() );
-        final GetPageDescriptor getPageDescriptor = page().descriptor().page().getByKey( pageDescriptorKey );
+        final GetPageDescriptor getPageDescriptor = page().descriptor().page().getByKey( key );
         return client.execute( getPageDescriptor );
     }
 }

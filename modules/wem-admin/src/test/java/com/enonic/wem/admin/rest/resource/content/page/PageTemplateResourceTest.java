@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.GetPageTemplatesBySiteTemplate;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.content.page.PageTemplate;
 import com.enonic.wem.api.content.page.PageTemplateKey;
 import com.enonic.wem.api.content.page.PageTemplateName;
@@ -17,7 +18,6 @@ import com.enonic.wem.api.content.site.SiteTemplateKey;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 
 public class PageTemplateResourceTest
@@ -73,7 +73,7 @@ public class PageTemplateResourceTest
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             build();
 
         return pageTemplate;

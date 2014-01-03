@@ -3,14 +3,13 @@ package com.enonic.wem.api.content.page.part;
 
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class PartTemplate
-    extends Template<PartTemplateName, PartTemplateKey>
+    extends Template<PartTemplateName, PartTemplateKey, PartDescriptorKey>
 {
     private PartTemplate( final Builder builder )
     {
@@ -28,7 +27,7 @@ public final class PartTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, PartTemplate, PartTemplateName, PartTemplateKey>
+        extends BaseTemplateBuilder<Builder, PartTemplate, PartTemplateName, PartTemplateKey, PartDescriptorKey>
     {
         private Builder()
         {
@@ -71,7 +70,7 @@ public final class PartTemplate
             return this;
         }
 
-        public PartTemplateEditBuilder descriptor( final ModuleResourceKey value )
+        public PartTemplateEditBuilder descriptor( final PartDescriptorKey value )
         {
             changes.recordChange( newPossibleChange( "descriptor" ).from( this.original.getDescriptor() ).to( value ).build() );
             this.descriptor = value;

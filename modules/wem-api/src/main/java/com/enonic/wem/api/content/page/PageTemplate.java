@@ -2,7 +2,6 @@ package com.enonic.wem.api.content.page;
 
 
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
@@ -10,7 +9,7 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class PageTemplate
-    extends Template<PageTemplateName, PageTemplateKey>
+    extends Template<PageTemplateName, PageTemplateKey, PageDescriptorKey>
 {
     private final ContentTypeNames canRender;
 
@@ -37,7 +36,7 @@ public final class PageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, PageTemplate, PageTemplateName, PageTemplateKey>
+        extends BaseTemplateBuilder<Builder, PageTemplate, PageTemplateName, PageTemplateKey, PageDescriptorKey>
     {
         private ContentTypeNames canRender;
 
@@ -91,7 +90,7 @@ public final class PageTemplate
             return this;
         }
 
-        public PageTemplateEditBuilder descriptor( final ModuleResourceKey value )
+        public PageTemplateEditBuilder descriptor( final PageDescriptorKey value )
         {
             changes.recordChange( newPossibleChange( "descriptor" ).from( this.original.getDescriptor() ).to( value ).build() );
             this.descriptor = value;

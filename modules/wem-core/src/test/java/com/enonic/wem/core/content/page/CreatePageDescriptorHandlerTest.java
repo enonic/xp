@@ -13,7 +13,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
@@ -46,11 +45,11 @@ public class CreatePageDescriptorHandlerTest
             addFormItem( newInput().name( "pause" ).inputType( InputTypes.DECIMAL_NUMBER ).build() ).
             build();
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
-        final ResourcePath path = ResourcePath.from( "components/landing-page.xml" );
-        final PageDescriptorKey key = PageDescriptorKey.from( module, path );
+        final ComponentDescriptorName descriptorName = new ComponentDescriptorName( "landing-page" );
+        final PageDescriptorKey key = PageDescriptorKey.from( module, descriptorName );
         final CreatePageDescriptor command = new CreatePageDescriptor().
             key( key ).
-            name( new ComponentDescriptorName( "landing-page" ) ).
+            name( descriptorName ).
             displayName( "Landing page" ).
             config( pageForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) );

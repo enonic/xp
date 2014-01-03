@@ -21,7 +21,6 @@ import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplates;
 import com.enonic.wem.api.content.site.SiteTemplateKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -54,10 +53,9 @@ public class LayoutTemplateResource
         return new LayoutTemplateListJson( layoutTemplates );
     }
 
-    private LayoutDescriptor getDescriptor( final ModuleResourceKey key )
+    private LayoutDescriptor getDescriptor( final LayoutDescriptorKey key )
     {
-        final LayoutDescriptorKey layoutDescriptorKey = LayoutDescriptorKey.from( key.getModuleKey(), key.getPath() );
-        final GetLayoutDescriptor getLayoutDescriptor = page().descriptor().layout().getByKey( layoutDescriptorKey );
+        final GetLayoutDescriptor getLayoutDescriptor = page().descriptor().layout().getByKey( key );
         return client.execute( getLayoutDescriptor );
     }
 }

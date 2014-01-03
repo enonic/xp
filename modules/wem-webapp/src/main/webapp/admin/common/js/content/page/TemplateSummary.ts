@@ -1,66 +1,66 @@
-module api.content.page{
+module api.content.page {
 
     export class TemplateSummary<KEY extends TemplateKey,NAME extends TemplateName> {
 
-        private key:KEY;
+        private key: KEY;
 
-        private name:NAME;
+        private name: NAME;
 
-        private displayName:string;
+        private displayName: string;
 
-        private descriptorModuleResourceKey:api.module.ModuleResourceKey;
+        private descriptorKey: api.module.ModuleResourceKey;
 
-        constructor(builder:TemplateSummaryBuilder<KEY,NAME>) {
+        constructor(builder: TemplateSummaryBuilder<KEY,NAME>) {
             this.key = builder.key;
             this.name = builder.name;
             this.displayName = builder.displayName;
-            this.descriptorModuleResourceKey = builder.descriptorModuleResourceKey;
+            this.descriptorKey = builder.descriptorKey;
         }
 
-        getKey():KEY {
+        getKey(): KEY {
             return this.key;
         }
 
-        getName():NAME {
+        getName(): NAME {
             return this.name;
         }
 
-        getDisplayName():string {
+        getDisplayName(): string {
             return this.displayName;
         }
 
-        getDescriptorModuleResourceKey():api.module.ModuleResourceKey {
-            return this.descriptorModuleResourceKey;
+        getDescriptorKey(): api.module.ModuleResourceKey {
+            return this.descriptorKey;
         }
     }
 
     export class TemplateSummaryBuilder<KEY extends TemplateKey,NAME extends TemplateName> {
 
-        key:KEY;
+        key: KEY;
 
-        name:NAME;
+        name: NAME;
 
-        displayName:string;
+        displayName: string;
 
-        descriptorModuleResourceKey:api.module.ModuleResourceKey;
+        descriptorKey: api.module.ModuleResourceKey;
 
-        public setKey(value:KEY):TemplateSummaryBuilder<KEY,NAME> {
+        public setKey(value: KEY): TemplateSummaryBuilder<KEY,NAME> {
             this.key = value;
             return this;
         }
 
-        public setName(value:NAME):TemplateSummaryBuilder<KEY,NAME> {
+        public setName(value: NAME): TemplateSummaryBuilder<KEY,NAME> {
             this.name = value;
             return this;
         }
 
-        public setDisplayName(value:string):TemplateSummaryBuilder<KEY,NAME> {
+        public setDisplayName(value: string): TemplateSummaryBuilder<KEY,NAME> {
             this.displayName = value;
             return this;
         }
 
-        public setDescriptorModuleResourceKey(value:api.module.ModuleResourceKey):TemplateSummaryBuilder<KEY,NAME> {
-            this.descriptorModuleResourceKey = value;
+        public setDescriptorKey(value: api.module.ModuleResourceKey): TemplateSummaryBuilder<KEY,NAME> {
+            this.descriptorKey = value;
             return this;
         }
 

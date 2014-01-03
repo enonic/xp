@@ -3,7 +3,7 @@ package com.enonic.wem.core.content.page.part;
 import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.page.CreateDescriptorHelper;
+import com.enonic.wem.core.content.page.DescriptorHelper;
 import com.enonic.wem.xml.XmlSerializers;
 import com.enonic.wem.xml.content.page.PartDescriptorXml;
 
@@ -25,7 +25,7 @@ public class CreatePartDescriptorHandler
             build();
 
         final String partDescriptorXml = serialize( partDescriptor );
-        CreateDescriptorHelper.storeDescriptorResource( partDescriptor, partDescriptorXml, this.context.getClient() );
+        DescriptorHelper.storeDescriptorResource( partDescriptor, partDescriptorXml, this.context.getClient() );
 
         command.setResult( partDescriptor );
     }

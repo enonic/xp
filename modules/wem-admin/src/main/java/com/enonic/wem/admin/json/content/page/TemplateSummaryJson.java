@@ -35,7 +35,7 @@ public class TemplateSummaryJson
         return template.getDisplayName();
     }
 
-    public String getDescriptorModuleResourceKey()
+    public String getDescriptorKey()
     {
         return template.getDescriptor().toString();
     }

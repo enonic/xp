@@ -3,9 +3,10 @@ package com.enonic.wem.api.content.page.layout;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
-import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -26,7 +27,7 @@ public class LayoutTemplateXmlTest
             key( LayoutTemplateKey.from( "sitetemplate-1.0.0|mainmodule-1.0.0|layout-name" ) ).
             displayName( "Layout template" ).
             config( layoutTemplateConfig ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/layout-temp.xml" ) ).
+            descriptor( LayoutDescriptorKey.from( ModuleKey.from( "mainmodule-1.0.0" ), new ComponentDescriptorName( "layout-temp" ) ) ).
             build();
 
         final LayoutTemplateXml layoutTemplateXml = new LayoutTemplateXml();
@@ -48,7 +49,7 @@ public class LayoutTemplateXmlTest
         final LayoutTemplate layoutTemplate = builder.build();
 
         assertEquals( "Layout template", layoutTemplate.getDisplayName() );
-        assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/components/layout-temp.xml" ), layoutTemplate.getDescriptor() );
+        assertEquals( LayoutDescriptorKey.from( "mainmodule-1.0.0:layout-temp" ), layoutTemplate.getDescriptor() );
 
         assertEquals( 200L, layoutTemplate.getConfig().getProperty( "width" ).getLong().longValue() );
     }

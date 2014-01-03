@@ -12,7 +12,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -22,18 +21,17 @@ public class PageDescriptorResource
     extends AbstractResource
 {
     @GET
-    public PageDescriptorJson getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
+    public PageDescriptorJson getByKey( @QueryParam("key") final String pageDescriptorKey )
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
+        final PageDescriptorKey key = PageDescriptorKey.from( pageDescriptorKey );
         final PageDescriptor descriptor = getDescriptor( key, client );
         final PageDescriptorJson json = new PageDescriptorJson( descriptor );
         return json;
     }
 
-    private PageDescriptor getDescriptor( final ModuleResourceKey key, final Client client )
+    private PageDescriptor getDescriptor( final PageDescriptorKey key, final Client client )
     {
-        final PageDescriptorKey pageDescriptorKey = PageDescriptorKey.from( key.getModuleKey(), key.getPath() );
-        final GetPageDescriptor getPageDescriptor = page().descriptor().page().getByKey( pageDescriptorKey );
+        final GetPageDescriptor getPageDescriptor = page().descriptor().page().getByKey( key );
         return client.execute( getPageDescriptor );
     }
 }

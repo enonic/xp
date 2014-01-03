@@ -27,6 +27,7 @@ import com.enonic.wem.api.command.content.page.GetPageTemplateByKey;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentPath;
+import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
@@ -39,7 +40,6 @@ import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.portal.controller.JsControllerFactoryImpl;
@@ -78,7 +78,7 @@ public class ContentResourceTest
 
     @Test
     public void testScript()
-    throws Exception
+        throws Exception
     {
         final HttpServletRequest httpServletRequest = mock( HttpServletRequest.class );
         when( httpServletRequest.getScheme() ).thenReturn( "http" );
@@ -195,7 +195,7 @@ public class ContentResourceTest
             displayName( "Main page template" ).
             config( pageTemplateConfig ).
             canRender( ContentTypeNames.from( "article", "banner" ) ).
-            descriptor( ModuleResourceKey.from( "mainmodule-1.0.0:/components/landing-page.xml" ) ).
+            descriptor( PageDescriptorKey.from( "mainmodule-1.0.0:landing-page" ) ).
             build();
 
         return pageTemplate;
@@ -205,8 +205,8 @@ public class ContentResourceTest
         throws Exception
     {
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
-        final ResourcePath path = ResourcePath.from( "components/landing-page.xml" );
-        final PageDescriptorKey key = PageDescriptorKey.from( module, path );
+        final ComponentDescriptorName name = new ComponentDescriptorName( "mypage" );
+        final PageDescriptorKey key = PageDescriptorKey.from( module, name );
 
         final String xml = readFromFile( "script-page-component.xml" );
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
@@ -216,7 +216,7 @@ public class ContentResourceTest
         return builder.
             key( key ).
             displayName( "Landing page" ).
-            name( "mypage" ).
+            name( name ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) ).
             build();
     }

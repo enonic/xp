@@ -1,10 +1,9 @@
 package com.enonic.wem.api.content.page;
 
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 
-public abstract class Template<NAME extends TemplateName, KEY extends TemplateKey<NAME>>
+public abstract class Template<NAME extends TemplateName, KEY extends TemplateKey<NAME>, DESCRIPTOR_KEY extends DescriptorKey>
 {
     private final ResourcePath parentPath;
 
@@ -16,7 +15,7 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
 
     private final String displayName;
 
-    private final ModuleResourceKey descriptor;
+    private final DESCRIPTOR_KEY descriptor;
 
     private final RootDataSet config;
 
@@ -27,7 +26,7 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
         this.name = this.key != null ? this.key.getTemplateName() : (NAME) properties.name;
         this.path = ResourcePath.from( this.parentPath, this.name.toString() );
         this.displayName = properties.displayName;
-        this.descriptor = properties.descriptor;
+        this.descriptor = (DESCRIPTOR_KEY) properties.descriptor;
         this.config = properties.config;
     }
 
@@ -51,7 +50,7 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
         return name;
     }
 
-    public ModuleResourceKey getDescriptor()
+    public DESCRIPTOR_KEY getDescriptor()
     {
         return descriptor;
     }
@@ -66,7 +65,7 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
         return config;
     }
 
-    public abstract static class TemplateProperties<T extends BaseTemplateBuilder, NAME extends TemplateName, KEY extends TemplateKey<NAME>>
+    public abstract static class TemplateProperties<NAME extends TemplateName, KEY extends TemplateKey<NAME>, DESCRIPTOR_KEY extends DescriptorKey>
     {
         protected ResourcePath parentPath = ResourcePath.root();
 
@@ -76,13 +75,13 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
 
         protected String displayName;
 
-        protected ModuleResourceKey descriptor;
+        protected DESCRIPTOR_KEY descriptor;
 
         protected RootDataSet config;
     }
 
-    public abstract static class BaseTemplateBuilder<B extends BaseTemplateBuilder, T extends Template, NAME extends TemplateName, KEY extends TemplateKey<NAME>>
-        extends TemplateProperties<B, NAME, KEY>
+    public abstract static class BaseTemplateBuilder<B extends BaseTemplateBuilder, T extends Template, NAME extends TemplateName, KEY extends TemplateKey<NAME>, DESCRIPTOR_KEY extends DescriptorKey>
+        extends TemplateProperties<NAME, KEY, DESCRIPTOR_KEY>
     {
         public B key( final KEY key )
         {
@@ -113,7 +112,7 @@ public abstract class Template<NAME extends TemplateName, KEY extends TemplateKe
             return typecastToTemplateBuilder( this );
         }
 
-        public B descriptor( final ModuleResourceKey descriptor )
+        public B descriptor( final DESCRIPTOR_KEY descriptor )
         {
             this.descriptor = descriptor;
             return typecastToTemplateBuilder( this );

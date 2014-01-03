@@ -12,7 +12,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.layout.GetLayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -22,18 +21,17 @@ public class LayoutDescriptorResource
     extends AbstractResource
 {
     @GET
-    public LayoutDescriptorJson getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
+    public LayoutDescriptorJson getByKey( @QueryParam("key") final String layoutDescriptorKey )
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
+        final LayoutDescriptorKey key = LayoutDescriptorKey.from( layoutDescriptorKey );
         final LayoutDescriptor descriptor = getDescriptor( key, client );
         final LayoutDescriptorJson json = new LayoutDescriptorJson( descriptor );
         return json;
     }
 
-    private LayoutDescriptor getDescriptor( final ModuleResourceKey key, final Client client )
+    private LayoutDescriptor getDescriptor( final LayoutDescriptorKey key, final Client client )
     {
-        final LayoutDescriptorKey layoutDescriptorKey = LayoutDescriptorKey.from( key.getModuleKey(), key.getPath() );
-        final GetLayoutDescriptor getLayoutDescriptor = page().descriptor().layout().getByKey( layoutDescriptorKey );
+        final GetLayoutDescriptor getLayoutDescriptor = page().descriptor().layout().getByKey( key );
         return client.execute( getLayoutDescriptor );
     }
 }

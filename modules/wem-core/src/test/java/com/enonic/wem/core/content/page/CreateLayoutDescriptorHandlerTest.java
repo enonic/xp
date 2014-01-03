@@ -13,7 +13,6 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.page.layout.CreateLayoutDescriptorHandler;
@@ -48,11 +47,11 @@ public class CreateLayoutDescriptorHandlerTest
             build();
 
         final ModuleKey module = ModuleKey.from( "mainmodule-1.0.0" );
-        final ResourcePath path = ResourcePath.from( "components/layout.xml" );
-        final LayoutDescriptorKey key = LayoutDescriptorKey.from( module, path );
+        final ComponentDescriptorName descriptorName = new ComponentDescriptorName( "fancy-layout" );
+        final LayoutDescriptorKey key = LayoutDescriptorKey.from( module, descriptorName );
         final CreateLayoutDescriptor command = new CreateLayoutDescriptor().
             key( key ).
-            name( new ComponentDescriptorName( "fancy-layout" ) ).
+            name( descriptorName ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
             controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/fancy-layout.js" ) );

@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content.page;
 
-import org.apache.commons.io.FilenameUtils;
-
 import com.enonic.wem.api.command.content.page.GetPageDescriptor;
 import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.PageDescriptor;
@@ -24,15 +22,13 @@ public class GetPageDescriptorHandler
         {
             final PageDescriptorKey key = this.command.getKey();
 
-            final ModuleResourceKey moduleResourceKey = new ModuleResourceKey( key.getModuleKey(), key.getPath() );
+            final ModuleResourceKey moduleResourceKey = DescriptorHelper.moduleResourceKeyForDescriptor( key );
             final Resource resource = context.getClient().execute( new GetModuleResource().resourceKey( moduleResourceKey ) );
 
             final String descriptorXml = resource.readAsString();
             final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
             XmlSerializers.pageDescriptor().parse( descriptorXml ).to( builder );
-
-            final String descriptorName = FilenameUtils.removeExtension( key.getPath().getName() );
-            builder.name( descriptorName );
+            builder.name( key.getName() );
 
             final PageDescriptor pageDescriptor = builder.build();
 

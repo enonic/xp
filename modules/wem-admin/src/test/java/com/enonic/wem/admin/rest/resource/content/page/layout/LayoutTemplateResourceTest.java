@@ -6,12 +6,11 @@ import org.mockito.Mockito;
 import com.enonic.wem.admin.rest.resource.AbstractResourceTest;
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.layout.GetLayoutTemplatesBySiteTemplate;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplate;
 import com.enonic.wem.api.content.page.layout.LayoutTemplateKey;
 import com.enonic.wem.api.content.page.layout.LayoutTemplates;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourceKey;
-import com.enonic.wem.api.module.ResourcePath;
 
 public class LayoutTemplateResourceTest
     extends AbstractResourceTest
@@ -35,16 +34,12 @@ public class LayoutTemplateResourceTest
         LayoutTemplate layoutTemplate1 = LayoutTemplate.newLayoutTemplate()
             .key( LayoutTemplateKey.from( "sitetemplate-1.0.0|module1-1.0.0|layout1" ) )
             .displayName( "Layout1 template" )
-            .config( new RootDataSet() )
-            .descriptor( ModuleResourceKey.from( "module1-1.0.0:/components/layout1-template.xml" ) )
-            .build();
+            .config( new RootDataSet() ).descriptor( LayoutDescriptorKey.from( "module1-1.0.0:layout1-template" ) ).build();
 
         LayoutTemplate layoutTemplate2 = LayoutTemplate.newLayoutTemplate()
             .key( LayoutTemplateKey.from( "sitetemplate-1.0.0|module2-1.0.0|layout2" ) )
             .displayName( "Layout2 template" )
-            .config( new RootDataSet() )
-            .descriptor( ModuleResourceKey.from( "module2-1.0.0:/components/layout2-template.xml" ) )
-            .build();
+            .config( new RootDataSet() ).descriptor( LayoutDescriptorKey.from( "module2-1.0.0:layout2-template" ) ).build();
 
         return LayoutTemplates.from( layoutTemplate1, layoutTemplate2 );
     }

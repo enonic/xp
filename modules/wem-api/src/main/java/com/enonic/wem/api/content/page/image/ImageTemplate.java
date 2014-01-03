@@ -3,14 +3,13 @@ package com.enonic.wem.api.content.page.image;
 
 import com.enonic.wem.api.content.page.Template;
 import com.enonic.wem.api.data.RootDataSet;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.support.Changes;
 import com.enonic.wem.api.support.EditBuilder;
 
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class ImageTemplate
-    extends Template<ImageTemplateName, ImageTemplateKey>
+    extends Template<ImageTemplateName, ImageTemplateKey, ImageDescriptorKey>
 {
     private ImageTemplate( final ImageTemplateProperties properties )
     {
@@ -28,7 +27,7 @@ public final class ImageTemplate
     }
 
     public static class Builder
-        extends BaseTemplateBuilder<Builder, ImageTemplate, ImageTemplateName, ImageTemplateKey>
+        extends BaseTemplateBuilder<Builder, ImageTemplate, ImageTemplateName, ImageTemplateKey, ImageDescriptorKey>
     {
         private Builder()
         {
@@ -71,7 +70,7 @@ public final class ImageTemplate
             return this;
         }
 
-        public ImageTemplateEditBuilder descriptor( final ModuleResourceKey value )
+        public ImageTemplateEditBuilder descriptor( final ImageDescriptorKey value )
         {
             changes.recordChange( newPossibleChange( "descriptor" ).from( this.original.getDescriptor() ).to( value ).build() );
             this.descriptor = value;

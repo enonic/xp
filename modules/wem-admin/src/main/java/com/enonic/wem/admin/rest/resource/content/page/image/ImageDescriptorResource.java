@@ -12,7 +12,6 @@ import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.page.image.GetImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.command.Commands.page;
 
@@ -22,18 +21,17 @@ public class ImageDescriptorResource
     extends AbstractResource
 {
     @GET
-    public ImageDescriptorJson getByKey( @QueryParam("key") final String descriptorModuleResourceKey )
+    public ImageDescriptorJson getByKey( @QueryParam("key") final String imageDescriptorKey )
     {
-        final ModuleResourceKey key = ModuleResourceKey.from( descriptorModuleResourceKey );
+        final ImageDescriptorKey key = ImageDescriptorKey.from( imageDescriptorKey );
         final ImageDescriptor descriptor = getDescriptor( key, client );
         final ImageDescriptorJson json = new ImageDescriptorJson( descriptor );
         return json;
     }
 
-    private ImageDescriptor getDescriptor( final ModuleResourceKey key, final Client client )
+    private ImageDescriptor getDescriptor( final ImageDescriptorKey key, final Client client )
     {
-        final ImageDescriptorKey imageDescriptorKey = ImageDescriptorKey.from( key.getModuleKey(), key.getPath() );
-        final GetImageDescriptor getImageDescriptor = page().descriptor().image().getByKey( imageDescriptorKey );
+        final GetImageDescriptor getImageDescriptor = page().descriptor().image().getByKey( key );
         return client.execute( getImageDescriptor );
     }
 }
