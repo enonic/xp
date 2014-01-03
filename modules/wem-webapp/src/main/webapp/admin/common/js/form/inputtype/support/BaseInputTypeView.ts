@@ -13,24 +13,33 @@ module api.form.inputtype.support {
                 containment: 'parent',
                 handle: '.drag-control',
                 update: (event, ui) => {
-                    var childCount = this.getHTMLElement().children.length;
-                    var newOccurrenceOrder: InputOccurrence[] = [];
-                    for (var i = 0; i < childCount; i++) {
-                        var child = this.getHTMLElement().children[i];
-                        newOccurrenceOrder[i] = this.inputOccurrences.getOccurrences().filter((occ: InputOccurrence) => {
-                            return occ.getDataId().toString() == child.getAttribute('data-dataid');
-                        })[0];
-                    }
-                    newOccurrenceOrder.forEach((occ: InputOccurrence, index: number) => {
-                        occ.setIndex(index);
+
+                    var occurrenceOrderAccordingToDOM = this.resolveOccurrencesInOrderAccordingToDOM();
+
+                    // Update index of each occurrence
+                    occurrenceOrderAccordingToDOM.forEach((occurrence: InputOccurrence, index: number) => {
+                        occurrence.setIndex(index);
                     });
+
                     this.inputOccurrences.sortOccurrences((a:InputOccurrence, b:InputOccurrence) => {
                         return a.getIndex() - b.getIndex();
                     });
-                    this.inputOccurrences.refreshOccurrenceViews();
                 }
             });
+        }
 
+        private resolveOccurrencesInOrderAccordingToDOM(): InputOccurrence[] {
+
+            var childCount = this.getHTMLElement().children.length;
+            var occurrenceOrderAccordingToDOM: InputOccurrence[] = [];
+            for (var i = 0; i < childCount; i++) {
+                var child:Element = this.getHTMLElement().children[i];
+                occurrenceOrderAccordingToDOM[i] = this.inputOccurrences.getOccurrences().filter((occ: InputOccurrence) => {
+                    return occ.getDataId().toString() == child.getAttribute('data-dataid');
+                })[0];
+            }
+
+            return occurrenceOrderAccordingToDOM;
         }
 
         onElementAddedToParent(parent: api.dom.Element) {

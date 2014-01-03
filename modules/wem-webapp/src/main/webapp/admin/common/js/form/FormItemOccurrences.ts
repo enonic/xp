@@ -198,6 +198,8 @@ module api.form {
             this.occurrenceViews.forEach((ov: FormItemOccurrenceView, index: number)=> {
                 console.log("  " + index + ": index=[" + ov.getIndex() + "], id=[" + ov.getId() + "]");
             });*/
+
+            this.refreshOccurrenceViews();
         }
 
         getOccurrences(): FormItemOccurrence<V>[] {
