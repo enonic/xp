@@ -11,7 +11,7 @@ module app.launcher {
             }
 
             var link = new api.dom.AEl();
-            link.setUrl('#/' + application.getName());
+            link.setUrl('#/' + application.getId());
 
             var imgContainer = new api.dom.DivEl(null, 'img-container');
 
