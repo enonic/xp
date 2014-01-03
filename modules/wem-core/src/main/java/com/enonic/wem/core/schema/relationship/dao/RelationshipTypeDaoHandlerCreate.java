@@ -4,9 +4,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.enonic.wem.api.exception.SystemException;
-import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.api.schema.relationship.RelationshipType;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeAlreadyExistException;
+import com.enonic.wem.api.schema.relationship.RelationshipTypeName;
 import com.enonic.wem.core.jcr.JcrHelper;
 
 
@@ -32,7 +32,7 @@ final class RelationshipTypeDaoHandlerCreate
         final RelationshipTypeName relationshipTypeName = relationshipType.getName();
         if ( relationshipTypeExists( relationshipTypeName ) )
         {
-            throw new SystemException( "RelationshipType already exists: {0}", relationshipTypeName.toString() );
+            throw new RelationshipTypeAlreadyExistException( relationshipTypeName );
         }
 
         final Node relationshipTypeNode = createRelationshipTypeNode( relationshipTypeName );

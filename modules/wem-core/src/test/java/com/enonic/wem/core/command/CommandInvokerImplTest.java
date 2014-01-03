@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.google.common.collect.Maps;
 import com.google.inject.Provider;
 
+import com.enonic.wem.api.command.CommandHandlerNotFoundException;
 import com.enonic.wem.api.exception.SystemException;
 
 import static org.junit.Assert.*;
@@ -43,7 +44,7 @@ public class CommandInvokerImplTest
         return handler;
     }
 
-    @Test(expected = SystemException.class)
+    @Test(expected = CommandHandlerNotFoundException.class)
     public void invoke_noSuchCommand()
     {
         final TestCommand command = new TestCommand();

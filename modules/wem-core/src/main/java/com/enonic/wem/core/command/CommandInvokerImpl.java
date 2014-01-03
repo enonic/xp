@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import com.google.inject.Provider;
 
 import com.enonic.wem.api.command.Command;
+import com.enonic.wem.api.command.CommandHandlerNotFoundException;
 import com.enonic.wem.api.exception.SystemException;
 
 
@@ -50,6 +51,6 @@ public final class CommandInvokerImpl
             return handler.get();
         }
 
-        throw new SystemException( "Handle for command [{0}] not found", type.getName() );
+        throw new CommandHandlerNotFoundException( type );
     }
 }
