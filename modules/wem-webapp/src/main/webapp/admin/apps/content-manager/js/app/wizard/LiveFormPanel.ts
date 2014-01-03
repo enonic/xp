@@ -39,17 +39,11 @@ module app.wizard {
                             var contextWindow = new app.contextwindow.ContextWindow({liveEditEl: this.frame, site: this.site});
                             this.appendChild(contextWindow);
                             clearInterval(intervalId);
-                        } else {
-                            iterations++;
-                            if (iterations >= maxIterations) {
-                                clearInterval(intervalId);
-                            }
                         }
-                    } else {
-                        iterations++;
-                        if (iterations >= maxIterations) {
-                            clearInterval(intervalId);
-                        }
+                    }
+                    iterations++;
+                    if (iterations >= maxIterations) {
+                        clearInterval(intervalId);
                     }
                 }, 200);
             }
