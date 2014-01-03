@@ -14,7 +14,6 @@ import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.account.DeleteAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
-import com.enonic.wem.core.index.IndexService;
 
 import static org.junit.Assert.*;
 
@@ -32,12 +31,9 @@ public class DeleteAccountHandlerTest
         super.initialize();
 
         accountDao = Mockito.mock( AccountDao.class );
-        final IndexService indexService = Mockito.mock( IndexService.class );
-
         handler = new DeleteAccountHandler();
         handler.setContext( this.context );
         handler.setAccountDao( accountDao );
-        handler.setIndexService( indexService );
     }
 
     @Test

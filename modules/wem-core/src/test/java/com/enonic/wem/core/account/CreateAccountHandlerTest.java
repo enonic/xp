@@ -47,7 +47,6 @@ public class CreateAccountHandlerTest
         handler = new CreateAccountHandler();
         handler.setContext( context );
         handler.setAccountDao( accountDao );
-        handler.setIndexService( indexService );
     }
 
     @Test

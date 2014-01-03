@@ -17,10 +17,7 @@ public class IndexMappingProvider
     private final static String PREFIX = "META-INF/index/mapping/";
 
     private final static String[] MAPPING_FILES = { //
-        PREFIX + "nodb-node-mapping.json", //
-        PREFIX + "wem-account-mapping.json", //
-        PREFIX + "wem-binaries-mapping.json", //
-        PREFIX + "wem-content-mapping.json" //
+        PREFIX + "nodb-node-mapping.json" //
     };
 
     public List<IndexMapping> getMappingsForIndex( final Index index )

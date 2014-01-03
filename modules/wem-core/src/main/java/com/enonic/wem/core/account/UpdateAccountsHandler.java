@@ -15,17 +15,12 @@ import com.enonic.wem.api.command.UpdateResult;
 import com.enonic.wem.api.command.account.UpdateAccounts;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.index.IndexService;
 
 
 public final class UpdateAccountsHandler
     extends CommandHandler<UpdateAccounts>
 {
-    // private AccountSearchService searchService;
-
     private AccountDao accountDao;
-
-    private IndexService indexService;
 
     @Override
     public void handle()
@@ -90,13 +85,7 @@ public final class UpdateAccountsHandler
                 break;
         }
 
-        this.indexService.indexAccount( account );
-    }
 
-    @Inject
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
     }
 
     @Inject

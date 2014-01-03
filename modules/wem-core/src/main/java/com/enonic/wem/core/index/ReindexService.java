@@ -1,6 +1,5 @@
 package com.enonic.wem.core.index;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import javax.inject.Inject;
@@ -9,8 +8,6 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.AccountKey;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
@@ -59,36 +56,6 @@ public class ReindexService
             indexService.indexNode( node );
 
             reindexNodes( nodeJcrDao.getNodesByParentPath( node.path() ), nodeJcrDao );
-        }
-    }
-
-    public void reindexAccounts()
-        throws Exception
-    {
-        Session session = jcrSessionProvider.login();
-
-        final Collection<AccountKey> accountKeys = accountDao.getAllAccountKeys( session );
-
-        for ( AccountKey accountKey : accountKeys )
-        {
-            final Account account;
-
-            if ( accountKey.isUser() )
-            {
-                account = accountDao.findUser( accountKey.asUser(), true, false, session );
-            }
-            else if ( accountKey.isGroup() )
-            {
-                account = accountDao.findGroup( accountKey.asGroup(), true, session );
-            }
-            else
-            {
-                return;
-            }
-
-            LOG.info( "Reindex account: " + account.getDisplayName() );
-
-            indexService.indexAccount( account );
         }
     }
 

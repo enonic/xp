@@ -54,7 +54,6 @@ public class UpdateAccountsHandlerTest
         handler = new UpdateAccountsHandler();
         handler.setContext( this.context );
         handler.setAccountDao( accountDao );
-        handler.setIndexService( indexService );
     }
 
     @Test

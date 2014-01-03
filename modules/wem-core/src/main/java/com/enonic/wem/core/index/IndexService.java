@@ -10,18 +10,9 @@ import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.content.Content;
-import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
-import com.enonic.wem.core.index.account.AccountDeleteDocumentFactory;
-import com.enonic.wem.core.index.account.AccountIndexDocumentFactory;
-import com.enonic.wem.core.index.content.ContentDeleteDocumentFactory;
-import com.enonic.wem.core.index.content.ContentIndexDocumentsFactory;
-import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocument2;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.index.elastic.IndexMapping;
@@ -52,7 +43,6 @@ public class IndexService
     protected void doStart()
         throws Exception
     {
-        doInitializeOldWemIndex();
         doInitializeNoDbIndex();
     }
 
@@ -69,23 +59,6 @@ public class IndexService
             {
                 reindexService.reindexContent();
                 // TODO: Reindex stuff here
-            }
-        }
-    }
-
-    private void doInitializeOldWemIndex()
-        throws Exception
-    {
-        elasticsearchIndexService.getIndexStatus( Index.WEM, true );
-
-        if ( !indexExists( Index.WEM ) )
-        {
-            createIndex( Index.WEM );
-
-            if ( doReindexOnEmptyIndex )
-            {
-                reindexService.reindexContent();
-                reindexService.reindexAccounts();
             }
         }
     }
@@ -132,21 +105,7 @@ public class IndexService
         for ( final Index index : indexes )
         {
             elasticsearchIndexService.deleteIndex( index );
-            //elasticsearchIndexService.getIndexStatus( index, true );
         }
-    }
-
-    public void indexAccount( final Account account )
-    {
-        final Collection<IndexDocument> indexDocuments = AccountIndexDocumentFactory.create( account );
-
-        elasticsearchIndexService.index( indexDocuments );
-    }
-
-    public void indexContent( final Content content )
-    {
-        final Collection<IndexDocument> indexDocuments = ContentIndexDocumentsFactory.create( content );
-        elasticsearchIndexService.index( indexDocuments );
     }
 
     public void indexNode( final Node node )
@@ -160,23 +119,6 @@ public class IndexService
     public void deleteEntity( final EntityId entityId )
     {
         elasticsearchIndexService.delete( new DeleteDocument( Index.NODB, IndexType.NODE, entityId.toString() ) );
-    }
-
-    public void deleteAccount( final AccountKey accountKey )
-    {
-        final DeleteDocument deleteDocument = AccountDeleteDocumentFactory.create( accountKey );
-
-        this.elasticsearchIndexService.delete( deleteDocument );
-    }
-
-    public void deleteContent( final ContentId contentId )
-    {
-        final Collection<DeleteDocument> deleteDocuments = ContentDeleteDocumentFactory.create( contentId );
-
-        for ( DeleteDocument deleteDocument : deleteDocuments )
-        {
-            this.elasticsearchIndexService.delete( deleteDocument );
-        }
     }
 
     public void setDoReindexOnEmptyIndex( final boolean doReindexOnEmptyIndex )

@@ -20,30 +20,18 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.query.ContentIndexQuery;
-import com.enonic.wem.api.facet.Facets;
 import com.enonic.wem.core.index.DeleteDocument;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.content.ContentSearchHit;
-import com.enonic.wem.core.index.content.ContentSearchResults;
-import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocument2;
-import com.enonic.wem.core.index.elastic.indexsource.IndexSource;
-import com.enonic.wem.core.index.elastic.indexsource.IndexSourceFactory;
-import com.enonic.wem.core.index.elastic.indexsource.XContentBuilderFactory;
-import com.enonic.wem.core.index.elastic.result.OldFacetFactory;
 import com.enonic.wem.core.index.entity.EntityQueryResult;
 import com.enonic.wem.core.index.entity.EntitySearchResultFactory;
 
@@ -80,26 +68,6 @@ public class ElasticsearchIndexServiceImpl
         final IndicesExistsResponse exists =
             this.client.admin().indices().exists( new IndicesExistsRequest( index.getName() ) ).actionGet();
         return exists.isExists();
-    }
-
-    @Override
-    public void index( Collection<IndexDocument> indexDocuments )
-    {
-        for ( IndexDocument indexDocument : indexDocuments )
-        {
-            final String id = indexDocument.getId();
-            final IndexType indexType = indexDocument.getIndexType();
-            final Index index = indexDocument.getIndex();
-
-            final IndexSource indexSource = IndexSourceFactory.create( indexDocument );
-
-            final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexSource );
-
-            final IndexRequest req = Requests.indexRequest().id( id ).index( index.getName() ).type( indexType.getIndexTypeName() ).source(
-                xContentBuilder ).refresh( indexDocument.doRefreshOnStore() );
-
-            this.client.index( req ).actionGet();
-        }
     }
 
     @Override
@@ -205,39 +173,10 @@ public class ElasticsearchIndexServiceImpl
         return entitySearchResultFactory.create( searchResponse );
     }
 
-    @Override
-    public ContentSearchResults search( final ContentIndexQuery contentIndexQuery )
-    {
-        final SearchSourceBuilder searchSourceBuilder = SearchSourceFactory.create( contentIndexQuery );
-
-        final SearchRequest searchRequest = Requests.
-            searchRequest( Index.WEM.getName() ).
-            types( IndexType.CONTENT.getIndexTypeName() ).
-            source( searchSourceBuilder );
-
-        final SearchResponse searchResponse = doSearchRequest( searchRequest );
-
-        final SearchHits hits = searchResponse.getHits();
-
-        ContentSearchResults contentSearchResults = new ContentSearchResults( (int) hits.totalHits(), 0 );
-
-        for ( SearchHit hit : hits )
-        {
-            contentSearchResults.add( new ContentSearchHit( ContentId.from( hit.getId() ), hit.score() ) );
-        }
-
-        final Facets facets = OldFacetFactory.create( searchResponse );
-
-        contentSearchResults.setFacets( facets );
-
-        return contentSearchResults;
-    }
-
     private SearchResponse doSearchRequest( SearchRequest searchRequest )
     {
         return this.client.search( searchRequest ).actionGet();
     }
-
 
     private ClusterHealthResponse getClusterHealth( Index index, boolean waitForYellow )
     {

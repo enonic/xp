@@ -1,124 +1,17 @@
 package com.enonic.wem.core.account;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.jcr.Session;
-
-import com.google.common.collect.Lists;
-
-import com.enonic.wem.api.account.AccountKey;
-import com.enonic.wem.api.account.AccountKeys;
-import com.enonic.wem.api.account.AccountType;
-import com.enonic.wem.api.account.query.AccountQuery;
-import com.enonic.wem.api.account.query.AccountQueryHits;
 import com.enonic.wem.api.command.account.FindAccounts;
-import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.index.SearchSortOrder;
-import com.enonic.wem.core.index.account.AccountIndexField;
-import com.enonic.wem.core.index.account.AccountSearchHit;
-import com.enonic.wem.core.index.account.AccountSearchQuery;
-import com.enonic.wem.core.index.account.AccountSearchResults;
-import com.enonic.wem.core.index.account.AccountSearchService;
-import com.enonic.wem.core.index.accountfacet.AccountFacet;
-import com.enonic.wem.core.index.accountfacet.AccountFacetEntry;
-import com.enonic.wem.core.index.accountfacet.AccountFacets;
-
-import static com.enonic.wem.api.account.query.AccountQuery.Direction;
 
 
 public final class FindAccountsHandler
     extends CommandHandler<FindAccounts>
 {
-    private AccountDao accountDao;
-
-    private AccountSearchService accountSearchService;
-
     @Override
     public void handle()
         throws Exception
     {
-        final AccountQuery selector = command.getQuery();
-
-        final AccountQueryHits result = findByQuery( context.getJcrSession(), selector );
-        command.setResult( result );
+        throw new NoSuchMethodException( "Account query is no longer implemented this way" );
     }
 
-    private AccountQueryHits findByQuery( final Session session, final AccountQuery accountQuery )
-        throws Exception
-    {
-        final AccountSearchQuery searchQuery = new AccountSearchQuery();
-        searchQuery.from( accountQuery.getOffset() );
-        searchQuery.count( accountQuery.getLimit() );
-        searchQuery.query( accountQuery.getQuery() );
-        searchQuery.userStores( accountQuery.getUserStores().toArray( new String[accountQuery.getUserStores().size()] ) );
-        final Set<AccountType> accountTypes = accountQuery.getTypes();
-        searchQuery.users( accountTypes.contains( AccountType.USER ) );
-        searchQuery.groups( accountTypes.contains( AccountType.GROUP ) );
-        searchQuery.roles( accountTypes.contains( AccountType.ROLE ) );
-        searchQuery.sortField( AccountIndexField.parse( accountQuery.getSortField() ) );
-        searchQuery.sortOrder( accountQuery.getSortDirection() == Direction.ASC ? SearchSortOrder.ASC : SearchSortOrder.DESC );
-        searchQuery.email( accountQuery.getEmail() );
-
-        final AccountSearchResults searchResults = accountSearchService.search( searchQuery );
-        final List<AccountKey> accounts = getSearchResults( session, searchResults );
-        final com.enonic.wem.api.account.query.AccountFacets accountFacets = getSearchFacets( searchResults );
-
-        final AccountQueryHits accountResult = new AccountQueryHits( searchResults.getTotal(), AccountKeys.from( accounts ) );
-        accountResult.setFacets( accountFacets );
-        return accountResult;
-    }
-
-    private List<AccountKey> getSearchResults( final Session session, final AccountSearchResults searchResults )
-        throws Exception
-    {
-        final List<AccountKey> accounts = Lists.newArrayList();
-        for ( AccountSearchHit hit : searchResults )
-        {
-            final AccountKey accountKey = AccountKey.from( hit.getKey().toString() );
-            if ( accountDao.accountExists( accountKey, session ) )
-            {
-                accounts.add( accountKey );
-            }
-        }
-        return accounts;
-    }
-
-    private com.enonic.wem.api.account.query.AccountFacets getSearchFacets( final AccountSearchResults searchResults )
-    {
-        final com.enonic.wem.api.account.query.AccountFacets accountAccountFacets = new com.enonic.wem.api.account.query.AccountFacets();
-        final AccountFacets searchAccountFacets = searchResults.getAccountFacets();
-        for ( AccountFacet searchAccountFacet : searchAccountFacets )
-        {
-            final com.enonic.wem.api.account.query.AccountFacet accountAccountFacet = getSearchFacets( searchAccountFacet );
-            accountAccountFacets.addFacet( accountAccountFacet );
-        }
-        return accountAccountFacets;
-    }
-
-    private com.enonic.wem.api.account.query.AccountFacet getSearchFacets( final AccountFacet searchAccountFacet )
-    {
-        final com.enonic.wem.api.account.query.AccountFacet accountFacet =
-            new com.enonic.wem.api.account.query.AccountFacet( searchAccountFacet.getName() );
-        for ( AccountFacetEntry accountFacetEntry : searchAccountFacet )
-        {
-            accountFacet.addEntry(
-                new com.enonic.wem.api.account.query.AccountFacetEntry( accountFacetEntry.getTerm(), accountFacetEntry.getCount() ) );
-        }
-        return accountFacet;
-    }
-
-    @Inject
-    public void setAccountSearchService( final AccountSearchService accountSearchService )
-    {
-        this.accountSearchService = accountSearchService;
-    }
-
-    @Inject
-    public void setAccountDao( final AccountDao accountDao )
-    {
-        this.accountDao = accountDao;
-    }
 }

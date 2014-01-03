@@ -2,15 +2,17 @@ package com.enonic.wem.core.index.elastic.indexsource
 
 import com.enonic.wem.api.data.Value
 import com.enonic.wem.core.index.document.*
+import com.enonic.wem.core.index.elastic.IndexFieldNameResolver
 import org.joda.time.DateTime
 import spock.lang.Specification
 import spock.lang.Unroll
 
 
-class IndexFieldNameResolverTest extends Specification
+class IndexFieldNameResolverTest
+        extends Specification
 {
     @Unroll
-    def "resolve name for item-type #item.getIndexBaseType()"( )
+    def "resolve name for item-type #item.getIndexBaseType()"()
     {
         expect:
         resolvedName == IndexFieldNameResolver.resolve( item )
@@ -27,10 +29,11 @@ class IndexFieldNameResolverTest extends Specification
     }
 
     @Unroll
-    def "resolve name from path #pathAsString"( )
+    def "resolve name from path #pathAsString"()
     {
         expect:
-        resolvedName == IndexFieldNameResolver.resolve( new IndexDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
+        resolvedName ==
+                IndexFieldNameResolver.resolve( new IndexDocumentStringItem( IndexDocumentItemPath.from( pathAsString ), "myValue" ) )
 
         where:
         pathAsString | resolvedName
@@ -41,7 +44,7 @@ class IndexFieldNameResolverTest extends Specification
     }
 
 
-    def "dummy"( )
+    def "dummy"()
     {
         given:
 

@@ -13,6 +13,7 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.elastic.XContentBuilderFactory;
 
 import static org.junit.Assert.*;
 

@@ -1,6 +1,5 @@
 package com.enonic.wem.core.index;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.elasticsearch.ElasticSearchException;
@@ -11,8 +10,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.wem.api.account.Account;
-import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.index.elastic.IndexMapping;
 import com.enonic.wem.core.index.elastic.IndexMappingProvider;
@@ -133,20 +130,6 @@ public class IndexServiceImplTest
         indexService.start();
 
         Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( Index.WEM );
-        Mockito.verify( reindexService, Mockito.times( 1 ) ).reindexAccounts();
-    }
-
-    @Test
-    public void testIndexAccount()
-    {
-        Account account = UserAccount.create( "enonic:rmy" );
-
-        final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        indexService.setElasticsearchIndexService( elasticsearchIndexService );
-
-        indexService.indexAccount( account );
-
-        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).index( Mockito.isA( Collection.class ) );
     }
 
     private IndexMappingProvider setUpIndexMappingMock()

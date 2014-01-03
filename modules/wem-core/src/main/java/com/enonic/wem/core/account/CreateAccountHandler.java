@@ -13,14 +13,11 @@ import com.enonic.wem.api.account.UserAccount;
 import com.enonic.wem.api.command.account.CreateAccount;
 import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.index.IndexService;
 
 
 public final class CreateAccountHandler
     extends CommandHandler<CreateAccount>
 {
-    private IndexService indexService;
-
     private AccountDao accountDao;
 
     @Override
@@ -46,7 +43,6 @@ public final class CreateAccountHandler
         }
         session.save();
 
-        this.indexService.indexAccount( account );
         command.setResult( key );
     }
 
@@ -57,9 +53,5 @@ public final class CreateAccountHandler
         this.accountDao = accountDao;
     }
 
-    @Inject
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
+
 }

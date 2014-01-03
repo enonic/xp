@@ -1,4 +1,4 @@
-package com.enonic.wem.core.index.elastic.indexsource;
+package com.enonic.wem.core.index.elastic;
 
 import java.util.Set;
 
@@ -14,7 +14,6 @@ import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
 import com.enonic.wem.core.index.document.IndexDocument2;
 
-@Deprecated
 public class XContentBuilderFactory
 {
     private XContentBuilderFactory()
@@ -45,22 +44,6 @@ public class XContentBuilderFactory
 
         addField( builder, IndexConstants.COLLECTION_FIELD,
                   Strings.isNullOrEmpty( collection ) ? IndexConstants.DEFAULT_COLLECTION : collection );
-    }
-
-    @Deprecated
-    public static XContentBuilder create( final IndexSource indexSource )
-    {
-        try
-        {
-            final XContentBuilder builder = startBuilder();
-            addFields( builder, indexSource );
-            endBuilder( builder );
-            return builder;
-        }
-        catch ( Exception e )
-        {
-            throw new IndexException( "Failed to build xContent for indexSource" );
-        }
     }
 
     private static void addDocumentAnalyzer( final XContentBuilder builder, final IndexDocument2 indexDocument )
@@ -125,15 +108,4 @@ public class XContentBuilderFactory
         result.field( name, value );
     }
 
-
-    private static void addFields( final XContentBuilder result, final IndexSource indexSource )
-        throws Exception
-    {
-        final Set<IndexSourceItem> indexSourceEntries = indexSource.indexSourceItems();
-
-        for ( IndexSourceItem indexSourceItem : indexSourceEntries )
-        {
-            addField( result, indexSourceItem.getKey(), indexSourceItem.getValue() );
-        }
-    }
 }

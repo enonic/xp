@@ -9,7 +9,7 @@ import com.enonic.wem.api.data.Value;
 class OrderbyValueResolver
 {
     // TODO: This should not be here I think, handle this when creating IndexRequest?
-    public final static SimpleDateFormat ELASTICSEARCH_FULL_DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss:SSS" );
+    public final static SimpleDateFormat ELASTICSEARCH_FULL_DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss.SSS" );
 
     public static String getOrderbyValue( Value value )
     {
