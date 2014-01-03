@@ -61,7 +61,8 @@ final class Runner
         throws Exception
     {
         final String docBase = new File( "./modules/wem-webapp/src/main/webapp" ).getAbsolutePath();
-        final String generatedDir = new File( "./modules/wem-webapp/target/main/webapp" ).getAbsolutePath();
+        final File generatedDir = new File( "./modules/wem-webapp/target/main/webapp" );
+        final File adminUiDir = new File( "./modules/wem-admin-ui/src/main/web" );
 
         this.tomcat.setPort( 8080 );
         this.tomcat.setHostname( "localhost" );
@@ -74,9 +75,14 @@ final class Runner
         final StandardRoot standardRoot = new StandardRoot( context );
         context.setResources( standardRoot );
 
-        if ( new File( generatedDir ).isDirectory() )
+        if ( generatedDir.isDirectory() )
         {
-            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", generatedDir, null, "/" );
+            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", generatedDir.getAbsolutePath(), null, "/" );
+        }
+
+        if ( adminUiDir.isDirectory() )
+        {
+            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", adminUiDir.getAbsolutePath(), null, "/" );
         }
     }
 
