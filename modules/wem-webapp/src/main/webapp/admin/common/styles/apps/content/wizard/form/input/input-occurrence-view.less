@@ -1,6 +1,14 @@
 .input-occurrence-view {
   .clearfix();
 
+  .drag-control {
+    background: url("../images/nail-plate.png");
+    width: 5px;
+    height: 30px;
+    margin-top: 3px;
+    cursor: pointer;
+  }
+
   * > {
     float: left;
   }
@@ -21,4 +29,13 @@
     cursor: pointer;
   }
 
+}
+
+.input-view .drop-zone {
+  background: blue;
+}
+
+.dragged {
+  border: dashed 1px #006dcc;
+  opacity: 0.5;
 }

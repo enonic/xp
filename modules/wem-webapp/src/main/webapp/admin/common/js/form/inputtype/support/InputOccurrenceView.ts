@@ -14,6 +14,8 @@ module api.form.inputtype.support {
             super("InputOccurrenceView", "input-occurrence-view", inputOccurrence);
             this.inputOccurrence = inputOccurrence;
 
+
+
             this.inputElement = inputElement;
             this.appendChild(this.inputElement);
 
@@ -29,10 +31,11 @@ module api.form.inputtype.support {
             });
 
             this.refresh();
+
+
         }
 
         refresh() {
-
             this.occurrenceCountEl.setHtml("#" + (this.inputOccurrence.getIndex() + 1));
             this.getEl().setData("dataId", this.inputOccurrence.getDataId().toString());
 
