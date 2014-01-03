@@ -8,6 +8,39 @@ module api.form.inputtype.support {
 
         constructor(idPrefix:string) {
             super(idPrefix, "input-type-view");
+            jQuery(this.getHTMLElement() ).sortable({
+                axis: "y",
+                containment: 'parent',
+                handle: '.drag-control',
+                update: (event, ui) => {
+                    var i , len = this.getHTMLElement().children.length;
+                    var newIndexes = [];
+                    for (i = 0; i < len; i++) {
+                        var child = this.getHTMLElement().children[i];
+                        var occurrence = this.inputOccurrences.getOccurrences().filter((occ) => {
+                            return occ.getDataId().toString() == child.getAttribute('data-dataid');
+                        })[0];
+                        newIndexes[i] = occurrence;
+
+                    }
+                    newIndexes.forEach((occ, index) => {
+                        occ.setIndex(index);
+                    });
+                    this.inputOccurrences.getOccurrences().sort((occ1, occ2) => {return occ1.getIndex() - occ2.getIndex()});
+                    this.inputOccurrences.refreshOccurrenceViews();
+                }
+            });
+
+        }
+
+        onElementAddedToParent(parent:api.dom.Element) {
+            super.onElementAddedToParent(parent);
+            this.addFormItemOccurrencesListener({
+                onOccurrenceAdded: () => {
+                    jQuery(this.getHTMLElement() ).sortable("refresh");
+                },
+                onOccurrenceRemoved: () => {}
+            });
         }
 
         getHTMLElement():HTMLElement {
@@ -39,6 +72,7 @@ module api.form.inputtype.support {
             this.input = input;
             this.inputOccurrences = new InputOccurrences(this, this.input, properties);
             this.inputOccurrences.layout();
+            jQuery(this.getHTMLElement() ).sortable("refresh");
         }
 
         getValues():api.data.Value[] {

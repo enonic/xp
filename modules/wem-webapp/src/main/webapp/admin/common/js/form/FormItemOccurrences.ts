@@ -163,7 +163,7 @@ module api.form {
             if (index < 1) {
                 return null;
             }
-            return this.occurrenceViews[index - 1];
+            return this.occurrenceViews.filter((occurrenceView:V) => {return occurrenceView.getIndex() == index - 1})[0];
         }
 
         countOccurrences():number {

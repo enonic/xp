@@ -4,11 +4,16 @@ module api.form {
 
         private formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>;
 
+        private dragControl:api.dom.DivEl;
+
         private listeners:FormItemOccurrenceViewListener[] = [];
 
         constructor(idPrefix:string, className, formItemOccurrence:FormItemOccurrence<FormItemOccurrenceView>) {
             super(idPrefix, className);
             this.formItemOccurrence = formItemOccurrence;
+            this.dragControl = new api.dom.DivEl();
+            this.dragControl.addClass("drag-control");
+            this.appendChild(this.dragControl);
         }
 
         addListener(listener:FormItemOccurrenceViewListener) {
