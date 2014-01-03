@@ -113,7 +113,7 @@ public class AccountSearchService
 
     private void flush()
     {
-        this.client.admin().indices().flush( new FlushRequest( Index.WEM.getName() ).refresh( true ) ).actionGet();
+        this.client.admin().indices().flush( new FlushRequest( Index.WEM.getName() ) ).actionGet();
     }
 
     @Inject

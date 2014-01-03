@@ -1,5 +1,8 @@
 {
     "term": {
-        "myfield._geopoint": "[59.91273, 10.74609]"
+        "myfield._geopoint": {
+            "lat": 59.91273,
+            "lon": 10.74609
+        }
     }
 }
