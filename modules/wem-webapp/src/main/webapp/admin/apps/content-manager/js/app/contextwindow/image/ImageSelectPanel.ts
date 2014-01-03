@@ -3,7 +3,7 @@ module app.contextwindow.image {
 
         private image:api.content.page.image.ImageComponent;
 
-        private contextWindow:app.contextwindow.ContextWindow;
+        private contextWindow:ContextWindow;
 
         private comboBox:api.ui.combobox.ComboBox<api.content.ContentSummary>;
 

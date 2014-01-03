@@ -24,17 +24,17 @@ module app.contextwindow {
             var rowEl = new api.dom.DivEl();
             rowEl.getEl().setData('width', data.width);
             rowEl.getEl().setData('height', data.height);
-            rowEl.getEl().setData('type', data.device.type);
+            rowEl.getEl().setData('type', data.device_type);
 
             var icon = new api.dom.DivEl();
-            icon.setClass('icon-' + data.device.type);
+            icon.setClass('icon-' + data.device_type);
             icon.addClass('icon');
 
             var title = new api.dom.H5El();
             title.getEl().setInnerHtml(data.name);
 
             var subtitle = new api.dom.H6El();
-            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device.type);
+            subtitle.getEl().setInnerHtml(data.width + " &times; " + data.height + " " + data.device_type);
 
             rowEl.appendChild(icon);
             rowEl.appendChild(title);

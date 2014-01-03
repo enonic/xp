@@ -125,10 +125,10 @@ module api.ui.dialog{
             super("ModalDialogButtonRow", "button-row");
         }
 
-        addAction(action:api.ui.Action) {
-
+        addAction(action:api.ui.Action):DialogButton {
             var button = new DialogButton(action);
             this.appendChild(button);
+            return button;
         }
     }
 
