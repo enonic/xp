@@ -2,47 +2,46 @@ module api.form {
 
     export class FormItemOccurrences<V extends FormItemOccurrenceView> {
 
-        private occurrences:FormItemOccurrence<V>[] = [];
+        private occurrences: FormItemOccurrence<V>[] = [];
 
-        private occurrenceViews:V[] = [];
+        private occurrenceViews: V[] = [];
 
-        private occurrenceViewContainer:api.dom.Element;
+        private occurrenceViewContainer: api.dom.Element;
 
-        private formItem:FormItem;
+        private formItem: FormItem;
 
-        private allowedOccurrences:Occurrences;
+        private allowedOccurrences: Occurrences;
 
-        private listeners:FormItemOccurrencesListener[] = [];
+        private listeners: FormItemOccurrencesListener[] = [];
 
-        constructor(formItem:FormItem, occurrenceViewContainer:api.dom.Element,
-                    allowedOccurrences?:Occurrences) {
+        constructor(formItem: FormItem, occurrenceViewContainer: api.dom.Element, allowedOccurrences?: Occurrences) {
             this.formItem = formItem;
             this.occurrenceViewContainer = occurrenceViewContainer;
             this.allowedOccurrences = allowedOccurrences;
         }
 
-        getAllowedOccurrences():Occurrences {
+        getAllowedOccurrences(): Occurrences {
             throw new Error("Must be implemented by inheritor");
         }
 
-        addListener(listener:FormItemOccurrencesListener) {
+        addListener(listener: FormItemOccurrencesListener) {
             this.listeners.push(listener);
         }
 
-        removeListener(listener:FormItemOccurrencesListener) {
+        removeListener(listener: FormItemOccurrencesListener) {
             this.listeners = this.listeners.filter(function (curr) {
                 return curr != listener;
             });
         }
 
-        private notifyOccurrenceAdded(occurrence:FormItemOccurrence<V>) {
-            this.listeners.forEach((listener:FormItemOccurrencesListener) => {
+        private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>) {
+            this.listeners.forEach((listener: FormItemOccurrencesListener) => {
                 listener.onOccurrenceAdded(occurrence);
             });
         }
 
-        private notifyOccurrenceRemoved(occurrence:FormItemOccurrence<V>) {
-            this.listeners.forEach((listener:FormItemOccurrencesListener) => {
+        private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>) {
+            this.listeners.forEach((listener: FormItemOccurrencesListener) => {
                 listener.onOccurrenceRemoved(occurrence);
             });
         }
@@ -59,46 +58,46 @@ module api.form {
             }
         }
 
-        addOccurrence(occurrence:FormItemOccurrence<V>) {
+        addOccurrence(occurrence: FormItemOccurrence<V>) {
             this.occurrences.push(occurrence);
         }
 
-        getFormItem():FormItem {
+        getFormItem(): FormItem {
             return this.formItem;
         }
 
-        maximumOccurrencesReached():boolean {
+        maximumOccurrencesReached(): boolean {
             return this.allowedOccurrences.maximumReached(this.countOccurrences());
         }
 
         layout() {
-            this.occurrences.forEach((occurrence:FormItemOccurrence<V>) => {
-                var occurrenceView:V = this.createNewOccurrenceView(occurrence);
+            this.occurrences.forEach((occurrence: FormItemOccurrence<V>) => {
+                var occurrenceView: V = this.createNewOccurrenceView(occurrence);
                 this.occurrenceViews.push(occurrenceView);
                 this.occurrenceViewContainer.appendChild(occurrenceView);
             });
         }
 
-        createNewOccurrenceView(occurrence:FormItemOccurrence<V>):V {
+        createNewOccurrenceView(occurrence: FormItemOccurrence<V>): V {
             throw new Error("Must be implemented by inheritor");
         }
 
-        createNewOccurrence(formItemOccurrences:FormItemOccurrences<V>, insertAtIndex:number):FormItemOccurrence<V> {
+        createNewOccurrence(formItemOccurrences: FormItemOccurrences<V>, insertAtIndex: number): FormItemOccurrence<V> {
             throw new Error("Must be implemented by inheritor");
         }
 
-        doRemoveOccurrence(occurrenceViewToRemove:V, indexToRemove:number) {
+        doRemoveOccurrence(occurrenceViewToRemove: V, indexToRemove: number) {
 
             if (!this.canRemove()) {
                 return;
             }
 
             occurrenceViewToRemove.remove();
-            this.occurrenceViews = this.occurrenceViews.filter((curr:V) => {
+            this.occurrenceViews = this.occurrenceViews.filter((curr: V) => {
                 return curr != occurrenceViewToRemove;
             });
             var occurrenceToRemove = this.occurrences[indexToRemove];
-            this.occurrences = this.occurrences.filter((curr:FormItemOccurrence<V>) => {
+            this.occurrences = this.occurrences.filter((curr: FormItemOccurrence<V>) => {
                 return curr.getIndex() != indexToRemove;
             });
 
@@ -109,30 +108,30 @@ module api.form {
 
         createAndAddOccurrence() {
 
-            var insertAtIndex:number = this.countOccurrences();
-            var occurrence:FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
+            var insertAtIndex: number = this.countOccurrences();
+            var occurrence: FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
 
             this.doAddOccurrence(occurrence);
         }
 
-        addOccurrenceAfter(fromOccurrence:V) {
+        addOccurrenceAfter(fromOccurrence: V) {
 
-            var insertAtIndex:number = fromOccurrence.getIndex() + 1;
-            var occurrence:FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
+            var insertAtIndex: number = fromOccurrence.getIndex() + 1;
+            var occurrence: FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
 
             this.doAddOccurrence(occurrence);
         }
 
-        private doAddOccurrence(occurrence:FormItemOccurrence<V>) {
+        private doAddOccurrence(occurrence: FormItemOccurrence<V>) {
 
             if (this.allowedOccurrences.maximumReached(this.countOccurrences())) {
                 return;
             }
-            var occurrenceView:V = this.createNewOccurrenceView(occurrence);
+            var occurrenceView: V = this.createNewOccurrenceView(occurrence);
             var insertAtIndex = occurrence.getIndex();
             this.occurrences.splice(insertAtIndex, 0, occurrence);
 
-            var occurrenceViewBefore:api.dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
+            var occurrenceViewBefore: api.dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
             if (occurrenceViewBefore != null) {
                 occurrenceView.insertAfterEl(occurrenceViewBefore);
             }
@@ -148,29 +147,60 @@ module api.form {
         }
 
         resetOccurrenceIndexes() {
-            this.occurrences.forEach((currOccurrence:FormItemOccurrence<V>, index:number) => {
+            this.occurrences.forEach((currOccurrence: FormItemOccurrence<V>, index: number) => {
                 currOccurrence.setIndex(index);
             });
         }
 
         refreshOccurrenceViews() {
-            this.occurrenceViews.forEach((currOccurrenceView:V) => {
+            this.occurrenceViews.forEach((currOccurrenceView: V) => {
                 currOccurrenceView.refresh();
             });
         }
 
-        getOccurrenceViewElementBefore(index:number):V {
+        getOccurrenceViewElementBefore(index: number): V {
             if (index < 1) {
                 return null;
             }
-            return this.occurrenceViews.filter((occurrenceView:V) => {return occurrenceView.getIndex() == index - 1})[0];
+            return this.occurrenceViews.filter((occurrenceView: V) => {
+                return occurrenceView.getIndex() == index - 1
+            })[0];
         }
 
-        countOccurrences():number {
+        countOccurrences(): number {
             return this.occurrences.length;
         }
 
-        getOccurrences():FormItemOccurrence<V>[] {
+        sortOccurrences(compareFunction: (a: form.FormItemOccurrence<V>, b: form.FormItemOccurrence<V>) => number) {
+
+            /*console.log("this.occurrences before sort:");
+            this.occurrences.forEach((o: FormItemOccurrence<V>, index: number)=> {
+                console.log("  " + index + ": index=[" + o.getIndex() + "], dataId=[" + o.getDataId().toString() + "]");
+            });*/
+
+            this.occurrences.sort(compareFunction);
+
+            /*console.log("this.occurrences after sort:");
+            this.occurrences.forEach((o: FormItemOccurrence<V>, index: number)=> {
+                console.log("  " + index + ": index=[" + o.getIndex() + "], dataId=[" + o.getDataId().toString() + "]");
+            });*/
+
+
+
+            /*console.log("this.occurrenceViews before sort:");
+            this.occurrenceViews.forEach((ov: FormItemOccurrenceView, index: number)=> {
+                console.log("  " + index + ": index=[" + ov.getIndex() + "], id=[" + ov.getId() + "]");
+            });*/
+            this.occurrenceViews.sort((a: FormItemOccurrenceView, b: FormItemOccurrenceView)=> {
+                return a.getIndex() - b.getIndex();
+            });
+            /*console.log("this.occurrenceViews after sort:");
+            this.occurrenceViews.forEach((ov: FormItemOccurrenceView, index: number)=> {
+                console.log("  " + index + ": index=[" + ov.getIndex() + "], id=[" + ov.getId() + "]");
+            });*/
+        }
+
+        getOccurrences(): FormItemOccurrence<V>[] {
             return this.occurrences;
         }
 
@@ -178,7 +208,7 @@ module api.form {
             return this.occurrences.length > Math.max(1, this.allowedOccurrences.getMinimum());
         }
 
-        getOccurrenceViews():V[] {
+        getOccurrenceViews(): V[] {
             return this.occurrenceViews;
         }
     }

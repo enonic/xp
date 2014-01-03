@@ -2,64 +2,65 @@ module api.form.inputtype.support {
 
     export class BaseInputTypeView extends api.dom.DivEl implements api.form.inputtype.InputTypeView {
 
-        private input:api.form.Input;
+        private input: api.form.Input;
 
-        private inputOccurrences:InputOccurrences;
+        private inputOccurrences: InputOccurrences;
 
-        constructor(idPrefix:string) {
+        constructor(idPrefix: string) {
             super(idPrefix, "input-type-view");
-            jQuery(this.getHTMLElement() ).sortable({
+            jQuery(this.getHTMLElement()).sortable({
                 axis: "y",
                 containment: 'parent',
                 handle: '.drag-control',
                 update: (event, ui) => {
-                    var i , len = this.getHTMLElement().children.length;
-                    var newIndexes = [];
-                    for (i = 0; i < len; i++) {
+                    var childCount = this.getHTMLElement().children.length;
+                    var newOccurrenceOrder: InputOccurrence[] = [];
+                    for (var i = 0; i < childCount; i++) {
                         var child = this.getHTMLElement().children[i];
-                        var occurrence = this.inputOccurrences.getOccurrences().filter((occ) => {
+                        newOccurrenceOrder[i] = this.inputOccurrences.getOccurrences().filter((occ: InputOccurrence) => {
                             return occ.getDataId().toString() == child.getAttribute('data-dataid');
                         })[0];
-                        newIndexes[i] = occurrence;
-
                     }
-                    newIndexes.forEach((occ, index) => {
+                    newOccurrenceOrder.forEach((occ: InputOccurrence, index: number) => {
                         occ.setIndex(index);
                     });
-                    this.inputOccurrences.getOccurrences().sort((occ1, occ2) => {return occ1.getIndex() - occ2.getIndex()});
+                    this.inputOccurrences.sortOccurrences((a:InputOccurrence, b:InputOccurrence) => {
+                        return a.getIndex() - b.getIndex();
+                    });
                     this.inputOccurrences.refreshOccurrenceViews();
                 }
             });
 
         }
 
-        onElementAddedToParent(parent:api.dom.Element) {
+        onElementAddedToParent(parent: api.dom.Element) {
             super.onElementAddedToParent(parent);
             this.addFormItemOccurrencesListener({
                 onOccurrenceAdded: () => {
-                    jQuery(this.getHTMLElement() ).sortable("refresh");
+                    jQuery(this.getHTMLElement()).sortable("refresh");
                 },
-                onOccurrenceRemoved: () => {}
+                onOccurrenceRemoved: () => {
+                }
             });
         }
 
-        getHTMLElement():HTMLElement {
+        getHTMLElement(): HTMLElement {
             return super.getHTMLElement();
         }
 
-        isManagingAdd():boolean {
+        isManagingAdd(): boolean {
             return false;
         }
 
-        addFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener) {
+        addFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
             this.inputOccurrences.addListener(listener);
         }
 
-        removeFormItemOccurrencesListener(listener:api.form.FormItemOccurrencesListener) {
+        removeFormItemOccurrencesListener(listener: api.form.FormItemOccurrencesListener) {
             this.inputOccurrences.removeListener(listener);
         }
 
-        public maximumOccurrencesReached():boolean {
+        public maximumOccurrencesReached(): boolean {
             return this.inputOccurrences.maximumOccurrencesReached();
         }
 
@@ -67,50 +68,50 @@ module api.form.inputtype.support {
             this.inputOccurrences.createAndAddOccurrence();
         }
 
-        layout(input:api.form.Input, properties:api.data.Property[]) {
+        layout(input: api.form.Input, properties: api.data.Property[]) {
 
             this.input = input;
             this.inputOccurrences = new InputOccurrences(this, this.input, properties);
             this.inputOccurrences.layout();
-            jQuery(this.getHTMLElement() ).sortable("refresh");
+            jQuery(this.getHTMLElement()).sortable("refresh");
         }
 
-        getValues():api.data.Value[] {
+        getValues(): api.data.Value[] {
 
             return this.inputOccurrences.getValues();
         }
 
-        getAttachments():api.content.attachment.Attachment[] {
+        getAttachments(): api.content.attachment.Attachment[] {
             return [];
         }
 
-        validate(validationRecorder:api.form.ValidationRecorder) {
+        validate(validationRecorder: api.form.ValidationRecorder) {
 
-            this.getValues().forEach((value:api.data.Value, index:number) => {
+            this.getValues().forEach((value: api.data.Value, index: number) => {
                 if (this.valueBreaksRequiredContract(value)) {
                     validationRecorder.registerBreaksRequiredContract(new api.data.DataId(this.input.getName(), index))
                 }
             });
         }
 
-        getInput():api.form.Input {
+        getInput(): api.form.Input {
             return this.input;
         }
 
-        valueBreaksRequiredContract(value:api.data.Value):boolean {
+        valueBreaksRequiredContract(value: api.data.Value): boolean {
             throw new Error("Must be implemented by inheritor");
         }
 
-        createInputOccurrenceElement(index:number, property:api.data.Property):api.dom.Element {
+        createInputOccurrenceElement(index: number, property: api.data.Property): api.dom.Element {
             throw new Error("Must be implemented by inheritor");
         }
 
-        getValue(occurrence:api.dom.Element):api.data.Value {
+        getValue(occurrence: api.dom.Element): api.data.Value {
             throw new Error("Must be implemented by inheritor");
         }
 
         giveFocus(): boolean {
-            if( this.inputOccurrences ) {
+            if (this.inputOccurrences) {
                 return this.inputOccurrences.giveFocus();
             }
             return false;
