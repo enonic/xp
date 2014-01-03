@@ -63,6 +63,7 @@ final class Runner
         final String docBase = new File( "./modules/wem-webapp/src/main/webapp" ).getAbsolutePath();
         final File generatedDir = new File( "./modules/wem-webapp/target/main/webapp" );
         final File adminUiDir = new File( "./modules/wem-admin-ui/src/main/web" );
+        final File adminUiTestDir = new File( "./modules/wem-admin-ui/src/test/web" );
 
         this.tomcat.setPort( 8080 );
         this.tomcat.setHostname( "localhost" );
@@ -83,6 +84,11 @@ final class Runner
         if ( adminUiDir.isDirectory() )
         {
             standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", adminUiDir.getAbsolutePath(), null, "/" );
+        }
+
+        if ( adminUiTestDir.isDirectory() )
+        {
+            standardRoot.createWebResourceSet( WebResourceRoot.ResourceSetType.PRE, "/", adminUiTestDir.getAbsolutePath(), null, "/" );
         }
     }
 

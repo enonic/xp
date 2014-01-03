@@ -15,6 +15,28 @@
   <packaging>jar</packaging>
   <name>Enonic WEM Admin UI</name>
 
+  <properties>
+    <npm.exec>npm</npm.exec>
+    <node.exec>node</node.exec>
+    <grunt.script>node_modules/grunt-cli/bin/grunt</grunt.script>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <npm.exec>npm.cmd</npm.exec>
+        <node.exec>node.exe</node.exec>
+        <grunt.script>node_modules\grunt-cli\bin\grunt</grunt.script>
+      </properties>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
@@ -35,7 +57,45 @@
                   <directory>${basedir}/src/main/web</directory>
                   <filtering>false</filtering>
                 </resource>
+                <resource>
+                  <directory>${basedir}/src/test/web</directory>
+                  <filtering>false</filtering>
+                </resource>
               </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <id>npmInstall</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${npm.exec}</executable>
+              <arguments>
+                <argument>install</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>gruntAll</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${node.exec}</executable>
+              <arguments>
+                <argument>${grunt.script}</argument>
+                <argument>all</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>
