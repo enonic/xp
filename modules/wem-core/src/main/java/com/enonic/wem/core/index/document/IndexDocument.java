@@ -10,7 +10,7 @@ import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 
-public class IndexDocument2
+public class IndexDocument
 {
 
     private final EntityId id;
@@ -27,7 +27,7 @@ public class IndexDocument2
 
     private final String collection;
 
-    private IndexDocument2( final Builder builder )
+    private IndexDocument( final Builder builder )
     {
         this.id = builder.id;
         this.indexType = builder.indexType;
@@ -139,9 +139,9 @@ public class IndexDocument2
             return this;
         }
 
-        public IndexDocument2 build()
+        public IndexDocument build()
         {
-            return new IndexDocument2( this );
+            return new IndexDocument( this );
         }
     }
 

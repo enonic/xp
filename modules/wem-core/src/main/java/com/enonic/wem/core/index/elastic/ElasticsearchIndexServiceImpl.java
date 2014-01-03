@@ -31,7 +31,7 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.IndexStatus;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.entity.EntityQueryResult;
 import com.enonic.wem.core.index.entity.EntitySearchResultFactory;
 
@@ -71,9 +71,9 @@ public class ElasticsearchIndexServiceImpl
     }
 
     @Override
-    public void indexDocuments( Collection<IndexDocument2> indexDocuments )
+    public void indexDocuments( Collection<IndexDocument> indexDocuments )
     {
-        for ( IndexDocument2 indexDocument : indexDocuments )
+        for ( IndexDocument indexDocument : indexDocuments )
         {
             final String id = indexDocument.getId();
             final IndexType indexType = indexDocument.getIndexType();

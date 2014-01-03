@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.core.entity.index.NodeIndexDocumentFactory;
-import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.elastic.ElasticsearchIndexServiceImpl;
 import com.enonic.wem.core.index.elastic.IndexMapping;
 import com.enonic.wem.core.index.elastic.IndexMappingProvider;
@@ -112,7 +112,7 @@ public class IndexService
     {
         NodeIndexDocumentFactory nodeIndexDocumentFactory = new NodeIndexDocumentFactory();
 
-        final Collection<IndexDocument2> indexDocuments = nodeIndexDocumentFactory.create( node );
+        final Collection<IndexDocument> indexDocuments = nodeIndexDocumentFactory.create( node );
         elasticsearchIndexService.indexDocuments( indexDocuments );
     }
 

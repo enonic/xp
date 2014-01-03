@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.elastic.XContentBuilderFactory;
 
 import static org.junit.Assert.*;
@@ -24,7 +24,7 @@ public class XContentBuilderFactoryTest
     public void create_given_indexdocument_analyzer()
         throws Exception
     {
-        IndexDocument2 indexDocument = IndexDocument2.newIndexDocument().
+        IndexDocument indexDocument = IndexDocument.newIndexDocument().
             index( Index.NODB ).
             indexType( IndexType.NODE ).
             analyzer( "myAnalyzer" ).

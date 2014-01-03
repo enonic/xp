@@ -12,7 +12,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.wem.core.index.IndexConstants;
 import com.enonic.wem.core.index.IndexException;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
-import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocument;
 
 public class XContentBuilderFactory
 {
@@ -20,7 +20,7 @@ public class XContentBuilderFactory
     {
     }
 
-    public static XContentBuilder create( final IndexDocument2 indexDocument )
+    public static XContentBuilder create( final IndexDocument indexDocument )
     {
         try
         {
@@ -37,7 +37,7 @@ public class XContentBuilderFactory
         }
     }
 
-    private static void addCollection( final XContentBuilder builder, final IndexDocument2 indexDocument )
+    private static void addCollection( final XContentBuilder builder, final IndexDocument indexDocument )
         throws Exception
     {
         final String collection = indexDocument.getCollection();
@@ -46,7 +46,7 @@ public class XContentBuilderFactory
                   Strings.isNullOrEmpty( collection ) ? IndexConstants.DEFAULT_COLLECTION : collection );
     }
 
-    private static void addDocumentAnalyzer( final XContentBuilder builder, final IndexDocument2 indexDocument )
+    private static void addDocumentAnalyzer( final XContentBuilder builder, final IndexDocument indexDocument )
         throws Exception
     {
         final String analyzer = indexDocument.getAnalyzer();
@@ -73,12 +73,12 @@ public class XContentBuilderFactory
         contentBuilder.endObject();
     }
 
-    private static void addFields( final XContentBuilder result, final IndexDocument2 indexDocument2 )
+    private static void addFields( final XContentBuilder result, final IndexDocument indexDocument )
         throws Exception
     {
         final Multimap<String, Object> fieldValueMap = ArrayListMultimap.create();
 
-        final Set<AbstractIndexDocumentItem> indexDocumentItems = indexDocument2.getIndexDocumentItems();
+        final Set<AbstractIndexDocumentItem> indexDocumentItems = indexDocument.getIndexDocumentItems();
 
         for ( AbstractIndexDocumentItem item : indexDocumentItems )
         {

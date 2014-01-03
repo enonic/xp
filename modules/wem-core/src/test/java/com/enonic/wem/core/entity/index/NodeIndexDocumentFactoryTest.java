@@ -19,7 +19,7 @@ import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
 import com.enonic.wem.core.index.IndexValueType;
 import com.enonic.wem.core.index.document.AbstractIndexDocumentItem;
-import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentItemPath;
 
 import static org.junit.Assert.*;
@@ -55,7 +55,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument2> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = factory.create( node );
 
         assertNotNull( indexDocuments );
     }
@@ -68,7 +68,7 @@ public class NodeIndexDocumentFactoryTest
             id( EntityId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument2> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = factory.create( node );
 
         assertNotNull( indexDocuments );
         assertNotNull( getIndexDocumentOfType( indexDocuments, IndexType.NODE ) );
@@ -87,9 +87,9 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument2> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = factory.create( node );
 
-        final IndexDocument2 indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
     }
@@ -115,9 +115,9 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument2> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = factory.create( node );
 
-        final IndexDocument2 indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
         assertEquals( Index.NODB, indexDocument.getIndex() );
@@ -152,17 +152,17 @@ public class NodeIndexDocumentFactoryTest
             rootDataSet( rootDataSet ).
             build();
 
-        final Collection<IndexDocument2> indexDocuments = factory.create( node );
+        final Collection<IndexDocument> indexDocuments = factory.create( node );
 
-        final IndexDocument2 indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
+        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, IndexType.NODE );
 
         assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_c" ), IndexValueType.NUMBER ) );
         assertNotNull( getItemWithName( indexDocument, IndexDocumentItemPath.from( "a_b_d" ), IndexValueType.DATETIME ) );
     }
 
-    private IndexDocument2 getIndexDocumentOfType( final Collection<IndexDocument2> indexDocuments, final IndexType indexType )
+    private IndexDocument getIndexDocumentOfType( final Collection<IndexDocument> indexDocuments, final IndexType indexType )
     {
-        for ( IndexDocument2 indexDocument : indexDocuments )
+        for ( IndexDocument indexDocument : indexDocuments )
         {
             if ( indexType.equals( indexDocument.getIndexType() ) )
             {
@@ -172,7 +172,7 @@ public class NodeIndexDocumentFactoryTest
         return null;
     }
 
-    public AbstractIndexDocumentItem getItemWithName( final IndexDocument2 indexDocument, final IndexDocumentItemPath path,
+    public AbstractIndexDocumentItem getItemWithName( final IndexDocument indexDocument, final IndexDocumentItemPath path,
                                                       final IndexValueType baseType )
     {
         for ( AbstractIndexDocumentItem item : indexDocument.getIndexDocumentItems() )

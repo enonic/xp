@@ -14,7 +14,7 @@ import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
 import com.enonic.wem.core.index.Index;
 import com.enonic.wem.core.index.IndexType;
-import com.enonic.wem.core.index.document.IndexDocument2;
+import com.enonic.wem.core.index.document.IndexDocument;
 import com.enonic.wem.core.index.document.IndexDocumentItemFactory;
 import com.enonic.wem.core.index.document.IndexDocumentItemPath;
 
@@ -56,22 +56,22 @@ public class NodeIndexDocumentFactory
         fulltextEnabled( false ).
         build();
 
-    public Collection<IndexDocument2> create( final Node node )
+    public Collection<IndexDocument> create( final Node node )
     {
         node.validateForIndexing();
 
-        Set<IndexDocument2> indexDocuments = Sets.newHashSet();
+        Set<IndexDocument> indexDocuments = Sets.newHashSet();
 
         indexDocuments.add( createDataDocument( node ) );
 
         return indexDocuments;
     }
 
-    private IndexDocument2 createDataDocument( final Node node )
+    private IndexDocument createDataDocument( final Node node )
     {
         final EntityIndexConfig entityIndexConfig = node.getEntityIndexConfig();
 
-        final IndexDocument2.Builder builder = IndexDocument2.newIndexDocument().
+        final IndexDocument.Builder builder = IndexDocument.newIndexDocument().
             id( node.id() ).
             index( Index.NODB ).
             indexType( IndexType.NODE ).
@@ -84,7 +84,7 @@ public class NodeIndexDocumentFactory
         return builder.build();
     }
 
-    private void addNodeMetaData( final Node node, final IndexDocument2.Builder builder )
+    private void addNodeMetaData( final Node node, final IndexDocument.Builder builder )
     {
         if ( node.name() != null )
         {
@@ -132,7 +132,7 @@ public class NodeIndexDocumentFactory
 
     }
 
-    private void addNodeProperties( final Node node, final IndexDocument2.Builder builder )
+    private void addNodeProperties( final Node node, final IndexDocument.Builder builder )
     {
         PropertyVisitor visitor = new PropertyVisitor()
         {
