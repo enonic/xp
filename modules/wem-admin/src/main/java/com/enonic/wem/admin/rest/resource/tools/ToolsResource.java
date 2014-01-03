@@ -36,12 +36,11 @@ public final class ToolsResource
     public String cleanData()
         throws Exception
     {
-        this.indexService.deleteIndex( Index.WEM, Index.NODB );
-        this.indexService.createIndex( Index.WEM );
+        this.indexService.deleteIndex( Index.NODB );
         this.indexService.createIndex( Index.NODB );
 
         this.startupInitializer.initialize( true );
-        this.indexService.reIndex( Index.WEM, Index.NODB );
+        this.indexService.reIndex( Index.NODB );
         return "Done.";
     }
 
@@ -51,7 +50,7 @@ public final class ToolsResource
     public String reIndexData( @QueryParam("redirect") final String redirect )
         throws Exception
     {
-        this.indexService.reIndex( Index.WEM, Index.NODB );
+        this.indexService.reIndex( Index.NODB );
         return "Done.";
     }
 }

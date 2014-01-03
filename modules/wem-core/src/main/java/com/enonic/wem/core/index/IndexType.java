@@ -6,7 +6,6 @@ public enum IndexType
     NODE,
     RELATION,
     POLICY,
-    ACCOUNT,
     CONTENT,
     BINARIES;
 

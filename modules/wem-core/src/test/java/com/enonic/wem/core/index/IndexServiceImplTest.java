@@ -31,8 +31,8 @@ public class IndexServiceImplTest
         throws Exception
     {
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.WEM, true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( Index.WEM ) ).thenReturn( false );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.NODB, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( Index.NODB ) ).thenReturn( false );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 
@@ -42,7 +42,7 @@ public class IndexServiceImplTest
 
         indexService.start();
 
-        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( Index.WEM );
+        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( Index.NODB );
     }
 
     @Test
@@ -51,8 +51,8 @@ public class IndexServiceImplTest
     {
 
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.WEM, true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( Index.WEM ) ).thenReturn( true );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.NODB, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( Index.NODB ) ).thenReturn( true );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 
@@ -62,7 +62,7 @@ public class IndexServiceImplTest
 
         indexService.start();
 
-        Mockito.verify( elasticsearchIndexService, Mockito.never() ).createIndex( Index.WEM );
+        Mockito.verify( elasticsearchIndexService, Mockito.never() ).createIndex( Index.NODB );
     }
 
     @Test
@@ -70,10 +70,10 @@ public class IndexServiceImplTest
         throws Exception
     {
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.WEM, true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( Index.WEM ) ).thenReturn( false );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.NODB, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( Index.NODB ) ).thenReturn( false );
 
-        Mockito.doThrow( new IndexAlreadyExistsException( null ) ).when( elasticsearchIndexService ).createIndex( Index.WEM );
+        Mockito.doThrow( new IndexAlreadyExistsException( null ) ).when( elasticsearchIndexService ).createIndex( Index.NODB );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 
@@ -92,10 +92,10 @@ public class IndexServiceImplTest
         throws Exception
     {
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.WEM, true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( Index.WEM ) ).thenReturn( false );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.NODB, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( Index.NODB ) ).thenReturn( false );
 
-        Mockito.doThrow( new ElasticSearchException( "expected" ) ).when( elasticsearchIndexService ).createIndex( Index.WEM );
+        Mockito.doThrow( new ElasticSearchException( "expected" ) ).when( elasticsearchIndexService ).createIndex( Index.NODB );
 
         final IndexMappingProvider indexMappingProvider = setUpIndexMappingMock();
 
@@ -114,8 +114,8 @@ public class IndexServiceImplTest
         throws Exception
     {
         final ElasticsearchIndexServiceImpl elasticsearchIndexService = Mockito.mock( ElasticsearchIndexServiceImpl.class );
-        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.WEM, true ) ).thenReturn( IndexStatus.YELLOW );
-        Mockito.when( elasticsearchIndexService.indexExists( Index.WEM ) ).thenReturn( false );
+        Mockito.when( elasticsearchIndexService.getIndexStatus( Index.NODB, true ) ).thenReturn( IndexStatus.YELLOW );
+        Mockito.when( elasticsearchIndexService.indexExists( Index.NODB ) ).thenReturn( false );
         indexService.setDoReindexOnEmptyIndex( true );
 
         final ReindexService reindexService = Mockito.mock( ReindexService.class );
@@ -129,15 +129,15 @@ public class IndexServiceImplTest
 
         indexService.start();
 
-        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( Index.WEM );
+        Mockito.verify( elasticsearchIndexService, Mockito.times( 1 ) ).createIndex( Index.NODB );
     }
 
     private IndexMappingProvider setUpIndexMappingMock()
     {
         final IndexMappingProvider indexMappingProvider = Mockito.mock( IndexMappingProvider.class );
         List<IndexMapping> indexMappings =
-            Lists.newArrayList( new IndexMapping( Index.WEM, IndexType.ACCOUNT.getIndexTypeName(), "Testings 1234" ) );
-        Mockito.when( indexMappingProvider.getMappingsForIndex( Index.WEM ) ).thenReturn( indexMappings );
+            Lists.newArrayList( new IndexMapping( Index.NODB, IndexType.NODE.getIndexTypeName(), "Testings 1234" ) );
+        Mockito.when( indexMappingProvider.getMappingsForIndex( Index.NODB ) ).thenReturn( indexMappings );
         return indexMappingProvider;
     }
 

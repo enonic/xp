@@ -4,12 +4,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.wem.core.index.Index;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 public class IndexMappingProviderTest
 {
@@ -18,14 +15,8 @@ public class IndexMappingProviderTest
         throws Exception
     {
         final IndexMappingProvider mappingProvider = new IndexMappingProvider();
-        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( Index.WEM );
+        final List<IndexMapping> indexMappings = mappingProvider.getMappingsForIndex( Index.NODB );
 
-        assertEquals( 3, indexMappings.size() );
-
-        for ( final IndexMapping indexMapping : indexMappings )
-        {
-            assertEquals( Index.WEM, indexMapping.getIndex() );
-            assertTrue( Lists.newArrayList( "account", "content", "binaries" ).contains( indexMapping.getIndexType() ) );
-        }
+        assertEquals( 1, indexMappings.size() );
     }
 }
