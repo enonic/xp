@@ -6,16 +6,16 @@ module api.form {
 
         private form: Form;
 
-        private contentData: api.content.ContentData;
+        private rootDataSet: api.data.RootDataSet;
 
         private formItemViews: FormItemView[] = [];
 
-        constructor(context: FormContext, form: Form, contentData?: api.content.ContentData) {
+        constructor(context: FormContext, form: Form, contentData?: api.data.RootDataSet) {
             super("FormView");
             this.setClass("form-view");
             this.context = context;
             this.form = form;
-            this.contentData = contentData;
+            this.rootDataSet = contentData;
             this.doLayout();
         }
 
@@ -24,7 +24,7 @@ module api.form {
                 setFormContext(this.context).
                 setFormItems(this.form.getFormItems()).
                 setParentElement(this).
-                layout(this.contentData);
+                layout(this.rootDataSet);
         }
 
         public getValueAtPath(path: api.data.DataPath): api.data.Value {
@@ -112,8 +112,8 @@ module api.form {
             return null;
         }
 
-        getContentData(): api.content.ContentData {
-            return this.contentData;
+        getContentData(): api.data.RootDataSet {
+            return this.rootDataSet;
         }
 
         getAttachments(): api.content.attachment.Attachment[] {

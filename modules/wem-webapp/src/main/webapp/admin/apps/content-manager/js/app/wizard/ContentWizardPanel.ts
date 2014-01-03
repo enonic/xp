@@ -65,7 +65,7 @@ module app.wizard {
 
         private contentWizardStepForm: ContentWizardStepForm;
 
-        private pageWizardStepForm: PageWizardStepForm;
+        private pageWizardStepForm: page.PageWizardStepForm;
 
         private iconUploadItem: api.ui.UploadItem;
 
@@ -135,11 +135,11 @@ module app.wizard {
                 this.siteWizardStepForm = null;
             }
             this.contentWizardStepForm = new ContentWizardStepForm();
-            var pageWizardStepFormConfig: PageWizardStepFormConfig = {
+            var pageWizardStepFormConfig: page.PageWizardStepFormConfig = {
                 parentContent: this.parentContent,
                 siteContent: this.siteContent
             };
-            this.pageWizardStepForm = new PageWizardStepForm(pageWizardStepFormConfig);
+            this.pageWizardStepForm = new page.PageWizardStepForm(pageWizardStepFormConfig);
 
             app.wizard.event.ShowContentLiveEvent.on((event) => {
                 this.toggleFormPanel(false);
@@ -272,39 +272,57 @@ module app.wizard {
                     // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
                     this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
-                    if (content.isPage()) {
-                        var page = content.getPage();
-
-                        new api.content.page.GetPageTemplateByKeyRequest(page.getTemplate()).
-                            sendAndParse().
-                            done((pageTemplate: api.content.page.PageTemplate) => {
-
-                                this.pageWizardStepForm.renderExisting(content, pageTemplate);
-                                this.livePanel.renderExisting(content, pageTemplate);
-
-                                if (this.siteWizardStepForm != null && content.getSite()) {
-                                    this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
-                                        callback();
-                                    });
-                                }
-                                else {
-                                    callback();
-                                }
-                            });
-                    }
-                    else {
-
-                        if (this.siteWizardStepForm != null && content.isSite()) {
-                            this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
-                                callback();
-                            });
-                        }
-                        else {
-                            callback();
-                        }
-                    }
+                    this.doRenderExistingSite(content, formContext)
+                        .then(() => {
+                            this.doRenderExistingPage(content, formContext).
+                                then((pageTemplate: api.content.page.PageTemplate) => {
+                                    this.doRenderLivePanel(content, pageTemplate).
+                                        then(() => {
+                                            callback();
+                                        });
+                                });
+                        });
                 });
             });
+        }
+
+        private doRenderExistingSite(content: api.content.Content, formContext: api.form.FormContext): Q.Promise<void> {
+
+            var deferred = Q.defer<void>();
+
+            if (this.siteWizardStepForm != null && content.getSite()) {
+                this.siteWizardStepForm.renderExisting(formContext, content.getSite(), this.contentType, () => {
+                    deferred.resolve(null);
+                });
+            }
+            else {
+                deferred.resolve(null);
+            }
+
+            return deferred.promise;
+        }
+
+        private doRenderExistingPage(content: api.content.Content, formContext: api.form.FormContext): Q.Promise<api.content.page.PageTemplate> {
+
+            var deferred = Q.defer<api.content.page.PageTemplate>();
+
+            this.pageWizardStepForm.renderExisting(content).
+                then((pageTemplate:api.content.page.PageTemplate) => {
+                    deferred.resolve(pageTemplate);
+                });
+
+
+            return deferred.promise;
+        }
+
+        private doRenderLivePanel(content: api.content.Content, pageTemplate: api.content.page.PageTemplate): Q.Promise<void> {
+
+            var deferred = Q.defer<void>();
+
+            this.livePanel.renderExisting(content, pageTemplate);
+
+            deferred.resolve(null);
+            return deferred.promise;
         }
 
         persistNewItem(callback: (persistedContent: api.content.Content) => void) {

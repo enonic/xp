@@ -17,6 +17,7 @@
 
 ///<reference path='app/wizard/action/_module.ts' />
 ///<reference path='app/wizard/event/_module.ts' />
+///<reference path='app/wizard/page/_module.ts' />
 ///<reference path='app/wizard/site/_module.ts' />
 ///<reference path='app/wizard/_module.ts' />
 ///<reference path='lib/_module.ts' />

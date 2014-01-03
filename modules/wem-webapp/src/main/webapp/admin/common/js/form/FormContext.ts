@@ -15,11 +15,11 @@ module api.form {
         }
 
         getContentId(): api.content.ContentId {
-            return this.persistedContent.getContentId();
+            return this.persistedContent != null ? this.persistedContent.getContentId() : null;
         }
 
         getContentPath(): api.content.ContentPath {
-            return this.persistedContent.getPath();
+            return this.persistedContent != null ? this.persistedContent.getPath(): null;
         }
 
         getParentContentPath(): api.content.ContentPath {

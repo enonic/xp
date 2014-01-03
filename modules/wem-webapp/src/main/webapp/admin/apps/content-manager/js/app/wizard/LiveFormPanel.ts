@@ -1,13 +1,13 @@
 module app.wizard {
     export class LiveFormPanel extends api.ui.Panel {
 
-        private frame:api.dom.IFrameEl;
+        private frame: api.dom.IFrameEl;
 
-        private url:string;
+        private url: string;
 
-        private site:api.content.Content;
+        private site: api.content.Content;
 
-        constructor(site:api.content.Content, url:string = api.util.getUri("portal/edit/bluman-intranett")) {
+        constructor(site: api.content.Content, url: string = api.util.getUri("portal/edit/bluman-intranett")) {
             super("LiveFormPanel");
             this.addClass("live-form-panel");
             this.url = url;
@@ -49,18 +49,20 @@ module app.wizard {
             }
         }
 
-        renderExisting(content:api.content.Content, pageTemplate:api.content.page.PageTemplate) {
+        renderExisting(content: api.content.Content, pageTemplate: api.content.page.PageTemplate) {
 
-            var page = content.getPage();
-            var config = pageTemplate.getConfig();
-            if (page.hasConfig()) {
-                config = page.getConfig();
+            if (content.isPage() && pageTemplate != null) {
+                var page = content.getPage();
+                var config = pageTemplate.getConfig();
+                if (page.hasConfig()) {
+                    config = page.getConfig();
+                }
+                var regionResolver = new api.content.page.region.RegionResolver(config);
+                var regions = regionResolver.resolve();
+                //var region = regions.getByName();
+                //region.getPart(id);
+                // TODO: live edit render request to server
             }
-            var regionResolver = new api.content.page.region.RegionResolver(config);
-            var regions = regionResolver.resolve();
-            //var region = regions.getByName();
-            //region.getPart(id);
-            // TODO: live edit render request to server
         }
     }
 }
