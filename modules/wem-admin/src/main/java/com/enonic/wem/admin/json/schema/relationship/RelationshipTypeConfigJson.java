@@ -5,11 +5,14 @@ import com.enonic.wem.core.schema.relationship.RelationshipTypeXmlSerializer;
 
 public class RelationshipTypeConfigJson
 {
+    private final static RelationshipTypeXmlSerializer relationshipTypeXmlSerializer =
+        new RelationshipTypeXmlSerializer().generateName( false ).prettyPrint( true );
+
     private final String contentTypeXml;
 
     public RelationshipTypeConfigJson( final RelationshipType model )
     {
-        this.contentTypeXml = new RelationshipTypeXmlSerializer().toString( model );
+        this.contentTypeXml = relationshipTypeXmlSerializer.toString( model );
     }
 
     public String getRelationshipTypeXml()

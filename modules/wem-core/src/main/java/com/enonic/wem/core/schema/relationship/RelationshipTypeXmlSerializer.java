@@ -20,9 +20,25 @@ public class RelationshipTypeXmlSerializer
 
     private boolean prettyPrint = true;
 
+    private boolean generateName = true;
+
+    private String overridingName = null;
+
     public RelationshipTypeXmlSerializer prettyPrint( boolean value )
     {
         this.prettyPrint = value;
+        return this;
+    }
+
+    public RelationshipTypeXmlSerializer generateName( boolean value )
+    {
+        this.generateName = value;
+        return this;
+    }
+
+    public RelationshipTypeXmlSerializer overrideName( String value )
+    {
+        this.overridingName = value;
         return this;
     }
 
@@ -38,10 +54,12 @@ public class RelationshipTypeXmlSerializer
         return new Document( typeEl );
     }
 
-
     private void generate( final RelationshipType type, final Element typeEl )
     {
-        typeEl.addContent( new Element( "name" ).setText( type.getName().toString() ) );
+        if ( this.generateName )
+        {
+            typeEl.addContent( new Element( "name" ).setText( type.getName().toString() ) );
+        }
         typeEl.addContent( new Element( "display-name" ).setText( type.getDisplayName() ) );
 
         typeEl.addContent( new Element( "from-semantic" ).setText( type.getFromSemantic() ) );
@@ -79,7 +97,7 @@ public class RelationshipTypeXmlSerializer
     private RelationshipType parse( final Element relationshipTypeEl )
         throws IOException
     {
-        final String name = relationshipTypeEl.getChildText( "name" );
+        final String name = this.overridingName != null ? overridingName : relationshipTypeEl.getChildText( "name" );
         final String displayName = relationshipTypeEl.getChildText( "display-name" );
 
         final String fromSemantic = relationshipTypeEl.getChildText( "from-semantic" );

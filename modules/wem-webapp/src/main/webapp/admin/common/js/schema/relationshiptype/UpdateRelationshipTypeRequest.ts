@@ -38,8 +38,15 @@ module api.schema.relationshiptype {
             var deferred = jQuery.Deferred<RelationshipType>();
 
             this.send().done((response: api.rest.JsonResponse<api.schema.relationshiptype.json.RelationshipTypeJson>) => {
-                deferred.resolve(this.fromJsonToReleationshipType(response.getResult()));
-            }).fail((response: api.rest.RequestError) => {
+                    var json = response.getJson();
+                    if ( json.result ) {
+                        deferred.resolve(this.fromJsonToReleationshipType(response.getResult()));
+                    } else if ( json.error ) {
+                        deferred.reject(new api.rest.RequestError(null, null, null, json.error.msg));
+                    } else {
+                        deferred.reject(null);
+                    }
+                }).fail((response: api.rest.RequestError) => {
                     deferred.reject(null);
                 });
 

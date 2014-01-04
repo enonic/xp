@@ -93,7 +93,10 @@ module app.wizard {
 
                         callback(relationshipType);
                     });
-                });
+                } ).
+                fail((error: api.rest.RequestError) => {
+                    api.notify.showError(error.getMessage());
+                } );
         }
 
         updatePersistedItem(callback: (persistedRelationshipType: api.schema.relationshiptype.RelationshipType) => void) {
@@ -113,7 +116,10 @@ module app.wizard {
 
                         callback(relationshipType);
                     });
-                });
+                }).
+                fail((error: api.rest.RequestError) => {
+                    api.notify.showError(error.getMessage());
+                } );
         }
 
         hasUnsavedChanges(): boolean {
