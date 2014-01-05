@@ -119,7 +119,8 @@ public class RelationshipTypeResource
     {
         try
         {
-            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().toRelationshipType( json.getConfig() );
+            final RelationshipType relationshipType = new RelationshipTypeXmlSerializer().
+                overrideName( json.getName().toString() ).toRelationshipType( json.getConfig() );
 
             final CreateRelationshipType createCommand = Commands.relationshipType().create();
             createCommand.
@@ -148,7 +149,8 @@ public class RelationshipTypeResource
     {
         try
         {
-            final RelationshipType parsed = new RelationshipTypeXmlSerializer().toRelationshipType( json.getConfig() );
+            final RelationshipType parsed = new RelationshipTypeXmlSerializer().
+                overrideName( json.getName().toString() ).toRelationshipType( json.getConfig() );
 
             final RelationshipTypeEditor editor = new RelationshipTypeEditor()
             {
