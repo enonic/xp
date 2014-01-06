@@ -18,7 +18,7 @@ module api.content.page{
         }
     }
 
-    export class PageBuilder extends BaseComponentBuilder<PageTemplateKey>{
+    export class PageBuilder extends ComponentBuilder<PageTemplateKey>{
 
         config:api.data.RootDataSet;
 

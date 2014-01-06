@@ -4,7 +4,7 @@ module api.content.page{
 
         private template:TEMPLATE_KEY;
 
-        constructor(builder?:BaseComponentBuilder<TEMPLATE_KEY>) {
+        constructor(builder?:ComponentBuilder<TEMPLATE_KEY>) {
             if( builder != undefined ) {
                 this.template = builder.template;
             }
@@ -19,11 +19,11 @@ module api.content.page{
         }
     }
 
-    export class BaseComponentBuilder<TEMPLATE_KEY extends TemplateKey> {
+    export class ComponentBuilder<TEMPLATE_KEY extends TemplateKey> {
 
         template:TEMPLATE_KEY;
 
-        setTemplate(value:TEMPLATE_KEY):BaseComponentBuilder<TEMPLATE_KEY> {
+        setTemplate(value:TEMPLATE_KEY):ComponentBuilder<TEMPLATE_KEY> {
             this.template = value;
             return this;
         }

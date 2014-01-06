@@ -31,7 +31,7 @@ module api.content.page.image {
         }
     }
 
-    export class ImageComponentBuilder extends api.content.page.BaseComponentBuilder<ImageTemplateKey> {
+    export class ImageComponentBuilder extends api.content.page.ComponentBuilder<ImageTemplateKey> {
 
         config: api.data.RootDataSet;
 

@@ -14,7 +14,7 @@ module api.content.page.part{
         }
     }
 
-    export class PartComponentBuilder extends api.content.page.BaseComponentBuilder<PartTemplateKey>{
+    export class PartComponentBuilder extends api.content.page.ComponentBuilder<PartTemplateKey>{
 
         config:api.data.RootDataSet;
 

@@ -14,7 +14,7 @@ module api.content.page.layout {
         }
     }
 
-    export class LayoutComponentBuilder extends api.content.page.BaseComponentBuilder<LayoutTemplateKey> {
+    export class LayoutComponentBuilder extends api.content.page.ComponentBuilder<LayoutTemplateKey> {
 
         config: api.data.RootDataSet;
 
