@@ -26,8 +26,8 @@ public class XContentBuilderFactory
         {
             final XContentBuilder builder = startBuilder();
             addDocumentAnalyzer( builder, indexDocument );
-            addCollection( builder, indexDocument );
-            addFields( builder, indexDocument );
+            addCollectionInfo( builder, indexDocument );
+            adddIndexDocumentItems( builder, indexDocument );
             endBuilder( builder );
             return builder;
         }
@@ -37,13 +37,13 @@ public class XContentBuilderFactory
         }
     }
 
-    private static void addCollection( final XContentBuilder builder, final IndexDocument indexDocument )
-        throws Exception
+    private static XContentBuilder startBuilder()
+    throws Exception
     {
-        final String collection = indexDocument.getCollection();
+        final XContentBuilder result = XContentFactory.jsonBuilder();
+        result.startObject();
 
-        addField( builder, IndexConstants.COLLECTION_FIELD,
-                  Strings.isNullOrEmpty( collection ) ? IndexConstants.DEFAULT_COLLECTION : collection );
+        return result;
     }
 
     private static void addDocumentAnalyzer( final XContentBuilder builder, final IndexDocument indexDocument )
@@ -57,23 +57,16 @@ public class XContentBuilderFactory
         }
     }
 
-    private static XContentBuilder startBuilder()
-        throws Exception
+    private static void addCollectionInfo( final XContentBuilder builder, final IndexDocument indexDocument )
+    throws Exception
     {
-        final XContentBuilder result = XContentFactory.jsonBuilder();
-        result.startObject();
+        final String collection = indexDocument.getCollection();
 
-        return result;
+        addField( builder, IndexConstants.COLLECTION_FIELD,
+                  Strings.isNullOrEmpty( collection ) ? IndexConstants.DEFAULT_COLLECTION : collection );
     }
 
-
-    private static void endBuilder( final XContentBuilder contentBuilder )
-        throws Exception
-    {
-        contentBuilder.endObject();
-    }
-
-    private static void addFields( final XContentBuilder result, final IndexDocument indexDocument )
+    private static void adddIndexDocumentItems( final XContentBuilder result, final IndexDocument indexDocument )
         throws Exception
     {
         final Multimap<String, Object> fieldValueMap = ArrayListMultimap.create();
@@ -107,5 +100,13 @@ public class XContentBuilderFactory
 
         result.field( name, value );
     }
+
+
+    private static void endBuilder( final XContentBuilder contentBuilder )
+        throws Exception
+    {
+        contentBuilder.endObject();
+    }
+
 
 }

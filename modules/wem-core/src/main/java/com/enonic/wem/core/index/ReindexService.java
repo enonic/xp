@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.wem.api.entity.Node;
 import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
-import com.enonic.wem.core.account.dao.AccountDao;
 import com.enonic.wem.core.entity.dao.NodeJcrDao;
 import com.enonic.wem.core.jcr.provider.JcrSessionProvider;
 
@@ -21,8 +20,6 @@ public class ReindexService
     private IndexService indexService;
 
     private JcrSessionProvider jcrSessionProvider;
-
-    private AccountDao accountDao;
 
     private final static Logger LOG = LoggerFactory.getLogger( ReindexService.class );
 
@@ -57,12 +54,6 @@ public class ReindexService
 
             reindexNodes( nodeJcrDao.getNodesByParentPath( node.path() ), nodeJcrDao );
         }
-    }
-
-    @Inject
-    public void setAccountDao( final AccountDao accountDao )
-    {
-        this.accountDao = accountDao;
     }
 
     @Inject
