@@ -1,11 +1,11 @@
 package com.enonic.wem.admin.json.content.page.part;
 
-import com.enonic.wem.admin.json.content.page.BaseDescriptorJson;
+import com.enonic.wem.admin.json.content.page.DescriptorJson;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 
 
 public class PartDescriptorJson
-    extends BaseDescriptorJson
+    extends DescriptorJson
 {
     private final boolean editable;
 

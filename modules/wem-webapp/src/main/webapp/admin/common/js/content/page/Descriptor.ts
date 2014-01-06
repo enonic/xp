@@ -1,20 +1,20 @@
 module api.content.page{
 
-    export class ComponentDescriptor{
+    export class Descriptor{
 
-        private name:ComponentDescriptorName;
+        private name:DescriptorName;
 
         private displayName:string;
 
         private form:api.form.Form;
 
-        constructor(builder:ComponentDescriptorBuilder) {
+        constructor(builder:DescriptorBuilder) {
             this.name = builder.name;
             this.displayName = builder.displayName;
             this.form = builder.form;
         }
 
-        getName():ComponentDescriptorName {
+        getName():DescriptorName {
             return this.name;
         }
 
@@ -27,9 +27,9 @@ module api.content.page{
         }
     }
 
-    export class ComponentDescriptorBuilder {
+    export class DescriptorBuilder {
 
-        name:ComponentDescriptorName;
+        name:DescriptorName;
 
         displayName:string;
 

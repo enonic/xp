@@ -2,7 +2,7 @@ package com.enonic.wem.core.content.page;
 
 import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.module.CreateModuleResource;
-import com.enonic.wem.api.content.page.BaseDescriptor;
+import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.content.page.DescriptorKey;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
@@ -19,7 +19,7 @@ public final class DescriptorHelper
     {
     }
 
-    public static void storeDescriptorResource( final BaseDescriptor descriptor, final String descriptorXml, final Client client )
+    public static void storeDescriptorResource( final Descriptor descriptor, final String descriptorXml, final Client client )
     {
         final Resource descriptorResource = newResource().
             stringValue( descriptorXml ).

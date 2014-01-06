@@ -1,10 +1,10 @@
 package com.enonic.wem.api.content.page.part;
 
 
-import com.enonic.wem.api.content.page.BaseDescriptor;
+import com.enonic.wem.api.content.page.Descriptor;
 
 public class PartDescriptor
-    extends BaseDescriptor<PartDescriptorKey>
+    extends Descriptor<PartDescriptorKey>
 {
     private PartDescriptor( final Builder builder )
     {

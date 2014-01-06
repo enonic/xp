@@ -4,17 +4,17 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.admin.json.ItemJson;
 import com.enonic.wem.admin.json.form.FormJson;
-import com.enonic.wem.api.content.page.BaseDescriptor;
+import com.enonic.wem.api.content.page.Descriptor;
 
 
-public abstract class BaseDescriptorJson
+public abstract class DescriptorJson
     implements ItemJson
 {
-    private final BaseDescriptor descriptor;
+    private final Descriptor descriptor;
 
     private final FormJson configFormJson;
 
-    public BaseDescriptorJson( final BaseDescriptor descriptor )
+    public DescriptorJson( final Descriptor descriptor )
     {
         Preconditions.checkNotNull( descriptor );
         this.descriptor = descriptor;

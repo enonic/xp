@@ -1,6 +1,6 @@
 module api.content.page{
 
-    export class ComponentDescriptorName{
+    export class DescriptorName{
 
         private name:string;
 

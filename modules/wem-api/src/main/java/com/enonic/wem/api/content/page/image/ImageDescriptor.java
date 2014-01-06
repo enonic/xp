@@ -1,10 +1,10 @@
 package com.enonic.wem.api.content.page.image;
 
 
-import com.enonic.wem.api.content.page.BaseDescriptor;
+import com.enonic.wem.api.content.page.Descriptor;
 
 public final class ImageDescriptor
-    extends BaseDescriptor<ImageDescriptorKey>
+    extends Descriptor<ImageDescriptorKey>
 {
     private ImageDescriptor( final Builder builder )
     {

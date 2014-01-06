@@ -1,11 +1,11 @@
 package com.enonic.wem.admin.json.content.page.layout;
 
-import com.enonic.wem.admin.json.content.page.BaseDescriptorJson;
+import com.enonic.wem.admin.json.content.page.DescriptorJson;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 
 
 public class LayoutDescriptorJson
-    extends BaseDescriptorJson
+    extends DescriptorJson
 {
     private final boolean editable;
 

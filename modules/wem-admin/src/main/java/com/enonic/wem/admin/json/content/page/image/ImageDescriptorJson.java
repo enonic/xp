@@ -1,11 +1,11 @@
 package com.enonic.wem.admin.json.content.page.image;
 
-import com.enonic.wem.admin.json.content.page.BaseDescriptorJson;
+import com.enonic.wem.admin.json.content.page.DescriptorJson;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 
 
 public class ImageDescriptorJson
-    extends BaseDescriptorJson
+    extends DescriptorJson
 {
     private final boolean editable;
 

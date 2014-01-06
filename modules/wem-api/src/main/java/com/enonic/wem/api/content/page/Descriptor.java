@@ -6,7 +6,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ResourcePath;
 
-public abstract class BaseDescriptor<KEY extends DescriptorKey>
+public abstract class Descriptor<KEY extends DescriptorKey>
 {
     private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
 
@@ -18,7 +18,7 @@ public abstract class BaseDescriptor<KEY extends DescriptorKey>
 
     private final Form config;
 
-    protected BaseDescriptor( final BaseDescriptorBuilder builder )
+    protected Descriptor( final BaseDescriptorBuilder builder )
     {
         Preconditions.checkNotNull( builder.name, "name cannot be null" );
         Preconditions.checkNotNull( builder.key, "key cannot be null" );
@@ -54,7 +54,7 @@ public abstract class BaseDescriptor<KEY extends DescriptorKey>
         return new ModuleResourceKey( key.getModuleKey(), path );
     }
 
-    public abstract static class BaseDescriptorBuilder<T extends BaseDescriptor.BaseDescriptorBuilder, KEY>
+    public abstract static class BaseDescriptorBuilder<T extends Descriptor.BaseDescriptorBuilder, KEY>
     {
         protected KEY key;
 

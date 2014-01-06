@@ -1,20 +1,20 @@
 module api.content.page {
 
-    export class PageDescriptor extends ComponentDescriptor {
+    export class PageDescriptor extends Descriptor {
 
     }
 
-    export class PageDescriptorBuilder extends ComponentDescriptorBuilder {
+    export class PageDescriptorBuilder extends DescriptorBuilder {
 
         public fromJson(json: api.content.page.json.PageDescriptorJson): PageDescriptorBuilder {
 
-            this.setName(new ComponentDescriptorName(json.name));
+            this.setName(new DescriptorName(json.name));
             this.setDisplayName(json.displayName);
             this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
             return this;
         }
 
-        public setName(value: ComponentDescriptorName): PageDescriptorBuilder {
+        public setName(value: DescriptorName): PageDescriptorBuilder {
             this.name = value;
             return this;
         }

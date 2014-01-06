@@ -1,9 +1,9 @@
 package com.enonic.wem.api.content.page.layout;
 
-import com.enonic.wem.api.content.page.BaseDescriptor;
+import com.enonic.wem.api.content.page.Descriptor;
 
 public class LayoutDescriptor
-    extends BaseDescriptor<LayoutDescriptorKey>
+    extends Descriptor<LayoutDescriptorKey>
 {
     private LayoutDescriptor( final Builder builder )
     {

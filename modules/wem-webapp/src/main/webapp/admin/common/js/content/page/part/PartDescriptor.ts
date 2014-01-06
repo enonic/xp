@@ -1,20 +1,20 @@
 module api.content.page.part {
 
-    export class PartDescriptor extends api.content.page.ComponentDescriptor {
+    export class PartDescriptor extends api.content.page.Descriptor {
 
     }
 
-    export class PartDescriptorBuilder extends api.content.page.ComponentDescriptorBuilder {
+    export class PartDescriptorBuilder extends api.content.page.DescriptorBuilder {
 
         public fromJson(json: api.content.page.part.json.PartDescriptorJson): PartDescriptorBuilder {
 
-            this.setName(new api.content.page.ComponentDescriptorName(json.name));
+            this.setName(new api.content.page.DescriptorName(json.name));
             this.setDisplayName(json.displayName);
             this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
             return this;
         }
 
-        public setName(value:api.content.page.ComponentDescriptorName):PartDescriptorBuilder {
+        public setName(value:api.content.page.DescriptorName):PartDescriptorBuilder {
             this.name = value;
             return this;
         }

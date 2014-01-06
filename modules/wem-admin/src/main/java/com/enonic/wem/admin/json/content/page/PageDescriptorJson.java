@@ -4,7 +4,7 @@ import com.enonic.wem.api.content.page.PageDescriptor;
 
 
 public class PageDescriptorJson
-    extends BaseDescriptorJson
+    extends DescriptorJson
 {
     private final boolean editable;
 

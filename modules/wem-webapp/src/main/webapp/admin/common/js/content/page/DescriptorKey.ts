@@ -6,7 +6,7 @@ module api.content.page {
 
         private moduleKey: api.module.ModuleKey;
 
-        private name: ComponentDescriptorName;
+        private name: DescriptorName;
 
         private refString:string;
 
@@ -19,10 +19,10 @@ module api.content.page {
             var moduleKey = str.substring(0, sepIndex);
             var name = str.substring(sepIndex+1, str.length);
 
-            return new DescriptorKey(api.module.ModuleKey.fromString(moduleKey), new ComponentDescriptorName(name));
+            return new DescriptorKey(api.module.ModuleKey.fromString(moduleKey), new DescriptorName(name));
         }
 
-        constructor(moduleKey:api.module.ModuleKey, name: ComponentDescriptorName) {
+        constructor(moduleKey:api.module.ModuleKey, name: DescriptorName) {
             this.moduleKey = moduleKey;
             this.name = name;
             this.refString = moduleKey.toString() + DescriptorKey.SEPARATOR  + name.toString();
@@ -32,7 +32,7 @@ module api.content.page {
             return this.moduleKey;
         }
 
-        getName():ComponentDescriptorName {
+        getName():DescriptorName {
             return this.name;
         }
 
