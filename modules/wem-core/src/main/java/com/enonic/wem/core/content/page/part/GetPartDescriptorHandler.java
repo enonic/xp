@@ -29,7 +29,7 @@ public class GetPartDescriptorHandler
             final String descriptorXml = resource.readAsString();
             final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
             XmlSerializers.partDescriptor().parse( descriptorXml ).to( builder );
-            builder.name( key.getName() );
+            builder.name( key.getName() ).key( key );
 
             final PartDescriptor partDescriptor = builder.build();
 

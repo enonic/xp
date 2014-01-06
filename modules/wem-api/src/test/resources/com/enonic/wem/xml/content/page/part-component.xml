@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <part-component>
   <display-name>A Part</display-name>
-  <controller>mainmodule-1.0.0:/controller/part-ctrl.js</controller>
   <config>
     <input name="width" type="DecimalNumber">
       <label>Column width</label>

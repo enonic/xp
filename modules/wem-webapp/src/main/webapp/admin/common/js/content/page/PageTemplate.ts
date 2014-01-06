@@ -32,7 +32,7 @@ module api.content.page {
             this.setKey(PageTemplateKey.fromString(json.key));
             this.setName(new PageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
+            this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new PageDescriptorBuilder().fromJson(json.descriptor).build();
             this.setConfig(api.data.DataFactory.createRootDataSet(json.config));
             json.canRender.forEach((name: string)=> {

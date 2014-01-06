@@ -3,8 +3,8 @@ package com.enonic.wem.xml.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -28,7 +28,7 @@ public class ImageDescriptorXmlTest
             displayName( "An Image" ).
             name( "myimage" ).
             config( configForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/image-ctrl.js" ) ).
+            key( ImageDescriptorKey.from( "module-1.0.0:myimage" ) ).
             build();
 
         final ImageDescriptorXml imageDescriptorXml = new ImageDescriptorXml();
@@ -44,13 +44,13 @@ public class ImageDescriptorXmlTest
     {
         final String xml = readFromFile( "image-component.xml" );
         final ImageDescriptor.Builder builder = ImageDescriptor.newImageDescriptor();
+        builder.key( ImageDescriptorKey.from( "module-1.0.0:myimage" ) );
 
         XmlSerializers.imageDescriptor().parse( xml ).to( builder );
 
         final ImageDescriptor imageDescriptor = builder.name( "myimage" ).build();
 
         assertEquals( "An Image", imageDescriptor.getDisplayName() );
-        assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/image-ctrl.js" ), imageDescriptor.getControllerResource() );
         final Form config = imageDescriptor.getConfigForm();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );

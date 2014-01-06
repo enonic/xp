@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 
@@ -51,8 +50,7 @@ public class CreatePageDescriptorHandlerTest
             key( key ).
             name( descriptorName ).
             displayName( "Landing page" ).
-            config( pageForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) );
+            config( pageForm );
 
         Resource res = Resource.newResource().build();
         Mockito.when( this.client.execute( isA( CreateModuleResource.class ) ) ).thenReturn( res );

@@ -2,7 +2,6 @@ package com.enonic.wem.api.content.page.part;
 
 
 import com.enonic.wem.api.content.page.BasePageComponent;
-import com.enonic.wem.api.content.page.image.ImageTemplateKey;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;

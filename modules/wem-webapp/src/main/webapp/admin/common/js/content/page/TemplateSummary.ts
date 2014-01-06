@@ -8,7 +8,7 @@ module api.content.page {
 
         private displayName: string;
 
-        private descriptorKey: api.module.ModuleResourceKey;
+        private descriptorKey: DescriptorKey;
 
         constructor(builder: TemplateSummaryBuilder<KEY,NAME>) {
             this.key = builder.key;
@@ -29,7 +29,7 @@ module api.content.page {
             return this.displayName;
         }
 
-        getDescriptorKey(): api.module.ModuleResourceKey {
+        getDescriptorKey(): DescriptorKey {
             return this.descriptorKey;
         }
     }
@@ -42,7 +42,7 @@ module api.content.page {
 
         displayName: string;
 
-        descriptorKey: api.module.ModuleResourceKey;
+        descriptorKey: DescriptorKey;
 
         public setKey(value: KEY): TemplateSummaryBuilder<KEY,NAME> {
             this.key = value;
@@ -59,7 +59,7 @@ module api.content.page {
             return this;
         }
 
-        public setDescriptorKey(value: api.module.ModuleResourceKey): TemplateSummaryBuilder<KEY,NAME> {
+        public setDescriptorKey(value: DescriptorKey): TemplateSummaryBuilder<KEY,NAME> {
             this.descriptorKey = value;
             return this;
         }

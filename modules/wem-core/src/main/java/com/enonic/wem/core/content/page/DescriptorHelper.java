@@ -13,6 +13,8 @@ import static com.enonic.wem.api.resource.Resource.newResource;
 
 public final class DescriptorHelper
 {
+    private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
+
     private DescriptorHelper()
     {
     }
@@ -51,7 +53,7 @@ public final class DescriptorHelper
             default:
                 throw new IllegalArgumentException( "Unsupported DescriptorType: " + descriptorKey.getDescriptorType() );
         }
-        final ResourcePath path = ResourcePath.from( "component/" + descriptorKey.getName().toString() + "/" + descriptorType + ".xml" );
+        final ResourcePath path = COMPONENT_FOLDER.resolve( descriptorKey.getName().toString() ).resolve( descriptorType + ".xml" );
         return new ModuleResourceKey( descriptorKey.getModuleKey(), path );
     }
 }

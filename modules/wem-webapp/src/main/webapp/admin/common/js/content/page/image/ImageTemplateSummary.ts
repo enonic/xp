@@ -18,7 +18,7 @@ module api.content.page.image {
             builder.setKey(ImageTemplateKey.fromString(json.key));
             builder.setName(new ImageTemplateName(json.name));
             builder.setDisplayName(json.displayName);
-            builder.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
+            builder.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             return builder;
         }
     }

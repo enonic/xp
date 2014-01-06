@@ -10,7 +10,6 @@ module api.content.page.layout {
 
             this.setName(new api.content.page.ComponentDescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setControllerResource(api.module.ModuleResourceKey.fromString(json.controller));
             this.setForm(json.configForm != null ? new api.form.Form(json.configForm) : null);
             return this;
         }
@@ -27,11 +26,6 @@ module api.content.page.layout {
 
         public setForm(value: api.form.Form): LayoutDescriptorBuilder {
             this.form = value;
-            return this;
-        }
-
-        public setControllerResource(value: api.module.ModuleResourceKey): LayoutDescriptorBuilder {
-            this.controllerResource = value;
             return this;
         }
 

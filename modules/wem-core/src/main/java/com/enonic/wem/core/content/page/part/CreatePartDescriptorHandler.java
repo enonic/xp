@@ -18,7 +18,6 @@ public class CreatePartDescriptorHandler
     {
         final PartDescriptor partDescriptor = newPartDescriptor().
             config( command.getConfig() ).
-            controllerResource( command.getControllerResource() ).
             displayName( command.getDisplayName() ).
             name( command.getName() ).
             key( command.getKey() ).

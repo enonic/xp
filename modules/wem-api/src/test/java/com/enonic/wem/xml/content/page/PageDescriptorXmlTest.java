@@ -3,11 +3,11 @@ package com.enonic.wem.xml.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.PageDescriptor;
+import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -68,7 +68,7 @@ public class PageDescriptorXmlTest
             displayName( "Landing page" ).
             name( "mypage" ).
             config( pageForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) ).
+            key( PageDescriptorKey.from( "module-1.0.0:mypage" ) ).
             build();
 
         final PageDescriptorXml pageDescriptorXml = new PageDescriptorXml();
@@ -84,13 +84,13 @@ public class PageDescriptorXmlTest
     {
         final String xml = readFromFile( "page-component.xml" );
         final PageDescriptor.Builder builder = PageDescriptor.newPageDescriptor();
+        builder.key( PageDescriptorKey.from( "module-1.0.0:mypage" ) );
 
         XmlSerializers.pageDescriptor().parse( xml ).to( builder );
 
         final PageDescriptor pageDescriptor = builder.name( "mypage" ).build();
 
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
-        assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ), pageDescriptor.getControllerResource() );
         final Form config = pageDescriptor.getConfigForm();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "pause" ).toInput().getInputType() );

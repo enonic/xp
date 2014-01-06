@@ -21,7 +21,6 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.xml.XmlSerializers;
@@ -97,7 +96,6 @@ public class GetPageDescriptorHandlerTest
             key( key ).
             displayName( "Landing page" ).
             name( "mypage" ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) ).
             build();
     }
 

@@ -92,7 +92,7 @@ public final class ContentResource
         final Page page = getPage( content );
         final PageTemplate pageTemplate = getPageTemplate( page );
         final PageDescriptor pageDescriptor = getPageDescriptor( pageTemplate );
-        return pageDescriptor.getControllerResource();
+        return pageDescriptor.getComponentPath();
     }
 
     private Content getContent( final ContentPath contentPath )

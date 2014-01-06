@@ -3,11 +3,13 @@ package com.enonic.wem.api.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
+import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 import static com.enonic.wem.api.form.Input.newInput;
 import static org.junit.Assert.*;
@@ -27,7 +29,7 @@ public class DescriptorsTest
             name( "landing-page" ).
             displayName( "Landing page" ).
             config( pageForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) ).
+            key( PageDescriptorKey.from( "module-1.0.0:landing-page" ) ).
             build();
 
         assertEquals( "Landing page", pageDescriptor.getDisplayName() );
@@ -44,7 +46,7 @@ public class DescriptorsTest
             name( "news-part" ).
             displayName( "News part" ).
             config( partForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/news-part.js" ) ).
+            key( PartDescriptorKey.from( "module-1.0.0:new-part" ) ).
             build();
 
         assertEquals( "News part", partDescriptor.getDisplayName() );
@@ -61,7 +63,7 @@ public class DescriptorsTest
             name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/fancy-layout.js" ) ).
+            key( LayoutDescriptorKey.from( "module-1.0.0:fancy-layout" ) ).
             build();
 
         assertEquals( "Fancy layout", layoutDescriptor.getDisplayName() );
@@ -78,6 +80,7 @@ public class DescriptorsTest
             name( "image" ).
             displayName( "Image" ).
             config( partForm ).
+            key( ImageDescriptorKey.from( "module-1.0.0:image" ) ).
             build();
 
         assertEquals( "Image", partDescriptor.getDisplayName() );

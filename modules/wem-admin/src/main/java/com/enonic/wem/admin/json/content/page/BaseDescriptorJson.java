@@ -31,11 +31,6 @@ public abstract class BaseDescriptorJson
         return descriptor.getDisplayName();
     }
 
-    public String getController()
-    {
-        return descriptor.getControllerResource().toString();
-    }
-
     public FormJson getConfigForm()
     {
         return configFormJson;

@@ -12,7 +12,6 @@ import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.inputtype.InputTypes;
 import com.enonic.wem.api.module.ModuleKey;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.core.content.page.part.CreatePartDescriptorHandler;
@@ -53,8 +52,7 @@ public class CreatePartDescriptorHandlerTest
             key( key ).
             name( descriptorName ).
             displayName( "News part" ).
-            config( partForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/news-part.js" ) );
+            config( partForm );
 
         Resource res = Resource.newResource().build();
         Mockito.when( this.client.execute( isA( CreateModuleResource.class ) ) ).thenReturn( res );

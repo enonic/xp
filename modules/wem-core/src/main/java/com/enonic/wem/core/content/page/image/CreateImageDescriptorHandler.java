@@ -18,7 +18,6 @@ public class CreateImageDescriptorHandler
     {
         final ImageDescriptor imageDescriptor = newImageDescriptor().
             config( command.getConfig() ).
-            controllerResource( command.getControllerResource() ).
             displayName( command.getDisplayName() ).
             name( command.getName() ).
             key( command.getKey() ).

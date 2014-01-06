@@ -22,7 +22,7 @@ module api.content.page.image {
             this.setKey(ImageTemplateKey.fromString(json.key));
             this.setName(new ImageTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
+            this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new ImageDescriptorBuilder().fromJson(json.descriptor).build();
             return this;
         }

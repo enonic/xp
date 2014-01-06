@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 public class CreatePageDescriptor
     extends Command<PageDescriptor>
@@ -18,8 +17,6 @@ public class CreatePageDescriptor
     private ComponentDescriptorName name;
 
     private String displayName;
-
-    private ModuleResourceKey controllerResource;
 
     private Form config;
 
@@ -45,12 +42,6 @@ public class CreatePageDescriptor
         return this;
     }
 
-    public CreatePageDescriptor controllerResource( final ModuleResourceKey controllerResource )
-    {
-        this.controllerResource = controllerResource;
-        return this;
-    }
-
     public CreatePageDescriptor config( final Form config )
     {
         this.config = config;
@@ -70,11 +61,6 @@ public class CreatePageDescriptor
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    public ModuleResourceKey getControllerResource()
-    {
-        return controllerResource;
     }
 
     public Form getConfig()

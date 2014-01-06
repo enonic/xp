@@ -3,8 +3,8 @@ package com.enonic.wem.xml.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.part.PartDescriptor;
+import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -28,7 +28,7 @@ public class PartDescriptorXmlTest
             displayName( "A Part" ).
             name( "mypart" ).
             config( configForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/part-ctrl.js" ) ).
+            key( PartDescriptorKey.from( "module-1.0.0:mypart" ) ).
             build();
 
         final PartDescriptorXml partDescriptorXml = new PartDescriptorXml();
@@ -44,13 +44,13 @@ public class PartDescriptorXmlTest
     {
         final String xml = readFromFile( "part-component.xml" );
         final PartDescriptor.Builder builder = PartDescriptor.newPartDescriptor();
+        builder.key( PartDescriptorKey.from( "module-1.0.0:mypart" ) );
 
         XmlSerializers.partDescriptor().parse( xml ).to( builder );
 
         final PartDescriptor partDescriptor = builder.name( "mypart" ).build();
 
         assertEquals( "A Part", partDescriptor.getDisplayName() );
-        assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/part-ctrl.js" ), partDescriptor.getControllerResource() );
         final Form config = partDescriptor.getConfigForm();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );

@@ -4,26 +4,27 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.module.ModuleResourceKey;
+import com.enonic.wem.api.module.ResourcePath;
 
 public abstract class BaseDescriptor<KEY extends DescriptorKey>
 {
+    private static final ResourcePath COMPONENT_FOLDER = ResourcePath.from( "component" );
+
     private final KEY key;
 
     private final ComponentDescriptorName name;
 
     private final String displayName;
 
-    private final ModuleResourceKey controllerResource;
-
     private final Form config;
 
     protected BaseDescriptor( final BaseDescriptorBuilder builder )
     {
         Preconditions.checkNotNull( builder.name, "name cannot be null" );
+        Preconditions.checkNotNull( builder.key, "key cannot be null" );
         this.key = (KEY) builder.key;
         this.name = builder.name;
         this.displayName = builder.displayName;
-        this.controllerResource = builder.controllerResource;
         this.config = builder.config != null ? builder.config : Form.newForm().build();
     }
 
@@ -42,14 +43,15 @@ public abstract class BaseDescriptor<KEY extends DescriptorKey>
         return displayName;
     }
 
-    public ModuleResourceKey getControllerResource()
-    {
-        return controllerResource;
-    }
-
     public Form getConfigForm()
     {
         return config;
+    }
+
+    public ModuleResourceKey getComponentPath()
+    {
+        final ResourcePath path = COMPONENT_FOLDER.resolve( key.getName().toString() );
+        return new ModuleResourceKey( key.getModuleKey(), path );
     }
 
     public abstract static class BaseDescriptorBuilder<T extends BaseDescriptor.BaseDescriptorBuilder, KEY>
@@ -59,8 +61,6 @@ public abstract class BaseDescriptor<KEY extends DescriptorKey>
         protected ComponentDescriptorName name;
 
         protected String displayName;
-
-        protected ModuleResourceKey controllerResource;
 
         protected Form config;
 
@@ -84,12 +84,6 @@ public abstract class BaseDescriptor<KEY extends DescriptorKey>
         public T displayName( final String displayName )
         {
             this.displayName = displayName;
-            return typecastToBuilder( this );
-        }
-
-        public T controllerResource( final ModuleResourceKey controllerResource )
-        {
-            this.controllerResource = controllerResource;
             return typecastToBuilder( this );
         }
 

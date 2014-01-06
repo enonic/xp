@@ -34,9 +34,7 @@ import com.enonic.wem.api.module.Module;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.module.ModuleKeys;
 import com.enonic.wem.api.module.ModuleNotFoundException;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.module.ModuleVersion;
-import com.enonic.wem.api.module.ResourcePath;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.api.schema.content.ContentTypeNames;
 import com.enonic.wem.core.support.BaseInitializer;
@@ -76,15 +74,12 @@ public class SitesInitializer
         throws Exception
     {
         final String pageDescriptorName = "main-page";
-        final ModuleResourceKey controllerResourceKey =
-            new ModuleResourceKey( DEMO_MODULE_KEY, ResourcePath.from( "/component/" + pageDescriptorName ) );
 
         final PageDescriptor pageDescriptor = newPageDescriptor().
             name( pageDescriptorName ).
             key( PageDescriptorKey.from( DEMO_MODULE_KEY, new ComponentDescriptorName( pageDescriptorName ) ) ).
             displayName( "Landing page" ).
             config( createPageDescriptorForm() ).
-            controllerResource( controllerResourceKey ).
             build();
 
         this.demoModule = createDemoModule( pageDescriptor );
@@ -124,7 +119,6 @@ public class SitesInitializer
             displayName( pageDescriptor.getDisplayName() ).
             name( pageDescriptor.getName() ).
             key( pageDescriptor.getKey() ).
-            controllerResource( pageDescriptor.getControllerResource() ).
             config( pageDescriptor.getConfigForm() );
         return client.execute( createPageDescriptor );
     }

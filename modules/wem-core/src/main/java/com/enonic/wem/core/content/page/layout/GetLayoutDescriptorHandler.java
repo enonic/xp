@@ -29,7 +29,7 @@ public class GetLayoutDescriptorHandler
             final String descriptorXml = resource.readAsString();
             final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
             XmlSerializers.layoutDescriptor().parse( descriptorXml ).to( builder );
-            builder.name( key.getName() );
+            builder.name( key.getName() ).key( key );
 
             final LayoutDescriptor layoutDescriptor = builder.build();
 

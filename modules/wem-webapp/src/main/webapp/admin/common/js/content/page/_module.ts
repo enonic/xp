@@ -1,5 +1,6 @@
 ///<reference path='ComponentDescriptorName.ts' />
 ///<reference path='ComponentDescriptor.ts' />
+///<reference path='DescriptorKey.ts' />
 
 ///<reference path='PageDescriptor.ts' />
 ///<reference path='PageDescriptorResourceRequest.ts' />

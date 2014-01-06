@@ -18,7 +18,7 @@ module api.content.page.layout {
             builder.setKey(LayoutTemplateKey.fromString(json.key));
             builder.setName(new LayoutTemplateName(json.name));
             builder.setDisplayName(json.displayName);
-            builder.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
+            builder.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             return builder;
         }
     }

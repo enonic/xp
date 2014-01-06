@@ -15,7 +15,7 @@ module api.content.page.part {
             this.setKey(PartTemplateKey.fromString(json.key));
             this.setName(new PartTemplateName(json.name));
             this.setDisplayName(json.displayName);
-            this.setDescriptorKey(api.module.ModuleResourceKey.fromString(json.descriptorKey));
+            this.setDescriptorKey(DescriptorKey.fromString(json.descriptorKey));
             this.descriptor = new PartDescriptorBuilder().fromJson(json.descriptor).build();
             return this;
         }

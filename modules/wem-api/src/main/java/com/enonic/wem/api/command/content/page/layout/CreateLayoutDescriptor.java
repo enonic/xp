@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 public class CreateLayoutDescriptor
     extends Command<LayoutDescriptor>
@@ -18,8 +17,6 @@ public class CreateLayoutDescriptor
     private ComponentDescriptorName name;
 
     private String displayName;
-
-    private ModuleResourceKey controllerResource;
 
     private Form config;
 
@@ -45,12 +42,6 @@ public class CreateLayoutDescriptor
         return this;
     }
 
-    public CreateLayoutDescriptor controllerResource( final ModuleResourceKey controllerResource )
-    {
-        this.controllerResource = controllerResource;
-        return this;
-    }
-
     public CreateLayoutDescriptor config( final Form config )
     {
         this.config = config;
@@ -70,11 +61,6 @@ public class CreateLayoutDescriptor
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    public ModuleResourceKey getControllerResource()
-    {
-        return controllerResource;
     }
 
     public Form getConfig()

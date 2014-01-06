@@ -3,8 +3,8 @@ package com.enonic.wem.xml.content.page;
 import org.junit.Test;
 
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;
 
@@ -28,7 +28,7 @@ public class LayoutDescriptorXmlTest
             displayName( "A Layout" ).
             name( "mylayout" ).
             config( configForm ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/layout-ctrl.js" ) ).
+            key( LayoutDescriptorKey.from( "module-1.0.0:mylayout" ) ).
             build();
 
         final LayoutDescriptorXml layoutDescriptorXml = new LayoutDescriptorXml();
@@ -44,13 +44,13 @@ public class LayoutDescriptorXmlTest
     {
         final String xml = readFromFile( "layout-component.xml" );
         final LayoutDescriptor.Builder builder = LayoutDescriptor.newLayoutDescriptor();
+        builder.key( LayoutDescriptorKey.from( "module-1.0.0:mylayout" ) );
 
         XmlSerializers.layoutDescriptor().parse( xml ).to( builder );
 
         final LayoutDescriptor layoutDescriptor = builder.name( "mylayout" ).build();
 
         assertEquals( "A Layout", layoutDescriptor.getDisplayName() );
-        assertEquals( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/layout-ctrl.js" ), layoutDescriptor.getControllerResource() );
         final Form config = layoutDescriptor.getConfigForm();
         assertNotNull( config );
         assertEquals( DECIMAL_NUMBER, config.getFormItem( "width" ).toInput().getInputType() );

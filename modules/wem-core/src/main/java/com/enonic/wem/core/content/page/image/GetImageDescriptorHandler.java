@@ -29,7 +29,7 @@ public class GetImageDescriptorHandler
             final String descriptorXml = resource.readAsString();
             final ImageDescriptor.Builder builder = ImageDescriptor.newImageDescriptor();
             XmlSerializers.imageDescriptor().parse( descriptorXml ).to( builder );
-            builder.name( key.getName() );
+            builder.name( key.getName() ).key( key );
 
             final ImageDescriptor imageDescriptor = builder.build();
 

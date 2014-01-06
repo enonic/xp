@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorKey;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 public class CreateImageDescriptor
     extends Command<ImageDescriptor>
@@ -18,8 +17,6 @@ public class CreateImageDescriptor
     private ComponentDescriptorName name;
 
     private String displayName;
-
-    private ModuleResourceKey controllerResource;
 
     private Form config;
 
@@ -45,12 +42,6 @@ public class CreateImageDescriptor
         return this;
     }
 
-    public CreateImageDescriptor controllerResource( final ModuleResourceKey controllerResource )
-    {
-        this.controllerResource = controllerResource;
-        return this;
-    }
-
     public CreateImageDescriptor config( final Form config )
     {
         this.config = config;
@@ -70,11 +61,6 @@ public class CreateImageDescriptor
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    public ModuleResourceKey getControllerResource()
-    {
-        return controllerResource;
     }
 
     public Form getConfig()

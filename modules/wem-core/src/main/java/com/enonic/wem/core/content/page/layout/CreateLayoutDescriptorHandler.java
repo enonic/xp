@@ -18,7 +18,6 @@ public class CreateLayoutDescriptorHandler
     {
         final LayoutDescriptor layoutDescriptor = newLayoutDescriptor().
             config( command.getConfig() ).
-            controllerResource( command.getControllerResource() ).
             displayName( command.getDisplayName() ).
             name( command.getName() ).
             key( command.getKey() ).

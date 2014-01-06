@@ -8,13 +8,10 @@ module api.content.page{
 
         private form:api.form.Form;
 
-        private controllerResource:api.module.ModuleResourceKey;
-
         constructor(builder:ComponentDescriptorBuilder) {
             this.name = builder.name;
             this.displayName = builder.displayName;
             this.form = builder.form;
-            this.controllerResource = builder.controllerResource;
         }
 
         getName():ComponentDescriptorName {
@@ -28,10 +25,6 @@ module api.content.page{
         getForm():api.form.Form {
             return this.form;
         }
-
-        getControllerResource():api.module.ModuleResourceKey {
-            return this.controllerResource;
-        }
     }
 
     export class ComponentDescriptorBuilder {
@@ -41,8 +34,5 @@ module api.content.page{
         displayName:string;
 
         form:api.form.Form;
-
-        controllerResource:api.module.ModuleResourceKey;
-
     }
 }

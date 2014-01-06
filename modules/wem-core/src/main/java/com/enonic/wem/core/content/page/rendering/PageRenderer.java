@@ -40,7 +40,7 @@ public final class PageRenderer
         final PageTemplate template = getPageTemplate( page.getTemplate(), client );
         final PageDescriptor descriptor = getPageDescriptor( template.getDescriptor(), client );
 
-        final ModuleResourceKey controllerResource = descriptor.getControllerResource();
+        final ModuleResourceKey controllerResource = descriptor.getComponentPath();
         final RootDataSet config = page.hasConfig() ? page.getConfig() : template.getConfig();
 
         printRegions( config, descriptor );

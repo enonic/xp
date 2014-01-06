@@ -217,7 +217,6 @@ public class ContentResourceTest
             key( key ).
             displayName( "Landing page" ).
             name( name ).
-            controllerResource( ModuleResourceKey.from( "mainmodule-1.0.0:/controller/landing-page.js" ) ).
             build();
     }
 

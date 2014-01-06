@@ -8,7 +8,6 @@ import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptorKey;
 import com.enonic.wem.api.form.Form;
-import com.enonic.wem.api.module.ModuleResourceKey;
 
 public class CreatePartDescriptor
     extends Command<PartDescriptor>
@@ -18,8 +17,6 @@ public class CreatePartDescriptor
     private ComponentDescriptorName name;
 
     private String displayName;
-
-    private ModuleResourceKey controllerResource;
 
     private Form config;
 
@@ -45,12 +42,6 @@ public class CreatePartDescriptor
         return this;
     }
 
-    public CreatePartDescriptor controllerResource( final ModuleResourceKey controllerResource )
-    {
-        this.controllerResource = controllerResource;
-        return this;
-    }
-
     public CreatePartDescriptor config( final Form config )
     {
         this.config = config;
@@ -70,11 +61,6 @@ public class CreatePartDescriptor
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    public ModuleResourceKey getControllerResource()
-    {
-        return controllerResource;
     }
 
     public Form getConfig()
