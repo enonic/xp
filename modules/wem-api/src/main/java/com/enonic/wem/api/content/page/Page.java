@@ -8,7 +8,7 @@ import com.enonic.wem.api.support.EditBuilder;
 import static com.enonic.wem.api.support.PossibleChange.newPossibleChange;
 
 public final class Page
-    extends BasePageComponent<PageTemplateKey>
+    extends PageComponent<PageTemplateKey>
 {
     private final RootDataSet config;
 

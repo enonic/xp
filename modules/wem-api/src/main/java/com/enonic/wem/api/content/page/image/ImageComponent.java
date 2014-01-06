@@ -2,14 +2,14 @@ package com.enonic.wem.api.content.page.image;
 
 
 import com.enonic.wem.api.content.ContentId;
-import com.enonic.wem.api.content.page.BasePageComponent;
+import com.enonic.wem.api.content.page.PageComponent;
 import com.enonic.wem.api.content.page.region.RegionPlaceableComponent;
 import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.RootDataSet;
 import com.enonic.wem.api.data.Value;
 
 public class ImageComponent
-    extends BasePageComponent<ImageTemplateKey>
+    extends PageComponent<ImageTemplateKey>
     implements RegionPlaceableComponent
 {
     private ContentId image;
@@ -48,7 +48,7 @@ public class ImageComponent
     }
 
     public static class Builder
-        extends BasePageComponent.Builder<ImageTemplateKey>
+        extends PageComponent.Builder<ImageTemplateKey>
     {
         private ContentId image;
 

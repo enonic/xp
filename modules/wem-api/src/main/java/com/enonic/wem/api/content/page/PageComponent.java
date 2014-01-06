@@ -7,14 +7,14 @@ import com.enonic.wem.api.data.DataSet;
 import com.enonic.wem.api.data.Value;
 import com.enonic.wem.api.rendering.Component;
 
-public abstract class BasePageComponent<TEMPLATE_KEY extends TemplateKey>
+public abstract class PageComponent<TEMPLATE_KEY extends TemplateKey>
     implements Component
 {
     private String id;
 
     private final TEMPLATE_KEY template;
 
-    protected BasePageComponent( final Properties<TEMPLATE_KEY> properties )
+    protected PageComponent( final Properties<TEMPLATE_KEY> properties )
     {
         Preconditions.checkNotNull( properties.template, "template cannot be null" );
         this.template = properties.template;
