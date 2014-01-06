@@ -9,7 +9,7 @@ import com.enonic.wem.api.module.ModuleResourceKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.api.resource.ResourceNotFoundException;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.page.DescriptorHelper;
+import com.enonic.wem.core.content.page.DescriptorKeyToModuleResourceKey;
 import com.enonic.wem.xml.XmlSerializers;
 
 public class GetLayoutDescriptorHandler
@@ -23,7 +23,7 @@ public class GetLayoutDescriptorHandler
         {
             final LayoutDescriptorKey key = this.command.getKey();
 
-            final ModuleResourceKey moduleResourceKey = DescriptorHelper.moduleResourceKeyForDescriptor( key );
+            final ModuleResourceKey moduleResourceKey = DescriptorKeyToModuleResourceKey.translate( key );
             final Resource resource = context.getClient().execute( new GetModuleResource().resourceKey( moduleResourceKey ) );
 
             final String descriptorXml = resource.readAsString();

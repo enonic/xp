@@ -23,7 +23,9 @@ public class CreatePageDescriptorHandler
             build();
 
         final String pageDescriptorXml = serialize( pageDescriptor );
-        DescriptorHelper.storeDescriptorResource( pageDescriptor, pageDescriptorXml, this.context.getClient() );
+
+        new DescriptorStorageHelper( this.context.getClient() ).
+            store( pageDescriptor, pageDescriptorXml );
 
         command.setResult( pageDescriptor );
     }

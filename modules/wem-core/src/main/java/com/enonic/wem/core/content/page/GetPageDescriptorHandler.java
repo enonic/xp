@@ -22,7 +22,7 @@ public class GetPageDescriptorHandler
         {
             final PageDescriptorKey key = this.command.getKey();
 
-            final ModuleResourceKey moduleResourceKey = DescriptorHelper.moduleResourceKeyForDescriptor( key );
+            final ModuleResourceKey moduleResourceKey = DescriptorKeyToModuleResourceKey.translate( key );
             final Resource resource = context.getClient().execute( new GetModuleResource().resourceKey( moduleResourceKey ) );
 
             final String descriptorXml = resource.readAsString();

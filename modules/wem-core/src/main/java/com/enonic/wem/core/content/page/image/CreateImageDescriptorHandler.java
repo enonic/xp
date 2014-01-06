@@ -4,7 +4,7 @@ import com.enonic.wem.api.command.content.page.image.CreateImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptorXml;
 import com.enonic.wem.core.command.CommandHandler;
-import com.enonic.wem.core.content.page.DescriptorHelper;
+import com.enonic.wem.core.content.page.DescriptorStorageHelper;
 import com.enonic.wem.xml.XmlSerializers;
 
 import static com.enonic.wem.api.content.page.image.ImageDescriptor.newImageDescriptor;
@@ -24,7 +24,9 @@ public class CreateImageDescriptorHandler
             build();
 
         final String imageDescriptorXml = serialize( imageDescriptor );
-        DescriptorHelper.storeDescriptorResource( imageDescriptor, imageDescriptorXml, this.context.getClient() );
+
+        new DescriptorStorageHelper( this.context.getClient() ).
+            store( imageDescriptor, imageDescriptorXml );
 
         command.setResult( imageDescriptor );
     }
