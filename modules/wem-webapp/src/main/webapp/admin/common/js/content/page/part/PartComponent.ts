@@ -1,6 +1,6 @@
 module api.content.page.part{
 
-    export class PartComponent extends api.content.page.BasePageComponent<PartTemplateKey> {
+    export class PartComponent extends api.content.page.PageComponent<PartTemplateKey> {
 
         private config:api.data.RootDataSet;
 

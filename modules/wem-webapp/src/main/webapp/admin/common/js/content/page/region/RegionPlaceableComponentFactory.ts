@@ -8,7 +8,7 @@ module api.content.page.region {
 
         private static LAYOUT_COMPONENT_CLASS_NAME = "LayoutComponent";
 
-        public static create(componentAsDataSet: api.data.DataSet): api.content.page.BasePageComponent<api.content.page.TemplateKey> {
+        public static create(componentAsDataSet: api.data.DataSet): api.content.page.PageComponent<api.content.page.TemplateKey> {
 
             if (componentAsDataSet.getName() == RegionPlaceableComponentFactory.PART_COMPONENT_CLASS_NAME) {
                 return new api.content.page.part.PartComponentBuilder().fromDataSet(componentAsDataSet).build();

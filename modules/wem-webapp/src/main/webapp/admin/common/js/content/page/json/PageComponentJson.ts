@@ -1,6 +1,6 @@
 module api.content.page.json{
 
-    export interface BasePageComponentJson{
+    export interface PageComponentJson{
 
         componentType:string;
 

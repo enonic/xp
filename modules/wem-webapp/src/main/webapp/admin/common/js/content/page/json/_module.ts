@@ -1,5 +1,5 @@
-///<reference path='BaseDescriptorJson.ts' />
-///<reference path='BasePageComponentJson.ts' />
+///<reference path='DescriptorJson.ts' />
+///<reference path='PageComponentJson.ts' />
 ///<reference path='TemplateSummaryJson.ts' />
 
 ///<reference path='PageDescriptorJson.ts' />

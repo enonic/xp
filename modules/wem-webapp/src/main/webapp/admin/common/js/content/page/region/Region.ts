@@ -4,7 +4,7 @@ module api.content.page.region {
 
         private name: string;
 
-        private pageComponents: api.content.page.BasePageComponent<api.content.page.TemplateKey>[] = [];
+        private pageComponents: api.content.page.PageComponent<api.content.page.TemplateKey>[] = [];
 
         constructor(builder: RegionBuilder) {
             this.name = builder.name;
@@ -17,7 +17,7 @@ module api.content.page.region {
 
         name: string;
 
-        pageComponents: api.content.page.BasePageComponent<api.content.page.TemplateKey>[] = [];
+        pageComponents: api.content.page.PageComponent<api.content.page.TemplateKey>[] = [];
 
         public fromRootDataSet(data: api.data.RootDataSet): RegionBuilder {
 

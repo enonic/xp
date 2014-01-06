@@ -1,6 +1,6 @@
 module api.content.page.json{
 
-    export interface BaseDescriptorJson{
+    export interface DescriptorJson{
 
         name:string;
 

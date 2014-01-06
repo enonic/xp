@@ -1,6 +1,6 @@
 module api.content.page.json{
 
-    export interface PageDescriptorJson extends BaseDescriptorJson{
+    export interface PageDescriptorJson extends DescriptorJson{
 
     }
 }

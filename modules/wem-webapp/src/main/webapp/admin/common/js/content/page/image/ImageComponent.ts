@@ -1,6 +1,6 @@
 module api.content.page.image {
 
-    export class ImageComponent extends api.content.page.BasePageComponent<ImageTemplateKey> {
+    export class ImageComponent extends api.content.page.PageComponent<ImageTemplateKey> {
 
         private config: api.data.RootDataSet;
 

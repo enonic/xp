@@ -1,8 +1,6 @@
 module api.content.page{
 
-    export class BasePageComponent<TEMPLATE_KEY extends TemplateKey> {
-
-        private id:number;
+    export class PageComponent<TEMPLATE_KEY extends TemplateKey> {
 
         private template:TEMPLATE_KEY;
 
