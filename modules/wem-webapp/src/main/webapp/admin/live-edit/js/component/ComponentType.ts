@@ -1,23 +1,25 @@
 // fixme: Create interface for highlighterStyle?
 
-interface HighlighterStyle {
-    stroke:string;
-    strokeDasharray:string;
-    fill:string;
-}
 
-interface TypeConfiguration {
-    type:LiveEdit.component.Type;
-    typeName:string;
-    cssSelector:string;
-    draggable:boolean;
-    cursor:string;
-    iconCls:string;
-    highlighterStyle?: HighlighterStyle;
-    contextMenuConfig:string[];
-}
 
 module LiveEdit.component {
+
+    export interface HighlighterStyle {
+        stroke:string;
+        strokeDasharray:string;
+        fill:string;
+    }
+
+    export interface TypeConfiguration {
+        type:LiveEdit.component.Type;
+        typeName:string;
+        cssSelector:string;
+        draggable:boolean;
+        cursor:string;
+        iconCls:string;
+        highlighterStyle?: HighlighterStyle;
+        contextMenuConfig:string[];
+    }
 
     export enum Type {
         PAGE,

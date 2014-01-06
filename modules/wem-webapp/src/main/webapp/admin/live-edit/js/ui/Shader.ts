@@ -85,7 +85,7 @@ module LiveEdit.ui {
                 documentWidth = documentSize.width,
                 documentHeight = documentSize.height;
 
-            var dimensions:ElementDimensions = component.getElementDimensions(),
+            var dimensions:component.ElementDimensions = component.getElementDimensions(),
                 x = dimensions.left,
                 y = dimensions.top,
                 w = dimensions.width,

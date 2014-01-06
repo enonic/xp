@@ -1,11 +1,11 @@
-interface ElementDimensions {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-}
-
 module LiveEdit.component {
+
+    export interface ElementDimensions {
+        top: number;
+        left: number;
+        width: number;
+        height: number;
+    }
 
     export class Component {
 

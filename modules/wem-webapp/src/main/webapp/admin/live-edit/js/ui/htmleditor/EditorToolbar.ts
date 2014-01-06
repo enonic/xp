@@ -122,7 +122,7 @@ module LiveEdit.ui {
         }
 
         private getPositionRelativeToComponentTop():any {
-            var dimensions:ElementDimensions = this.selectedParagraph.getElementDimensions(),
+            var dimensions:component.ElementDimensions = this.selectedParagraph.getElementDimensions(),
                 leftPos = dimensions.left + (dimensions.width / 2 - this.getEl().outerWidth() / 2),
                 topPos = dimensions.top - this.getEl().height() - 25;
 

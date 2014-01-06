@@ -32,7 +32,7 @@ module LiveEdit.ui.contextmenu.menuitem {
         }
 
         private scrollComponentIntoView(component:LiveEdit.component.Component):void {
-            var dimensions:ElementDimensions = component.getElementDimensions();
+            var dimensions:component.ElementDimensions = component.getElementDimensions();
             if (dimensions.top <= window.pageYOffset) {
                 $('html, body').animate({scrollTop: dimensions.top - 10}, 200);
             }

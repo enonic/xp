@@ -169,7 +169,7 @@ module LiveEdit.ui.contextmenu {
         private handleWindowResize():void {
             // fixme: improve!
             if (this.selectedComponent) {
-                var dimensions:ElementDimensions = this.selectedComponent.getElementDimensions(),
+                var dimensions:component.ElementDimensions = this.selectedComponent.getElementDimensions(),
                     x = dimensions.left + dimensions.width / 2 - this.getEl().width() / 2,
                     y = this.getEl().offset().top;
 

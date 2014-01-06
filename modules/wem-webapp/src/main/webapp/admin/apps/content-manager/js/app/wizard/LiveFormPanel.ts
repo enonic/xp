@@ -38,6 +38,7 @@ module app.wizard {
                         if (this.frame.getHTMLElement()["contentWindow"].$liveEdit) {
                             var contextWindow = new app.contextwindow.ContextWindow({liveEditEl: this.frame, site: this.site});
                             this.appendChild(contextWindow);
+                            //contextWindow.init();
                             clearInterval(intervalId);
                         }
                     }

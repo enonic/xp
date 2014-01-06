@@ -3,7 +3,7 @@ module LiveEdit.component {
     // Uses
     var $ = $liveEdit;
 
-    var ATTRIBUTE_NAME:string = 'data-live-edit-selected';
+    export var ATTRIBUTE_NAME:string = 'data-live-edit-selected';
 
     export class Selection {
 

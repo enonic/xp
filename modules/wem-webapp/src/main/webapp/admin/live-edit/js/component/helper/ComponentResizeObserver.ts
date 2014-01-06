@@ -21,7 +21,8 @@ module LiveEdit.component.helper {
             this.component = component;
             this.component.getElement().on('resize', (event) => {
                 if (this.component.isSelected()) {
-                    $(window).on('selectComponent.liveEdit', [component])
+                    // TODO: This bugged out jQuery, not sure what it was used for.
+                    //$(window).on('selectComponent.liveEdit', [component])
                 }
             });
 

@@ -22,7 +22,7 @@ module app.contextwindow.image {
 
         private liveEditIndex:number = 1;
 
-        constructor(contextWindow:app.contextwindow.ContextWindow) {
+        constructor(contextWindow:ContextWindow) {
             super("ImageSelectPanel");
             this.addClass("select-panel");
             var comboBoxWrapper = new api.dom.DivEl();
@@ -54,10 +54,11 @@ module app.contextwindow.image {
 
             comboBoxWrapper.appendChild(this.comboBox);
             comboBoxWrapper.appendChild(this.selectedOptionsView);
+            comboBoxWrapper.getEl().setHeight("50px");
             this.appendChild(comboBoxWrapper);
             this.appendChild(this.deck);
 
-            app.contextwindow.ComponentSelectEvent.on((event) => {
+            ComponentSelectEvent.on((event) => {
                 //TODO: set image here
                 if (!event.getComponent().isEmpty()) {
                     this.image = new api.content.page.image.ImageComponent();
@@ -74,11 +75,11 @@ module app.contextwindow.image {
 
             });
 
-            app.contextwindow.ComponentDeselectEvent.on((event) => {
+            ComponentDeselectEvent.on((event) => {
                 this.itemRemoved();
             });
 
-            app.contextwindow.ComponentRemovedEvent.on((event) => {
+            ComponentRemovedEvent.on((event) => {
                 if (this.selectedOption != null) {
                     this.comboBox.removeSelectedItem(this.selectedOption);
                     this.itemRemoved();
@@ -124,14 +125,12 @@ module app.contextwindow.image {
 
             comboBox.addSelectedOptionRemovedListener(()=> {
                 this.selectedOption = null;
-                console.log("On selected option removed");
             });
             comboBox.addListener({
                 onInputValueChanged: (oldValue, newValue, grid) => {
                     contentSummaryLoader.search(newValue);
                 },
                 onOptionSelected: (item:api.ui.combobox.Option<api.content.ContentSummary>) => {
-                    console.log("On option selected");
                     //TODO: Mocked live use of image
                     var iconUrl = item.displayValue.getIconUrl();
                     this.selectedOption = item;
