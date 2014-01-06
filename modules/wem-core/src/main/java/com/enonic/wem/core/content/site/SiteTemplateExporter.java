@@ -92,9 +92,12 @@ public final class SiteTemplateExporter
                 final String filename = getTemplateFilenameSuffix( file );
                 final AbstractEntityExporter<Template, Template.BaseTemplateBuilder> entityExporter =
                     EntityExporters.getByFilename( filename );
-                final Template.BaseTemplateBuilder template = entityExporter.importObject( parentDirectory, file );
-                setTemplateKey( siteTemplateKey, moduleKey, template );
-                parentEntry.addTemplate( template.build() );
+                if ( entityExporter != null )
+                {
+                    final Template.BaseTemplateBuilder template = entityExporter.importObject( parentDirectory, file );
+                    setTemplateKey( siteTemplateKey, moduleKey, template );
+                    parentEntry.addTemplate( template.build() );
+                }
             }
         }
     }
