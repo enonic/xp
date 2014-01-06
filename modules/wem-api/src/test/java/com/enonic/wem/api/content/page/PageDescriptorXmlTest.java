@@ -1,9 +1,7 @@
-package com.enonic.wem.xml.content.page;
+package com.enonic.wem.api.content.page;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.PageDescriptor;
-import com.enonic.wem.api.content.page.PageDescriptorKey;
 import com.enonic.wem.api.form.FieldSet;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;

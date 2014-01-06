@@ -1,12 +1,12 @@
-package com.enonic.wem.xml.content.page;
+package com.enonic.wem.api.content.page.part;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.enonic.wem.api.content.page.part.PartDescriptor;
+import com.enonic.wem.api.content.page.DescriptorXml;
 
 @XmlRootElement(name = "part-component")
 public final class PartDescriptorXml
-    extends AbstractDescriptorXml<PartDescriptor, PartDescriptor.Builder>
+    extends DescriptorXml<PartDescriptor, PartDescriptor.Builder>
 {
     @Override
     public void from( final PartDescriptor template )

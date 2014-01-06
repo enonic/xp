@@ -20,11 +20,11 @@ import com.enonic.wem.api.command.module.GetModuleResource;
 import com.enonic.wem.api.content.page.ComponentDescriptorName;
 import com.enonic.wem.api.content.page.PageDescriptor;
 import com.enonic.wem.api.content.page.PageDescriptorKey;
+import com.enonic.wem.api.content.page.PageDescriptorXmlTest;
 import com.enonic.wem.api.module.ModuleKey;
 import com.enonic.wem.api.resource.Resource;
 import com.enonic.wem.core.command.AbstractCommandHandlerTest;
 import com.enonic.wem.xml.XmlSerializers;
-import com.enonic.wem.xml.content.page.PageDescriptorXmlTest;
 
 import static com.enonic.wem.api.resource.Resource.newResource;
 import static junit.framework.Assert.assertEquals;

@@ -1,9 +1,7 @@
-package com.enonic.wem.xml.content.page;
+package com.enonic.wem.api.content.page.layout;
 
 import org.junit.Test;
 
-import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
-import com.enonic.wem.api.content.page.layout.LayoutDescriptorKey;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.xml.BaseXmlSerializerTest;
 import com.enonic.wem.xml.XmlSerializers;

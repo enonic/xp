@@ -2,10 +2,10 @@ package com.enonic.wem.core.content.page.layout;
 
 import com.enonic.wem.api.command.content.page.layout.CreateLayoutDescriptor;
 import com.enonic.wem.api.content.page.layout.LayoutDescriptor;
+import com.enonic.wem.api.content.page.layout.LayoutDescriptorXml;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.page.DescriptorHelper;
 import com.enonic.wem.xml.XmlSerializers;
-import com.enonic.wem.xml.content.page.LayoutDescriptorXml;
 
 import static com.enonic.wem.api.content.page.layout.LayoutDescriptor.newLayoutDescriptor;
 

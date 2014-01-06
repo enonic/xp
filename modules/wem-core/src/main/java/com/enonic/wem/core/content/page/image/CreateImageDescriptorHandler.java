@@ -2,10 +2,10 @@ package com.enonic.wem.core.content.page.image;
 
 import com.enonic.wem.api.command.content.page.image.CreateImageDescriptor;
 import com.enonic.wem.api.content.page.image.ImageDescriptor;
+import com.enonic.wem.api.content.page.image.ImageDescriptorXml;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.page.DescriptorHelper;
 import com.enonic.wem.xml.XmlSerializers;
-import com.enonic.wem.xml.content.page.ImageDescriptorXml;
 
 import static com.enonic.wem.api.content.page.image.ImageDescriptor.newImageDescriptor;
 

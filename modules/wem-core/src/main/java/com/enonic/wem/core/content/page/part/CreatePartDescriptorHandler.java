@@ -2,10 +2,10 @@ package com.enonic.wem.core.content.page.part;
 
 import com.enonic.wem.api.command.content.page.part.CreatePartDescriptor;
 import com.enonic.wem.api.content.page.part.PartDescriptor;
+import com.enonic.wem.api.content.page.part.PartDescriptorXml;
 import com.enonic.wem.core.command.CommandHandler;
 import com.enonic.wem.core.content.page.DescriptorHelper;
 import com.enonic.wem.xml.XmlSerializers;
-import com.enonic.wem.xml.content.page.PartDescriptorXml;
 
 import static com.enonic.wem.api.content.page.part.PartDescriptor.newPartDescriptor;
 

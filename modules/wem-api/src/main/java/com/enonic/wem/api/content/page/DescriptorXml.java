@@ -1,14 +1,13 @@
-package com.enonic.wem.xml.content.page;
+package com.enonic.wem.api.content.page;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import com.enonic.wem.api.content.page.Descriptor;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormXml;
 import com.enonic.wem.xml.XmlObject;
 
-abstract class AbstractDescriptorXml<I, O>
-    implements XmlObject<I, O>
+public abstract class DescriptorXml<I, O>
+implements XmlObject<I, O>
 {
     @XmlElement(name = "display-name", required = false)
     private String displayName;
