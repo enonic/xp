@@ -21,3 +21,5 @@ Ext.override(Ext.LoadMask, {
     maskCls: 'admin-mask-white'
 });
 
+
+Q.longStackSupport = true;
