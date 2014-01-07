@@ -40,7 +40,7 @@ public class ContentNodeTranslator
 
     public static final String CONTENT_DATA_PATH = "contentdata";
 
-    private static final String PAGE_CONFIG_PATH = "page";
+    public static final String PAGE_CONFIG_PATH = "page";
 
     private static final SerializerForFormItemToData SERIALIZER_FOR_FORM_ITEM_TO_DATA = new SerializerForFormItemToData();
 
@@ -213,6 +213,8 @@ public class ContentNodeTranslator
     {
         final RootDataSet rootDataSet = propertiesToRootDataSet( content );
 
+        final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( rootDataSet );
+
         return new NodeEditor()
         {
             @Override
@@ -221,6 +223,7 @@ public class ContentNodeTranslator
                 return Node.editNode( toBeEdited ).
                     name( NodeName.from( content.getName().toString() ) ).
                     attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( updateContentCommand.getAttachments() ) ).
+                    entityIndexConfig( entityIndexConfig ).
                     rootDataSet( rootDataSet );
             }
         };

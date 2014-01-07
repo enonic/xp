@@ -87,7 +87,7 @@ public class EntityIndexConfig
 
         public Builder addPropertyIndexConfig( final Property property, final PropertyIndexConfig propertyIndexConfig )
         {
-            propertyIndexConfigs.put( property.getPath(), propertyIndexConfig );
+            propertyIndexConfigs.put( property.getBasePath(), propertyIndexConfig );
             return this;
         }
 

@@ -223,6 +223,21 @@ public class DataSetTest
     }
 
     @Test
+    public void base_path_is_same_for_same_path()
+    {
+        Property myArray1 = new Property.String( "myArray", "1" );
+        Property myArray2 = new Property.String( "myArray", "2" );
+
+        DataSet dataSet = new ContentData();
+        dataSet.add( myArray1 );
+        dataSet.add( myArray2 );
+
+        assertTrue( dataSet.getProperty( "myArray[0]" ).getBasePath().equals( dataSet.getProperty( "myArray[1]" ).getBasePath() ) );
+        assertFalse( dataSet.getProperty( "myArray[0]" ).getPath().equals( dataSet.getProperty( "myArray[1]" ).getPath() ) );
+        assertEquals( "myArray", dataSet.getProperty( "myArray[0]" ).getBasePath().toString() );
+    }
+
+    @Test
     public void dataNames()
     {
         DataSet dataSet = DataSet.newDataSet().name( "mySet" ).build();
@@ -500,10 +515,10 @@ public class DataSetTest
         dataSet.add( set2 );
 
         // exercise
-        List<DataSet> foundDataSets =  dataSet.getDataSets();
+        List<DataSet> foundDataSets = dataSet.getDataSets();
 
         // verify
-        assertEquals( 2, foundDataSets.size()  );
+        assertEquals( 2, foundDataSets.size() );
     }
 
 }

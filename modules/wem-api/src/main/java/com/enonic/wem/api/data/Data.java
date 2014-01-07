@@ -82,6 +82,34 @@ public abstract class Data<T extends Data>
         return this.path;
     }
 
+    /**
+     * Get path without array index info *
+     */
+    public DataPath getBasePath()
+    {
+        if ( parent == null && StringUtils.isEmpty( this.name ) )
+        {
+            return DataPath.ROOT;
+        }
+
+        final DataPath.Element pathElement;
+        pathElement = DataPath.Element.from( this.name );
+
+        final DataPath newPath;
+        if ( parent != null )
+        {
+            final DataPath parentPath = parent.getPath();
+            newPath = DataPath.from( parentPath, pathElement );
+        }
+        else
+        {
+            newPath = DataPath.from( pathElement );
+        }
+
+        return newPath;
+    }
+
+
     private DataPath resolvePath()
     {
         if ( parent == null && StringUtils.isEmpty( this.name ) )

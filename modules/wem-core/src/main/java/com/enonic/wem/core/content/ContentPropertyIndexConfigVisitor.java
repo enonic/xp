@@ -5,7 +5,6 @@ import com.enonic.wem.api.data.Property;
 import com.enonic.wem.api.data.PropertyVisitor;
 import com.enonic.wem.api.entity.EntityIndexConfig;
 import com.enonic.wem.api.entity.PropertyIndexConfig;
-import com.enonic.wem.core.schema.content.ContentTypeNodeTranslator;
 
 public class ContentPropertyIndexConfigVisitor
     extends PropertyVisitor
@@ -15,7 +14,13 @@ public class ContentPropertyIndexConfigVisitor
     public static final PropertyIndexConfig CONTENT_DEFAULT_INDEX_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
         tokenizedEnabled( false ).
         fulltextEnabled( false ).
-        enabled( false ).
+        enabled( true ).
+        build();
+
+    public static final PropertyIndexConfig CONTENT_ROOT_DEFAULT_INDEX_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
+        tokenizedEnabled( false ).
+        fulltextEnabled( false ).
+        enabled( true ).
         build();
 
 
@@ -28,7 +33,20 @@ public class ContentPropertyIndexConfigVisitor
     @Override
     public void visit( final Property property )
     {
-        if ( property.getPath().startsWith( DataPath.from( ContentNodeTranslator.CONTENT_DATA_PATH ) ) )
+        final DataPath basePath = property.getBasePath();
+
+        if ( basePath.getParent().equals( DataPath.ROOT ) )
+        {
+            if ( ContentNodeTranslator.DISPLAY_NAME_PATH.equals( property.getName() ) )
+            {
+                builder.addPropertyIndexConfig( property, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG );
+            }
+            else
+            {
+                builder.addPropertyIndexConfig( property, CONTENT_ROOT_DEFAULT_INDEX_CONFIG );
+            }
+        }
+        else if ( isChildOf( basePath, ContentNodeTranslator.CONTENT_DATA_PATH ) )
         {
             builder.addPropertyIndexConfig( property, PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( true ).
@@ -36,7 +54,7 @@ public class ContentPropertyIndexConfigVisitor
                 fulltextEnabled( true ).
                 build() );
         }
-        else if ( property.getPath().startsWith( DataPath.from( ContentNodeTranslator.FORM_PATH ) ) )
+        else if ( isChildOf( basePath, ContentNodeTranslator.FORM_PATH ) )
         {
             builder.addPropertyIndexConfig( property, PropertyIndexConfig.newPropertyIndexConfig().
                 enabled( false ).
@@ -44,17 +62,22 @@ public class ContentPropertyIndexConfigVisitor
                 fulltextEnabled( false ).
                 build() );
         }
-        else if ( ContentTypeNodeTranslator.DISPLAY_NAME_PROPERTY.equals( property.getName() ) )
+        else if ( isChildOf( basePath, ContentNodeTranslator.PAGE_CONFIG_PATH ) )
         {
             builder.addPropertyIndexConfig( property, PropertyIndexConfig.newPropertyIndexConfig().
-                enabled( true ).
-                tokenizedEnabled( true ).
-                fulltextEnabled( true ).
+                enabled( false ).
+                tokenizedEnabled( false ).
+                fulltextEnabled( false ).
                 build() );
         }
         else
         {
             builder.addPropertyIndexConfig( property, CONTENT_DEFAULT_INDEX_CONFIG );
         }
+    }
+
+    private boolean isChildOf( final DataPath childPath, final String parent )
+    {
+        return childPath.getFirstElement().equals( DataPath.from( parent ).getFirstElement() );
     }
 }

@@ -84,4 +84,22 @@ public class EntityIndexConfigTest
         assertEquals( propertyIndexConfig3, indexConfig.getPropertyIndexConfig( DataPath.from( "test/path/child" ) ) );
         assertEquals( propertyIndexConfig4, indexConfig.getPropertyIndexConfig( DataPath.from( "test/path/child/sub" ) ) );
     }
+
+    @Test
+    public void array_values_gets_one_config_and_that_is_the_last_given()
+    {
+        Property myArray1 = new Property.String( "myArray", "1" );
+        Property myArray2 = new Property.String( "myArray", "2" );
+
+        final EntityIndexConfig indexConfig = EntityIndexConfig.
+            newEntityIndexConfig().
+            addPropertyIndexConfig( myArray1, PropertyIndexConfig.INDEXNON_PROPERTY_CONFIG ).
+            addPropertyIndexConfig( myArray2, PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG ).
+            build();
+
+        assertNotNull( indexConfig.getPropertyIndexConfig( myArray1.getPath() ) );
+        assertEquals( PropertyIndexConfig.INDEXALL_PROPERTY_CONFIG, indexConfig.getPropertyIndexConfig( myArray1.getPath() ) );
+        assertEquals( indexConfig.getPropertyIndexConfig( myArray1.getPath() ), indexConfig.getPropertyIndexConfig( myArray2.getPath() ) );
+    }
+
 }

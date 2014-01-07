@@ -35,8 +35,6 @@ public class NodeIndexDocumentFactory
 
     protected static final IndexDocumentItemPath PATH_PROPERTY_PATH = IndexDocumentItemPath.from( "path" );
 
-    public static final String DATA_PROPERTY_PREFIX = "data";
-
     private static final PropertyIndexConfig metadataPropertyIndexConfig = PropertyIndexConfig.newPropertyIndexConfig().
         enabled( true ).
         tokenizedEnabled( false ).
@@ -45,8 +43,8 @@ public class NodeIndexDocumentFactory
 
     private static final PropertyIndexConfig defaultPropertyIndexConfig = PropertyIndexConfig.newPropertyIndexConfig().
         enabled( true ).
-        tokenizedEnabled( true ).
-        fulltextEnabled( true ).
+        tokenizedEnabled( false ).
+        fulltextEnabled( false ).
         build();
 
     public static final PropertyIndexConfig namePropertyIndexConfig = PropertyIndexConfig.

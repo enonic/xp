@@ -11,6 +11,18 @@ public final class PropertyIndexConfig
 
     private final boolean tokenizedEnabled;
 
+    public static final PropertyIndexConfig INDEXNON_PROPERTY_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
+        tokenizedEnabled( false ).
+        fulltextEnabled( false ).
+        enabled( false ).
+        build();
+
+    public static final PropertyIndexConfig INDEXALL_PROPERTY_CONFIG = PropertyIndexConfig.newPropertyIndexConfig().
+        tokenizedEnabled( true ).
+        fulltextEnabled( true ).
+        enabled( true ).
+        build();
+
     private PropertyIndexConfig( final Builder builder )
     {
         this.enabled = builder.enabled;

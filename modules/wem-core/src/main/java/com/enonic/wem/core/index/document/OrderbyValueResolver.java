@@ -1,15 +1,12 @@
 package com.enonic.wem.core.index.document;
 
-import java.text.SimpleDateFormat;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.enonic.wem.api.data.Value;
+import com.enonic.wem.core.index.IndexFormats;
 
 class OrderbyValueResolver
 {
-    // TODO: This should not be here I think, handle this when creating IndexRequest?
-    public final static SimpleDateFormat ELASTICSEARCH_FULL_DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss.SSS" );
 
     public static String getOrderbyValue( Value value )
     {
@@ -50,7 +47,7 @@ class OrderbyValueResolver
 
     private static String getOrderbyValueForDate( Value value )
     {
-        return ELASTICSEARCH_FULL_DATE_FORMAT.format( value.asDateTime().toDate() );
+        return IndexFormats.FULL_DATE_FORMAT.print( value.asDateTime() );
     }
 
     private static String getOrderbyValueForString( String value )

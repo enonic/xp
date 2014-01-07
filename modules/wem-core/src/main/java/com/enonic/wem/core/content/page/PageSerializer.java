@@ -7,9 +7,9 @@ import com.enonic.wem.api.data.Value;
 
 public class PageSerializer
 {
-    static final String PAGE_TEMPLATE = "template";
+    public static final String PAGE_TEMPLATE = "template";
 
-    static final String PAGE_CONFIG = "config";
+    public static final String PAGE_CONFIG = "config";
 
     public DataSet toData( final Page page, final String dataSetName )
     {
