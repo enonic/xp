@@ -1,7 +1,5 @@
 package com.enonic.wem.core.content;
 
-import javax.jcr.Session;
-
 import com.enonic.wem.api.command.content.GetContentById;
 import com.enonic.wem.api.command.entity.GetNodeById;
 import com.enonic.wem.api.content.Content;
@@ -9,6 +7,7 @@ import com.enonic.wem.api.content.ContentNotFoundException;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.NoEntityWithIdFoundException;
 import com.enonic.wem.api.entity.Node;
+import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.entity.GetNodeByIdService;
 
 public class GetContentByIdService
@@ -16,9 +15,9 @@ public class GetContentByIdService
 {
     private final GetContentById command;
 
-    public GetContentByIdService( final Session session, final GetContentById command )
+    public GetContentByIdService( final CommandContext context, final GetContentById command )
     {
-        super( session );
+        super( context );
         this.command = command;
     }
 
@@ -29,7 +28,7 @@ public class GetContentByIdService
         try
         {
             final Node node = new GetNodeByIdService( session, getNodeByIdCommand ).execute();
-            return CONTENT_TO_NODE_TRANSLATOR.fromNode( node );
+            return translator.fromNode( node );
         }
         catch ( NoEntityWithIdFoundException e )
         {

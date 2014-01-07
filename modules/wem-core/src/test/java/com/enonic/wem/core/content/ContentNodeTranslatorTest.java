@@ -1,9 +1,13 @@
 package com.enonic.wem.core.content;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import com.enonic.wem.api.Client;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.entity.CreateNode;
+import com.enonic.wem.api.command.schema.content.GetContentType;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
@@ -17,6 +21,7 @@ import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItemSet;
 import com.enonic.wem.api.form.Input;
 import com.enonic.wem.api.form.inputtype.InputTypes;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 
 import static junit.framework.Assert.assertEquals;
@@ -25,7 +30,18 @@ import static org.junit.Assert.*;
 
 public class ContentNodeTranslatorTest
 {
-    private ContentNodeTranslator translator = new ContentNodeTranslator();
+    private ContentNodeTranslator translator;
+
+    @Before
+    public void before()
+    {
+        final Client client = Mockito.mock( Client.class );
+
+        final ContentType contentType = ContentType.newContentType().name( "my-content-type" ).build();
+        Mockito.when( client.execute( Mockito.isA( GetContentType.class ) ) ).thenReturn( contentType );
+
+        translator = new ContentNodeTranslator( client );
+    }
 
     @Test
     public void toNode_contentData_to_rootdataset()

@@ -53,7 +53,6 @@ public class UpdateContentHandler
 
     private final static Logger LOG = LoggerFactory.getLogger( UpdateContentHandler.class );
 
-    private final static ContentNodeTranslator CONTENT_NODE_TRANSLATOR = new ContentNodeTranslator();
 
     @Override
     public void handle()
@@ -64,8 +63,10 @@ public class UpdateContentHandler
 
     private Content updateContentAsNode()
     {
+        ContentNodeTranslator translator = new ContentNodeTranslator( this.context.getClient() );
+
         final GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content persistedContent = new GetContentByIdService( this.context.getJcrSession(), getContentByIdCommand ).execute();
+        final Content persistedContent = new GetContentByIdService( this.context, getContentByIdCommand ).execute();
 
         Content.EditBuilder editBuilder = command.getEditor().edit( persistedContent );
 
@@ -84,8 +85,8 @@ public class UpdateContentHandler
             modifier( command.getModifier() ).build();
 
         // TODO: Rewrite to use service instead?
-        final NodeEditor nodeEditor = CONTENT_NODE_TRANSLATOR.toNodeEditor( editedContent, this.command );
-        final UpdateNode updateNodeCommand = CONTENT_NODE_TRANSLATOR.toUpdateNodeCommand( persistedContent.getId(), nodeEditor );
+        final NodeEditor nodeEditor = translator.toNodeEditor( editedContent, this.command );
+        final UpdateNode updateNodeCommand = translator.toUpdateNodeCommand( persistedContent.getId(), nodeEditor );
 
         final UpdateNodeHandler updateNodeHandler = UpdateNodeHandler.create().
             context( this.context ).
@@ -97,7 +98,7 @@ public class UpdateContentHandler
             updateNodeHandler.handle();
 
             final Node editedNode = updateNodeCommand.getResult().getPersistedNode();
-            final Content editedNodeAsContent = CONTENT_NODE_TRANSLATOR.fromNode( editedNode );
+            final Content editedNodeAsContent = translator.fromNode( editedNode );
 
             deleteRemovedEmbeddedContentAsNode( persistedContent, editedNodeAsContent );
 
@@ -157,7 +158,6 @@ public class UpdateContentHandler
     }
 
 
-
     private ImmutableMap<ContentId, Content> resolveEmbeddedContent( final ContentData contentData )
     {
 
@@ -170,7 +170,7 @@ public class UpdateContentHandler
             public void visit( final Property property )
             {
 
-                final Content content = new GetContentByIdService( session, new GetContentById( property.getContentId() ) ).execute();
+                final Content content = new GetContentByIdService( context, new GetContentById( property.getContentId() ) ).execute();
 
                 if ( content != null )
                 {

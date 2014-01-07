@@ -1,8 +1,22 @@
 package com.enonic.wem.core.content;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
+
+import com.enonic.wem.api.Client;
+import com.enonic.wem.api.blob.Blob;
+import com.enonic.wem.api.blob.BlobKey;
 import com.enonic.wem.api.command.Commands;
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.content.UpdateContent;
+import com.enonic.wem.api.command.content.blob.CreateBlob;
 import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
@@ -10,6 +24,7 @@ import com.enonic.wem.api.content.ContentId;
 import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.api.content.attachment.Attachment;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.content.page.Page;
 import com.enonic.wem.api.content.site.Site;
@@ -26,10 +41,14 @@ import com.enonic.wem.api.entity.NodePath;
 import com.enonic.wem.api.entity.Nodes;
 import com.enonic.wem.api.form.Form;
 import com.enonic.wem.api.form.FormItems;
+import com.enonic.wem.api.schema.content.ContentType;
 import com.enonic.wem.api.schema.content.ContentTypeName;
 import com.enonic.wem.core.content.page.PageSerializer;
 import com.enonic.wem.core.content.site.SiteSerializer;
+import com.enonic.wem.core.image.filter.effect.ScaleMaxFilter;
 import com.enonic.wem.core.support.SerializerForFormItemToData;
+
+import static com.enonic.wem.api.content.attachment.Attachment.newAttachment;
 
 public class ContentNodeTranslator
 {
@@ -61,17 +80,36 @@ public class ContentNodeTranslator
 
     public static final String SITE_CONFIG_PATH = "site";
 
+    private static final int THUMBNAIL_SIZE = 512;
+
+    private static final String THUMBNAIL_MIME_TYPE = "image/png";
+
+    private final Client client;
+
+    public ContentNodeTranslator( final Client client )
+    {
+        this.client = client;
+    }
+
+
     public CreateNode toCreateNode( final CreateContent command )
     {
         final RootDataSet rootDataSet = toRootDataSet( command );
         final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( rootDataSet );
+
+        final List<Attachment> attachments = Lists.newArrayList( command.getAttachments() );
+        final Attachment thumbnail = resolveThumbnailAttachment( command );
+        if ( thumbnail != null )
+        {
+            attachments.add( thumbnail );
+        }
 
         final CreateNode createNode = new CreateNode();
         createNode.name( resolveNodeName( command.getName() ) );
         createNode.parent( resolveParentNodePath( command.getParentContentPath() ) );
         createNode.embed( command.isEmbed() );
         createNode.data( rootDataSet );
-        createNode.attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( command.getAttachments() ) );
+        createNode.attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( attachments ) );
         createNode.entityIndexConfig( entityIndexConfig );
         return createNode;
     }
@@ -270,6 +308,64 @@ public class ContentNodeTranslator
     private NodePath resolveParentNodePath( final ContentPath parentContentPath )
     {
         return NodePath.newPath( CONTENTS_ROOT_PATH ).elements( parentContentPath.toString() ).build();
+    }
+
+    private Attachment resolveThumbnailAttachment( final CreateContent command )
+    {
+        final ContentType contentType = getContentType( command.getContentType() );
+
+        if ( ( contentType.getSuperType() != null ) && contentType.getSuperType().isMedia() )
+        {
+            Attachment mediaAttachment = command.getAttachment( command.getName().toString() );
+            if ( mediaAttachment == null )
+            {
+                if ( !command.getAttachments().isEmpty() )
+                {
+                    mediaAttachment = command.getAttachments().iterator().next();
+                }
+            }
+            if ( mediaAttachment != null )
+            {
+                return createThumbnailAttachment( mediaAttachment );
+            }
+        }
+        return null;
+    }
+
+    private Attachment createThumbnailAttachment( final Attachment origin )
+    {
+        final Blob thumbnailBlob = createImageThumbnail( origin.getBlobKey(), THUMBNAIL_SIZE );
+        return newAttachment( origin ).
+            blobKey( thumbnailBlob.getKey() ).
+            name( CreateContent.THUMBNAIL_NAME ).
+            mimeType( THUMBNAIL_MIME_TYPE ).
+            size( thumbnailBlob.getLength() ).
+            build();
+    }
+
+    public Blob createImageThumbnail( final BlobKey originalImageBlobKey, final int size )
+    {
+        try
+        {
+            final Blob originalImage = client.execute( Commands.blob().get( originalImageBlobKey ) );
+
+            final BufferedImage image = ImageIO.read( originalImage.getStream() );
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            final BufferedImage scaledImage = new ScaleMaxFilter( size ).filter( image );
+            ImageIO.write( scaledImage, "png", outputStream );
+            CreateBlob createBlob = Commands.blob().create( ByteStreams.newInputStreamSupplier( outputStream.toByteArray() ).getInput() );
+
+            return client.execute( createBlob );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Failed to createImageThumbnail: " + e.getMessage(), e );
+        }
+    }
+
+    private ContentType getContentType( final ContentTypeName contentTypeName )
+    {
+        return client.execute( Commands.contentType().get().byName().contentTypeName( contentTypeName ) );
     }
 
 }

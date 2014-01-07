@@ -3,8 +3,6 @@ package com.enonic.wem.core.content;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.jcr.Session;
-
 import com.google.common.collect.Sets;
 
 import com.enonic.wem.api.command.content.GetContentByIds;
@@ -15,6 +13,7 @@ import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.EntityId;
 import com.enonic.wem.api.entity.EntityIds;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.entity.GetNodesByIdsService;
 
 
@@ -23,9 +22,9 @@ public class GetContentByIdsService
 {
     private final GetContentByIds command;
 
-    public GetContentByIdsService( final Session session, final GetContentByIds command )
+    public GetContentByIdsService( final CommandContext context, final GetContentByIds command )
     {
-        super( session );
+        super( context );
         this.command = command;
     }
 
@@ -35,7 +34,7 @@ public class GetContentByIdsService
 
         final Nodes nodes = new GetNodesByIdsService( session, getNodesByIdsCommand ).execute();
 
-        return CONTENT_TO_NODE_TRANSLATOR.fromNodes( nodes );
+        return translator.fromNodes( nodes );
     }
 
     private EntityIds getAsEntityIds( final ContentIds contentIds )

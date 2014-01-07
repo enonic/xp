@@ -17,7 +17,7 @@ public class DeleteContentHandler
     public void handle()
         throws Exception
     {
-        command.setResult( new DeleteContentService( this.context.getJcrSession(), this.command, this.indexService ).execute() );
+        command.setResult( new DeleteContentService( this.context, this.command, this.indexService ).execute() );
     }
 
     @Inject

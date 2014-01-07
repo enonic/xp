@@ -11,6 +11,6 @@ public class GetContentByPathHandler
     public void handle()
         throws Exception
     {
-        command.setResult( new GetContentByPathService( this.context.getJcrSession(), this.command ).execute() );
+        command.setResult( new GetContentByPathService( this.context, this.command ).execute() );
     }
 }

@@ -19,7 +19,7 @@ public class GetContentByIdsHandler
 
         try
         {
-            contents = new GetContentByIdsService( this.context.getJcrSession(), this.command ).execute();
+            contents = new GetContentByIdsService( this.context, this.command ).execute();
         }
         catch ( NoEntityWithIdFoundException ex )
         {

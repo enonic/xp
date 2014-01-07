@@ -25,7 +25,7 @@ public class RenameContentHandler
         this.context.getJcrSession().save();
 
         GetContentById getContentByIdCommand = new GetContentById( command.getContentId() );
-        final Content renamedContent = new GetContentByIdService( this.context.getJcrSession(), getContentByIdCommand ).execute();
+        final Content renamedContent = new GetContentByIdService( this.context, getContentByIdCommand ).execute();
 
         command.setResult( renamedContent );
     }

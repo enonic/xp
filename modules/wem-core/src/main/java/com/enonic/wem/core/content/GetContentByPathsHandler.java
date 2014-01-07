@@ -19,7 +19,7 @@ public class GetContentByPathsHandler
 
         try
         {
-            contents = new GetContentByPathsService( this.context.getJcrSession(), this.command ).execute();
+            contents = new GetContentByPathsService( this.context, this.command ).execute();
         }
         catch ( NoNodeAtPathFoundException ex )
         {

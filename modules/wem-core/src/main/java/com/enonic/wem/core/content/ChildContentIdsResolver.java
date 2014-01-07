@@ -1,23 +1,22 @@
 package com.enonic.wem.core.content;
 
-import javax.jcr.Session;
-
 import com.enonic.wem.api.command.content.GetChildContent;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.Contents;
+import com.enonic.wem.core.command.CommandContext;
 
 class ChildContentIdsResolver
 {
-    private final Session session;
+    private final CommandContext context;
 
-    ChildContentIdsResolver( final Session session )
+    ChildContentIdsResolver( final CommandContext context )
     {
-        this.session = session;
+        this.context = context;
     }
 
     Content resolve( final Content content )
     {
-        final Contents children = new GetChildContentService( session, new GetChildContent().parentPath( content.getPath() ) ).execute();
+        final Contents children = new GetChildContentService( context, new GetChildContent().parentPath( content.getPath() ) ).execute();
 
         if ( children.isNotEmpty() )
         {

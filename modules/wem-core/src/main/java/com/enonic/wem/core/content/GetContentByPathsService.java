@@ -1,11 +1,10 @@
 package com.enonic.wem.core.content;
 
-import javax.jcr.Session;
-
 import com.enonic.wem.api.command.content.GetContentByPaths;
 import com.enonic.wem.api.command.entity.GetNodesByPaths;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.entity.Nodes;
+import com.enonic.wem.core.command.CommandContext;
 import com.enonic.wem.core.entity.GetNodesByPathsService;
 
 
@@ -14,9 +13,9 @@ public class GetContentByPathsService
 {
     private GetContentByPaths command;
 
-    public GetContentByPathsService( final Session session, final GetContentByPaths command )
+    public GetContentByPathsService( final CommandContext context, final GetContentByPaths command )
     {
-        super( session );
+        super( context );
         this.command = command;
     }
 
@@ -28,6 +27,6 @@ public class GetContentByPathsService
 
         final Nodes nodes = new GetNodesByPathsService( session, getNodesByPathsCommand ).execute();
 
-        return CONTENT_TO_NODE_TRANSLATOR.fromNodes( nodes );
+        return translator.fromNodes( nodes );
     }
 }

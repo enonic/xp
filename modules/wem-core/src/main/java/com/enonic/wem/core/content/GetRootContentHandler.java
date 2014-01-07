@@ -11,7 +11,7 @@ public class GetRootContentHandler
     public void handle()
         throws Exception
     {
-        final Contents contents = new GetRootContentService( this.context.getJcrSession(), this.command ).execute();
+        final Contents contents = new GetRootContentService( this.context, this.command ).execute();
 
         command.setResult( contents );
     }

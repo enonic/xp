@@ -11,6 +11,6 @@ public class GetContentByIdHandler
     public void handle()
         throws Exception
     {
-        command.setResult( new GetContentByIdService( this.context.getJcrSession(), this.command ).execute() );
+        command.setResult( new GetContentByIdService( this.context, this.command ).execute() );
     }
 }

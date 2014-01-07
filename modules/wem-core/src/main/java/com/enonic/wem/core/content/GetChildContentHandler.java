@@ -12,8 +12,7 @@ public class GetChildContentHandler
     public void handle()
         throws Exception
     {
-        final Contents contents =
-            new GetChildContentService( this.context.getJcrSession(), this.command ).populateChildIds( true ).execute();
+        final Contents contents = new GetChildContentService( this.context, this.command ).populateChildIds( true ).execute();
 
         command.setResult( contents );
     }
