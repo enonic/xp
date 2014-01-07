@@ -243,33 +243,35 @@ module app.wizard {
             this.formIcon.setSrc(persistedContent.getIconUrl());
             var contentData: api.content.ContentData = persistedContent.getContentData();
 
-            this.loadAttachments(persistedContent.getContentId(), (attachmentsArray: api.content.attachment.Attachment[])=> {
+            new api.content.attachment.GetAttachmentsRequest(persistedContent.getContentId()).
+                sendAndParse().
+                done((attachmentsArray: api.content.attachment.Attachment[]) => {
 
-                var attachments = new api.content.attachment.AttachmentsBuilder().
-                    addAll(attachmentsArray).
-                    build();
+                    var attachments = new api.content.attachment.AttachmentsBuilder().
+                        addAll(attachmentsArray).
+                        build();
 
-                var formContext = new api.form.FormContextBuilder().
-                    setParentContent(this.parentContent).
-                    setPersistedContent(persistedContent).
-                    setAttachments(attachments).
-                    build();
+                    var formContext = new api.form.FormContextBuilder().
+                        setParentContent(this.parentContent).
+                        setPersistedContent(persistedContent).
+                        setAttachments(attachments).
+                        build();
 
-                this.contentWizardStepForm.renderExisting(formContext, contentData, persistedContent.getForm());
-                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
-                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                    this.contentWizardStepForm.renderExisting(formContext, contentData, persistedContent.getForm());
+                    // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
-                this.doRenderExistingSite(persistedContent, formContext)
-                    .then(() => {
-                        this.doRenderExistingPage(persistedContent, formContext).
-                            then((pageTemplate: api.content.page.PageTemplate) => {
-                                this.doRenderLivePanel(persistedContent, pageTemplate).
-                                    done(() => {
-                                        deferred.resolve(null);
-                                    });
-                            });
-                    });
-            });
+                    this.doRenderExistingSite(persistedContent, formContext)
+                        .then(() => {
+                            this.doRenderExistingPage(persistedContent, formContext).
+                                then((pageTemplate: api.content.page.PageTemplate) => {
+                                    this.doRenderLivePanel(persistedContent, pageTemplate).
+                                        done(() => {
+                                            deferred.resolve(null);
+                                        });
+                                });
+                        });
+                });
 
             return deferred.promise;
         }
@@ -451,15 +453,6 @@ module app.wizard {
                 });
             }
         }
-
-        private loadAttachments(content: api.content.ContentId, callback: { (attachments: api.content.attachment.Attachment[]) }) {
-            new api.content.attachment.GetAttachmentsRequest(content).
-                sendAndParse().
-                done((attachments: api.content.attachment.Attachment[]) => {
-                    callback(attachments);
-                });
-        }
-
 
         private resolveContentNameForUpdateReuest(): api.content.ContentName {
             if (api.util.isStringEmpty(this.contentWizardHeader.getName()) && this.getPersistedItem().getName().isUnnamed()) {
