@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import com.enonic.wem.api.command.content.CreateContent;
 import com.enonic.wem.api.command.entity.CreateNode;
-import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.data.ContentData;
 import com.enonic.wem.api.data.DataPath;
@@ -34,14 +33,13 @@ public class ContentNodeTranslatorTest
     {
         final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
 
-        final Content mycontent = Content.newContent().
+        final CreateContent mycontent = new CreateContent().
             name( "mycontent" ).
-            path( ContentPath.from( "/my-path" ) ).
-            type( ContentTypeName.from( "my-content-type" ) ).
-            contentData( new ContentData( rootDataSet.toRootDataSet() ) ).
-            build();
+            parent( ContentPath.ROOT ).
+            contentType( ContentTypeName.from( "my-content-type" ) ).
+            contentData( new ContentData( rootDataSet.toRootDataSet() ) );
 
-        final CreateNode createNode = translator.toCreateNode( mycontent, new CreateContent() );
+        final CreateNode createNode = translator.toCreateNode( mycontent );
 
         final Property testProperty = createNode.getData().getProperty( "contentdata.test" );
 
@@ -55,14 +53,13 @@ public class ContentNodeTranslatorTest
     {
         final DataSet rootDataSet = RootDataSet.newDataSet().set( "test", "testValue", ValueTypes.STRING ).build();
 
-        final Content mycontent = Content.newContent().
+        final CreateContent mycontent = new CreateContent().
             name( "mycontent" ).
-            path( ContentPath.from( "/my-path" ) ).
-            type( ContentTypeName.from( "my-content-type" ) ).
-            contentData( new ContentData( rootDataSet.toRootDataSet() ) ).
-            build();
+            parent( ContentPath.ROOT ).
+            contentType( ContentTypeName.from( "my-content-type" ) ).
+            contentData( new ContentData( rootDataSet.toRootDataSet() ) );
 
-        final CreateNode createNode = translator.toCreateNode( mycontent, new CreateContent() );
+        final CreateNode createNode = translator.toCreateNode( mycontent );
 
         final EntityIndexConfig entityIndexConfig = createNode.getEntityIndexConfig();
 
@@ -88,14 +85,13 @@ public class ContentNodeTranslatorTest
 
         final Form form = Form.newForm().addFormItems( formItemSet.getFormItems() ).build();
 
-        final Content mycontent = Content.newContent().
+        final CreateContent mycontent = new CreateContent().
             name( "mycontent" ).
-            path( ContentPath.from( "/my-path" ) ).
-            type( ContentTypeName.from( "my-content-type" ) ).
-            form( form ).
-            build();
+            parent( ContentPath.ROOT ).
+            contentType( ContentTypeName.from( "my-content-type" ) ).
+            form( form );
 
-        final CreateNode createNode = translator.toCreateNode( mycontent, new CreateContent() );
+        final CreateNode createNode = translator.toCreateNode( mycontent );
 
         final EntityIndexConfig entityIndexConfig = createNode.getEntityIndexConfig();
 

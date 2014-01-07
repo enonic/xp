@@ -7,6 +7,7 @@ import com.enonic.wem.api.command.entity.CreateNode;
 import com.enonic.wem.api.command.entity.UpdateNode;
 import com.enonic.wem.api.content.Content;
 import com.enonic.wem.api.content.ContentId;
+import com.enonic.wem.api.content.ContentName;
 import com.enonic.wem.api.content.ContentPath;
 import com.enonic.wem.api.content.Contents;
 import com.enonic.wem.api.content.data.ContentData;
@@ -60,22 +61,38 @@ public class ContentNodeTranslator
 
     public static final String SITE_CONFIG_PATH = "site";
 
-    public CreateNode toCreateNode( final Content content, final CreateContent command )
+    public CreateNode toCreateNode( final CreateContent command )
     {
-        final NodePath parentNodePath = NodePath.newPath( CONTENTS_ROOT_PATH ).elements( content.getParentPath().toString() ).build();
-        final RootDataSet rootDataSet = propertiesToRootDataSet( content );
-
+        final RootDataSet rootDataSet = toRootDataSet( command );
         final EntityIndexConfig entityIndexConfig = ContentEntityIndexConfigFactory.create( rootDataSet );
 
-        return new CreateNode().
-            attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( command.getAttachments() ) ).
-            data( rootDataSet ).
-            entityIndexConfig( entityIndexConfig ).
-            parent( parentNodePath ).
-            embed( content.isEmbedded() ).
-            name( content.getName().toString() );
+        final CreateNode createNode = new CreateNode();
+        createNode.name( resolveNodeName( command.getName() ) );
+        createNode.parent( resolveParentNodePath( command.getParentContentPath() ) );
+        createNode.embed( command.isEmbed() );
+        createNode.data( rootDataSet );
+        createNode.attachments( CONTENT_ATTACHMENT_NODE_TRANSLATOR.toNodeAttachments( command.getAttachments() ) );
+        createNode.entityIndexConfig( entityIndexConfig );
+        return createNode;
     }
 
+    private RootDataSet toRootDataSet( final CreateContent command )
+    {
+        final RootDataSet rootDataSet = new RootDataSet();
+
+        addPropertyIfNotNull( rootDataSet, DRAFT_PATH, command.isDraft() );
+        addPropertyIfNotNull( rootDataSet, DISPLAY_NAME_PATH, command.getDisplayName() );
+        addPropertyIfNotNull( rootDataSet, CONTENT_TYPE_PATH, command.getContentType() );
+
+        if ( command.getContentData() != null )
+        {
+            rootDataSet.add( command.getContentData().toDataSet( CONTENT_DATA_PATH ) );
+        }
+
+        addForm( command.getForm(), rootDataSet );
+
+        return rootDataSet;
+    }
 
     public RootDataSet propertiesToRootDataSet( final Content content )
     {
@@ -235,6 +252,24 @@ public class ContentNodeTranslator
         {
             rootDataSet.setProperty( propertyName, new Value.String( value.toString() ) );
         }
+    }
+
+    private String resolveNodeName( final ContentName name )
+    {
+        if ( name instanceof ContentName.Unnamed )
+        {
+            ContentName.Unnamed unnammed = (ContentName.Unnamed) name;
+            if ( !unnammed.hasUniqueness() )
+            {
+                return ContentName.Unnamed.withUniqueness().toString();
+            }
+        }
+        return name.toString();
+    }
+
+    private NodePath resolveParentNodePath( final ContentPath parentContentPath )
+    {
+        return NodePath.newPath( CONTENTS_ROOT_PATH ).elements( parentContentPath.toString() ).build();
     }
 
 }

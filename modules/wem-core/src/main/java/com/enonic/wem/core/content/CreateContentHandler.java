@@ -71,7 +71,8 @@ public class CreateContentHandler
 
         addAttachments( builtContent );
 
-        final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( builtContent, command );
+        final CreateNode createNodeCommand = CONTENT_NODE_TRANSLATOR.toCreateNode( command );
+
         final CreateNodeResult createdNode = createAsNode( createNodeCommand );
 
         final Content storedContent = CONTENT_NODE_TRANSLATOR.fromNode( createdNode.getPersistedNode() );
