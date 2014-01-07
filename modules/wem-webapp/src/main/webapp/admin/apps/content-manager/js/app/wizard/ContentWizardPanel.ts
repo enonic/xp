@@ -214,7 +214,7 @@ module app.wizard {
             console.log("ContentWizardPanel.preRenderNew");
             var deferred = Q.defer<void>();
 
-            // Ensure nameless and empty content is persisted before rendering new
+            // Ensure a nameless and empty content is persisted before rendering new
             this.saveChanges().
                 done(() => {
                     deferred.resolve(null);
@@ -233,29 +233,6 @@ module app.wizard {
 
             deferred.resolve(null);
             return deferred.promise;
-        }
-
-        postRenderExisting(existing: api.content.Content): Q.Promise<void> {
-            console.log("ContentWizardPanel.postRenderExisting");
-            var deferred = Q.defer<void>();
-
-            this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
-                false);
-            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
-
-            deferred.resolve(null);
-            return deferred.promise;
-        }
-
-        private enableDisplayNameScriptExecution(formView: api.form.FormView) {
-
-            if (this.displayNameScriptExecutor.hasScript()) {
-
-                formView.getEl().addEventListener("keyup", (e) => {
-                    this.contentWizardHeader.getDisplayName();
-                    this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
-                });
-            }
         }
 
         layoutPersistedItem(persistedContent: api.content.Content): Q.Promise<void> {
@@ -287,13 +264,25 @@ module app.wizard {
                         this.doRenderExistingPage(persistedContent, formContext).
                             then((pageTemplate: api.content.page.PageTemplate) => {
                                 this.doRenderLivePanel(persistedContent, pageTemplate).
-                                    then(() => {
+                                    done(() => {
                                         deferred.resolve(null);
                                     });
                             });
                     });
             });
 
+            return deferred.promise;
+        }
+
+        postRenderExisting(existing: api.content.Content): Q.Promise<void> {
+            console.log("ContentWizardPanel.postRenderExisting");
+            var deferred = Q.defer<void>();
+
+            this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
+                false);
+            this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+
+            deferred.resolve(null);
             return deferred.promise;
         }
 
@@ -441,6 +430,28 @@ module app.wizard {
             return deferred.promise;
         }
 
+        hasUnsavedChanges(): boolean {
+            var persistedContent: api.content.Content = this.getPersistedItem();
+            if (persistedContent == undefined) {
+                return true;
+            } else {
+                return !api.util.isStringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
+                           || !api.util.isStringsEqual(persistedContent.getName().toString(), this.contentWizardHeader.getName().toString())
+                    || !persistedContent.getContentData().equals(this.contentWizardStepForm.getContentData());
+            }
+        }
+
+        private enableDisplayNameScriptExecution(formView: api.form.FormView) {
+
+            if (this.displayNameScriptExecutor.hasScript()) {
+
+                formView.getEl().addEventListener("keyup", (e) => {
+                    this.contentWizardHeader.getDisplayName();
+                    this.contentWizardHeader.setDisplayName(this.displayNameScriptExecutor.execute());
+                });
+            }
+        }
+
         private loadAttachments(content: api.content.ContentId, callback: { (attachments: api.content.attachment.Attachment[]) }) {
             new api.content.attachment.GetAttachmentsRequest(content).
                 sendAndParse().
@@ -456,17 +467,6 @@ module app.wizard {
             }
             else {
                 return api.content.ContentName.fromString(this.contentWizardHeader.getName());
-            }
-        }
-
-        hasUnsavedChanges(): boolean {
-            var persistedContent: api.content.Content = this.getPersistedItem();
-            if (persistedContent == undefined) {
-                return true;
-            } else {
-                return !api.util.isStringsEqual(persistedContent.getDisplayName(), this.contentWizardHeader.getDisplayName())
-                           || !api.util.isStringsEqual(persistedContent.getName().toString(), this.contentWizardHeader.getName().toString())
-                    || !persistedContent.getContentData().equals(this.contentWizardStepForm.getContentData());
             }
         }
 

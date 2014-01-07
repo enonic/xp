@@ -142,38 +142,12 @@ module api.app.wizard {
             }
         }
 
-        initWizardPanel() {
-            console.log("WizardPanel.initWizardPanel");
-            this.giveInitialFocus();
-        }
-
-        giveInitialFocus() {
-            console.log("WizardPanel.giveInitialFocus");
-            this.header.giveFocus();
-
-            this.startRememberFocus();
-        }
-
-        startRememberFocus() {
-            jQuery(this.getHTMLElement()).on("focus", "*", (e) => {
-                e.stopPropagation();
-                this.lastFocusedElement = jQuery(e.target);
-            });
-        }
-
         onElementShown() {
             console.log("WizardPanel.onElementShown");
+
             if (this.lastFocusedElement) {
                 console.log("Last focused element was remembered: ", this.lastFocusedElement);
                 this.lastFocusedElement.focus();
-            }
-        }
-
-        toggleFormPanel(toggle: boolean) {
-            if (toggle) {
-                this.backPanel.showPanel(0)
-            } else {
-                this.backPanel.showPanel(1)
             }
         }
 
@@ -198,6 +172,33 @@ module api.app.wizard {
             });
         }
 
+        initWizardPanel() {
+            console.log("WizardPanel.initWizardPanel");
+            this.giveInitialFocus();
+        }
+
+        giveInitialFocus() {
+            console.log("WizardPanel.giveInitialFocus");
+            this.header.giveFocus();
+
+            this.startRememberFocus();
+        }
+
+        startRememberFocus() {
+            jQuery(this.getHTMLElement()).on("focus", "*", (e) => {
+                e.stopPropagation();
+                this.lastFocusedElement = jQuery(e.target);
+            });
+        }
+
+        toggleFormPanel(toggle: boolean) {
+            if (toggle) {
+                this.backPanel.showPanel(0)
+            } else {
+                this.backPanel.showPanel(1)
+            }
+        }
+
         addListener(listener: WizardPanelListener) {
             this.listeners.push(listener);
         }
@@ -216,14 +217,21 @@ module api.app.wizard {
             return this.header;
         }
 
+        getIconUrl(): string {
+            return null; // TODO:
+        }
+
         getActions(): api.ui.Action[] {
             return this.mainToolbar.getActions();
         }
 
-        private notifyClosed() {
-            this.listeners.forEach((listener: WizardPanelListener) => {
-                if (listener.onClosed) {
-                    listener.onClosed(this);
+        private setSteps(steps: api.app.wizard.WizardStep[]) {
+
+            steps.forEach((step: api.app.wizard.WizardStep, index: number) => {
+                this.stepPanels.addNavigablePanelToBack(step.getTabBarItem(), step.getPanel());
+                // Ensure first step is shown
+                if (index == 0) {
+                    this.stepPanels.showPanel(0);
                 }
             });
         }
@@ -233,6 +241,10 @@ module api.app.wizard {
             var deferred = Q.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
+        }
+
+        isRenderingNew(): boolean {
+            return this.renderingNew;
         }
 
         renderNew(): Q.Promise<void> {
@@ -252,10 +264,6 @@ module api.app.wizard {
             return deferred.promise;
         }
 
-        isRenderingNew(): boolean {
-            return this.renderingNew;
-        }
-
         private setPersistedItem(persistedItem: T): Q.Promise<void> {
             console.log("WizardPanel.setPersistedItem");
 
@@ -273,18 +281,18 @@ module api.app.wizard {
             return deferred.promise;
         }
 
-        postRenderExisting(existing: T): Q.Promise<void> {
-            // To be overridden by inheritors - if extra work is needed at end of setPersistedItem
-            var deferred = Q.defer<void>();
-
-            deferred.resolve(null);
-            return deferred.promise;
-        }
-
         layoutPersistedItem(persistedItem: T): Q.Promise<void> {
             console.log("WizardPanel.layoutPersistedItem");
 
             var deferred = Q.defer<void>();
+            deferred.resolve(null);
+            return deferred.promise;
+        }
+
+        postRenderExisting(existing: T): Q.Promise<void> {
+            // To be overridden by inheritors - if extra work is needed at end of setPersistedItem
+            var deferred = Q.defer<void>();
+
             deferred.resolve(null);
             return deferred.promise;
         }
@@ -295,48 +303,6 @@ module api.app.wizard {
 
         isItemPersisted(): boolean {
             return this.persistedItem != null;
-        }
-
-        getIconUrl(): string {
-            return null; // TODO:
-        }
-
-        private setSteps(steps: api.app.wizard.WizardStep[]) {
-
-            steps.forEach((step: api.app.wizard.WizardStep, index: number) => {
-                this.stepPanels.addNavigablePanelToBack(step.getTabBarItem(), step.getPanel());
-                // Ensure first step is shown
-                if (index == 0) {
-                    this.stepPanels.showPanel(0);
-                }
-            });
-        }
-
-        close(checkCanClose: boolean = false) {
-
-            if (checkCanClose) {
-                if (this.canClose()) {
-                    this.closing();
-                }
-            }
-            else {
-                this.closing();
-            }
-        }
-
-        canClose(): boolean {
-
-            if (this.hasUnsavedChanges()) {
-                this.askUserForSaveChangesBeforeClosing();
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
-
-        closing() {
-            this.notifyClosed();
         }
 
         /*
@@ -391,6 +357,41 @@ module api.app.wizard {
          */
         updatePersistedItem(): Q.Promise<T> {
             throw new Error("Must be overriden by inheritor");
+        }
+
+        close(checkCanClose: boolean = false) {
+
+            if (checkCanClose) {
+                if (this.canClose()) {
+                    this.closing();
+                }
+            }
+            else {
+                this.closing();
+            }
+        }
+
+        canClose(): boolean {
+
+            if (this.hasUnsavedChanges()) {
+                this.askUserForSaveChangesBeforeClosing();
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        closing() {
+            this.notifyClosed();
+        }
+
+        private notifyClosed() {
+            this.listeners.forEach((listener: WizardPanelListener) => {
+                if (listener.onClosed) {
+                    listener.onClosed(this);
+                }
+            });
         }
     }
 }
