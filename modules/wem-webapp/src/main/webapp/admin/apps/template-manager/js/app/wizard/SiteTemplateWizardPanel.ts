@@ -59,9 +59,17 @@ module app.wizard {
             return steps;
         }
 
-        renderNew() {
-            super.renderNew(() => {});
-            this.siteTemplateStep.renderNew();
+        renderNew(): Q.Promise<void>  {
+
+            var deferred = Q.defer<void>();
+            super.renderNew().
+                done(() => {
+
+                this.siteTemplateStep.renderNew();
+                deferred.resolve(null);
+            });
+
+            return deferred.promise;
         }
     }
 }

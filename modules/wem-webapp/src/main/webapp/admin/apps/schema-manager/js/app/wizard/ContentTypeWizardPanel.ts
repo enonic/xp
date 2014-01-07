@@ -57,21 +57,27 @@ module app.wizard {
             });
         }
 
-        setPersistedItem(contentType: api.schema.content.ContentType, callback: () => void) {
-            super.setPersistedItem(contentType, () => {
-                this.contentTypeWizardHeader.setName(contentType.getName());
-                this.formIcon.setSrc(contentType.getIconUrl());
+        layoutPersistedItem(persistedContentType: api.schema.content.ContentType): Q.Promise<void> {
 
-                new api.schema.content.GetContentTypeConfigByNameRequest(contentType.getContentTypeName()).send().
-                    done((response: api.rest.JsonResponse <api.schema.content.GetContentTypeConfigResult>) => {
-                        this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
-                        this.persistedConfig = response.getResult().contentTypeXml || "";
-                        callback();
-                    });
-            });
+            var deferred = Q.defer<void>();
+
+            this.contentTypeWizardHeader.setName(persistedContentType.getName());
+            this.formIcon.setSrc(persistedContentType.getIconUrl());
+
+            new api.schema.content.GetContentTypeConfigByNameRequest(persistedContentType.getContentTypeName()).send().
+                done((response: api.rest.JsonResponse <api.schema.content.GetContentTypeConfigResult>) => {
+                    this.contentTypeForm.setFormData({"xml": response.getResult().contentTypeXml});
+                    this.persistedConfig = response.getResult().contentTypeXml || "";
+                    deferred.resolve(null);
+                });
+
+            return deferred.promise;
         }
 
-        persistNewItem(callback: (persistedContentType: api.schema.content.ContentType) => void) {
+        persistNewItem(): Q.Promise<api.schema.content.ContentType> {
+
+            var deferred = Q.defer<api.schema.content.ContentType>();
+
             var formData = this.contentTypeForm.getFormData();
             var createContentTypeRequest = new api.schema.content.CreateContentTypeRequest(this.contentTypeWizardHeader.getName(),
                 formData.xml,
@@ -80,20 +86,22 @@ module app.wizard {
                 sendAndParse().
                 done((contentType: api.schema.content.ContentType) => {
 
-                    this.setPersistedItem(contentType, () => {
+                    this.getTabId().changeToEditMode(contentType.getKey());
+                    new app.wizard.ContentTypeCreatedEvent().fire();
+                    api.notify.showFeedback('Content type was created!');
 
-                        this.getTabId().changeToEditMode(contentType.getKey());
-                        new app.wizard.ContentTypeCreatedEvent().fire();
-                        api.notify.showFeedback('Content type was created!');
+                    new api.schema.SchemaCreatedEvent(contentType).fire();
 
-                        new api.schema.SchemaCreatedEvent(contentType).fire();
+                    deferred.resolve(contentType);
 
-                        callback(contentType);
-                    });
                 });
+
+            return deferred.promise;
         }
 
-        updatePersistedItem(callback: (persistedContentType: api.schema.content.ContentType) => void) {
+        updatePersistedItem(): Q.Promise<api.schema.content.ContentType> {
+
+            var deferred = Q.defer<api.schema.content.ContentType>();
 
             var formData = this.contentTypeForm.getFormData();
             var newName = new api.schema.content.ContentTypeName(this.contentTypeWizardHeader.getName());
@@ -110,10 +118,11 @@ module app.wizard {
                     api.notify.showFeedback('Content type was saved!');
 
                     new api.schema.SchemaUpdatedEvent(contentType).fire();
-                    this.setPersistedItem(contentType, () => {
-                        callback(contentType);
-                    });
+
+                    deferred.resolve(contentType);
                 });
+
+            return deferred.promise;
         }
 
         hasUnsavedChanges(): boolean {
@@ -123,7 +132,7 @@ module app.wizard {
             } else {
                 return !api.util.isStringsEqual(persistedContentType.getName(), this.contentTypeWizardHeader.getName())
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
-                                                api.util.removeCarriageChars(this.contentTypeForm.getFormData().xml));
+                    api.util.removeCarriageChars(this.contentTypeForm.getFormData().xml));
             }
         }
     }

@@ -210,31 +210,41 @@ module app.wizard {
             super.onElementShown();
         }
 
-        preRenderNew(callBack: Function) {
+        preRenderNew(): Q.Promise<void> {
             console.log("ContentWizardPanel.preRenderNew");
+            var deferred = Q.defer<void>();
 
-            this.persistNewItem((createdContent: api.content.Content) => {
-                callBack();
-            });
+            // Ensure nameless and empty content is persisted before rendering new
+            this.saveChanges().
+                done(() => {
+                    deferred.resolve(null);
+                });
+
+            return deferred.promise;
         }
 
-        postRenderNew(callBack: Function) {
+        postRenderNew(): Q.Promise<void> {
             console.log("ContentWizardPanel.postRenderNew");
+            var deferred = Q.defer<void>();
 
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
             this.contentWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getName().toString(),
                 true);
 
-            callBack();
+            deferred.resolve(null);
+            return deferred.promise;
         }
 
-        postRenderExisting(callBack: Function) {
+        postRenderExisting(existing: api.content.Content): Q.Promise<void> {
             console.log("ContentWizardPanel.postRenderExisting");
+            var deferred = Q.defer<void>();
 
-            this.contentWizardHeader.initNames(this.getPersistedItem().getDisplayName(), this.getPersistedItem().getName().toString(),
+            this.contentWizardHeader.initNames(existing.getDisplayName(), existing.getName().toString(),
                 false);
             this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
-            callBack();
+
+            deferred.resolve(null);
+            return deferred.promise;
         }
 
         private enableDisplayNameScriptExecution(formView: api.form.FormView) {
@@ -248,42 +258,43 @@ module app.wizard {
             }
         }
 
-        setPersistedItem(content: api.content.Content, callback: Function) {
-            console.log("ContentWizardPanel.setPersistedItem");
+        layoutPersistedItem(persistedContent: api.content.Content): Q.Promise<void> {
+            console.log("ContentWizardPanel.layoutPersistedItem");
 
-            super.setPersistedItem(content, () => {
+            var deferred = Q.defer<void>();
 
-                this.formIcon.setSrc(content.getIconUrl());
-                var contentData: api.content.ContentData = content.getContentData();
+            this.formIcon.setSrc(persistedContent.getIconUrl());
+            var contentData: api.content.ContentData = persistedContent.getContentData();
 
-                this.loadAttachments(content.getContentId(), (attachmentsArray: api.content.attachment.Attachment[])=> {
+            this.loadAttachments(persistedContent.getContentId(), (attachmentsArray: api.content.attachment.Attachment[])=> {
 
-                    var attachments = new api.content.attachment.AttachmentsBuilder().
-                        addAll(attachmentsArray).
-                        build();
+                var attachments = new api.content.attachment.AttachmentsBuilder().
+                    addAll(attachmentsArray).
+                    build();
 
-                    var formContext = new api.form.FormContextBuilder().
-                        setParentContent(this.parentContent).
-                        setPersistedContent(content).
-                        setAttachments(attachments).
-                        build();
+                var formContext = new api.form.FormContextBuilder().
+                    setParentContent(this.parentContent).
+                    setPersistedContent(persistedContent).
+                    setAttachments(attachments).
+                    build();
 
-                    this.contentWizardStepForm.renderExisting(formContext, contentData, content.getForm());
-                    // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
-                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                this.contentWizardStepForm.renderExisting(formContext, contentData, persistedContent.getForm());
+                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor, since a new is created for each call to renderExisting
+                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
 
-                    this.doRenderExistingSite(content, formContext)
-                        .then(() => {
-                            this.doRenderExistingPage(content, formContext).
-                                then((pageTemplate: api.content.page.PageTemplate) => {
-                                    this.doRenderLivePanel(content, pageTemplate).
-                                        then(() => {
-                                            callback();
-                                        });
-                                });
-                        });
-                });
+                this.doRenderExistingSite(persistedContent, formContext)
+                    .then(() => {
+                        this.doRenderExistingPage(persistedContent, formContext).
+                            then((pageTemplate: api.content.page.PageTemplate) => {
+                                this.doRenderLivePanel(persistedContent, pageTemplate).
+                                    then(() => {
+                                        deferred.resolve(null);
+                                    });
+                            });
+                    });
             });
+
+            return deferred.promise;
         }
 
         private doRenderExistingSite(content: api.content.Content, formContext: api.form.FormContext): Q.Promise<void> {
@@ -302,12 +313,13 @@ module app.wizard {
             return deferred.promise;
         }
 
-        private doRenderExistingPage(content: api.content.Content, formContext: api.form.FormContext): Q.Promise<api.content.page.PageTemplate> {
+        private doRenderExistingPage(content: api.content.Content,
+                                     formContext: api.form.FormContext): Q.Promise<api.content.page.PageTemplate> {
 
             var deferred = Q.defer<api.content.page.PageTemplate>();
 
             this.pageWizardStepForm.renderExisting(content).
-                then((pageTemplate:api.content.page.PageTemplate) => {
+                then((pageTemplate: api.content.page.PageTemplate) => {
                     deferred.resolve(pageTemplate);
                 });
 
@@ -325,9 +337,10 @@ module app.wizard {
             return deferred.promise;
         }
 
-        persistNewItem(callback: (persistedContent: api.content.Content) => void) {
-
+        persistNewItem(): Q.Promise<api.content.Content> {
             console.log("ContentWizardPanel.persistNewItem");
+
+            var deferred = Q.defer<api.content.Content>();
 
             var contentData = new api.content.ContentData();
 
@@ -360,31 +373,27 @@ module app.wizard {
                         new api.content.site.CreateSiteRequest(createdContent.getId())
                             .setSiteTemplateKey(this.siteTemplate.getKey())
                             .setModuleConfigs(moduleConfigs)
-                            .sendAndParse().done((updatedContent: api.content.Content) => {
+                            .sendAndParse().
+                            done((updatedContent: api.content.Content) => {
 
                                 new api.content.ContentCreatedEvent(updatedContent).fire();
 
-                                this.setPersistedItem(updatedContent, () => {
-
-                                    callback(updatedContent);
-                                });
-
+                                deferred.resolve(updatedContent);
                             });
                     }
                     else {
-
                         new api.content.ContentCreatedEvent(createdContent).fire();
-
-                        this.setPersistedItem(createdContent, () => {
-
-                            callback(createdContent);
-                        });
+                        deferred.resolve(createdContent);
                     }
                 });
+
+            return deferred.promise;
         }
 
-        updatePersistedItem(callback: (persistedContent: api.content.Content) => void) {
+        updatePersistedItem(): Q.Promise<api.content.Content> {
             console.log("ContentWizardPanel.updatePersistedItem");
+
+            var deferred = Q.defer<api.content.Content>();
 
             var updateRequest = new api.content.UpdateContentRequest(this.getPersistedItem().getId()).
                 setContentName(this.resolveContentNameForUpdateReuest()).
@@ -419,26 +428,17 @@ module app.wizard {
 
                                 api.notify.showFeedback('Content was updated!');
 
-                                this.renderExisting(updatedSite, () => {
-                                    this.postRenderExisting(() => {
+                                deferred.resolve(updatedContent);
 
-                                        callback(updatedSite);
-                                    });
-                                });
                             });
                     }
                     else {
-
                         api.notify.showFeedback('Content was updated!');
-
-                        this.renderExisting(updatedContent, () => {
-                            this.postRenderExisting(() => {
-
-                                callback(updatedContent);
-                            });
-                        });
+                        deferred.resolve(updatedContent);
                     }
                 });
+
+            return deferred.promise;
         }
 
         private loadAttachments(content: api.content.ContentId, callback: { (attachments: api.content.attachment.Attachment[]) }) {

@@ -62,24 +62,30 @@ module app.wizard {
             this.mixinForm.reRender();
         }
 
-        setPersistedItem(mixin: api.schema.mixin.Mixin, callback: Function) {
+        layoutPersistedItem(persistedMixin: api.schema.mixin.Mixin) : Q.Promise<void> {
 
-            super.setPersistedItem(mixin, () => {
-                this.mixinWizardHeader.setName(mixin.getName());
-                this.formIcon.setSrc(mixin.getIconUrl());
+            var deferred = Q.defer<void>();
 
-                new api.schema.mixin.GetMixinConfigByNameRequest(mixin.getMixinName()).send().
-                    done((response: api.rest.JsonResponse<api.schema.mixin.GetMixinConfigResult>) => {
-                        this.mixinForm.reRender();
-                        this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
-                        this.persistedConfig = response.getResult().mixinXml || "";
-                        callback();
-                    });
-            });
+            this.mixinWizardHeader.setName(persistedMixin.getName());
+            this.formIcon.setSrc(persistedMixin.getIconUrl());
 
+            new api.schema.mixin.GetMixinConfigByNameRequest(persistedMixin.getMixinName()).
+                send().
+                done((response: api.rest.JsonResponse<api.schema.mixin.GetMixinConfigResult>) => {
+
+                    this.mixinForm.reRender();
+                    this.mixinForm.setFormData({"xml": response.getResult().mixinXml});
+                    this.persistedConfig = response.getResult().mixinXml || "";
+                    deferred.resolve(null)
+                });
+
+            return deferred.promise;
         }
 
-        persistNewItem(callback: (persistedMixin: api.schema.mixin.Mixin) => void) {
+        persistNewItem(): Q.Promise<api.schema.mixin.Mixin> {
+
+            var deferred = Q.defer<api.schema.mixin.Mixin>();
+
             var formData = this.mixinForm.getFormData();
 
             var createRequest = new api.schema.mixin.CreateMixinRequest().
@@ -91,18 +97,21 @@ module app.wizard {
                 sendAndParse().
                 done((mixin: api.schema.mixin.Mixin) => {
 
-                    this.setPersistedItem(mixin, () => {
-                        this.getTabId().changeToEditMode(mixin.getKey());
-                        api.notify.showFeedback('Mixin was created!');
+                    this.getTabId().changeToEditMode(mixin.getKey());
+                    api.notify.showFeedback('Mixin was created!');
 
-                        new api.schema.SchemaCreatedEvent(mixin).fire();
+                    new api.schema.SchemaCreatedEvent(mixin).fire();
 
-                        callback(mixin);
-                    });
+                    deferred.resolve(mixin);
                 });
+
+            return deferred.promise;
         }
 
-        updatePersistedItem(callback: (mixin: api.schema.mixin.Mixin) => void) {
+        updatePersistedItem(): Q.Promise<api.schema.mixin.Mixin> {
+
+            var deferred = Q.defer<api.schema.mixin.Mixin>();
+
             var formData = this.mixinForm.getFormData();
 
             var updateRequest = new api.schema.mixin.UpdateMixinRequest().
@@ -116,12 +125,13 @@ module app.wizard {
                 done((mixin: api.schema.mixin.Mixin) => {
 
                     api.notify.showFeedback('Mixin was updated!');
-                    this.setPersistedItem(mixin, () => {
-                        new api.schema.SchemaUpdatedEvent(mixin).fire();
 
-                        callback(mixin);
-                    });
+                    new api.schema.SchemaUpdatedEvent(mixin).fire();
+
+                    deferred.resolve(mixin);
                 });
+
+            return deferred.promise;
         }
 
         hasUnsavedChanges(): boolean {
@@ -131,7 +141,7 @@ module app.wizard {
             } else {
                 return !api.util.isStringsEqual(persistedMixin.getName(), this.mixinWizardHeader.getName())
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
-                                                api.util.removeCarriageChars(this.mixinForm.getFormData().xml));
+                    api.util.removeCarriageChars(this.mixinForm.getFormData().xml));
             }
         }
     }

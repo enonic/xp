@@ -58,7 +58,7 @@ module api.app.wizard {
 
         private stepNavigatorAndToolbarContainer: api.dom.DivEl;
 
-        constructor(params: WizardPanelParams, callback:Function) {
+        constructor(params: WizardPanelParams, callback: Function) {
             super("WizardPanel");
 
             console.log("WizardPanel.constructor started");
@@ -112,22 +112,33 @@ module api.app.wizard {
             this.setSteps(params.steps);
 
             if (this.persistedItem != null) {
-                this.renderExisting(this.persistedItem, () => {
-                    this.postRenderExisting(() => {
-                        console.log("WizardPanel.constructor finished");
-                        callback();
+
+                this.setPersistedItem(this.persistedItem).
+                    done(() => {
+
+                        this.postRenderExisting(this.persistedItem).
+                            done(() => {
+
+                                console.log("WizardPanel.constructor finished");
+                                callback();
+                            });
                     });
-                });
             }
             else {
-                this.preRenderNew(() => {
-                    this.renderNew(() => {
-                        this.postRenderNew( ()=> {
-                            console.log("WizardPanel.constructor finished");
-                            callback();
-                        } );
+                this.preRenderNew().
+                    then(() => {
+
+                        this.renderNew().
+                            then(() => {
+
+                                this.postRenderNew().
+                                    then(()=> {
+
+                                        console.log("WizardPanel.constructor finished");
+                                        callback();
+                                    });
+                            });
                     });
-                });
             }
         }
 
@@ -217,49 +228,65 @@ module api.app.wizard {
             });
         }
 
-        preRenderNew(callback:Function) {
+        preRenderNew(): Q.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of renderNew
-            callback();
+            var deferred = Q.defer<void>();
+            deferred.resolve(null);
+            return deferred.promise;
         }
 
-        renderNew(callback:Function) {
+        renderNew(): Q.Promise<void> {
             console.log("WizardPanel.renderNew");
 
+            var deferred = Q.defer<void>();
             this.renderingNew = true;
-            //this.giveInitialFocus();
             this.actions.enableActionsForNew();
-            callback();
+            deferred.resolve(null);
+            return deferred.promise;
         }
 
-        postRenderNew(callback:Function) {
+        postRenderNew(): Q.Promise<void> {
             // To be overridden by inheritors - if extra work is needed at end of renderNew
-            callback();
+            var deferred = Q.defer<void>();
+            deferred.resolve(null);
+            return deferred.promise;
         }
 
         isRenderingNew(): boolean {
             return this.renderingNew;
         }
 
-        renderExisting(item: T, callback:Function) {
-            console.log("WizardPanel.renderExisting");
-            console.log("        - > setPersistedItem");
-            this.renderingNew = false;
-            this.setPersistedItem(item, () => {
-                callback();
-            });
-        }
-
-        postRenderExisting(callback:Function) {
-            // To be overridden by inheritors - if extra work is needed at end of renderExisting
-            callback();
-        }
-
-        setPersistedItem(item: T, callback:Function) {
+        private setPersistedItem(persistedItem: T): Q.Promise<void> {
             console.log("WizardPanel.setPersistedItem");
 
-            this.persistedItem = item;
-            this.actions.enableActionsForExisting(item);
-            callback();
+            var deferred = Q.defer<void>();
+
+            this.renderingNew = false;
+            this.persistedItem = persistedItem;
+            this.actions.enableActionsForExisting(persistedItem);
+
+            this.layoutPersistedItem(persistedItem).
+                done(() => {
+                    deferred.resolve(null)
+                });
+
+            return deferred.promise;
+        }
+
+        postRenderExisting(existing: T): Q.Promise<void> {
+            // To be overridden by inheritors - if extra work is needed at end of setPersistedItem
+            var deferred = Q.defer<void>();
+
+            deferred.resolve(null);
+            return deferred.promise;
+        }
+
+        layoutPersistedItem(persistedItem: T): Q.Promise<void> {
+            console.log("WizardPanel.layoutPersistedItem");
+
+            var deferred = Q.defer<void>();
+            deferred.resolve(null);
+            return deferred.promise;
         }
 
         getPersistedItem(): T {
@@ -323,34 +350,47 @@ module api.app.wizard {
             new api.app.wizard.SaveBeforeCloseDialog(this).open();
         }
 
-        saveChanges(callback: () => void) {
+        saveChanges(): Q.Promise<T> {
+
+            var deferred = Q.defer<T>();
 
             if (this.isItemPersisted()) {
-                this.updatePersistedItem(() => {
-                    callback();
-                });
+                this.updatePersistedItem().
+                    done((persisted: T) => {
+                        this.setPersistedItem(persisted).
+                            done(() => {
+
+                                deferred.resolve(persisted);
+                            });
+                    });
             }
             else {
-                this.persistNewItem(()=> {
-                    callback();
-                });
+                this.persistNewItem().
+                    done((persistedItem: T)=> {
+                        this.setPersistedItem(persistedItem).
+                            done(() => {
+                                deferred.resolve(persistedItem);
+                            });
+                    });
             }
 
             this.isChanged = false;
+
+            return deferred.promise;
         }
 
         /*
          * Override this method in specific wizard to do actual persisting of new item.
          */
-        persistNewItem(callback: (persistedItem:T) => void) {
-
+        persistNewItem(): Q.Promise<T> {
+            throw new Error("Must be overriden by inheritor");
         }
 
         /*
          * Override this method in specific wizard to do actual update of item.
          */
-        updatePersistedItem(callback: (persistedItem:T) => void) {
-
+        updatePersistedItem(): Q.Promise<T> {
+            throw new Error("Must be overriden by inheritor");
         }
     }
 }

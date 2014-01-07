@@ -3,13 +3,13 @@ module api.app.wizard {
 
     export class SaveBeforeCloseDialog extends api.ui.dialog.ModalDialog {
 
-        private wizardPanel:api.app.wizard.WizardPanel<any>;
+        private wizardPanel: api.app.wizard.WizardPanel<any>;
 
         private yesAction = new api.ui.Action('Yes');
 
         private noAction = new api.ui.Action('No');
 
-        constructor(wizardPanel:api.app.wizard.WizardPanel<any>) {
+        constructor(wizardPanel: api.app.wizard.WizardPanel<any>) {
             super({
                 idPrefix: "SaveBeforeCloseDialog",
                 title: "Close wizard",
@@ -58,7 +58,9 @@ module api.app.wizard {
         private doSaveAndClose() {
 
             this.close();
-            this.wizardPanel.saveChanges(() => {
+            this.wizardPanel.saveChanges().
+                done(() => {
+
                 this.wizardPanel.close(true);
             });
         }

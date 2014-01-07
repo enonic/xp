@@ -61,45 +61,54 @@ module app.wizard {
             });
         }
 
-        setPersistedItem(relationshipType: api.schema.relationshiptype.RelationshipType, callback: Function) {
-            super.setPersistedItem(relationshipType, () => {
-                this.relationShipTypeWizardHeader.setName(relationshipType.getName());
-                this.formIcon.setSrc(relationshipType.getIconUrl());
-                this.persistedRelationshipType = relationshipType;
+        layoutPersistedItem(persistedRelationshipType: api.schema.relationshiptype.RelationshipType): Q.Promise<void> {
 
-                new api.schema.relationshiptype.GetRelationshipTypeConfigByNameRequest(relationshipType.getRelationshiptypeName()).send().
-                    done((response: api.rest.JsonResponse <api.schema.relationshiptype.GetRelationshipTypeConfigResult>) => {
-                        this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
-                        this.persistedConfig = response.getResult().relationshipTypeXml || "";
-                        callback();
-                    });
-            });
+            var deferred = Q.defer<void>();
+
+            this.relationShipTypeWizardHeader.setName(persistedRelationshipType.getName());
+            this.formIcon.setSrc(persistedRelationshipType.getIconUrl());
+            this.persistedRelationshipType = persistedRelationshipType;
+
+            new api.schema.relationshiptype.GetRelationshipTypeConfigByNameRequest(persistedRelationshipType.getRelationshiptypeName()).send().
+                done((response: api.rest.JsonResponse <api.schema.relationshiptype.GetRelationshipTypeConfigResult>) => {
+
+                    this.relationshipTypeForm.setFormData({"xml": response.getResult().relationshipTypeXml});
+                    this.persistedConfig = response.getResult().relationshipTypeXml || "";
+                    deferred.resolve(null);
+                });
+
+            return deferred.promise;
         }
 
-        persistNewItem(callback: (persistedRelationshipType: api.schema.relationshiptype.RelationshipType) => void) {
+        persistNewItem(): Q.Promise<api.schema.relationshiptype.RelationshipType> {
+
+            var deferred = Q.defer<api.schema.relationshiptype.RelationshipType>();
+
             var formData = this.relationshipTypeForm.getFormData();
             var newName = new api.schema.relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
             var request = new api.schema.relationshiptype.CreateRelationshipTypeRequest(newName, formData.xml, this.relationshipTypeIcon);
             request.sendAndParse().
                 done((relationshipType: api.schema.relationshiptype.RelationshipType)=> {
 
-                    this.setPersistedItem(relationshipType, () => {
+                    this.getTabId().changeToEditMode(relationshipType.getKey());
+                    new app.wizard.RelationshipTypeCreatedEvent().fire();
+                    api.notify.showFeedback('Relationship type was created!');
 
-                        this.getTabId().changeToEditMode(relationshipType.getKey());
-                        new app.wizard.RelationshipTypeCreatedEvent().fire();
-                        api.notify.showFeedback('Relationship type was created!');
+                    new api.schema.SchemaCreatedEvent(relationshipType).fire();
 
-                        new api.schema.SchemaCreatedEvent(relationshipType).fire();
-
-                        callback(relationshipType);
-                    });
-                } ).
+                    deferred.resolve(relationshipType);
+                }).
                 fail((error: api.rest.RequestError) => {
                     api.notify.showError(error.getMessage());
-                } );
+                });
+
+            return deferred.promise;
         }
 
-        updatePersistedItem(callback: (persistedRelationshipType: api.schema.relationshiptype.RelationshipType) => void) {
+        updatePersistedItem(): Q.Promise<api.schema.relationshiptype.RelationshipType> {
+
+            var deferred = Q.defer<api.schema.relationshiptype.RelationshipType>();
+
             var formData = this.relationshipTypeForm.getFormData();
             var newName = new api.schema.relationshiptype.RelationshipTypeName(this.relationShipTypeWizardHeader.getName());
             var request = new api.schema.relationshiptype.UpdateRelationshipTypeRequest(this.getPersistedItem().getRelationshiptypeName(),
@@ -107,19 +116,18 @@ module app.wizard {
             request.sendAndParse().
                 done((relationshipType: api.schema.relationshiptype.RelationshipType)=> {
 
-                    this.setPersistedItem(relationshipType, () => {
+                    new app.wizard.RelationshipTypeUpdatedEvent().fire();
+                    api.notify.showFeedback('Relationship type was saved!');
 
-                        new app.wizard.RelationshipTypeUpdatedEvent().fire();
-                        api.notify.showFeedback('Relationship type was saved!');
+                    new api.schema.SchemaUpdatedEvent(relationshipType).fire();
 
-                        new api.schema.SchemaUpdatedEvent(relationshipType).fire();
-
-                        callback(relationshipType);
-                    });
+                    deferred.resolve(relationshipType);
                 }).
                 fail((error: api.rest.RequestError) => {
                     api.notify.showError(error.getMessage());
-                } );
+                });
+
+            return deferred.promise;
         }
 
         hasUnsavedChanges(): boolean {
@@ -129,7 +137,7 @@ module app.wizard {
             } else {
                 return !api.util.isStringsEqual(persistedRelationshipType.getName(), this.relationShipTypeWizardHeader.getName())
                     || !api.util.isStringsEqual(api.util.removeCarriageChars(this.persistedConfig),
-                                                api.util.removeCarriageChars(this.relationshipTypeForm.getFormData().xml));
+                    api.util.removeCarriageChars(this.relationshipTypeForm.getFormData().xml));
             }
         }
     }
