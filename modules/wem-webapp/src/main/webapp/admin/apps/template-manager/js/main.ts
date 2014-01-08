@@ -17,7 +17,7 @@ window.onload = () => {
     appPanel.init();
 
     var siteTemplateDeleteDialog: app.remove.SiteTemplateDeleteDialog = new app.remove.SiteTemplateDeleteDialog();
-    app.browse.DeleteSiteTemplatePromptEvent.on((event: app.browse.DeleteSiteTemplatePromptEvent) => {
+    app.browse.event.DeleteSiteTemplatePromptEvent.on((event: app.browse.event.DeleteSiteTemplatePromptEvent) => {
         siteTemplateDeleteDialog.setSiteTemplateToDelete(event.getSiteTemplate());
         siteTemplateDeleteDialog.open();
     });

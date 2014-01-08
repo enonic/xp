@@ -34,11 +34,11 @@ module app {
                 dialog.close();
             });
 
-            app.browse.ImportTemplateEvent.on(() => {
+            app.browse.event.ImportTemplateEvent.on(() => {
                 dialog.open();
             });
 
-            app.browse.ExportTemplateEvent.on((event:app.browse.ExportTemplateEvent) => {
+            app.browse.event.ExportTemplateEvent.on((event:app.browse.event.ExportTemplateEvent) => {
                 var siteTemplate:api.content.site.template.SiteTemplateSummary = event.getSiteTemplate();
 
                 var exportTemplate = new api.content.site.template.ExportSiteTemplateRequest(siteTemplate.getKey());
@@ -47,7 +47,7 @@ module app {
 
                 window.location.href = templateExportUrl;
             });
-            app.browse.NewTemplateEvent.on((event:app.browse.NewTemplateEvent) => {
+            app.browse.event.NewTemplateEvent.on((event:app.browse.event.NewTemplateEvent) => {
                 var tabId = api.app.AppBarTabId.forNew('new-site-template-wizard');
                 var tabMenuItem =new api.app.AppBarTabMenuItem("New Site Template ", tabId);
                 var wizard = new app.wizard.SiteTemplateWizardPanel(tabId);
