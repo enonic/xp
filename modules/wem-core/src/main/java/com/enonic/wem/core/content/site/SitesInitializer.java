@@ -84,7 +84,7 @@ public class SitesInitializer
 
         this.demoModule = createDemoModule();
         createPageDescriptor( pageDescriptor );
-        mainPageTemplate = createPageTemplate( this.demoModule, pageDescriptor.getKey() );
+        mainPageTemplate = createPageTemplate( pageDescriptor.getKey() );
         this.siteTemplate = createSiteTemplate( BLUMAN_SITE_TEMPLATE_KEY, ModuleKeys.from( this.demoModule.getKey() ), mainPageTemplate );
 
         createSite( "bluman-trampoliner", "Bluman Trampoliner" );
@@ -109,7 +109,8 @@ public class SitesInitializer
         final CreatePage createPage = page().create().
             content( content ).
             pageTemplate( this.mainPageTemplate.getKey() ).
-            config( createPageTemplateConfig( "red", createRegion() ) );
+            config( createPageTemplateConfig( "red", createRegion( "myMainRegion" ), createRegion( "myHeaderRegion" ),
+                                              createRegion( "myFooterRegion" ) ) );
         client.execute( createPage );
     }
 
@@ -123,23 +124,25 @@ public class SitesInitializer
         return client.execute( createPageDescriptor );
     }
 
-    private PageTemplate createPageTemplate( final Module module, final PageDescriptorKey pageDescriptorKey )
+    private PageTemplate createPageTemplate( final PageDescriptorKey pageDescriptorKey )
     {
         return newPageTemplate().
             key( PageTemplateKey.from( BLUMAN_SITE_TEMPLATE_KEY, DEMO_MODULE_KEY, new PageTemplateName( "mainpage" ) ) ).
             displayName( "Main Page" ).
-            config( createPageTemplateConfig( "blue", createRegion() ) ).
+            config( createPageTemplateConfig( "blue", createRegion( "myMainRegion" ), createRegion( "myHeaderRegion" ),
+                                              createRegion( "myFooterRegion" ) ) ).
             descriptor( pageDescriptorKey ).
             build();
     }
 
-    private RootDataSet createPageTemplateConfig( final String backgroundColor, final Region region )
+    private RootDataSet createPageTemplateConfig( final String backgroundColor, final Region main, final Region header,
+                                                  final Region footer )
     {
         RootDataSet data = new RootDataSet();
         data.setProperty( "background-color", new Value.String( backgroundColor ) );
-        data.setProperty( "main", new Value.Data( region.toData() ) );
-        data.setProperty( "header", new Value.Data( region.toData() ) );
-        data.setProperty( "footer", new Value.Data( region.toData() ) );
+        data.setProperty( "main", new Value.Data( main.toData() ) );
+        data.setProperty( "header", new Value.Data( header.toData() ) );
+        data.setProperty( "footer", new Value.Data( footer.toData() ) );
         return data;
     }
 
@@ -209,14 +212,14 @@ public class SitesInitializer
             build();
     }
 
-    private Region createRegion()
+    private Region createRegion( final String name )
     {
         RootDataSet imageComponentConfig = new RootDataSet();
         imageComponentConfig.setProperty( "width", new Value.Long( 300 ) );
         imageComponentConfig.setProperty( "caption", new Value.String( "My photo" ) );
 
         return newRegion().
-            name( "myRegion" ).
+            name( name ).
             add( newImageComponent().
                 image( ContentId.from( "123" ) ).
                 template( ImageTemplateKey.from( "mysitetemplate-1.0.0|mymodule-1.0.0|mypagetemplate" ) ).
