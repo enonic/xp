@@ -2,7 +2,7 @@ module app.browse {
 
     export class TemplateBrowsePanel extends api.app.browse.BrowsePanel<app.browse.TemplateBrowseItem> {
 
-        private browseActions:app.browse.TemplateBrowseActions;
+        private browseActions:app.browse.action.TemplateBrowseActions;
 
         private templateTreeGridPanel: app.browse.TemplateTreeGridPanel;
 
@@ -14,7 +14,7 @@ module app.browse {
                 contextMenu: treeGridContextMenu
             });
 
-            this.browseActions = TemplateBrowseActions.get();
+            this.browseActions = app.browse.action.TemplateBrowseActions.get();
             treeGridContextMenu.setActions(this.browseActions);
 
             this.toolbar = new TemplateBrowseToolbar(this.browseActions);

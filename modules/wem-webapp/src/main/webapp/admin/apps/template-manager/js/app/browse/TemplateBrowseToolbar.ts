@@ -2,7 +2,7 @@ module app.browse {
 
     export class TemplateBrowseToolbar extends api.ui.toolbar.Toolbar {
 
-        constructor(actions:TemplateBrowseActions) {
+        constructor(actions:app.browse.action.TemplateBrowseActions) {
             super();
 
             this.addAction(actions.IMPORT_TEMPLATE);

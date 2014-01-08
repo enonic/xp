@@ -6,7 +6,7 @@ module app.browse {
             super();
         }
 
-        setActions(actions:TemplateBrowseActions) {
+        setActions(actions:app.browse.action.TemplateBrowseActions) {
             this.addAction(actions.NEW_TEMPLATE);
             this.addAction(actions.EDIT_TEMPLATE);
             this.addAction(actions.OPEN_TEMPLATE);
